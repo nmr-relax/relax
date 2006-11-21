@@ -23,11 +23,37 @@
 #                                                                              #
 ################################################################################
 
-''' unit_test_runner provides utilities for the running of unit tests within
-    the relax testing frame work.
+''' unit_test_runner provides utilities for the running of unit tests from the
+    command line or within the relax testing frame work.
+
+    Unit tests in the relax frame work are stored in a directory structure
+    rooted at <relax-root-directory>/test_suite/unit_tests. The directory
+    unit tests contains a directory structure that mirrors the relax directory
+    structire and which ideally contains one unit test file/module for each
+    file/module in the relax framework. The dfault convettion is that the unit
+    test module for a relax module called <relax-module> is called
+    test_<relax-module> (stored in test_<relax-module>.py). The unit test module
+    test_<relax-module> should then contain a class called Test_<relax-module>
+    which is a child of TestCase and contains methods whose names start with
+    'test' and take no arguments other than self.
+
+    A concrete example:
+
+    for class <relax-root-directory>/maths-fns/chi2.py ***complete***
+
+
+
+
+    The framework can discover sets of unit tests from the file system and add
+    them to TestSuites either from the command line or programmatically from
+    inside another program. It also has the ability to search for a  root unit
+    test and system directory from a position anywhere inside the unit test
+    hierachy.
 '''
 
 import os,re,unittest,string,sys
+#import Tkinter as tk
+#import unittest.unittestgui as unitgui
 
 # utility functions
 ###################
@@ -45,6 +71,16 @@ def get_startup_path():
     if startup_path == '':
         startup_path = os.getcwd()
     return startup_path
+
+def import_module(module_path):
+
+    module = __import__(module_path)
+    result = [module]
+    components = module_path.split('.')
+    for component in components[1:]:
+        module = getattr(module, component)
+        result.append(module)
+    return result
 
 
 def get_module_relative_path(module_path, root_paths=None):
@@ -199,6 +235,8 @@ class Test_finder:
     def scan_paths(self):
         '''Scan directories and paths for unit test classes and load them into TestSuites'''
 
+        self.suite = unittest.TestSuite()
+        suite_dictionary = {'':self.suite}
         for (dir_path, dir_names, file_names) in os.walk(self.root_path):
              for file_name in file_names:
                  if self.pattern.match(file_name):
@@ -207,35 +245,29 @@ class Test_finder:
                      relative_module_path = get_module_relative_path(dir_path)
 
                      class_name = string.upper(file_name[0]) + file_name[1:]
-                     print relative_module_path, class_name, file_name
                      if relative_module_path != '':
                          module_path = '.'.join((relative_module_path, file_name))
                      else:
                          module_path = file_name
-                     module = __import__(module_path)
-                     clazz =  getattr(module, class_name)
 
-                     self.suite = unittest.TestLoader().loadTestsFromTestCase(clazz)
+                     modules = import_module(module_path)
+
+                     path  = ['']
+                     for i,elem in enumerate(module_path.split('.')):
+                         old_path_key  =  '.'.join(path)
+                         path.append(elem)
+                         path_key = '.'.join(path)
+                         if path_key not in suite_dictionary:
+                             test_suite = unittest.TestSuite()
+                             suite_dictionary[path_key]=test_suite
+                             suite_dictionary[old_path_key].addTest(test_suite)
+
+                     clazz =  getattr(modules[-1], class_name)
+                     suite_dictionary[path_key].addTest(unittest.TestLoader().loadTestsFromTestCase(clazz))
 
 
-    def run(self, test_runner=None):
-        '''Run the unit tests found using a TestRunner.
 
-           @type test_runner: an instance ot TestRunner
-           @param test_runner: the TestRunner instance  to be used to run the
-                               TestSuite  with. if the fefault value of None is
-                               used an instance of unittest.TextTestRunner is
-                               used
-        '''
 
-        if not self.paths_scanned:
-            self.scan_paths()
-            self.paths_scanned = True
-
-        if not test_runner:
-            runner = unittest.TextTestRunner()
-
-        runner.run(self.suite)
 
 class Run_unit_tests(object):
     '''Class to run a particular unit test or a directory of unit tests.'''
@@ -427,8 +459,12 @@ class Run_unit_tests(object):
         return result
 
 
-    def run(self):
+    def run(self, runner=None):
         '''Run a unit test or set of unit tests.'''
+
+        print 'testing units...'
+        print '----------------'
+        print
 
         system_directory = self.find_system_directory_path(self.root_path)
         unit_test_directory = self.find_unit_test_directory_path(self.root_path)
@@ -437,10 +473,9 @@ class Run_unit_tests(object):
             print 'root path:          ', self.root_path
             print 'system directory:   ', system_directory
             print 'unit test directory:', unit_test_directory
-            print 'module paths',modulePath
+            print 'module paths:       ', module_path
             print
         # add UnitTestDirectory to python path
-        print 'sys path',sys.path
         backup_python_path = sys.path[:]
         sys.path.insert(1,unit_test_directory)
         sys.path.insert(1,system_directory)
@@ -449,20 +484,29 @@ class Run_unit_tests(object):
         #iterate and load unit tests from module path
         finder = Test_finder(unit_test_directory)
         finder.scan_paths()
-        finder.run()
+        if runner == None:
+            runner = unittest.TextTestRunner()
+        runner.run(finder.suite)
         # add SystemDirectory to python path
         # iterate and load files to be tested
 
 if __name__ == '__main__':
-    print '1',get_module_relative_path('/A/B/C', ('/A/B',))
-    print '2',get_module_relative_path('/A/B/C', ('/A/B/C',))
-    print '3',get_module_relative_path('/A/B/C', ('/A/B/D/W',))
-    print get_common_prefix(('A','B','C'), ('A','B','C'))
-    print get_common_prefix(('A','B','C'), ('A','B','C','D'))
-    print get_common_prefix(('D','E'), ('A','B','C','D'))
-    print get_common_prefix(('A','B','C','F'), ('A','B','C','D'))
-    print get_common_prefix((),('A','B','C','D'))
-    print ('A','B','C') == ('A','B','C')
-    runner = Run_unit_tests()
+#    print '1',get_module_relative_path('/A/B/C', ('/A/B',))
+#    print '2',get_module_relative_path('/A/B/C', ('/A/B/C',))
+#    print '3',get_module_relative_path('/A/B/C', ('/A/B/D/W',))
+#    print get_common_prefix(('A','B','C'), ('A','B','C'))
+#    print get_common_prefix(('A','B','C'), ('A','B','C','D'))
+#    print get_common_prefix(('D','E'), ('A','B','C','D'))
+#    print get_common_prefix(('A','B','C','F'), ('A','B','C','D'))
+#    print get_common_prefix((),('A','B','C','D'))
+#    print ('A','B','C') == ('A','B','C')
+    runner = Run_unit_tests(verbose=True)
     runner.run()
+
+#    root = tk.Tk()
+#    root.title("Realx unit tests")
+#    gui = unitgui.TkTestRunner(root)
+#    runner.run()
+
+
 # todo normcase home
