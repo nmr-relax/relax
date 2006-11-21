@@ -21,11 +21,13 @@
 ###############################################################################
 
 
-__all__ = ['test_suite',
+__all__ = ['angles',
            'diffusion_tensor',
            'generic.py',
            'jw_mapping',
+           'main',
            'model_free',
+           'model_selection',
            'relax_fit',
            'run_create',
            'sequence']

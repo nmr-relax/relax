@@ -20,8 +20,46 @@
 #                                                                             #
 ###############################################################################
 
+# Import the test suite categories.
+from system_tests.main import System_tests
+from unit_tests.unit_test_runner import run_unit_tests
 
-__all__ = ['runner',
-           'system_tests',
-           'unit_tests']
 
+class Test_suite_runner:
+    """Class for running all components of the relax test suite.
+
+    This currently includes the following categories of tests:
+        System/functional tests.
+        Unit tests.
+    """
+
+    def __init__(self, relax):
+        """Run the system/functional and unit test suite components.
+
+        @param relax:   The relax namespace.
+        @type relax:    instance
+        """
+
+        self.relax = relax
+
+        # Execute the system/functional tests.
+        system_result = System_tests(self.relax)
+
+        # Execute the unit tests.
+        runner = run_unit_tests()
+        unit_result = runner.run()
+
+        # Print out a summary of the test suite.
+        ########################################
+
+        # Heading.
+        print "\n\n\n"
+        print "###################################"
+        print "# Summary of the relax test suite #"
+        print "###################################"
+
+        # System/functional tests.
+        print "System/functional tests: " + `system_result`
+
+        # Unit tests.
+        print "Unit tests: " + `unit_result`
