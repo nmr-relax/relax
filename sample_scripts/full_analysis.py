@@ -328,9 +328,9 @@ class Main:
         print "chi2 (k-1): %s" + self.relax.data.chi2['previous']
         print "chi2 (k):   %s" + self.relax.data.chi2[run]
         if self.relax.data.chi2['previous'] == self.relax.data.chi2[run]:
-            print "The chi-squared value has converged."
+            print "The chi-squared value has converged.\n"
         else:
-            print "The chi-squared value has not converged."
+            print "The chi-squared value has not converged.\n"
             chi2_converged = 0
 
 
@@ -351,9 +351,9 @@ class Main:
 
         # The test.
         if prev_models == curr_models:
-            print "The model-free models have converged."
+            print "The model-free models have converged.\n"
         else:
-            print "The model-free models have not converged."
+            print "The model-free models have not converged.\n"
             models_converged = 0
 
 
@@ -364,8 +364,38 @@ class Main:
 
         # Only run the tests if the model-free models have converged.
         if models_converged:
+            # Diffusion parameter array.
+            if self.diff_model == 'sphere':
+                params = ['tm']
+            elif self.diff_model == 'oblate' or self.diff_model == 'prolate':
+                params = ['tm', 'Da', 'theta', 'phi']
+            elif self.diff_model == 'ellipsoid':
+                params = ['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma']
+
+            # Tests.
+            for param in params:
+                # Get the parameter values.
+                prev_val = getattr(self.relax.data.diff['previous'], param)
+                curr_val = getattr(self.relax.data.diff[run], param)
+
+                # Test if not identical.
+                if prev_val != curr_val:
+                    print "Parameter:   " + param
+                    print "Value (k-1): " + `prev_val`
+                    print "Value (k):   " + `curr_val`
+                    print "The diffusion parameters have not converged.\n"
+                    params_converged = 0
+
+            # Skip the rest if the diffusion tensor parameters have not converged.
+            if not param_converged:
+                break
+
             # Loop over the spin systems.
             for i in xrange(len(self.relax.data.res[run])):
+                # Skip if the parameters have not converged.
+                if not params_converged:
+                    break
+
                 # Loop over the parameters.
                 for j in xrange(len(self.relax.data.res[run][i].params)):
                     # Get the parameter values.
@@ -378,8 +408,9 @@ class Main:
                         print "Parameter:   " + self.relax.data.res[run][i].params[j]
                         print "Value (k-1): " + `prev_val`
                         print "Value (k):   " + `curr_val`
-                        print "The model-free parameters have not converged."
+                        print "The model-free parameters have not converged.\n"
                         params_converged = 0
+                        break
 
         # The model-free models haven't converged hence the parameter values haven't converged.
         else:
