@@ -482,7 +482,7 @@ class Main:
         eliminate()
 
         # Model selection.
-        model_selection('AIC', run)
+        model_selection('AIC', run, runs=self.runs)
 
         # Write the results.
         if write_flag:
@@ -494,14 +494,14 @@ class Main:
 
         # Set the run names (also the names of preset model-free models).
         if local_tm:
-            runs = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
+            self.runs = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
         else:
-            runs = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
+            self.runs = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
 
         # Nuclei type
         nuclei('N')
 
-        for name in runs:
+        for name in self.runs:
             # Create the run.
             run.create(name, 'mf')
 
