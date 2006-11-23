@@ -387,30 +387,28 @@ class Main:
                     params_converged = 0
 
             # Skip the rest if the diffusion tensor parameters have not converged.
-            if not param_converged:
-                break
-
-            # Loop over the spin systems.
-            for i in xrange(len(self.relax.data.res[run])):
-                # Skip if the parameters have not converged.
-                if not params_converged:
-                    break
-
-                # Loop over the parameters.
-                for j in xrange(len(self.relax.data.res[run][i].params)):
-                    # Get the parameter values.
-                    prev_val = getattr(self.relax.data.res['previous'][i], lower(self.relax.data.res['previous'][i].params[j]))
-                    curr_val = getattr(self.relax.data.res[run][i], lower(self.relax.data.res[run][i].params[j]))
-
-                    # Test if not identical.
-                    if prev_val != curr_val:
-                        print "Spin system: " + `self.relax.data.res[run][i].num` + ' ' + self.relax.data.res[run][i].name
-                        print "Parameter:   " + self.relax.data.res[run][i].params[j]
-                        print "Value (k-1): " + `prev_val`
-                        print "Value (k):   " + `curr_val`
-                        print "The model-free parameters have not converged.\n"
-                        params_converged = 0
+            if param_converged:
+                # Loop over the spin systems.
+                for i in xrange(len(self.relax.data.res[run])):
+                    # Skip if the parameters have not converged.
+                    if not params_converged:
                         break
+
+                    # Loop over the parameters.
+                    for j in xrange(len(self.relax.data.res[run][i].params)):
+                        # Get the parameter values.
+                        prev_val = getattr(self.relax.data.res['previous'][i], lower(self.relax.data.res['previous'][i].params[j]))
+                        curr_val = getattr(self.relax.data.res[run][i], lower(self.relax.data.res[run][i].params[j]))
+
+                        # Test if not identical.
+                        if prev_val != curr_val:
+                            print "Spin system: " + `self.relax.data.res[run][i].num` + ' ' + self.relax.data.res[run][i].name
+                            print "Parameter:   " + self.relax.data.res[run][i].params[j]
+                            print "Value (k-1): " + `prev_val`
+                            print "Value (k):   " + `curr_val`
+                            print "The model-free parameters have not converged.\n"
+                            params_converged = 0
+                            break
 
         # The model-free models haven't converged hence the parameter values haven't converged.
         else:
