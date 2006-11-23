@@ -322,20 +322,20 @@ class Main:
         # Chi-squared test.
         ###################
 
-        print "# Chi-squared test.\n"
-        print "chi2 (k-1): " + `self.relax.data.chi2['previous']`
-        print "chi2 (k):   " + `self.relax.data.chi2[run]`
+        print "Chi-squared test:"
+        print "    chi2 (k-1): " + `self.relax.data.chi2['previous']`
+        print "    chi2 (k):   " + `self.relax.data.chi2[run]`
         if self.relax.data.chi2['previous'] == self.relax.data.chi2[run]:
-            print "The chi-squared value has converged.\n"
+            print "    The chi-squared value has converged.\n"
         else:
-            print "The chi-squared value has not converged.\n"
+            print "    The chi-squared value has not converged.\n"
             chi2_converged = 0
 
 
         # Identical model-free model test.
         ##################################
 
-        print "# Identical model-free models test."
+        print "Identical model-free models test:"
 
         # Create a string representation of the model-free models of the previous run.
         prev_models = ''
@@ -349,16 +349,16 @@ class Main:
 
         # The test.
         if prev_models == curr_models:
-            print "The model-free models have converged.\n"
+            print "    The model-free models have converged.\n"
         else:
-            print "The model-free models have not converged.\n"
+            print "    The model-free models have not converged.\n"
             models_converged = 0
 
 
         # Identical parameter value test.
         #################################
 
-        print "# Identical parameter test."
+        print "Identical parameter test:"
 
         # Only run the tests if the model-free models have converged.
         if models_converged:
@@ -378,10 +378,10 @@ class Main:
 
                 # Test if not identical.
                 if prev_val != curr_val:
-                    print "Parameter:   " + param
-                    print "Value (k-1): " + `prev_val`
-                    print "Value (k):   " + `curr_val`
-                    print "The diffusion parameters have not converged.\n"
+                    print "    Parameter:   " + param
+                    print "    Value (k-1): " + `prev_val`
+                    print "    Value (k):   " + `curr_val`
+                    print "    The diffusion parameters have not converged.\n"
                     params_converged = 0
 
             # Skip the rest if the diffusion tensor parameters have not converged.
@@ -400,24 +400,28 @@ class Main:
 
                         # Test if not identical.
                         if prev_val != curr_val:
-                            print "Spin system: " + `self.relax.data.res[run][i].num` + ' ' + self.relax.data.res[run][i].name
-                            print "Parameter:   " + self.relax.data.res[run][i].params[j]
-                            print "Value (k-1): " + `prev_val`
-                            print "Value (k):   " + `curr_val`
-                            print "The model-free parameters have not converged.\n"
+                            print "    Spin system: " + `self.relax.data.res[run][i].num` + ' ' + self.relax.data.res[run][i].name
+                            print "    Parameter:   " + self.relax.data.res[run][i].params[j]
+                            print "    Value (k-1): " + `prev_val`
+                            print "    Value (k):   " + `curr_val`
+                            print "    The model-free parameters have not converged.\n"
                             params_converged = 0
                             break
 
         # The model-free models haven't converged hence the parameter values haven't converged.
         else:
-            print "The model-free models haven't converged hence the parameters haven't converged."
+            print "    The model-free models haven't converged hence the parameters haven't converged.\n"
             params_converged = 0
+
+        # Print out.
+        if params_converged:
+            print "    The diffusion tensor and model-free parameters have converged.\n"
 
 
         # Final print out.
         ##################
 
-        print "\n# Convergence:"
+        print "\nConvergence:"
         if chi2_converged and models_converged and params_converged:
             print "    [ Yes ]"
         else:
