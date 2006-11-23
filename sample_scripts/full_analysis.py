@@ -385,7 +385,7 @@ class Main:
                     params_converged = 0
 
             # Skip the rest if the diffusion tensor parameters have not converged.
-            if param_converged:
+            if params_converged:
                 # Loop over the spin systems.
                 for i in xrange(len(self.relax.data.res[run])):
                     # Skip if the parameters have not converged.
@@ -418,7 +418,7 @@ class Main:
         ##################
 
         print "\n# Convergence:"
-        if chi2_converged and models_converged and paras_converged:
+        if chi2_converged and models_converged and params_converged:
             print "    [ Yes ]"
         else:
             print "    [ No ]"
