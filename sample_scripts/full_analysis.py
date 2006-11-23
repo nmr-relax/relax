@@ -9,6 +9,7 @@
 # Import functions from the python modules 'os' and 're'.
 from os import getcwd, listdir
 from re import search
+from string import lower
 
 
 class Main:
@@ -211,7 +212,7 @@ class Main:
                 self.multi_model()
 
                 # Delete the run containing the optimised diffusion tensor.
-                run.delete('tensor')
+                run.delete('previous')
 
                 # Create the final run (for model selection and final optimisation).
                 name = 'final'
@@ -229,6 +230,10 @@ class Main:
                 # Write the results.
                 dir = self.base_dir + 'opt'
                 results.write(run=name, file='results', dir=dir, force=1)
+
+                # Test for convergence.
+                self.convergence(run=name)
+
 
 
         # Final run.
@@ -301,6 +306,128 @@ class Main:
             raise RelaxError, "Unknown diffusion model, change the value of 'self.diff_model'"
 
 
+    def convergence(self, run=None):
+        """Test for the convergence of the global model."""
+
+        # Print out.
+        print "\n\n\n"
+        print "#####################"
+        print "# Convergence tests #"
+        print "#####################\n\n"
+
+        # Convergence flags.
+        chi2_converged = 1
+        models_converged = 1
+        params_converged = 1
+
+
+        # Chi-squared test.
+        ###################
+
+        print "# Chi-squared test.\n"
+        print "chi2 (k-1): %s" + self.relax.data.chi2['previous']
+        print "chi2 (k):   %s" + self.relax.data.chi2[run]
+        if self.relax.data.chi2['previous'] == self.relax.data.chi2[run]:
+            print "The chi-squared value has converged.\n"
+        else:
+            print "The chi-squared value has not converged.\n"
+            chi2_converged = 0
+
+
+        # Identical model-free model test.
+        ##################################
+
+        print "# Identical model-free models test."
+
+        # Create a string representation of the model-free models of the previous run.
+        prev_models = ''
+        for i in xrange(len(self.relax.data.res['previous'])):
+            prev_models = prev_models + self.relax.data.res['previous'][i].model
+
+        # Create a string representation of the model-free models of the current run.
+        curr_models = ''
+        for i in xrange(len(self.relax.data.res[run])):
+            curr_models = curr_models + self.relax.data.res[run][i].model
+
+        # The test.
+        if prev_models == curr_models:
+            print "The model-free models have converged.\n"
+        else:
+            print "The model-free models have not converged.\n"
+            models_converged = 0
+
+
+        # Identical parameter value test.
+        #################################
+
+        print "# Identical parameter test."
+
+        # Only run the tests if the model-free models have converged.
+        if models_converged:
+            # Diffusion parameter array.
+            if self.diff_model == 'sphere':
+                params = ['tm']
+            elif self.diff_model == 'oblate' or self.diff_model == 'prolate':
+                params = ['tm', 'Da', 'theta', 'phi']
+            elif self.diff_model == 'ellipsoid':
+                params = ['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma']
+
+            # Tests.
+            for param in params:
+                # Get the parameter values.
+                prev_val = getattr(self.relax.data.diff['previous'], param)
+                curr_val = getattr(self.relax.data.diff[run], param)
+
+                # Test if not identical.
+                if prev_val != curr_val:
+                    print "Parameter:   " + param
+                    print "Value (k-1): " + `prev_val`
+                    print "Value (k):   " + `curr_val`
+                    print "The diffusion parameters have not converged.\n"
+                    params_converged = 0
+
+            # Skip the rest if the diffusion tensor parameters have not converged.
+            if not param_converged:
+                break
+
+            # Loop over the spin systems.
+            for i in xrange(len(self.relax.data.res[run])):
+                # Skip if the parameters have not converged.
+                if not params_converged:
+                    break
+
+                # Loop over the parameters.
+                for j in xrange(len(self.relax.data.res[run][i].params)):
+                    # Get the parameter values.
+                    prev_val = getattr(self.relax.data.res['previous'][i], lower(self.relax.data.res['previous'][i].params[j]))
+                    curr_val = getattr(self.relax.data.res[run][i], lower(self.relax.data.res[run][i].params[j]))
+
+                    # Test if not identical.
+                    if prev_val != curr_val:
+                        print "Spin system: " + `self.relax.data.res[run][i].num` + ' ' + self.relax.data.res[run][i].name
+                        print "Parameter:   " + self.relax.data.res[run][i].params[j]
+                        print "Value (k-1): " + `prev_val`
+                        print "Value (k):   " + `curr_val`
+                        print "The model-free parameters have not converged.\n"
+                        params_converged = 0
+                        break
+
+        # The model-free models haven't converged hence the parameter values haven't converged.
+        else:
+            print "The model-free models haven't converged hence the parameters haven't converged."
+            params_converged = 0
+
+
+        # Final print out.
+        ##################
+
+        print "\n# Convergence:"
+        if chi2_converged and models_converged and paras_converged:
+            print "    [ Yes ]"
+        else:
+            print "    [ No ]"
+
+
     def determine_rnd(self, model=None):
         """Function for returning the name of next round of optimisation."""
 
@@ -341,15 +468,15 @@ class Main:
         """Function for loading the optimised diffusion tensor."""
 
         # Create the run for the previous data.
-        run.create('tensor', 'mf')
+        run.create('previous', 'mf')
 
         # Load the optimised diffusion tensor from the initial round.
         if self.round == 1:
-            results.read('tensor', 'results', self.diff_model + '/init')
+            results.read('previous', 'results', self.diff_model + '/init')
 
         # Load the optimised diffusion tensor from the previous round.
         else:
-            results.read('tensor', 'results', self.diff_model + '/round_' + `self.round - 1` + '/opt')
+            results.read('previous', 'results', self.diff_model + '/round_' + `self.round - 1` + '/opt')
 
 
     def model_selection(self, run=None, dir=None, write_flag=1):
@@ -402,7 +529,7 @@ class Main:
 
             # Copy the diffusion tensor from the run 'opt' and prevent it from being minimised.
             if not local_tm:
-                diffusion_tensor.copy('tensor', name)
+                diffusion_tensor.copy('previous', name)
                 fix(name, 'diff')
 
             # Set the bond length and CSA values.
