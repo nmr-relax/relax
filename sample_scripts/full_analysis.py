@@ -323,8 +323,8 @@ class Main:
         ###################
 
         print "# Chi-squared test.\n"
-        print "chi2 (k-1): %s" + self.relax.data.chi2['previous']
-        print "chi2 (k):   %s" + self.relax.data.chi2[run]
+        print "chi2 (k-1): " + `self.relax.data.chi2['previous']`
+        print "chi2 (k):   " + `self.relax.data.chi2[run]`
         if self.relax.data.chi2['previous'] == self.relax.data.chi2[run]:
             print "The chi-squared value has converged.\n"
         else:
