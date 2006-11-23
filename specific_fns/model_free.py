@@ -4674,13 +4674,9 @@ class Model_free(Common_functions):
         # PDB.
         pdb = None
         pdb_model = None
-        pdb_heteronuc = None
-        pdb_proton = None
         if self.relax.data.pdb.has_key(self.run):
             pdb = self.relax.data.pdb[self.run].file_name
             pdb_model = self.relax.data.pdb[self.run].model
-            pdb_heteronuc = self.relax.data.pdb[self.run].heteronuc
-            pdb_proton = self.relax.data.pdb[self.run].proton
 
         # Relaxation data setup.
         try:
@@ -4829,7 +4825,7 @@ class Model_free(Common_functions):
                         ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='value', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='value', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=data.heteronuc, pdb_proton=data.proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Errors.
