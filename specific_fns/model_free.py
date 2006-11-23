@@ -2111,7 +2111,7 @@ class Model_free(Common_functions):
 
         # Loop over the minimisation instances.
         #######################################
-        
+
         for i in xrange(num_instances):
             # Set the residue index.
             if min_algor == 'back_calc':
