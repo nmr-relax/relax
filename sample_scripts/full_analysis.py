@@ -174,8 +174,9 @@ class Main:
                 # Remove the tm parameter.
                 model_free.remove_tm(run=name)
 
-                # Load the PDB file.
+                # Load the PDB file and calculate the unit vectors parallel to the XH bond.
                 structure.read_pdb(name, '1F3Y.pdb')
+                structure.vectors(name, heteronuc='N', proton='H')
 
                 # Add an arbitrary diffusion tensor which will be optimised.
                 if self.diff_model == 'sphere':
@@ -510,9 +511,10 @@ class Main:
             # Load the sequence.
             sequence.read(name, 'noe.600.out')
 
-            # Load the PDB file.
+            # Load the PDB file and calculate the unit vectors parallel to the XH bond.
             if not local_tm:
                 structure.read_pdb(name, '1F3Y.pdb')
+                structure.vectors(name, heteronuc='N', proton='H')
 
             # Load the relaxation data.
             relax_data.read(name, 'R1', '600', 599.719 * 1e6, 'r1.600.out')
