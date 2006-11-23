@@ -212,9 +212,6 @@ class Main:
                 # Sequential optimisation of all model-free models (function must be modified to suit).
                 self.multi_model()
 
-                # Delete the run containing the optimised diffusion tensor.
-                run.delete('previous')
-
                 # Create the final run (for model selection and final optimisation).
                 name = 'final'
                 run.create(name, 'mf')
