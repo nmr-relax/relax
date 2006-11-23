@@ -3268,7 +3268,7 @@ class Model_free(Common_functions):
 
         # Read the PDB file (if it exists).
         if not pdb == 'None':
-            self.relax.generic.structure.read(run=self.run, file=pdb, model=pdb_model, fail=0, print_flag=print_flag)
+            self.relax.generic.structure.read_pdb(run=self.run, file=pdb, model=pdb_model, fail=0, print_flag=print_flag)
             return 1
         else:
             return 0
