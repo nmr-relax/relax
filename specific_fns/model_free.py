@@ -3439,6 +3439,9 @@ class Model_free(Common_functions):
 
         # Set up the simulations.
         if len(sims):
+            print "sims: " + `sims`
+            print "Select sim: " + `select_sim`
+            print "len sim: " + `len(select_sim)`
             self.relax.generic.monte_carlo.setup(self.run, select_sim=select_sim)
 
 
@@ -4729,57 +4732,67 @@ class Model_free(Common_functions):
             s2 = None
             if hasattr(data, 's2') and data.s2 != None:
                 s2 = data.s2 / self.return_conversion_factor('s2')
+            s2 = `s2`
 
             # S2f.
             s2f = None
             if hasattr(data, 's2f') and data.s2f != None:
                 s2f = data.s2f / self.return_conversion_factor('s2f')
+            s2f = `s2f`
 
             # S2s.
             s2s = None
             if hasattr(data, 's2s') and data.s2s != None:
                 s2s = data.s2s / self.return_conversion_factor('s2s')
+            s2s = `s2s`
 
             # Local tm.
             local_tm = None
             if hasattr(data, 'local_tm') and data.local_tm != None:
                 local_tm = data.local_tm / self.return_conversion_factor('local_tm')
+            local_tm = `local_tm`
 
             # te.
             te = None
             if hasattr(data, 'te') and data.te != None:
                 te = data.te / self.return_conversion_factor('te')
+            te = `te`
 
             # tf.
             tf = None
             if hasattr(data, 'tf') and data.tf != None:
                 tf = data.tf / self.return_conversion_factor('tf')
+            tf = `tf`
 
             # ts.
             ts = None
             if hasattr(data, 'ts') and data.ts != None:
                 ts = data.ts / self.return_conversion_factor('ts')
+            ts = `ts`
 
             # Rex.
             rex = None
             if hasattr(data, 'rex') and data.rex != None:
                 rex = data.rex / self.return_conversion_factor('rex')
+            rex = `rex`
 
             # Bond length.
             r = None
             if hasattr(data, 'r') and data.r != None:
                 r = data.r / self.return_conversion_factor('r')
+            r = `r`
 
             # CSA.
             csa = None
             if hasattr(data, 'csa') and data.csa != None:
                 csa = data.csa / self.return_conversion_factor('csa')
+            csa = `csa`
 
             # Minimisation details.
             try:
                 # Global minimisation results.
                 if self.param_set == 'diff' or self.param_set == 'all':
-                    chi2 = self.relax.data.chi2[self.run]
+                    chi2 = `self.relax.data.chi2[self.run]`
                     iter = self.relax.data.iter[self.run]
                     f = self.relax.data.f_count[self.run]
                     g = self.relax.data.g_count[self.run]
@@ -4791,7 +4804,7 @@ class Model_free(Common_functions):
 
                 # Individual residue results.
                 else:
-                    chi2 = data.chi2
+                    chi2 = `data.chi2`
                     iter = data.iter
                     f = data.f_count
                     g = data.g_count
@@ -4837,7 +4850,7 @@ class Model_free(Common_functions):
                         ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='value', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='value', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Errors.
@@ -4901,51 +4914,61 @@ class Model_free(Common_functions):
                 s2 = None
                 if hasattr(data, 's2_err') and data.s2_err != None:
                     s2 = data.s2_err / self.return_conversion_factor('s2')
+                s2 = `s2`
 
                 # S2f.
                 s2f = None
                 if hasattr(data, 's2f_err') and data.s2f_err != None:
                     s2f = data.s2f_err / self.return_conversion_factor('s2f')
+                s2f = `s2f`
 
                 # S2s.
                 s2s = None
                 if hasattr(data, 's2s_err') and data.s2s_err != None:
                     s2s = data.s2s_err / self.return_conversion_factor('s2s')
+                s2s = `s2s`
 
                 # Local tm.
                 local_tm = None
                 if hasattr(data, 'local_tm_err') and data.local_tm_err != None:
                     local_tm = data.local_tm_err / self.return_conversion_factor('local_tm')
+                local_tm = `local_tm`
 
                 # te.
                 te = None
                 if hasattr(data, 'te_err') and data.te_err != None:
                     te = data.te_err / self.return_conversion_factor('te')
+                te = `te`
 
                 # tf.
                 tf = None
                 if hasattr(data, 'tf_err') and data.tf_err != None:
                     tf = data.tf_err / self.return_conversion_factor('tf')
+                tf = `tf`
 
                 # ts.
                 ts = None
                 if hasattr(data, 'ts_err') and data.ts_err != None:
                     ts = data.ts_err / self.return_conversion_factor('ts')
+                ts = `ts`
 
                 # Rex.
                 rex = None
                 if hasattr(data, 'rex_err') and data.rex_err != None:
                     rex = data.rex_err / self.return_conversion_factor('rex')
+                rex = `rex`
 
                 # Bond length.
                 r = None
                 if hasattr(data, 'r_err') and data.r_err != None:
                     r = data.r_err / self.return_conversion_factor('r')
+                r = `r`
 
                 # CSA.
                 csa = None
                 if hasattr(data, 'csa_err') and data.csa_err != None:
                     csa = data.csa_err / self.return_conversion_factor('csa')
+                csa = `csa`
 
                 # Relaxation data and errors.
                 ri = []
@@ -4960,7 +4983,7 @@ class Model_free(Common_functions):
                     xh_vect = replace(`data.xh_vect.tolist()`, ' ', '')
 
                 # Write the line.
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Simulation values.
@@ -5034,57 +5057,67 @@ class Model_free(Common_functions):
                     s2 = None
                     if hasattr(data, 's2_sim') and data.s2_sim[i] != None:
                         s2 = data.s2_sim[i] / self.return_conversion_factor('s2')
+                    s2 = `s2`
 
                     # S2f.
                     s2f = None
                     if hasattr(data, 's2f_sim') and data.s2f_sim[i] != None:
                         s2f = data.s2f_sim[i] / self.return_conversion_factor('s2f')
+                    s2f = `s2f`
 
                     # S2s.
                     s2s = None
                     if hasattr(data, 's2s_sim') and data.s2s_sim[i] != None:
                         s2s = data.s2s_sim[i] / self.return_conversion_factor('s2s')
+                    s2s = `s2s`
 
                     # Local tm.
                     local_tm = None
                     if hasattr(data, 'local_tm_sim') and data.local_tm_sim[i] != None:
                         local_tm = data.local_tm_sim[i] / self.return_conversion_factor('local_tm')
+                    local_tm = `local_tm`
 
                     # te.
                     te = None
                     if hasattr(data, 'te_sim') and data.te_sim[i] != None:
                         te = data.te_sim[i] / self.return_conversion_factor('te')
+                    te = `te`
 
                     # tf.
                     tf = None
                     if hasattr(data, 'tf_sim') and data.tf_sim[i] != None:
                         tf = data.tf_sim[i] / self.return_conversion_factor('tf')
+                    tf = `tf`
 
                     # ts.
                     ts = None
                     if hasattr(data, 'ts_sim') and data.ts_sim[i] != None:
                         ts = data.ts_sim[i] / self.return_conversion_factor('ts')
+                    ts = `ts`
 
                     # Rex.
                     rex = None
                     if hasattr(data, 'rex_sim') and data.rex_sim[i] != None:
                         rex = data.rex_sim[i] / self.return_conversion_factor('rex')
+                    rex = `rex`
 
                     # Bond length.
                     r = None
                     if hasattr(data, 'r_sim') and data.r_sim[i] != None:
                         r = data.r_sim[i] / self.return_conversion_factor('r')
+                    r = `r`
 
                     # CSA.
                     csa = None
                     if hasattr(data, 'csa_sim') and data.csa_sim[i] != None:
                         csa = data.csa_sim[i] / self.return_conversion_factor('csa')
+                    csa = `csa`
 
                     # Minimisation details.
                     try:
                         # Global minimisation results.
                         if self.param_set == 'diff' or self.param_set == 'all':
-                            chi2 = self.relax.data.chi2_sim[self.run][i]
+                            chi2 = `self.relax.data.chi2_sim[self.run][i]`
                             iter = self.relax.data.iter_sim[self.run][i]
                             f = self.relax.data.f_count_sim[self.run][i]
                             g = self.relax.data.g_count_sim[self.run][i]
@@ -5096,7 +5129,7 @@ class Model_free(Common_functions):
 
                         # Individual residue results.
                         else:
-                            chi2 = data.chi2_sim[i]
+                            chi2 = `data.chi2_sim[i]`
                             iter = data.iter_sim[i]
                             f = data.f_count_sim[i]
                             g = data.g_count_sim[i]
@@ -5139,7 +5172,7 @@ class Model_free(Common_functions):
                         xh_vect = replace(`data.xh_vect.tolist()`, ' ', '')
 
                     # Write the line.
-                    self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, select_sim=select_sim, data_set='sim_'+`i`, nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, chi2=`chi2`, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                    self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, select_sim=select_sim, data_set='sim_'+`i`, nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
 
