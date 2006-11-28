@@ -241,6 +241,9 @@ class Main:
             # Diffusion model selection.
             ############################
 
+            # All the global diffusion models to be used in the model selection.
+            self.runs = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid']
+
             # Create the local_tm run.
             run.create('local_tm', 'mf')
 
