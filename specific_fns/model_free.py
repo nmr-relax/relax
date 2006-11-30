@@ -1303,7 +1303,7 @@ class Model_free(Common_functions):
                             data.s2s_sim[sim_index] = data.s2_sim[sim_index] / data.s2f_sim[sim_index]
 
 
-    def duplicate_data(self, new_run=None, old_run=None, instance=None):
+    def duplicate_data(self, new_run=None, old_run=None, instance=None, global_stats=0):
         """Function for duplicating data."""
 
         # self.run for determining the parameter set.
@@ -1341,7 +1341,7 @@ class Model_free(Common_functions):
         self.param_set = self.determine_param_set_type()
 
         # Sequence specific data.
-        if self.param_set == 'mf' or self.param_set == 'local_tm':
+        if self.param_set == 'mf' or (self.param_set == 'local_tm' and not global_stats):
             # Create the sequence data if it does not exist.
             if not self.relax.data.res.has_key(new_run) or not len(self.relax.data.res[new_run]):
                 # Add the new run to 'self.relax.data.res'.
@@ -1361,7 +1361,7 @@ class Model_free(Common_functions):
             self.relax.data.res[new_run][instance] = deepcopy(self.relax.data.res[old_run][instance])
 
         # Other data types.
-        elif self.param_set == 'diff' or self.param_set == 'all':
+        else:
             # Duplicate the residue specific data.
             self.relax.data.res[new_run] = deepcopy(self.relax.data.res[old_run])
 
