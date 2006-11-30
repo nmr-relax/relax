@@ -3424,7 +3424,7 @@ class Model_free(Common_functions):
                 if self.read_columnar_pdb(print_flag):
                     pdb = 1
 
-            # XH vector.
+            # XH vector, heteronucleus, and proton.
             if self.data_set == 'value':
                 self.read_columnar_xh_vect()
 
@@ -3474,6 +3474,10 @@ class Model_free(Common_functions):
 
             # Set the vector.
             self.relax.generic.structure.set_vector(run=self.run, res=self.res_index, xh_vect=xh_vect)
+
+        # The heteronucleus and proton names.
+        self.relax.data.res[self.run][self.res_index].heteronuc = self.file_line[self.col['pdb_heteronuc']]
+        self.relax.data.res[self.run][self.res_index].proton = self.file_line[self.col['pdb_proton']]
 
 
     def remove_tm(self, run, res_num):
@@ -4980,7 +4984,7 @@ class Model_free(Common_functions):
                     xh_vect = replace(`data.xh_vect.tolist()`, ' ', '')
 
                 # Write the line.
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=data.heteronuc, pdb_proton=data.proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Simulation values.
@@ -5169,7 +5173,7 @@ class Model_free(Common_functions):
                         xh_vect = replace(`data.xh_vect.tolist()`, ' ', '')
 
                     # Write the line.
-                    self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, select_sim=select_sim, data_set='sim_'+`i`, nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                    self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, select_sim=select_sim, data_set='sim_'+`i`, nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=data.heteronuc, pdb_proton=data.proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
 
