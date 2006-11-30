@@ -1420,10 +1420,12 @@ class Model_free(Common_functions):
 
         # Local tm.
         if name == 'local_tm' and value >= c1:
+            print "The local tm parameter of " + `value` + " is greater than " + `c1` + ", eliminating spin system " + `self.relax.data.res[run][i].num` + " " + self.relax.data.res[run][i].name + " of the run " + `run`
             return 1
 
         # Internal correlation times.
         if match('t[efs]', name) and value >= c2 * tm:
+            print "The " + name + " value of " + `value` + " is greater than " + `c2 * tm` + ", eliminating spin system " + `self.relax.data.res[run][i].num` + " " + self.relax.data.res[run][i].name + " of the run " + `run`
             return 1
 
         # Accept model.
@@ -3343,7 +3345,7 @@ class Model_free(Common_functions):
         nucleus_set = 0
         sim_num = None
         sims = []
-        select_sim = []
+        all_select_sim = []
         diff_data_set = 0
         diff_error_set = 0
         diff_sim_set = None
@@ -3397,11 +3399,14 @@ class Model_free(Common_functions):
                 except:
                     raise RelaxError, "The simulation number '%s' is invalid." % sim_num
 
-                # Update the sims array.
-                sims.append(sim_num)
+                # A new simulation number.
+                if sim_num not in sims:
+                    # Update the sims array and append an empty array to the selected sims array.
+                    sims.append(sim_num)
+                    all_select_sim.append([])
 
                 # Selected simulations.
-                select_sim.append(self.file_line[self.col['select']])
+                all_select_sim[-1].append(int(self.file_line[self.col['select']]))
 
             # Diffusion tensor data.
             if self.data_set == 'value' and not diff_data_set:
@@ -3427,7 +3432,7 @@ class Model_free(Common_functions):
                 if self.read_columnar_pdb(print_flag):
                     pdb = 1
 
-            # XH vector.
+            # XH vector, heteronucleus, and proton.
             if self.data_set == 'value':
                 self.read_columnar_xh_vect()
 
@@ -3439,7 +3444,14 @@ class Model_free(Common_functions):
 
         # Set up the simulations.
         if len(sims):
-            self.relax.generic.monte_carlo.setup(self.run, select_sim=select_sim)
+            # Convert the selected simulation array of arrays into a Numeric matrix and transpose it.
+            all_select_sim = transpose(array(all_select_sim))
+
+            # Set up the Monte Carlo simulations.
+            self.relax.generic.monte_carlo.setup(self.run, number=len(sims), all_select_sim=all_select_sim)
+
+            # Turn the simulation state to off!
+            self.relax.data.sim_state[self.run] = 0
 
 
     def read_columnar_sequence(self):
@@ -3470,6 +3482,10 @@ class Model_free(Common_functions):
 
             # Set the vector.
             self.relax.generic.pdb.set_vector(run=self.run, res=self.res_index, xh_vect=xh_vect)
+
+        # The heteronucleus and proton names.
+        self.relax.data.res[self.run][self.res_index].heteronuc = self.file_line[self.col['pdb_heteronuc']]
+        self.relax.data.res[self.run][self.res_index].proton = self.file_line[self.col['pdb_proton']]
 
 
     def remove_tm(self, run, res_num):
@@ -4980,7 +4996,7 @@ class Model_free(Common_functions):
                     xh_vect = replace(`data.xh_vect.tolist()`, ' ', '')
 
                 # Write the line.
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=data.heteronuc, pdb_proton=data.proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Simulation values.
@@ -5169,7 +5185,7 @@ class Model_free(Common_functions):
                         xh_vect = replace(`data.xh_vect.tolist()`, ' ', '')
 
                     # Write the line.
-                    self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, select_sim=select_sim, data_set='sim_'+`i`, nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                    self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, select_sim=select_sim, data_set='sim_'+`i`, nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=data.heteronuc, pdb_proton=data.proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
 
