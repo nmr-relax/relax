@@ -1420,13 +1420,12 @@ class Model_free(Common_functions):
 
         # Local tm.
         if name == 'local_tm' and value >= c1:
-            print "The local tm parameter of " + `value` + " is greater than " + `c1` + ", eliminating spin system " + `self.relax.data.res[run][i].num` + " " + self.rel
-ax.data.res[run][i].name + " of the run " + `run`
+            print "The local tm parameter of " + `value` + " is greater than " + `c1` + ", eliminating spin system " + `self.relax.data.res[run][i].num` + " " + self.relax.data.res[run][i].name + " of the run " + `run`
             return 1
 
         # Internal correlation times.
         if match('t[efs]', name) and value >= c2 * tm:
-            print "The correlation time parameter of " + `value` + " is greater than " + `c2 * tm` + ", eliminating residue " + `self.relax.data.res[run][i].num` + " " + self.relax.data.res[run][i].name
+            print "The " + name + " value of " + `value` + " is greater than " + `c2 * tm` + ", eliminating spin system " + `self.relax.data.res[run][i].num` + " " + self.relax.data.res[run][i].name + " of the run " + `run`
             return 1
 
         # Accept model.
@@ -3442,6 +3441,9 @@ ax.data.res[run][i].name + " of the run " + `run`
 
             # Set up the Monte Carlo simulations.
             self.relax.generic.monte_carlo.setup(self.run, number=len(sims), all_select_sim=all_select_sim)
+
+            # Turn the simulation state to off!
+            self.relax.data.sim_state[self.run] = 0
 
 
     def read_columnar_sequence(self):
