@@ -307,7 +307,7 @@ class Monte_carlo:
         self.relax.data.sim_state[self.run] = 1
 
 
-    def select_all_sims(self, number=None, select_sim=None):
+    def select_all_sims(self, number=None, all_select_sim=None):
         """Function for setting the select flag of all simulations of all instances to one."""
 
         # Function type.
@@ -321,32 +321,30 @@ class Monte_carlo:
         num_instances = count_num_instances(self.run)
 
         # Create the selected simulation array with all simulations selected.
-        if select_sim == None:
-            all_selected = ones(number)
+        if all_select_sim == None:
+            select_sim = ones(number)
 
         # Loop over the instances.
         for instance in xrange(num_instances):
             # Set up the selected simulation array.
-            if select_sim == None:
-                selected_sims = all_selected
-            else:
-                selected_sims = select_sim[instance].tolist()
+            if all_select_sim != None:
+                select_sim = all_select_sim[instance].tolist()
 
             # Set the selected simulation array.
-            set_selected_sim(self.run, instance, selected_sims)
+            set_selected_sim(self.run, instance, select_sim)
 
 
-    def setup(self, run=None, number=None, select_sim=None):
+    def setup(self, run=None, number=None, all_select_sim=None):
         """Function for setting up Monte Carlo simulations.
         
-        @param run:         The name of the run.
-        @type run:          str
-        @param number:      The number of Monte Carlo simulations to set up.
-        @type number:       int
-        @params select_sim: The selection status of the Monte Carlo simulations.  The first
+        @param run:             The name of the run.
+        @type run:              str
+        @param number:          The number of Monte Carlo simulations to set up.
+        @type number:           int
+        @params all_select_sim: The selection status of the Monte Carlo simulations.  The first
             dimension of this matrix corresponds to the simulation and the second corresponds to the
             instance.
-        @type select_sim:   Numeric matrix (int)
+        @type all_select_sim:   Numeric matrix (int)
         """
 
         # Arguments.
@@ -375,4 +373,4 @@ class Monte_carlo:
         self.relax.data.sim_state[self.run] = 1
 
         # Select all simulations.
-        self.select_all_sims(number=number, select_sim=select_sim)
+        self.select_all_sims(number=number, all_select_sim=all_select_sim)

@@ -1420,7 +1420,8 @@ class Model_free(Common_functions):
 
         # Local tm.
         if name == 'local_tm' and value >= c1:
-            print "The local tm parameter of " + `value` + " is greater than " + `c1` + ", eliminating residue " + `self.relax.data.res[run][i].num` + " " + self.relax.data.res[run][i].name
+            print "The local tm parameter of " + `value` + " is greater than " + `c1` + ", eliminating spin system " + `self.relax.data.res[run][i].num` + " " + self.rel
+ax.data.res[run][i].name + " of the run " + `run`
             return 1
 
         # Internal correlation times.
@@ -3337,7 +3338,7 @@ class Model_free(Common_functions):
         nucleus_set = 0
         sim_num = None
         sims = []
-        select_sim = []
+        all_select_sim = []
         diff_data_set = 0
         diff_error_set = 0
         diff_sim_set = None
@@ -3395,10 +3396,10 @@ class Model_free(Common_functions):
                 if sim_num not in sims:
                     # Update the sims array and append an empty array to the selected sims array.
                     sims.append(sim_num)
-                    select_sim.append([])
+                    all_select_sim.append([])
 
                 # Selected simulations.
-                select_sim[-1].append(int(self.file_line[self.col['select']]))
+                all_select_sim[-1].append(int(self.file_line[self.col['select']]))
 
             # Diffusion tensor data.
             if self.data_set == 'value' and not diff_data_set:
@@ -3437,10 +3438,10 @@ class Model_free(Common_functions):
         # Set up the simulations.
         if len(sims):
             # Convert the selected simulation array of arrays into a Numeric matrix and transpose it.
-            select_sim = transpose(array(select_sim))
+            all_select_sim = transpose(array(all_select_sim))
 
             # Set up the Monte Carlo simulations.
-            self.relax.generic.monte_carlo.setup(self.run, number=len(sims), select_sim=select_sim)
+            self.relax.generic.monte_carlo.setup(self.run, number=len(sims), all_select_sim=all_select_sim)
 
 
     def read_columnar_sequence(self):
