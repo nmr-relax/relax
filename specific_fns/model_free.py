@@ -3439,9 +3439,6 @@ class Model_free(Common_functions):
 
         # Set up the simulations.
         if len(sims):
-            print "sims: " + `sims`
-            print "Select sim: " + `select_sim`
-            print "len sim: " + `len(select_sim)`
             self.relax.generic.monte_carlo.setup(self.run, select_sim=select_sim)
 
 
