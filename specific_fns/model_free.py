@@ -1420,10 +1420,12 @@ class Model_free(Common_functions):
 
         # Local tm.
         if name == 'local_tm' and value >= c1:
+            print "The local tm parameter of " + `value` + " is greater than " + `c1` + ", eliminating residue " + `self.relax.data.res[run][i].num` + " " + self.relax.data.res[run][i].name
             return 1
 
         # Internal correlation times.
         if match('t[efs]', name) and value >= c2 * tm:
+            print "The correlation time parameter of " + `value` + " is greater than " + `c2 * tm` + ", eliminating residue " + `self.relax.data.res[run][i].num` + " " + self.relax.data.res[run][i].name
             return 1
 
         # Accept model.
