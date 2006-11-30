@@ -3391,11 +3391,14 @@ class Model_free(Common_functions):
                 except:
                     raise RelaxError, "The simulation number '%s' is invalid." % sim_num
 
-                # Update the sims array.
-                sims.append(sim_num)
+                # A new simulation number.
+                if sim_num not in sims:
+                    # Update the sims array and append an empty array to the selected sims array.
+                    sims.append(sim_num)
+                    select_sim.append([])
 
                 # Selected simulations.
-                select_sim.append(self.file_line[self.col['select']])
+                select_sim[-1].append(int(self.file_line[self.col['select']]))
 
             # Diffusion tensor data.
             if self.data_set == 'value' and not diff_data_set:
@@ -3433,7 +3436,11 @@ class Model_free(Common_functions):
 
         # Set up the simulations.
         if len(sims):
-            self.relax.generic.monte_carlo.setup(self.run, select_sim=select_sim)
+            # Convert the selected simulation array of arrays into a Numeric matrix and transpose it.
+            select_sim = transpose(array(select_sim))
+
+            # Set up the Monte Carlo simulations.
+            self.relax.generic.monte_carlo.setup(self.run, number=len(sims), select_sim=select_sim)
 
 
     def read_columnar_sequence(self):

@@ -22,6 +22,7 @@
 
 from copy import deepcopy
 from math import sqrt
+from Numeric import ones
 from random import gauss
 
 
@@ -321,18 +322,32 @@ class Monte_carlo:
 
         # Create the selected simulation array with all simulations selected.
         if select_sim == None:
-            select_sim = []
-            for i in xrange(number):
-                select_sim.append(1)
+            all_selected = ones(number)
 
         # Loop over the instances.
         for instance in xrange(num_instances):
+            # Set up the selected simulation array.
+            if select_sim == None:
+                selected_sims = all_selected
+            else:
+                selected_sims = select_sim[instance].tolist()
+
             # Set the selected simulation array.
-            set_selected_sim(self.run, instance, select_sim)
+            set_selected_sim(self.run, instance, selected_sims)
 
 
     def setup(self, run=None, number=None, select_sim=None):
-        """Function for setting up Monte Carlo simulations."""
+        """Function for setting up Monte Carlo simulations.
+        
+        @param run:         The name of the run.
+        @type run:          str
+        @param number:      The number of Monte Carlo simulations to set up.
+        @type number:       int
+        @params select_sim: The selection status of the Monte Carlo simulations.  The first
+            dimension of this matrix corresponds to the simulation and the second corresponds to the
+            instance.
+        @type select_sim:   Numeric matrix (int)
+        """
 
         # Arguments.
         self.run = run
@@ -350,10 +365,7 @@ class Monte_carlo:
             self.relax.data.sim_number = {}
 
         # Add the simulation number.
-        if select_sim:
-            self.relax.data.sim_number[self.run] = len(select_sim)
-        else:
-            self.relax.data.sim_number[self.run] = number
+        self.relax.data.sim_number[self.run] = number
 
         # Create the data structure 'sim_state'.
         if not hasattr(self.relax.data, 'sim_state'):
