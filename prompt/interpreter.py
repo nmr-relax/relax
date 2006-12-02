@@ -43,7 +43,7 @@ from dx import OpenDX
 from eliminate import Eliminate
 from fix import Fix
 from gpl import GPL
-from init_data import Init_data
+from reset import Reset
 from minimisation import Minimisation
 from model_selection import Modsel
 from nuclei import Nuclei
@@ -98,7 +98,7 @@ class Interpreter:
         self._Eliminate = Eliminate(relax)
         self._Fix = Fix(relax)
         self._GPL = GPL
-        self._Init_data = Init_data(relax)
+        self._Reset = Reset(relax)
         self._Minimisation = Minimisation(relax)
         self._Modsel = Modsel(relax)
         self._Nuclei = Nuclei(relax)
@@ -158,7 +158,7 @@ class Interpreter:
         eliminate = self._Eliminate.eliminate
         fix = self._Fix.fix
         grid_search = self._Minimisation.grid_search
-        init_data = self._Init_data.init
+        reset = self._Reset.reset
         minimise = self._Minimisation.minimise
         model_selection = self._Modsel.model_selection
         nuclei = self._Nuclei.nuclei

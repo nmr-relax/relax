@@ -171,7 +171,7 @@ class Main:
                 model_free.remove_tm(run=name)
 
                 # Load the PDB file.
-                pdb(name, '1F3Y.pdb')
+                structure.read_pdb(name, '1F3Y.pdb')
 
                 # Add an arbitrary diffusion tensor which will be optimised.
                 if self.diff_model == 'sphere':
@@ -377,7 +377,7 @@ class Main:
 
             # Load the PDB file.
             if not local_tm:
-                pdb(name, '1F3Y.pdb')
+                structure.read_pdb(name, '1F3Y.pdb')
 
             # Load the relaxation data.
             relax_data.read(name, 'R1', '600', 599.719 * 1e6, 'r1.600.out')
