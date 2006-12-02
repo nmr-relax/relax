@@ -21,60 +21,8 @@
 ###############################################################################
 
 
-from math import pi
 from re import match
 from types import DictType, ListType
-
-
-# Global data.
-##############
-
-class Data:
-    def __init__(self):
-        """Class containing all the program data."""
-
-        # Fundamental constants.
-        #self.h = 6.6260755e-34    # Old low precision value.
-        self.h = 6.62606876e-34
-        self.h_bar = self.h / ( 2.0*pi )
-        self.mu0 = 4.0 * pi * 1e-7
-
-        # PDB data.
-        self.pdb = SpecificData()
-
-        # Diffusion data.
-        self.diff = DiffTensorData()
-
-        # The residue specific data.
-        self.res = Residue()
-
-        # The name of the runs.
-        self.run_names = []
-
-        # The type of the runs.
-        self.run_types = []
-
-        # Hybrid models.
-        self.hybrid_runs = {}
-
-        # Global minimisation statistics.
-        self.chi2 = {}
-        self.iter = {}
-        self.f_count = {}
-        self.g_count = {}
-        self.h_count = {}
-        self.warning = {}
-
-
-
-    def __repr__(self):
-        text = "The data class containing all permanent program data.\n"
-        text = text + "The class contains the following objects:\n"
-        for name in dir(self):
-            if match("^__", name):
-                continue
-            text = text + "  " + name + ", " + `type(getattr(self, name))` + "\n"
-        return text
 
 
 
@@ -92,7 +40,7 @@ class Element:
 
         # Data structures.
         for name in dir(self):
-            if match("^__", name):
+            if match("^_", name):
                 continue
             text = text + "%-25s%-100s\n" % (name, `getattr(self, name)`)
 
@@ -121,7 +69,7 @@ class SpecificData(DictType):
                     text = text + "  , "
                 text = text + "Key " + `key` + ":\n"
                 for name in dir(self[key]):
-                    if match("^__", name):
+                    if match("^_", name):
                         continue
                     text = text + "    " + name + ", " + `type(getattr(self[key], name))` + "\n"
                 i = i + 1
@@ -134,80 +82,6 @@ class SpecificData(DictType):
         """Function for adding an empty container to the dictionary."""
 
         self[key] = Element()
-
-
-
-# Diffusion tensor specific data.
-#################################
-
-class DiffTensorData(SpecificData):
-    def __init__(self):
-        """Dictionary type class for the diffusion tensor data.
-
-        The non-default diffusion parameters are calculated on the fly.
-        """
-
-
-    def add_item(self, key):
-        """Function for adding an empty container to the dictionary.
-        
-        This overwrites the function from the parent class SpecificData.
-        """
-
-        self[key] = DiffTensorElement()
-
-
-
-class DiffTensorElement(Element):
-    def __init__(self):
-        """An empty data container for the diffusion tensor elements."""
-
-
-    def __getattr__(self, name):
-        """Function for calculating the parameters on the fly."""
-
-        # All tensor types.
-        ###################
-
-        # Diso.
-        if name == 'Diso':
-            return 1.0 / (6.0 * self.tm)
-
-
-        # Spheroidal diffusion.
-        #######################
-
-        # Dper = Diso - 1/3Da.
-        if name == 'Dper':
-            return self.Diso - 1.0/3.0 * self.Da
-
-        # Dpar = Diso + 2/3Da.
-        if name == 'Dpar':
-            return self.Diso + 2.0/3.0 * self.Da
-
-        # Dratio = Dpar / Dper.
-        if name == 'Dratio':
-            return self.Dpar / self.Dper
-
-        
-        # Ellipsoidal diffusion.
-        ########################
-
-        # Dx = Diso - 1/3Da(1 + 3Dr).
-        if name == 'Dx':
-            return self.Diso - 1.0/3.0 * self.Da * (1.0 + 3.0*self.Dr)
-
-        # Dy = Diso - 1/3Da(1 - 3Dr).
-        if name == 'Dy':
-            return self.Diso - 1.0/3.0 * self.Da * (1.0 - 3.0*self.Dr)
-
-        # Dz = Diso + 2/3Da.
-        if name == 'Dz':
-            return self.Diso + 2.0/3.0 * self.Da
-
-
-        # The attribute asked for does not exist.
-        raise AttributeError, name
 
 
 

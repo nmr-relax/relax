@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006 Edward d'Auvergne                                  #
+# Copyright (C) 2006 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,24 +24,18 @@ from os import popen
 from string import split
 
 
-class Molmol:
+class Pymol:
     def __init__(self, relax):
-        """Class containing the functions for viewing molecules."""
+        """Class containing the functions for viewing molecules using PyMOL."""
 
         self.relax = relax
 
-        # Initialise the command history (for reopening Molmol pipes).
+        # Initialise the command history (for reopening PyMOL pipes).
         self.clear_history()
 
 
-    def clear_history(self):
-        """Function for clearing the Molmol command history."""
-
-        self.command_history = ""
-
-
-    def command(self, run, command):
-        """Function for sending Molmol commands to the program pipe."""
+    def cartoon(self, run=None):
+        """Apply the PyMOL cartoon style and colour by secondary structure."""
 
         # Arguments.
         self.run = run
@@ -50,25 +44,55 @@ class Molmol:
         if not self.run in self.relax.data.run_names:
             raise RelaxNoRunError, self.run
 
-        # Pass the command to Molmol.
+        # Identifier.
+        pdb_file = self.relax.data.pdb[self.run].file_name
+        id = self.relax.IO.file_root(pdb_file)
+
+        # Hide everything.
+        self.pipe_write("cmd.hide('everything'," + `id` + ")")
+
+        # Show the cartoon style.
+        self.pipe_write("cmd.show('cartoon'," + `id` + ")")
+
+        # Colour by secondary structure.
+        self.pipe_write("util.cbss(" + `id` + ", 'red', 'yellow', 'green')")
+
+
+    def clear_history(self):
+        """Function for clearing the PyMOL command history."""
+
+        self.command_history = ""
+
+
+    def command(self, run, command):
+        """Function for sending PyMOL commands to the program pipe."""
+
+        # Arguments.
+        self.run = run
+
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # Pass the command to PyMOL.
         self.pipe_write(command)
 
 
     def create_macro(self):
-        """Function for creating an array of Molmol commands."""
+        """Function for creating an array of PyMOL commands."""
 
         # Function type.
         self.function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
 
-        # Specific Molmol macro creation function.
-        molmol_macro = self.relax.specific_setup.setup('molmol_macro', self.function_type)
+        # Specific PyMOL macro creation function.
+        pymol_macro = self.relax.specific_setup.setup('pymol_macro', self.function_type)
 
         # Get the macro.
-        self.commands = molmol_macro(self.run, self.data_type, self.style, self.colour_start, self.colour_end, self.colour_list)
+        self.commands = pymol_macro(self.run, self.data_type, self.style, self.colour_start, self.colour_end, self.colour_list)
 
 
     def macro_exec(self, run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
-        """Function for executing a Molmol macro."""
+        """Function for executing a PyMOL macro."""
 
         # Arguments.
         self.run = run
@@ -77,6 +101,9 @@ class Molmol:
         self.colour_start = colour_start
         self.colour_end = colour_end
         self.colour_list = colour_list
+
+        # No coded yet.
+        raise RelaxImplementError
 
         # Test if the run exists.
         if not self.run in self.relax.data.run_names:
@@ -95,7 +122,7 @@ class Molmol:
 
 
     def open_pdb(self, run=None):
-        """Function for opening the PDB file in Molmol."""
+        """Function for opening the PDB file in PyMOL."""
 
         # Argument.
         if run:
@@ -105,21 +132,21 @@ class Molmol:
         if not self.pipe_open_test():
             return
 
-        # Run InitAll to remove everything from molmol.
-        self.pipe_write("InitAll yes")
+        # Reinitialise PyMOL.
+        self.pipe_write("reinitialize")
 
-        # Open the PDB.
-        self.pipe_write("ReadPdb " + self.relax.data.pdb[self.run].file_name)
+        # Open the PDB file.
+        self.pipe_write("load " + self.relax.data.pdb[self.run].file_name)
 
 
     def pipe_open(self):
-        """Function for opening a Molmol pipe."""
+        """Function for opening a PyMOL pipe."""
 
-        # Test that the Molmol binary exists.
-        self.relax.IO.test_binary('molmol')
+        # Test that the PyMOL binary exists.
+        self.relax.IO.test_binary('pymol')
 
-        # Open the Molmol pipe.
-        self.relax.data.molmol = popen("molmol -f -", 'w', 0)
+        # Open the PyMOL pipe.
+        self.relax.data.pymol = popen("pymol -qpK", 'w', 0)
 
         # Execute the command history.
         if len(self.command_history) > 0:
@@ -130,21 +157,17 @@ class Molmol:
         if hasattr(self.relax.data, 'pdb') and self.relax.data.pdb.has_key(self.run):
             self.open_pdb()
 
-        # Run InitAll to remove everything from molmol.
-        else:
-            self.pipe_write("InitAll yes")
-
 
     def pipe_open_test(self):
-        """Function for testing if the Molmol pipe is open."""
+        """Function for testing if the PyMOL pipe is open."""
 
         # Test if a pipe has been opened.
-        if not hasattr(self.relax.data, 'molmol'):
+        if not hasattr(self.relax.data, 'pymol'):
             return 0
 
         # Test if the pipe has been broken.
         try:
-            self.relax.data.molmol.write('\n')
+            self.relax.data.pymol.write('\n')
         except IOError:
             return 0
 
@@ -153,9 +176,9 @@ class Molmol:
 
 
     def pipe_write(self, command=None, store_command=1):
-        """Function for writing to the Molmol pipe.
+        """Function for writing to the PyMOL pipe.
 
-        This function is also used to execute a user supplied Molmol command.
+        This function is also used to execute a user supplied PyMOL command.
         """
 
         # Reopen the pipe if needed.
@@ -163,32 +186,11 @@ class Molmol:
             self.pipe_open()
 
         # Write the command to the pipe.
-        self.relax.data.molmol.write(command + '\n')
+        self.relax.data.pymol.write(command + '\n')
 
         # Place the command in the command history.
         if store_command:
             self.command_history = self.command_history + command + "\n"
-
-
-    def ribbon(self, run=None):
-        """Apply the Molmol ribbon style."""
-
-        # Arguments.
-        self.run = run
-
-        # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
-            raise RelaxNoRunError, self.run
-
-        # Calculate the protons.
-        self.pipe_write("CalcAtom 'H'")
-        self.pipe_write("CalcAtom 'HN'")
-
-        # Calculate the secondary structure.
-        self.pipe_write("CalcSecondary")
-
-        # Execute the ribbon macro.
-        self.pipe_write("XMacStand ribbon.mac")
 
 
     def tensor_pdb(self, run=None, file=None):
@@ -201,49 +203,78 @@ class Molmol:
         if not self.run in self.relax.data.run_names:
             raise RelaxNoRunError, self.run
 
-        # To overlay the structure with the diffusion tensor, select all and reorient to the PDB frame.
-        self.pipe_write("SelectAtom ''")
-        self.pipe_write("SelectBond ''")
-        self.pipe_write("SelectAngle ''")
-        self.pipe_write("SelectDist ''")
-        self.pipe_write("SelectPrim ''")
-        self.pipe_write("RotateInit")
-        self.pipe_write("MoveInit")
+        # Read in the tensor PDB file.
+        self.pipe_write("load " + file)
 
-        # Read in the tensor PDB file and force Molmol to recognise the CONECT records (not that it will show the bonds)!
-        self.pipe_write("ReadPdb " + file)
-        file_parts = split(file, '.')
-        self.pipe_write("SelectMol '@" + file_parts[0] + "'")
-        self.pipe_write("CalcBond 1 1 1")
 
-        # Apply the 'ball/stick' style to the tensor.
-        self.pipe_write("SelectAtom '0'")
-        self.pipe_write("SelectBond '0'")
-        self.pipe_write("SelectAtom ':TNS'")
-        self.pipe_write("SelectBond ':TNS'")
-        self.pipe_write("XMacStand ball_stick.mac")
+        # Centre of mass.
+        #################
 
-        # Touch up.
-        self.pipe_write("RadiusAtom 1")
-        self.pipe_write("SelectAtom ':TNS@C*'")
-        self.pipe_write("RadiusAtom 1.5")
+        # Select the COM residue.
+        self.pipe_write("select resn COM")
+
+        # Show the centre of mass as the dots representation.
+        self.pipe_write("show dots, 'sele'")
+
+        # Colour it blue.
+        self.pipe_write("color blue, 'sele'")
+
+
+        # The diffusion tensor axes.
+        ############################
+
+        # Select the AXS residue.
+        self.pipe_write("select resn AXS")
+
+        # Hide everything.
+        self.pipe_write("hide ('sele')")
+
+        # Show as 'sticks'.
+        self.pipe_write("show sticks, 'sele'")
+
+        # Colour it cyan.
+        self.pipe_write("color cyan, 'sele'")
+
+        # Select the N atoms of the AXS residue (used to display the axis labels).
+        self.pipe_write("select (resn AXS and elem N)")
+
+        # Label the atoms.
+        self.pipe_write("label 'sele', name")
+
+
+
+        # Monte Carlo simulations.
+        ##########################
+
+        # Select the SIM residue.
+        self.pipe_write("select resn SIM")
+
+        # Colour it.
+        self.pipe_write("colour cyan, 'sele'")
+
+
+        # Clean up.
+        ###########
+
+        # Remove the selection.
+        self.pipe_write("cmd.delete('sele')")
 
 
     def view(self, run=None):
-        """Function for running Molmol."""
+        """Function for running PyMOL."""
 
         # Arguments.
         self.run = run
 
-        # Open a Molmol pipe.
+        # Open a PyMOL pipe.
         if self.pipe_open_test():
-            raise RelaxError, "The Molmol pipe already exists."
+            raise RelaxError, "The PyMOL pipe already exists."
         else:
             self.pipe_open()
 
 
     def write(self, run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir=None, force=0):
-        """Function for creating a Molmol macro."""
+        """Function for creating a PyMOL macro."""
 
         # Arguments.
         self.run = run
@@ -252,6 +283,9 @@ class Molmol:
         self.colour_start = colour_start
         self.colour_end = colour_end
         self.colour_list = colour_list
+
+        # No coded yet.
+        raise RelaxImplementError
 
         # Test if the run exists.
         if not self.run in self.relax.data.run_names:
