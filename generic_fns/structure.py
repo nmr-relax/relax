@@ -28,7 +28,7 @@ import Scientific.IO.PDB
 from string import ascii_uppercase
 
 
-class PDB:
+class Structure:
     def __init__(self, relax):
         """Class containing the PDB related functions."""
 
@@ -725,7 +725,7 @@ class PDB:
                 i = i + 1
 
 
-    def read(self, run=None, file=None, dir=None, model=None, load_seq=1, fail=1, print_flag=1):
+    def read_pdb(self, run=None, file=None, dir=None, model=None, load_seq=1, fail=1, print_flag=1):
         """The pdb loading function."""
 
         # Arguments.

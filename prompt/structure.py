@@ -25,11 +25,11 @@ import sys
 import help
 
 
-class PDB:
+class Structure:
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \
-        """Class containing the PDB related functions."""
+        """Class containing the structural related functions."""
 
         # Add the generic help string.
         self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
@@ -166,10 +166,10 @@ class PDB:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        self.__relax__.generic.pdb.create_tensor_pdb(run=run, scale=scale, file=file, dir=dir, force=force)
+        self.__relax__.generic.structure.create_tensor_pdb(run=run, scale=scale, file=file, dir=dir, force=force)
 
 
-    def read(self, run=None, file=None, dir=None, model=None, load_seq=1):
+    def read_pdb(self, run=None, file=None, dir=None, model=None, load_seq=1):
         """The pdb loading function.
 
         Keyword Arguments
@@ -216,7 +216,7 @@ class PDB:
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pdb.read("
+            text = sys.ps3 + "pdb.read_pdb("
             text = text + "run=" + `run`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
@@ -245,7 +245,7 @@ class PDB:
             raise RelaxBinError, ('load sequence flag', load_seq)
 
         # Execute the functional code.
-        self.__relax__.generic.pdb.read(run=run, file=file, dir=dir, model=model, load_seq=load_seq)
+        self.__relax__.generic.structure.read_pdb(run=run, file=file, dir=dir, model=model, load_seq=load_seq)
 
 
     def vectors(self, run=None, heteronuc='N', proton='H', res_num=None, res_name=None):
@@ -330,4 +330,4 @@ class PDB:
             raise RelaxNoneStrError, ('residue name', res_name)
 
         # Execute the functional code.
-        self.__relax__.generic.pdb.vectors(run=run, heteronuc=heteronuc, proton=proton, res_num=res_num, res_name=res_name)
+        self.__relax__.generic.structure.vectors(run=run, heteronuc=heteronuc, proton=proton, res_num=res_num, res_name=res_name)
