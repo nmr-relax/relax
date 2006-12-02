@@ -236,7 +236,7 @@ class Model_selection:
 
             # Duplicate the data from the 'best_model' to the model selection run 'modsel_run'.
             if best_model != None:
-                self.duplicate_data[best_model](new_run=modsel_run, old_run=best_model, instance=i)
+                self.duplicate_data[best_model](new_run=modsel_run, old_run=best_model, instance=i, global_stats=global_stats)
 
 
     def aic(self, chi2, k, n):

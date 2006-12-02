@@ -137,7 +137,7 @@ class Structure:
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pdb.create_tensor_pdb("
+            text = sys.ps3 + "structure.create_tensor_pdb("
             text = text + "run=" + `run`
             text = text + ", scale=" + `scale`
             text = text + ", file=" + `file`
@@ -203,20 +203,20 @@ class Structure:
         To load all structures from the PDB file 'test.pdb' in the directory '~/pdb' for use in the
         model-free analysis run 'm8', type:
 
-        relax> pdb.read('m8', 'test.pdb', '~/pdb', 1)
-        relax> pdb.read(run='m8', file='test.pdb', dir='pdb', model=1)
+        relax> structure.read_pdb('m8', 'test.pdb', '~/pdb', 1)
+        relax> structure.read_pdb(run='m8', file='test.pdb', dir='pdb', model=1)
 
 
         To load the 10th model from the file 'test.pdb', use:
 
-        relax> pdb.read('m1', 'test.pdb', model=10)
-        relax> pdb.read(run='m1', file='test.pdb', model=10)
+        relax> structure.read_pdb('m1', 'test.pdb', model=10)
+        relax> structure.read_pdb(run='m1', file='test.pdb', model=10)
 
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pdb.read_pdb("
+            text = sys.ps3 + "structure.read_pdb("
             text = text + "run=" + `run`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
@@ -282,26 +282,26 @@ class Structure:
         backbone nitrogen is called 'N' and the attached proton is called 'H', assuming the run
         'test', type:
 
-        relax> pdb.vectors('test')
-        relax> pdb.vectors('test', 'N')
-        relax> pdb.vectors('test', 'N', 'H')
-        relax> pdb.vectors('test', heteronuc='N', proton='H')
+        relax> structure.vectors('test')
+        relax> structure.vectors('test', 'N')
+        relax> structure.vectors('test', 'N', 'H')
+        relax> structure.vectors('test', heteronuc='N', proton='H')
 
         If the attached proton is called 'HN', type:
 
-        relax> pdb.vectors('test', proton='HN')
+        relax> structure.vectors('test', proton='HN')
 
         If you are working with RNA, you can use the residue name identifier to calculate the
         vectors for each residue separately.  For example:
 
-        relax> pdb.vectors('m1', 'N1', 'H1', res_name='G')
-        relax> pdb.vectors('m1', 'N3', 'H3', res_name='U')
+        relax> structure.vectors('m1', 'N1', 'H1', res_name='G')
+        relax> structure.vectors('m1', 'N3', 'H3', res_name='U')
 
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pdb.vectors("
+            text = sys.ps3 + "structure.vectors("
             text = text + "run=" + `run`
             text = text + ", heteronuc=" + `heteronuc`
             text = text + ", proton=" + `proton`

@@ -1303,7 +1303,7 @@ class Model_free(Common_functions):
                             data.s2s_sim[sim_index] = data.s2_sim[sim_index] / data.s2f_sim[sim_index]
 
 
-    def duplicate_data(self, new_run=None, old_run=None, instance=None):
+    def duplicate_data(self, new_run=None, old_run=None, instance=None, global_stats=0):
         """Function for duplicating data."""
 
         # self.run for determining the parameter set.
@@ -1341,7 +1341,7 @@ class Model_free(Common_functions):
         self.param_set = self.determine_param_set_type()
 
         # Sequence specific data.
-        if self.param_set == 'mf' or self.param_set == 'local_tm':
+        if self.param_set == 'mf' or (self.param_set == 'local_tm' and not global_stats):
             # Create the sequence data if it does not exist.
             if not self.relax.data.res.has_key(new_run) or not len(self.relax.data.res[new_run]):
                 # Add the new run to 'self.relax.data.res'.
@@ -1361,7 +1361,7 @@ class Model_free(Common_functions):
             self.relax.data.res[new_run][instance] = deepcopy(self.relax.data.res[old_run][instance])
 
         # Other data types.
-        elif self.param_set == 'diff' or self.param_set == 'all':
+        else:
             # Duplicate the residue specific data.
             self.relax.data.res[new_run] = deepcopy(self.relax.data.res[old_run])
 
@@ -1420,10 +1420,12 @@ class Model_free(Common_functions):
 
         # Local tm.
         if name == 'local_tm' and value >= c1:
+            print "The local tm parameter of " + `value` + " is greater than " + `c1` + ", eliminating spin system " + `self.relax.data.res[run][i].num` + " " + self.relax.data.res[run][i].name + " of the run " + `run`
             return 1
 
         # Internal correlation times.
         if match('t[efs]', name) and value >= c2 * tm:
+            print "The " + name + " value of " + `value` + " is greater than " + `c2 * tm` + ", eliminating spin system " + `self.relax.data.res[run][i].num` + " " + self.relax.data.res[run][i].name + " of the run " + `run`
             return 1
 
         # Accept model.
@@ -2111,7 +2113,7 @@ class Model_free(Common_functions):
 
         # Loop over the minimisation instances.
         #######################################
-        
+
         for i in xrange(num_instances):
             # Set the residue index.
             if min_algor == 'back_calc':
@@ -3268,7 +3270,7 @@ class Model_free(Common_functions):
 
         # Read the PDB file (if it exists).
         if not pdb == 'None':
-            self.relax.generic.structure.read(run=self.run, file=pdb, model=pdb_model, fail=0, print_flag=print_flag)
+            self.relax.generic.structure.read_pdb(run=self.run, file=pdb, model=pdb_model, fail=0, print_flag=print_flag)
             return 1
         else:
             return 0
@@ -3335,7 +3337,7 @@ class Model_free(Common_functions):
         nucleus_set = 0
         sim_num = None
         sims = []
-        select_sim = []
+        all_select_sim = []
         diff_data_set = 0
         diff_error_set = 0
         diff_sim_set = None
@@ -3389,11 +3391,14 @@ class Model_free(Common_functions):
                 except:
                     raise RelaxError, "The simulation number '%s' is invalid." % sim_num
 
-                # Update the sims array.
-                sims.append(sim_num)
+                # A new simulation number.
+                if sim_num not in sims:
+                    # Update the sims array and append an empty array to the selected sims array.
+                    sims.append(sim_num)
+                    all_select_sim.append([])
 
                 # Selected simulations.
-                select_sim.append(self.file_line[self.col['select']])
+                all_select_sim[-1].append(int(self.file_line[self.col['select']]))
 
             # Diffusion tensor data.
             if self.data_set == 'value' and not diff_data_set:
@@ -3419,7 +3424,7 @@ class Model_free(Common_functions):
                 if self.read_columnar_pdb(print_flag):
                     pdb = 1
 
-            # XH vector.
+            # XH vector, heteronucleus, and proton.
             if self.data_set == 'value':
                 self.read_columnar_xh_vect()
 
@@ -3431,7 +3436,14 @@ class Model_free(Common_functions):
 
         # Set up the simulations.
         if len(sims):
-            self.relax.generic.monte_carlo.setup(self.run, select_sim=select_sim)
+            # Convert the selected simulation array of arrays into a Numeric matrix and transpose it.
+            all_select_sim = transpose(array(all_select_sim))
+
+            # Set up the Monte Carlo simulations.
+            self.relax.generic.monte_carlo.setup(self.run, number=len(sims), all_select_sim=all_select_sim)
+
+            # Turn the simulation state to off!
+            self.relax.data.sim_state[self.run] = 0
 
 
     def read_columnar_sequence(self):
@@ -3462,6 +3474,10 @@ class Model_free(Common_functions):
 
             # Set the vector.
             self.relax.generic.structure.set_vector(run=self.run, res=self.res_index, xh_vect=xh_vect)
+
+        # The heteronucleus and proton names.
+        self.relax.data.res[self.run][self.res_index].heteronuc = self.file_line[self.col['pdb_heteronuc']]
+        self.relax.data.res[self.run][self.res_index].proton = self.file_line[self.col['pdb_proton']]
 
 
     def remove_tm(self, run, res_num):
@@ -4674,13 +4690,9 @@ class Model_free(Common_functions):
         # PDB.
         pdb = None
         pdb_model = None
-        pdb_heteronuc = None
-        pdb_proton = None
         if self.relax.data.pdb.has_key(self.run):
             pdb = self.relax.data.pdb[self.run].file_name
             pdb_model = self.relax.data.pdb[self.run].model
-            pdb_heteronuc = self.relax.data.pdb[self.run].heteronuc
-            pdb_proton = self.relax.data.pdb[self.run].proton
 
         # Relaxation data setup.
         try:
@@ -4721,57 +4733,67 @@ class Model_free(Common_functions):
             s2 = None
             if hasattr(data, 's2') and data.s2 != None:
                 s2 = data.s2 / self.return_conversion_factor('s2')
+            s2 = `s2`
 
             # S2f.
             s2f = None
             if hasattr(data, 's2f') and data.s2f != None:
                 s2f = data.s2f / self.return_conversion_factor('s2f')
+            s2f = `s2f`
 
             # S2s.
             s2s = None
             if hasattr(data, 's2s') and data.s2s != None:
                 s2s = data.s2s / self.return_conversion_factor('s2s')
+            s2s = `s2s`
 
             # Local tm.
             local_tm = None
             if hasattr(data, 'local_tm') and data.local_tm != None:
                 local_tm = data.local_tm / self.return_conversion_factor('local_tm')
+            local_tm = `local_tm`
 
             # te.
             te = None
             if hasattr(data, 'te') and data.te != None:
                 te = data.te / self.return_conversion_factor('te')
+            te = `te`
 
             # tf.
             tf = None
             if hasattr(data, 'tf') and data.tf != None:
                 tf = data.tf / self.return_conversion_factor('tf')
+            tf = `tf`
 
             # ts.
             ts = None
             if hasattr(data, 'ts') and data.ts != None:
                 ts = data.ts / self.return_conversion_factor('ts')
+            ts = `ts`
 
             # Rex.
             rex = None
             if hasattr(data, 'rex') and data.rex != None:
                 rex = data.rex / self.return_conversion_factor('rex')
+            rex = `rex`
 
             # Bond length.
             r = None
             if hasattr(data, 'r') and data.r != None:
                 r = data.r / self.return_conversion_factor('r')
+            r = `r`
 
             # CSA.
             csa = None
             if hasattr(data, 'csa') and data.csa != None:
                 csa = data.csa / self.return_conversion_factor('csa')
+            csa = `csa`
 
             # Minimisation details.
             try:
                 # Global minimisation results.
                 if self.param_set == 'diff' or self.param_set == 'all':
-                    chi2 = self.relax.data.chi2[self.run]
+                    chi2 = `self.relax.data.chi2[self.run]`
                     iter = self.relax.data.iter[self.run]
                     f = self.relax.data.f_count[self.run]
                     g = self.relax.data.g_count[self.run]
@@ -4783,7 +4805,7 @@ class Model_free(Common_functions):
 
                 # Individual residue results.
                 else:
-                    chi2 = data.chi2
+                    chi2 = `data.chi2`
                     iter = data.iter
                     f = data.f_count
                     g = data.g_count
@@ -4829,7 +4851,7 @@ class Model_free(Common_functions):
                         ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='value', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='value', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=data.heteronuc, pdb_proton=data.proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Errors.
@@ -4893,51 +4915,61 @@ class Model_free(Common_functions):
                 s2 = None
                 if hasattr(data, 's2_err') and data.s2_err != None:
                     s2 = data.s2_err / self.return_conversion_factor('s2')
+                s2 = `s2`
 
                 # S2f.
                 s2f = None
                 if hasattr(data, 's2f_err') and data.s2f_err != None:
                     s2f = data.s2f_err / self.return_conversion_factor('s2f')
+                s2f = `s2f`
 
                 # S2s.
                 s2s = None
                 if hasattr(data, 's2s_err') and data.s2s_err != None:
                     s2s = data.s2s_err / self.return_conversion_factor('s2s')
+                s2s = `s2s`
 
                 # Local tm.
                 local_tm = None
                 if hasattr(data, 'local_tm_err') and data.local_tm_err != None:
                     local_tm = data.local_tm_err / self.return_conversion_factor('local_tm')
+                local_tm = `local_tm`
 
                 # te.
                 te = None
                 if hasattr(data, 'te_err') and data.te_err != None:
                     te = data.te_err / self.return_conversion_factor('te')
+                te = `te`
 
                 # tf.
                 tf = None
                 if hasattr(data, 'tf_err') and data.tf_err != None:
                     tf = data.tf_err / self.return_conversion_factor('tf')
+                tf = `tf`
 
                 # ts.
                 ts = None
                 if hasattr(data, 'ts_err') and data.ts_err != None:
                     ts = data.ts_err / self.return_conversion_factor('ts')
+                ts = `ts`
 
                 # Rex.
                 rex = None
                 if hasattr(data, 'rex_err') and data.rex_err != None:
                     rex = data.rex_err / self.return_conversion_factor('rex')
+                rex = `rex`
 
                 # Bond length.
                 r = None
                 if hasattr(data, 'r_err') and data.r_err != None:
                     r = data.r_err / self.return_conversion_factor('r')
+                r = `r`
 
                 # CSA.
                 csa = None
                 if hasattr(data, 'csa_err') and data.csa_err != None:
                     csa = data.csa_err / self.return_conversion_factor('csa')
+                csa = `csa`
 
                 # Relaxation data and errors.
                 ri = []
@@ -4952,7 +4984,7 @@ class Model_free(Common_functions):
                     xh_vect = replace(`data.xh_vect.tolist()`, ' ', '')
 
                 # Write the line.
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=data.heteronuc, pdb_proton=data.proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Simulation values.
@@ -5026,57 +5058,67 @@ class Model_free(Common_functions):
                     s2 = None
                     if hasattr(data, 's2_sim') and data.s2_sim[i] != None:
                         s2 = data.s2_sim[i] / self.return_conversion_factor('s2')
+                    s2 = `s2`
 
                     # S2f.
                     s2f = None
                     if hasattr(data, 's2f_sim') and data.s2f_sim[i] != None:
                         s2f = data.s2f_sim[i] / self.return_conversion_factor('s2f')
+                    s2f = `s2f`
 
                     # S2s.
                     s2s = None
                     if hasattr(data, 's2s_sim') and data.s2s_sim[i] != None:
                         s2s = data.s2s_sim[i] / self.return_conversion_factor('s2s')
+                    s2s = `s2s`
 
                     # Local tm.
                     local_tm = None
                     if hasattr(data, 'local_tm_sim') and data.local_tm_sim[i] != None:
                         local_tm = data.local_tm_sim[i] / self.return_conversion_factor('local_tm')
+                    local_tm = `local_tm`
 
                     # te.
                     te = None
                     if hasattr(data, 'te_sim') and data.te_sim[i] != None:
                         te = data.te_sim[i] / self.return_conversion_factor('te')
+                    te = `te`
 
                     # tf.
                     tf = None
                     if hasattr(data, 'tf_sim') and data.tf_sim[i] != None:
                         tf = data.tf_sim[i] / self.return_conversion_factor('tf')
+                    tf = `tf`
 
                     # ts.
                     ts = None
                     if hasattr(data, 'ts_sim') and data.ts_sim[i] != None:
                         ts = data.ts_sim[i] / self.return_conversion_factor('ts')
+                    ts = `ts`
 
                     # Rex.
                     rex = None
                     if hasattr(data, 'rex_sim') and data.rex_sim[i] != None:
                         rex = data.rex_sim[i] / self.return_conversion_factor('rex')
+                    rex = `rex`
 
                     # Bond length.
                     r = None
                     if hasattr(data, 'r_sim') and data.r_sim[i] != None:
                         r = data.r_sim[i] / self.return_conversion_factor('r')
+                    r = `r`
 
                     # CSA.
                     csa = None
                     if hasattr(data, 'csa_sim') and data.csa_sim[i] != None:
                         csa = data.csa_sim[i] / self.return_conversion_factor('csa')
+                    csa = `csa`
 
                     # Minimisation details.
                     try:
                         # Global minimisation results.
                         if self.param_set == 'diff' or self.param_set == 'all':
-                            chi2 = self.relax.data.chi2_sim[self.run][i]
+                            chi2 = `self.relax.data.chi2_sim[self.run][i]`
                             iter = self.relax.data.iter_sim[self.run][i]
                             f = self.relax.data.f_count_sim[self.run][i]
                             g = self.relax.data.g_count_sim[self.run][i]
@@ -5088,7 +5130,7 @@ class Model_free(Common_functions):
 
                         # Individual residue results.
                         else:
-                            chi2 = data.chi2_sim[i]
+                            chi2 = `data.chi2_sim[i]`
                             iter = data.iter_sim[i]
                             f = data.f_count_sim[i]
                             g = data.g_count_sim[i]
@@ -5131,7 +5173,7 @@ class Model_free(Common_functions):
                         xh_vect = replace(`data.xh_vect.tolist()`, ' ', '')
 
                     # Write the line.
-                    self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, select_sim=select_sim, data_set='sim_'+`i`, nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=`s2`, s2f=`s2f`, s2s=`s2s`, local_tm=`local_tm`, te=`te`, tf=`tf`, ts=`ts`, rex=`rex`, r=`r`, csa=`csa`, chi2=`chi2`, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                    self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, select_sim=select_sim, data_set='sim_'+`i`, nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=data.heteronuc, pdb_proton=data.proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
 

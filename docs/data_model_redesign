@@ -3,6 +3,28 @@
 ######################################################
 
 
+# The proposal.
+###############
+
+The proposal was split into multiple posts to relax-devel.  The posts are:
+
+* The parent message 'Redesign of the relax data model:  A HOWTO for breaking relax'.
+Located at https://mail.gna.org/public/relax-devel/2006-10/msg00053.html (Message-id: <1160550133.9523.54.camel@pc172-31-2-63.biochem.unimelb.edu.au>).
+
+* Section 1 'Redesign of the relax data model:  1.  Why change?'.
+Located at https://mail.gna.org/public/relax-devel/2006-10/msg00054.html (Message-id: <1160551172.9523.60.camel@pc172-31-2-63.biochem.unimelb.edu.au>).
+
+* Section 2 'Subject: Redesign of the relax data model:  2.  A new run concept'.
+Located at https://mail.gna.org/public/relax-devel/2006-10/msg00056.html (Message-id: <1160555137.9523.70.camel@pc172-31-2-63.biochem.unimelb.edu.au>).
+
+* Section 3 'Redesign of the relax data model:  3.  Molecules, residues, and spins'.
+Located at https://mail.gna.org/public/relax-devel/2006-10/msg00057.html (Message-id: <1160557041.9523.74.camel@pc172-31-2-63.biochem.unimelb.edu.au>).
+
+* Section 4 'Redesign of the relax data model:  4.  Conclusion'.
+Located at https://mail.gna.org/public/relax-devel/2006-10/msg00058.html (Message-id: <1160557876.9523.79.camel@pc172-31-2-63.biochem.unimelb.edu.au>).
+
+
+
 # Preparation.
 ##############
 
@@ -13,9 +35,9 @@
 
 * Rename 'prompt/run.py' to 'prompt/pipe.py'.  Rename 'generic_fns/runs.py' to 'generic_fns/pipes.py'.
 
-* Create the data pipe looping function for the 'pipes' argument (http://???).
+* Create the data pipe looping function for the 'pipes' argument (Chris MacRaild, https://mail.gna.org/public/relax-devel/2006-10/msg00060.html, Message-id: <1160562239.14487.98.camel@mrspell>).
 
-* Create the spin loop function (http://???).
+* Create the spin loop function (Edward d'Auvergne, https://mail.gna.org/public/relax-devel/2006-10/msg00057.html, Message-id: <1160557041.9523.74.camel@pc172-31-2-63.biochem.unimelb.edu.au>).
 
 * Create a function for returning specific spin data.
 
@@ -34,7 +56,7 @@ The following are the steps to be taken for the function to function, file to fi
 
 * Remove all the 'run' arguments and the code accessing it.
 
-* Add the 'pipes' argument to each user function in the 'prompt' directory to allow looping over a number of data pipes (http://?).
+* Add the 'pipes' argument to each user function in the 'prompt' directory to allow looping over a number of data pipes (Chris MacRaild, https://mail.gna.org/public/relax-devel/2006-10/msg00060.html, Message-id: <1160562239.14487.98.camel@mrspell>).
 
 * Use the following code at the start if 'self.relax.data' is accessed by the function:
 -----
