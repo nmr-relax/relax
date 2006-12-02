@@ -29,6 +29,40 @@ class Intensity:
         self.relax = relax
 
 
+    def det_dimensions(self):
+        """Determine which are the proton and heteronuclei dimensions of the XEasy text file.
+
+        @return:    None
+        """
+
+        # Loop over the lines of the file until the proton and heteronucleus is reached.
+        for i in xrange(len(self.file_data)):
+            # Extract the data.
+            res_num, w1_name, w2_name, intensity = self.intensity(self.file_data[i])
+
+            # Proton in w1, heteronucleus in w2.
+            if w1_name == self.proton and w2_name == self.heteronuc:
+                # Set the proton dimension.
+                self.H_dim = 'w1'
+
+                # Print out.
+                print "The proton dimension is w1"
+
+                # Don't continue (waste of time).
+                break
+
+            # Heteronucleus in w1, proton in w2.
+            if w1_name == self.heteronuc and w2_name == self.proton:
+                # Set the proton dimension.
+                self.H_dim = 'w2'
+
+                # Print out.
+                print "The proton dimension is w2"
+
+                # Don't continue (waste of time).
+                break
+
+
     def intensity_sparky(self, line):
         """Function for returning relevant data from the Sparky peak intensity line.
 
@@ -60,7 +94,7 @@ class Intensity:
             raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
 
         # Return the data.
-        return res_num, x_name, h_name, intensity
+        return res_num, h_name, x_name, intensity
 
 
     def intensity_xeasy(self, line):
@@ -80,8 +114,12 @@ class Intensity:
             raise RelaxError, "Improperly formatted XEasy file."
 
         # Nuclei names.
-        x_name = line[7]
-        h_name = line[4]
+        if self.H_dim == 'w1':
+            h_name = line[4]
+            x_name = line[7]
+        else:
+            x_name = line[4]
+            h_name = line[7]
 
         # Intensity (located in column 10).
         try:
@@ -90,7 +128,42 @@ class Intensity:
             raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
 
         # Return the data.
-        return res_num, x_name, h_name, intensity
+        return res_num, h_name, x_name, intensity
+
+
+    def number_of_header_lines(self):
+        """Function for determining how many header lines are in the intensity file.
+
+        @return:    The number of header lines.
+        @rtype:     int
+        """
+
+        # Sparky.
+        #########
+
+        # Assume the Sparky file has two header lines!
+        if self.format == 'sparky':
+            return 2
+
+
+        # XEasy.
+        ########
+
+        # Loop over the lines of the file until a peak intensity value is reached.
+        header_lines = 0
+        for i in xrange(len(self.file_data)):
+            # Try to see if the intensity can be extracted.
+            try:
+                self.intensity(self.file_data[i])
+            except RelaxError:
+                header_lines = header_lines + 1
+            except IndexError:
+                header_lines = header_lines + 1
+            else:
+                break
+
+        # Return the number of lines.
+        return header_lines
 
 
     def read(self, run=None, file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=None, assign_func=None):
@@ -111,13 +184,22 @@ class Intensity:
 
         # Sparky.
         if self.format == 'sparky':
+            # Print out.
             print "Sparky formatted data file.\n"
+
+            # Set the intensity reading function.
             self.intensity = self.intensity_sparky
 
         # XEasy.
         elif self.format == 'xeasy':
+            # Print out.
             print "XEasy formatted data file.\n"
+
+            # Set the intensity reading function.
             self.intensity = self.intensity_xeasy
+
+            # Set the default proton dimension.
+            self.H_dim = 'w1'
 
         # Test if the run exists.
         if not self.run in self.relax.data.run_names:
@@ -128,22 +210,30 @@ class Intensity:
             raise RelaxNoSequenceError, self.run
 
         # Extract the data from the file.
-        file_data = self.relax.IO.extract_data(file, dir)
+        self.file_data = self.relax.IO.extract_data(file, dir)
+
+        # Determine the number of header lines.
+        num = self.number_of_header_lines()
+        print "Number of header lines found: " + `num`
 
         # Remove the header.
-        file_data = file_data[2:]
+        self.file_data = self.file_data[num:]
 
         # Strip the data.
-        file_data = self.relax.IO.strip(file_data)
+        self.file_data = self.relax.IO.strip(self.file_data)
+
+        # Determine the proton and heteronucleus dimensions in the XEasy text file.
+        if self.format == 'xeasy':
+            self.det_dimensions()
 
         # Loop over the peak intensity data.
-        for i in xrange(len(file_data)):
+        for i in xrange(len(self.file_data)):
             # Extract the data.
-            res_num, X_name, H_name, intensity = self.intensity(file_data[i])
+            res_num, H_name, X_name, intensity = self.intensity(self.file_data[i])
 
             # Skip data.
             if X_name != self.heteronuc or H_name != self.proton:
-                print "Skipping the data: " + `file_data[i]`
+                warn(RelaxWarning("Proton and heteronucleus names do not match, skipping the data %s: " % `self.file_data[i]`))
                 continue
 
             # Find the index of self.relax.data.res[self.run] which corresponds to res_num.
@@ -153,7 +243,7 @@ class Intensity:
                     index = j
                     break
             if index == None:
-                print "Skipping the data: " + `file_data[i]`
+                warn(RelaxWarning("Cannot find residue number %s within the sequence." % res_num))
                 continue
 
             # Remap the data structure 'self.relax.data.res[self.run][index]'.
