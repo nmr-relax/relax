@@ -42,7 +42,7 @@ except ImportError, message:
     __builtin__.devnull_import_message = message.args[0]
 
 from os import F_OK, X_OK, access, altsep, getenv, makedirs, pathsep, remove, sep, stat
-from os.path import expanduser
+from os.path import expanduser, basename, splitext
 from re import match, search
 from string import split
 import sys
@@ -154,6 +154,13 @@ class IO:
 
         # Return the file path.
         return file_path
+
+
+    def file_root(self, file_path):
+        """Return the root file name, striped of path and extension details"""
+        
+        root,ext = splitext(file_path)
+        return basename(root)
 
 
     def log(self, file_name=None, dir=None, compress_type=0, print_flag=1):
