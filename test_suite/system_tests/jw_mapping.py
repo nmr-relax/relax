@@ -103,7 +103,7 @@ class Jw:
     def calc_setup(self):
         """Setup for the calculation test."""
 
-        dir = sys.path[-1] + '/test_suite/data/jw_mapping/'
+        dir = sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/'
 
         dataPaths = [dir + 'noe.dat',
                      dir + 'R1.dat',
@@ -117,7 +117,7 @@ class Jw:
         self.relax.generic.runs.create(self.run, 'jw')
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(self.run, file='test_seq', dir=sys.path[-1] + '/test_suite/data')
+        self.relax.interpreter._Sequence.read(self.run, file='test_seq', dir=sys.path[-1] + '/test_suite/system_tests/data')
 
         # Read the data.
         for dataSet in xrange(len(dataPaths)):
@@ -144,7 +144,7 @@ class Jw:
         self.relax.generic.runs.create(self.run, 'jw')
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(self.run, file='test_seq', dir=sys.path[-1] + '/test_suite/data')
+        self.relax.interpreter._Sequence.read(self.run, file='test_seq', dir=sys.path[-1] + '/test_suite/system_tests/data')
 
         # Try to set the values.
         bond_length = 1.02 * 1e-10

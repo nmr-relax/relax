@@ -20,53 +20,46 @@
 #                                                                             #
 ###############################################################################
 
-import sys
+# Import the test suite categories.
+from system_tests.main import System_tests
+from unit_tests.unit_test_runner import run_unit_tests
 
 
-class Sequence:
-    def __init__(self, relax, test_name):
-        """Class for testing the sequence functions."""
+class Test_suite_runner:
+    """Class for running all components of the relax test suite.
+
+    This currently includes the following categories of tests:
+        System/functional tests.
+        Unit tests.
+    """
+
+    def __init__(self, relax):
+        """Run the system/functional and unit test suite components.
+
+        @param relax:   The relax namespace.
+        @type relax:    instance
+        """
 
         self.relax = relax
 
-        # Sequence reading test.
-        if test_name == 'read':
-            # The name of the test.
-            self.name = "The user function sequence.read()"
+        # Execute the system/functional tests.
+        system_result = System_tests(self.relax)
 
-            # The test.
-            self.test = self.read
+        # Execute the unit tests.
+        runner = run_unit_tests()
+        unit_result = runner.run()
 
-        # Loading the sequence from a PDB file test.
-        if test_name == 'pdb':
-            # The name of the test.
-            self.name = "Loading the sequence from a PDB file"
+        # Print out a summary of the test suite.
+        ########################################
 
-            # The test.
-            self.test = self.pdb
+        # Heading.
+        print "\n\n\n"
+        print "###################################"
+        print "# Summary of the relax test suite #"
+        print "###################################"
 
+        # System/functional tests.
+        print "System/functional tests: " + `system_result`
 
-    def pdb(self, run):
-        """The sequence loading from a PDB file test."""
-
-        # Create the run.
-        self.relax.generic.runs.create(run, 'mf')
-
-        # Read the sequence.
-        self.relax.interpreter._Structure.read_pdb(run, file='test.pdb', dir=sys.path[-1] + '/test_suite/data', model=1, load_seq=1)
-
-        # Success.
-        return 1
-
-
-    def read(self, run):
-        """The sequence.read() test."""
-
-        # Create the run.
-        self.relax.generic.runs.create(run, 'mf')
-
-        # Read the sequence.
-        self.relax.interpreter._Sequence.read(run, file='test_seq', dir=sys.path[-1] + '/test_suite/data')
-
-        # Success.
-        return 1
+        # Unit tests.
+        print "Unit tests: " + `unit_result`

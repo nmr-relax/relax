@@ -23,33 +23,50 @@
 import sys
 
 
-class Angles:
-    def __init__(self, relax):
-        """Class for testing the angle calculation function."""
+class Sequence:
+    def __init__(self, relax, test_name):
+        """Class for testing the sequence functions."""
 
         self.relax = relax
 
-        # The name of the test.
-        self.name = "The user function angles()"
+        # Sequence reading test.
+        if test_name == 'read':
+            # The name of the test.
+            self.name = "The user function sequence.read()"
+
+            # The test.
+            self.test = self.read
+
+        # Loading the sequence from a PDB file test.
+        if test_name == 'pdb':
+            # The name of the test.
+            self.name = "Loading the sequence from a PDB file"
+
+            # The test.
+            self.test = self.pdb
 
 
-    def test(self, run):
-        """The actual test."""
+    def pdb(self, run):
+        """The sequence loading from a PDB file test."""
 
         # Create the run.
-        self.relax.interpreter._Run.create(run, 'mf')
+        self.relax.generic.runs.create(run, 'mf')
 
-        # Read a PDB file.
-        self.relax.interpreter._Structure.read_pdb(run, file='test.pdb', dir=sys.path[-1] + '/test_suite/data', model=1)
+        # Read the sequence.
+        self.relax.interpreter._Structure.read_pdb(run, file='test.pdb', dir=sys.path[-1] + '/test_suite/system_tests/data', model=1, load_seq=1)
 
-        # Set the NH vector.
-        self.relax.interpreter._Structure.vectors(run, heteronuc='N', proton='H')
+        # Success.
+        return 1
 
-        # Initialise a diffusion tensor.
-        self.relax.interpreter._Diffusion_tensor.init(run, (1.698e7, 1.417e7, 67.174, -83.718), param_types=3)
 
-        # Calculate the angles.
-        self.relax.interpreter._Angles.angles(run)
+    def read(self, run):
+        """The sequence.read() test."""
+
+        # Create the run.
+        self.relax.generic.runs.create(run, 'mf')
+
+        # Read the sequence.
+        self.relax.interpreter._Sequence.read(run, file='test_seq', dir=sys.path[-1] + '/test_suite/system_tests/data')
 
         # Success.
         return 1

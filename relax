@@ -75,7 +75,7 @@ from prompt.gpl import gpl
 from prompt.interpreter import Interpreter
 from specific_fns.main import Specific
 from specific_fns.specific_setup import Specific_setup
-from test_suite.test_suite import Test_suite
+from test_suite.runner import Test_suite_runner
 from thread_classes import Threading, ThreadData
 import version
 
@@ -192,7 +192,7 @@ class Relax:
             self.interpreter._on()
 
             # Run the tests.
-            Test_suite(self)
+            Test_suite_runner(self)
 
         # Test mode.
         elif mode == 'test':

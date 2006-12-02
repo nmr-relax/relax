@@ -37,9 +37,11 @@ from run_create import Run_create
 from sequence import Sequence
 
 
-class Test_suite:
+class System_tests:
+    """The system/functional tests component of the relax test suite."""
+
     def __init__(self, relax):
-        """The relax test suite.
+        """The relax system/functional tests.
 
         This class runs a number of tests to determine if any changes to relax have caused
         breakages.
