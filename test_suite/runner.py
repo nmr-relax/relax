@@ -22,7 +22,7 @@
 
 # Import the test suite categories.
 from system_tests.main import System_tests
-from unit_tests.unit_test_runner import run_unit_tests
+from unit_tests.unit_test_runner import Run_unit_tests
 
 
 class Test_suite_runner:
@@ -46,7 +46,7 @@ class Test_suite_runner:
         system_result = System_tests(self.relax)
 
         # Execute the unit tests.
-        runner = run_unit_tests()
+        runner = Run_unit_tests()
         unit_result = runner.run()
 
         # Print out a summary of the test suite.
