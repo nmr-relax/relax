@@ -86,6 +86,19 @@ class Selection:
         # Extract the data from the file.
         file_data = self.relax.IO.extract_data(file, dir)
 
+        # Count the number of header lines.
+        header_lines = 0
+        for i in xrange(len(file_data)):
+            try:
+                int(file_data[i][column])
+            except:
+                header_lines = header_lines + 1
+            else:
+                break
+
+        # Remove the header.
+        file_data = file_data[header_lines:]
+
         # Strip the data.
         file_data = self.relax.IO.strip(file_data)
 
@@ -222,6 +235,19 @@ class Selection:
 
         # Extract the data from the file.
         file_data = self.relax.IO.extract_data(file, dir)
+
+        # Count the number of header lines.
+        header_lines = 0
+        for i in xrange(len(file_data)):
+            try:
+                int(file_data[i][column])
+            except:
+                header_lines = header_lines + 1
+            else:
+                break
+
+        # Remove the header.
+        file_data = file_data[header_lines:]
 
         # Strip the data.
         file_data = self.relax.IO.strip(file_data)
