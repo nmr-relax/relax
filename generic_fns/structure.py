@@ -544,10 +544,10 @@ class Structure:
             H_id = data.proton + end
 
             # Add the central X atom.
-            self.atom_add(atom_id=X_id, record_name='ATM', atom_name=data.heteronuc, res_name=data.name, chain_id='A', res_num=data.num, pos=R, element=data.heteronuc)
+            self.atom_add(atom_id=X_id, record_name='ATOM', atom_name=data.heteronuc, res_name=data.name, chain_id='A', res_num=data.num, pos=R, element=data.heteronuc)
 
             # Add the H atom.
-            self.atom_add(atom_id=H_id, record_name='ATM', atom_name=data.proton, res_name=data.name, chain_id='A', res_num=data.num, pos=vector, element=data.proton)
+            self.atom_add(atom_id=H_id, record_name='ATOM', atom_name=data.proton, res_name=data.name, chain_id='A', res_num=data.num, pos=vector, element=data.proton)
 
             # Connect the two atoms.
             self.atom_connect(atom_id=X_id, bonded_id=H_id)
@@ -1139,6 +1139,35 @@ class Structure:
         |_________|______________|______________|________________________________________________|
 
 
+        ATOM record
+        -----------
+
+        The ATOM record contains the atomic coordinates for atoms belonging to standard residues.
+        The format is of the record is:
+        __________________________________________________________________________________________
+        |         |              |              |                                                |
+        | Columns | Data type    | Field        | Definition                                     |
+        |_________|______________|______________|________________________________________________|
+        |         |              |              |                                                |
+        |  1 -  6 | Record name  | "ATOM"       |                                                |
+        |  7 - 11 | Integer      | serial       | Atom serial number.                            |
+        | 13 - 16 | Atom         | name         | Atom name.                                     |
+        | 17      | Character    | altLoc       | Alternate location indicator.                  |
+        | 18 - 20 | Residue name | resName      | Residue name.                                  |
+        | 22      | Character    | chainID      | Chain identifier.                              |
+        | 23 - 26 | Integer      | resSeq       | Residue sequence number.                       |
+        | 27      | AChar        | iCode        | Code for insertion of residues.                |
+        | 31 - 38 | Real(8.3)    | x            | Orthogonal coordinates for X in Angstroms.     |
+        | 39 - 46 | Real(8.3)    | y            | Orthogonal coordinates for Y in Angstroms.     |
+        | 47 - 54 | Real(8.3)    | z            | Orthogonal coordinates for Z in Angstroms.     |
+        | 55 - 60 | Real(6.2)    | occupancy    | Occupancy.                                     |
+        | 61 - 66 | Real(6.2)    | tempFactor   | Temperature factor.                            |
+        | 73 - 76 | LString(4)   | segID        | Segment identifier, left-justified.            |
+        | 77 - 78 | LString(2)   | element      | Element symbol, right-justified.               |
+        | 79 - 80 | LString(2)   | charge       | Charge on the atom.                            |
+        |_________|______________|______________|________________________________________________|
+
+
         HETATM record
         -------------
 
@@ -1399,7 +1428,7 @@ class Structure:
         for array in atomic_arrays:
             # Write the ATOM record.
             if array[1] == 'ATOM':
-                raise RelaxError, 'Not coded yet.'
+                file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', array[0], array[2], '', array[3], array[4], array[5], '', array[6], array[7], array[8], 1.0, 0, array[9], array[10], ''))
 
             # Write the HETATM record.
             if array[1] == 'HETATM':
