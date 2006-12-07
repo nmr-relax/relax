@@ -169,7 +169,7 @@ class Structure:
         else:
             raise RelaxError, "The mass of the element " + `element` + " has not yet been programmed into relax."
 
-    
+
     def autoscale_tensor(self,method=None):
         """Automatically determine an appropriate scaling factor for display
         of the diffusion tensor"""
@@ -469,8 +469,7 @@ class Structure:
         @type i:            int
         @return:            None
         """
-        
-        
+
         # Alias the relevant data.
         scale = self.scale
         if i == None:
@@ -804,10 +803,6 @@ class Structure:
     def vectors(self, run=None, heteronuc=None, proton=None, res_num=None, res_name=None):
         """Function for calculating/extracting the XH unit vector from the loaded structure."""
 
-        # Arguments.
-        self.heteronuc = heteronuc
-        self.proton = proton
-
         # Test if the PDB file has been loaded.
         if not self.relax.data.pdb.has_key(run):
             raise RelaxPdbError, run
@@ -831,99 +826,11 @@ class Structure:
                 raise RelaxRegExpError, ('residue name', res_name)
 
         # Test that the nuclei have been correctly set.
-        if self.heteronuc == self.proton:
+        if heteronuc == proton:
             raise RelaxError, "The proton and heteronucleus are set to the same atom."
-
-        # Print out.
-        if self.print_flag:
-            print "\nCalculating unit XH vectors.\n"
 
         # Number of structures.
         num_str = len(self.relax.data.pdb[self.run].structures)
-
-        # Create a temporary vector list for each residue.
-        for i in xrange(len(self.relax.data.res[self.run])):
-            if not hasattr(self.relax.data.res[self.run][i], 'xh_vect'):
-                self.relax.data.res[self.run][i].xh_vect = []
-
-        # Loop over the structures.
-        for i in xrange(num_str):
-            # Print out.
-            if self.print_flag:
-                print "\nStructure " + `i + 1` + "\n"
-
-            # Reassign the first peptide or nucleotide chain of the first structure.
-            if self.relax.data.pdb[self.run].structures[i].peptide_chains:
-                pdb_residues = self.relax.data.pdb[self.run].structures[i].peptide_chains[0].residues
-            elif self.relax.data.pdb[self.run].structures[i].nucleotide_chains:
-                pdb_residues = self.relax.data.pdb[self.run].structures[i].nucleotide_chains[0].residues
-            else:
-                raise RelaxNoPdbChainError
-
-            # Loop over the sequence.
-            for j in xrange(len(self.relax.data.res[self.run])):
-                # Remap the data structure 'self.relax.data.res[self.run][j]'.
-                data = self.relax.data.res[self.run][j]
-
-                # Skip unselected residues.
-                if not data.select:
-                    continue
-
-                # Skip the residue if there is no match to 'num'.
-                if type(res_num) == int:
-                    if not data.num == res_num:
-                        continue
-                elif type(res_num) == str:
-                    if not match(res_num, `data.num`):
-                        continue
-
-                # Skip the residue if there is no match to 'name'.
-                if res_name != None:
-                    if not match(res_name, data.name):
-                        continue
-
-                # Find the corresponding residue in the PDB.
-                pdb_res = None
-                for k in xrange(len(pdb_residues)):
-                    if data.num == pdb_residues[k].number:
-                        pdb_res = pdb_residues[k]
-                        break
-                if pdb_res == None:
-                    raise RelaxNoResError, data.num
-
-                # Test if the proton atom exists for residue i.
-                if not pdb_res.atoms.has_key(self.proton):
-                    warn(RelaxNoAtomWarning(self.proton, data.num))
-                    data.xh_vect.append(None)
-
-                # Test if the heteronucleus atom exists for residue i.
-                elif not pdb_res.atoms.has_key(self.heteronuc):
-                    warn(RelaxNoAtomWarning(self.heteronuc, data.num))
-                    data.xh_vect.append(None)
-
-                # Calculate the vector.
-                else:
-                    # Get the proton position.
-                    posH = pdb_res.atoms[self.proton].position.array
-
-                    # Get the heteronucleus position.
-                    posX = pdb_res.atoms[self.heteronuc].position.array
-
-                    # Calculate the XH bond vector.
-                    vector = posH - posX
-
-                    # Normalisation factor.
-                    norm_factor = sqrt(dot(vector, vector))
-
-                    # Test for zero length.
-                    if norm_factor == 0.0:
-                        if self.print_flag:
-                            print "The XH bond vector for residue " + `data.num` + " is of zero length."
-                        data.xh_vect.append(None)
-
-                    # Calculate the normalised vector.
-                    else:
-                        data.xh_vect.append(vector / norm_factor)
 
         # Print out.
         if self.print_flag:
@@ -932,9 +839,9 @@ class Structure:
             else:
                 print "\nCalculating the unit XH vectors from the structure."
 
-        # Average the vectors and convert xh_vect from an array of vectors to a vector.
+        # Loop over the sequence.
         for i in xrange(len(self.relax.data.res[self.run])):
-            # Remap the data structure 'self.relax.data.res[self.run][i]'.
+            # Remap the data structure 'self.relax.data.res[self.run][j]'.
             data = self.relax.data.res[self.run][i]
 
             # Skip unselected residues.
@@ -958,24 +865,12 @@ class Structure:
             data.proton = proton
             data.heteronuc = heteronuc
 
-            # No vectors.
-            if data.xh_vect[0] == None:
-                del data.xh_vect
-                continue
+            # Calculate the vector.
+            vector = self.xh_vector(data)
 
-            # Average vectors.
-            ave_vector = zeros(3, Float64)
-
-            # Sum the vectors.
-            for j in xrange(num_str):
-                # Sum.
-                ave_vector = ave_vector + data.xh_vect[j]
-
-            # Average the vector.
-            ave_vector = ave_vector / num_str
-
-            # Replace the temporary vector list with the normalised average vector.
-            data.xh_vect = ave_vector / sqrt(dot(ave_vector, ave_vector))
+            # Set the vector.
+            if vector:
+                data.xh_vect = vector
 
 
     def uniform_vect_dist_spherical_angles(self, inc=20):
@@ -1470,3 +1365,104 @@ class Structure:
 
         # Write the END record.
         file.write("END\n")
+
+
+    def xh_vector(self, data, structure=None, unit=1):
+        """Function for calculating/extracting the XH vector from the loaded structure.
+
+        @param data:        The spin system data container.
+        @type data:         Residue instance
+        @param structure:   The structure number to get the XH vector from.  If set to None and
+            multiple structures exist, then the XH vector will be averaged across all structures.
+        @type structure:    int
+        @param unit:        A flag which if set will cause the function to return the unit XH vector
+            rather than the full vector.
+        @type unit:         int
+        @return:            The XH vector (or unit vector if the unit flag is set).
+        @rtype:             list or None
+        """
+
+        # Initialise.
+        vector_array = []
+        ave_vector = zeros(3, Float64)
+
+        # Number of structures.
+        num_str = len(self.relax.data.pdb[self.run].structures)
+
+        # Loop over the structures.
+        for i in xrange(num_str):
+            # The vectors from a specific structure.
+            if structure != None and structure != i:
+                continue
+
+            # Reassign the first peptide or nucleotide chain of the first structure.
+            if self.relax.data.pdb[self.run].structures[i].peptide_chains:
+                pdb_residues = self.relax.data.pdb[self.run].structures[i].peptide_chains[0].residues
+            elif self.relax.data.pdb[self.run].structures[i].nucleotide_chains:
+                pdb_residues = self.relax.data.pdb[self.run].structures[i].nucleotide_chains[0].residues
+            else:
+                raise RelaxNoPdbChainError
+
+            # Find the corresponding residue in the PDB.
+            pdb_res = None
+            for k in xrange(len(pdb_residues)):
+                if data.num == pdb_residues[k].number:
+                    pdb_res = pdb_residues[k]
+                    break
+            if pdb_res == None:
+                raise RelaxNoResError, data.num
+
+            # Test if the proton atom exists for residue i.
+            if not pdb_res.atoms.has_key(data.proton):
+                warn(RelaxNoAtomWarning(data.proton, data.num))
+
+            # Test if the heteronucleus atom exists for residue i.
+            elif not pdb_res.atoms.has_key(data.heteronuc):
+                warn(RelaxNoAtomWarning(data.heteronuc, data.num))
+
+            # Calculate the vector.
+            else:
+                # Get the proton position.
+                posH = pdb_res.atoms[data.proton].position.array
+
+                # Get the heteronucleus position.
+                posX = pdb_res.atoms[data.heteronuc].position.array
+
+                # Calculate the XH bond vector.
+                vector = posH - posX
+
+                # Unit vector.
+                if unit:
+                    # Normalisation factor.
+                    norm_factor = sqrt(dot(vector, vector))
+
+                    # Test for zero length.
+                    if norm_factor == 0.0:
+                        warn(RelaxZeroVectorWarning(data.num))
+
+                    # Calculate the normalised vector.
+                    else:
+                        vector_array.append(vector / norm_factor)
+
+                # Normal XH vector.
+                else:
+                    vector_array.append(vector)
+
+        # Return None if there are no vectors.
+        if not len(vector_array):
+            return
+
+        # Sum the vectors.
+        for vector in vector_array:
+            # Sum.
+            ave_vector = ave_vector + vector
+
+        # Average the vector.
+        ave_vector = ave_vector / len(vector_array)
+
+        # Unit vector.
+        if unit:
+            ave_vector = ave_vector / sqrt(dot(ave_vector, ave_vector))
+
+        # Return the vector.
+        return ave_vector
