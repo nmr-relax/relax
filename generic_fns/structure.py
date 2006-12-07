@@ -436,7 +436,7 @@ class Structure:
             atomic_arrays.sort()
             last_res = atomic_arrays[-1][3]
 
-            # Add the TER 'atom''.
+            # Add the TER 'atom'.
             self.atom_add(atom_id='TER' + atom_id_ext, record_name='TER', res_name=last_res, res_num=res_num)
 
 
@@ -456,26 +456,26 @@ class Structure:
         tensor_pdb_file.close()
 
 
-    def create_vector_dist(self, run=None, length=1.8e-6, file=None, dir=None, force=0):
+    def create_vector_dist(self, run=None, length=None, symmetry=1, file=None, dir=None, force=0):
         """Create a PDB representation of the XH vector distribution.
 
-        @param run:     The run.
-        @type run:      str
-        @param length:  The length to set the vectors to in the PDB file.
-        @type length:   float
-        @param file:    The name of the PDB file to create.
-        @type file:     str
-        @param dir:     The name of the directory to place the PDB file into.
-        @type dir:      str
-        @param force:   Flag which if set to 1 will overwrite any pre-existing file.
-        @type force:    int
+        @param run:         The run.
+        @type run:          str
+        @param length:      The length to set the vectors to in the PDB file.
+        @type length:       float
+        @param symmetry:    The symmetry flag which if set will create a second PDB chain 'B' which
+            is the same as chain 'A' but with the XH vectors reversed.
+        @type symmetry:     int
+        @param file:        The name of the PDB file to create.
+        @type file:         str
+        @param dir:         The name of the directory to place the PDB file into.
+        @type dir:          str
+        @param force:       Flag which if set will overwrite any pre-existing file.
+        @type force:        int
         """
 
         # Arguments.
-        self.length = length
-        self.file = file
-        self.dir = dir
-        self.force = force
+        self.run = run
 
         # Test if the run exists.
         if not run in self.relax.data.run_names:
@@ -547,10 +547,57 @@ class Structure:
             self.atom_add(atom_id=X_id, record_name='ATOM', atom_name=data.heteronuc, res_name=data.name, chain_id='A', res_num=data.num, pos=R, element=data.heteronuc)
 
             # Add the H atom.
-            self.atom_add(atom_id=H_id, record_name='ATOM', atom_name=data.proton, res_name=data.name, chain_id='A', res_num=data.num, pos=vector, element=data.proton)
+            self.atom_add(atom_id=H_id, record_name='ATOM', atom_name=data.proton, res_name=data.name, chain_id='A', res_num=data.num, pos=R+vector, element=data.proton)
 
             # Connect the two atoms.
             self.atom_connect(atom_id=X_id, bonded_id=H_id)
+
+            # Store the terminate residue number for the TER record.
+            last_res = data.num
+            last_name = data.name
+
+        # The TER record.
+        self.atom_add(atom_id='TER' + '_A', record_name='TER', res_name=last_name, chain_id='A', res_num=last_res)
+
+        # Symmetry chain.
+        if symmetry:
+            # Loop over the spin systems.
+            for i in xrange(len(self.relax.data.res[self.run])):
+                # Alias the spin system data.
+                data = self.relax.data.res[self.run][i]
+
+                # Skip unselected spin systems.
+                if not data.select:
+                    continue
+
+                # Skip spin systems missing the xh_vect structure.
+                if not hasattr(data, 'xh_vect'):
+                    continue
+
+                # Scale the vector.
+                vector = data.xh_vect * length * 1e10
+
+                # The atom ids.
+                end = '_' + `data.num` + '_' + data.name
+                X_id = data.heteronuc + end
+                H_id = data.proton + end
+
+                # Add the central X atom.
+                self.atom_add(atom_id=X_id + '_B', record_name='ATOM', atom_name=data.heteronuc, res_name=data.name, chain_id='B', res_num=data.num, pos=R, element=data.heteronuc)
+
+                # Add the H atom.
+                self.atom_add(atom_id=H_id + '_B', record_name='ATOM', atom_name=data.proton, res_name=data.name, chain_id='B', res_num=data.num, pos=R-vector, element=data.proton)
+
+                # Connect the two atoms.
+                self.atom_connect(atom_id=X_id + '_B', bonded_id=H_id + '_B')
+
+                # Store the terminate residue number for the TER record.
+                last_res = data.num
+                last_name = data.name
+
+            # The TER record.
+            self.atom_add(atom_id='TER' + '_B', record_name='TER', res_name=last_name, chain_id='B', res_num=last_res)
+
 
 
         # Create the PDB file.
@@ -560,7 +607,7 @@ class Structure:
         print "\nGenerating the PDB file."
 
         # Open the PDB file for writing.
-        tensor_pdb_file = self.relax.IO.open_write_file(self.file, self.dir, force=self.force)
+        tensor_pdb_file = self.relax.IO.open_write_file(file, dir, force=force)
 
         # Write the data.
         self.write_pdb_file(tensor_pdb_file)

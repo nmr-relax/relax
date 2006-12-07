@@ -169,7 +169,7 @@ class Structure:
         self.__relax__.generic.structure.create_diff_tensor_pdb(run=run, scale=scale, file=file, dir=dir, force=force)
 
 
-    def create_vector_dist(self, run=None, length=1e-8, file='XH_dist.pdb', dir=None, force=0):
+    def create_vector_dist(self, run=None, length=2e-9, symmetry=1, file='XH_dist.pdb', dir=None, force=0):
         """Create a PDB file representation of the distribution of XH bond vectors.
 
         Keyword Arguments
@@ -178,6 +178,9 @@ class Structure:
         run:  The run to assign the structure to.
 
         length:  The length of the vectors in the PDB representation (meters).
+
+        symmetry:  A flag which, if set to 1, will create a second chain with reversed XH bond
+            orientations.
 
         file:  The name of the PDB file.
 
@@ -194,6 +197,10 @@ class Structure:
         into relax.  The origin of the vector distribution is located at the centre of mass (of the
         selected residues).  This vector distribution PDB file can subsequently be read into any
         molecular viewer.
+
+        Because of the symmetry of the diffusion tensor, reversing the orientation of the XH bond
+        vector has no effect.  Therefore by setting the symmetry flag, two chains 'A' and 'B' will
+        be added to the PDB file whereby chain 'B' is chain 'A' with the XH bonds reversed.
         """
 
         # Function intro text.
@@ -201,6 +208,7 @@ class Structure:
             text = sys.ps3 + "structure.create_vector_dist("
             text = text + "run=" + `run`
             text = text + ", length=" + `length`
+            text = text + ", symmetry=" + `symmetry`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force` + ")"
@@ -213,6 +221,10 @@ class Structure:
         # Vector length.
         if type(length) != float:
             raise RelaxFloatError, ('vector length', length)
+
+        # The symmetry flag.
+        if type(symmetry) != int or (symmetry != 0 and symmetry != 1):
+            raise RelaxBinError, ('symmetry flag', symmetry)
 
         # File name.
         if type(file) != str:
@@ -227,7 +239,7 @@ class Structure:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        self.__relax__.generic.structure.create_vector_dist(run=run, length=length, file=file, dir=dir, force=force)
+        self.__relax__.generic.structure.create_vector_dist(run=run, length=length, symmetry=symmetry, file=file, dir=dir, force=force)
 
 
     def read_pdb(self, run=None, file=None, dir=None, model=None, load_seq=1):
