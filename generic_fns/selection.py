@@ -80,7 +80,7 @@ class Selection:
                 self.relax.data.res[self.run][i].select = 1
 
 
-    def sel_read(self, run=None, file=None, dir=None, change_all=None):
+    def sel_read(self, run=None, file=None, dir=None, change_all=None, column=None):
         """Function for selecting the residues contained in a file."""
 
         # Extract the data from the file.
