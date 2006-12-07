@@ -303,6 +303,50 @@ class Pymol:
         self.__relax__.generic.pymol.tensor_pdb(run=run, file=file)
 
 
+    def vector_dist(self, run=None, file='XH_dist.pdb'):
+        """Function displaying the PDB file representation of the XH vector distribution.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
+        file:  The name of the PDB file containing the vector distribution.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        A PDB file of the macromolecule must have previously been loaded as the vector distribution
+        will be overlain with the macromolecule within PyMOL.  The PDB file containing the vector
+        distribution must be created using the complementary 'pdb.create_vector_dist()' user
+        function.
+
+        The vector distribution PDB file is read in using the command:
+
+            load file
+
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "pymol.vector_dist("
+            text = text + "run=" + `run`
+            text = text + ", file=" + `file` + ")"
+            print text
+
+        # The run name.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # The file name.
+        if type(file) != str:
+            raise RelaxStrError, ('file name', file)
+
+        # Execute the functional code.
+        self.__relax__.generic.pymol.vector_dist(run=run, file=file)
+
+
     def view(self, run=None):
         """Function for viewing the collection of molecules extracted from the PDB file.
 

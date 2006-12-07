@@ -260,6 +260,36 @@ class Pymol:
         self.pipe_write("cmd.delete('sele')")
 
 
+    def vector_dist(self, run=None, file=None):
+        """Display the XH bond vector distribution.
+
+        @param run:     The run
+        @type run:      str
+        @param file:    The vector distribution PDB file.
+        @type file:     str
+        """
+
+        # Arguments.
+        self.run = run
+
+        # Test if the run exists.
+        if not self.run in self.relax.data.run_names:
+            raise RelaxNoRunError, self.run
+
+        # The file root.
+        file_root = self.relax.IO.file_root(file)
+
+        # Read in the vector distribution PDB file.
+        self.pipe_write("load " + file)
+
+
+        # Create a surface.
+        ###################
+
+        # Select the vector distribution.
+        self.pipe_write("cmd.show('surface', " + `file_root` + ")")
+
+
     def view(self, run=None):
         """Function for running PyMOL."""
 
