@@ -1,3 +1,5 @@
+# Script for creating a PDB representation of the Brownian rotational diffusion tensor.
+
 # Create the run.
 name = 'sims'
 run.create(name, 'mf')
@@ -10,7 +12,7 @@ diffusion_tensor.display(name)
 
 # Create the tensor PDB file.
 tensor_file = 'tensor.pdb'
-pdb.create_tensor_pdb(name, file='tensor.pdb', force=1)
+structure.create_tensor_pdb(name, file=tensor_file, force=1)
 
 # PyMOL.
 pymol.view(name)
