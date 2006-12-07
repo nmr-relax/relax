@@ -515,9 +515,6 @@ class Structure:
         # Calculate the centre of mass.
         R = self.centre_of_mass()
 
-        # Add the central atom.
-        self.atom_add(atom_id='R', record_name='HETATM', atom_name='R', res_name='COM', chain_id='A', res_num=res_num, pos=R, element='C')
-
         # Increment the residue number.
         res_num = res_num + 1
 
@@ -541,8 +538,19 @@ class Structure:
             # Scale the vector.
             vector = data.xh_vect * length * 1e10
 
-            # Add the vector as a H atom of the TNS residue.
-            self.atom_add(atom_id=data.num, record_name='ATM', atom_name='H'+`data.num`, res_name=data.name, chain_id='A', res_num=data.num, pos=vector, element='H')
+            # The atom ids.
+            end = '_' + `data.num` + '_' + data.name
+            X_id = data.heteronuc + end
+            H_id = data.proton + end
+
+            # Add the central X atom.
+            self.atom_add(atom_id=X_id, record_name='ATM', atom_name=data.heteronuc, res_name=data.name, chain_id='A', res_num=data.num, pos=R, element=data.heteronuc)
+
+            # Add the H atom.
+            self.atom_add(atom_id=H_id, record_name='ATM', atom_name=data.proton, res_name=data.name, chain_id='A', res_num=data.num, pos=vector, element=data.proton)
+
+            # Connect the two atoms.
+            self.atom_connect(atom_id=X_id, bonded_id=H_id)
 
 
         # Create the PDB file.
