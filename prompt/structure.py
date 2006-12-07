@@ -169,6 +169,67 @@ class Structure:
         self.__relax__.generic.structure.create_diff_tensor_pdb(run=run, scale=scale, file=file, dir=dir, force=force)
 
 
+    def create_vector_dist(self, run=None, length=1e-8, file='XH_dist.pdb', dir=None, force=0):
+        """Create a PDB file representation of the distribution of XH bond vectors.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The run to assign the structure to.
+
+        length:  The length of the vectors in the PDB representation (meters).
+
+        file:  The name of the PDB file.
+
+        dir:  The directory to place the file into.
+
+        force:  A flag which, if set to 1, will overwrite the file if it already exists.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function creates a PDB file containing an artificial vectors, the length of which
+        default to the length argument of 100 Angstrom.  A structure must have previously been read
+        into relax.  The origin of the vector distribution is located at the centre of mass (of the
+        selected residues).  This vector distribution PDB file can subsequently be read into any
+        molecular viewer.
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "structure.create_vector_dist("
+            text = text + "run=" + `run`
+            text = text + ", length=" + `length`
+            text = text + ", file=" + `file`
+            text = text + ", dir=" + `dir`
+            text = text + ", force=" + `force` + ")"
+            print text
+
+        # The run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Vector length.
+        if type(length) != float:
+            raise RelaxFloatError, ('vector length', length)
+
+        # File name.
+        if type(file) != str:
+            raise RelaxStrError, ('file name', file)
+
+        # Directory.
+        if dir != None and type(dir) != str:
+            raise RelaxNoneStrError, ('directory name', dir)
+
+        # The force flag.
+        if type(force) != int or (force != 0 and force != 1):
+            raise RelaxBinError, ('force flag', force)
+
+        # Execute the functional code.
+        self.__relax__.generic.structure.create_vector_dist(run=run, length=length, file=file, dir=dir, force=force)
+
+
     def read_pdb(self, run=None, file=None, dir=None, model=None, load_seq=1):
         """The pdb loading function.
 
