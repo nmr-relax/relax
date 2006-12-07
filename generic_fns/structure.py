@@ -456,6 +456,111 @@ class Structure:
         tensor_pdb_file.close()
 
 
+    def create_vector_dist(self, run=None, length=1.8e-6, file=None, dir=None, force=0):
+        """Create a PDB representation of the XH vector distribution.
+
+        @param run:     The run.
+        @type run:      str
+        @param length:  The length to set the vectors to in the PDB file.
+        @type length:   float
+        @param file:    The name of the PDB file to create.
+        @type file:     str
+        @param dir:     The name of the directory to place the PDB file into.
+        @type dir:      str
+        @param force:   Flag which if set to 1 will overwrite any pre-existing file.
+        @type force:    int
+        """
+
+        # Arguments.
+        self.length = length
+        self.file = file
+        self.dir = dir
+        self.force = force
+
+        # Test if the run exists.
+        if not run in self.relax.data.run_names:
+            raise RelaxNoRunError, run
+
+        # Test if the PDB file of the macromolecule has been loaded.
+        if not self.relax.data.pdb.has_key(self.run):
+            raise RelaxNoPdbError, self.run
+
+        # Test if sequence data is loaded.
+        if not len(self.relax.data.res[self.run]):
+            raise RelaxNoSequenceError, self.run
+
+        # Test if unit vectors exist.
+        vectors = 0
+        for i in xrange(len(self.relax.data.res[self.run])):
+            if hasattr(self.relax.data.res[self.run][i], 'xh_vect'):
+                vectors = 1
+                break
+        if not vectors:
+            raise RelaxNoVectorsError, self.run
+
+
+        # Initialise.
+        #############
+
+        # Initialise the atom and atomic connections data structures.
+        self.atomic_data = {}
+
+        # Initialise the residue number.
+        res_num = 1
+
+
+        # Centre of mass.
+        #################
+
+        # Calculate the centre of mass.
+        R = self.centre_of_mass()
+
+        # Add the central atom.
+        self.atom_add(atom_id='R', record_name='HETATM', atom_name='R', res_name='COM', chain_id='A', res_num=res_num, pos=R, element='C')
+
+        # Increment the residue number.
+        res_num = res_num + 1
+
+
+        # The XH vectors.
+        #################
+
+        # Loop over the spin systems.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            # Alias the spin system data.
+            data = self.relax.data.res[self.run][i]
+
+            # Skip unselected spin systems.
+            if not data.select:
+                continue
+
+            # Skip spin systems missing the xh_vect structure.
+            if not hasattr(data, 'xh_vect'):
+                continue
+
+            # Scale the vector.
+            vector = data.xh_vect * length * 1e10
+
+            # Add the vector as a H atom of the TNS residue.
+            self.atom_add(atom_id=data.num, record_name='ATM', atom_name='H'+`data.num`, res_name=data.name, chain_id='A', res_num=data.num, pos=vector, element='H')
+
+
+        # Create the PDB file.
+        ######################
+
+        # Print out.
+        print "\nGenerating the PDB file."
+
+        # Open the PDB file for writing.
+        tensor_pdb_file = self.relax.IO.open_write_file(self.file, self.dir, force=self.force)
+
+        # Write the data.
+        self.write_pdb_file(tensor_pdb_file)
+
+        # Close the file.
+        tensor_pdb_file.close()
+
+
     def generate_ellipsoid_axes(self, chain_id=None, res_num=None, R=None, i=None):
         """Generate the AXS and SIM residues of the ellipsoidal PDB tensor representation.
 
