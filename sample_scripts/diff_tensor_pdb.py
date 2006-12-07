@@ -12,7 +12,7 @@ diffusion_tensor.display(name)
 
 # Create the tensor PDB file.
 tensor_file = 'tensor.pdb'
-structure.create_tensor_pdb(name, file=tensor_file, force=1)
+structure.create_diff_tensor_pdb(name, file=tensor_file, force=1)
 
 # PyMOL.
 pymol.view(name)

@@ -256,7 +256,7 @@ class Molmol:
         In executing this user function, a PDB file must have previously been loaded into this run,
         a geometric object or polygon representing the Brownian rotational diffusion tensor will be
         overlain with the loaded PDB file and displayed within Molmol.  The PDB file containing the
-        geometric object must be created using the complementary 'pdb.create_tensor_pdb()' user
+        geometric object must be created using the complementary 'pdb.create_diff_tensor_pdb()' user
         function.
 
         To display the diffusion tensor, the multiple commands will be executed.  To overlay the

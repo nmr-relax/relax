@@ -257,7 +257,7 @@ class Pymol:
         In executing this user function, a PDB file must have previously been loaded into this run,
         a geometric object or polygon representing the Brownian rotational diffusion tensor will be
         overlain with the loaded PDB file and displayed within PyMOL.  The PDB file containing the
-        geometric object must be created using the complementary 'pdb.create_tensor_pdb()' user
+        geometric object must be created using the complementary 'pdb.create_diff_tensor_pdb()' user
         function.
 
         The tensor PDB file is read in using the command:

@@ -38,7 +38,7 @@ class Structure:
         self.__relax__ = relax
 
 
-    def create_tensor_pdb(self, run=None, scale=1.8e-6, file='tensor.pdb', dir=None, force=0):
+    def create_diff_tensor_pdb(self, run=None, scale=1.8e-6, file='tensor.pdb', dir=None, force=0):
         """Create a PDB file to represent the diffusion tensor.
 
         Keyword Arguments
@@ -137,7 +137,7 @@ class Structure:
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "structure.create_tensor_pdb("
+            text = sys.ps3 + "structure.create_diff_tensor_pdb("
             text = text + "run=" + `run`
             text = text + ", scale=" + `scale`
             text = text + ", file=" + `file`
@@ -166,7 +166,7 @@ class Structure:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        self.__relax__.generic.structure.create_tensor_pdb(run=run, scale=scale, file=file, dir=dir, force=force)
+        self.__relax__.generic.structure.create_diff_tensor_pdb(run=run, scale=scale, file=file, dir=dir, force=force)
 
 
     def read_pdb(self, run=None, file=None, dir=None, model=None, load_seq=1):

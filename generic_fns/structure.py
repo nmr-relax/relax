@@ -247,8 +247,8 @@ class Structure:
             return R
 
 
-    def create_tensor_pdb(self, run=None, scale=1.8e-6, file=None, dir=None, force=0):
-        """The pdb loading function."""
+    def create_diff_tensor_pdb(self, run=None, scale=1.8e-6, file=None, dir=None, force=0):
+        """Create the PDB representation of the diffusion tensor."""
 
         # Arguments.
         self.scale = scale
