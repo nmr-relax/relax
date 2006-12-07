@@ -93,7 +93,7 @@ class Selection:
         select = []
         for i in xrange(len(file_data)):
             try:
-                select.append(int(file_data[i][0]))
+                select.append(int(file_data[i][column]))
             except:
                 raise RelaxError, "Improperly formatted file."
 
@@ -217,7 +217,7 @@ class Selection:
                 self.relax.data.res[self.run][i].select = 0
 
 
-    def unsel_read(self, run=None, file=None, dir=None, change_all=None):
+    def unsel_read(self, run=None, file=None, dir=None, change_all=None, column=None):
         """Function for unselecting the residues contained in a file."""
 
         # Extract the data from the file.
@@ -230,7 +230,7 @@ class Selection:
         unselect = []
         for i in xrange(len(file_data)):
             try:
-                unselect.append(int(file_data[i][0]))
+                unselect.append(int(file_data[i][column]))
             except:
                 raise RelaxError, "Improperly formatted file."
 

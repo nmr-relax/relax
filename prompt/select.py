@@ -80,7 +80,7 @@ class Select:
         self.__relax__.generic.selection.sel_all(run=run)
 
 
-    def read(self, run=None, file=None, dir=None, change_all=0):
+    def read(self, run=None, file=None, dir=None, change_all=0, column=0):
         """Function for selecting the residues contained in a file.
 
         Keyword Arguments
@@ -95,13 +95,13 @@ class Select:
 
         change_all:  A flag specifying if all other residues should be changed.
 
+        column:  The column containing the residue numbers (defaulting to 0, the first column).
+
 
         Description
         ~~~~~~~~~~~
 
-        The file must contain one residue number per line.  The number is taken as the first column
-        of the file and all other columns are ignored.  Empty lines and lines beginning with a hash
-        are ignored.
+        Empty lines and lines beginning with a hash are ignored.
 
         The 'change_all' flag argument default is zero meaning that all residues currently either
         selected or unselected will remain that way.  Setting the argument to 1 will cause all
@@ -111,10 +111,16 @@ class Select:
         Examples
         ~~~~~~~~
 
-        To select all residues in the file 'isolated_peaks', type:
+        To select all residues in the file 'isolated_peaks', type one of:
 
         relax> select.read('noe', 'isolated_peaks')
         relax> select.read(run='noe', file='isolated_peaks')
+
+        To select the residues in the second column of the relaxation data file 'r1.600' while
+        deselecting all other residues, type one of: 
+
+        relax> select.read('test', 'r1.600', change_all=1, column=1)
+        relax> select.read(run='test', file='r1.600', change_all=1, column=1)
         """
 
         # Function intro test.
@@ -123,7 +129,8 @@ class Select:
             text = text + "run=" + `run`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
-            text = text + ", change_all=" + `change_all` + ")"
+            text = text + ", change_all=" + `change_all`
+            text = text + ", column=" + `column` + ")"
             print text
 
         # The run argument.
@@ -146,8 +153,12 @@ class Select:
         if type(change_all) != int or (change_all != 0 and change_all != 1):
             raise RelaxBinError, ('change_all', change_all)
 
+        # The residue column.
+        if type(column) != int:
+            raise RelaxIntError, ('residue number column', column)
+
         # Execute the functional code.
-        self.__relax__.generic.selection.sel_read(run=run, file=file, dir=dir, change_all=change_all)
+        self.__relax__.generic.selection.sel_read(run=run, file=file, dir=dir, change_all=change_all, column=column)
 
 
     def res(self, run=None, num=None, name=None, change_all=0):
