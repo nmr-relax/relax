@@ -5483,9 +5483,10 @@ class Molmol:
                 elif (model == 'm2' or model == 'm4') and residue.te <= 100e-12:
                     self.classic_correlation_time(residue, residue.te, colour_start, colour_end, colour_list)
 
-                # All other residues are assumed to have a fast correlation time of zero (that's a statistical zero!).
+                # All other residues are assumed to have a fast correlation time of zero (statistically zero, not real zero!).
+                # Colour these bonds white.
                 else:
-                    self.classic_correlation_time(residue, 0.0, colour_start, colour_end, colour_list)
+                    self.classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
 
 
         # Timescale of slow motions.
