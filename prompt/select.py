@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003, 2004, 2006 Edward d'Auvergne                            #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,6 +26,38 @@ import help
 
 
 class Select:
+    boolean_doc = """
+        Boolean operators
+        ~~~~~~~~~~~~~~~~~
+
+        The 'boolean' keyword argument can be used to change how spin systems are selected.  The
+        allowed values are: 'OR', 'NOR', 'AND', 'NAND', 'XOR', 'XNOR'.  The following table details
+        how the selections will occur for the different boolean operators.
+        __________________________________________________________
+        |                    |   |   |   |   |   |   |   |   |   |
+        | Spin system        | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+        |____________________|___|___|___|___|___|___|___|___|___|
+        |                    |   |   |   |   |   |   |   |   |   |
+        | Original selection | 0 | 1 | 1 | 1 | 1 | 0 | 1 | 0 | 1 |
+        |                    |   |   |   |   |   |   |   |   |   |
+        | New selection      | 0 | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 0 |
+        |____________________|___|___|___|___|___|___|___|___|___|
+        |                    |   |   |   |   |   |   |   |   |   |
+        | OR                 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 |
+        |                    |   |   |   |   |   |   |   |   |   |
+        | NOR                | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
+        |                    |   |   |   |   |   |   |   |   |   |
+        | AND                | 0 | 1 | 1 | 1 | 1 | 0 | 0 | 0 | 0 |
+        |                    |   |   |   |   |   |   |   |   |   |
+        | NAND               | 1 | 0 | 0 | 0 | 0 | 1 | 1 | 1 | 1 |
+        |                    |   |   |   |   |   |   |   |   |   |
+        | XOR                | 0 | 0 | 0 | 0 | 0 | 1 | 1 | 0 | 1 |
+        |                    |   |   |   |   |   |   |   |   |   |
+        | XNOR               | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 1 | 0 |
+        |____________________|___|___|___|___|___|___|___|___|___|
+    """
+
+
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \
@@ -80,7 +112,7 @@ class Select:
         self.__relax__.generic.selection.sel_all(run=run)
 
 
-    def read(self, run=None, file=None, dir=None, change_all=0):
+    def read(self, run=None, file=None, dir=None, boolean='OR', change_all=0, column=0):
         """Function for selecting the residues contained in a file.
 
         Keyword Arguments
@@ -93,15 +125,17 @@ class Select:
 
         dir:  The directory where the file is located.
 
+        boolean:  The boolean operator specifying how residues should be selected.
+
         change_all:  A flag specifying if all other residues should be changed.
+
+        column:  The column containing the residue numbers (defaulting to 0, the first column).
 
 
         Description
         ~~~~~~~~~~~
 
-        The file must contain one residue number per line.  The number is taken as the first column
-        of the file and all other columns are ignored.  Empty lines and lines beginning with a hash
-        are ignored.
+        Empty lines and lines beginning with a hash are ignored.
 
         The 'change_all' flag argument default is zero meaning that all residues currently either
         selected or unselected will remain that way.  Setting the argument to 1 will cause all
@@ -111,10 +145,16 @@ class Select:
         Examples
         ~~~~~~~~
 
-        To select all residues in the file 'isolated_peaks', type:
+        To select all residues in the file 'isolated_peaks', type one of:
 
         relax> select.read('noe', 'isolated_peaks')
         relax> select.read(run='noe', file='isolated_peaks')
+
+        To select the residues in the second column of the relaxation data file 'r1.600' while
+        deselecting all other residues, type one of: 
+
+        relax> select.read('test', 'r1.600', change_all=1, column=1)
+        relax> select.read(run='test', file='r1.600', change_all=1, column=1)
         """
 
         # Function intro test.
@@ -123,7 +163,9 @@ class Select:
             text = text + "run=" + `run`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
-            text = text + ", change_all=" + `change_all` + ")"
+            text = text + ", boolean=" + `boolean`
+            text = text + ", change_all=" + `change_all`
+            text = text + ", column=" + `column` + ")"
             print text
 
         # The run argument.
@@ -142,15 +184,23 @@ class Select:
         if dir != None and type(dir) != str:
             raise RelaxNoneStrError, ('directory name', dir)
 
+        # Boolean operator.
+        if type(boolean) != str:
+            raise RelaxStrError, ('boolean operator', boolean)
+
         # Change all flag.
         if type(change_all) != int or (change_all != 0 and change_all != 1):
             raise RelaxBinError, ('change_all', change_all)
 
+        # The residue column.
+        if type(column) != int:
+            raise RelaxIntError, ('residue number column', column)
+
         # Execute the functional code.
-        self.__relax__.generic.selection.sel_read(run=run, file=file, dir=dir, change_all=change_all)
+        self.__relax__.generic.selection.sel_read(run=run, file=file, dir=dir, boolean=boolean, change_all=change_all, column=column)
 
 
-    def res(self, run=None, num=None, name=None, change_all=0):
+    def res(self, run=None, num=None, name=None, boolean='OR', change_all=0):
         """Function for selecting specific residues.
 
         Keyword Arguments
@@ -162,6 +212,8 @@ class Select:
         num:  The residue number.
 
         name:  The residue name.
+
+        boolean:  The boolean operator specifying how residues should be selected.
 
         change_all:  A flag specifying if all other residues should be changed.
 
@@ -204,6 +256,7 @@ class Select:
             text = text + "run=" + `run`
             text = text + ", num=" + `num`
             text = text + ", name=" + `name`
+            text = text + ", boolean=" + `boolean`
             text = text + ", change_all=" + `change_all` + ")"
             print text
 
@@ -227,12 +280,16 @@ class Select:
         if num == None and name == None:
             raise RelaxError, "At least one of the number or name arguments is required."
 
+        # Boolean operator.
+        if type(boolean) != str:
+            raise RelaxStrError, ('boolean operator', boolean)
+
         # Change all flag.
         if type(change_all) != int or (change_all != 0 and change_all != 1):
             raise RelaxBinError, ('change_all', change_all)
 
         # Execute the functional code.
-        self.__relax__.generic.selection.sel_res(run=run, num=num, name=name, change_all=change_all)
+        self.__relax__.generic.selection.sel_res(run=run, num=num, name=name, boolean=boolean, change_all=change_all)
 
 
     def reverse(self, run=None):
@@ -269,3 +326,11 @@ class Select:
 
         # Execute the functional code.
         self.__relax__.generic.selection.reverse(run=run)
+
+
+
+    # Docstring modification.
+    #########################
+
+    # Read function.
+    read.__doc__ = read.__doc__ + "\n\n" + boolean_doc + "\n"
