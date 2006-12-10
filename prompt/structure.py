@@ -193,13 +193,13 @@ class Structure:
         ~~~~~~~~~~~
 
         This function creates a PDB file containing an artificial vectors, the length of which
-        default to the length argument of 100 Angstrom.  A structure must have previously been read
+        default to the length argument of 20 Angstrom.  A structure must have previously been read
         into relax.  The origin of the vector distribution is located at the centre of mass (of the
         selected residues).  This vector distribution PDB file can subsequently be read into any
         molecular viewer.
 
-        Because of the symmetry of the diffusion tensor, reversing the orientation of the XH bond
-        vector has no effect.  Therefore by setting the symmetry flag, two chains 'A' and 'B' will
+        Because of the symmetry of the diffusion tensor reversing the orientation of the XH bond
+        vector has no effect.  Therefore by setting the symmetry flag two chains 'A' and 'B' will
         be added to the PDB file whereby chain 'B' is chain 'A' with the XH bonds reversed.
         """
 
