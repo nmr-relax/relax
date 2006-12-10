@@ -653,8 +653,8 @@ class DiffTensorElement(Element):
         (target), its error (target+'_err'), or all Monte Carlo simulations (target+'_sim') are
         updated.
 
-        @param name:            The parameter name which is being set in the __setattr__() function.
-        @type name:             str
+        @param base_name:       The parameter name which is being set in the __setattr__() function.
+        @type base_name:        str
         @param target:          The name of the object to update.
         @type target:           str
         @param update_if_set:   If the parameter being set by the __setattr__() function is not
