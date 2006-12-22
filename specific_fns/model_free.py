@@ -1056,7 +1056,7 @@ class Model_free(Common_functions):
 
         # Test if the diffusion tensor data is loaded.
         if not self.relax.data.diff.has_key(self.run):
-            return None
+            raise RelaxNoTensorError, self.run
 
         # 'diff' parameter set.
         if mf_all_fixed:
