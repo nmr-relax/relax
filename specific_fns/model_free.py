@@ -5244,15 +5244,15 @@ class Molmol:
         |                |             | on the timescale of the motions.  This is because these   |
         |                |             | single timescale models can, at times, be perfect         |
         |                |             | approximations to the more complex two timescale models.  |
-        |                |             | Hence if te is less than 100 ps, S2 is plotted. Otherwise |
+        |                |             | Hence if te is less than 200 ps, S2 is plotted. Otherwise |
         |                |             | the peptide bond is coloured white.  The default colour   |
         |                |             | gradient  is the same as that for S2.                     |
         |                |             |                                                           |
         | Amplitude of   | 'amp_slow'  | Model independent display of the amplite of slow motions, |
-        | slow motions.  |             | arbitrarily defined as motions slower than 100 ps.  For   |
+        | slow motions.  |             | arbitrarily defined as motions slower than 200 ps.  For   |
         |                |             | residues described by model-free models m5 to m8, the     |
-        |                |             | order parameter S2 is plotted if ts > 100 ps.  For models |
-        |                |             | m1 to m4, S2 is plotted if te > 100 ps.  The default      |
+        |                |             | order parameter S2 is plotted if ts > 200 ps.  For models |
+        |                |             | m1 to m4, S2 is plotted if te > 200 ps.  The default      |
         |                |             | colour gradient is the same as that for S2.               |
         |                |             |                                                           |
         | te.            | 'te'        | The correlation time, te.  The default colour gradient    |
@@ -5267,14 +5267,14 @@ class Molmol:
         | Timescale of   | 'time_fast' | Model independent display of the timescale of fast        |
         | fast motions   |             | motions.  For models m5 to m8, only the parameter tf is   |
         |                |             | plotted.  For models m2 and m4, the parameter te is       |
-        |                |             | plotted only if it is less than 100 ps.  All other        |
+        |                |             | plotted only if it is less than 200 ps.  All other        |
         |                |             | residues are assumed to have a correlation time of zero.  |
         |                |             | The default colour gradient is the same as that of te.    |
         |                |             |                                                           |
         | Timescale of   | 'time_slow' | Model independent display of the timescale of slow        |
         | slow motions   |             | motions.  For models m5 to m8, only the parameter ts is   |
         |                |             | plotted.  For models m2 and m4, the parameter te is       |
-        |                |             | plotted only if it is greater than 100 ps.  All other     |
+        |                |             | plotted only if it is greater than 200 ps.  All other     |
         |                |             | residues are coloured white.  The default colour gradient |
         |                |             | is the same as that of ts.                                |
         |                |             |                                                           |
@@ -5370,12 +5370,12 @@ class Molmol:
                 elif model == 'm1' or model == 'm3':
                     self.classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
 
-                # S2 width and colour (for models m2 and m4 when te <= 100 ps).
-                elif (model == 'm2' or model == 'm4') and residue.te <= 100e-12:
+                # S2 width and colour (for models m2 and m4 when te <= 200 ps).
+                elif (model == 'm2' or model == 'm4') and residue.te <= 200e-12:
                     self.classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
 
-                # White bonds (for models m2 and m4 when te > 100 ps).
-                elif (model == 'm2' or model == 'm4') and residue.te > 100e-12:
+                # White bonds (for models m2 and m4 when te > 200 ps).
+                elif (model == 'm2' or model == 'm4') and residue.te > 200e-12:
                     self.classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
 
                 # Catch errors.
@@ -5403,8 +5403,8 @@ class Molmol:
                 if hasattr(residue, 'ts') and residue.ts != None:
                     self.classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
 
-                # S2 width and colour (for models m2 and m4 when te > 100 ps).
-                elif (model == 'm2' or model == 'm4') and residue.te > 100 * 1e-12:
+                # S2 width and colour (for models m2 and m4 when te > 200 ps).
+                elif (model == 'm2' or model == 'm4') and residue.te > 200 * 1e-12:
                     self.classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
 
                 # White bonds for fast motions.
@@ -5491,8 +5491,8 @@ class Molmol:
                 if hasattr(residue, 'tf') and residue.tf != None:
                     self.classic_correlation_time(residue, residue.tf, colour_start, colour_end, colour_list)
 
-                # te width and colour (for models m2 and m4 when te <= 100 ps).
-                elif (model == 'm2' or model == 'm4') and residue.te <= 100e-12:
+                # te width and colour (for models m2 and m4 when te <= 200 ps).
+                elif (model == 'm2' or model == 'm4') and residue.te <= 200e-12:
                     self.classic_correlation_time(residue, residue.te, colour_start, colour_end, colour_list)
 
                 # All other residues are assumed to have a fast correlation time of zero (statistically zero, not real zero!).
@@ -5527,8 +5527,8 @@ class Molmol:
                 if hasattr(residue, 'ts') and residue.ts != None:
                     self.classic_correlation_time(residue, residue.ts / 10.0, colour_start, colour_end, colour_list)
 
-                # te width and colour (for models m2 and m4 when te > 100 ps).
-                elif (model == 'm2' or model == 'm4') and residue.te > 100e-12:
+                # te width and colour (for models m2 and m4 when te > 200 ps).
+                elif (model == 'm2' or model == 'm4') and residue.te > 200e-12:
                     self.classic_correlation_time(residue, residue.te / 10.0, colour_start, colour_end, colour_list)
 
                 # White bonds for the rest.
