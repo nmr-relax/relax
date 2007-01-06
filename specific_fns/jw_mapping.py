@@ -529,9 +529,6 @@ class Jw_mapping(Common_functions):
 
         # Selected flag and data set.
         file.write("%-9s %-9s " % (select, data_set))
-        if not select:
-            file.write("\n")
-            return
 
         # Nucleus.
         file.write("%-7s " % nucleus)
@@ -629,11 +626,6 @@ class Jw_mapping(Common_functions):
             # Reassign data structure.
             data = self.relax.data.res[self.run][i]
 
-            # Unselected residues.
-            if not data.select:
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=0, data_set='value')
-                continue
-
             # J(0).
             j0 = None
             if hasattr(data, 'j0'):
@@ -696,11 +688,6 @@ class Jw_mapping(Common_functions):
             # Reassign data structure.
             data = self.relax.data.res[self.run][i]
 
-            # Unselected residues.
-            if not data.select:
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=0, data_set='error')
-                continue
-
             # J(0).
             j0 = None
             if hasattr(data, 'j0_err'):
@@ -746,11 +733,6 @@ class Jw_mapping(Common_functions):
             for j in xrange(len(self.relax.data.res[self.run])):
                 # Reassign data structure.
                 data = self.relax.data.res[self.run][j]
-
-                # Unselected residues.
-                if not data.select:
-                    self.write_columnar_line(file=file, num=data.num, name=data.name, select=0, data_set='sim_'+`i`)
-                    continue
 
                 # J(0).
                 j0 = None
