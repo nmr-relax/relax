@@ -259,7 +259,7 @@ class Selection:
                     raise RelaxError, "Unknown boolean operator " + `boolean`
 
                 # Match flag.
-                if new_selection:
+                if new_select:
                     no_match = 0
 
         # No residue matched.
