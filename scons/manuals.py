@@ -389,6 +389,9 @@ def fetch_docstrings(target, source, env):
     # Get the docstrings.
     Fetch_docstrings(env['LATEX_DIR'] + sep + 'docstring.tex')
 
+    # Delete the Fetch_docstrings class.  This allows the loaded dll files to be deleted through python on MS Windows.
+    del Fetch_docstrings
+
     # Final print out.
     print "\n\n\n"
 
