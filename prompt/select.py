@@ -26,7 +26,7 @@ import help
 
 
 class Select:
-    boolean_doc = """
+    __boolean_doc = """
         Boolean operators
         ~~~~~~~~~~~~~~~~~
 
@@ -333,4 +333,4 @@ class Select:
     #########################
 
     # Read function.
-    read.__doc__ = read.__doc__ + "\n\n" + boolean_doc + "\n"
+    read.__doc__ = read.__doc__ + "\n\n" + __boolean_doc + "\n"
