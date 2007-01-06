@@ -2490,10 +2490,6 @@ class Model_free(Common_functions):
 
         # Loop over the sequence.
         for i in xrange(len(self.relax.data.res[run])):
-            # Skip unselected residues.
-            if not self.relax.data.res[run][i].select:
-                continue
-
             # If res_num is set, then skip all other residues.
             if res_num != None and res_num != self.relax.data.res[run][i].num:
                 continue
@@ -3372,8 +3368,8 @@ class Model_free(Common_functions):
             # Reassign data structure.
             data = self.relax.data.res[self.run][self.res_index]
 
-            # Skip unselected residues.
-            if not data.select:
+            # Backwards compatibility for the reading of the results file from versions 1.2.0 to 1.2.9.
+            if len(self.file_line) == 3:
                 continue
 
             # Set the nucleus type.
@@ -4549,11 +4545,6 @@ class Model_free(Common_functions):
         # Data set.
         file.write("%-9s " % data_set)
 
-        # Skip the rest of the line if the residue is not selected.
-        if not select:
-            file.write("\n")
-            return
-
         # Nucleus.
         file.write("%-7s " % nucleus)
 
@@ -4710,11 +4701,6 @@ class Model_free(Common_functions):
         for i in xrange(len(self.relax.data.res[self.run])):
             # Reassign data structure.
             data = self.relax.data.res[self.run][i]
-
-            # Unselected residues.
-            if not data.select:
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=0, data_set='value')
-                continue
 
             # Model details.
             model = None
@@ -4900,11 +4886,6 @@ class Model_free(Common_functions):
                 # Reassign data structure.
                 data = self.relax.data.res[self.run][i]
 
-                # Unselected residues.
-                if not data.select:
-                    self.write_columnar_line(file=file, num=data.num, name=data.name, select=0, data_set='error')
-                    continue
-
                 # Model details.
                 model = None
                 if hasattr(data, 'model'):
@@ -5036,11 +5017,6 @@ class Model_free(Common_functions):
                 for j in xrange(len(self.relax.data.res[self.run])):
                     # Reassign data structure.
                     data = self.relax.data.res[self.run][j]
-
-                    # Unselected residues.
-                    if not data.select:
-                        self.write_columnar_line(file=file, num=data.num, name=data.name, select=0, data_set='sim_'+`i`)
-                        continue
 
                     # Model details.
                     model = None
