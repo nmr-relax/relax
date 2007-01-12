@@ -1,3 +1,40 @@
+Version 1.2.10
+(12 January 2007, from /1.2)
+http://svn.gna.org/svn/relax/tags/1.2.10
+
+    Features:
+        * Addition of tests to the 'full_analysis.py' script for the identification of convergence.
+        * Different columns can be specified for the residue number in the 'select.read()' and 'unselect.read()' user functions.
+        * More advanced selection of spin systems or residues is possible through the use of the Boolean operators 'OR', 'NOR', 'AND', 'NAND', 'XOR', or 'XNOR'.
+        * Addition of a sample script for the creation a LaTeX longtable of the model-free results.
+        * The rows of the model-free and reduced spectral density results files are no longer truncated for deselected spin systems, hence all data is now stored in the results file. (see bug #8059)
+
+    Changes:
+        * The relax core design diagram in the development chapter of the manual has been updated.
+        * Three flow diagrams have been added to the relax manual detailing the steps of different model-free analysis protocols.      
+        * Spin systems are now identified when deselected by the 'eliminate()' user function.
+        * The model-free Molmol cutoff for fast and slow motions has been changed from 100 to 200 ps.
+        * For the clarification of bug #8059 a RelaxNoTensorError is raised instead of returning None when no diffusion tensor data is present. 
+        * The Scons target 'source_dist' now creates and GPG signs both the 'tar.bz2' and 'zip' source distribution packages. (see task #4087)
+
+    Bugfixes:
+        * The C modules can now be compiled on Mac OS X. (see bug #7670)
+        * The order of the proton and heteronucleus dimensions and number of header lines in the XEasy text file is now automatically detected. (see bug #7676)
+        * The 'full_analysis.py' script now throws a RelaxError if only one round of optimisation of the global model has been executed. (see bug #7787)
+        * The model selection of the global model in the 'full_analysis.py' script has been fixed. (see bug #7863)
+        * Monte Carlo simulations no longer fail if the local tm global model has been selected in the 'full_analysis.py' script. (see bug #7875)
+        * The Monte Carlo simulation data in the model-free results file is now correctly read back into the program. (see bug #7755)
+        * The Monte Carlo simulation state used to be turned on after reading a results file containing simulations. (see bug #7890)
+        * After reading model-free results files, model selection would fail as the heteronucleus and proton data structures did not exist. (see bug #7891)
+        * The model-free Molmol fast correlation time macro (te < 100 ps and tf) no longer sets the bond length to zero when no parameter is present.
+        * The docstring fetching Scons target no longer fails. (see bug #8182)
+        * The model-free 'S2 difference stored in a new run' test of the test suite now passes. (see bug #8183)
+        * The 'source_dist' Scons target now works on MS Windows. (see bug #7678)
+        * The MS Windows BAT file execution failure "python: can't open file 'C:\Program': [Errno 2] No such file or directory" has been fixed. (see bug #8201)
+        * The reading in of the results files from relax versions 1.2.0 to 1.2.9 in which deselected spin system lines are truncated now works. (see bug #8248)
+
+
+
 Version 1.2.9
 (9 November 2006, from /1.2)
 http://svn.gna.org/svn/relax/tags/1.2.9
