@@ -125,12 +125,12 @@ SYMLINK = BIN_PATH + sep + 'relax'
 #########################
 
 if SYSTEM == 'Windows':
-    BIN_FILE = 'relax-' + version + '.' + SYS + '.zip'
-    SRC_FILE = 'relax-' + version + '.src.zip'
+    BIN_FILE = 'relax-' + version + '.' + SYS
+    SRC_FILE = 'relax-' + version + '.src'
     DIST_TYPE = 'zip'
 else:
-    BIN_FILE = 'relax-' + version + '.' + SYS + '.' + MACH + '.tar.bz2'
-    SRC_FILE = 'relax-' + version + '.src.tar.bz2'
+    BIN_FILE = 'relax-' + version + '.' + SYS + '.' + MACH
+    SRC_FILE = 'relax-' + version + '.src'
     DIST_TYPE = 'tar'
 
 
@@ -201,7 +201,7 @@ class Main:
         binary_dist_env.dummy(target='binary_dist', source=None)
         binary_dist_env.Depends('binary_dist', 'version_check')           # First check the program version number.
         binary_dist_env.Depends('binary_dist', self.relax_fit_object)     # Compile the C code.
-        binary_dist_env.Depends('binary_dist', 'user_manual_pdf')         # Compile the PDF version of the user manual.
+        #binary_dist_env.Depends('binary_dist', 'user_manual_pdf')         # Compile the PDF version of the user manual.
         binary_dist_env.Depends('binary_dist', 'manual_clean_nodeps')     # Clean up the temporary manual files.
         binary_dist_env.Depends('binary_dist', 'clean_temp')              # Then clean up all other temporary files.
         binary_dist_env.Depends('binary_dist', 'package_bin')             # Package the binary distribution.
@@ -211,7 +211,7 @@ class Main:
         source_dist_env = Environment(BUILDERS={'dummy' : Builder(action=self.dummy)})
         source_dist_env.dummy(target='source_dist', source=None)
         source_dist_env.Depends('source_dist', 'version_check')           # First check the program version number.
-        source_dist_env.Depends('source_dist', 'user_manual_pdf')         # Compile the PDF version of the user manual.
+        #source_dist_env.Depends('source_dist', 'user_manual_pdf')         # Compile the PDF version of the user manual.
         source_dist_env.Depends('source_dist', 'manual_clean_nodeps')     # Clean up the temporary manual files.
         source_dist_env.Depends('source_dist', 'clean')                   # Then clean up the sources.
         source_dist_env.Depends('source_dist', 'package_src')             # Package the source distribution.
@@ -227,19 +227,21 @@ class Main:
         # Target for packaging the source distribution.
         package_src_env = Environment(BUILDERS={'archive' : Builder(action=package)},
                                       DIST_FILE=SRC_FILE,
-                                      DIST_TYPE=DIST_TYPE)
+                                      DIST_TYPE='ALL')
         package_src_env.archive(target='package_src', source=None)
         package_src_env.Depends('package_src', 'version_check')     # Check the program version number first.
 
         # Target for creating a GPG signature of the binary distribution file.
         gpg_bin_env = Environment(BUILDERS={'sign' : Builder(action=gpg_sign)},
-                                  DIST_FILE=BIN_FILE)
+                                  DIST_FILE=BIN_FILE,
+                                  DIST_TYPE=DIST_TYPE)
         gpg_bin_env.sign(target='gpg_bin', source=None)
         gpg_bin_env.Depends('gpg_bin', 'version_check')     # Check the program version number before signing.
 
         # Target for creating a GPG signature of the source distribution file.
         gpg_src_env = Environment(BUILDERS={'sign' : Builder(action=gpg_sign)},
-                                  DIST_FILE=SRC_FILE)
+                                  DIST_FILE=SRC_FILE,
+                                  DIST_TYPE='ALL')
         gpg_src_env.sign(target='gpg_src', source=None)
         gpg_src_env.Depends('gpg_src', 'version_check')     # Check the program version number before signing.
 
