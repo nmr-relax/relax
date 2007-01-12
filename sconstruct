@@ -201,7 +201,7 @@ class Main:
         binary_dist_env.dummy(target='binary_dist', source=None)
         binary_dist_env.Depends('binary_dist', 'version_check')           # First check the program version number.
         binary_dist_env.Depends('binary_dist', self.relax_fit_object)     # Compile the C code.
-        #binary_dist_env.Depends('binary_dist', 'user_manual_pdf')         # Compile the PDF version of the user manual.
+        binary_dist_env.Depends('binary_dist', 'user_manual_pdf')         # Compile the PDF version of the user manual.
         binary_dist_env.Depends('binary_dist', 'manual_clean_nodeps')     # Clean up the temporary manual files.
         binary_dist_env.Depends('binary_dist', 'clean_temp')              # Then clean up all other temporary files.
         binary_dist_env.Depends('binary_dist', 'package_bin')             # Package the binary distribution.
@@ -211,7 +211,7 @@ class Main:
         source_dist_env = Environment(BUILDERS={'dummy' : Builder(action=self.dummy)})
         source_dist_env.dummy(target='source_dist', source=None)
         source_dist_env.Depends('source_dist', 'version_check')           # First check the program version number.
-        #source_dist_env.Depends('source_dist', 'user_manual_pdf')         # Compile the PDF version of the user manual.
+        source_dist_env.Depends('source_dist', 'user_manual_pdf')         # Compile the PDF version of the user manual.
         source_dist_env.Depends('source_dist', 'manual_clean_nodeps')     # Clean up the temporary manual files.
         source_dist_env.Depends('source_dist', 'clean')                   # Then clean up the sources.
         source_dist_env.Depends('source_dist', 'package_src')             # Package the source distribution.
