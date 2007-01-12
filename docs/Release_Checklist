@@ -49,7 +49,7 @@ $ rsync --delete -av --rsh="ssh" . bugman@download.gna.org:/upload/relax/
 
 $ scons user_manual_html
 
-Replace the old manual with the new in the CVS homepage repository and commit the new manual.
+Replace the old manual with the new in the http://nmr-relax.com SVN repository (http://svn.gna.org/viewcvs/relax/website) and commit the new manual.
 
 
 
@@ -57,7 +57,7 @@ Replace the old manual with the new in the CVS homepage repository and commit th
 
 $ scons api_manual_html
 
-Replace the old API documentation in the CVS sources and commit the new files.
+Replace the old API documentation in the http://nmr-relax.com SVN repository (http://svn.gna.org/viewcvs/relax/website) and commit the new files.
 
 
 
