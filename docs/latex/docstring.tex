@@ -1648,7 +1648,7 @@
    &   \\
   More and Thuente line search & \quotecmd{\^{}[Mm][Tt]} or \quotecmd{\^{}[Mm]ore[ \_][Tt]huente\$}  \\
    &   \\
-  No line search & \quotecmd{\^{}[Nn]o [Ll]ine [Ss]earch\$}  \\
+  No line search & \quotecmd{\^{}[Nn]one\$}  \\
  \bottomrule 
  \end{tabular} 
  \end{center} 
@@ -1662,7 +1662,7 @@
  \toprule 
   Hessian modification & Patterns  \\ 
  \midrule 
-  Unmodified Hessian & \quotecmd{\^{}[Nn]o [Hh]essian [Mm]od}  \\
+  Unmodified Hessian & \quotecmd{[Nn]one}  \\
    &   \\
   Eigenvalue\index{eigenvalues} modification & \quotecmd{\^{}[Ee]igen}  \\
    &   \\
@@ -1677,6 +1677,9 @@
  \bottomrule 
  \end{tabular} 
  \end{center} 
+  
+
+ As both the line search algorithm and Hessian modification can be specified for Newton\index{minimisation techniques!Newton} optimisation, supplying the option \quotecmd{None} may appear to be ambiguous.  In fact, the Hessian takes precedence over the line search.  Hence supplying the option \quotecmd{None} with the Newton\index{minimisation techniques!Newton} algorithm selects the unmodified Hessian.  Supplying \quotecmd{None} twice will turn off the Hessian modification and no step length selection (or line search) will be performed. 
   
 
  Hessian type, these are used in a few of the trust region methods including the Dogleg\index{minimisation techniques!dogleg} and Exact\index{minimisation techniques!exact trust region} trust region algorithms.  In these cases, when the Hessian type is set to Newton,\index{minimisation techniques!Newton} a Hessian modification can also be supplied as above.  The default Hessian type is Newton,\index{minimisation techniques!Newton} and the default Hessian modification when Newton\index{minimisation techniques!Newton} is selected is the GMW algorithm. 
@@ -2436,15 +2439,15 @@
    &  & on the timescale of the motions.  This is because these  \\
    &  & single timescale models can, at times, be perfect  \\
    &  & approximations to the more complex two timescale models.  \\
-   &  & Hence if $\tau_e$ is less than 100 ps, $S^2$ is plotted.\index{plot} Otherwise  \\
+   &  & Hence if $\tau_e$ is less than 200 ps, $S^2$ is plotted.\index{plot} Otherwise  \\
    &  & the peptide bond is coloured white.  The default colour  \\
    &  & gradient  is the same as that for $S^2$.  \\
    &  &   \\
   Amplitude of & \quotecmd{amp\_slow} & Model independent display\index{display} of the amplite of slow motions,  \\
-  slow motions. &  & arbitrarily defined as motions slower than 100 ps.  For  \\
+  slow motions. &  & arbitrarily defined as motions slower than 200 ps.  For  \\
    &  & residues described by model-free models m5 to m8, the  \\
-   &  & order\index{order parameter} parameter $S^2$ is plotted\index{plot} if $\tau_s$ $>$ 100 ps.  For models  \\
-   &  & m1 to m4, $S^2$ is plotted\index{plot} if $\tau_e$ $>$ 100 ps.  The default  \\
+   &  & order\index{order parameter} parameter $S^2$ is plotted\index{plot} if $\tau_s$ $>$ 200 ps.  For models  \\
+   &  & m1 to m4, $S^2$ is plotted\index{plot} if $\tau_e$ $>$ 200 ps.  The default  \\
    &  & colour gradient is the same as that for $S^2$.  \\
    &  &   \\
   $\tau_e$. & \quotecmd{te} & The correlation\index{correlation time} time, $\tau_e$.  The default colour gradient  \\
@@ -2459,14 +2462,14 @@
   Timescale of & \quotecmd{time\_fast} & Model independent display\index{display} of the timescale of fast  \\
   fast motions &  & motions.  For models m5 to m8, only the parameter $\tau_f$ is  \\
    &  & plotted.\index{plot}  For models m2 and m4, the parameter $\tau_e$ is  \\
-   &  & plotted\index{plot} only if it is less than 100 ps.  All other  \\
+   &  & plotted\index{plot} only if it is less than 200 ps.  All other  \\
    &  & residues are assumed to have a correlation\index{correlation time} time of zero.  \\
    &  & The default colour gradient is the same as that of $\tau_e$.  \\
    &  &   \\
   Timescale of & \quotecmd{time\_slow} & Model independent display\index{display} of the timescale of slow  \\
   slow motions &  & motions.  For models m5 to m8, only the parameter $\tau_s$ is  \\
    &  & plotted.\index{plot}  For models m2 and m4, the parameter $\tau_e$ is  \\
-   &  & plotted\index{plot} only if it is greater than 100 ps.  All other  \\
+   &  & plotted\index{plot} only if it is greater than 200 ps.  All other  \\
    &  & residues are coloured white.  The default colour gradient  \\
    &  & is the same as that of $\tau_s$.  \\
    &  &   \\
@@ -3991,7 +3994,7 @@
 
  \newpage 
 
- \subsection{pdb.read} 
+ \subsection{pdb} 
 
   
  \subsubsection{Synopsis} 
@@ -4002,7 +4005,7 @@
   
  \subsubsection{Defaults} 
 
- \textsf{\textbf{pdb.read}(self, run=None, file=None, dir=None, model=None, load\_seq=1)} 
+ \textsf{\textbf{pdb}(self, run=None, file=None, dir=None, model=None, heteronuc=`N', proton=`H', load\_seq=1)} 
 
   
  \subsubsection{Keyword Arguments} 
@@ -4014,6 +4017,10 @@
  \keyword{ dir:}  The directory where the file is located.   
 
  \keyword{ model:}  The PDB\index{PDB} model number.   
+
+ \keyword{ heteronuc:}  The name of the heteronucleus as specified in the PDB\index{PDB} file.   
+
+ \keyword{ proton:}  The name of the proton as specified in the PDB\index{PDB} file.   
 
  \keyword{ load\_seq:}  A flag specifying whether the sequence\index{sequence} should be loaded from the PDB\index{PDB} file.  
 
@@ -4028,86 +4035,25 @@
  To load the sequence\index{sequence} from the PDB\index{PDB} file, set the \quotecmd{load\_seq} flag to 1.  If the sequence\index{sequence} has previously been loaded, then this flag will be ignored. 
   
 
+ Once the PDB\index{PDB} structures are loaded, unit XH bond vectors will be calculated.  The vectors are calculated using the atomic coordinates of the atoms specified by the arguments heteronuc and proton.  If more than one model structure is loaded, the unit XH vectors for each model will be calculated and the final unit XH vector will be taken as the average. 
+  
+
   
  \subsubsection{Example} 
 
- To load all structures from the PDB\index{PDB} file \quotecmd{test.pdb} in the directory \quotecmd{\~{}/pdb} for use in the model-free analysis run \quotecmd{m8}, type: 
+ To load all structures from the PDB\index{PDB} file \quotecmd{test.pdb} in the directory \quotecmd{\~{}/pdb} for use in the model-free analysis run \quotecmd{m8} where the heteronucleus in the PDB\index{PDB} file is \quotecmd{N} and the proton is \quotecmd{H}, type: 
   
 
- \example{relax> pdb.read(`m8', `test.pdb', `\~{}/pdb', 1)} 
+ \example{relax> pdb(`m8', `test.pdb', `\~{}/pdb', 1, `N', `H')} 
 
- \example{relax> pdb.read(run=`m8', file=`test.pdb', dir=`pdb', model=1)} 
+ \example{relax> pdb(run=`m8', file=`test.pdb', dir=`pdb', model=1, heteronuc=`N', proton=`H')} 
 
  To load the 10$^\mathrm{th}$ model from the file \quotecmd{test.pdb}, use: 
   
 
- \example{relax> pdb.read(`m1', `test.pdb', model=10)} 
+ \example{relax> pdb(`m1', `test.pdb', model=10)} 
 
- \example{relax> pdb.read(run=`m1', file=`test.pdb', model=10)} 
-
-  
-
- \newpage 
-
- \subsection{pdb.vectors} 
-
-  
- \subsubsection{Synopsis} 
-
- Function for calculating/extracting XH vectors from the structure. 
-  
-
-  
- \subsubsection{Defaults} 
-
- \textsf{\textbf{pdb.vectors}(self, run=None, heteronuc=`N', proton=`H', res\_num=None, res\_name=None)} 
-
-  
- \subsubsection{Keyword arguments} 
-
- \keyword{run:}  The run to assign the vectors to.   
-
- \keyword{ heteronuc:}  The heteronucleus name as specified in the PDB\index{PDB} file.   
-
- \keyword{ proton:}  The name of the proton as specified in the PDB\index{PDB} file.   
-
- \keyword{ res\_num:}  The residue number.   
-
- \keyword{ res\_name:}  The name of the residue.  
-
-  
-
-  
- \subsubsection{Description} 
-
- Once the PDB\index{PDB} structures have been loaded, the unit XH bond vectors must be calculated for the non-spherical diffusion models.  The vectors are calculated using the atomic coordinates of the atoms specified by the arguments heteronuc and proton.  If more than one model structure is loaded, the unit XH vectors for each model will be calculated and the final unit XH vector will be taken as the average. 
-  
-
-  
- \subsubsection{Example} 
-
- To calculate the XH vectors of the backbone amide nitrogens where in the PDB\index{PDB} file the backbone nitrogen is called \quotecmd{N} and the attached proton is called \quotecmd{H}, assuming the run \quotecmd{test}, type: 
-  
-
- \example{relax> pdb.vectors(`test')} 
-
- \example{relax> pdb.vectors(`test', `N')} 
-
- \example{relax> pdb.vectors(`test', `N', `H')} 
-
- \example{relax> pdb.vectors(`test', heteronuc=`N', proton=`H')} 
-
- If the attached proton is called \quotecmd{HN}, type: 
-  
-
- \example{relax> pdb.vectors(`test', proton=`HN')} 
-
- If you are working with RNA, you can use the residue name identifier to calculate the vectors for each residue separately.  For example: 
-  
-
- \example{relax> pdb.vectors(`m1', `N1', `H1', res\_name=`G')} 
-
- \example{relax> pdb.vectors(`m1', `N3', `H3', res\_name=`U')} 
+ \example{relax> pdb(run=`m1', file=`test.pdb', model=10)} 
 
   
 
@@ -4829,7 +4775,7 @@
   
  \subsubsection{Defaults} 
 
- \textsf{\textbf{select.read}(self, run=None, file=None, dir=None, change\_all=0)} 
+ \textsf{\textbf{select.read}(self, run=None, file=None, dir=None, boolean=`OR', change\_all=0, column=0)} 
 
   
  \subsubsection{Keyword Arguments} 
@@ -4840,14 +4786,18 @@
 
  \keyword{ dir:}  The directory where the file is located.   
 
- \keyword{ change\_all:}  A flag specifying if all other residues should be changed.  
+ \keyword{ boolean:}  The boolean operator specifying how residues should be selected.   
+
+ \keyword{ change\_all:}  A flag specifying if all other residues should be changed.   
+
+ \keyword{ column:}  The column containing the residue numbers (defaulting to 0, the first column).  
 
   
 
   
  \subsubsection{Description} 
 
- The file must contain one residue number per line.  The number is taken as the first column of the file and all other columns are ignored.  Empty lines and lines beginning with a hash are ignored. 
+ Empty lines and lines beginning with a hash are ignored. 
   
 
  The \quotecmd{change\_all} flag argument default is zero meaning that all residues currently either selected or unselected will remain that way.  Setting the argument to 1 will cause all residues not specified in the file to be unselected. 
@@ -4856,12 +4806,41 @@
   
  \subsubsection{Examples} 
 
- To select all residues in the file \quotecmd{isolated\_peaks}, type: 
+ To select all residues in the file \quotecmd{isolated\_peaks}, type one of: 
   
 
  \example{relax> select.read(`noe', `isolated\_peaks')} 
 
  \example{relax> select.read(run=`noe', file=`isolated\_peaks')} 
+
+ To select the residues in the second column of the relaxation\index{relaxation} data file \quotecmd{r1.600} while deselecting all other residues, type one of:  
+  
+
+ \example{relax> select.read(`test', `r1.600', change\_all=1, column=1)} 
+
+ \example{relax> select.read(run=`test', file=`r1.600', change\_all=1, column=1)} 
+
+  
+ \subsubsection{Boolean operators} 
+
+ The \quotecmd{boolean} keyword argument can be used to change how spin systems are selected.  The allowed values are: \quotecmd{OR}, \quotecmd{NOR}, \quotecmd{AND}, \quotecmd{NAND}, \quotecmd{XOR}, \quotecmd{XNOR}.  The following table details how the selections will occur for the different boolean operators. 
+  
+
+ \begin{center} 
+ \begin{tabular}{llllllllll} 
+ \toprule 
+  Spin system & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9  \\ 
+ \midrule 
+  Original selection & 0 & 1 & 1 & 1 & 1 & 0 & 1 & 0 & 1  \\
+   &  &  &  &  &  &  &  &  &   \\
+  New selection & 0 & 1 & 1 & 1 & 1 & 1 & 0 & 0 & 0  \\
+ \bottomrule 
+ \end{tabular} 
+ \end{center} 
+  
+
+ | OR                 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 | |                    |   |   |   |   |   |   |   |   |   | | NOR                | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | |                    |   |   |   |   |   |   |   |   |   | | AND                | 0 | 1 | 1 | 1 | 1 | 0 | 0 | 0 | 0 | |                    |   |   |   |   |   |   |   |   |   | | NAND               | 1 | 0 | 0 | 0 | 0 | 1 | 1 | 1 | 1 | |                    |   |   |   |   |   |   |   |   |   | | XOR                | 0 | 0 | 0 | 0 | 0 | 1 | 1 | 0 | 1 | |                    |   |   |   |   |   |   |   |   |   | | XNOR               | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 1 | 0 | |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_|\_\_\_|\_\_\_|\_\_\_|\_\_\_|\_\_\_|\_\_\_|\_\_\_|\_\_\_| 
+  
 
   
 
@@ -4878,7 +4857,7 @@
   
  \subsubsection{Defaults} 
 
- \textsf{\textbf{select.res}(self, run=None, num=None, name=None, change\_all=0)} 
+ \textsf{\textbf{select.res}(self, run=None, num=None, name=None, boolean=`OR', change\_all=0)} 
 
   
  \subsubsection{Keyword Arguments} 
@@ -4888,6 +4867,8 @@
  \keyword{ num:}  The residue number.   
 
  \keyword{ name:}  The residue name.   
+
+ \keyword{ boolean:}  The boolean operator specifying how residues should be selected.   
 
  \keyword{ change\_all:}  A flag specifying if all other residues should be changed.  
 
@@ -5552,7 +5533,7 @@
   
  \subsubsection{Defaults} 
 
- \textsf{\textbf{unselect.read}(self, run=None, file=None, dir=None, change\_all=0)} 
+ \textsf{\textbf{unselect.read}(self, run=None, file=None, dir=None, change\_all=0, column=0)} 
 
   
  \subsubsection{Keyword Arguments} 
@@ -5563,14 +5544,16 @@
 
  \keyword{ dir:}  The directory where the file is located.   
 
- \keyword{ change\_all:}  A flag specifying if all other residues should be changed.  
+ \keyword{ change\_all:}  A flag specifying if all other residues should be changed.   
+
+ \keyword{ column:}  The column containing the residue numbers (defaulting to 0, the first column).  
 
   
 
   
  \subsubsection{Description} 
 
- The file must contain one residue number per line.  The number is taken as the first column of the file and all other columns are ignored.  Empty lines and lines beginning with a hash are ignored. 
+ Empty lines and lines beginning with a hash are ignored. 
   
 
  The \quotecmd{change\_all} flag argument default is zero meaning that all residues currently either selected or unselected will remain that way.  Setting the argument to 1 will cause all residues not specified in the file to be selected. 
@@ -5585,6 +5568,13 @@
  \example{relax> unselect.read(`noe', `unresolved')} 
 
  \example{relax> unselect.read(run=`noe', file=`unresolved')} 
+
+ To unselect the residues in the second column of the relaxation\index{relaxation} data file \quotecmd{r1.600} while selecting all other residues, type one of:  
+  
+
+ \example{relax> unselect.read(`test', `r1.600', change\_all=1, column=1)} 
+
+ \example{relax> unselect.read(run=`test', file=`r1.600', change\_all=1, column=1)} 
 
   
 
