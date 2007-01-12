@@ -41,8 +41,24 @@ def gpg_sign(target, source, env):
     print "# GPG signing the binary distribution file #"
     print "############################################\n\n"
 
-    # Run the 'gpg' command.
-    system("gpg --detach-sign --default-key relax " + path.pardir + path.sep + env['DIST_FILE'])
+    # List of distribution files.
+    type_list = [env['DIST_TYPE']]
+    if type_list[0] == 'ALL':
+        type_list = ['zip', 'tar']
+
+    # Loop over the distribution files.
+    for dist_type in type_list:
+        # The file name.
+        if dist_type == 'zip':
+            file = env['DIST_FILE'] + '.zip'
+        elif dist_type == 'tar':
+            file = env['DIST_FILE'] + '.tar.bz2'
+
+        # Print out.
+        print "\n\nSigning the distribution package " + `file` + ".\n"
+
+        # Run the 'gpg' command.
+        system("gpg --detach-sign --default-key relax " + path.pardir + path.sep + file)
 
     # Final print out.
     print "\n\n\n"
@@ -55,55 +71,70 @@ def package(target, source, env):
     print
     print "#######################"
     print "# Packaging the files #"
-    print "#######################\n\n"
-    print "Creating the package distribution " + `env['DIST_FILE']` + ".\n"
+    print "#######################"
 
-    # Open the Zip distribution file.
-    if env['DIST_TYPE'] == 'zip':
-        archive = ZipFile(path.pardir + path.sep + env['DIST_FILE'], 'w', compression=8)
+    # List of distribution files.
+    type_list = [env['DIST_TYPE']]
+    if type_list[0] == 'ALL':
+        type_list = ['zip', 'tar']
 
-    # Open the Tar distribution file.
-    elif env['DIST_TYPE'] == 'tar':
-        if search('.bz2$', env['DIST_FILE']):
-            archive = TarFile.bz2open(path.pardir + path.sep + env['DIST_FILE'], 'w')
-        elif search('.gz$', env['DIST_FILE']):
-            archive = TarFile.gzopen(path.pardir + path.sep + env['DIST_FILE'], 'w')
-        else:
-            archive = TarFile.open(path.pardir + path.sep + env['DIST_FILE'], 'w')
+    # Loop over the distribution files.
+    for dist_type in type_list:
+        # The file name.
+        if dist_type == 'zip':
+            file = env['DIST_FILE'] + '.zip'
+        elif dist_type == 'tar':
+            file = env['DIST_FILE'] + '.tar.bz2'
 
-    # Base directory.
-    base = getcwd() + sep
+        # Print out.
+        print "\n\nCreating the package distribution " + `file` + ".\n"
 
-    # Walk through the directories.
-    for root, dirs, files in walk(getcwd()):
-        # Skip the subversion directories.
-        if search("\.svn", root):
-            continue
+        # Open the Zip distribution file.
+        if dist_type == 'zip':
+            archive = ZipFile(path.pardir + path.sep + file, 'w', compression=8)
 
-        # Add the files in the current directory to the archive.
-        for i in xrange(len(files)):
-            # Skip any '.sconsign' files, hidden files, byte-compiled '*.pyc' files, or binary objects '.o', '.os', 'obj', 'lib', and 'exp'.
-            if search("\.sconsign", files[i]) or search("^\.", files[i]) or search("\.pyc$", files[i]) or search("\.o$", files[i]) or search("\.os$", files[i]) or search("\.obj$", files[i]) or search("\.lib$", files[i]) or search("\.exp$", files[i]):
+        # Open the Tar distribution file.
+        elif dist_type == 'tar':
+            if search('.bz2$', file):
+                archive = TarFile.bz2open(path.pardir + path.sep + file, 'w')
+            elif search('.gz$', file):
+                archive = TarFile.gzopen(path.pardir + path.sep + file, 'w')
+            else:
+                archive = TarFile.open(path.pardir + path.sep + file, 'w')
+
+        # Base directory.
+        base = getcwd() + sep
+
+        # Walk through the directories.
+        for root, dirs, files in walk(getcwd()):
+            # Skip the subversion directories.
+            if search("\.svn", root):
                 continue
 
-            # Create the file name (without the base directory).
-            name = path.join(root, files[i])
-            name = name[len(base):]
-            print 'relax-' + version + path.sep + name
+            # Add the files in the current directory to the archive.
+            for i in xrange(len(files)):
+                # Skip any '.sconsign' files, hidden files, byte-compiled '*.pyc' files, or binary objects '.o', '.os', 'obj', 'lib', and 'exp'.
+                if search("\.sconsign", files[i]) or search("^\.", files[i]) or search("\.pyc$", files[i]) or search("\.o$", files[i]) or search("\.os$", files[i]) or search("\.obj$", files[i]) or search("\.lib$", files[i]) or search("\.exp$", files[i]):
+                    continue
 
-            # The archive file name.
-            arcname = 'relax-' + version + path.sep + name
+                # Create the file name (without the base directory).
+                name = path.join(root, files[i])
+                name = name[len(base):]
+                print 'relax-' + version + path.sep + name
 
-            # Zip archives.
-            if env['DIST_TYPE'] == 'zip':
-                archive.write(filename=name, arcname=arcname)
+                # The archive file name.
+                arcname = 'relax-' + version + path.sep + name
 
-            # Tar archives.
-            if env['DIST_TYPE'] == 'tar':
-                archive.add(name=name, arcname=arcname)
+                # Zip archives.
+                if dist_type == 'zip':
+                    archive.write(filename=name, arcname=arcname)
 
-    # Close the archive.
-    archive.close()
+                # Tar archives.
+                if dist_type == 'tar':
+                    archive.add(name=name, arcname=arcname)
+
+        # Close the archive.
+        archive.close()
 
     # Final print out.
     print "\n\n\n"
