@@ -3377,7 +3377,7 @@ class Model_free(Common_functions):
             data = self.relax.data.res[self.run][self.res_index]
 
             # Backwards compatibility for the reading of the results file from versions 1.2.0 to 1.2.9.
-            if len(self.file_line) == 3:
+            if len(self.file_line) == 4:
                 continue
 
             # Set the nucleus type.
