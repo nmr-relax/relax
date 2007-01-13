@@ -27,7 +27,7 @@ from string import split
 from sys import path
 from unittest import TestCase, main
 
-# Modify the system path so that the relax modules can be imported.
+# Modify the system path so that the relax modules can be imported (for stand alone execution).
 path_comps = split(path[0], sep)
 relax_path = sep + join(*path_comps[0:5])
 path.append(relax_path)
@@ -44,13 +44,16 @@ class Test_diff_tensor(TestCase):
 
 
     def test_set_Diso(self):
-        """Test the setting of the Diso parameter.
+        """Test that the Diso parameter cannot be set."""
 
-        The setting of this parameter is not allowed.
-        """
+        # Try to set Diso to the tm value of 10 ns.
+        try:
+            self.diff_data.Diso = 1/(6*1e-8)
+        except RelaxError, message:
+            assert message.text == "The object 'Diso' is not modifiable."
 
-        # Set Diso to the tm value of 10 ns.
-        self.diff_data.Diso = 1/(6*1e-8)
+        # Make sure that the Diso parameter has not been set.
+        assert not hasattr(self.diff_data, 'Diso')
 
 
     def test_set_tm(self):
@@ -58,6 +61,10 @@ class Test_diff_tensor(TestCase):
 
         # Set the tm value to 10 ns.
         self.diff_data.tm = 1e-8
+
+        # Test that the tm parameter has been set correctly.
+        assert hasattr(self.diff_data, 'tm')
+        assert self.diff_data.tm == 1e-8
 
 
 if __name__ == '__main__':
