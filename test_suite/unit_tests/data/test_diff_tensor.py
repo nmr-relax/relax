@@ -34,7 +34,7 @@ path_comps = split(path[0], sep)
 relax_path = sep + join(*path_comps[0:5])
 path.append(relax_path)
 
-from data.diff_tensor import DiffTensorElement
+from data.diff_tensor import DiffTensorElement, DiffTensorSimList
 
 
 # Tests for the data.diff_tensor module.
@@ -70,9 +70,65 @@ class Test_diff_tensor(TestCase):
         self.diff_data = DiffTensorElement()
 
 
+    def test_append_spheroid_sim(self):
+        """Test the appending of Monte Carlo simulation spheroidal diffusion tensor parameters.
+
+        The following parameters will be appended to empty lists:
+            tm: 8 ns
+            Da: -1e7
+            theta: 150 degrees
+            phi: 30 degrees
+        """
+
+        # The MC sim parameter values.
+        tm = 8e-9
+        Da = -1e7
+        theta = (150 / 360.0) * 2.0 * pi
+        phi = (30 / 360.0) * 2.0 * pi
+
+        # Set the diffusion type.
+        self.diff_data.type = 'spheroid'
+
+        # Set the MC sim diffusion parameter lists.
+        self.diff_data.tm_sim = DiffTensorSimList()
+        self.diff_data.Da_sim = DiffTensorSimList()
+        self.diff_data.theta_sim = DiffTensorSimList()
+        self.diff_data.phi_sim = DiffTensorSimList()
+
+        # Append the values.
+        self.diff_data.tm_sim.append(tm)
+        self.diff_data.Da_sim.append(Da)
+        self.diff_data.theta_sim.append(theta)
+        self.diff_data.phi_sim.append(phi)
+
+        # Test the set values.
+        self.assertEqual(self.diff_data.type, 'spheroid')
+        self.assertEqual(self.diff_data.tm_sim[0], tm)
+        self.assertEqual(self.diff_data.Da_sim[0], Da)
+        self.assertEqual(self.diff_data.theta_sim[0], theta)
+        self.assertEqual(self.diff_data.phi_sim[0], phi)
+
+        # Calculate the diffusion tensor objects.
+        Diso, Dpar, Dper, Dratio, Dpar_unit, tensor_diag, rotation, tensor = self.calc_spheroid_objects(tm, Da, theta, phi)
+
+        # Test the automatically created values.
+        self.assertEqual(self.diff_data.Diso_sim[0], Diso)
+        self.assertEqual(self.diff_data.Dpar_sim[0], Dpar)
+        self.assertEqual(self.diff_data.Dper_sim[0], Dper)
+        self.assertEqual(self.diff_data.Dratio_sim[0], Dratio)
+
+        # Test the vectors.
+        self.assertEqual(self.diff_data.Dpar_unit_sim[0].tostring(), Dpar_unit.tostring())
+
+        # Test the matrices.
+        self.assertEqual(self.diff_data.tensor_diag_sim[0].tostring(), tensor_diag.tostring())
+        self.assertEqual(self.diff_data.rotation_sim[0].tostring(), rotation.tostring())
+        self.assertEqual(self.diff_data.tensor_sim[0].tostring(), tensor.tostring())
+
+
     def test_set_spheroid_errors(self):
         """Test the setting of spheroidal diffusion tensor parameter errors.
-        
+
         The following parameter errors will be set:
             tm: 1 ns
             Da: 1e3
@@ -117,7 +173,7 @@ class Test_diff_tensor(TestCase):
 
     def test_set_spheroid_params(self):
         """Test the setting of spheroidal diffusion tensor parameters.
-        
+
         The following parameters will be set:
             tm: 20 ns
             Da: 2e6
@@ -177,7 +233,7 @@ class Test_diff_tensor(TestCase):
 
     def test_set_tm(self):
         """Test the setting of the tm parameter.
-        
+
         The tm parameter will be set to 10 ns.  The setting of tm should automatically create the
         Diso parameter.
         """
