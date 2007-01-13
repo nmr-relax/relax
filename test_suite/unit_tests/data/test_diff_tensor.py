@@ -45,8 +45,8 @@ class Test_diff_tensor(TestCase):
         self.diff_data = DiffTensorElement()
 
 
-    def test_set_prolate_params(self):
-        """Test the setting of prolate diffusion tensor parameters.
+    def test_set_spheroid_params(self):
+        """Test the setting of spheroidal diffusion tensor parameters.
         
         The following parameters will be set:
             tm: 20 ns
