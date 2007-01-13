@@ -46,14 +46,14 @@ class Test_diff_tensor(TestCase):
     def test_set_Diso(self):
         """Test that the Diso parameter cannot be set."""
 
-        # Try to set Diso to the tm value of 10 ns.
+        # Assert that Diso cannot be set (to the tm value of 10 ns).
         try:
             self.diff_data.Diso = 1/(6*1e-8)
         except RelaxError, message:
-            assert message.text == "The object 'Diso' is not modifiable."
+            self.assert_(message.text == "The object 'Diso' is not modifiable.")
 
         # Make sure that the Diso parameter has not been set.
-        assert not hasattr(self.diff_data, 'Diso')
+        self.assert_(not hasattr(self.diff_data, 'Diso'))
 
 
     def test_set_tm(self):
@@ -63,8 +63,8 @@ class Test_diff_tensor(TestCase):
         self.diff_data.tm = 1e-8
 
         # Test that the tm parameter has been set correctly.
-        assert hasattr(self.diff_data, 'tm')
-        assert self.diff_data.tm == 1e-8
+        self.assert_(hasattr(self.diff_data, 'tm'))
+        self.assertEqual(self.diff_data.tm, 1e-8)
 
 
 if __name__ == '__main__':
