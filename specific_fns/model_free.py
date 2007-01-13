@@ -21,6 +21,7 @@
 ###############################################################################
 
 from copy import deepcopy
+from data.diff_tensor import DiffTensorSimList
 from LinearAlgebra import inverse
 from math import pi
 from Numeric import Float64, array, identity, matrixmultiply, ones, transpose, zeros
@@ -2782,7 +2783,7 @@ class Model_free(Common_functions):
             else:
                 # Create the data structure if it doesn't exist.
                 if not hasattr(self.relax.data.diff[self.run], 'tm_sim'):
-                    self.relax.data.diff[self.run].tm_sim = []
+                    self.relax.data.diff[self.run].tm_sim = DiffTensorSimList()
 
                 # Append the value.
                 self.relax.data.diff[self.run].tm_sim.append(tm)
@@ -2819,13 +2820,13 @@ class Model_free(Common_functions):
             else:
                 # Create the data structure if it doesn't exist.
                 if not hasattr(self.relax.data.diff[self.run], 'tm_sim'):
-                    self.relax.data.diff[self.run].tm_sim = []
+                    self.relax.data.diff[self.run].tm_sim = DiffTensorSimList()
                 if not hasattr(self.relax.data.diff[self.run], 'Da_sim'):
-                    self.relax.data.diff[self.run].Da_sim = []
+                    self.relax.data.diff[self.run].Da_sim = DiffTensorSimList()
                 if not hasattr(self.relax.data.diff[self.run], 'theta_sim'):
-                    self.relax.data.diff[self.run].theta_sim = []
+                    self.relax.data.diff[self.run].theta_sim = DiffTensorSimList()
                 if not hasattr(self.relax.data.diff[self.run], 'phi_sim'):
-                    self.relax.data.diff[self.run].phi_sim = []
+                    self.relax.data.diff[self.run].phi_sim = DiffTensorSimList()
 
                 # Append the value.
                 self.relax.data.diff[self.run].tm_sim.append(tm)
@@ -2869,17 +2870,17 @@ class Model_free(Common_functions):
             else:
                 # Create the data structure if it doesn't exist.
                 if not hasattr(self.relax.data.diff[self.run], 'tm_sim'):
-                    self.relax.data.diff[self.run].tm_sim = []
+                    self.relax.data.diff[self.run].tm_sim = DiffTensorSimList()
                 if not hasattr(self.relax.data.diff[self.run], 'Da_sim'):
-                    self.relax.data.diff[self.run].Da_sim = []
+                    self.relax.data.diff[self.run].Da_sim = DiffTensorSimList()
                 if not hasattr(self.relax.data.diff[self.run], 'Dr_sim'):
-                    self.relax.data.diff[self.run].Dr_sim = []
+                    self.relax.data.diff[self.run].Dr_sim = DiffTensorSimList()
                 if not hasattr(self.relax.data.diff[self.run], 'alpha_sim'):
-                    self.relax.data.diff[self.run].alpha_sim = []
+                    self.relax.data.diff[self.run].alpha_sim = DiffTensorSimList()
                 if not hasattr(self.relax.data.diff[self.run], 'beta_sim'):
-                    self.relax.data.diff[self.run].beta_sim = []
+                    self.relax.data.diff[self.run].beta_sim = DiffTensorSimList()
                 if not hasattr(self.relax.data.diff[self.run], 'gamma_sim'):
-                    self.relax.data.diff[self.run].gamma_sim = []
+                    self.relax.data.diff[self.run].gamma_sim = DiffTensorSimList()
 
                 # Append the value.
                 self.relax.data.diff[self.run].tm_sim.append(tm)
