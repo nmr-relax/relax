@@ -70,6 +70,51 @@ class Test_diff_tensor(TestCase):
         self.diff_data = DiffTensorElement()
 
 
+    def test_set_spheroid_errors(self):
+        """Test the setting of spheroidal diffusion tensor parameter errors.
+        
+        The following parameter errors will be set:
+            tm: 1 ns
+            Da: 1e3
+            theta: 3 degrees
+            phi: 5 degrees
+        """
+
+        # The parameter errors.
+        tm = 1e-8
+        Da = 1e3
+        theta = (3 / 360.0) * 2.0 * pi
+        phi = (5 / 360.0) * 2.0 * pi
+
+        # Set the diffusion type.
+        self.diff_data.type = 'spheroid'
+
+        # Set the diffusion parameters.
+        self.diff_data.tm_err = tm
+        self.diff_data.Da_err = Da
+        self.diff_data.theta_err = theta
+        self.diff_data.phi_err = phi
+
+        # Test the set values.
+        self.assertEqual(self.diff_data.type, 'spheroid')
+        self.assertEqual(self.diff_data.tm_err, tm)
+        self.assertEqual(self.diff_data.Da_err, Da)
+        self.assertEqual(self.diff_data.theta_err, theta)
+        self.assertEqual(self.diff_data.phi_err, phi)
+
+        # Calculate the diffusion tensor objects.
+        Diso, Dpar, Dper, Dratio, Dpar_unit, tensor_diag, rotation, tensor = self.calc_spheroid_objects(tm, Da, theta, phi)
+
+        # Test the automatically created values.
+        self.assertEqual(self.diff_data.Diso_err, Diso)
+        self.assertEqual(self.diff_data.Dpar_err, Dpar)
+        self.assertEqual(self.diff_data.Dper_err, Dper)
+        self.assertEqual(self.diff_data.Dratio_err, Dratio)
+
+        # Test the vectors.
+        self.assertEqual(self.diff_data.Dpar_unit_err.tostring(), Dpar_unit.tostring())
+
+
     def test_set_spheroid_params(self):
         """Test the setting of spheroidal diffusion tensor parameters.
         
