@@ -54,7 +54,10 @@ class Test_diff_tensor(TestCase):
 
 
     def test_set_tm(self):
-        """Test the setting of the tm parameter."""
+        """Test the setting of the tm parameter.
+        
+        The setting of the tm parameter should automatically create the Diso parameter.
+        """
 
         # Set the tm value to 10 ns.
         self.diff_data.tm = 1e-8
@@ -62,6 +65,10 @@ class Test_diff_tensor(TestCase):
         # Test that the tm parameter has been set correctly.
         self.assert_(hasattr(self.diff_data, 'tm'))
         self.assertEqual(self.diff_data.tm, 1e-8)
+
+        # Test that the Diso parameter has been set correctly.
+        self.assert_(hasattr(self.diff_data, 'Diso'))
+        self.assertEqual(self.diff_data.Diso, 1/(6*1e-8))
 
 
 if __name__ == '__main__':
