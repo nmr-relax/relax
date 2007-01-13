@@ -46,7 +46,7 @@ class Test_suite_runner:
         system_result = System_tests(self.relax)
 
         # Execute the unit tests.
-        runner = Run_unit_tests()
+        runner = Run_unit_tests(root_path='test_suite/unit_tests')
         unit_result = runner.run()
 
         # Print out a summary of the test suite.
