@@ -29,8 +29,8 @@
     Unit tests in the relax frame work are stored in a directory structure
     rooted at <relax-root-directory>/test_suite/unit_tests. The directory
     unit tests contains a directory structure that mirrors the relax directory
-    structire and which ideally contains one unit test file/module for each
-    file/module in the relax framework. The dfault convettion is that the unit
+    structure and which ideally contains one unit test file/module for each
+    file/module in the relax framework. The default convention is that the unit
     test module for a relax module called <relax-module> is called
     test_<relax-module> (stored in test_<relax-module>.py). The unit test module
     test_<relax-module> should then contain a class called Test_<relax-module>
@@ -48,7 +48,7 @@
     them to TestSuites either from the command line or programmatically from
     inside another program. It also has the ability to search for a  root unit
     test and system directory from a position anywhere inside the unit test
-    hierachy.
+    hierarchy.
 '''
 
 import os,re,unittest,string,sys
@@ -63,7 +63,7 @@ def get_startup_path():
     '''Get the path of the directory the program started from.
 
        The startup path is the first path in sys.path (the internal PYTHONPATH)
-       by convention. If the first element of sys.path is an empty tring the
+       by convention. If the first element of sys.path is an empty trying the
        current working directory is used instead.
     '''
 
@@ -97,11 +97,11 @@ def get_module_relative_path(module_path, root_paths=None):
        @param root_paths: a set of paths to search for the module in.if None is
               passed the list is initialized from the internal PYTHONPATH
               sys.path. Elements which are empty strings are replace with
-              the cureent working directory sys.getcwd()
+              the current working directory sys.getcwd()
 
 
        @returns: a relative module path to one of the rootPaths which is
-                 sepparated by '.'s if the modulePath is a subpath of one of
+                 separated by '.'s if the modulePath is a subpath of one of
                  the root paths, otherwise None
 
     '''
@@ -134,7 +134,7 @@ def get_common_prefix(path1, path2):
        @param path2: the second path to be compared
 
        @return: the common path shared between the two paths starting from the
-                root directory as a list of segmeents. If there is no common
+                root directory as a list of segments. If there is no common
                 path an empty list is returned.
     '''
 
@@ -154,7 +154,7 @@ def segment_path(path, normalise=True):
        @type path: a path
        @param path: the path to segment
 
-       @type normalise: boolean
+       @type normalise: Boolean
        @param normalise: whether to normalise the path before starting.
 
        @result: a list of path segments
@@ -179,7 +179,7 @@ def segment_path(path, normalise=True):
 def join_path_segments(segments):
     '''Join a list of path segments (drives, files, directories etc) into a path.
 
-       @type path: a lsit of path segments
+       @type path: a list of path segments
        @param path: the path segments to join into a path
 
        @result: the path containing the joined path segments
@@ -200,12 +200,12 @@ def join_path_segments(segments):
 
 
 class Test_finder:
-    '''Find and load unit test classes as a hierachy of TestSuites and TestCases.
+    '''Find and load unit test classes as a hierarchy of TestSuites and TestCases.
 
        The class provides functions for running or returning the resulting
-       TestSuite and resuires a root directory to start searching from.
+       TestSuite and requires a root directory to start searching from.
 
-       TestCases are identifified by the class name matching a pattern
+       TestCases are identified by the class name matching a pattern
        (pattern_string)
     '''
 
@@ -282,7 +282,7 @@ class Run_unit_tests(object):
 
           @type  root_path: a string containing a directory name
           @param root_path: root path to start searching for modules to unit test
-                 from ususally this is the current working directory.
+                 from usually this is the current working directory.
 
           @type  test_module: string
           @param test_module: the name of a module to unit test. If the variable
@@ -299,23 +299,23 @@ class Run_unit_tests(object):
                  testCases e.g in the case of test_float.py the combination
                  would be test_float.Test_float.
 
-          @type  rootSystemDirectory: a list containing a directory name folowed by a
+          @type  rootSystemDirectory: a list containing a directory name followed by a
                  relative path
           @param rootSystemDirectory: the directory from which the distribution
                  is rooted. This is viewed as the the 'PYTHONPATH'
                  of the classes to be tested. It must be unique and defined
                  relative to the test suite. For the current setup
                  in relax this is (\'test_suite\', /'..\'). The first string is a
-                 directory to match the secon string is a relative path from that
+                 directory to match the second string is a relative path from that
                  directory to the system directory
 
-          @type  root_unit_test_directory: a list containing a directory name folowed by a
+          @type  root_unit_test_directory: a list containing a directory name followed by a
                  relative path
           @param root_unit_test_directory: the directory from which all unit
                  module directories descend. For the current setup in relax
                  this is (\'unit_tests\', \'.\').
-          @type  verbose: boolean
-          @param verbose: produce verbose output during testing e.g. directorys
+          @type  verbose: Boolean
+          @param verbose: produce verbose output during testing e.g. directories
                  searched root directories etc
         '''
 
@@ -406,7 +406,7 @@ class Run_unit_tests(object):
     def paths_from_test_module(self, root_path):
         '''Determine the possible path of the self.testModule.
 
-           THe search starts from the current directory or the root_path
+           The search starts from the current directory or the root_path
 
            The possible paths are as follows
                1. a file or directory relative to the rootPath (usually pwd)
@@ -504,7 +504,7 @@ if __name__ == '__main__':
     runner.run()
 
 #    root = tk.Tk()
-#    root.title("Realx unit tests")
+#    root.title("relax unit tests")
 #    gui = unitgui.TkTestRunner(root)
 #    runner.run()
 
