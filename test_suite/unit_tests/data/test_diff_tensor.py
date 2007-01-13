@@ -22,6 +22,8 @@
 #                                                                             #
 ###############################################################################
 
+from math import cos, pi, sin
+from Numeric import array, dot, transpose
 from os.path import join, sep
 from string import split
 from sys import path
@@ -43,6 +45,70 @@ class Test_diff_tensor(TestCase):
         self.diff_data = DiffTensorElement()
 
 
+    def test_set_prolate_params(self):
+        """Test the setting of prolate diffusion tensor parameters.
+        
+        The following parameters will be set:
+            tm: 20 ns
+            Da: 2e6
+            theta: 60 degrees
+            phi: 290 degrees
+        """
+
+        # The parameter values.
+        tm = 2e-8
+        Da = 2e6
+        theta = (60 / 360.0) * 2.0 * pi
+        phi = (290 / 360.0) * 2.0 * pi
+        Diso = 1/(6*tm)
+        Dpar = Diso + 2.0/3.0 * Da
+        Dper = Diso - 1.0/3.0 * Da
+        Dratio = Dpar / Dper
+
+        # Vectors.
+        Dpar_unit = array([sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta)])
+
+        # Matrices.
+        tensor_diag = array([[ Dper,  0.0,  0.0],
+                             [  0.0, Dper,  0.0],
+                             [  0.0,  0.0, Dpar]])
+        rotation = array([[ cos(theta) * cos(phi), -sin(phi), sin(theta) * cos(phi) ],
+                          [ cos(theta) * sin(phi),  cos(phi), sin(theta) * sin(phi) ],
+                          [           -sin(theta),       0.0,            cos(theta) ]])
+        tensor = dot(rotation, dot(tensor_diag, transpose(rotation)))
+
+
+        # Set the diffusion type.
+        self.diff_data.type = 'spheroid'
+
+        # Set the diffusion parameters.
+        self.diff_data.tm = tm
+        self.diff_data.Da = Da
+        self.diff_data.theta = theta
+        self.diff_data.phi = phi
+
+        # Test the set values.
+        self.assertEqual(self.diff_data.type, 'spheroid')
+        self.assertEqual(self.diff_data.tm, tm)
+        self.assertEqual(self.diff_data.Da, Da)
+        self.assertEqual(self.diff_data.theta, theta)
+        self.assertEqual(self.diff_data.phi, phi)
+
+        # Test the automatically created values.
+        self.assertEqual(self.diff_data.Diso, Diso)
+        self.assertEqual(self.diff_data.Dpar, Dpar)
+        self.assertEqual(self.diff_data.Dper, Dper)
+        self.assertEqual(self.diff_data.Dratio, Dratio)
+
+        # Test the vectors.
+        self.assertEqual(self.diff_data.Dpar_unit.tostring(), Dpar_unit.tostring())
+
+        # Test the matrices.
+        self.assertEqual(self.diff_data.tensor_diag.tostring(), tensor_diag.tostring())
+        self.assertEqual(self.diff_data.rotation.tostring(), rotation.tostring())
+        self.assertEqual(self.diff_data.tensor.tostring(), tensor.tostring())
+
+
     def test_set_Diso(self):
         """Test that the Diso parameter cannot be set."""
 
@@ -56,7 +122,8 @@ class Test_diff_tensor(TestCase):
     def test_set_tm(self):
         """Test the setting of the tm parameter.
         
-        The setting of the tm parameter should automatically create the Diso parameter.
+        The tm parameter will be set to 10 ns.  The setting of tm should automatically create the
+        Diso parameter.
         """
 
         # Set the tm value to 10 ns.
