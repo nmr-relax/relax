@@ -126,6 +126,16 @@ class Test_diff_tensor(TestCase):
         self.assertEqual(self.diff_data.tensor_sim[0].tostring(), tensor.tostring())
 
 
+    def test_set_Diso(self):
+        """Test that the Diso parameter cannot be set."""
+
+        # Assert that a RelaxError occurs when Diso is set (to the tm value of 10 ns).
+        self.assertRaises(RelaxError, setattr, self.diff_data, 'Diso', 1/(6*1e-8))
+
+        # Make sure that the Diso parameter has not been set.
+        self.assert_(not hasattr(self.diff_data, 'Diso'))
+
+
     def test_set_spheroid_errors(self):
         """Test the setting of spheroidal diffusion tensor parameter errors.
 
@@ -221,14 +231,73 @@ class Test_diff_tensor(TestCase):
         self.assertEqual(self.diff_data.tensor.tostring(), tensor.tostring())
 
 
-    def test_set_Diso(self):
-        """Test that the Diso parameter cannot be set."""
+    def test_set_spheroid_sim(self):
+        """Test the setting of Monte Carlo simulation spheroidal diffusion tensor parameters.
 
-        # Assert that a RelaxError occurs when Diso is set (to the tm value of 10 ns).
-        self.assertRaises(RelaxError, setattr, self.diff_data, 'Diso', 1/(6*1e-8))
+        Firstly the following parameters will be appended to empty lists:
+            tm: 2 ns
+            Da: 1e5
+            theta: 0 degrees
+            phi: 360 degrees
 
-        # Make sure that the Diso parameter has not been set.
-        self.assert_(not hasattr(self.diff_data, 'Diso'))
+        These MC sim values will then be explicity overwritten by setting the first elements of the
+        lists to:
+            tm: 0.5 ns
+            Da: 3e5
+            theta: 2 degrees
+            phi: 0 degrees
+        """
+
+        # Set the diffusion type.
+        self.diff_data.type = 'spheroid'
+
+        # Set the MC sim diffusion parameter lists.
+        self.diff_data.tm_sim = DiffTensorSimList()
+        self.diff_data.Da_sim = DiffTensorSimList()
+        self.diff_data.theta_sim = DiffTensorSimList()
+        self.diff_data.phi_sim = DiffTensorSimList()
+
+        # Append the initial values.
+        self.diff_data.tm_sim.append(2e-9)
+        self.diff_data.Da_sim.append(1e5)
+        self.diff_data.theta_sim.append(0.0)
+        self.diff_data.phi_sim.append(2.0 * pi)
+
+        # The new MC sim parameter values.
+        tm = 0.5e-9
+        Da = 3e5
+        theta = (2 / 360.0) * 2.0 * pi
+        phi = 0.0
+
+        # Set the MC sim parameter values (overwriting the initial values).
+        self.diff_data.tm_sim[0] = tm
+        self.diff_data.Da_sim[0] = Da
+        self.diff_data.theta_sim[0] = theta
+        self.diff_data.phi_sim[0] = phi
+
+        # Test the set values.
+        self.assertEqual(self.diff_data.type, 'spheroid')
+        self.assertEqual(self.diff_data.tm_sim[0], tm)
+        self.assertEqual(self.diff_data.Da_sim[0], Da)
+        self.assertEqual(self.diff_data.theta_sim[0], theta)
+        self.assertEqual(self.diff_data.phi_sim[0], phi)
+
+        # Calculate the diffusion tensor objects.
+        Diso, Dpar, Dper, Dratio, Dpar_unit, tensor_diag, rotation, tensor = self.calc_spheroid_objects(tm, Da, theta, phi)
+
+        # Test the automatically created values.
+        self.assertEqual(self.diff_data.Diso_sim[0], Diso)
+        self.assertEqual(self.diff_data.Dpar_sim[0], Dpar)
+        self.assertEqual(self.diff_data.Dper_sim[0], Dper)
+        self.assertEqual(self.diff_data.Dratio_sim[0], Dratio)
+
+        # Test the vectors.
+        self.assertEqual(self.diff_data.Dpar_unit_sim[0].tostring(), Dpar_unit.tostring())
+
+        # Test the matrices.
+        self.assertEqual(self.diff_data.tensor_diag_sim[0].tostring(), tensor_diag.tostring())
+        self.assertEqual(self.diff_data.rotation_sim[0].tostring(), rotation.tostring())
+        self.assertEqual(self.diff_data.tensor_sim[0].tostring(), tensor.tostring())
 
 
     def test_set_tm(self):
