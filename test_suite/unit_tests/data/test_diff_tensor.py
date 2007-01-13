@@ -39,6 +39,31 @@ from data.diff_tensor import DiffTensorElement
 
 # Tests for the data.diff_tensor module.
 class Test_diff_tensor(TestCase):
+    def calc_spheroid_objects(self, tm, Da, theta, phi):
+        """Function for calculating the spheroidal diffusion tensor objects."""
+
+        # The parameter values.
+        Diso = 1/(6*tm)
+        Dpar = Diso + 2.0/3.0 * Da
+        Dper = Diso - 1.0/3.0 * Da
+        Dratio = Dpar / Dper
+
+        # Vectors.
+        Dpar_unit = array([sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta)])
+
+        # Matrices.
+        tensor_diag = array([[ Dper,  0.0,  0.0],
+                             [  0.0, Dper,  0.0],
+                             [  0.0,  0.0, Dpar]])
+        rotation = array([[ cos(theta) * cos(phi), -sin(phi), sin(theta) * cos(phi) ],
+                          [ cos(theta) * sin(phi),  cos(phi), sin(theta) * sin(phi) ],
+                          [           -sin(theta),       0.0,            cos(theta) ]])
+        tensor = dot(rotation, dot(tensor_diag, transpose(rotation)))
+
+        # Return the objects.
+        return Diso, Dpar, Dper, Dratio, Dpar_unit, tensor_diag, rotation, tensor
+
+
     def setUp(self):
         """Set 'self.diff_data' to an empty instance of the DiffTensorElement class."""
 
@@ -60,23 +85,6 @@ class Test_diff_tensor(TestCase):
         Da = 2e6
         theta = (60 / 360.0) * 2.0 * pi
         phi = (290 / 360.0) * 2.0 * pi
-        Diso = 1/(6*tm)
-        Dpar = Diso + 2.0/3.0 * Da
-        Dper = Diso - 1.0/3.0 * Da
-        Dratio = Dpar / Dper
-
-        # Vectors.
-        Dpar_unit = array([sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta)])
-
-        # Matrices.
-        tensor_diag = array([[ Dper,  0.0,  0.0],
-                             [  0.0, Dper,  0.0],
-                             [  0.0,  0.0, Dpar]])
-        rotation = array([[ cos(theta) * cos(phi), -sin(phi), sin(theta) * cos(phi) ],
-                          [ cos(theta) * sin(phi),  cos(phi), sin(theta) * sin(phi) ],
-                          [           -sin(theta),       0.0,            cos(theta) ]])
-        tensor = dot(rotation, dot(tensor_diag, transpose(rotation)))
-
 
         # Set the diffusion type.
         self.diff_data.type = 'spheroid'
@@ -93,6 +101,9 @@ class Test_diff_tensor(TestCase):
         self.assertEqual(self.diff_data.Da, Da)
         self.assertEqual(self.diff_data.theta, theta)
         self.assertEqual(self.diff_data.phi, phi)
+
+        # Calculate the diffusion tensor objects.
+        Diso, Dpar, Dper, Dratio, Dpar_unit, tensor_diag, rotation, tensor = self.calc_spheroid_objects(tm, Da, theta, phi)
 
         # Test the automatically created values.
         self.assertEqual(self.diff_data.Diso, Diso)
