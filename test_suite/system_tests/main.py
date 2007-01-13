@@ -24,6 +24,8 @@
 import traceback
 import sys
 
+# Formatting.
+from test_suite.formatting import *
 
 # Import the tests.
 from angles import Angles
@@ -54,14 +56,14 @@ class System_tests:
         ###############
 
         # Heading.
-        self.heading("The relax test suite")
+        heading("The relax test suite")
 
 
         # Run tests.
         ############
 
         # Heading.
-        self.heading("The run tests")
+        heading("The run tests")
 
         # Initialise the array containing each test element.
         self.run_test_array = []
@@ -77,7 +79,7 @@ class System_tests:
         #################
 
         # Heading.
-        self.heading("The sequence tests")
+        heading("The sequence tests")
 
         # Initialise the array containing each test element.
         self.seq_test_array = []
@@ -96,7 +98,7 @@ class System_tests:
         #########################
 
         # Heading.
-        self.heading("The diffusion tensor tests")
+        heading("The diffusion tensor tests")
 
         # Initialise the array containing each test element.
         self.diff_tensor_test_array = []
@@ -115,7 +117,7 @@ class System_tests:
         ##########################
 
         # Heading.
-        self.heading("Angle calculation tests")
+        heading("Angle calculation tests")
 
         # Initialise the array containing each test element.
         self.angles_test_array = []
@@ -131,7 +133,7 @@ class System_tests:
         #################################
 
         # Heading.
-        self.heading("The relaxation curve-fitting tests")
+        heading("The relaxation curve-fitting tests")
 
         # Initialise the array containing each test element.
         self.relax_fit_test_array = []
@@ -147,7 +149,7 @@ class System_tests:
         ###################
 
         # Heading.
-        self.heading("The model-free tests")
+        heading("The model-free tests")
 
         # Initialise the array containing each test element.
         self.mf_test_array = []
@@ -181,7 +183,7 @@ class System_tests:
         #########################################
 
         # Heading.
-        self.heading("The reduced spectral density mapping tests")
+        heading("The reduced spectral density mapping tests")
 
         # Initialise the array containing each test element.
         self.jw_test_array = []
@@ -198,7 +200,7 @@ class System_tests:
         ########################
 
         # Heading.
-        self.heading("The model selection tests")
+        heading("The model selection tests")
 
         # Initialise the array containing each test element.
         self.modsel_test_array = []
@@ -214,7 +216,7 @@ class System_tests:
         ################
 
         # Heading.
-        self.heading("The generic tests")
+        heading("The generic tests")
 
         # Initialise the array containing each test element.
         self.generic_test_array = []
@@ -231,26 +233,6 @@ class System_tests:
 
         self.summary()
 
-
-
-    def heading(self, text):
-        """Function for printing the headings."""
-
-        # Spacing.
-        sys.stdout.write("\n\n\n\n")
-
-        # Top bar.
-        for i in xrange(len(text) + 4):
-            sys.stdout.write("#")
-        sys.stdout.write("\n")
-
-        # Text.
-        sys.stdout.write("# " + text + " #\n")
-
-        # Bottom bar.
-        for i in xrange(len(text) + 4):
-            sys.stdout.write("#")
-        sys.stdout.write("\n\n\n")
 
 
     def exec_tests(self, test_array):
@@ -295,7 +277,7 @@ class System_tests:
 
         # Heading.
         sys.stdout.write("\n\n\n")
-        self.heading("Results of the test suite")
+        heading("Results of the test suite")
 
         # Flag for all tests.
         self.global_pass = 1
@@ -309,7 +291,7 @@ class System_tests:
 
         # Loop over the tests.
         for test in self.run_test_array:
-            self.summary_line(test)
+            summary_line(test.name, test.passed)
 
 
         # Sequence tests.
@@ -320,7 +302,7 @@ class System_tests:
 
         # Loop over the tests.
         for test in self.seq_test_array:
-            self.summary_line(test)
+            summary_line(test.name, test.passed)
 
 
         # Diffusion tensor tests.
@@ -331,7 +313,7 @@ class System_tests:
 
         # Loop over the tests.
         for test in self.diff_tensor_test_array:
-            self.summary_line(test)
+            summary_line(test.name, test.passed)
 
 
         # Angle calculation tests.
@@ -342,7 +324,7 @@ class System_tests:
 
         # Loop over the tests.
         for test in self.angles_test_array:
-            self.summary_line(test)
+            summary_line(test.name, test.passed)
 
 
         # Relaxation curve-fitting tests.
@@ -353,7 +335,7 @@ class System_tests:
 
         # Loop over the tests.
         for test in self.relax_fit_test_array:
-            self.summary_line(test)
+            summary_line(test.name, test.passed)
 
 
         # Model-free tests.
@@ -364,7 +346,7 @@ class System_tests:
 
         # Loop over the tests.
         for test in self.mf_test_array:
-            self.summary_line(test)
+            summary_line(test.name, test.passed)
 
 
         # Reduced spectral density Mapping tests.
@@ -375,7 +357,7 @@ class System_tests:
 
         # Loop over the tests.
         for test in self.jw_test_array:
-            self.summary_line(test)
+            summary_line(test.name, test.passed)
 
 
         # Model selection tests.
@@ -386,7 +368,7 @@ class System_tests:
 
         # Loop over the tests.
         for test in self.modsel_test_array:
-            self.summary_line(test)
+            summary_line(test.name, test.passed)
 
 
         # Generic tests.
@@ -397,7 +379,7 @@ class System_tests:
 
         # Loop over the tests.
         for test in self.generic_test_array:
-            self.summary_line(test)
+            summary_line(test.name, test.passed)
 
 
         # Synposis.
@@ -418,23 +400,3 @@ class System_tests:
         else:
             sys.stdout.write(" %-10s\n" % "[ Failed ]")
         sys.stdout.write("\n\n")
-
-
-    def summary_line(self, test):
-        """Function for printing the summary lines."""
-
-        # Name.
-        sys.stdout.write("    " + test.name + " ")
-
-        # Dots.
-        for j in xrange(84 - len(test.name)):
-            sys.stdout.write(".")
-
-        # Passed.
-        if test.passed:
-            sys.stdout.write(" %-10s\n" % "[ OK ]")
-
-        # Failed.
-        else:
-            sys.stdout.write(" %-10s\n" % "[ Failed ]")
-            self.global_pass = 0

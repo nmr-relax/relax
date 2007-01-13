@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2007 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,52 +20,54 @@
 #                                                                             #
 ###############################################################################
 
-# Formatting.
-from formatting import *
-
-# Import the test suite categories.
-from system_tests.main import System_tests
-from unit_tests.unit_test_runner import Run_unit_tests
+import sys
 
 
-class Test_suite_runner:
-    """Class for running all components of the relax test suite.
-
-    This currently includes the following categories of tests:
-        System/functional tests.
-        Unit tests.
+def heading(text):
+    """Function for printing the headings.
+    
+    @param text:    The text of the heading to be printed.
+    @type text:     str
     """
 
-    def __init__(self, relax):
-        """Run the system/functional and unit test suite components.
+    # Spacing.
+    sys.stdout.write("\n\n\n\n")
 
-        @param relax:   The relax namespace.
-        @type relax:    instance
-        """
+    # Top bar.
+    for i in xrange(len(text) + 4):
+        sys.stdout.write("#")
+    sys.stdout.write("\n")
 
-        self.relax = relax
+    # Text.
+    sys.stdout.write("# " + text + " #\n")
 
-        # Execute the system/functional tests.
-        system_result = System_tests(self.relax)
+    # Bottom bar.
+    for i in xrange(len(text) + 4):
+        sys.stdout.write("#")
+    sys.stdout.write("\n\n\n")
 
-        # Execute the unit tests.
-        runner = Run_unit_tests(root_path='test_suite/unit_tests')
-        unit_result = runner.run()
 
-        # Print out a summary of the test suite.
-        ########################################
+def summary_line(name, passed):
+    """Print a summary line.
+    
+    @param name:    The name of the test, test category, etc.
+    @type name:     str
+    @param passed:  An argment which if True causes '[ OK ]' to be printed and if False causes
+                    '[ Failed ]' to be printed.
+    @type passed:   Any objects which evaluates to either True or False.
+    """
 
-        # Heading.
-        print "\n\n\n"
-        print "###################################"
-        print "# Summary of the relax test suite #"
-        print "###################################\n"
+    # Name.
+    sys.stdout.write("    " + name + " ")
 
-        # System/functional test summary.
-        summary_line("System/functional tests", system_result)
+    # Dots.
+    for j in xrange(84 - len(name)):
+        sys.stdout.write(".")
 
-        # Unit test summary.
-        summary_line("Unit tests", unit_result)
+    # Passed.
+    if passed:
+        sys.stdout.write(" %-10s\n" % "[ OK ]")
 
-        # Synopsis.
-        summary_line("Synopsis", system_result and unit_result)
+    # Failed.
+    else:
+        sys.stdout.write(" %-10s\n" % "[ Failed ]")
