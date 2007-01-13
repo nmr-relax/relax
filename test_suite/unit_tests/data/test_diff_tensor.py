@@ -46,11 +46,8 @@ class Test_diff_tensor(TestCase):
     def test_set_Diso(self):
         """Test that the Diso parameter cannot be set."""
 
-        # Assert that Diso cannot be set (to the tm value of 10 ns).
-        try:
-            self.diff_data.Diso = 1/(6*1e-8)
-        except RelaxError, message:
-            self.assert_(message.text == "The object 'Diso' is not modifiable.")
+        # Assert that a RelaxError occurs when Diso is set (to the tm value of 10 ns).
+        self.assertRaises(RelaxError, setattr, self.diff_data, 'Diso', 1/(6*1e-8))
 
         # Make sure that the Diso parameter has not been set.
         self.assert_(not hasattr(self.diff_data, 'Diso'))
