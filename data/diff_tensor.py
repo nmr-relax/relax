@@ -28,6 +28,52 @@ from data_classes import Element, SpecificData
 from generic_fns.diffusion_tensor import calc_Diso, calc_Dpar, calc_Dpar_unit, calc_Dper, calc_Dratio, calc_Dx, calc_Dx_unit, calc_Dy, calc_Dy_unit, calc_Dz, calc_Dz_unit, calc_rotation, calc_tensor, calc_tensor_diag
 
 
+
+def dependency_generator(diff_type):
+    """Generator for the automatic updating the diffusion tensor data structures.
+
+    The order of the yield statements is important!
+
+    @param diff_type:   The type of Brownian rotational diffusion.
+    @type diff_type:    str
+    @return:            This generator successively yields three objects, the target object to
+                        update, the list of parameters which if modified cause the target to be
+                        updated, and the list of parameters that the target depends upon.
+    """
+
+    # Spherical diffusion.
+    if diff_type == 'sphere':
+        yield ('Diso',          ['tm'], ['tm'])
+        yield ('tensor_diag',   ['tm'], ['type', 'Diso'])
+        yield ('rotation',      ['tm'], ['type'])
+        yield ('tensor',        ['tm'], ['rotation', 'tensor_diag'])
+
+    # Spheroidal diffusion.
+    elif diff_type == 'spheroid':
+        yield ('Diso',          ['tm'],                         ['tm'])
+        yield ('Dpar',          ['tm', 'Da'],                   ['Diso', 'Da'])
+        yield ('Dper',          ['tm', 'Da'],                   ['Diso', 'Da'])
+        yield ('Dratio',        ['tm', 'Da'],                   ['Dpar', 'Dper'])
+        yield ('Dpar_unit',     ['theta', 'phi'],               ['theta', 'phi'])
+        yield ('tensor_diag',   ['tm', 'Da'],                   ['type', 'Dpar', 'Dper'])
+        yield ('rotation',      ['theta', 'phi'],               ['type', 'theta', 'phi', 'Dpar_unit'])
+        yield ('tensor',        ['tm', 'Da', 'theta', 'phi'],   ['rotation', 'tensor_diag'])
+
+    # Ellipsoidal diffusion.
+    elif diff_type == 'ellipsoid':
+        yield ('Diso',          ['tm'],                                         ['tm'])
+        yield ('Dx',            ['tm', 'Da', 'Dr'],                             ['Diso', 'Da', 'Dr'])
+        yield ('Dy',            ['tm', 'Da', 'Dr'],                             ['Diso', 'Da', 'Dr'])
+        yield ('Dz',            ['tm', 'Da'],                                   ['Diso', 'Da'])
+        yield ('Dx_unit',       ['alpha', 'beta', 'gamma'],                     ['alpha', 'beta', 'gamma'])
+        yield ('Dy_unit',       ['alpha', 'beta', 'gamma'],                     ['alpha', 'beta', 'gamma'])
+        yield ('Dz_unit',       ['alpha', 'beta'],                              ['alpha', 'beta'])
+        yield ('tensor_diag',   ['tm', 'Da', 'Dr'],                             ['type', 'Dx', 'Dy', 'Dz'])
+        yield ('rotation',      ['alpha', 'beta', 'gamma'],                     ['type', 'Dx_unit', 'Dy_unit', 'Dz_unit'])
+        yield ('tensor',        ['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma'],   ['rotation', 'tensor_diag'])
+
+
+
 # Diffusion tensor specific data.
 #################################
 
@@ -65,10 +111,6 @@ class DiffTensorElement(Element):
             Dratio  =  Dpar / Dper.
         """
 
-        ######################
-        # Set the attribute. #
-        ######################
-
         # Get the base parameter name and determine the object category ('val', 'err', or 'sim').
         if search('_err$', name):
             category = 'err'
@@ -104,77 +146,9 @@ class DiffTensorElement(Element):
         if name in ['type', 'fixed', 'spheroid_type']:
             return
 
-
-        ###############################
-        # Update the data structures. #
-        ###############################
-
-
-        # Objects for all tensor types.
-        ###############################
-
-        # The isotropic diffusion rate Diso.
-        self._update_object(param_name, target='Diso', update_if_set=['tm'], depends=['tm'], category=category)
-
-
-        # Spherical diffusion.
-        ######################
-
-        if self.type == 'sphere':
-            # Update the diagonalised diffusion tensor (within the diffusion frame).
-            self._update_object(param_name, target='tensor_diag', update_if_set=['tm'], depends=['type', 'Diso'], category=category)
-
-            # The rotation matrix (diffusion frame to structural frame).
-            self._update_object(param_name, target='rotation', update_if_set=['tm'], depends=['type'], category=category)
-
-            # The diffusion tensor (within the structural frame).
-            self._update_object(param_name, target='tensor', update_if_set=['tm'], depends=['rotation', 'tensor_diag'], category=category)
-
-
-        # Spheroidal diffusion.
-        #######################
-
-        elif self.type == 'spheroid':
-            # Update Dpar, Dper, and Dratio.
-            self._update_object(param_name, target='Dpar', update_if_set=['tm', 'Da'], depends=['Diso', 'Da'], category=category)
-            self._update_object(param_name, target='Dper', update_if_set=['tm', 'Da'], depends=['Diso', 'Da'], category=category)
-            self._update_object(param_name, target='Dratio', update_if_set=['tm', 'Da'], depends=['Dpar', 'Dper'], category=category)
-
-            # Update the unit vector parallel to the axis.
-            self._update_object(param_name, target='Dpar_unit', update_if_set=['theta', 'phi'], depends=['theta', 'phi'], category=category)
-
-            # Update the diagonalised diffusion tensor (within the diffusion frame).
-            self._update_object(param_name, target='tensor_diag', update_if_set=['tm', 'Da'], depends=['type', 'Dpar', 'Dper'], category=category)
-
-            # The rotation matrix (diffusion frame to structural frame).
-            self._update_object(param_name, target='rotation', update_if_set=['theta', 'phi'], depends=['type', 'theta', 'phi', 'Dpar_unit'], category=category)
-
-            # The diffusion tensor (within the structural frame).
-            self._update_object(param_name, target='tensor', update_if_set=['tm', 'Da', 'theta', 'phi'], depends=['rotation', 'tensor_diag'], category=category)
-
-
-        # Ellipsoidal diffusion.
-        ########################
-
-        elif self.type == 'ellipsoid':
-            # Update Dx, Dy, and Dz.
-            self._update_object(param_name, target='Dx', update_if_set=['tm', 'Da', 'Dr'], depends=['Diso', 'Da', 'Dr'], category=category)
-            self._update_object(param_name, target='Dy', update_if_set=['tm', 'Da', 'Dr'], depends=['Diso', 'Da', 'Dr'], category=category)
-            self._update_object(param_name, target='Dz', update_if_set=['tm', 'Da'], depends=['Diso', 'Da'], category=category)
-
-            # Update the unit vectors parallel to the axes.
-            self._update_object(param_name, target='Dx_unit', update_if_set=['alpha', 'beta', 'gamma'], depends=['alpha', 'beta', 'gamma'], category=category)
-            self._update_object(param_name, target='Dy_unit', update_if_set=['alpha', 'beta', 'gamma'], depends=['alpha', 'beta', 'gamma'], category=category)
-            self._update_object(param_name, target='Dz_unit', update_if_set=['beta', 'gamma'], depends=['beta', 'gamma'], category=category)
-
-            # Update the diagonalised diffusion tensor (within the diffusion frame).
-            self._update_object(param_name, target='tensor_diag', update_if_set=['tm', 'Da', 'Dr'], depends=['type', 'Dx', 'Dy', 'Dz'], category=category)
-
-            # The rotation matrix (diffusion frame to structural frame).
-            self._update_object(param_name, target='rotation', update_if_set=['alpha', 'beta', 'gamma'], depends=['type', 'Dx_unit', 'Dy_unit', 'Dz_unit'], category=category)
-
-            # The diffusion tensor (within the structural frame).
-            self._update_object(param_name, target='tensor', update_if_set=['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma'], depends=['rotation', 'tensor_diag'], category=category)
+        # Update the data structures.
+        for target, update_if_set, depends in dependency_generator(self.type):
+            self._update_object(param_name, target, update_if_set, depends, category)
 
 
     def _update_object(self, param_name, target, update_if_set, depends, category):
