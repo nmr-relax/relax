@@ -307,6 +307,9 @@ class Test_diff_tensor(TestCase):
         Diso parameter.
         """
 
+        # Set the diffusion type.
+        self.diff_data.type = 'sphere'
+
         # Set the tm value to 10 ns.
         self.diff_data.tm = 1e-8
 
