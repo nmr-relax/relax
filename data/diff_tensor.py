@@ -72,13 +72,13 @@ class DiffTensorElement(Element):
         # Get the base parameter name and determine the object category ('val', 'err', or 'sim').
         if search('_err$', name):
             category = 'err'
-            base_name = name[:-4]
+            param_name = name[:-4]
         elif search('_sim$', name):
             category = 'sim'
-            base_name = name[:-4]
+            param_name = name[:-4]
         else:
             category = 'val'
-            base_name = name
+            param_name = name
 
         # List of modifiable attributes.
         mod_attr = ['type',
@@ -94,7 +94,7 @@ class DiffTensorElement(Element):
                     'gamma']
 
         # Test if the attribute that is trying to be set is modifiable.
-        if not base_name in mod_attr:
+        if not param_name in mod_attr:
             raise RelaxError, "The object " + `name` + " is not modifiable."
 
         # Set the attribute normally.
@@ -114,7 +114,7 @@ class DiffTensorElement(Element):
         ###############################
 
         # The isotropic diffusion rate Diso.
-        self._update_object(base_name, target='Diso', update_if_set=['tm'], depends=['tm'], category=category)
+        self._update_object(param_name, target='Diso', update_if_set=['tm'], depends=['tm'], category=category)
 
 
         # Spherical diffusion.
@@ -122,13 +122,13 @@ class DiffTensorElement(Element):
 
         if self.type == 'sphere':
             # Update the diagonalised diffusion tensor (within the diffusion frame).
-            self._update_object(base_name, target='tensor_diag', update_if_set=['tm'], depends=['type', 'Diso'], category=category)
+            self._update_object(param_name, target='tensor_diag', update_if_set=['tm'], depends=['type', 'Diso'], category=category)
 
             # The rotation matrix (diffusion frame to structural frame).
-            self._update_object(base_name, target='rotation', update_if_set=['tm'], depends=['type'], category=category)
+            self._update_object(param_name, target='rotation', update_if_set=['tm'], depends=['type'], category=category)
 
             # The diffusion tensor (within the structural frame).
-            self._update_object(base_name, target='tensor', update_if_set=['tm'], depends=['rotation', 'tensor_diag'], category=category)
+            self._update_object(param_name, target='tensor', update_if_set=['tm'], depends=['rotation', 'tensor_diag'], category=category)
 
 
         # Spheroidal diffusion.
@@ -136,21 +136,21 @@ class DiffTensorElement(Element):
 
         elif self.type == 'spheroid':
             # Update Dpar, Dper, and Dratio.
-            self._update_object(base_name, target='Dpar', update_if_set=['tm', 'Da'], depends=['Diso', 'Da'], category=category)
-            self._update_object(base_name, target='Dper', update_if_set=['tm', 'Da'], depends=['Diso', 'Da'], category=category)
-            self._update_object(base_name, target='Dratio', update_if_set=['tm', 'Da'], depends=['Dpar', 'Dper'], category=category)
+            self._update_object(param_name, target='Dpar', update_if_set=['tm', 'Da'], depends=['Diso', 'Da'], category=category)
+            self._update_object(param_name, target='Dper', update_if_set=['tm', 'Da'], depends=['Diso', 'Da'], category=category)
+            self._update_object(param_name, target='Dratio', update_if_set=['tm', 'Da'], depends=['Dpar', 'Dper'], category=category)
 
             # Update the unit vector parallel to the axis.
-            self._update_object(base_name, target='Dpar_unit', update_if_set=['theta', 'phi'], depends=['theta', 'phi'], category=category)
+            self._update_object(param_name, target='Dpar_unit', update_if_set=['theta', 'phi'], depends=['theta', 'phi'], category=category)
 
             # Update the diagonalised diffusion tensor (within the diffusion frame).
-            self._update_object(base_name, target='tensor_diag', update_if_set=['tm', 'Da'], depends=['type', 'Dpar', 'Dper'], category=category)
+            self._update_object(param_name, target='tensor_diag', update_if_set=['tm', 'Da'], depends=['type', 'Dpar', 'Dper'], category=category)
 
             # The rotation matrix (diffusion frame to structural frame).
-            self._update_object(base_name, target='rotation', update_if_set=['theta', 'phi'], depends=['type', 'theta', 'phi', 'Dpar_unit'], category=category)
+            self._update_object(param_name, target='rotation', update_if_set=['theta', 'phi'], depends=['type', 'theta', 'phi', 'Dpar_unit'], category=category)
 
             # The diffusion tensor (within the structural frame).
-            self._update_object(base_name, target='tensor', update_if_set=['tm', 'Da', 'theta', 'phi'], depends=['rotation', 'tensor_diag'], category=category)
+            self._update_object(param_name, target='tensor', update_if_set=['tm', 'Da', 'theta', 'phi'], depends=['rotation', 'tensor_diag'], category=category)
 
 
         # Ellipsoidal diffusion.
@@ -158,26 +158,26 @@ class DiffTensorElement(Element):
 
         elif self.type == 'ellipsoid':
             # Update Dx, Dy, and Dz.
-            self._update_object(base_name, target='Dx', update_if_set=['tm', 'Da', 'Dr'], depends=['Diso', 'Da', 'Dr'], category=category)
-            self._update_object(base_name, target='Dy', update_if_set=['tm', 'Da', 'Dr'], depends=['Diso', 'Da', 'Dr'], category=category)
-            self._update_object(base_name, target='Dz', update_if_set=['tm', 'Da'], depends=['Diso', 'Da'], category=category)
+            self._update_object(param_name, target='Dx', update_if_set=['tm', 'Da', 'Dr'], depends=['Diso', 'Da', 'Dr'], category=category)
+            self._update_object(param_name, target='Dy', update_if_set=['tm', 'Da', 'Dr'], depends=['Diso', 'Da', 'Dr'], category=category)
+            self._update_object(param_name, target='Dz', update_if_set=['tm', 'Da'], depends=['Diso', 'Da'], category=category)
 
             # Update the unit vectors parallel to the axes.
-            self._update_object(base_name, target='Dx_unit', update_if_set=['alpha', 'beta', 'gamma'], depends=['alpha', 'beta', 'gamma'], category=category)
-            self._update_object(base_name, target='Dy_unit', update_if_set=['alpha', 'beta', 'gamma'], depends=['alpha', 'beta', 'gamma'], category=category)
-            self._update_object(base_name, target='Dz_unit', update_if_set=['beta', 'gamma'], depends=['beta', 'gamma'], category=category)
+            self._update_object(param_name, target='Dx_unit', update_if_set=['alpha', 'beta', 'gamma'], depends=['alpha', 'beta', 'gamma'], category=category)
+            self._update_object(param_name, target='Dy_unit', update_if_set=['alpha', 'beta', 'gamma'], depends=['alpha', 'beta', 'gamma'], category=category)
+            self._update_object(param_name, target='Dz_unit', update_if_set=['beta', 'gamma'], depends=['beta', 'gamma'], category=category)
 
             # Update the diagonalised diffusion tensor (within the diffusion frame).
-            self._update_object(base_name, target='tensor_diag', update_if_set=['tm', 'Da', 'Dr'], depends=['type', 'Dx', 'Dy', 'Dz'], category=category)
+            self._update_object(param_name, target='tensor_diag', update_if_set=['tm', 'Da', 'Dr'], depends=['type', 'Dx', 'Dy', 'Dz'], category=category)
 
             # The rotation matrix (diffusion frame to structural frame).
-            self._update_object(base_name, target='rotation', update_if_set=['alpha', 'beta', 'gamma'], depends=['type', 'Dx_unit', 'Dy_unit', 'Dz_unit'], category=category)
+            self._update_object(param_name, target='rotation', update_if_set=['alpha', 'beta', 'gamma'], depends=['type', 'Dx_unit', 'Dy_unit', 'Dz_unit'], category=category)
 
             # The diffusion tensor (within the structural frame).
-            self._update_object(base_name, target='tensor', update_if_set=['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma'], depends=['rotation', 'tensor_diag'], category=category)
+            self._update_object(param_name, target='tensor', update_if_set=['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma'], depends=['rotation', 'tensor_diag'], category=category)
 
 
-    def _update_object(self, base_name, target, update_if_set, depends, category):
+    def _update_object(self, param_name, target, update_if_set, depends, category):
         """Function for updating the target object, its error, and the MC simulations.
 
         If the base name of the object is not within the 'update_if_set' list, this function returns
@@ -185,8 +185,8 @@ class DiffTensorElement(Element):
         (target), its error (target+'_err'), or all Monte Carlo simulations (target+'_sim') are
         updated.
 
-        @param base_name:       The parameter name which is being set in the __setattr__() function.
-        @type base_name:        str
+        @param param_name:      The parameter name which is being set in the __setattr__() function.
+        @type param_name:       str
         @param target:          The name of the object to update.
         @type target:           str
         @param update_if_set:   If the parameter being set by the __setattr__() function is not
@@ -201,13 +201,13 @@ class DiffTensorElement(Element):
         """
 
         # Only update if the parameter name is within the 'update_if_set' list.
-        if not base_name in update_if_set:
+        if not param_name in update_if_set:
             return
 
         # Debugging.
         if Debug:
             print "\n\n"
-            print "Base name: " + `base_name`
+            print "Param name: " + `param_name`
             print "Target: " + `target`
             print "update_if_set: " + `update_if_set`
             print "Depends: " + `depends`
