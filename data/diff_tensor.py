@@ -322,12 +322,19 @@ class DiffTensorElement(Element):
 
 
 class DiffTensorSimList(ListType):
-    def __init__(self):
-        """Empty data container for Monte Carlo simulation diffusion tensor data."""
+    """Empty data container for Monte Carlo simulation diffusion tensor data."""
 
-    def __setitem__(self):
+    def __setitem__(self, index, value):
         """Set the value."""
-        print "Setitem"
+        print "index: " + `index`
+        print "value: " + `value`
 
     def append(self, value):
+        """Replacement function for the normal self.append() method."""
+
+        print
         print "append: " + `value`
+
+        # Append the value to the list.
+        self[len(self):len(self)] = [value]
+        print self
