@@ -486,9 +486,15 @@ class Run_unit_tests(object):
         finder.scan_paths()
         if runner == None:
             runner = unittest.TextTestRunner()
-        runner.run(finder.suite)
         # add SystemDirectory to python path
         # iterate and load files to be tested
+
+        # Run the unit tests and catch the TestResult object.
+        results = runner.run(finder.suite)
+
+        # Return the result of all the tests.
+        return results.wasSuccessful()
+
 
 if __name__ == '__main__':
 #    print '1',get_module_relative_path('/A/B/C', ('/A/B',))
