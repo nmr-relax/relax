@@ -383,6 +383,10 @@ def calc_rotation(diff_type, *args):
         # Return the tensor.
         return rotation
 
+    # Raise an error.
+    else:
+        raise RelaxError, 'The diffusion tensor has not been specified'
+
 
 def calc_tensor(rotation, tensor_diag):
     """Function for calculating the diffusion tensor (in the structural frame).

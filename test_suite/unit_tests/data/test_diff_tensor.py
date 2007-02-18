@@ -90,10 +90,10 @@ class Test_diff_tensor(TestCase):
         self.diff_data.type = 'spheroid'
 
         # Set the MC sim diffusion parameter lists.
-        self.diff_data.tm_sim = DiffTensorSimList(self.diff_data)
-        self.diff_data.Da_sim = DiffTensorSimList(self.diff_data)
-        self.diff_data.theta_sim = DiffTensorSimList(self.diff_data)
-        self.diff_data.phi_sim = DiffTensorSimList(self.diff_data)
+        self.diff_data.tm_sim = DiffTensorSimList('tm', self.diff_data)
+        self.diff_data.Da_sim = DiffTensorSimList('Da', self.diff_data)
+        self.diff_data.theta_sim = DiffTensorSimList('theta', self.diff_data)
+        self.diff_data.phi_sim = DiffTensorSimList('phi', self.diff_data)
 
         # Append the values.
         self.diff_data.tm_sim.append(tm)
@@ -252,17 +252,16 @@ class Test_diff_tensor(TestCase):
         self.diff_data.type = 'spheroid'
 
         # Set the MC sim diffusion parameter lists.
-        self.diff_data.tm_sim = DiffTensorSimList(self.diff_data)
-        self.diff_data.Da_sim = DiffTensorSimList(self.diff_data)
-        self.diff_data.theta_sim = DiffTensorSimList(self.diff_data)
-        self.diff_data.phi_sim = DiffTensorSimList(self.diff_data)
+        self.diff_data.tm_sim = DiffTensorSimList('tm', self.diff_data)
+        self.diff_data.Da_sim = DiffTensorSimList('Da', self.diff_data)
+        self.diff_data.theta_sim = DiffTensorSimList('theta', self.diff_data)
+        self.diff_data.phi_sim = DiffTensorSimList('phi', self.diff_data)
 
         # Append the initial values.
         self.diff_data.tm_sim.append(2e-9)
         self.diff_data.Da_sim.append(1e5)
         self.diff_data.theta_sim.append(0.0)
         self.diff_data.phi_sim.append(2.0 * pi)
-        print self.diff_data
 
         # The new MC sim parameter values.
         tm = 0.5e-9
@@ -277,7 +276,6 @@ class Test_diff_tensor(TestCase):
         self.diff_data.phi_sim[0] = phi
 
         # Test the set values.
-        print self.diff_data
         self.assertEqual(self.diff_data.type, 'spheroid')
         self.assertEqual(self.diff_data.tm_sim[0], tm)
         self.assertEqual(self.diff_data.Da_sim[0], Da)
