@@ -278,7 +278,7 @@ class DiffTensorElement(Element):
             # Only update the MC simulation object if its dependancies exist.
             if not missing_dep:
                 # Initialise an empty array to store the MC simulation object elements.
-                sim_values = DiffTensorSimList()
+                sim_values = DiffTensorSimList(self)
 
                 # Loop over the simulations.
                 for i in xrange(num_sim):
@@ -298,17 +298,20 @@ class DiffTensorElement(Element):
 class DiffTensorSimList(ListType):
     """Empty data container for Monte Carlo simulation diffusion tensor data."""
 
+    def __init__(self, diff_element):
+        """Make the parent object accessible to this list object."""
+
+        self.__diff_element = diff_element
+
+
     def __setitem__(self, index, value):
         """Set the value."""
-        print "index: " + `index`
-        print "value: " + `value`
+
+        ListType.__setitem__(self, index, value)
+
 
     def append(self, value):
         """Replacement function for the normal self.append() method."""
 
-        print
-        print "append: " + `value`
-
         # Append the value to the list.
         self[len(self):len(self)] = [value]
-        print self
