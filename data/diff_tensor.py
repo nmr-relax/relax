@@ -148,7 +148,7 @@ class DiffTensorElement(Element):
 
         # Update the data structures.
         for target, update_if_set, depends in dependency_generator(self.type):
-            self._update_object(param_name, target, update_if_set, depends, category)
+            self.__update_object(param_name, target, update_if_set, depends, category)
 
 
     def __update_sim_append(self, param_name, index):
@@ -263,7 +263,7 @@ class DiffTensorElement(Element):
                 target_obj.set_untouchable_item(index, fn(*deps))
 
 
-    def _update_object(self, param_name, target, update_if_set, depends, category):
+    def __update_object(self, param_name, target, update_if_set, depends, category):
         """Function for updating the target object, its error, and the MC simulations.
 
         If the base name of the object is not within the 'update_if_set' list, this function returns
