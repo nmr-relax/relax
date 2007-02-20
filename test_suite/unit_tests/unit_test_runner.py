@@ -475,23 +475,35 @@ class Run_unit_tests(object):
             print 'unit test directory:', unit_test_directory
             print 'module paths:       ', module_path
             print
+            
         # add UnitTestDirectory to python path
         backup_python_path = sys.path[:]
-        sys.path.insert(1,unit_test_directory)
-        sys.path.insert(1,system_directory)
-
+        #sys.path.insert(1,unit_test_directory)
+        
+        # add SystemDirectory to python path
+        sys.path.pop(0)
+        sys.path.insert(0,system_directory)
+        
+    
+        print sys.path
 
         #iterate and load unit tests from module path
         finder = Test_finder(unit_test_directory)
         finder.scan_paths()
         if runner == None:
             runner = unittest.TextTestRunner()
-        # add SystemDirectory to python path
+        
+        
+
+        
         # iterate and load files to be tested
 
         # Run the unit tests and catch the TestResult object.
         results = runner.run(finder.suite)
 
+        # restore sys  path
+        sys.path=backup_python_path
+        
         # Return the result of all the tests.
         return results.wasSuccessful()
 
