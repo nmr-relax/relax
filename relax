@@ -133,11 +133,15 @@ class Relax:
         # Process the command line arguments and determine the relax mode.
         mode, log_file, tee_file = self.arguments()
 
-        # Set up the RelaxError and RelaxWarning global variables.
+        # Set up the debugging flag.
         errors.Debug = self.Debug
-        errors.relax = self
         warnings.Debug = self.Debug
+
+        # Set up the pedantic flag.
         warnings.Pedantic = self.Pedantic
+
+        # Place the class instance into the RelaxError and RelaxWarning modules as global variables.
+        errors.relax = self
         warnings.relax = self
 
         # Show the version number and exit.
