@@ -34,7 +34,6 @@
 
 
 # Python modules.
-import __builtin__
 from os import F_OK, access, getpid, putenv
 import platform
 import profile
@@ -101,10 +100,10 @@ class Relax:
         RelaxErrors(self)
 
         # Debugging flag (default is off).
-        __builtin__.Debug = 0
+        self.relax.Debug = 0
         
         # Pedantic flag (default is off).
-        __builtin__.Pedantic = 0
+        self.relax.Pedantic = 0
 
         # Set up the program internal errors.
         RelaxErrors(self)
@@ -234,11 +233,11 @@ class Relax:
 
         # Debugging flag.
         if options.debug:
-            __builtin__.Debug = 1
+            self.relax.Debug = 1
         
         # Pedantic flag.
         if options.pedantic:
-            __builtin__.Pedantic = 1
+            self.relax.Pedantic = 1
 
         # Logging.
         if options.log:
