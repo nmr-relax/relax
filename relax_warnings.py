@@ -23,7 +23,7 @@
 import warnings
 import inspect
 
-from errors import BaseError
+from relax_errors import BaseError
 
 
 # Global variables.
