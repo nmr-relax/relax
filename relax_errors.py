@@ -20,8 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+from re import match
 import time
-
+from types import ClassType
 
 # Global variables.
 relax = None
@@ -648,3 +649,23 @@ class RelaxNaNError(BaseError):
         self.text = "The invalid " + name + " floating point value of NaN (Not a Number) has occurred."
         if Debug:
             self.save_state()
+
+
+
+# An object of all the RelaxErrors.
+###################################
+
+# Loop over all objects of this module.
+for name in dir():
+    # Get the object.
+    object = globals()[name]
+
+    # Skip over all non error class objects.
+    if type(object) != ClassType or not match('Relax', name):
+        continue
+
+    # Tuple of all the errors.
+    if 'AllRelaxErrors' in dir():
+        AllRelaxErrors = AllRelaxErrors, object
+    else:
+        AllRelaxErrors = object,
