@@ -98,10 +98,10 @@ class Relax:
         self.platform = platform.uname()[0]
 
         # Debugging flag (default is off).
-        self.relax.Debug = 0
+        self.Debug = 0
 
         # Pedantic flag (default is off).
-        self.relax.Pedantic = 0
+        self.Pedantic = 0
 
         # Set the program introduction string to nothing.
         self.intro_string = None
@@ -134,10 +134,10 @@ class Relax:
         mode, log_file, tee_file = self.arguments()
 
         # Set up the RelaxError and RelaxWarning global variables.
-        errors.Debug = self.relax.Debug
-        errors.relax = self.relax
-        warnings.Debug = warnings.relax.Debug
-        warnings.relax = warnings.relax
+        errors.Debug = self.Debug
+        errors.relax = self
+        warnings.Debug = self.Debug
+        warnings.relax = self
 
         # Show the version number and exit.
         if mode == 'version':
@@ -231,11 +231,11 @@ class Relax:
 
         # Debugging flag.
         if options.debug:
-            self.relax.Debug = 1
+            self.Debug = 1
 
         # Pedantic flag.
         if options.pedantic:
-            self.relax.Pedantic = 1
+            self.Pedantic = 1
 
         # Logging.
         if options.log:
