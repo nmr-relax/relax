@@ -21,6 +21,11 @@
 ###############################################################################
 
 from re import split
+from warnings import warn
+
+from relax_errors import RelaxError, RelaxArgNotInListError, RelaxNoRunError, RelaxNoSequenceError
+from relax_warnings import RelaxWarning
+
 
 class Intensity:
     def __init__(self, relax):
