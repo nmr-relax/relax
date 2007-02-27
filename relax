@@ -42,7 +42,6 @@ import pstats
 from re import match
 from string import split, strip
 import sys
-from warnings import warn
 
 # Numeric.
 try:
@@ -142,7 +141,6 @@ class Relax:
         
         # Initialise the warnings sytem.
         RelaxWarnings()
-        __builtin__.warn = warn
                 
         # Show the version number and exit.
         if mode == 'version':
