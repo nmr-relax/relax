@@ -291,15 +291,6 @@ class DiffTensorElement(Element):
         if not param_name in update_if_set:
             return
 
-        # Debugging.
-        if Debug:
-            print "\n\n"
-            print "Param name: " + `param_name`
-            print "Target: " + `target`
-            print "update_if_set: " + `update_if_set`
-            print "Depends: " + `depends`
-            print "Category: " + `category`
-
         # Get the function for calculating the value.
         fn = globals()['calc_'+target]
 
@@ -314,28 +305,16 @@ class DiffTensorElement(Element):
             for dep_name in depends:
                 # Test if the object exists.
                 if not hasattr(self, dep_name):
-                    # Debugging.
-                    if Debug:
-                        print "Missing dep: " + `dep_name`
-
                     missing_dep = 1
                     break
 
                 # Get the object and place it into the 'deps' tuple.
                 deps = deps+(getattr(self, dep_name),)
 
-            # Debugging.
-            if Debug:
-                print "Deps: " + `deps`
-
             # Only update the object if its dependencies exist.
             if not missing_dep:
                 # Calculate the value.
                 value = fn(*deps)
-
-                # Debugging.
-                if Debug:
-                    print "Value: " + `value`
 
                 # Set the attribute.
                 self.__dict__[target] = value
