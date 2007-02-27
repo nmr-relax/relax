@@ -66,7 +66,7 @@ except ImportError:
 # relax modules.
 from colour import Colour
 from data.main import Data
-from errors import RelaxErrors, RelaxWarnings
+import errors
 from io import IO
 from generic_fns.main import Generic
 from prompt.gpl import gpl
@@ -77,6 +77,7 @@ from test_suite.runner import Test_suite_runner
 from test_suite.unit_tests.unit_test_runner import Run_unit_tests
 from thread_classes import Threading, ThreadData
 import version
+import warnings
 
 sys.path.append(sys.path[0])
 sys.path[0] = '.'
@@ -96,17 +97,11 @@ class Relax:
         # Store the operating system name.
         self.platform = platform.uname()[0]
 
-        # Set up the program internal errors.
-        RelaxErrors(self)
-
         # Debugging flag (default is off).
         self.relax.Debug = 0
-        
+
         # Pedantic flag (default is off).
         self.relax.Pedantic = 0
-
-        # Set up the program internal errors.
-        RelaxErrors(self)
 
         # Set the program introduction string to nothing.
         self.intro_string = None
@@ -137,10 +132,13 @@ class Relax:
 
         # Process the command line arguments and determine the relax mode.
         mode, log_file, tee_file = self.arguments()
-        
-        # Initialise the warnings sytem.
-        RelaxWarnings()
-                
+
+        # Set up the RelaxError and RelaxWarning global variables.
+        errors.Debug = self.relax.Debug
+        errors.relax = self.relax
+        warnings.Debug = warnings.relax.Debug
+        warnings.relax = warnings.relax
+
         # Show the version number and exit.
         if mode == 'version':
             print 'relax ' + self.version
@@ -234,7 +232,7 @@ class Relax:
         # Debugging flag.
         if options.debug:
             self.relax.Debug = 1
-        
+
         # Pedantic flag.
         if options.pedantic:
             self.relax.Pedantic = 1
