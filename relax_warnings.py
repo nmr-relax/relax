@@ -32,16 +32,6 @@ Debug = False
 Pedantic = False
 
 
-# Format warning messages.
-warnings.formatwarning = format
-
-# Set warning filters.
-if Pedantic:
-    warnings.filterwarnings('error', category=BaseWarning)
-else:
-    warnings.filterwarnings('always', category=BaseWarning)
-
-
 # The warning formatting function.
 def format(message, category, filename, lineno):
     """ Replacement for warnings.formatwarning to customise output format."""
@@ -107,3 +97,16 @@ class RelaxNoAtomWarning(BaseWarning):
 class RelaxNoPDBFileWarning(BaseWarning):
     def __init__(self, file):
         self.text = "The PDB file %s cannot be found, no structures will be loaded." % file
+
+
+
+# Format warning messages.
+warnings.formatwarning = format
+
+# Set warning filters.
+if Pedantic:
+    warnings.filterwarnings('error', category=BaseWarning)
+else:
+    warnings.filterwarnings('always', category=BaseWarning)
+
+
