@@ -137,6 +137,7 @@ class Relax:
         errors.Debug = self.Debug
         errors.relax = self
         warnings.Debug = self.Debug
+        warnings.Pedantic = self.Pedantic
         warnings.relax = self
 
         # Show the version number and exit.
