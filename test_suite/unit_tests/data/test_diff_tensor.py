@@ -36,6 +36,7 @@ if len(path_comps) > 3:
     path.append(relax_path)
 
 from data.diff_tensor import DiffTensorElement, DiffTensorSimList
+from errors import RelaxError
 
 
 # Tests for the data.diff_tensor module.
