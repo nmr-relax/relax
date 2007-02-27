@@ -27,6 +27,9 @@ import readline
 #import signal
 import sys
 
+# RelaxError system.
+from relax_errors import *
+
 # Python modules accessible on the command prompt.
 from math import pi
 import Numeric
