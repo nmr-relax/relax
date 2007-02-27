@@ -25,6 +25,7 @@ from re import search
 from types import ListType
 
 from data_classes import Element, SpecificData
+from errors import RelaxError
 from generic_fns.diffusion_tensor import calc_Diso, calc_Dpar, calc_Dpar_unit, calc_Dper, calc_Dratio, calc_Dx, calc_Dx_unit, calc_Dy, calc_Dy_unit, calc_Dz, calc_Dz_unit, calc_rotation, calc_tensor, calc_tensor_diag
 
 
