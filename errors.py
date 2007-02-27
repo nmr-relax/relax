@@ -20,10 +20,12 @@
 #                                                                             #
 ###############################################################################
 
-import __builtin__
-from re import match
-from types import ClassType
 import time
+
+
+# Global variables.
+relax = None
+Debug = False
 
 
 
@@ -38,9 +40,17 @@ class BaseError(Exception):
     def save_state(self):
         """Function for saving the program state."""
 
+        # Dummy function.
+        if not relax:
+            return
+
+        # Append the date and time to the save file.
         now = time.localtime()
         file_name = "relax_state_%i%02i%02i_%02i%02i%02i" % (now[0], now[2], now[1], now[3], now[4], now[5])
-        self._relax.interpreter._State.save(file_name)
+
+        # Save the program state.
+        relax.interpreter._State.save(file_name)
+
 
 
 # Standard errors.
