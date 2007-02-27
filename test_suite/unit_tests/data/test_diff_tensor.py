@@ -31,7 +31,7 @@ from unittest import TestCase, main
 
 # Modify the system path so that the relax modules can be imported (for stand alone execution).
 path_comps = split(path[0], sep)
-relax_path = sep + join(*path_comps[0:5])
+relax_path = sep + join(*path_comps[0:-3])
 path.append(relax_path)
 
 from data.diff_tensor import DiffTensorElement, DiffTensorSimList
