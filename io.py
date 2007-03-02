@@ -46,6 +46,8 @@ from string import split
 import sys
 from sys import stdin, stdout, stderr
 
+from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
+
 
 class IO:
     def __init__(self, relax):

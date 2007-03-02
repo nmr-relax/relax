@@ -32,6 +32,7 @@ from threading import Lock, Thread
 
 from data.data_classes import Element
 #from processes import RelaxPopen3
+from relax_errors import RelaxError, RelaxFileEmptyError, RelaxIntError
 
 
 # Class for setting up threading.
