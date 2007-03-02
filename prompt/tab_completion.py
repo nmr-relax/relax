@@ -20,7 +20,6 @@
 #                                                                             #
 ###############################################################################
 
-import __builtin__
 from re import match, split
 from rlcompleter import get_class_members
 
@@ -40,7 +39,7 @@ class Tab_completion:
 
         self.options = []
         for name in self.list:
-            if match(self.input, name) and name != "__builtins__":
+            if match(self.input, name) and name != "__builtin__":
                 self.options.append(name)
 
 
@@ -69,7 +68,7 @@ class Tab_completion:
         # Possible completions.
         self.options = []
         for name in self.list:
-            if match(list[-1], name) and name != "__builtins__":
+            if match(list[-1], name) and name != "__builtin__":
                 self.options.append(module + '.' + name)
 
         if self.print_flag:
