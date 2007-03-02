@@ -22,6 +22,8 @@
 
 from copy import deepcopy
 
+from relax_errors import RelaxError
+
 
 class Common_functions:
     def __init__(self):

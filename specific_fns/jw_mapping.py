@@ -25,6 +25,7 @@ from string import replace
 
 from base_class import Common_functions
 from maths_fns.jw_mapping import Mapping
+from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoValueError, RelaxNucleusError
 
 
 class Jw_mapping(Common_functions):

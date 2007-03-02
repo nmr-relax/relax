@@ -23,6 +23,8 @@
 from copy import deepcopy
 import sys
 
+from relax_errors import RelaxError, RelaxNoResError, RelaxNoRiError, RelaxNoRunError, RelaxNoSequenceError, RelaxRiError
+
 
 class Rx_data:
     def __init__(self, relax):

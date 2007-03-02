@@ -28,6 +28,8 @@ import sys
 
 from base_class import Common_functions
 from minimise.generic import generic_minimise
+from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoRunError, RelaxNoSequenceError
+
 
 # C modules.
 try:
