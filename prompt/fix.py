@@ -22,6 +22,8 @@
 
 import sys
 
+from relax_errors import RelaxBinError, RelaxIntStrError, RelaxStrError
+
 
 class Fix:
     def __init__(self, relax):

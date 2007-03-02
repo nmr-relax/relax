@@ -23,6 +23,7 @@
 import sys
 
 import help
+from relax_errors import RelaxIntError, RelaxListError, RelaxListStrError, RelaxNoneIntError, RelaxStrError
 
 
 class Model_free:

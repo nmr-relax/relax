@@ -22,6 +22,8 @@
 
 import sys
 
+from relax_errors import RelaxBinError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxStrError
+
 from doc_string import regexp_doc
 import help
 from generic_fns.minimise import Minimise

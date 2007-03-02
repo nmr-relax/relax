@@ -22,6 +22,8 @@
 
 import sys
 
+from relax_errors import RelaxError, RelaxNoneListError, RelaxStrError
+
 
 class Modsel:
     def __init__(self, relax):

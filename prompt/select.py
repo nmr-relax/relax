@@ -23,6 +23,7 @@
 import sys
 
 import help
+from relax_errors import RelaxBinError, RelaxError, RelaxIntError, RelaxListStrError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
 
 
 class Select:

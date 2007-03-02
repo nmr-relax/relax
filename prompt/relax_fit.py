@@ -23,6 +23,7 @@
 import sys
 
 import help
+from relax_errors import RelaxFloatError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 
 
 class Relax_fit:

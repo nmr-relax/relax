@@ -23,6 +23,8 @@
 
 import os
 
+from relax_errors import RelaxStrError
+
 
 class Lh:
     def __repr__(self):

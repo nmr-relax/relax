@@ -23,6 +23,8 @@
 from string import split
 import sys
 
+from relax_errors import RelaxBinError, RelaxError, RelaxIntError, RelaxIntListIntError, RelaxListError, RelaxListNumError, RelaxNoneError, RelaxNoneNumError, RelaxNumError, RelaxStrError
+
 from minimise.generic import generic_minimise
 
 

@@ -22,6 +22,8 @@
 
 import sys
 
+from relax_errors import RelaxBinError, RelaxError, RelaxFloatError, RelaxIntError, RelaxListFloatError, RelaxListStrError, RelaxNoneFloatListError, RelaxNoneIntError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
+
 from doc_string import regexp_doc
 import help
 from generic_fns.diffusion_tensor import Diffusion_tensor

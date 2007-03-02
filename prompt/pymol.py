@@ -24,6 +24,7 @@ import sys
 
 from colour import Colour
 import help
+from relax_errors import RelaxBinError, RelaxListNumError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
 
 
 class Pymol:
