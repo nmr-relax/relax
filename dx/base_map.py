@@ -24,6 +24,8 @@
 from Numeric import Float64, array, zeros
 from time import asctime, localtime
 
+from relax_errors import RelaxError, RelaxUnknownParamError
+
 
 class Base_Map:
     def __init__(self):
