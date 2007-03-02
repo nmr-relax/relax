@@ -20,15 +20,13 @@
 #                                                                             #
 ###############################################################################
 
-import __builtin__
-
 # BZ2 compression module.
 try:
     from bz2 import BZ2File
-    __builtin__.bz2_module = 1
+    bz2_module = 1
 except ImportError, message:
-    __builtin__.bz2_module = 0
-    __builtin__.bz2_module_message = message.args[0]
+    bz2_module = 0
+    bz2_module_message = message.args[0]
 
 # Gzip compression module.
 from gzip import GzipFile
@@ -36,10 +34,10 @@ from gzip import GzipFile
 # Devnull.
 try:
     from os import devnull
-    __builtin__.devnull_import = 1
+    devnull_import = 1
 except ImportError, message:
-    __builtin__.devnull_import = 0
-    __builtin__.devnull_import_message = message.args[0]
+    devnull_import = 0
+    devnull_import_message = message.args[0]
 
 from os import F_OK, X_OK, access, altsep, getenv, makedirs, pathsep, remove, sep, stat
 from os.path import expanduser, basename, splitext
