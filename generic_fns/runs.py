@@ -21,6 +21,7 @@
 ###############################################################################
 
 from copy import deepcopy
+from specific_fns.relax_fit import C_module_exp_fn
 
 
 class Runs:

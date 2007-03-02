@@ -20,7 +20,6 @@
 #                                                                             #
 ###############################################################################
 
-import __builtin__
 from LinearAlgebra import inverse
 from math import sqrt
 from Numeric import Float64, array, average, identity, matrixmultiply, zeros
@@ -35,9 +34,9 @@ try:
     from maths_fns.relax_fit import setup, func, dfunc, d2func, back_calc_I
 except ImportError:
     sys.stderr.write("\nImportError: relaxation curve fitting is unavailible, try compiling the C modules.\n")
-    __builtin__.C_module_exp_fn = 0
+    C_module_exp_fn = 0
 else:
-    __builtin__.C_module_exp_fn = 1
+    C_module_exp_fn = 1
 
 
 class Relax_fit(Common_functions):
