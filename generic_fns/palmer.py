@@ -31,6 +31,8 @@ try:
 except ImportError:
     pass
 
+from relax_errors import RelaxDirError, RelaxFileError, RelaxFileOverwriteError, RelaxNoPdbError, RelaxNoRunError, RelaxNoSequenceError, RelaxNucleusError, RelaxProgFailError
+
 
 class Palmer:
     def __init__(self, relax):

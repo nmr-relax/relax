@@ -22,6 +22,8 @@
 
 from copy import deepcopy
 
+from relax_errors import RelaxError, RelaxNoRunError
+
 
 class Eliminate:
     def __init__(self, relax):

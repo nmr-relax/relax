@@ -23,6 +23,8 @@
 from os import F_OK, access
 from re import compile, match
 
+from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError, RelaxRegExpError
+
 
 class Selection:
     def __init__(self, relax):

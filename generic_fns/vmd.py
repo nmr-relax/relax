@@ -22,6 +22,8 @@
 
 from Scientific.Visualization import VMD
 
+from relax_errors import RelaxNoPdbError
+
 
 class Vmd:
     def __init__(self, relax):

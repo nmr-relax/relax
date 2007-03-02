@@ -23,6 +23,8 @@
 from copy import deepcopy
 from math import log
 
+from relax_errors import RelaxDiffSeqError, RelaxError, RelaxNoRunError, RelaxNoSequenceError
+
 
 class Model_selection:
     def __init__(self, relax):

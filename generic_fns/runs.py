@@ -21,6 +21,8 @@
 ###############################################################################
 
 from copy import deepcopy
+
+from relax_errors import RelaxError, RelaxNoRunError, RelaxRunError
 from specific_fns.relax_fit import C_module_exp_fn
 
 

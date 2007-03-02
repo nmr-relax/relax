@@ -22,6 +22,8 @@
 
 from re import match
 
+from relax_errors import RelaxInvalidError
+
 
 class Nuclei:
     def __init__(self, relax):

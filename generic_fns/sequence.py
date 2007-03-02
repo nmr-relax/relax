@@ -21,6 +21,9 @@
 ###############################################################################
 
 
+from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoRunError, RelaxNoSequenceError, RelaxSequenceError
+
+
 class Sequence:
     def __init__(self, relax):
         """Class containing functions specific to amino-acid sequence."""

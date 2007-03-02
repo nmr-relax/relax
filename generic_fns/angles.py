@@ -23,6 +23,8 @@
 from math import acos, pi, sin
 from Numeric import dot
 
+from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoTensorError
+
 
 class Angles:
     def __init__(self, relax):

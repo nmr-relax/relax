@@ -22,6 +22,8 @@
 
 import sys
 
+from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoRunError
+
 
 class Results:
     def __init__(self, relax):

@@ -23,6 +23,8 @@
 from os import system
 from re import match
 
+from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoSimError, RelaxRegExpError
+
 
 class Grace:
     def __init__(self, relax):

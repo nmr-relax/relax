@@ -23,6 +23,8 @@
 from os import popen
 from string import split
 
+from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError
+
 
 class Molmol:
     def __init__(self, relax):
