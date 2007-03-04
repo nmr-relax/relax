@@ -917,23 +917,31 @@ class Relax_fit(Common_functions):
         Relaxation curve fitting data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        ___________________________________________________________________
-        |                        |               |                        |
-        | Data type              | Object name   | Patterns               |
-        |________________________|_______________|________________________|
-        |                        |               |                        |
-        | Relaxation rate        | 'rx'          | '^[Rr]x$'              |
-        |                        |               |                        |
-        | Initial intensity      | 'i0'          | '^[Ii]0$'              |
-        |                        |               |                        |
-        | Intensity at infinity  | 'iinf'        | '^[Ii]inf$'            |
-        |________________________|_______________|________________________|
+        __________________________________________________________________________________________
+        |                                   |                      |                             |
+        | Data type                         | Object name          | Patterns                    |
+        |___________________________________|______________________|_____________________________|
+        |                                   |                      |                             |
+        | Relaxation rate                   | 'rx'                 | '^[Rr]x$'                   |
+        |                                   |                      |                             |
+        | Average peak intensities (series) | 'ave_intensities'    | '^[Aa]ve[ -_][Ii]nt$'       |
+        |                                   |                      |                             |
+        | Initial intensity                 | 'i0'                 | '^[Ii]0$'                   |
+        |                                   |                      |                             |
+        | Intensity at infinity             | 'iinf'               | '^[Ii]inf$'                 |
+        |                                   |                      |                             |
+        | Relaxation period times (series)  | 'relax_times'        | '^[Rr]elax[ -_][Tt]imes$'   |
+        |___________________________________|______________________|_____________________________|
 
         """
 
         # Relaxation rate.
         if match('^[Rr]x$', name):
             return 'rx'
+
+        # Average peak intensities (series)
+        if match('^[Aa]ve[ -_][Ii]nt$', name):
+            return 'ave_intensities'
 
         # Initial intensity.
         if match('^[Ii]0$', name):
@@ -942,6 +950,10 @@ class Relax_fit(Common_functions):
         # Intensity at infinity.
         if match('^[Ii]inf$', name):
             return 'iinf'
+
+        # Relaxation period times (series).
+        if match('^[Rr]elax[ -_][Tt]imes$', name):
+            return 'relax_times'
 
 
     def return_grace_string(self, data_type):
@@ -954,6 +966,10 @@ class Relax_fit(Common_functions):
         if object_name == 'rx':
             grace_string = '\\qR\\sx\\Q'
 
+        # Average peak intensities.
+        elif object_name == 'ave_intensities':
+            grace_string = '\\qAverage peak intensities\\Q'
+
         # Initial intensity.
         elif object_name == 'i0':
             grace_string = '\\qI\\s0\\Q'
@@ -961,6 +977,10 @@ class Relax_fit(Common_functions):
         # Intensity at infinity.
         elif object_name == 'iinf':
             grace_string = '\\qI\\sinf\\Q'
+
+        # Intensity at infinity.
+        elif object_name == 'relax_times':
+            grace_string = '\\qRelaxation time period (s)\\Q'
 
         # Return the Grace string.
         return grace_string

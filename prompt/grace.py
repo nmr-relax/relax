@@ -28,6 +28,7 @@ from generic_fns.minimise import Minimise
 from specific_fns.model_free import Model_free
 from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.noe import Noe
+from specific_fns.relax_fit import Relax_fit
 
 
 class Grace:
@@ -97,7 +98,7 @@ class Grace:
         self.__relax__.generic.grace.view(file=file, dir=dir, grace_exe=grace_exe)
 
 
-    def write(self, run=None, x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot_data='value', file=None, dir='grace', force=0):
+    def write(self, run=None, x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot_data='value', norm=0, file=None, dir='grace', force=0):
         """Function for creating a grace '.agr' file.
 
         Keyword Arguments
@@ -114,6 +115,8 @@ class Grace:
         res_name:  The residue name (regular expression is allowed).
 
         plot_data:  The data to use for the plot.
+
+        norm:  Flag for the normalisation of series type data.
 
         file:  The name of the file.
 
@@ -150,6 +153,11 @@ class Grace:
             'error':  Plot errors.
             'sims':   Plot the simulation values.
 
+        Normalisation is only allowed for series type data, for example the R2 exponential curves,
+        and will be ignored for all other data types.  If the norm flag is set to one then the
+        y-value of the first point of the series will be set to 1.  This normalisation is useful for
+        emphasising errors in the data sets.
+
 
         Examples
         ~~~~~~~~
@@ -176,6 +184,17 @@ class Grace:
         relax> grace.write('m4', 'Rex', 'te', res_num=123, plot_data='sims', file='s2_te.agr')
         relax> grace.write(run='m4', x_data_type='Rex', y_data_type='te', res_num=123,
                            plot_data='sims', file='s2_te.agr')
+
+
+        By plotting the peak intensities, the integrity of exponential relaxation curves can be
+        checked and anomalies searched for prior to model-free analysis or reduced spectral density
+        mapping.  For example the normalised average peak intensities can be plotted verses the
+        relaxation time periods for the relaxation curves of all residues of a protein.  The
+        normalisation, whereby the initial peak intensity of each residue I(0) is set to 1,
+        emphasises any problems.  To produce this Grace file, type:
+
+        relax> grace.write(name, x_data_type='relax_times', y_data_type='ave_int',
+                           norm=1, file='intensities_norm.agr', force=1)
         """
 
         # Function intro text.
@@ -187,6 +206,7 @@ class Grace:
             text = text + ", res_num=" + `res_num`
             text = text + ", res_name=" + `res_name`
             text = text + ", plot_data=" + `plot_data`
+            text = text + ", norm=" + `norm`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force` + ")"
@@ -229,7 +249,7 @@ class Grace:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        self.__relax__.generic.grace.write(run=run, x_data_type=x_data_type, y_data_type=y_data_type, res_num=res_num, res_name=res_name, plot_data=plot_data, file=file, dir=dir, force=force)
+        self.__relax__.generic.grace.write(run=run, x_data_type=x_data_type, y_data_type=y_data_type, res_num=res_num, res_name=res_name, plot_data=plot_data, norm=norm, file=file, dir=dir, force=force)
 
 
 
@@ -239,6 +259,7 @@ class Grace:
     # Write function.
     write.__doc__ = write.__doc__ + "\n\n" + regexp_doc() + "\n"
     write.__doc__ = write.__doc__ + Minimise.return_data_name.__doc__ + "\n\n"
-    write.__doc__ = write.__doc__ + Model_free.return_data_name.__doc__ + "\n\n"
-    write.__doc__ = write.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n\n"
     write.__doc__ = write.__doc__ + Noe.return_data_name.__doc__ + "\n"
+    write.__doc__ = write.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
+    write.__doc__ = write.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n\n"
+    write.__doc__ = write.__doc__ + Model_free.return_data_name.__doc__ + "\n\n"
