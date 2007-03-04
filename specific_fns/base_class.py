@@ -101,12 +101,18 @@ class Common_functions:
             # Get the value.
             if hasattr(data, object_name):
                 value = getattr(data, object_name)
+            elif hasattr(self.relax.data, object_name):
+                object = getattr(self.relax.data, object_name)
+                value = object[self.run]
             else:
                 value = None
 
             # Get the error.
             if hasattr(data, object_error):
                 error = getattr(data, object_error)
+            elif hasattr(self.relax.data, object_error):
+                object = getattr(self.relax.data, object_error)
+                error = object[self.run]
             else:
                 error = None
 
@@ -119,6 +125,9 @@ class Common_functions:
             if hasattr(data, object_sim):
                 object = getattr(data, object_sim)
                 value = object[sim]
+            elif hasattr(self.relax.dat, object_sim):
+                object = getattr(self.relax.dat, object_sim)
+                value = object[self.run][sim]
             else:
                 value = None
 

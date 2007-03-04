@@ -20,6 +20,7 @@
 #                                                                             #
 ###############################################################################
 
+from Numeric import array
 from os import system
 from re import match
 
@@ -43,11 +44,11 @@ class Grace:
         # Loop over the data.
         for i in xrange(len(self.data)):
             # X-axis errors.
-            if self.x_data_type != 'res' and self.data[i][1] != None:
+            if self.x_data_type != 'res' and self.data[i][3] != None:
                 x_errors = 1
 
             # Y-axis errors.
-            if self.data[i][3] != None:
+            if self.data[i][5] != None:
                 y_errors = 1
 
         # Plot of values.
@@ -112,6 +113,10 @@ class Grace:
                 if not match(self.res_name, data.name):
                     continue
 
+            # Skip deselected residues.
+            if not data.select:
+                continue
+
             # Number of data points per residue.
             if self.plot_data == 'sim':
                 points = self.relax.data.sim_number[self.run]
@@ -121,40 +126,40 @@ class Grace:
             # Loop over the data points.
             for j in xrange(points):
                 # Initialise an empty array for the individual residue data.
-                res_data = [None, None, None, None]
+                res_data = [data.num, data.name, None, None, None, None]
 
                 # Residue number on the x-axis.
                 if self.x_data_type == 'res':
-                    res_data[0] = data.num
+                    res_data[2] = data.num
 
                 # Parameter value for the x-axis.
                 else:
                     # Get the x-axis values and errors.
                     if self.plot_data == 'sim':
-                        res_data[0], res_data[1] = self.x_return_value(self.run, i, self.x_data_type, sim=j)
+                        res_data[2], res_data[3] = self.x_return_value(self.run, i, self.x_data_type, sim=j)
                     else:
-                        res_data[0], res_data[1] = self.x_return_value(self.run, i, self.x_data_type)
+                        res_data[2], res_data[3] = self.x_return_value(self.run, i, self.x_data_type)
 
                 # Get the y-axis values and errors.
                 if self.plot_data == 'sim':
-                    res_data[2], res_data[3] = self.y_return_value(self.run, i, self.y_data_type, sim=j)
+                    res_data[4], res_data[5] = self.y_return_value(self.run, i, self.y_data_type, sim=j)
                 else:
-                    res_data[2], res_data[3] = self.y_return_value(self.run, i, self.y_data_type)
+                    res_data[4], res_data[5] = self.y_return_value(self.run, i, self.y_data_type)
 
                 # Go to the next residue if there is missing data.
-                if res_data[0] == None or res_data[2] == None:
+                if res_data[2] == None or res_data[4] == None:
                     continue
 
                 # X-axis conversion factors.
                 if self.x_data_type != 'res':
-                    res_data[0] = res_data[0] / self.x_return_conversion_factor(self.x_data_type)
-                    if res_data[1]:
-                        res_data[1] = res_data[1] / self.x_return_conversion_factor(self.x_data_type)
+                    res_data[2] = array(res_data[2]) / self.x_return_conversion_factor(self.x_data_type)
+                    if res_data[3]:
+                        res_data[3] = array(res_data[3]) / self.x_return_conversion_factor(self.x_data_type)
 
                 # Y-axis conversion factors.
-                res_data[2] = res_data[2] / self.y_return_conversion_factor(self.y_data_type)
-                if res_data[3]:
-                    res_data[3] = res_data[3] / self.y_return_conversion_factor(self.y_data_type)
+                res_data[4] = array(res_data[4]) / self.y_return_conversion_factor(self.y_data_type)
+                if res_data[5]:
+                    res_data[5] = array(res_data[5]) / self.y_return_conversion_factor(self.y_data_type)
 
                 # Append the array to the full data structure.
                 self.data.append(res_data)
@@ -173,7 +178,7 @@ class Grace:
         system(grace_exe + " " + self.file_path + " &")
 
 
-    def write(self, run=None, x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot_data='value', file=None, dir=None, force=0):
+    def write(self, run=None, x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot_data='value', norm=1, file=None, dir=None, force=0):
         """Function for writing data to a file."""
 
         # Arguments.
@@ -183,6 +188,7 @@ class Grace:
         self.res_num = res_num
         self.res_name = res_name
         self.plot_data = plot_data
+        self.norm = norm
 
         # Test if the run exists.
         if not self.run in self.relax.data.run_names:
@@ -246,11 +252,28 @@ class Grace:
         # Determine the graph type (ie xy, xydy, xydx, or xydxdy).
         self.determine_graph_type()
 
-        # Write the header.
-        self.write_header()
+        # Test for multiple data sets.
+        self.multi = 1
+        try:
+            len(self.data[0][2])
+        except TypeError:
+            self.multi = 0
 
-        # Write the data.
-        self.write_data()
+        # Multiple data sets.
+        if self.multi:
+            # Write the header.
+            self.write_multi_header()
+
+            # Write the data.
+            self.write_multi_data()
+
+        # Single data set.
+        else:
+            # Write the header.
+            self.write_header()
+
+            # Write the data.
+            self.write_data()
 
         # Close the file.
         self.file.close()
@@ -259,39 +282,43 @@ class Grace:
     def write_data(self):
         """Write the data into the grace file."""
 
+        # First graph and data set (graph 0, set 0).
+        self.file.write("@target G0.S0\n")
+        self.file.write("@type " + self.graph_type + "\n")
+
         # Loop over the data.
         for i in xrange(len(self.data)):
             # Graph type xy.
             if self.graph_type == 'xy':
                 # Write the data.
-                self.file.write("%-30s%-30s\n" % (self.data[i][0], self.data[i][2]))
+                self.file.write("%-30s%-30s\n" % (self.data[i][2], self.data[i][4]))
 
             # Graph type xydy.
             elif self.graph_type == 'xydy':
                 # Catch y-axis errors of None.
-                y_error = self.data[i][3]
+                y_error = self.data[i][5]
                 if y_error == None:
                     y_error = 0.0
 
                 # Write the data.
-                self.file.write("%-30s%-30s%-30s\n" % (self.data[i][0], self.data[i][2], y_error))
+                self.file.write("%-30s%-30s%-30s\n" % (self.data[i][2], self.data[i][4], y_error))
 
             # Graph type xydxdy.
             elif self.graph_type == 'xydxdy':
                 # Catch x-axis errors of None.
-                x_error = self.data[i][1]
+                x_error = self.data[i][3]
                 if x_error == None:
                     x_error = 0.0
 
                 # Catch y-axis errors of None.
-                y_error = self.data[i][3]
+                y_error = self.data[i][5]
                 if y_error == None:
                     y_error = 0.0
 
                 # Write the data.
-                self.file.write("%-30s%-30s%-30s%-30s\n" % (self.data[i][0], self.data[i][2], x_error, y_error))
+                self.file.write("%-30s%-30s%-30s%-30s\n" % (self.data[i][2], self.data[i][4], x_error, y_error))
 
-        # End of graph 0, set 0.
+        # End of graph and data set.
         self.file.write("&\n")
 
 
@@ -357,6 +384,118 @@ class Grace:
         self.file.write("@    s0 errorbar linewidth 0.5\n")
         self.file.write("@    s0 errorbar riser linewidth 0.5\n")
 
-        # Graph 0, set 0.
-        self.file.write("@target G0.S0\n")
-        self.file.write("@type " + self.graph_type + "\n")
+
+    def write_multi_data(self):
+        """Write the data into the grace file."""
+
+        # Loop over the data.
+        for i in xrange(len(self.data)):
+            # Multi data set (graph 0, set i).
+            self.file.write("@target G0.S" + `i` + "\n")
+            self.file.write("@type " + self.graph_type + "\n")
+
+            # Normalisation.
+            norm_fact = 1.0
+            if self.norm:
+                norm_fact = self.data[i][4][0]
+
+            # Loop over the data of the set.
+            for j in xrange(len(self.data[i][2])):
+                # Graph type xy.
+                if self.graph_type == 'xy':
+                    # Write the data.
+                    self.file.write("%-30s%-30s\n" % (self.data[i][2][j], self.data[i][4][j]/norm_fact))
+
+                # Graph type xydy.
+                elif self.graph_type == 'xydy':
+                    # Catch y-axis errors of None.
+                    y_error = self.data[i][5][j]
+                    if y_error == None:
+                        y_error = 0.0
+
+                    # Write the data.
+                    self.file.write("%-30s%-30s%-30s\n" % (self.data[i][2][j], self.data[i][4][j]/norm_fact, y_error/norm_fact))
+
+                # Graph type xydxdy.
+                elif self.graph_type == 'xydxdy':
+                    # Catch x-axis errors of None.
+                    x_error = self.data[i][3][j]
+                    if x_error == None:
+                        x_error = 0.0
+
+                    # Catch y-axis errors of None.
+                    y_error = self.data[i][5][j]
+                    if y_error == None:
+                        y_error = 0.0
+
+                    # Write the data.
+                    self.file.write("%-30s%-30s%-30s%-30s\n" % (self.data[i][2][j], self.data[i][4][j]/norm_fact, x_error, y_error/norm_fact))
+
+            # End of the data set i.
+            self.file.write("&\n")
+
+
+    def write_multi_header(self):
+        """Write the grace header."""
+
+        # Graph G0.
+        self.file.write("@with g0\n")
+
+        # X axis start and end.
+        if self.x_data_type == 'res':
+            self.file.write("@    world xmin " + `self.relax.data.res[self.run][0].num - 1` + "\n")
+            self.file.write("@    world xmax " + `self.relax.data.res[self.run][-1].num + 1` + "\n")
+
+        # X-axis label.
+        if self.x_data_type == 'res':
+            self.file.write("@    xaxis  label \"Residue number\"\n")
+        else:
+            # Get the units.
+            units = self.x_return_units(self.x_data_type)
+
+            # Label.
+            if units:
+                self.file.write("@    xaxis  label \"" + self.x_return_grace_string(self.x_data_type) + "\\N (" + units + ")\"\n")
+            else:
+                self.file.write("@    xaxis  label \"" + self.x_return_grace_string(self.x_data_type) + "\"\n")
+
+        # X-axis specific settings.
+        self.file.write("@    xaxis  label char size 1.48\n")
+        self.file.write("@    xaxis  tick major size 0.75\n")
+        self.file.write("@    xaxis  tick major linewidth 0.5\n")
+        self.file.write("@    xaxis  tick minor linewidth 0.5\n")
+        self.file.write("@    xaxis  tick minor size 0.45\n")
+        self.file.write("@    xaxis  ticklabel char size 1.00\n")
+
+        # Y-axis label.
+        units = self.y_return_units(self.y_data_type)
+        string = "@    yaxis  label \"" + self.y_return_grace_string(self.y_data_type)
+        if units:
+            string = string + "\\N (" + units + ")"
+        if self.norm:
+            string = string + " \\q(normalised)\\Q"
+        self.file.write(string + "\"\n")
+
+        # Y-axis specific settings.
+        self.file.write("@    yaxis  label char size 1.48\n")
+        self.file.write("@    yaxis  tick major size 0.75\n")
+        self.file.write("@    yaxis  tick major linewidth 0.5\n")
+        self.file.write("@    yaxis  tick minor linewidth 0.5\n")
+        self.file.write("@    yaxis  tick minor size 0.45\n")
+        self.file.write("@    yaxis  ticklabel char size 1.00\n")
+
+        # Legend box.
+        self.file.write("@    legend off\n")
+
+        # Frame.
+        self.file.write("@    frame linewidth 0.5\n")
+
+        # Loop over the data sets.
+        for i in xrange(len(self.data)):
+            # Error bars.
+            self.file.write("@    s%i errorbar size 0.5\n" % i)
+            self.file.write("@    s%i errorbar linewidth 0.5\n" % i)
+            self.file.write("@    s%i errorbar riser linewidth 0.5\n" % i)
+
+            # Legend.
+            self.file.write("@    s%i legend \"Residue %s\"\n" % (i, self.data[i][1] + " " + `self.data[i][0]`))
