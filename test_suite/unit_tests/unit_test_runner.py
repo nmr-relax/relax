@@ -49,9 +49,14 @@
     inside another program. It also has the ability to search for a  root unit
     test and system directory from a position anywhere inside the unit test
     hierarchy.
+
+    TODO: examine PEP 338 and runpy.run_module(modulename): Executing Modules as Scripts
+          for a later version of relax that is dependant on python 2.5
 '''
 
 import os,re,unittest,string,sys
+from optparse import OptionParser
+
 #import Tkinter as tk
 #import unittest.unittestgui as unitgui
 
@@ -268,7 +273,7 @@ class Test_finder:
 
 
 
-
+#FIXME:  bad name
 class Run_unit_tests(object):
     '''Class to run a particular unit test or a directory of unit tests.'''
 
@@ -320,9 +325,9 @@ class Run_unit_tests(object):
         '''
 
         self.test_module = test_module
+
         if self.test_module == None:
             self.test_module = os.getcwd()
-
         self.root_path = root_path
         if self.root_path == None:
             self.root_path = os.getcwd()
@@ -330,6 +335,7 @@ class Run_unit_tests(object):
         self.root_system_directory = root_system_directory
         self.root_unit_test_directory = root_unit_test_directory
         self.verbose = verbose
+
 
 
     def get_first_instance_path(self, path, target_directory, offset_path='.'):
@@ -374,7 +380,8 @@ class Run_unit_tests(object):
     def find_unit_test_directory_path(self, path):
         ''' Find the path to the unit_test directory.
 
-            The algorithm starts from path and using self.rootUnitTestDirectory
+            The algorithm starts from path and using self.rootUnitTestDirectory to find
+            the unit test directory path
 
              @type  path: a string containing a directory path
              @param path: a path to a point to start searching to the system
@@ -390,7 +397,8 @@ class Run_unit_tests(object):
     def find_system_directory_path(self, path):
         ''' Find the path to the relax system directory.
 
-            The algorithm starts from path and uses self.rootSystemDirectory
+            The algorithm starts from path and uses self.rootSystemDirectoryto find
+            the relax system directory path
 
              @type  path: a string containing a directory path
              @param path: a path to a point to start searching to the system
@@ -402,9 +410,29 @@ class Run_unit_tests(object):
 
         return self.get_first_instance_path(path, search_path, offset_path)
 
+    def get_module_path(self,python_module_path):
+        ''' convert a module path delimited by dots into a path for
+           use in the current file system
+
+           e.g. test.python.wibble ->  test/python/wibble (under unix)
+
+           limitationscan only currently deal with relative paths without
+           backtracks non of the multidot magic for module paths introduced
+           by python 2.5 pep 328 is accounted for!
+
+
+           @type python_module_path: a string
+           @param python_module_path: a pythond module path separated by dots
+
+           @rtype:   string
+           @return:  a (relative) path in the current file system
+
+        '''
+        elems = python_module_path.split('.')
+        return os.sep.join(elems)
 
     def paths_from_test_module(self, root_path):
-        '''Determine the possible path of the self.testModule.
+        '''Determine the possible path of the self.test_module.
 
            The search starts from the current directory or the root_path
 
@@ -426,35 +454,44 @@ class Run_unit_tests(object):
            @param root_path: directory to start looking for the module from
         '''
 
-        unit_test_directory = self.find_unit_test_directory_path(root_path)
-        search_paths = (unit_test_directory, root_path)
-        result = []
-        if self.test_module != None:
-            result.extend(search_paths)
-
+        print self.test_module
+        result  = []
+        # first see if we can just find a direct path
+        module_fs_path = self.get_module_path(self.test_module)
+        test_path = os.extsep.join((module_fs_path,'py'))
+        if os.path.exists(test_path):
+            print 'found module: ' + module_fs_path
+            result.append(test_path)
         else:
-            test_module_segs = string.split(self.test_module,'.')
-            print 'root path', root_path
-            print 'test segs', test_module_segs
 
-            test_module_ames = []
-            if len(test_module_segs) >= 2:
-                putative_class_name = test_module_segs[-1]
-                class_from_module_name = string.lower(putative_class_name[0]) + putative_class_name[:1]
+            unit_test_directory = self.find_unit_test_directory_path(root_path)
+            search_paths = (unit_test_directory, root_path)
+            if self.test_module != None:
+                result.extend(search_paths)
 
-                putative_module_name = test_module_segs[-2]
+            else:
+                test_module_segs = string.split(self.test_module,'.')
+                print 'root path', root_path
+                print 'test segs', test_module_segs
 
-                if class_from_module_name == putative_module_name:
-                    copy_test_module_segs = copy(test_module_segs)
-                    class_file = copy_testModule_segs.pop()
-                    class_file = class_file + '.py'
-                    copy_test_module_segs.append(class_file)
-                    test_module_names.append(copy_test_module_segs)
+                test_module_ames = []
+                if len(test_module_segs) >= 2:
+                    putative_class_name = test_module_segs[-1]
+                    class_from_module_name = string.lower(putative_class_name[0]) + putative_class_name[:1]
 
-            test_module_names.append(test_module_segs)
-            for test_module in test_module_names:
-                for search_path in search_paths:
-                    result.append(os.path.join(search_path, test_module))
+                    putative_module_name = test_module_segs[-2]
+
+                    if class_from_module_name == putative_module_name:
+                        copy_test_module_segs = copy(test_module_segs)
+                        class_file = copy_testModule_segs.pop()
+                        class_file = class_file + '.py'
+                        copy_test_module_segs.append(class_file)
+                        test_module_names.append(copy_test_module_segs)
+
+                test_module_names.append(test_module_segs)
+                for test_module in test_module_names:
+                    for search_path in search_paths:
+                        result.append(os.path.join(search_path, test_module))
 
         return result
 
@@ -473,18 +510,18 @@ class Run_unit_tests(object):
             print 'root path:          ', self.root_path
             print 'system directory:   ', system_directory
             print 'unit test directory:', unit_test_directory
-            print 'module paths:       ', module_path
-            print
-            
+            for i,elem in enumerate(module_path):
+                print 'module path %d:  %s'  % (i,elem)
+
         # add UnitTestDirectory to python path
         backup_python_path = sys.path[:]
         #sys.path.insert(1,unit_test_directory)
-        
+
         # add SystemDirectory to python path
         sys.path.pop(0)
         sys.path.insert(0,system_directory)
-        
-    
+
+
         print sys.path
 
         #iterate and load unit tests from module path
@@ -492,10 +529,10 @@ class Run_unit_tests(object):
         finder.scan_paths()
         if runner == None:
             runner = unittest.TextTestRunner()
-        
-        
 
-        
+
+
+
         # iterate and load files to be tested
 
         # Run the unit tests and catch the TestResult object.
@@ -503,7 +540,7 @@ class Run_unit_tests(object):
 
         # restore sys  path
         sys.path=backup_python_path
-        
+
         # Return the result of all the tests.
         return results.wasSuccessful()
 
@@ -518,8 +555,15 @@ if __name__ == '__main__':
 #    print get_common_prefix(('A','B','C','F'), ('A','B','C','D'))
 #    print get_common_prefix((),('A','B','C','D'))
 #    print ('A','B','C') == ('A','B','C')
-    runner = Run_unit_tests(verbose=True)
-    runner.run()
+    parser = OptionParser()
+
+    parser.add_option("-v", "--verbose", dest="verbose",
+                      help="verbose test ouput", default=False, action='store_true')
+    (options, args) = parser.parse_args()
+
+    for arg in args:
+        runner = Run_unit_tests(test_module=arg, verbose=options.verbose)
+        runner.run()
 
 #    root = tk.Tk()
 #    root.title("relax unit tests")
