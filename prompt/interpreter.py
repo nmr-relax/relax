@@ -27,7 +27,7 @@ import readline
 import sys
 
 # RelaxError system.
-from relax_errors import RelaxBinError, RelaxError, RelaxNoneError, RelaxStrError
+from relax_errors import AllRelaxErrors, RelaxBinError, RelaxError, RelaxNoneError, RelaxStrError
 
 # Python modules accessible on the command prompt.
 from math import pi
