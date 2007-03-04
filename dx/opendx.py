@@ -24,6 +24,7 @@ from os import system
 from re import search
 
 from isosurface_3D import Iso3D
+from relax_errors import RelaxError, RelaxNoResError
 
 
 class OpenDX:

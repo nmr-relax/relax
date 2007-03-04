@@ -20,6 +20,8 @@
 #                                                                             #
 ###############################################################################
 
+from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError, RelaxRunError, RelaxSequenceError
+
 
 class Hybrid:
     def __init__(self, relax):

@@ -22,6 +22,8 @@
 
 from Numeric import Float64, array
 
+from relax_errors import RelaxInvalidColourError
+
 
 class Colour:
     def __init__(self):

@@ -22,6 +22,9 @@
 
 from re import match
 
+from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoTensorError
+
+
 class Fix:
     def __init__(self, relax):
         """Class containing the function for fixing or allowing parameter values to change."""

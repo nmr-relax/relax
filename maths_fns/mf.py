@@ -25,6 +25,8 @@ from Numeric import Float64, matrixmultiply, ones, sum, transpose, zeros
 from math import pi
 import sys
 
+from relax_errors import RelaxError
+
 from direction_cosine import *
 from weights import *
 from correlation_time import *

@@ -20,12 +20,14 @@
 #                                                                             #
 ###############################################################################
 
-import __builtin__
 from code import InteractiveConsole, softspace
 from os import F_OK, access
 import readline
 #import signal
 import sys
+
+# RelaxError system.
+from relax_errors import RelaxBinError, RelaxError, RelaxNoneError, RelaxStrError
 
 # Python modules accessible on the command prompt.
 from math import pi

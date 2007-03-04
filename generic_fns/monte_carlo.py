@@ -25,6 +25,8 @@ from math import sqrt
 from Numeric import ones
 from random import gauss
 
+from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError
+
 
 class Monte_carlo:
     def __init__(self, relax):

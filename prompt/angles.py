@@ -22,6 +22,8 @@
 
 import sys
 
+from relax_errors import RelaxStrError
+
 
 class Angles:
     def __init__(self, relax):

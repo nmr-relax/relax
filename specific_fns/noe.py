@@ -23,6 +23,8 @@
 from math import sqrt
 from re import match
 
+from relax_errors import RelaxArgNotInListError, RelaxError, RelaxInvalidDataError, RelaxNoRunError, RelaxNoSequenceError, RelaxRegExpError
+
 
 class Noe:
     def __init__(self, relax):

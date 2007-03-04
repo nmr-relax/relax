@@ -25,6 +25,7 @@ from Queue import Queue
 from re import search
 
 #from processes import RelaxPopen3
+from relax_errors import RelaxError, RelaxNoRunError
 from thread_classes import RelaxParentThread, RelaxThread
 
 

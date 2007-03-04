@@ -26,6 +26,10 @@ from os import F_OK, access
 from re import compile, match
 import Scientific.IO.PDB
 from string import ascii_uppercase
+from warnings import warn
+
+from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbChainError, RelaxNoPdbError, RelaxNoResError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError, RelaxPdbError, RelaxPdbLoadError, RelaxRegExpError
+from relax_warnings import RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxWarning, RelaxZeroVectorWarning
 
 
 class Structure:

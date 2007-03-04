@@ -26,6 +26,8 @@ from re import match, search
 from string import lower, split
 import sys
 
+from relax_errors import RelaxDirError, RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNucleusError
+
 
 class Dasha:
     def __init__(self, relax):

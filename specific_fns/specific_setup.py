@@ -23,6 +23,8 @@
 
 from re import match
 
+from relax_errors import RelaxFuncSetupError
+
 
 class Specific_setup:
     def __init__(self, relax):

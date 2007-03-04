@@ -34,7 +34,6 @@
 
 
 # Python modules.
-import __builtin__
 from os import F_OK, access, getpid, putenv
 import platform
 import profile
@@ -42,7 +41,6 @@ import pstats
 from re import match
 from string import split, strip
 import sys
-from warnings import warn
 
 # Numeric.
 try:
@@ -68,11 +66,12 @@ except ImportError:
 # relax modules.
 from colour import Colour
 from data.main import Data
-from errors import RelaxErrors, RelaxWarnings
 from io import IO
 from generic_fns.main import Generic
 from prompt.gpl import gpl
 from prompt.interpreter import Interpreter
+import relax_errors
+import relax_warnings
 from specific_fns.main import Specific
 from specific_fns.specific_setup import Specific_setup
 from test_suite.runner import Test_suite_runner
@@ -98,17 +97,11 @@ class Relax:
         # Store the operating system name.
         self.platform = platform.uname()[0]
 
-        # Set up the program internal errors.
-        RelaxErrors(self)
-
         # Debugging flag (default is off).
-        __builtin__.Debug = 0
-        
-        # Pedantic flag (default is off).
-        __builtin__.Pedantic = 0
+        self.Debug = 0
 
-        # Set up the program internal errors.
-        RelaxErrors(self)
+        # Pedantic flag (default is off).
+        self.Pedantic = 0
 
         # Set the program introduction string to nothing.
         self.intro_string = None
@@ -139,11 +132,18 @@ class Relax:
 
         # Process the command line arguments and determine the relax mode.
         mode, log_file, tee_file = self.arguments()
-        
-        # Initialise the warnings sytem.
-        RelaxWarnings()
-        __builtin__.warn = warn
-                
+
+        # Set up the debugging flag.
+        relax_errors.Debug = self.Debug
+        relax_warnings.Debug = self.Debug
+
+        # Set up the pedantic flag.
+        relax_warnings.Pedantic = self.Pedantic
+
+        # Place the class instance into the RelaxError and RelaxWarning modules as global variables.
+        relax_errors.relax = self
+        relax_warnings.relax = self
+
         # Show the version number and exit.
         if mode == 'version':
             print 'relax ' + self.version
@@ -236,11 +236,11 @@ class Relax:
 
         # Debugging flag.
         if options.debug:
-            __builtin__.Debug = 1
-        
+            self.Debug = 1
+
         # Pedantic flag.
         if options.pedantic:
-            __builtin__.Pedantic = 1
+            self.Pedantic = 1
 
         # Logging.
         if options.log:
@@ -452,8 +452,8 @@ class RelaxParser(OptionParser):
 
         # Raise a clean error.
         try:
-            raise RelaxError, message
-        except AllRelaxErrors, instance:
+            raise relax_errors.RelaxError, message
+        except relax_errors.AllRelaxErrors, instance:
             sys.stderr.write(instance.__str__())
 
         # Exit.

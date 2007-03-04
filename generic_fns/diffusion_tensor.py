@@ -25,6 +25,8 @@ from math import cos, pi, sin
 from Numeric import Float64, array, dot, identity, transpose, zeros
 from re import search
 
+from relax_errors import RelaxError, RelaxNoRunError, RelaxNoTensorError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
+
 
 def calc_Diso(tm):
     """Function for calculating the Diso value.

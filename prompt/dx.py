@@ -23,6 +23,8 @@
 import sys
 from types import FunctionType
 
+from relax_errors import RelaxBinError, RelaxError, RelaxFunctionError, RelaxIntError, RelaxLenError, RelaxListError, RelaxListNumError, RelaxListStrError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+
 from doc_string import regexp_doc
 import help
 from generic_fns.diffusion_tensor import Diffusion_tensor

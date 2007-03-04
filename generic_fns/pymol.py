@@ -23,6 +23,8 @@
 from os import popen
 from string import split
 
+from relax_errors import RelaxError, RelaxImplementError, RelaxNoRunError, RelaxNoSequenceError
+
 
 class Pymol:
     def __init__(self, relax):

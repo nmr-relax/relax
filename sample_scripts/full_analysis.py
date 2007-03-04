@@ -11,6 +11,9 @@ from os import getcwd, listdir
 from re import search
 from string import lower
 
+# The RelaxError system.
+from relax_errors import RelaxError
+
 
 class Main:
     def __init__(self, relax):

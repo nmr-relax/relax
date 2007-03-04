@@ -25,6 +25,8 @@ from Numeric import ArrayType, zeros
 from re import compile, match
 import sys
 
+from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoRunError, RelaxNoSequenceError, RelaxRegExpError, RelaxUnknownParamError, RelaxValueError
+
 
 class Value:
     def __init__(self, relax):

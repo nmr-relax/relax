@@ -1,5 +1,8 @@
 # Script for model-free analysis using the program 'Modelfree4'.
 
+# The RelaxError system.
+from relax_errors import RelaxError
+
 # Set the stage of analysis.
 #
 # The three stages in this script are:

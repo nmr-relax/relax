@@ -268,7 +268,7 @@ class System_tests:
             sys.stdout.write("\n\n\n\n\n\n\n")
 
             # Debugging.
-            if not test_array[i].passed and Debug:
+            if not test_array[i].passed and self.relax.Debug:
                 sys.exit()
 
 

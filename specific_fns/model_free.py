@@ -30,9 +30,10 @@ from string import replace, split
 import sys
 
 from base_class import Common_functions
+from float import isNaN,isInf 
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
-from float import isNaN,isInf 
+from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxStyleError, RelaxTensorError, RelaxUnknownDataTypeError
 
 
 class Model_free(Common_functions):
