@@ -56,9 +56,14 @@
 
 import os,re,unittest,string,sys
 from optparse import OptionParser
+from textwrap import dedent
 
 #import Tkinter as tk
 #import unittest.unittestgui as unitgui
+
+# constants
+###########
+PY_FILE_EXTENSION='py'
 
 # utility functions
 ###################
@@ -287,23 +292,27 @@ class Run_unit_tests(object):
 
           @type  root_path: a string containing a directory name
           @param root_path: root path to start searching for modules to unit test
-                 from usually this is the current working directory.
+                 from. Two special cases arise: if the string contains '.'
+                 the search starts from the current working directory, if the value is
+                 the special value TEST_SUITE defined in this file the root of the
+                 test suite is sought from the current working directory using
+                 find_unit_test_directory_path() and used instead.
 
           @type  test_module: string
           @param test_module: the name of a module to unit test. If the variable
-                 is None it will be interpreted as
-                 the current working directory
-                 contents. Otherwise it will be used as a module path from the
+                 is None a search for unit tests using <test-pattern> will start
+                 form <root_path>, otherwise it will be used as a module path from the
                  current working directory.
 
-          @type  test_pattern: a list of strings containing patterns
-          @param test_pattern: a list of patterns against which files will be
+          FIXME: rename as testcase_file_pattern
+          @type  test_pattern: a list of strings containing regex patterns
+          @param test_pattern: a list of regex patterns against which files will be
                  tested to see if they are expected to contain unit tests. If
-                 the file has the correct pattern the class
-                 <fileName>.<capitalisedFileName> will be searched for
-                 testCases e.g in the case of test_float.py the combination
-                 would be test_float.Test_float.
+                 the file has the correct pattern the module contained inside the
+                 file will be searched for testCases e.g in the case of test_float.py
+                 the  module to be searched for would be test_float.Test_float.
 
+          FIXME: the following to options are search paths and should be named so
           @type  rootSystemDirectory: a list containing a directory name followed by a
                  relative path
           @param rootSystemDirectory: the directory from which the distribution
@@ -312,13 +321,16 @@ class Run_unit_tests(object):
                  relative to the test suite. For the current setup
                  in relax this is (\'test_suite\', /'..\'). The first string is a
                  directory to match the second string is a relative path from that
-                 directory to the system directory
+                 directory to the system directory. The search is started from the true
+                 value of root_path in the file system.
 
           @type  root_unit_test_directory: a list containing a directory name followed by a
                  relative path
           @param root_unit_test_directory: the directory from which all unit
                  module directories descend. For the current setup in relax
-                 this is (\'unit_tests\', \'.\').
+                 this is (\'unit_tests\', \'.\'). The search is started from the true
+                 value of root_path in the file system.
+
           @type  verbose: Boolean
           @param verbose: produce verbose output during testing e.g. directories
                  searched root directories etc
@@ -431,6 +443,7 @@ class Run_unit_tests(object):
         elems = python_module_path.split('.')
         return os.sep.join(elems)
 
+# FIXME: logic error two uses for self.testModule
     def paths_from_test_module(self, root_path):
         '''Determine the possible path of the self.test_module.
 
@@ -441,6 +454,7 @@ class Run_unit_tests(object):
                2. the rootPath itself (self.testModule ==  None)
                3. a file or directory relative to the unitTestRootPath
                4. the unit test directory itself (self.testModule ==  None)
+
 
            currently this assumes that if the last two names in testModule are
            the same barring an initial  capital letter in the class name
@@ -559,7 +573,33 @@ if __name__ == '__main__':
 
     parser.add_option("-v", "--verbose", dest="verbose",
                       help="verbose test ouput", default=False, action='store_true')
+
+    usage="""
+    %%prog [options] [<file-or-dir>...]
+
+      a program to find and run subsets of the relax unit test suite using pyunit.
+      (details of how to write pyunit tests can be found in your python distributions
+      library reference)
+
+
+    arguments:
+      <file-or-dir> = <file-path> | <dir-path> is a list which can contain
+                      inter-mixed directories and files
+
+      <file-path>  =  a file containing a test case class files of the same
+                      name with the first letter capitalised
+
+                      e.g. maths_fns/test_chi2.py will be assumed to contain
+                      a test case class called Test_chi2
+
+      <dir-path>   =  a path which will be recursivley searched for <file-path>s
+                      which end in %s
+      """ % PY_FILE_EXTENSION
+
+    parser.set_usage(dedent(usage))
+
     (options, args) = parser.parse_args()
+
 
     for arg in args:
         runner = Run_unit_tests(test_module=arg, verbose=options.verbose)
