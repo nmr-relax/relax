@@ -23,6 +23,8 @@
 #                                                                              #
 ################################################################################
 
+#TODO: do it
+
 ''' unit_test_runner provides utilities for the running of unit tests from the
     command line or within the relax testing frame work.
 
@@ -39,7 +41,7 @@
 
     A concrete example:
 
-    for class <relax-root-directory>/maths-fns/chi2.py ***complete***
+    for class <relax-root-directory>/maths-fns/chi2.py FIXME:***complete***
 
 
 
@@ -52,11 +54,14 @@
 
     TODO: examine PEP 338 and runpy.run_module(modulename): Executing Modules as Scripts
           for a later version of relax that is dependant on python 2.5
+    TODO: create suites within suites?
+    TODO: split out runner part from search part
 '''
 
 import os,re,unittest,string,sys
 from optparse import OptionParser
 from textwrap import dedent
+from copy import copy
 
 #import Tkinter as tk
 #import unittest.unittestgui as unitgui
@@ -248,6 +253,9 @@ class Test_finder:
         self.suite = unittest.TestSuite()
         suite_dictionary = {'':self.suite}
         for (dir_path, dir_names, file_names) in os.walk(self.root_path):
+             # to remove warnings of unused names
+             if __debug__:
+                 dir_names=dir_names
              for file_name in file_names:
                  if self.pattern.match(file_name):
 
@@ -263,7 +271,7 @@ class Test_finder:
                      modules = import_module(module_path)
 
                      path  = ['']
-                     for i,elem in enumerate(module_path.split('.')):
+                     for elem in module_path.split('.'):
                          old_path_key  =  '.'.join(path)
                          path.append(elem)
                          path_key = '.'.join(path)
@@ -488,7 +496,7 @@ class Run_unit_tests(object):
                 print 'root path', root_path
                 print 'test segs', test_module_segs
 
-                test_module_ames = []
+                test_module_names = []
                 if len(test_module_segs) >= 2:
                     putative_class_name = test_module_segs[-1]
                     class_from_module_name = string.lower(putative_class_name[0]) + putative_class_name[:1]
@@ -497,7 +505,7 @@ class Run_unit_tests(object):
 
                     if class_from_module_name == putative_module_name:
                         copy_test_module_segs = copy(test_module_segs)
-                        class_file = copy_testModule_segs.pop()
+                        class_file = copy_test_module_segs.pop()
                         class_file = class_file + '.py'
                         copy_test_module_segs.append(class_file)
                         test_module_names.append(copy_test_module_segs)
