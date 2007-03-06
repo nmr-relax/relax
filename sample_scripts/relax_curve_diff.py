@@ -1,5 +1,6 @@
-# Script: relax_curve_diff.py
-# Author: Edward d'Auvergne
+# Script:   relax_curve_diff.py
+# Author:   Edward d'Auvergne
+# Email:    edward at nmr-relax dot com
 #
 # This script creates a Grace plot of Ix - Ix(theta), the difference between the measured peak
 # intensity and the back calculated peak intensity for each spin system x.  Ix(theta) is back
