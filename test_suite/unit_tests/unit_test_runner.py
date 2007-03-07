@@ -23,6 +23,8 @@
 #                                                                              #
 ################################################################################
 
+
+
 #TODO: do it
 
 ''' unit_test_runner provides utilities for the running of unit tests from the
@@ -68,7 +70,7 @@ from copy import copy
 
 # constants
 ###########
-PY_FILE_EXTENSION='py'
+PY_FILE_EXTENSION='.py'
 
 # utility functions
 ###################
@@ -89,23 +91,33 @@ def get_startup_path():
 
 def import_module(module_path):
 
-    module = __import__(module_path)
-    result = [module]
-    components = module_path.split('.')
-    for component in components[1:]:
-        module = getattr(module, component)
-        result.append(module)
+    module = None
+    result = None
+
+    try:
+        module = __import__(module_path)
+    except:
+        pass
+
+    if module != None:
+        result = [module]
+        components = module_path.split('.')
+        for component in components[1:]:
+            module = getattr(module, component)
+            result.append(module)
     return result
 
 
-def get_module_relative_path(module_path, root_paths=None):
+def get_module_relative_path(module_path, file_name, root_paths=None):
     '''Find the relative path of a module to one of a set of root paths.
 
-       As the module may match moregetStartupPath than one path the first path that
+       As the module may match more than one path the first path that
        can contain it is chosen.
 
        @type  module_path: string
        @param module_path: path of a python module
+
+        FIXME: file_name not documented
 
 
        @type  root_paths: sequence of strings
@@ -135,6 +147,13 @@ def get_module_relative_path(module_path, root_paths=None):
 
     if relative_path != None:
         relative_path = '.'.join(relative_path)
+
+        if relative_path != '':
+            relative_path = '.'.join((relative_path, file_name))
+        else:
+            relative_path = file_name
+
+
 
     return relative_path
 
@@ -213,6 +232,24 @@ def join_path_segments(segments):
 
     return result
 
+def load_test_case(module_path,  file_name, class_name):
+    if __debug__:
+            print 'load module'
+            print 'module_path: ', module_path
+            print 'file_name: ', file_name
+            print 'class_name: ', class_name
+    result = None
+
+    module_path=get_module_relative_path(module_path, file_name)
+    modules = import_module(module_path)
+
+
+    if modules != None:
+        clazz =  getattr(modules[-1], class_name)
+        result = unittest.TestLoader().loadTestsFromTestCase(clazz)
+    return result
+
+
 
 class Test_finder:
     '''Find and load unit test classes as a hierarchy of TestSuites and TestCases.
@@ -247,42 +284,45 @@ class Test_finder:
         self.paths_scanned = False
 
 
+
+
     def scan_paths(self):
         '''Scan directories and paths for unit test classes and load them into TestSuites'''
 
         self.suite = unittest.TestSuite()
         suite_dictionary = {'':self.suite}
         for (dir_path, dir_names, file_names) in os.walk(self.root_path):
-             # to remove warnings of unused names
-             if __debug__:
-                 dir_names=dir_names
-             for file_name in file_names:
-                 if self.pattern.match(file_name):
+            # to remove warnings of unused names
+            if __debug__:
+                dir_names=dir_names
 
-                     file_name = os.path.splitext(file_name)[0]
-                     relative_module_path = get_module_relative_path(dir_path)
+            for file_name in file_names:
+                if self.pattern.match(file_name):
 
-                     class_name = string.upper(file_name[0]) + file_name[1:]
-                     if relative_module_path != '':
-                         module_path = '.'.join((relative_module_path, file_name))
-                     else:
-                         module_path = file_name
+                    # build class name
+                    file_name = os.path.splitext(file_name)[0]
+                    class_name = string.upper(file_name[0]) + file_name[1:]
 
-                     modules = import_module(module_path)
 
-                     path  = ['']
-                     for elem in module_path.split('.'):
-                         old_path_key  =  '.'.join(path)
-                         path.append(elem)
-                         path_key = '.'.join(path)
-                         if path_key not in suite_dictionary:
-                             test_suite = unittest.TestSuite()
-                             suite_dictionary[path_key]=test_suite
-                             suite_dictionary[old_path_key].addTest(test_suite)
+                    module_path = get_module_relative_path(dir_path, file_name)
 
-                     clazz =  getattr(modules[-1], class_name)
-                     suite_dictionary[path_key].addTest(unittest.TestLoader().loadTestsFromTestCase(clazz))
 
+
+                    path  = ['']
+                    for elem in module_path.split('.'):
+                        old_path_key  =  '.'.join(path)
+                        path.append(elem)
+                        path_key = '.'.join(path)
+                        if path_key not in suite_dictionary:
+                            test_suite = unittest.TestSuite()
+                            suite_dictionary[path_key]=test_suite
+                            suite_dictionary[old_path_key].addTest(test_suite)
+
+#                     modules = import_module(module_path)
+#                     print 'modules: ', modules
+#                     clazz =  getattr(modules[-1], class_name)
+#                     suite_dictionary[path_key].addTest(unittest.TestLoader().loadTestsFromTestCase(clazz))
+                    suite_dictionary[path_key].addTest(load_test_case(dir_path, file_name, class_name))
 
 
 
@@ -290,8 +330,10 @@ class Test_finder:
 class Run_unit_tests(object):
     '''Class to run a particular unit test or a directory of unit tests.'''
 
+    TEST_SUITE_ROOT='test-suite-root_constant'
+    CURRENT_DIRECTORY='.'
 
-    def __init__(self, root_path=None, test_module=None,
+    def __init__(self, root_path='.', test_module=None,
                  test_pattern = ['test_(\.*).py'],
                  root_system_directory = ['test_suite/unit_tests','../..'],
                  root_unit_test_directory = ['test_suite/unit_tests','.'],
@@ -302,15 +344,18 @@ class Run_unit_tests(object):
           @param root_path: root path to start searching for modules to unit test
                  from. Two special cases arise: if the string contains '.'
                  the search starts from the current working directory, if the value is
-                 the special value TEST_SUITE defined in this file the root of the
+                 the special value TEST_SUITE_ROOT defined in this class the root of the
                  test suite is sought from the current working directory using
-                 find_unit_test_directory_path() and used instead.
+                 find_unit_test_directory_path() and used instead. Default current
+                 working directory.
 
           @type  test_module: string
           @param test_module: the name of a module to unit test. If the variable
-                 is None a search for unit tests using <test-pattern> will start
-                 form <root_path>, otherwise it will be used as a module path from the
-                 current working directory.
+                 is None a search for all unit tests using <test-pattern> will start
+                 from <root_path>, otherwise it will be used as a module path from the
+                 current root_path or CHECKME: ****module_directory_path****. The module name can be in the directory path format
+                 used by the current operating system or a unix style path with /'s including
+                 a final .py extension or a dotted moudle name
 
           FIXME: rename as testcase_file_pattern
           @type  test_pattern: a list of strings containing regex patterns
@@ -320,10 +365,9 @@ class Run_unit_tests(object):
                  file will be searched for testCases e.g in the case of test_float.py
                  the  module to be searched for would be test_float.Test_float.
 
-          FIXME: the following to options are search paths and should be named so
-          @type  rootSystemDirectory: a list containing a directory name followed by a
+          @type  root_system_directory: a list containing a directory name followed by a
                  relative path
-          @param rootSystemDirectory: the directory from which the distribution
+          @param root_system_directory: the directory from which the distribution
                  is rooted. This is viewed as the the 'PYTHONPATH'
                  of the classes to be tested. It must be unique and defined
                  relative to the test suite. For the current setup
@@ -344,17 +388,43 @@ class Run_unit_tests(object):
                  searched root directories etc
         '''
 
-        self.test_module = test_module
+        # setup root path
 
-        if self.test_module == None:
-            self.test_module = os.getcwd()
-        self.root_path = root_path
-        if self.root_path == None:
-            self.root_path = os.getcwd()
-        self.test_pattern = test_pattern
-        self.root_system_directory = root_system_directory
-        self.root_unit_test_directory = root_unit_test_directory
+        # deal with finding root of unit test hierachy
+        if root_path is self.TEST_SUITE_ROOT:
+            root_path = self.find_unit_test_directory_path(root_path)
+
+        # deal with using pwd
+        elif root_path == self.CURRENT_DIRECTORY:
+            root_path =  os.getcwd()
+
+        self.root_path =  root_path
+
+        # other instance variables
+        self.test_module = test_module
         self.verbose = verbose
+
+        # find system directories
+        self.test_pattern = test_pattern
+        self.system_directory = self.get_first_instance_path(root_path,
+                                                                  root_system_directory[0],
+                                                                  root_system_directory[1])
+        self.unit_test_directory = self.get_first_instance_path(root_path,
+                                                                  root_unit_test_directory[0],
+                                                                  root_unit_test_directory[1])
+
+        #TODO: delete unused
+        #if self.test_module == None:
+        #    self.test_module = os.getcwd()
+
+        #self.root_path = root_path
+        #if self.root_path == None:
+        #    self.root_path = os.getcwd()
+
+
+        #self.root_unit_test_directory = root_unit_test_directory
+
+
 
 
 
@@ -396,126 +466,166 @@ class Run_unit_tests(object):
         #print 'result', result
         return result
 
+# DELETEME:
+#    def find_unit_test_directory_path(self, path):
+#        ''' Find the path to the unit_test directory.
+#
+#            The algorithm starts from path and using self.rootUnitTestDirectory to find
+#            the unit test directory path
+#
+#             @type  path: a string containing a directory path
+#             @param path: a path to a point to start searching to the system
+#                    directory from.
+#        '''
+#
+#        #print 'find unit test path'
+#        search_path = self.root_unit_test_directory[0]
+#        offset_path = self.root_unit_test_directory[1]
+#        return self.get_first_instance_path(path,search_path, offset_path)
+#
+#
+#    def find_system_directory_path(self, path):
+#        ''' Find the path to the relax system directory.
+#
+#            The algorithm starts from path and uses self.rootSystemDirectory to find
+#            the relax system directory path
+#
+#             @type  path: a string containing a directory path
+#             @param path: a path to a point to start searching to the system
+#                    directory from.
+#        '''
+#
+#        search_path = self.root_system_directory[0]
+#        offset_path = self.root_system_directory[1]
+#
+#        return self.get_first_instance_path(path, search_path, offset_path)
 
-    def find_unit_test_directory_path(self, path):
-        ''' Find the path to the unit_test directory.
+#    def get_module_path(self,python_module_path):
+#        ''' convert a module path delimited by dots into a path for
+#           use in the current file system
+#
+#           e.g. test.python.wibble ->  test/python/wibble (under unix)
+#
+#           limitations can only currently deal with relative paths without
+#           backtracks non of the multidot magic for module paths introduced
+#           by python 2.5 pep 328 is accounted for!
+#
+#
+#           @type python_module_path: a string
+#           @param python_module_path: a pythond module path separated by dots
+#
+#           @rtype:   string
+#           @return:  a (relative) path in the current file system
+#
+#        '''
 
-            The algorithm starts from path and using self.rootUnitTestDirectory to find
-            the unit test directory path
-
-             @type  path: a string containing a directory path
-             @param path: a path to a point to start searching to the system
-                    directory from.
-        '''
-
-        #print 'find unit test path'
-        search_path = self.root_unit_test_directory[0]
-        offset_path = self.root_unit_test_directory[1]
-        return self.get_first_instance_path(path,search_path, offset_path)
-
-
-    def find_system_directory_path(self, path):
-        ''' Find the path to the relax system directory.
-
-            The algorithm starts from path and uses self.rootSystemDirectoryto find
-            the relax system directory path
-
-             @type  path: a string containing a directory path
-             @param path: a path to a point to start searching to the system
-                    directory from.
-        '''
-
-        search_path = self.root_system_directory[0]
-        offset_path = self.root_system_directory[1]
-
-        return self.get_first_instance_path(path, search_path, offset_path)
-
-    def get_module_path(self,python_module_path):
-        ''' convert a module path delimited by dots into a path for
-           use in the current file system
-
-           e.g. test.python.wibble ->  test/python/wibble (under unix)
-
-           limitationscan only currently deal with relative paths without
-           backtracks non of the multidot magic for module paths introduced
-           by python 2.5 pep 328 is accounted for!
-
-
-           @type python_module_path: a string
-           @param python_module_path: a pythond module path separated by dots
-
-           @rtype:   string
-           @return:  a (relative) path in the current file system
-
-        '''
-        elems = python_module_path.split('.')
-        return os.sep.join(elems)
 
 # FIXME: logic error two uses for self.testModule
-    def paths_from_test_module(self, root_path):
-        '''Determine the possible path of the self.test_module.
+    def paths_from_test_module(self, root_path, test_module):
+        '''FIXME bad docs
+        Determine the possible paths of the test_module.
 
-           The search starts from the current directory or the root_path
+           it is assumed that the test_module can be either a path or
+           a python module or package name including dots
 
-           The possible paths are as follows
-               1. a file or directory relative to the rootPath (usually pwd)
-               2. the rootPath itself (self.testModule ==  None)
-               3. a file or directory relative to the unitTestRootPath
-               4. the unit test directory itself (self.testModule ==  None)
+           The following heuristics are used
+
+                1. if the test_module=None add the value '.'
+                2. if the test_module ends with a PY_FILE_EXTENSION append
+                   test_module with the PY_FILE_EXTENSION removed
+                3. add the module_name with .'s converted to /'s and
+                   any elements of the form PY_FILE_EXTENSION removed
+                3. repeat 2 and 3 with the last element of the path
+                   repeated with the first letter capitalised
 
 
-           currently this assumes that if the last two names in testModule are
-           the same barring an initial  capital letter in the class name
-           then we can just look for the module. Thus the class name is popped
-           off and we then join the moduleName together with the root unit test
-           path and a '.py'
-
-           note we can't deal with module methods...
+           note: we can't deal with module methods...
 
            @type  root_path: string containing a directory name
            @param root_path: directory to start looking for the module from
         '''
 
         print self.test_module
-        result  = []
-        # first see if we can just find a direct path
-        module_fs_path = self.get_module_path(self.test_module)
-        test_path = os.extsep.join((module_fs_path,'py'))
-        if os.path.exists(test_path):
-            print 'found module: ' + module_fs_path
-            result.append(test_path)
+        result  = set()
+
+        # check for current working directory
+        if test_module == None:
+            result.add('.')
         else:
+            # add a direct file
+            mpath = []
+            test_module_segments=segment_path(test_module)
+            for elem in test_module_segments:
+                if elem.endswith(PY_FILE_EXTENSION):
+                    mpath.append(os.path.splitext(elem)[0])
+                else:
+                    mpath.append(elem)
 
-            unit_test_directory = self.find_unit_test_directory_path(root_path)
-            search_paths = (unit_test_directory, root_path)
-            if self.test_module != None:
-                result.extend(search_paths)
+            result.add(tuple(mpath))
 
-            else:
-                test_module_segs = string.split(self.test_module,'.')
-                print 'root path', root_path
-                print 'test segs', test_module_segs
+            mpath=copy(mpath)
+            mpath.append(mpath[-1].capitalize())
+            result.add(tuple(mpath))
 
-                test_module_names = []
-                if len(test_module_segs) >= 2:
-                    putative_class_name = test_module_segs[-1]
-                    class_from_module_name = string.lower(putative_class_name[0]) + putative_class_name[:1]
 
-                    putative_module_name = test_module_segs[-2]
+            module_path_elems = test_module.split('.')
 
-                    if class_from_module_name == putative_module_name:
-                        copy_test_module_segs = copy(test_module_segs)
-                        class_file = copy_test_module_segs.pop()
-                        class_file = class_file + '.py'
-                        copy_test_module_segs.append(class_file)
-                        test_module_names.append(copy_test_module_segs)
 
-                test_module_names.append(test_module_segs)
-                for test_module in test_module_names:
-                    for search_path in search_paths:
-                        result.append(os.path.join(search_path, test_module))
+            module_norm_path = []
+            for elem in module_path_elems:
+                if elem != PY_FILE_EXTENSION[1:]:
+                    module_norm_path.append(elem)
 
+            print result
+            # see if we can find a dot separated module
+            # a package name first
+            elems_ok = True
+            for elem in module_norm_path:
+                if len(segment_path(elem)) > 1:
+                    elems_ok = False
+                    break
+            if elems_ok:
+                result.add(tuple(module_norm_path))
+
+                mpath=copy(module_norm_path)
+                mpath.append(module_norm_path[-1].capitalize())
+                result.add(tuple(mpath))
+
+        print '***result: ',result
         return result
+
+#        # see if we can find a sub directory path
+#        if result == None:
+#
+#            search_paths = (self.unit_test_directory, root_path)
+#            if self.test_module != None:
+#                result.update(search_paths)
+#
+#            else:
+#                test_module_segs = string.split(self.test_module,'.')
+#                print 'root path', root_path
+#                print 'test segs', test_module_segs
+#
+#                test_module_names = []
+#                if len(test_module_segs) >= 2:
+#                    putative_class_name = test_module_segs[-1]
+#                    class_from_module_name = string.lower(putative_class_name[0]) + putative_class_name[:1]
+#
+#                    putative_module_name = test_module_segs[-2]
+#
+#                    if class_from_module_name == putative_module_name:
+#                        copy_test_module_segs = copy(test_module_segs)
+#                        class_file = copy_test_module_segs.pop()
+#                        class_file = class_file + '.py'
+#                        copy_test_module_segs.append(class_file)
+#                        test_module_names.append(copy_test_module_segs)
+#
+#                test_module_names.append(test_module_segs)
+#                for test_module in test_module_names:
+#                    for search_path in search_paths:
+#                        result.update(os.path.join(search_path, test_module))
+
+
 
 
     def run(self, runner=None):
@@ -525,47 +635,105 @@ class Run_unit_tests(object):
         print '----------------'
         print
 
-        system_directory = self.find_system_directory_path(self.root_path)
-        unit_test_directory = self.find_unit_test_directory_path(self.root_path)
-        module_path = self.paths_from_test_module(self.root_path)
+
+        #DELETEME:
+        #system_directory = self.find_system_directory_path(self.root_path)
+        #unit_test_directory = self.find_unit_test_directory_path(self.root_path)
+        module_paths = self.paths_from_test_module(self.root_path, self.test_module)
         if self.verbose:
             print 'root path:          ', self.root_path
-            print 'system directory:   ', system_directory
-            print 'unit test directory:', unit_test_directory
-            for i,elem in enumerate(module_path):
+            print 'system directory:   ', self.system_directory
+            print 'unit test directory:', self.unit_test_directory
+            for i,elem in enumerate(module_paths):
                 print 'module path %d:  %s'  % (i,elem)
 
         # add UnitTestDirectory to python path
         backup_python_path = sys.path[:]
         #sys.path.insert(1,unit_test_directory)
 
-        # add SystemDirectory to python path
+        # add SystemDirectory to python pathprint 'test_module: ', test_module
+
         sys.path.pop(0)
-        sys.path.insert(0,system_directory)
+        sys.path.insert(0,self.system_directory)
 
 
-        print sys.path
+        #print sys.path
+        print module_paths
+        tests = None
 
-        #iterate and load unit tests from module path
-        finder = Test_finder(unit_test_directory)
-        finder.scan_paths()
+        # use search path first
+        for module_path in module_paths:
+            module_string = os.path.join(*module_path)
+
+            if os.path.isdir(module_string):
+                #iterate and load unit tests from module path
+                finder = Test_finder(module_string)
+                finder.scan_paths()
+                tests=finder.suite
+                break
+
+
+        print tests
+        if tests == None:
+            for module_path in module_paths:
+                print module_path
+                #module_string = os.path.join(*module_path)
+                path_len = len(module_path)
+                if path_len <= 1:
+                    continue
+                elif path_len == 2:
+                    tests=load_test_case('', module_path[1], module_path[1])
+                else:
+                    print module_path[:-2]
+                    print os.path.join(module_path[:-2])
+                    tests=load_test_case(os.path.join(*module_path[:-2]), module_path[-2], module_path[-1])
+                if tests != None:
+                    break
+            #tests = load_test_case(module_path, file_name, class_name)
         if runner == None:
             runner = unittest.TextTestRunner()
 
-
-
-
-        # iterate and load files to be tested
-
         # Run the unit tests and catch the TestResult object.
-        results = runner.run(finder.suite)
+        if tests != None:
+            results = runner.run(tests)
+        else:
+            print 'error no test cases found for input!'
 
-        # restore sys  path
-        sys.path=backup_python_path
 
-        # Return the result of all the tests.
-        return results.wasSuccessful()
-
+#
+#        else:
+#        #iterate and load unit tests from module path
+#        #print self.unit_test_directory
+#            for module_path in module_paths:
+#
+#                if self.unit_test_module_path(module_path):
+#                    break
+#
+#
+#
+#                #path[-1]
+#                #os.path.join()
+#                #if
+#
+#
+#            if runner == None:
+#                runner = unittest.TextTestRunner()
+#
+#
+#
+#
+#        # iterate and load files to be tested
+#
+#        # Run the unit tests and catch the TestResult object.
+#        #results = runner.run(finder.suite)
+#
+#        # restore sys  path
+#        sys.path=backup_python_path
+#
+#        # Return the result of all the tests.
+#        #return results.wasSuccessful()
+#
+#    #def unit_test_module_path(self):
 
 if __name__ == '__main__':
 #    print '1',get_module_relative_path('/A/B/C', ('/A/B',))
