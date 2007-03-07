@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2006 Edward d'Auvergne                            #
+# Copyright (C) 2003-2004, 2006-2007 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -33,7 +33,9 @@ from diff_tensor import DiffTensorData
 # Global data.
 ##############
 
-class Data:
+class Data(object):
+    __instance = None
+
     def __init__(self):
         """Class containing all the program data."""
 
@@ -68,6 +70,22 @@ class Data:
         self.g_count = {}
         self.h_count = {}
         self.warning = {}
+
+
+    def __new__(self, *args, **kargs): 
+        """Method for implementing the singleton design pattern.
+
+        If no other class instance currently exists, create a new instance of this class.  Otherwise
+        return the class instance.  See http://en.wikipedia.org/wiki/Singleton_pattern for a
+        description of this design pattern.
+        """
+
+        # Create a new instance if none exists.
+        if self.__instance is None:
+            self.__instance = object.__new__(self, *args, **kargs)
+
+        # Return the class instance.
+        return self.__instance
 
 
     def __repr__(self):
