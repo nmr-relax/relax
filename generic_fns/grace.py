@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,11 +20,19 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from Numeric import array
 from os import system
 from re import match
 
+# relax module imports.
+from data import Data
 from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoSimError, RelaxRegExpError
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Grace:
@@ -96,9 +104,9 @@ class Grace:
         self.data = []
 
         # Loop over the residues.
-        for i in xrange(len(self.relax.data.res[self.run])):
-            # Remap the data structure 'self.relax.data.res[self.run][i]'.
-            data = self.relax.data.res[self.run][i]
+        for i in xrange(len(relax_data_store.res[self.run])):
+            # Remap the data structure 'relax_data_store.res[self.run][i]'.
+            data = relax_data_store.res[self.run][i]
 
             # Skip the residue if there is no match to 'self.res_num' (unless it is None).
             if type(self.res_num) == int:
@@ -119,7 +127,7 @@ class Grace:
 
             # Number of data points per residue.
             if self.plot_data == 'sim':
-                points = self.relax.data.sim_number[self.run]
+                points = relax_data_store.sim_number[self.run]
             else:
                 points = 1
 
@@ -191,11 +199,11 @@ class Grace:
         self.norm = norm
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Test if the sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Test if the residue number is a valid regular expression.
@@ -217,14 +225,14 @@ class Grace:
             raise RelaxError, "The plot data argument " + `self.plot_data` + " must be set to either 'value', 'error', 'sim'."
 
         # Test if the simulations exist.
-        if self.plot_data == 'sim' and (not hasattr(self.relax.data, 'sim_number') or not self.relax.data.sim_number.has_key(self.run)):
+        if self.plot_data == 'sim' and (not hasattr(relax_data_store, 'sim_number') or not relax_data_store.sim_number.has_key(self.run)):
             raise RelaxNoSimError, self.run
 
         # Open the file for writing.
         self.file = self.relax.IO.open_write_file(file, dir, force)
 
         # Function type.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+        function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
 
         # Specific value and error, conversion factor, and units returning functions.
         self.x_return_value =             self.y_return_value =             self.relax.specific_setup.setup('return_value', function_type)
@@ -330,8 +338,8 @@ class Grace:
 
         # X axis start and end.
         if self.x_data_type == 'res':
-            self.file.write("@    world xmin " + `self.relax.data.res[self.run][0].num - 1` + "\n")
-            self.file.write("@    world xmax " + `self.relax.data.res[self.run][-1].num + 1` + "\n")
+            self.file.write("@    world xmin " + `relax_data_store.res[self.run][0].num - 1` + "\n")
+            self.file.write("@    world xmax " + `relax_data_store.res[self.run][-1].num + 1` + "\n")
 
         # X-axis label.
         if self.x_data_type == 'res':
@@ -443,8 +451,8 @@ class Grace:
 
         # X axis start and end.
         if self.x_data_type == 'res':
-            self.file.write("@    world xmin " + `self.relax.data.res[self.run][0].num - 1` + "\n")
-            self.file.write("@    world xmax " + `self.relax.data.res[self.run][-1].num + 1` + "\n")
+            self.file.write("@    world xmin " + `relax_data_store.res[self.run][0].num - 1` + "\n")
+            self.file.write("@    world xmax " + `relax_data_store.res[self.run][-1].num + 1` + "\n")
 
         # X-axis label.
         if self.x_data_type == 'res':

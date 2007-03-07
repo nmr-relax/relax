@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006 Edward d'Auvergne                                  #
+# Copyright (C) 2004, 2006-2007 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,10 +20,18 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from os import popen
 from string import split
 
+# relax module imports.
+from data import Data
 from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Molmol:
@@ -49,7 +57,7 @@ class Molmol:
         self.run = run
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Pass the command to Molmol.
@@ -60,7 +68,7 @@ class Molmol:
         """Function for creating an array of Molmol commands."""
 
         # Function type.
-        self.function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+        self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
 
         # Specific Molmol macro creation function.
         molmol_macro = self.relax.specific_setup.setup('molmol_macro', self.function_type)
@@ -81,11 +89,11 @@ class Molmol:
         self.colour_list = colour_list
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Test if the sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Create the macro.
@@ -111,7 +119,7 @@ class Molmol:
         self.pipe_write("InitAll yes")
 
         # Open the PDB.
-        self.pipe_write("ReadPdb " + self.relax.data.pdb[self.run].file_name)
+        self.pipe_write("ReadPdb " + relax_data_store.pdb[self.run].file_name)
 
 
     def pipe_open(self):
@@ -121,7 +129,7 @@ class Molmol:
         self.relax.IO.test_binary('molmol')
 
         # Open the Molmol pipe.
-        self.relax.data.molmol = popen("molmol -f -", 'w', 0)
+        relax_data_store.molmol = popen("molmol -f -", 'w', 0)
 
         # Execute the command history.
         if len(self.command_history) > 0:
@@ -129,7 +137,7 @@ class Molmol:
             return
 
         # Test if the PDB file has been loaded.
-        if hasattr(self.relax.data, 'pdb') and self.relax.data.pdb.has_key(self.run):
+        if hasattr(relax_data_store, 'pdb') and relax_data_store.pdb.has_key(self.run):
             self.open_pdb()
 
         # Run InitAll to remove everything from molmol.
@@ -141,12 +149,12 @@ class Molmol:
         """Function for testing if the Molmol pipe is open."""
 
         # Test if a pipe has been opened.
-        if not hasattr(self.relax.data, 'molmol'):
+        if not hasattr(relax_data_store, 'molmol'):
             return 0
 
         # Test if the pipe has been broken.
         try:
-            self.relax.data.molmol.write('\n')
+            relax_data_store.molmol.write('\n')
         except IOError:
             return 0
 
@@ -165,7 +173,7 @@ class Molmol:
             self.pipe_open()
 
         # Write the command to the pipe.
-        self.relax.data.molmol.write(command + '\n')
+        relax_data_store.molmol.write(command + '\n')
 
         # Place the command in the command history.
         if store_command:
@@ -179,7 +187,7 @@ class Molmol:
         self.run = run
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Calculate the protons.
@@ -200,7 +208,7 @@ class Molmol:
         self.run = run
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # To overlay the structure with the diffusion tensor, select all and reorient to the PDB frame.
@@ -256,11 +264,11 @@ class Molmol:
         self.colour_list = colour_list
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Test if the sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Create the macro.

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2006 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,12 +20,19 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from re import search
 from string import replace
 
+# relax module imports.
+from data import Data
 from base_class import Common_functions
 from maths_fns.jw_mapping import Mapping
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoValueError, RelaxNucleusError
+
+
+# The relax data storage object.
+relax_data_store = Data()
 
 
 class Jw_mapping(Common_functions):
@@ -42,39 +49,39 @@ class Jw_mapping(Common_functions):
         self.run = run
 
         # Test if the frequency has been set.
-        if not hasattr(self.relax.data, 'jw_frq') or not self.relax.data.jw_frq.has_key(self.run) or type(self.relax.data.jw_frq[self.run]) != float:
+        if not hasattr(relax_data_store, 'jw_frq') or not relax_data_store.jw_frq.has_key(self.run) or type(relax_data_store.jw_frq[self.run]) != float:
             raise RelaxError, "The frequency for the run " + `self.run` + " has not been set up."
 
         # Test if the nucleus type has been set.
-        if not hasattr(self.relax.data, 'gx'):
+        if not hasattr(relax_data_store, 'gx'):
             raise RelaxNucleusError
 
         # Test if the sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Test if the CSA and bond length values have been set.
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for i in xrange(len(relax_data_store.res[self.run])):
             # Skip unselected residues.
-            if not self.relax.data.res[self.run][i].select:
+            if not relax_data_store.res[self.run][i].select:
                 continue
 
             # CSA value.
-            if not hasattr(self.relax.data.res[self.run][i], 'csa') or self.relax.data.res[self.run][i].csa == None:
+            if not hasattr(relax_data_store.res[self.run][i], 'csa') or relax_data_store.res[self.run][i].csa == None:
                 raise RelaxNoValueError, "CSA"
 
             # Bond length value.
-            if not hasattr(self.relax.data.res[self.run][i], 'r') or self.relax.data.res[self.run][i].r == None:
+            if not hasattr(relax_data_store.res[self.run][i], 'r') or relax_data_store.res[self.run][i].r == None:
                 raise RelaxNoValueError, "bond length"
 
         # Frequency index.
-        if self.relax.data.jw_frq[self.run] not in self.relax.data.frq[self.run]:
-            raise RelaxError, "No relaxation data corresponding to the frequency " + `self.relax.data.jw_frq[self.run]` + " has been loaded."
+        if relax_data_store.jw_frq[self.run] not in relax_data_store.frq[self.run]:
+            raise RelaxError, "No relaxation data corresponding to the frequency " + `relax_data_store.jw_frq[self.run]` + " has been loaded."
 
         # Reduced spectral density mapping.
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for i in xrange(len(relax_data_store.res[self.run])):
             # Reassign data structure.
-            data = self.relax.data.res[self.run][i]
+            data = relax_data_store.res[self.run][i]
 
             # Skip unselected residues.
             if not data.select:
@@ -83,7 +90,7 @@ class Jw_mapping(Common_functions):
             # Residue specific frequency index.
             frq_index = None
             for j in xrange(data.num_frq):
-                if data.frq[j] == self.relax.data.jw_frq[self.run]:
+                if data.frq[j] == relax_data_store.jw_frq[self.run]:
                     frq_index = j
             if frq_index == None:
                 continue
@@ -121,7 +128,7 @@ class Jw_mapping(Common_functions):
                 continue
 
             # Initialise the function to calculate.
-            self.jw = Mapping(frq=self.relax.data.jw_frq[self.run], gx=self.relax.data.gx, gh=self.relax.data.gh, mu0=self.relax.data.mu0, h_bar=self.relax.data.h_bar)
+            self.jw = Mapping(frq=relax_data_store.jw_frq[self.run], gx=relax_data_store.gx, gh=relax_data_store.gh, mu0=relax_data_store.mu0, h_bar=relax_data_store.h_bar)
 
             # Calculate the spectral density values.
             j0, jwx, jwh = self.jw.func(r=data.r, csa=data.csa, r1=r1, r2=r2, noe=noe)
@@ -231,22 +238,22 @@ class Jw_mapping(Common_functions):
         self.run = run
 
         # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             return 0
 
         # Return the number of residues.
-        return len(self.relax.data.res[self.run])
+        return len(relax_data_store.res[self.run])
 
 
     def overfit_deselect(self, run):
         """Function for deselecting residues without sufficient data to support calculation"""
 
         # Test the sequence data exists:
-        if not self.relax.data.res.has_key(run):
+        if not relax_data_store.res.has_key(run):
             raise RelaxNoSequenceError, run
 
         # Loop over residue data:
-        for residue in self.relax.data.res[run]:
+        for residue in relax_data_store.res[run]:
     
             # Check for sufficient data
             if not hasattr(residue, 'relax_data'):
@@ -389,12 +396,12 @@ class Jw_mapping(Common_functions):
                 value.append(self.default_value('r'))
 
             # Initilise data.
-            if not hasattr(self.relax.data.res[self.run][index], 'csa') or not hasattr(self.relax.data.res[self.run][index], 'csa'):
-                self.data_init(self.relax.data.res[self.run][index])
+            if not hasattr(relax_data_store.res[self.run][index], 'csa') or not hasattr(relax_data_store.res[self.run][index], 'csa'):
+                self.data_init(relax_data_store.res[self.run][index])
 
             # CSA and Bond length.
-            setattr(self.relax.data.res[self.run][index], 'csa', float(value[0]))
-            setattr(self.relax.data.res[self.run][index], 'r', float(value[1]))
+            setattr(relax_data_store.res[self.run][index], 'csa', float(value[0]))
+            setattr(relax_data_store.res[self.run][index], 'r', float(value[1]))
 
 
         # Individual data type.
@@ -407,19 +414,19 @@ class Jw_mapping(Common_functions):
                 raise RelaxError, "The reduced spectral density mapping data type " + `param` + " does not exist."
 
             # Initialise all data if it doesn't exist.
-            if not hasattr(self.relax.data.res[self.run][index], object_name):
-                self.data_init(self.relax.data.res[self.run][index])
+            if not hasattr(relax_data_store.res[self.run][index], object_name):
+                self.data_init(relax_data_store.res[self.run][index])
 
             # Default value.
             if value == None:
                 value = self.default_value(object_name)
 
             # Set the value.
-            setattr(self.relax.data.res[self.run][index], object_name, float(value))
+            setattr(relax_data_store.res[self.run][index], object_name, float(value))
 
             # Set the error.
             if error != None:
-                setattr(self.relax.data.res[self.run][index], object_name+'_err', float(error))
+                setattr(relax_data_store.res[self.run][index], object_name+'_err', float(error))
 
 
     def set_frq(self, run=None, frq=None):
@@ -429,24 +436,24 @@ class Jw_mapping(Common_functions):
         self.run = run
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Test if the run type is set to 'jw'.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+        function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
         if function_type != 'jw':
             raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 
         # Test if the frequency has been set.
-        if hasattr(self.relax.data, 'jw_frq') and self.relax.data.jw_frq.has_key(self.run):
+        if hasattr(relax_data_store, 'jw_frq') and relax_data_store.jw_frq.has_key(self.run):
             raise RelaxError, "The frequency for the run " + `self.run` + " has already been set."
 
         # Create the data structure if it doesn't exist.
-        if not hasattr(self.relax.data, 'jw_frq'):
-            self.relax.data.jw_frq = {}
+        if not hasattr(relax_data_store, 'jw_frq'):
+            relax_data_store.jw_frq = {}
 
         # Set the frequency.
-        self.relax.data.jw_frq[self.run] = frq
+        relax_data_store.jw_frq[self.run] = frq
 
 
     def set_error(self, run, instance, index, error):
@@ -457,15 +464,15 @@ class Jw_mapping(Common_functions):
 
         # Return J(0) sim data.
         if index == 0:
-            self.relax.data.res[self.run][instance].j0_err = error
+            relax_data_store.res[self.run][instance].j0_err = error
 
         # Return J(wX) sim data.
         if index == 1:
-            self.relax.data.res[self.run][instance].jwx_err = error
+            relax_data_store.res[self.run][instance].jwx_err = error
 
         # Return J(wH) sim data.
         if index == 2:
-            self.relax.data.res[self.run][instance].jwh_err = error
+            relax_data_store.res[self.run][instance].jwh_err = error
 
 
     def sim_return_param(self, run, instance, index):
@@ -475,20 +482,20 @@ class Jw_mapping(Common_functions):
         self.run = run
 
         # Skip unselected residues.
-        if not self.relax.data.res[self.run][instance].select:
+        if not relax_data_store.res[self.run][instance].select:
                 return
 
         # Return J(0) sim data.
         if index == 0:
-            return self.relax.data.res[self.run][instance].j0_sim
+            return relax_data_store.res[self.run][instance].j0_sim
 
         # Return J(wX) sim data.
         if index == 1:
-            return self.relax.data.res[self.run][instance].jwx_sim
+            return relax_data_store.res[self.run][instance].jwx_sim
 
         # Return J(wH) sim data.
         if index == 2:
-            return self.relax.data.res[self.run][instance].jwh_sim
+            return relax_data_store.res[self.run][instance].jwh_sim
 
 
     def sim_return_selected(self, run, instance):
@@ -498,7 +505,7 @@ class Jw_mapping(Common_functions):
         self.run = run
 
         # Multiple instances.
-        return self.relax.data.res[self.run][instance].select_sim
+        return relax_data_store.res[self.run][instance].select_sim
 
 
     def set_selected_sim(self, run, instance, select_sim):
@@ -508,18 +515,18 @@ class Jw_mapping(Common_functions):
         self.run = run
 
         # Multiple instances.
-        self.relax.data.res[self.run][instance].select_sim = select_sim
+        relax_data_store.res[self.run][instance].select_sim = select_sim
 
 
     def sim_pack_data(self, run, i, sim_data):
         """Function for packing Monte Carlo simulation data."""
 
         # Test if the simulation data already exists.
-        if hasattr(self.relax.data.res[run][i], 'relax_sim_data'):
+        if hasattr(relax_data_store.res[run][i], 'relax_sim_data'):
             raise RelaxError, "Monte Carlo simulation data already exists."
 
         # Create the data structure.
-        self.relax.data.res[run][i].relax_sim_data = sim_data
+        relax_data_store.res[run][i].relax_sim_data = sim_data
 
 
     def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, nucleus=None, wH=None, j0=None, jwx=None, jwh=None, r=None, csa=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
@@ -578,11 +585,11 @@ class Jw_mapping(Common_functions):
         self.run = run
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
 
@@ -592,10 +599,10 @@ class Jw_mapping(Common_functions):
         # Relaxation data and errors.
         ri = []
         ri_error = []
-        if hasattr(self.relax.data, 'num_ri'):
-            for i in xrange(self.relax.data.num_ri[self.run]):
-                ri.append('Ri_(' + self.relax.data.ri_labels[self.run][i] + "_" + self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]] + ")")
-                ri_error.append('Ri_error_(' + self.relax.data.ri_labels[self.run][i] + "_" + self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]] + ")")
+        if hasattr(relax_data_store, 'num_ri'):
+            for i in xrange(relax_data_store.num_ri[self.run]):
+                ri.append('Ri_(' + relax_data_store.ri_labels[self.run][i] + "_" + relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][i]] + ")")
+                ri_error.append('Ri_error_(' + relax_data_store.ri_labels[self.run][i] + "_" + relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][i]] + ")")
 
         # Write the header line.
         self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', wH='Proton_frq_(MHz)', j0='J(0)', jwx='J(wX)', jwh='J(wH)', r='Bond_length_(A)', csa='CSA_(ppm)', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
@@ -608,14 +615,14 @@ class Jw_mapping(Common_functions):
         nucleus = self.relax.generic.nuclei.find_nucleus()
 
         # The proton frequency in MHz.
-        wH = self.relax.data.jw_frq[self.run] / 1e6
+        wH = relax_data_store.jw_frq[self.run] / 1e6
 
         # Relaxation data setup.
         try:
-            ri_labels = replace(`self.relax.data.ri_labels[self.run]`, ' ', '')
-            remap_table = replace(`self.relax.data.remap_table[self.run]`, ' ', '')
-            frq_labels = replace(`self.relax.data.frq_labels[self.run]`, ' ', '')
-            frq = replace(`self.relax.data.frq[self.run]`, ' ', '')
+            ri_labels = replace(`relax_data_store.ri_labels[self.run]`, ' ', '')
+            remap_table = replace(`relax_data_store.remap_table[self.run]`, ' ', '')
+            frq_labels = replace(`relax_data_store.frq_labels[self.run]`, ' ', '')
+            frq = replace(`relax_data_store.frq[self.run]`, ' ', '')
         except AttributeError:
             ri_labels = `None`
             remap_table = `None`
@@ -623,9 +630,9 @@ class Jw_mapping(Common_functions):
             frq = `None`
 
         # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for i in xrange(len(relax_data_store.res[self.run])):
             # Reassign data structure.
-            data = self.relax.data.res[self.run][i]
+            data = relax_data_store.res[self.run][i]
 
             # J(0).
             j0 = None
@@ -655,12 +662,12 @@ class Jw_mapping(Common_functions):
             # Relaxation data and errors.
             ri = []
             ri_error = []
-            if hasattr(self.relax.data, 'num_ri'):
-                for i in xrange(self.relax.data.num_ri[self.run]):
+            if hasattr(relax_data_store, 'num_ri'):
+                for i in xrange(relax_data_store.num_ri[self.run]):
                     # Find the residue specific data corresponding to i.
                     index = None
                     for j in xrange(data.num_ri):
-                        if data.ri_labels[j] == self.relax.data.ri_labels[self.run][i] and data.frq_labels[data.remap_table[j]] == self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]]:
+                        if data.ri_labels[j] == relax_data_store.ri_labels[self.run][i] and data.frq_labels[data.remap_table[j]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][i]]:
                             index = j
 
                     # Data exists for this data type.
@@ -679,15 +686,15 @@ class Jw_mapping(Common_functions):
         #########
 
         # Skip this section and the next if no simulations have been setup.
-        if not hasattr(self.relax.data, 'sim_state'):
+        if not hasattr(relax_data_store, 'sim_state'):
             return
-        elif self.relax.data.sim_state[self.run] == 0:
+        elif relax_data_store.sim_state[self.run] == 0:
             return
 
         # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for i in xrange(len(relax_data_store.res[self.run])):
             # Reassign data structure.
-            data = self.relax.data.res[self.run][i]
+            data = relax_data_store.res[self.run][i]
 
             # J(0).
             j0 = None
@@ -717,7 +724,7 @@ class Jw_mapping(Common_functions):
             # Relaxation data and errors.
             ri = []
             ri_error = []
-            for i in xrange(self.relax.data.num_ri[self.run]):
+            for i in xrange(relax_data_store.num_ri[self.run]):
                 ri.append(None)
                 ri_error.append(None)
 
@@ -729,11 +736,11 @@ class Jw_mapping(Common_functions):
         ####################
 
         # Loop over the simulations.
-        for i in xrange(self.relax.data.sim_number[self.run]):
+        for i in xrange(relax_data_store.sim_number[self.run]):
             # Loop over the sequence.
-            for j in xrange(len(self.relax.data.res[self.run])):
+            for j in xrange(len(relax_data_store.res[self.run])):
                 # Reassign data structure.
-                data = self.relax.data.res[self.run][j]
+                data = relax_data_store.res[self.run][j]
 
                 # J(0).
                 j0 = None
@@ -763,11 +770,11 @@ class Jw_mapping(Common_functions):
                 # Relaxation data and errors.
                 ri = []
                 ri_error = []
-                for k in xrange(self.relax.data.num_ri[self.run]):
+                for k in xrange(relax_data_store.num_ri[self.run]):
                     # Find the residue specific data corresponding to k.
                     index = None
                     for l in xrange(data.num_ri):
-                        if data.ri_labels[l] == self.relax.data.ri_labels[self.run][k] and data.frq_labels[data.remap_table[l]] == self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][k]]:
+                        if data.ri_labels[l] == relax_data_store.ri_labels[self.run][k] and data.frq_labels[data.remap_table[l]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][k]]:
                             index = l
 
                     # Data exists for this data type.

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2006 Edward d'Auvergne                            #
+# Copyright (C) 2003-2004, 2006-2007 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,10 +20,18 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from os import F_OK, access
 from re import compile, match
 
+# relax module imports.
+from data import Data
 from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError, RelaxRegExpError
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Selection:
@@ -42,17 +50,17 @@ class Selection:
         # Loop over the runs.
         for self.run in self.runs:
             # Test if the run exists.
-            if not self.run in self.relax.data.run_names:
+            if not self.run in relax_data_store.run_names:
                 raise RelaxNoRunError, self.run
 
             # Test if sequence data is loaded.
-            if not len(self.relax.data.res[self.run]):
+            if not len(relax_data_store.res[self.run]):
                 raise RelaxNoSequenceError, self.run
 
             # Loop over the sequence and reverse the selection flag.
-            for i in xrange(len(self.relax.data.res[self.run])):
-                # Remap the data structure 'self.relax.data.res[self.run][i]'.
-                data = self.relax.data.res[self.run][i]
+            for i in xrange(len(relax_data_store.res[self.run])):
+                # Remap the data structure 'relax_data_store.res[self.run][i]'.
+                data = relax_data_store.res[self.run][i]
 
                 # Reverse the selection.
                 if data.select:
@@ -70,16 +78,16 @@ class Selection:
         # Loop over the runs.
         for self.run in self.runs:
             # Test if the run exists.
-            if not self.run in self.relax.data.run_names:
+            if not self.run in relax_data_store.run_names:
                 raise RelaxNoRunError, self.run
 
             # Test if sequence data is loaded.
-            if not len(self.relax.data.res[self.run]):
+            if not len(relax_data_store.res[self.run]):
                 raise RelaxNoSequenceError, self.run
 
             # Loop over the sequence and set the selection flag to 1.
-            for i in xrange(len(self.relax.data.res[self.run])):
-                self.relax.data.res[self.run][i].select = 1
+            for i in xrange(len(relax_data_store.res[self.run])):
+                relax_data_store.res[self.run][i].select = 1
 
 
     def sel_read(self, run=None, file=None, dir=None, boolean='OR', change_all=0, column=None):
@@ -134,17 +142,17 @@ class Selection:
         # Loop over the runs.
         for self.run in self.runs:
             # Test if the run exists.
-            if not self.run in self.relax.data.run_names:
+            if not self.run in relax_data_store.run_names:
                 raise RelaxNoRunError, self.run
 
             # Test if sequence data is loaded.
-            if not len(self.relax.data.res[self.run]):
+            if not len(relax_data_store.res[self.run]):
                 raise RelaxNoSequenceError, self.run
 
             # Loop over the sequence.
-            for i in xrange(len(self.relax.data.res[self.run])):
-                # Remap the data structure 'self.relax.data.res[self.run][i]'.
-                data = self.relax.data.res[self.run][i]
+            for i in xrange(len(relax_data_store.res[self.run])):
+                # Remap the data structure 'relax_data_store.res[self.run][i]'.
+                data = relax_data_store.res[self.run][i]
 
                 # The spin system is in the new selection list.
                 if data.num in select:
@@ -212,17 +220,17 @@ class Selection:
         no_match = 1
         for self.run in self.runs:
             # Test if the run exists.
-            if not self.run in self.relax.data.run_names:
+            if not self.run in relax_data_store.run_names:
                 raise RelaxNoRunError, self.run
 
             # Test if sequence data is loaded.
-            if not len(self.relax.data.res[self.run]):
+            if not len(relax_data_store.res[self.run]):
                 raise RelaxNoSequenceError, self.run
 
             # Loop over the sequence.
-            for i in xrange(len(self.relax.data.res[self.run])):
-                # Remap the data structure 'self.relax.data.res[self.run][i]'.
-                data = self.relax.data.res[self.run][i]
+            for i in xrange(len(relax_data_store.res[self.run])):
+                # Remap the data structure 'relax_data_store.res[self.run][i]'.
+                data = relax_data_store.res[self.run][i]
 
                 # Initialise the new selection flag.
                 new_select = 0
@@ -278,16 +286,16 @@ class Selection:
         # Loop over the runs.
         for self.run in self.runs:
             # Test if the run exists.
-            if not self.run in self.relax.data.run_names:
+            if not self.run in relax_data_store.run_names:
                 raise RelaxNoRunError, self.run
 
             # Test if sequence data is loaded.
-            if not len(self.relax.data.res[self.run]):
+            if not len(relax_data_store.res[self.run]):
                 raise RelaxNoSequenceError, self.run
 
             # Loop over the sequence and set the selection flag to 0.
-            for i in xrange(len(self.relax.data.res[self.run])):
-                self.relax.data.res[self.run][i].select = 0
+            for i in xrange(len(relax_data_store.res[self.run])):
+                relax_data_store.res[self.run][i].select = 0
 
 
     def unsel_read(self, run=None, file=None, dir=None, change_all=None, column=None):
@@ -327,17 +335,17 @@ class Selection:
         no_match = 1
         for self.run in self.runs:
             # Test if the run exists.
-            if not self.run in self.relax.data.run_names:
+            if not self.run in relax_data_store.run_names:
                 raise RelaxNoRunError, self.run
 
             # Test if sequence data is loaded.
-            if not len(self.relax.data.res[self.run]):
+            if not len(relax_data_store.res[self.run]):
                 raise RelaxNoSequenceError, self.run
 
             # Loop over the sequence.
-            for i in xrange(len(self.relax.data.res[self.run])):
-                # Remap the data structure 'self.relax.data.res[self.run][i]'.
-                data = self.relax.data.res[self.run][i]
+            for i in xrange(len(relax_data_store.res[self.run])):
+                # Remap the data structure 'relax_data_store.res[self.run][i]'.
+                data = relax_data_store.res[self.run][i]
 
                 # Select all residues.
                 if change_all:
@@ -379,17 +387,17 @@ class Selection:
         no_match = 1
         for self.run in self.runs:
             # Test if the run exists.
-            if not self.run in self.relax.data.run_names:
+            if not self.run in relax_data_store.run_names:
                 raise RelaxNoRunError, self.run
 
             # Test if sequence data is loaded.
-            if not len(self.relax.data.res[self.run]):
+            if not len(relax_data_store.res[self.run]):
                 raise RelaxNoSequenceError, self.run
 
             # Loop over the sequence.
-            for i in xrange(len(self.relax.data.res[self.run])):
-                # Remap the data structure 'self.relax.data.res[self.run][i]'.
-                data = self.relax.data.res[self.run][i]
+            for i in xrange(len(relax_data_store.res[self.run])):
+                # Remap the data structure 'relax_data_store.res[self.run][i]'.
+                data = relax_data_store.res[self.run][i]
 
                 # Select all residues.
                 if change_all:

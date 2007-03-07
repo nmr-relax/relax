@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003-2004, 2007 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,10 +20,18 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from copy import deepcopy
 from math import log
 
+# relax module imports.
+from data import Data
 from relax_errors import RelaxDiffSeqError, RelaxError, RelaxNoRunError, RelaxNoSequenceError
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Model_selection:
@@ -37,13 +45,13 @@ class Model_selection:
         """Model selection function."""
 
         # Test if the model selection run exists.
-        if not modsel_run in self.relax.data.run_names:
+        if not modsel_run in relax_data_store.run_names:
             raise RelaxNoRunError, modsel_run
 
         # The runs argument.
         if runs == None:
-            # Use the runs from 'self.relax.data.run_names'.
-            self.runs = deepcopy(self.relax.data.run_names)
+            # Use the runs from 'relax_data_store.run_names'.
+            self.runs = deepcopy(relax_data_store.run_names)
 
             # Remove the model selection run name if it is in the list.
             if modsel_run in self.runs:
@@ -92,7 +100,7 @@ class Model_selection:
                     run = self.runs[i][j]
 
                     # Function type.
-                    self.function_type[run] = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+                    self.function_type[run] = relax_data_store.run_types[relax_data_store.run_names.index(run)]
 
                     # Store the first non-hybrid run.
                     if not self.first_run and self.function_type[run] != 'hybrid':
@@ -115,7 +123,7 @@ class Model_selection:
                 run = self.runs[i]
 
                 # Function type.
-                self.function_type[run] = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+                self.function_type[run] = relax_data_store.run_types[relax_data_store.run_names.index(run)]
 
                 # Store the first non-hybrid run.
                 if not self.first_run and self.function_type[run] != 'hybrid':
@@ -294,35 +302,35 @@ class Model_selection:
         """Function containing tests the given run."""
 
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
+        if not run in relax_data_store.run_names:
             raise RelaxNoRunError, run
 
         # Find the index of the run.
-        index = self.relax.data.run_names.index(run)
+        index = relax_data_store.run_names.index(run)
 
         # Test if the function type is the same as 'self.function_type' (skip the test if self.function_type is a hybrid).
-        #if self.function_type != 'hybrid' and self.relax.data.run_types[index] != self.function_type:
-        if self.relax.data.run_types[index] != self.function_type[run]:
+        #if self.function_type != 'hybrid' and relax_data_store.run_types[index] != self.function_type:
+        if relax_data_store.run_types[index] != self.function_type[run]:
             raise RelaxError, "The runs supplied are not all of the same function type."
 
         # Skip all tests if the model is a hybrid.
-        if self.relax.data.run_types[index] == 'hybrid':
+        if relax_data_store.run_types[index] == 'hybrid':
             return
 
         # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(run):
+        if not relax_data_store.res.has_key(run):
             raise RelaxNoSequenceError, run
 
         # Sequence lengths.
-        if len(self.relax.data.res[self.first_run]) != len(self.relax.data.res[run]):
+        if len(relax_data_store.res[self.first_run]) != len(relax_data_store.res[run]):
             raise RelaxDiffSeqError, (self.first_run, run)
 
         # Loop over the sequence and test that the residue number and residue name are the same.
-        for i in xrange(len(self.relax.data.res[self.first_run])):
+        for i in xrange(len(relax_data_store.res[self.first_run])):
             # Residue number.
-            if self.relax.data.res[self.first_run][i].num != self.relax.data.res[run][i].num:
+            if relax_data_store.res[self.first_run][i].num != relax_data_store.res[run][i].num:
                 raise RelaxDiffSeqError, (self.first_run, run)
 
             # Residue name.
-            if self.relax.data.res[self.first_run][i].name != self.relax.data.res[run][i].name:
+            if relax_data_store.res[self.first_run][i].name != relax_data_store.res[run][i].name:
                 raise RelaxDiffSeqError, (self.first_run, run)

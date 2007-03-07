@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,6 +20,7 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from math import pi
 from os import F_OK, P_WAIT, access, chdir, chmod, getcwd, listdir, remove, system
 from re import match, search
@@ -31,7 +32,14 @@ try:
 except ImportError:
     pass
 
+# relax module imports.
+from data import Data
 from relax_errors import RelaxDirError, RelaxFileError, RelaxFileOverwriteError, RelaxNoPdbError, RelaxNoRunError, RelaxNoSequenceError, RelaxNucleusError, RelaxProgFailError
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Palmer:
@@ -53,19 +61,19 @@ class Palmer:
         """
 
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
+        if not run in relax_data_store.run_names:
             raise RelaxNoRunError, run
 
         # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(run):
+        if not relax_data_store.res.has_key(run):
             raise RelaxNoSequenceError, run
 
         # Test if the PDB file is loaded (for the spheroid and ellipsoid).
-        if not self.relax.data.diff[run].type == 'sphere' and not self.relax.data.pdb.has_key(run):
+        if not relax_data_store.diff[run].type == 'sphere' and not relax_data_store.pdb.has_key(run):
             raise RelaxNoPdbError, run
 
         # Test if the nucleus type has been set.
-        if not hasattr(self.relax.data, 'gx'):
+        if not hasattr(relax_data_store, 'gx'):
             raise RelaxNucleusError
 
         # Directory creation.
@@ -91,14 +99,14 @@ class Palmer:
         # Number of field strengths and values.
         self.num_frq = 0
         self.frq = []
-        for i in xrange(len(self.relax.data.res[self.run])):
-            if hasattr(self.relax.data.res[self.run][i], 'num_frq'):
-                if self.relax.data.res[self.run][i].num_frq > self.num_frq:
+        for i in xrange(len(relax_data_store.res[self.run])):
+            if hasattr(relax_data_store.res[self.run][i], 'num_frq'):
+                if relax_data_store.res[self.run][i].num_frq > self.num_frq:
                     # Number of field strengths.
-                    self.num_frq = self.relax.data.res[self.run][i].num_frq
+                    self.num_frq = relax_data_store.res[self.run][i].num_frq
 
                     # Field strength values.
-                    for frq in self.relax.data.res[self.run][i].frq:
+                    for frq in relax_data_store.res[self.run][i].frq:
                         if frq not in self.frq:
                             self.frq.append(frq)
 
@@ -113,8 +121,8 @@ class Palmer:
         mfpar = self.open_file('mfpar')
 
         # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[self.run])):
-            if hasattr(self.relax.data.res[self.run][i], 'num_frq'):
+        for i in xrange(len(relax_data_store.res[self.run])):
+            if hasattr(relax_data_store.res[self.run][i], 'num_frq'):
                 # The 'mfdata' file.
                 if not self.create_mfdata(i, mfdata):
                     continue
@@ -141,7 +149,7 @@ class Palmer:
         """Create the Modelfree4 input file 'mfmodel'."""
 
         # Spin title.
-        file.write("\nspin     " + self.relax.data.res[self.run][i].name + "_" + `self.relax.data.res[self.run][i].num` + "\n")
+        file.write("\nspin     " + relax_data_store.res[self.run][i].name + "_" + `relax_data_store.res[self.run][i].num` + "\n")
 
         # Data written flag.
         written = 0
@@ -152,24 +160,24 @@ class Palmer:
             r1, r2, noe = None, None, None
 
             # Loop over the relevant relaxation data.
-            for k in xrange(self.relax.data.res[self.run][i].num_ri):
-                if self.frq[j] != self.relax.data.res[self.run][i].frq[self.relax.data.res[self.run][i].remap_table[k]]:
+            for k in xrange(relax_data_store.res[self.run][i].num_ri):
+                if self.frq[j] != relax_data_store.res[self.run][i].frq[relax_data_store.res[self.run][i].remap_table[k]]:
                     continue
 
                 # Find the corresponding R1.
-                if self.relax.data.res[self.run][i].ri_labels[k] == 'R1':
-                    r1 = self.relax.data.res[self.run][i].relax_data[k]
-                    r1_err = self.relax.data.res[self.run][i].relax_error[k]
+                if relax_data_store.res[self.run][i].ri_labels[k] == 'R1':
+                    r1 = relax_data_store.res[self.run][i].relax_data[k]
+                    r1_err = relax_data_store.res[self.run][i].relax_error[k]
 
                 # Find the corresponding R2.
-                elif self.relax.data.res[self.run][i].ri_labels[k] == 'R2':
-                    r2 = self.relax.data.res[self.run][i].relax_data[k]
-                    r2_err = self.relax.data.res[self.run][i].relax_error[k]
+                elif relax_data_store.res[self.run][i].ri_labels[k] == 'R2':
+                    r2 = relax_data_store.res[self.run][i].relax_data[k]
+                    r2_err = relax_data_store.res[self.run][i].relax_error[k]
 
                 # Find the corresponding NOE.
-                elif self.relax.data.res[self.run][i].ri_labels[k] == 'NOE':
-                    noe = self.relax.data.res[self.run][i].relax_data[k]
-                    noe_err = self.relax.data.res[self.run][i].relax_error[k]
+                elif relax_data_store.res[self.run][i].ri_labels[k] == 'NOE':
+                    noe = relax_data_store.res[self.run][i].relax_data[k]
+                    noe_err = relax_data_store.res[self.run][i].relax_error[k]
 
             # Test if the R1 exists for this frequency, otherwise skip the data.
             if r1:
@@ -198,24 +206,24 @@ class Palmer:
         """Create the Modelfree4 input file 'mfin'."""
 
         # Set the diffusion tensor specific values.
-        if self.relax.data.diff[self.run].type == 'sphere':
+        if relax_data_store.diff[self.run].type == 'sphere':
             diff = 'isotropic'
             algorithm = 'brent'
-            tm = self.relax.data.diff[self.run].tm / 1e-9
+            tm = relax_data_store.diff[self.run].tm / 1e-9
             dratio = 1
             theta = 0
             phi = 0
-        elif self.relax.data.diff[self.run].type == 'spheroid':
+        elif relax_data_store.diff[self.run].type == 'spheroid':
             diff = 'axial'
             algorithm = 'powell'
-            tm = self.relax.data.diff[self.run].tm / 1e-9
-            dratio = self.relax.data.diff[self.run].Dratio
-            theta = self.relax.data.diff[self.run].theta * 360.0 / (2.0 * pi)
-            phi = self.relax.data.diff[self.run].phi * 360.0 / (2.0 * pi)
-        elif self.relax.data.diff[self.run].type == 'ellipsoid':
+            tm = relax_data_store.diff[self.run].tm / 1e-9
+            dratio = relax_data_store.diff[self.run].Dratio
+            theta = relax_data_store.diff[self.run].theta * 360.0 / (2.0 * pi)
+            phi = relax_data_store.diff[self.run].phi * 360.0 / (2.0 * pi)
+        elif relax_data_store.diff[self.run].type == 'ellipsoid':
             diff = 'anisotropic'
             algorithm = 'powell'
-            tm = self.relax.data.diff[self.run].tm / 1e-9
+            tm = relax_data_store.diff[self.run].tm / 1e-9
             dratio = 0
             theta = 0
             phi = 0
@@ -226,7 +234,7 @@ class Palmer:
         file.write("search          grid\n\n")
 
         # Diffusion type.
-        if self.relax.data.diff[self.run].fixed:
+        if relax_data_store.diff[self.run].fixed:
             algorithm = 'fix'
 
         file.write("diffusion       " + diff + " " + self.diff_search + "\n\n")
@@ -288,11 +296,11 @@ class Palmer:
         """Create the Modelfree4 input file 'mfmodel'."""
 
         # Spin title.
-        file.write("\nspin     " + self.relax.data.res[self.run][i].name + "_" + `self.relax.data.res[self.run][i].num` + "\n")
+        file.write("\nspin     " + relax_data_store.res[self.run][i].name + "_" + `relax_data_store.res[self.run][i].num` + "\n")
 
         # tloc.
         file.write('%-3s%-6s%-6.1f' % ('M1', 'tloc', 0))
-        if 'tm' in self.relax.data.res[self.run][i].params:
+        if 'tm' in relax_data_store.res[self.run][i].params:
             file.write('%-4i' % 1)
         else:
             file.write('%-4i' % 0)
@@ -317,7 +325,7 @@ class Palmer:
 
         # S2f.
         file.write('%-3s%-6s%-6.1f' % ('M1', 'Sf2', 1))
-        if 'S2f' in self.relax.data.res[self.run][i].params:
+        if 'S2f' in relax_data_store.res[self.run][i].params:
             file.write('%-4i' % 1)
         else:
             file.write('%-4i' % 0)
@@ -331,7 +339,7 @@ class Palmer:
 
         # S2s.
         file.write('%-3s%-6s%-6.1f' % ('M1', 'Ss2', 1))
-        if 'S2s' in self.relax.data.res[self.run][i].params or 'S2' in self.relax.data.res[self.run][i].params:
+        if 'S2s' in relax_data_store.res[self.run][i].params or 'S2' in relax_data_store.res[self.run][i].params:
             file.write('%-4i' % 1)
         else:
             file.write('%-4i' % 0)
@@ -345,7 +353,7 @@ class Palmer:
 
         # te.
         file.write('%-3s%-6s%-6.1f' % ('M1', 'te', 0))
-        if 'te' in self.relax.data.res[self.run][i].params or 'ts' in self.relax.data.res[self.run][i].params:
+        if 'te' in relax_data_store.res[self.run][i].params or 'ts' in relax_data_store.res[self.run][i].params:
             file.write('%-4i' % 1)
         else:
             file.write('%-4i' % 0)
@@ -359,7 +367,7 @@ class Palmer:
 
         # Rex.
         file.write('%-3s%-6s%-6.1f' % ('M1', 'Rex', 0))
-        if 'Rex' in self.relax.data.res[self.run][i].params:
+        if 'Rex' in relax_data_store.res[self.run][i].params:
             file.write('%-4i' % 1)
         else:
             file.write('%-4i' % 0)
@@ -376,14 +384,14 @@ class Palmer:
         """Create the Modelfree4 input file 'mfpar'."""
 
         # Spin title.
-        file.write("\nspin     " + self.relax.data.res[self.run][i].name + "_" + `self.relax.data.res[self.run][i].num` + "\n")
+        file.write("\nspin     " + relax_data_store.res[self.run][i].name + "_" + `relax_data_store.res[self.run][i].num` + "\n")
 
         file.write('%-14s' % "constants")
-        file.write('%-6i' % self.relax.data.res[self.run][i].num)
+        file.write('%-6i' % relax_data_store.res[self.run][i].num)
         file.write('%-7s' % self.nucleus)
-        file.write('%-8.3f' % (self.relax.data.gx / 1e7))
-        file.write('%-8.3f' % (self.relax.data.res[self.run][i].r * 1e10))
-        file.write('%-8.3f\n' % (self.relax.data.res[self.run][i].csa * 1e6))
+        file.write('%-8.3f' % (relax_data_store.gx / 1e7))
+        file.write('%-8.3f' % (relax_data_store.res[self.run][i].r * 1e10))
+        file.write('%-8.3f\n' % (relax_data_store.res[self.run][i].csa * 1e6))
 
         file.write('%-10s' % "vector")
         file.write('%-4s' % self.atom1)
@@ -395,10 +403,10 @@ class Palmer:
 
         file.write("#! /bin/sh\n")
         file.write(self.binary + " -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
-        if self.relax.data.diff[self.run].type != 'sphere':
+        if relax_data_store.diff[self.run].type != 'sphere':
             # Copy the pdb file to the model directory so there are no problems with the existance of *.rotate files.
-            system('cp ' + self.relax.data.pdb[self.run].file_name + ' ' + self.dir)
-            file.write(" -s " + self.relax.data.pdb[self.run].file_name.split('/')[-1])
+            system('cp ' + relax_data_store.pdb[self.run].file_name + ' ' + self.dir)
+            file.write(" -s " + relax_data_store.pdb[self.run].file_name.split('/')[-1])
         file.write("\n")
 
 
@@ -445,8 +453,8 @@ class Palmer:
                 raise RelaxFileError, ('mfpar input', 'mfpar')
 
             # Test if the 'PDB' input file exists.
-            if self.relax.data.diff[run].type != 'sphere':
-                pdb = self.relax.data.pdb[self.run].file_name.split('/')[-1]
+            if relax_data_store.diff[run].type != 'sphere':
+                pdb = relax_data_store.pdb[self.run].file_name.split('/')[-1]
                 if not access(pdb, F_OK):
                     raise RelaxFileError, ('PDB', pdb)
             else:
@@ -493,7 +501,7 @@ class Palmer:
         self.run = run
 
         # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # The directory.
@@ -524,9 +532,9 @@ class Palmer:
 
         # Loop over the sequence.
         pos = 0
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for i in xrange(len(relax_data_store.res[self.run])):
             # Reassign the data structure.
-            data = self.relax.data.res[self.run][i]
+            data = relax_data_store.res[self.run][i]
 
             # Skip unselected residues.
             if not data.select:

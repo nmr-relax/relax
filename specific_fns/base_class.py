@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006 Edward d'Auvergne                                  #
+# Copyright (C) 2004, 2006-2007 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,9 +20,16 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from copy import deepcopy
 
+# relax module imports.
+from data import Data
 from relax_errors import RelaxError
+
+
+# The relax data storage object.
+relax_data_store = Data()
 
 
 class Common_functions:
@@ -34,19 +41,19 @@ class Common_functions:
         """Function for testing if errors exist for the run."""
 
         # Diffusion tensor errors.
-        if self.relax.data.diff.has_key(self.run):
-            for object_name in dir(self.relax.data.diff[self.run]):
+        if relax_data_store.diff.has_key(self.run):
+            for object_name in dir(relax_data_store.diff[self.run]):
                 # The object error name.
                 object_error = object_name + '_err'
 
                 # Error exists.
-                if hasattr(self.relax.data.diff[self.run], object_error):
+                if hasattr(relax_data_store.diff[self.run], object_error):
                     return 1
 
         # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for i in xrange(len(relax_data_store.res[self.run])):
             # Reassign data structure.
-            data = self.relax.data.res[self.run][i]
+            data = relax_data_store.res[self.run][i]
 
             # Parameter errors.
             for object_name in dir(data):
@@ -64,13 +71,13 @@ class Common_functions:
     def return_data(self, run, i):
         """Function for returning the Ri data structure."""
 
-        return self.relax.data.res[run][i].relax_data
+        return relax_data_store.res[run][i].relax_data
 
 
     def return_error(self, run, i):
         """Function for returning the Ri error structure."""
 
-        return self.relax.data.res[run][i].relax_error
+        return relax_data_store.res[run][i].relax_error
 
 
     def return_value(self, run, i, param, sim=None):
@@ -94,15 +101,15 @@ class Common_functions:
         object_sim = object_name + '_sim'
 
         # Alias the residue specific data structure.
-        data = self.relax.data.res[self.run][i]
+        data = relax_data_store.res[self.run][i]
 
         # Value and error.
         if sim == None:
             # Get the value.
             if hasattr(data, object_name):
                 value = getattr(data, object_name)
-            elif hasattr(self.relax.data, object_name):
-                object = getattr(self.relax.data, object_name)
+            elif hasattr(relax_data_store, object_name):
+                object = getattr(relax_data_store, object_name)
                 value = object[self.run]
             else:
                 value = None
@@ -110,8 +117,8 @@ class Common_functions:
             # Get the error.
             if hasattr(data, object_error):
                 error = getattr(data, object_error)
-            elif hasattr(self.relax.data, object_error):
-                object = getattr(self.relax.data, object_error)
+            elif hasattr(relax_data_store, object_error):
+                object = getattr(relax_data_store, object_error)
                 error = object[self.run]
             else:
                 error = None
@@ -148,8 +155,8 @@ class Common_functions:
             # The values are supplied by the user:
             if value:
                 # Test if the length of the value array is equal to the length of the parameter array.
-                if len(value) != len(self.relax.data.res[self.run][index].params):
-                    raise RelaxError, "The length of " + `len(value)` + " of the value array must be equal to the length of the parameter array, " + `self.relax.data.res[self.run][index].params` + ", for residue " + `self.relax.data.res[self.run][index].num` + " " + self.relax.data.res[self.run][index].name + "."
+                if len(value) != len(relax_data_store.res[self.run][index].params):
+                    raise RelaxError, "The length of " + `len(value)` + " of the value array must be equal to the length of the parameter array, " + `relax_data_store.res[self.run][index].params` + ", for residue " + `relax_data_store.res[self.run][index].num` + " " + relax_data_store.res[self.run][index].name + "."
 
             # Default values.
             else:
@@ -157,25 +164,25 @@ class Common_functions:
                 value = []
 
                 # Loop over the parameters.
-                for i in xrange(len(self.relax.data.res[self.run][index].params)):
-                    value.append(self.default_value(self.relax.data.res[self.run][index].params[i]))
+                for i in xrange(len(relax_data_store.res[self.run][index].params)):
+                    value.append(self.default_value(relax_data_store.res[self.run][index].params[i]))
 
             # Loop over the parameters.
-            for i in xrange(len(self.relax.data.res[self.run][index].params)):
+            for i in xrange(len(relax_data_store.res[self.run][index].params)):
                 # Get the object.
-                object_name = self.return_data_name(self.relax.data.res[self.run][index].params[i])
+                object_name = self.return_data_name(relax_data_store.res[self.run][index].params[i])
                 if not object_name:
-                    raise RelaxError, "The data type " + `self.relax.data.res[self.run][index].params[i]` + " does not exist."
+                    raise RelaxError, "The data type " + `relax_data_store.res[self.run][index].params[i]` + " does not exist."
 
                 # Initialise all data if it doesn't exist.
-                if not hasattr(self.relax.data.res[self.run][index], object_name):
-                    self.data_init(self.relax.data.res[self.run][index])
+                if not hasattr(relax_data_store.res[self.run][index], object_name):
+                    self.data_init(relax_data_store.res[self.run][index])
 
                 # Set the value.
                 if value[i] == None:
-                    setattr(self.relax.data.res[self.run][index], object_name, None)
+                    setattr(relax_data_store.res[self.run][index], object_name, None)
                 else:
-                    setattr(self.relax.data.res[self.run][index], object_name, float(value[i]) * scaling)
+                    setattr(relax_data_store.res[self.run][index], object_name, float(value[i]) * scaling)
 
 
         # Individual data type.
@@ -188,8 +195,8 @@ class Common_functions:
                 raise RelaxError, "The data type " + `param` + " does not exist."
 
             # Initialise all data if it doesn't exist.
-            if not hasattr(self.relax.data.res[self.run][index], object_name):
-                self.data_init(self.relax.data.res[self.run][index])
+            if not hasattr(relax_data_store.res[self.run][index], object_name):
+                self.data_init(relax_data_store.res[self.run][index])
 
             # Default value.
             if value == None:
@@ -197,13 +204,13 @@ class Common_functions:
 
             # Set the value.
             if value == None:
-                setattr(self.relax.data.res[self.run][index], object_name, None)
+                setattr(relax_data_store.res[self.run][index], object_name, None)
             else:
-                setattr(self.relax.data.res[self.run][index], object_name, float(value) * scaling)
+                setattr(relax_data_store.res[self.run][index], object_name, float(value) * scaling)
 
             # Set the error.
             if error != None:
-                setattr(self.relax.data.res[self.run][index], object_name+'_err', float(error) * scaling)
+                setattr(relax_data_store.res[self.run][index], object_name+'_err', float(error) * scaling)
 
             # Update the other parameters if necessary.
             self.set_update(run=run, param=param, index=index)
@@ -216,7 +223,7 @@ class Common_functions:
         self.run = run
 
         # Skip unselected residues.
-        if not self.relax.data.res[self.run][instance].select:
+        if not relax_data_store.res[self.run][instance].select:
             return
 
         # Parameter increment counter.
@@ -226,7 +233,7 @@ class Common_functions:
         for param in self.data_names(set='params'):
             # Return the parameter array.
             if index == inc:
-                setattr(self.relax.data.res[self.run][instance], param + "_err", error)
+                setattr(relax_data_store.res[self.run][instance], param + "_err", error)
 
             # Increment.
             inc = inc + 1
@@ -255,9 +262,9 @@ class Common_functions:
         #############################################################
 
         # Loop over the residues.
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for i in xrange(len(relax_data_store.res[self.run])):
             # Skip unselected residues.
-            if not self.relax.data.res[self.run][i].select:
+            if not relax_data_store.res[self.run][i].select:
                 continue
 
             # Loop over all the parameter names.
@@ -266,7 +273,7 @@ class Common_functions:
                 sim_object_name = object_name + '_sim'
 
                 # Test if the simulation object already exists.
-                if hasattr(self.relax.data.res[self.run][i], sim_object_name):
+                if hasattr(relax_data_store.res[self.run][i], sim_object_name):
                     raise RelaxError, "Monte Carlo parameter values have already been set."
 
 
@@ -274,9 +281,9 @@ class Common_functions:
         #######################################
 
         # Loop over the residues.
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for i in xrange(len(relax_data_store.res[self.run])):
             # Skip unselected residues.
-            if not self.relax.data.res[self.run][i].select:
+            if not relax_data_store.res[self.run][i].select:
                 continue
 
             # Loop over all the data names.
@@ -285,15 +292,15 @@ class Common_functions:
                 sim_object_name = object_name + '_sim'
 
                 # Create the simulation object.
-                setattr(self.relax.data.res[self.run][i], sim_object_name, [])
+                setattr(relax_data_store.res[self.run][i], sim_object_name, [])
 
                 # Get the simulation object.
-                sim_object = getattr(self.relax.data.res[self.run][i], sim_object_name)
+                sim_object = getattr(relax_data_store.res[self.run][i], sim_object_name)
 
                 # Loop over the simulations.
-                for j in xrange(self.relax.data.sim_number[self.run]):
+                for j in xrange(relax_data_store.sim_number[self.run]):
                     # Copy and append the data.
-                    sim_object.append(deepcopy(getattr(self.relax.data.res[self.run][i], object_name)))
+                    sim_object.append(deepcopy(getattr(relax_data_store.res[self.run][i], object_name)))
 
             # Loop over all the minimisation object names.
             for object_name in min_names:
@@ -301,15 +308,15 @@ class Common_functions:
                 sim_object_name = object_name + '_sim'
 
                 # Create the simulation object.
-                setattr(self.relax.data.res[self.run][i], sim_object_name, [])
+                setattr(relax_data_store.res[self.run][i], sim_object_name, [])
 
                 # Get the simulation object.
-                sim_object = getattr(self.relax.data.res[self.run][i], sim_object_name)
+                sim_object = getattr(relax_data_store.res[self.run][i], sim_object_name)
 
                 # Loop over the simulations.
-                for j in xrange(self.relax.data.sim_number[self.run]):
+                for j in xrange(relax_data_store.sim_number[self.run]):
                     # Copy and append the data.
-                    sim_object.append(deepcopy(getattr(self.relax.data.res[self.run][i], object_name)))
+                    sim_object.append(deepcopy(getattr(relax_data_store.res[self.run][i], object_name)))
 
 
     def sim_return_param(self, run, instance, index):
@@ -319,7 +326,7 @@ class Common_functions:
         self.run = run
 
         # Skip unselected residues.
-        if not self.relax.data.res[self.run][instance].select:
+        if not relax_data_store.res[self.run][instance].select:
             return
 
         # Parameter increment counter.
@@ -329,7 +336,7 @@ class Common_functions:
         for param in self.data_names(set='params'):
             # Return the parameter array.
             if index == inc:
-                return getattr(self.relax.data.res[self.run][instance], param + "_sim")
+                return getattr(relax_data_store.res[self.run][instance], param + "_sim")
 
             # Increment.
             inc = inc + 1
@@ -342,4 +349,4 @@ class Common_functions:
         self.run = run
 
         # Return the array.
-        return self.relax.data.res[self.run][index].select_sim
+        return relax_data_store.res[self.run][index].select_sim

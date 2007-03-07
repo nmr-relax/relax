@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,6 +20,7 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from copy import deepcopy
 from data.diff_tensor import DiffTensorSimList
 from LinearAlgebra import inverse
@@ -29,11 +30,18 @@ from re import match, search
 from string import replace, split
 import sys
 
+# relax module imports.
+from data import Data
 from specific_fns.base_class import Common_functions
 from float import isNaN,isInf 
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxStyleError, RelaxTensorError, RelaxUnknownDataTypeError
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Model_free(Common_functions):
@@ -50,7 +58,7 @@ class Model_free(Common_functions):
         """Function for testing if the model-free parameter values are set."""
 
         # Alias the data structure.
-        data = self.relax.data.res[self.run][index]
+        data = relax_data_store.res[self.run][index]
 
         # Unselected residue.
         if data.select == 0:
@@ -108,18 +116,18 @@ class Model_free(Common_functions):
         # Diffusion tensor parameters.
         if self.param_set == 'diff' or self.param_set == 'all':
             # Spherical diffusion.
-            if self.relax.data.diff[self.run].type == 'sphere':
+            if relax_data_store.diff[self.run].type == 'sphere':
                 self.param_names.append('tm')
 
             # Spheroidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'spheroid':
+            elif relax_data_store.diff[self.run].type == 'spheroid':
                 self.param_names.append('tm')
                 self.param_names.append('Da')
                 self.param_names.append('theta')
                 self.param_names.append('phi')
 
             # Ellipsoidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'ellipsoid':
+            elif relax_data_store.diff[self.run].type == 'ellipsoid':
                 self.param_names.append('tm')
                 self.param_names.append('Da')
                 self.param_names.append('Dr')
@@ -129,18 +137,18 @@ class Model_free(Common_functions):
 
         # Model-free parameters (residue specific parameters).
         if self.param_set != 'diff':
-            for i in xrange(len(self.relax.data.res[self.run])):
+            for i in xrange(len(relax_data_store.res[self.run])):
                 # Only add parameters for a single residue if index has a value.
                 if index != None and i != index:
                     continue
 
                 # Skip unselected residues.
-                if not self.relax.data.res[self.run][i].select:
+                if not relax_data_store.res[self.run][i].select:
                     continue
 
                 # Loop over the model-free parameters and add the names.
-                for j in xrange(len(self.relax.data.res[self.run][i].params)):
-                    self.param_names.append(self.relax.data.res[self.run][i].params[j])
+                for j in xrange(len(relax_data_store.res[self.run][i].params)):
+                    self.param_names.append(relax_data_store.res[self.run][i].params[j])
 
 
     def assemble_param_vector(self, index=None, sim_index=None, param_set=None):
@@ -154,52 +162,52 @@ class Model_free(Common_functions):
         # Monte Carlo diffusion tensor parameters.
         if sim_index != None and (param_set == 'diff' or param_set == 'all'):
             # Spherical diffusion.
-            if self.relax.data.diff[self.run].type == 'sphere':
-                param_vector.append(self.relax.data.diff[self.run].tm_sim[sim_index])
+            if relax_data_store.diff[self.run].type == 'sphere':
+                param_vector.append(relax_data_store.diff[self.run].tm_sim[sim_index])
 
             # Spheroidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'spheroid':
-                param_vector.append(self.relax.data.diff[self.run].tm_sim[sim_index])
-                param_vector.append(self.relax.data.diff[self.run].Da_sim[sim_index])
-                param_vector.append(self.relax.data.diff[self.run].theta_sim[sim_index])
-                param_vector.append(self.relax.data.diff[self.run].phi_sim[sim_index])
+            elif relax_data_store.diff[self.run].type == 'spheroid':
+                param_vector.append(relax_data_store.diff[self.run].tm_sim[sim_index])
+                param_vector.append(relax_data_store.diff[self.run].Da_sim[sim_index])
+                param_vector.append(relax_data_store.diff[self.run].theta_sim[sim_index])
+                param_vector.append(relax_data_store.diff[self.run].phi_sim[sim_index])
 
             # Ellipsoidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'ellipsoid':
-                param_vector.append(self.relax.data.diff[self.run].tm_sim[sim_index])
-                param_vector.append(self.relax.data.diff[self.run].Da_sim[sim_index])
-                param_vector.append(self.relax.data.diff[self.run].Dr_sim[sim_index])
-                param_vector.append(self.relax.data.diff[self.run].alpha_sim[sim_index])
-                param_vector.append(self.relax.data.diff[self.run].beta_sim[sim_index])
-                param_vector.append(self.relax.data.diff[self.run].gamma_sim[sim_index])
+            elif relax_data_store.diff[self.run].type == 'ellipsoid':
+                param_vector.append(relax_data_store.diff[self.run].tm_sim[sim_index])
+                param_vector.append(relax_data_store.diff[self.run].Da_sim[sim_index])
+                param_vector.append(relax_data_store.diff[self.run].Dr_sim[sim_index])
+                param_vector.append(relax_data_store.diff[self.run].alpha_sim[sim_index])
+                param_vector.append(relax_data_store.diff[self.run].beta_sim[sim_index])
+                param_vector.append(relax_data_store.diff[self.run].gamma_sim[sim_index])
 
         # Diffusion tensor parameters.
         elif param_set == 'diff' or param_set == 'all':
             # Spherical diffusion.
-            if self.relax.data.diff[self.run].type == 'sphere':
-                param_vector.append(self.relax.data.diff[self.run].tm)
+            if relax_data_store.diff[self.run].type == 'sphere':
+                param_vector.append(relax_data_store.diff[self.run].tm)
 
             # Spheroidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'spheroid':
-                param_vector.append(self.relax.data.diff[self.run].tm)
-                param_vector.append(self.relax.data.diff[self.run].Da)
-                param_vector.append(self.relax.data.diff[self.run].theta)
-                param_vector.append(self.relax.data.diff[self.run].phi)
+            elif relax_data_store.diff[self.run].type == 'spheroid':
+                param_vector.append(relax_data_store.diff[self.run].tm)
+                param_vector.append(relax_data_store.diff[self.run].Da)
+                param_vector.append(relax_data_store.diff[self.run].theta)
+                param_vector.append(relax_data_store.diff[self.run].phi)
 
             # Ellipsoidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'ellipsoid':
-                param_vector.append(self.relax.data.diff[self.run].tm)
-                param_vector.append(self.relax.data.diff[self.run].Da)
-                param_vector.append(self.relax.data.diff[self.run].Dr)
-                param_vector.append(self.relax.data.diff[self.run].alpha)
-                param_vector.append(self.relax.data.diff[self.run].beta)
-                param_vector.append(self.relax.data.diff[self.run].gamma)
+            elif relax_data_store.diff[self.run].type == 'ellipsoid':
+                param_vector.append(relax_data_store.diff[self.run].tm)
+                param_vector.append(relax_data_store.diff[self.run].Da)
+                param_vector.append(relax_data_store.diff[self.run].Dr)
+                param_vector.append(relax_data_store.diff[self.run].alpha)
+                param_vector.append(relax_data_store.diff[self.run].beta)
+                param_vector.append(relax_data_store.diff[self.run].gamma)
 
         # Model-free parameters (residue specific parameters).
         if param_set != 'diff':
-            for i in xrange(len(self.relax.data.res[self.run])):
+            for i in xrange(len(relax_data_store.res[self.run])):
                 # Skip unselected residues.
-                if not self.relax.data.res[self.run][i].select:
+                if not relax_data_store.res[self.run][i].select:
                     continue
 
                 # Only add parameters for a single residue if index has a value.
@@ -207,96 +215,96 @@ class Model_free(Common_functions):
                     continue
 
                 # Loop over the model-free parameters.
-                for j in xrange(len(self.relax.data.res[self.run][i].params)):
+                for j in xrange(len(relax_data_store.res[self.run][i].params)):
                     # local tm.
-                    if self.relax.data.res[self.run][i].params[j] == 'local_tm':
-                        if self.relax.data.res[self.run][i].local_tm == None:
+                    if relax_data_store.res[self.run][i].params[j] == 'local_tm':
+                        if relax_data_store.res[self.run][i].local_tm == None:
                             param_vector.append(0.0)
                         elif sim_index != None:
-                            param_vector.append(self.relax.data.res[self.run][i].local_tm_sim[sim_index])
+                            param_vector.append(relax_data_store.res[self.run][i].local_tm_sim[sim_index])
                         else:
-                            param_vector.append(self.relax.data.res[self.run][i].local_tm)
+                            param_vector.append(relax_data_store.res[self.run][i].local_tm)
 
                     # S2.
-                    elif self.relax.data.res[self.run][i].params[j] == 'S2':
-                        if self.relax.data.res[self.run][i].s2 == None:
+                    elif relax_data_store.res[self.run][i].params[j] == 'S2':
+                        if relax_data_store.res[self.run][i].s2 == None:
                             param_vector.append(0.0)
                         elif sim_index != None:
-                            param_vector.append(self.relax.data.res[self.run][i].s2_sim[sim_index])
+                            param_vector.append(relax_data_store.res[self.run][i].s2_sim[sim_index])
                         else:
-                            param_vector.append(self.relax.data.res[self.run][i].s2)
+                            param_vector.append(relax_data_store.res[self.run][i].s2)
 
                     # S2f.
-                    elif self.relax.data.res[self.run][i].params[j] == 'S2f':
-                        if self.relax.data.res[self.run][i].s2f == None:
+                    elif relax_data_store.res[self.run][i].params[j] == 'S2f':
+                        if relax_data_store.res[self.run][i].s2f == None:
                             param_vector.append(0.0)
                         elif sim_index != None:
-                            param_vector.append(self.relax.data.res[self.run][i].s2f_sim[sim_index])
+                            param_vector.append(relax_data_store.res[self.run][i].s2f_sim[sim_index])
                         else:
-                            param_vector.append(self.relax.data.res[self.run][i].s2f)
+                            param_vector.append(relax_data_store.res[self.run][i].s2f)
 
                     # S2s.
-                    elif self.relax.data.res[self.run][i].params[j] == 'S2s':
-                        if self.relax.data.res[self.run][i].s2s == None:
+                    elif relax_data_store.res[self.run][i].params[j] == 'S2s':
+                        if relax_data_store.res[self.run][i].s2s == None:
                             param_vector.append(0.0)
                         elif sim_index != None:
-                            param_vector.append(self.relax.data.res[self.run][i].s2s_sim[sim_index])
+                            param_vector.append(relax_data_store.res[self.run][i].s2s_sim[sim_index])
                         else:
-                            param_vector.append(self.relax.data.res[self.run][i].s2s)
+                            param_vector.append(relax_data_store.res[self.run][i].s2s)
 
                     # te.
-                    elif self.relax.data.res[self.run][i].params[j] == 'te':
-                        if self.relax.data.res[self.run][i].te == None:
+                    elif relax_data_store.res[self.run][i].params[j] == 'te':
+                        if relax_data_store.res[self.run][i].te == None:
                             param_vector.append(0.0)
                         elif sim_index != None:
-                            param_vector.append(self.relax.data.res[self.run][i].te_sim[sim_index])
+                            param_vector.append(relax_data_store.res[self.run][i].te_sim[sim_index])
                         else:
-                            param_vector.append(self.relax.data.res[self.run][i].te)
+                            param_vector.append(relax_data_store.res[self.run][i].te)
 
                     # tf.
-                    elif self.relax.data.res[self.run][i].params[j] == 'tf':
-                        if self.relax.data.res[self.run][i].tf == None:
+                    elif relax_data_store.res[self.run][i].params[j] == 'tf':
+                        if relax_data_store.res[self.run][i].tf == None:
                             param_vector.append(0.0)
                         elif sim_index != None:
-                            param_vector.append(self.relax.data.res[self.run][i].tf_sim[sim_index])
+                            param_vector.append(relax_data_store.res[self.run][i].tf_sim[sim_index])
                         else:
-                            param_vector.append(self.relax.data.res[self.run][i].tf)
+                            param_vector.append(relax_data_store.res[self.run][i].tf)
 
                     # ts.
-                    elif self.relax.data.res[self.run][i].params[j] == 'ts':
-                        if self.relax.data.res[self.run][i].ts == None:
+                    elif relax_data_store.res[self.run][i].params[j] == 'ts':
+                        if relax_data_store.res[self.run][i].ts == None:
                             param_vector.append(0.0)
                         elif sim_index != None:
-                            param_vector.append(self.relax.data.res[self.run][i].ts_sim[sim_index])
+                            param_vector.append(relax_data_store.res[self.run][i].ts_sim[sim_index])
                         else:
-                            param_vector.append(self.relax.data.res[self.run][i].ts)
+                            param_vector.append(relax_data_store.res[self.run][i].ts)
 
                     # Rex.
-                    elif self.relax.data.res[self.run][i].params[j] == 'Rex':
-                        if self.relax.data.res[self.run][i].rex == None:
+                    elif relax_data_store.res[self.run][i].params[j] == 'Rex':
+                        if relax_data_store.res[self.run][i].rex == None:
                             param_vector.append(0.0)
                         elif sim_index != None:
-                            param_vector.append(self.relax.data.res[self.run][i].rex_sim[sim_index])
+                            param_vector.append(relax_data_store.res[self.run][i].rex_sim[sim_index])
                         else:
-                            param_vector.append(self.relax.data.res[self.run][i].rex)
+                            param_vector.append(relax_data_store.res[self.run][i].rex)
 
                     # r.
-                    elif self.relax.data.res[self.run][i].params[j] == 'r':
-                        if self.relax.data.res[self.run][i].r == None:
+                    elif relax_data_store.res[self.run][i].params[j] == 'r':
+                        if relax_data_store.res[self.run][i].r == None:
                             param_vector.append(0.0)
                         elif sim_index != None:
-                            param_vector.append(self.relax.data.res[self.run][i].r_sim[sim_index])
+                            param_vector.append(relax_data_store.res[self.run][i].r_sim[sim_index])
                         else:
-                            param_vector.append(self.relax.data.res[self.run][i].r)
+                            param_vector.append(relax_data_store.res[self.run][i].r)
 
                     # CSA.
-                    elif self.relax.data.res[self.run][i].params[j] == 'CSA':
-                        if self.relax.data.res[self.run][i].csa == None:
+                    elif relax_data_store.res[self.run][i].params[j] == 'CSA':
+                        if relax_data_store.res[self.run][i].csa == None:
                             param_vector.append(0.0)
                         elif sim_index != None:
-                            param_vector.append(self.relax.data.res[self.run][i].csa_sim[sim_index])
+                            param_vector.append(relax_data_store.res[self.run][i].csa_sim[sim_index])
                         else:
-                            param_vector.append(self.relax.data.res[self.run][i].csa)
+                            param_vector.append(relax_data_store.res[self.run][i].csa)
 
                     # Unknown parameter.
                     else:
@@ -326,7 +334,7 @@ class Model_free(Common_functions):
         # Diffusion tensor parameters.
         if self.param_set == 'diff' or self.param_set == 'all':
             # Spherical diffusion.
-            if self.relax.data.diff[self.run].type == 'sphere':
+            if relax_data_store.diff[self.run].type == 'sphere':
                 # tm.
                 self.scaling_matrix[i, i] = ti_scaling
 
@@ -334,7 +342,7 @@ class Model_free(Common_functions):
                 i = i + 1
 
             # Spheroidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'spheroid':
+            elif relax_data_store.diff[self.run].type == 'spheroid':
                 # tm, Da, theta, phi
                 self.scaling_matrix[i, i] = ti_scaling
                 self.scaling_matrix[i+1, i+1] = 1e7
@@ -345,7 +353,7 @@ class Model_free(Common_functions):
                 i = i + 4
 
             # Ellipsoidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'ellipsoid':
+            elif relax_data_store.diff[self.run].type == 'ellipsoid':
                 # tm, Da, Dr, alpha, beta, gamma.
                 self.scaling_matrix[i, i] = ti_scaling
                 self.scaling_matrix[i+1, i+1] = 1e7
@@ -360,9 +368,9 @@ class Model_free(Common_functions):
         # Model-free parameters.
         if self.param_set != 'diff':
             # Loop over all residues.
-            for j in xrange(len(self.relax.data.res[self.run])):
+            for j in xrange(len(relax_data_store.res[self.run])):
                 # Skip unselected residues.
-                if not self.relax.data.res[self.run][j].select:
+                if not relax_data_store.res[self.run][j].select:
                     continue
 
                 # Only add parameters for a single residue if index has a value.
@@ -370,21 +378,21 @@ class Model_free(Common_functions):
                     continue
 
                 # Loop over the model-free parameters.
-                for k in xrange(len(self.relax.data.res[self.run][j].params)):
+                for k in xrange(len(relax_data_store.res[self.run][j].params)):
                     # Local tm, te, tf, and ts (must all be the same for diagonal scaling!).
-                    if self.relax.data.res[self.run][j].params[k] == 'local_tm' or search('^t', self.relax.data.res[self.run][j].params[k]):
+                    if relax_data_store.res[self.run][j].params[k] == 'local_tm' or search('^t', relax_data_store.res[self.run][j].params[k]):
                         self.scaling_matrix[i, i] = ti_scaling
 
                     # Rex.
-                    elif self.relax.data.res[self.run][j].params[k] == 'Rex':
-                        self.scaling_matrix[i, i] = 1.0 / (2.0 * pi * self.relax.data.res[self.run][j].frq[0]) ** 2
+                    elif relax_data_store.res[self.run][j].params[k] == 'Rex':
+                        self.scaling_matrix[i, i] = 1.0 / (2.0 * pi * relax_data_store.res[self.run][j].frq[0]) ** 2
 
                     # Bond length.
-                    elif self.relax.data.res[self.run][j].params[k] == 'r':
+                    elif relax_data_store.res[self.run][j].params[k] == 'r':
                         self.scaling_matrix[i, i] = 1e-10
 
                     # CSA.
-                    elif self.relax.data.res[self.run][j].params[k] == 'CSA':
+                    elif relax_data_store.res[self.run][j].params[k] == 'CSA':
                         self.scaling_matrix[i, i] = 1e-4
 
                     # Increment i.
@@ -412,16 +420,16 @@ class Model_free(Common_functions):
         self.print_flag = print_flag
 
         # Test if the sequence data for self.run is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # The residue index.
         index = None
         if res_num != None:
             # Loop over the sequence.
-            for i in xrange(len(self.relax.data.res[self.run])):
+            for i in xrange(len(relax_data_store.res[self.run])):
                 # Found the residue.
-                if self.relax.data.res[self.run][i].num == res_num:
+                if relax_data_store.res[self.run][i].num == res_num:
                     index = i
                     break
 
@@ -433,21 +441,21 @@ class Model_free(Common_functions):
         self.param_set = self.determine_param_set_type()
 
         # Test if diffusion tensor data for the run exists.
-        if self.param_set != 'local_tm' and not self.relax.data.diff.has_key(self.run):
+        if self.param_set != 'local_tm' and not relax_data_store.diff.has_key(self.run):
             raise RelaxNoTensorError, self.run
 
         # Test if the PDB file has been loaded.
-        if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'sphere' and not self.relax.data.pdb.has_key(self.run):
+        if self.param_set != 'local_tm' and relax_data_store.diff[self.run].type != 'sphere' and not relax_data_store.pdb.has_key(self.run):
             raise RelaxNoPdbError, self.run
 
         # Test if the nucleus type has been set.
-        if not hasattr(self.relax.data, 'gx'):
+        if not hasattr(relax_data_store, 'gx'):
             raise RelaxNucleusError
 
         # Loop over the residues.
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for i in xrange(len(relax_data_store.res[self.run])):
             # Alias the data structure.
-            data = self.relax.data.res[self.run][i]
+            data = relax_data_store.res[self.run][i]
 
             # Skip unselected residues.
             if not data.select:
@@ -462,7 +470,7 @@ class Model_free(Common_functions):
                 raise RelaxNoModelError, self.run
 
             # Test if unit vectors exist.
-            if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'sphere' and not hasattr(data, 'xh_vect'):
+            if self.param_set != 'local_tm' and relax_data_store.diff[self.run].type != 'sphere' and not hasattr(data, 'xh_vect'):
                 raise RelaxNoVectorsError, self.run
 
             # Test if the model-free parameter values exist.
@@ -503,7 +511,7 @@ class Model_free(Common_functions):
                 csa = [data.csa_sim[sim_index]]
 
             # Vectors.
-            if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'sphere':
+            if self.param_set != 'local_tm' and relax_data_store.diff[self.run].type != 'sphere':
                 xh_unit_vectors = [data.xh_vect]
             else:
                 xh_unit_vectors = [None]
@@ -520,11 +528,11 @@ class Model_free(Common_functions):
 
             # Package the diffusion tensor parameters.
             if self.param_set == 'local_tm':
-                diff_params = [self.relax.data.res[self.run][i].local_tm]
+                diff_params = [relax_data_store.res[self.run][i].local_tm]
                 diff_type = 'sphere'
             else:
                 # Alias.
-                diff_data = self.relax.data.diff[self.run]
+                diff_data = relax_data_store.diff[self.run]
 
                 # Diff type.
                 diff_type = diff_data.type
@@ -542,7 +550,7 @@ class Model_free(Common_functions):
                     diff_params = [diff_data.tm, diff_data.Da, diff_data.Dr, diff_data.alpha, diff_data.beta, diff_data.gamma]
 
             # Initialise the model-free function.
-            self.mf = Mf(init_params=self.param_vector, param_set='mf', diff_type=diff_type, diff_params=diff_params, num_res=1, equations=[data.equation], param_types=[data.params], param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=[data.num_frq], frq=[data.frq], num_ri=[data.num_ri], remap_table=[data.remap_table], noe_r1_table=[data.noe_r1_table], ri_labels=[data.ri_labels], gx=self.relax.data.gx, gh=self.relax.data.gh, g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar, mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors)
+            self.mf = Mf(init_params=self.param_vector, param_set='mf', diff_type=diff_type, diff_params=diff_params, num_res=1, equations=[data.equation], param_types=[data.params], param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=[data.num_frq], frq=[data.frq], num_ri=[data.num_ri], remap_table=[data.remap_table], noe_r1_table=[data.noe_r1_table], ri_labels=[data.ri_labels], gx=relax_data_store.gx, gh=relax_data_store.gh, g_ratio=relax_data_store.g_ratio, h_bar=relax_data_store.h_bar, mu0=relax_data_store.mu0, num_params=num_params, vectors=xh_unit_vectors)
 
             # Chi-squared calculation.
             try:
@@ -552,48 +560,48 @@ class Model_free(Common_functions):
 
             # Global chi-squared value.
             if self.param_set == 'all' or self.param_set == 'diff':
-                self.relax.data.chi2[self.run] = self.relax.data.chi2[self.run] + chi2
+                relax_data_store.chi2[self.run] = relax_data_store.chi2[self.run] + chi2
             else:
-                self.relax.data.res[self.run][i].chi2 = chi2
+                relax_data_store.res[self.run][i].chi2 = chi2
 
 
     def copy(self, run1=None, run2=None, sim=None):
         """Function for copying all model-free data from run1 to run2."""
 
         # Test if run1 exists.
-        if not run1 in self.relax.data.run_names:
+        if not run1 in relax_data_store.run_names:
             raise RelaxNoRunError, run1
 
         # Test if run2 exists.
-        if not run2 in self.relax.data.run_names:
+        if not run2 in relax_data_store.run_names:
             raise RelaxNoRunError, run2
 
         # Test if the run type of run1 is set to 'mf'.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run1)]
+        function_type = relax_data_store.run_types[relax_data_store.run_names.index(run1)]
         if function_type != 'mf':
             raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 
         # Test if the run type of run2 is set to 'mf'.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run2)]
+        function_type = relax_data_store.run_types[relax_data_store.run_names.index(run2)]
         if function_type != 'mf':
             raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 
         # Test if the sequence data for run1 is loaded.
-        if not self.relax.data.res.has_key(run1):
+        if not relax_data_store.res.has_key(run1):
             raise RelaxNoSequenceError, run1
 
         # Test if the sequence data for run2 is loaded.
-        if not self.relax.data.res.has_key(run2):
+        if not relax_data_store.res.has_key(run2):
             raise RelaxNoSequenceError, run2
 
         # Get all data structure names.
         names = self.data_names()
 
         # Copy the data.
-        for i in xrange(len(self.relax.data.res[run1])):
-            # Remap the data structure 'self.relax.data.res[run1][i]'.
-            data1 = self.relax.data.res[run1][i]
-            data2 = self.relax.data.res[run2][i]
+        for i in xrange(len(relax_data_store.res[run1])):
+            # Remap the data structure 'relax_data_store.res[run1][i]'.
+            data1 = relax_data_store.res[run1][i]
+            data2 = relax_data_store.res[run2][i]
 
             # Loop through the data structure names.
             for name in names:
@@ -633,13 +641,13 @@ class Model_free(Common_functions):
         data = []
 
         # Test if the model is set.
-        if not hasattr(self.relax.data.res[self.run][i], 'model') or not self.relax.data.res[self.run][i].model:
+        if not hasattr(relax_data_store.res[self.run][i], 'model') or not relax_data_store.res[self.run][i].model:
             raise RelaxNoModelError, self.run
 
         # Loop over the relaxation data.
-        for j in xrange(len(self.relax.data.res[run][i].relax_data)):
+        for j in xrange(len(relax_data_store.res[run][i].relax_data)):
             # Back calculate the value.
-            value = self.back_calc(run=run, index=i, ri_label=self.relax.data.res[run][i].ri_labels[j], frq_label=self.relax.data.res[run][i].frq_labels[self.relax.data.res[run][i].remap_table[j]], frq=self.relax.data.res[run][i].frq[self.relax.data.res[run][i].remap_table[j]])
+            value = self.back_calc(run=run, index=i, ri_label=relax_data_store.res[run][i].ri_labels[j], frq_label=relax_data_store.res[run][i].frq_labels[relax_data_store.res[run][i].remap_table[j]], frq=relax_data_store.res[run][i].frq[relax_data_store.res[run][i].remap_table[j]])
 
             # Append the value.
             data.append(value)
@@ -655,16 +663,16 @@ class Model_free(Common_functions):
         self.run = run
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Test if the run type is set to 'mf'.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+        function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
         if function_type != 'mf':
             raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 
         # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Check the validity of the model-free equation type.
@@ -972,25 +980,25 @@ class Model_free(Common_functions):
         self.run = run
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Test if the run type is set to 'mf'.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+        function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
         if function_type != 'mf':
             raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 
         # Test if the sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Get all data structure names.
         names = self.data_names()
 
         # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[self.run])):
-            # Remap the data structure 'self.relax.data.res[self.run][i]'.
-            data = self.relax.data.res[self.run][i]
+        for i in xrange(len(relax_data_store.res[self.run])):
+            # Remap the data structure 'relax_data_store.res[self.run][i]'.
+            data = relax_data_store.res[self.run][i]
 
             # Loop through the data structure names.
             for name in names:
@@ -1013,42 +1021,42 @@ class Model_free(Common_functions):
             self.run = run
 
         # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # If there is a local tm, fail if not all residues have a local tm parameter.
         local_tm = 0
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for i in xrange(len(relax_data_store.res[self.run])):
             # Skip unselected residues.
             # This code causes a bug after model elimination if the model has been eliminated (select = 0).
-            #if not self.relax.data.res[self.run][i].select:
+            #if not relax_data_store.res[self.run][i].select:
             #    continue
 
             # No params.
-            if not hasattr(self.relax.data.res[self.run][i], 'params'):
+            if not hasattr(relax_data_store.res[self.run][i], 'params'):
                 continue
 
             # Local tm.
-            if local_tm == 0 and 'local_tm' in self.relax.data.res[self.run][i].params:
+            if local_tm == 0 and 'local_tm' in relax_data_store.res[self.run][i].params:
                 local_tm = 1
 
             # Inconsistencies.
-            elif local_tm == 1 and not 'local_tm' in self.relax.data.res[self.run][i].params:
+            elif local_tm == 1 and not 'local_tm' in relax_data_store.res[self.run][i].params:
                 raise RelaxError, "All residues must either have a local tm parameter or not."
 
         # Check if any model-free parameters are allowed to vary.
         mf_all_fixed = 1
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for i in xrange(len(relax_data_store.res[self.run])):
             # Skip unselected residues.
             # This code causes a bug after model elimination if the model has been eliminated (select = 0).
-            #if not self.relax.data.res[self.run][i].select:
+            #if not relax_data_store.res[self.run][i].select:
             #    continue
 
             # Test the fixed flag.
-            if not hasattr(self.relax.data.res[self.run][i], 'fixed'):
+            if not hasattr(relax_data_store.res[self.run][i], 'fixed'):
                 mf_all_fixed = 0
                 break
-            if not self.relax.data.res[self.run][i].fixed:
+            if not relax_data_store.res[self.run][i].fixed:
                 mf_all_fixed = 0
                 break
 
@@ -1057,19 +1065,19 @@ class Model_free(Common_functions):
             return 'local_tm'
 
         # Test if the diffusion tensor data is loaded.
-        if not self.relax.data.diff.has_key(self.run):
+        if not relax_data_store.diff.has_key(self.run):
             raise RelaxNoTensorError, self.run
 
         # 'diff' parameter set.
         if mf_all_fixed:
             # All parameters fixed.
-            if self.relax.data.diff[self.run].fixed:
+            if relax_data_store.diff[self.run].fixed:
                 raise RelaxError, "All parameters are fixed."
 
             return 'diff'
 
         # 'mf' parameter set.
-        if self.relax.data.diff[self.run].fixed:
+        if relax_data_store.diff[self.run].fixed:
             return 'mf'
 
         # 'all' parameter set.
@@ -1086,34 +1094,34 @@ class Model_free(Common_functions):
         # Diffusion tensor parameters of the Monte Carlo simulations.
         if sim_index != None and (self.param_set == 'diff' or self.param_set == 'all'):
             # Spherical diffusion.
-            if self.relax.data.diff[self.run].type == 'sphere':
+            if relax_data_store.diff[self.run].type == 'sphere':
                 # Sim values.
-                self.relax.data.diff[self.run].tm_sim[sim_index] = self.param_vector[0]
+                relax_data_store.diff[self.run].tm_sim[sim_index] = self.param_vector[0]
 
                 # Parameter index.
                 param_index = param_index + 1
 
             # Spheroidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'spheroid':
+            elif relax_data_store.diff[self.run].type == 'spheroid':
                 # Sim values.
-                self.relax.data.diff[self.run].tm_sim[sim_index] = self.param_vector[0]
-                self.relax.data.diff[self.run].Da_sim[sim_index] = self.param_vector[1]
-                self.relax.data.diff[self.run].theta_sim[sim_index] = self.param_vector[2]
-                self.relax.data.diff[self.run].phi_sim[sim_index] = self.param_vector[3]
+                relax_data_store.diff[self.run].tm_sim[sim_index] = self.param_vector[0]
+                relax_data_store.diff[self.run].Da_sim[sim_index] = self.param_vector[1]
+                relax_data_store.diff[self.run].theta_sim[sim_index] = self.param_vector[2]
+                relax_data_store.diff[self.run].phi_sim[sim_index] = self.param_vector[3]
                 self.relax.generic.diffusion_tensor.fold_angles(run=self.run, sim_index=sim_index)
 
                 # Parameter index.
                 param_index = param_index + 4
 
             # Ellipsoidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'ellipsoid':
+            elif relax_data_store.diff[self.run].type == 'ellipsoid':
                 # Sim values.
-                self.relax.data.diff[self.run].tm_sim[sim_index] = self.param_vector[0]
-                self.relax.data.diff[self.run].Da_sim[sim_index] = self.param_vector[1]
-                self.relax.data.diff[self.run].Dr_sim[sim_index] = self.param_vector[2]
-                self.relax.data.diff[self.run].alpha_sim[sim_index] = self.param_vector[3]
-                self.relax.data.diff[self.run].beta_sim[sim_index] = self.param_vector[4]
-                self.relax.data.diff[self.run].gamma_sim[sim_index] = self.param_vector[5]
+                relax_data_store.diff[self.run].tm_sim[sim_index] = self.param_vector[0]
+                relax_data_store.diff[self.run].Da_sim[sim_index] = self.param_vector[1]
+                relax_data_store.diff[self.run].Dr_sim[sim_index] = self.param_vector[2]
+                relax_data_store.diff[self.run].alpha_sim[sim_index] = self.param_vector[3]
+                relax_data_store.diff[self.run].beta_sim[sim_index] = self.param_vector[4]
+                relax_data_store.diff[self.run].gamma_sim[sim_index] = self.param_vector[5]
                 self.relax.generic.diffusion_tensor.fold_angles(run=self.run, sim_index=sim_index)
 
                 # Parameter index.
@@ -1122,34 +1130,34 @@ class Model_free(Common_functions):
         # Diffusion tensor parameters.
         elif self.param_set == 'diff' or self.param_set == 'all':
             # Spherical diffusion.
-            if self.relax.data.diff[self.run].type == 'sphere':
+            if relax_data_store.diff[self.run].type == 'sphere':
                 # Values.
-                self.relax.data.diff[self.run].tm = self.param_vector[0]
+                relax_data_store.diff[self.run].tm = self.param_vector[0]
 
                 # Parameter index.
                 param_index = param_index + 1
 
             # Spheroidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'spheroid':
+            elif relax_data_store.diff[self.run].type == 'spheroid':
                 # Values.
-                self.relax.data.diff[self.run].tm = self.param_vector[0]
-                self.relax.data.diff[self.run].Da = self.param_vector[1]
-                self.relax.data.diff[self.run].theta = self.param_vector[2]
-                self.relax.data.diff[self.run].phi = self.param_vector[3]
+                relax_data_store.diff[self.run].tm = self.param_vector[0]
+                relax_data_store.diff[self.run].Da = self.param_vector[1]
+                relax_data_store.diff[self.run].theta = self.param_vector[2]
+                relax_data_store.diff[self.run].phi = self.param_vector[3]
                 self.relax.generic.diffusion_tensor.fold_angles(run=self.run)
 
                 # Parameter index.
                 param_index = param_index + 4
 
             # Ellipsoidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'ellipsoid':
+            elif relax_data_store.diff[self.run].type == 'ellipsoid':
                 # Values.
-                self.relax.data.diff[self.run].tm = self.param_vector[0]
-                self.relax.data.diff[self.run].Da = self.param_vector[1]
-                self.relax.data.diff[self.run].Dr = self.param_vector[2]
-                self.relax.data.diff[self.run].alpha = self.param_vector[3]
-                self.relax.data.diff[self.run].beta = self.param_vector[4]
-                self.relax.data.diff[self.run].gamma = self.param_vector[5]
+                relax_data_store.diff[self.run].tm = self.param_vector[0]
+                relax_data_store.diff[self.run].Da = self.param_vector[1]
+                relax_data_store.diff[self.run].Dr = self.param_vector[2]
+                relax_data_store.diff[self.run].alpha = self.param_vector[3]
+                relax_data_store.diff[self.run].beta = self.param_vector[4]
+                relax_data_store.diff[self.run].gamma = self.param_vector[5]
                 self.relax.generic.diffusion_tensor.fold_angles(run=self.run)
 
                 # Parameter index.
@@ -1158,9 +1166,9 @@ class Model_free(Common_functions):
         # Model-free parameters.
         if self.param_set != 'diff':
             # Loop over all residues.
-            for i in xrange(len(self.relax.data.res[self.run])):
+            for i in xrange(len(relax_data_store.res[self.run])):
                 # Remap the residue data structure.
-                data = self.relax.data.res[self.run][i]
+                data = relax_data_store.res[self.run][i]
 
                 # Skip unselected residues.
                 if not data.select:
@@ -1252,9 +1260,9 @@ class Model_free(Common_functions):
         # Calculate all order parameters after unpacking the vector.
         if self.param_set != 'diff':
             # Loop over all residues.
-            for i in xrange(len(self.relax.data.res[self.run])):
+            for i in xrange(len(relax_data_store.res[self.run])):
                 # Remap the residue data structure.
-                data = self.relax.data.res[self.run][i]
+                data = relax_data_store.res[self.run][i]
 
                 # Skip unselected residues.
                 if not data.select:
@@ -1312,13 +1320,13 @@ class Model_free(Common_functions):
         self.run = old_run
 
         # Duplicate all non-residue specific data.
-        for data_name in dir(self.relax.data):
+        for data_name in dir(relax_data_store):
             # Skip 'res'.
             if data_name == 'res':
                 continue
 
             # Get the object.
-            data = getattr(self.relax.data, data_name)
+            data = getattr(relax_data_store, data_name)
 
             # Skip the data if it is not a dictionary (or equivalent).
             if not hasattr(data, 'has_key'):
@@ -1345,27 +1353,27 @@ class Model_free(Common_functions):
         # Sequence specific data.
         if self.param_set == 'mf' or (self.param_set == 'local_tm' and not global_stats):
             # Create the sequence data if it does not exist.
-            if not self.relax.data.res.has_key(new_run) or not len(self.relax.data.res[new_run]):
-                # Add the new run to 'self.relax.data.res'.
-                self.relax.data.res.add_list(new_run)
+            if not relax_data_store.res.has_key(new_run) or not len(relax_data_store.res[new_run]):
+                # Add the new run to 'relax_data_store.res'.
+                relax_data_store.res.add_list(new_run)
 
-                # Fill the array 'self.relax.data.res[new_run]' with empty data containers and place sequence data into the array.
-                for i in xrange(len(self.relax.data.res[old_run])):
+                # Fill the array 'relax_data_store.res[new_run]' with empty data containers and place sequence data into the array.
+                for i in xrange(len(relax_data_store.res[old_run])):
                     # Append a data container.
-                    self.relax.data.res[new_run].add_item()
+                    relax_data_store.res[new_run].add_item()
 
                     # Insert the data.
-                    self.relax.data.res[new_run][i].num = self.relax.data.res[old_run][i].num
-                    self.relax.data.res[new_run][i].name = self.relax.data.res[old_run][i].name
-                    self.relax.data.res[new_run][i].select = self.relax.data.res[old_run][i].select
+                    relax_data_store.res[new_run][i].num = relax_data_store.res[old_run][i].num
+                    relax_data_store.res[new_run][i].name = relax_data_store.res[old_run][i].name
+                    relax_data_store.res[new_run][i].select = relax_data_store.res[old_run][i].select
 
             # Duplicate the residue specific data.
-            self.relax.data.res[new_run][instance] = deepcopy(self.relax.data.res[old_run][instance])
+            relax_data_store.res[new_run][instance] = deepcopy(relax_data_store.res[old_run][instance])
 
         # Other data types.
         else:
             # Duplicate the residue specific data.
-            self.relax.data.res[new_run] = deepcopy(self.relax.data.res[old_run])
+            relax_data_store.res[new_run] = deepcopy(relax_data_store.res[old_run])
 
 
     def eliminate(self, name, value, run, i, args):
@@ -1416,18 +1424,18 @@ class Model_free(Common_functions):
 
         # Get the tm value.
         if self.param_set == 'local_tm':
-            tm = self.relax.data.res[run][i].local_tm
+            tm = relax_data_store.res[run][i].local_tm
         else:
-            tm = self.relax.data.diff[run].tm
+            tm = relax_data_store.diff[run].tm
 
         # Local tm.
         if name == 'local_tm' and value >= c1:
-            print "The local tm parameter of " + `value` + " is greater than " + `c1` + ", eliminating spin system " + `self.relax.data.res[run][i].num` + " " + self.relax.data.res[run][i].name + " of the run " + `run`
+            print "The local tm parameter of " + `value` + " is greater than " + `c1` + ", eliminating spin system " + `relax_data_store.res[run][i].num` + " " + relax_data_store.res[run][i].name + " of the run " + `run`
             return 1
 
         # Internal correlation times.
         if match('t[efs]', name) and value >= c2 * tm:
-            print "The " + name + " value of " + `value` + " is greater than " + `c2 * tm` + ", eliminating spin system " + `self.relax.data.res[run][i].num` + " " + self.relax.data.res[run][i].name + " of the run " + `run`
+            print "The " + name + " value of " + `value` + " is greater than " + `c2 * tm` + ", eliminating spin system " + `relax_data_store.res[run][i].num` + " " + relax_data_store.res[run][i].name + " of the run " + `run`
             return 1
 
         # Accept model.
@@ -1441,17 +1449,17 @@ class Model_free(Common_functions):
         self.run = run
 
         # Skip residues where there is no data or errors.
-        if not hasattr(self.relax.data.res[self.run][i], 'relax_data') or not hasattr(self.relax.data.res[self.run][i], 'relax_error'):
+        if not hasattr(relax_data_store.res[self.run][i], 'relax_data') or not hasattr(relax_data_store.res[self.run][i], 'relax_error'):
             return
 
         # Test if the model-free model has been setup.
-        for j in xrange(len(self.relax.data.res[self.run])):
+        for j in xrange(len(relax_data_store.res[self.run])):
             # Skip unselected residues.
-            if not self.relax.data.res[self.run][j].select:
+            if not relax_data_store.res[self.run][j].select:
                 continue
 
             # Not setup.
-            if not self.relax.data.res[self.run][j].model:
+            if not relax_data_store.res[self.run][j].model:
                 raise RelaxNoModelError, self.run
 
         # Determine the parameter set type.
@@ -1477,17 +1485,17 @@ class Model_free(Common_functions):
         self.run = run
 
         # Skip residues where there is no data or errors.
-        if not hasattr(self.relax.data.res[self.run][i], 'relax_data') or not hasattr(self.relax.data.res[self.run][i], 'relax_error'):
+        if not hasattr(relax_data_store.res[self.run][i], 'relax_data') or not hasattr(relax_data_store.res[self.run][i], 'relax_error'):
             return
 
         # Test if the model-free model has been setup.
-        for j in xrange(len(self.relax.data.res[self.run])):
+        for j in xrange(len(relax_data_store.res[self.run])):
             # Skip unselected residues.
-            if not self.relax.data.res[self.run][j].select:
+            if not relax_data_store.res[self.run][j].select:
                 continue
 
             # Not setup.
-            if not self.relax.data.res[self.run][j].model:
+            if not relax_data_store.res[self.run][j].model:
                 raise RelaxNoModelError, self.run
 
         # Determine the parameter set type.
@@ -1556,16 +1564,16 @@ class Model_free(Common_functions):
         # Minimisation options for diffusion tensor parameters.
         if self.param_set == 'diff' or self.param_set == 'all':
             # Spherical diffusion {tm}.
-            if self.relax.data.diff[self.run].type == 'sphere':
+            if relax_data_store.diff[self.run].type == 'sphere':
                 min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
                 m = m + 1
 
             # Spheroidal diffusion {tm, Da, theta, phi}.
-            if self.relax.data.diff[self.run].type == 'spheroid':
+            if relax_data_store.diff[self.run].type == 'spheroid':
                 min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
-                if self.relax.data.diff[self.run].spheroid_type == 'prolate':
+                if relax_data_store.diff[self.run].spheroid_type == 'prolate':
                     min_options.append([inc[1], 0.0, 1e7])
-                elif self.relax.data.diff[self.run].spheroid_type == 'oblate':
+                elif relax_data_store.diff[self.run].spheroid_type == 'oblate':
                     min_options.append([inc[1], -1e7, 0.0])
                 else:
                     min_options.append([inc[1], -1e7, 1e7])
@@ -1574,7 +1582,7 @@ class Model_free(Common_functions):
                 m = m + 4
 
             # Ellipsoidal diffusion {tm, Da, Dr, alpha, beta, gamma}.
-            elif self.relax.data.diff[self.run].type == 'ellipsoid':
+            elif relax_data_store.diff[self.run].type == 'ellipsoid':
                 min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
                 min_options.append([inc[1], 0.0, 1e7])
                 min_options.append([inc[2], 0.0, 1.0])
@@ -1585,9 +1593,9 @@ class Model_free(Common_functions):
 
         # Model-free parameters (residue specific parameters).
         if self.param_set != 'diff':
-            for i in xrange(len(self.relax.data.res[self.run])):
+            for i in xrange(len(relax_data_store.res[self.run])):
                 # Skip unselected residues.
-                if not self.relax.data.res[self.run][i].select:
+                if not relax_data_store.res[self.run][i].select:
                     continue
 
                 # Only add parameters for a single residue if index has a value.
@@ -1595,29 +1603,29 @@ class Model_free(Common_functions):
                     continue
 
                 # Loop over the model-free parameters.
-                for j in xrange(len(self.relax.data.res[self.run][i].params)):
+                for j in xrange(len(relax_data_store.res[self.run][i].params)):
                     # Local tm.
-                    if self.relax.data.res[self.run][i].params[j] == 'local_tm':
+                    if relax_data_store.res[self.run][i].params[j] == 'local_tm':
                         min_options.append([inc[m], 1.0 * 1e-9, 12.0 * 1e-9])
 
                     # {S2, S2f, S2s}.
-                    elif match('S2', self.relax.data.res[self.run][i].params[j]):
+                    elif match('S2', relax_data_store.res[self.run][i].params[j]):
                         min_options.append([inc[m], 0.0, 1.0])
 
                     # {te, tf, ts}.
-                    elif match('t', self.relax.data.res[self.run][i].params[j]):
+                    elif match('t', relax_data_store.res[self.run][i].params[j]):
                         min_options.append([inc[m], 0.0, 500.0 * 1e-12])
 
                     # Rex.
-                    elif self.relax.data.res[self.run][i].params[j] == 'Rex':
-                        min_options.append([inc[m], 0.0, 5.0 / (2.0 * pi * self.relax.data.res[self.run][i].frq[0])**2])
+                    elif relax_data_store.res[self.run][i].params[j] == 'Rex':
+                        min_options.append([inc[m], 0.0, 5.0 / (2.0 * pi * relax_data_store.res[self.run][i].frq[0])**2])
 
                     # Bond length.
-                    elif self.relax.data.res[self.run][i].params[j] == 'r':
+                    elif relax_data_store.res[self.run][i].params[j] == 'r':
                         min_options.append([inc[m], 1.0 * 1e-10, 1.05 * 1e-10])
 
                     # CSA.
-                    elif self.relax.data.res[self.run][i].params[j] == 'CSA':
+                    elif relax_data_store.res[self.run][i].params[j] == 'CSA':
                         min_options.append([inc[m], -120 * 1e-6, -200 * 1e-6])
 
                     # Unknown option.
@@ -1764,9 +1772,9 @@ class Model_free(Common_functions):
         j = 0
 
         # Diffusion tensor parameters.
-        if self.param_set != 'mf' and self.relax.data.diff.has_key(self.run):
+        if self.param_set != 'mf' and relax_data_store.diff.has_key(self.run):
             # Spherical diffusion.
-            if self.relax.data.diff[self.run].type == 'sphere':
+            if relax_data_store.diff[self.run].type == 'sphere':
                 # 0 <= tm <= 200 ns.
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
@@ -1778,7 +1786,7 @@ class Model_free(Common_functions):
                 j = j + 2
 
             # Spheroidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'spheroid':
+            elif relax_data_store.diff[self.run].type == 'spheroid':
                 # 0 <= tm <= 200 ns.
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
@@ -1790,7 +1798,7 @@ class Model_free(Common_functions):
                 j = j + 2
 
                 # Prolate diffusion, Da >= 0.
-                if self.relax.data.diff[self.run].spheroid_type == 'prolate':
+                if relax_data_store.diff[self.run].spheroid_type == 'prolate':
                     A.append(zero_array * 0.0)
                     A[j][i] = 1.0
                     b.append(0.0 / self.scaling_matrix[i, i])
@@ -1801,7 +1809,7 @@ class Model_free(Common_functions):
                     i = i + 2
 
                 # Oblate diffusion, Da <= 0.
-                elif self.relax.data.diff[self.run].spheroid_type == 'oblate':
+                elif relax_data_store.diff[self.run].spheroid_type == 'oblate':
                     A.append(zero_array * 0.0)
                     A[j][i] = -1.0
                     b.append(0.0 / self.scaling_matrix[i, i])
@@ -1816,7 +1824,7 @@ class Model_free(Common_functions):
                     i = i + 3
 
             # Ellipsoidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'ellipsoid':
+            elif relax_data_store.diff[self.run].type == 'ellipsoid':
                 # 0 <= tm <= 200 ns.
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
@@ -1850,9 +1858,9 @@ class Model_free(Common_functions):
         # Model-free parameters.
         if self.param_set != 'diff':
             # Loop over all residues.
-            for k in xrange(len(self.relax.data.res[self.run])):
+            for k in xrange(len(relax_data_store.res[self.run])):
                 # Skip unselected residues.
-                if not self.relax.data.res[self.run][k].select:
+                if not relax_data_store.res[self.run][k].select:
                     continue
 
                 # Only add parameters for a single residue if index has a value.
@@ -1863,9 +1871,9 @@ class Model_free(Common_functions):
                 old_i = i
 
                 # Loop over the model-free parameters.
-                for l in xrange(len(self.relax.data.res[self.run][k].params)):
+                for l in xrange(len(relax_data_store.res[self.run][k].params)):
                     # Local tm.
-                    if self.relax.data.res[self.run][k].params[l] == 'local_tm':
+                    if relax_data_store.res[self.run][k].params[l] == 'local_tm':
                         if upper_time_limit:
                             # 0 <= tm <= 200 ns.
                             A.append(zero_array * 0.0)
@@ -1883,7 +1891,7 @@ class Model_free(Common_functions):
                             j = j + 1
 
                     # Order parameters {S2, S2f, S2s}.
-                    elif match('S2', self.relax.data.res[self.run][k].params[l]):
+                    elif match('S2', relax_data_store.res[self.run][k].params[l]):
                         # 0 <= S2 <= 1.
                         A.append(zero_array * 0.0)
                         A.append(zero_array * 0.0)
@@ -1894,9 +1902,9 @@ class Model_free(Common_functions):
                         j = j + 2
 
                         # S2 <= S2f and S2 <= S2s.
-                        if self.relax.data.res[self.run][k].params[l] == 'S2':
-                            for m in xrange(len(self.relax.data.res[self.run][k].params)):
-                                if self.relax.data.res[self.run][k].params[m] == 'S2f' or self.relax.data.res[self.run][k].params[m] == 'S2s':
+                        if relax_data_store.res[self.run][k].params[l] == 'S2':
+                            for m in xrange(len(relax_data_store.res[self.run][k].params)):
+                                if relax_data_store.res[self.run][k].params[m] == 'S2f' or relax_data_store.res[self.run][k].params[m] == 'S2s':
                                     A.append(zero_array * 0.0)
                                     A[j][i] = -1.0
                                     A[j][old_i+m] = 1.0
@@ -1904,7 +1912,7 @@ class Model_free(Common_functions):
                                     j = j + 1
 
                     # Correlation times {te, tf, ts}.
-                    elif match('t[efs]', self.relax.data.res[self.run][k].params[l]):
+                    elif match('t[efs]', relax_data_store.res[self.run][k].params[l]):
                         # te, tf, ts >= 0.
                         A.append(zero_array * 0.0)
                         A[j][i] = 1.0
@@ -1912,9 +1920,9 @@ class Model_free(Common_functions):
                         j = j + 1
 
                         # tf <= ts.
-                        if self.relax.data.res[self.run][k].params[l] == 'ts':
-                            for m in xrange(len(self.relax.data.res[self.run][k].params)):
-                                if self.relax.data.res[self.run][k].params[m] == 'tf':
+                        if relax_data_store.res[self.run][k].params[l] == 'ts':
+                            for m in xrange(len(relax_data_store.res[self.run][k].params)):
+                                if relax_data_store.res[self.run][k].params[m] == 'tf':
                                     A.append(zero_array * 0.0)
                                     A[j][i] = 1.0
                                     A[j][old_i+m] = -1.0
@@ -1923,11 +1931,11 @@ class Model_free(Common_functions):
 
                         # te, tf, ts <= 2 * tm.  (tf not needed because tf <= ts).
                         if upper_time_limit:
-                            if not self.relax.data.res[self.run][k].params[l] == 'tf':
+                            if not relax_data_store.res[self.run][k].params[l] == 'tf':
                                 if self.param_set == 'mf':
                                     A.append(zero_array * 0.0)
                                     A[j][i] = -1.0
-                                    b.append(-2.0 * self.relax.data.diff[self.run].tm / self.scaling_matrix[i, i])
+                                    b.append(-2.0 * relax_data_store.diff[self.run].tm / self.scaling_matrix[i, i])
                                 else:
                                     A.append(zero_array * 0.0)
                                     A[j][0] = 2.0
@@ -1937,14 +1945,14 @@ class Model_free(Common_functions):
                                 j = j + 1
 
                     # Rex.
-                    elif self.relax.data.res[self.run][k].params[l] == 'Rex':
+                    elif relax_data_store.res[self.run][k].params[l] == 'Rex':
                         A.append(zero_array * 0.0)
                         A[j][i] = 1.0
                         b.append(0.0 / self.scaling_matrix[i, i])
                         j = j + 1
 
                     # Bond length.
-                    elif self.relax.data.res[self.run][k].params[l] == 'r':
+                    elif relax_data_store.res[self.run][k].params[l] == 'r':
                         # 0.9e-10 <= r <= 2e-10.
                         A.append(zero_array * 0.0)
                         A.append(zero_array * 0.0)
@@ -1955,7 +1963,7 @@ class Model_free(Common_functions):
                         j = j + 2
 
                     # CSA.
-                    elif self.relax.data.res[self.run][k].params[l] == 'CSA':
+                    elif relax_data_store.res[self.run][k].params[l] == 'CSA':
                         # -300e-6 <= CSA <= 0.
                         A.append(zero_array * 0.0)
                         A.append(zero_array * 0.0)
@@ -1991,7 +1999,7 @@ class Model_free(Common_functions):
 
         # Rex.
         elif param == 'rex':
-            return [0, 30.0 / (2.0 * pi * self.relax.data.frq[self.run][0])**2]
+            return [0, 30.0 / (2.0 * pi * relax_data_store.frq[self.run][0])**2]
 
         # Bond length.
         elif param == 'r':
@@ -2016,17 +2024,17 @@ class Model_free(Common_functions):
         self.print_flag = print_flag
 
         # Test if the sequence data for self.run is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Test if the model-free model has been setup.
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for i in xrange(len(relax_data_store.res[self.run])):
             # Skip unselected residues.
-            if not self.relax.data.res[self.run][i].select:
+            if not relax_data_store.res[self.run][i].select:
                 continue
 
             # Not setup.
-            if not self.relax.data.res[self.run][i].model:
+            if not relax_data_store.res[self.run][i].model:
                 raise RelaxNoModelError, self.run
 
         # Determine the parameter set type.
@@ -2037,33 +2045,33 @@ class Model_free(Common_functions):
             self.param_set = 'mf'
 
         # Test if diffusion tensor data for the run exists.
-        if self.param_set != 'local_tm' and not self.relax.data.diff.has_key(self.run):
+        if self.param_set != 'local_tm' and not relax_data_store.diff.has_key(self.run):
             raise RelaxNoTensorError, self.run
 
         # Tests for the PDB file and unit vectors.
-        if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'sphere':
+        if self.param_set != 'local_tm' and relax_data_store.diff[self.run].type != 'sphere':
             # Test if the PDB file has been loaded.
-            if not self.relax.data.pdb.has_key(self.run):
+            if not relax_data_store.pdb.has_key(self.run):
                 raise RelaxNoPdbError, self.run
 
             # Test if unit vectors exist.
-            for i in xrange(len(self.relax.data.res[self.run])):
+            for i in xrange(len(relax_data_store.res[self.run])):
                 # Skip unselected residues.
-                if not self.relax.data.res[self.run][i].select:
+                if not relax_data_store.res[self.run][i].select:
                     continue
 
                 # Unit vector.
-                if not hasattr(self.relax.data.res[self.run][i], 'xh_vect'):
+                if not hasattr(relax_data_store.res[self.run][i], 'xh_vect'):
                     raise RelaxNoVectorsError, self.run
 
         # Test if the nucleus type has been set.
-        if not hasattr(self.relax.data, 'gx'):
+        if not hasattr(relax_data_store, 'gx'):
             raise RelaxNucleusError
 
         # Test if the model-free parameter values are set for minimising diffusion tensor parameters by themselves.
         if self.param_set == 'diff':
             # Loop over the sequence.
-            for i in xrange(len(self.relax.data.res[self.run])):
+            for i in xrange(len(relax_data_store.res[self.run])):
                 unset_param = self.are_mf_params_set(i)
                 if unset_param != None:
                     raise RelaxNoValueError, unset_param
@@ -2081,17 +2089,17 @@ class Model_free(Common_functions):
 
         # Count the total number of residues and test if the CSA and bond length values have been set.
         num_res = 0
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for i in xrange(len(relax_data_store.res[self.run])):
             # Skip unselected residues.
-            if not self.relax.data.res[self.run][i].select:
+            if not relax_data_store.res[self.run][i].select:
                 continue
 
             # CSA value.
-            if not hasattr(self.relax.data.res[self.run][i], 'csa') or self.relax.data.res[self.run][i].csa == None:
+            if not hasattr(relax_data_store.res[self.run][i], 'csa') or relax_data_store.res[self.run][i].csa == None:
                 raise RelaxNoValueError, "CSA"
 
             # Bond length value.
-            if not hasattr(self.relax.data.res[self.run][i], 'r') or self.relax.data.res[self.run][i].r == None:
+            if not hasattr(relax_data_store.res[self.run][i], 'r') or relax_data_store.res[self.run][i].r == None:
                 raise RelaxNoValueError, "bond length"
 
             # Increment the number of residues.
@@ -2099,12 +2107,12 @@ class Model_free(Common_functions):
 
         # Number of residues, minimisation instances, and data sets for each parameter set type.
         if self.param_set == 'mf' or self.param_set == 'local_tm':
-            num_instances = len(self.relax.data.res[self.run])
+            num_instances = len(relax_data_store.res[self.run])
             num_data_sets = 1
             num_res = 1
         elif self.param_set == 'diff' or self.param_set == 'all':
             num_instances = 1
-            num_data_sets = len(self.relax.data.res[self.run])
+            num_data_sets = len(relax_data_store.res[self.run])
 
         # Number of residues, minimisation instances, and data sets for the back-calculate function.
         if min_algor == 'back_calc':
@@ -2130,11 +2138,11 @@ class Model_free(Common_functions):
             # Individual residue stuff.
             if (self.param_set == 'mf' or self.param_set == 'local_tm') and not min_algor == 'back_calc':
                 # Skip unselected residues.
-                if not self.relax.data.res[self.run][i].select:
+                if not relax_data_store.res[self.run][i].select:
                     continue
 
                 # Skip residues where there is no data or errors.
-                if not hasattr(self.relax.data.res[self.run][i], 'relax_data') or not hasattr(self.relax.data.res[self.run][i], 'relax_error'):
+                if not hasattr(relax_data_store.res[self.run][i], 'relax_data') or not hasattr(relax_data_store.res[self.run][i], 'relax_error'):
                     continue
 
             # Parameter vector and diagonal scaling.
@@ -2172,7 +2180,7 @@ class Model_free(Common_functions):
                 if self.param_set == 'mf' or self.param_set == 'local_tm':
                     if self.print_flag >= 2:
                         print "\n\n"
-                    string = "Fitting to residue: " + `self.relax.data.res[self.run][index].num` + " " + self.relax.data.res[self.run][index].name
+                    string = "Fitting to residue: " + `relax_data_store.res[self.run][index].num` + " " + relax_data_store.res[self.run][index].name
                     print "\n\n" + string
                     print len(string) * '~'
                 if match('^[Gg]rid', min_algor):
@@ -2210,23 +2218,23 @@ class Model_free(Common_functions):
                 # The data.
                 relax_data = [0.0]
                 relax_error = [0.000001]
-                equations = [self.relax.data.res[self.run][index].equation]
-                param_types = [self.relax.data.res[self.run][index].params]
-                r = [self.relax.data.res[self.run][index].r]
-                csa = [self.relax.data.res[self.run][index].csa]
+                equations = [relax_data_store.res[self.run][index].equation]
+                param_types = [relax_data_store.res[self.run][index].params]
+                r = [relax_data_store.res[self.run][index].r]
+                csa = [relax_data_store.res[self.run][index].csa]
                 num_frq = [1]
                 frq = [[min_options[3]]]
                 num_ri = [1]
                 remap_table = [[0]]
                 noe_r1_table = [[None]]
                 ri_labels = [[min_options[1]]]
-                if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'sphere':
-                    xh_unit_vectors = [self.relax.data.res[self.run][index].xh_vect]
+                if self.param_set != 'local_tm' and relax_data_store.diff[self.run].type != 'sphere':
+                    xh_unit_vectors = [relax_data_store.res[self.run][index].xh_vect]
                 else:
                     xh_unit_vectors = [None]
 
                 # Count the number of model-free parameters for the residue index.
-                num_params = [len(self.relax.data.res[self.run][index].params)]
+                num_params = [len(relax_data_store.res[self.run][index].params)]
 
             # Loop over the number of data sets.
             for j in xrange(num_data_sets):
@@ -2237,7 +2245,7 @@ class Model_free(Common_functions):
                     seq_index = j
 
                 # Alias the data structure.
-                data = self.relax.data.res[self.run][seq_index]
+                data = relax_data_store.res[self.run][seq_index]
 
                 # Skip unselected residues.
                 if not data.select:
@@ -2280,7 +2288,7 @@ class Model_free(Common_functions):
                     pass
 
                 # Vectors.
-                if self.param_set != 'local_tm' and self.relax.data.diff[self.run].type != 'sphere':
+                if self.param_set != 'local_tm' and relax_data_store.diff[self.run].type != 'sphere':
                     xh_unit_vectors.append(data.xh_vect)
                 else:
                     xh_unit_vectors.append(None)
@@ -2301,13 +2309,13 @@ class Model_free(Common_functions):
             if self.param_set == 'local_tm':
                 diff_type = 'sphere'
             else:
-                diff_type = self.relax.data.diff[self.run].type
+                diff_type = relax_data_store.diff[self.run].type
 
             # Package the diffusion tensor parameters.
             diff_params = None
             if self.param_set == 'mf':
                 # Alias.
-                data = self.relax.data.diff[self.run]
+                data = relax_data_store.diff[self.run]
 
                 # Spherical diffusion.
                 if diff_type == 'sphere':
@@ -2322,14 +2330,14 @@ class Model_free(Common_functions):
                     diff_params = [data.tm, data.Da, data.Dr, data.alpha, data.beta, data.gamma]
             elif min_algor == 'back_calc' and self.param_set == 'local_tm':
                 # Spherical diffusion.
-                diff_params = [self.relax.data.res[self.run][index].local_tm]
+                diff_params = [relax_data_store.res[self.run][index].local_tm]
 
 
 
             # Initialise the function to minimise.
             ######################################
 
-            self.mf = Mf(init_params=self.param_vector, param_set=self.param_set, diff_type=diff_type, diff_params=diff_params, scaling_matrix=self.scaling_matrix, num_res=num_res, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=self.relax.data.gx, gh=self.relax.data.gh, g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar, mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors)
+            self.mf = Mf(init_params=self.param_vector, param_set=self.param_set, diff_type=diff_type, diff_params=diff_params, scaling_matrix=self.scaling_matrix, num_res=num_res, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=relax_data_store.gx, gh=relax_data_store.gh, g_ratio=relax_data_store.g_ratio, h_bar=relax_data_store.h_bar, mu0=relax_data_store.mu0, num_params=num_params, vectors=xh_unit_vectors)
 
 
             # Setup the minimisation algorithm when constraints are present.
@@ -2402,84 +2410,84 @@ class Model_free(Common_functions):
                 # Sequence specific minimisation statistics.
                 if self.param_set == 'mf' or self.param_set == 'local_tm':
                     # Chi-squared statistic.
-                    self.relax.data.res[self.run][i].chi2_sim[sim_index] = self.func
+                    relax_data_store.res[self.run][i].chi2_sim[sim_index] = self.func
 
                     # Iterations.
-                    self.relax.data.res[self.run][i].iter_sim[sim_index] = self.iter_count
+                    relax_data_store.res[self.run][i].iter_sim[sim_index] = self.iter_count
 
                     # Function evaluations.
-                    self.relax.data.res[self.run][i].f_count_sim[sim_index] = self.f_count
+                    relax_data_store.res[self.run][i].f_count_sim[sim_index] = self.f_count
 
                     # Gradient evaluations.
-                    self.relax.data.res[self.run][i].g_count_sim[sim_index] = self.g_count
+                    relax_data_store.res[self.run][i].g_count_sim[sim_index] = self.g_count
 
                     # Hessian evaluations.
-                    self.relax.data.res[self.run][i].h_count_sim[sim_index] = self.h_count
+                    relax_data_store.res[self.run][i].h_count_sim[sim_index] = self.h_count
 
                     # Warning.
-                    self.relax.data.res[self.run][i].warning_sim[sim_index] = self.warning
+                    relax_data_store.res[self.run][i].warning_sim[sim_index] = self.warning
 
                 # Global minimisation statistics.
                 elif self.param_set == 'diff' or self.param_set == 'all':
                     # Chi-squared statistic.
-                    self.relax.data.chi2_sim[self.run][sim_index] = self.func
+                    relax_data_store.chi2_sim[self.run][sim_index] = self.func
 
                     # Iterations.
-                    self.relax.data.iter_sim[self.run][sim_index] = self.iter_count
+                    relax_data_store.iter_sim[self.run][sim_index] = self.iter_count
 
                     # Function evaluations.
-                    self.relax.data.f_count_sim[self.run][sim_index] = self.f_count
+                    relax_data_store.f_count_sim[self.run][sim_index] = self.f_count
 
                     # Gradient evaluations.
-                    self.relax.data.g_count_sim[self.run][sim_index] = self.g_count
+                    relax_data_store.g_count_sim[self.run][sim_index] = self.g_count
 
                     # Hessian evaluations.
-                    self.relax.data.h_count_sim[self.run][sim_index] = self.h_count
+                    relax_data_store.h_count_sim[self.run][sim_index] = self.h_count
 
                     # Warning.
-                    self.relax.data.warning_sim[self.run][sim_index] = self.warning
+                    relax_data_store.warning_sim[self.run][sim_index] = self.warning
 
             # Normal statistics.
             else:
                 # Sequence specific minimisation statistics.
                 if self.param_set == 'mf' or self.param_set == 'local_tm':
                     # Chi-squared statistic.
-                    self.relax.data.res[self.run][i].chi2 = self.func
+                    relax_data_store.res[self.run][i].chi2 = self.func
 
                     # Iterations.
-                    self.relax.data.res[self.run][i].iter = self.iter_count
+                    relax_data_store.res[self.run][i].iter = self.iter_count
 
                     # Function evaluations.
-                    self.relax.data.res[self.run][i].f_count = self.f_count
+                    relax_data_store.res[self.run][i].f_count = self.f_count
 
                     # Gradient evaluations.
-                    self.relax.data.res[self.run][i].g_count = self.g_count
+                    relax_data_store.res[self.run][i].g_count = self.g_count
 
                     # Hessian evaluations.
-                    self.relax.data.res[self.run][i].h_count = self.h_count
+                    relax_data_store.res[self.run][i].h_count = self.h_count
 
                     # Warning.
-                    self.relax.data.res[self.run][i].warning = self.warning
+                    relax_data_store.res[self.run][i].warning = self.warning
 
                 # Global minimisation statistics.
                 elif self.param_set == 'diff' or self.param_set == 'all':
                     # Chi-squared statistic.
-                    self.relax.data.chi2[self.run] = self.func
+                    relax_data_store.chi2[self.run] = self.func
 
                     # Iterations.
-                    self.relax.data.iter[self.run] = self.iter_count
+                    relax_data_store.iter[self.run] = self.iter_count
 
                     # Function evaluations.
-                    self.relax.data.f_count[self.run] = self.f_count
+                    relax_data_store.f_count[self.run] = self.f_count
 
                     # Gradient evaluations.
-                    self.relax.data.g_count[self.run] = self.g_count
+                    relax_data_store.g_count[self.run] = self.g_count
 
                     # Hessian evaluations.
-                    self.relax.data.h_count[self.run] = self.h_count
+                    relax_data_store.h_count[self.run] = self.h_count
 
                     # Warning.
-                    self.relax.data.warning[self.run] = self.warning
+                    relax_data_store.warning[self.run] = self.warning
 
 
     def model_setup(self, run=None, model=None, equation=None, params=None, res_num=None):
@@ -2487,22 +2495,22 @@ class Model_free(Common_functions):
 
         # Test that no diffusion tensor exists for the run if local tm is a parameter in the model.
         for param in params:
-            if param == 'local_tm' and self.relax.data.diff.has_key(run):
+            if param == 'local_tm' and relax_data_store.diff.has_key(run):
                 raise RelaxTensorError, run
 
         # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[run])):
+        for i in xrange(len(relax_data_store.res[run])):
             # If res_num is set, then skip all other residues.
-            if res_num != None and res_num != self.relax.data.res[run][i].num:
+            if res_num != None and res_num != relax_data_store.res[run][i].num:
                 continue
 
             # Initialise the data structures (if needed).
-            self.data_init(self.relax.data.res[run][i])
+            self.data_init(relax_data_store.res[run][i])
 
             # Model-free model, equation, and parameter types.
-            self.relax.data.res[run][i].model = model
-            self.relax.data.res[run][i].equation = equation
-            self.relax.data.res[run][i].params = params
+            relax_data_store.res[run][i].model = model
+            relax_data_store.res[run][i].equation = equation
+            relax_data_store.res[run][i].params = params
 
 
     def model_statistics(self, run=None, instance=None, global_stats=None):
@@ -2519,8 +2527,8 @@ class Model_free(Common_functions):
         # Determine if local or global statistics will be returned.
         if global_stats == None:
             global_stats = 1
-            for i in xrange(len(self.relax.data.res[self.run])):
-                if hasattr(self.relax.data.res[self.run][i], 'chi2') and self.relax.data.res[self.run][i].chi2 != None:
+            for i in xrange(len(relax_data_store.res[self.run])):
+                if hasattr(relax_data_store.res[self.run][i], 'chi2') and relax_data_store.res[self.run][i].chi2 != None:
                     global_stats = 0
                     break
 
@@ -2530,11 +2538,11 @@ class Model_free(Common_functions):
         # Statistics for a single residue.
         if not global_stats:
             # Skip unselected residues.
-            if not self.relax.data.res[self.run][instance].select:
+            if not relax_data_store.res[self.run][instance].select:
                 return None, None, None
 
             # Missing data sets.
-            if not hasattr(self.relax.data.res[self.run][instance], 'relax_data'):
+            if not hasattr(relax_data_store.res[self.run][instance], 'relax_data'):
                 return None, None, None
 
             # Count the number of parameters.
@@ -2542,10 +2550,10 @@ class Model_free(Common_functions):
             k = len(self.param_vector)
 
             # Count the number of data points.
-            n = len(self.relax.data.res[self.run][instance].relax_data)
+            n = len(relax_data_store.res[self.run][instance].relax_data)
 
             # The chi2 value.
-            chi2 = self.relax.data.res[self.run][instance].chi2
+            chi2 = relax_data_store.res[self.run][instance].chi2
 
         # Global stats.
         elif global_stats:
@@ -2556,24 +2564,24 @@ class Model_free(Common_functions):
             # Count the number of data points.
             n = 0
             chi2 = 0
-            for i in xrange(len(self.relax.data.res[self.run])):
+            for i in xrange(len(relax_data_store.res[self.run])):
                 # Skip unselected residues.
-                if not self.relax.data.res[self.run][i].select:
+                if not relax_data_store.res[self.run][i].select:
                     continue
 
                 # Skip residues with no relaxation data.
-                if not hasattr(self.relax.data.res[self.run][i], 'relax_data') or not len(self.relax.data.res[self.run][i].relax_data):
+                if not hasattr(relax_data_store.res[self.run][i], 'relax_data') or not len(relax_data_store.res[self.run][i].relax_data):
                     continue
 
-                n = n + len(self.relax.data.res[self.run][i].relax_data)
+                n = n + len(relax_data_store.res[self.run][i].relax_data)
 
                 # Local tm models.
                 if self.param_set == 'local_tm':
-                    chi2 = chi2 + self.relax.data.res[self.run][i].chi2
+                    chi2 = chi2 + relax_data_store.res[self.run][i].chi2
 
             # The chi2 value.
             if self.param_set != 'local_tm':
-                chi2 = self.relax.data.chi2[self.run]
+                chi2 = relax_data_store.chi2[self.run]
 
         # Return the data.
         return k, n, chi2
@@ -2586,7 +2594,7 @@ class Model_free(Common_functions):
         self.run = run
 
         # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             return 0
 
         # Determine the parameter set type.
@@ -2594,7 +2602,7 @@ class Model_free(Common_functions):
 
         # Sequence specific data.
         if self.param_set == 'mf' or self.param_set == 'local_tm':
-            return len(self.relax.data.res[self.run])
+            return len(relax_data_store.res[self.run])
 
         # Other data.
         elif self.param_set == 'diff' or self.param_set == 'all':
@@ -2609,11 +2617,11 @@ class Model_free(Common_functions):
         """Function for deselecting residues without sufficient data to support minimisation"""
 
         # Test sequence data exists.
-        if not self.relax.data.res.has_key(run):
+        if not relax_data_store.res.has_key(run):
             raise RelaxNoSequenceError, run
 
         # Loop over residue data:
-        for residue in self.relax.data.res[run]:
+        for residue in relax_data_store.res[run]:
             # Skip unselected data:
             if not residue.select:
                 continue
@@ -2635,8 +2643,8 @@ class Model_free(Common_functions):
                     continue
 
             # Test for structural data if required
-            if hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(run):
-                if self.relax.data.diff[run].type == 'spheroid' or self.relax.data.diff[run].type == 'ellipsoid':
+            if hasattr(relax_data_store, 'diff') and relax_data_store.diff.has_key(run):
+                if relax_data_store.diff[run].type == 'spheroid' or relax_data_store.diff[run].type == 'ellipsoid':
                     if not hasattr(residue, 'xh_vect'):
                         residue.select = 0
                         continue
@@ -2778,16 +2786,16 @@ class Model_free(Common_functions):
 
             # Errors.
             elif self.data_set == 'error':
-                self.relax.data.diff[self.run].tm_err = tm
+                relax_data_store.diff[self.run].tm_err = tm
 
             # Simulation values.
             else:
                 # Create the data structure if it doesn't exist.
-                if not hasattr(self.relax.data.diff[self.run], 'tm_sim'):
-                    self.relax.data.diff[self.run].tm_sim = DiffTensorSimList('tm', self.relax.data.diff[self.run])
+                if not hasattr(relax_data_store.diff[self.run], 'tm_sim'):
+                    relax_data_store.diff[self.run].tm_sim = DiffTensorSimList('tm', relax_data_store.diff[self.run])
 
                 # Append the value.
-                self.relax.data.diff[self.run].tm_sim.append(tm)
+                relax_data_store.diff[self.run].tm_sim.append(tm)
 
 
         # Spheroid.
@@ -2812,28 +2820,28 @@ class Model_free(Common_functions):
 
             # Errors.
             elif self.data_set == 'error':
-                self.relax.data.diff[self.run].tm_err = tm
-                self.relax.data.diff[self.run].Da_err = Da
-                self.relax.data.diff[self.run].theta_err = theta
-                self.relax.data.diff[self.run].phi_err = phi
+                relax_data_store.diff[self.run].tm_err = tm
+                relax_data_store.diff[self.run].Da_err = Da
+                relax_data_store.diff[self.run].theta_err = theta
+                relax_data_store.diff[self.run].phi_err = phi
 
             # Simulation values.
             else:
                 # Create the data structure if it doesn't exist.
-                if not hasattr(self.relax.data.diff[self.run], 'tm_sim'):
-                    self.relax.data.diff[self.run].tm_sim = DiffTensorSimList('tm', self.relax.data.diff[self.run])
-                if not hasattr(self.relax.data.diff[self.run], 'Da_sim'):
-                    self.relax.data.diff[self.run].Da_sim = DiffTensorSimList('Da', self.relax.data.diff[self.run])
-                if not hasattr(self.relax.data.diff[self.run], 'theta_sim'):
-                    self.relax.data.diff[self.run].theta_sim = DiffTensorSimList('theta', self.relax.data.diff[self.run])
-                if not hasattr(self.relax.data.diff[self.run], 'phi_sim'):
-                    self.relax.data.diff[self.run].phi_sim = DiffTensorSimList('phi', self.relax.data.diff[self.run])
+                if not hasattr(relax_data_store.diff[self.run], 'tm_sim'):
+                    relax_data_store.diff[self.run].tm_sim = DiffTensorSimList('tm', relax_data_store.diff[self.run])
+                if not hasattr(relax_data_store.diff[self.run], 'Da_sim'):
+                    relax_data_store.diff[self.run].Da_sim = DiffTensorSimList('Da', relax_data_store.diff[self.run])
+                if not hasattr(relax_data_store.diff[self.run], 'theta_sim'):
+                    relax_data_store.diff[self.run].theta_sim = DiffTensorSimList('theta', relax_data_store.diff[self.run])
+                if not hasattr(relax_data_store.diff[self.run], 'phi_sim'):
+                    relax_data_store.diff[self.run].phi_sim = DiffTensorSimList('phi', relax_data_store.diff[self.run])
 
                 # Append the value.
-                self.relax.data.diff[self.run].tm_sim.append(tm)
-                self.relax.data.diff[self.run].Da_sim.append(Da)
-                self.relax.data.diff[self.run].theta_sim.append(theta)
-                self.relax.data.diff[self.run].phi_sim.append(phi)
+                relax_data_store.diff[self.run].tm_sim.append(tm)
+                relax_data_store.diff[self.run].Da_sim.append(Da)
+                relax_data_store.diff[self.run].theta_sim.append(theta)
+                relax_data_store.diff[self.run].phi_sim.append(phi)
 
 
         # Ellipsoid.
@@ -2860,36 +2868,36 @@ class Model_free(Common_functions):
 
             # Errors.
             elif self.data_set == 'error':
-                self.relax.data.diff[self.run].tm_err = tm
-                self.relax.data.diff[self.run].Da_err = Da
-                self.relax.data.diff[self.run].Dr_err = Dr
-                self.relax.data.diff[self.run].alpha_err = alpha
-                self.relax.data.diff[self.run].beta_err = beta
-                self.relax.data.diff[self.run].gamma_err = gamma
+                relax_data_store.diff[self.run].tm_err = tm
+                relax_data_store.diff[self.run].Da_err = Da
+                relax_data_store.diff[self.run].Dr_err = Dr
+                relax_data_store.diff[self.run].alpha_err = alpha
+                relax_data_store.diff[self.run].beta_err = beta
+                relax_data_store.diff[self.run].gamma_err = gamma
 
             # Simulation values.
             else:
                 # Create the data structure if it doesn't exist.
-                if not hasattr(self.relax.data.diff[self.run], 'tm_sim'):
-                    self.relax.data.diff[self.run].tm_sim = DiffTensorSimList('tm', self.relax.data.diff[self.run])
-                if not hasattr(self.relax.data.diff[self.run], 'Da_sim'):
-                    self.relax.data.diff[self.run].Da_sim = DiffTensorSimList('Da', self.relax.data.diff[self.run])
-                if not hasattr(self.relax.data.diff[self.run], 'Dr_sim'):
-                    self.relax.data.diff[self.run].Dr_sim = DiffTensorSimList('Dr', self.relax.data.diff[self.run])
-                if not hasattr(self.relax.data.diff[self.run], 'alpha_sim'):
-                    self.relax.data.diff[self.run].alpha_sim = DiffTensorSimList('alpha', self.relax.data.diff[self.run])
-                if not hasattr(self.relax.data.diff[self.run], 'beta_sim'):
-                    self.relax.data.diff[self.run].beta_sim = DiffTensorSimList('beta', self.relax.data.diff[self.run])
-                if not hasattr(self.relax.data.diff[self.run], 'gamma_sim'):
-                    self.relax.data.diff[self.run].gamma_sim = DiffTensorSimList('gamma', self.relax.data.diff[self.run])
+                if not hasattr(relax_data_store.diff[self.run], 'tm_sim'):
+                    relax_data_store.diff[self.run].tm_sim = DiffTensorSimList('tm', relax_data_store.diff[self.run])
+                if not hasattr(relax_data_store.diff[self.run], 'Da_sim'):
+                    relax_data_store.diff[self.run].Da_sim = DiffTensorSimList('Da', relax_data_store.diff[self.run])
+                if not hasattr(relax_data_store.diff[self.run], 'Dr_sim'):
+                    relax_data_store.diff[self.run].Dr_sim = DiffTensorSimList('Dr', relax_data_store.diff[self.run])
+                if not hasattr(relax_data_store.diff[self.run], 'alpha_sim'):
+                    relax_data_store.diff[self.run].alpha_sim = DiffTensorSimList('alpha', relax_data_store.diff[self.run])
+                if not hasattr(relax_data_store.diff[self.run], 'beta_sim'):
+                    relax_data_store.diff[self.run].beta_sim = DiffTensorSimList('beta', relax_data_store.diff[self.run])
+                if not hasattr(relax_data_store.diff[self.run], 'gamma_sim'):
+                    relax_data_store.diff[self.run].gamma_sim = DiffTensorSimList('gamma', relax_data_store.diff[self.run])
 
                 # Append the value.
-                self.relax.data.diff[self.run].tm_sim.append(tm)
-                self.relax.data.diff[self.run].Da_sim.append(Da)
-                self.relax.data.diff[self.run].Dr_sim.append(Dr)
-                self.relax.data.diff[self.run].alpha_sim.append(alpha)
-                self.relax.data.diff[self.run].beta_sim.append(beta)
-                self.relax.data.diff[self.run].gamma_sim.append(gamma)
+                relax_data_store.diff[self.run].tm_sim.append(tm)
+                relax_data_store.diff[self.run].Da_sim.append(Da)
+                relax_data_store.diff[self.run].Dr_sim.append(Dr)
+                relax_data_store.diff[self.run].alpha_sim.append(alpha)
+                relax_data_store.diff[self.run].beta_sim.append(beta)
+                relax_data_store.diff[self.run].gamma_sim.append(gamma)
 
 
         # Set the diffusion tensor.
@@ -2915,8 +2923,8 @@ class Model_free(Common_functions):
 
         # Find the residue index.
         res_index = None
-        for j in xrange(len(self.relax.data.res[self.run])):
-            if self.relax.data.res[self.run][j].num == self.res_num and self.relax.data.res[self.run][j].name == self.res_name:
+        for j in xrange(len(relax_data_store.res[self.run])):
+            if relax_data_store.res[self.run][j].num == self.res_num and relax_data_store.res[self.run][j].name == self.res_name:
                 res_index = j
                 break
         if res_index == None:
@@ -2930,7 +2938,7 @@ class Model_free(Common_functions):
         """Function for reading the model-free data."""
 
         # Reassign data structure.
-        data = self.relax.data.res[self.run][self.res_index]
+        data = relax_data_store.res[self.run][self.res_index]
 
         # Set up the model-free models.
         if self.data_set == 'value':
@@ -3016,15 +3024,15 @@ class Model_free(Common_functions):
 
             # Minimisation details (global minimisation results).
             if self.param_set == 'diff' or self.param_set == 'all':
-                self.relax.data.chi2[self.run] = eval(self.file_line[self.col['chi2']])
-                self.relax.data.iter[self.run] = eval(self.file_line[self.col['iter']])
-                self.relax.data.f_count[self.run] = eval(self.file_line[self.col['f_count']])
-                self.relax.data.g_count[self.run] = eval(self.file_line[self.col['g_count']])
-                self.relax.data.h_count[self.run] = eval(self.file_line[self.col['h_count']])
+                relax_data_store.chi2[self.run] = eval(self.file_line[self.col['chi2']])
+                relax_data_store.iter[self.run] = eval(self.file_line[self.col['iter']])
+                relax_data_store.f_count[self.run] = eval(self.file_line[self.col['f_count']])
+                relax_data_store.g_count[self.run] = eval(self.file_line[self.col['g_count']])
+                relax_data_store.h_count[self.run] = eval(self.file_line[self.col['h_count']])
                 if self.file_line[self.col['warn']] == 'None':
-                    self.relax.data.warning[self.run] = None
+                    relax_data_store.warning[self.run] = None
                 else:
-                    self.relax.data.warning[self.run] = replace(self.file_line[self.col['warn']], '_', ' ')
+                    relax_data_store.warning[self.run] = replace(self.file_line[self.col['warn']], '_', ' ')
 
             # Minimisation details (individual residue results).
             else:
@@ -3124,8 +3132,8 @@ class Model_free(Common_functions):
 
                 # Create the simulation object.
                 if self.param_set == 'diff' or self.param_set == 'all':
-                    setattr(self.relax.data, sim_object_name, {})
-                    object = getattr(self.relax.data, sim_object_name)
+                    setattr(relax_data_store, sim_object_name, {})
+                    object = getattr(relax_data_store, sim_object_name)
                     object[self.run] = []
                 else:
                     setattr(data, sim_object_name, [])
@@ -3194,15 +3202,15 @@ class Model_free(Common_functions):
 
             # Minimisation details (global minimisation results).
             if self.param_set == 'diff' or self.param_set == 'all':
-                self.relax.data.chi2_sim[self.run].append(eval(self.file_line[self.col['chi2']]))
-                self.relax.data.iter_sim[self.run].append(eval(self.file_line[self.col['iter']]))
-                self.relax.data.f_count_sim[self.run].append(eval(self.file_line[self.col['f_count']]))
-                self.relax.data.g_count_sim[self.run].append(eval(self.file_line[self.col['g_count']]))
-                self.relax.data.h_count_sim[self.run].append(eval(self.file_line[self.col['h_count']]))
+                relax_data_store.chi2_sim[self.run].append(eval(self.file_line[self.col['chi2']]))
+                relax_data_store.iter_sim[self.run].append(eval(self.file_line[self.col['iter']]))
+                relax_data_store.f_count_sim[self.run].append(eval(self.file_line[self.col['f_count']]))
+                relax_data_store.g_count_sim[self.run].append(eval(self.file_line[self.col['g_count']]))
+                relax_data_store.h_count_sim[self.run].append(eval(self.file_line[self.col['h_count']]))
                 if self.file_line[self.col['warn']] == 'None':
-                    self.relax.data.warning_sim[self.run].append(None)
+                    relax_data_store.warning_sim[self.run].append(None)
                 else:
-                    self.relax.data.warning_sim[self.run].append(replace(self.file_line[self.col['warn']], '_', ' '))
+                    relax_data_store.warning_sim[self.run].append(replace(self.file_line[self.col['warn']], '_', ' '))
 
             # Minimisation details (individual residue results).
             else:
@@ -3249,12 +3257,12 @@ class Model_free(Common_functions):
 
         # Set the diffusion tensor fixed flag.
         if self.param_set != 'local_tm' and diff_fixed != None:
-            self.relax.data.diff[self.run].fixed = diff_fixed
+            relax_data_store.diff[self.run].fixed = diff_fixed
 
         # Set the residue specific fixed flag.
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for i in xrange(len(relax_data_store.res[self.run])):
             if res_fixed != None:
-                self.relax.data.res[self.run][i].fixed = res_fixed
+                relax_data_store.res[self.run][i].fixed = res_fixed
 
 
     def read_columnar_pdb(self, print_flag=1):
@@ -3368,7 +3376,7 @@ class Model_free(Common_functions):
             self.res_index = self.read_columnar_find_index()
 
             # Reassign data structure.
-            data = self.relax.data.res[self.run][self.res_index]
+            data = relax_data_store.res[self.run][self.res_index]
 
             # Backwards compatibility for the reading of the results file from versions 1.2.0 to 1.2.9.
             if len(self.file_line) == 4:
@@ -3441,7 +3449,7 @@ class Model_free(Common_functions):
             self.relax.generic.monte_carlo.setup(self.run, number=len(sims), all_select_sim=all_select_sim)
 
             # Turn the simulation state to off!
-            self.relax.data.sim_state[self.run] = 0
+            relax_data_store.sim_state[self.run] = 0
 
 
     def read_columnar_sequence(self):
@@ -3474,8 +3482,8 @@ class Model_free(Common_functions):
             self.relax.generic.structure.set_vector(run=self.run, res=self.res_index, xh_vect=xh_vect)
 
         # The heteronucleus and proton names.
-        self.relax.data.res[self.run][self.res_index].heteronuc = self.file_line[self.col['pdb_heteronuc']]
-        self.relax.data.res[self.run][self.res_index].proton = self.file_line[self.col['pdb_proton']]
+        relax_data_store.res[self.run][self.res_index].heteronuc = self.file_line[self.col['pdb_heteronuc']]
+        relax_data_store.res[self.run][self.res_index].proton = self.file_line[self.col['pdb_proton']]
 
 
     def remove_tm(self, run, res_num):
@@ -3485,22 +3493,22 @@ class Model_free(Common_functions):
         self.run = run
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Test if the run type is set to 'mf'.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+        function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
         if function_type != 'mf':
             raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 
         # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for i in xrange(len(relax_data_store.res[self.run])):
             # Remap the data structure.
-            data = self.relax.data.res[self.run][i]
+            data = relax_data_store.res[self.run][i]
 
             # Skip unselected residues.
             if not data.select:
@@ -3533,12 +3541,12 @@ class Model_free(Common_functions):
             data.warning = None
 
         # Set the global minimisation details to None.
-        self.relax.data.chi2[self.run] = None
-        self.relax.data.iter[self.run] = None
-        self.relax.data.f_count[self.run] = None
-        self.relax.data.g_count[self.run] = None
-        self.relax.data.h_count[self.run] = None
-        self.relax.data.warning[self.run] = None
+        relax_data_store.chi2[self.run] = None
+        relax_data_store.iter[self.run] = None
+        relax_data_store.f_count[self.run] = None
+        relax_data_store.g_count[self.run] = None
+        relax_data_store.h_count[self.run] = None
+        relax_data_store.warning[self.run] = None
 
 
     def return_conversion_factor(self, param):
@@ -3561,7 +3569,7 @@ class Model_free(Common_functions):
 
         # Rex (value at 1st field strength).
         elif object_name == 'rex':
-            return 1.0 / (2.0 * pi * self.relax.data.frq[self.run][0])**2
+            return 1.0 / (2.0 * pi * relax_data_store.frq[self.run][0])**2
 
         # Bond length (Angstrom).
         elif object_name == 'r':
@@ -3718,7 +3726,7 @@ class Model_free(Common_functions):
 
         # Rex (value at 1st field strength).
         elif object_name == 'rex':
-            return self.relax.data.frq_labels[self.run][0] + ' MHz'
+            return relax_data_store.frq_labels[self.run][0] + ' MHz'
 
         # Bond length (Angstrom).
         elif object_name == 'r':
@@ -3736,16 +3744,16 @@ class Model_free(Common_functions):
         self.run = run
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Test if the run type is set to 'mf'.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+        function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
         if function_type != 'mf':
             raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 
         # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
 
@@ -4060,44 +4068,44 @@ class Model_free(Common_functions):
 
         if self.param_set == 'diff' or self.param_set == 'all':
             # Spherical diffusion.
-            if self.relax.data.diff[self.run].type == 'sphere':
+            if relax_data_store.diff[self.run].type == 'sphere':
                 # Return the parameter array.
                 if index == 0:
-                    self.relax.data.diff[self.run].tm_err = error
+                    relax_data_store.diff[self.run].tm_err = error
 
                 # Increment.
                 inc = inc + 1
 
             # Spheroidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'spheroid':
+            elif relax_data_store.diff[self.run].type == 'spheroid':
                 # Return the parameter array.
                 if index == 0:
-                    self.relax.data.diff[self.run].tm_err = error
+                    relax_data_store.diff[self.run].tm_err = error
                 elif index == 1:
-                    self.relax.data.diff[self.run].Da_err = error
+                    relax_data_store.diff[self.run].Da_err = error
                 elif index == 2:
-                    self.relax.data.diff[self.run].theta_err = error
+                    relax_data_store.diff[self.run].theta_err = error
                 elif index == 3:
-                    self.relax.data.diff[self.run].phi_err = error
+                    relax_data_store.diff[self.run].phi_err = error
 
                 # Increment.
                 inc = inc + 4
 
             # Ellipsoidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'ellipsoid':
+            elif relax_data_store.diff[self.run].type == 'ellipsoid':
                 # Return the parameter array.
                 if index == 0:
-                    self.relax.data.diff[self.run].tm_err = error
+                    relax_data_store.diff[self.run].tm_err = error
                 elif index == 1:
-                    self.relax.data.diff[self.run].Da_err = error
+                    relax_data_store.diff[self.run].Da_err = error
                 elif index == 2:
-                    self.relax.data.diff[self.run].Dr_err = error
+                    relax_data_store.diff[self.run].Dr_err = error
                 elif index == 3:
-                    self.relax.data.diff[self.run].alpha_err = error
+                    relax_data_store.diff[self.run].alpha_err = error
                 elif index == 4:
-                    self.relax.data.diff[self.run].beta_err = error
+                    relax_data_store.diff[self.run].beta_err = error
                 elif index == 5:
-                    self.relax.data.diff[self.run].gamma_err = error
+                    relax_data_store.diff[self.run].gamma_err = error
 
                 # Increment.
                 inc = inc + 6
@@ -4108,16 +4116,16 @@ class Model_free(Common_functions):
 
         if self.param_set == 'all':
             # Loop over the sequence.
-            for i in xrange(len(self.relax.data.res[self.run])):
+            for i in xrange(len(relax_data_store.res[self.run])):
                 # Skip unselected residues.
-                if not self.relax.data.res[self.run][i].select:
+                if not relax_data_store.res[self.run][i].select:
                     continue
 
                 # Loop over the residue specific parameters.
                 for param in param_names:
                     # Return the parameter array.
                     if index == inc:
-                        setattr(self.relax.data.res[self.run][i], param + "_err", error)
+                        setattr(relax_data_store.res[self.run][i], param + "_err", error)
 
                     # Increment.
                     inc = inc + 1
@@ -4128,14 +4136,14 @@ class Model_free(Common_functions):
 
         if self.param_set == 'mf' or self.param_set == 'local_tm':
             # Skip unselected residues.
-            if not self.relax.data.res[self.run][instance].select:
+            if not relax_data_store.res[self.run][instance].select:
                 return
 
             # Loop over the residue specific parameters.
             for param in param_names:
                 # Return the parameter array.
                 if index == inc:
-                    setattr(self.relax.data.res[self.run][instance], param + "_err", error)
+                    setattr(relax_data_store.res[self.run][instance], param + "_err", error)
 
                 # Increment.
                 inc = inc + 1
@@ -4152,20 +4160,20 @@ class Model_free(Common_functions):
 
         # Single instance.
         if self.param_set == 'all' or self.param_set == 'diff':
-            if not hasattr(self.relax.data, 'select_sim'):
-                self.relax.data.select_sim = {}
-            self.relax.data.select_sim[self.run] = select_sim
+            if not hasattr(relax_data_store, 'select_sim'):
+                relax_data_store.select_sim = {}
+            relax_data_store.select_sim[self.run] = select_sim
 
         # Multiple instances.
         else:
-            self.relax.data.res[self.run][instance].select_sim = select_sim
+            relax_data_store.res[self.run][instance].select_sim = select_sim
 
 
     def set_update(self, run, param, index):
         """Function to update the other model-free parameters."""
 
         # Alias the residue specific data structure.
-        data = self.relax.data.res[self.run][index]
+        data = relax_data_store.res[self.run][index]
 
         # S2f parameter.
         if param == 'S2f':
@@ -4199,15 +4207,15 @@ class Model_free(Common_functions):
         # List of diffusion tensor parameters.
         if self.param_set == 'diff' or self.param_set == 'all':
             # Spherical diffusion.
-            if self.relax.data.diff[self.run].type == 'sphere':
+            if relax_data_store.diff[self.run].type == 'sphere':
                 diff_params = ['tm']
 
             # Spheroidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'spheroid':
+            elif relax_data_store.diff[self.run].type == 'spheroid':
                 diff_params = ['tm', 'Da', 'theta', 'phi']
 
             # Ellipsoidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'ellipsoid':
+            elif relax_data_store.diff[self.run].type == 'ellipsoid':
                 diff_params = ['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma']
 
 
@@ -4222,7 +4230,7 @@ class Model_free(Common_functions):
                 sim_object_name = object_name + '_sim'
 
                 # Test if the simulation object already exists.
-                if hasattr(self.relax.data.diff[self.run], sim_object_name):
+                if hasattr(relax_data_store.diff[self.run], sim_object_name):
                     raise RelaxError, "Monte Carlo parameter values have already been set."
 
             # Loop over the minimisation stats objects.
@@ -4231,14 +4239,14 @@ class Model_free(Common_functions):
                 sim_object_name = object_name + '_sim'
 
                 # Test if the simulation object already exists.
-                if hasattr(self.relax.data, sim_object_name):
+                if hasattr(relax_data_store, sim_object_name):
                     raise RelaxError, "Monte Carlo parameter values have already been set."
 
         # Residue specific parameters.
         if self.param_set != 'diff':
-            for i in xrange(len(self.relax.data.res[self.run])):
+            for i in xrange(len(relax_data_store.res[self.run])):
                 # Skip unselected residues.
-                if not self.relax.data.res[self.run][i].select:
+                if not relax_data_store.res[self.run][i].select:
                     continue
 
                 # Loop over all the parameter names.
@@ -4247,7 +4255,7 @@ class Model_free(Common_functions):
                     sim_object_name = object_name + '_sim'
 
                     # Test if the simulation object already exists.
-                    if hasattr(self.relax.data.res[self.run][i], sim_object_name):
+                    if hasattr(relax_data_store.res[self.run][i], sim_object_name):
                         raise RelaxError, "Monte Carlo parameter values have already been set."
 
 
@@ -4260,18 +4268,18 @@ class Model_free(Common_functions):
             sim_object_name = object_name + '_sim'
 
             # Create the simulation object.
-            setattr(self.relax.data, sim_object_name, {})
+            setattr(relax_data_store, sim_object_name, {})
 
             # Get the simulation object.
-            sim_object = getattr(self.relax.data, sim_object_name)
+            sim_object = getattr(relax_data_store, sim_object_name)
 
             # Add the run.
             sim_object[self.run] = []
 
             # Loop over the simulations.
-            for j in xrange(self.relax.data.sim_number[self.run]):
+            for j in xrange(relax_data_store.sim_number[self.run]):
                 # Get the object.
-                object = getattr(self.relax.data, object_name)
+                object = getattr(relax_data_store, object_name)
 
                 # Test if the object has the key self.run.
                 if not object.has_key(self.run):
@@ -4288,21 +4296,21 @@ class Model_free(Common_functions):
                 sim_object_name = object_name + '_sim'
 
                 # Create the simulation object.
-                setattr(self.relax.data.diff[self.run], sim_object_name, [])
+                setattr(relax_data_store.diff[self.run], sim_object_name, [])
 
                 # Get the simulation object.
-                sim_object = getattr(self.relax.data.diff[self.run], sim_object_name)
+                sim_object = getattr(relax_data_store.diff[self.run], sim_object_name)
 
                 # Loop over the simulations.
-                for j in xrange(self.relax.data.sim_number[self.run]):
+                for j in xrange(relax_data_store.sim_number[self.run]):
                     # Copy and append the data.
-                    sim_object.append(deepcopy(getattr(self.relax.data.diff[self.run], object_name)))
+                    sim_object.append(deepcopy(getattr(relax_data_store.diff[self.run], object_name)))
 
         # Residue specific parameters.
         if self.param_set != 'diff':
-            for i in xrange(len(self.relax.data.res[self.run])):
+            for i in xrange(len(relax_data_store.res[self.run])):
                 # Skip unselected residues.
-                if not self.relax.data.res[self.run][i].select:
+                if not relax_data_store.res[self.run][i].select:
                     continue
 
                 # Loop over all the data names.
@@ -4311,15 +4319,15 @@ class Model_free(Common_functions):
                     sim_object_name = object_name + '_sim'
 
                     # Create the simulation object.
-                    setattr(self.relax.data.res[self.run][i], sim_object_name, [])
+                    setattr(relax_data_store.res[self.run][i], sim_object_name, [])
 
                     # Get the simulation object.
-                    sim_object = getattr(self.relax.data.res[self.run][i], sim_object_name)
+                    sim_object = getattr(relax_data_store.res[self.run][i], sim_object_name)
 
                     # Loop over the simulations.
-                    for j in xrange(self.relax.data.sim_number[self.run]):
+                    for j in xrange(relax_data_store.sim_number[self.run]):
                         # Copy and append the data.
-                        sim_object.append(deepcopy(getattr(self.relax.data.res[self.run][i], object_name)))
+                        sim_object.append(deepcopy(getattr(relax_data_store.res[self.run][i], object_name)))
 
                 # Loop over all the minimisation object names.
                 for object_name in min_names:
@@ -4327,26 +4335,26 @@ class Model_free(Common_functions):
                     sim_object_name = object_name + '_sim'
 
                     # Create the simulation object.
-                    setattr(self.relax.data.res[self.run][i], sim_object_name, [])
+                    setattr(relax_data_store.res[self.run][i], sim_object_name, [])
 
                     # Get the simulation object.
-                    sim_object = getattr(self.relax.data.res[self.run][i], sim_object_name)
+                    sim_object = getattr(relax_data_store.res[self.run][i], sim_object_name)
 
                     # Loop over the simulations.
-                    for j in xrange(self.relax.data.sim_number[self.run]):
+                    for j in xrange(relax_data_store.sim_number[self.run]):
                         # Copy and append the data.
-                        sim_object.append(deepcopy(getattr(self.relax.data.res[self.run][i], object_name)))
+                        sim_object.append(deepcopy(getattr(relax_data_store.res[self.run][i], object_name)))
 
 
     def sim_pack_data(self, run, i, sim_data):
         """Function for packing Monte Carlo simulation data."""
 
         # Test if the simulation data already exists.
-        if hasattr(self.relax.data.res[run][i], 'relax_sim_data'):
+        if hasattr(relax_data_store.res[run][i], 'relax_sim_data'):
             raise RelaxError, "Monte Carlo simulation data already exists."
 
         # Create the data structure.
-        self.relax.data.res[run][i].relax_sim_data = sim_data
+        relax_data_store.res[run][i].relax_sim_data = sim_data
 
 
     def sim_return_chi2(self, run, instance):
@@ -4360,11 +4368,11 @@ class Model_free(Common_functions):
 
         # Single instance.
         if self.param_set == 'all' or self.param_set == 'diff':
-            return self.relax.data.chi2_sim[self.run]
+            return relax_data_store.chi2_sim[self.run]
 
         # Multiple instances.
         else:
-            return self.relax.data.res[self.run][instance].chi2_sim
+            return relax_data_store.res[self.run][instance].chi2_sim
 
 
     def sim_return_param(self, run, instance, index):
@@ -4385,44 +4393,44 @@ class Model_free(Common_functions):
 
         if self.param_set == 'diff' or self.param_set == 'all':
             # Spherical diffusion.
-            if self.relax.data.diff[self.run].type == 'sphere':
+            if relax_data_store.diff[self.run].type == 'sphere':
                 # Return the parameter array.
                 if index == 0:
-                    return self.relax.data.diff[self.run].tm_sim
+                    return relax_data_store.diff[self.run].tm_sim
 
                 # Increment.
                 inc = inc + 1
 
             # Spheroidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'spheroid':
+            elif relax_data_store.diff[self.run].type == 'spheroid':
                 # Return the parameter array.
                 if index == 0:
-                    return self.relax.data.diff[self.run].tm_sim
+                    return relax_data_store.diff[self.run].tm_sim
                 elif index == 1:
-                    return self.relax.data.diff[self.run].Da_sim
+                    return relax_data_store.diff[self.run].Da_sim
                 elif index == 2:
-                    return self.relax.data.diff[self.run].theta_sim
+                    return relax_data_store.diff[self.run].theta_sim
                 elif index == 3:
-                    return self.relax.data.diff[self.run].phi_sim
+                    return relax_data_store.diff[self.run].phi_sim
 
                 # Increment.
                 inc = inc + 4
 
             # Ellipsoidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'ellipsoid':
+            elif relax_data_store.diff[self.run].type == 'ellipsoid':
                 # Return the parameter array.
                 if index == 0:
-                    return self.relax.data.diff[self.run].tm_sim
+                    return relax_data_store.diff[self.run].tm_sim
                 elif index == 1:
-                    return self.relax.data.diff[self.run].Da_sim
+                    return relax_data_store.diff[self.run].Da_sim
                 elif index == 2:
-                    return self.relax.data.diff[self.run].Dr_sim
+                    return relax_data_store.diff[self.run].Dr_sim
                 elif index == 3:
-                    return self.relax.data.diff[self.run].alpha_sim
+                    return relax_data_store.diff[self.run].alpha_sim
                 elif index == 4:
-                    return self.relax.data.diff[self.run].beta_sim
+                    return relax_data_store.diff[self.run].beta_sim
                 elif index == 5:
-                    return self.relax.data.diff[self.run].gamma_sim
+                    return relax_data_store.diff[self.run].gamma_sim
 
                 # Increment.
                 inc = inc + 6
@@ -4433,16 +4441,16 @@ class Model_free(Common_functions):
 
         if self.param_set == 'all':
             # Loop over the sequence.
-            for i in xrange(len(self.relax.data.res[self.run])):
+            for i in xrange(len(relax_data_store.res[self.run])):
                 # Skip unselected residues.
-                if not self.relax.data.res[self.run][i].select:
+                if not relax_data_store.res[self.run][i].select:
                     continue
 
                 # Loop over the residue specific parameters.
                 for param in param_names:
                     # Return the parameter array.
                     if index == inc:
-                        return getattr(self.relax.data.res[self.run][i], param + "_sim")
+                        return getattr(relax_data_store.res[self.run][i], param + "_sim")
 
                     # Increment.
                     inc = inc + 1
@@ -4453,14 +4461,14 @@ class Model_free(Common_functions):
 
         if self.param_set == 'mf' or self.param_set == 'local_tm':
             # Skip unselected residues.
-            if not self.relax.data.res[self.run][instance].select:
+            if not relax_data_store.res[self.run][instance].select:
                 return
 
             # Loop over the residue specific parameters.
             for param in param_names:
                 # Return the parameter array.
                 if index == inc:
-                    return getattr(self.relax.data.res[self.run][instance], param + "_sim")
+                    return getattr(relax_data_store.res[self.run][instance], param + "_sim")
 
                 # Increment.
                 inc = inc + 1
@@ -4477,11 +4485,11 @@ class Model_free(Common_functions):
 
         # Single instance.
         if self.param_set == 'all' or self.param_set == 'diff':
-            return self.relax.data.select_sim[self.run]
+            return relax_data_store.select_sim[self.run]
 
         # Multiple instances.
         else:
-            return self.relax.data.res[self.run][instance].select_sim
+            return relax_data_store.res[self.run][instance].select_sim
 
 
     def skip_function(self, run=None, instance=None, min_instances=None, num_instances=None):
@@ -4499,7 +4507,7 @@ class Model_free(Common_functions):
             combine = 1
 
         # Sequence specific data.
-        if (self.param_set == 'mf' or self.param_set == 'local_tm') and not combine and not self.relax.data.res[self.run][instance].select:
+        if (self.param_set == 'mf' or self.param_set == 'local_tm') and not combine and not relax_data_store.res[self.run][instance].select:
             return 1
 
         # Don't skip.
@@ -4519,17 +4527,17 @@ class Model_free(Common_functions):
         if sim_index != None:
             # Single instance.
             if self.param_set == 'mf' or self.param_set == 'local_tm':
-                self.relax.data.res[self.run][i].select_sim[sim_index] = 0
+                relax_data_store.res[self.run][i].select_sim[sim_index] = 0
 
             # Multiple instances.
             else:
-                self.relax.data.select_sim[self.run][sim_index] = 0
+                relax_data_store.select_sim[self.run][sim_index] = 0
 
         # Residue unselect.
         else:
             # Single residue.
             if self.param_set == 'mf' or self.param_set == 'local_tm':
-                self.relax.data.res[self.run][i].select = 0
+                relax_data_store.res[self.run][i].select = 0
 
 
     def write_columnar_line(self, file=None, num=None, name=None, select=None, select_sim=None, data_set=None, nucleus=None, model=None, equation=None, params=None, param_set=None, s2=None, s2f=None, s2s=None, local_tm=None, te=None, tf=None, ts=None, rex=None, r=None, csa=None, chi2=None, i=None, f=None, g=None, h=None, warn=None, diff_type=None, diff_params=None, pdb=None, pdb_model=None, pdb_heteronuc=None, pdb_proton=None, xh_vect=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
@@ -4628,26 +4636,26 @@ class Model_free(Common_functions):
 
         # Diffusion parameters.
         diff_params = None
-        if self.param_set != 'local_tm' and hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(self.run):
+        if self.param_set != 'local_tm' and hasattr(relax_data_store, 'diff') and relax_data_store.diff.has_key(self.run):
             # Sphere.
-            if self.relax.data.diff[self.run].type == 'sphere':
+            if relax_data_store.diff[self.run].type == 'sphere':
                 diff_params = ['tm_(s)']
 
             # Spheroid.
-            elif self.relax.data.diff[self.run].type == 'spheroid':
+            elif relax_data_store.diff[self.run].type == 'spheroid':
                 diff_params = ['tm_(s)', 'Da_(1/s)', 'theta_(deg)', 'phi_(deg)']
 
             # Ellipsoid.
-            elif self.relax.data.diff[self.run].type == 'ellipsoid':
+            elif relax_data_store.diff[self.run].type == 'ellipsoid':
                 diff_params = ['tm_(s)', 'Da_(1/s)', 'Dr_(1/s)', 'alpha_(deg)', 'beta_(deg)', 'gamma_(deg)']
 
         # Relaxation data and errors.
         ri = []
         ri_error = []
-        if hasattr(self.relax.data, 'num_ri'):
-            for i in xrange(self.relax.data.num_ri[self.run]):
-                ri.append('Ri_(' + self.relax.data.ri_labels[self.run][i] + "_" + self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]] + ")")
-                ri_error.append('Ri_error_(' + self.relax.data.ri_labels[self.run][i] + "_" + self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]] + ")")
+        if hasattr(relax_data_store, 'num_ri'):
+            for i in xrange(relax_data_store.num_ri[self.run]):
+                ri.append('Ri_(' + relax_data_store.ri_labels[self.run][i] + "_" + relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][i]] + ")")
+                ri_error.append('Ri_error_(' + relax_data_store.ri_labels[self.run][i] + "_" + relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][i]] + ")")
 
         # Write the header line.
         self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', model='Model', equation='Equation', params='Params', param_set='Param_set', s2='S2', s2f='S2f', s2s='S2s', local_tm='Local_tm_(' + self.return_units('local_tm') + ')', te='te_(' + self.return_units('te') + ')', tf='tf_(' + self.return_units('tf') + ')', ts='ts_(' + self.return_units('ts') + ')', rex='Rex_(' + replace(self.return_units('rex'), ' ', '_') + ')', r='Bond_length_(' + self.return_units('r') + ')', csa='CSA_(' + self.return_units('csa') + ')', chi2='Chi-squared', i='Iter', f='f_count', g='g_count', h='h_count', warn='Warning', diff_type='Diff_type', diff_params=diff_params, pdb='PDB', pdb_model='PDB_model', pdb_heteronuc='PDB_heteronuc', pdb_proton='PDB_proton', xh_vect='XH_vector', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
@@ -4662,37 +4670,37 @@ class Model_free(Common_functions):
         # Diffusion parameters.
         diff_type = None
         diff_params = None
-        if self.param_set != 'local_tm' and hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(self.run):
+        if self.param_set != 'local_tm' and hasattr(relax_data_store, 'diff') and relax_data_store.diff.has_key(self.run):
             # Sphere.
-            if self.relax.data.diff[self.run].type == 'sphere':
+            if relax_data_store.diff[self.run].type == 'sphere':
                 diff_type = 'sphere'
-                diff_params = [`self.relax.data.diff[self.run].tm`]
+                diff_params = [`relax_data_store.diff[self.run].tm`]
 
             # Spheroid.
-            elif self.relax.data.diff[self.run].type == 'spheroid':
-                diff_type = self.relax.data.diff[self.run].spheroid_type
+            elif relax_data_store.diff[self.run].type == 'spheroid':
+                diff_type = relax_data_store.diff[self.run].spheroid_type
                 if diff_type == None:
                     diff_type = 'spheroid'
-                diff_params = [`self.relax.data.diff[self.run].tm`, `self.relax.data.diff[self.run].Da`, `self.relax.data.diff[self.run].theta * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].phi * 360 / (2.0 * pi)`]
+                diff_params = [`relax_data_store.diff[self.run].tm`, `relax_data_store.diff[self.run].Da`, `relax_data_store.diff[self.run].theta * 360 / (2.0 * pi)`, `relax_data_store.diff[self.run].phi * 360 / (2.0 * pi)`]
 
             # Ellipsoid.
-            elif self.relax.data.diff[self.run].type == 'ellipsoid':
+            elif relax_data_store.diff[self.run].type == 'ellipsoid':
                 diff_type = 'ellipsoid'
-                diff_params = [`self.relax.data.diff[self.run].tm`, `self.relax.data.diff[self.run].Da`, `self.relax.data.diff[self.run].Dr`, `self.relax.data.diff[self.run].alpha * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].beta * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].gamma * 360 / (2.0 * pi)`]
+                diff_params = [`relax_data_store.diff[self.run].tm`, `relax_data_store.diff[self.run].Da`, `relax_data_store.diff[self.run].Dr`, `relax_data_store.diff[self.run].alpha * 360 / (2.0 * pi)`, `relax_data_store.diff[self.run].beta * 360 / (2.0 * pi)`, `relax_data_store.diff[self.run].gamma * 360 / (2.0 * pi)`]
 
         # PDB.
         pdb = None
         pdb_model = None
-        if self.relax.data.pdb.has_key(self.run):
-            pdb = self.relax.data.pdb[self.run].file_name
-            pdb_model = self.relax.data.pdb[self.run].model
+        if relax_data_store.pdb.has_key(self.run):
+            pdb = relax_data_store.pdb[self.run].file_name
+            pdb_model = relax_data_store.pdb[self.run].model
 
         # Relaxation data setup.
         try:
-            ri_labels = replace(`self.relax.data.ri_labels[self.run]`, ' ', '')
-            remap_table = replace(`self.relax.data.remap_table[self.run]`, ' ', '')
-            frq_labels = replace(`self.relax.data.frq_labels[self.run]`, ' ', '')
-            frq = replace(`self.relax.data.frq[self.run]`, ' ', '')
+            ri_labels = replace(`relax_data_store.ri_labels[self.run]`, ' ', '')
+            remap_table = replace(`relax_data_store.remap_table[self.run]`, ' ', '')
+            frq_labels = replace(`relax_data_store.frq_labels[self.run]`, ' ', '')
+            frq = replace(`relax_data_store.frq[self.run]`, ' ', '')
         except AttributeError:
             ri_labels = `None`
             remap_table = `None`
@@ -4700,9 +4708,9 @@ class Model_free(Common_functions):
             frq = `None`
 
         # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for i in xrange(len(relax_data_store.res[self.run])):
             # Reassign data structure.
-            data = self.relax.data.res[self.run][i]
+            data = relax_data_store.res[self.run][i]
 
             # Model details.
             model = None
@@ -4781,15 +4789,15 @@ class Model_free(Common_functions):
             try:
                 # Global minimisation results.
                 if self.param_set == 'diff' or self.param_set == 'all':
-                    chi2 = `self.relax.data.chi2[self.run]`
-                    iter = self.relax.data.iter[self.run]
-                    f = self.relax.data.f_count[self.run]
-                    g = self.relax.data.g_count[self.run]
-                    h = self.relax.data.h_count[self.run]
-                    if type(self.relax.data.warning[self.run]) == str:
-                        warn = replace(self.relax.data.warning[self.run], ' ', '_')
+                    chi2 = `relax_data_store.chi2[self.run]`
+                    iter = relax_data_store.iter[self.run]
+                    f = relax_data_store.f_count[self.run]
+                    g = relax_data_store.g_count[self.run]
+                    h = relax_data_store.h_count[self.run]
+                    if type(relax_data_store.warning[self.run]) == str:
+                        warn = replace(relax_data_store.warning[self.run], ' ', '_')
                     else:
-                        warn = self.relax.data.warning[self.run]
+                        warn = relax_data_store.warning[self.run]
 
                 # Individual residue results.
                 else:
@@ -4827,13 +4835,13 @@ class Model_free(Common_functions):
             # Relaxation data and errors.
             ri = []
             ri_error = []
-            if hasattr(self.relax.data, 'num_ri'):
-                for i in xrange(self.relax.data.num_ri[self.run]):
+            if hasattr(relax_data_store, 'num_ri'):
+                for i in xrange(relax_data_store.num_ri[self.run]):
                     try:
                         # Find the residue specific data corresponding to i.
                         index = None
                         for j in xrange(data.num_ri):
-                            if data.ri_labels[j] == self.relax.data.ri_labels[self.run][i] and data.frq_labels[data.remap_table[j]] == self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]]:
+                            if data.ri_labels[j] == relax_data_store.ri_labels[self.run][i] and data.frq_labels[data.remap_table[j]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][i]]:
                                 index = j
 
                         # Data exists for this data type.
@@ -4856,37 +4864,37 @@ class Model_free(Common_functions):
         if self.has_errors():
             # Diffusion parameters.
             diff_params = None
-            if self.param_set != 'local_tm' and hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(self.run):
+            if self.param_set != 'local_tm' and hasattr(relax_data_store, 'diff') and relax_data_store.diff.has_key(self.run):
                 # Sphere.
-                if self.relax.data.diff[self.run].type == 'sphere':
+                if relax_data_store.diff[self.run].type == 'sphere':
                     diff_params = [None]
 
                 # Spheroid.
-                elif self.relax.data.diff[self.run].type == 'spheroid':
+                elif relax_data_store.diff[self.run].type == 'spheroid':
                     diff_params = [None, None, None, None]
 
                 # Ellipsoid.
-                elif self.relax.data.diff[self.run].type == 'ellipsoid':
+                elif relax_data_store.diff[self.run].type == 'ellipsoid':
                     diff_params = [None, None, None, None, None, None]
 
                 # Diffusion parameter errors.
                 if self.param_set == 'diff' or self.param_set == 'all':
                     # Sphere.
-                    if self.relax.data.diff[self.run].type == 'sphere' and hasattr(self.relax.data.diff[self.run], 'tm_err'):
-                        diff_params = [`self.relax.data.diff[self.run].tm_err`]
+                    if relax_data_store.diff[self.run].type == 'sphere' and hasattr(relax_data_store.diff[self.run], 'tm_err'):
+                        diff_params = [`relax_data_store.diff[self.run].tm_err`]
 
                     # Spheroid.
-                    elif self.relax.data.diff[self.run].type == 'spheroid' and hasattr(self.relax.data.diff[self.run], 'tm_err'):
-                        diff_params = [`self.relax.data.diff[self.run].tm_err`, `self.relax.data.diff[self.run].Da_err`, `self.relax.data.diff[self.run].theta_err * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].phi_err * 360 / (2.0 * pi)`]
+                    elif relax_data_store.diff[self.run].type == 'spheroid' and hasattr(relax_data_store.diff[self.run], 'tm_err'):
+                        diff_params = [`relax_data_store.diff[self.run].tm_err`, `relax_data_store.diff[self.run].Da_err`, `relax_data_store.diff[self.run].theta_err * 360 / (2.0 * pi)`, `relax_data_store.diff[self.run].phi_err * 360 / (2.0 * pi)`]
 
                     # Ellipsoid.
-                    elif self.relax.data.diff[self.run].type == 'ellipsoid' and hasattr(self.relax.data.diff[self.run], 'tm_err'):
-                        diff_params = [`self.relax.data.diff[self.run].tm_err`, `self.relax.data.diff[self.run].Da_err`, `self.relax.data.diff[self.run].Dr_err`, `self.relax.data.diff[self.run].alpha_err * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].beta_err * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].gamma_err * 360 / (2.0 * pi)`]
+                    elif relax_data_store.diff[self.run].type == 'ellipsoid' and hasattr(relax_data_store.diff[self.run], 'tm_err'):
+                        diff_params = [`relax_data_store.diff[self.run].tm_err`, `relax_data_store.diff[self.run].Da_err`, `relax_data_store.diff[self.run].Dr_err`, `relax_data_store.diff[self.run].alpha_err * 360 / (2.0 * pi)`, `relax_data_store.diff[self.run].beta_err * 360 / (2.0 * pi)`, `relax_data_store.diff[self.run].gamma_err * 360 / (2.0 * pi)`]
 
             # Loop over the sequence.
-            for i in xrange(len(self.relax.data.res[self.run])):
+            for i in xrange(len(relax_data_store.res[self.run])):
                 # Reassign data structure.
-                data = self.relax.data.res[self.run][i]
+                data = relax_data_store.res[self.run][i]
 
                 # Model details.
                 model = None
@@ -4964,7 +4972,7 @@ class Model_free(Common_functions):
                 # Relaxation data and errors.
                 ri = []
                 ri_error = []
-                for i in xrange(self.relax.data.num_ri[self.run]):
+                for i in xrange(relax_data_store.num_ri[self.run]):
                     ri.append(None)
                     ri_error.append(None)
 
@@ -4981,44 +4989,44 @@ class Model_free(Common_functions):
         ####################
 
         # Only invoke this section if simulations have been setup.
-        if hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state[self.run]:
+        if hasattr(relax_data_store, 'sim_state') and relax_data_store.sim_state[self.run]:
             # Loop over the simulations.
-            for i in xrange(self.relax.data.sim_number[self.run]):
+            for i in xrange(relax_data_store.sim_number[self.run]):
                 # Diffusion parameters.
                 diff_params = None
-                if self.param_set != 'local_tm' and hasattr(self.relax.data, 'diff') and self.relax.data.diff.has_key(self.run):
+                if self.param_set != 'local_tm' and hasattr(relax_data_store, 'diff') and relax_data_store.diff.has_key(self.run):
                     # Diffusion parameter simulation values.
                     if self.param_set == 'diff' or self.param_set == 'all':
                         # Sphere.
-                        if self.relax.data.diff[self.run].type == 'sphere':
-                            diff_params = [`self.relax.data.diff[self.run].tm_sim[i]`]
+                        if relax_data_store.diff[self.run].type == 'sphere':
+                            diff_params = [`relax_data_store.diff[self.run].tm_sim[i]`]
 
                         # Spheroid.
-                        elif self.relax.data.diff[self.run].type == 'spheroid':
-                            diff_params = [`self.relax.data.diff[self.run].tm_sim[i]`, `self.relax.data.diff[self.run].Da_sim[i]`, `self.relax.data.diff[self.run].theta_sim[i] * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].phi_sim[i] * 360 / (2.0 * pi)`]
+                        elif relax_data_store.diff[self.run].type == 'spheroid':
+                            diff_params = [`relax_data_store.diff[self.run].tm_sim[i]`, `relax_data_store.diff[self.run].Da_sim[i]`, `relax_data_store.diff[self.run].theta_sim[i] * 360 / (2.0 * pi)`, `relax_data_store.diff[self.run].phi_sim[i] * 360 / (2.0 * pi)`]
 
                         # Ellipsoid.
-                        elif self.relax.data.diff[self.run].type == 'ellipsoid':
-                            diff_params = [`self.relax.data.diff[self.run].tm_sim[i]`, `self.relax.data.diff[self.run].Da_sim[i]`, `self.relax.data.diff[self.run].Dr_sim[i]`, `self.relax.data.diff[self.run].alpha_sim[i] * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].beta_sim[i] * 360 / (2.0 * pi)`, `self.relax.data.diff[self.run].gamma_sim[i] * 360 / (2.0 * pi)`]
+                        elif relax_data_store.diff[self.run].type == 'ellipsoid':
+                            diff_params = [`relax_data_store.diff[self.run].tm_sim[i]`, `relax_data_store.diff[self.run].Da_sim[i]`, `relax_data_store.diff[self.run].Dr_sim[i]`, `relax_data_store.diff[self.run].alpha_sim[i] * 360 / (2.0 * pi)`, `relax_data_store.diff[self.run].beta_sim[i] * 360 / (2.0 * pi)`, `relax_data_store.diff[self.run].gamma_sim[i] * 360 / (2.0 * pi)`]
 
                     # No simulation values.
                     else:
                         # Sphere.
-                        if self.relax.data.diff[self.run].type == 'sphere':
+                        if relax_data_store.diff[self.run].type == 'sphere':
                             diff_params = [None]
 
                         # Spheroid.
-                        elif self.relax.data.diff[self.run].type == 'spheroid':
+                        elif relax_data_store.diff[self.run].type == 'spheroid':
                             diff_params = [None, None, None, None]
 
                         # Ellipsoid.
-                        elif self.relax.data.diff[self.run].type == 'ellipsoid':
+                        elif relax_data_store.diff[self.run].type == 'ellipsoid':
                             diff_params = [None, None, None, None, None, None]
 
                 # Loop over the sequence.
-                for j in xrange(len(self.relax.data.res[self.run])):
+                for j in xrange(len(relax_data_store.res[self.run])):
                     # Reassign data structure.
-                    data = self.relax.data.res[self.run][j]
+                    data = relax_data_store.res[self.run][j]
 
                     # Model details.
                     model = None
@@ -5035,7 +5043,7 @@ class Model_free(Common_functions):
 
                     # Selected simulation.
                     if self.param_set == 'diff' or self.param_set == 'all':
-                        select_sim = self.relax.data.select_sim[self.run][i]
+                        select_sim = relax_data_store.select_sim[self.run][i]
                     else:
                         select_sim = data.select_sim[i]
 
@@ -5103,15 +5111,15 @@ class Model_free(Common_functions):
                     try:
                         # Global minimisation results.
                         if self.param_set == 'diff' or self.param_set == 'all':
-                            chi2 = `self.relax.data.chi2_sim[self.run][i]`
-                            iter = self.relax.data.iter_sim[self.run][i]
-                            f = self.relax.data.f_count_sim[self.run][i]
-                            g = self.relax.data.g_count_sim[self.run][i]
-                            h = self.relax.data.h_count_sim[self.run][i]
-                            if type(self.relax.data.warning_sim[self.run][i]) == str:
-                                warn = replace(self.relax.data.warning_sim[self.run][i], ' ', '_')
+                            chi2 = `relax_data_store.chi2_sim[self.run][i]`
+                            iter = relax_data_store.iter_sim[self.run][i]
+                            f = relax_data_store.f_count_sim[self.run][i]
+                            g = relax_data_store.g_count_sim[self.run][i]
+                            h = relax_data_store.h_count_sim[self.run][i]
+                            if type(relax_data_store.warning_sim[self.run][i]) == str:
+                                warn = replace(relax_data_store.warning_sim[self.run][i], ' ', '_')
                             else:
-                                warn = self.relax.data.warning_sim[self.run][i]
+                                warn = relax_data_store.warning_sim[self.run][i]
 
                         # Individual residue results.
                         else:
@@ -5137,11 +5145,11 @@ class Model_free(Common_functions):
                     # Relaxation data and errors.
                     ri = []
                     ri_error = []
-                    for k in xrange(self.relax.data.num_ri[self.run]):
+                    for k in xrange(relax_data_store.num_ri[self.run]):
                         # Find the residue specific data corresponding to k.
                         index = None
                         for l in xrange(data.num_ri):
-                            if data.ri_labels[l] == self.relax.data.ri_labels[self.run][k] and data.frq_labels[data.remap_table[l]] == self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][k]]:
+                            if data.ri_labels[l] == relax_data_store.ri_labels[self.run][k] and data.frq_labels[data.remap_table[l]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][k]]:
                                 index = l
 
                         # Data exists for this data type.
@@ -5268,7 +5276,7 @@ class Molmol:
 
         if data_type == 'S2':
             # Loop over the sequence.
-            for residue in self.relax.data.res[self.run]:
+            for residue in relax_data_store.res[self.run]:
                 # Skip unselected residues.
                 if not residue.select:
                     continue
@@ -5286,7 +5294,7 @@ class Molmol:
 
         elif data_type == 'S2f':
             # Loop over the sequence.
-            for residue in self.relax.data.res[self.run]:
+            for residue in relax_data_store.res[self.run]:
                 # Skip unselected residues.
                 if not residue.select:
                     continue
@@ -5305,7 +5313,7 @@ class Molmol:
 
         elif data_type == 'S2s':
             # Loop over the sequence.
-            for residue in self.relax.data.res[self.run]:
+            for residue in relax_data_store.res[self.run]:
                 # Skip unselected residues.
                 if not residue.select:
                     continue
@@ -5324,7 +5332,7 @@ class Molmol:
 
         elif data_type == 'amp_fast':
             # Loop over the sequence.
-            for residue in self.relax.data.res[self.run]:
+            for residue in relax_data_store.res[self.run]:
                 # Skip unselected residues.
                 if not residue.select:
                     continue
@@ -5361,7 +5369,7 @@ class Molmol:
 
         elif data_type == 'amp_slow':
             # Loop over the sequence.
-            for residue in self.relax.data.res[self.run]:
+            for residue in relax_data_store.res[self.run]:
                 # Skip unselected residues.
                 if not residue.select:
                     continue
@@ -5389,7 +5397,7 @@ class Molmol:
 
         elif data_type == 'te':
             # Loop over the sequence.
-            for residue in self.relax.data.res[self.run]:
+            for residue in relax_data_store.res[self.run]:
                 # Skip unselected residues.
                 if not residue.select:
                     continue
@@ -5407,7 +5415,7 @@ class Molmol:
 
         elif data_type == 'tf':
             # Loop over the sequence.
-            for residue in self.relax.data.res[self.run]:
+            for residue in relax_data_store.res[self.run]:
                 # Skip unselected residues.
                 if not residue.select:
                     continue
@@ -5425,7 +5433,7 @@ class Molmol:
 
         elif data_type == 'ts':
             # Loop over the sequence.
-            for residue in self.relax.data.res[self.run]:
+            for residue in relax_data_store.res[self.run]:
                 # Skip unselected residues.
                 if not residue.select:
                     continue
@@ -5449,7 +5457,7 @@ class Molmol:
 
         elif data_type == 'time_fast':
             # Loop over the sequence.
-            for residue in self.relax.data.res[self.run]:
+            for residue in relax_data_store.res[self.run]:
                 # Skip unselected residues.
                 if not residue.select:
                     continue
@@ -5479,7 +5487,7 @@ class Molmol:
 
         elif data_type == 'time_slow':
             # Loop over the sequence.
-            for residue in self.relax.data.res[self.run]:
+            for residue in relax_data_store.res[self.run]:
                 # Skip unselected residues.
                 if not residue.select:
                     continue
@@ -5514,7 +5522,7 @@ class Molmol:
 
         elif data_type == 'Rex':
             # Loop over the sequence.
-            for residue in self.relax.data.res[self.run]:
+            for residue in relax_data_store.res[self.run]:
                 # Skip unselected residues.
                 if not residue.select:
                     continue
@@ -5649,7 +5657,7 @@ class Molmol:
         """Function for generating the bond width and colours for correlation times."""
 
         # The Rex value at the first field strength.
-        rex = rex * (2.0 * pi * self.relax.data.frq[self.run][0])**2
+        rex = rex * (2.0 * pi * relax_data_store.frq[self.run][0])**2
 
         # The bond width (aiming for a width range of 2 to 0 for Rex values of 0 to 25 s^-1).
         width = 2.0 - 2.0 / (rex/5.0 + 1.0)

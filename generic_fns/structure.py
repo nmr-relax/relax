@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,6 +20,7 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from math import sqrt, cos, pi, sin
 from Numeric import Float64, arccos, dot, zeros
 from os import F_OK, access
@@ -28,8 +29,15 @@ import Scientific.IO.PDB
 from string import ascii_uppercase
 from warnings import warn
 
+# relax module imports.
+from data import Data
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbChainError, RelaxNoPdbError, RelaxNoResError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError, RelaxPdbError, RelaxPdbLoadError, RelaxRegExpError
 from relax_warnings import RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxWarning, RelaxZeroVectorWarning
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Structure:
@@ -200,7 +208,7 @@ class Structure:
         M = 0.0
 
         # Loop over the structures.
-        for struct in self.relax.data.pdb[self.run].structures:
+        for struct in relax_data_store.pdb[self.run].structures:
             # Protein.
             if struct.peptide_chains:
                 chains = struct.peptide_chains
@@ -211,9 +219,9 @@ class Structure:
 
             # Loop over the residues of the protein in the PDB file.
             for res in chains[0].residues:
-                # Find the corresponding residue in 'self.relax.data'.
+                # Find the corresponding residue in 'relax_data_store'.
                 found = 0
-                for res_data in self.relax.data.res[self.run]:
+                for res_data in relax_data_store.res[self.run]:
                     if res.number == res_data.num:
                         found = 1
                         break
@@ -265,12 +273,12 @@ class Structure:
             self.scale = scale
 
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
+        if not run in relax_data_store.run_names:
             raise RelaxNoRunError, run
 
         # Create an array of runs to loop over (hybrid support).
-        if self.relax.data.run_types[self.relax.data.run_names.index(run)] == 'hybrid':
-            runs = self.relax.data.hybrid_runs[run]
+        if relax_data_store.run_types[relax_data_store.run_names.index(run)] == 'hybrid':
+            runs = relax_data_store.hybrid_runs[run]
         else:
             runs = [run]
 
@@ -287,15 +295,15 @@ class Structure:
             ########
 
             # Test if the diffusion tensor data is loaded.
-            if not self.relax.data.diff.has_key(self.run):
+            if not relax_data_store.diff.has_key(self.run):
                 raise RelaxNoTensorError, self.run
 
             # Test if the PDB file of the macromolecule has been loaded.
-            if not self.relax.data.pdb.has_key(self.run):
+            if not relax_data_store.pdb.has_key(self.run):
                 raise RelaxNoPdbError, self.run
 
             # Test if sequence data is loaded.
-            if not len(self.relax.data.res[self.run]):
+            if not len(relax_data_store.res[self.run]):
                 raise RelaxNoSequenceError, self.run
 
 
@@ -353,10 +361,10 @@ class Structure:
                     atom_id = 'T' + `i` + 'P' + `j` + atom_id_ext
 
                     # Rotate the vector into the diffusion frame.
-                    vector = dot(self.relax.data.diff[self.run].rotation, vectors[index])
+                    vector = dot(relax_data_store.diff[self.run].rotation, vectors[index])
 
                     # Set the length of the vector to its diffusion rate within the diffusion tensor geometric object.
-                    vector = dot(self.relax.data.diff[self.run].tensor, vector)
+                    vector = dot(relax_data_store.diff[self.run].tensor, vector)
 
                     # Scale the vector.
                     vector = vector * self.scale
@@ -393,7 +401,7 @@ class Structure:
             #####################
 
             # Create the unique axis of the spheroid.
-            if self.relax.data.diff[self.run].type == 'spheroid':
+            if relax_data_store.diff[self.run].type == 'spheroid':
                 # Print out.
                 print "\nGenerating the unique axis of the diffusion tensor."
                 print "    Scaling factor:                      " + `self.scale`
@@ -402,18 +410,18 @@ class Structure:
                 self.generate_spheroid_axes(chain_id=chain_id, res_num=res_num, R=R)
 
                 # Simulations.
-                if hasattr(self.relax.data.diff[self.run], 'tm_sim'):
+                if hasattr(relax_data_store.diff[self.run], 'tm_sim'):
                     # Print out.
                     print "    Creating the MC simulation axes."
 
                     # Create each MC simulation axis as a new residue.
-                    for i in xrange(len(self.relax.data.diff[self.run].tm_sim)):
+                    for i in xrange(len(relax_data_store.diff[self.run].tm_sim)):
                         res_num = res_num + 1
                         self.generate_spheroid_axes(chain_id=chain_id, res_num=res_num, R=R, i=i)
 
 
             # Create the three axes of the ellipsoid.
-            if self.relax.data.diff[self.run].type == 'ellipsoid':
+            if relax_data_store.diff[self.run].type == 'ellipsoid':
                 # Print out.
                 print "Generating the three axes of the ellipsoid."
                 print "    Scaling factor:                      " + `self.scale`
@@ -422,12 +430,12 @@ class Structure:
                 self.generate_ellipsoid_axes(chain_id=chain_id, res_num=res_num, R=R)
 
                 # Simulations.
-                if hasattr(self.relax.data.diff[self.run], 'tm_sim'):
+                if hasattr(relax_data_store.diff[self.run], 'tm_sim'):
                     # Print out.
                     print "    Creating the MC simulation axes."
 
                     # Create each MC simulation axis as a new residue.
-                    for i in xrange(len(self.relax.data.diff[self.run].tm_sim)):
+                    for i in xrange(len(relax_data_store.diff[self.run].tm_sim)):
                         res_num = res_num + 1
                         self.generate_ellipsoid_axes(chain_id=chain_id, res_num=res_num, R=R, i=i)
 
@@ -482,21 +490,21 @@ class Structure:
         self.run = run
 
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
+        if not run in relax_data_store.run_names:
             raise RelaxNoRunError, run
 
         # Test if the PDB file of the macromolecule has been loaded.
-        if not self.relax.data.pdb.has_key(self.run):
+        if not relax_data_store.pdb.has_key(self.run):
             raise RelaxNoPdbError, self.run
 
         # Test if sequence data is loaded.
-        if not len(self.relax.data.res[self.run]):
+        if not len(relax_data_store.res[self.run]):
             raise RelaxNoSequenceError, self.run
 
         # Test if unit vectors exist.
         vectors = 0
-        for i in xrange(len(self.relax.data.res[self.run])):
-            if hasattr(self.relax.data.res[self.run][i], 'xh_vect'):
+        for i in xrange(len(relax_data_store.res[self.run])):
+            if hasattr(relax_data_store.res[self.run][i], 'xh_vect'):
                 vectors = 1
                 break
         if not vectors:
@@ -527,9 +535,9 @@ class Structure:
         #################
 
         # Loop over the spin systems.
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for i in xrange(len(relax_data_store.res[self.run])):
             # Alias the spin system data.
-            data = self.relax.data.res[self.run][i]
+            data = relax_data_store.res[self.run][i]
 
             # Skip unselected spin systems.
             if not data.select:
@@ -566,9 +574,9 @@ class Structure:
         # Symmetry chain.
         if symmetry:
             # Loop over the spin systems.
-            for i in xrange(len(self.relax.data.res[self.run])):
+            for i in xrange(len(relax_data_store.res[self.run])):
                 # Alias the spin system data.
-                data = self.relax.data.res[self.run][i]
+                data = relax_data_store.res[self.run][i]
 
                 # Skip unselected spin systems.
                 if not data.select:
@@ -637,21 +645,21 @@ class Structure:
         # Alias the relevant data.
         scale = self.scale
         if i == None:
-            Dx = self.relax.data.diff[self.run].Dx
-            Dy = self.relax.data.diff[self.run].Dy
-            Dz = self.relax.data.diff[self.run].Dz
-            Dx_unit = self.relax.data.diff[self.run].Dx_unit
-            Dy_unit = self.relax.data.diff[self.run].Dy_unit
-            Dz_unit = self.relax.data.diff[self.run].Dz_unit
+            Dx = relax_data_store.diff[self.run].Dx
+            Dy = relax_data_store.diff[self.run].Dy
+            Dz = relax_data_store.diff[self.run].Dz
+            Dx_unit = relax_data_store.diff[self.run].Dx_unit
+            Dy_unit = relax_data_store.diff[self.run].Dy_unit
+            Dz_unit = relax_data_store.diff[self.run].Dz_unit
             res_name = 'AXS'
             atom_id_ext = '_' + chain_id
         else:
-            Dx = self.relax.data.diff[self.run].Dx_sim[i]
-            Dy = self.relax.data.diff[self.run].Dy_sim[i]
-            Dz = self.relax.data.diff[self.run].Dz_sim[i]
-            Dx_unit = self.relax.data.diff[self.run].Dx_unit_sim[i]
-            Dy_unit = self.relax.data.diff[self.run].Dy_unit_sim[i]
-            Dz_unit = self.relax.data.diff[self.run].Dz_unit_sim[i]
+            Dx = relax_data_store.diff[self.run].Dx_sim[i]
+            Dy = relax_data_store.diff[self.run].Dy_sim[i]
+            Dz = relax_data_store.diff[self.run].Dz_sim[i]
+            Dx_unit = relax_data_store.diff[self.run].Dx_unit_sim[i]
+            Dy_unit = relax_data_store.diff[self.run].Dy_unit_sim[i]
+            Dz_unit = relax_data_store.diff[self.run].Dz_unit_sim[i]
             res_name = 'SIM'
             atom_id_ext = '_' + chain_id + '_sim' + `i`
 
@@ -727,13 +735,13 @@ class Structure:
         # Alias the relevant data.
         scale = self.scale
         if i == None:
-            Dpar = self.relax.data.diff[self.run].Dpar
-            Dpar_unit = self.relax.data.diff[self.run].Dpar_unit
+            Dpar = relax_data_store.diff[self.run].Dpar
+            Dpar_unit = relax_data_store.diff[self.run].Dpar_unit
             res_name = 'AXS'
             atom_id_ext = '_' + chain_id
         else:
-            Dpar = self.relax.data.diff[self.run].Dpar_sim[i]
-            Dpar_unit = self.relax.data.diff[self.run].Dpar_unit_sim[i]
+            Dpar = relax_data_store.diff[self.run].Dpar_sim[i]
+            Dpar_unit = relax_data_store.diff[self.run].Dpar_unit_sim[i]
             res_name = 'SIM'
             atom_id_ext = '_' + chain_id + '_sim' + `i`
 
@@ -814,22 +822,22 @@ class Structure:
         """Function for loading the structures from the PDB file."""
 
         # Use pointers (references) if the PDB data exists in another run.
-        for run in self.relax.data.run_names:
-            if self.relax.data.pdb.has_key(run) and hasattr(self.relax.data.pdb[run], 'structures') and self.relax.data.pdb[run].file_name == self.file and self.relax.data.pdb[run].model == self.model:
+        for run in relax_data_store.run_names:
+            if relax_data_store.pdb.has_key(run) and hasattr(relax_data_store.pdb[run], 'structures') and relax_data_store.pdb[run].file_name == self.file and relax_data_store.pdb[run].model == self.model:
                 # Make a pointer to the data.
-                self.relax.data.pdb[self.run].structures = self.relax.data.pdb[run].structures
+                relax_data_store.pdb[self.run].structures = relax_data_store.pdb[run].structures
 
                 # Print out.
                 if self.print_flag:
                     print "Using the structures from the run " + `run` + "."
-                    for i in xrange(len(self.relax.data.pdb[self.run].structures)):
-                        print self.relax.data.pdb[self.run].structures[i]
+                    for i in xrange(len(relax_data_store.pdb[self.run].structures)):
+                        print relax_data_store.pdb[self.run].structures[i]
 
                 # Exit this function.
                 return
 
         # Initialisation.
-        self.relax.data.pdb[self.run].structures = []
+        relax_data_store.pdb[self.run].structures = []
 
         # Load the structure i from the PDB file.
         if type(self.model) == int:
@@ -848,8 +856,8 @@ class Structure:
             if self.print_flag:
                 print str
 
-            # Place the structure in 'self.relax.data.pdb[self.run]'.
-            self.relax.data.pdb[self.run].structures.append(str)
+            # Place the structure in 'relax_data_store.pdb[self.run]'.
+            relax_data_store.pdb[self.run].structures.append(str)
 
 
         # Load all structures.
@@ -881,8 +889,8 @@ class Structure:
                 if self.print_flag:
                     print str
 
-                # Place the structure in 'self.relax.data.pdb[self.run]'.
-                self.relax.data.pdb[self.run].structures.append(str)
+                # Place the structure in 'relax_data_store.pdb[self.run]'.
+                relax_data_store.pdb[self.run].structures.append(str)
 
                 # Increment i.
                 i = i + 1
@@ -904,15 +912,15 @@ class Structure:
         ########
 
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
+        if not run in relax_data_store.run_names:
             raise RelaxNoRunError, run
 
         # Test if PDB data corresponding to the run already exists.
-        if self.relax.data.pdb.has_key(self.run):
+        if relax_data_store.pdb.has_key(self.run):
             raise RelaxPdbError, self.run
 
         # Test if sequence data is loaded.
-        if not self.load_seq and not len(self.relax.data.res[self.run]):
+        if not self.load_seq and not len(relax_data_store.res[self.run]):
             raise RelaxNoSequenceError, self.run
 
         # The file path.
@@ -931,13 +939,13 @@ class Structure:
         ################
 
         # Add the run to the PDB data structure.
-        self.relax.data.pdb.add_item(self.run)
+        relax_data_store.pdb.add_item(self.run)
 
         # File name.
-        self.relax.data.pdb[self.run].file_name = self.file_path
+        relax_data_store.pdb[self.run].file_name = self.file_path
 
         # Model.
-        self.relax.data.pdb[self.run].model = model
+        relax_data_store.pdb[self.run].model = model
 
 
         # Load the structures.
@@ -950,7 +958,7 @@ class Structure:
         #########
 
         # Sequence loading.
-        if self.load_seq and not self.relax.data.res.has_key(self.run):
+        if self.load_seq and not relax_data_store.res.has_key(self.run):
             self.relax.generic.sequence.load_PDB_sequence(self.run)
 
         # Load into Molmol (if running).
@@ -960,19 +968,19 @@ class Structure:
     def set_vector(self, run=None, res=None, xh_vect=None):
         """Function for setting the XH unit vectors."""
 
-        # Place the XH unit vector in 'self.relax.data.res'.
-        self.relax.data.res[run][res].xh_vect = xh_vect
+        # Place the XH unit vector in 'relax_data_store.res'.
+        relax_data_store.res[run][res].xh_vect = xh_vect
 
 
     def vectors(self, run=None, heteronuc=None, proton=None, res_num=None, res_name=None):
         """Function for calculating/extracting the XH unit vector from the loaded structure."""
 
         # Test if the PDB file has been loaded.
-        if not self.relax.data.pdb.has_key(run):
+        if not relax_data_store.pdb.has_key(run):
             raise RelaxPdbError, run
 
         # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(run):
+        if not relax_data_store.res.has_key(run):
             raise RelaxNoSequenceError, run
 
         # Test if the residue number is a valid regular expression.
@@ -994,7 +1002,7 @@ class Structure:
             raise RelaxError, "The proton and heteronucleus are set to the same atom."
 
         # Number of structures.
-        num_str = len(self.relax.data.pdb[self.run].structures)
+        num_str = len(relax_data_store.pdb[self.run].structures)
 
         # Print out.
         if self.print_flag:
@@ -1004,9 +1012,9 @@ class Structure:
                 print "\nCalculating the unit XH vectors from the structure."
 
         # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[self.run])):
-            # Remap the data structure 'self.relax.data.res[self.run][j]'.
-            data = self.relax.data.res[self.run][i]
+        for i in xrange(len(relax_data_store.res[self.run])):
+            # Remap the data structure 'relax_data_store.res[self.run][j]'.
+            data = relax_data_store.res[self.run][i]
 
             # Skip unselected residues.
             if not data.select:
@@ -1580,7 +1588,7 @@ class Structure:
         ave_vector = zeros(3, Float64)
 
         # Number of structures.
-        num_str = len(self.relax.data.pdb[self.run].structures)
+        num_str = len(relax_data_store.pdb[self.run].structures)
 
         # Loop over the structures.
         for i in xrange(num_str):
@@ -1589,10 +1597,10 @@ class Structure:
                 continue
 
             # Reassign the first peptide or nucleotide chain of the first structure.
-            if self.relax.data.pdb[self.run].structures[i].peptide_chains:
-                pdb_residues = self.relax.data.pdb[self.run].structures[i].peptide_chains[0].residues
-            elif self.relax.data.pdb[self.run].structures[i].nucleotide_chains:
-                pdb_residues = self.relax.data.pdb[self.run].structures[i].nucleotide_chains[0].residues
+            if relax_data_store.pdb[self.run].structures[i].peptide_chains:
+                pdb_residues = relax_data_store.pdb[self.run].structures[i].peptide_chains[0].residues
+            elif relax_data_store.pdb[self.run].structures[i].nucleotide_chains:
+                pdb_residues = relax_data_store.pdb[self.run].structures[i].nucleotide_chains[0].residues
             else:
                 raise RelaxNoPdbChainError
 

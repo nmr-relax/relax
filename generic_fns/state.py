@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003-2004, 2007 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,7 +20,16 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from cPickle import dump, load
+
+# relax module imports.
+from data import Data
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class State:
@@ -37,7 +46,7 @@ class State:
         file = self.relax.IO.open_read_file(file_name=file, dir=dir, compress_type=compress_type)
 
         # Unpickle the data class.
-        self.relax.data = load(file)
+        relax_data_store = load(file)
 
         # Close the file.
         file.close()
@@ -50,7 +59,7 @@ class State:
         file = self.relax.IO.open_write_file(file_name=file, dir=dir, force=force, compress_type=compress_type)
 
         # Pickle the data class and write it to file
-        dump(self.relax.data, file, 1)
+        dump(relax_data_store, file, 1)
 
         # Close the file.
         file.close()

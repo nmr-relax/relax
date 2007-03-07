@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2005, 2007 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,12 +20,20 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from copy import deepcopy
 from math import sqrt
 from Numeric import ones
 from random import gauss
 
+# relax module imports.
+from data import Data
 from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Monte_carlo:
@@ -45,15 +53,15 @@ class Monte_carlo:
         self.run = run
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Test if simulations have been set up.
-        if not hasattr(self.relax.data, 'sim_state'):
+        if not hasattr(relax_data_store, 'sim_state'):
             raise RelaxError, "Monte Carlo simulations for the run " + `self.run` + " have not been set up."
 
         # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Test the method argument.
@@ -62,7 +70,7 @@ class Monte_carlo:
             raise RelaxError, "The simulation creation method " + `method` + " is not valid."
 
         # Function type.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+        function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
 
         # Specific Monte Carlo data creation, data return, and error return function setup.
         create_mc_data = self.relax.specific_setup.setup('create_mc_data', function_type)
@@ -71,9 +79,9 @@ class Monte_carlo:
         pack_sim_data = self.relax.specific_setup.setup('pack_sim_data', function_type)
 
         # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for i in xrange(len(relax_data_store.res[self.run])):
             # Skip unselected residues.
-            if not self.relax.data.res[self.run][i].select:
+            if not relax_data_store.res[self.run][i].select:
                 continue
 
             # Create the Monte Carlo data.
@@ -89,7 +97,7 @@ class Monte_carlo:
 
             # Loop over the Monte Carlo simulations.
             random = []
-            for j in xrange(self.relax.data.sim_number[self.run]):
+            for j in xrange(relax_data_store.sim_number[self.run]):
                 # Randomise the data.
                 random.append([])
                 for k in xrange(len(data)):
@@ -126,15 +134,15 @@ class Monte_carlo:
         self.run = run
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Test if simulations have been set up.
-        if not hasattr(self.relax.data, 'sim_state'):
+        if not hasattr(relax_data_store, 'sim_state'):
             raise RelaxError, "Monte Carlo simulations for the run " + `self.run` + " have not been set up."
 
         # Function type.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+        function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
 
         # Specific number of instances, return simulation chi2 array, return selected simulation array, return simulation parameter array, and set error functions.
         count_num_instances = self.relax.specific_setup.setup('num_instances', function_type)
@@ -256,15 +264,15 @@ class Monte_carlo:
         self.run = run
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Test if simulations have been set up.
-        if not hasattr(self.relax.data, 'sim_state'):
+        if not hasattr(relax_data_store, 'sim_state'):
             raise RelaxError, "Monte Carlo simulations for the run " + `self.run` + " have not been set up."
 
         # Function type.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+        function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
 
         # Specific initial Monte Carlo parameter value function setup.
         init_sim_values = self.relax.specific_setup.setup('init_sim_values', function_type)
@@ -280,15 +288,15 @@ class Monte_carlo:
         self.run = run
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Test if simulations have been set up.
-        if not hasattr(self.relax.data, 'sim_state'):
+        if not hasattr(relax_data_store, 'sim_state'):
             raise RelaxError, "Monte Carlo simulations for the run " + `self.run` + " have not been set up."
 
         # Turn simulations off.
-        self.relax.data.sim_state[self.run] = 0
+        relax_data_store.sim_state[self.run] = 0
 
 
     def on(self, run=None):
@@ -298,22 +306,22 @@ class Monte_carlo:
         self.run = run
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Test if simulations have been set up.
-        if not hasattr(self.relax.data, 'sim_state'):
+        if not hasattr(relax_data_store, 'sim_state'):
             raise RelaxError, "Monte Carlo simulations for the run " + `self.run` + " have not been set up."
 
         # Turn simulations on.
-        self.relax.data.sim_state[self.run] = 1
+        relax_data_store.sim_state[self.run] = 1
 
 
     def select_all_sims(self, number=None, all_select_sim=None):
         """Function for setting the select flag of all simulations of all instances to one."""
 
         # Function type.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+        function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
 
         # Specific number of instances and set the selected simulation array functions.
         count_num_instances = self.relax.specific_setup.setup('num_instances', function_type)
@@ -353,26 +361,26 @@ class Monte_carlo:
         self.run = run
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Test if Monte Carlo simulations have already been set up for the given run.
-        if hasattr(self.relax.data, 'sim_number') and self.relax.data.sim_number.has_key(self.run):
+        if hasattr(relax_data_store, 'sim_number') and relax_data_store.sim_number.has_key(self.run):
             raise RelaxError, "Monte Carlo simulations for the run " + `self.run` + " have already been set up."
 
         # Create the data structure 'sim_number' if it doesn't exist.
-        if not hasattr(self.relax.data, 'sim_number'):
-            self.relax.data.sim_number = {}
+        if not hasattr(relax_data_store, 'sim_number'):
+            relax_data_store.sim_number = {}
 
         # Add the simulation number.
-        self.relax.data.sim_number[self.run] = number
+        relax_data_store.sim_number[self.run] = number
 
         # Create the data structure 'sim_state'.
-        if not hasattr(self.relax.data, 'sim_state'):
-            self.relax.data.sim_state = {}
+        if not hasattr(relax_data_store, 'sim_state'):
+            relax_data_store.sim_state = {}
 
         # Turn simulations on.
-        self.relax.data.sim_state[self.run] = 1
+        relax_data_store.sim_state[self.run] = 1
 
         # Select all simulations.
         self.select_all_sims(number=number, all_select_sim=all_select_sim)

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003-2004, 2007 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,9 +20,17 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
 
+# relax module imports.
+from data import Data
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoRunError
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Results:
@@ -36,15 +44,15 @@ class Results:
         """Function for copying all results from run1 to run2."""
 
         # Test if run1 exists.
-        if not run1 in self.relax.data.run_names:
+        if not run1 in relax_data_store.run_names:
             raise RelaxNoRunError, run1
 
         # Test if run2 exists.
-        if not run2 in self.relax.data.run_names:
+        if not run2 in relax_data_store.run_names:
             raise RelaxNoRunError, run2
 
         # Function type.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run1)]
+        function_type = relax_data_store.run_types[relax_data_store.run_names.index(run1)]
 
         # Copy function.
         copy = self.relax.specific_setup.setup('copy', function_type, raise_error=0)
@@ -57,11 +65,11 @@ class Results:
         """Function for displaying the results."""
 
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
+        if not run in relax_data_store.run_names:
             raise RelaxNoRunError, run
 
         # Function type.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+        function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
 
         # Specific results writing function.
         if format == 'xml':
@@ -84,11 +92,11 @@ class Results:
         """Function for reading the data out of a file."""
 
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
+        if not run in relax_data_store.run_names:
             raise RelaxNoRunError, run
 
         # Function type.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+        function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
 
         # Equation type specific function setup.
         if format == 'xml':
@@ -108,9 +116,9 @@ class Results:
             directory = run
 
         # Make sure that there are no data structures corresponding to the run.
-        for data_name in dir(self.relax.data):
+        for data_name in dir(relax_data_store):
             # Get the object.
-            data = getattr(self.relax.data, data_name)
+            data = getattr(relax_data_store, data_name)
 
             # Skip the data if it is not a dictionary (or equivalent).
             if not hasattr(data, 'has_key'):
@@ -138,7 +146,7 @@ class Results:
         """Create the results file."""
 
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
+        if not run in relax_data_store.run_names:
             raise RelaxNoRunError, run
 
         # The directory.
@@ -146,7 +154,7 @@ class Results:
             directory = run
 
         # Function type.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+        function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
 
         # Specific results writing function.
         if format == 'xml':

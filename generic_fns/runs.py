@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006 Edward d'Auvergne                                  #
+# Copyright (C) 2004, 2006-2007 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,10 +20,18 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from copy import deepcopy
 
+# relax module imports.
+from data import Data
 from relax_errors import RelaxError, RelaxNoRunError, RelaxRunError
 from specific_fns.relax_fit import C_module_exp_fn
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Runs:
@@ -37,7 +45,7 @@ class Runs:
         """Function for creating a run."""
 
         # Test if the run already exists.
-        if run in self.relax.data.run_names:
+        if run in relax_data_store.run_names:
             raise RelaxRunError, run
 
         # List of valid run types.
@@ -52,21 +60,21 @@ class Runs:
             raise RelaxError, "Relaxation curve fitting is not availible.  Try compiling the C modules on your platform."
 
         # Add the run and type.
-        self.relax.data.run_names.append(run)
-        self.relax.data.run_types.append(run_type)
+        relax_data_store.run_names.append(run)
+        relax_data_store.run_types.append(run_type)
 
 
     def delete(self, run=None):
         """Function for deleting a run."""
 
         # Test if the run exists.
-        if run != None and not run in self.relax.data.run_names:
+        if run != None and not run in relax_data_store.run_names:
             raise RelaxNoRunError, run
 
-        # Find out if any data in 'self.relax.data' is assigned to a run.
-        for name in dir(self.relax.data):
+        # Find out if any data in 'relax_data_store' is assigned to a run.
+        for name in dir(relax_data_store):
             # Get the object.
-            object = getattr(self.relax.data, name)
+            object = getattr(relax_data_store, name)
 
             # Skip to the next data structure if the object is not a dictionary.
             if not hasattr(object, 'keys'):
@@ -86,10 +94,10 @@ class Runs:
         # An array of runs to retain.
         keep_runs = []
 
-        # Find out if any data in 'self.relax.data' is assigned to a run.
-        for name in dir(self.relax.data):
+        # Find out if any data in 'relax_data_store' is assigned to a run.
+        for name in dir(relax_data_store):
             # Skip to the next data structure if the object is not a dictionary.
-            object = getattr(self.relax.data, name)
+            object = getattr(relax_data_store, name)
             if not hasattr(object, 'keys'):
                 continue
 
@@ -98,17 +106,17 @@ class Runs:
                 if not key in keep_runs:
                     keep_runs.append(key)
 
-        # Delete the runs in 'self.relax.data.run_names' and 'self.relax.data.run_types' which are not in 'keep_runs'.
-        for run in self.relax.data.run_names:
+        # Delete the runs in 'relax_data_store.run_names' and 'relax_data_store.run_types' which are not in 'keep_runs'.
+        for run in relax_data_store.run_names:
             if not run in keep_runs:
                 # Index.
-                index = self.relax.data.run_names.index(run)
+                index = relax_data_store.run_names.index(run)
 
                 # Remove from run_names.
-                self.relax.data.run_names.remove(run)
+                relax_data_store.run_names.remove(run)
 
                 # Remove from run_types.
-                temp = self.relax.data.run_types.pop(index)
+                temp = relax_data_store.run_types.pop(index)
 
 
     def list_of_runs(self, run):
@@ -116,7 +124,7 @@ class Runs:
 
         # All runs.
         if run == None:
-            runs = deepcopy(self.relax.data.run_names)
+            runs = deepcopy(relax_data_store.run_names)
 
         # Single run.
         elif type(run) == str:

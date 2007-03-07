@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003-2004, 2007 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,9 +20,17 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from re import match
 
+# relax module imports.
+from data import Data
 from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoTensorError
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Fix:
@@ -36,46 +44,46 @@ class Fix:
         """Function for fixing or allowing parameter values to change."""
 
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
+        if not run in relax_data_store.run_names:
             raise RelaxNoRunError, run
 
         # Diffusion tensor.
         if element == 'diff':
             # Test if the diffusion tensor data is loaded.
-            if not self.relax.data.diff.has_key(run):
+            if not relax_data_store.diff.has_key(run):
                 raise RelaxNoTensorError, run
 
             # Set the fixed flag.
-            self.relax.data.diff[run].fixed = fixed
+            relax_data_store.diff[run].fixed = fixed
 
 
         # All residues.
         elif element == 'all_res':
             # Test if sequence data is loaded.
-            if not self.relax.data.res.has_key(run):
+            if not relax_data_store.res.has_key(run):
                 raise RelaxNoSequenceError, run
 
             # Loop over the sequence and set the fixed flag.
-            for i in xrange(len(self.relax.data.res[run])):
-                self.relax.data.res[run][i].fixed = fixed
+            for i in xrange(len(relax_data_store.res[run])):
+                relax_data_store.res[run][i].fixed = fixed
 
 
         # All parameters.
         elif element == 'all':
             # Test if sequence data is loaded.
-            if not self.relax.data.res.has_key(run):
+            if not relax_data_store.res.has_key(run):
                 raise RelaxNoSequenceError, run
 
             # Test if the diffusion tensor data is loaded.
-            if not self.relax.data.diff.has_key(run):
+            if not relax_data_store.diff.has_key(run):
                 raise RelaxNoTensorError, run
 
             # Set the fixed flag for the diffusion tensor.
-            self.relax.data.diff[run].fixed = fixed
+            relax_data_store.diff[run].fixed = fixed
 
             # Loop over the sequence and set the fixed flag.
-            for i in xrange(len(self.relax.data.res[run])):
-                self.relax.data.res[run][i].fixed = fixed
+            for i in xrange(len(relax_data_store.res[run])):
+                relax_data_store.res[run][i].fixed = fixed
 
 
         # Unknown.

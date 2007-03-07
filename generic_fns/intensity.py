@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004 Edward d'Auvergne                                        #
+# Copyright (C) 2004, 2007 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,11 +20,19 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from re import split
 from warnings import warn
 
+# relax module imports.
+from data import Data
 from relax_errors import RelaxError, RelaxArgNotInListError, RelaxNoRunError, RelaxNoSequenceError
 from relax_warnings import RelaxWarning
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Intensity:
@@ -207,11 +215,11 @@ class Intensity:
             self.H_dim = 'w1'
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Extract the data from the file.
@@ -241,18 +249,18 @@ class Intensity:
                 warn(RelaxWarning("Proton and heteronucleus names do not match, skipping the data %s: " % `self.file_data[i]`))
                 continue
 
-            # Find the index of self.relax.data.res[self.run] which corresponds to res_num.
+            # Find the index of relax_data_store.res[self.run] which corresponds to res_num.
             index = None
-            for j in xrange(len(self.relax.data.res[self.run])):
-                if self.relax.data.res[self.run][j].num == res_num:
+            for j in xrange(len(relax_data_store.res[self.run])):
+                if relax_data_store.res[self.run][j].num == res_num:
                     index = j
                     break
             if index == None:
                 warn(RelaxWarning("Cannot find residue number %s within the sequence." % res_num))
                 continue
 
-            # Remap the data structure 'self.relax.data.res[self.run][index]'.
-            data = self.relax.data.res[self.run][index]
+            # Remap the data structure 'relax_data_store.res[self.run][index]'.
+            data = relax_data_store.res[self.run][index]
 
             # Skip unselected residues.
             if not data.select:

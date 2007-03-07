@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,12 +20,19 @@
 #                                                                             #
 ###############################################################################
 
-
+# Python module imports.
 from Numeric import ArrayType, zeros
 from re import compile, match
 import sys
 
+# relax module imports.
+from data import Data
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoRunError, RelaxNoSequenceError, RelaxRegExpError, RelaxUnknownParamError, RelaxValueError
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Value:
@@ -42,23 +49,23 @@ class Value:
         self.param = param
 
         # Test if run1 exists.
-        if not run1 in self.relax.data.run_names:
+        if not run1 in relax_data_store.run_names:
             raise RelaxNoRunError, run1
 
         # Test if run2 exists.
-        if not run2 in self.relax.data.run_names:
+        if not run2 in relax_data_store.run_names:
             raise RelaxNoRunError, run2
 
         # Test if the sequence data for run1 is loaded.
-        if not self.relax.data.res.has_key(run1):
+        if not relax_data_store.res.has_key(run1):
             raise RelaxNoSequenceError, run1
 
         # Test if the sequence data for run2 is loaded.
-        if not self.relax.data.res.has_key(run2):
+        if not relax_data_store.res.has_key(run2):
             raise RelaxNoSequenceError, run2
 
         # Function type.
-        self.function_type = self.relax.data.run_types[self.relax.data.run_names.index(run1)]
+        self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(run1)]
 
         # Specific value and error returning function.
         return_value = self.relax.specific_setup.setup('return_value', self.function_type)
@@ -67,7 +74,7 @@ class Value:
         set = self.relax.specific_setup.setup('set', self.function_type)
 
         # Test if the data exists for run2.
-        for i in xrange(len(self.relax.data.res[run2])):
+        for i in xrange(len(relax_data_store.res[run2])):
             # Get the value and error for run2.
             value, error = return_value(run2, i, param)
 
@@ -76,7 +83,7 @@ class Value:
                 raise RelaxValueError, (param, run2)
 
         # Copy the values.
-        for i in xrange(len(self.relax.data.res[run1])):
+        for i in xrange(len(relax_data_store.res[run1])):
             # Get the value and error for run1.
             value, error = return_value(run1, i, param)
 
@@ -98,11 +105,11 @@ class Value:
         self.param = param
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Test if the sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Print the data.
@@ -118,15 +125,15 @@ class Value:
         self.scaling = scaling
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Function type.
-        self.function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+        self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
 
         # Minimisation parameter.
         if self.relax.generic.minimise.return_data_name(param):
@@ -151,9 +158,9 @@ class Value:
             set = self.relax.specific_setup.setup('set', self.function_type)
 
         # Test data corresponding to param already exists.
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for i in xrange(len(relax_data_store.res[self.run])):
             # Skip unselected residues.
-            if not self.relax.data.res[self.run][i].select:
+            if not relax_data_store.res[self.run][i].select:
                 continue
 
             # Get the value and error.
@@ -243,10 +250,10 @@ class Value:
             else:
                 error = None
 
-            # Find the index of self.relax.data.res[self.run] which corresponds to the relaxation data set i.
+            # Find the index of relax_data_store.res[self.run] which corresponds to the relaxation data set i.
             index = None
-            for j in xrange(len(self.relax.data.res[self.run])):
-                if self.relax.data.res[self.run][j].num == res_num and (res_name == None or self.relax.data.res[self.run][j].name == res_name):
+            for j in xrange(len(relax_data_store.res[self.run])):
+                if relax_data_store.res[self.run][j].num == res_num and (res_name == None or relax_data_store.res[self.run][j].name == res_name):
                     index = j
                     break
             if index == None:
@@ -276,11 +283,11 @@ class Value:
         self.force = force
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Function type.
-        self.function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+        self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
 
         # Specific functions.
         self.return_data_name = self.relax.specific_setup.setup('return_data_name', self.function_type)
@@ -304,7 +311,7 @@ class Value:
 
         if self.res_params:
             # Test if the sequence data is loaded.
-            if not self.relax.data.res.has_key(self.run):
+            if not relax_data_store.res.has_key(self.run):
                 raise RelaxNoSequenceError, self.run
 
             # Test if the residue number is a valid regular expression.
@@ -324,19 +331,19 @@ class Value:
             # Test if parameter value already exists.
             if not self.force:
                 # Loop over the residues.
-                for i in xrange(len(self.relax.data.res[self.run])):
+                for i in xrange(len(relax_data_store.res[self.run])):
                     # Skip unselected residues.
-                    if not self.relax.data.res[self.run][i].select:
+                    if not relax_data_store.res[self.run][i].select:
                         continue
 
                     # If 'res_num' is not None, skip the residue if there is no match.
-                    if type(self.res_num) == int and not self.relax.data.res[self.run][i].num == self.res_num:
+                    if type(self.res_num) == int and not relax_data_store.res[self.run][i].num == self.res_num:
                         continue
-                    elif type(self.res_num) == str and not match(self.res_num, `self.relax.data.res[self.run][i].num`):
+                    elif type(self.res_num) == str and not match(self.res_num, `relax_data_store.res[self.run][i].num`):
                         continue
 
                     # If 'res_name' is not None, skip the residue if there is no match.
-                    if self.res_name != None and not match(self.res_name, self.relax.data.res[self.run][i].name):
+                    if self.res_name != None and not match(self.res_name, relax_data_store.res[self.run][i].name):
                         continue
 
                     # Loop over the parameters.
@@ -350,19 +357,19 @@ class Value:
                                 raise RelaxValueError, (param, self.run)
 
             # Loop over the sequence.
-            for i in xrange(len(self.relax.data.res[self.run])):
+            for i in xrange(len(relax_data_store.res[self.run])):
                 # Skip unselected residues.
-                if not self.relax.data.res[self.run][i].select:
+                if not relax_data_store.res[self.run][i].select:
                     continue
 
                 # If 'res_num' is not None, skip the residue if there is no match.
-                if type(self.res_num) == int and not self.relax.data.res[self.run][i].num == self.res_num:
+                if type(self.res_num) == int and not relax_data_store.res[self.run][i].num == self.res_num:
                     continue
-                elif type(self.res_num) == str and not match(self.res_num, `self.relax.data.res[self.run][i].num`):
+                elif type(self.res_num) == str and not match(self.res_num, `relax_data_store.res[self.run][i].num`):
                     continue
 
                 # If 'res_name' is not None, skip the residue if there is no match.
-                if self.res_name != None and not match(self.res_name, self.relax.data.res[self.run][i].name):
+                if self.res_name != None and not match(self.res_name, relax_data_store.res[self.run][i].name):
                     continue
 
                 # Go to the specific code.
@@ -377,8 +384,8 @@ class Value:
         self.relax.generic.minimise.reset_min_stats(self.run)
 
         # Reset the sequence specific minimisation statistics.
-        if self.relax.data.res.has_key(self.run):
-            for i in xrange(len(self.relax.data.res[self.run])):
+        if relax_data_store.res.has_key(self.run):
+            for i in xrange(len(relax_data_store.res[self.run])):
                 self.relax.generic.minimise.reset_min_stats(self.run, i)
 
 
@@ -525,11 +532,11 @@ class Value:
         self.param = param
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Test if the sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Open the file for writing.
@@ -548,7 +555,7 @@ class Value:
         # Get the value and error returning function if required.
         if not return_value:
             # Function type.
-            self.function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+            self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
 
             # Specific value and error returning function.
             return_value = self.relax.specific_setup.setup('return_value', self.function_type)
@@ -557,9 +564,9 @@ class Value:
         file.write("%-5s%-6s%-30s%-30s\n" % ('Num', 'Name', 'Value', 'Error'))
 
         # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[self.run])):
-            # Remap the data structure 'self.relax.data.res[self.run][i]'.
-            data = self.relax.data.res[self.run][i]
+        for i in xrange(len(relax_data_store.res[self.run])):
+            # Remap the data structure 'relax_data_store.res[self.run][i]'.
+            data = relax_data_store.res[self.run][i]
 
             # Get the value and error.
             value, error = return_value(self.run, i, self.param)

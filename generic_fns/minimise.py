@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2005, 2007 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,13 +20,20 @@
 #                                                                             #
 ###############################################################################
 
-
+# Python module imports.
 from Queue import Queue
 from re import search
 
+# relax module imports.
+from data import Data
 #from processes import RelaxPopen3
 from relax_errors import RelaxError, RelaxNoRunError
 from thread_classes import RelaxParentThread, RelaxThread
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Minimise:
@@ -40,11 +47,11 @@ class Minimise:
         """Function for calculating the function value."""
 
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
+        if not run in relax_data_store.run_names:
             raise RelaxNoRunError, run
 
         # Function type.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+        function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
 
         # Specific calculate function setup.
         calculate = self.relax.specific_setup.setup('calculate', function_type)
@@ -54,9 +61,9 @@ class Minimise:
         overfit_deselect(run)
 
         # Monte Carlo simulation calculation.
-        if hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state.has_key(run) and self.relax.data.sim_state[run] == 1:
+        if hasattr(relax_data_store, 'sim_state') and relax_data_store.sim_state.has_key(run) and relax_data_store.sim_state[run] == 1:
             # Loop over the simulations.
-            for i in xrange(self.relax.data.sim_number[run]):
+            for i in xrange(relax_data_store.sim_number[run]):
                 if print_flag:
                     print "Simulation " + `i+1`
                 calculate(run=run, print_flag=print_flag-1, sim_index=i)
@@ -71,11 +78,11 @@ class Minimise:
         """The grid search function."""
 
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
+        if not run in relax_data_store.run_names:
             raise RelaxNoRunError, run
 
         # Function type.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+        function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
 
         # Specific grid search function.
         grid_search = self.relax.specific_setup.setup('grid_search', function_type)
@@ -85,9 +92,9 @@ class Minimise:
         overfit_deselect(run)
 
         # Monte Carlo simulation grid search.
-        if hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state.has_key(run) and self.relax.data.sim_state[run] == 1:
+        if hasattr(relax_data_store, 'sim_state') and relax_data_store.sim_state.has_key(run) and relax_data_store.sim_state[run] == 1:
             # Loop over the simulations.
-            for i in xrange(self.relax.data.sim_number[run]):
+            for i in xrange(relax_data_store.sim_number[run]):
                 if print_flag:
                     print "Simulation " + `i+1`
                 grid_search(run=run, lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag-1, sim_index=i)
@@ -101,11 +108,11 @@ class Minimise:
         """Minimisation function."""
 
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
+        if not run in relax_data_store.run_names:
             raise RelaxNoRunError, run
 
         # Function type.
-        function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+        function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
 
         # Specific minimisation function.
         minimise = self.relax.specific_setup.setup('minimise', function_type)
@@ -119,7 +126,7 @@ class Minimise:
             minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag, sim_index=sim_index)
 
         # Monte Carlo simulation minimisation.
-        elif hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state.has_key(run) and self.relax.data.sim_state[run] == 1:
+        elif hasattr(relax_data_store, 'sim_state') and relax_data_store.sim_state.has_key(run) and relax_data_store.sim_state[run] == 1:
             # Threaded minimisation of simulations.
             if self.relax.thread_data.status:
                 # Print out.
@@ -130,7 +137,7 @@ class Minimise:
 
             # Non-threaded minimisation of simulations.
             else:
-                for i in xrange(self.relax.data.sim_number[run]):
+                for i in xrange(relax_data_store.sim_number[run]):
                     if print_flag:
                         print "Simulation " + `i+1`
                     minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag-1, sim_index=i)
@@ -149,54 +156,54 @@ class Minimise:
         # Global minimisation statistics.
         if index == None:
             # Chi-squared.
-            if hasattr(self.relax.data, 'chi2') and self.relax.data.chi2.has_key(self.run):
-                self.relax.data.chi2[self.run] = None
+            if hasattr(relax_data_store, 'chi2') and relax_data_store.chi2.has_key(self.run):
+                relax_data_store.chi2[self.run] = None
 
             # Iteration count.
-            if hasattr(self.relax.data, 'iter') and self.relax.data.iter.has_key(self.run):
-                self.relax.data.iter[self.run] = None
+            if hasattr(relax_data_store, 'iter') and relax_data_store.iter.has_key(self.run):
+                relax_data_store.iter[self.run] = None
 
             # Function count.
-            if hasattr(self.relax.data, 'f_count') and self.relax.data.f_count.has_key(self.run):
-                self.relax.data.f_count[self.run] = None
+            if hasattr(relax_data_store, 'f_count') and relax_data_store.f_count.has_key(self.run):
+                relax_data_store.f_count[self.run] = None
 
             # Gradient count.
-            if hasattr(self.relax.data, 'g_count') and self.relax.data.g_count.has_key(self.run):
-                self.relax.data.g_count[self.run] = None
+            if hasattr(relax_data_store, 'g_count') and relax_data_store.g_count.has_key(self.run):
+                relax_data_store.g_count[self.run] = None
 
             # Hessian count.
-            if hasattr(self.relax.data, 'h_count') and self.relax.data.h_count.has_key(self.run):
-                self.relax.data.h_count[self.run] = None
+            if hasattr(relax_data_store, 'h_count') and relax_data_store.h_count.has_key(self.run):
+                relax_data_store.h_count[self.run] = None
 
             # Warning.
-            if hasattr(self.relax.data, 'warning') and self.relax.data.warning.has_key(self.run):
-                self.relax.data.warning[self.run] = None
+            if hasattr(relax_data_store, 'warning') and relax_data_store.warning.has_key(self.run):
+                relax_data_store.warning[self.run] = None
 
         # Sequence specific minimisation statistics.
         else:
             # Chi-squared.
-            if hasattr(self.relax.data.res[self.run][index], 'chi2'):
-                self.relax.data.res[self.run][index].chi2 = None
+            if hasattr(relax_data_store.res[self.run][index], 'chi2'):
+                relax_data_store.res[self.run][index].chi2 = None
 
             # Iteration count.
-            if hasattr(self.relax.data.res[self.run][index], 'iter'):
-                self.relax.data.res[self.run][index].iter = None
+            if hasattr(relax_data_store.res[self.run][index], 'iter'):
+                relax_data_store.res[self.run][index].iter = None
 
             # Function count.
-            if hasattr(self.relax.data.res[self.run][index], 'f_count'):
-                self.relax.data.res[self.run][index].f_count = None
+            if hasattr(relax_data_store.res[self.run][index], 'f_count'):
+                relax_data_store.res[self.run][index].f_count = None
 
             # Gradient count.
-            if hasattr(self.relax.data.res[self.run][index], 'g_count'):
-                self.relax.data.res[self.run][index].g_count = None
+            if hasattr(relax_data_store.res[self.run][index], 'g_count'):
+                relax_data_store.res[self.run][index].g_count = None
 
             # Hessian count.
-            if hasattr(self.relax.data.res[self.run][index], 'h_count'):
-                self.relax.data.res[self.run][index].h_count = None
+            if hasattr(relax_data_store.res[self.run][index], 'h_count'):
+                relax_data_store.res[self.run][index].h_count = None
 
             # Warning.
-            if hasattr(self.relax.data.res[self.run][index], 'warning'):
-                self.relax.data.res[self.run][index].warning = None
+            if hasattr(relax_data_store.res[self.run][index], 'warning'):
+                relax_data_store.res[self.run][index].warning = None
 
 
     def return_conversion_factor(self, stat_type):
@@ -305,15 +312,15 @@ class Minimise:
         if index == None:
             # Get the statistic.
             if sim == None:
-                if hasattr(self.relax.data, object_name) and getattr(self.relax.data.res[self.run][index], object_name).has_key(self.run):
-                    stat = getattr(self.relax.data, object_name)[self.run]
+                if hasattr(relax_data_store, object_name) and getattr(relax_data_store.res[self.run][index], object_name).has_key(self.run):
+                    stat = getattr(relax_data_store, object_name)[self.run]
                 else:
                     stat = None
 
             # Get the simulation statistic.
             else:
-                if hasattr(self.relax.data, object_sim) and getattr(self.relax.data.res[self.run][index], object_sim).has_key(self.run):
-                    stat = getattr(self.relax.data, object_sim)[self.run][sim]
+                if hasattr(relax_data_store, object_sim) and getattr(relax_data_store.res[self.run][index], object_sim).has_key(self.run):
+                    stat = getattr(relax_data_store, object_sim)[self.run][sim]
                 else:
                     stat = None
 
@@ -321,15 +328,15 @@ class Minimise:
         else:
             # Get the statistic.
             if sim == None:
-                if hasattr(self.relax.data.res[self.run][index], object_name):
-                    stat = getattr(self.relax.data.res[self.run][index], object_name)
+                if hasattr(relax_data_store.res[self.run][index], object_name):
+                    stat = getattr(relax_data_store.res[self.run][index], object_name)
                 else:
                     stat = None
 
             # Get the simulation statistic.
             else:
-                if hasattr(self.relax.data.res[self.run][index], object_sim):
-                    stat = getattr(self.relax.data.res[self.run][index], object_sim)[sim]
+                if hasattr(relax_data_store.res[self.run][index], object_sim):
+                    stat = getattr(relax_data_store.res[self.run][index], object_sim)[sim]
                 else:
                     stat = None
 
@@ -355,45 +362,45 @@ class Minimise:
         if index == None:
             # Chi-squared.
             if param_name == 'chi2':
-                self.relax.data.chi2[self.run] = value
+                relax_data_store.chi2[self.run] = value
 
             # Iteration count.
             elif param_name == 'iter':
-                self.relax.data.iter[self.run] = value
+                relax_data_store.iter[self.run] = value
 
             # Function call count.
             elif param_name == 'f_count':
-                self.relax.data.f_count[self.run] = value
+                relax_data_store.f_count[self.run] = value
 
             # Gradient call count.
             elif param_name == 'g_count':
-                self.relax.data.g_count[self.run] = value
+                relax_data_store.g_count[self.run] = value
 
             # Hessian call count.
             elif param_name == 'h_count':
-                self.relax.data.h_count[self.run] = value
+                relax_data_store.h_count[self.run] = value
 
         # Residue specific minimisation.
         else:
             # Chi-squared.
             if param_name == 'chi2':
-                self.relax.data.res[self.run][index].chi2 = value
+                relax_data_store.res[self.run][index].chi2 = value
 
             # Iteration count.
             elif param_name == 'iter':
-                self.relax.data.res[self.run][index].iter = value
+                relax_data_store.res[self.run][index].iter = value
 
             # Function call count.
             elif param_name == 'f_count':
-                self.relax.data.res[self.run][index].f_count = value
+                relax_data_store.res[self.run][index].f_count = value
 
             # Gradient call count.
             elif param_name == 'g_count':
-                self.relax.data.res[self.run][index].g_count = value
+                relax_data_store.res[self.run][index].g_count = value
 
             # Hessian call count.
             elif param_name == 'h_count':
-                self.relax.data.res[self.run][index].h_count = value
+                relax_data_store.res[self.run][index].h_count = value
 
 
 
@@ -413,7 +420,7 @@ class RelaxMinParentThread(RelaxParentThread):
         RelaxParentThread.__init__(self)
 
         # The number of jobs.
-        self.num_jobs = self.relax.data.sim_number[self.parent_run]
+        self.num_jobs = relax_data_store.sim_number[self.parent_run]
 
         # Run the main loop.
         self.run()
@@ -498,7 +505,7 @@ class RelaxMinimiseThread(RelaxThread):
         """Code to run after locking the job."""
 
         # Create a run in the parent to temporarily store the data prior to copying into the main run.
-        self.relax.generic.runs.create(run=self.thread_run, run_type=self.relax.data.run_types[self.relax.data.run_names.index(self.parent_run)])
+        self.relax.generic.runs.create(run=self.thread_run, run_type=relax_data_store.run_types[relax_data_store.run_names.index(self.parent_run)])
 
         # Read the data into the run.
         self.relax.generic.results.read(run=self.thread_run, file_data=self.results, print_flag=0)

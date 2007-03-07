@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2005, 2007 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,10 +20,18 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from math import acos, pi, sin
 from Numeric import dot
 
+# relax module imports.
+from data import Data
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoTensorError
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Angles:
@@ -37,34 +45,34 @@ class Angles:
         """Function for calculating the angle defining the XH vector in the diffusion frame."""
 
         # Test if the run exists.
-        if not run in self.relax.data.run_names:
+        if not run in relax_data_store.run_names:
             raise RelaxNoRunError, run
 
         # Test if the PDB file has been loaded.
-        if not self.relax.data.pdb.has_key(run):
+        if not relax_data_store.pdb.has_key(run):
             raise RelaxNoPdbError, run
 
         # Test if sequence data is loaded.
-        if not self.relax.data.res.has_key(run):
+        if not relax_data_store.res.has_key(run):
             raise RelaxNoSequenceError, run
 
         # Test if the diffusion tensor data is loaded.
-        if not self.relax.data.diff.has_key(run):
+        if not relax_data_store.diff.has_key(run):
             raise RelaxNoTensorError, run
 
         # Arguments.
         self.run = run
 
         # Sphere.
-        if self.relax.data.diff[self.run].type == 'sphere':
+        if relax_data_store.diff[self.run].type == 'sphere':
             return
 
         # Spheroid.
-        elif self.relax.data.diff[self.run].type == 'spheroid':
+        elif relax_data_store.diff[self.run].type == 'spheroid':
             self.spheroid_frame()
 
         # Ellipsoid.
-        elif self.relax.data.diff[self.run].type == 'ellipsoid':
+        elif relax_data_store.diff[self.run].type == 'ellipsoid':
             raise RelaxError, "No coded yet."
 
 
@@ -75,21 +83,21 @@ class Angles:
         Dx, Dy, Dz = self.relax.generic.diffusion_tensor.unit_axes()
 
         # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for i in xrange(len(relax_data_store.res[self.run])):
             # Test if the vector exists.
-            if not hasattr(self.relax.data.res[self.run][i], 'xh_vect'):
-                print "No angles could be calculated for residue '" + `self.relax.data.res[self.run][i].num` + " " + self.relax.data.res[self.run][i].name + "'."
+            if not hasattr(relax_data_store.res[self.run][i], 'xh_vect'):
+                print "No angles could be calculated for residue '" + `relax_data_store.res[self.run][i].num` + " " + relax_data_store.res[self.run][i].name + "'."
                 continue
 
             # dz and dx direction cosines.
-            dz = dot(Dz, self.relax.data.res[self.run][i].xh_vect)
-            dx = dot(Dx, self.relax.data.res[self.run][i].xh_vect)
+            dz = dot(Dz, relax_data_store.res[self.run][i].xh_vect)
+            dx = dot(Dx, relax_data_store.res[self.run][i].xh_vect)
 
             # Calculate the polar angle theta.
-            self.relax.data.res[self.run][i].theta = acos(dz)
+            relax_data_store.res[self.run][i].theta = acos(dz)
 
             # Calculate the azimuthal angle phi.
-            self.relax.data.res[self.run][i].phi = acos(dx / sin(self.relax.data.res[self.run][i].theta))
+            relax_data_store.res[self.run][i].phi = acos(dx / sin(relax_data_store.res[self.run][i].theta))
 
 
     def spheroid_frame(self):
@@ -99,14 +107,14 @@ class Angles:
         Dpar = self.relax.generic.diffusion_tensor.unit_axes()
 
         # Loop over the sequence.
-        for i in xrange(len(self.relax.data.res[self.run])):
+        for i in xrange(len(relax_data_store.res[self.run])):
             # Test if the vector exists.
-            if not hasattr(self.relax.data.res[self.run][i], 'xh_vect'):
-                print "No angles could be calculated for residue '" + `self.relax.data.res[self.run][i].num` + " " + self.relax.data.res[self.run][i].name + "'."
+            if not hasattr(relax_data_store.res[self.run][i], 'xh_vect'):
+                print "No angles could be calculated for residue '" + `relax_data_store.res[self.run][i].num` + " " + relax_data_store.res[self.run][i].name + "'."
                 continue
 
             # Calculate alpha.
-            self.relax.data.res[self.run][i].alpha = acos(dot(Dpar, self.relax.data.res[self.run][i].xh_vect))
+            relax_data_store.res[self.run][i].alpha = acos(dot(Dpar, relax_data_store.res[self.run][i].xh_vect))
 
 
     def wrap_angles(self, angle, lower, upper):

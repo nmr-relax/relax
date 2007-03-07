@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2006-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,10 +20,18 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from os import popen
 from string import split
 
+# relax module imports.
+from data import Data
 from relax_errors import RelaxError, RelaxImplementError, RelaxNoRunError, RelaxNoSequenceError
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Pymol:
@@ -43,11 +51,11 @@ class Pymol:
         self.run = run
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Identifier.
-        pdb_file = self.relax.data.pdb[self.run].file_name
+        pdb_file = relax_data_store.pdb[self.run].file_name
         id = self.relax.IO.file_root(pdb_file)
 
         # Hide everything.
@@ -73,7 +81,7 @@ class Pymol:
         self.run = run
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Pass the command to PyMOL.
@@ -84,7 +92,7 @@ class Pymol:
         """Function for creating an array of PyMOL commands."""
 
         # Function type.
-        self.function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+        self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
 
         # Specific PyMOL macro creation function.
         pymol_macro = self.relax.specific_setup.setup('pymol_macro', self.function_type)
@@ -108,11 +116,11 @@ class Pymol:
         raise RelaxImplementError
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Test if the sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Create the macro.
@@ -138,7 +146,7 @@ class Pymol:
         self.pipe_write("reinitialize")
 
         # Open the PDB file.
-        self.pipe_write("load " + self.relax.data.pdb[self.run].file_name)
+        self.pipe_write("load " + relax_data_store.pdb[self.run].file_name)
 
 
     def pipe_open(self):
@@ -148,7 +156,7 @@ class Pymol:
         self.relax.IO.test_binary('pymol')
 
         # Open the PyMOL pipe.
-        self.relax.data.pymol = popen("pymol -qpK", 'w', 0)
+        relax_data_store.pymol = popen("pymol -qpK", 'w', 0)
 
         # Execute the command history.
         if len(self.command_history) > 0:
@@ -156,7 +164,7 @@ class Pymol:
             return
 
         # Test if the PDB file has been loaded.
-        if hasattr(self.relax.data, 'pdb') and self.relax.data.pdb.has_key(self.run):
+        if hasattr(relax_data_store, 'pdb') and relax_data_store.pdb.has_key(self.run):
             self.open_pdb()
 
 
@@ -164,12 +172,12 @@ class Pymol:
         """Function for testing if the PyMOL pipe is open."""
 
         # Test if a pipe has been opened.
-        if not hasattr(self.relax.data, 'pymol'):
+        if not hasattr(relax_data_store, 'pymol'):
             return 0
 
         # Test if the pipe has been broken.
         try:
-            self.relax.data.pymol.write('\n')
+            relax_data_store.pymol.write('\n')
         except IOError:
             return 0
 
@@ -188,7 +196,7 @@ class Pymol:
             self.pipe_open()
 
         # Write the command to the pipe.
-        self.relax.data.pymol.write(command + '\n')
+        relax_data_store.pymol.write(command + '\n')
 
         # Place the command in the command history.
         if store_command:
@@ -202,7 +210,7 @@ class Pymol:
         self.run = run
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Read in the tensor PDB file.
@@ -275,7 +283,7 @@ class Pymol:
         self.run = run
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # The file root.
@@ -320,11 +328,11 @@ class Pymol:
         raise RelaxImplementError
 
         # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
+        if not self.run in relax_data_store.run_names:
             raise RelaxNoRunError, self.run
 
         # Test if the sequence data is loaded.
-        if not self.relax.data.res.has_key(self.run):
+        if not relax_data_store.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Create the macro.

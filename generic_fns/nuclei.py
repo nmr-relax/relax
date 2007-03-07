@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003-2004, 2007 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,9 +20,17 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from re import match
 
+# relax module imports.
+from data import Data
 from relax_errors import RelaxInvalidError
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Nuclei:
@@ -33,26 +41,26 @@ class Nuclei:
 
 
     def find_nucleus(self):
-        """Function for finding the nucleus corresponding to 'self.relax.data.gx'."""
+        """Function for finding the nucleus corresponding to 'relax_data_store.gx'."""
 
         # Not set.
-        if not hasattr(self.relax.data, 'gx'):
+        if not hasattr(relax_data_store, 'gx'):
             return
 
         # Nitrogen.
-        if self.relax.data.gx == self.gn():
+        if relax_data_store.gx == self.gn():
             return 'N'
 
         # Carbon
-        if self.relax.data.gx == self.gc():
+        if relax_data_store.gx == self.gc():
             return 'C'
 
         # Oxygen.
-        if self.relax.data.gx == self.go():
+        if relax_data_store.gx == self.go():
             return 'O'
 
         # Phosphate.
-        if self.relax.data.gx == self.gp():
+        if relax_data_store.gx == self.gp():
             return 'P'
 
 
@@ -94,26 +102,26 @@ class Nuclei:
 
         # Nitrogen.
         if match('[Nn]', heteronuc):
-            self.relax.data.gx = self.gn()
+            relax_data_store.gx = self.gn()
 
         # Carbon
         elif match('[Cc]', heteronuc):
-            self.relax.data.gx = self.gc()
+            relax_data_store.gx = self.gc()
 
         # Oxygen.
         elif match('[Oo]', heteronuc):
-            self.relax.data.gx = self.go()
+            relax_data_store.gx = self.go()
 
         # Phosphate.
         elif match('[Pp]', heteronuc):
-            self.relax.data.gx = self.gp()
+            relax_data_store.gx = self.gp()
 
         # Incorrect arguement.
         else:
             raise RelaxInvalidError, ('heteronucleus', heteronuc)
 
         # Set the proton gyromagnetic ratio.
-        self.relax.data.gh = self.gh()
+        relax_data_store.gh = self.gh()
 
         # Calculate the ratio of the gyromagnetic ratios.
-        self.relax.data.g_ratio = self.relax.data.gh / self.relax.data.gx
+        relax_data_store.g_ratio = relax_data_store.gh / relax_data_store.gx

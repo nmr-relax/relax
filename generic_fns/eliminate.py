@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2005, 2007 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,9 +20,17 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from copy import deepcopy
 
+# relax module imports.
+from data import Data
 from relax_errors import RelaxError, RelaxNoRunError
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Eliminate:
@@ -41,11 +49,11 @@ class Eliminate:
         # Loop over the runs.
         for self.run in self.runs:
             # Test if the run exists.
-            if not self.run in self.relax.data.run_names:
+            if not self.run in relax_data_store.run_names:
                 raise RelaxNoRunError, self.run
 
             # Function type.
-            function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
+            function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
 
             # Specific eliminate, parameter names, parameter values, number of instances, and unselect function setup.
             eliminate = self.relax.specific_setup.setup('eliminate', function_type)
@@ -57,7 +65,7 @@ class Eliminate:
             # Get the number of instances and loop over them.
             for i in xrange(num_instances(self.run)):
                 # Determine if simulations are active for the run.
-                if hasattr(self.relax.data, 'sim_state') and self.relax.data.sim_state.has_key(self.run) and self.relax.data.sim_state[self.run] == 1:
+                if hasattr(relax_data_store, 'sim_state') and relax_data_store.sim_state.has_key(self.run) and relax_data_store.sim_state[self.run] == 1:
                     sim_state = 1
                 else:
                     sim_state = 0
@@ -96,7 +104,7 @@ class Eliminate:
 
                 else:
                     # Loop over the simulations.
-                    for j in xrange(self.relax.data.sim_number[self.run]):
+                    for j in xrange(relax_data_store.sim_number[self.run]):
                         # Get the parameter names and values.
                         names = param_names(self.run, i)
                         values = param_values(self.run, i, sim_index=j)
