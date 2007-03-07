@@ -29,7 +29,7 @@ from re import match, search
 from string import replace, split
 import sys
 
-from base_class import Common_functions
+from specific_fns.base_class import Common_functions
 from float import isNaN,isInf 
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
