@@ -65,7 +65,7 @@ except ImportError:
 
 # relax modules.
 from colour import Colour
-from data.main import Data
+from data import Data
 from io import IO
 from generic_fns.main import Generic
 from prompt.gpl import gpl
