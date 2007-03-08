@@ -295,8 +295,8 @@ class Test_suite:
         sys.stdout.write("\n\n\n")
         self.heading("Results of the test suite")
 
-        # Flag for all tests.
-        self.global_pass = 1
+        # Synopsis.
+        global_pass = 1
 
 
         # Run tests.
@@ -307,6 +307,10 @@ class Test_suite:
 
         # Loop over the tests.
         for test in self.run_test_array:
+            # Synopsis.
+            global_pass = global_pass and test.passed
+
+            # Print the summary line.
             self.summary_line(test)
 
 
@@ -318,6 +322,10 @@ class Test_suite:
 
         # Loop over the tests.
         for test in self.seq_test_array:
+            # Synopsis.
+            global_pass = global_pass and test.passed
+
+            # Print the summary line.
             self.summary_line(test)
 
 
@@ -329,6 +337,10 @@ class Test_suite:
 
         # Loop over the tests.
         for test in self.diff_tensor_test_array:
+            # Synopsis.
+            global_pass = global_pass and test.passed
+
+            # Print the summary line.
             self.summary_line(test)
 
 
@@ -340,6 +352,10 @@ class Test_suite:
 
         # Loop over the tests.
         for test in self.angles_test_array:
+            # Synopsis.
+            global_pass = global_pass and test.passed
+
+            # Print the summary line.
             self.summary_line(test)
 
 
@@ -351,6 +367,10 @@ class Test_suite:
 
         # Loop over the tests.
         for test in self.relax_fit_test_array:
+            # Synopsis.
+            global_pass = global_pass and test.passed
+
+            # Print the summary line.
             self.summary_line(test)
 
 
@@ -362,6 +382,10 @@ class Test_suite:
 
         # Loop over the tests.
         for test in self.mf_test_array:
+            # Synopsis.
+            global_pass = global_pass and test.passed
+
+            # Print the summary line.
             self.summary_line(test)
 
 
@@ -373,6 +397,10 @@ class Test_suite:
 
         # Loop over the tests.
         for test in self.jw_test_array:
+            # Synopsis.
+            global_pass = global_pass and test.passed
+
+            # Print the summary line.
             self.summary_line(test)
 
 
@@ -384,6 +412,10 @@ class Test_suite:
 
         # Loop over the tests.
         for test in self.modsel_test_array:
+            # Synopsis.
+            global_pass = global_pass and test.passed
+
+            # Print the summary line.
             self.summary_line(test)
 
 
@@ -395,6 +427,10 @@ class Test_suite:
 
         # Loop over the tests.
         for test in self.generic_test_array:
+            # Synopsis.
+            global_pass = global_pass and test.passed
+
+            # Print the summary line.
             self.summary_line(test)
 
 
@@ -409,7 +445,7 @@ class Test_suite:
             sys.stdout.write(".")
 
         # Global pass.
-        if self.global_pass:
+        if global_pass:
             sys.stdout.write(" %-10s\n" % "[ OK ]")
 
         # Global fail.
