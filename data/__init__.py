@@ -22,7 +22,7 @@
 
 # Python module imports.
 from re import match
-from types import DictType, ListType
+from types import DictType
 
 
 __all__ = [ 'data_classes',
@@ -30,10 +30,8 @@ __all__ = [ 'data_classes',
             'diff_tensor_auto_objects',
             'main' ]
 
-# Global data.
-##############
 
-class Data(object):
+class Data(DictType):
     """The relax data storage object."""
 
     # Singleton initialisation, the reference to the single instance of this class.
@@ -54,7 +52,7 @@ class Data(object):
 
         # Create a new instance if none exists.
         if self.__instance is None:
-            self.__instance = object.__new__(self, *args, **kargs)
+            self.__instance = DictType.__new__(self, *args, **kargs)
 
         # Return the class instance.
         return self.__instance
