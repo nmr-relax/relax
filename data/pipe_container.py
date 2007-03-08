@@ -21,11 +21,10 @@
 ###############################################################################
 
 # Python module imports.
-from re import match, search
-from types import DictType, ListType
+from re import match
 
 # relax module imports.
-from data_classes import Element, Residue, SpecificData
+from data_classes import Residue, SpecificData
 from diff_tensor import DiffTensorData
 
 
