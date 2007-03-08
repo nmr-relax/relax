@@ -20,11 +20,12 @@
 #                                                                             #
 ###############################################################################
 
-
+# Python module imports.
 from math import pi
-from re import match
+from re import match, search
 from types import DictType, ListType
 
+# relax module imports.
 from data_classes import Element, Residue, SpecificData
 from diff_tensor import DiffTensorData
 
@@ -96,3 +97,18 @@ class Data(object):
                 continue
             text = text + "  " + name + ", " + `type(getattr(self, name))` + "\n"
         return text
+
+
+    def __reset__(self):
+        """"""
+
+        # Get the keys of self.__dict__.
+        keys = self.__dict__.keys()
+
+        # Loop over the keys and delete the corresponding object.
+        for key in keys:
+            # Delete the object.
+            del self.__dict__[key]
+
+        # Rerun the __init__() method.
+        self.__init__()
