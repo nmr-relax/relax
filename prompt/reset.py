@@ -20,6 +20,13 @@
 #                                                                             #
 ###############################################################################
 
+# relax module imports.
+from data import Data
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 class Reset:
     def __init__(self, relax):
