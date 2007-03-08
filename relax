@@ -65,7 +65,6 @@ except ImportError:
 
 # relax modules.
 from colour import Colour
-from data import Data
 from io import IO
 from generic_fns.main import Generic
 from prompt.gpl import gpl
@@ -105,9 +104,6 @@ class Relax:
 
         # Set the program introduction string to nothing.
         self.intro_string = None
-
-        # The program data storage object.
-        self.data = Data()
 
         # The thread data storage object.
         self.thread_data = ThreadData()
