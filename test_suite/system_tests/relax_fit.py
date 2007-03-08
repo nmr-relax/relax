@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2006-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,7 +20,16 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
+
+# relax module imports.
+from data import Data
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Relax_fit:
@@ -64,10 +73,10 @@ class Relax_fit:
         print "\nTesting the integrity of the loaded data.\n"
 
         # Loop over the residues of the original data.
-        for i in xrange(len(self.relax.data.res['rx'])):
+        for i in xrange(len(relax_data_store.res['rx'])):
             # Aliases
-            orig_data = self.relax.data.res['rx'][i]
-            new_data = self.relax.data.res[self.run][i]
+            orig_data = relax_data_store.res['rx'][i]
+            new_data = relax_data_store.res[self.run][i]
 
             # Residue alias.
             self.orig_res = `orig_data.num` + orig_data.name

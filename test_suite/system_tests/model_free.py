@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2006-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,8 +20,18 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from math import pi
 import sys
+
+# relax module imports.
+from data import Data
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
+
 
 
 class Mf:
@@ -211,12 +221,12 @@ class Mf:
         self.relax.interpreter._Model_free.create_model(self.run, model='m4', equation='mf_orig', params=['S2', 'te', 'Rex'])
 
         # Test the model.
-        if self.relax.data.res[self.run][1].model != 'm4':
+        if relax_data_store.res[self.run][1].model != 'm4':
             print "The model has not been selected."
             return
 
         # Test the parameters.
-        if self.relax.data.res[self.run][1].params != ['S2', 'te', 'Rex']:
+        if relax_data_store.res[self.run][1].params != ['S2', 'te', 'Rex']:
             print "The parameters are incorrect."
             return
 
@@ -372,7 +382,7 @@ class Mf:
         ########################################################
 
         # Alias the data structure.
-        data = self.relax.data.res[self.run][1]
+        data = relax_data_store.res[self.run][1]
 
         # Error tolerance.
         error = 1e-8
@@ -433,7 +443,7 @@ class Mf:
         ########################################################
 
         # Alias the data structure.
-        data = self.relax.data.res[self.run][1]
+        data = relax_data_store.res[self.run][1]
 
         # Error tolerance.
         error = 1e-8
@@ -494,7 +504,7 @@ class Mf:
         ########################################################
 
         # Alias the data structure.
-        data = self.relax.data.res[self.run][1]
+        data = relax_data_store.res[self.run][1]
 
         # Error tolerance.
         error = 1e-8
@@ -555,7 +565,7 @@ class Mf:
         ########################################################
 
         # Alias the data structure.
-        data = self.relax.data.res[self.run][1]
+        data = relax_data_store.res[self.run][1]
 
         # Error tolerance.
         error = 1e-8
@@ -617,7 +627,7 @@ class Mf:
         ########################################################
 
         # Alias the data structure.
-        data = self.relax.data.res[self.run][1]
+        data = relax_data_store.res[self.run][1]
 
         # Error tolerance.
         error = 1e-8
@@ -679,7 +689,7 @@ class Mf:
         ########################################################
 
         # Alias the data structure.
-        data = self.relax.data.res[self.run][1]
+        data = relax_data_store.res[self.run][1]
 
         # Error tolerance.
         error = 1e-8
@@ -740,7 +750,7 @@ class Mf:
         ########################################################
 
         # Alias the data structure.
-        data = self.relax.data.res[self.run][1]
+        data = relax_data_store.res[self.run][1]
 
         # Error tolerance.
         error = 1e-8
@@ -801,7 +811,7 @@ class Mf:
         ########################################################
 
         # Alias the data structure.
-        data = self.relax.data.res[self.run][1]
+        data = relax_data_store.res[self.run][1]
 
         # Error tolerance.
         error = 1e-8
@@ -856,7 +866,7 @@ class Mf:
         ########################################################
 
         # Alias the data structure.
-        data = self.relax.data.res[self.run][1]
+        data = relax_data_store.res[self.run][1]
 
         # Error tolerance.
         error = 1e-8
@@ -947,12 +957,12 @@ class Mf:
         self.relax.interpreter._Relax_data.read(self.run, 'R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
 
         # Test the data.
-        if self.relax.data.res[self.run][1].relax_data[0] != 1.3874977659397683:
+        if relax_data_store.res[self.run][1].relax_data[0] != 1.3874977659397683:
             print "The relaxation data does not match."
             return
 
         # Test the error.
-        if self.relax.data.res[self.run][1].relax_error[0] != 0.027749955318795365:
+        if relax_data_store.res[self.run][1].relax_error[0] != 0.027749955318795365:
             print "The relaxation error does not match."
             return
 
@@ -978,20 +988,20 @@ class Mf:
         print "\nTesting the integrity of the loaded data.\n"
 
         # Diffusion tensor type.
-        if self.relax.data.diff['orig'].type != self.relax.data.diff[self.run].type:
+        if relax_data_store.diff['orig'].type != relax_data_store.diff[self.run].type:
             print "The diffusion tensor types do not match."
             return
 
         # tm.
-        if self.relax.data.diff['orig'].tm != self.relax.data.diff[self.run].tm:
+        if relax_data_store.diff['orig'].tm != relax_data_store.diff[self.run].tm:
             print "The tm values do not match."
             return
 
         # Loop over the residues of the original data.
-        for i in xrange(len(self.relax.data.res['orig'])):
+        for i in xrange(len(relax_data_store.res['orig'])):
             # Aliases
-            orig_data = self.relax.data.res['orig'][i]
-            new_data = self.relax.data.res[self.run][i]
+            orig_data = relax_data_store.res['orig'][i]
+            new_data = relax_data_store.res[self.run][i]
 
             # Residue alias.
             self.orig_res = `orig_data.num` + orig_data.name
@@ -1161,12 +1171,12 @@ class Mf:
         self.relax.interpreter._Model_free.select_model(self.run, model='m4')
 
         # Test the model.
-        if self.relax.data.res[self.run][1].model != 'm4':
+        if relax_data_store.res[self.run][1].model != 'm4':
             print "The model has not been selected."
             return
 
         # Test the parameters.
-        if self.relax.data.res[self.run][1].params != ['S2', 'te', 'Rex']:
+        if relax_data_store.res[self.run][1].params != ['S2', 'te', 'Rex']:
             print "The parameters are incorrect."
             return
 
@@ -1192,7 +1202,7 @@ class Mf:
         self.relax.interpreter._Value.set(self.run, 1.02 * 1e-10, 'bond_length')
 
         # Test the value.
-        if self.relax.data.res[self.run][1].r != 1.02 * 1e-10:
+        if relax_data_store.res[self.run][1].r != 1.02 * 1e-10:
             print "The bond length has not been set correctly."
             return
 
@@ -1218,7 +1228,7 @@ class Mf:
         self.relax.interpreter._Value.set(self.run, -170 * 1e-6, 'csa')
 
         # Test the value.
-        if self.relax.data.res[self.run][1].csa != -170*1e-6:
+        if relax_data_store.res[self.run][1].csa != -170*1e-6:
             print "The CSA value has not been set correctly."
             return
 
@@ -1244,12 +1254,12 @@ class Mf:
         self.relax.interpreter._Value.set(self.run, [-170 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
 
         # Test the CSA value.
-        if self.relax.data.res[self.run][1].csa != -170*1e-6:
+        if relax_data_store.res[self.run][1].csa != -170*1e-6:
             print "The CSA value has not been set correctly."
             return
 
         # Test the bond length.
-        if self.relax.data.res[self.run][1].r != 1.02 * 1e-10:
+        if relax_data_store.res[self.run][1].r != 1.02 * 1e-10:
             print "The bond length has not been set correctly."
             return
 

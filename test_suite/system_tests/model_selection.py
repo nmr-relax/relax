@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2006-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,7 +20,16 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
+
+# relax module imports.
+from data import Data
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Modsel:
@@ -71,14 +80,14 @@ class Modsel:
         self.relax.interpreter._Diffusion_tensor.init('spheroid', (1e-9, 0, 0, 0), fixed=0)
 
         # Set some global stats.
-        self.relax.data.chi2['sphere'] = 200
-        self.relax.data.chi2['spheroid'] = 0
+        relax_data_store.chi2['sphere'] = 200
+        relax_data_store.chi2['spheroid'] = 0
 
         # Model selection.
         self.relax.interpreter._Modsel.model_selection(method='AIC', modsel_run='aic')
 
         # Test if the spheroid has been selected.
-        if not self.relax.data.diff.has_key('aic') or not self.relax.data.diff['aic'].type == 'spheroid':
+        if not relax_data_store.diff.has_key('aic') or not relax_data_store.diff['aic'].type == 'spheroid':
             print "\nThe spheroid diffusion tensor has not been selected."
             return
 

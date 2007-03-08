@@ -1,6 +1,11 @@
 # Script for generating synthetic relaxation data.
 
 
+# The relax data storage object.
+from data import Data
+relax_data_store = Data()
+
+
 def back_calc(name):
     """Function for back calculating the relaxation data."""
 
@@ -16,11 +21,11 @@ def errors(name):
     """Function for generating relaxation data errors."""
 
     # Loop over the sequence.
-    for i in xrange(len(self.relax.data.res[name])):
+    for i in xrange(len(relax_data_store.res[name])):
         # Loop over the relaxation data.
-        for j in xrange(len(self.relax.data.res[name][i].relax_data)):
+        for j in xrange(len(relax_data_store.res[name][i].relax_data)):
             # Alias.
-            data = self.relax.data.res[name][i]
+            data = relax_data_store.res[name][i]
 
             # 600 MHz NOE.
             if data.ri_labels[j] == 'NOE' and data.frq_labels[data.remap_table[j]] == '600':

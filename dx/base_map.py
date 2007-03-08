@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2005, 2007 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,11 +20,18 @@
 #                                                                             #
 ###############################################################################
 
-
+# Python module imports.
 from Numeric import Float64, array, zeros
 from time import asctime, localtime
 
+# relax module imports.
+from data import Data
 from relax_errors import RelaxError, RelaxUnknownParamError
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Base_Map:
@@ -253,7 +260,7 @@ class Base_Map:
         #############
 
         # Function type.
-        self.function_type = self.relax.data.run_types[self.relax.data.run_names.index(run)]
+        self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
 
         # Function arguments.
         self.run = run

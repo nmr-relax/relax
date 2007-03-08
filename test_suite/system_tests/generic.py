@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2006-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,7 +20,16 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
+
+# relax module imports.
+from data import Data
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Generic:
@@ -64,11 +73,11 @@ class Generic:
         self.relax.interpreter._Value.set('orig2', 0.7, 'S2', res_num=8)
 
         # Calculate the difference and assign it to residue 8 (located in position 7).
-        diff = self.relax.data.res['orig1'][7].s2 - self.relax.data.res['orig2'][7].s2
+        diff = relax_data_store.res['orig1'][7].s2 - relax_data_store.res['orig2'][7].s2
         self.relax.interpreter._Value.set('new', diff, 'S2', res_num=8)
 
         # Test if the difference is 0.2!
-        if abs(self.relax.data.res['new'][7].s2 - 0.2) > 0.00001:
+        if abs(relax_data_store.res['new'][7].s2 - 0.2) > 0.00001:
             print "The difference of '" + `diff` + "' should be equal to 0.2."
             return
 

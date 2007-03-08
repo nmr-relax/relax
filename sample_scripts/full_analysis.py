@@ -11,8 +11,12 @@ from os import getcwd, listdir
 from re import search
 from string import lower
 
-# The RelaxError system.
+# relax module imports.
+from data import Data
 from relax_errors import RelaxError
+
+# The relax data storage object.
+relax_data_store = Data()
 
 
 class Main:
@@ -285,7 +289,7 @@ class Main:
             ##########################
 
             # Fix the diffusion tensor (if it exists!).
-            if self.relax.data.diff.has_key('final'):
+            if relax_data_store.diff.has_key('final'):
                 fix('final', 'diff')
 
             # Simulations.
@@ -329,9 +333,9 @@ class Main:
         ###################
 
         print "Chi-squared test:"
-        print "    chi2 (k-1): " + `self.relax.data.chi2['previous']`
-        print "    chi2 (k):   " + `self.relax.data.chi2[run]`
-        if self.relax.data.chi2['previous'] == self.relax.data.chi2[run]:
+        print "    chi2 (k-1): " + `relax_data_store.chi2['previous']`
+        print "    chi2 (k):   " + `relax_data_store.chi2[run]`
+        if relax_data_store.chi2['previous'] == relax_data_store.chi2[run]:
             print "    The chi-squared value has converged.\n"
         else:
             print "    The chi-squared value has not converged.\n"
@@ -345,13 +349,13 @@ class Main:
 
         # Create a string representation of the model-free models of the previous run.
         prev_models = ''
-        for i in xrange(len(self.relax.data.res['previous'])):
-            prev_models = prev_models + self.relax.data.res['previous'][i].model
+        for i in xrange(len(relax_data_store.res['previous'])):
+            prev_models = prev_models + relax_data_store.res['previous'][i].model
 
         # Create a string representation of the model-free models of the current run.
         curr_models = ''
-        for i in xrange(len(self.relax.data.res[run])):
-            curr_models = curr_models + self.relax.data.res[run][i].model
+        for i in xrange(len(relax_data_store.res[run])):
+            curr_models = curr_models + relax_data_store.res[run][i].model
 
         # The test.
         if prev_models == curr_models:
@@ -379,8 +383,8 @@ class Main:
             # Tests.
             for param in params:
                 # Get the parameter values.
-                prev_val = getattr(self.relax.data.diff['previous'], param)
-                curr_val = getattr(self.relax.data.diff[run], param)
+                prev_val = getattr(relax_data_store.diff['previous'], param)
+                curr_val = getattr(relax_data_store.diff[run], param)
 
                 # Test if not identical.
                 if prev_val != curr_val:
@@ -393,21 +397,21 @@ class Main:
             # Skip the rest if the diffusion tensor parameters have not converged.
             if params_converged:
                 # Loop over the spin systems.
-                for i in xrange(len(self.relax.data.res[run])):
+                for i in xrange(len(relax_data_store.res[run])):
                     # Skip if the parameters have not converged.
                     if not params_converged:
                         break
 
                     # Loop over the parameters.
-                    for j in xrange(len(self.relax.data.res[run][i].params)):
+                    for j in xrange(len(relax_data_store.res[run][i].params)):
                         # Get the parameter values.
-                        prev_val = getattr(self.relax.data.res['previous'][i], lower(self.relax.data.res['previous'][i].params[j]))
-                        curr_val = getattr(self.relax.data.res[run][i], lower(self.relax.data.res[run][i].params[j]))
+                        prev_val = getattr(relax_data_store.res['previous'][i], lower(relax_data_store.res['previous'][i].params[j]))
+                        curr_val = getattr(relax_data_store.res[run][i], lower(relax_data_store.res[run][i].params[j]))
 
                         # Test if not identical.
                         if prev_val != curr_val:
-                            print "    Spin system: " + `self.relax.data.res[run][i].num` + ' ' + self.relax.data.res[run][i].name
-                            print "    Parameter:   " + self.relax.data.res[run][i].params[j]
+                            print "    Spin system: " + `relax_data_store.res[run][i].num` + ' ' + relax_data_store.res[run][i].name
+                            print "    Parameter:   " + relax_data_store.res[run][i].params[j]
                             print "    Value (k-1): " + `prev_val`
                             print "    Value (k):   " + `curr_val`
                             print "    The model-free parameters have not converged.\n"

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2005, 2007 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,11 +20,19 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from os import system
 from re import search
 
+# relax module imports.
+from data import Data
 from isosurface_3D import Iso3D
 from relax_errors import RelaxError, RelaxNoResError
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class OpenDX:
@@ -44,8 +52,8 @@ class OpenDX:
         # Residue index.
         index = None
         if res_num:
-            for i in xrange(len(self.relax.data.res[run])):
-                if self.relax.data.res[run][i].num == res_num:
+            for i in xrange(len(relax_data_store.res[run])):
+                if relax_data_store.res[run][i].num == res_num:
                     index = i
                     break
             if index == None:

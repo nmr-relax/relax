@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,10 +20,17 @@
 #                                                                             #
 ###############################################################################
 
-
+# Python module imports.
 from Numeric import Float64, zeros
 
+# relax module imports.
+from data import Data
 from base_map import Base_Map
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
 
 
 class Iso3D(Base_Map):
@@ -78,8 +85,8 @@ class Iso3D(Base_Map):
 
         # Fix the diffusion tensor.
         unfix = 0
-        if self.relax.data.diff.has_key(self.run) and not self.relax.data.diff[self.run].fixed:
-            self.relax.data.diff[self.run].fixed = 1
+        if relax_data_store.diff.has_key(self.run) and not relax_data_store.diff[self.run].fixed:
+            relax_data_store.diff[self.run].fixed = 1
             unfix = 1
 
         # Initial value of the first parameter.
@@ -127,7 +134,7 @@ class Iso3D(Base_Map):
 
         # Unfix the diffusion tensor.
         if unfix:
-            self.relax.data.diff[self.run].fixed = 0
+            relax_data_store.diff[self.run].fixed = 0
 
 
     def general_text(self):

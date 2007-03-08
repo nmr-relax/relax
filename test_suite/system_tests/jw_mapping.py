@@ -20,7 +20,17 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
+
+# relax module imports.
+from data import Data
+
+
+# The relax data storage object.
+relax_data_store = Data()
+
+
 
 
 class Jw:
@@ -72,28 +82,28 @@ class Jw:
         jwx = [5.2475572036231835e-12, 4.6479921863578077e-12]
 
         # Loop over residues.
-        for index,residue in enumerate(self.relax.data.res[self.run]):
+        for index,residue in enumerate(relax_data_store.res[self.run]):
             
             # Residues -2 and -1 have data.
             if index == 0 or index == 1:
-                if not self.relax.data.res[self.run][index].select:
-                    print 'Residue', self.relax.data.res[self.run][index].num, 'unexpectedly not selected'
+                if not relax_data_store.res[self.run][index].select:
+                    print 'Residue', relax_data_store.res[self.run][index].num, 'unexpectedly not selected'
                     return
 
-                if abs(self.relax.data.res[self.run][index].j0 - j0[index]) > j0[index]/1e6:
-                    print 'Error in residue', self.relax.data.res[self.run][index].num, 'j0 calculated value'
+                if abs(relax_data_store.res[self.run][index].j0 - j0[index]) > j0[index]/1e6:
+                    print 'Error in residue', relax_data_store.res[self.run][index].num, 'j0 calculated value'
                     return
-                if abs(self.relax.data.res[self.run][index].jwh - jwh[index]) > jwh[index]/1e6:
-                    print 'Error in residue', self.relax.data.res[self.run][index].num, 'jwh calculated value'
+                if abs(relax_data_store.res[self.run][index].jwh - jwh[index]) > jwh[index]/1e6:
+                    print 'Error in residue', relax_data_store.res[self.run][index].num, 'jwh calculated value'
                     return
-                if abs(self.relax.data.res[self.run][index].jwx - jwx[index]) > jwx[index]/1e6:
-                    print 'Error in residue', self.relax.data.res[self.run][index].num, 'jwx calculated value'
+                if abs(relax_data_store.res[self.run][index].jwx - jwx[index]) > jwx[index]/1e6:
+                    print 'Error in residue', relax_data_store.res[self.run][index].num, 'jwx calculated value'
                     return
 
             # Other residues have insufficient data.
             else:
-                if self.relax.data.res[self.run][index].select:
-                    print 'Residue', self.relax.data.res[self.run][index].num, 'unexpectedly selected'
+                if relax_data_store.res[self.run][index].select:
+                    print 'Residue', relax_data_store.res[self.run][index].num, 'unexpectedly selected'
                     return
 
         # Success.
@@ -153,11 +163,11 @@ class Jw:
         self.relax.interpreter._Value.set(self.run, csa, 'csa')
 
         # Test values.
-        for i in xrange( len(self.relax.data.res[self.run]) ):
-            if self.relax.data.res[self.run][i].r != bond_length:
+        for i in xrange( len(relax_data_store.res[self.run]) ):
+            if relax_data_store.res[self.run][i].r != bond_length:
                 print 'Value of bond_length has not been set correctly'
                 return
-            if self.relax.data.res[self.run][i].csa != csa:
+            if relax_data_store.res[self.run][i].csa != csa:
                 print 'Value of csa has not been set correctly'
                 return
 
