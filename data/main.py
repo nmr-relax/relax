@@ -30,6 +30,10 @@ from data_classes import Element, Residue, SpecificData
 from diff_tensor import DiffTensorData
 
 
+__all__ = [ 'data_classes',
+            'diff_tensor',
+            'diff_tensor_auto_objects',
+            'main' ]
 
 # Global data.
 ##############
