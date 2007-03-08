@@ -89,7 +89,7 @@ class Data(DictType):
                 continue
             if name in DictType.__dict__:
                 continue
-            text = text + "  %s, %s\n" % (name, `type(getattr(self, name))`)
+            text = text + "  %s: %s\n" % (name, `getattr(self, name)`)
 
         # DictType methods.
         text = text + "\n"
