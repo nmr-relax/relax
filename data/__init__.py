@@ -26,6 +26,7 @@ from types import DictType
 
 # relax module imports.
 from pipe_container import PipeContainer
+from relax_errors import RelaxRunError
 
 
 __all__ = [ 'data_classes',
@@ -131,4 +132,9 @@ class Data(DictType):
         @type pipe:     str
         """
 
+        # Test if the pipe already exists.
+        if pipe in self.keys():
+            raise RelaxRunError, pipe
+
+        # Create a new container.
         self[pipe] = PipeContainer()
