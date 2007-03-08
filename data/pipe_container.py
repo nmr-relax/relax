@@ -30,34 +30,33 @@ from diff_tensor import DiffTensorData
 
 
 class PipeContainer:
-    def __init__(self):
-        """Class containing all the program data."""
+    """Class containing all the program data."""
 
-        # PDB data.
-        self.pdb = SpecificData()
+    # PDB data.
+    pdb = SpecificData()
 
-        # Diffusion data.
-        self.diff = DiffTensorData()
+    # Diffusion data.
+    diff = DiffTensorData()
 
-        # The residue specific data.
-        self.res = Residue()
+    # The residue specific data.
+    res = Residue()
 
-        # The name of the runs.
-        self.run_names = []
+    # The name of the runs.
+    run_names = []
 
-        # The type of the runs.
-        self.run_types = []
+    # The type of the runs.
+    run_types = []
 
-        # Hybrid models.
-        self.hybrid_runs = {}
+    # Hybrid models.
+    hybrid_runs = {}
 
-        # Global minimisation statistics.
-        self.chi2 = {}
-        self.iter = {}
-        self.f_count = {}
-        self.g_count = {}
-        self.h_count = {}
-        self.warning = {}
+    # Global minimisation statistics.
+    chi2 = {}
+    iter = {}
+    f_count = {}
+    g_count = {}
+    h_count = {}
+    warning = {}
 
 
     def __repr__(self):
