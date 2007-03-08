@@ -37,6 +37,9 @@ class Data(DictType):
     # Singleton initialisation, the reference to the single instance of this class.
     __instance = None
 
+    # The current data pipe.
+    current_pipe = None
+
 
     def __init__(self):
         pass
