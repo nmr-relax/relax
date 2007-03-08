@@ -24,6 +24,9 @@
 from re import match
 from types import DictType
 
+# relax module imports.
+from pipe_container import PipeContainer
+
 
 __all__ = [ 'data_classes',
             'diff_tensor',
@@ -115,3 +118,17 @@ class Data(DictType):
 
         # Remove all items from the dictionary.
         self.clear()
+
+
+    def add(self, pipe):
+        """Method for adding a new pipe container to the dictionary.
+
+        This method should be used rather than importing the PipeContainer class and using the
+        statement 'D[pipe] = PipeContainer()', where D is the relax data storage object and pipe is
+        the name of the data pipe.
+
+        @param pipe:    The name of the new data pipe.
+        @type pipe:     str
+        """
+
+        self[pipe] = PipeContainer()
