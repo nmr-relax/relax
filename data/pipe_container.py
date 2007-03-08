@@ -48,12 +48,12 @@ class PipeContainer:
     hybrid_runs = {}
 
     # Global minimisation statistics.
-    chi2 = {}
-    iter = {}
-    f_count = {}
-    g_count = {}
-    h_count = {}
-    warning = {}
+    chi2 = None
+    iter = None
+    f_count = None
+    g_count = None
+    h_count = None
+    warning = None
 
 
     def __repr__(self):
