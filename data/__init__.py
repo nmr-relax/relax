@@ -59,12 +59,42 @@ class Data(DictType):
 
 
     def __repr__(self):
-        text = "The data class containing all permanent program data.\n"
-        text = text + "The class contains the following objects:\n"
+        """The string representation of the object.
+
+        Rather than using the standard Python conventions (either the string representation of the
+        value or the "<...desc...>" notation), a rich-formatted description of the object is given.
+        """
+
+        # Intro text.
+        text = "The relax data storage object.\n"
+
+        # The data pipes.
+        text = text + "\n"
+        text = text + "Data pipes:\n"
+        pipes = self.keys()
+        if pipes:
+            for pipe in pipes:
+                text = text + "  %s\n" % `pipe`
+        else:
+            text = text + "  None\n"
+
+        # Objects.
+        text = text + "\n"
+        text = text + "Objects:\n"
         for name in dir(self):
             if match("^_", name):
                 continue
-            text = text + "  " + name + ", " + `type(getattr(self, name))` + "\n"
+            if name in DictType.__dict__:
+                continue
+            text = text + "  %s, %s\n" % (name, `type(getattr(self, name))`)
+
+        # DictType methods.
+        text = text + "\n"
+        text = text + "Dictionary type methods:\n"
+        for name in dir(DictType):
+            if match("^_", name):
+                continue
+            text = text + "  %s, %s\n" % (name, `type(getattr(self, name))`)
         return text
 
 
