@@ -41,9 +41,6 @@ class PipeContainer:
     # The residue specific data.
     res = Residue()
 
-    # The name of the runs.
-    run_names = []
-
     # The type of the runs.
     run_types = []
 
