@@ -233,11 +233,7 @@ def join_path_segments(segments):
     return result
 
 def load_test_case(module_path,  file_name, class_name):
-    if __debug__:
-            print 'load module'
-            print 'module_path: ', module_path
-            print 'file_name: ', file_name
-            print 'class_name: ', class_name
+
     result = None
 
     module_path=get_module_relative_path(module_path, file_name)
@@ -322,7 +318,9 @@ class Test_finder:
 #                     print 'modules: ', modules
 #                     clazz =  getattr(modules[-1], class_name)
 #                     suite_dictionary[path_key].addTest(unittest.TestLoader().loadTestsFromTestCase(clazz))
-                    suite_dictionary[path_key].addTest(load_test_case(dir_path, file_name, class_name))
+                    found_test_case = load_test_case(dir_path, file_name, class_name)
+                    if found_test_case != None:
+                        suite_dictionary[path_key].addTest(found_test_case)
 
 
 
@@ -352,7 +350,9 @@ class Run_unit_tests(object):
           @type  test_module: string
           @param test_module: the name of a module to unit test. If the variable
                  is None a search for all unit tests using <test-pattern> will start
-                 from <root_path>, otherwise it will be used as a module path from the
+                 from <root_path>, if the variable is '.' a search for all unit tests will
+                 commence from the current working directory, otherwise it will be used as
+                 a module path from the
                  current root_path or CHECKME: ****module_directory_path****. The module name can be in the directory path format
                  used by the current operating system or a unix style path with /'s including
                  a final .py extension or a dotted moudle name
@@ -400,18 +400,35 @@ class Run_unit_tests(object):
 
         self.root_path =  root_path
 
-        # other instance variables
-        self.test_module = test_module
-        self.verbose = verbose
-
         # find system directories
         self.test_pattern = test_pattern
         self.system_directory = self.get_first_instance_path(root_path,
                                                                   root_system_directory[0],
                                                                   root_system_directory[1])
+        if self.system_directory == None:
+            raise Exception("can't find system directory start from %s" % root_path)
+
         self.unit_test_directory = self.get_first_instance_path(root_path,
                                                                   root_unit_test_directory[0],
                                                                   root_unit_test_directory[1])
+        if self.unit_test_directory == None:
+            raise Exception("can't find unit test directory start from %s" % root_path)
+
+        #deal with default test_module
+        if test_module == None:
+            test_module=self.root_path
+        elif test_module ==  self.CURRENT_DIRECTORY:
+            test_module =  os.getcwd()
+        elif test_module == self.TEST_SUITE_ROOT:
+            test_module = self.unit_test_directory
+
+
+        self.test_module = test_module
+
+        # other instance variables
+        self.verbose = verbose
+
+
 
         #TODO: delete unused
         #if self.test_module == None:
@@ -576,7 +593,7 @@ class Run_unit_tests(object):
                 if elem != PY_FILE_EXTENSION[1:]:
                     module_norm_path.append(elem)
 
-            print result
+
             # see if we can find a dot separated module
             # a package name first
             elems_ok = True
@@ -591,7 +608,7 @@ class Run_unit_tests(object):
                 mpath.append(module_norm_path[-1].capitalize())
                 result.add(tuple(mpath))
 
-        print '***result: ',result
+
         return result
 
 #        # see if we can find a sub directory path
@@ -658,7 +675,7 @@ class Run_unit_tests(object):
 
 
         #print sys.path
-        print module_paths
+
         tests = None
 
         # use search path first
@@ -673,7 +690,7 @@ class Run_unit_tests(object):
                 break
 
 
-        print tests
+
         if tests == None:
             for module_path in module_paths:
                 print module_path
@@ -693,11 +710,16 @@ class Run_unit_tests(object):
         if runner == None:
             runner = unittest.TextTestRunner()
 
+
+
         # Run the unit tests and catch the TestResult object.
         if tests != None:
             results = runner.run(tests)
+            result_string = results.wasSuccessful()
         else:
             print 'error no test cases found for input!'
+            results=False
+            result_string = 'Error no tests found'
 
 
 #
@@ -730,8 +752,8 @@ class Run_unit_tests(object):
 #        # restore sys  path
 #        sys.path=backup_python_path
 #
-#        # Return the result of all the tests.
-#        #return results.wasSuccessful()
+#        #Return the result of all the tests.
+#        return results_string
 #
 #    #def unit_test_module_path(self):
 
@@ -776,6 +798,8 @@ if __name__ == '__main__':
 
     (options, args) = parser.parse_args()
 
+    if len(args) < 1:
+        args = [None]
 
     for arg in args:
         runner = Run_unit_tests(test_module=arg, verbose=options.verbose)
