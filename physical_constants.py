@@ -21,51 +21,14 @@
 ###############################################################################
 
 # Python module imports.
-from re import match, search
-from types import DictType, ListType
-
-# relax module imports.
-from data_classes import Element, Residue, SpecificData
-from diff_tensor import DiffTensorData
+from math import pi
 
 
+# Planck's constant.
+h = 6.62606876e-34
 
-class PipeContainer:
-    def __init__(self):
-        """Class containing all the program data."""
+# Dirac's constant.
+h_bar = h / (2.0*pi)
 
-        # PDB data.
-        self.pdb = SpecificData()
-
-        # Diffusion data.
-        self.diff = DiffTensorData()
-
-        # The residue specific data.
-        self.res = Residue()
-
-        # The name of the runs.
-        self.run_names = []
-
-        # The type of the runs.
-        self.run_types = []
-
-        # Hybrid models.
-        self.hybrid_runs = {}
-
-        # Global minimisation statistics.
-        self.chi2 = {}
-        self.iter = {}
-        self.f_count = {}
-        self.g_count = {}
-        self.h_count = {}
-        self.warning = {}
-
-
-    def __repr__(self):
-        text = "The data class containing all permanent program data.\n"
-        text = text + "The class contains the following objects:\n"
-        for name in dir(self):
-            if match("^_", name):
-                continue
-            text = text + "  " + name + ", " + `type(getattr(self, name))` + "\n"
-        return text
+# The magnetic constant or the permeability of vacuum.
+mu0 = 4.0 * pi * 1e-7
