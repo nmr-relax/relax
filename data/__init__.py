@@ -21,13 +21,8 @@
 ###############################################################################
 
 # Python module imports.
-from math import pi
-from re import match, search
+from re import match
 from types import DictType, ListType
-
-# relax module imports.
-from data_classes import Element, Residue, SpecificData
-from diff_tensor import DiffTensorData
 
 
 __all__ = [ 'data_classes',
@@ -39,42 +34,14 @@ __all__ = [ 'data_classes',
 ##############
 
 class Data(object):
+    """The relax data storage object."""
+
+    # Singleton initialisation, the reference to the single instance of this class.
     __instance = None
 
+
     def __init__(self):
-        """Class containing all the program data."""
-
-        # Fundamental constants.
-        #self.h = 6.6260755e-34    # Old low precision value.
-        self.h = 6.62606876e-34
-        self.h_bar = self.h / ( 2.0*pi )
-        self.mu0 = 4.0 * pi * 1e-7
-
-        # PDB data.
-        self.pdb = SpecificData()
-
-        # Diffusion data.
-        self.diff = DiffTensorData()
-
-        # The residue specific data.
-        self.res = Residue()
-
-        # The name of the runs.
-        self.run_names = []
-
-        # The type of the runs.
-        self.run_types = []
-
-        # Hybrid models.
-        self.hybrid_runs = {}
-
-        # Global minimisation statistics.
-        self.chi2 = {}
-        self.iter = {}
-        self.f_count = {}
-        self.g_count = {}
-        self.h_count = {}
-        self.warning = {}
+        pass
 
 
     def __new__(self, *args, **kargs): 
