@@ -41,8 +41,8 @@ class PipeContainer:
     # The residue specific data.
     res = Residue()
 
-    # The type of the runs.
-    run_types = []
+    # The data pipe type.
+    pipe_type = None
 
     # Hybrid models.
     hybrid_runs = {}
