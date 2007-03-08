@@ -31,7 +31,7 @@ from diff_tensor import DiffTensorData
 
 
 
-class RunContainer(object):
+class PipeContainer:
     def __init__(self):
         """Class containing all the program data."""
 
