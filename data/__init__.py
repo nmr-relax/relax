@@ -89,19 +89,22 @@ class Data(DictType):
         text = text + "\n"
         text = text + "Objects:\n"
         for name in dir(self):
-            if match("^_", name):
-                continue
-            if name in DictType.__dict__:
+            if match("^_", name) or name in DictType.__dict__ or name == 'add':
                 continue
             text = text + "  %s: %s\n" % (name, `getattr(self, name)`)
 
+        # Methods.
+        text = text + "\n"
+        text = text + "Methods:\n"
+        text = text + "  add, Add a new pipe container to the dictionary.\n"
+
         # DictType methods.
         text = text + "\n"
-        text = text + "Dictionary type methods:\n"
+        text = text + "Inherited dictionary methods:\n"
         for name in dir(DictType):
             if match("^_", name):
                 continue
-            text = text + "  %s, %s\n" % (name, `type(getattr(self, name))`)
+            text = text + "  %s\n" % name
         return text
 
 
