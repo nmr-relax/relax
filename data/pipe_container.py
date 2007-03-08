@@ -32,8 +32,8 @@ from diff_tensor import DiffTensorData
 class PipeContainer:
     """Class containing all the program data."""
 
-    # PDB data.
-    pdb = SpecificData()
+    # Molecular structure data.
+    structure = SpecificData()
 
     # Diffusion data.
     diff = DiffTensorData()
