@@ -60,10 +60,22 @@ class PipeContainer:
 
 
     def __repr__(self):
-        text = "The data class containing all permanent program data.\n"
-        text = text + "The class contains the following objects:\n"
+        """The string representation of the object.
+
+        Rather than using the standard Python conventions (either the string representation of the
+        value or the "<...desc...>" notation), a rich-formatted description of the object is given.
+        """
+
+        # Intro text.
+        text = "The data pipe storage object.\n"
+
+        # Objects.
+        text = text + "\n"
+        text = text + "Objects:\n"
         for name in dir(self):
             if match("^_", name):
                 continue
-            text = text + "  " + name + ", " + `type(getattr(self, name))` + "\n"
+            text = text + "  " + name + ": " + `getattr(self, name)` + "\n"
+
+        # Return the text representation.
         return text
