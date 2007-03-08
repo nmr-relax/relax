@@ -42,7 +42,7 @@ class Data(DictType):
         pass
 
 
-    def __new__(self, *args, **kargs): 
+    def __new__(self, *args, **kargs):
         """Method for implementing the singleton design pattern.
 
         If no other class instance currently exists, create a new instance of this class.  Otherwise
@@ -69,7 +69,11 @@ class Data(DictType):
 
 
     def __reset__(self):
-        """"""
+        """Delete all the data from the relax data storage object.
+
+        This method is to make the current single instance of the Data object identical to a newly
+        created instance of Data, hence resetting the relax program state.
+        """
 
         # Get the keys of self.__dict__.
         keys = self.__dict__.keys()
