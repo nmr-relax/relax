@@ -162,7 +162,6 @@ class MoleculeContainer:
                 continue
 
             # Add the object's attribute to the text string.
-            print name
             text = text + "  " + name + ": " + `getattr(self, name)` + "\n"
 
         return text
