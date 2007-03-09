@@ -59,18 +59,30 @@ class MoleculeContainer:
 
 
     def __repr__(self):
+        """The string representation of the object.
+
+        Rather than using the standard Python conventions (either the string representation of the
+        value or the "<...desc...>" notation), a rich-formatted description of the object is given.
+        """
+
+        # Intro.
         text = "Class containing all the molecule specific data.\n\n"
 
-        # Empty.
-        if not len(self):
-            text = text + "The class contains no data.\n"
+        # Objects.
+        text = text + "\n"
+        text = text + "Objects:\n"
+        for name in dir(self):
+            # Residue list.
+            if name == 'res':
+                text = text + "  res: The list of the residues of the molecule is the object\n"
 
-        # Not empty.
-        else:
-            text = text + "The molecule container has the following keys:\n"
-            for key in self:
-                text = text + "    " + `key` + "\n"
-            text = text + "\nThese can be accessed by typing 'relax_data_store.res[key]'.\n"
+            # Skip certain objects.
+            if match("^_", name) or name == 'res' or name == 'add_list':
+                continue
+
+            # Add the object's attribute to the text string.
+            print name
+            text = text + "  " + name + ": " + `getattr(self, name)` + "\n"
 
         return text
 
