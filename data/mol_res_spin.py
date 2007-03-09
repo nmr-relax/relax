@@ -38,10 +38,10 @@ class MoleculeList(ListType):
 
     def __repr__(self):
         text = "Molecules.\n\n"
-        text = text + "%-8s%-8s%-8s%-10s" % ("Index", "Number", "Name", "Selected") + "\n"
+        text = text + "%-8s%-8s" % ("Index", "Name") + "\n"
         for i in xrange(len(self)):
-            text = text + "%-8i%-8i%-8s%-10i" % (i, self[i].num, self[i].name, self[i].select) + "\n"
-        text = text + "\nThese can be accessed by typing 'relax_data_store.res[key][index]'.\n"
+            text = text + "%-8i%-8i" % (i, self[i].name) + "\n"
+        text = text + "\nThese can be accessed by typing 'relax_data_store.mol[index]'.\n"
         return text
 
 
