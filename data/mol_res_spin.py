@@ -36,36 +36,69 @@ from types import DictType, ListType
 class SpinContainer:
     """Class containing all the spin system specific data."""
 
+    def __init__(self):
+        """Set up the default objects of the spin system data container."""
+
+        # The spin system name and number.
+        self.name = None
+        self.num = None
+        self.select = 1
+
 
     def __repr__(self):
+        """The string representation of the object.
+
+        Rather than using the standard Python conventions (either the string representation of the
+        value or the "<...desc...>" notation), a rich-formatted description of the object is given.
+        """
 
         # Intro.
         text = "Class containing all the spin system specific data.\n\n"
 
-        # Empty.
-        if not len(self):
-            text = text + "The class contains no data.\n"
+        # Objects.
+        text = text + "\n"
+        text = text + "Objects:\n"
+        for name in dir(self):
+            # Spin systems.
+            if name == 'spin':
+                text = text + "  spin: The list of spin systems of the residues\n"
 
-        # Not empty.
-        else:
-            text = text + "The spin system container has the following keys:\n"
-            for key in self:
-                text = text + "    " + `key` + "\n"
-            text = text + "\nThese can be accessed by typing 'relax_data_store.res[key]'.\n"
+            # Skip certain objects.
+            if match("^_", name) or name == 'spin':
+                continue
+
+            # Add the object's attribute to the text string.
+            text = text + "  " + name + ": " + `getattr(self, name)` + "\n"
 
         return text
 
 
 class SpinList(ListType):
-    """Empty data container for spin system specific data."""
+    """List type data container for spin system specific data."""
+
+    def __init__(self):
+        """Set up the first spin system data container."""
+
+        # Add the initial spin system container at index 0.
+        self.append(SpinContainer())
 
 
     def __repr__(self):
+        """The string representation of the object.
+
+        Rather than using the standard Python conventions (either the string representation of the
+        value or the "<...desc...>" notation), a rich-formatted description of the object is given.
+        """
+
+        # Intro.
         text = "Spin systems.\n\n"
+
+        # Residue data.
         text = text + "%-8s%-8s%-8s%-10s" % ("Index", "Number", "Name", "Selected") + "\n"
         for i in xrange(len(self)):
-            text = text + "%-8i%-8i%-8s%-10i" % (i, self[i].num, self[i].name, self[i].select) + "\n"
-        text = text + "\nThese can be accessed by typing 'relax_data_store.res[key][index]'.\n"
+            text = text + "%-8i%-8s%-8s%-10i" % (i, `self[i].num`, self[i].name, self[i].select) + "\n"
+        text = text + "\nThese can be accessed by typing 'D.mol[i].res[j].spin[k]', where D is the relax data storage object.\n"
+
         return text
 
 
@@ -82,40 +115,71 @@ class SpinList(ListType):
 class ResidueContainer:
     """Class containing all the residue specific data."""
 
+    def __init__(self):
+        """Set up the default objects of the residue data container."""
+
+        # The residue name and number.
+        self.name = None
+        self.num = None
+
+        # The empty spin system list.
+        self.spin = SpinList()
+
 
     def __repr__(self):
-        text = "Class containing all the residue specific data.\n\n"
+        """The string representation of the object.
 
-        # Empty.
-        if not len(self):
-            text = text + "The class contains no data.\n"
+        Rather than using the standard Python conventions (either the string representation of the
+        value or the "<...desc...>" notation), a rich-formatted description of the object is given.
+        """
 
-        # Not empty.
-        else:
-            text = text + "The residue container has the following keys:\n"
-            for key in self:
-                text = text + "    " + `key` + "\n"
-            text = text + "\nThese can be accessed by typing 'relax_data_store.res[key]'.\n"
+        # Intro.
+        text = "Class containing all the residue specific data.\n"
+
+        # Objects.
+        text = text + "\n"
+        text = text + "Objects:\n"
+        for name in dir(self):
+            # Spin systems.
+            if name == 'spin':
+                text = text + "  spin: The list of spin systems of the residues\n"
+
+            # Skip certain objects.
+            if match("^_", name) or name == 'spin':
+                continue
+
+            # Add the object's attribute to the text string.
+            text = text + "  " + name + ": " + `getattr(self, name)` + "\n"
 
         return text
 
 
-    def add_list(self, key):
-        """Function for adding an empty container to the dictionary."""
-
-        self[key] = ResidueList()
-
-
 class ResidueList(ListType):
-    """Empty data container for residue specific data."""
+    """List type data container for residue specific data."""
+
+    def __init__(self):
+        """Set up the first residue data container."""
+
+        # Add the initial residue container at index 0.
+        self.append(ResidueContainer())
 
 
     def __repr__(self):
-        text = "Sequence data.\n\n"
-        text = text + "%-8s%-8s%-8s%-10s" % ("Index", "Number", "Name", "Selected") + "\n"
+        """The string representation of the object.
+
+        Rather than using the standard Python conventions (either the string representation of the
+        value or the "<...desc...>" notation), a rich-formatted description of the object is given.
+        """
+
+        # Intro.
+        text = "Residues.\n\n"
+
+        # Residue data.
+        text = text + "%-8s%-8s%-8s" % ("Index", "Number", "Name") + "\n"
         for i in xrange(len(self)):
-            text = text + "%-8i%-8i%-8s%-10i" % (i, self[i].num, self[i].name, self[i].select) + "\n"
-        text = text + "\nThese can be accessed by typing 'relax_data_store.res[key][index]'.\n"
+            text = text + "%-8i%-8s%-8s" % (i, `self[i].num`, self[i].name) + "\n"
+        text = text + "\nThese can be accessed by typing 'D.mol[i].res[j]', where D is the relax data storage object.\n"
+
         return text
 
 
@@ -132,11 +196,14 @@ class ResidueList(ListType):
 class MoleculeContainer:
     """Class containing all the molecule specific data."""
 
-    # The name of the molecule, corresponding to that of the structure file if specified.
-    name = None
+    def __init__(self):
+        """Set up the default objects of the molecule data container."""
 
-    # The empty residue list.
-    res = ResidueList()
+        # The name of the molecule, corresponding to that of the structure file if specified.
+        self.name = None
+
+        # The empty residue list.
+        self.res = ResidueList()
 
 
     def __repr__(self):
@@ -155,7 +222,7 @@ class MoleculeContainer:
         for name in dir(self):
             # Residue list.
             if name == 'res':
-                text = text + "  res: The list of the residues of the molecule is the object\n"
+                text = text + "  res: The list of the residues of the molecule\n"
 
             # Skip certain objects.
             if match("^_", name) or name == 'res':
@@ -168,7 +235,13 @@ class MoleculeContainer:
 
 
 class MoleculeList(ListType):
-    """Empty data container for the molecule specific data."""
+    """List type data container for the molecule specific data."""
+
+    def __init__(self):
+        """Set up the first molecule data container."""
+
+        # Add the initial molecule container at index 0.
+        self.append(MoleculeContainer())
 
 
     def __repr__(self):
@@ -176,7 +249,7 @@ class MoleculeList(ListType):
         text = text + "%-8s%-8s" % ("Index", "Name") + "\n"
         for i in xrange(len(self)):
             text = text + "%-8i%-8s" % (i, self[i].name) + "\n"
-        text = text + "\nThese can be accessed by typing 'D.mol[index]', where D is the relax data storage object.\n"
+        text = text + "\nThese can be accessed by typing 'D.mol[i]', where D is the relax data storage object.\n"
         return text
 
 
