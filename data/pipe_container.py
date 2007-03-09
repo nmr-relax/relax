@@ -24,7 +24,8 @@
 from re import match
 
 # relax module imports.
-from data_classes import Residue, SpecificData
+from data_classes import SpecificData
+from mol_res_spin import MoleculeList
 from diff_tensor import DiffTensorData
 
 
@@ -39,7 +40,7 @@ class PipeContainer:
     diff = DiffTensorData()
 
     # The residue specific data.
-    res = Residue()
+    mol = MoleculeList()
 
     # The data pipe type.
     pipe_type = None
