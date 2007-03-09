@@ -54,6 +54,9 @@ class MoleculeList(ListType):
 class MoleculeContainer:
     """Class containing all the molecule specific data."""
 
+    # The name of the molecule, corresponding to that of the structure file if specified.
+    name = None
+
 
     def __repr__(self):
         text = "Class containing all the molecule specific data.\n\n"
