@@ -29,27 +29,105 @@ from types import DictType, ListType
 
 
 
-# The molecule data.
-###################
 
-class MoleculeList(ListType):
-    """Empty data container for the molecule specific data."""
+# The spin system data.
+#######################
+
+class SpinContainer:
+    """Class containing all the spin system specific data."""
 
 
     def __repr__(self):
-        text = "Molecules.\n\n"
-        text = text + "%-8s%-8s" % ("Index", "Name") + "\n"
+
+        # Intro.
+        text = "Class containing all the spin system specific data.\n\n"
+
+        # Empty.
+        if not len(self):
+            text = text + "The class contains no data.\n"
+
+        # Not empty.
+        else:
+            text = text + "The spin system container has the following keys:\n"
+            for key in self:
+                text = text + "    " + `key` + "\n"
+            text = text + "\nThese can be accessed by typing 'relax_data_store.res[key]'.\n"
+
+        return text
+
+
+class SpinList(ListType):
+    """Empty data container for spin system specific data."""
+
+
+    def __repr__(self):
+        text = "Spin systems.\n\n"
+        text = text + "%-8s%-8s%-8s%-10s" % ("Index", "Number", "Name", "Selected") + "\n"
         for i in xrange(len(self)):
-            text = text + "%-8i%-8s" % (i, self[i].name) + "\n"
-        text = text + "\nThese can be accessed by typing 'D.mol[index]', where D is the relax data storage object.\n"
+            text = text + "%-8i%-8i%-8s%-10i" % (i, self[i].num, self[i].name, self[i].select) + "\n"
+        text = text + "\nThese can be accessed by typing 'relax_data_store.res[key][index]'.\n"
         return text
 
 
     def add_item(self):
         """Function for appending an empty container to the list."""
 
-        self.append(MoleculeContainer())
+        self.append(SpinContainer())
 
+
+
+# The residue data.
+###################
+
+class ResidueContainer:
+    """Class containing all the residue specific data."""
+
+
+    def __repr__(self):
+        text = "Class containing all the residue specific data.\n\n"
+
+        # Empty.
+        if not len(self):
+            text = text + "The class contains no data.\n"
+
+        # Not empty.
+        else:
+            text = text + "The residue container has the following keys:\n"
+            for key in self:
+                text = text + "    " + `key` + "\n"
+            text = text + "\nThese can be accessed by typing 'relax_data_store.res[key]'.\n"
+
+        return text
+
+
+    def add_list(self, key):
+        """Function for adding an empty container to the dictionary."""
+
+        self[key] = ResidueList()
+
+
+class ResidueList(ListType):
+    """Empty data container for residue specific data."""
+
+
+    def __repr__(self):
+        text = "Sequence data.\n\n"
+        text = text + "%-8s%-8s%-8s%-10s" % ("Index", "Number", "Name", "Selected") + "\n"
+        for i in xrange(len(self)):
+            text = text + "%-8i%-8i%-8s%-10i" % (i, self[i].num, self[i].name, self[i].select) + "\n"
+        text = text + "\nThese can be accessed by typing 'relax_data_store.res[key][index]'.\n"
+        return text
+
+
+    def add_item(self):
+        """Function for appending an empty container to the list."""
+
+        self.append(ResidueContainer())
+
+
+
+# The molecule data.
+###################
 
 class MoleculeContainer:
     """Class containing all the molecule specific data."""
@@ -90,98 +168,20 @@ class MoleculeContainer:
         return text
 
 
-
-
-# The residue data.
-###################
-
-class ResidueList(ListType):
-    """Empty data container for residue specific data."""
+class MoleculeList(ListType):
+    """Empty data container for the molecule specific data."""
 
 
     def __repr__(self):
-        text = "Sequence data.\n\n"
-        text = text + "%-8s%-8s%-8s%-10s" % ("Index", "Number", "Name", "Selected") + "\n"
+        text = "Molecules.\n\n"
+        text = text + "%-8s%-8s" % ("Index", "Name") + "\n"
         for i in xrange(len(self)):
-            text = text + "%-8i%-8i%-8s%-10i" % (i, self[i].num, self[i].name, self[i].select) + "\n"
-        text = text + "\nThese can be accessed by typing 'relax_data_store.res[key][index]'.\n"
+            text = text + "%-8i%-8s" % (i, self[i].name) + "\n"
+        text = text + "\nThese can be accessed by typing 'D.mol[index]', where D is the relax data storage object.\n"
         return text
 
 
     def add_item(self):
         """Function for appending an empty container to the list."""
 
-        self.append(ResidueContainer())
-
-
-class ResidueContainer:
-    """Class containing all the residue specific data."""
-
-
-    def __repr__(self):
-        text = "Class containing all the residue specific data.\n\n"
-
-        # Empty.
-        if not len(self):
-            text = text + "The class contains no data.\n"
-
-        # Not empty.
-        else:
-            text = text + "The residue container has the following keys:\n"
-            for key in self:
-                text = text + "    " + `key` + "\n"
-            text = text + "\nThese can be accessed by typing 'relax_data_store.res[key]'.\n"
-
-        return text
-
-
-    def add_list(self, key):
-        """Function for adding an empty container to the dictionary."""
-
-        self[key] = ResidueList()
-
-
-
-# The spin system data.
-#######################
-
-class SpinList(ListType):
-    """Empty data container for spin system specific data."""
-
-
-    def __repr__(self):
-        text = "Spin systems.\n\n"
-        text = text + "%-8s%-8s%-8s%-10s" % ("Index", "Number", "Name", "Selected") + "\n"
-        for i in xrange(len(self)):
-            text = text + "%-8i%-8i%-8s%-10i" % (i, self[i].num, self[i].name, self[i].select) + "\n"
-        text = text + "\nThese can be accessed by typing 'relax_data_store.res[key][index]'.\n"
-        return text
-
-
-    def add_item(self):
-        """Function for appending an empty container to the list."""
-
-        self.append(SpinContainer())
-
-
-class SpinContainer:
-    """Class containing all the spin system specific data."""
-
-
-    def __repr__(self):
-
-        # Intro.
-        text = "Class containing all the spin system specific data.\n\n"
-
-        # Empty.
-        if not len(self):
-            text = text + "The class contains no data.\n"
-
-        # Not empty.
-        else:
-            text = text + "The spin system container has the following keys:\n"
-            for key in self:
-                text = text + "    " + `key` + "\n"
-            text = text + "\nThese can be accessed by typing 'relax_data_store.res[key]'.\n"
-
-        return text
+        self.append(MoleculeContainer())
