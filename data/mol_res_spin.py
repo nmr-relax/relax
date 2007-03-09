@@ -147,7 +147,7 @@ class MoleculeContainer:
         """
 
         # Intro.
-        text = "Class containing all the molecule specific data.\n\n"
+        text = "Class containing all the molecule specific data.\n"
 
         # Objects.
         text = text + "\n"
