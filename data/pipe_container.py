@@ -39,7 +39,7 @@ class PipeContainer:
     # Diffusion data.
     diff = DiffTensorData()
 
-    # The residue specific data.
+    # The molecule-residue-spin object.
     mol = MoleculeList()
 
     # The data pipe type.
