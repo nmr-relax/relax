@@ -57,6 +57,9 @@ class MoleculeContainer:
     # The name of the molecule, corresponding to that of the structure file if specified.
     name = None
 
+    # The empty residue list.
+    res = ResidueList()
+
 
     def __repr__(self):
         """The string representation of the object.
@@ -77,7 +80,7 @@ class MoleculeContainer:
                 text = text + "  res: The list of the residues of the molecule is the object\n"
 
             # Skip certain objects.
-            if match("^_", name) or name == 'res' or name == 'add_list':
+            if match("^_", name) or name == 'res':
                 continue
 
             # Add the object's attribute to the text string.
@@ -86,11 +89,6 @@ class MoleculeContainer:
 
         return text
 
-
-    def add_list(self, key):
-        """Function for adding an empty container to the dictionary."""
-
-        self[key] = ResidueList()
 
 
 
