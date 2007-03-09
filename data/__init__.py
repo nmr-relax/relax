@@ -45,10 +45,6 @@ class Data(DictType):
     current_pipe = None
 
 
-    def __init__(self):
-        pass
-
-
     def __new__(self, *args, **kargs):
         """Method for implementing the singleton design pattern.
 
