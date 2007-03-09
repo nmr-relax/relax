@@ -67,12 +67,30 @@ class PipeContainer:
         # Intro text.
         text = "The data pipe storage object.\n"
 
+        # Special objects/methods (to avoid the getattr() function call on).
+        spec_obj = ['mol', 'diff', 'structure']
+
         # Objects.
         text = text + "\n"
         text = text + "Objects:\n"
         for name in dir(self):
-            if match("^_", name):
+            # Molecular list.
+            if name == 'mol':
+                text = text + "  mol: The molecule list (for the storage of the spin system specific data)\n"
+
+            # Diffusion tensor.
+            if name == 'diff':
+                text = text + "  diff: The Brownian rotational diffusion tensor data object\n"
+
+            # Molecular structure.
+            if name == 'structure':
+                text = text + "  structure: The 3D molecular data object\n"
+
+            # Skip certain objects.
+            if match("^_", name) or name in spec_obj:
                 continue
+
+            # Add the object's attribute to the text string.
             text = text + "  " + name + ": " + `getattr(self, name)` + "\n"
 
         # Return the text representation.
