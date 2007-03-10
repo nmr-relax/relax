@@ -33,8 +33,9 @@ from data.diff_tensor import DiffTensorElement, DiffTensorSimList
 from relax_errors import RelaxError
 
 
-# Tests for the data.diff_tensor module.
 class Test_diff_tensor(TestCase):
+    """Unit tests for the data.diff_tensor relax module."""
+
     def calc_spheroid_objects(self, tm, Da, theta, phi):
         """Function for calculating the spheroidal diffusion tensor objects."""
 
