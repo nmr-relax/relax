@@ -49,7 +49,7 @@ This syntax will need to be properly referenced (in addition to being fully desc
 
 7.  Create the spin_command function (Chris MacRaild, https://mail.gna.org/public/relax-devel/2007-01/msg00036.html, Message-ID: <1168883717.7569.511.camel@mrspell>).
 
-8.  Rename 'prompt/run.py' to 'prompt/pipe.py'.  Rename 'generic_fns/runs.py' to 'generic_fns/pipes.py'.
+8 [Done].  Rename 'prompt/run.py' to 'prompt/pipe.py'.  Rename 'generic_fns/runs.py' to 'generic_fns/pipes.py'.
 
 9.  Create the new pipe user functions (from the old run user functions):
     pipe.copy()         # Create a new pipe with the current contents of another pipe.
