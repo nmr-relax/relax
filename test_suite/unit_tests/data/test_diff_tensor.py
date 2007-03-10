@@ -22,13 +22,12 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from math import cos, pi, sin
 from Numeric import array, dot, transpose
-from os.path import join, sep
-from string import split
-from sys import path
-from unittest import TestCase, main
+from unittest import TestCase
 
+# relax module imports.
 from data.diff_tensor import DiffTensorElement, DiffTensorSimList
 from relax_errors import RelaxError
 
