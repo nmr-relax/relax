@@ -34,44 +34,45 @@ relax_data_store = Data()
 
 
 
-class Runs:
+class Pipes:
+    """Class containing the methods for manipulating data pipes."""
+
     def __init__(self, relax):
-        """Class containing the function for creating a run."""
 
         self.relax = relax
 
 
-    def create(self, run=None, run_type=None):
-        """Function for creating a run."""
+    def create(self, pipe_name=None, pipe_type=None):
+        """Function for creating a data pipe."""
 
-        # Test if the run already exists.
-        if run in relax_data_store.run_names:
-            raise RelaxRunError, run
+        # Test if the data pipe already exists.
+        if pipe_name in relax_data_store.pipe_names:
+            raise RelaxRunError, pipe_name
 
-        # List of valid run types.
+        # List of valid data pipe types.
         valid = ['jw', 'mf', 'noe', 'relax_fit', 'srls']
 
-        # Test if run_type is valid.
-        if not run_type in valid:
-            raise RelaxError, "The run type name " + `run_type` + " is invalid and must be one of the strings in the list " + `valid` + "."
+        # Test if pipe_type is valid.
+        if not pipe_type in valid:
+            raise RelaxError, "The data pipe type " + `pipe_type` + " is invalid and must be one of the strings in the list " + `valid` + "."
 
         # Test that the C modules have been loaded.
-        if run_type == 'relax_fit' and not C_module_exp_fn:
+        if pipe_type == 'relax_fit' and not C_module_exp_fn:
             raise RelaxError, "Relaxation curve fitting is not availible.  Try compiling the C modules on your platform."
 
-        # Add the run and type.
-        relax_data_store.run_names.append(run)
-        relax_data_store.run_types.append(run_type)
+        # Add the data pipe name and type.
+        relax_data_store.pipe_names.append(pipe_name)
+        relax_data_store.pipe_types.append(pipe_type)
 
 
-    def delete(self, run=None):
-        """Function for deleting a run."""
+    def delete(self, pipe_name=None):
+        """Function for deleting a data pipe."""
 
-        # Test if the run exists.
-        if run != None and not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
+        # Test if the data pipe exists.
+        if pipe_name != None and not pipe_name in relax_data_store.pipe_names:
+            raise RelaxNoRunError, pipe_name
 
-        # Find out if any data in 'relax_data_store' is assigned to a run.
+        # Find out if any data in 'relax_data_store' is assigned to a data pipe.
         for name in dir(relax_data_store):
             # Get the object.
             object = getattr(relax_data_store, name)
@@ -80,59 +81,59 @@ class Runs:
             if not hasattr(object, 'keys'):
                 continue
 
-            # Delete the data if the object contains the key 'run'.
-            if object.has_key(run):
-                del(object[run])
+            # Delete the data if the object contains the key 'pipe_name'.
+            if object.has_key(pipe_name):
+                del(object[pipe_name])
 
-        # Clean up the runs, ie delete any runs for which there is no data left.
-        self.eliminate_unused_runs()
+        # Clean up the data pipes, ie delete any data pipes for which there is no data left.
+        self.eliminate_unused_pipes()
 
 
-    def eliminate_unused_runs(self):
-        """Function for eliminating any runs for which there is no data."""
+    def eliminate_unused_pipes(self):
+        """Function for eliminating any data pipes for which there is no data."""
 
-        # An array of runs to retain.
-        keep_runs = []
+        # An array of data pipes to retain.
+        keep_pipes = []
 
-        # Find out if any data in 'relax_data_store' is assigned to a run.
+        # Find out if any data in 'relax_data_store' is assigned to a data pipe.
         for name in dir(relax_data_store):
             # Skip to the next data structure if the object is not a dictionary.
             object = getattr(relax_data_store, name)
             if not hasattr(object, 'keys'):
                 continue
 
-            # Add the keys to 'keep_runs'.
+            # Add the keys to 'keep_pipes'.
             for key in object.keys():
-                if not key in keep_runs:
-                    keep_runs.append(key)
+                if not key in keep_pipes:
+                    keep_pipes.append(key)
 
-        # Delete the runs in 'relax_data_store.run_names' and 'relax_data_store.run_types' which are not in 'keep_runs'.
-        for run in relax_data_store.run_names:
-            if not run in keep_runs:
+        # Delete the data pipes in 'relax_data_store.pipe_names' and 'relax_data_store.pipe_types' which are not in 'keep_pipes'.
+        for pipe in relax_data_store.pipe_names:
+            if not pipe in keep_pipes:
                 # Index.
-                index = relax_data_store.run_names.index(run)
+                index = relax_data_store.pipe_names.index(pipe)
 
-                # Remove from run_names.
-                relax_data_store.run_names.remove(run)
+                # Remove from pipe_names.
+                relax_data_store.pipe_names.remove(pipe)
 
-                # Remove from run_types.
-                temp = relax_data_store.run_types.pop(index)
+                # Remove from pipe_types.
+                temp = relax_data_store.pipe_types.pop(index)
 
 
-    def list_of_runs(self, run):
-        """Function for creating a list of runs."""
+    def list_of_pipes(self, pipe):
+        """Function for creating a list of data pipes."""
 
-        # All runs.
-        if run == None:
-            runs = deepcopy(relax_data_store.run_names)
+        # All data pipes.
+        if pipe == None:
+            pipes = deepcopy(relax_data_store.pipe_names)
 
-        # Single run.
-        elif type(run) == str:
-            runs = [run]
+        # Single data pipe.
+        elif type(pipe) == str:
+            pipes = [pipe]
 
-        # List of runs.
+        # List of data pipes.
         else:
-            runs = run
+            pipes = pipe
 
         # Return the list.
-        return runs
+        return pipes
