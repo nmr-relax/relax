@@ -65,7 +65,7 @@ from pymol import Pymol
 from relax_data import Relax_data
 from relax_fit import Relax_fit
 from results import Results
-from run import Run
+from pipe import Pipe
 from select import Select
 from sequence import Sequence
 from state import State
@@ -123,7 +123,7 @@ class Interpreter:
         self._Relax_data = Relax_data(relax)
         self._Relax_fit = Relax_fit(relax)
         self._Results = Results(relax)
-        self._Run = Run(relax)
+        self._Pipe = Pipe(relax)
         self._Select = Select(relax)
         self._Sequence = Sequence(relax)
         self._State = State(relax)
@@ -181,7 +181,7 @@ class Interpreter:
         relax_data = self._Relax_data
         relax_fit = self._Relax_fit
         results = self._Results
-        run = self._Run
+        pipe = self._Pipe
         select = self._Select
         sequence = self._Sequence
         state = self._State

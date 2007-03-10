@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2006 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,17 +20,19 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
 
+# relax module imports.
 import help
 from relax_errors import RelaxListStrError, RelaxNoneListError, RelaxNoneStrError, RelaxStrError
 
 
-class Run:
+class Pipe:
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \
-        """Class for holding the functions for manipulating runs."""
+        """Class for holding the functions for manipulating data pipes."""
 
         # Add the generic help string.
         self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
@@ -39,21 +41,22 @@ class Run:
         self.__relax__ = relax
 
 
-    def create(self, run=None, run_type=None):
-        """Function for setting up a run type.
+    def create(self, pipe_name=None, pipe_type=None):
+        """Function for initialising a data pipe.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
+        pipe_name:  The name of the data pipe.
 
-        type:  The type of run.
+        pipe_type:  The type of data pipe.
 
 
         Description
         ~~~~~~~~~~~
 
-        The run name can be any string however the run type can only be one of the following
+        The data pipe name can be any string however the data pipe type can only be one of the
+        following:
 
             'jw':  Reduced spectral density mapping,
             'mf':  Model-free analysis,
@@ -65,68 +68,68 @@ class Run:
         Examples
         ~~~~~~~~
 
-        To set up a model-free analysis run with the name 'm5', type:
+        To set up a model-free analysis data pipe with the name 'm5', type:
 
-        relax> run.create('m5', 'mf')
+        relax> pipe.create('m5', 'mf')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "run.create("
-            text = text + "run=" + `run`
-            text = text + ", run_type=" + `run_type` + ")"
+            text = sys.ps3 + "pipe.create("
+            text = text + "pipe_name=" + `pipe_name`
+            text = text + ", pipe_type=" + `pipe_type` + ")"
             print text
 
-        # The name of the run.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
+        # The name of the data pipe.
+        if type(pipe_name) != str:
+            raise RelaxStrError, ('data pipe name', pipe_name)
 
-        # The run type.
-        if type(run_type) != str:
-            raise RelaxStrError, ('run_type', run_type)
+        # The data pipe type.
+        if type(pipe_type) != str:
+            raise RelaxStrError, ('data pipe type', pipe_type)
 
         # Execute the functional code.
-        self.__relax__.generic.runs.create(run=run, run_type=run_type)
+        self.__relax__.generic.pipes.create(pipe_name=pipe_name, pipe_type=pipe_type)
 
 
-    def delete(self, run=None):
-        """Function for deleting a run.
+    def delete(self, pipe_name=None):
+        """Function for deleting a data pipe.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
+        pipe_name:  The name of the name.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function will destroy all data corresponding to the given run.
+        This function will permanently remove the data pipe and all its contents.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "run.delete("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "pipe.delete("
+            text = text + "pipe_name=" + `pipe_name` + ")"
             print text
 
-        # The run argument.
-        if run != None and type(run) != str:
-            raise RelaxNoneStrError, ('run', run)
+        # The data pipe name argument.
+        if pipe_name != None and type(pipe_name) != str:
+            raise RelaxNoneStrError, ('data pipe name', pipe_name)
 
         # Execute the functional code.
-        self.__relax__.generic.runs.delete(run=run)
+        self.__relax__.generic.pipes.delete(pipe_name=pipe_name)
 
 
-    def hybridise(self, hybrid=None, runs=None):
-        """Function for a hybridised run from a number of other runs.
+    def hybridise(self, hybrid=None, pipes=None):
+        """Create a hybrid data pipe by fusing a number of other data pipes.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        hybrid:  The name of the hybrid run to create.
+        hybrid:  The name of the hybrid data pipe to create.
 
-        runs:  An array containing the names of all runs to hybridise.
+        pipes:  An array containing the names of all data pipes to hybridise.
 
 
         Description
@@ -135,40 +138,40 @@ class Run:
         This user function can be used to construct hybrid models.  An example of the use of a
         hybrid model could be if the protein consists of two independent domains.  These two domains
         could be analysed separately, each having their own optimised diffusion tensors.  The
-        N-terminal domain run could be called 'N_sphere' while the C-terminal domain could be called
-        'C_ellipsoid'.  These two runs could then be hybridised into a run called 'mixed model' by
-        typing
+        N-terminal domain data pipe could be called 'N_sphere' while the C-terminal domain could be
+        called 'C_ellipsoid'.  These two data pipes could then be hybridised into a single data pipe
+        called 'mixed model' by typing:
 
-        relax> run.hybridise('mixed model', ['N_sphere', 'C_ellipsoid'])
-        relax> run.hybridise(hybrid='mixed model', runs=['N_sphere', 'C_ellipsoid'])
+        relax> pipe.hybridise('mixed model', ['N_sphere', 'C_ellipsoid'])
+        relax> pipe.hybridise(hybrid='mixed model', pipes=['N_sphere', 'C_ellipsoid'])
 
-        This hybrid run can then be compared via model selection to a run where the entire protein
-        is assumed to have a single diffusion tensor.
+        This hybrid data pipe can then be compared via model selection to a data pipe whereby the
+        entire protein is assumed to have a single diffusion tensor.
 
-        The only requirements for runs to be hybridised is that, at minimum, a sequence has been
-        loaded, that the sequence for all hybridised runs is the same, and that no residue is
-        allowed to be selected in two or more runs.  The last condition is to ensure that overlap
-        does not occur to allow statistically significant comparisons.
+        The requirements for data pipes to be hybridised is that the molecules, sequences, and spin
+        systems for all the data pipes is the same, and that no spin system is allowed to be
+        selected in two or more data pipes.  The selections must not overlap to allow for
+        rigorous statistical comparisons.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "run.hybridise("
+            text = sys.ps3 + "pipe.hybridise("
             text = text + "hybrid=" + `hybrid`
-            text = text + ", runs=" + `runs` + ")"
+            text = text + ", pipes=" + `pipes` + ")"
             print text
 
         # The hybrid argument.
         if hybrid != None and type(hybrid) != str:
-            raise RelaxNoneStrError, ('hybrid run', hybrid)
+            raise RelaxNoneStrError, ('hybrid data pipe', hybrid)
 
-        # Runs.
-        if type(runs) != list:
-            raise RelaxNoneListError, ('runs', runs)
+        # Data pipes.
+        if type(pipes) != list:
+            raise RelaxNoneListError, ('data pipes', pipes)
         else:
-            for name in runs:
+            for name in pipes:
                 if type(name) != str:
-                    raise RelaxListStrError, ('runs', runs)
+                    raise RelaxListStrError, ('data pipes', pipes)
 
         # Execute the functional code.
-        self.__relax__.specific.hybrid.hybridise(hybrid=hybrid, runs=runs)
+        self.__relax__.specific.hybrid.hybridise(hybrid=hybrid, pipes=pipes)
