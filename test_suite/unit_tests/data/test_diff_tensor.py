@@ -29,12 +29,6 @@ from string import split
 from sys import path
 from unittest import TestCase, main
 
-# Modify the system path so that the relax modules can be imported (for stand alone execution).
-path_comps = split(path[0], sep)
-if len(path_comps) > 3:
-    relax_path = sep + join(*path_comps[0:-3])
-    path.append(relax_path)
-
 from data.diff_tensor import DiffTensorElement, DiffTensorSimList
 from relax_errors import RelaxError
 
@@ -322,7 +316,3 @@ class Test_diff_tensor(TestCase):
         # Test that the Diso parameter has been set correctly.
         self.assert_(hasattr(self.diff_data, 'Diso'))
         self.assertEqual(self.diff_data.Diso, 1/(6*1e-8))
-
-
-if __name__ == '__main__':
-    main()
