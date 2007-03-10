@@ -30,7 +30,7 @@ Located at https://mail.gna.org/public/relax-devel/2006-10/msg00058.html (Messag
 
 1 [Done].  Firstly release relax version 1.3.0 prior to any changes (to allow a functional version which handles RNA better, has the tensor PDB representation code, etc).
 
-2.  Redesign 'self.relax.data'.
+2 [Done].  Redesign 'self.relax.data'.
 
 3.  Create the data pipe looping function for the 'pipes' argument (Chris MacRaild, https://mail.gna.org/public/relax-devel/2006-10/msg00060.html, Message-id: <1160562239.14487.98.camel@mrspell>).  The user functions could be implemented as functors (Chris MacRaild, https://mail.gna.org/public/relax-devel/2007-01/msg00020.html, Message-ID: <1168432131.7569.338.camel@mrspell>).  The design will need to take into account the user function docstrings, relax help system, and the relax manual docstring fetching code.
 
