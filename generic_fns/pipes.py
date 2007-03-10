@@ -37,7 +37,18 @@ relax_data_store = Data()
 
 
 def create(pipe_name=None, pipe_type=None):
-    """Function for creating a data pipe."""
+    """Creating a new data pipe.
+
+    @param pipe_name:   The name of the new data pipe.
+    @type pipe_name:    str
+    @param pipe_type:   The new data pipe type which can be one of the following:
+        'jw':  Reduced spectral density mapping,
+        'mf':  Model-free analysis,
+        'noe':  Steady state NOE calculation,
+        'relax_fit':  Relaxation curve fitting,
+        'srls':  SRLS analysis.
+    @type pipe_type:    str
+    """
 
     # Test if the data pipe already exists.
     if pipe_name in relax_data_store.pipe_names:
