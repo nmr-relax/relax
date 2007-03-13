@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2006-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -35,7 +35,7 @@ from jw_mapping import Jw
 from model_free import Mf
 from model_selection import Modsel
 from relax_fit import Relax_fit
-from run_create import Run_create
+from pipe_create import Pipe_create
 from sequence import Sequence
 
 
@@ -59,20 +59,20 @@ class System_tests:
         heading("The relax test suite")
 
 
-        # Run tests.
-        ############
+        # Data pipe tests.
+        ##################
 
         # Heading.
-        heading("The run tests")
+        heading("The data pipe tests")
 
         # Initialise the array containing each test element.
-        self.run_test_array = []
+        self.pipe_test_array = []
 
-        # User function run.create() test.
-        self.run_test_array.append(Run_create(self.relax))
+        # User function pipe.create() test.
+        self.pipe_test_array.append(Pipe_create(self.relax))
 
         # Execute the tests.
-        self.exec_tests(self.run_test_array)
+        self.exec_tests(self.pipe_test_array)
 
 
         # Sequence tests.
@@ -283,14 +283,14 @@ class System_tests:
         global_pass = 1
 
 
-        # Run tests.
-        ############
+        # Data pipe tests.
+        ##################
 
         # Heading.
-        sys.stdout.write("\nThe run tests:\n")
+        sys.stdout.write("\nThe data pipe tests:\n")
 
         # Loop over the tests.
-        for test in self.run_test_array:
+        for test in self.pipe_test_array:
             # Synopsis.
             global_pass = global_pass and test.passed
 

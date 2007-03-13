@@ -25,6 +25,7 @@ import sys
 
 # relax module imports.
 import help
+from generic_fns import pipes
 from relax_errors import RelaxListStrError, RelaxNoneListError, RelaxNoneStrError, RelaxStrError
 
 
@@ -89,7 +90,7 @@ class Pipe:
             raise RelaxStrError, ('data pipe type', pipe_type)
 
         # Execute the functional code.
-        self.__relax__.generic.pipes.create(pipe_name=pipe_name, pipe_type=pipe_type)
+        pipes.create(pipe_name=pipe_name, pipe_type=pipe_type)
 
 
     def delete(self, pipe_name=None):

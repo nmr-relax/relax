@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2006-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,21 +21,21 @@
 ###############################################################################
 
 
-class Run_create:
+class Pipe_create:
     def __init__(self, relax):
-        """Class for testing the creation of runs."""
+        """Class for testing the creation of data pipes."""
 
         self.relax = relax
 
         # The name of the test.
-        self.name = "The user function run.create()"
+        self.name = "The user function pipe.create()"
 
 
-    def test(self, run):
+    def test(self, pipe):
         """The actual test."""
 
-        # Create the run.
-        self.relax.interpreter._Run.create(run, 'mf')
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create(pipe, 'mf')
 
         # Success.
         return 1
