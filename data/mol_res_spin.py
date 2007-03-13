@@ -36,13 +36,13 @@ from types import DictType, ListType
 class SpinContainer:
     """Class containing all the spin system specific data."""
 
-    def __init__(self):
+    def __init__(self, spin_name=None, spin_num=None, select=1):
         """Set up the default objects of the spin system data container."""
 
         # The spin system name and number.
-        self.name = None
-        self.num = None
-        self.select = 1
+        self.name = spin_name
+        self.num = spin_num
+        self.select = select
 
 
     def __repr__(self):
@@ -102,10 +102,10 @@ class SpinList(ListType):
         return text
 
 
-    def add_item(self):
+    def add_item(self, spin_name=None, spin_num=None, select=1):
         """Function for appending an empty container to the list."""
 
-        self.append(SpinContainer())
+        self.append(SpinContainer(spin_name, spin_num, select))
 
 
 
@@ -115,12 +115,12 @@ class SpinList(ListType):
 class ResidueContainer:
     """Class containing all the residue specific data."""
 
-    def __init__(self):
+    def __init__(self, res_name=None, res_num=None):
         """Set up the default objects of the residue data container."""
 
         # The residue name and number.
-        self.name = None
-        self.num = None
+        self.name = res_name
+        self.num = res_num
 
         # The empty spin system list.
         self.spin = SpinList()
@@ -183,10 +183,10 @@ class ResidueList(ListType):
         return text
 
 
-    def add_item(self):
+    def add_item(self, res_name=None, res_num=None):
         """Function for appending an empty container to the list."""
 
-        self.append(ResidueContainer())
+        self.append(ResidueContainer(res_name, res_num))
 
 
 
@@ -196,11 +196,11 @@ class ResidueList(ListType):
 class MoleculeContainer:
     """Class containing all the molecule specific data."""
 
-    def __init__(self):
+    def __init__(self, mol_name=None):
         """Set up the default objects of the molecule data container."""
 
         # The name of the molecule, corresponding to that of the structure file if specified.
-        self.name = None
+        self.name = mol_name
 
         # The empty residue list.
         self.res = ResidueList()
@@ -253,7 +253,7 @@ class MoleculeList(ListType):
         return text
 
 
-    def add_item(self):
+    def add_item(self, mol_name=None):
         """Function for appending an empty container to the list."""
 
-        self.append(MoleculeContainer())
+        self.append(MoleculeContainer(mol_name))
