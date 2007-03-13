@@ -551,18 +551,17 @@ class Run_unit_tests(object):
                break
            else:
                extended_seg_path =  copy(seg_path)
-               for elem in  seg_target_directory[-1::-1]:
-                   extended_seg_path.append(elem)
-                   if os.path.exists(os.path.join(*extended_seg_path)):
-                       found_seg_path=extended_seg_path
-                       break
+               extended_seg_path.extend(seg_target_directory)
+               if os.path.exists(os.path.join(*extended_seg_path)):
+                   found_seg_path=extended_seg_path
+                   break
 
            #if len(seg_path) != 0:
            seg_path.pop()
 
 
         result = None
-        if len(found_seg_path) != 0:
+        if found_seg_path != None and len(found_seg_path) != 0:
             seg_offset_path = segment_path(offset_path)
             found_seg_path.extend(seg_offset_path)
             #print 'pre join', os.path.join(seg_path),seg_path
@@ -804,13 +803,17 @@ class Run_unit_tests(object):
 
 
         # Run the unit tests and catch the TestResult object.
-        if tests != None:
+        if tests != None and tests.countTestCases() != 0:
             results = runner.run(tests)
             result_string = results.wasSuccessful()
+        elif tests == None:
+            results=None
+            result_string = 'Error: no test directories found for input module: %s' % self.test_module
+            print result_string
         else:
-            print 'error no test cases found for input!'
-            results=False
-            result_string = 'Error no tests found'
+            results=None
+            result_string = 'note: no tests found for input module: %s' % self.test_module
+            print result_string
 
         #Return the result of all the tests.
         return result_string
@@ -892,6 +895,7 @@ if __name__ == '__main__':
     if len(args) < 1:
         args = [None]
 
+    print 'arsg',args
     for arg in args:
         runner = Run_unit_tests(test_module=arg, verbose=options.verbose)
         runner.run()
