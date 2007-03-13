@@ -21,19 +21,22 @@
 ###############################################################################
 
 # Python module imports.
+from copy import deepcopy
 from re import match
 from types import DictType, ListType
+
+# relax module imports.
+from prototype import Prototype
 
 
 """The molecule-residue-spin containers."""
 
 
 
-
 # The spin system data.
 #######################
 
-class SpinContainer:
+class SpinContainer(Prototype):
     """Class containing all the spin system specific data."""
 
     def __init__(self, spin_name=None, spin_num=None, select=1):
@@ -112,7 +115,7 @@ class SpinList(ListType):
 # The residue data.
 ###################
 
-class ResidueContainer:
+class ResidueContainer(Prototype):
     """Class containing all the residue specific data."""
 
     def __init__(self, res_name=None, res_num=None):
@@ -193,7 +196,7 @@ class ResidueList(ListType):
 # The molecule data.
 ###################
 
-class MoleculeContainer:
+class MoleculeContainer(Prototype):
     """Class containing all the molecule specific data."""
 
     def __init__(self, mol_name=None):

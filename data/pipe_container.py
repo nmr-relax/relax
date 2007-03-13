@@ -25,12 +25,13 @@ from re import match
 
 # relax module imports.
 from data_classes import SpecificData
-from mol_res_spin import MoleculeList
 from diff_tensor import DiffTensorData
+from mol_res_spin import MoleculeList
+from prototype import Prototype
 
 
 
-class PipeContainer:
+class PipeContainer(Prototype):
     """Class containing all the program data."""
 
     # Molecular structure data.
