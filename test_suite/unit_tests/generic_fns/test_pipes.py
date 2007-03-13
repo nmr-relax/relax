@@ -57,6 +57,12 @@ class Test_pipes(TestCase):
         relax_data_store['empty'].pipe_type = 'mf'
 
 
+    def tearDown(self):
+        """Reset the relax data storage object."""
+
+        relax_data_store.__reset__()
+
+
     def test_creation(self):
         """Test the creation of a data pipe.
 
