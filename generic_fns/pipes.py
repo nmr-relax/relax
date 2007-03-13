@@ -74,27 +74,18 @@ def create(pipe_name=None, pipe_type=None):
 
 
 def delete(pipe_name=None):
-    """Function for deleting a data pipe."""
+    """Delete a data pipe.
+
+    @param pipe_name:   The name of the data pipe to delete.
+    @type pipe_name:    str
+    """
 
     # Test if the data pipe exists.
-    if pipe_name != None and not pipe_name in relax_data_store.pipe_names:
+    if pipe_name != None and not relax_data_store.has_key(pipe_name):
         raise RelaxNoRunError, pipe_name
 
-    # Find out if any data in 'relax_data_store' is assigned to a data pipe.
-    for name in dir(relax_data_store):
-        # Get the object.
-        object = getattr(relax_data_store, name)
-
-        # Skip to the next data structure if the object is not a dictionary.
-        if not hasattr(object, 'keys'):
-            continue
-
-        # Delete the data if the object contains the key 'pipe_name'.
-        if object.has_key(pipe_name):
-            del(object[pipe_name])
-
-    # Clean up the data pipes, ie delete any data pipes for which there is no data left.
-    eliminate_unused_pipes()
+    # Delete the data pipe.
+    del relax_data_store[pipe_name]
 
 
 def eliminate_unused_pipes():
