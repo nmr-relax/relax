@@ -27,6 +27,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Data
+from data.pipe_container import PipeContainer
 from generic_fns import pipes
 from relax_errors import RelaxError
 
@@ -41,8 +42,9 @@ class Test_pipes(TestCase):
     def setUp(self):
         """Set up for all the data pipe unit tests."""
 
-        # Add a run to the data store.
-        relax_data_store.add('orig')
+        # Add a data pipe to the data store.
+        relax_data_store['orig'] = PipeContainer()
+        relax_data_store['orig'].pipe_type = 'mf'
 
         # Add a single object to the 'orig' data pipe.
         relax_data_store['orig'].x = 1
@@ -51,7 +53,8 @@ class Test_pipes(TestCase):
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 1
 
         # Add an empty data pipe (for the 'eliminate_unused_pipes' test).
-        relax_data_store.add('empty')
+        relax_data_store['empty'] = PipeContainer()
+        relax_data_store['empty'].pipe_type = 'mf'
 
 
     def test_creation(self):
@@ -67,8 +70,8 @@ class Test_pipes(TestCase):
         # Test that the data pipe exists.
         self.assert_(relax_data_store.has_key(name))
 
-        # Test that the current run is the new run.
-        self.assertEqual(relax_data_store.current_run, name)
+        # Test that the current pipe is the new pipe.
+        self.assertEqual(relax_data_store.current_pipe, name)
 
 
     def test_creation_fail(self):
@@ -87,9 +90,9 @@ class Test_pipes(TestCase):
         The function tested is generic_fns.pipes.delete()
         """
 
-        # Set the current run to the 'orig' data pipe.
+        # Set the current pipe to the 'orig' data pipe.
         name = 'orig'
-        relax_data_store.current_run = name
+        relax_data_store.current_pipe = name
 
         # Delete the 'orig' data pipe.
         pipes.delete(name)
@@ -97,8 +100,8 @@ class Test_pipes(TestCase):
         # Test that the data pipe no longer exists.
         self.assert_(not relax_data_store.has_key(name))
 
-        # Test that the current run is None (as the current run was deleted).
-        self.assertEqual(relax_data_store.current_run, None)
+        # Test that the current pipe is None (as the current pipe was deleted).
+        self.assertEqual(relax_data_store.current_pipe, None)
 
 
     def test_deletion_fail(self):
@@ -117,7 +120,7 @@ class Test_pipes(TestCase):
         The function tests is generic_fns.pipes.eliminate_unused_pipes().
         """
 
-        # The name of the empty run.
+        # The name of the empty pipe.
         name = 'empty'
 
         # Execute the cleanup function.
@@ -126,5 +129,5 @@ class Test_pipes(TestCase):
         # Test that the data pipe no longer exists.
         self.assert_(not relax_data_store.has_key(name))
 
-        # Test that the current run is None (as the current run was the empty run).
-        self.assertEqual(relax_data_store.current_run, None)
+        # Test that the current pipe is None (as the current pipe was the empty pipe).
+        self.assertEqual(relax_data_store.current_pipe, None)

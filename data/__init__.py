@@ -85,14 +85,14 @@ class Data(DictType):
         text = text + "\n"
         text = text + "Objects:\n"
         for name in dir(self):
-            if match("^_", name) or name in DictType.__dict__ or name == 'add':
+            if match("^_", name) or name in DictType.__dict__:
                 continue
             text = text + "  %s: %s\n" % (name, `getattr(self, name)`)
 
         # Methods.
         text = text + "\n"
         text = text + "Methods:\n"
-        text = text + "  add, Add a new pipe container to the dictionary.\n"
+        text = text + "  __reset__, Reset the relax data storage object back to its initial state\n"
 
         # DictType methods.
         text = text + "\n"
@@ -118,22 +118,3 @@ class Data(DictType):
 
         # Remove all items from the dictionary.
         self.clear()
-
-
-    def add(self, pipe):
-        """Method for adding a new pipe container to the dictionary.
-
-        This method should be used rather than importing the PipeContainer class and using the
-        statement 'D[pipe] = PipeContainer()', where D is the relax data storage object and pipe is
-        the name of the data pipe.
-
-        @param pipe:    The name of the new data pipe.
-        @type pipe:     str
-        """
-
-        # Test if the pipe already exists.
-        if pipe in self.keys():
-            raise RelaxRunError, pipe
-
-        # Create a new container.
-        self[pipe] = PipeContainer()
