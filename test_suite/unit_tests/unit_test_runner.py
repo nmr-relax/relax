@@ -568,7 +568,6 @@ class Run_unit_tests(object):
             #print 'pre join', os.path.join(seg_path),seg_path
             result = os.path.normpath(join_path_segments(found_seg_path))
 
-        print 'result', result
         return result
 
 # DELETEME:
