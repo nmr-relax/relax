@@ -29,7 +29,7 @@ from unittest import TestCase
 from data import Data
 from data.pipe_container import PipeContainer
 from generic_fns import pipes
-from relax_errors import RelaxError
+from relax_errors import RelaxError, RelaxNoRunError
 
 
 # The relax data storage object.
@@ -116,8 +116,8 @@ class Test_pipes(TestCase):
         The function tested is generic_fns.pipes.delete()
         """
 
-        # Assert that a RelaxError occurs when the data pipe does not exist.
-        self.assertRaises(RelaxError, pipes.delete, 'x')
+        # Assert that a RelaxNoRunError occurs when the data pipe does not exist.
+        self.assertRaises(RelaxNoRunError, pipes.delete, 'x')
 
 
     def test_unused_cleanup(self):
