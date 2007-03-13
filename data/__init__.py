@@ -22,7 +22,6 @@
 
 # Python module imports.
 from re import match
-from types import DictType
 
 # relax module imports.
 from pipe_container import PipeContainer
@@ -35,7 +34,7 @@ __all__ = [ 'data_classes',
             'main' ]
 
 
-class Data(DictType):
+class Data(dict):
     """The relax data storage object."""
 
     # Singleton initialisation, the reference to the single instance of this class.
@@ -55,7 +54,7 @@ class Data(DictType):
 
         # Create a new instance if none exists.
         if self.__instance is None:
-            self.__instance = DictType.__new__(self, *args, **kargs)
+            self.__instance = dict.__new__(self, *args, **kargs)
 
         # Return the class instance.
         return self.__instance
@@ -85,7 +84,7 @@ class Data(DictType):
         text = text + "\n"
         text = text + "Objects:\n"
         for name in dir(self):
-            if match("^_", name) or name in DictType.__dict__:
+            if match("^_", name) or name in dict.__dict__:
                 continue
             text = text + "  %s: %s\n" % (name, `getattr(self, name)`)
 
@@ -94,10 +93,10 @@ class Data(DictType):
         text = text + "Methods:\n"
         text = text + "  __reset__, Reset the relax data storage object back to its initial state\n"
 
-        # DictType methods.
+        # dict methods.
         text = text + "\n"
         text = text + "Inherited dictionary methods:\n"
-        for name in dir(DictType):
+        for name in dir(dict):
             if match("^_", name):
                 continue
             text = text + "  %s\n" % name

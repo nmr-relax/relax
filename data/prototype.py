@@ -22,15 +22,39 @@
 
 # Python module imports.
 from copy import deepcopy
+from re import search
 
 
 """The molecule-residue-spin containers."""
 
 
-class Prototype:
+class Prototype(object):
     """Base class implementing the prototype design pattern."""
 
-    def __copy__(self):
+    def __deepcopy__(self, memo):
+        """Replacement deepcopy method."""
+
+        # Make a new object.
+        new_obj = self.__class__.__new__(self.__class__)
+
+        # Loop over all objects in self and make deepcopies of them.
+        for name in dir(self):
+            # Skip all names begining with '__'.
+            if search('^__', name):
+                continue
+
+            # Get the object.
+            value = getattr(self, name)
+
+            # Replace the object with a deepcopy of it.
+            setattr(new_obj, name, deepcopy(value, memo))
+
+        # Return the new object.
+        return new_obj
+
+
+    def __clone__(self):
         """Prototype method which returns a deepcopy of the object."""
 
+        # Make a new object.
         return deepcopy(self)

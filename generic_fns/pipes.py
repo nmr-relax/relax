@@ -55,7 +55,7 @@ def copy(pipe_from=None, pipe_to=None):
         pipe_from = relax_data_store.current_pipe
 
     # Copy the data.
-    relax_data_store[pipe_to] = relax_data_store[pipe_from].__copy__()
+    relax_data_store[pipe_to] = relax_data_store[pipe_from].__clone__()
 
 
 def create(pipe_name=None, pipe_type=None):

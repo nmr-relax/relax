@@ -23,7 +23,6 @@
 # Python module imports.
 from copy import deepcopy
 from re import match
-from types import DictType, ListType
 
 # relax module imports.
 from prototype import Prototype
@@ -76,7 +75,7 @@ class SpinContainer(Prototype):
         return text
 
 
-class SpinList(ListType):
+class SpinList(list):
     """List type data container for spin system specific data."""
 
     def __init__(self):
@@ -157,7 +156,7 @@ class ResidueContainer(Prototype):
         return text
 
 
-class ResidueList(ListType):
+class ResidueList(list):
     """List type data container for residue specific data."""
 
     def __init__(self):
@@ -237,7 +236,7 @@ class MoleculeContainer(Prototype):
         return text
 
 
-class MoleculeList(ListType):
+class MoleculeList(list):
     """List type data container for the molecule specific data."""
 
     def __init__(self):
