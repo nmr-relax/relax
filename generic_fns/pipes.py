@@ -93,6 +93,10 @@ def delete(pipe_name=None):
     # Delete the data pipe.
     del relax_data_store[pipe_name]
 
+    # Set the current data pipe to None if it is the deleted data pipe.
+    if relax_data_store.current_pipe == pipe_name:
+        relax_data_store.current_pipe = None
+
 
 def eliminate_unused_pipes():
     """Function for eliminating any data pipes for which there is no data."""
