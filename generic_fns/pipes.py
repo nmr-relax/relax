@@ -20,9 +20,6 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from copy import deepcopy
-
 # relax module imports.
 from data import Data
 from data.pipe_container import PipeContainer
@@ -96,53 +93,3 @@ def delete(pipe_name=None):
     # Set the current data pipe to None if it is the deleted data pipe.
     if relax_data_store.current_pipe == pipe_name:
         relax_data_store.current_pipe = None
-
-
-def eliminate_unused_pipes():
-    """Function for eliminating any data pipes for which there is no data."""
-
-    # An array of data pipes to retain.
-    keep_pipes = []
-
-    # Find out if any data in 'relax_data_store' is assigned to a data pipe.
-    for name in dir(relax_data_store):
-        # Skip to the next data structure if the object is not a dictionary.
-        object = getattr(relax_data_store, name)
-        if not hasattr(object, 'keys'):
-            continue
-
-        # Add the keys to 'keep_pipes'.
-        for key in object.keys():
-            if not key in keep_pipes:
-                keep_pipes.append(key)
-
-    # Delete the data pipes in 'relax_data_store.pipe_names' and 'relax_data_store.pipe_types' which are not in 'keep_pipes'.
-    for pipe in relax_data_store.pipe_names:
-        if not pipe in keep_pipes:
-            # Index.
-            index = relax_data_store.pipe_names.index(pipe)
-
-            # Remove from pipe_names.
-            relax_data_store.pipe_names.remove(pipe)
-
-            # Remove from pipe_types.
-            temp = relax_data_store.pipe_types.pop(index)
-
-
-def list_of_pipes(pipe):
-    """Function for creating a list of data pipes."""
-
-    # All data pipes.
-    if pipe == None:
-            pipes = deepcopy(relax_data_store.pipe_names)
-
-    # Single data pipe.
-    elif type(pipe) == str:
-        pipes = [pipe]
-
-    # List of data pipes.
-    else:
-        pipes = pipe
-
-    # Return the list.
-    return pipes

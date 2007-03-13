@@ -118,22 +118,3 @@ class Test_pipes(TestCase):
 
         # Assert that a RelaxNoRunError occurs when the data pipe does not exist.
         self.assertRaises(RelaxNoRunError, pipes.delete, 'x')
-
-
-    def test_unused_cleanup(self):
-        """Test the removal of empty data pipes.
-
-        The function tests is generic_fns.pipes.eliminate_unused_pipes().
-        """
-
-        # The name of the empty pipe.
-        name = 'empty'
-
-        # Execute the cleanup function.
-        pipes.eliminate_unused_pipes()
-
-        # Test that the data pipe no longer exists.
-        self.assert_(not relax_data_store.has_key(name))
-
-        # Test that the current pipe is None (as the current pipe was the empty pipe).
-        self.assertEqual(relax_data_store.current_pipe, None)
