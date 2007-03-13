@@ -37,7 +37,6 @@ from palmer import Palmer
 from structure import Structure
 from pymol import Pymol
 from results import Results
-from pipes import Pipes
 from selection import Selection
 from sequence import Sequence
 from state import State
@@ -70,7 +69,6 @@ class Generic:
         self.structure = Structure(self.relax)
         self.pymol = Pymol(self.relax)
         self.results = Results(self.relax)
-        self.pipes = Pipes(self.relax)
         self.selection = Selection(self.relax)
         self.sequence = Sequence(self.relax)
         self.state = State(self.relax)
