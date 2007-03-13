@@ -93,6 +93,26 @@ class Pipe:
         pipes.create(pipe_name=pipe_name, pipe_type=pipe_type)
 
 
+    def current(self):
+        """Print the name of the current pipe.
+
+        Examples
+        ~~~~~~~~
+
+        To run the user function, type:
+
+        relax> pipe.current()
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "pipe.current()"
+            print text
+
+        # Execute the functional code.
+        pipes.current()
+
+
     def delete(self, pipe_name=None):
         """Function for deleting a data pipe.
 

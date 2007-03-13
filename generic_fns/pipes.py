@@ -76,6 +76,12 @@ def create(pipe_name=None, pipe_type=None):
     relax_data_store.current_pipe = pipe_name
 
 
+def current():
+    """Print the name of the current data pipe."""
+
+    print relax_data_store.current_pipe
+
+
 def delete(pipe_name=None):
     """Delete a data pipe.
 
