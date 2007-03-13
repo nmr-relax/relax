@@ -27,7 +27,8 @@ from unittest import TestCase
 from data import Data
 
 
-__all__ = ['test_diff_tensor']
+__all__ = ['test_diff_tensor',
+           'test_mol_res_spin']
 
 
 
