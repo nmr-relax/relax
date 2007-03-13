@@ -119,13 +119,13 @@ class Pipe:
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        pipe_name:  The name of the name.
+        pipe_name:  The name of the data pipe.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function will permanently remove the data pipe and all its contents.
+        This function will permanently remove the data pipe and all of its contents.
         """
 
         # Function intro text.
@@ -139,7 +139,7 @@ class Pipe:
             raise RelaxNoneStrError, ('data pipe name', pipe_name)
 
         # Execute the functional code.
-        self.__relax__.generic.pipes.delete(pipe_name=pipe_name)
+        pipes.delete(pipe_name=pipe_name)
 
 
     def hybridise(self, hybrid=None, pipes=None):
