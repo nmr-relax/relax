@@ -101,6 +101,17 @@ def delete(pipe_name=None):
         relax_data_store.current_pipe = None
 
 
+def list():
+    """Print the details of all the data pipes."""
+
+    # Heading.
+    print "%-20s%-20s" % ("Data pipe name", "Data pipe type")
+
+    # Loop over the data pipes.
+    for pipe_name in relax_data_store:
+        print "%-20s%-20s" % (pipe_name, relax_data_store[pipe_name].pipe_type)
+
+
 def switch(pipe_name=None):
     """Switch the current data pipe to the given data pipe.
 

@@ -198,6 +198,26 @@ class Pipe:
         self.__relax__.specific.hybrid.hybridise(hybrid=hybrid, pipes=pipes)
 
 
+    def list(self):
+        """Print a list of all the data pipes.
+
+        Examples
+        ~~~~~~~~
+
+        To run the user function, type:
+
+        relax> pipe.list()
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "pipe.list()"
+            print text
+
+        # Execute the functional code.
+        pipes.list()
+
+
     def switch(self, pipe_name=None):
         """Function for switching between data pipes.
 
