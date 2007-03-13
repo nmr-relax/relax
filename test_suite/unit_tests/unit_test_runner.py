@@ -812,7 +812,8 @@ class Run_unit_tests(object):
             results=False
             result_string = 'Error no tests found'
 
-
+        #Return the result of all the tests.
+        return result_string
 #
 #        else:
 #        #iterate and load unit tests from module path
@@ -843,8 +844,7 @@ class Run_unit_tests(object):
 #        # restore sys  path
 #        sys.path=backup_python_path
 #
-#        #Return the result of all the tests.
-#        return results_string
+
 #
 #    #def unit_test_module_path(self):
 
