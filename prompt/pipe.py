@@ -196,3 +196,41 @@ class Pipe:
 
         # Execute the functional code.
         self.__relax__.specific.hybrid.hybridise(hybrid=hybrid, pipes=pipes)
+
+
+    def switch(self, pipe_name=None):
+        """Function for switching between data pipes.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        pipe_name:  The name of the data pipe.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function will switch from the current data pipe to the given data pipe.
+
+
+        Examples
+        ~~~~~~~~
+
+        To switch to the 'ellipsoid' data pipe, type:
+
+        relax> pipe.switch('ellipsoid')
+        relax> pipe.switch(pipe_name='ellipsoid')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "pipe.switch("
+            text = text + "pipe_name=" + `pipe_name` + ")"
+            print text
+
+        # The data pipe name argument.
+        if pipe_name != None and type(pipe_name) != str:
+            raise RelaxNoneStrError, ('data pipe name', pipe_name)
+
+        # Execute the functional code.
+        pipes.switch(pipe_name=pipe_name)

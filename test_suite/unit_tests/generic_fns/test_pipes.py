@@ -118,3 +118,32 @@ class Test_pipes(TestCase):
 
         # Assert that a RelaxNoRunError occurs when the data pipe does not exist.
         self.assertRaises(RelaxNoRunError, pipes.delete, 'x')
+
+
+    def test_switch(self):
+        """Test the switching of the current data pipe.
+
+        The function tested is generic_fns.pipes.switch().
+        """
+
+        # Switch to the 'orig' data pipe.
+        pipes.switch('orig')
+
+        # Test the current data pipe.
+        self.assertEqual(relax_data_store.current_pipe, 'orig')
+
+        # Switch to the 'empty' data pipe.
+        pipes.switch('empty')
+
+        # Test the current data pipe.
+        self.assertEqual(relax_data_store.current_pipe, 'empty')
+
+
+    def test_switch_fail(self):
+        """Test the failure of switching to a non-existant data pipe.
+
+        The function used is generic_fns.pipes.switch().
+        """
+
+        # Assert that a RelaxNoRunError occurs when the pipe type is invalid.
+        self.assertRaises(RelaxNoRunError, pipes.switch, 'x')

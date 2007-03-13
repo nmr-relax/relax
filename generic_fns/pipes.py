@@ -99,3 +99,18 @@ def delete(pipe_name=None):
     # Set the current data pipe to None if it is the deleted data pipe.
     if relax_data_store.current_pipe == pipe_name:
         relax_data_store.current_pipe = None
+
+
+def switch(pipe_name=None):
+    """Switch the current data pipe to the given data pipe.
+
+    @param pipe_name:   The name of the data pipe to switch to.
+    @type pipe_name:    str
+    """
+
+    # Test if the data pipe exists.
+    if not relax_data_store.has_key(pipe_name):
+        raise RelaxNoRunError, pipe_name
+
+    # Switch the current data pipe.
+    relax_data_store.current_pipe = pipe_name
