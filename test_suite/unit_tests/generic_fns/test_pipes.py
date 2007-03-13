@@ -29,7 +29,7 @@ from unittest import TestCase
 from data import Data
 from data.pipe_container import PipeContainer
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxNoRunError
+from relax_errors import RelaxError, RelaxNoRunError, RelaxRunError
 
 
 # The relax data storage object.
@@ -56,11 +56,86 @@ class Test_pipes(TestCase):
         relax_data_store['empty'] = PipeContainer()
         relax_data_store['empty'].pipe_type = 'mf'
 
+        # Set the current run to the 'orig' data pipe.
+        relax_data_store.current_pipe = 'orig'
+
 
     def tearDown(self):
         """Reset the relax data storage object."""
 
         relax_data_store.__reset__()
+
+
+    def test_copy(self):
+        """Test the copying of a data pipe.
+
+        The function tested is generic_fns.pipes.copy().
+        """
+
+        # Copy the 'orig' data pipe to the 'new' data pipe.
+        pipes.copy('orig', 'new')
+
+        # Test that the new data pipe exists.
+        self.assert_(relax_data_store.has_key('new'))
+
+        # Test that the new data pipe has the object 'x' and that its value is 1.
+        self.assertEqual(relax_data_store['new'].x, 1)
+
+        # Change the value of x.
+        relax_data_store['new'].x = 2
+
+        # Test that the two values are different.
+        self.assert_(relax_data_store['orig'].x != relax_data_store['new'].x)
+
+        # Test that the new data pipe has the object 'mol[0].res[0].spin[0].num' and that its value is 1.
+        self.assertEqual(relax_data_store['new'].mol[0].res[0].spin[0].num, 1)
+
+        # Change the spin system number.
+        relax_data_store['new'].mol[0].res[0].spin[0].num = 2
+
+        # Test that the original spin system number hasn't changed.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 1)
+
+
+    def test_copy_current(self):
+        """Test the copying of current data pipe.
+
+        The function tested is generic_fns.pipes.copy().
+        """
+
+        # Copy the 'orig' data pipe to the 'new' data pipe.
+        pipes.copy(pipe_to='new')
+
+        # Test that the new data pipe exists.
+        self.assert_(relax_data_store.has_key('new'))
+
+        # Test that the new data pipe has the object 'x' and that its value is 1.
+        self.assertEqual(relax_data_store['new'].x, 1)
+
+        # Change the value of x.
+        relax_data_store['new'].x = 2
+
+        # Test that the two values are different.
+        self.assert_(relax_data_store['orig'].x != relax_data_store['new'].x)
+
+        # Test that the new data pipe has the object 'mol[0].res[0].spin[0].num' and that its value is 1.
+        self.assertEqual(relax_data_store['new'].mol[0].res[0].spin[0].num, 1)
+
+        # Change the spin system number.
+        relax_data_store['new'].mol[0].res[0].spin[0].num = 2
+
+        # Test that the original spin system number hasn't changed.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 1)
+
+
+    def test_copy_fail(self):
+        """Test the failure of the copying of data pipes when the data pipe to copy to already exists.
+
+        The function tested is generic_fns.pipes.copy()
+        """
+
+        # Assert that a RelaxRunError occurs when the data pipe to copy data to already exists.
+        self.assertRaises(RelaxRunError, pipes.copy, 'orig', 'empty')
 
 
     def test_creation(self):

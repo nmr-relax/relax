@@ -34,6 +34,30 @@ relax_data_store = Data()
 """Class containing the methods for manipulating data pipes."""
 
 
+def copy(pipe_from=None, pipe_to=None):
+    """Copy the contents of the source data pipe to a new target data pipe.
+
+    If the 'pipe_from' argument is None then the current run is assumed as the source.  The data
+    pipe corresponding to 'pipe_to' cannot exist.
+
+    @param pipe_from:   The name of the source data pipe to copy the data from.
+    @type pipe_from:    str
+    @param pipe_to:     The name of the target data pipe to copy the data to.
+    @type pipe_to:      str
+    """
+
+    # Test if the pipe already exists.
+    if pipe_to in relax_data_store.keys():
+        raise RelaxRunError, pipe_to
+
+    # The current data pipe.
+    if pipe_from == None:
+        pipe_from = relax_data_store.current_pipe
+
+    # Copy the data.
+    relax_data_store[pipe_to] = relax_data_store[pipe_from].__copy__()
+
+
 def create(pipe_name=None, pipe_type=None):
     """Create a new data pipe.
 

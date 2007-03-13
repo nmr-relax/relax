@@ -42,6 +42,57 @@ class Pipe:
         self.__relax__ = relax
 
 
+    def copy(self, pipe_from=None, pipe_to=None):
+        """Function for copying a data pipe.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        pipe_from:  The name of the source data pipe to copy the data from.
+
+        pipe_to:  The name of the target data pipe to copy the data to.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This user function allows the contents of a data pipe to be copied.  If the 'pipe_from'
+        keyword argument is set to None the current run is assumed.  The data pipe corresponding to
+        'pipe_to' must not yet exist.
+
+
+        Examples
+        ~~~~~~~~
+
+        To copy the contents of the 'm1' data pipe to the 'm2' data pipe, type:
+
+        relax> pipe.copy('m1', 'm2')
+        relax> pipe.copy(pipe_from='m1', pipe_to='m2')
+
+        If the current data pipe is 'm1', then the following command can be used:
+
+        relax> pipe.copy(pipe_to='m2')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "pipe.copy("
+            text = text + "pipe_from=" + `pipe_from`
+            text = text + "pipe_to=" + `pipe_to` + ")"
+            print text
+
+        # The source data pipe argument.
+        if pipe_from != None and type(pipe_from) != str:
+            raise RelaxNoneStrError, ('data pipe from', pipe_from)
+
+        # The target data pipe argument.
+        if pipe_to != None and type(pipe_to) != str:
+            raise RelaxNoneStrError, ('data pipe to', pipe_to)
+
+        # Execute the functional code.
+        pipes.copy(pipe_from=pipe_from, pipe_to=pipe_to)
+
+
     def create(self, pipe_name=None, pipe_type=None):
         """Function for initialising a data pipe.
 
