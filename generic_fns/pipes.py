@@ -40,6 +40,9 @@ relax_data_store = Data()
 def create(pipe_name=None, pipe_type=None):
     """Create a new data pipe.
 
+    The current data pipe will be changed to this new data pipe.
+
+
     @param pipe_name:   The name of the new data pipe.
     @type pipe_name:    str
     @param pipe_type:   The new data pipe type which can be one of the following:
@@ -71,6 +74,9 @@ def create(pipe_name=None, pipe_type=None):
 
     # Add the data pipe type string to the container.
     relax_data_store[pipe_name].pipe_type = pipe_type
+
+    # Change the current data pipe.
+    relax_data_store.current_pipe = pipe_name
 
 
 def delete(pipe_name=None):
