@@ -61,8 +61,11 @@ class Test_chi2(TestCase):
         """Unit test for the value returned by the chi2 function.
 
         For the following data, the chi-squared value is 2.5
+
             data =      [1.0, 1.5,  2.0, 2.5,  3.0],
+
             back_calc = [0.9, 1.45, 2.0, 2.55, 3.1],
+
             errors =    [0.1, 0.1,  0.1, 0.1,  0.1].
         """
 
@@ -74,7 +77,19 @@ class Test_chi2(TestCase):
 
 
     def test_dchi2(self):
-        """Unit test for the chi-squared gradient created by the dchi2 function."""
+        """Unit test for the chi-squared gradient created by the dchi2 function.
+
+        The chi-squared gradient is [0, 10] for the following data
+
+            data =              [1.0, 1.5,  2.0, 2.5,  3.0],
+
+            back_calc =         [0.9, 1.45, 2.0, 2.55, 3.1],
+
+            back_calc_grad =    | 0.1,  0.2, 0.3, 0.2, 0.1|
+                                |-0.2, -0.1, 0.0, 0.1, 0.2|,
+
+            errors =            [0.1, 0.1,  0.1, 0.1,  0.1],
+        """
 
         # Initial gradient.
         grad = [None, None]
@@ -83,6 +98,6 @@ class Test_chi2(TestCase):
         grad[0] = dchi2(self.data, self.back_calc, self.back_calc_grad[0], self.errors)
         grad[1] = dchi2(self.data, self.back_calc, self.back_calc_grad[1], self.errors)
 
-        # Assert that the gradient is [0, 10] (within a precision of 13 decimal places).
+        # Assert, to a precision of 13 decimal places, that the gradient is [0, 10].
         self.assertAlmostEqual(grad[0], 0.0, places=13)
         self.assertAlmostEqual(grad[1], 10.0, places=13)
