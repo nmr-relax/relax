@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -60,6 +60,7 @@ from molmol import Molmol
 from monte_carlo import Monte_carlo
 from noe import Noe
 from palmer import Palmer
+from residue import Residue
 from structure import Structure
 from pymol import Pymol
 from relax_data import Relax_data
@@ -118,6 +119,7 @@ class Interpreter:
         self._Monte_carlo = Monte_carlo(relax)
         self._Noe = Noe(relax)
         self._Palmer = Palmer(relax)
+        self._Residue = Residue(relax)
         self._Structure = Structure(relax)
         self._Pymol = Pymol(relax)
         self._Relax_data = Relax_data(relax)
@@ -180,6 +182,7 @@ class Interpreter:
         pymol = self._Pymol
         relax_data = self._Relax_data
         relax_fit = self._Relax_fit
+        residue = self._Residue
         results = self._Results
         pipe = self._Pipe
         select = self._Select
