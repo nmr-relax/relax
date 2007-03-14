@@ -51,12 +51,12 @@ This syntax will need to be properly referenced (in addition to being fully desc
 
 8 [Done].  Rename 'prompt/run.py' to 'prompt/pipe.py'.  Rename 'generic_fns/runs.py' to 'generic_fns/pipes.py'.
 
-9.  Create the new pipe user functions (from the old run user functions):
+9 [Done].  Create the new pipe user functions (from the old run user functions):
     pipe.copy()         # Create a new pipe with the current contents of another pipe.
     pipe.create()       # Create a new pipe.  Switch to this pipe by default.
     pipe.current()      # Print the current pipe name.
     pipe.delete()       # Delete the pipe.
-    pipe.delete_all()   # Delete all pipes.  Essentially deleting 'self.relax.data'.
+    [this is almost the same as reset() so it will not be implemented] pipe.delete_all()   # Delete all pipes.  Essentially deleting 'self.relax.data'.
     pipe.hybridise()    # Fuse two pipes into the current pipe.  Overlapping data in the two pipes must be identical!
     pipe.list()         # Print the details of all pipes.
     pipe.switch()       # Switch to a different pipe.
