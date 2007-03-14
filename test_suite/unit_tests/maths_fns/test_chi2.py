@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import unittest
 
 class Test_chi2(unittest.TestCase):
