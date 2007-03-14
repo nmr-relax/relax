@@ -30,7 +30,7 @@ relax_data_store = Data()
 
 
 
-def create(self, res_num=None, res_name=None):
+def create(res_num=None, res_name=None):
     """Function for adding a residue into the relax data store."""
 
     # Initialise the sequence data if no sequence currently exists.
