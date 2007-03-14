@@ -44,6 +44,13 @@ class Test_chi2(TestCase):
         self.back_calc_grad = array([[ 0.1,  0.2, 0.3, 0.2, 0.1],
                                      [-0.2, -0.1, 0.0, 0.1, 0.2]], Float64)
 
+        # A 'back calculated' Hessian.
+        self.back_calc_hess = array([[[0.01, 0.005, 0.0, 0.005, 0.01],
+                                      [0.05, 0.01,  0.0, 0.01,  0.05]],
+                                     [[0.001, 0.0005, 0.0, 0.0005, 0.001],
+                                      [0.005, 0.001,  0.0, 0.001,  0.005]]],
+                                      Float64)
+
         # Some errors.
         self.errors = array([0.1, 0.1, 0.1, 0.1, 0.1], Float64)
 
@@ -101,3 +108,42 @@ class Test_chi2(TestCase):
         # Assert, to a precision of 13 decimal places, that the gradient is [0, 10].
         self.assertAlmostEqual(grad[0], 0.0, places=13)
         self.assertAlmostEqual(grad[1], 10.0, places=13)
+
+
+    def test_d2chi2(self):
+        """Unit test for the chi-squared Hessian created by the d2chi2 function.
+
+        For the data
+
+            data =              | 1.0    1.5    2.0    2.5    3.0   |,
+
+            back_calc =         | 0.9    1.45   2.0    2.55   3.1   |,
+
+            back_calc_grad =    | 0.1    0.2    0.3    0.2    0.1   |
+                                |-0.2   -0.1    0.0    0.1    0.2   |,
+
+            back_calc_hess[0] = | 0.01   0.005  0.0    0.005  0.01  |
+                                | 0.05   0.01   0.0    0.01   0.05  |,
+
+            back_calc_hess[1] = | 0.001  0.0005 0.0    0.0005 0.001 |
+                                | 0.005  0.001  0.0    0.001  0.005 |,
+
+            errors =            | 0.1    0.1    0.1    0.1    0.1   |,
+
+        the chi-squared hessian is
+
+            Hessian = | 38.0   0.0 |
+                      |  0.0  20.0 |.
+        """
+
+        # Calculate the Hessian elements.
+        hess00 = d2chi2(self.data, self.back_calc, self.back_calc_grad[0], self.back_calc_grad[0], self.back_calc_hess[0, 0], self.errors)
+        hess01 = d2chi2(self.data, self.back_calc, self.back_calc_grad[0], self.back_calc_grad[1], self.back_calc_hess[0, 1], self.errors)
+        hess10 = d2chi2(self.data, self.back_calc, self.back_calc_grad[1], self.back_calc_grad[0], self.back_calc_hess[1, 0], self.errors)
+        hess11 = d2chi2(self.data, self.back_calc, self.back_calc_grad[1], self.back_calc_grad[1], self.back_calc_hess[1, 1], self.errors)
+
+        # Assert, to a precision of 13 decimal places, that the Hessian is [[38.0, 0], [0, 20]].
+        self.assertAlmostEqual(hess00, 38.0, places=13)
+        self.assertAlmostEqual(hess01, 0.0, places=13)
+        self.assertAlmostEqual(hess10, 0.0, places=13)
+        self.assertAlmostEqual(hess11, 20.0, places=13)
