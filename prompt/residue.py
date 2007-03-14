@@ -20,9 +20,12 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
 
+# relax module imports.
 import help
+from generic_fns import residue
 from relax_errors import RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxStrError
 
 
