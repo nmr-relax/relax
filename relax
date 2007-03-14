@@ -74,7 +74,7 @@ import relax_warnings
 from specific_fns.main import Specific
 from specific_fns.specific_setup import Specific_setup
 from test_suite.runner import Test_suite_runner
-from test_suite.unit_tests.unit_test_runner import Run_unit_tests
+from test_suite.unit_tests.unit_test_runner import Unit_test_runner
 from thread_classes import Threading, ThreadData
 import version
 
@@ -197,7 +197,7 @@ class Relax:
             self.set_intro_string()
 
             # Run the tests.
-            runner = Run_unit_tests(root_path='test_suite/unit_tests')
+            runner = Unit_test_runner(root_path='test_suite/unit_tests')
             runner.run()
 
         # Test mode.
