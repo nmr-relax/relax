@@ -67,13 +67,13 @@ class Test_chi2(TestCase):
     def test_chi2(self):
         """Unit test for the value returned by the chi2 function.
 
-        For the following data, the chi-squared value is 2.5
+        The chi-squared value is 2.5 for the following data
 
-            data =      [1.0, 1.5,  2.0, 2.5,  3.0],
+            data =      | 1.0  1.5  2.0  2.5  3.0 |,
 
-            back_calc = [0.9, 1.45, 2.0, 2.55, 3.1],
+            back_calc = | 0.9  1.45 2.0  2.55 3.1 |,
 
-            errors =    [0.1, 0.1,  0.1, 0.1,  0.1].
+            errors =    | 0.1  0.1  0.1  0.1  0.1 |.
         """
 
         # Get the chi-squared value.
@@ -88,14 +88,14 @@ class Test_chi2(TestCase):
 
         The chi-squared gradient is [0, 10] for the following data
 
-            data =              [1.0, 1.5,  2.0, 2.5,  3.0],
+            data =              |  1.0  1.5  2.0  2.5  3.0 |,
 
-            back_calc =         [0.9, 1.45, 2.0, 2.55, 3.1],
+            back_calc =         |  0.9  1.45 2.0  2.55 3.1 |,
 
-            back_calc_grad =    | 0.1,  0.2, 0.3, 0.2, 0.1|
-                                |-0.2, -0.1, 0.0, 0.1, 0.2|,
+            back_calc_grad =    |  0.1  0.2  0.3  0.2  0.1 |
+                                | -0.2 -0.1  0.0  0.1  0.2 |,
 
-            errors =            [0.1, 0.1,  0.1, 0.1,  0.1],
+            errors =            |  0.1  0.1  0.1  0.1  0.1 |.
         """
 
         # Initial gradient.
