@@ -61,6 +61,7 @@ class Test_chi2(TestCase):
         del self.data
         del self.back_calc
         del self.back_calc_grad
+        del self.back_calc_hess
         del self.errors
 
 
