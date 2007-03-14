@@ -52,6 +52,9 @@ class System_tests:
         self.relax = relax
 
 
+    def run(self):
+        """Method for the execution of all system/functional tests."""
+
         # Introduction.
         ###############
 
@@ -228,10 +231,11 @@ class System_tests:
         self.exec_tests(self.generic_test_array)
 
 
-        # Summary.
-        ##########
+        # Fin.
+        ######
 
-        self.summary()
+        global_pass = self.summary()
+        return global_pass
 
 
 
@@ -436,3 +440,7 @@ class System_tests:
         else:
             sys.stdout.write(" %-10s\n" % "[ Failed ]")
         sys.stdout.write("\n\n")
+
+
+        # Return the global_pass value.
+        return global_pass
