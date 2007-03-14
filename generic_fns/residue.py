@@ -33,25 +33,20 @@ relax_data_store = Data()
 def create(res_num=None, res_name=None):
     """Function for adding a residue into the relax data store."""
 
-    # Initialise the sequence data if no sequence currently exists.
-    if not relax_data_store.res.has_key(run):
-        # Add the run to 'relax_data_store.res'.
-        relax_data_store.res.add_list(run)
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoRunError
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Test if the residue number already exists.
-    for i in xrange(len(relax_data_store.res[run])):
-        if relax_data_store.res[run][i].num == res_num:
+    for i in xrange(len(cdp.mol[0].res)):
+        if cdp.mol[0].res[i].num == res_num:
             raise RelaxError, "The residue number '" + `res_num` + "' already exists in the sequence."
 
-    # Residue index.
-    index = len(relax_data_store.res[run])
-
-    # Append a data container.
-    relax_data_store.res[run].add_item()
-
-    # Insert the data.
-    relax_data_store.res[run][index].num = res_num
-    relax_data_store.res[run][index].name = res_name
+    # Append the residue.
+    cdp.mol[0].res.add_item(res_num=res_num, res_name=res_name)
 
 
 class Residue:

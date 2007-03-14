@@ -523,8 +523,11 @@ class RelaxRunError(BaseError):
 
 # No run.
 class RelaxNoRunError(BaseError):
-    def __init__(self, run):
-        self.text = "The run " + `run` + " has not been created yet."
+    def __init__(self, run=None):
+        if run:
+            self.text = "The run " + `run` + " has not been created yet."
+        else:
+            self.text = "No data pipes currently exist.  Please use the pipe.create() user function first."
         if Debug:
             self.save_state()
 
