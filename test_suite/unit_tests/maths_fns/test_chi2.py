@@ -83,6 +83,9 @@ class Test_chi2(TestCase):
         # Assert that the value must be 2.5.
         self.assertEqual(val, 2.5)
 
+        # Delete the value.
+        del val
+
 
     def test_dchi2(self):
         """Unit test for the chi-squared gradient created by the dchi2 function.
@@ -99,16 +102,16 @@ class Test_chi2(TestCase):
             errors =            |  0.1  0.1  0.1  0.1  0.1 |.
         """
 
-        # Initial gradient.
-        grad = [None, None]
-
         # Calculate the gradient elements.
-        grad[0] = dchi2(self.data, self.back_calc, self.back_calc_grad[0], self.errors)
-        grad[1] = dchi2(self.data, self.back_calc, self.back_calc_grad[1], self.errors)
+        grad0 = dchi2(self.data, self.back_calc, self.back_calc_grad[0], self.errors)
+        grad1 = dchi2(self.data, self.back_calc, self.back_calc_grad[1], self.errors)
 
         # Assert, to a precision of 13 decimal places, that the gradient is [0, 10].
-        self.assertAlmostEqual(grad[0], 0.0, places=13)
-        self.assertAlmostEqual(grad[1], 10.0, places=13)
+        self.assertAlmostEqual(grad0, 0.0, places=13)
+        self.assertAlmostEqual(grad1, 10.0, places=13)
+
+        # Delete the gradient data.
+        del grad0, grad1
 
 
     def test_d2chi2(self):
@@ -148,3 +151,6 @@ class Test_chi2(TestCase):
         self.assertAlmostEqual(hess01, 0.0, places=13)
         self.assertAlmostEqual(hess10, 0.0, places=13)
         self.assertAlmostEqual(hess11, 20.0, places=13)
+
+        # Delete the Hessian data.
+        del hess00, hess01, hess10, hess11
