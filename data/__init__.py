@@ -37,28 +37,8 @@ __all__ = [ 'data_classes',
 class Data(dict):
     """The relax data storage object."""
 
-    # Singleton initialisation, the reference to the single instance of this class.
-    __instance = None
-
     # The current data pipe.
     current_pipe = None
-
-
-    def __new__(self, *args, **kargs):
-        """Method for implementing the singleton design pattern.
-
-        If no other class instance currently exists, create a new instance of this class.  Otherwise
-        return the class instance.  See http://en.wikipedia.org/wiki/Singleton_pattern for a
-        description of this design pattern.
-        """
-
-        # Create a new instance if none exists.
-        if self.__instance is None:
-            self.__instance = dict.__new__(self, *args, **kargs)
-
-        # Return the class instance.
-        return self.__instance
-
 
     def __repr__(self):
         """The string representation of the object.
@@ -145,3 +125,6 @@ class Data(dict):
         # Change the current data pipe.
         self.current_pipe = pipe_name
 
+# Rebind the name Data with an instance to prevent accidental creation
+# of multiple instances of the Data class
+Data = Data()

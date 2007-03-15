@@ -27,9 +27,12 @@ from unittest import TestCase
 from data import Data
 
 
-class NewStore(Data):
-    """Subclass the relax data storage object for the isolation and creation of a new singleton."""
-
+class NewStore(dict):
+    """Dict subclass to act as proxy for the Singleton Data object."""
+    def __getattr__(self, attr):
+        """Delegate to the Data class to get methods for testing"""
+        return getattr(Data.__class__, attr)
+            
 
 class Empty_container:
     """An empty data container."""
@@ -53,15 +56,11 @@ class Test_Data(TestCase):
         # Add an object to the data store object.
         self.data_store.test = 1
 
-        # Create a new reference.
-        self.new_ref = NewStore()
-
 
     def tearDown(self):
         """Destroy the subclassed data store."""
 
         # Delete all references (which should decrement the singleton's ref counter to 0, hence destroying it).
-        del self.new_ref
         del self.data_store
 
 
@@ -104,18 +103,3 @@ class Test_Data(TestCase):
         self.assert_(hasattr(self.data_store, 'current_pipe'))
 
 
-    def test_singleton(self):
-        """Test that the relax data storage object is functioning as a singleton."""
-
-        # Test that the new reference to NewStore is the singleton instance reference.
-        self.assertEqual(self.data_store, self.new_ref)
-
-        # Delete all references (which should decrement the singleton's ref counter to 0, hence destroying it).
-        del self.new_ref
-        del self.data_store
-
-        # Create a new singleton.
-        new = NewStore()
-
-        # Test that the object 'test' from the original singleton does not exist.
-        self.assert_(not hasattr(new, 'test'))
