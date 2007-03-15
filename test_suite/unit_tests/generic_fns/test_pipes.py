@@ -41,8 +41,7 @@ class Test_pipes(TestCase):
         """Set up for all the data pipe unit tests."""
 
         # Add a data pipe to the data store.
-        relax_data_store['orig'] = PipeContainer()
-        relax_data_store['orig'].pipe_type = 'mf'
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
 
         # Add a single object to the 'orig' data pipe.
         relax_data_store['orig'].x = 1
@@ -51,8 +50,7 @@ class Test_pipes(TestCase):
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 1
 
         # Add an empty data pipe (for the 'eliminate_unused_pipes' test).
-        relax_data_store['empty'] = PipeContainer()
-        relax_data_store['empty'].pipe_type = 'mf'
+        relax_data_store.add(pipe_name='empty', pipe_type='mf')
 
         # Set the current run to the 'orig' data pipe.
         relax_data_store.current_pipe = 'orig'

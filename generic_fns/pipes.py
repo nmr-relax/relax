@@ -22,7 +22,6 @@
 
 # relax module imports.
 from data import Data
-from data.pipe_container import PipeContainer
 from relax_errors import RelaxError, RelaxNoRunError, RelaxRunError
 from specific_fns.relax_fit import C_module_exp_fn
 
@@ -75,10 +74,6 @@ def create(pipe_name=None, pipe_type=None):
     @type pipe_type:    str
     """
 
-    # Test if the pipe already exists.
-    if pipe_name in relax_data_store.keys():
-        raise RelaxRunError, pipe_name
-
     # List of valid data pipe types.
     valid = ['jw', 'mf', 'noe', 'relax_fit', 'srls']
 
@@ -90,14 +85,8 @@ def create(pipe_name=None, pipe_type=None):
     if pipe_type == 'relax_fit' and not C_module_exp_fn:
         raise RelaxError, "Relaxation curve fitting is not availible.  Try compiling the C modules on your platform."
 
-    # Create a new container.
-    relax_data_store[pipe_name] = PipeContainer()
-
-    # Add the data pipe type string to the container.
-    relax_data_store[pipe_name].pipe_type = pipe_type
-
-    # Change the current data pipe.
-    relax_data_store.current_pipe = pipe_name
+    # Add the data pipe.
+    relax_data_store.add(pipe_name=pipe_name, pipe_type=pipe_type)
 
 
 def current():
