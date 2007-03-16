@@ -34,28 +34,31 @@ from prototype import Prototype
 class PipeContainer(Prototype):
     """Class containing all the program data."""
 
-    # Molecular structure data.
-    structure = SpecificData()
+    def __init__(self):
+        """Set up all the PipeContainer data structures."""
 
-    # Diffusion data.
-    diff = DiffTensorData()
+        # Molecular structure data.
+        self.structure = SpecificData()
 
-    # The molecule-residue-spin object.
-    mol = MoleculeList()
+        # Diffusion data.
+        self.diff = DiffTensorData()
 
-    # The data pipe type.
-    pipe_type = None
+        # The molecule-residue-spin object.
+        self.mol = MoleculeList()
 
-    # Hybrid models.
-    hybrid_runs = {}
+        # The data pipe type.
+        self.pipe_type = None
 
-    # Global minimisation statistics.
-    chi2 = None
-    iter = None
-    f_count = None
-    g_count = None
-    h_count = None
-    warning = None
+        # Hybrid models.
+        self.hybrid_runs = {}
+
+        # Global minimisation statistics.
+        self.chi2 = None
+        self.iter = None
+        self.f_count = None
+        self.g_count = None
+        self.h_count = None
+        self.warning = None
 
 
     def __repr__(self):
