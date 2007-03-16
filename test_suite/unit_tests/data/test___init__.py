@@ -32,13 +32,13 @@ class NewStore(dict):
     def __getattr__(self, attr):
         """Delegate to the Data class to get methods for testing"""
         return getattr(Data.__class__, attr)
-            
+
 
 class Empty_container:
     """An empty data container."""
 
 
-class Test_Data(TestCase):
+class Test___init__(TestCase):
     """Unit tests for the data.Data class."""
 
     def setUp(self):
@@ -61,14 +61,15 @@ class Test_Data(TestCase):
         """Destroy the subclassed data store."""
 
         # Delete all references (which should decrement the singleton's ref counter to 0, hence destroying it).
-        del self.data_store
+        if hasattr(self, 'data_store'):
+            del self.data_store
 
 
     def test_add(self):
         """Unit test for testing the addition of a new data pipe by the 'add()' method."""
 
         # Add a new data pipe.
-        self.data_store.add('new')
+        self.data_store.add(pipe_name='new', pipe_type='mf')
 
         # Test that the new data pipe exists.
         self.assert_(self.data_store.has_key('new'))
@@ -101,5 +102,3 @@ class Test_Data(TestCase):
 
         # Test that the object's initial objects still exist.
         self.assert_(hasattr(self.data_store, 'current_pipe'))
-
-
