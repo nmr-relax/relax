@@ -45,8 +45,14 @@ def create(res_num=None, res_name=None):
         if cdp.mol[0].res[i].num == res_num:
             raise RelaxError, "The residue number '" + `res_num` + "' already exists in the sequence."
 
+    # If no residue data exists, replace the empty first residue with this residue.
+    if cdp.mol[0].res[0].num == None and cdp.mol[0].res[0].name == None and len(cdp.mol[0].res) == 1:
+        cdp.mol[0].res[0].num = res_num
+        cdp.mol[0].res[0].name = res_name
+
     # Append the residue.
-    cdp.mol[0].res.add_item(res_num=res_num, res_name=res_name)
+    else:
+        cdp.mol[0].res.add_item(res_num=res_num, res_name=res_name)
 
 
 class Residue:
