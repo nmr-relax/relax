@@ -511,7 +511,7 @@ class Diffusion_tensor:
 
         # The relax data storage object.
         global relax_data_store
-        relax_data_store = Data()
+        relax_data_store = Data
 
 
 

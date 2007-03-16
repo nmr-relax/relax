@@ -21,12 +21,11 @@
 ###############################################################################
 
 # relax module imports.
-from data import Data
+from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoRunError, RelaxNoSequenceError, RelaxSequenceError
 
 
 # The relax data storage object.
-relax_data_store = Data()
 
 
 

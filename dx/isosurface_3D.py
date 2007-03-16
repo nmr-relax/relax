@@ -24,13 +24,8 @@
 from Numeric import Float64, zeros
 
 # relax module imports.
-from data import Data
+from data import Data as relax_data_store
 from base_map import Base_Map
-
-
-# The relax data storage object.
-relax_data_store = Data()
-
 
 
 class Iso3D(Base_Map):

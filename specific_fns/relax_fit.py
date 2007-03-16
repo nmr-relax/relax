@@ -28,7 +28,7 @@ from re import match, search
 import sys
 
 # relax module imports.
-from data import Data
+from data import Data as relax_data_store
 from base_class import Common_functions
 from minimise.generic import generic_minimise
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoRunError, RelaxNoSequenceError
@@ -44,7 +44,6 @@ else:
 
 
 # The relax data storage object.
-relax_data_store = Data()
 
 
 

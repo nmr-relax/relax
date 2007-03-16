@@ -24,14 +24,13 @@
 from unittest import TestCase
 
 # relax module imports.
-from data import Data
+from data import Data as relax_data_store
 from data.pipe_container import PipeContainer
 from generic_fns import residue
 from relax_errors import RelaxError, RelaxNoRunError, RelaxRunError
 
 
 # The relax data storage object.
-relax_data_store = Data()
 
 
 class Test_residue(TestCase):

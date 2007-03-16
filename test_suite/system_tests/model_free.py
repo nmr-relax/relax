@@ -25,11 +25,10 @@ from math import pi
 import sys
 
 # relax module imports.
-from data import Data
+from data import Data as relax_data_store
 
 
 # The relax data storage object.
-relax_data_store = Data()
 
 
 

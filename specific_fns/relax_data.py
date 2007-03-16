@@ -25,12 +25,11 @@ from copy import deepcopy
 import sys
 
 # relax module imports.
-from data import Data
+from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxNoResError, RelaxNoRiError, RelaxNoRunError, RelaxNoSequenceError, RelaxRiError
 
 
 # The relax data storage object.
-relax_data_store = Data()
 
 
 class Rx_data:

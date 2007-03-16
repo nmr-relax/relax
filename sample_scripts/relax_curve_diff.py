@@ -26,12 +26,11 @@
 from Numeric import Float64, array, identity, sqrt, zeros
 
 # relax module imports.
-from data import Data
+from data import Data as relax_data_store
 from maths_fns.relax_fit import back_calc_I, func, setup
 
 
 # The relax data storage object.
-relax_data_store = Data()
 
 
 

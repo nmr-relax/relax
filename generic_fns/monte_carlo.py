@@ -27,12 +27,11 @@ from Numeric import ones
 from random import gauss
 
 # relax module imports.
-from data import Data
+from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError
 
 
 # The relax data storage object.
-relax_data_store = Data()
 
 
 

@@ -25,14 +25,12 @@ from Queue import Queue
 from re import search
 
 # relax module imports.
-from data import Data
+from data import Data as elax_data_store
 #from processes import RelaxPopen3
 from relax_errors import RelaxError, RelaxNoRunError
 from thread_classes import RelaxParentThread, RelaxThread
 
 
-# The relax data storage object.
-relax_data_store = Data()
 
 
 

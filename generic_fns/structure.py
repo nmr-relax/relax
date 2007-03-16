@@ -30,13 +30,12 @@ from string import ascii_uppercase
 from warnings import warn
 
 # relax module imports.
-from data import Data
+from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbChainError, RelaxNoPdbError, RelaxNoResError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError, RelaxPdbError, RelaxPdbLoadError, RelaxRegExpError
 from relax_warnings import RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxWarning, RelaxZeroVectorWarning
 
 
 # The relax data storage object.
-relax_data_store = Data()
 
 
 

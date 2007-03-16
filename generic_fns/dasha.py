@@ -28,12 +28,9 @@ from string import lower, split
 import sys
 
 # relax module imports.
-from data import Data
+from data import Data as relax_data_store
 from relax_errors import RelaxDirError, RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNucleusError
 
-
-# The relax data storage object.
-relax_data_store = Data()
 
 
 

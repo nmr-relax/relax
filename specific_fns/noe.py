@@ -25,12 +25,11 @@ from math import sqrt
 from re import match
 
 # relax module imports.
-from data import Data
+from data import Data as relax_data_store
 from relax_errors import RelaxArgNotInListError, RelaxError, RelaxInvalidDataError, RelaxNoRunError, RelaxNoSequenceError, RelaxRegExpError
 
 
 # The relax data storage object.
-relax_data_store = Data()
 
 
 

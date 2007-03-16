@@ -31,7 +31,7 @@ from string import replace, split
 import sys
 
 # relax module imports.
-from data import Data
+from data import Data as relax_data_store
 from specific_fns.base_class import Common_functions
 from float import isNaN,isInf 
 from maths_fns.mf import Mf
@@ -40,7 +40,6 @@ from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxIn
 
 
 # The relax data storage object.
-relax_data_store = Data()
 
 
 

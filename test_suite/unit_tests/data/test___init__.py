@@ -25,13 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Data
-
-
-class NewStore(dict):
-    """Dict subclass to act as proxy for the Singleton Data object."""
-    def __getattr__(self, attr):
-        """Delegate to the Data class to get methods for testing"""
-        return getattr(Data.__class__, attr)
+from relax_errors import RelaxError
 
 
 class Empty_container:
@@ -44,8 +38,9 @@ class Test___init__(TestCase):
     def setUp(self):
         """Set up a complex relax data store."""
 
-        # Create a new relax data store singleton.
-        self.data_store = NewStore()
+        # Get an instance of the relax data object fot testing. This is a deliberate breach of 
+        # the Singleton design of this class for testing purposes only. Dont try this at home!
+        self.data_store = Data.__class__()
 
         # Add an empty data container as a new pipe.
         self.data_store['empty'] = Empty_container()
@@ -60,7 +55,7 @@ class Test___init__(TestCase):
     def tearDown(self):
         """Destroy the subclassed data store."""
 
-        # Delete all references (which should decrement the singleton's ref counter to 0, hence destroying it).
+        # Delete all references.
         if hasattr(self, 'data_store'):
             del self.data_store
 

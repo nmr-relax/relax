@@ -2,8 +2,7 @@
 
 
 # The relax data storage object.
-from data import Data
-relax_data_store = Data()
+from data import Data as relax_data_store
 
 
 def back_calc(name):

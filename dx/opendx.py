@@ -25,13 +25,10 @@ from os import system
 from re import search
 
 # relax module imports.
-from data import Data
+from data import Data as relax_data_store
 from isosurface_3D import Iso3D
 from relax_errors import RelaxError, RelaxNoResError
 
-
-# The relax data storage object.
-relax_data_store = Data()
 
 
 
