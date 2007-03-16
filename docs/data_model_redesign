@@ -69,6 +69,7 @@ This syntax will need to be properly referenced (in addition to being fully desc
 The molecule.add() user function should be used to create all the residue and spin structures for that molecule from a loaded structure.  This can be done through an API to allow users to code their own PDB readers (which could in future be incorporated into relax).  For more information see Gary Thompson's post at https://mail.gna.org/public/relax-devel/2007-01/msg00014.html (Message-ID: <f001463a0701071417w6bd7927cp8fdd052e698575ec@mail.gmail.com>).  The user function should also allow for the creation of an empty molecule data container to allow for analyses whereby no structure is needed (relaxation curve-fitting, NOE calculation, model-free analysis with isotropic diffusion, etc.).  The sequence user function class can then be used to load the sequence (or spin.read()).
 
 11.  Create the 'residue' user function class:
+    residue.copy()
     residue.create()    # This is currently named 'sequence.add()'.
     residue.delete()
     residue.merge()

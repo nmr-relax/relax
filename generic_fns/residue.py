@@ -30,6 +30,65 @@ relax_data_store = Data()
 
 
 
+def copy(res_num_from=None, res_name_from=None, res_num_to=None, res_name_to=None):
+    """Copy the contents of the residue structure from one residue to a new residue.
+
+    For copying to be successful, the res_num_from and res_name_from must match an existant residue.
+    The res_name_from and res_name_to arguments need not be supplied.  The new residue number must
+    be unique.
+
+    @param res_num_from:    The residue number identifying the structure to copy the data from.
+        This argument must be supplied.
+    @type res_num_from:     int
+    @param res_name_from:   The residue name identifying the structure to copy the data from.  This
+        argument is optional.
+    @type res_name_from:    str
+    @param res_num_to:      The residue number identifying the structure to copy the data to.  This
+        argument must be supplied.
+    @type res_num_to:       int
+    @param res_name_to:     The residue name identifying the structure to copy the data to.  This
+        argument is optional but if supplied will rename the copied residue.
+    @type res_name_to:      str
+    """
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Test if the residue number already exists.
+    for i in xrange(len(cdp.mol[0].res)):
+        if cdp.mol[0].res[i].num == res_num_to:
+            raise RelaxError, "The residue number '" + `res_num_to` + "' already exists in the sequence."
+
+    # Find the index corresponding to the residue number and name.
+    index = None
+    for i in xrange(len(cdp.mol[0].res)):
+        # Residue number match.
+        if cdp.mol[0].res[i].num == res_num_from:
+            # Residue name match (if required).
+            if res_name_from:
+                if cdp.mol[0].res[i].name == res_name_from:
+                    index = i
+            else:
+                index = i
+
+    # No residue to copy data from.
+    if index == None:
+        if res_name_from:
+            raise RelaxError, "The residue '" + `res_num_from` + " " + res_name_from + "' does not exist."
+        else:
+            raise RelaxError, "The residue number '" + `res_num_from` + "' does not exist."
+
+    # Copy the data.
+    cdp.mol[0].res.append(cdp.mol[0].res[index].__clone__())
+
+    # Change the new residue number.
+    cdp.mol[0].res[-1].num = res_num_to
+
+    # Change the new residue name.
+    if res_name_to:
+        cdp.mol[0].res[-1].name = res_name_to
+
+
 def create(res_num=None, res_name=None):
     """Function for adding a residue into the relax data store."""
 
@@ -60,39 +119,6 @@ class Residue:
         """Class containing functions specific to amino-acid sequence."""
 
         self.relax = relax
-
-
-    def copy(self, run1=None, run2=None):
-        """Function for copying the sequence from run1 to run2."""
-
-        # Test if run1 exists.
-        if not run1 in relax_data_store.run_names:
-            raise RelaxNoRunError, run1
-
-        # Test if run2 exists.
-        if not run2 in relax_data_store.run_names:
-            raise RelaxNoRunError, run2
-
-        # Test if the sequence data for run1 is loaded.
-        if not relax_data_store.res.has_key(run1):
-            raise RelaxNoSequenceError, run1
-
-        # Test if the sequence data already exists.
-        if relax_data_store.res.has_key(run2):
-            raise RelaxSequenceError, run2
-
-        # Add run2 to 'relax_data_store.res'.
-        relax_data_store.res.add_list(run2)
-
-        # Copy the data.
-        for i in xrange(len(relax_data_store.res[run1])):
-            # Append a data container to run2.
-            relax_data_store.res[run2].add_item()
-
-            # Insert the data.
-            relax_data_store.res[run2][i].num = relax_data_store.res[run1][i].num
-            relax_data_store.res[run2][i].name = relax_data_store.res[run1][i].name
-            relax_data_store.res[run2][i].select = relax_data_store.res[run1][i].select
 
 
     def data_names(self):
