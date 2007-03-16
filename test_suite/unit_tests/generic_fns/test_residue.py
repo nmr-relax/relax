@@ -53,6 +53,64 @@ class Test_residue(TestCase):
         relax_data_store.__reset__()
 
 
+    def test_copy(self):
+        """Test the copying of the residue data.
+
+        The function used is generic_fns.residues.copy().
+        """
+
+        # Create the first residue and add some data to its spin container.
+        residue.create(1, 'Ala')
+        relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
+        relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
+
+        # Copy the residue a few times.
+        residue.copy(res_num_from=1, res_num_to=2)
+        residue.copy(res_num_from=1, res_name_from='Ala', res_num_to=3)
+
+        # Change the first residue's data.
+        relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
+        relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
+
+        # Copy the residue once more.
+        residue.copy(res_num_from=1, res_num_to=4, res_name_to='Met')
+
+        # Test the new residue 2.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[1].num, 2)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[1].name, 'Ala')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].num, 111)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].x, 1)
+
+        # Test the new residue 3.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[2].num, 3)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[2].name, 'Ala')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[2].spin[0].num, 111)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[2].spin[0].x, 1)
+
+        # Test the new residue 4.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[3].num, 4)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[3].name, 'Met')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[3].spin[0].num, 222)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[3].spin[0].x, 2)
+
+
+    def test_copy_fail(self):
+        """Test the failure of the copying of the residue data.
+
+        The function used is generic_fns.residues.copy().
+        """
+
+        # Create the a few residues.
+        residue.create(1, 'Ala')
+        residue.create(-1, 'His')
+
+        # Copy a non-existant residue (1 Met).
+        self.assertRaises(RelaxError, residue.copy, 1, 'Met', 2, 'Gly')
+
+        # Copy a residue to a number which already exists.
+        self.assertRaises(RelaxError, residue.copy, 1, 'Ala', -1, 'Gly')
+
+
     def test_creation(self):
         """Test the creation of a residue.
 
@@ -86,3 +144,34 @@ class Test_residue(TestCase):
 
         # Assert that a RelaxError occurs when the next added residue has the same sequence number as the first.
         self.assertRaises(RelaxError, residue.create, 1, 'Ala')
+
+
+    def test_delete(self):
+        """Test the deletion of a residue.
+
+        The function used is generic_fns.residues.delete().
+        """
+
+        # Create the first residue and add some data to its spin container.
+        residue.create(1, 'Ala')
+        relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
+        relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
+
+        # Delete the residue.
+        residue.delete(res_num=1, res_name='Ala')
+
+        # Test that the residue no longer exists (and defaults back to the empty residue).
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, None)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, None)
+        self.assertNotEqual(relax_data_store['orig'].mol[0].res[1].spin[0].num, 111)
+        self.assert_(not hasattr(relax_data_store['orig'].mol[0].res[1].spin[0], 'x'))
+
+
+    def test_delete_fail(self):
+        """Test the failure of the deletion of a non-existant residue.
+
+        The function used is generic_fns.residues.delete().
+        """
+
+        # Delete a non-existant residue (1 Met).
+        self.assertRaises(RelaxError, residue.delete, 1, 'Met')
