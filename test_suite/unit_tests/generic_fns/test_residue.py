@@ -30,8 +30,6 @@ from generic_fns import residue
 from relax_errors import RelaxError, RelaxNoRunError, RelaxRunError
 
 
-# The relax data storage object.
-
 
 class Test_residue(TestCase):
     """Unit tests for the functions of the 'generic_fns.residue' module."""

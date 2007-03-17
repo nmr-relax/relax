@@ -30,8 +30,6 @@ from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoRunError, RelaxRunError
 
 
-# The relax data storage object.
-
 
 class Test_pipes(TestCase):
     """Unit tests for the functions of the 'generic_fns.pipes' module."""
