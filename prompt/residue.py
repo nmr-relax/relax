@@ -139,34 +139,33 @@ class Residue:
         self.__relax__.generic.sequence.copy(run1=run1, run2=run2)
 
 
-    def delete(self, run=None):
-        """Function for deleting the sequence.
+    def delete(self, res_id=None):
+        """Function for deleting residues.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
+        res_id:  The residue identifier string.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function has the same effect as using the 'delete' function to delete all residue
-        specific data.
+        This function can be used to delete a single or sets of residues.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.delete("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "residue.delete("
+            text = text + "res_id=" + `res_id` + ")"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
+        # The residue identifier argument.
+        if type(res_id) != str:
+            raise RelaxStrError, ('residue identifier', res_id)
 
         # Execute the functional code.
-        self.__relax__.generic.sequence.delete(run=run)
+        residue.delete(res_id=res_id)
 
 
     def display(self, run=None):
