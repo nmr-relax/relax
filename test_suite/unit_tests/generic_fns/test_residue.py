@@ -182,7 +182,7 @@ class Test_residue(TestCase):
         relax_data_store['orig'].mol[0].res[3].spin[0].num = 111
         relax_data_store['orig'].mol[0].res[3].spin[0].x = 1
 
-        # Delete the first and third residues.
+        # Delete all residues.
         residue.delete(res_id=':1-4')
 
         # Test that the first residue defaults back to the empty residue.

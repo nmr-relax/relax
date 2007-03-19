@@ -23,6 +23,7 @@
 # Python module imports.
 from os import F_OK, access
 from re import compile, match, split
+from string import strip
 
 # relax module imports.
 from data import Data as relax_data_store
@@ -212,7 +213,76 @@ def molecule_loop(selection=None):
 
 
 def parse_token(token):
-    return []
+    """Parse the token string and return a list of identifying numbers and names.
+
+    Firstly the token is split by the ',' character into its individual elements and all whitespace
+    stripped from the elements.  Numbers are converted to integers, names are left as strings, and
+    ranges are converted into the full list of integers.
+
+    @param token:   The identification string, the elements of which are separated by commas.  Each
+        element can be either a single number, a range of numbers (two numbers separated by '-'), or
+        a name.
+    @type token:    str
+    @return:        A list of identifying numbers and names.
+    @rtype:         list of int and str
+    """
+
+    # No token.
+    if token == None:
+        return None
+
+    # Split by the ',' character.
+    elements = split(',', token)
+
+    # Loop over the elements.
+    list = []
+    for element in elements:
+        # Strip all leading and trailing whitespace.
+        element = strip(element)
+
+        # Find all '-' characters (ignoring the first character, i.e. a negative number).
+        indecies= []
+        for i in xrange(1,len(element)):
+            if element[i] == '-':
+                indecies.append(i)
+
+        # Range.
+        if indecies:
+            # Invalid range element, only one range char '-' and one negative sign is allowed.
+            if len(indecies) > 2:
+                raise RelaxError, "The range element " + `element` + " is invalid."
+
+            # Convert the two numbers to integers.
+            try:
+                start = int(element[:indecies[0]])
+                end = int(element[indecies[0]+1:])
+            except ValueError:
+                raise RelaxError, "The range element " + `element` + " is invalid as either the start or end of the range are not integers."
+
+            # Test that the starting number is less than the end.
+            if start >= end:
+                raise RelaxError, "The starting number of the range element " + `element` + " needs to be less than the end number."
+
+            # Create the range and append it to the list.
+            for i in range(start, end+1):
+                list.append(i)
+
+        # Number or name.
+        else:
+            # Try converting the element into an integer.
+            try:
+                element = int(element)
+            except ValueError:
+                pass
+
+            # Append the element.
+            list.append(element)
+
+    # Sort the list.
+    list.sort()
+
+    # Return the identifying list.
+    return list
 
 
 def residue_loop(selection=None):

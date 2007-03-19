@@ -105,6 +105,159 @@ class Test_selection(TestCase):
             i = i + 1
 
 
+    def test_parse_token_single_element_num(self):
+        """Test the generic_fns.selection.parse_token() function on the string '1'."""
+
+        # Parse the token.
+        list = selection.parse_token('1')
+
+        # Check the list elements.
+        self.assertEqual(len(list), 1)
+        self.assertEqual(list[0], 1)
+
+
+    def test_parse_token_single_element_neg_num(self):
+        """Test the generic_fns.selection.parse_token() function on the string '-4'."""
+
+        # Parse the token.
+        list = selection.parse_token('-4')
+
+        # Check the list elements.
+        self.assertEqual(len(list), 1)
+        self.assertEqual(list[0], -4)
+
+
+    def test_parse_token_single_element_name(self):
+        """Test the generic_fns.selection.parse_token() function on the string 'G'."""
+
+        # Parse the token.
+        list = selection.parse_token('G')
+
+        # Check the list elements.
+        self.assertEqual(len(list), 1)
+        self.assertEqual(list[0], 'G')
+
+
+    def test_parse_token_single_element_range(self):
+        """Test the generic_fns.selection.parse_token() function on the string '1-10'."""
+
+        # Parse the token.
+        list = selection.parse_token('1-10')
+
+        # Check the list elements.
+        self.assertEqual(len(list), 10)
+        for i in range(1, 11):
+            self.assertEqual(list[i-1], i)
+
+
+    def test_parse_token_single_element_neg_range(self):
+        """Test the generic_fns.selection.parse_token() function on the string '-10--1'."""
+
+        # Parse the token.
+        list = selection.parse_token('-10--1')
+
+        # Check the list elements.
+        self.assertEqual(len(list), 10)
+        j = 0
+        for i in range(-10, -2):
+            self.assertEqual(list[j], i)
+            j = j + 1
+
+
+    def test_parse_token_multi_element_num(self):
+        """Test the generic_fns.selection.parse_token() function on the string '-2, 1'."""
+
+        # Parse the token.
+        list = selection.parse_token('-2, 1')
+
+        # Check the list elements.
+        self.assertEqual(len(list), 2)
+        self.assertEqual(list[0], -2)
+        self.assertEqual(list[1], 1)
+
+
+    def test_parse_token_multi_element_name(self):
+        """Test the generic_fns.selection.parse_token() function on the string 'N,CA'."""
+
+        # Parse the token.
+        list = selection.parse_token('N,CA')
+
+        # Check the list elements.
+        self.assertEqual(len(list), 2)
+        self.assertEqual(list[0], 'CA')
+        self.assertEqual(list[1], 'N')
+
+
+    def test_parse_token_multi_element_num_name(self):
+        """Test the generic_fns.selection.parse_token() function on the string '76,Ala'."""
+
+        # Parse the token.
+        list = selection.parse_token('76,Ala')
+
+        # Check the list elements.
+        self.assertEqual(len(list), 2)
+        self.assertEqual(list[0], 76)
+        self.assertEqual(list[1], 'Ala')
+
+
+    def test_parse_token_multi_element_num_range(self):
+        """Test the generic_fns.selection.parse_token() function on the string '1,3-5'."""
+
+        # Parse the token.
+        list = selection.parse_token('1,3-5')
+
+        # Check the list elements.
+        self.assertEqual(len(list), 4)
+        self.assertEqual(list[0], 1)
+        self.assertEqual(list[1], 3)
+        self.assertEqual(list[2], 4)
+        self.assertEqual(list[3], 5)
+
+
+    def test_parse_token_multi_element_range_name(self):
+        """Test the generic_fns.selection.parse_token() function on the string '3-5,NH'."""
+
+        # Parse the token.
+        list = selection.parse_token('3-5,NH')
+
+        # Check the list elements.
+        self.assertEqual(len(list), 4)
+        self.assertEqual(list[0], 3)
+        self.assertEqual(list[1], 4)
+        self.assertEqual(list[2], 5)
+        self.assertEqual(list[3], 'NH')
+
+
+    def test_parse_token_multi_element_range_num_name(self):
+        """Test the generic_fns.selection.parse_token() function on the string '3-6, 8, Gly'."""
+
+        # Parse the token.
+        list = selection.parse_token('3-6, 8, Gly')
+
+        # Check the list elements.
+        self.assertEqual(len(list), 6)
+        self.assertEqual(list[0], 3)
+        self.assertEqual(list[1], 4)
+        self.assertEqual(list[2], 5)
+        self.assertEqual(list[3], 6)
+        self.assertEqual(list[4], 8)
+        self.assertEqual(list[5], 'Gly')
+
+
+    def test_parse_token_range_fail1(self):
+        """Failure of the generic_fns.selection.parse_token() function on the string '1-5-7'."""
+
+        # Parse the invalid token.
+        self.assertRaises(RelaxError, selection.parse_token, '1-5-7')
+
+
+    def test_parse_token_range_fail2(self):
+        """Failure of the generic_fns.selection.parse_token() function on the string '1--3'."""
+
+        # Parse the invalid token.
+        self.assertRaises(RelaxError, selection.parse_token, '1--3')
+
+
     def test_residue_loop(self):
         """Test the proper operation of the residue loop with residue selection.
 
