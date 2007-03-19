@@ -26,7 +26,7 @@ from re import compile, match
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError, RelaxRegExpError
+from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError, RelaxRegExpError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 
 
 
@@ -181,7 +181,33 @@ def desel_res(self, run=None, num=None, name=None, change_all=None):
 
 
 def molecule_loop(selection):
+    """Generator function for looping over all the molecules of the given selection.
+
+    @param selection:   The molecule selection identifier.
+    @type selection:    str
+    @return:            The molecule specific data container.
+    @rtype:             instance of the MoleculeContainer class.
+    """
+
+    # Split up the selection string.
+    mol_token, res_token, spin_token = tokenise(selection)
+
+    # Disallowed selections.
+    if res_token:
+        raise RelaxResSelectDisallowError
+    if spin_token:
+        raise RelaxSpinSelectDisallowError
+
+    # Parse the token.
+    molecules = parse_token(mol_token)
+
+    # Loop over the molecules.
     for mol in relax_data_store[relax_data_store.current_pipe].mol:
+        # Skip the molecule if there is no match to the selection.
+        if mol_token and mol.name not in molecules:
+            continue
+
+        # Yield the molecule data container.
         yield mol
 
 
