@@ -52,7 +52,7 @@ class Test_pipes(TestCase):
         # Add an empty data pipe (for the 'eliminate_unused_pipes' test).
         relax_data_store.add(pipe_name='empty', pipe_type='mf')
 
-        # Set the current run to the 'orig' data pipe.
+        # Set the current pipe to the 'orig' data pipe.
         relax_data_store.current_pipe = 'orig'
 
 
