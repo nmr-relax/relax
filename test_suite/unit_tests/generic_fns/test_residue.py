@@ -27,7 +27,7 @@ from unittest import TestCase
 from data import Data as relax_data_store
 from data.pipe_container import PipeContainer
 from generic_fns import residue
-from relax_errors import RelaxError, RelaxNoRunError, RelaxRunError
+from relax_errors import RelaxError, RelaxNoRunError, RelaxRunError, RelaxSpinSelectDisallowError
 
 
 
@@ -143,8 +143,8 @@ class Test_residue(TestCase):
         self.assertRaises(RelaxError, residue.create, 1, 'Ala')
 
 
-    def test_delete(self):
-        """Test the deletion of a residue.
+    def test_delete_name(self):
+        """Test residue deletion using residue name identifiers.
 
         The function used is generic_fns.residues.delete().
         """
@@ -153,19 +153,46 @@ class Test_residue(TestCase):
         residue.create(1, 'Ala')
         residue.create(2, 'Ala')
         residue.create(3, 'Ala')
-        residue.create(4, 'Ala')
+        residue.create(4, 'Gly')
+        relax_data_store['orig'].mol[0].res[3].spin[0].num = 111
+        relax_data_store['orig'].mol[0].res[3].spin[0].x = 1
+
+        # Delete the first residue.
+        residue.delete(res_id=':Ala')
+
+        # Test that the first residue is 4 Gly.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 4)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'Gly')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 111)
+        self.assert_(hasattr(relax_data_store['orig'].mol[0].res[0].spin[0], 'x'))
+
+
+    def test_delete_num(self):
+        """Test residue deletion using residue number identifiers.
+
+        The function used is generic_fns.residues.delete().
+        """
+
+        # Create some residues and add some data to the spin containers.
+        residue.create(1, 'Ala')
+        residue.create(2, 'Ala')
+        residue.create(3, 'Ala')
+        residue.create(4, 'Gly')
         relax_data_store['orig'].mol[0].res[3].spin[0].num = 111
         relax_data_store['orig'].mol[0].res[3].spin[0].x = 1
 
         # Delete the first residue.
         residue.delete(res_id=':1')
 
-        # Test that the residue no longer exists (and defaults back to the empty residue).
-        self.assertNotEqual(relax_data_store['orig'].mol[0].res[1].spin[0].num, 111)
-        self.assert_(not hasattr(relax_data_store['orig'].mol[0].res[1].spin[0], 'x'))
-
-        # Delete the first residue.
-        residue.delete(res_id=':1')
+        # Test that the sequence.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 2)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'Ala')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[1].num, 3)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[1].name, 'Ala')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[2].num, 4)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[2].name, 'Gly')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[2].spin[0].num, 111)
+        self.assert_(hasattr(relax_data_store['orig'].mol[0].res[2].spin[0], 'x'))
 
 
     def test_delete_all(self):
@@ -191,7 +218,7 @@ class Test_residue(TestCase):
 
 
     def test_delete_shift(self):
-        """Test the deletion of multiple residue.
+        """Test the deletion of multiple residues.
 
         The function used is generic_fns.residues.delete().
         """
@@ -207,18 +234,18 @@ class Test_residue(TestCase):
         # Delete the first and third residues.
         residue.delete(res_id=':1,3')
 
-        # Test that the residue no longer exists (and defaults back to the empty residue).
+        # Test that the remaining residues.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 2)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[1].num, 4)
         self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].num, 111)
         self.assert_(hasattr(relax_data_store['orig'].mol[0].res[1].spin[0], 'x'))
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, None)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, None)
 
 
     def test_delete_fail(self):
-        """Test the failure of the deletion of a non-existant residue.
+        """Test the failure of residue deletion when an atom id is supplied.
 
         The function used is generic_fns.residues.delete().
         """
 
-        # Delete a non-existant residue (2).
-        self.assertRaises(RelaxError, residue.delete, res_id=':2')
+        # Supply an atom id.
+        self.assertRaises(RelaxSpinSelectDisallowError, residue.delete, res_id='@2')

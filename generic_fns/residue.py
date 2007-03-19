@@ -114,7 +114,7 @@ def create(res_num=None, res_name=None):
 def delete(res_id=None):
     """Function for deleting residues from the current data pipe.
 
-    @param res_id:  The residue identifier string.
+    @param res_id:  The molecule and residue identifier string.
     @type res_id:   str
     """
 
@@ -130,11 +130,25 @@ def delete(res_id=None):
 
     # Molecule loop.
     for mol in molecule_loop(mol_token):
+        # List of indecies to delete.
+        indecies = []
+
         # Loop over the residues of the molecule.
         for i in xrange(len(mol.res)):
             # Remove the residue is there is a match.
-            if mol.res[i].num in residues:
-                mol.res[i].pop()
+            if mol.res[i].num in residues or mol.res[i].name in residues:
+                indecies.append(i)
+
+        # Reverse the indecies.
+        indecies.reverse()
+
+        # Delete the residues.
+        for index in indecies:
+            mol.res.pop(index)
+
+        # Create an empty residue container if no residues remain.
+        if len(mol.res) == 0:
+            mol.res.add_item()
 
 
 class Residue:
