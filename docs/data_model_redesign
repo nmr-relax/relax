@@ -34,16 +34,16 @@ Located at https://mail.gna.org/public/relax-devel/2006-10/msg00058.html (Messag
 
 3.  Create the data pipe looping function for the 'pipes' argument (Chris MacRaild, https://mail.gna.org/public/relax-devel/2006-10/msg00060.html, Message-id: <1160562239.14487.98.camel@mrspell>).  The user functions could be implemented as functors (Chris MacRaild, https://mail.gna.org/public/relax-devel/2007-01/msg00020.html, Message-ID: <1168432131.7569.338.camel@mrspell>).  The design will need to take into account the user function docstrings, relax help system, and the relax manual docstring fetching code.
 
-4.  Create the spin_loop function (Edward d'Auvergne, https://mail.gna.org/public/relax-devel/2006-10/msg00057.html, Message-id: <1160557041.9523.74.camel@pc172-31-2-63.biochem.unimelb.edu.au>).  Use a generator function, using the yield statement, to return the spin data containers which are essentially pointers to the data (Gary Thompson, https://mail.gna.org/public/relax-devel/2007-01/msg00014.html, Message-id: <f001463a0701071417w6bd7927cp8fdd052e698575ec@mail.gmail.com>).  The implementation was essentially given by Chris MacRaild at https://mail.gna.org/public/relax-devel/2007-01/msg00036.html (Message-ID: <1168883717.7569.511.camel@mrspell>).
+4 [Done].  Create the spin_loop function (Edward d'Auvergne, https://mail.gna.org/public/relax-devel/2006-10/msg00057.html, Message-id: <1160557041.9523.74.camel@pc172-31-2-63.biochem.unimelb.edu.au>).  Use a generator function, using the yield statement, to return the spin data containers which are essentially pointers to the data (Gary Thompson, https://mail.gna.org/public/relax-devel/2007-01/msg00014.html, Message-id: <f001463a0701071417w6bd7927cp8fdd052e698575ec@mail.gmail.com>).  The implementation was essentially given by Chris MacRaild at https://mail.gna.org/public/relax-devel/2007-01/msg00036.html (Message-ID: <1168883717.7569.511.camel@mrspell>).
 
-5.  Implement a parser for the following molecule/residue/spin selection syntax (Gary Thompson, https://mail.gna.org/public/relax-devel/2007-01/msg00014.html, Message-id: <f001463a0701071417w6bd7927cp8fdd052e698575ec@mail.gmail.com>):
+5 [Done].  Implement a parser for the following molecule/residue/spin selection syntax (Gary Thompson, https://mail.gna.org/public/relax-devel/2007-01/msg00014.html, Message-id: <f001463a0701071417w6bd7927cp8fdd052e698575ec@mail.gmail.com>):
     #<molecule number> | <molecule_name>:<residue_selection>[,<residue_selection>...]@<atom_selection> [,<atom_selection>]
     residue_selection=<residue_number> | <residue_range> | <residue_type>
     residue_selection=<residue_number>-<residue_number>
     atom_selection=<string_and_wildcards>
 This syntax will need to be properly referenced (in addition to being fully described) in the user function docstrings.  I.e. the reference for Molmol syntax, the reference for UCSF syntax, etc.  We need to find the source and name of the syntax.
 
-6.  Convert the methods of the class 'Selection' from the file 'generic_fns/selection.py' into methods and then add the following functions (Chris MacRaild at https://mail.gna.org/public/relax-devel/2007-01/msg00036.html Message-ID: <1168883717.7569.511.camel@mrspell>; Edward d'Auvergne, https://mail.gna.org/public/relax-devel/2007-01/msg00041.html, Message-ID: <7f080ed10701190408i8a5dee3y8ccbe1aba11bcba@mail.gmail.com>):
+6 [Done].  Convert the methods of the class 'Selection' from the file 'generic_fns/selection.py' into methods and then add the following functions (Chris MacRaild at https://mail.gna.org/public/relax-devel/2007-01/msg00036.html Message-ID: <1168883717.7569.511.camel@mrspell>; Edward d'Auvergne, https://mail.gna.org/public/relax-devel/2007-01/msg00041.html, Message-ID: <7f080ed10701190408i8a5dee3y8ccbe1aba11bcba@mail.gmail.com>):
     parse_token()
     tokenise()
 
