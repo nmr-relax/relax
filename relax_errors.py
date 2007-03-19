@@ -535,6 +535,20 @@ class RelaxNoRunError(BaseError):
 # Selection errors.
 ###################
 
+# Disallow molecule selection.
+class RelaxMolSelectDisallowError(BaseError):
+    def __init__(self):
+        self.text = "The selection of molecules is not allowed."
+        if Debug:
+            self.save_state()
+
+# Disallow residue selection.
+class RelaxResSelectDisallowError(BaseError):
+    def __init__(self):
+        self.text = "The selection of residues is not allowed."
+        if Debug:
+            self.save_state()
+
 # Disallow spin selection.
 class RelaxSpinSelectDisallowError(BaseError):
     def __init__(self):
