@@ -30,13 +30,13 @@ def exit_mpi():
 
 #FIXME do some inheritance
 class Exit_command(object):
-    def run(self,processor):
+    def run(self,relax,processor):
         processor.do_quit=True
 
 class Get_name_command(object):
-    def run(self,processor):
+    def run(self,relax,processor):
         result = '%s-%s' % (MPI.Get_processor_name(),os.getpid())
-        MPI.COMM_WORLD.Send(buf=result, dest=0)
+        processor.return_object(result)
 
 #FIXME do some inheritance
 class Mpi4py_processor:
@@ -53,6 +53,9 @@ class Mpi4py_processor:
     def exit(self):
         exit_mpi()
 
+    def return_object(self,result):
+        MPI.COMM_WORLD.Send(buf=result, dest=0)
+
     def run_command(self,command):
         for i in range(1,MPI.size):
             if i != 0:
@@ -62,7 +65,7 @@ class Mpi4py_processor:
             if i !=0:
                 elem = MPI.COMM_WORLD.Recv(source=i)
                 if type(elem) == 'object':
-                    elem.run(relax_instance)
+                    elem.run(relax_instance, relax_instance.processor)
                 else:
                     #FIXME can't cope with multiple lines
                     print i,elem
@@ -85,14 +88,21 @@ class Mpi4py_processor:
             self.relax_instance.multi_mode='multi_master'
         else:
             self.relax_instance.multi_mode='multi_slave'
+            self.relax_instance.mode='slave'
+            self.relax_instance.script_file=None
+            self.relax_instance.dummy_mode=True
+            self.relax_instance.run()
+
 
         if MPI.rank ==0:
             self.relax_instance.run()
             sys.exit()
         else:
+            #self.relax_instance.run(deamon=True)
             while not self.do_quit:
-                data = MPI.COMM_WORLD.Recv(source=0)
-                data.run(self)
+                command = MPI.COMM_WORLD.Recv(source=0)
+                command.run(self.relax_instance, self.relax_instance.processor)
+
 
             #if data=='close':
             #    exit_mpi()

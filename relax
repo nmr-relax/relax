@@ -173,6 +173,11 @@ class Relax:
             self.interpreter.run()
             print 'exit'
 
+        elif mode == 'slave':
+            self.interpreter = Interpreter(self)
+            self.dummy_mode=1
+            self.interpreter.run()
+
         # FIXME no more threading
         # Threading mode.
 #        elif mode == 'thread':
