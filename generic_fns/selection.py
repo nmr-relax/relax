@@ -189,32 +189,16 @@ def parse_token(token):
     return []
 
 
-def reverse(self, run=None):
-    """Function for the reversal of residue selection."""
+def reverse(selection=None):
+    """Function for the reversal of the spin system selection."""
 
-    # Create the list of runs.
-    self.runs = self.relax.generic.runs.list_of_runs(run)
-
-    # Loop over the runs.
-    for self.run in self.runs:
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
-
-        # Test if sequence data is loaded.
-        if not len(relax_data_store.res[self.run]):
-            raise RelaxNoSequenceError, self.run
-
-        # Loop over the sequence and reverse the selection flag.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Remap the data structure 'relax_data_store.res[self.run][i]'.
-            data = relax_data_store.res[self.run][i]
-
-            # Reverse the selection.
-            if data.select:
-                data.select = 0
-            else:
-                data.select = 1
+    # Loop over the spin systems and reverse the selection flag.
+    for spin in spin_loop(selection):
+        # Reverse the selection.
+        if spin.select:
+            spin.select = 0
+        else:
+            spin.select = 1
 
 
 def sel_all(self, run=None):

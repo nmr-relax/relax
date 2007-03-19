@@ -20,10 +20,13 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
 
+# relax module imports.
 import help
 from relax_errors import RelaxBinError, RelaxError, RelaxIntError, RelaxListStrError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
+from generic_fns.selection import reverse
 
 
 class Select:
@@ -293,20 +296,27 @@ class Select:
         self.__relax__.generic.selection.sel_res(run=run, num=num, name=name, boolean=boolean, change_all=change_all)
 
 
-    def reverse(self, run=None):
-        """Function for the reversal of the residue selection.
+    def reverse(self, selection=None):
+        """Function for the reversal of the spin system selection for the given spins.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run(s).  By supplying a single string, array of strings, or None, a
-        single run, multiple runs, or all runs will be selected respectively.
+        selection:  The selection string identifying the molecules, residues, and spins to reverse
+        the selection of.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        If the selection argument is left on the default of None, then the selection status of all
+        spin systems of the current data pipe will be reversed.
 
 
         Examples
         ~~~~~~~~
 
-        To unselect all currently selected residues and select those which are unselected type:
+        To deselect all currently selected residues and select those which are deselected type:
 
         relax> select.reverse()
         """
@@ -314,19 +324,15 @@ class Select:
         # Function intro test.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "select.reverse("
-            text = text + "run=" + `run` + ")"
+            text = text + "selection=" + `selection` + ")"
             print text
 
-        # The run argument.
-        if run != None and type(run) != str and type(run) != list:
-            raise RelaxNoneStrListError, ('run', run)
-        if type(run) == list:
-            for i in xrange(len(run)):
-                if type(run[i]) != str:
-                    raise RelaxListStrError, ('run', run)
+        # The selection argument.
+        if selection != None and type(selection) != str:
+            raise RelaxNoneStrError, ('selection', selection)
 
         # Execute the functional code.
-        self.__relax__.generic.selection.reverse(run=run)
+        reverse(selection=selection)
 
 
 
