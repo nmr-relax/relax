@@ -215,6 +215,42 @@ def parse_token(token):
     return []
 
 
+def residue_loop(selection=None):
+    """Generator function for looping over all the residues of the given selection.
+
+    @param selection:   The residue selection identifier.
+    @type selection:    str
+    @return:            The residue specific data container.
+    @rtype:             instance of the MoleculeContainer class.
+    """
+
+    # Split up the selection string.
+    mol_token, res_token, spin_token = tokenise(selection)
+
+    # Disallowed selections.
+    if spin_token:
+        raise RelaxSpinSelectDisallowError
+
+    # Parse the tokens.
+    molecules = parse_token(mol_token)
+    residues = parse_token(res_token)
+
+    # Loop over the molecules.
+    for mol in relax_data_store[relax_data_store.current_pipe].mol:
+        # Skip the molecule if there is no match to the selection.
+        if mol_token and mol.name not in molecules:
+            continue
+
+        # Loop over the residues.
+        for res in mol.res:
+            # Skip the residue if there is no match to the selection.
+            if res_token and res.name not in residues:
+                continue
+
+            # Yield the residue data container.
+            yield res
+
+
 def reverse(selection=None):
     """Function for the reversal of the spin system selection."""
 
@@ -341,7 +377,7 @@ def sel_read(self, run=None, file=None, dir=None, boolean='OR', change_all=0, co
 
 def sel_res(self, run=None, num=None, name=None, boolean='OR', change_all=0):
     """Select specific residues.
-    
+
     @param run:         The run name.
     @type run:          str
     @param num:         The residue number.
