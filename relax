@@ -171,23 +171,25 @@ class Relax:
             # Run the interpreter.
             self.interpreter = Interpreter(self)
             self.interpreter.run()
+            print 'exit'
 
+        # FIXME no more threading
         # Threading mode.
-        elif mode == 'thread':
-            # Print the PID prior to IO redirection, and then flush the buffer to send it to the parent.
-            print self.pid
-            sys.stdout.flush()
-
-            # Logging (silent IO redirection).
-            if self.log_file:
-                self.IO.log(log_file, print_flag=0)
-
-            # Tee (silent IO redirection).
-            elif self.tee_file:
-                self.IO.tee(tee_file, print_flag=0)
-
-            # Execute the script.
-            self.threading.execute()
+#        elif mode == 'thread':
+#            # Print the PID prior to IO redirection, and then flush the buffer to send it to the parent.
+#            print self.pid
+#            sys.stdout.flush()
+#
+#            # Logging (silent IO redirection).
+#            if self.log_file:
+#                self.IO.log(log_file, print_flag=0)
+#
+#            # Tee (silent IO redirection).
+#            elif self.tee_file:
+#                self.IO.tee(tee_file, print_flag=0)
+#
+#            # Execute the script.
+#            self.threading.execute()
 
         # Execute the relax test suite
         elif mode == 'test suite':
@@ -553,8 +555,8 @@ def load_multiprocessor(relax_instance):
     module_path = '.'.join(('multi',processor_name))
 
 
-    modules = import_module(module_path,verbose=True)
-    print modules
+    modules = import_module(module_path)
+    #print modules
     if hasattr(modules[-1],class_name):
         clazz =  getattr(modules[-1], class_name)
     else:
