@@ -24,10 +24,36 @@
 from os import F_OK, access
 from re import compile, match, split
 from string import strip
+from textwrap import fill
 
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError, RelaxRegExpError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
+
+
+id_string_doc = """
+Identification string documentation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The identification string is composed of three components: the molecule id token beginning with the '#' character, the residue id token beginning with the ':' character, and the atom or spin system id token beginning with the '@' character.  Each token can be composed of multiple elements separated by the ',' character and each individual element can either be a number (which must be an integer, in string format), a name, or a range of numbers separated by the '-' character.  Negative numbers are supported.  The full id string specification is
+
+    #<mol_name> :<res_id>[, <res_id>[, <res_id>, ...]] @<atom_id>[, <atom_id>[, <atom_id>, ...]],
+
+where the token elements are
+
+    <mol_name>, the name of the molecule,
+    <res_id>, the residue identifier which can be a number, name, or range of numbers,
+    <atom_id>, the atom or spin system identifier which can be a number, name, or range of numbers.
+
+If one of the tokens is left out then all elements will be assumed to match.  For example if the string does not contain the '#' character then all molecules will match the string.
+"""
+
+# Wrap the id string doc.
+string = ''
+for line in split('\n', id_string_doc):
+    string = string + fill(line, width=100, initial_indent=8*' ', subsequent_indent=8*' ') + '\n'
+id_string_doc = string
+    
 
 
 

@@ -22,10 +22,12 @@
 
 # Python module imports.
 import sys
+from string import replace
 
 # relax module imports.
 import help
 from generic_fns import residue
+from generic_fns.selection import id_string_doc
 from relax_errors import RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxStrError
 
 
@@ -151,7 +153,9 @@ class Residue:
         Description
         ~~~~~~~~~~~
 
-        This function can be used to delete a single or sets of residues.
+        This function can be used to delete a single or sets of residues.  See the identification
+        string documentation below for more information.  If spin system/atom ids are included a
+        RelaxError will be raised.
         """
 
         # Function intro text.
@@ -354,3 +358,13 @@ class Residue:
 
         # Execute the functional code.
         self.__relax__.generic.sequence.write(run=run, file=file, dir=dir, force=force)
+
+
+    # Docstring modification.
+    #########################
+
+    # Indent the identification string documentation.
+    #id_string_doc = replace(id_string_doc, '\n', '\n' + 8*' ')
+
+    # Delete function.
+    delete.__doc__ = delete.__doc__ + "\n\n" + id_string_doc + "\n"
