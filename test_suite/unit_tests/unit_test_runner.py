@@ -115,7 +115,7 @@ def import_module(module_path):
 
     if module != None:
         result = [module]
-        components = module_path.split('.')
+        components = module_path.split(os.curdir)
         for component in components[1:]:
             module = getattr(module, component)
             result.append(module)
@@ -162,10 +162,10 @@ def get_module_relative_path(package_path, module_name, root_paths=None):
             break
 
     if relative_path != None:
-        relative_path = '.'.join(relative_path)
+        relative_path = os.curdir.join(relative_path)
 
         if relative_path != '':
-            relative_path = '.'.join((relative_path, module_name))
+            relative_path = os.curdir.join((relative_path, module_name))
         else:
             relative_path = module_name
 
@@ -347,10 +347,10 @@ class Test_finder:
 
 
                     path  = ['']
-                    for elem in module_path.split('.'):
-                        old_path_key  =  '.'.join(path)
+                    for elem in module_path.split(os.curdir):
+                        old_path_key  =  os.curdir.join(path)
                         path.append(elem)
-                        path_key = '.'.join(path)
+                        path_key = os.curdir.join(path)
                         if path_key not in suite_dictionary:
                             test_suite = unittest.TestSuite()
                             suite_dictionary[path_key]=test_suite
@@ -376,11 +376,12 @@ class Unit_test_runner(object):
     ''' @type TEST_SUITE_ROOT: string
         @ivar TEST_SUITE_ROOT: constant indicating the use of the current unit test suite found from the root_path'''
 
-    CURRENT_DIRECTORY='.'
-    ''' @type CURRENT_DIRECTORY: string
-        @ivar CURRENT_DIRECTORY: internal constant defining a name for the current directory on all platforms'''
+    # Unused.
+    #CURRENT_DIRECTORY='.'
+    #''' @type CURRENT_DIRECTORY: string
+    #    @ivar CURRENT_DIRECTORY: internal constant defining a name for the current directory on all platforms'''
 
-    system_path_pattern = ['test_suite/unit_tests','../..']
+    system_path_pattern = ['test_suite' + os.sep + 'unit_tests', os.pardir + os.sep + os.pardir]
     ''' @type system_path_pattern: list of strings
         @ivar system_path_pattern: a search template for the directory in which relax is installed.
                                  The directory which relax is installed in is viewed as the the 'PYTHONPATH'
@@ -392,7 +393,7 @@ class Unit_test_runner(object):
                                  value of root_path in the file system.
     '''
 
-    unit_test_path_pattern = ['test_suite/unit_tests','.']
+    unit_test_path_pattern = ['test_suite' + os.sep + 'unit_tests', os.curdir]
     '''  @type unit_test_path_pattern: a list of strings
          @ivar unit_test_path_pattern: a search template for the directory from which all unit
                                        module directories descend. For the current setup in relax
@@ -409,7 +410,7 @@ class Unit_test_runner(object):
                 the module to be searched for would be test_float.Test_float.
     '''
 
-    def __init__(self, root_path='.', test_module=None, search_for_root_path=True,
+    def __init__(self, root_path=os.curdir, test_module=None, search_for_root_path=True,
                   search_for_unit_test_path=True, verbose = False):
         '''Initialise the unit test runner.
 
@@ -459,7 +460,7 @@ class Unit_test_runner(object):
             root_path = self.find_unit_test_directory_path(root_path)
 
         # deal with using pwd
-        elif root_path == self.CURRENT_DIRECTORY:
+        elif root_path == os.curdir:
             root_path =  os.getcwd()
 
         self.root_path =  root_path
@@ -506,7 +507,7 @@ class Unit_test_runner(object):
         #deal with test_module
         if test_module == None:
             test_module=self.root_path
-        elif test_module ==  self.CURRENT_DIRECTORY:
+        elif test_module == os.curdir:
             test_module =  os.getcwd()
         elif test_module == self.TEST_SUITE_ROOT:
             test_module = self.unit_test_directory
@@ -524,7 +525,7 @@ class Unit_test_runner(object):
 
 
 
-    def get_first_instance_path(self, path, target_path, offset_path='.'):
+    def get_first_instance_path(self, path, target_path, offset_path=os.curdir):
         '''Get the minimal path searching up the file system to target_directory.
 
             the algorithm is that we repeatedly chop the end off path and see if
@@ -611,7 +612,7 @@ class Unit_test_runner(object):
 
         # check for current working directory
         if test_module == None:
-            result.add('.')
+            result.add(os.curdir)
         else:
             # add a direct file
             mpath = []
@@ -629,7 +630,7 @@ class Unit_test_runner(object):
             result.add(tuple(mpath))
 
 
-            module_path_elems = test_module.split('.')
+            module_path_elems = test_module.split(os.curdir)
 
 
             module_norm_path = []
