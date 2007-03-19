@@ -408,5 +408,44 @@ def sel_res(self, run=None, num=None, name=None, boolean='OR', change_all=0):
         print "No residues match."
 
 
+def spin_loop(selection):
+    """Generator function for looping over all the spin systems of the given selection.
+
+    @param selection:   The spin system selection identifier.
+    @type selection:    str
+    @return:            The spin system specific data container.
+    @rtype:             instance of the SpinContainer class.
+    """
+
+    # Split up the selection string.
+    mol_token, res_token, spin_token = tokenise(selection)
+
+    # Parse the tokens.
+    molecules = parse_token(mol_token)
+    residues = parse_token(res_token)
+    spins = parse_token(spin_token)
+
+    # Loop over the molecules.
+    for mol in relax_data_store[relax_data_store.current_pipe].mol:
+        # Skip the molecule if there is no match to the selection.
+        if mol_token and mol.name not in molecules:
+            continue
+
+        # Loop over the residues.
+        for res in mol.res:
+            # Skip the residue if there is no match to the selection.
+            if res_token and res.name not in residues:
+                continue
+
+            # Loop over the spins.
+            for spin in res.spin:
+                # Skip the spin if there is no match to the selection.
+                if spin_token and spin.name not in spins:
+                    continue
+
+                # Yield the spin system data container.
+                yield spin
+
+
 def tokenise(selection):
     return None, None, None
