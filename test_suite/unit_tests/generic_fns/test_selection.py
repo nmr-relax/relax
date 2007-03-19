@@ -92,7 +92,7 @@ class Test_selection(TestCase):
         """
 
         # Molecule data.
-        name = [None, 'RNA']
+        name = ['Ap4Aase', 'RNA']
 
         # Loop over the molecules.
         i = 0

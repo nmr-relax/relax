@@ -180,7 +180,7 @@ def desel_res(self, run=None, num=None, name=None, change_all=None):
         print "No residues match."
 
 
-def molecule_loop(selection):
+def molecule_loop(selection=None):
     """Generator function for looping over all the molecules of the given selection.
 
     @param selection:   The molecule selection identifier.
@@ -434,7 +434,7 @@ def sel_res(self, run=None, num=None, name=None, boolean='OR', change_all=0):
         print "No residues match."
 
 
-def spin_loop(selection):
+def spin_loop(selection=None):
     """Generator function for looping over all the spin systems of the given selection.
 
     @param selection:   The spin system selection identifier.
