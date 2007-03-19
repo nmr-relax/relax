@@ -130,7 +130,7 @@ class Test_selection(TestCase):
         i = 0
         for res in selection.residue_loop():
             # Test the residue numbers.
-            self.assertEqual(res.select, num[i])
+            self.assertEqual(res.num, num[i])
 
             # Test the residue names.
             self.assertEqual(res.name, name[i])
