@@ -532,6 +532,17 @@ class RelaxNoRunError(BaseError):
             self.save_state()
 
 
+# Selection errors.
+###################
+
+# Disallow spin selection.
+class RelaxSpinSelectDisallowError(BaseError):
+    def __init__(self):
+        self.text = "The selection of spin systems is not allowed."
+        if Debug:
+            self.save_state()
+
+
 # Setup errors.
 ###############
 

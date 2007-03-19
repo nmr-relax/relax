@@ -32,6 +32,15 @@ from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError, Rela
 # The relax data storage object.
 
 
+def tokenise(selection):
+    return None, None, None
+
+def molecule_loop(selection):
+    for mol in relax_data_store[relax_data_store.current_pipe].mol:
+        yield mol
+
+def parse_token(token):
+    return []
 
 class Selection:
     def __init__(self, relax):

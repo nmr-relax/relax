@@ -22,10 +22,8 @@
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoRunError, RelaxNoSequenceError, RelaxSequenceError
-
-
-# The relax data storage object.
+from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoRunError, RelaxNoSequenceError, RelaxSequenceError, RelaxSpinSelectDisallowError
+from selection import molecule_loop, parse_token, tokenise
 
 
 
@@ -113,6 +111,32 @@ def create(res_num=None, res_name=None):
         cdp.mol[0].res.add_item(res_num=res_num, res_name=res_name)
 
 
+def delete(res_id=None):
+    """Function for deleting residues from the current data pipe.
+
+    @param res_id:  The residue identifier string.
+    @type res_id:   str
+    """
+
+    # Split up the selection string.
+    mol_token, res_token, spin_token = tokenise(res_id)
+
+    # Disallow spin selections.
+    if spin_token != None:
+        raise RelaxSpinSelectDisallowError
+
+    # Parse the tokens.
+    residues = parse_token(res_token)
+
+    # Molecule loop.
+    for mol in molecule_loop(mol_token):
+        # Loop over the residues of the molecule.
+        for i in xrange(len(mol.res)):
+            # Remove the residue is there is a match.
+            if mol.res[i].num in residues:
+                mol.res[i].pop()
+
+
 class Residue:
     def __init__(self, relax):
         """Class containing functions specific to amino-acid sequence."""
@@ -124,24 +148,6 @@ class Residue:
         """Function for returning a list of names of data structures associated with the sequence."""
 
         return [ 'res' ]
-
-
-    def delete(self, run=None):
-        """Function for deleting the sequence."""
-
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
-
-        # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(run):
-            raise RelaxNoSequenceError, run
-
-        # Delete the data.
-        del(relax_data_store.res[run])
-
-        # Clean up the runs.
-        self.relax.generic.runs.eliminate_unused_runs()
 
 
     def display(self, run=None):
