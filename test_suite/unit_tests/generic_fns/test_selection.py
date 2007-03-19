@@ -26,6 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns import selection
+from relax_errors import RelaxError
 
 
 class Test_selection(TestCase):
@@ -204,3 +205,297 @@ class Test_selection(TestCase):
 
             # Increment i.
             i = i + 1
+
+
+    def test_tokenise1(self):
+        """Test the generic_fns.selection.tokenise() function on the string '@1'."""
+
+        # Tokenise.
+        mol_token, res_token, spin_token = selection.tokenise('@1')
+
+        # Check the tokens.
+        self.assertEqual(mol_token, None)
+        self.assertEqual(res_token, None)
+        self.assertEqual(spin_token, '1')
+
+
+    def test_tokenise2(self):
+        """Test the generic_fns.selection.tokenise() function on the string ':-4'."""
+
+        # Tokenise.
+        mol_token, res_token, spin_token = selection.tokenise(':-4')
+
+        # Check the tokens.
+        self.assertEqual(mol_token, None)
+        self.assertEqual(res_token, '-4')
+        self.assertEqual(spin_token, None)
+
+
+    def test_tokenise3(self):
+        """Test the generic_fns.selection.tokenise() function on the string '#CaM'."""
+
+        # Tokenise.
+        mol_token, res_token, spin_token = selection.tokenise('#CaM')
+
+        # Check the tokens.
+        self.assertEqual(mol_token, 'CaM')
+        self.assertEqual(res_token, None)
+        self.assertEqual(spin_token, None)
+
+
+    def test_tokenise4(self):
+        """Test the generic_fns.selection.tokenise() function on the string ':G@N3'."""
+
+        # Tokenise.
+        mol_token, res_token, spin_token = selection.tokenise(':G@N3')
+
+        # Check the tokens.
+        self.assertEqual(mol_token, None)
+        self.assertEqual(res_token, 'G')
+        self.assertEqual(spin_token, 'N3')
+
+
+    def test_tokenise5(self):
+        """Test the generic_fns.selection.tokenise() function on the string '#OMP@NH'."""
+
+        # Tokenise.
+        mol_token, res_token, spin_token = selection.tokenise('#OMP@NH')
+
+        # Check the tokens.
+        self.assertEqual(mol_token, 'OMP')
+        self.assertEqual(res_token, None)
+        self.assertEqual(spin_token, 'NH')
+
+
+    def test_tokenise6(self):
+        """Test the generic_fns.selection.tokenise() function on the string '#Lyso:20-50'."""
+
+        # Tokenise.
+        mol_token, res_token, spin_token = selection.tokenise('#Lyso:20-50')
+
+        # Check the tokens.
+        self.assertEqual(mol_token, 'Lyso')
+        self.assertEqual(res_token, '20-50')
+        self.assertEqual(spin_token, None)
+
+
+    def test_tokenise7(self):
+        """Test the generic_fns.selection.tokenise() function on the string '#Ap4Aase:*@N,CA'."""
+
+        # Tokenise.
+        mol_token, res_token, spin_token = selection.tokenise('#Ap4Aase:*@N,CA')
+
+        # Check the tokens.
+        self.assertEqual(mol_token, 'Ap4Aase')
+        self.assertEqual(res_token, '*')
+        self.assertEqual(spin_token, 'N,CA')
+
+
+    def test_tokenise_dup_atom_id_fail1(self):
+        """Test failure of the generic_fns.selection.tokenise() function on the string '@N@1'.
+
+        This tests for a duplicated atom identifier.
+        """
+
+        # Tokenise an invalid string.
+        self.assertRaises(RelaxError, selection.tokenise, '@N@1')
+
+
+    def test_tokenise_dup_atom_id_fail2(self):
+        """Test failure of the generic_fns.selection.tokenise() function on the string ':*@N@1'.
+
+        This tests for a duplicated atom identifier.
+        """
+
+        # Tokenise an invalid string.
+        self.assertRaises(RelaxError, selection.tokenise, ':*@N@1')
+
+
+    def test_tokenise_dup_atom_id_fail3(self):
+        """Test failure of the generic_fns.selection.tokenise() function on the string '@N:*@1'.
+
+        This tests for a duplicated atom identifier.
+        """
+
+        # Tokenise an invalid string.
+        self.assertRaises(RelaxError, selection.tokenise, '@N:*@1')
+
+
+    def test_tokenise_dup_res_id_fail1(self):
+        """Test failure of the generic_fns.selection.tokenise() function on the string ':1:2'.
+
+        This tests for a duplicated residue identifier.
+        """
+
+        # Tokenise an invalid string.
+        self.assertRaises(RelaxError, selection.tokenise, ':1:2')
+
+
+    def test_tokenise_dup_res_id_fail2(self):
+        """Test failure of the generic_fns.selection.tokenise() function on the string '#None:1:Ala'.
+
+        This tests for a duplicated residue identifier.
+        """
+
+        # Tokenise an invalid string.
+        self.assertRaises(RelaxError, selection.tokenise, '#None:1:Ala')
+
+
+    def test_tokenise_dup_res_id_fail3(self):
+        """Test failure of the generic_fns.selection.tokenise() function on the string ':1:Ala@N'.
+
+        This tests for a duplicated residue identifier.
+        """
+
+        # Tokenise an invalid string.
+        self.assertRaises(RelaxError, selection.tokenise, ':1:Ala@N')
+
+
+    def test_tokenise_dup_mol_id_fail1(self):
+        """Test failure of the generic_fns.selection.tokenise() function on the string '#A#B'.
+
+        This tests for a duplicated molecule identifier.
+        """
+
+        # Tokenise an invalid string.
+        self.assertRaises(RelaxError, selection.tokenise, '#A#B')
+
+
+    def test_tokenise_dup_mol_id_fail2(self):
+        """Test failure of the generic_fns.selection.tokenise() function on the string '#A#B:Leu'.
+
+        This tests for a duplicated molecule identifier.
+        """
+
+        # Tokenise an invalid string.
+        self.assertRaises(RelaxError, selection.tokenise, '#A#B:Leu')
+
+
+    def test_tokenise_dup_mol_id_fail3(self):
+        """Test failure of the generic_fns.selection.tokenise() function on the string '#A#C@CA'.
+
+        This tests for a duplicated molecule identifier.
+        """
+
+        # Tokenise an invalid string.
+        self.assertRaises(RelaxError, selection.tokenise, '#A#C@CA')
+
+
+    def test_tokenise_out_of_order_atom_id_fail1(self):
+        """Test failure of the generic_fns.selection.tokenise() function on the string '@CA#A'.
+
+        This tests for an out of order '@' identifier.
+        """
+
+        # Tokenise an invalid string.
+        self.assertRaises(RelaxError, selection.tokenise, '@CA#A')
+
+
+    def test_tokenise_out_of_order_atom_id_fail2(self):
+        """Test failure of the generic_fns.selection.tokenise() function on the string '@CA:Pro'.
+
+        This tests for an out of order '@' identifier.
+        """
+
+        # Tokenise an invalid string.
+        self.assertRaises(RelaxError, selection.tokenise, '@CA:Pro')
+
+
+    def test_tokenise_out_of_order_atom_id_fail3(self):
+        """Test failure of the generic_fns.selection.tokenise() function on the string '@CA#Z:Pro'.
+
+        This tests for an out of order '@' identifier.
+        """
+
+        # Tokenise an invalid string.
+        self.assertRaises(RelaxError, selection.tokenise, '@CA#Z:Pro')
+
+
+    def test_tokenise_out_of_order_res_id_fail1(self):
+        """Test failure of the generic_fns.selection.tokenise() function on the string '@CA:Pro'.
+
+        This tests for an out of order ':' identifier.
+        """
+
+        # Tokenise an invalid string.
+        self.assertRaises(RelaxError, selection.tokenise, '@CA:Pro')
+
+
+    def test_tokenise_out_of_order_res_id_fail2(self):
+        """Test failure of the generic_fns.selection.tokenise() function on the string ':Glu#X'.
+
+        This tests for an out of order ':' identifier.
+        """
+
+        # Tokenise an invalid string.
+        self.assertRaises(RelaxError, selection.tokenise, ':Glu#X')
+
+
+    def test_tokenise_out_of_order_res_id_fail3(self):
+        """Test failure of the generic_fns.selection.tokenise() function on the string '#1@12423:Glu'.
+
+        This tests for an out of order ':' identifier.
+        """
+
+        # Tokenise an invalid string.
+        self.assertRaises(RelaxError, selection.tokenise, ':Glu#X')
+
+
+    def test_tokenise_out_of_order_mol_id_fail1(self):
+        """Test failure of the generic_fns.selection.tokenise() function on the string ':1-160#A'.
+
+        This tests for an out of order '#' identifier.
+        """
+
+        # Tokenise an invalid string.
+        self.assertRaises(RelaxError, selection.tokenise, ':1-160#A')
+
+
+    def test_tokenise_out_of_order_mol_id_fail2(self):
+        """Test failure of the generic_fns.selection.tokenise() function on the string '@N,CA#A'.
+
+        This tests for an out of order '#' identifier.
+        """
+
+        # Tokenise an invalid string.
+        self.assertRaises(RelaxError, selection.tokenise, '@N,CA#A')
+
+
+    def test_tokenise_out_of_order_mol_id_fail3(self):
+        """Test failure of the generic_fns.selection.tokenise() function on the string '@N:-10#Zip'.
+
+        This tests for an out of order '#' identifier.
+        """
+
+        # Tokenise an invalid string.
+        self.assertRaises(RelaxError, selection.tokenise, '@N:-10#Zip')
+
+
+    def test_tokenise_bad_string_fail1(self):
+        """Test failure of the generic_fns.selection.tokenise() function on the string '13'.
+
+        This tests for an improper selection string.
+        """
+
+        # Tokenise an invalid string.
+        self.assertRaises(RelaxError, selection.tokenise, '13')
+
+
+    def test_tokenise_bad_string_fail2(self):
+        """Test failure of the generic_fns.selection.tokenise() function on the string 'XXX'.
+
+        This tests for an improper selection string.
+        """
+
+        # Tokenise an invalid string.
+        self.assertRaises(RelaxError, selection.tokenise, 'XXX')
+
+
+    def test_tokenise_bad_string_fail3(self):
+        """Test failure of the generic_fns.selection.tokenise() function on the string ''.
+
+        This tests for an improper selection string.
+        """
+
+        # Tokenise an invalid string.
+        self.assertRaises(RelaxError, selection.tokenise, '')

@@ -22,7 +22,7 @@
 
 # Python module imports.
 from os import F_OK, access
-from re import compile, match
+from re import compile, match, split
 
 # relax module imports.
 from data import Data as relax_data_store
@@ -510,4 +510,94 @@ def spin_loop(selection=None):
 
 
 def tokenise(selection):
-    return None, None, None
+    """Split the input selection string returning the mol_token, res_token, and spin_token strings.
+
+    The mol_token is identified as the text from the '#' to either the ':' or '@' characters or the
+    end of the string.
+
+    The res_token is identified as the text from the ':' to either the '@' character or the end of
+    the string.
+
+    The spin_token is identified as the text from the '@' to the end of the string.
+
+    @param selection:   The selection identifier.
+    @type selection:    str
+    @return:            The mol_token, res_token, and spin_token.
+    @rtype:             3-tuple of str or None
+    """
+
+    # No selection.
+    if selection == None:
+        return None, None, None
+
+
+    # Atoms.
+    ########
+
+    # Split by '@'.
+    atom_split = split('@', selection)
+
+    # Test that only one '@' character was supplied.
+    if len(atom_split) > 2:
+        raise RelaxError, "Only one '@' character is allowed within the selection identifier string."
+
+    # No atom identifier.
+    if len(atom_split) == 1:
+        spin_token = None
+    else:
+        # Test for out of order identifiers.
+        if ':' in atom_split[1]:
+            raise RelaxError, "The atom identifier '@' must come after the residue identifier ':'."
+        elif '#' in atom_split[1]:
+            raise RelaxError, "The atom identifier '@' must come after the molecule identifier '#'."
+
+        # The token.
+        spin_token = atom_split[1]
+
+
+    # Residues.
+    ###########
+
+    # Split by ':'.
+    res_split = split(':', atom_split[0])
+
+    # Test that only one ':' character was supplied.
+    if len(res_split) > 2:
+        raise RelaxError, "Only one ':' character is allowed within the selection identifier string."
+
+    # No residue identifier.
+    if len(res_split) == 1:
+        res_token = None
+    else:
+        # Test for out of order identifiers.
+        if '#' in res_split[1]:
+            raise RelaxError, "The residue identifier ':' must come after the molecule identifier '#'."
+
+        # The token.
+        res_token = res_split[1]
+
+
+
+    # Molecules.
+    ############
+
+    # Split by '#'.
+    mol_split = split('#', res_split[0])
+
+    # Test that only one '#' character was supplied.
+    if len(mol_split) > 2:
+        raise RelaxError, "Only one '#' character is allowed within the selection identifier string."
+
+    # No molecule identifier.
+    if len(mol_split) == 1:
+        mol_token = None
+    else:
+        mol_token = mol_split[1]
+
+
+    # Improper selection string.
+    if mol_token == None and res_token == None and spin_token == None:
+        raise RelaxError, "The selection string " + `selection` + " is invalid."
+
+    # Return the three tokens.
+    return mol_token, res_token, spin_token
