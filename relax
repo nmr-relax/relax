@@ -149,12 +149,14 @@ class Relax:
 
         #FIXME use self.mode all over
         mode = self.mode
+        print mode
 
         # Show the version number and exit.
         if mode == 'version':
             print 'relax ' + self.version
             sys.exit()
 
+        # FIXME threading
         # Logging.
         if self.log_file and mode != 'thread':
             self.IO.log(self.log_file)
@@ -171,7 +173,7 @@ class Relax:
             # Run the interpreter.
             self.interpreter = Interpreter(self)
             self.interpreter.run()
-            print 'exit'
+
 
         elif mode == 'slave':
             self.interpreter = Interpreter(self)
@@ -534,14 +536,14 @@ def import_module(module_path, verbose=False):
     module = None
     result = None
 
-    try:
-        module = __import__(module_path,globals(),  locals(), [])
-        if verbose:
-            print 'loaded module %s' % module_path
-    except Exception, e:
-        if verbose:
-            print 'failed to load module_path %s' % module_path
-            print 'exception:',e
+    #try:
+    module = __import__(module_path,globals(),  locals(), [])
+    if verbose:
+        print 'loaded module %s' % module_path
+    #except Exception, e:
+    #    if verbose:
+    #        print 'failed to load module_path %s' % module_path
+    #        print 'exception:',e
 
     #FIXME: needs more failure checking
     if module != None:
@@ -562,6 +564,7 @@ def load_multiprocessor(relax_instance):
 
     modules = import_module(module_path)
     #print modules
+
     if hasattr(modules[-1],class_name):
         clazz =  getattr(modules[-1], class_name)
     else:
