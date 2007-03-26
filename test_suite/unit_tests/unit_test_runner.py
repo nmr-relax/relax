@@ -115,7 +115,7 @@ def import_module(module_path):
 
     if module != None:
         result = [module]
-        components = module_path.split(os.curdir)
+        components = module_path.split('.')
         for component in components[1:]:
             module = getattr(module, component)
             result.append(module)
@@ -162,10 +162,10 @@ def get_module_relative_path(package_path, module_name, root_paths=None):
             break
 
     if relative_path != None:
-        relative_path = os.curdir.join(relative_path)
+        relative_path = '.'.join(relative_path)
 
         if relative_path != '':
-            relative_path = os.curdir.join((relative_path, module_name))
+            relative_path = '.'.join((relative_path, module_name))
         else:
             relative_path = module_name
 
@@ -347,10 +347,10 @@ class Test_finder:
 
 
                     path  = ['']
-                    for elem in module_path.split(os.curdir):
-                        old_path_key  =  os.curdir.join(path)
+                    for elem in module_path.split('.'):
+                        old_path_key  =  '.'.join(path)
                         path.append(elem)
-                        path_key = os.curdir.join(path)
+                        path_key = '.'.join(path)
                         if path_key not in suite_dictionary:
                             test_suite = unittest.TestSuite()
                             suite_dictionary[path_key]=test_suite
@@ -375,11 +375,6 @@ class Unit_test_runner(object):
     TEST_SUITE_ROOT='test-suite-root_constant'
     ''' @type TEST_SUITE_ROOT: string
         @ivar TEST_SUITE_ROOT: constant indicating the use of the current unit test suite found from the root_path'''
-
-    # Unused.
-    #CURRENT_DIRECTORY='.'
-    #''' @type CURRENT_DIRECTORY: string
-    #    @ivar CURRENT_DIRECTORY: internal constant defining a name for the current directory on all platforms'''
 
     system_path_pattern = ['test_suite' + os.sep + 'unit_tests', os.pardir + os.sep + os.pardir]
     ''' @type system_path_pattern: list of strings
@@ -630,7 +625,7 @@ class Unit_test_runner(object):
             result.add(tuple(mpath))
 
 
-            module_path_elems = test_module.split(os.curdir)
+            module_path_elems = test_module.split('.')
 
 
             module_norm_path = []
