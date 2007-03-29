@@ -35,7 +35,7 @@ from base_class import Common_functions
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
 from float import isNaN,isInf
-from multi.mpi4py_processor import  MF_minimise_command
+from multi.mpi4py_processor import  MF_minimise_command,MF_completion_memo
 
 
 class Model_free(Common_functions):
@@ -2181,6 +2181,7 @@ class Model_free(Common_functions):
                     print "Unconstrained grid search size: " + `self.grid_size` + " (constraints may decrease this size).\n"
 
             # Initialise the iteration counter and function, gradient, and Hessian call counters.
+            #FIXME: move to processor command
             self.iter_count = 0
             self.f_count = 0
             self.g_count = 0
@@ -2395,6 +2396,7 @@ class Model_free(Common_functions):
 #                         ri_labels=ri_labels, gx=self.relax.data.gx, gh=self.relax.data.gh,
 #                         g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar,
 #                         mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors)
+
             command=MF_minimise_command()
             command.set_mf(init_params=self.param_vector, param_set=self.param_set, diff_type=diff_type,
                          diff_params=diff_params, scaling_matrix=self.scaling_matrix, num_res=num_res,
@@ -2460,13 +2462,40 @@ class Model_free(Common_functions):
                 command.set_minimise(args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options,
                           func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1,
                           print_flag=print_flag)
-            command.run(None)
 
-            self.param_vector, self.func, iter, fc, gc, hc, self.warning = command.results
+            memo = MF_completion_memo(model_free=self,index=index,sim_index=sim_index,run=self.run,param_set=self.param_set,scaling=scaling)
+
+            self.relax.processor.add_to_queue(command,memo)
+            #self.relax.processor.add_to_queue()
+
+            #command.do_minimise(memo)
+            #command.memo_id
+
+            #param_vector, func, iter, fc, gc, hc, warning = command.results
+            #self.disassemble_result(param_vector=param_vector,func=func,iter=iter,fc=fc,gc=gc,hc=hc,warning=warning,
+            #                        run=memo.run,index=memo.index,sim_index=memo.sim_index, param_set=memo.param_set,scaling=memo.scaling)
+
+        self.relax.processor.run_queue()
+
+
+    def disassemble_result(self,param_vector,func,iter,fc,gc,hc,warning,run,index,sim_index, param_set,scaling):
+            self.func=func
+            self.warning=warning
+            self.param_vector=param_vector
+
+            #FIXME something is resetting the count between each calculation!
+#            self.iter_count = iter
+#            self.f_count = fc
+#            self.g_count = gc
+#            self.h_count = hc
+
             self.iter_count = self.iter_count + iter
             self.f_count = self.f_count + fc
             self.g_count = self.g_count + gc
             self.h_count = self.h_count + hc
+
+
+
 
             # Catch infinite chi-squared values.
             if isInf(self.func):
@@ -2488,22 +2517,22 @@ class Model_free(Common_functions):
                 # Sequence specific minimisation statistics.
                 if self.param_set == 'mf' or self.param_set == 'local_tm':
                     # Chi-squared statistic.
-                    self.relax.data.res[self.run][i].chi2_sim[sim_index] = self.func
+                    self.relax.data.res[self.run][index].chi2_sim[sim_index] = self.func
 
                     # Iterations.
-                    self.relax.data.res[self.run][i].iter_sim[sim_index] = self.iter_count
+                    self.relax.data.res[self.run][index].iter_sim[sim_index] = self.iter_count
 
                     # Function evaluations.
-                    self.relax.data.res[self.run][i].f_count_sim[sim_index] = self.f_count
+                    self.relax.data.res[self.run][index].f_count_sim[sim_index] = self.f_count
 
                     # Gradient evaluations.
-                    self.relax.data.res[self.run][i].g_count_sim[sim_index] = self.g_count
+                    self.relax.data.res[self.run][index].g_count_sim[sim_index] = self.g_count
 
                     # Hessian evaluations.
-                    self.relax.data.res[self.run][i].h_count_sim[sim_index] = self.h_count
+                    self.relax.data.res[self.run][index].h_count_sim[sim_index] = self.h_count
 
                     # Warning.
-                    self.relax.data.res[self.run][i].warning_sim[sim_index] = self.warning
+                    self.relax.data.res[self.run][index].warning_sim[sim_index] = self.warning
 
                 # Global minimisation statistics.
                 elif self.param_set == 'diff' or self.param_set == 'all':
@@ -2530,22 +2559,22 @@ class Model_free(Common_functions):
                 # Sequence specific minimisation statistics.
                 if self.param_set == 'mf' or self.param_set == 'local_tm':
                     # Chi-squared statistic.
-                    self.relax.data.res[self.run][i].chi2 = self.func
+                    self.relax.data.res[self.run][index].chi2 = self.func
 
                     # Iterations.
-                    self.relax.data.res[self.run][i].iter = self.iter_count
+                    self.relax.data.res[self.run][index].iter = self.iter_count
 
                     # Function evaluations.
-                    self.relax.data.res[self.run][i].f_count = self.f_count
+                    self.relax.data.res[self.run][index].f_count = self.f_count
 
                     # Gradient evaluations.
-                    self.relax.data.res[self.run][i].g_count = self.g_count
+                    self.relax.data.res[self.run][index].g_count = self.g_count
 
                     # Hessian evaluations.
-                    self.relax.data.res[self.run][i].h_count = self.h_count
+                    self.relax.data.res[self.run][index].h_count = self.h_count
 
                     # Warning.
-                    self.relax.data.res[self.run][i].warning = self.warning
+                    self.relax.data.res[self.run][index].warning = self.warning
 
                 # Global minimisation statistics.
                 elif self.param_set == 'diff' or self.param_set == 'all':

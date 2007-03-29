@@ -174,7 +174,6 @@ class Relax:
             self.interpreter = Interpreter(self)
             self.interpreter.run()
 
-
         elif mode == 'slave':
             self.interpreter = Interpreter(self)
             self.dummy_mode=1

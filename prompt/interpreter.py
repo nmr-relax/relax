@@ -357,8 +357,9 @@ def interact_script(self, intro, local, script_file, quit):
     sys.stdout.write("\n")
 
     # Quit.
-    if quit:
-        sys.exit()
+    # FIXME: need to drop off end of interpreter loop to exit cleanly
+    #if quit:
+    #    sys.exit()
 
 
 def prompt(intro=None, local=None):
