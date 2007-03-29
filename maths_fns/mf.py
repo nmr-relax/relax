@@ -37,11 +37,7 @@ from chi2 import *
 
 
 class Mf:
-    def __init__(self, init_params=None, param_set=None, diff_type=None, diff_params=None,
-                  scaling_matrix=None, num_res=None, equations=None, param_types=None,
-                  param_values=None, relax_data=None, errors=None, bond_length=None,
-                  csa=None, num_frq=0, frq=None, num_ri=None, remap_table=None, noe_r1_table=None,
-                  ri_labels=None, gx=0, gh=0, g_ratio=0, h_bar=0, mu0=0, num_params=None, vectors=None):
+    def __init__(self, init_params=None, param_set=None, diff_type=None, diff_params=None, scaling_matrix=None, num_res=None, equations=None, param_types=None, param_values=None, relax_data=None, errors=None, bond_length=None, csa=None, num_frq=0, frq=None, num_ri=None, remap_table=None, noe_r1_table=None, ri_labels=None, gx=0, gh=0, g_ratio=0, h_bar=0, mu0=0, num_params=None, vectors=None):
         """The model-free minimisation class.
 
         This class should be initialised before every calculation.
@@ -49,8 +45,7 @@ class Mf:
 
         Arguments
         ~~~~~~~~~
-        FIXME: widths
-        FIXME: no arguments
+
         equation:  The model-free equation string which should be either 'mf_orig' or 'mf_ext'.
 
         param_types:  An array of the parameter types used in minimisation.
@@ -120,7 +115,7 @@ class Mf:
         dthetaj     dthetaj
 
 
-         dNOE()     gH      1      /        dsigma_noe()                    dR1()  \
+         dNOE()     gH      1      /        dsigma_noe()                    dR1()  \ 
         -------  =  -- . ------- . | R1() . ------------  -  sigma_noe() . ------- |
         dthetaj     gN   R1()**2   \          dthetaj                      dthetaj /
 
@@ -146,11 +141,11 @@ class Mf:
         dthetai.dthetaj     dthetai.dthetaj
 
 
-            d2NOE()         gH      1      /               /      dR1()     dR1()                  d2R1()     \
+            d2NOE()         gH      1      /               /      dR1()     dR1()                  d2R1()     \ 
         ---------------  =  -- . ------- . | sigma_noe() . | 2 . ------- . -------  -  R1() . --------------- |
         dthetai.dthetaj     gN   R1()**3   \               \     dthetai   dthetaj            dthetai.dthetaj /
 
-                     / dsigma_noe()    dR1()       dR1()    dsigma_noe()             d2sigma_noe()  \ \
+                     / dsigma_noe()    dR1()       dR1()    dsigma_noe()             d2sigma_noe()  \ \ 
             - R1() . | ------------ . -------  +  ------- . ------------  -  R1() . --------------- | |
                      \   dthetai      dthetaj     dthetai     dthetaj               dthetai.dthetaj / /
 
@@ -173,7 +168,7 @@ class Mf:
         The chi-sqared gradient
         ~~~~~~~~~~~~~~~~~~~~~~~
                        _n_
-         dChi2         \   /  Ri - Ri()      dRi()  \
+         dChi2         \   /  Ri - Ri()      dRi()  \ 
         -------  =  -2  >  | ----------  .  ------- |
         dthetaj        /__ \ sigma_i**2     dthetaj /
                        i=1
@@ -187,7 +182,7 @@ class Mf:
         The chi-sqared Hessian
         ~~~~~~~~~~~~~~~~~~~~~~
                              _n_
-             d2chi2          \       1      /  dRi()     dRi()                         d2Ri()     \
+             d2chi2          \       1      /  dRi()     dRi()                         d2Ri()     \ 
         ---------------  = 2  >  ---------- | ------- . -------  -  (Ri - Ri()) . --------------- |
         dthetaj.dthetak      /__ sigma_i**2 \ dthetaj   dthetak                   dthetaj.dthetak /
                              i=1
