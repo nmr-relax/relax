@@ -28,6 +28,7 @@ from textwrap import fill
 
 # relax module imports.
 from data import Data as relax_data_store
+from data.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
 from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError, RelaxRegExpError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 
 
@@ -55,6 +56,67 @@ for line in split('\n', id_string_doc):
 id_string_doc = string
     
 
+
+class Selection(object):
+    """An object containing mol-res-spin selections"""
+
+    def __init__(self, selectString):
+
+        self._union = None
+        self._intersect = None
+
+        self.molecules = None
+        self.residues = None
+        self.spins = None
+
+        if not selectString:
+            return
+        
+        if '&' in selectString:
+            and_split = selectString.split('&')
+            part0 = Selection(and_split[0])
+            part1 = Selection(and_split[1])
+            return part0.intersection(part1)
+
+        elif '|' in selectString:
+            and_split = selectString.split('|')
+            part0 = Selection(and_split[0])
+            part1 = Selection(and_split[1])
+            return part0.union(part1)
+
+        else:
+            mol_token, res_token, spin_token = tokenise(selectString)
+            self.molecules = parse_token(mol_token)
+            self.residues = parse_token(res_token)
+            self.spins = parse_token(spin_token)
+
+    def __contains__(self, obj):
+        
+        in_self = False
+        if isinstance(obj, MoleculeContainer) and obj.name in self.molecules:
+            in_self = True
+        elif isinstance(obj, ResidueContainer) and obj.name in self.residues:
+            in_self = True
+        elif isinstance(obj, SpinContainer) and obj.name in self.spins:
+            in_self = True
+        if self._union:
+            return in_self or (obj in self._union)
+        if self._intersect:
+            return in_self and (obj in self._union)
+        else:
+            return in_self
+
+    def intersection(self, selectObj):
+        
+        if self._union or self._intersect:
+            raise RelaxError, "Cannot define multiple Boolean relationships between Selection objects"
+        self._intersect = selectObj
+   
+    def union(self, selectObj):
+
+        if self._union or self._intersect:
+            raise RelaxError, "Cannot define multiple Boolean relationships between Selection objects"
+        self._union = selectObj
 
 
 def desel_all(self, run=None):
@@ -216,22 +278,19 @@ def molecule_loop(selection=None):
     @rtype:             instance of the MoleculeContainer class.
     """
 
-    # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(selection)
+    # Parse the selection string.
+    selectObj = Selection(selection)
 
     # Disallowed selections.
-    if res_token:
+    if selectObj.residues:
         raise RelaxResSelectDisallowError
-    if spin_token:
+    if selectObj.spins:
         raise RelaxSpinSelectDisallowError
-
-    # Parse the token.
-    molecules = parse_token(mol_token)
 
     # Loop over the molecules.
     for mol in relax_data_store[relax_data_store.current_pipe].mol:
         # Skip the molecule if there is no match to the selection.
-        if mol_token and mol.name not in molecules:
+        if selectObj.molecules and mol.name not in selectObj:
             continue
 
         # Yield the molecule data container.
@@ -320,27 +379,23 @@ def residue_loop(selection=None):
     @rtype:             instance of the MoleculeContainer class.
     """
 
-    # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(selection)
-
+    # Parse the selection string.
+    selectObj = Selection(selection)
+        
     # Disallowed selections.
-    if spin_token:
+    if selectObj.spins:
         raise RelaxSpinSelectDisallowError
-
-    # Parse the tokens.
-    molecules = parse_token(mol_token)
-    residues = parse_token(res_token)
 
     # Loop over the molecules.
     for mol in relax_data_store[relax_data_store.current_pipe].mol:
         # Skip the molecule if there is no match to the selection.
-        if mol_token and mol.name not in molecules:
+        if selectObj.molecules and mol.name not in selectObj:
             continue
 
         # Loop over the residues.
         for res in mol.res:
             # Skip the residue if there is no match to the selection.
-            if res_token and res.name not in residues:
+            if selectObj.residues and res.name not in selectObj:
                 continue
 
             # Yield the residue data container.
@@ -575,30 +630,25 @@ def spin_loop(selection=None):
     @rtype:             instance of the SpinContainer class.
     """
 
-    # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(selection)
-
-    # Parse the tokens.
-    molecules = parse_token(mol_token)
-    residues = parse_token(res_token)
-    spins = parse_token(spin_token)
+    # Parse the selection string.
+    selectObj = Selection(selection)
 
     # Loop over the molecules.
     for mol in relax_data_store[relax_data_store.current_pipe].mol:
         # Skip the molecule if there is no match to the selection.
-        if mol_token and mol.name not in molecules:
+        if selectObj.molecules and mol.name not in selectObj:
             continue
 
         # Loop over the residues.
         for res in mol.res:
             # Skip the residue if there is no match to the selection.
-            if res_token and res.name not in residues:
+            if selectObj.residues and res.name not in selectObj:
                 continue
 
             # Loop over the spins.
             for spin in res.spin:
                 # Skip the spin if there is no match to the selection.
-                if spin_token and spin.name not in spins:
+                if selectObj.spins and spin.name not in selectObj:
                     continue
 
                 # Yield the spin system data container.
@@ -697,3 +747,4 @@ def tokenise(selection):
 
     # Return the three tokens.
     return mol_token, res_token, spin_token
+
