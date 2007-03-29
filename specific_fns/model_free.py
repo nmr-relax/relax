@@ -35,7 +35,7 @@ from base_class import Common_functions
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
 from float import isNaN,isInf
-from multi.mpi4py_processor import  MF_minimise_command,MF_completion_memo
+from multi.commands import  MF_minimise_command,MF_completion_memo
 
 
 class Model_free(Common_functions):

@@ -1,19 +1,18 @@
 class Result(object):
-    def __init__(self):
-        pass
+    def __init__(self,completed):
+        self.completed=completed
 
 
 class Result_string(Result):
     #FIXME move result up a level
     def __init__(self,string,completed):
-        super(Result_string,self).__init__()
+        super(Result_string,self).__init__(completed=completed)
         self.string=string
-        self.completed=completed
+
 
 class Result_command(Result):
     def __init__(self,completed,memo_id=None):
-        super(Result_command,self).__init__()
-        self.completed=completed
+        super(Result_command,self).__init__(completed=completed)
         self.memo_id=memo_id
 
     def run(self,relax,processor,memo):
@@ -41,24 +40,6 @@ class Slave_command(object):
 
 #FIXME do some inheritance
 
-class Exit_command(Slave_command):
-    def __init__(self):
-        super(Exit_command,self).__init__()
-
-    def run(self,processor):
-        processor.return_object(NULL_RESULT)
-        processor.do_quit=True
-
-
-
-class Get_name_command(Slave_command):
-    def __init__(self):
-        super(Exit_command,self).__init__()
-
-    def run(self,processor):
-        msg = processor.get_name()
-        result = Result_string(msg,True)
-        processor.return_object(result)
 
 class Memo(object):
     def memo_id(self):
