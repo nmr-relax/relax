@@ -74,15 +74,15 @@ class Selection(object):
         
         if '&' in selectString:
             and_split = selectString.split('&')
-            part0 = Selection(and_split[0])
-            part1 = Selection(and_split[1])
-            return part0.intersection(part1)
+            Selection.__init__(self, and_split[0].strip())
+            part1 = Selection(and_split[1].strip())
+            self.intersection(part1)
 
         elif '|' in selectString:
             and_split = selectString.split('|')
-            part0 = Selection(and_split[0])
-            part1 = Selection(and_split[1])
-            return part0.union(part1)
+            Selection.__init__(self, and_split[0].strip())
+            part1 = Selection(and_split[1].strip())
+            self.union(part1)
 
         else:
             mol_token, res_token, spin_token = tokenise(selectString)
