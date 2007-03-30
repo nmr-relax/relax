@@ -38,7 +38,6 @@ class Slave_command(object):
     def run(self,processor):
         pass
 
-#FIXME do some inheritance
 
 
 class Memo(object):

@@ -26,7 +26,7 @@ class Get_name_command(Slave_command):
         processor.return_object(result)
 
 #not quite a momento so a memo
-class MF_completion_memo(Memo):
+class MF_memo(Memo):
     def __init__(self,model_free,index,sim_index,run,param_set,scaling):
         self.index = index
         self.sim_index=sim_index
@@ -36,7 +36,7 @@ class MF_completion_memo(Memo):
         self.scaling=scaling
 
 
-class MF_completion_command(Result_command):
+class MF_result_command(Result_command):
     def __init__(self,memo_id,param_vector, func, iter, fc, gc, hc, warning):
         super(MF_completion_command,self).__init__(completed=True,memo_id=memo_id)
         self.memo_id=memo_id
