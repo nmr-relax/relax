@@ -26,12 +26,12 @@
 import sys
 import os
 import math
-import time,datetime
 import textwrap
 
-from multi.processor import Memo,Slave_command
+from multi.processor import Processor,Memo,Slave_command
 from multi.processor import Result,Result_command,Result_string
 from multi.commands import Exit_command
+
 
 
 
@@ -95,7 +95,7 @@ def exit_mpi():
 
 
 #FIXME do some inheritance
-class Mpi4py_processor:
+class Mpi4py_processor(Processor):
 
 
 
@@ -124,7 +124,7 @@ class Mpi4py_processor:
          self.memo_map.clear()
 
     def assert_on_master(self):
-        if MPI.rank != 0:
+        if self.on_slave():
             msg = 'running on slave when expected master with MPI.rank == 0, rank was %d'% MPI.rank
             raise Exception(msg)
 
@@ -141,9 +141,7 @@ class Mpi4py_processor:
 
 
 
-    def run_command_globally(self,command):
-        queue = [command for i in range(1,MPI.size)]
-        self.run_command_queue(queue)
+
 
     def run_command_queue(self,queue):
         self.assert_on_master()
@@ -191,23 +189,19 @@ class Mpi4py_processor:
                         raise Exception(message)
 
 
-    def pre_run(self):
-        self.start_time =  time.time()
 
-    def post_run(self):
-        end_time = time.time()
-        time_diff= end_time - start_time
-        time_delta = datetime.timedelta(seconds=time_diff)
-        time_delta_str = time_delta.__str__()
-        (time_delta_str,millis) = time_delta_str.rsplit(sep='.',maxsplit=1)
-        print 'overall runtime: ' + time_delta_str + '\n'
+    def on_master(self):
+        result = False
+        if MPI.rank ==0:
+            result = True
+        return result
 
 
     def run(self):
 
 
 
-        if MPI.rank ==0:
+        if self.on_master():
             self.pre_run()
             self.relax_instance.run()
             self.post_run()

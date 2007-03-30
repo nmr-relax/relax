@@ -26,10 +26,50 @@ import sys
 import multi
 import time,datetime
 
-from multi.processor import Result_command,Result_string
+from multi.processor import Processor,Result_command,Result_string
+#class Processor(object):
+#    def add_to_queue(self,command,memo=None):
+#        pass
+#    def run_queue(self):
+#        pass
+#    def run(self):
+#        pass
+#    def return_object(self,result):
+#        pass
+#    def get_name(self):
+#        pass
+#    def exit(self):
+#        pass
+#
+#    def on_master(self):
+#        pass
+#
+#    def on_slave(self):
+#        return not self.on_master()
+#
+#    def run_command_globally(self,command):
+#        queue = [command for i in range(1,MPI.size)]
+#        self.run_command_queue(queue)
+#
+#    def pre_run(self):
+#        if self.on_master():
+#            self.start_time =  time.time()
+#
+#    def get_time_delta(self,start_time,end_time):
+#        end_time = time.time()
+#        time_diff= end_time - self.start_time
+#        time_delta = datetime.timedelta(seconds=time_diff)
+#        time_delta_str = time_delta.__str__()
+#        (time_delta_str,millis) = time_delta_str.rsplit(sep='.',maxsplit=1)
+#        return time_delta
+#
+#    def post_run(self):
+#        if self.on_master():
+#
+#            print 'overall runtime: ' + time_delta_str + '\n'
 
 #FIXME need to subclass
-class Uni_processor(object):
+class Uni_processor(Processor):
     def __init__(self,relax_instance):
         self.relax_instance= relax_instance
 
@@ -37,6 +77,8 @@ class Uni_processor(object):
         self.memo_map={}
 
 
+    def on_master(self):
+        return True
 
     def add_to_queue(self,command,memo=None):
         self.command_queue.append(command)
@@ -46,26 +88,28 @@ class Uni_processor(object):
 
     def run_queue(self):
         #FIXME: need a finally here to cleanup exceptions states
+
+
         for command in self.command_queue:
-            print command
-
-
-        self.run_command_queue()
+            command.run(self)
+        #self.run_command_queue()
         #TODO: add cheques for empty queuese and maps if now warn
         del self.command_queue[:]
         self.memo_map.clear()
-
-    def run_command_queue(self):
-    		for command in self.command_queue:
-    			command.run(self)
+# FIXME: remove me
+#    def run_command_queue(self):
+#    		for command in self.command_queue:
+#    			command.run(self)
 
     def run(self):
-        start_time =  time.clock()
+#        start_time =  time.clock()
+        self.pre_run()
         self.relax_instance.run()
-        end_time = time.clock()
-        time_diff= end_time - start_time
-        time_delta = datetime.timedelta(seconds=time_diff)
-        print 'overall runtime: ' + time_delta.__str__() + '\n'
+        self.post_run()
+#        end_time = time.clock()
+#        time_diff= end_time - start_time
+#        time_delta = datetime.timedelta(seconds=time_diff)
+#        print 'overall runtime: ' + time_delta.__str__() + '\n'
 
 
 
@@ -96,7 +140,4 @@ class Uni_processor(object):
 
 
 
-if __name__ == '__main__':
-    test =Uni_processor(None)
-    print test
 
