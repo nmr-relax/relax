@@ -169,18 +169,26 @@ class Mpi4py_processor:
                         raise Exception(message)
 
 
+    def pre_run(self):
+        self.start_time =  time.time()
+
+    def post_run(self):
+        end_time = time.time()
+        time_diff= end_time - start_time
+        time_delta = datetime.timedelta(seconds=time_diff)
+        time_delta_str = time_delta.__str__()
+        (time_delta_str,millis) = time_delta_str.rsplit(sep='.',maxsplit=1)
+        print 'overall runtime: ' + time_delta_str + '\n'
+
 
     def run(self):
 
 
 
         if MPI.rank ==0:
-            start_time =  time.time()
+            self.pre_run()
             self.relax_instance.run()
-            end_time = time.time()
-            time_diff= end_time - start_time
-            time_delta = datetime.timedelta(seconds=time_diff)
-            print 'overall runtime: ' + time_delta.__str__() + '\n'
+            self.post_run()
 
             # note this a modified exit that kills all MPI processors
             sys.exit()

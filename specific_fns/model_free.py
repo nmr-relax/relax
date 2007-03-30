@@ -35,7 +35,7 @@ from base_class import Common_functions
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
 from float import isNaN,isInf
-from multi.commands import  MF_minimise_command,MF_completion_memo
+from multi.commands import  MF_minimise_command,MF_memo
 
 
 class Model_free(Common_functions):
@@ -2394,7 +2394,7 @@ class Model_free(Common_functions):
                           func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1,
                           print_flag=print_flag,res_id=res_id,grid_size=self.grid_size)
 
-            memo = MF_completion_memo(model_free=self,index=index,sim_index=sim_index,run=self.run,param_set=self.param_set,scaling=scaling)
+            memo = MF_memo(model_free=self,index=index,sim_index=sim_index,run=self.run,param_set=self.param_set,scaling=scaling)
 
             self.relax.processor.add_to_queue(command,memo)
 
