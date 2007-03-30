@@ -60,63 +60,62 @@ id_string_doc = string
 class Selection(object):
     """An object containing mol-res-spin selections"""
 
-    def __init__(self, selectString):
+    def __init__(self, select_string):
 
         self._union = None
         self._intersect = None
 
-        self.molecules = None
-        self.residues = None
-        self.spins = None
+        self.molecules = []
+        self.residues = []
+        self.spins = []
 
-        if not selectString:
+        if not select_string:
             return
         
-        if '&' in selectString:
-            and_split = selectString.split('&')
-            Selection.__init__(self, and_split[0].strip())
-            part1 = Selection(and_split[1].strip())
-            self.intersection(part1)
+        if '&' in select_string:
+            and_split = select_string.split('&')
+            sel0 = Selection(and_split[0].strip())
+            sel1 = Selection(and_split[1].strip())
+            self.intersection(sel0, sel1)
 
-        elif '|' in selectString:
-            and_split = selectString.split('|')
-            Selection.__init__(self, and_split[0].strip())
-            part1 = Selection(and_split[1].strip())
-            self.union(part1)
+        elif '|' in select_string:
+            and_split = select_string.split('|')
+            sel0 = Selection(and_split[0].strip())
+            sel1 = Selection(and_split[1].strip())
+            self.union(sel0, sel1)
 
         else:
-            mol_token, res_token, spin_token = tokenise(selectString)
+            mol_token, res_token, spin_token = tokenise(select_string)
             self.molecules = parse_token(mol_token)
             self.residues = parse_token(res_token)
             self.spins = parse_token(spin_token)
 
     def __contains__(self, obj):
-        
-        in_self = False
-        if isinstance(obj, MoleculeContainer) and obj.name in self.molecules:
-            in_self = True
-        elif isinstance(obj, ResidueContainer) and obj.name in self.residues:
-            in_self = True
-        elif isinstance(obj, SpinContainer) and obj.name in self.spins:
-            in_self = True
+
         if self._union:
-            return in_self or (obj in self._union)
-        if self._intersect:
-            return in_self and (obj in self._union)
+            return (obj in self._union[0]) or (obj in self._union[1])
+        elif self._intersect:
+            return (obj in self._intersect[0]) and (obj in self._intersect[1])
+        elif isinstance(obj, MoleculeContainer) and obj.name in self.molecules:
+            return True
+        elif isinstance(obj, ResidueContainer) and obj.name in self.residues:
+            return True
+        elif isinstance(obj, SpinContainer) and obj.name in self.spins:
+            return True
         else:
-            return in_self
+            return False
 
-    def intersection(self, selectObj):
+    def intersection(self, select_obj0, select_obj1):
         
         if self._union or self._intersect:
             raise RelaxError, "Cannot define multiple Boolean relationships between Selection objects"
-        self._intersect = selectObj
+        self._intersect = (select_obj0, select_obj1)
    
-    def union(self, selectObj):
+    def union(self, select_obj0, select_obj1):
 
         if self._union or self._intersect:
             raise RelaxError, "Cannot define multiple Boolean relationships between Selection objects"
-        self._union = selectObj
+        self._union = (select_obj0, select_obj1)
 
 
 def desel_all(self, run=None):
@@ -314,7 +313,7 @@ def parse_token(token):
 
     # No token.
     if token == None:
-        return None
+        return []
 
     # Split by the ',' character.
     elements = split(',', token)

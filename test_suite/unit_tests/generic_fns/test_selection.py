@@ -359,6 +359,11 @@ class Test_selection(TestCase):
             # Increment i.
             i = i + 1
 
+    def test_boolean_selection1(self):
+        """Test boolean mol-res-spin selections."""
+
+        # The selection object:
+        sel = selection.Selection("#Ap4Aase | #RNA@N5")
 
     def test_tokenise1(self):
         """Test the generic_fns.selection.tokenise() function on the string '@1'."""
@@ -652,3 +657,31 @@ class Test_selection(TestCase):
 
         # Tokenise an invalid string.
         self.assertRaises(RelaxError, selection.tokenise, '')
+   
+   
+    def test_boolean_or_selection(self):
+        """Test boolean or in mol-res-spin selections."""
+
+        self.assert_(list(selection.spin_loop("#Ap4Aase | #RNA@N5")) == list(selection.spin_loop())
+   
+                
+    def test_boolean_and_selection(self):
+        """Test boolean and in mol-res-spin selections."""
+        
+        # The selection loop:
+        sel = selection.residue_loop("#Ap4Aase:4 & :Pro")
+        
+        # Test:
+        for res in sel:
+            self.assert_(res.name == "Pro" and res.num == 4)
+       
+                
+    def test_boolean_complex_selection(self):
+        """Test complex boolean mol-res-spin selections."""
+        a syntax error
+        # The selection loops:
+        sel = selection.residue_loop("#Ap4Aase:4 & :Pro | #RNA@N5")
+
+        # Test:
+        for res in sel:
+            self.assert_(res.num in [-5,-4,4])
