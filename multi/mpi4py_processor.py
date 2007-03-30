@@ -5,20 +5,31 @@ import sys
 import os
 import math
 import time,datetime
+import textwrap
 
 from multi.processor import Memo,Slave_command
 from multi.processor import Result,Result_command,Result_string
 from multi.commands import Exit_command
 
-#FIXME: me move top generic command module
+
 
 
 # load mpi
 try:
     from  mpi4py import MPI
 except ImportError:
-    raise Exception('test')
-    sys.stderr.write("The dependency 'mpi4py' has not been installed.\n")
+    msg = '''The dependency 'mpi4py' has not been installed. You should either
+
+                 1. run without multiprocessor support i.e. remove the
+                    --multi mpi4py flag  from the command line
+
+                 2. install mpi4py
+
+                 3. choose another multi processor method to give to the
+                    --multi command line flag\n'''
+    msg=textwrap.dedent(msg)
+    sys.stderr.write(msg)
+    sys.stderr.write('exiting...\n\n')
     sys.exit()
 
 # save original sys.exit to call after wrapper
@@ -106,11 +117,6 @@ class Mpi4py_processor:
         MPI.COMM_WORLD.Send(buf=result, dest=0)
 
 
-#    def process_commands(self,commands):
-#        self.assert_on_master()
-#
-#        for i in range(1,MPI.size):
-#            MPI.COMM_WORLD.Send(buf=command,dest=i)
 
     def run_command_globally(self,command):
         queue = [command for i in range(1,MPI.size)]
@@ -119,16 +125,6 @@ class Mpi4py_processor:
     def run_command_queue(self,queue):
         self.assert_on_master()
 
-#        for i in range(1,MPI.size):
-#                MPI.COMM_WORLD.Send(buf=command,dest=i)
-#        for i in range(1,MPI.size):
-#            elem = MPI.COMM_WORLD.Recv(source=i)
-#            if type(elem) == 'object':
-#                elem.run(relax_instance, relax_instance.processor)
-#            else:
-#                #FIXME can't cope with multiple lines
-#                print i,elem
-        #queue = [command for i in range(1,MPI.size*2)]
         running_set=set()
         idle_set=set([i for i in range(1,MPI.size)])
 
@@ -172,27 +168,9 @@ class Mpi4py_processor:
                         raise Exception(message)
 
 
-#        for i in range(MPI.size):
-#            buf=[]
-#            if i !=0:
-#                print 'try',i
-#                MPI.COMM_WORLD.Recv(buf=buf, source=i)
-#                for i,elem in enumerate(buf):
-#                    if elem.type!='object':
-#                        print i,elem
-#                    else:
-#                        elem.run()
 
     def run(self):
 
-#        if MPI.rank == 0:
-#            self.relax_instance.multi_mode='multi_master'
-#        else:
-#            self.relax_instance.multi_mode='multi_slave'
-#            self.relax_instance.mode='slave'
-#            self.relax_instance.script_file=None
-#            self.relax_instance.dummy_mode=True
-#            #self.relax_instance.run()
 
 
         if MPI.rank ==0:
@@ -201,12 +179,12 @@ class Mpi4py_processor:
             end_time = time.time()
             time_diff= end_time - start_time
             time_delta = datetime.timedelta(seconds=time_diff)
-            sys.stderr.write('overall runtime: ' + time_delta.__str__() + '\n')
-            sys.stderr.flush()
-            # note this a mdofied exit that kills all MPI processors
+            print 'overall runtime: ' + time_delta.__str__() + '\n'
+
+            # note this a modified exit that kills all MPI processors
             sys.exit()
         else:
-            #self.relax_instance.run(deamon=True)
+
             while not self.do_quit:
                 command = MPI.COMM_WORLD.Recv(source=0)
                 try:
@@ -216,9 +194,7 @@ class Mpi4py_processor:
 
 
 
-            #if data=='close':
-            #    exit_mpi()
-            #    return
+
 
 
 

@@ -44,8 +44,8 @@ class Uni_processor(object):
         end_time = time.clock()
         time_diff= end_time - start_time
         time_delta = datetime.timedelta(seconds=time_diff)
-        sys.stderr.write('overall runtime: ' + time_delta.__str__() + '\n')
-        sys.stderr.flush()
+        print 'overall runtime: ' + time_delta.__str__() + '\n'
+
 
 
 

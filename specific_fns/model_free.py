@@ -2168,17 +2168,17 @@ class Model_free(Common_functions):
             if constraints:
                 A, b = self.linear_constraints(index=index)
 
-            # Print out.
-            if self.print_flag >= 1:
-                # Individual residue stuff.
-                if self.param_set == 'mf' or self.param_set == 'local_tm':
-                    if self.print_flag >= 2:
-                        print "\n\n"
-                    string = "Fitting to residue: " + `self.relax.data.res[self.run][index].num` + " " + self.relax.data.res[self.run][index].name
-                    print "\n\n" + string
-                    print len(string) * '~'
-                if match('^[Gg]rid', min_algor):
-                    print "Unconstrained grid search size: " + `self.grid_size` + " (constraints may decrease this size).\n"
+#            # Print out.
+#            if self.print_flag >= 1:
+#                # Individual residue stuff.
+#                if self.param_set == 'mf' or self.param_set == 'local_tm':
+#                    if self.print_flag >= 2:
+#                        print "\n\n"
+#                    string = "Fitting to residue: " + `self.relax.data.res[self.run][index].num` + " " + self.relax.data.res[self.run][index].name
+#                    print "\n\n" + string
+#                    print len(string) * '~'
+#                if match('^[Gg]rid', min_algor):
+#                    print "Unconstrained grid search size: " + `self.grid_size` + " (constraints may decrease this size).\n"
 
             # Initialise the iteration counter and function, gradient, and Hessian call counters.
             #FIXME: move to processor command
@@ -2329,73 +2329,6 @@ class Model_free(Common_functions):
 
 
 
-#            # Initialise the function to minimise.
-#            ######################################
-#            print 'initialise Mf'
-#            print 'init_params',self.param_vector
-#            print 'param_se',self.param_set
-#            print 'diff_type',diff_type
-#            print 'diff_params',diff_params
-#            print 'scaling_matrix',self.scaling_matrix
-#            print 'num_res',num_res
-#            print 'equations',equations
-#            print 'param_types',param_types
-#            print 'param_values',param_values
-#            print 'relax_data',relax_data
-#            print 'errors',relax_error
-#            print 'bond_length',r
-#            print 'csa=',csa
-#            print 'num_frq',num_frq
-#            print 'frq',frq
-#            print 'num_ri',num_ri
-#            print 'remap_table',remap_table
-#            print 'noe_r1_table',noe_r1_table
-#            print 'ri_labels',ri_labels
-#            print 'gx',self.relax.data.gx
-#            print 'gh',self.relax.data.gh
-#            print 'g_ratio',self.relax.data.g_ratio
-#            print 'h_bar',self.relax.data.h_bar
-#            print 'mu0',self.relax.data.mu0
-#            print 'num_params',num_params
-#            print 'vectors',xh_unit_vectors
-#
-#            data_list =  [ 'initialise Mf',
-#             'init_params',self.param_vector,
-#             'param_set',self.param_set,
-#             'diff_type',diff_type,
-#             'diff_params',diff_params,
-#             'scaling_matrix',self.scaling_matrix,
-#             'num_res',num_res,
-#             'equations',equations,
-#             'param_types',param_types,
-#             'param_values',param_values,
-#             'relax_data',relax_data,
-#             'errors',relax_error,
-#             'bond_length',r,
-#             'csa=',csa,
-#             'num_frq',num_frq,
-#             'frq',frq,
-#             'num_ri',num_ri,
-#             'remap_table',remap_table,
-#             'noe_r1_table',noe_r1_table,
-#             'ri_labels',ri_labels,
-#             'gx',self.relax.data.gx,
-#             'gh',self.relax.data.gh,\
-#             'g_ratio',self.relax.data.g_ratio,
-#             'h_bar',self.relax.data.h_bar,
-#             'mu0',self.relax.data.mu0,
-#             'num_params',num_params,
-#             'vectors',xh_unit_vectors]
-#            for elem in data_list:
-#                marshal.loads(marshal.dumps(elem))
-#            self.mf = Mf(init_params=self.param_vector, param_set=self.param_set, diff_type=diff_type,
-#                         diff_params=diff_params, scaling_matrix=self.scaling_matrix, num_res=num_res,
-#                         equations=equations, param_types=param_types, param_values=param_values,
-#                         relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq,
-#                         frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table,
-#                         ri_labels=ri_labels, gx=self.relax.data.gx, gh=self.relax.data.gh,
-#                         g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar,
-#                         mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors)
 
             command=MF_minimise_command()
             command.set_mf(init_params=self.param_vector, param_set=self.param_set, diff_type=diff_type,
@@ -2446,34 +2379,25 @@ class Model_free(Common_functions):
 
             # Minimisation.
             ###############
-            #FIXME remove old version
-#            if constraints:
-#                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
-#            else:
-#                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
-#            if results == None:
-#                return
             #FIXME??? strange contraints
+            #residue_num,residue_name,min_algor,grid_size=None
+            res_num = self.relax.data.res[self.run][index].num
+            res_name = self.relax.data.res[self.run][index].name
+            res_id = `res_num` + ' ' + res_name
+
             if constraints:
                 command.set_minimise(args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options,
                           func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1,
-                          print_flag=print_flag)
+                          print_flag=print_flag,res_id=res_id,grid_size=self.grid_size)
             else:
                 command.set_minimise(args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options,
                           func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1,
-                          print_flag=print_flag)
+                          print_flag=print_flag,res_id=res_id,grid_size=self.grid_size)
 
             memo = MF_completion_memo(model_free=self,index=index,sim_index=sim_index,run=self.run,param_set=self.param_set,scaling=scaling)
 
             self.relax.processor.add_to_queue(command,memo)
-            #self.relax.processor.add_to_queue()
 
-            #command.do_minimise(memo)
-            #command.memo_id
-
-            #param_vector, func, iter, fc, gc, hc, warning = command.results
-            #self.disassemble_result(param_vector=param_vector,func=func,iter=iter,fc=fc,gc=gc,hc=hc,warning=warning,
-            #                        run=memo.run,index=memo.index,sim_index=memo.sim_index, param_set=memo.param_set,scaling=memo.scaling)
 
         self.relax.processor.run_queue()
 
@@ -2483,12 +2407,7 @@ class Model_free(Common_functions):
             self.warning=warning
             self.param_vector=param_vector
 
-            #FIXME something is resetting the count between each calculation!
-#            self.iter_count = iter
-#            self.f_count = fc
-#            self.g_count = gc
-#            self.h_count = hc
-
+            #FIXME this is a fix for old code
             self.iter_count = self.iter_count + iter
             self.f_count = self.f_count + fc
             self.g_count = self.g_count + gc
