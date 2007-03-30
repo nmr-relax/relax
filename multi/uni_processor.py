@@ -24,7 +24,6 @@
 import threading, Queue
 import sys
 import multi
-import time,datetime
 
 from multi.processor import Processor,Result_command,Result_string
 #class Processor(object):

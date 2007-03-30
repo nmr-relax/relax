@@ -108,7 +108,7 @@ class MF_minimise_command(Slave_command):
     def set_mf(self, **kwargs):
         # note the creation of a dict prevents a bug in python 2.3.3  where
         # it complains update doesn't take keywords
-        self.mf_map.update(dict(**kwargs))
+        self.mf_map.update(kwargs)
 
 
     def set_minimise(self,**kwargs):
@@ -121,7 +121,7 @@ class MF_minimise_command(Slave_command):
            del kwargs['grid_size']
         # note the creation of a dict prevents a bug in python 2.3.3  where
         # it complains update doesn't take keywords
-        self.minimise_map.update(dict(**kwargs))
+        self.minimise_map.update(kwargs)
 
     def build_mf(self):
         return  Mf(**self.mf_map)
