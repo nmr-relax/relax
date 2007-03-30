@@ -25,7 +25,6 @@
 ################################################################################
 
 
-#TODO: do it
 
 ''' unit_test_runner provides utilities for the running of unit tests from the
     command line or within the relax testing frame work.
@@ -108,10 +107,11 @@ def import_module(module_path):
     module = None
     result = None
 
-    try:
-        module = __import__(module_path)
-    except:
-        pass
+    #try:
+    module = __import__(module_path)
+    #except:
+    #    print 'failed'
+    #    sys.exit()
 
     if module != None:
         result = [module]
@@ -249,6 +249,15 @@ def join_path_segments(segments):
 
     return result
 
+class ImportErrorTestCase(unittest.TestCase):
+    def __init__(self,module_name,syntax_error):
+        super(ImportErrorTestCase,self).__init__('testImportError')
+        self.syntax_error=syntax_error
+
+    def testImportError(self):
+        raise self.syntax_error
+        #self.fail(self.syntax_error.__str__())
+
 def load_test_case(package_path,  module_name, class_name):
     ''' load a testCase from the file system using a package path, file name
         and class name
@@ -267,8 +276,20 @@ def load_test_case(package_path,  module_name, class_name):
         @return:
         '''
     result = None
+    packages = None
     package_path=get_module_relative_path(package_path, module_name)
-    packages = import_module(package_path)
+
+    #catch syntax errors
+    try:
+        packages = import_module(package_path)
+#    except ImportError,e:
+#        result = unittest.TestSuite()
+#        bad_syntax = ImportErrorTestCase('testImportError',e)
+#        result.addTest(bad_syntax)
+    except Exception,e:
+        result = unittest.TestSuite()
+        bad_syntax = ImportErrorTestCase('testImportError',e)
+        result.addTest(bad_syntax)
 
 
     if packages != None:
@@ -277,6 +298,37 @@ def load_test_case(package_path,  module_name, class_name):
             clazz =  getattr(packages[-1], class_name)
             result = unittest.TestLoader().loadTestsFromTestCase(clazz)
     return result
+
+
+#def load_test_case(package_path,  module_name, class_name):
+#    ''' load a testCase from the file system using a package path, file name
+#        and class name
+#
+#        @type package_path: string with . separated fields
+#        @param package_path: path to the module as a list of package names
+#                             separated by dots
+#
+#        @type module_name: string
+#        @param module_name: name of the module to load the class from
+#
+#        @type class_name: string
+#        @param class_name: name of the class to load
+#
+#        FIXME:
+#        @rtype:
+#        @return:
+#        '''
+#    result = None
+#    package_path=get_module_relative_path(package_path, module_name)
+#    packages = import_module(package_path)
+#
+#
+#    if packages != None:
+#        # some input packages may not contain the required class
+#        if hasattr(packages[-1], class_name):
+#            clazz =  getattr(packages[-1], class_name)
+#            result = unittest.TestLoader().loadTestsFromTestCase(clazz)
+#    return result
 
 
 
@@ -322,6 +374,7 @@ class Test_finder:
             @rtype: a hierachy of pyunit testSuites and testCases
         '''
 
+        print self.root_path
         self.suite = unittest.TestSuite()
         suite_dictionary = {'':self.suite}
         for (dir_path, dir_names, file_names) in os.walk(self.root_path):
@@ -343,7 +396,8 @@ class Test_finder:
 
 
                     module_path = get_module_relative_path(dir_path, module_found)
-
+                    #if self.verbose:
+                    #    print 'loading module: ' + module_path
 
 
                     path  = ['']
@@ -720,13 +774,16 @@ class Unit_test_runner(object):
 
         if tests == None:
             for module_path in module_paths:
-
+                print module_path
                 path_len = len(module_path)
                 if path_len <= 1:
                     continue
                 elif path_len == 2:
-                    tests=load_test_case('', module_path[1], module_path[1])
+
+                    print 'trying to load 2: ',  module_path[0], module_path[1]
+                    tests=load_test_case('', module_path[0], module_path[1])
                 else:
+                    print 'trying to load 3: ', os.path.join(*module_path[:-2]), module_path[-2], module_path[-1]
                     tests=load_test_case(os.path.join(*module_path[:-2]), module_path[-2], module_path[-1])
                 if tests != None:
                     break
