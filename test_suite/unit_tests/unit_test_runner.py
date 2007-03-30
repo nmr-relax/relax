@@ -249,6 +249,15 @@ def join_path_segments(segments):
 
     return result
 
+class ExtendedException(Exception):
+    def __init__(self,e,module):
+        self.e=e
+        self.module=module
+    def __str__(self):
+        result = self.e.__str__()
+        result = result + '\n\n***WARNING: no tests from module %s will be run!!!' % self.module
+        return result
+
 class ImportErrorTestCase(unittest.TestCase):
     def __init__(self,module_name,syntax_error):
         super(ImportErrorTestCase,self).__init__('testImportError')
@@ -288,7 +297,8 @@ def load_test_case(package_path,  module_name, class_name):
 #        result.addTest(bad_syntax)
     except Exception,e:
         result = unittest.TestSuite()
-        bad_syntax = ImportErrorTestCase('testImportError',e)
+        ee = ExtendedException(e,module_name)
+        bad_syntax = ImportErrorTestCase('testImportError',ee)
         result.addTest(bad_syntax)
 
 
@@ -396,6 +406,7 @@ class Test_finder:
 
 
                     module_path = get_module_relative_path(dir_path, module_found)
+                    #FIXME add verbose search option
                     #if self.verbose:
                     #    print 'loading module: ' + module_path
 
