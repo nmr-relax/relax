@@ -58,9 +58,17 @@ id_string_doc = string
 
 
 class Selection(object):
-    """An object containing mol-res-spin selections"""
+    """An object containing mol-res-spin selections.
+    
+    A Selection object represents either a set of selected 
+    molecules, residues and spins, or the union or intersection
+    of two other Selection objects."""
 
     def __init__(self, select_string):
+        """Initialise a Selection object.
+
+        @type select_string: string
+        @param select_string: a mol-res-spin selection string"""
 
         self._union = None
         self._intersect = None
@@ -91,29 +99,49 @@ class Selection(object):
             self.spins = parse_token(spin_token)
 
     def __contains__(self, obj):
-
         if self._union:
             return (obj in self._union[0]) or (obj in self._union[1])
         elif self._intersect:
             return (obj in self._intersect[0]) and (obj in self._intersect[1])
-        elif isinstance(obj, MoleculeContainer) and obj.name in self.molecules:
-            return True
-        elif isinstance(obj, ResidueContainer) and obj.name in self.residues:
-            return True
-        elif isinstance(obj, SpinContainer) and obj.name in self.spins:
-            return True
-        else:
-            return False
+        elif isinstance(obj, MoleculeContainer):
+            if not self.molecules:
+                return True
+            elif obj.name in self.molecules:
+                return True
+        elif isinstance(obj, ResidueContainer):
+            if not self.residues:
+                return True
+            elif obj.name in self.residues or obj.num in self.residues:
+                return True
+        elif isinstance(obj, SpinContainer):
+            if not self.spins:
+                return True
+            elif obj.name in self.spins or obj.num in self.spins:
+                return True
+
+        return False
 
     def intersection(self, select_obj0, select_obj1):
+        """Make a Selection object the intersection of two Selection objects
         
-        if self._union or self._intersect:
+        @type select_obj0: Instance of class Selection
+        @param select_obj0: First Selection object in intersection
+        @type select_obj1: Instance of class Selection
+        @param select_obj1: First Selection object in intersection"""
+        
+        if self._union or self._intersect or self.molecules or self.residues or self.spins:
             raise RelaxError, "Cannot define multiple Boolean relationships between Selection objects"
         self._intersect = (select_obj0, select_obj1)
    
     def union(self, select_obj0, select_obj1):
+        """Make a Selection object the union of two Selection objects
 
-        if self._union or self._intersect:
+        @type select_obj0: Instance of class Selection
+        @param select_obj0: First Selection object in union
+        @type select_obj1: Instance of class Selection
+        @param select_obj1: First Selection object in union"""
+
+        if self._union or self._intersect or self.molecules or self.residues or self.spins:
             raise RelaxError, "Cannot define multiple Boolean relationships between Selection objects"
         self._union = (select_obj0, select_obj1)
 
@@ -278,18 +306,18 @@ def molecule_loop(selection=None):
     """
 
     # Parse the selection string.
-    selectObj = Selection(selection)
+    select_obj = Selection(selection)
 
     # Disallowed selections.
-    if selectObj.residues:
+    if select_obj.residues:
         raise RelaxResSelectDisallowError
-    if selectObj.spins:
+    if select_obj.spins:
         raise RelaxSpinSelectDisallowError
 
     # Loop over the molecules.
     for mol in relax_data_store[relax_data_store.current_pipe].mol:
         # Skip the molecule if there is no match to the selection.
-        if selectObj.molecules and mol.name not in selectObj:
+        if mol not in select_obj:
             continue
 
         # Yield the molecule data container.
@@ -379,23 +407,25 @@ def residue_loop(selection=None):
     """
 
     # Parse the selection string.
-    selectObj = Selection(selection)
+    select_obj = Selection(selection)
         
     # Disallowed selections.
-    if selectObj.spins:
+    if select_obj.spins:
         raise RelaxSpinSelectDisallowError
 
     # Loop over the molecules.
     for mol in relax_data_store[relax_data_store.current_pipe].mol:
         # Skip the molecule if there is no match to the selection.
-        if selectObj.molecules and mol.name not in selectObj:
+        if mol not in select_obj:
             continue
+        print mol
 
         # Loop over the residues.
         for res in mol.res:
             # Skip the residue if there is no match to the selection.
-            if selectObj.residues and res.name not in selectObj:
+            if res not in select_obj:
                 continue
+            print res
 
             # Yield the residue data container.
             yield res
@@ -630,24 +660,24 @@ def spin_loop(selection=None):
     """
 
     # Parse the selection string.
-    selectObj = Selection(selection)
+    select_obj = Selection(selection)
 
     # Loop over the molecules.
     for mol in relax_data_store[relax_data_store.current_pipe].mol:
         # Skip the molecule if there is no match to the selection.
-        if selectObj.molecules and mol.name not in selectObj:
+        if mol not in select_obj:
             continue
 
         # Loop over the residues.
         for res in mol.res:
             # Skip the residue if there is no match to the selection.
-            if selectObj.residues and res.name not in selectObj:
+            if res not in select_obj:
                 continue
 
             # Loop over the spins.
             for spin in res.spin:
                 # Skip the spin if there is no match to the selection.
-                if selectObj.spins and spin.name not in selectObj:
+                if spin not in select_obj:
                     continue
 
                 # Yield the spin system data container.
