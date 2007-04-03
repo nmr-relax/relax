@@ -80,18 +80,21 @@ class Selection(object):
         if not select_string:
             return
         
-        if '&' in select_string:
-            and_split = select_string.split('&')
-            sel0 = Selection(and_split[0].strip())
-            sel1 = Selection(and_split[1].strip())
+        # Read boolean symbols from right to left:
+        and_index = select_string.rfind('&')
+        or_index = select_string.rfind('|')
+        
+        if and_index > or_index: 
+            sel0 = Selection(select_string[:and_index].strip())
+            sel1 = Selection(select_string[and_index+1:].strip())
             self.intersection(sel0, sel1)
 
-        elif '|' in select_string:
-            and_split = select_string.split('|')
-            sel0 = Selection(and_split[0].strip())
-            sel1 = Selection(and_split[1].strip())
+        elif or_index > and_index:
+            sel0 = Selection(select_string[:or_index].strip())
+            sel1 = Selection(select_string[or_index+1:].strip())
             self.union(sel0, sel1)
 
+        # No booleans, so parse as simple selection:
         else:
             mol_token, res_token, spin_token = tokenise(select_string)
             self.molecules = parse_token(mol_token)
@@ -418,14 +421,12 @@ def residue_loop(selection=None):
         # Skip the molecule if there is no match to the selection.
         if mol not in select_obj:
             continue
-        print mol
 
         # Loop over the residues.
         for res in mol.res:
             # Skip the residue if there is no match to the selection.
             if res not in select_obj:
                 continue
-            print res
 
             # Yield the residue data container.
             yield res
