@@ -28,8 +28,7 @@ from Numeric import Float64, array, identity, matrixmultiply, ones, transpose, z
 from re import match, search
 from string import replace, split
 import sys
-import cStringIO #FIXME: temporary for pickle tests
-import marshal   #FIXME: temporary for pickle tests
+
 
 from base_class import Common_functions
 from maths_fns.mf import Mf
@@ -1079,90 +1078,90 @@ class Model_free(Common_functions):
             return 'all'
 
 
-    def disassemble_param_vector(self, index=None, sim_index=None):
+    def disassemble_param_vector(self,run=None, param_set=None, param_vector=None, index=None, sim_index=None):
         """Function for disassembling the parameter vector."""
 
         # Initialise.
         param_index = 0
 
         # Diffusion tensor parameters of the Monte Carlo simulations.
-        if sim_index != None and (self.param_set == 'diff' or self.param_set == 'all'):
+        if sim_index != None and (param_set == 'diff' or param_set == 'all'):
             # Spherical diffusion.
-            if self.relax.data.diff[self.run].type == 'sphere':
+            if self.relax.data.diff[run].type == 'sphere':
                 # Sim values.
-                self.relax.data.diff[self.run].tm_sim[sim_index] = self.param_vector[0]
+                self.relax.data.diff[run].tm_sim[sim_index] = param_vector[0]
 
                 # Parameter index.
                 param_index = param_index + 1
 
             # Spheroidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'spheroid':
+            elif self.relax.data.diff[run].type == 'spheroid':
                 # Sim values.
-                self.relax.data.diff[self.run].tm_sim[sim_index] = self.param_vector[0]
-                self.relax.data.diff[self.run].Da_sim[sim_index] = self.param_vector[1]
-                self.relax.data.diff[self.run].theta_sim[sim_index] = self.param_vector[2]
-                self.relax.data.diff[self.run].phi_sim[sim_index] = self.param_vector[3]
-                self.relax.generic.diffusion_tensor.fold_angles(run=self.run, sim_index=sim_index)
+                self.relax.data.diff[run].tm_sim[sim_index] = param_vector[0]
+                self.relax.data.diff[run].Da_sim[sim_index] = param_vector[1]
+                self.relax.data.diff[run].theta_sim[sim_index] = param_vector[2]
+                self.relax.data.diff[run].phi_sim[sim_index] = param_vector[3]
+                self.relax.generic.diffusion_tensor.fold_angles(run=run, sim_index=sim_index)
 
                 # Parameter index.
                 param_index = param_index + 4
 
             # Ellipsoidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'ellipsoid':
+            elif self.relax.data.diff[run].type == 'ellipsoid':
                 # Sim values.
-                self.relax.data.diff[self.run].tm_sim[sim_index] = self.param_vector[0]
-                self.relax.data.diff[self.run].Da_sim[sim_index] = self.param_vector[1]
-                self.relax.data.diff[self.run].Dr_sim[sim_index] = self.param_vector[2]
-                self.relax.data.diff[self.run].alpha_sim[sim_index] = self.param_vector[3]
-                self.relax.data.diff[self.run].beta_sim[sim_index] = self.param_vector[4]
-                self.relax.data.diff[self.run].gamma_sim[sim_index] = self.param_vector[5]
-                self.relax.generic.diffusion_tensor.fold_angles(run=self.run, sim_index=sim_index)
+                self.relax.data.diff[run].tm_sim[sim_index] = param_vector[0]
+                self.relax.data.diff[run].Da_sim[sim_index] = param_vector[1]
+                self.relax.data.diff[run].Dr_sim[sim_index] = param_vector[2]
+                self.relax.data.diff[run].alpha_sim[sim_index] = param_vector[3]
+                self.relax.data.diff[run].beta_sim[sim_index] = param_vector[4]
+                self.relax.data.diff[run].gamma_sim[sim_index] = param_vector[5]
+                self.relax.generic.diffusion_tensor.fold_angles(run=run, sim_index=sim_index)
 
                 # Parameter index.
                 param_index = param_index + 6
 
         # Diffusion tensor parameters.
-        elif self.param_set == 'diff' or self.param_set == 'all':
+        elif param_set == 'diff' or param_set == 'all':
             # Spherical diffusion.
-            if self.relax.data.diff[self.run].type == 'sphere':
+            if self.relax.data.diff[run].type == 'sphere':
                 # Values.
-                self.relax.data.diff[self.run].tm = self.param_vector[0]
+                self.relax.data.diff[run].tm = param_vector[0]
 
                 # Parameter index.
                 param_index = param_index + 1
 
             # Spheroidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'spheroid':
+            elif self.relax.data.diff[run].type == 'spheroid':
                 # Values.
-                self.relax.data.diff[self.run].tm = self.param_vector[0]
-                self.relax.data.diff[self.run].Da = self.param_vector[1]
-                self.relax.data.diff[self.run].theta = self.param_vector[2]
-                self.relax.data.diff[self.run].phi = self.param_vector[3]
-                self.relax.generic.diffusion_tensor.fold_angles(run=self.run)
+                self.relax.data.diff[run].tm = param_vector[0]
+                self.relax.data.diff[run].Da = param_vector[1]
+                self.relax.data.diff[run].theta = param_vector[2]
+                self.relax.data.diff[run].phi = param_vector[3]
+                self.relax.generic.diffusion_tensor.fold_angles(run=run)
 
                 # Parameter index.
                 param_index = param_index + 4
 
             # Ellipsoidal diffusion.
-            elif self.relax.data.diff[self.run].type == 'ellipsoid':
+            elif self.relax.data.diff[run].type == 'ellipsoid':
                 # Values.
-                self.relax.data.diff[self.run].tm = self.param_vector[0]
-                self.relax.data.diff[self.run].Da = self.param_vector[1]
-                self.relax.data.diff[self.run].Dr = self.param_vector[2]
-                self.relax.data.diff[self.run].alpha = self.param_vector[3]
-                self.relax.data.diff[self.run].beta = self.param_vector[4]
-                self.relax.data.diff[self.run].gamma = self.param_vector[5]
-                self.relax.generic.diffusion_tensor.fold_angles(run=self.run)
+                self.relax.data.diff[run].tm = param_vector[0]
+                self.relax.data.diff[run].Da = param_vector[1]
+                self.relax.data.diff[run].Dr = param_vector[2]
+                self.relax.data.diff[run].alpha = param_vector[3]
+                self.relax.data.diff[run].beta = param_vector[4]
+                self.relax.data.diff[run].gamma = param_vector[5]
+                self.relax.generic.diffusion_tensor.fold_angles(run=run)
 
                 # Parameter index.
                 param_index = param_index + 6
 
         # Model-free parameters.
-        if self.param_set != 'diff':
+        if param_set != 'diff':
             # Loop over all residues.
-            for i in xrange(len(self.relax.data.res[self.run])):
+            for i in xrange(len(self.relax.data.res[run])):
                 # Remap the residue data structure.
-                data = self.relax.data.res[self.run][i]
+                data = self.relax.data.res[run][i]
 
                 # Skip unselected residues.
                 if not data.select:
@@ -1177,72 +1176,72 @@ class Model_free(Common_functions):
                     # Local tm.
                     if data.params[j] == 'local_tm':
                         if sim_index == None:
-                            data.local_tm = self.param_vector[param_index]
+                            data.local_tm = param_vector[param_index]
                         else:
-                            data.local_tm_sim[sim_index] = self.param_vector[param_index]
+                            data.local_tm_sim[sim_index] = param_vector[param_index]
 
                     # S2.
                     elif data.params[j] == 'S2':
                         if sim_index == None:
-                            data.s2 = self.param_vector[param_index]
+                            data.s2 = param_vector[param_index]
                         else:
-                            data.s2_sim[sim_index] = self.param_vector[param_index]
+                            data.s2_sim[sim_index] = param_vector[param_index]
 
                     # S2f.
                     elif data.params[j] == 'S2f':
                         if sim_index == None:
-                            data.s2f = self.param_vector[param_index]
+                            data.s2f = param_vector[param_index]
                         else:
-                            data.s2f_sim[sim_index] = self.param_vector[param_index]
+                            data.s2f_sim[sim_index] = param_vector[param_index]
 
                     # S2s.
                     elif data.params[j] == 'S2s':
                         if sim_index == None:
-                            data.s2s = self.param_vector[param_index]
+                            data.s2s = param_vector[param_index]
                         else:
-                            data.s2s_sim[sim_index] = self.param_vector[param_index]
+                            data.s2s_sim[sim_index] = param_vector[param_index]
 
                     # te.
                     elif data.params[j] == 'te':
                         if sim_index == None:
-                            data.te = self.param_vector[param_index]
+                            data.te = param_vector[param_index]
                         else:
-                            data.te_sim[sim_index] = self.param_vector[param_index]
+                            data.te_sim[sim_index] = param_vector[param_index]
 
                     # tf.
                     elif data.params[j] == 'tf':
                         if sim_index == None:
-                            data.tf = self.param_vector[param_index]
+                            data.tf = param_vector[param_index]
                         else:
-                            data.tf_sim[sim_index] = self.param_vector[param_index]
+                            data.tf_sim[sim_index] = param_vector[param_index]
 
                     # ts.
                     elif data.params[j] == 'ts':
                         if sim_index == None:
-                            data.ts = self.param_vector[param_index]
+                            data.ts = param_vector[param_index]
                         else:
-                            data.ts_sim[sim_index] = self.param_vector[param_index]
+                            data.ts_sim[sim_index] = param_vector[param_index]
 
                     # Rex.
                     elif data.params[j] == 'Rex':
                         if sim_index == None:
-                            data.rex = self.param_vector[param_index]
+                            data.rex = param_vector[param_index]
                         else:
-                            data.rex_sim[sim_index] = self.param_vector[param_index]
+                            data.rex_sim[sim_index] = param_vector[param_index]
 
                     # r.
                     elif data.params[j] == 'r':
                         if sim_index == None:
-                            data.r = self.param_vector[param_index]
+                            data.r = param_vector[param_index]
                         else:
-                            data.r_sim[sim_index] = self.param_vector[param_index]
+                            data.r_sim[sim_index] = param_vector[param_index]
 
                     # CSA.
                     elif data.params[j] == 'CSA':
                         if sim_index == None:
-                            data.csa = self.param_vector[param_index]
+                            data.csa = param_vector[param_index]
                         else:
-                            data.csa_sim[sim_index] = self.param_vector[param_index]
+                            data.csa_sim[sim_index] = param_vector[param_index]
 
                     # Unknown parameter.
                     else:
@@ -1252,11 +1251,11 @@ class Model_free(Common_functions):
                     param_index = param_index + 1
 
         # Calculate all order parameters after unpacking the vector.
-        if self.param_set != 'diff':
+        if param_set != 'diff':
             # Loop over all residues.
-            for i in xrange(len(self.relax.data.res[self.run])):
+            for i in xrange(len(self.relax.data.res[run])):
                 # Remap the residue data structure.
-                data = self.relax.data.res[self.run][i]
+                data = self.relax.data.res[run][i]
 
                 # Skip unselected residues.
                 if not data.select:
@@ -2182,10 +2181,10 @@ class Model_free(Common_functions):
 
             # Initialise the iteration counter and function, gradient, and Hessian call counters.
             #FIXME: move to processor command
-            self.iter_count = 0
-            self.f_count = 0
-            self.g_count = 0
-            self.h_count = 0
+            #self.iter_count = 0
+            #self.f_count = 0
+            #self.g_count = 0
+            #self.h_count = 0
 
             # Initialise the data structures for the model-free function.
             relax_data = []
@@ -2262,6 +2261,7 @@ class Model_free(Common_functions):
                     relax_data.append(data.relax_data)
                 else:
                     relax_data.append(data.relax_sim_data[sim_index])
+
                 relax_error.append(data.relax_error)
                 equations.append(data.equation)
                 param_types.append(data.params)
@@ -2388,26 +2388,37 @@ class Model_free(Common_functions):
             if constraints:
                 command.set_minimise(args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options,
                           func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1,
-                          print_flag=print_flag,res_id=res_id,grid_size=self.grid_size)
+                          print_flag=print_flag,res_id=res_id,grid_size=self.grid_size,index=index,sim_index=sim_index)
             else:
                 command.set_minimise(args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options,
                           func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1,
-                          print_flag=print_flag,res_id=res_id,grid_size=self.grid_size)
+                          print_flag=print_flag,res_id=res_id,grid_size=self.grid_size,index=index,sim_index=sim_index)
 
-            memo = MF_memo(model_free=self,index=index,sim_index=sim_index,run=self.run,param_set=self.param_set,scaling=scaling)
+            memo = MF_memo(model_free=self,index=index,sim_index=sim_index,run=self.run,param_set=self.param_set,
+                           scaling=scaling,scaling_matrix=self.scaling_matrix)
 
             self.relax.processor.add_to_queue(command,memo)
 
+        #raise Exception('test')
+        #self.relax.processor.run_queue()
 
-        self.relax.processor.run_queue()
 
-
-    def disassemble_result(self,param_vector,func,iter,fc,gc,hc,warning,run,index,sim_index, param_set,scaling):
-            self.func=func
-            self.warning=warning
-            self.param_vector=param_vector
+    def disassemble_result(self,param_vector,func,iter,fc,gc,hc,warning,run,index,sim_index, param_set,scaling,scaling_matrix):
+            #print '***',param_vector,func,iter,fc,gc,hc,warning,run,index,sim_index, param_set,scaling
+            #self.write_columnar_line(file=sys.stdout)
+            #self.param_vector=param_vector
 
             #FIXME this is a fix for old code
+#            self.iter_count = iter
+#            self.f_count = fc
+#            self.g_count = gc
+#            self.h_count = hc
+#            self.run=run
+
+
+
+            self.func=func
+            self.warning=warning
             self.iter_count = self.iter_count + iter
             self.f_count = self.f_count + fc
             self.g_count = self.g_count + gc
@@ -2426,94 +2437,107 @@ class Model_free(Common_functions):
 
             # Scaling.
             if scaling:
-                self.param_vector = matrixmultiply(self.scaling_matrix, self.param_vector)
+
+                param_vector = matrixmultiply(scaling_matrix, param_vector)
 
             # Disassemble the parameter vector.
-            self.disassemble_param_vector(index=index, sim_index=sim_index)
+            # FIXME pass param_vector
+            self.disassemble_param_vector(run=run,param_set=param_set,param_vector=param_vector,index=index, sim_index=sim_index)
 
             # Monte Carlo minimisation statistics.
             if sim_index != None:
                 # Sequence specific minimisation statistics.
                 if self.param_set == 'mf' or self.param_set == 'local_tm':
+
                     # Chi-squared statistic.
-                    self.relax.data.res[self.run][index].chi2_sim[sim_index] = self.func
+                    self.relax.data.res[run][index].chi2_sim[sim_index] = self.func
 
                     # Iterations.
-                    self.relax.data.res[self.run][index].iter_sim[sim_index] = self.iter_count
+                    self.relax.data.res[run][index].iter_sim[sim_index] = self.iter_count
 
                     # Function evaluations.
-                    self.relax.data.res[self.run][index].f_count_sim[sim_index] = self.f_count
+                    self.relax.data.res[run][index].f_count_sim[sim_index] = self.f_count
 
                     # Gradient evaluations.
-                    self.relax.data.res[self.run][index].g_count_sim[sim_index] = self.g_count
+                    self.relax.data.res[run][index].g_count_sim[sim_index] = self.g_count
 
                     # Hessian evaluations.
-                    self.relax.data.res[self.run][index].h_count_sim[sim_index] = self.h_count
+                    self.relax.data.res[run][index].h_count_sim[sim_index] = self.h_count
 
                     # Warning.
-                    self.relax.data.res[self.run][index].warning_sim[sim_index] = self.warning
+                    self.relax.data.res[run][index].warning_sim[sim_index] = self.warning
 
                 # Global minimisation statistics.
                 elif self.param_set == 'diff' or self.param_set == 'all':
                     # Chi-squared statistic.
-                    self.relax.data.chi2_sim[self.run][sim_index] = self.func
+                    self.relax.data.chi2_sim[run][sim_index] = self.func
 
                     # Iterations.
-                    self.relax.data.iter_sim[self.run][sim_index] = self.iter_count
+                    self.relax.data.iter_sim[run][sim_index] = self.iter_count
 
                     # Function evaluations.
-                    self.relax.data.f_count_sim[self.run][sim_index] = self.f_count
+                    self.relax.data.f_count_sim[run][sim_index] = self.f_count
 
                     # Gradient evaluations.
-                    self.relax.data.g_count_sim[self.run][sim_index] = self.g_count
+                    self.relax.data.g_count_sim[run][sim_index] = self.g_count
 
                     # Hessian evaluations.
-                    self.relax.data.h_count_sim[self.run][sim_index] = self.h_count
+                    self.relax.data.h_count_sim[run][sim_index] = self.h_count
 
                     # Warning.
-                    self.relax.data.warning_sim[self.run][sim_index] = self.warning
+                    self.relax.data.warning_sim[run][sim_index] = self.warning
 
             # Normal statistics.
             else:
                 # Sequence specific minimisation statistics.
                 if self.param_set == 'mf' or self.param_set == 'local_tm':
-                    # Chi-squared statistic.
-                    self.relax.data.res[self.run][index].chi2 = self.func
+# FIXME: remove me
+#                    import traceback
+#                    if self.relax.data.res[run][index].num ==  4:
+#                        print '***1',run,param_set
+#                        print '***2',index,self.relax.data.res[run][index].num,self.relax.data.res['m1'][index].name
+#                        print '***3',self.relax.data.res[run][index].num,self.relax.data.res['m1'][index].name,param_set,run,index,sim_index,self.param_vector
+#                        print '***4',self.relax.data.res['m1'][index].s2,id(self.relax.data.res['m1'][index])
+#                        print '***5'
+#                        traceback.print_stack(file=sys.stdout)
+
+                   # Chi-squared statistic.
+                    self.relax.data.res[run][index].chi2 = self.func
 
                     # Iterations.
-                    self.relax.data.res[self.run][index].iter = self.iter_count
+                    self.relax.data.res[run][index].iter = self.iter_count
 
                     # Function evaluations.
-                    self.relax.data.res[self.run][index].f_count = self.f_count
+                    self.relax.data.res[run][index].f_count = self.f_count
 
                     # Gradient evaluations.
-                    self.relax.data.res[self.run][index].g_count = self.g_count
+                    self.relax.data.res[run][index].g_count = self.g_count
 
                     # Hessian evaluations.
-                    self.relax.data.res[self.run][index].h_count = self.h_count
+                    self.relax.data.res[run][index].h_count = self.h_count
 
                     # Warning.
-                    self.relax.data.res[self.run][index].warning = self.warning
+                    self.relax.data.res[run][index].warning = self.warning
 
                 # Global minimisation statistics.
                 elif self.param_set == 'diff' or self.param_set == 'all':
                     # Chi-squared statistic.
-                    self.relax.data.chi2[self.run] = self.func
+                    self.relax.data.chi2[run] = self.func
 
                     # Iterations.
-                    self.relax.data.iter[self.run] = self.iter_count
+                    self.relax.data.iter[run] = self.iter_count
 
                     # Function evaluations.
-                    self.relax.data.f_count[self.run] = self.f_count
+                    self.relax.data.f_count[run] = self.f_count
 
                     # Gradient evaluations.
-                    self.relax.data.g_count[self.run] = self.g_count
+                    self.relax.data.g_count[run] = self.g_count
 
                     # Hessian evaluations.
-                    self.relax.data.h_count[self.run] = self.h_count
+                    self.relax.data.h_count[run] = self.h_count
 
                     # Warning.
-                    self.relax.data.warning[self.run] = self.warning
+                    self.relax.data.warning[run] = self.warning
 
 
     def model_setup(self, run=None, model=None, equation=None, params=None, res_num=None):
