@@ -20,14 +20,185 @@
 #                                                                             #
 ###############################################################################
 
+#FIXME exceptiosn not progated properly in main loop
+import sys
+from Numeric import  Float
+from textwrap import dedent
+from copy import copy
 
 from Numeric import Float64, ones, zeros
 
 from constraint_linear import Constraint_linear
 
+#constants
+##########
+
+GRID_STEPS = 0
+GRID_LOWER = 1
+GRID_UPPER = 2
+
+class Grid_info(object):
+    def __init__(self,grid_ops):
+        self.grid_ops = grid_ops
+        for op in self.grid_ops:
+            op[GRID_LOWER] = float(op[GRID_LOWER])
+            op[GRID_UPPER] = float(op[GRID_UPPER])
+        self.steps = self.count_grid_steps(grid_ops)
+        self.grid_dimension = len(grid_ops)
+        self.values = self.calc_grid_values(grid_ops)
+        self.strides = self.calc_strides(grid_ops)
+
+    def calc_strides(self,grid_ops):
+        stride = 1
+        result = []
+        for op in grid_ops:
+            result.append(stride)
+            stride=stride*op[GRID_STEPS]
+
+        return result
+
+
+    def count_grid_steps(self,grid_ops=None):
+        """ calculate the number of steps in a grid search """
+
+        result = 1
+        for op in grid_ops:
+            result = result * op[GRID_STEPS]
+
+        return result
+
+    def calc_grid_values(self,grid_ops=None):
+        """ calculate the values the points along each grid dimension can take"""
+        result = []
+        for  op in grid_ops:
+            values=[]
+            result.append(values)
+
+            op_range = op[GRID_UPPER] - op[GRID_LOWER]
+            for i in xrange(op[GRID_STEPS]):
+                values.append(op[GRID_LOWER] + i * op_range / (op[GRID_STEPS] - 1))
+
+        return result
+
+    def __str__(self):
+        message = '''\
+                        grid info:
+
+                        number of axes:   %d
+                        number of steps:  %d
+
+                  '''
+
+        message = dedent(message)
+        message = message % (self.grid_dimension,self.steps)
+
+        op_message_list = []
+        for i,op in enumerate(self.grid_ops):
+            op_message  = '%d.  %f...[%d steps]...%f'
+            op_list = (i+1,op[GRID_LOWER], op[GRID_STEPS], op[GRID_UPPER])
+            op_message_list .append(op_message % op_list)
+
+        op_message =  '\n'.join(op_message_list)
+
+        message = message+op_message
+
+        return message
+
+    def print_steps(self):
+        step_num = ones((self.grid_dimension))
+        params = []
+        for op in  self.grid_ops:
+            params.append(op[GRID_LOWER])
+
+        for i in range(self.steps):
+            print `i+1` + '. ',params
+            # Increment the grid search.
+            broken=False
+            for j in xrange(self.grid_dimension):
+                if step_num[j] < self.grid_ops[j][GRID_STEPS]:
+                    step_num[j] = step_num[j] + 1
+                    params[j] = self.values[j][step_num[j]-1]
+                    broken = True
+                    break    # Exit so that the other step numbers are not incremented.
+                else:
+                    step_num[j] = 1
+                    params[j] = self.grid_ops[j][GRID_LOWER]
+
+    def get_step_offset(self,step):
+        result=[]
+        for stride in self.strides[-1::-1]:
+            offset  = step / stride
+            result.append(offset)
+            step= step - stride*offset
+
+        result.reverse()
+
+        return result
+        #res_values = []
+        #for i,elem in enumerate(result):
+        #    res_values.append(self.values[i][elem])
+        #
+        #return res_values
+
+    def get_params(self,offsets,params=None):
+        if params==None:
+            params=ones(len(offsets),Float)
+
+
+        for i,offset in enumerate(offsets):
+            params[i]=self.values[i][offset]
+
+        return params
+
+    class Iterator(object):
+        def __init__(self,info,step=0):
+            self.info=info
+            self.offsets= info.get_step_offset(step)
+            self.step = step
+            self.params = self.info.get_params(self.offsets)
+
+
+        def __iter__(self):
+            return self
+
+
+
+        def next(self):
+
+
+            if self.step >= self.info.steps:
+                raise StopIteration()
+
+            self.params=self.info.get_params(self.offsets,self.params)
+
+            self.step=self.step+1
+            self.increment()
+
+            return self.params
+
+
+
+        def increment(self):
+            # Increment the grid search.
+            for j in xrange(self.info.grid_dimension):
+                if self.offsets[j] < self.info.grid_ops[j][GRID_STEPS]-1:
+                    self.offsets[j] = self.offsets[j] + 1
+                    break    # Exit so that the other step numbers are not incremented.
+                else:
+                    self.offsets[j] = 0
+
+
+
+    def get_iterator(self,step=0):
+        return Grid_info.Iterator(self,step)
+
+
+
+
 
 def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=None, print_flag=0, print_prefix=""):
     """Grid search function.
+
 
     Keyword Arguments
     ~~~~~~~~~~~~~~~~~
@@ -48,22 +219,7 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
         1 - Lower limit.
         2 - Upper limit.
     """
-
-    # Initialise.
-    n = len(grid_ops)
-    grid_size = 0
-    total_steps = 1
-    step_num = ones((n))
-    params = zeros((n), Float64)
-    min_params = zeros((n), Float64)
-    param_values = []   # This data structure eliminates the round-off error of summing a step size value to the parameter value.
-    for k in xrange(n):
-        params[k] = grid_ops[k][1]
-        min_params[k] = grid_ops[k][1]
-        total_steps = total_steps * grid_ops[k][0]
-        param_values.append([])
-        for i in xrange(grid_ops[k][0]):
-            param_values[k].append(grid_ops[k][1] + i * (grid_ops[k][2] - grid_ops[k][1]) / (grid_ops[k][0] - 1))
+    info  = Grid_info(grid_ops)
 
     # Print out.
     if print_flag:
@@ -73,6 +229,7 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
         print print_prefix + "Grid search"
         print print_prefix + "~~~~~~~~~~~"
 
+    #FIXME: edge conditions l == None u == soemthing
     # Linear constraints.
     if A != None and b != None:
         constraint_flag = 1
@@ -86,6 +243,7 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
     # Bound constraints.
     elif l != None and u != None:
         constraint_flag = 1
+        # FIXME:  doesn't
         print "Bound constraints are not implemented yet."
         return
 
@@ -99,20 +257,23 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
 
     # Set a ridiculously large initial grid value.
     f_min = 1e300
+    # FIXME:should be float.PosMax but internal float classhes with relax float, rename relax float to ieee_float
 
     # Initial print out.
     if print_flag:
         print "\n" + print_prefix + "Searching the grid."
 
     # Test if the grid is too large (ie total_steps is a long integer)
-    if type(total_steps) == long:
+    if type(info.steps) == long:
+        # FIXME: should be range error
         raise NameError, "A grid search of size " + `total_steps` + " is too large."
 
     # Search the grid.
     k = 0
-    for i in xrange(total_steps):
+    for params in info.get_iterator():
+        #print params
         # Check that the grid point does not violate a constraint, and if it does, skip the function call.
-        skip = 0
+        skip = False
         if constraint_flag:
             ci = c(params)
             if min(ci) < 0.0:
@@ -121,7 +282,7 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
                     print print_prefix + "Constraint violated, skipping grid point."
                     print print_prefix + "ci: " + `ci`
                     print ""
-                skip = 1
+                skip = True
 
         # Function call, test, and increment grid_size.
         if not skip:
@@ -131,14 +292,16 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
             # Test if the current function value is less than the least function value.
             if f < f_min:
                 f_min = f
-                min_params = 1.0 * params
+                #FIXME: replacw with a copy
+                min_params = params * 1.0
 
                 # Print out code.
                 if print_flag:
                     print print_prefix + "%-3s%-8i%-4s%-65s %-4s%-20s" % ("k:", k, "xk:", `min_params`, "fk:", `f_min`)
 
+            # FIXME: not needed
             # Grid count.
-            grid_size = grid_size + 1
+            #grid_size = grid_size + 1
 
             # Print out code.
             if print_flag >= 2:
@@ -154,15 +317,38 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
             # Increment k.
             k = k + 1
 
-        # Increment the grid search.
+
+    # Return the results.
+    return min_params, f_min, k
+
+def test(grid_ops):
+
+    n = len(grid_ops)
+    grid_size = 0
+    total_steps = 1
+    step_num = ones((n))
+    params = zeros((n), Float64)
+    min_params = zeros((n), Float64)
+    param_values = []   # This data structure eliminates the round-off error of summing a step size value to the parameter value.
+    for k in xrange(n):
+        params[k] = grid_ops[k][GRID_LOWER]
+        min_params[k] = grid_ops[k][GRID_LOWER]
+        total_steps = total_steps * grid_ops[k][GRID_STEPS]
+        param_values.append([])
+        for i in xrange(grid_ops[k][GRID_STEPS]):
+            param_values[k].append(grid_ops[k][GRID_LOWER] + i * (grid_ops[k][GRID_UPPER] - grid_ops[k][GRID_LOWER]) / (grid_ops[k][GRID_STEPS] - 1))
+
+    print params
+    print param_values
+    print step_num
+    for i in xrange(total_steps):
+        print i,step_num
+
         for j in xrange(n):
-            if step_num[j] < grid_ops[j][0]:
+            if step_num[j] < grid_ops[j][GRID_STEPS]:
                 step_num[j] = step_num[j] + 1
                 params[j] = param_values[j][step_num[j]-1]
                 break    # Exit so that the other step numbers are not incremented.
             else:
                 step_num[j] = 1
-                params[j] = grid_ops[j][1]
-
-    # Return the results.
-    return min_params, f_min, grid_size
+                params[j] = grid_ops[j][GRID_LOWER]
