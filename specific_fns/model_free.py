@@ -33,6 +33,7 @@ import sys
 from base_class import Common_functions
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
+# convert float to ieee_float name clash with builtin float
 from float import isNaN,isInf
 from multi.commands import  MF_minimise_command,MF_memo
 
@@ -2381,9 +2382,12 @@ class Model_free(Common_functions):
             ###############
             #FIXME??? strange contraints
             #residue_num,residue_name,min_algor,grid_size=None
-            res_num = self.relax.data.res[self.run][index].num
-            res_name = self.relax.data.res[self.run][index].name
-            res_id = `res_num` + ' ' + res_name
+            if index == None:
+                res_id=None
+            else:
+                res_num = self.relax.data.res[self.run][index].num
+                res_name = self.relax.data.res[self.run][index].name
+                res_id = `res_num` + ' ' + res_name
 
             if constraints:
                 command.set_minimise(args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options,
@@ -5207,7 +5211,7 @@ class Model_free(Common_functions):
                                 # Data exists for this data type.
                                  ri.append(`data.relax_sim_data[i][index]`)
                                  ri_error.append(`data.relax_error[index]`)
-                    
+
                             # No data exists for this data type.
                             except:
                                 ri.append(None)
