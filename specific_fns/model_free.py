@@ -5209,8 +5209,8 @@ class Model_free(Common_functions):
                                         index = l
 
                                 # Data exists for this data type.
-                                 ri.append(`data.relax_sim_data[i][index]`)
-                                 ri_error.append(`data.relax_error[index]`)
+                                ri.append(`data.relax_sim_data[i][index]`)
+                                ri_error.append(`data.relax_error[index]`)
 
                             # No data exists for this data type.
                             except:
