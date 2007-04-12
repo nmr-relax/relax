@@ -21,7 +21,7 @@
 ###############################################################################
 
 #FIXME exceptiosn not progated properly in main loop
-import sys
+import sys,math
 from Numeric import  Float
 from textwrap import dedent
 from copy import copy
@@ -37,8 +37,13 @@ GRID_STEPS = 0
 GRID_LOWER = 1
 GRID_UPPER = 2
 
+
+
+
+
+
 class Grid_info(object):
-    def __init__(self,grid_ops):
+    def __init__(self,grid_ops,start=0,range=None):
         self.grid_ops = grid_ops
         for op in self.grid_ops:
             op[GRID_LOWER] = float(op[GRID_LOWER])
@@ -47,6 +52,43 @@ class Grid_info(object):
         self.grid_dimension = len(grid_ops)
         self.values = self.calc_grid_values(grid_ops)
         self.strides = self.calc_strides(grid_ops)
+        self.start=start
+
+        #FIXME needs range checking i.e. is start = range > info.steps
+        # need checks for empty/fractional ranges
+
+        if range == None:
+            self.range = self.steps-start
+        else:
+            self.range=range
+
+
+    def sub_grid(self,start,range):
+        return Grid_info(self.grid_ops,start=start,range=range)
+
+    def sub_divide(self,steps):
+        if steps > self.range:
+            steps =  self.range
+
+        increment = self.range/(steps * 1.0)
+        max_div_end = self.start + self.range
+
+
+        divs = []
+        last_div=self.start
+        for i in range(steps):
+            div_end =  int(math.ceil(self.start + ((i+1) * increment)))
+
+            # this garuntees completion in the face of roundoff errors
+            if div_end > max_div_end:
+                div_end=max_div_end
+
+            div_range  = div_end - last_div
+            print last_div,last_div+div_range
+            divs.append(self.sub_grid(start= last_div,range=div_range))
+            last_div = div_end
+
+        return divs
 
     def calc_strides(self,grid_ops):
         stride = 1
@@ -84,13 +126,16 @@ class Grid_info(object):
         message = '''\
                         grid info:
 
-                        number of axes:   %d
-                        number of steps:  %d
+                        number of axes:        %d
+                        full number of steps:  %d
+                        sub range indices:     %d - %d
+
+                        full grid range:
 
                   '''
 
         message = dedent(message)
-        message = message % (self.grid_dimension,self.steps)
+        message = message % (self.grid_dimension,self.steps,self.start,self.start+self.range)
 
         op_message_list = []
         for i,op in enumerate(self.grid_ops):
@@ -105,24 +150,20 @@ class Grid_info(object):
         return message
 
     def print_steps(self):
-        step_num = ones((self.grid_dimension))
-        params = []
-        for op in  self.grid_ops:
-            params.append(op[GRID_LOWER])
+        offsets = self.get_step_offset(self.start)
+        #params = self.get_params(step_num)
+        #for op in  self.grid_ops:
+        #    params.append(op[GRID_LOWER])
 
-        for i in range(self.steps):
-            print `i+1` + '. ',params
-            # Increment the grid search.
-            broken=False
-            for j in xrange(self.grid_dimension):
-                if step_num[j] < self.grid_ops[j][GRID_STEPS]:
-                    step_num[j] = step_num[j] + 1
-                    params[j] = self.values[j][step_num[j]-1]
-                    broken = True
+        for i in xrange(self.start,self.start+self.range):
+
+            print `i+1` + '. ',self.get_params(offsets)
+            for j in range(self.grid_dimension):
+                if offsets[j] < self.grid_ops[j][GRID_STEPS]-1:
+                    offsets[j] = offsets[j] + 1
                     break    # Exit so that the other step numbers are not incremented.
                 else:
-                    step_num[j] = 1
-                    params[j] = self.grid_ops[j][GRID_LOWER]
+                    offsets[j] = 0
 
     def get_step_offset(self,step):
         result=[]
@@ -151,11 +192,22 @@ class Grid_info(object):
         return params
 
     class Iterator(object):
-        def __init__(self,info,step=0):
+        def __init__(self,info,start,end):
             self.info=info
-            self.offsets= info.get_step_offset(step)
-            self.step = step
+
+            # start point
+            self.start =start
+
+            # end of range
+            self.end = end
+
+            #current step
+            self.step = start
+
+            self.offsets= info.get_step_offset(self.step)
             self.params = self.info.get_params(self.offsets)
+
+
 
 
         def __iter__(self):
@@ -166,7 +218,7 @@ class Grid_info(object):
         def next(self):
 
 
-            if self.step >= self.info.steps:
+            if self.step >= self.end:
                 raise StopIteration()
 
             self.params=self.info.get_params(self.offsets,self.params)
@@ -187,10 +239,26 @@ class Grid_info(object):
                 else:
                     self.offsets[j] = 0
 
+        def __str__(self):
+            print type(self.start)
+            print type(self.end)
+            print type(self.step)
+            return ''' info:
+
+                       %s
+
+                       iter:
+
+                       start %d
+                       end   %d
+                       step  %d
+                       offsets %s
+                       params  %s ''' % (`self.info`,self.start,self.end,self.step,`self.offsets`,`self.params`)
 
 
-    def get_iterator(self,step=0):
-        return Grid_info.Iterator(self,step)
+
+    def get_iterator(self):
+        return Grid_info.Iterator(self,self.start,self.start+self.range)
 
 
 
@@ -219,7 +287,15 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
         1 - Lower limit.
         2 - Upper limit.
     """
-    info  = Grid_info(grid_ops)
+
+    if not isinstance(grid_ops, Grid_info):
+        info  = Grid_info(grid_ops)
+        # FIXME: issue warning?
+    else:
+        info=grid_ops
+
+    #print 'info',info
+    #info.print_steps()
 
     # Print out.
     if print_flag:
@@ -269,8 +345,11 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
         raise NameError, "A grid search of size " + `total_steps` + " is too large."
 
     # Search the grid.
-    k = 0
-    for params in info.get_iterator():
+
+    iter = info.get_iterator()
+    k = iter.step
+    #print iter
+    for params in iter:
         #print params
         # Check that the grid point does not violate a constraint, and if it does, skip the function call.
         skip = False
@@ -283,7 +362,7 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
                     print print_prefix + "ci: " + `ci`
                     print ""
                 skip = True
-
+        #print 'skip',k,skip
         # Function call, test, and increment grid_size.
         if not skip:
             # Back calculate the current function value.

@@ -28,6 +28,7 @@ from Numeric import Float64, array, identity, matrixmultiply, ones, transpose, z
 from re import match, search
 from string import replace, split
 import sys
+from minimise.grid import Grid_info
 
 
 from base_class import Common_functions
@@ -36,6 +37,7 @@ from minimise.generic import generic_minimise
 # convert float to ieee_float name clash with builtin float
 from float import isNaN,isInf
 from multi.commands import  MF_minimise_command,MF_memo
+from multi.commands import  MF_grid_command,MF_super_grid_memo,MF_grid_memo
 
 
 class Model_free(Common_functions):
@@ -2331,15 +2333,7 @@ class Model_free(Common_functions):
 
 
 
-            command=MF_minimise_command()
-            command.set_mf(init_params=self.param_vector, param_set=self.param_set, diff_type=diff_type,
-                         diff_params=diff_params, scaling_matrix=self.scaling_matrix, num_res=num_res,
-                         equations=equations, param_types=param_types, param_values=param_values,
-                         relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq,
-                         frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table,
-                         ri_labels=ri_labels, gx=self.relax.data.gx, gh=self.relax.data.gh,
-                         g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar,
-                         mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors)
+
             #test.assert_mf_equivalent(self.mf)
             ##self.mf=test.mf
             # Setup the minimisation algorithm when constraints are present.
@@ -2382,6 +2376,7 @@ class Model_free(Common_functions):
             ###############
             #FIXME??? strange contraints
             #residue_num,residue_name,min_algor,grid_size=None
+
             if index == None:
                 res_id=None
             else:
@@ -2389,19 +2384,60 @@ class Model_free(Common_functions):
                 res_name = self.relax.data.res[self.run][index].name
                 res_id = `res_num` + ' ' + res_name
 
-            if constraints:
-                command.set_minimise(args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options,
-                          func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1,
-                          print_flag=print_flag,res_id=res_id,grid_size=self.grid_size,index=index,sim_index=sim_index)
+            if match('^[Gg]rid', min_algor):
+                processors = self.relax.processor.processor_size()
+                full_grid_info = Grid_info(min_options)
+                sub_grid_list = full_grid_info.sub_divide(self.relax.processor.processor_size())
+                super_grid_memo = MF_super_grid_memo(model_free=self,index=index,sim_index=sim_index,run=self.run,param_set=self.param_set,
+                                          scaling=scaling,scaling_matrix=self.scaling_matrix)
+
+                for sub_grid_index,sub_grid_info in enumerate(sub_grid_list):
+
+                    command=MF_grid_command()
+                    command.set_mf(init_params=self.param_vector, param_set=self.param_set, diff_type=diff_type,
+                                 diff_params=diff_params, scaling_matrix=self.scaling_matrix, num_res=num_res,
+                                 equations=equations, param_types=param_types, param_values=param_values,
+                                 relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq,
+                                 frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table,
+                                 ri_labels=ri_labels, gx=self.relax.data.gx, gh=self.relax.data.gh,
+                                 g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar,
+                                 mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors)
+                    if constraints:
+                        command.set_minimise(args=(), x0=self.param_vector, min_algor=min_algor, min_options=sub_grid_info,
+                                  func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1,
+                                  print_flag=print_flag,res_id=res_id,grid_size=self.grid_size,index=index,sim_index=sim_index)
+                    else:
+                        command.set_minimise(args=(), x0=self.param_vector, min_algor=min_algor, min_options=sub_grid_info,
+                                  func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1,
+                                  print_flag=print_flag,res_id=res_id,grid_size=self.grid_size,index=index,sim_index=sim_index)
+
+
+                memo = MF_grid_memo(super_grid_memo)
+                self.relax.processor.add_to_queue(command,memo)
+
             else:
-                command.set_minimise(args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options,
-                          func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1,
-                          print_flag=print_flag,res_id=res_id,grid_size=self.grid_size,index=index,sim_index=sim_index)
+                command=MF_minimise_command()
+                command.set_mf(init_params=self.param_vector, param_set=self.param_set, diff_type=diff_type,
+                             diff_params=diff_params, scaling_matrix=self.scaling_matrix, num_res=num_res,
+                             equations=equations, param_types=param_types, param_values=param_values,
+                             relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq,
+                             frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table,
+                             ri_labels=ri_labels, gx=self.relax.data.gx, gh=self.relax.data.gh,
+                             g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar,
+                             mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors)
+                if constraints:
+                    command.set_minimise(args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options,
+                              func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1,
+                              print_flag=print_flag,res_id=res_id,grid_size=self.grid_size,index=index,sim_index=sim_index)
+                else:
+                    command.set_minimise(args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options,
+                              func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1,
+                              print_flag=print_flag,res_id=res_id,grid_size=self.grid_size,index=index,sim_index=sim_index)
 
-            memo = MF_memo(model_free=self,index=index,sim_index=sim_index,run=self.run,param_set=self.param_set,
-                           scaling=scaling,scaling_matrix=self.scaling_matrix)
+                memo = MF_memo(model_free=self,index=index,sim_index=sim_index,run=self.run,param_set=self.param_set,
+                               scaling=scaling,scaling_matrix=self.scaling_matrix)
 
-            self.relax.processor.add_to_queue(command,memo)
+                self.relax.processor.add_to_queue(command,memo)
 
         #raise Exception('test')
         #self.relax.processor.run_queue()
