@@ -40,6 +40,13 @@ from simplex import simplex
 from levenberg_marquardt import levenberg_marquardt
 from method_of_multipliers import method_of_multipliers
 
+import minimise
+
+# FIXME: a somewhat inglorious hack, printing needs to be revisited in the light of multiprocessing
+pre_and_post_amble = True
+def set_pre_and_post_amble(value):
+    global pre_and_post_amble
+    pre_and_post_amble=value
 
 def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, min_options=None, func_tol=1e-25, grad_tol=None, maxiter=1e6, A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, full_output=0, print_flag=0, print_prefix=""):
     """Generic minimisation function.
@@ -402,8 +409,7 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
     # Finish.
     #########
 
-    if print_flag and results != None:
-        print ""
+    if print_flag and results != None and pre_and_post_amble:
         if full_output:
             xk, fk, k, f_count, g_count, h_count, warning = results
             print print_prefix + "Parameter values: " + `xk`

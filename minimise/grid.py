@@ -30,6 +30,7 @@ from Numeric import Float64, ones, zeros
 
 from constraint_linear import Constraint_linear
 
+
 #constants
 ##########
 
@@ -37,10 +38,13 @@ GRID_STEPS = 0
 GRID_LOWER = 1
 GRID_UPPER = 2
 
+# FIXME: a somewhat inglorious hack, printing needs to be revisited in the light of multiprocessing
+pre_and_post_amble =  True
 
 
-
-
+def set_pre_and_post_amble(value):
+    global pre_and_post_amble
+    pre_and_post_amble=value
 
 class Grid_info(object):
     def __init__(self,grid_ops,start=0,range=None):
@@ -84,7 +88,6 @@ class Grid_info(object):
                 div_end=max_div_end
 
             div_range  = div_end - last_div
-            print last_div,last_div+div_range
             divs.append(self.sub_grid(start= last_div,range=div_range))
             last_div = div_end
 
@@ -133,7 +136,6 @@ class Grid_info(object):
                         full grid range:
 
                   '''
-
         message = dedent(message)
         message = message % (self.grid_dimension,self.steps,self.start,self.start+self.range)
 
@@ -257,7 +259,7 @@ class Grid_info(object):
 
 
 
-    def get_iterator(self):
+    def __iter__(self):
         return Grid_info.Iterator(self,self.start,self.start+self.range)
 
 
@@ -298,7 +300,7 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
     #info.print_steps()
 
     # Print out.
-    if print_flag:
+    if print_flag and pre_and_post_amble:
         if print_flag >= 2:
             print print_prefix
         print print_prefix
@@ -311,7 +313,7 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
         constraint_flag = 1
         constraint_linear = Constraint_linear(A, b)
         c = constraint_linear.func
-        if print_flag >= 3:
+        if print_flag >= 3 and pre_and_post_amble:
             print print_prefix + "Linear constraint matrices."
             print print_prefix + "A: " + `A`
             print print_prefix + "b: " + `b`
@@ -319,7 +321,7 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
     # Bound constraints.
     elif l != None and u != None:
         constraint_flag = 1
-        # FIXME:  doesn't
+        # FIXME:  doesn't raise exceptipn
         print "Bound constraints are not implemented yet."
         return
 
@@ -336,7 +338,7 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
     # FIXME:should be float.PosMax but internal float classhes with relax float, rename relax float to ieee_float
 
     # Initial print out.
-    if print_flag:
+    if print_flag and pre_and_post_amble:
         print "\n" + print_prefix + "Searching the grid."
 
     # Test if the grid is too large (ie total_steps is a long integer)
@@ -346,11 +348,12 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
 
     # Search the grid.
 
-    iter = info.get_iterator()
+    iter = info.__iter__()
     k = iter.step
-    #print iter
+    k_start = k
+    first_time  =  True
     for params in iter:
-        #print params
+
         # Check that the grid point does not violate a constraint, and if it does, skip the function call.
         skip = False
         if constraint_flag:
@@ -367,12 +370,17 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
         if not skip:
             # Back calculate the current function value.
             f = func(*(params,)+args)
-
+            # nasty hacks (1) to make al results different
+            #f=f-k
+            #print '*****params',k,f
             # Test if the current function value is less than the least function value.
             if f < f_min:
                 f_min = f
                 #FIXME: replacw with a copy
                 min_params = params * 1.0
+                # nasty hacks (2) to make al results different
+                #for i,elem in enumerate(min_params):
+                #    min_params[i]=elem+((k*(i+1))/1000.0)
 
                 # Print out code.
                 if print_flag:
@@ -383,7 +391,7 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
             #grid_size = grid_size + 1
 
             # Print out code.
-            if print_flag >= 2:
+            if print_flag >= 2  and pre_and_post_amble:
                 if f != f_min:
                     print print_prefix + "%-3s%-8i%-4s%-65s %-4s%-20s" % ("k:", k, "xk:", `params`, "fk:", `f`)
                 if print_flag >= 3:
@@ -398,7 +406,7 @@ def grid(func=None, grid_ops=None, args=(), A=None, b=None, l=None, u=None, c=No
 
 
     # Return the results.
-    return min_params, f_min, k
+    return min_params, f_min, k-k_start
 
 def test(grid_ops):
 
