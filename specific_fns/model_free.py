@@ -2381,7 +2381,7 @@ class Model_free(Common_functions):
                 res_name = self.relax.data.res[self.run][index].name
                 res_id = `res_num` + ' ' + res_name
 
-            if match('^[Gg]rid', min_algor) and self.param_set == 'all':
+            if match('^[Gg]rid', min_algor) and self.param_set == 'diff' :
                 processors = self.relax.processor.processor_size()
                 full_grid_info = Grid_info(min_options)
                 sub_grid_list = full_grid_info.sub_divide(self.relax.processor.processor_size())
@@ -5271,6 +5271,20 @@ class Model_free(Common_functions):
                             except:
                                 ri.append(None)
                                 ri_error.append(None)
+#                    for k in xrange(self.relax.data.num_ri[self.run]):
+#                        # Find the residue specific data corresponding to k.
+#                        index = None
+#                        for l in xrange(data.num_ri):
+#                            if data.ri_labels[l] == self.relax.data.ri_labels[self.run][k] and data.frq_labels[data.remap_table[l]] == self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][k]]:
+#                                index = l
+#
+#                        # Data exists for this data type.
+#                        try:
+#                            ri.append(`data.relax_sim_data[i][index]`)
+#                            ri_error.append(`data.relax_error[index]`)
+#                        except:
+#                            ri.append(None)
+#                            ri_error.append(None)
 
                     # XH vector.
                     xh_vect = None

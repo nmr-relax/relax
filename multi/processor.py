@@ -22,7 +22,8 @@
 #                                                                              #
 ################################################################################
 
-#FIXME better  requirement of inherited commands
+# FIXME better  requirement of inherited commands
+# TODO: check exceptiosn on master
 import time,datetime,math,sys
 from multi.PrependStringIO import  PrependStringIO,PrependOut
 import traceback,textwrap
@@ -54,6 +55,7 @@ class Processor(object):
     def get_name(self):
         raise_unimplimented(self.get_name)
 
+    # FIXME is this used?
     def exit(self):
         raise_unimplimented(self.exit)
 
@@ -68,6 +70,10 @@ class Processor(object):
 
     def processor_size(self):
         raise_unimplimented(self.processor_size())
+
+    def restore_stdio(self):
+        sys.stderr = self.save_stderr
+        sys.stdout = self.save_stdout
 
     def run_command_globally(self,command):
         queue = [command for i in range(1,MPI.size)]
@@ -84,9 +90,12 @@ class Processor(object):
 
         self.save_stdout = sys.stdout
         self.save_stderr = sys.stderr
-        pre_string = 'M'*self.rank_format_string_width()
-        sys.stdout = PrependOut(pre_string + ' S> ', sys.stdout)
-        sys.stderr = PrependOut(pre_string + ' E> ', sys.stderr)
+
+        if self.processor_size() > 1:
+
+            pre_string = 'M'*self.rank_format_string_width()
+            sys.stdout = PrependOut(pre_string + ' S> ', sys.stdout)
+            sys.stderr = PrependOut(pre_string + ' E> ', sys.stderr)
 
     def get_time_delta(self,start_time,end_time):
 
@@ -101,8 +110,9 @@ class Processor(object):
             end_time = time.time()
             time_delta_str = self.get_time_delta(self.start_time,end_time)
             print 'overall runtime: ' + time_delta_str + '\n'
-        sys.stdout = self.save_stdout
-        sys.stderr = self.save_stderr
+
+        if self.processor_size() > 1:
+            self.restore_stdio()
 
     def rank_format_string_width(self):
         return int(math.ceil(math.log10(self.processor_size())))

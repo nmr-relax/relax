@@ -22,7 +22,7 @@
 #                                                                              #
 ################################################################################
 import threading, Queue
-import sys
+import sys,os
 import multi
 
 from multi.processor import Processor,Result_command,Result_string
@@ -69,15 +69,13 @@ from multi.processor import Processor,Result_command,Result_string
 
 #FIXME need to subclass
 class Uni_processor(Processor):
+
+
     def __init__(self,relax_instance):
         self.relax_instance= relax_instance
 
         self.command_queue=[]
         self.memo_map={}
-
-
-    def on_master(self):
-        return True
 
     def add_to_queue(self,command,memo=None):
         self.command_queue.append(command)
@@ -86,57 +84,81 @@ class Uni_processor(Processor):
             self.memo_map[memo.memo_id()]=memo
 
     def run_queue(self):
-        #FIXME: need a finally here to cleanup exceptions states
+        #FIXME: need a finally here to cleanup exceptions states for windows etc
 
-
-        for command in self.command_queue:
-            command.run(self)
+        last_command = len(self.command_queue)-1
+        for i,command  in enumerate(self.command_queue):
+            completed = (i == last_command)
+            command.run(self,completed)
         #self.run_command_queue()
         #TODO: add cheques for empty queuese and maps if now warn
         del self.command_queue[:]
         self.memo_map.clear()
 # FIXME: remove me
 #    def run_command_queue(self):
-#    		for command in self.command_queue:
-#    			command.run(self)
+#            for command in self.command_queue:
+#                command.run(self)
 
     def run(self):
 #        start_time =  time.clock()
-        self.pre_run()
-        self.relax_instance.run()
-        self.post_run()
+        try:
+            self.pre_run()
+            self.relax_instance.run()
+        finally:
+            self.post_run()
 #        end_time = time.clock()
 #        time_diff= end_time - start_time
 #        time_delta = datetime.timedelta(seconds=time_diff)
 #        print 'overall runtime: ' + time_delta.__str__() + '\n'
 
 
+    def get_name(self):
+        # FIXME may need system dependent changes
+        return '%s-%s' % (os.getenv('HOSTNAME'),os.getpid())
+
+    def exit(self):
+        sys.exit()
+
+    def on_master(self):
+        return True
+
+
+    def rank(self):
+        return 1
+
+    def processor_size(self):
+        return 1
+
+
+
 
 
 
     def return_object(self,result):
+
+        local_save_stdout = sys.stdout
+        local_save_stderr = sys.stderr
+        self.restore_stdio()
+
         if isinstance(result, Exception):
-		    #FIXME: clear command queue
+            #FIXME: clear command queue
 		    #       and finalise mpi (or restart it if we can!
-		    raise result
-
-
-
-        if isinstance(result, Result_command):
+            raise result
+        elif isinstance(result, Result_command):
             memo=None
             if result.memo_id != None:
                 memo=self.memo_map[result.memo_id]
-                result.run(self.relax_instance,self,memo)
+            result.run(self.relax_instance,self,memo)
             if result.memo_id != None and result.completed:
-            		del self.memo_map[result.memo_id]
+                del self.memo_map[result.memo_id]
 
-	    elif isinstance(result, Result_string):
-	        #FIXME can't cope with multiple lines
-	        print result.rank,result.string
-	    else:
-	        message = 'Unexpected result type \n%s \nvalue%s' %(result.__class__.__name__,result)
-	        raise Exception(message)
-
+        elif isinstance(result, Result_string):
+            self.save_stdout.write(result.string)
+        else:
+            message = 'Unexpected result type \n%s \nvalue%s' %(result.__class__.__name__,result)
+            raise Exception(message)
+        sys.stdout = local_save_stdout
+        sys.stderr = local_save_stderr
 
 
 
