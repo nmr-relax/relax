@@ -295,7 +295,7 @@ class Mpi4py_processor(Processor):
 
                 while not self.do_quit:
                     commands = MPI.COMM_WORLD.Recv(source=0)
-                    sys.exit()
+
 
                     if not isinstance(commands,list):
                         commands =  [commands]
