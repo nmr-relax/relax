@@ -79,6 +79,9 @@ class Processor(object):
         queue = [command for i in range(1,MPI.size)]
         self.run_command_queue(queue)
 
+    def abort(self):
+        sys.exit()
+
     #FIXME: remname chunk* grain*
     def __init__(self,relax_instance,chunkyness=1):
         self.chunkyness = chunkyness
@@ -122,9 +125,14 @@ class Processor(object):
         format = '%%%di' % digits
         return format
 
+
+
+
 class Result(object):
     def __init__(self,completed):
         self.completed=completed
+        self.memo_id=None
+
 
 
 class Result_string(Result):
@@ -147,6 +155,14 @@ class Null_result_command(Result_command):
         super(Null_result_command,self).__init__(completed=completed)
 
 NULL_RESULT=Null_result_command()
+
+class Result_exception(Result_command):
+    def __init__(self,exception,completed=True):
+        super(Result_exception,self).__init__(completed=completed)
+        self.exception=exception
+
+    def run(self,relax,processor,memos):
+        raise self.exception
 
 
 class Slave_command(object):
