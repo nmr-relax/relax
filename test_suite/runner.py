@@ -25,7 +25,7 @@ from formatting import *
 
 # Import the test suite categories.
 from system_tests.main import System_tests
-from unit_tests.unit_test_runner import Run_unit_tests
+from unit_tests.unit_test_runner import Unit_test_runner
 
 
 class Test_suite_runner:
@@ -49,8 +49,8 @@ class Test_suite_runner:
         system_result = System_tests(self.relax)
 
         # Execute the unit tests.
-        runner = Run_unit_tests(root_path='test_suite/unit_tests')
-        unit_result = runner.run()
+        unit_runner = Unit_test_runner(root_path='test_suite/unit_tests')
+        unit_result = unit_runner.run()
 
         # Print out a summary of the test suite.
         ########################################
