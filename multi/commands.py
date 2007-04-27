@@ -255,8 +255,8 @@ class MF_minimise_command(Slave_command):
         # add debug flag or extra channels that output immediately
         if processor.processor_size() > 1:
             pre_string = processor.rank_format_string() % processor.rank()
-            stderr_string = ' E> '
-            stdout_string  = ' S> '
+            stderr_string  =  ' E> '
+            stdout_string  =  ' S> '
         else:
             pre_string = ''
             stderr_string = ''
@@ -279,8 +279,8 @@ class MF_minimise_command(Slave_command):
         return generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
 
 
-    def process_result(self,processor):
-        self.process_results(self.results,processor,completed)
+#    def process_result(self,processor):
+#        self.process_results(self.results,processor,completed)
 
 
 
@@ -420,9 +420,10 @@ class MF_super_grid_memo(MF_memo):
             self.h_count += results[OFFSET_H_COUNT]
             if results[OFFSET_WARNING] != None:
                 self.warning.append(results[OFFSET_WARNING])
-
+        #FIXME:
+        #TESTME: do we sue short results?
         else:
-            if results[OFFSET_SHORT_FK] < short_result[OFFSET_SHORT_FK]:
+            if results[OFFSET_SHORT_FK] < self.short_result[OFFSET_SHORT_FK]:
                 self.short_result[OFFSET_SHORT_MIN_PARAMS] = results[OFFSET_SHORT_MIN_PARAMS]
                 self.short_result[OFFSET_SHORT_FK] = results[OFFSET_SHORT_FK]
             self.short_result[OFFSET_SHORT_K] += results[OFFSET_SHORT_K]
@@ -460,7 +461,7 @@ class MF_grid_result_command(Result_command):
 
         # FIXME: Check against full result
         # FIXME: names not consistent in memo
-        # FIXME too much repacking
+        # FIXME: too much repacking
         results = (self.param_vector,self.func,self.iter,self.fc,self.gc,self.hc, self.warning)
         memo.add_result(results)
 

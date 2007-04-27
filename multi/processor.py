@@ -76,7 +76,7 @@ class Processor(object):
         sys.stdout = self.save_stdout
 
     def run_command_globally(self,command):
-        queue = [command for i in range(1,MPI.size)]
+        queue = [command for i in range(self.processor_size())]
         self.run_command_queue(queue)
 
     def abort(self):

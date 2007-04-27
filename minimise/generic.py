@@ -425,5 +425,6 @@ def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_a
         else:
             print print_prefix + "Parameter values: " + `results`
         print ""
+        #FIXME: raising an exception here wedges mpi4py
 
     return results
