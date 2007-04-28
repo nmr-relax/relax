@@ -3,7 +3,7 @@ import sys
 
 
 
-
+#FIXME could these two classes be merged via use of a target stream and multiple inheritance?
 class PrependOut(StringIO):
 
     def __init__(self,token,stream):
@@ -37,27 +37,29 @@ class PrependOut(StringIO):
 
 class PrependStringIO(StringIO):
 
-    def __init__(self,token):
+    def __init__(self,token,target_stream=None):
         StringIO.__init__(self)
         self.token = token
         self.token_length = len(token)
         self.first_time = True
+        if target_stream == None:
+            self.target_stream=self
+        else:
+            self.target_stream=target_stream
+
+
 
 
     def write(self,string):
         # FIXME: raising an exception here wedges mpi4py
-        file_name = sys._getframe(1).f_code.co_filename.split('/')[-1]
-        function_name = sys._getframe(1).f_code.co_name
-        line_number = sys._getframe(1).f_lineno
-        #msg = '<<%d - %s - %s - %d: %s>>'  %(id(self),file_name,function_name,line_number,string)
-        #sys.__stdout__.write(msg)
+
         string = string.replace('\n', '\n' + self.token)
         if self.first_time == True:
             string ='\n' +self.token + string
             self.first_time = False
 
 
-        StringIO.write(self,string)
+        StringIO.write(self.target_stream,string)
 
 
 

@@ -23,7 +23,7 @@
 ################################################################################
 
 # TODO: clone communicators & resize
-# TODO: check exceptiosn on master
+# TODO: check exceptions on master
 import sys
 import os
 import math
@@ -39,6 +39,7 @@ from multi.commands import Exit_command
 
 from copy import copy
 from multi.processor import Capturing_exception
+from processor import raise_unimplimented
 
 
 
@@ -120,8 +121,8 @@ def exit_mpi():
 
 class Batched_result_command(Result_command):
 
-    def __init__(self,result_commands,completed=True):
-        super(Batched_result_command,self).__init__(completed=completed)
+    def __init__(self,processor,result_commands,completed=True):
+        super(Batched_result_command,self).__init__(processor=processor,completed=completed)
         self.result_commands=result_commands
 
 
@@ -141,12 +142,21 @@ class Exit_queue_result_command(Result_command):
         pass
 
 RESULT_QUEUE_EXIT_COMMAND = Exit_queue_result_command()
-
-class Threaded_result_queue(object):
+class Result_queue(object):
     def __init__(self,mpi4py_processor):
-
-        self.queue = Queue.Queue()
         self.mpi4py_processor = mpi4py_processor
+
+    def put(self,job):
+        if isinstance(job, Result_exception) :
+            self.mpi4py_processor.process_result(job)
+
+    def run_all(self):
+        raise_unimplimented(self.run_all)
+
+class Threaded_result_queue(Result_queue):
+    def __init__(self,mpi4py_processor):
+        super(Threaded_result_queue,self).__init__(mpi4py_processor)
+        self.queue = Queue.Queue()
         self.sleep_time =0.05
 
         self.running=1
@@ -158,21 +168,30 @@ class Threaded_result_queue(object):
     def workerThread(self):
 
             while True:
-                item=self.queue.get()
-                if item == RESULT_QUEUE_EXIT_COMMAND:
+                job=self.queue.get()
+                if job == RESULT_QUEUE_EXIT_COMMAND:
                     break
-                self.mpi4py_processor.process_result(item)
+                self.mpi4py_processor.process_result(job)
 
 
     def put(self,job):
+        super(Threaded_result_queue,self).put(job)
         self.queue.put_nowait(job)
 
     def run_all(self):
         self.queue.put_nowait(RESULT_QUEUE_EXIT_COMMAND)
         self.thread1.join()
 
+class Immediate_result_queue(Result_queue):
+    def __init(self,mpi4py_processor):
+        super(Threaded_result_queue,self).__init__(mpi4py_processor)
 
+    def put(self,job):
+        super(Immediate_result_queue,self).put(job)
+        self.mpi4py_processor.process_result(job)
 
+    def run_all(self):
+        pass
 
 #FIXME: do some inheritance
 class Mpi4py_processor(Processor):
@@ -181,6 +200,7 @@ class Mpi4py_processor(Processor):
 
     def __init__(self,relax_instance, chunkyness=1):
         super(Mpi4py_processor,self).__init__(relax_instance = relax_instance, chunkyness=chunkyness)
+
 
 
         # wrap sys.exit to close down mpi before exiting
@@ -251,9 +271,12 @@ class Mpi4py_processor(Processor):
         exit_mpi()
 
     def return_object(self,result):
+
         result_object = None
         #raise Exception('dummy')
-        if self.batched_returns:
+        if isinstance(result,  Result_exception):
+            result_object=result
+        elif self.batched_returns:
             is_batch_result = isinstance(result, Batched_result_command)
 
 
@@ -266,10 +289,22 @@ class Mpi4py_processor(Processor):
             result_object=result
 
 
+
         if result_object != None:
             #FIXME check is used?
             result_object.rank=MPI.rank
             MPI.COMM_WORLD.Send(buf=result_object, dest=0)
+
+#    def queue_result_processing(self,result):
+#        # exceptions are handled instantly not queued to avoid deadlock!
+#        if isinstance(result, Result_exception):
+#            sys.exit()
+#            self.process_result(result)
+#
+#        if self.threaded_result_processing:
+#            self.result_queue.put(result)
+#        else:
+#            self.process_result(result)
 
     #FIXME: fill out generic result processing move to processor
     def process_result(self,result):
@@ -299,7 +334,8 @@ class Mpi4py_processor(Processor):
 
             if self.threaded_result_processing:
                 result_queue=Threaded_result_queue(self)
-
+            else:
+                result_queue=Immediate_result_queue(self)
 
             while len(queue) != 0:
 
@@ -315,15 +351,15 @@ class Mpi4py_processor(Processor):
 
                 while len(running_set) !=0:
                     result = MPI.COMM_WORLD.Recv(source=MPI.ANY_SOURCE)
-                    #print result
+                    #if isinstance(result, Result_exception):
+                    #    print 'result', result
+                    #    sys.exit()
 
                     if result.completed:
                         idle_set.add(result.rank)
                         running_set.remove(result.rank)
-                    if self.threaded_result_processing:
-                        result_queue.put(result)
-                    else:
-                        self.process_result(result)
+
+                    result_queue.put(result)
 
             if self.threaded_result_processing:
                 result_queue.run_all()
@@ -336,6 +372,11 @@ class Mpi4py_processor(Processor):
             result = True
         return result
 
+    def print_message(self,message):
+        f=open ('error' + `self.rank()` + '.txt','a')
+        f.write(message+'\n')
+        f.flush()
+        f.close()
 
     def run(self):
 
@@ -356,8 +397,9 @@ class Mpi4py_processor(Processor):
             # note this a modified exit that kills all MPI processors
             sys.exit()
         else:
-            try:
-                while not self.do_quit:
+
+            while not self.do_quit:
+                try:
 
                     commands = MPI.COMM_WORLD.Recv(source=0)
 
@@ -380,14 +422,20 @@ class Mpi4py_processor(Processor):
 
 
                     if self.batched_returns:
-                        self.return_object(Batched_result_command(result_commands=self.result_list))
+                        self.return_object(Batched_result_command(processor=self,result_commands=self.result_list))
                         self.result_list=None
 
-            except Exception,e:
-                self.result_list=None
-                capturing_exception = Capturing_exception(rank=self.rank(),name=self.get_name())
-                exception_result = Result_exception(capturing_exception)
-                exception_result.rank=MPI.rank
-                MPI.COMM_WORLD.Send(buf=exception_result, dest=0)
+
+                except:
+                    capturing_exception = Capturing_exception(rank=self.rank(),name=self.get_name())
+                    exception_result = Result_exception(exception=capturing_exception,processor=self,completed=True)
+                    #error = 'sending exception' + `e` + e.__str__()
+                    #self.print_message(error)
+                    #result = Result_string('sending exception' + `e`, True)
+                    #exception_result.rank=MPI.rank
+                    self.return_object(exception_result)
+                    #error = 'sending exception' + `e` + e.__str__()
+                    #MPI.COMM_WORLD.Send(buf=exception_result, dest=0)
+                    self.result_list=None
 
     in_main_loop = False

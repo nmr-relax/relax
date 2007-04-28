@@ -29,6 +29,21 @@ from multi.PrependStringIO import  PrependStringIO,PrependOut
 import traceback,textwrap
 
 
+def print_file_lineno(range=xrange(1,2)):
+
+
+    for level in range:
+        print '<< ', level,
+        try:
+            file_name = sys._getframe(level).f_code.co_filename
+            function_name = sys._getframe(level).f_code.co_name
+            line_number = sys._getframe(level).f_lineno
+            msg = ': %s - %s - %d>>'  %(file_name,function_name,line_number)
+            print msg
+        except Exception, e:
+            print e
+            break
+
 
 def raise_unimplimented(method):
     raise NotImplementedError("Attempt to invoke unimplemented abstract method %s") % method.__name__
@@ -39,6 +54,14 @@ def raise_unimplimented(method):
 #    return f
 
 class Processor(object):
+
+    #FIXME: remname chunk* grain*
+    def __init__(self,relax_instance,chunkyness=1):
+        self.pre_queue_command=None
+        self.post_queue_command=None
+        self.chunkyness = chunkyness
+        self.relax_instance = relax_instance
+        self.NULL_RESULT=Null_result_command(processor=self)
 
     def add_to_queue(self,command,memo=None):
          raise_unimplimented(self.add_to_queue)
@@ -82,10 +105,6 @@ class Processor(object):
     def abort(self):
         sys.exit()
 
-    #FIXME: remname chunk* grain*
-    def __init__(self,relax_instance,chunkyness=1):
-        self.chunkyness = chunkyness
-        self.relax_instance = relax_instance
 
     def pre_run(self):
         if self.on_master():
@@ -97,8 +116,10 @@ class Processor(object):
         if self.processor_size() > 1:
 
             pre_string = 'M'*self.rank_format_string_width()
+
             sys.stdout = PrependOut(pre_string + ' S> ', sys.stdout)
-            sys.stderr = PrependOut(pre_string + ' E> ', sys.stderr)
+            #FIXME: seems to be that writing to stderr results leeds to incorrect serialisation of output
+            sys.stderr = PrependOut(pre_string + ' E> ', sys.__stdout__)
 
     def get_time_delta(self,start_time,end_time):
 
@@ -129,36 +150,37 @@ class Processor(object):
 
 
 class Result(object):
-    def __init__(self,completed):
+    def __init__(self,processor,completed):
         self.completed=completed
         self.memo_id=None
-
+        self.rank = processor.rank()
 
 
 class Result_string(Result):
     #FIXME move result up a level
-    def __init__(self,string,completed):
-        super(Result_string,self).__init__(completed=completed)
+    def __init__(self,processor,string,completed):
+        super(Result_string,self).__init__(processor=processor,completed=completed)
         self.string=string
 
 
 class Result_command(Result):
-    def __init__(self,completed,memo_id=None):
-        super(Result_command,self).__init__(completed=completed)
+    def __init__(self,processor,completed,memo_id=None):
+        super(Result_command,self).__init__(processor=processor,completed=completed)
         self.memo_id=memo_id
+
 
     def run(self,relax,processor,memo):
         pass
 
 class Null_result_command(Result_command):
-    def __init__(self,completed=True):
-        super(Null_result_command,self).__init__(completed=completed)
+    def __init__(self,processor,completed=True):
+        super(Null_result_command,self).__init__(processor=processor,completed=completed)
 
-NULL_RESULT=Null_result_command()
+
 
 class Result_exception(Result_command):
-    def __init__(self,exception,completed=True):
-        super(Result_exception,self).__init__(completed=completed)
+    def __init__(self,processor,exception,completed=True):
+        super(Result_exception,self).__init__(processor=processor,completed=completed)
         self.exception=exception
 
     def run(self,relax,processor,memos):

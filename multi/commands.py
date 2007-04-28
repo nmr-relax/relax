@@ -24,7 +24,7 @@
 from  multi.PrependStringIO import PrependStringIO
 
 from multi.processor import Memo,Slave_command
-from multi.processor import Result_command,Result_string,NULL_RESULT
+from multi.processor import Result_command,Result_string
 from re import match
 
 from maths_fns.mf import Mf
@@ -41,7 +41,7 @@ class Exit_command(Slave_command):
         super(Exit_command,self).__init__()
 
     def run(self,processor,completed):
-        processor.return_object(NULL_RESULT)
+        processor.return_object(processor.NULL_RESULT)
         processor.do_quit=True
 
 
@@ -64,7 +64,7 @@ class Set_processor_property_command(Slave_command):
         for property,value in self.property_map.items():
             try:
                 setattr(processor, property, value)
-                processor.return_object(NULL_RESULT)
+                processor.return_object(processor.NULL_RESULT)
             except Exception, e:
                 processor.return_object(e)
 
@@ -99,8 +99,8 @@ OFFSET_SHORT_K=2
 
 
 class MF_result_command(Result_command):
-    def __init__(self,memo_id,param_vector, func, iter, fc, gc, hc, warning,completed):
-        super(MF_result_command,self).__init__(completed=completed)
+    def __init__(self,processor,memo_id,param_vector, func, iter, fc, gc, hc, warning,completed):
+        super(MF_result_command,self).__init__(processor=processor,completed=completed)
         self.memo_id=memo_id
         self.param_vector=param_vector
         self.func=func
@@ -239,8 +239,8 @@ class MF_minimise_command(Slave_command):
         param_vector, func, iter, fc, gc, hc, warning = results
 
         result_string = sys.stdout.getvalue() + sys.stderr.getvalue()
-        processor.return_object(MF_result_command(self.memo_id,param_vector, func, iter, fc, gc, hc, warning,completed=False))
-        processor.return_object(Result_string(result_string,completed=completed))
+        processor.return_object(MF_result_command(processor,self.memo_id,param_vector, func, iter, fc, gc, hc, warning,completed=False))
+        processor.return_object(Result_string(processor,result_string,completed=completed))
 
     def pre_command_feed_back(self,processor):
         self.do_feedback()
@@ -262,7 +262,7 @@ class MF_minimise_command(Slave_command):
             stderr_string = ''
             stdout_string  = ''
         sys.stdout = PrependStringIO(pre_string + stdout_string)
-        sys.stderr = PrependStringIO(pre_string + stderr_string)
+        sys.stderr = PrependStringIO(pre_string + stderr_string,target_stream=sys.stdout)
 
     def post_run(self,processor):
         #FIXME: move to processor startup
@@ -359,7 +359,7 @@ class MF_grid_command(MF_minimise_command):
         param_vector, func, iter, fc, gc, hc, warning = results
 
         result_string = sys.stdout.getvalue() + sys.stderr.getvalue()
-        processor.return_object(MF_grid_result_command(result_string,self.memo_id,param_vector, func, iter, fc, gc, hc, warning,completed=completed))
+        processor.return_object(MF_grid_result_command(processor,result_string,self.memo_id,param_vector, func, iter, fc, gc, hc, warning,completed=completed))
 
 class MF_grid_memo(Memo):
     def __init__(self,super_grid_memo):
@@ -420,8 +420,8 @@ class MF_super_grid_memo(MF_memo):
             self.h_count += results[OFFSET_H_COUNT]
             if results[OFFSET_WARNING] != None:
                 self.warning.append(results[OFFSET_WARNING])
-        #FIXME:
-        #TESTME: do we sue short results?
+
+        #FIXME: TESTME: do we use short results?
         else:
             if results[OFFSET_SHORT_FK] < self.short_result[OFFSET_SHORT_FK]:
                 self.short_result[OFFSET_SHORT_MIN_PARAMS] = results[OFFSET_SHORT_MIN_PARAMS]
@@ -445,8 +445,8 @@ class MF_super_grid_memo(MF_memo):
         #print   '****', self.xk,self.fk,self.k,self.f_count,self.g_count,self.h_count,self.warning
 
 class MF_grid_result_command(Result_command):
-    def __init__(self,result_string,memo_id,param_vector, func, iter, fc, gc, hc, warning,completed):
-        super(MF_grid_result_command,self).__init__(completed=completed)
+    def __init__(self,processor,result_string,memo_id,param_vector, func, iter, fc, gc, hc, warning,completed):
+        super(MF_grid_result_command,self).__init__(processor=processor,completed=completed)
         self.result_string=result_string
         self.memo_id=memo_id
         self.param_vector=param_vector
