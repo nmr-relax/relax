@@ -110,7 +110,7 @@ class MF_result_command(Result_command):
         self.hc=hc
         self.warning=warning
 
-    def run(self,relax,processor,memo):
+    def run(self,processor,memo):
         m_f=memo.model_free
         m_f.iter_count = 0
         m_f.f_count = 0
@@ -457,7 +457,7 @@ class MF_grid_result_command(Result_command):
         self.hc=hc
         self.warning=warning
 
-    def run(self,relax,processor,memo):
+    def run(self,processor,memo):
 
         # FIXME: Check against full result
         # FIXME: names not consistent in memo

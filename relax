@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+from numpy.f2py.cfuncs import callbacks
 
 ###############################################################################
 #                                                                             #
@@ -43,6 +44,7 @@ from re import match
 from string import split, strip
 import sys
 from warnings import warn
+from multi.processor import Application_callback
 
 # Numeric.
 try:
@@ -560,7 +562,7 @@ def import_module(module_path, verbose=False):
 #FIXME error checking for if module require not found
 #FIXME move module loading to processor
 #FIXME module loading code needs to be in a util module
-def load_multiprocessor(relax_instance):
+def load_multiprocessor(callback):
 
     processor_name = relax_instance.multiprocessor_type + '_processor'
     class_name= processor_name[0].upper() + processor_name[1:]
@@ -575,7 +577,7 @@ def load_multiprocessor(relax_instance):
     else:
         raise RelaxError("can't load class %s from module %s" % (class_name,module_path))
 
-    object = clazz(relax_instance)
+    object = clazz(callback)
     relax_instance.processor =  object
     return object
 
@@ -590,7 +592,8 @@ if __name__ == "__main__":
     if not profile_flag:
         relax_instance = Relax()
         mode=relax_instance.arguments(sys.argv[1:])
-        multi_processor = load_multiprocessor(relax_instance)
+        callbacks =  Application_callback(master=relax_instance)
+        multi_processor = load_multiprocessor(callbacks)
         multi_processor.run()
 
     else:

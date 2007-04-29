@@ -71,8 +71,9 @@ from multi.processor import Processor,Result_command,Result_string
 class Uni_processor(Processor):
 
 
-    def __init__(self,relax_instance):
-        self.relax_instance= relax_instance
+    def __init__(self,callback):
+        super(Uni_processor,self).__init__(callback=callback)
+
 
         self.command_queue=[]
         self.memo_map={}
@@ -103,9 +104,11 @@ class Uni_processor(Processor):
 #        start_time =  time.clock()
         try:
             self.pre_run()
-            self.relax_instance.run()
-        finally:
+            self.callback.init_master(self)
             self.post_run()
+        except Exception,e:
+            self.callback.handle_exception(self,e)
+
 #        end_time = time.clock()
 #        time_diff= end_time - start_time
 #        time_delta = datetime.timedelta(seconds=time_diff)
@@ -148,7 +151,7 @@ class Uni_processor(Processor):
             memo=None
             if result.memo_id != None:
                 memo=self.memo_map[result.memo_id]
-            result.run(self.relax_instance,self,memo)
+            result.run(self,memo)
             if result.memo_id != None and result.completed:
                 del self.memo_map[result.memo_id]
 

@@ -44,6 +44,20 @@ def print_file_lineno(range=xrange(1,2)):
             print e
             break
 
+class Application_callback(object):
+
+    def __init__(self,master):
+        self.master=master
+        self.init_master = self.default_init_master
+        self.handle_error= self.default_handle_error
+
+    def default_init_master(self,processor):
+        self.master.run()
+
+    def default_handle_error(self,processor,exception):
+        traceback.print_exc(file=sys.stdout)
+        processor.abort()
+
 
 def raise_unimplimented(method):
     raise NotImplementedError("Attempt to invoke unimplemented abstract method %s") % method.__name__
@@ -56,11 +70,11 @@ def raise_unimplimented(method):
 class Processor(object):
 
     #FIXME: remname chunk* grain*
-    def __init__(self,relax_instance,chunkyness=1):
+    def __init__(self,callback):
+        self.callback=callback
+        self.chunkyness=1
         self.pre_queue_command=None
         self.post_queue_command=None
-        self.chunkyness = chunkyness
-        self.relax_instance = relax_instance
         self.NULL_RESULT=Null_result_command(processor=self)
 
     def add_to_queue(self,command,memo=None):
@@ -169,7 +183,7 @@ class Result_command(Result):
         self.memo_id=memo_id
 
 
-    def run(self,relax,processor,memo):
+    def run(self,processor,memo):
         pass
 
 class Null_result_command(Result_command):
@@ -183,7 +197,7 @@ class Result_exception(Result_command):
         super(Result_exception,self).__init__(processor=processor,completed=completed)
         self.exception=exception
 
-    def run(self,relax,processor,memos):
+    def run(self,processor,memos):
         raise self.exception
 
 

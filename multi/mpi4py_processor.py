@@ -126,7 +126,7 @@ class Batched_result_command(Result_command):
         self.result_commands=result_commands
 
 
-    def run(self,relax,processor,batched_memo):
+    def run(self,processor,batched_memo):
 
         processor.assert_on_master()
         if batched_memo != None:
@@ -198,8 +198,8 @@ class Mpi4py_processor(Processor):
 
 
 
-    def __init__(self,relax_instance, chunkyness=1):
-        super(Mpi4py_processor,self).__init__(relax_instance = relax_instance, chunkyness=chunkyness)
+    def __init__(self,callback):
+        super(Mpi4py_processor,self).__init__(callback=callback)
 
 
 
@@ -315,7 +315,7 @@ class Mpi4py_processor(Processor):
                 memo=None
                 if result.memo_id != None:
                     memo=self.memo_map[result.memo_id]
-                result.run(self.relax_instance,self,memo)
+                result.run(self,memo)
                 if result.memo_id != None and result.completed:
                     del self.memo_map[result.memo_id]
 
@@ -386,13 +386,12 @@ class Mpi4py_processor(Processor):
         if self.on_master():
             try:
                 self.pre_run()
-                self.relax_instance.run()
+                self.callback.init_master(self)
                 self.post_run()
             except Exception,e:
-                # check me could be moved outside
-                #print e
-                traceback.print_exc(file=sys.stdout)
-                self.abort()
+                self.callback.handle_exception(self,e)
+
+
 
             # note this a modified exit that kills all MPI processors
             sys.exit()
