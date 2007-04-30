@@ -21,6 +21,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA    #
 #                                                                              #
 ################################################################################
+from errors import RelaxWarnings
 import threading, Queue
 import sys,os
 import multi
@@ -71,8 +72,12 @@ from multi.processor import Processor,Result_command,Result_string
 class Uni_processor(Processor):
 
 
-    def __init__(self,callback):
-        super(Uni_processor,self).__init__(callback=callback)
+    def __init__(self,processor_size,callback):
+        super(Uni_processor,self).__init__(processor_size=1,callback=callback)
+
+        if processor_size > 1:
+            print 'warning: uniprocessor can only support 1 processor you requested %d' % processor_size
+            print 'continuing...\n'
 
 
         self.command_queue=[]

@@ -70,12 +70,13 @@ def raise_unimplimented(method):
 class Processor(object):
 
     #FIXME: remname chunk* grain*
-    def __init__(self,callback):
+    def __init__(self,processor_size,callback):
         self.callback=callback
         self.chunkyness=1
         self.pre_queue_command=None
         self.post_queue_command=None
         self.NULL_RESULT=Null_result_command(processor=self)
+        self._processor_size=processor_size
 
     def add_to_queue(self,command,memo=None):
          raise_unimplimented(self.add_to_queue)
@@ -106,7 +107,7 @@ class Processor(object):
         raise_unimplimented(self.rank)
 
     def processor_size(self):
-        raise_unimplimented(self.processor_size())
+        return self._processor_size
 
     def get_intro_string(self):
         raise_unimplimented(self.get_intro_string)
