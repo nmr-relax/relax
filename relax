@@ -471,6 +471,8 @@ class Relax:
             self.intro_string = self.intro_string + "and comes with absolutely no warranty.  For details type 'GPL'.  Assistance in using this program\n"
             self.intro_string = self.intro_string + "can be accessed by typing 'help'.\n"
 
+        self.intro_string  = self.intro_string  + '\nprocessor = ' + self.processor.get_intro_string() + '\n'
+
 
     def spacing(self, string, width=100):
         """Function for formatting the string to be centred to 100 spaces."""

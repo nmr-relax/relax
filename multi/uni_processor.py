@@ -132,6 +132,8 @@ class Uni_processor(Processor):
     def processor_size(self):
         return 1
 
+    def get_intro_string(self):
+        return '''uniprocessor'''
 
 
 

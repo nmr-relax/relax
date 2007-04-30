@@ -49,12 +49,12 @@ class Application_callback(object):
     def __init__(self,master):
         self.master=master
         self.init_master = self.default_init_master
-        self.handle_error= self.default_handle_error
+        self.handle_exception= self.default_handle_exception
 
     def default_init_master(self,processor):
         self.master.run()
 
-    def default_handle_error(self,processor,exception):
+    def default_handle_exception(self,processor,exception):
         traceback.print_exc(file=sys.stdout)
         processor.abort()
 
@@ -107,6 +107,10 @@ class Processor(object):
 
     def processor_size(self):
         raise_unimplimented(self.processor_size())
+
+    def get_intro_string(self):
+        raise_unimplimented(self.get_intro_string)
+
 
     def restore_stdio(self):
         sys.stderr = self.save_stderr

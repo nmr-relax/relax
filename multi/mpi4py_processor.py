@@ -232,6 +232,11 @@ class Mpi4py_processor(Processor):
     def processor_size(self):
         return MPI.size -1
 
+    def get_intro_string(self):
+        version_info = MPI.Get_version()
+        return '''MPI running via mpi4py with %d slave processors, mpi version = %s.%s''' % (self.processor_size(),version_info[0],version_info[1])
+
+
     def chunk_queue(self,queue):
         lqueue=copy(queue)
         result = []
