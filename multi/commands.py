@@ -234,7 +234,7 @@ class MF_minimise_command(Slave_command):
                 string = "Fitting to residue: " + i_m['res_id']
                 print "\n\n" + string
                 print len(string) * '~'
-
+    # rename confusing with processor process_results
     def process_results(self,results,processor,completed):
         param_vector, func, iter, fc, gc, hc, warning = results
 

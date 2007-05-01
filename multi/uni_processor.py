@@ -127,8 +127,8 @@ class Uni_processor(Processor):
     def exit(self):
         sys.exit()
 
-    def on_master(self):
-        return True
+#    def on_master(self):
+#        return True
 
 
     def rank(self):
@@ -139,9 +139,6 @@ class Uni_processor(Processor):
 
     def get_intro_string(self):
         return '''uniprocessor'''
-
-
-
 
 
     def return_object(self,result):

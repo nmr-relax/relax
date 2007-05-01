@@ -25,10 +25,11 @@
 # FIXME better  requirement of inherited commands
 # TODO: check exceptiosn on master
 import time,datetime,math,sys
-from multi.PrependStringIO import  PrependStringIO,PrependOut
+from multi.PrependStringIO import  PrependOut
 import traceback,textwrap
 
 
+# FIXME useful debugging code but where to put it
 def print_file_lineno(range=xrange(1,2)):
 
 
@@ -43,6 +44,12 @@ def print_file_lineno(range=xrange(1,2)):
         except Exception, e:
             print e
             break
+    #FIXME: useful for debugging but where to put it
+    def print_message(processor,message):
+        f=open ('error' + `processor.rank()` + '.txt','a')
+        f.write(message+'\n')
+        f.flush()
+        f.close()
 
 class Application_callback(object):
 
@@ -78,6 +85,8 @@ class Processor(object):
         self.NULL_RESULT=Null_result_command(processor=self)
         self._processor_size=processor_size
 
+
+
     def add_to_queue(self,command,memo=None):
          raise_unimplimented(self.add_to_queue)
 
@@ -93,15 +102,14 @@ class Processor(object):
     def get_name(self):
         raise_unimplimented(self.get_name)
 
+    def abort(self):
+        sys.exit()
+
     # FIXME is this used?
-    def exit(self):
-        raise_unimplimented(self.exit)
+#    def exit(self):
+#        raise_unimplimented(self.exit)
 
-    def on_master(self):
-        raise_unimplimented(self.on_master)
 
-    def on_slave(self):
-        return not self.on_master()
 
     def rank(self):
         raise_unimplimented(self.rank)
@@ -121,8 +129,7 @@ class Processor(object):
         queue = [command for i in range(self.processor_size())]
         self.run_command_queue(queue)
 
-    def abort(self):
-        sys.exit()
+
 
 
     def pre_run(self):
@@ -155,7 +162,9 @@ class Processor(object):
             print 'overall runtime: ' + time_delta_str + '\n'
 
         if self.processor_size() > 1:
-            self.restore_stdio()
+            sys.stderr = self.save_stderr
+            sys.stdout = self.save_stdout
+
 
     def rank_format_string_width(self):
         return int(math.ceil(math.log10(self.processor_size())))
@@ -234,12 +243,19 @@ class Capturing_exception(Exception):
         self.name=name
         if exc_info == None:
             (exception_type,exception_instance,exception_traceback)=sys.exc_info()
-        self.exception_name =  exception_type.__name__
-        self.exception_string = exception_instance.__str__()
+        if type(exception_type) ==  str:
+            self.exception_name = exception_type + ' (legacy string exception)'
+            self.exception_string=exception_type
+        else:
+            self.exception_name =  exception_type.__name__
+            self.exception_string = exception_instance.__str__()
+
         self.traceback = traceback.format_tb(exception_traceback)
 
     def __str__(self):
         message ='''
+
+                     %s
 
                      %s
 
@@ -250,14 +266,11 @@ class Capturing_exception(Exception):
 
                      %s
 
-                     %s
-
 
                  '''
         message = textwrap.dedent(message)
-        result =  message % ('-'*120,self.rank, self.name, self.exception_name,
-                             self.exception_string, '\n'.join(self.traceback),
-                             '-'*120)
+        result =  message % ('-'*120, ''.join(self.traceback) ,self.rank, self.name, self.exception_name,
+                             self.exception_string, '-'*120)
         return result
 
 
