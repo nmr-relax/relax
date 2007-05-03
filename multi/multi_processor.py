@@ -21,6 +21,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA    #
 #                                                                              #
 ################################################################################
+import traceback
 
 
 import threading
@@ -34,6 +35,7 @@ from multi.processor import Processor
 from multi.processor import Result,Result_command,Result_string,Result_exception
 from multi.processor import raise_unimplimented
 from multi.processor import Capturing_exception
+
 
 
 
@@ -64,23 +66,23 @@ class Exit_queue_result_command(Result_command):
 RESULT_QUEUE_EXIT_COMMAND = Exit_queue_result_command()
 #FIXME: move  up a level or more
 class Result_queue(object):
-    def __init__(self,mpi4py_processor):
-        self.mpi4py_processor = mpi4py_processor
+    def __init__(self,processor):
+        self.processor = processor
 
     def put(self,job):
         if isinstance(job, Result_exception) :
-            self.mpi4py_processor.process_result(job)
+            self.processor.process_result(job)
 
     def run_all(self):
         raise_unimplimented(self.run_all)
 
 #FIXME: move  up a level or more
 class Threaded_result_queue(Result_queue):
-    def __init__(self,mpi4py_processor):
-        super(Threaded_result_queue,self).__init__(mpi4py_processor)
+    def __init__(self,processor):
+        super(Threaded_result_queue,self).__init__(processor)
         self.queue = Queue.Queue()
         self.sleep_time =0.05
-
+        self.processor=processor
         self.running=1
         # FIXME: syntax error here produces exception but no quit
         self.thread1 = threading.Thread(target=self.workerThread)
@@ -89,11 +91,16 @@ class Threaded_result_queue(Result_queue):
 
     def workerThread(self):
 
-            while True:
-                job=self.queue.get()
-                if job == RESULT_QUEUE_EXIT_COMMAND:
-                    break
-                self.mpi4py_processor.process_result(job)
+            try:
+                while True:
+                    job=self.queue.get()
+                    if job == RESULT_QUEUE_EXIT_COMMAND:
+                        break
+                    self.processor.process_result(job)
+            except:
+                traceback.print_exc(file=sys.stdout)
+                # FIXME: this doesn't work because this isn't the main thread so sys.exit fails...
+                self.processor.abort()
 
 
     def put(self,job):
@@ -106,12 +113,17 @@ class Threaded_result_queue(Result_queue):
 
 #FIXME: move  up a level or more
 class Immediate_result_queue(Result_queue):
-    def __init(self,mpi4py_processor):
-        super(Threaded_result_queue,self).__init__(mpi4py_processor)
+    def __init(self,processor):
+        super(Threaded_result_queue,self).__init__(processor)
 
     def put(self,job):
         super(Immediate_result_queue,self).put(job)
-        self.mpi4py_processor.process_result(job)
+        try:
+            self.processor.process_result(job)
+        except:
+            traceback.print_exc(file=sys.stdout)
+            # FIXME: this doesn't work because this isn't the main thread so sys.exit fails...
+            self.processor.abort()
 
     def run_all(self):
         pass
@@ -125,8 +137,8 @@ class Too_few_slaves_exception(Exception):
 
 class Multi_processor(Processor):
 
-    def __init__(self,processor_size,callback):
-        super(Multi_processor,self).__init__(processor_size=processor_size,callback=callback)
+    def __init__(self,processor_size,callback,stdio_capture=None):
+        super(Multi_processor,self).__init__(processor_size=processor_size,callback=callback,stdio_capture=stdio_capture)
 
         self.do_quit=False
 
@@ -139,6 +151,53 @@ class Multi_processor(Processor):
         self.result_list=None
 
         self.threaded_result_processing=True
+
+    def pre_run(self):
+        super(Multi_processor,self).pre_run()
+
+        self.capture_stdio()
+#        self.save_stdout = sys.stdout
+#        self.save_stderr = sys.stderr
+
+#        if self.processor_size() > 1 and self.rank() == 0:
+#
+#            pre_string = 'M'*self.rank_format_string_width()
+#
+#            sys.stdout = PrependOut(pre_string + ' S> ', sys.stdout)
+#            #FIXME: seems to be that writing to stderr results leeds to incorrect serialisation of output
+#            sys.stderr = PrependOut(pre_string + ' E> ', sys.__stdout__)
+#
+#        else:
+#            # add debug flag or extra channels that output immediately
+#            if self.processor_size() > 1:
+#                pre_string = self.rank_format_string() % self.rank()
+#                stderr_string  =  ' E> '
+#                stdout_string  =  ' S> '
+#            else:
+#                pre_string = ''
+#                stderr_string = ''
+#                stdout_string  = ''
+#            sys.stdout = PrependStringIO(pre_string + stdout_string)
+#            sys.stderr = PrependStringIO(pre_string + stderr_string,target_stream=sys.stdout)
+#
+
+
+
+    def post_run(self):
+
+        self.restore_stdio()
+
+#        if self.processor_size() > 1:
+#           if id(sys.stderr) != id(sys.__stderr__):
+#               sys.stderr.close()
+#               sys.stderr = sys.__stderr__
+#
+#           if id(sys.stdout) != id(sys.__stdout__):
+#               sys.stdout.close()
+#               sys.stdout = sys.__stdout__
+
+        super(Multi_processor,self).post_run()
+
 
     #TODO: move up a level
     def assert_on_master(self):
@@ -163,7 +222,7 @@ class Multi_processor(Processor):
 
             elif isinstance(result, Result_string):
                 #FIXME can't cope with multiple lines
-                self.save_stdout.write(result.string),
+                sys.__stdout__.write(result.string),
         else:
             message = 'Unexpected result type \n%s \nvalue%s' %(result.__class__.__name__,result)
             raise Exception(message)
@@ -240,7 +299,7 @@ class Multi_processor(Processor):
             self.assert_on_master()
 
             running_set=set()
-            idle_set=set([i for i in range(1,self.processor_size())])
+            idle_set=set([i for i in range(1,self.processor_size()+1)])
 
             if self.threaded_result_processing:
                 result_queue=Threaded_result_queue(self)
@@ -267,6 +326,8 @@ class Multi_processor(Processor):
 
                     if result.completed:
                         idle_set.add(result.rank)
+                        print 'idle set', `idle_set`
+                        print 'running_set', `running_set`
                         running_set.remove(result.rank)
 
                     result_queue.put(result)
@@ -281,20 +342,18 @@ class Multi_processor(Processor):
     def run(self):
 
 
-
+        self.pre_run()
         if self.on_master():
             try:
-                self.pre_run()
                 self.create_slaves(self.processor_size())
                 self.callback.init_master(self)
-                self.post_run()
+
             except Exception,e:
                 self.callback.handle_exception(self,e)
 
 
 
-            # note this a modified exit that kills all MPI processors
-            sys.exit()
+
         else:
 
             while not self.do_quit:
@@ -334,3 +393,21 @@ class Multi_processor(Processor):
                     self.return_object(exception_result)
                     self.result_list=None
 
+        self.post_run()
+        if self.on_master():
+            # note this a modified exit that kills all MPI processors
+            sys.exit()
+
+    def return_result_command(self,result_object):
+        raise_unimplimented(self.slave_queue_result)
+
+
+    def master_queue_command(self,command,dest):
+        raise_unimplimented(self.master_queue_command)
+
+
+    def master_recieve_result(self):
+        raise_unimplimented(self.master_recieve_result)
+
+    def slave_recieve_commands(self):
+        raise_unimplimented(self.slave_recieve_commands)

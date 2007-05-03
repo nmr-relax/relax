@@ -24,11 +24,24 @@
 
 # FIXME better  requirement of inherited commands
 # TODO: check exceptiosn on master
-import time,datetime,math,sys
-from multi.PrependStringIO import  PrependOut
+import time,datetime,math,sys,os
 import traceback,textwrap
+from  multi.prependStringIO import PrependStringIO,PrependOut
+
+def traceit(frame, event, arg):
+    import linecache
+    if event == "line":
+        file_name = os.path.split(frame.f_code.co_filename)[-1]
+        function_name = frame.f_code.co_name
+        line_number = frame.f_lineno
+        line = linecache.getline(file_name, line_number)
+        msg = '<< %s - %s - %d>> %s'  %(file_name,function_name,line_number, line[:-1])
+        print >> sys.__stdout__, msg
+
+    return traceit
 
 
+#sys.settrace(traceit)
 # FIXME useful debugging code but where to put it
 def print_file_lineno(range=xrange(1,2)):
 
@@ -62,7 +75,8 @@ class Application_callback(object):
         self.master.run()
 
     def default_handle_exception(self,processor,exception):
-        traceback.print_exc(file=sys.stdout)
+        #TODO: could do with flag to force __stdout__ vs  stdout
+        traceback.print_exc(file=sys.__stdout__)
         processor.abort()
 
 
@@ -72,18 +86,22 @@ def raise_unimplimented(method):
 #requires 2.4 decorators@abstract
 #def abstract(f):
 #    raise_unimplimented(f)
+
 #    return f
 
 class Processor(object):
 
     #FIXME: remname chunk* grain*
-    def __init__(self,processor_size,callback):
+    def __init__(self,processor_size,callback, stdio_capture=None):
         self.callback=callback
         self.chunkyness=1
         self.pre_queue_command=None
         self.post_queue_command=None
         self.NULL_RESULT=Null_result_command(processor=self)
         self._processor_size=processor_size
+
+
+        self.setup_stdio_capture(stdio_capture)
 
 
 
@@ -121,31 +139,19 @@ class Processor(object):
         raise_unimplimented(self.get_intro_string)
 
 
-    def restore_stdio(self):
-        sys.stderr = self.save_stderr
-        sys.stdout = self.save_stdout
+#    def restore_stdio(self):
+#        sys.stderr = self.save_stderr
+#        sys.stdout = self.save_stdout
 
     def run_command_globally(self,command):
         queue = [command for i in range(self.processor_size())]
         self.run_command_queue(queue)
 
 
-
-
     def pre_run(self):
-        if self.on_master():
+        if self.rank() == 0:
             self.start_time =  time.time()
 
-        self.save_stdout = sys.stdout
-        self.save_stderr = sys.stderr
-
-        if self.processor_size() > 1:
-
-            pre_string = 'M'*self.rank_format_string_width()
-
-            sys.stdout = PrependOut(pre_string + ' S> ', sys.stdout)
-            #FIXME: seems to be that writing to stderr results leeds to incorrect serialisation of output
-            sys.stderr = PrependOut(pre_string + ' E> ', sys.__stdout__)
 
     def get_time_delta(self,start_time,end_time):
 
@@ -156,14 +162,11 @@ class Processor(object):
         return time_delta_str
 
     def post_run(self):
-        if self.on_master():
+        if self.rank() == 0:
             end_time = time.time()
             time_delta_str = self.get_time_delta(self.start_time,end_time)
             print 'overall runtime: ' + time_delta_str + '\n'
 
-        if self.processor_size() > 1:
-            sys.stderr = self.save_stderr
-            sys.stdout = self.save_stdout
 
 
     def rank_format_string_width(self):
@@ -174,8 +177,66 @@ class Processor(object):
         format = '%%%di' % digits
         return format
 
+    def setup_stdio_capture(self,stdio_capture=None):
+
+        rank =self.rank()
+        pre_strings=('','')
+
+        if stdio_capture==None:
+            pre_strings = self.get_stdio_pre_strings(rank)
+            stdio_capture=self.std_stdio_capture(pre_strings=pre_strings)
+
+        self.stdio_capture=stdio_capture
 
 
+    def std_stdio_capture(self,rank=0,pre_strings=None):
+            if pre_strings == None:
+                pre_strings=('','')
+
+            stdout_capture = None
+            stderr_capture = None
+
+            if self.rank() ==0:
+                stdout_capture = PrependOut(pre_strings[0], sys.stdout)
+                #FIXME: seems to be that writing to stderr results leeds to incorrect serialisation of output
+                stderr_capture = PrependOut(pre_strings[1], sys.__stdout__)
+            else:
+                stdout_capture = PrependStringIO(pre_strings[0])
+                stderr_capture = PrependStringIO(pre_strings[1],target_stream=stdout_capture)
+
+
+            return (stdout_capture,stderr_capture)
+
+    def capture_stdio(self,stdio_capture=None):
+
+        if stdio_capture  == None:
+            stdio_capture=self.stdio_capture
+
+        sys.stdout = self.stdio_capture[0]
+        sys.stderr = self.stdio_capture[1]
+
+    def get_stdio_capture(self):
+        return self.stdio_capture
+
+    def restore_stdio(self):
+        sys.stdout=sys.__stdout__
+        sys.stderr=sys.__stderr__
+
+    def get_stdio_pre_strings(self,rank=0):
+        pre_string =''
+        stdout_string = ''
+        stderr_string = ''
+
+        if self.processor_size() > 1 and rank > 0:
+            pre_string = self.rank_format_string() % self.rank()
+        elif self.processor_size() > 1 and rank == 0:
+            pre_string = 'M'*self.rank_format_string_width()
+
+        if self.processor_size() > 1:
+            stderr_string  =  pre_string + ' E> '
+            stdout_string  =  pre_string + ' S> '
+
+        return (stdout_string,stderr_string)
 
 class Result(object):
     def __init__(self,processor,completed):
@@ -243,9 +304,12 @@ class Capturing_exception(Exception):
         self.name=name
         if exc_info == None:
             (exception_type,exception_instance,exception_traceback)=sys.exc_info()
-        if type(exception_type) ==  str:
-            self.exception_name = exception_type + ' (legacy string exception)'
-            self.exception_string=exception_type
+        else:
+            (exception_type,exception_instance,exception_traceback)=exc_info
+        #PY3K: this check can be removed once string based exceptions are no longer used
+    	if type(exception_type) ==  str:
+                self.exception_name = exception_type + ' (legacy string exception)'
+                self.exception_string=exception_type
         else:
             self.exception_name =  exception_type.__name__
             self.exception_string = exception_instance.__str__()

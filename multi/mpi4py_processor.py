@@ -98,6 +98,7 @@ def exit_mpi():
 
 
 
+
 class Mpi4py_processor(Multi_processor):
 
 
@@ -135,7 +136,7 @@ class Mpi4py_processor(Multi_processor):
         return '''MPI running via mpi4py with %d slave processors & 1 master, mpi version = %s.%s''' % (self.processor_size(),version_info[0],version_info[1])
 
     def get_name(self):
-        return '%s-%s' % (MPI.Get_processor_name(),os.getpid())
+        return '%s-pid%s' % (MPI.Get_processor_name(),os.getpid())
 
 
     def return_result_command(self,result_object):

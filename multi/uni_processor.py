@@ -83,6 +83,8 @@ class Uni_processor(Processor):
         self.command_queue=[]
         self.memo_map={}
 
+        self.slave_stdio_capture=self.std_stdio_capture(rank=1,pre_strings=('',''))
+
     def add_to_queue(self,command,memo=None):
         self.command_queue.append(command)
         if memo != None:
@@ -95,7 +97,11 @@ class Uni_processor(Processor):
         last_command = len(self.command_queue)-1
         for i,command  in enumerate(self.command_queue):
             completed = (i == last_command)
+
+            self.capture_stdio(self.slave_stdio_capture)
             command.run(self,completed)
+            self.restore_stdio()
+
         #self.run_command_queue()
         #TODO: add cheques for empty queuese and maps if now warn
         del self.command_queue[:]
@@ -132,13 +138,14 @@ class Uni_processor(Processor):
 
 
     def rank(self):
-        return 1
+        return 0
 
     def processor_size(self):
         return 1
 
     def get_intro_string(self):
         return '''uniprocessor'''
+
 
 
     def return_object(self,result):
@@ -160,7 +167,7 @@ class Uni_processor(Processor):
                 del self.memo_map[result.memo_id]
 
         elif isinstance(result, Result_string):
-            self.save_stdout.write(result.string)
+            sys.stdout.write(result.string)
         else:
             message = 'Unexpected result type \n%s \nvalue%s' %(result.__class__.__name__,result)
             raise Exception(message)

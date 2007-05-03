@@ -21,7 +21,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA    #
 #                                                                              #
 ################################################################################
-from  multi.PrependStringIO import PrependStringIO
+
 
 from multi.processor import Memo,Slave_command
 from multi.processor import Result_command,Result_string
@@ -32,6 +32,9 @@ from minimise.generic import generic_minimise
 
 import minimise
 import sys
+import traceback
+from processor import Capturing_exception
+
 
 from minimise.generic import set_pre_and_post_amble as set_generic_pre_and_post_amble
 from minimise.grid import set_pre_and_post_amble as set_grid_pre_and_post_amble
@@ -234,11 +237,17 @@ class MF_minimise_command(Slave_command):
                 string = "Fitting to residue: " + i_m['res_id']
                 print "\n\n" + string
                 print len(string) * '~'
+
     # rename confusing with processor process_results
     def process_results(self,results,processor,completed):
         param_vector, func, iter, fc, gc, hc, warning = results
 
-        result_string = sys.stdout.getvalue() + sys.stderr.getvalue()
+        #FIXME: we need to interleave stdout and stderr
+        (stdout,stderr)= processor.get_stdio_capture()
+        result_string = stdout.getvalue() + stderr.getvalue()
+        stdout.truncate(0)
+        stderr.truncate(0)
+
         processor.return_object(MF_result_command(processor,self.memo_id,param_vector, func, iter, fc, gc, hc, warning,completed=False))
         processor.return_object(Result_string(processor,result_string,completed=completed))
 
@@ -247,29 +256,14 @@ class MF_minimise_command(Slave_command):
 
 
     def pre_run(self,processor):
-        #FIXME: move to processor startup
+       pass
+       #FIXME: move to processor startup
 
-        self.save_stdout = sys.stdout
-        self.save_stderr = sys.stderr
 
-        # add debug flag or extra channels that output immediately
-        if processor.processor_size() > 1:
-            pre_string = processor.rank_format_string() % processor.rank()
-            stderr_string  =  ' E> '
-            stdout_string  =  ' S> '
-        else:
-            pre_string = ''
-            stderr_string = ''
-            stdout_string  = ''
-        sys.stdout = PrependStringIO(pre_string + stdout_string)
-        sys.stderr = PrependStringIO(pre_string + stderr_string,target_stream=sys.stdout)
 
     def post_run(self,processor):
         #FIXME: move to processor startup
-        sys.stdout.close()
-        sys.stderr.close()
-        sys.stdout = self.save_stdout
-        sys.stderr = self.save_stderr
+        pass
 
     def post_command_feedback(self,results,processor):
         pass
@@ -293,13 +287,19 @@ class MF_minimise_command(Slave_command):
 #        # add debug flag or extra channels that output immediately
 #        sys.stdout = PrependStringIO(pre_string + ' S> ')
 #        sys.stderr = PrependStringIO(pre_string + ' E> ')
-
-        self.pre_run(processor)
-        self.pre_command_feed_back(processor)
-        results = self.run_command(processor)
-        self.post_command_feedback(results, processor)
-        self.process_results(results, processor, completed)
-        self.post_run(processor)
+        try:
+            self.pre_run(processor)
+            self.pre_command_feed_back(processor)
+            results = self.run_command(processor)
+            self.post_command_feedback(results, processor)
+            self.process_results(results, processor, completed)
+            self.post_run(processor)
+        except Exception,e :
+            processor.restore_stdio()
+            if isinstance(e, Capturing_exception):
+                raise e
+            else:
+                raise Capturing_exception(rank=processor.rank(),name=processor.get_name())
 
 
 
@@ -358,7 +358,12 @@ class MF_grid_command(MF_minimise_command):
     def process_results(self,results,processor,completed):
         param_vector, func, iter, fc, gc, hc, warning = results
 
-        result_string = sys.stdout.getvalue() + sys.stderr.getvalue()
+        (stdout,stderr)= processor.get_stdio_capture()
+        result_string = stdout.getvalue() + stderr.getvalue()
+        stdout.truncate(0)
+        stderr.truncate(0)
+
+
         processor.return_object(MF_grid_result_command(processor,result_string,self.memo_id,param_vector, func, iter, fc, gc, hc, warning,completed=completed))
 
 class MF_grid_memo(Memo):
@@ -496,7 +501,8 @@ class MF_grid_result_command(Result_command):
                     print print_prefix + "A: " + `A`
                     print print_prefix + "b: " + `b`
 
-        processor.save_stdout.write('\n'+self.result_string),
+        # we don't want to prepend the masters stdout tag
+        sys.__stdout__.write('\n'+self.result_string),
 
 
         if sgm.completed:
