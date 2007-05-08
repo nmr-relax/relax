@@ -586,6 +586,8 @@ class Rx_data:
                 # Skip missing data.
                 if len(file_data[i]) <= min_col_num:
                     continue
+                elif file_data[i][data_col] == 'None' or file_data[i][error_col] == 'None':
+                    continue
 
                 # Test that the data are numbers.
                 try:
