@@ -5141,6 +5141,10 @@ class Model_free(Common_functions):
                     ri = []
                     ri_error = []
                     for k in xrange(self.relax.data.num_ri[self.run]):
+                        # No relaxation data.
+                        if not hasattr(data, 'num_ri'):
+                            break
+
                         # Find the residue specific data corresponding to k.
                         index = None
                         for l in xrange(data.num_ri):
