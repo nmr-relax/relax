@@ -1,141 +1,151 @@
 # Script for complete model-free analysis.
-#
-# This script is designed for those who appreciate black-boxes, although it will need to be
-# heavily tailored to the protein in question, or those who appreciate complex code.  For a
-# description of object-oriented coding in python using classes, functions/methods, self, etc,
-# see the python tutorial.
 
-
-# Import functions from the python modules 'os' and 're'.
+# Python module imports.
 from os import getcwd, listdir
 from re import search
 from string import lower
 
+"""Script for black-box model-free analysis.
+
+This script is designed for those who appreciate black-boxes or those who appreciate complex code.  Importantly data at multiple magnetic field strengths is essential for this analysis.  The script will need to be heavily tailored to the protein in question by changing the variables just below this documentation.  If you would like to change how model-free analysis is performed, the code in the class Main can be changed as needed.  For a description of object-oriented coding in python using classes, functions/methods, self, etc, see the python tutorial.
+
+The value of the variable DIFF_MODEL will determine the behaviour of this script.  The five diffusion models used in this script are:
+
+    Model I   (MI)   - Local tm.
+    Model II  (MII)  - Sphere.
+    Model III (MIII) - Prolate spheroid.
+    Model IV  (MIV)  - Oblate spheroid.
+    Model V   (MV)   - Ellipsoid.
+
+Model I must be optimised prior to any of the other diffusion models, while the Models II to V can be optimised in any order.  To select the various models, set the variable DIFF_MODEL to the following strings:
+
+    MI   - 'local_tm'
+    MII  - 'sphere'
+    MIII - 'prolate'
+    MIV  - 'oblate'
+    MV   - 'ellipsoid'
+
+This approach has the advantage of eliminating the need for an initial estimate of a global diffusion tensor and removing all the problems associated with the initial estimate.
+
+It is important that the number of parameters in a model does not excede the number of relaxation data sets for that residue.  If this is the case, the list of models in the MF_MODELS and LOCAL_TM_MODELS variables will need to be trimmed.
+
+
+Model I - Local tm
+~~~~~~~~~~~~~~~~~~
+
+This will optimise the diffusion model whereby all residues of the protein have a local tm value, i.e. there is no global diffusion tensor.  This model needs to be optimised prior to optimising any of the other diffusion models.  Each residue is fitted to the multiple model-free models separately, where the parameter tm is included in each model.
+
+AIC model selection is used to select the models for each residue.
+
+
+Model II - Sphere
+~~~~~~~~~~~~~~~~~
+
+This will optimise the isotropic diffusion model.  Multiple steps are required, an initial optimisation of the diffusion tensor, followed by a repetitive optimisation until convergence of the diffusion tensor.  Each of these steps requires this script to be rerun. For the initial optimisation, which will be placed in the directory './sphere/init/', the following steps are used:
+
+The model-free models and parameter values for each residue are set to those of diffusion model MI.
+
+The local tm parameter is removed from the models.
+
+The model-free parameters are fixed and a global spherical diffusion tensor is minimised.
+
+
+For the repetitive optimisation, each minimisation is named from 'round_1' onwards.  The initial 'round_1' optimisation will extract the diffusion tensor from the results file in './sphere/init/', and the results will be placed in the directory './sphere/round_1/'.  Each successive round will take the diffusion tensor from the previous round.  The following steps are used:
+
+The global diffusion tensor is fixed and the multiple model-free models are fitted to each residue.
+
+AIC model selection is used to select the models for each residue.
+
+All model-free and diffusion parameters are allowed to vary and a global optimisation of all parameters is carried out.
+
+
+Model III - Prolate spheroid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The methods used are identical to those of diffusion model MII, except that an axially symmetric diffusion tensor with Da >= 0 is used.  The base directory containing all the results is './prolate/'.
+
+
+Model IV - Oblate spheroid
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The methods used are identical to those of diffusion model MII, except that an axially symmetric diffusion tensor with Da <= 0 is used.  The base directory containing all the results is './oblate/'.
+
+
+Model V - Ellipsoid
+~~~~~~~~~~~~~~~~~~~
+
+The methods used are identical to those of diffusion model MII, except that a fully anisotropic diffusion tensor is used (also known as rhombic or asymmetric diffusion).  The base directory is './ellipsoid/'.
+
+
+
+Final run
+~~~~~~~~~
+
+Once all the diffusion models have converged, the final run can be executed.  This is done by setting the variable DIFF_MODEL to 'final'.  This consists of two steps, diffusion tensor model selection, and Monte Carlo simulations.  Firstly AIC model selection is used to select between the diffusion tensor models.  Monte Carlo simulations are then run soley on this selected diffusion model.  Minimisation of the model is bypassed as it is assumed that the model is already fully optimised (if this is not the case the final run is not yet appropriate).
+
+The final black-box model-free results will be placed in the file 'final/results'.
+"""
+
+
+# User variables.
+#################
+
+# The diffusion model.
+DIFF_MODEL = 'local_tm'
+
+# The model-free models (do not change these unless absolutely necessary).
+MF_MODELS = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
+LOCAL_TM_MODELS = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
+
+# The type of heteronucleus.
+HETNUC = 'N'
+
+# The PDB file.
+PDB_FILE = '1f3y.pdb'
+
+# The file containing the sequence.
+SEQUENCE = 'noe.600.out'
+
+# The relaxation data (Data type, frequency label, frequency, file name).
+# These are the arguments 'ri_label', 'frq_label', 'frq', and 'file' to the relax_data.read() user function.  Please read the user function documentation for more information.
+RELAX_DATA = [['R1', '600', 599.719 * 1e6, 'r1.600.out'],
+              ['R2', '600', 599.719 * 1e6, 'r2.600.out'],
+              ['NOE', '600', 599.719 * 1e6, 'noe.600.out'],
+              ['R1', '500', 500.208 * 1e6, 'r1.500.out'],
+              ['R2', '500', 500.208 * 1e6, 'r2.500.out'],
+              ['NOE', '500', 500.208 * 1e6, 'noe.500.out']
+]
+
+# The file containing the list of unresolved residues to exclude from the analysis.
+UNRES = 'unresolved'
+
+# The bond length and CSA values.
+BOND_LENGTH = 1.02 * 1e-10
+CSA = -172 * 1e-6
+
+# The grid search size (the number of increments per dimension).
+GRID_INC = 11
+
+# The optimisation technique.
+MIN_ALGOR = 'newton'
+
+# The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+MC_NUM = 200
+
+
 
 class Main:
     def __init__(self, relax):
-        """Script for black-box model-free analysis.
-
-        The value of the variable self.diff_model will determine the behaviour of this script.  The
-        five diffusion models used in this script are:
-
-            Model I   (MI)   - Local tm.
-            Model II  (MII)  - Sphere.
-            Model III (MIII) - Prolate spheroid.
-            Model IV  (MIV)  - Oblate spheroid.
-            Model V   (MV)   - Ellipsoid.
-
-        Model I must be optimised prior to any of the other diffusion models, while the Models II to
-        V can be optimised in any order.  To select the various models, set the variable
-        self.diff_model to the following strings:
-
-            MI   - 'local_tm'
-            MII  - 'sphere'
-            MIII - 'prolate'
-            MIV  - 'oblate'
-            MV   - 'ellipsoid'
-
-        This approach has the advantage of eliminating the need for an initial estimate of a global
-        diffusion tensor and removing all the problems associated with the initial estimate.
-
-        It is important that the number of parameters in a model does not excede the number of
-        relaxation data sets for that residue.  If this is the case, the list of models in the
-        'multi_model' functions will need to be trimmed.
-
-
-        Model I - Local tm
-        ~~~~~~~~~~~~~~~~~~
-
-        This will optimise the diffusion model whereby all residues of the protein have a local tm
-        value, i.e. there is no global diffusion tensor.  This model needs to be optimised prior to
-        optimising any of the other diffusion models.  Each residue is fitted to the multiple model-
-        free models separately, where the parameter tm is included in each model.
-
-        AIC model selection is used to select the models for each residue.
-
-
-        Model II - Sphere
-        ~~~~~~~~~~~~~~~~~
-
-        This will optimise the isotropic diffusion model.  Multiple steps are required, an initial
-        optimisation of the diffusion tensor, followed by a repetitive optimisation until
-        convergence of the diffusion tensor.  Each of these steps requires this script to be rerun.
-        For the initial optimisation, which will be placed in the directory './sphere/init/', the
-        following steps are used:
-
-        The model-free models and parameter values for each residue are set to those of diffusion
-        model MI.
-
-        The local tm parameter is removed from the models.
-
-        The model-free parameters are fixed and a global spherical diffusion tensor is minimised.
-
-
-        For the repetitive optimisation, each minimisation is named from 'round_1' onwards.  The
-        initial 'round_1' optimisation will extract the diffusion tensor from the results file in
-        './sphere/init/', and the results will be placed in the directory './sphere/round_1/'.  Each
-        successive round will take the diffusion tensor from the previous round.  The following
-        steps are used:
-
-        The global diffusion tensor is fixed and the multiple model-free models are fitted to each
-        residue.
-
-        AIC model selection is used to select the models for each residue.
-
-        All model-free and diffusion parameters are allowed to vary and a global optimisation of all
-        parameters is carried out.
-
-
-        Model III - Prolate spheroid
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        The methods used are identical to those of diffusion model MII, except that an axially
-        symmetric diffusion tensor with Da >= 0 is used.  The base directory containing all the
-        results is './prolate/'.
-
-
-        Model IV - Oblate spheroid
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        The methods used are identical to those of diffusion model MII, except that an axially
-        symmetric diffusion tensor with Da <= 0 is used.  The base directory containing all the
-        results is './oblate/'.
-
-
-        Model V - Ellipsoid
-        ~~~~~~~~~~~~~~~~~~~
-
-        The methods used are identical to those of diffusion model MII, except that a fully
-        anisotropic diffusion tensor is used (also known as rhombic or asymmetric diffusion).  The
-        base directory is './ellipsoid/'.
-
-
-
-        Final run
-        ~~~~~~~~~
-
-        Once all the diffusion models have converged, the final run can be executed.  This is done
-        by setting the variable self.diff_model to 'final'.  This consists of two steps, diffusion
-        tensor model selection, and Monte Carlo simulations.  Firstly AIC model selection is used to
-        select between the diffusion tensor models.  Monte Carlo simulations are then run soley on
-        this selected diffusion model.  Minimisation of the model is bypassed as it is assumed that
-        the model is already fully optimised (if this is not the case the final run is not yet
-        appropriate).
-
-        The final black-box model-free results will be placed in the file 'final/results'.
-        """
+        """Execute the model-free analysis."""
 
         # Setup.
         self.relax = relax
-
-        # The diffusion model (this is the variable which should be changed).
-        self.diff_model = 'local_tm'
 
 
         # MI - Local tm.
         ################
 
-        if self.diff_model == 'local_tm':
+        if DIFF_MODEL == 'local_tm':
             # Base directory to place files into.
             self.base_dir = 'local_tm/'
 
@@ -152,18 +162,18 @@ class Main:
         # Diffusion models MII to MV.
         #############################
 
-        elif self.diff_model == 'sphere' or self.diff_model == 'prolate' or self.diff_model == 'oblate' or self.diff_model == 'ellipsoid':
+        elif DIFF_MODEL == 'sphere' or DIFF_MODEL == 'prolate' or DIFF_MODEL == 'oblate' or DIFF_MODEL == 'ellipsoid':
             # Determine which round of optimisation to do (init, round_1, round_2, etc).
-            self.round = self.determine_rnd(model=self.diff_model)
+            self.round = self.determine_rnd(model=DIFF_MODEL)
 
 
             # Inital round of optimisation for diffusion models MII to MV.
             if self.round == 0:
                 # Base directory to place files into.
-                self.base_dir = self.diff_model + '/init/'
+                self.base_dir = DIFF_MODEL + '/init/'
 
                 # Run name.
-                name = self.diff_model
+                name = DIFF_MODEL
 
                 # Create the run.
                 run.create(name, 'mf')
@@ -175,26 +185,26 @@ class Main:
                 model_free.remove_tm(run=name)
 
                 # Load the PDB file.
-                pdb(name, '1F3Y.pdb')
+                pdb(name, PDB_FILE)
 
                 # Add an arbitrary diffusion tensor which will be optimised.
-                if self.diff_model == 'sphere':
+                if DIFF_MODEL == 'sphere':
                     diffusion_tensor.init(name, 10e-9, fixed=0)
                     inc = 11
-                elif self.diff_model == 'prolate':
+                elif DIFF_MODEL == 'prolate':
                     diffusion_tensor.init(name, (10e-9, 0, 0, 0), spheroid_type='prolate', fixed=0)
                     inc = 11
-                elif self.diff_model == 'oblate':
+                elif DIFF_MODEL == 'oblate':
                     diffusion_tensor.init(name, (10e-9, 0, 0, 0), spheroid_type='oblate', fixed=0)
                     inc = 11
-                elif self.diff_model == 'ellipsoid':
+                elif DIFF_MODEL == 'ellipsoid':
                     diffusion_tensor.init(name, (10e-09, 0, 0, 0, 0, 0), fixed=0)
                     inc = 6
 
                 # Minimise just the diffusion tensor.
                 fix(name, 'all_res')
                 grid_search(name, inc=inc)
-                minimise('newton', run=name)
+                minimise(MIN_ALGOR, run=name)
 
                 # Write the results.
                 results.write(run=name, file='results', dir=self.base_dir, force=1)
@@ -203,7 +213,7 @@ class Main:
             # Normal round of optimisation for diffusion models MII to MV.
             else:
                 # Base directory to place files into.
-                self.base_dir = self.diff_model + '/round_' + `self.round` + '/'
+                self.base_dir = DIFF_MODEL + '/round_' + `self.round` + '/'
 
                 # Load the optimised diffusion tensor from either the previous round.
                 self.load_tensor()
@@ -222,7 +232,7 @@ class Main:
                 fix(name, 'all', fixed=0)
 
                 # Minimise all parameters.
-                minimise('newton', run=name)
+                minimise(MIN_ALGOR, run=name)
 
                 # Write the results.
                 dir = self.base_dir + 'opt'
@@ -236,7 +246,7 @@ class Main:
         # Final run.
         ############
 
-        elif self.diff_model == 'final':
+        elif DIFF_MODEL == 'final':
             # Diffusion model selection.
             ############################
 
@@ -285,10 +295,10 @@ class Main:
                 fix('final', 'diff')
 
             # Simulations.
-            monte_carlo.setup('final', number=200)
+            monte_carlo.setup('final', number=MC_NUM)
             monte_carlo.create_data('final')
             monte_carlo.initial_values('final')
-            minimise('newton', run='final')
+            minimise(MIN_ALGOR, run='final')
             eliminate('final')
             monte_carlo.error_analysis('final')
 
@@ -303,7 +313,7 @@ class Main:
         ###########################
 
         else:
-            raise RelaxError, "Unknown diffusion model, change the value of 'self.diff_model'"
+            raise RelaxError, "Unknown diffusion model, change the value of 'DIFF_MODEL'"
 
 
     def convergence(self, run=None):
@@ -365,11 +375,11 @@ class Main:
         # Only run the tests if the model-free models have converged.
         if models_converged:
             # Diffusion parameter array.
-            if self.diff_model == 'sphere':
+            if DIFF_MODEL == 'sphere':
                 params = ['tm']
-            elif self.diff_model == 'oblate' or self.diff_model == 'prolate':
+            elif DIFF_MODEL == 'oblate' or DIFF_MODEL == 'prolate':
                 params = ['tm', 'Da', 'theta', 'phi']
-            elif self.diff_model == 'ellipsoid':
+            elif DIFF_MODEL == 'ellipsoid':
                 params = ['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma']
 
             # Tests.
@@ -474,11 +484,11 @@ class Main:
 
         # Load the optimised diffusion tensor from the initial round.
         if self.round == 1:
-            results.read('previous', 'results', self.diff_model + '/init')
+            results.read('previous', 'results', DIFF_MODEL + '/init')
 
         # Load the optimised diffusion tensor from the previous round.
         else:
-            results.read('previous', 'results', self.diff_model + '/round_' + `self.round - 1` + '/opt')
+            results.read('previous', 'results', DIFF_MODEL + '/round_' + `self.round - 1` + '/opt')
 
 
     def model_selection(self, run=None, dir=None, write_flag=1):
@@ -500,34 +510,30 @@ class Main:
 
         # Set the run names (also the names of preset model-free models).
         if local_tm:
-            self.runs = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
+            models = LOCAL_TM_MODELS
         else:
-            self.runs = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
+            models = MF_MODELS
 
         # Nuclei type
-        nuclei('N')
+        nuclei(HETNUC)
 
-        for name in self.runs:
+        for name in models:
             # Create the run.
             run.create(name, 'mf')
 
             # Load the sequence.
-            sequence.read(name, 'noe.600.out')
+            sequence.read(name, SEQUENCE)
 
             # Load the PDB file.
             if not local_tm:
-                pdb(name, '1F3Y.pdb')
+                pdb(name, PDB_FILE)
 
             # Load the relaxation data.
-            relax_data.read(name, 'R1', '600', 599.719 * 1e6, 'r1.600.out')
-            relax_data.read(name, 'R2', '600', 599.719 * 1e6, 'r2.600.out')
-            relax_data.read(name, 'NOE', '600', 599.719 * 1e6, 'noe.600.out')
-            relax_data.read(name, 'R1', '500', 500.208 * 1e6, 'r1.500.out')
-            relax_data.read(name, 'R2', '500', 500.208 * 1e6, 'r2.500.out')
-            relax_data.read(name, 'NOE', '500', 500.208 * 1e6, 'noe.500.out')
+            for data in RELAX_DATA:
+                relax_data.read(name, data[0], data[1], data[2], data[3])
 
             # Unselect unresolved residues.
-            unselect.read(name, file='unresolved')
+            unselect.read(name, file=UNRES)
 
             # Copy the diffusion tensor from the run 'opt' and prevent it from being minimised.
             if not local_tm:
@@ -535,15 +541,15 @@ class Main:
                 fix(name, 'diff')
 
             # Set the bond length and CSA values.
-            value.set(name, 1.02 * 1e-10, 'bond_length')
-            value.set(name, -172 * 1e-6, 'csa')
+            value.set(name, BOND_LENGTH, 'bond_length')
+            value.set(name, CSA, 'csa')
 
             # Select the model-free model.
             model_free.select_model(run=name, model=name)
 
             # Minimise.
-            grid_search(name, inc=11)
-            minimise('newton', run=name)
+            grid_search(name, inc=GRID_INC)
+            minimise(MIN_ALGOR, run=name)
 
             # Write the results.
             dir = self.base_dir + name
