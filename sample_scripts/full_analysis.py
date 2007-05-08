@@ -510,14 +510,14 @@ class Main:
 
         # Set the run names (also the names of preset model-free models).
         if local_tm:
-            models = LOCAL_TM_MODELS
+            self.runs = LOCAL_TM_MODELS
         else:
-            models = MF_MODELS
+            self.runs = MF_MODELS
 
         # Nuclei type
         nuclei(HETNUC)
 
-        for name in models:
+        for name in self.runs:
             # Create the run.
             run.create(name, 'mf')
 
