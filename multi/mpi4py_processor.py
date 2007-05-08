@@ -24,6 +24,7 @@
 
 # TODO: clone communicators & resize
 # TODO: check exceptions on master
+
 import sys
 import os
 import textwrap
@@ -121,6 +122,7 @@ class Mpi4py_processor(Multi_processor):
 
         # wrap sys.exit to close down mpi before exiting
         sys.exit= exit
+
 
 
     def abort(self):

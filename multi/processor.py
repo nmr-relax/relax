@@ -22,12 +22,146 @@
 #                                                                              #
 ################################################################################
 
+'''  The processor class is the central class in the multi python multiprocessor framework.
+
+     Overview
+     --------
+
+     The framework has two main responsibilities
+
+         1. process management - if needed the processor can create the slave processes it
+            manages if they haven't been created by the operating system. It is also reponsible for
+            reporting exceptions and shutting down the multiprocessor in the face of errors.
+
+         2. sheduling commands on the slave processors via an interprocess communication fabric (MPI,
+            PVM, threads etc) and processing returned text and result
+            commands
+
+
+     Using the processor framework
+     -----------------------------
+
+     users of the processor framework will typically use the following methodoloy:
+
+         1. at application startup determine the name of the required processor implimentation a
+            and  the number of slave processors requested
+         2. create an Application_callback object
+         3. dynamically load a processor implimentation using the name of the processor and the
+            number of required slave processors using
+
+            >>>
+            processor = Processor.load_multiprocessor(relax_instance.multiprocessor_type,
+                              callbacks, processor_size=relax_instance.n_processors)
+         4. call run on the processor instance resturned above and handle all Exceptions
+         5. after calling run the processor will call back to Application_callback.init_master from
+            which you should call you main program (Application_callback defaults to
+            self.master.run())
+         5. once in the main program you should call processor.add_to_queue with a series of
+            multi.Slave_command objects you wish to be run across the slave processor pool and then
+            call processor.run_queue to actually execute the commands remotely while blocking.
+            >>>
+            example here...
+
+         6. processor.Slave_commands will then run remotely on the slaves and any thrown exceptions
+            and processor.result_commands queued to processor.return_object will be returned to the
+            master processor and handled or executed. The slave processors also provide facilities
+            for capturing the stderr and stdout streams and returning their contents as strings for
+            display on the masters stout and stderr streams (***more**?)
+
+    Extending the processor framework with a new interprocess communication fabric
+    ------------------------------------------------------------------------------
+
+     The processor class acts as a base class that defines all the commands that a processor
+     implimenting a new inter processo communication fabric needs. All that is required is to
+     impliment a subclass of processor providing the required methods (of course as python provides
+     dynamic typing and polymorphism 'duck typing' you can always impliment a class with the same
+     set of method and it will also work). Currnently processor classes are loaded from the
+     processor module and are modules with names of the form:
+     >>> multi.<type>_processor.<Type>_processor
+
+     where <Type> is the name of the processor with the correct capitalisation e.g.
+
+     >>>
+     processor_name =  'mpi4py'
+     callback = My_application-callback()
+     proccesor_size=6
+     processor.load_multiprocessor(processor_name, callback, processor_size):
+
+     will load multi.mpi4py_processor.Mpi4py_Processor
+
+     todo
+     ----
+
+     1. there is no ability of the processor to request command line arguments
+     2. the processor can't currently be loaded from somewhere other than the multi directory
+
+'''
+
+def import_module(module_path, verbose=False):
+    ''' import the python module named by module_path
+
+        @type module_path: a string containing a dot separated module path
+        @param module_path: a module path in python dot separated format
+                            note: this currently doesn't support relative module
+                            paths as defined by pep328 and python 2.5
+
+        @type verbose: Boolean
+        @param verbose: whether to report sucesses and failures for debugging
+
+        @rtype:     list of class module instances or None
+        @return:    the module path as a list of module instances or None
+                    if the module path cannot be found in the python path
+
+        '''
+
+    result = None
+
+    #try:
+    module = __import__(module_path,globals(),  locals(), [])
+    if verbose:
+        print 'loaded module %s' % module_path
+    #except Exception, e:
+    #    if verbose:
+    #        print 'failed to load module_path %s' % module_path
+    #        print 'exception:',e
+
+    #FIXME: needs more failure checking
+    if module != None:
+        result = [module]
+        components = module_path.split('.')
+        for component in components[1:]:
+            module = getattr(module, component)
+            result.append(module)
+    return result
+
+#FIXME: mode not required should be an instance variable of relax?
+#FIXME error checking for if module require not found
+#FIXME move module loading to processor
+#FIXME module loading code needs to be in a util module
+def load_multiprocessor(processor_name, callback, processor_size):
+
+    processor_name =  processor_name + '_processor'
+    class_name= processor_name[0].upper() + processor_name[1:]
+    module_path = '.'.join(('multi',processor_name))
+
+
+    modules = import_module(module_path)
+    #print modules
+
+    if hasattr(modules[-1],class_name):
+        clazz =  getattr(modules[-1], class_name)
+    else:
+        raise Exception("can't load class %s from module %s" % (class_name,module_path))
+
+    object = clazz(callback=callback,processor_size=processor_size)
+    return object
 # FIXME better  requirement of inherited commands
 # TODO: check exceptiosn on master
 import time,datetime,math,sys,os
 import traceback,textwrap
 from  multi.prependStringIO import PrependStringIO,PrependOut
 
+#FIXME: move elsewhere
 def traceit(frame, event, arg):
     import linecache
     if event == "line":
@@ -65,23 +199,36 @@ def print_file_lineno(range=xrange(1,2)):
         f.close()
 
 class Application_callback(object):
-
+    ''' call backs provided to the host application by the multi processor framework. This class
+        allows for independance from the host class/application.
+    '''
     def __init__(self,master):
+        '''  initialise the callback interface
+             @type master: object
+             @param master: the data for the host application. In the default implimentation this is
+                            an object we call methods on but it could be anything...
+        '''
         self.master=master
         self.init_master = self.default_init_master
         self.handle_exception= self.default_handle_exception
 
     def default_init_master(self,processor):
+        ''' start the main loop of the host application.
+
+             the processor framework
+        '''
         self.master.run()
 
     def default_handle_exception(self,processor,exception):
+        ''' handle an exception rased int eh processor framework'''
         #TODO: could do with flag to force __stdout__ vs  stdout
         traceback.print_exc(file=sys.__stdout__)
         processor.abort()
 
 
 def raise_unimplimented(method):
-    raise NotImplementedError("Attempt to invoke unimplemented abstract method %s") % method.__name__
+    msg = "Attempt to invoke unimplemented abstract method %s"
+    raise NotImplementedError(msg % method.__name__)
 
 #requires 2.4 decorators@abstract
 #def abstract(f):
@@ -103,7 +250,7 @@ class Processor(object):
 
         self.setup_stdio_capture(stdio_capture)
 
-
+    load_multiprocessor = staticmethod(load_multiprocessor)
 
     def add_to_queue(self,command,memo=None):
          raise_unimplimented(self.add_to_queue)
