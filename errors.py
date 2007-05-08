@@ -42,7 +42,7 @@ class RelaxErrors:
             object = getattr(self, name)
 
             # Skip over all non error class objects.
-            if not (isinstance(object, ClassType) or isinstance(object, type(type))) or not match('Relax', name):
+            if type(object) != ClassType or not match('Relax', name):
                 continue
 
             # Add the top level relax class:
@@ -676,7 +676,7 @@ class RelaxWarnings:
             object = getattr(self, name)
 
             # Skip over all non-warning class objects.
-            if not (isinstance(object, ClassType) or isinstance(object, type(type))) or not match('Relax', name):
+            if type(object) != ClassType or not match('Relax', name):
                 continue
 
             # Place the warnings into __builtin__
