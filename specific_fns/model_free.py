@@ -2383,7 +2383,11 @@ class Model_free(Common_functions):
 
             if match('^[Gg]rid', min_algor) and self.param_set == 'diff' :
                 processors = self.relax.processor.processor_size()
+
                 full_grid_info = Grid_info(min_options)
+                # TODO: use processsor .grainyness to divide task, add a function to processor to
+                # get suggested grains
+                # sub_grid_list = full_grid_info.sub_divide(self.relax.processor.processor_size()*self.relax.processor.grainyness)
                 sub_grid_list = full_grid_info.sub_divide(self.relax.processor.processor_size())
                 if constraints:
                     super_grid_memo = MF_super_grid_memo(model_free=self,index=index,sim_index=sim_index,run=self.run,param_set=self.param_set,

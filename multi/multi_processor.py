@@ -250,7 +250,7 @@ class Multi_processor(Processor):
         lqueue=copy(queue)
         result = []
         processors = self.processor_size()
-        chunks = processors * self.chunkyness
+        chunks = processors * self.grainyness
         chunk_size = int(math.floor(float(len(queue)) / float(chunks)))
 
         if chunk_size < 1:
