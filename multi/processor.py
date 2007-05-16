@@ -1,4 +1,4 @@
-ed################################################################################
+################################################################################
 #                                                                              #
 # Copyright (C) 2007  Gary S Thompson (see https://gna.org/users/varioustoxins #
 #                                      for contact details)                    #
@@ -22,78 +22,77 @@ ed##############################################################################
 #                                                                              #
 ################################################################################
 
-'''  The processor class is the central class in the multi python multiprocessor framework.
+'''
+The processor class is the central class in the multi python multiprocessor framework.
 
-     Overview
-     --------
+Overview
+========
 
-     The framework has two main responsibilities
+The framework has two main responsibilities
 
-         1. process management - if needed the processor can create the slave processes it
-            manages if they haven't been created by the operating system. It is also reponsible for
-            reporting exceptions and shutting down the multiprocessor in the face of errors.
+     1. process management - if needed the processor can create the slave processes it
+        manages if they haven't been created by the operating system. It is also reponsible for
+        reporting exceptions and shutting down the multiprocessor in the face of errors.
+     2. sheduling commands on the slave processors via an interprocess communication fabric (MPI,
+        PVM, threads etc) and processing returned text and result
+        commands
 
-         2. sheduling commands on the slave processors via an interprocess communication fabric (MPI,
-            PVM, threads etc) and processing returned text and result
-            commands
 
+Using the processor framework
+=============================
 
-     Using the processor framework
-     -----------------------------
+users of the processor framework will typically use the following methodoloy:
 
-     users of the processor framework will typically use the following methodoloy:
+     1. at application startup determine the name of the required processor implimentation a
+        and  the number of slave processors requested
 
-         1. at application startup determine the name of the required processor implimentation a
-            and  the number of slave processors requested
-         2. create an Application_callback object
-         3. dynamically load a processor implimentation using the name of the processor and the
-            number of required slave processors using
+     2. create an Application_callback object
 
-            >>>
-            processor = Processor.load_multiprocessor(relax_instance.multiprocessor_type,
-                              callbacks, processor_size=relax_instance.n_processors)
-         4. call run on the processor instance resturned above and handle all Exceptions
-         5. after calling run the processor will call back to Application_callback.init_master from
-            which you should call you main program (Application_callback defaults to
-            self.master.run())
-         5. once in the main program you should call processor.add_to_queue with a series of
-            multi.Slave_command objects you wish to be run across the slave processor pool and then
-            call processor.run_queue to actually execute the commands remotely while blocking.
-            >>>
-            example here...
+     3. dynamically load a processor implimentation using the name of the processor and the
+        number of required slave processors using::
+        processor = Processor.load_multiprocessor(relax_instance.multiprocessor_type,
+                    callbacks, processor_size=relax_instance.n_processors)
+     4. call run on the processor instance resturned above and handle all Exceptions
+     5. after calling run the processor will call back to Application_callback.init_master from
+        which you should call you main program (Application_callback defaults to
+        self.master.run())
+     5. once in the main program you should call processor.add_to_queue with a series of
+        multi.Slave_command objects you wish to be run across the slave processor pool and then
+        call processor.run_queue to actually execute the commands remotely while blocking.
+        >>>
+        example here...
+     6. processor.Slave_commands will then run remotely on the slaves and any thrown exceptions
+        and processor.result_commands queued to processor.return_object will be returned to the
+        master processor and handled or executed. The slave processors also provide facilities
+        for capturing the stderr and stdout streams and returning their contents as strings for
+        display on the masters stout and stderr streams (***more**?)
 
-         6. processor.Slave_commands will then run remotely on the slaves and any thrown exceptions
-            and processor.result_commands queued to processor.return_object will be returned to the
-            master processor and handled or executed. The slave processors also provide facilities
-            for capturing the stderr and stdout streams and returning their contents as strings for
-            display on the masters stout and stderr streams (***more**?)
+Extending the processor framework with a new interprocess communication fabric
+==============================================================================
 
-    Extending the processor framework with a new interprocess communication fabric
-    ------------------------------------------------------------------------------
+The processor class acts as a base class that defines all the commands that a processor
+implimenting a new inter processo communication fabric needs. All that is required is to
+impliment a subclass of processor providing the required methods (of course as python provides
+dynamic typing and polymorphism 'duck typing' you can always impliment a class with the same
+set of method and it will also work). Currnently processor classes are loaded from the
+processor module and are modules with names of the form:
+>>> multi.<type>_processor.<Type>_processor
 
-     The processor class acts as a base class that defines all the commands that a processor
-     implimenting a new inter processo communication fabric needs. All that is required is to
-     impliment a subclass of processor providing the required methods (of course as python provides
-     dynamic typing and polymorphism 'duck typing' you can always impliment a class with the same
-     set of method and it will also work). Currnently processor classes are loaded from the
-     processor module and are modules with names of the form:
-     >>> multi.<type>_processor.<Type>_processor
+where <Type> is the name of the processor with the correct capitalisation e.g.
 
-     where <Type> is the name of the processor with the correct capitalisation e.g.
+>>>
+processor_name =  'mpi4py'
+callback = My_application-callback()
+proccesor_size=6
+processor.load_multiprocessor(processor_name, callback, processor_size)
 
-     >>>
-     processor_name =  'mpi4py'
-     callback = My_application-callback()
-     proccesor_size=6
-     processor.load_multiprocessor(processor_name, callback, processor_size):
+will load multi.mpi4py_processor.Mpi4py_Processor
 
-     will load multi.mpi4py_processor.Mpi4py_Processor
+todo
+====
 
-     todo
-     ----
-
-     1. there is no ability of the processor to request command line arguments
-     2. the processor can't currently be loaded from somewhere other than the multi directory
+    1. there is no ability of the processor to request command line arguments
+    2. the processor can't currently be loaded from somewhere other than the multi directory
 
 '''
 #FIXME: better  requirement of inherited commands
@@ -221,14 +220,13 @@ class Application_callback(object):
     ''' call backs provided to the host application by the multi processor framework. This class
         allows for independance from the host class/application.
 
-        design note
-        -----------
-
-        the callbacks are defined as two attributes self.init_master and self.handle_exception as
-        handle_exception can be null which results in the use of the processors default error
-        handling code. Note, however, thata class with the equivalent methods would also works as
-        python effectivley handles methods as attributes of a class. The signatures for the callback
-        methods are documented by the default methods default_init_master & default_handle_exception
+        @note: B{The logic behind the design} the callbacks are defined as two attributes
+               self.init_master and self.handle_exception as handle_exception can be null (which
+               is used to request the use of the processors default error handling code). Note,
+               however, that a class with the equivalent methods would also works as python
+               effectivley handles methods as attributes of a class. The signatures for the callback
+               methods are documented by the default methods default_init_master &
+               default_handle_exception
     '''
     def __init__(self,master):
         '''  initialise the callback interface
@@ -397,9 +395,9 @@ class Processor(object):
                          generated by the command submitted.
             @type memo: a sub class of Memo
 
-            @see multi.processor.Slave_command
-            @see multi.processor.Result_command
-            @see multi.processor.Memo
+            @see: multi.processor.Slave_command
+            @see: multi.processor.Result_command
+            @see: multi.processor.Memo
 
         '''
         raise_unimplimented(self.add_to_queue)
@@ -419,7 +417,7 @@ class Processor(object):
             been completed. It does remote execution setup and teardown round either side of a call
             to Application_callback.init_master
 
-            @see multi.processor.Application_callback
+            @see: multi.processor.Application_callback
         '''
         raise_unimplimented(self.run)
 
@@ -429,8 +427,8 @@ class Processor(object):
             @param result: a result to be returned to the master processor, if the
             @type result: a Result_string, Result_command or an Exception
 
-            @see multi.processor.Result_string
-            @see multi.processor.Resulf_command
+            @see: multi.processor.Result_string
+            @see: multi.processor.Resulf_command
         '''
         raise_unimplimented(self.return_object)
 
@@ -448,7 +446,7 @@ class Processor(object):
         raise_unimplimented(self.get_name)
 
     def abort(self):
-        ''' shutdown the multi prcoessor in exceptional conditions - designed for overriding
+        ''' shutdown the multi processor in exceptional conditions - designed for overriding
 
             this method is called after an exception from the master or slave has been raised and
             prcoessed and is reposnible for the shutdown of the multi prcocessor fabric and
@@ -461,9 +459,9 @@ class Processor(object):
 
             The default action is to call sys.exit()
 
-            @see multi.processor.Application_callback
-            @see multi.mpi4py_processor.Mpi4py_processor.abort()
-            @see mpi4py.MPI.COMM_WORLD.Abort()
+            @see: multi.processor.Application_callback
+            @see: multi.mpi4py_processor.Mpi4py_processor.abort()
+            @see: mpi4py.MPI.COMM_WORLD.Abort()
         '''
         sys.exit()
 
@@ -479,7 +477,7 @@ class Processor(object):
             the rank of the processor should be a numbe between 0 and n where n is the number of
             slave proessors, the rank of 0 is reserved for the master processor.
 
-            @return the rank of the prcoessor
+            @return: the rank of the prcoessor
             @rtype: integer
 
         '''
@@ -499,7 +497,7 @@ class Processor(object):
             the string should be suitable for display at application startup and should be less than
             100 characters wide. A good example is the string returned by mpi4py_prcoessor:
 
-                MPI running via mpi4py with <n> slave processors & 1 master, mpi version = <x>.<y>
+            >>>MPI running via mpi4py with <n> slave processors & 1 master, mpi version = <x>.<y>
 
 
             @return: a stringdecribing the multi processor
@@ -550,11 +548,11 @@ class Processor(object):
             @param start_time: the time the application started in seconds since the epoch
             @type start_time: float
 
-            @param start_time: the time the application ended in seconds since the epoch
-            @type start_time: float
+            @param end_time: the time the application ended in seconds since the epoch
+            @type end_time: float
 
             # TODO: check my format is correctr
-            @return the time difference in the format hours:minutes:seconds
+            @return: the time difference in the format hours:minutes:seconds
             @rtype: string
 
         '''
@@ -619,9 +617,9 @@ class Processor(object):
                    calling capture_stdio all it does is save replacements to self.stdio_capture
 
             @see: multi.prependStringIO
-            @see multi.processor.restore_stdio
-            @see multi.processor.capture_stdio
-            @see sys
+            @see: multi.processor.restore_stdio
+            @see: multi.processor.capture_stdio
+            @see: sys
 
 
             @todo: remove useless stdio_capture parameter
@@ -631,7 +629,7 @@ class Processor(object):
         pre_strings=('','')
 
         if stdio_capture==None:
-            pre_strings = self.get_stdio_pre_strings(rank)
+            pre_strings = self.get_stdio_pre_strings()
             stdio_capture=self.std_stdio_capture(pre_strings=pre_strings)
 
         self.stdio_capture=stdio_capture
@@ -697,22 +695,43 @@ class Processor(object):
         sys.stderr = self.stdio_capture[1]
 
     def get_stdio_capture(self):
-        ''' return the file like objects currently replacing sys.stdout and sys.stderr
+        ''' get the file like objects currently replacing sys.stdout and sys.stderr
+
+            @return: the file like objects currently replacing sys.stdout and sys.stderr
+            @rtype: a tuple of two file like objects replacing sys.stdout and sys.stderr
         '''
 
         return self.stdio_capture
 
     def restore_stdio(self):
+        ''' restore sys.stdout and sys.stderr to the system defaults
+
+            @note: sys.stdout and sys.stderr are replaced with sys.__stdout__ ans sys.__stderr__
+        '''
+
         sys.stdout=sys.__stdout__
         sys.stderr=sys.__stderr__
 
-    def get_stdio_pre_strings(self,rank=0):
+    def get_stdio_pre_strings(self):
+        ''' get the strings used prepend stdout and stderr dependant on the current rank
+            for processors with only one slave the result should be ('','') - designed for
+            overriding
+
+            @note: the defaults are ('MM X]',MM E]') and  ('NN S]' , NN E]') for masters and slaves
+                   respectivley with NN replaced by the rank of the prcoessor
+
+            @return: a list of two strings for stdout and stderr respectivley
+            @rtype: list of two strings
+        '''
+
+
         pre_string =''
         stdout_string = ''
         stderr_string = ''
+        rank =self.rank()
 
         if self.processor_size() > 1 and rank > 0:
-            pre_string = self.rank_format_string() % self.rank()
+            pre_string = self.rank_format_string() % rank
         elif self.processor_size() > 1 and rank == 0:
             pre_string = 'M'*self.rank_format_string_width()
 
@@ -722,67 +741,254 @@ class Processor(object):
 
         return (stdout_string,stderr_string)
 
+# TODO currently uni_processor doesn't have a prcoess_result should this be integrated
 class Result(object):
+    ''' a basic result object returned from a alave processor via return_object
+
+        this a very basic result and shouldn't be overriden unless you are also modifying the
+        process_result method in all the processors in the framework (i.e. currently for
+        implimentors only). Most users should override Result_command
+
+        this result basically acts as stroage for the following fields completed,memo_id,
+        processor_rank
+
+        results should only be created on slave processors
+
+        @see: multi.processor.return_object
+        @see: multi.processor.process_result
+        @see: multi.prcoessor.Result_command
+
+    '''
+
     def __init__(self,processor,completed):
+        ''' initialise a result
+
+            this object is designed for subclassing and __init__ should be called via the super()
+            function
+
+            result_command objects
+
+            @param processor: processor the processor instance we are running in
+            @type processor: an instance of prcoessor
+
+            @param completed: a flag used in batching result returns to indicate that the sequence of batched result
+                              commands has completed, the flag should be set by slave_commands. The
+                              value should be the value passed to a Slave_commands run method if it
+                              is the final result being returned otherwise it should be False.
+            @type completed: boolean
+
+            @note: the requirement for the user to know about completed will hopefully disappear
+                   with some slight of hand in the Slave_command and it may even disappear
+                   completely
+
+
+            @see: multi.processor.Processor
+        '''
+        #TODO: assert on slave if processor_size > 1
+        #TODO: check if a completed command will add a noticeable overhead (I doubt it will)
         self.completed=completed
+        '''a flag used in batching result returns to indicate that the sequence of batched result
+           commands has completed. This is an optimisation to prevent the sending an extra batched
+           result queue completion result being sent, it may be an over early optimisation '''
         self.memo_id=None
+        '''the memo_id of the Slave_command currently being processed on this processor, this value
+           is set by the return_object method to the current Slave_commands memo_id'''
         self.rank = processor.rank()
+        '''the rank of the current processor, used in command sheduling on the master prcoessor'''
 
-
+# TODO: make this a result_command
 class Result_string(Result):
-    #FIXME move result up a level
+    ''' A simple result from a slave containing a result, the processor will print this string via
+        sys__stdout__
+
+        @note: this may become a result_command so as to simpliy things in the end
+    '''
+    #TODO: correct order of parameters should be string,processor,completed
     def __init__(self,processor,string,completed):
+        '''initialiser
+
+            @param string: a string to return the master processor for output to stdout (note the
+                           master may split the string into compoenets for stdout and stderr
+                           depending on the prefix string. This class is not really designed for
+                           subclassing.
+
+            @type string: a string
+
+            @see: multi.processor.Processor.std_stdio_capture
+            #TODO: check inherited parameters are documented
+
+        '''
         super(Result_string,self).__init__(processor=processor,completed=completed)
         self.string=string
 
 
 class Result_command(Result):
+    ''' A general result command - designed to be subclassed by users
+
+        This is a general result command from a Slave command that will have its run() method called
+        on return to the master processor
+
+        @see: multi.processor.Slave_command
+
+    '''
+
     def __init__(self,processor,completed,memo_id=None):
+        #TODO: check this method is documnted by its parent
         super(Result_command,self).__init__(processor=processor,completed=completed)
         self.memo_id=memo_id
 
 
     def run(self,processor,memo):
+        ''' the run method of the result command
+
+            this method will be called when the result command is processed by the master and should
+            carry out any actions the slave command needs carried out on the master (e.g. save or
+            register results).
+
+            @param processor: The master processor that queued the original Slave_command
+            @type processor: an instance of Processor
+
+            @param memo: a memo that was registered when the original slave command was placed on
+                         the queue. This provides local storage on the master
+            @type memo: an instance of Memo or None
+
+            @see: multi.processor.Processsor
+            @see: multi.processor.Slave_command
+            @see: multi.prcoessor.Memo
+
+
+
+        '''
         pass
 
 class Null_result_command(Result_command):
+    ''' an empty result command
+
+        This command should be returned from slave_command if no other Result_command  is returned.
+        This allows the queue processor to register that the slave processor has completed its
+        processing and schedule new Slave-commands to it .
+    '''
     def __init__(self,processor,completed=True):
         super(Null_result_command,self).__init__(processor=processor,completed=completed)
 
 
 
 class Result_exception(Result_command):
+    ''' return and raise an exception from the salve processor
+    '''
     def __init__(self,processor,exception,completed=True):
+        ''' initialise the result command with an exception
+
+            @param exception: an exception that was raised on the slave processor (note the real
+                              exception will be warapped in a Capturing_exception
+            @type exception: an exception most probably wrapped in a capturing exception
+        '''
         super(Result_exception,self).__init__(processor=processor,completed=completed)
         self.exception=exception
 
-    def run(self,processor,memos):
+    def run(self,processor,memo):
+        ''' raise the exception from the Slave_processor
+        '''
         raise self.exception
 
 
 class Slave_command(object):
+    ''' a command to executed remotely on the slave processor -designed to be subclassed by users
+
+        the command should be queued with the command queue using the add_to_queue command of the
+        master and B{must} return at least one Result_command even if it is a prcoessor.NULL_RESULT.
+        results are returned from the Slave_command to the master prcoessor uuing the return_object
+        method of the prcoessor passed to the command. Any exceptions raised will be caught wrapped
+        and returned to the master prcoessor by the slave processor.
+
+        @note: good examples of subclassing a slave command include
+               multi.commands.MF_minimise_command and multi.commands.Get_name_command
+
+        @see: multi.commands.MF_minimise_command
+        @see: multi.commands.Get_name_command
+
+    '''
+
     def __init__(self):
         self.memo_id=None
 
     def set_memo_id(self,memo):
+        '''called by the master processor to remember this Slave_commands memo on the master
+           processor
+
+            @param memo: the memo to remember, memos are remembered by getting the memo_id of the
+                         memo
+        '''
         if memo != None:
             self.memo_id = memo.memo_id()
         else:
             self.memo_id=None
 
     def run(self,processor,completed):
+        ''' run the slave command on the slave processor. The run command B{must} return at least
+            one Result_command even if it is a processor.NULL_RESULT.  results are returned from the
+            Slave_command to the master prcoessor uuing the return_object method of the processor
+            passed to the command. Any exceptions raised will be caught wrapped and returned to the
+            master processor by the slave processor.
+
+            @param processor: The slave prcoessor the command is running on. results from the
+                              command are returned via calls to processor.return_object
+            @type processor: an instance of Processor
+
+            @param completed: The  flag used in batching result returns to indicate that the  a
+                              sequence of batched result commands has completed. This cvlaue should
+                              be returned via the last result object retuned by this method or
+                              methods it calls. All other Result_commands should be initialised with
+                              completed=False. This is an optimisation to prevent the sending an
+                              extra batched result queue completion result command being sent, it
+                              may be an over early optimisation.
+            @type completed: Boolean
+
+
+        '''
         pass
 
 
 
 class Memo(object):
+    ''' a memo of objects and data that a slave_command want to provide to its results-commands upon
+        their return to the master processor - designed for overring by users'''
+
     def memo_id(self):
+        ''' get the unique id for the memo, currently this is the objects unique python id (note
+            these ids can be recycled once the memo has been garbage collected it cannot be used as
+            a unique longterm hash)
+
+            @return: a unique id for this memo
+            @rtype: inetegr
+        '''
         return id(self)
 
 
 
 class Capturing_exception(Exception):
+    ''' a wrapper exception for an exception captured on a slave processor
+
+        the wrapper will remeber the stack trace on the remote machine and when raised and caught
+        has a string that includes the remote stack trace, which will be displayed along with the
+        stack trace on the master.
+
+    '''
     def __init__(self,exc_info=None, rank='unknown', name='unknown'):
+        '''initialise the wrapping exception
+
+           @param exc_info: exception information as produced by sys.exc_info()
+           @type exc_info: a tuple as prcouced by sys.exc_info()
+
+           @todo: would it be easier to pass a processor here
+           @param rank: The rank of the processor on which the xception was raised
+           @type rank: an integer > 1
+
+           @param name: The name of the processor on which the exception was raised as returned by
+                        processor.get_name()
+           @type name:  a string
+        '''
+
         Exception.__init__(self)
         self.rank=rank
         self.name=name
@@ -801,6 +1007,10 @@ class Capturing_exception(Exception):
         self.traceback = traceback.format_tb(exception_traceback)
 
     def __str__(self):
+        '''get the string describing this exception
+            @return: The string describing this exception
+            @rtype: a string
+        '''
         message ='''
 
                      %s
@@ -817,7 +1027,7 @@ class Capturing_exception(Exception):
 
                  '''
         message = textwrap.dedent(message)
-        result =  message % ('-'*120, ''.join(self.traceback) ,self.rank, self.name, self.exception_name,
+        result =  message % ('-'*120, ''.join(self.traceback) ,self. rank, self.name, self.exception_name,
                              self.exception_string, '-'*120)
         return result
 
