@@ -2361,7 +2361,7 @@ class Mf:
                 # Diffusion parameters and model-free parameters {S2f, S2s, ts}.
                 if data.s2f_i != None and data.tf_i == None and data.s2s_i != None and data.ts_i != None:
                     # Equation.
-                    data.calc_jw_comps =    calc_diff_S2f_S2s_ts_jw_comps
+                    data.calc_jw_comps =    calc_S2f_S2s_ts_jw_comps
                     data.calc_jw =          calc_S2f_S2s_ts_jw
 
                     # Gradient.
@@ -2483,7 +2483,7 @@ class Mf:
                 # Diffusion parameters and model-free parameters {S2f, tf, S2s, ts}.
                 elif data.s2f_i != None and data.tf_i != None and data.s2s_i != None and data.ts_i != None:
                     # Equation.
-                    data.calc_jw_comps =    calc_diff_S2f_tf_S2s_ts_jw_comps
+                    data.calc_jw_comps =    calc_S2f_tf_S2s_ts_jw_comps
                     data.calc_jw =          calc_S2f_tf_S2s_ts_jw
 
                     # Gradient.
