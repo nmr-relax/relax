@@ -76,13 +76,12 @@ class Jw:
     def calc_integrity(self):
         
         # Correct jw values:
-        j0 = [1.1572932929675908e-10, 1.0730217796621087e-10]
-        jwh = [1.5598167512718012e-12, 2.9480536599037041e-12]
-        jwx = [5.2475572036231835e-12, 4.6479921863578077e-12]
+        j0 = [1.89952400461e-10, 1.76120490832e-10]
+        jwx = [8.61308100067e-12, 7.62898461858e-12]
+        jwh = [1.55981675127e-12, 2.9480536599e-12]
 
         # Loop over residues.
         for index,residue in enumerate(relax_data_store.res[self.run]):
-            
             # Residues -2 and -1 have data.
             if index == 0 or index == 1:
                 if not relax_data_store.res[self.run][index].select:

@@ -48,8 +48,9 @@ class Mapping:
         self.data.dip_const_func = 0.0
         self.data.csa_const_func = zeros(1, Float64)
 
-        # Heteronuclear frequency.
-        frqX = 2.0 * pi * frq
+        # Nuclear frequencies.
+        frq = frq * 2 * pi
+        frqX = frq * self.data.gx / self.data.gh
 
         # Calculate the five frequencies which cause R1, R2, and NOE relaxation.
         self.data.frq_list = zeros((1, 5), Float64)
