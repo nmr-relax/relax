@@ -67,9 +67,9 @@ class Jw:
     def calc_integrity(self):
         
         # Correct jw values:
-        j0 = [1.89952400461e-10, 1.76120490832e-10]
-        jwx = [8.61308100067e-12, 7.62898461858e-12]
-        jwh = [1.55981675127e-12, 2.9480536599e-12]
+        j0 = [4.0958793960056238e-09, 3.7976266046729745e-09]
+        jwx = [1.85720953886864e-10, 1.6450121628270092e-10]
+        jwh = [1.5598167512718012e-12, 2.9480536599037041e-12]
 
         # Loop over residues.
         for index,residue in enumerate(self.relax.data.res[self.run]):

@@ -55,11 +55,10 @@ class Mapping:
         # Calculate the five frequencies which cause R1, R2, and NOE relaxation.
         self.data.frq_list = zeros((1, 5), Float64)
         self.data.frq_list[0, 1] = frqX
-        self.data.frq_list[0, 1] = frq - frqX
-        self.data.frq_list[0, 1] = frq
-        self.data.frq_list[0, 1] = frq + frqX
+        self.data.frq_list[0, 2] = frq - frqX
+        self.data.frq_list[0, 3] = frq
+        self.data.frq_list[0, 4] = frq + frqX
         self.data.frq_sqrd_list = self.data.frq_list ** 2
-
 
 
     def calc_sigma_noe(self, noe, r1):
