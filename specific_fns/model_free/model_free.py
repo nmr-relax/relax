@@ -2493,9 +2493,10 @@ class Model_free(Common_functions):
         """Function for updating various data structures depending on the model selected."""
 
         # Test that no diffusion tensor exists for the run if local tm is a parameter in the model.
-        for param in params:
-            if param == 'local_tm' and relax_data_store.diff.has_key(run):
-                raise RelaxTensorError, run
+        if params:
+            for param in params:
+                if param == 'local_tm' and relax_data_store.diff.has_key(run):
+                    raise RelaxTensorError, run
 
         # Loop over the sequence.
         for i in xrange(len(relax_data_store.res[run])):
@@ -2507,9 +2508,12 @@ class Model_free(Common_functions):
             self.data_init(relax_data_store.res[run][i])
 
             # Model-free model, equation, and parameter types.
-            relax_data_store.res[run][i].model = model
-            relax_data_store.res[run][i].equation = equation
-            relax_data_store.res[run][i].params = params
+            if model:
+                relax_data_store.res[run][i].model = model
+            if equation:
+                relax_data_store.res[run][i].equation = equation
+            if params:
+                relax_data_store.res[run][i].params = params
 
 
     def model_statistics(self, run=None, instance=None, global_stats=None):
@@ -2951,9 +2955,10 @@ class Model_free(Common_functions):
             params = eval(self.file_line[self.col['params']])
 
             # Fix for the 1.2 relax versions whereby the parameter 'tm' was renamed to 'local_tm' (which occurred in version 1.2.5).
-            for i in xrange(len(params)):
-                if params[i] == 'tm':
-                    params[i] = 'local_tm'
+            if params:
+                for i in xrange(len(params)):
+                    if params[i] == 'tm':
+                        params[i] = 'local_tm'
 
             # Set up the model-free model.
             if model and equation:
