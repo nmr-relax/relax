@@ -1032,7 +1032,7 @@ class Model_free(Common_functions):
             #    continue
 
             # No params.
-            if not hasattr(relax_data_store.res[self.run][i], 'params'):
+            if not hasattr(relax_data_store.res[self.run][i], 'params') or not relax_data_store.res[self.run][i].params:
                 continue
 
             # Local tm.
