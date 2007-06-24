@@ -132,6 +132,8 @@ MIN_ALGOR = 'newton'
 # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
 MC_NUM = 200
 
+# Automatic looping over all rounds until convergence.
+CONV_LOOP = 0
 
 
 class Main:
@@ -163,84 +165,89 @@ class Main:
         #############################
 
         elif DIFF_MODEL == 'sphere' or DIFF_MODEL == 'prolate' or DIFF_MODEL == 'oblate' or DIFF_MODEL == 'ellipsoid':
-            # Determine which round of optimisation to do (init, round_1, round_2, etc).
-            self.round = self.determine_rnd(model=DIFF_MODEL)
+            # Loop until convergence if CONV_LOOP is set, otherwise just loop once.
+            # This looping could be made much cleaner by removing the dependence on the determine_rnd() function.
+            while 1:
+                # Determine which round of optimisation to do (init, round_1, round_2, etc).
+                self.round = self.determine_rnd(model=DIFF_MODEL)
+
+                # Inital round of optimisation for diffusion models MII to MV.
+                if self.round == 0:
+                    # Base directory to place files into.
+                    self.base_dir = DIFF_MODEL + '/init/'
+
+                    # Run name.
+                    name = DIFF_MODEL
+
+                    # Create the run.
+                    run.create(name, 'mf')
+
+                    # Load the local tm diffusion model MI results.
+                    results.read(run=name, file='results', dir='local_tm/aic')
+
+                    # Remove the tm parameter.
+                    model_free.remove_tm(run=name)
+
+                    # Load the PDB file.
+                    pdb(name, PDB_FILE)
+
+                    # Add an arbitrary diffusion tensor which will be optimised.
+                    if DIFF_MODEL == 'sphere':
+                        diffusion_tensor.init(name, 10e-9, fixed=0)
+                        inc = 11
+                    elif DIFF_MODEL == 'prolate':
+                        diffusion_tensor.init(name, (10e-9, 0, 0, 0), spheroid_type='prolate', fixed=0)
+                        inc = 11
+                    elif DIFF_MODEL == 'oblate':
+                        diffusion_tensor.init(name, (10e-9, 0, 0, 0), spheroid_type='oblate', fixed=0)
+                        inc = 11
+                    elif DIFF_MODEL == 'ellipsoid':
+                        diffusion_tensor.init(name, (10e-09, 0, 0, 0, 0, 0), fixed=0)
+                        inc = 6
+
+                    # Minimise just the diffusion tensor.
+                    fix(name, 'all_res')
+                    grid_search(name, inc=inc)
+                    minimise(MIN_ALGOR, run=name)
+
+                    # Write the results.
+                    results.write(run=name, file='results', dir=self.base_dir, force=1)
 
 
-            # Inital round of optimisation for diffusion models MII to MV.
-            if self.round == 0:
-                # Base directory to place files into.
-                self.base_dir = DIFF_MODEL + '/init/'
+                # Normal round of optimisation for diffusion models MII to MV.
+                else:
+                    # Base directory to place files into.
+                    self.base_dir = DIFF_MODEL + '/round_' + `self.round` + '/'
 
-                # Run name.
-                name = DIFF_MODEL
+                    # Load the optimised diffusion tensor from either the previous round.
+                    self.load_tensor()
 
-                # Create the run.
-                run.create(name, 'mf')
+                    # Sequential optimisation of all model-free models (function must be modified to suit).
+                    self.multi_model()
 
-                # Load the local tm diffusion model MI results.
-                results.read(run=name, file='results', dir='local_tm/aic')
+                    # Create the final run (for model selection and final optimisation).
+                    name = 'final'
+                    run.create(name, 'mf')
 
-                # Remove the tm parameter.
-                model_free.remove_tm(run=name)
+                    # Model selection.
+                    self.model_selection(run=name, dir=self.base_dir + 'aic')
 
-                # Load the PDB file.
-                pdb(name, PDB_FILE)
+                    # Final optimisation of all diffusion and model-free parameters.
+                    fix(name, 'all', fixed=0)
 
-                # Add an arbitrary diffusion tensor which will be optimised.
-                if DIFF_MODEL == 'sphere':
-                    diffusion_tensor.init(name, 10e-9, fixed=0)
-                    inc = 11
-                elif DIFF_MODEL == 'prolate':
-                    diffusion_tensor.init(name, (10e-9, 0, 0, 0), spheroid_type='prolate', fixed=0)
-                    inc = 11
-                elif DIFF_MODEL == 'oblate':
-                    diffusion_tensor.init(name, (10e-9, 0, 0, 0), spheroid_type='oblate', fixed=0)
-                    inc = 11
-                elif DIFF_MODEL == 'ellipsoid':
-                    diffusion_tensor.init(name, (10e-09, 0, 0, 0, 0, 0), fixed=0)
-                    inc = 6
+                    # Minimise all parameters.
+                    minimise(MIN_ALGOR, run=name)
 
-                # Minimise just the diffusion tensor.
-                fix(name, 'all_res')
-                grid_search(name, inc=inc)
-                minimise(MIN_ALGOR, run=name)
+                    # Write the results.
+                    dir = self.base_dir + 'opt'
+                    results.write(run=name, file='results', dir=dir, force=1)
 
-                # Write the results.
-                results.write(run=name, file='results', dir=self.base_dir, force=1)
+                    # Test for convergence.
+                    converged = self.convergence(run=name)
 
-
-            # Normal round of optimisation for diffusion models MII to MV.
-            else:
-                # Base directory to place files into.
-                self.base_dir = DIFF_MODEL + '/round_' + `self.round` + '/'
-
-                # Load the optimised diffusion tensor from either the previous round.
-                self.load_tensor()
-
-                # Sequential optimisation of all model-free models (function must be modified to suit).
-                self.multi_model()
-
-                # Create the final run (for model selection and final optimisation).
-                name = 'final'
-                run.create(name, 'mf')
-
-                # Model selection.
-                self.model_selection(run=name, dir=self.base_dir + 'aic')
-
-                # Final optimisation of all diffusion and model-free parameters.
-                fix(name, 'all', fixed=0)
-
-                # Minimise all parameters.
-                minimise(MIN_ALGOR, run=name)
-
-                # Write the results.
-                dir = self.base_dir + 'opt'
-                results.write(run=name, file='results', dir=dir, force=1)
-
-                # Test for convergence.
-                self.convergence(run=name)
-
+                    # Break out of the infinite while loop if automatic looping is not activated or if convergence has occurred.
+                    if converged or not CONV_LOOP:
+                        break
 
 
         # Final run.
@@ -436,8 +443,10 @@ class Main:
         print "\nConvergence:"
         if chi2_converged and models_converged and params_converged:
             print "    [ Yes ]"
+            return 1
         else:
             print "    [ No ]"
+            return 0
 
 
     def determine_rnd(self, model=None):
