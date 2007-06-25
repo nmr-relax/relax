@@ -493,7 +493,9 @@ class Main:
     def load_tensor(self):
         """Function for loading the optimised diffusion tensor."""
 
-        # Create the run for the previous data.
+        # Create the run for the previous data (deleting the old run first if necessary).
+        if relax_data_store.has_key('previous'):
+            run.delete('previous')
         run.create('previous', 'mf')
 
         # Load the optimised diffusion tensor from the initial round.
