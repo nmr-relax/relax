@@ -489,7 +489,7 @@ class Main:
         """Function for loading the optimised diffusion tensor."""
 
         # Create the run for the previous data (deleting the old run first if necessary).
-        if 'previous' in self.relax.data.runs:
+        if 'previous' in self.relax.data.run_names:
             run.delete('previous')
         run.create('previous', 'mf')
 
