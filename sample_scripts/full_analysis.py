@@ -227,6 +227,8 @@ class Main:
 
                     # Create the final run (for model selection and final optimisation).
                     name = 'final'
+                    if name in self.relax.data.run_names:
+                        run.delete(name)
                     run.create(name, 'mf')
 
                     # Model selection.
@@ -530,6 +532,8 @@ class Main:
 
         for name in self.runs:
             # Create the run.
+            if name in self.relax.data.run_names:
+                run.delete(name)
             run.create(name, 'mf')
 
             # Load the sequence.
