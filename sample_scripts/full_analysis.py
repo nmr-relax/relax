@@ -232,6 +232,8 @@ class Main:
 
                     # Create the final run (for model selection and final optimisation).
                     name = 'final'
+                    if relax_data_store.has_key(name):
+                        run.delete(name)
                     run.create(name, 'mf')
 
                     # Model selection.
@@ -535,6 +537,8 @@ class Main:
 
         for name in self.runs:
             # Create the run.
+            if relax_data_store.has_key(name):
+                run.delete(name)
             run.create(name, 'mf')
 
             # Load the sequence.
