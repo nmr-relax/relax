@@ -52,8 +52,8 @@ class Consistency_tests:
         Description
         ~~~~~~~~~~~
 
-        This function will select the relaxation data to use in the consistency tests
-        corresponding to the given frequencies.
+        This function will select the relaxation data to use in the consistency tests corresponding
+        to the given frequencies.
 
 
         Examples
