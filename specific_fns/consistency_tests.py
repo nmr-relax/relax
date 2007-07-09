@@ -184,10 +184,10 @@ class Consistency_tests(Common_functions):
 
         csa:  CSA value.
 
-        orientation: Angle between the 15N-1H vector and the principal axis of the 15N chemical
+        orientation:  Angle between the 15N-1H vector and the principal axis of the 15N chemical
                      shift tensor.
 
-        tc: Correlation time.
+        tc:  Correlation time.
 
         j0:  Spectral density value at 0 MHz.
 
@@ -295,7 +295,7 @@ class Consistency_tests(Common_functions):
     def return_data_name(self, name):
         """
         Consistency testing data type string matching patterns
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         ____________________________________________________________________________________________
         |                       |               |                                                  |
@@ -414,7 +414,7 @@ class Consistency_tests(Common_functions):
     def set(self, run=None, value=None, error=None, param=None, index=None):
         """
         Consistency testing set details
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         In consistency testing, only four values can be set, the bond length, CSA, angle
         Theta and correlation time values.  These must be set prior to the calculation
@@ -440,7 +440,7 @@ class Consistency_tests(Common_functions):
                 # Set 'value' to an empty array.
                 value = []
 
-                # CSA, Bond length Angle Theta and Correlation time.
+                # CSA, Bond length, Angle Theta and Correlation time.
                 value.append(self.default_value('csa'))
                 value.append(self.default_value('r'))
                 value.append(self.default_value('orientation'))
