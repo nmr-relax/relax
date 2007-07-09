@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2004 Edward d'Auvergne                                        #
+# Copyright (C) 2007 Sebastien Morin <sebastien.morin.1 at ulaval.ca>         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,14 +22,14 @@
 ###############################################################################
 
 from Numeric import Float64, zeros
-from math import pi
+from math import pi, cos
 
 from ri_comps import calc_fixed_csa, calc_fixed_dip, comp_csa_const_func, comp_dip_const_func
 
 
-class Mapping:
+class Consistency:
     def __init__(self, frq=None, gx=None, gh=None, mu0=None, h_bar=None):
-        """Reduced spectral density mapping."""
+        """Consistency tests for data acquired at different magnetic fields."""
 
         # Initialise the data container.
         self.data = Data()
@@ -67,10 +68,10 @@ class Mapping:
         return (noe - 1.0) * r1 * self.data.gx / self.data.gh
 
 
-    def func(self, r=None, csa=None, r1=None, r2=None, noe=None):
-        """Function for calculating the three spectal density values.
+    def func(self, orientation=None, tc=None, r=None, csa=None, r1=None, r2=None, noe=None):
+        """Function for calculating the three consistency testing values.
 
-        Three values are returned, J(0), J(wX), and J(wH) (or J(0.87wH)).
+        Three values are returned, J(0), F_eta and F_R2.
         """
 
         # Calculate the fixed component of the dipolar and CSA constants.
@@ -94,11 +95,23 @@ class Mapping:
         # Calculate J(wX).
         jwx = 1.0 / (3.0*d + c) * (r1 - 1.4*sigma_noe)
 
-        # Calculate J(wH).
-        jwh = sigma_noe / (5.0*d)
+        # Calculate P_2.
+        p_2 = 0.5 * ((3.0 * (cos(orientation * pi / 180)) ** 2) -1)
+
+        # Calculate eta.
+        eta = ((d * c) ** 0.5) * (4.0 * j0 + 3.0 * jwx) * p_2
+
+        # Calculate F_eta.
+        f_eta = eta * self.data.gh / (self.data.frq_list[0, 3] * (4.0 + 3.0 / (1 + (self.data.frq_list[0, 1] * tc) ** 2)))
+
+        # Calculate P_HF.
+        p_hf = 1.3 * (self.data.gx / self.data.gh) * (1.0 - noe) * r1
+
+        # Calculate F_R2.
+        f_r2 = (r2 - p_hf) / ((4.0 + 3.0 / (1 + (self.data.frq_list[0, 1] * tc) ** 2)) * (d + c/3.0))
 
         # Return the three values.
-        return j0, jwx, jwh
+        return j0, f_eta, f_r2
 
 
 class Data:
