@@ -21,6 +21,7 @@
 ###############################################################################
 
 
+from consistency_tests import Consistency_tests
 from hybrid import Hybrid
 from jw_mapping import Jw_mapping
 from model_free import Model_free
@@ -37,6 +38,7 @@ class Specific:
         self.relax = relax
 
         # Set up all the functions
+        self.consistency_tests = Consistency_tests(self.relax)
         self.hybrid = Hybrid(self.relax)
         self.jw_mapping = Jw_mapping(self.relax)
         self.model_free = Model_free(self.relax)

@@ -25,6 +25,7 @@ import sys
 from doc_string import regexp_doc
 import help
 from generic_fns.minimise import Minimise
+from specific_fns.consistency_tests import Consistency_tests
 from specific_fns.model_free import Model_free
 from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.noe import Noe
@@ -258,6 +259,7 @@ class Grace:
 
     # Write function.
     write.__doc__ = write.__doc__ + "\n\n" + regexp_doc() + "\n"
+    write.__doc__ = write.__doc__ + Consistency_tests.return_data_name.__doc__ + "\n\n"
     write.__doc__ = write.__doc__ + Minimise.return_data_name.__doc__ + "\n\n"
     write.__doc__ = write.__doc__ + Noe.return_data_name.__doc__ + "\n"
     write.__doc__ = write.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
