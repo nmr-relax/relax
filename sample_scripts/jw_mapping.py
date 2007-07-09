@@ -8,7 +8,7 @@ run.create(name, 'jw')
 nuclei('N')
 
 # Load the sequence.
-sequence.read(name, 'noe.500.out')
+sequence.read(name, 'noe.600.out')
 
 # Load the relaxation data.
 relax_data.read(name, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
@@ -26,10 +26,20 @@ jw_mapping.set_frq(name, frq=600.0 * 1e6)
 calc(name)
 
 # Monte Carlo simulations.
-monte_carlo.setup(name, number=5000)
+monte_carlo.setup(name, number=500)
 monte_carlo.create_data(name)
 calc(name)
 monte_carlo.error_analysis(name)
+
+# Create grace files.
+grace.write(name, y_data_type='j0', file='j0.agr', force=1)
+grace.write(name, y_data_type='jwx', file='jwx.agr', force=1)
+grace.write(name, y_data_type='jwh', file='jwh.agr', force=1)
+
+# View the grace files.
+grace.view(file='j0.agr')
+grace.view(file='jwx.agr')
+grace.view(file='jwh.agr')
 
 # Finish.
 results.write(run=name, file='results', force=1)
