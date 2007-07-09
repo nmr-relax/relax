@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2006 Chris MacRaild                                           #
+# Copyright (C) 2007 Sebastien Morin <sebastien.morin.1 at ulaval.ca>         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,15 +24,15 @@
 import sys
 
 
-class Jw:
+class Consistent:
     def __init__(self, relax, test_name):
-        """Class for testing various aspects specific to reduced spectral density mapping."""
+        """Class for testing various aspects specific to consistency tests."""
 
         self.relax = relax
 
         # Results reading test.
         if test_name == 'set':
-            
+
             # The name of the test.
             self.name = "The user function value.set()"
 
@@ -40,36 +41,36 @@ class Jw:
 
         # Spectral density calculation test.
         if test_name == 'calc':
-            
+
             # The name of the test.
-            self.name = "Spectral density calculation"
+            self.name = "Consistency tests calculation"
 
             # The test.
             self.test = self.calc
 
 
     def calc(self, run):
-        """The spectral density calculation test."""
+        """The consistency tests calculation test."""
 
         # Arguments.
         self.run = run
 
         # Setup.
         self.calc_setup()
-        
+
         # Try the reduced spectral density mapping.
         self.relax.interpreter._Minimisation.calc(self.run)
-        
+
         # Success.
         return self.calc_integrity()
-        
+
 
     def calc_integrity(self):
-        
-        # Correct jw values:
+
+        # Correct consistency functions values:
         j0 = [4.0958793960056238e-09, 3.7976266046729745e-09]
-        jwx = [1.85720953886864e-10, 1.6450121628270092e-10]
-        jwh = [1.5598167512718012e-12, 2.9480536599037041e-12]
+        f_eta = [0.35164988964635652, 0.32556427866911447]
+        f_r2 = [2.0611470814962761e-09, 1.9117396355237641e-09]
 
         # Loop over residues.
         for index,residue in enumerate(self.relax.data.res[self.run]):
@@ -82,11 +83,11 @@ class Jw:
                 if abs(self.relax.data.res[self.run][index].j0 - j0[index]) > j0[index]/1e6:
                     print 'Error in residue', self.relax.data.res[self.run][index].num, 'j0 calculated value'
                     return
-                if abs(self.relax.data.res[self.run][index].jwh - jwh[index]) > jwh[index]/1e6:
-                    print 'Error in residue', self.relax.data.res[self.run][index].num, 'jwh calculated value'
+                if abs(self.relax.data.res[self.run][index].f_eta - f_eta[index]) > f_eta[index]/1e6:
+                    print 'Error in residue', self.relax.data.res[self.run][index].num, 'f_eta calculated value'
                     return
-                if abs(self.relax.data.res[self.run][index].jwx - jwx[index]) > jwx[index]/1e6:
-                    print 'Error in residue', self.relax.data.res[self.run][index].num, 'jwx calculated value'
+                if abs(self.relax.data.res[self.run][index].f_r2 - f_r2[index]) > f_r2[index]/1e6:
+                    print 'Error in residue', self.relax.data.res[self.run][index].num, 'f_r2 calculated value'
                     return
 
             # Other residues have insufficient data.
@@ -111,9 +112,9 @@ class Jw:
         dataTypes = [('NOE', '600', 600.0e6),
                      ('R1', '600', 600.0e6),
                      ('R2', '600', 600.0e6)]
-        
+
         # Create the run.
-        self.relax.generic.runs.create(self.run, 'jw')
+        self.relax.generic.runs.create(self.run, 'ct')
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(self.run, file='test_seq', dir=sys.path[-1] + '/test_suite/data')
@@ -129,8 +130,14 @@ class Jw:
         self.relax.interpreter._Value.set(self.run, 1.02 * 1e-10, 'bond_length')
         self.relax.interpreter._Value.set(self.run, -170 * 1e-6, 'csa')
 
+        # Set the angle between the 15N-1H vector and the principal axis of the 15N chemical shift tensor
+        self.relax.interpreter._Value.set(self.run, 15.7, 'orientation')
+
+        # Set the approximate correlation time.
+        self.relax.interpreter._Value.set(self.run, 13 * 1e-9, 'tc')
+
         # Select the frequency.
-        self.relax.interpreter._Jw_mapping.set_frq(self.run, frq=600.0 * 1e6)
+        self.relax.interpreter._Consistency_tests.set_frq(self.run, frq=600.0 * 1e6)
 
 
     def set_value(self, run):
