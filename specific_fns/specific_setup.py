@@ -463,7 +463,7 @@ class Specific_setup:
         # Set function.
         if self.eqi == 'set':
             return self.relax.specific.relax_fit.set
-        
+
         # Set error function.
         if self.eqi == 'set_error':
             return self.relax.specific.relax_fit.set_error

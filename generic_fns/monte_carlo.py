@@ -345,7 +345,7 @@ class Monte_carlo:
 
     def setup(self, run=None, number=None, all_select_sim=None):
         """Function for setting up Monte Carlo simulations.
-        
+
         @param run:             The name of the run.
         @type run:              str
         @param number:          The number of Monte Carlo simulations to set up.

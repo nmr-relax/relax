@@ -213,7 +213,7 @@ def compile_api_manual_html(target, source, env):
     ####################################
 
     # Program name, output, target, docformat, css, name, and url.
-    epydoc_cmd = 'epydoc' + ' --' + output + ' -o ' + target + ' --docformat ' + docformat + ' --css ' + css + ' --name ' + name + ' --url ' + url 
+    epydoc_cmd = 'epydoc' + ' --' + output + ' -o ' + target + ' --docformat ' + docformat + ' --css ' + css + ' --name ' + name + ' --url ' + url
 
     # Frames.
     if frames:

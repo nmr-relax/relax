@@ -33,7 +33,7 @@ import sys
 # relax module imports.
 from data import Data as relax_data_store
 from specific_fns.base_class import Common_functions
-from float import isNaN,isInf 
+from float import isNaN,isInf
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxStyleError, RelaxTensorError, RelaxUnknownDataTypeError

@@ -54,13 +54,13 @@ string = ''
 for line in split('\n', id_string_doc):
     string = string + fill(line, width=100, initial_indent=8*' ', subsequent_indent=8*' ') + '\n'
 id_string_doc = string
-    
+
 
 
 class Selection(object):
     """An object containing mol-res-spin selections.
-    
-    A Selection object represents either a set of selected 
+
+    A Selection object represents either a set of selected
     molecules, residues and spins, or the union or intersection
     of two other Selection objects."""
 
@@ -79,12 +79,12 @@ class Selection(object):
 
         if not select_string:
             return
-        
+
         # Read boolean symbols from right to left:
         and_index = select_string.rfind('&')
         or_index = select_string.rfind('|')
-        
-        if and_index > or_index: 
+
+        if and_index > or_index:
             sel0 = Selection(select_string[:and_index].strip())
             sel1 = Selection(select_string[and_index+1:].strip())
             self.intersection(sel0, sel1)
@@ -126,16 +126,16 @@ class Selection(object):
 
     def intersection(self, select_obj0, select_obj1):
         """Make a Selection object the intersection of two Selection objects
-        
+
         @type select_obj0: Instance of class Selection
         @param select_obj0: First Selection object in intersection
         @type select_obj1: Instance of class Selection
         @param select_obj1: First Selection object in intersection"""
-        
+
         if self._union or self._intersect or self.molecules or self.residues or self.spins:
             raise RelaxError, "Cannot define multiple Boolean relationships between Selection objects"
         self._intersect = (select_obj0, select_obj1)
-   
+
     def union(self, select_obj0, select_obj1):
         """Make a Selection object the union of two Selection objects
 
@@ -411,7 +411,7 @@ def residue_loop(selection=None):
 
     # Parse the selection string.
     select_obj = Selection(selection)
-        
+
     # Disallowed selections.
     if select_obj.spins:
         raise RelaxSpinSelectDisallowError

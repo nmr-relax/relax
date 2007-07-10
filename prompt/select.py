@@ -155,7 +155,7 @@ class Select:
         relax> select.read(run='noe', file='isolated_peaks')
 
         To select the residues in the second column of the relaxation data file 'r1.600' while
-        deselecting all other residues, type one of: 
+        deselecting all other residues, type one of:
 
         relax> select.read('test', 'r1.600', change_all=1, column=1)
         relax> select.read(run='test', file='r1.600', change_all=1, column=1)

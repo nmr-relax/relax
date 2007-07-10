@@ -118,7 +118,7 @@ class Unselect:
         relax> unselect.read(run='noe', file='unresolved')
 
         To unselect the residues in the second column of the relaxation data file 'r1.600' while
-        selecting all other residues, type one of: 
+        selecting all other residues, type one of:
 
         relax> unselect.read('test', 'r1.600', change_all=1, column=1)
         relax> unselect.read(run='test', file='r1.600', change_all=1, column=1)

@@ -36,7 +36,7 @@ class Reset:
 
     def reset(self):
         """Reset relax.
-        
+
         All of the data of the relax data storage object will be erased and hence relax will return
         to its initial state.
         """

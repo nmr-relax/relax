@@ -253,7 +253,7 @@ class Jw_mapping(Common_functions):
 
         # Loop over residue data:
         for residue in relax_data_store.res[run]:
-    
+
             # Check for sufficient data
             if not hasattr(residue, 'relax_data'):
                 residue.select = 0

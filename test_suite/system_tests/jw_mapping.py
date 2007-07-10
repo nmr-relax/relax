@@ -40,7 +40,7 @@ class Jw:
 
         # Results reading test.
         if test_name == 'set':
-            
+
             # The name of the test.
             self.name = "The user function value.set()"
 
@@ -49,7 +49,7 @@ class Jw:
 
         # Spectral density calculation test.
         if test_name == 'calc':
-            
+
             # The name of the test.
             self.name = "Spectral density calculation"
 
@@ -65,16 +65,16 @@ class Jw:
 
         # Setup.
         self.calc_setup()
-        
+
         # Try the reduced spectral density mapping.
         self.relax.interpreter._Minimisation.calc(self.run)
-        
+
         # Success.
         return self.calc_integrity()
-        
+
 
     def calc_integrity(self):
-        
+
         # Correct jw values:
         j0 = [4.0958793960056238e-09, 3.7976266046729745e-09]
         jwx = [1.85720953886864e-10, 1.6450121628270092e-10]
@@ -120,7 +120,7 @@ class Jw:
         dataTypes = [('NOE', '600', 600.0e6),
                      ('R1', '600', 600.0e6),
                      ('R2', '600', 600.0e6)]
-        
+
         # Create the run.
         self.relax.generic.runs.create(self.run, 'jw')
 

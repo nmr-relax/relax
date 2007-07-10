@@ -25,7 +25,7 @@ import sys
 
 def heading(text):
     """Function for printing the headings.
-    
+
     @param text:    The text of the heading to be printed.
     @type text:     str
     """
@@ -49,7 +49,7 @@ def heading(text):
 
 def summary_line(name, passed):
     """Print a summary line.
-    
+
     @param name:    The name of the test, test category, etc.
     @type name:     str
     @param passed:  An argment which if True causes '[ OK ]' to be printed and if False causes

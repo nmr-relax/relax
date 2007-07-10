@@ -278,7 +278,7 @@ class Main:
                 # Determine which was the last round of optimisation for each of the models.
                 self.round = self.determine_rnd(model=model) - 1
 
-                # If no directories begining with 'round_' exist, the script has not been properly utilised! 
+                # If no directories begining with 'round_' exist, the script has not been properly utilised!
                 if self.round < 1:
                     # Construct the name of the diffusion tensor.
                     name = model

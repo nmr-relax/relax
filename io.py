@@ -158,7 +158,7 @@ class IO:
 
     def file_root(self, file_path):
         """Return the root file name, striped of path and extension details"""
-        
+
         root,ext = splitext(file_path)
         return basename(root)
 

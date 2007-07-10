@@ -106,10 +106,10 @@ class Test_selection(TestCase):
 
             # Increment i.
             i = i + 1
-        
+
         # Test loop length.
         self.assertEqual(len(list(selection.molecule_loop())), 2)
-                
+
 
 
     def test_parse_token_single_element_num(self):
@@ -275,10 +275,10 @@ class Test_selection(TestCase):
         for res in selection.residue_loop('#Ap4Aase:Glu'):
             # Test the selection.
             self.assertEqual(res.num, 2)
-        
+
         # Test loop length.
         self.assertEqual(len(list(selection.residue_loop('#Ap4Aase:Glu'))), 1)
-                
+
 
     def test_residue_loop_no_selection(self):
         """Test the proper operation of the residue loop when no selection is present.
@@ -304,7 +304,7 @@ class Test_selection(TestCase):
 
         # Test loop length.
         self.assertEqual(i, 5)
-        
+
     def test_reverse(self):
         """Test spin system selection reversal.
 
@@ -347,10 +347,10 @@ class Test_selection(TestCase):
 
             # Increment i.
             i = i + 1
-        
+
         # Test loop length.
         self.assertEqual(i, 2)
-                
+
 
 
     def test_spin_loop_no_selection(self):
@@ -374,10 +374,10 @@ class Test_selection(TestCase):
 
             # Increment i.
             i = i + 1
-        
+
         # Test loop length.
         self.assertEqual(i, 7)
-                
+
 
     def test_tokenise1(self):
         """Test the generic_fns.selection.tokenise() function on the string '@1'."""
@@ -671,29 +671,29 @@ class Test_selection(TestCase):
 
         # Tokenise an invalid string.
         self.assertRaises(RelaxError, selection.tokenise, '')
-   
-   
+
+
     def test_boolean_or_selection(self):
         """Test boolean or in mol-res-spin selections."""
 
         self.assert_(list(selection.spin_loop("#Ap4Aase | #RNA@N5")) == list(selection.spin_loop()))
-   
-                
+
+
     def test_boolean_and_selection(self):
         """Test boolean and in mol-res-spin selections."""
-        
+
         # The selection loop:
         sel = list(selection.residue_loop("#Ap4Aase:4 & :Pro"))
-        
+
         # Test:
         self.assertEqual(len(sel), 1)
         for res in sel:
             self.assert_(res.name == "Pro" and res.num == 4)
-       
-                
+
+
     def test_boolean_complex_selection(self):
         """Test complex boolean mol-res-spin selections."""
-        
+
         # The selection loop:
         sel = list(selection.residue_loop("#Ap4Aase:4 & :Pro | #RNA"))
 
@@ -701,7 +701,7 @@ class Test_selection(TestCase):
         self.assertEqual(len(sel), 3)
         for res in sel:
             self.assert_(res.num in [-5,-4,4])
-    
+
 
     def test_boolean_parenthesis_selection(self):
         """Test complex boolean mol-res-spin selections with parenthesis."""
@@ -713,4 +713,4 @@ class Test_selection(TestCase):
         self.assertEqual(len(sel), 2)
         for res in sel:
             self.assert_(res.num in [-4,4])
-       
+
