@@ -152,19 +152,19 @@ def getFloatClass(float):
 
     # check finite
     if isFinite(float):
-         # check and store is positive
-         positive = isPositive(float)
-         if isZero(float):
+        # check and store is positive
+        positive = isPositive(float)
+        if isZero(float):
             if positive:
                 result = CLASS_POS_ZERO
             else:
                 result = CLASS_NEG_ZERO
-         elif isDenormalised(float):
+        elif isDenormalised(float):
             if positive:
                 result = CLASS_POS_DENORMAL
             else:
                 result = CLASS_NEG_DENORMAL
-         else:
+        else:
             if positive:
                 result  = CLASS_POS_NORMAL
             else:

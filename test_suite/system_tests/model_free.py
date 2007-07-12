@@ -63,7 +63,7 @@ class Mf:
             # The test.
             self.test = self.set_csa
 
-         # Test of setting the CSA and the bond length.
+        # Test of setting the CSA and the bond length.
         if test_name == 'set csa and bond length':
             # The name of the test.
             self.name = "Setting both the CSA value and bond length through the user function value.set()"
@@ -71,7 +71,7 @@ class Mf:
             # The test.
             self.test = self.set_csa_bond_length
 
-       # Test of selecting model-free model m4.
+        # Test of selecting model-free model m4.
         if test_name == 'select m4':
             # The name of the test.
             self.name = "Selecting model m4 with parameters {S2, te, Rex} using model_free.select_model()"
