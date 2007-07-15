@@ -96,7 +96,7 @@ class Consistency_tests(Common_functions):
             if frq_index == None:
                 continue
 
-            # Set the r1, r2, and NOE to None.
+            # Set the R1, R2, and NOE to None.
             r1 = None
             r2 = None
             noe = None
@@ -149,7 +149,7 @@ class Consistency_tests(Common_functions):
                     data.f_eta_sim = []
                     data.f_r2_sim = []
 
-                # Reduced spectral density values.
+                # Consistency tests values.
                 data.j0_sim.append(j0)
                 data.f_eta_sim.append(f_eta)
                 data.f_r2_sim.append(f_r2)
@@ -189,11 +189,11 @@ class Consistency_tests(Common_functions):
 
         tc:  Correlation time.
 
-        j0:  Spectral density value at 0 MHz.
+        j0:  Spectral density value at the zero frequency.
 
-        f_eta:  Eta test.
+        f_eta:  Eta-test (from Fushman D. et al. (1998) JACS, 120: 10947-10952).
 
-        f_r2:  R2 test.
+        f_r2:  R2-test (from Fushman D. et al. (1998) JACS, 120: 10947-10952).
         """
 
         # Initialise.
@@ -215,8 +215,8 @@ class Consistency_tests(Common_functions):
 
     def default_value(self, param):
         """
-        Reduced spectral density mapping default values
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Consistency testing default values
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         _______________________________________________________________________________________
         |                                       |               |                             |
@@ -287,7 +287,7 @@ class Consistency_tests(Common_functions):
 
 
     def return_conversion_factor(self, stat_type):
-        """Dummy function for returning 1.0."""
+        """Dummy function for returning 1.0. This function is essential when writing grace files"""
 
         return 1.0
 

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2004-2005 Edward d'Auvergne                                   #
-# Copyright (C) 2007 Sebastien Morin <sebastien.morin.1 at ulaval.ca>
+# Copyright (C) 2007 Sebastien Morin <sebastien.morin.1 at ulaval.ca>         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -48,6 +48,7 @@ class Consistency_tests:
         run:  The name of the run.
 
         frq:  The spectrometer frequency in Hz.
+
 
         Description
         ~~~~~~~~~~~

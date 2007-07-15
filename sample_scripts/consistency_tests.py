@@ -25,7 +25,7 @@ value.set(name, 15.7, 'orientation')
 # Set the approximate correlation time.
 value.set(name, 13 * 1e-9, 'tc')
 
-# Select the frequency.
+# Set the frequency.
 consistency_tests.set_frq(name, frq=600.0 * 1e6)
 
 # Consistency tests.

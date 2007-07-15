@@ -39,7 +39,7 @@ class Consistent:
             # The test.
             self.test = self.set_value
 
-        # Spectral density calculation test.
+        # Consistency tests calculation test.
         if test_name == 'calc':
 
             # The name of the test.
@@ -58,7 +58,7 @@ class Consistent:
         # Setup.
         self.calc_setup()
 
-        # Try the reduced spectral density mapping.
+        # Try the consistency testing.
         self.relax.interpreter._Minimisation.calc(self.run)
 
         # Success.
@@ -66,6 +66,7 @@ class Consistent:
 
 
     def calc_integrity(self):
+        """The consistency tests calculation sub-routine."""
 
         # Correct consistency functions values:
         j0 = [4.0958793960056238e-09, 3.7976266046729745e-09]
@@ -103,6 +104,7 @@ class Consistent:
     def calc_setup(self):
         """Setup for the calculation test."""
 
+        # Locate and describe the data.
         dir = sys.path[-1] + '/test_suite/data/jw_mapping/'
 
         dataPaths = [dir + 'noe.dat',
@@ -136,7 +138,7 @@ class Consistent:
         # Set the approximate correlation time.
         self.relax.interpreter._Value.set(self.run, 13 * 1e-9, 'tc')
 
-        # Select the frequency.
+        # Set the frequency.
         self.relax.interpreter._Consistency_tests.set_frq(self.run, frq=600.0 * 1e6)
 
 
