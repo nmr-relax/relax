@@ -28,7 +28,6 @@ from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, 
 # The relax data storage object.
 
 
-
 def copy(res_num_from=None, res_name_from=None, res_num_to=None, res_name_to=None):
     """Copy the contents of the residue structure from one residue to a new residue.
 

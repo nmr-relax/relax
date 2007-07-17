@@ -30,7 +30,6 @@ from generic_fns.diffusion_tensor import calc_Diso, calc_Dpar, calc_Dpar_unit, c
 from relax_errors import RelaxError
 
 
-
 def dependency_generator(diff_type):
     """Generator for the automatic updating the diffusion tensor data structures.
 

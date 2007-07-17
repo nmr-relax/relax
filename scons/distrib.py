@@ -31,7 +31,6 @@ from zipfile import ZipFile
 from version import version
 
 
-
 def gpg_sign(target, source, env):
     """Builder action for creating a GPG signature of the binary distribution file."""
 

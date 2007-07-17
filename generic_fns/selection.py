@@ -101,6 +101,7 @@ class Selection(object):
             self.residues = parse_token(res_token)
             self.spins = parse_token(spin_token)
 
+
     def __contains__(self, obj):
         if self._union:
             return (obj in self._union[0]) or (obj in self._union[1])
@@ -124,6 +125,7 @@ class Selection(object):
 
         return False
 
+
     def intersection(self, select_obj0, select_obj1):
         """Make a Selection object the intersection of two Selection objects
 
@@ -135,6 +137,7 @@ class Selection(object):
         if self._union or self._intersect or self.molecules or self.residues or self.spins:
             raise RelaxError, "Cannot define multiple Boolean relationships between Selection objects"
         self._intersect = (select_obj0, select_obj1)
+
 
     def union(self, select_obj0, select_obj1):
         """Make a Selection object the union of two Selection objects

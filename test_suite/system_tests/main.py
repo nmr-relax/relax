@@ -238,7 +238,6 @@ class System_tests:
         return global_pass
 
 
-
     def exec_tests(self, test_array):
         """Function for running the tests."""
 

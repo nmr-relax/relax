@@ -31,7 +31,6 @@ import sys
 from version import version
 
 
-
 def clean_manual_files(target, source, env):
     """Builder action for removing the temporary manual files."""
 

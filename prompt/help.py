@@ -48,6 +48,7 @@ interactive python help system, type 'help_python()'.
     def __repr__(self):
         return self.text
 
+
     def __call__(self, *args, **kwds):
         if len(args) != 1 or type(args[0]) == str:
             print self.text
@@ -66,6 +67,7 @@ to the help function built into the normal python interpreter.
 
     def __repr__(self):
         return self.text
+
 
     def __call__(self, *args, **kwds):
         return pydoc.help(*args, **kwds)

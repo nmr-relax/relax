@@ -514,8 +514,6 @@ class Diffusion_tensor:
         relax_data_store = Data
 
 
-
-
     def copy(self, run1=None, run2=None):
         """Function for copying diffusion tensor data from run1 to run2."""
 

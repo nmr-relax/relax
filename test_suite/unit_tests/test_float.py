@@ -31,12 +31,14 @@ NEG_ZERO = -ZERO
 NEG_FLOAT_EPSILON = -FLOAT_EPSILON
 NEG_FLOAT_NORMAL =  -FLOAT_NORMAL
 
+
 def makeDictById(elements):
     result ={}
     for element in elements:
         result[id(element)]=element
 
     return result
+
 
 def winnowDictToListById(dict,elements):
     resultDict = copy(dict)
@@ -51,7 +53,6 @@ class Test_float(unittest.TestCase):
     tests = makeDictById([pos_inf, neg_inf, FLOAT_NORMAL, 
                           NEG_FLOAT_NORMAL, FLOAT_EPSILON, 
                           NEG_FLOAT_EPSILON, nan, ZERO, NEG_ZERO])
-
 
     def test_getFloatClass(self):
 
@@ -69,6 +70,7 @@ class Test_float(unittest.TestCase):
         i=iter(tests)
         for (fpClass, value) in zip(i,i):
             self.assertEqual(fpClass, getFloatClass(value))
+
 
     def test_isZero(self):
         positives = (ZERO,NEG_ZERO)

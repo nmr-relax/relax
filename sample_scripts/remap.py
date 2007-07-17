@@ -2,6 +2,7 @@
 
 from Numeric import Float64, array
 
+
 def remap(values):
     """Remapping function."""
 

@@ -136,8 +136,10 @@ CLASS_SIGNAL_NAN = 128
 CLASS_POS_ZERO =  256
 CLASS_NEG_ZERO = 512
 
+
 def isZero(float):
     return isMantissaAllZeros(float) and isExpAllZeros(float)
+
 
 def getFloatClass(float):
     ''' get the ieee-class (nan,inf etc) of apython float
@@ -256,6 +258,7 @@ def floatToBinaryString(obj):
 
     return packed
 
+
 def floatAsByteArray(obj):
     ''' unpack a python float as a list of 8 bytes
 
@@ -279,7 +282,6 @@ def floatAsByteArray(obj):
     return list(bytes)
 
 
-
 def getSignBit(obj):
     ''' get the sign bit from a python float
 
@@ -298,6 +300,7 @@ def getSignBit(obj):
     # grab last byte and check if sign bit is set
     return unpacked[7]  & SIGNBIT
 
+
 def isPositive(obj):
     ''' test if a a pyhton float is positive
 
@@ -314,6 +317,7 @@ def isPositive(obj):
     else:
         return True
 
+
 def isNegative(obj):
     ''' test if a a pyhton float 64 bit ieee-74 double is negative
 
@@ -324,7 +328,6 @@ def isNegative(obj):
         throws -- tthrows a TypeError if the the input object isn't a python float
     '''
     return not isPositive(obj)
-
 
 
 def areUnordered(obj1,obj2):
@@ -371,6 +374,7 @@ def isFinite(obj):
 
 
     return result
+
 
 def copySign(fromNumber,toDouble):
     ''' copy the sign bit from one python float  to another
@@ -438,10 +442,6 @@ def isDenormalised(obj):
     return result
 
 
-
-
-
-
 def getMantissaBytes(obj):
     ''' get the 7 bytes that makeup the mantissa of float
 
@@ -466,6 +466,7 @@ def getMantissaBytes(obj):
 
     # remove the exponent bytes that can be removed
     return bytes[:7]
+
 
 def getExponentBytes(obj):
     ''' get the 2 bytes that makeup the exponent of a float
@@ -496,8 +497,6 @@ def getExponentBytes(obj):
     return bytes[6:]
 
 
-
-
 def isExpAllZeros(obj):
     ''' check if the bits of the exponent of a float is zero
 
@@ -517,6 +516,7 @@ def isExpAllZeros(obj):
         result = False
 
     return result
+
 
 def isMantissaAllZeros(obj):
     ''' check if the bits of the mantissa of a float is zero
@@ -540,6 +540,7 @@ def isMantissaAllZeros(obj):
 
     return result
 
+
 def isExpAllOnes(obj):
     ''' check if the bits of the exponent of a floatis all 1 bits
 
@@ -560,6 +561,7 @@ def isExpAllOnes(obj):
         result  =  True
 
     return result
+
 
 def isNaN(obj):
     ''' check to see if a python float is an ieee-754 double not a number (nan)
@@ -594,6 +596,7 @@ def isNaN(obj):
         #    result = True
     return result
 
+
 def isInf(obj):
     ''' check to see if a python float is an infinity
 
@@ -625,6 +628,7 @@ def isInf(obj):
             result = True
 
     return result
+
 
 def isPosInf(obj):
     ''' check to see if a python float is positive infinity

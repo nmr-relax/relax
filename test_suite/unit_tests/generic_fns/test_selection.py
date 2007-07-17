@@ -305,6 +305,7 @@ class Test_selection(TestCase):
         # Test loop length.
         self.assertEqual(i, 5)
 
+
     def test_reverse(self):
         """Test spin system selection reversal.
 
