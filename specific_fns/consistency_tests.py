@@ -447,7 +447,7 @@ class Consistency_tests(Common_functions):
                 value.append(self.default_value('tc'))
 
             # Initilise data.
-            if not hasattr(self.relax.data.res[self.run][index], 'csa') or not hasattr(self.relax.data.res[self.run][index], 'csa'):
+            if not hasattr(self.relax.data.res[self.run][index], 'csa') or not hasattr(self.relax.data.res[self.run][index], 'csa') or not hasattr(self.relax.data.res[self.run][index], 'orientation') or not hasattr(self.relax.data.res[self.run][index], 'tc'):
                 self.data_init(self.relax.data.res[self.run][index])
 
             # CSA, bond length, angle Theta and correlation time.
