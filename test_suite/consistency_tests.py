@@ -149,7 +149,7 @@ class Consistent:
         self.run = run
 
         # Create the run.
-        self.relax.generic.runs.create(self.run, 'jw')
+        self.relax.generic.runs.create(self.run, 'ct')
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(self.run, file='test_seq', dir=sys.path[-1] + '/test_suite/data')
@@ -157,8 +157,12 @@ class Consistent:
         # Try to set the values.
         bond_length = 1.02 * 1e-10
         csa = -170 * 1e-6
+        orientation = 15.7
+        tc = 13 * 1e-9
         self.relax.interpreter._Value.set(self.run, bond_length, 'bond_length')
         self.relax.interpreter._Value.set(self.run, csa, 'csa')
+        self.relax.interpreter._Value.set(self.run, orientation, 'orientation')
+        self.relax.interpreter._Value.set(self.run, tc, 'tc')
 
         # Test values.
         for i in xrange( len(self.relax.data.res[self.run]) ):
@@ -167,6 +171,12 @@ class Consistent:
                 return
             if self.relax.data.res[self.run][i].csa != csa:
                 print 'Value of csa has not been set correctly'
+                return
+            if self.relax.data.res[self.run][i].orientation != orientation:
+                print 'Value of orientation has not been set correctly'
+                return
+            if self.relax.data.res[self.run][i].tc != tc:
+                print 'Value of tc has not been set correctly'
                 return
 
         # Success.
