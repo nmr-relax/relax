@@ -582,7 +582,7 @@ class Consistency_tests(Common_functions):
         self.relax.data.res[run][i].relax_sim_data = sim_data
 
 
-    def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, nucleus=None, wH=None, j0=None, f_eta=None, f_r2=None, r=None, csa=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
+    def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, nucleus=None, wH=None, j0=None, f_eta=None, f_r2=None, r=None, csa=None, orientation=None, tc=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
         """Function for printing a single line of the columnar formatted results."""
 
         # Residue number and name.
@@ -603,6 +603,8 @@ class Consistency_tests(Common_functions):
         file.write("%-25s " % f_r2)
         file.write("%-25s " % r)
         file.write("%-25s " % csa)
+        file.write("%-25s " % orientation)
+        file.write("%-25s " % tc)
 
         # Relaxation data setup.
         if ri_labels:
@@ -658,7 +660,7 @@ class Consistency_tests(Common_functions):
                 ri_error.append('Ri_error_(' + self.relax.data.ri_labels[self.run][i] + "_" + self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][i]] + ")")
 
         # Write the header line.
-        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', wH='Proton_frq_(MHz)', j0='J(0)', f_eta='F_eta', f_r2='F_R2', r='Bond_length_(A)', csa='CSA_(ppm)', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
+        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', wH='Proton_frq_(MHz)', j0='J(0)', f_eta='F_eta', f_r2='F_R2', r='Bond_length_(A)', csa='CSA_(ppm)', orientation='Angle_Theta_(degrees)', tc='Correlation_time_(ns)', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
 
 
         # Values.
@@ -712,6 +714,16 @@ class Consistency_tests(Common_functions):
             if hasattr(data, 'csa') and data.csa != None:
                 csa = data.csa / 1e-6
 
+            # Angle Theta
+            orientation = None
+            if hasattr(data, 'orientation') and data.orientation != None:
+                orientation = data.orientation
+
+            # Correlation time
+            tc = None
+            if hasattr(data, 'tc') and data.tc != None:
+                tc = data.tc / 1e-9
+
             # Relaxation data and errors.
             ri = []
             ri_error = []
@@ -732,7 +744,7 @@ class Consistency_tests(Common_functions):
                         ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='value', nucleus=nucleus, wH=`wH`, j0=`j0`, f_eta=`f_eta`, f_r2=`f_r2`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='value', nucleus=nucleus, wH=`wH`, j0=`j0`, f_eta=`f_eta`, f_r2=`f_r2`, r=`r`, csa=`csa`, orientation=`orientation`, tc=`tc`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Errors.
@@ -774,6 +786,16 @@ class Consistency_tests(Common_functions):
             if hasattr(data, 'csa_err') and data.csa_err != None:
                 csa = data.csa_err / 1e-6
 
+            # Angle Theta.
+            orientation = None
+            if hasattr(data, 'orientation_err') and data.orientation_err != None:
+                orientation = data.orientation_err
+
+            # Correlation time.
+            tc = None
+            if hasattr(data, 'tc_err') and data.tc_err != None:
+                tc = data.tc_err / 1e-6
+
             # Relaxation data and errors.
             ri = []
             ri_error = []
@@ -782,7 +804,7 @@ class Consistency_tests(Common_functions):
                 ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, wH=`wH`, j0=`j0`, f_eta=`f_eta`, f_r2=`f_r2`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, wH=`wH`, j0=`j0`, f_eta=`f_eta`, f_r2=`f_r2`, r=`r`, csa=`csa`, orientation=`orientation`, tc=`tc`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Simulation values.
@@ -820,6 +842,16 @@ class Consistency_tests(Common_functions):
                 if hasattr(data, 'csa_sim') and data.csa_sim != None and data.csa_sim[i] != None:
                     csa = data.csa_sim[i] / 1e-6
 
+                # Angle Theta.
+                orientation = None
+                if hasattr(data, 'orientation_sim') and data.orientation_sim != None and data.orientation_sim[i] != None:
+                    orientation = data.orientation_sim[i]
+
+                # Correlation time.
+                tc = None
+                if hasattr(data, 'tc_sim') and data.tc_sim != None and data.tc_sim[i] != None:
+                    tc = data.tc_sim[i] / 1e-6
+
                 # Relaxation data and errors.
                 ri = []
                 ri_error = []
@@ -839,4 +871,4 @@ class Consistency_tests(Common_functions):
                         ri_error.append(None)
 
                 # Write the line.
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='sim_'+`i`, nucleus=nucleus, wH=`wH`, j0=`j0`, f_eta=`f_eta`, f_r2=`f_r2`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='sim_'+`i`, nucleus=nucleus, wH=`wH`, j0=`j0`, f_eta=`f_eta`, f_r2=`f_r2`, r=`r`, csa=`csa`, orientation=`orientation`, tc=`tc`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
