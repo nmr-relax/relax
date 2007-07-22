@@ -121,7 +121,7 @@ which is part of the exponent (0b11110000)'''
 
 
 EXPONENT_SIGN_MASK= 0x7F
-'''' mask to select only bits from byte 8 of an ieee-754 double that are
+''' mask to select only bits from byte 8 of an ieee-754 double that are
 not part of the sign bit (0b11111110)'''
 
 ''' classes of floating point numbers'''
@@ -197,6 +197,7 @@ def packBytesAsPyFloat(bytes):
         throws -- an Exception if bytes contains < 8 bytes
                     type of exception not determined
     '''
+
     # pack bytes into binary string
     doubleString=pack('8B',*bytes)
 
@@ -246,6 +247,7 @@ def floatToBinaryString(obj):
         throws --  throws a TypeError if the the input object isn't a python float
 
     '''
+
     if not isinstance(obj,float):
         raise TypeError('the object recieved wasn\'t a float, type was: %s' % type(obj))
 
@@ -272,7 +274,8 @@ def floatAsByteArray(obj):
         throws --  throws an exception if obj is not composed of 8 bytes
 
     '''
-    #unpack bytes to a binary string (takes care of byte order)
+
+    # unpack bytes to a binary string (takes care of byte order)
     binaryString = floatToBinaryString(obj)
 
     # convert the binary string to an array of 8 bytes
@@ -327,6 +330,7 @@ def isNegative(obj):
 
         throws -- tthrows a TypeError if the the input object isn't a python float
     '''
+
     return not isPositive(obj)
 
 
@@ -506,6 +510,7 @@ def isExpAllZeros(obj):
 
         throws -- throws a TypeError if obj isn't a python float
     '''
+
     result = True
 
     # get the exponent as a byte array porperly masked
@@ -527,6 +532,7 @@ def isMantissaAllZeros(obj):
 
     throws -- throws a TypeError if obj isn't a python float
     '''
+
     result = True
 
     # get the mantissa as a byte array properly masked
@@ -608,6 +614,7 @@ def isInf(obj):
 
         throws -- throws a TypeError if obj isn't a python float
     '''
+
     # bad result for code checking
     result = None
 
@@ -639,6 +646,7 @@ def isPosInf(obj):
 
         throws -- throws a TypeError if obj isn't a python float
     '''
+
     return isInf(obj) and isPositive(obj)
 
 
