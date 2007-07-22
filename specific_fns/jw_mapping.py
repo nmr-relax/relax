@@ -388,7 +388,7 @@ class Jw_mapping(Common_functions):
                 value.append(self.default_value('r'))
 
             # Initilise data.
-            if not hasattr(self.relax.data.res[self.run][index], 'csa') or not hasattr(self.relax.data.res[self.run][index], 'csa'):
+            if not hasattr(self.relax.data.res[self.run][index], 'csa') or not hasattr(self.relax.data.res[self.run][index], 'r'):
                 self.data_init(self.relax.data.res[self.run][index])
 
             # CSA and Bond length.
