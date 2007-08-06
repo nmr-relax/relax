@@ -29,6 +29,7 @@ from data import Data as relax_data_store
 from base_class import Common_functions
 from maths_fns.jw_mapping import Mapping
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoValueError, RelaxNucleusError
+from physical_constants import N15_CSA, NH_BOND_LENGTH
 
 
 # The relax data storage object.
@@ -208,6 +209,7 @@ class Jw_mapping(Common_functions):
         """
         Reduced spectral density mapping default values
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        These default values are found in the file 'physical_constants.py'.
 
         _______________________________________________________________________________________
         |                                       |              |                              |
@@ -216,18 +218,18 @@ class Jw_mapping(Common_functions):
         |                                       |              |                              |
         | Bond length                           | 'r'          | 1.02 * 1e-10                 |
         |                                       |              |                              |
-        | CSA                                   | 'csa'        | -170 * 1e-6                  |
+        | CSA                                   | 'csa'        | -172 * 1e-6                  |
         |_______________________________________|______________|______________________________|
 
         """
 
         # Bond length.
         if param == 'r':
-            return 1.02 * 1e-10
+            return NH_BOND_LENGTH
 
         # CSA.
         if param == 'CSA':
-            return -170 * 1e-6
+            return N15_CSA
 
 
     def num_instances(self, run=None):

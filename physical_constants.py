@@ -32,3 +32,10 @@ h_bar = h / (2.0*pi)
 
 # The magnetic constant or the permeability of vacuum.
 mu0 = 4.0 * pi * 1e-7
+
+# The 15N CSA in the NH bond (default value).
+N15_CSA = -172 * 1e-6
+
+# The length of the NH bond (default value).
+NH_BOND_LENGTH = 1.02 * 1e-10
+

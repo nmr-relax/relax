@@ -26,6 +26,7 @@ import sys
 
 # relax module imports.
 from data import Data as relax_data_store
+from physical_constants import N15_CSA, NH_BOND_LENGTH
 
 
 # The relax data storage object.
@@ -260,7 +261,7 @@ class Mf:
 
         # Setup other values.
         self.relax.interpreter._Diffusion_tensor.init(self.run, 1e-8, fixed=1)
-        self.relax.interpreter._Value.set(self.run, [-170 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
+        self.relax.interpreter._Value.set(self.run, [N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
 
         # Select the model.
         self.relax.interpreter._Model_free.select_model(self.run, model='m4')
@@ -303,7 +304,7 @@ class Mf:
 
         # Setup other values.
         self.relax.interpreter._Diffusion_tensor.init(self.run, (1.601 * 1e7, 1.34, 72.4, 90-77.9), param_types=4)
-        self.relax.interpreter._Value.set(self.run, [-170 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
+        self.relax.interpreter._Value.set(self.run, [N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
         self.relax.interpreter._Value.set(self.run, [0.8, 50 * 1e-12, 0.0], ['S2', 'te', 'Rex'])
 
         # Select the model.
@@ -342,7 +343,7 @@ class Mf:
         self.relax.interpreter._Relax_data.read(self.run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
 
         # Setup other values.
-        self.relax.interpreter._Value.set(self.run, [-170 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
+        self.relax.interpreter._Value.set(self.run, [N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
 
         # Select the model.
         self.relax.interpreter._Model_free.select_model(self.run, model='tm2')
@@ -930,7 +931,7 @@ class Mf:
 
         # Setup other values.
         self.relax.interpreter._Diffusion_tensor.init(self.run, 10e-9, fixed=1)
-        self.relax.interpreter._Value.set(self.run, 1.02 * 1e-10, 'bond_length')
+        self.relax.interpreter._Value.set(self.run, NH_BOND_LENGTH, 'bond_length')
         self.relax.interpreter._Value.set(self.run, -160 * 1e-6, 'csa')
 
         # Select the model-free model.
@@ -1198,10 +1199,10 @@ class Mf:
         self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
 
         # Set the CSA value.
-        self.relax.interpreter._Value.set(self.run, 1.02 * 1e-10, 'bond_length')
+        self.relax.interpreter._Value.set(self.run, NH_BOND_LENGTH, 'bond_length')
 
         # Test the value.
-        if relax_data_store.res[self.run][1].r != 1.02 * 1e-10:
+        if relax_data_store.res[self.run][1].r != NH_BOND_LENGTH:
             print "The bond length has not been set correctly."
             return
 
@@ -1224,10 +1225,10 @@ class Mf:
         self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
 
         # Set the CSA value.
-        self.relax.interpreter._Value.set(self.run, -170 * 1e-6, 'csa')
+        self.relax.interpreter._Value.set(self.run, N15_CSA, 'csa')
 
         # Test the value.
-        if relax_data_store.res[self.run][1].csa != -170*1e-6:
+        if relax_data_store.res[self.run][1].csa != N15_CSA:
             print "The CSA value has not been set correctly."
             return
 
@@ -1250,15 +1251,15 @@ class Mf:
         self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
 
         # Set the CSA value and bond length simultaneously.
-        self.relax.interpreter._Value.set(self.run, [-170 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
+        self.relax.interpreter._Value.set(self.run, [N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
 
         # Test the CSA value.
-        if relax_data_store.res[self.run][1].csa != -170*1e-6:
+        if relax_data_store.res[self.run][1].csa != N15_CSA:
             print "The CSA value has not been set correctly."
             return
 
         # Test the bond length.
-        if relax_data_store.res[self.run][1].r != 1.02 * 1e-10:
+        if relax_data_store.res[self.run][1].r != NH_BOND_LENGTH:
             print "The bond length has not been set correctly."
             return
 
