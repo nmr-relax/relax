@@ -925,7 +925,7 @@ class Model_free(Common_functions):
         |                                       |                    |                        |
         | Bond length                           | 'r'                | 1.02 * 1e-10           |
         |                                       |                    |                        |
-        | CSA                                   | 'csa'              | -170 * 1e-6            |
+        | CSA                                   | 'csa'              | -172 * 1e-6            |
         |_______________________________________|____________________|________________________|
 
         """
@@ -960,7 +960,7 @@ class Model_free(Common_functions):
 
         # CSA.
         elif param == 'CSA':
-            return -170 * 1e-6
+            return -172 * 1e-6
 
 
     def delete(self, run):

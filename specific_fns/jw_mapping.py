@@ -209,7 +209,7 @@ class Jw_mapping(Common_functions):
         |                                       |              |                              |
         | Bond length                           | 'r'          | 1.02 * 1e-10                 |
         |                                       |              |                              |
-        | CSA                                   | 'csa'        | -170 * 1e-6                  |
+        | CSA                                   | 'csa'        | -172 * 1e-6                  |
         |_______________________________________|______________|______________________________|
 
         """
@@ -220,7 +220,7 @@ class Jw_mapping(Common_functions):
 
         # CSA.
         if param == 'CSA':
-            return -170 * 1e-6
+            return -172 * 1e-6
 
 
     def num_instances(self, run=None):

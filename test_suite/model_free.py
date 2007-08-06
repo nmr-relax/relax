@@ -251,7 +251,7 @@ class Mf:
 
         # Setup other values.
         self.relax.interpreter._Diffusion_tensor.init(self.run, 1e-8, fixed=1)
-        self.relax.interpreter._Value.set(self.run, [-170 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
+        self.relax.interpreter._Value.set(self.run, [-172 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
 
         # Select the model.
         self.relax.interpreter._Model_free.select_model(self.run, model='m4')
@@ -293,7 +293,7 @@ class Mf:
 
         # Setup other values.
         self.relax.interpreter._Diffusion_tensor.init(self.run, (1.601 * 1e7, 1.34, 72.4, 90-77.9), param_types=4)
-        self.relax.interpreter._Value.set(self.run, [-170 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
+        self.relax.interpreter._Value.set(self.run, [-172 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
         self.relax.interpreter._Value.set(self.run, [0.8, 50 * 1e-12, 0.0], ['S2', 'te', 'Rex'])
 
         # Select the model.
@@ -332,7 +332,7 @@ class Mf:
         self.relax.interpreter._Relax_data.read(self.run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
 
         # Setup other values.
-        self.relax.interpreter._Value.set(self.run, [-170 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
+        self.relax.interpreter._Value.set(self.run, [-172 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
 
         # Select the model.
         self.relax.interpreter._Model_free.select_model(self.run, model='tm2')
@@ -1214,10 +1214,10 @@ class Mf:
         self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
 
         # Set the CSA value.
-        self.relax.interpreter._Value.set(self.run, -170 * 1e-6, 'csa')
+        self.relax.interpreter._Value.set(self.run, -172 * 1e-6, 'csa')
 
         # Test the value.
-        if self.relax.data.res[self.run][1].csa != -170*1e-6:
+        if self.relax.data.res[self.run][1].csa != -172*1e-6:
             print "The CSA value has not been set correctly."
             return
 
@@ -1240,10 +1240,10 @@ class Mf:
         self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
 
         # Set the CSA value and bond length simultaneously.
-        self.relax.interpreter._Value.set(self.run, [-170 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
+        self.relax.interpreter._Value.set(self.run, [-172 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
 
         # Test the CSA value.
-        if self.relax.data.res[self.run][1].csa != -170*1e-6:
+        if self.relax.data.res[self.run][1].csa != -172*1e-6:
             print "The CSA value has not been set correctly."
             return
 
