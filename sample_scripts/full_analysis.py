@@ -366,12 +366,14 @@ class Main:
         # Create a string representation of the model-free models of the previous run.
         prev_models = ''
         for i in xrange(len(relax_data_store.res['previous'])):
-            prev_models = prev_models + relax_data_store.res['previous'][i].model
+            if hasattr(relax_data_store.res['previous'][i], 'model'):
+                prev_models = prev_models + relax_data_store.res['previous'][i].model
 
         # Create a string representation of the model-free models of the current run.
         curr_models = ''
         for i in xrange(len(relax_data_store.res[run])):
-            curr_models = curr_models + relax_data_store.res[run][i].model
+            if hasattr(relax_data_store.res[run][i], 'model'):
+                curr_models = curr_models + relax_data_store.res[run][i].model
 
         # The test.
         if prev_models == curr_models:
@@ -417,6 +419,10 @@ class Main:
                     # Skip if the parameters have not converged.
                     if not params_converged:
                         break
+
+                    # Skip spin systems with no 'params' object.
+                    if not hasattr(relax_data_store.res['previous'][i], 'params') or not hasattr(relax_data_store.res[run][i], 'params'):
+                        continue
 
                     # Loop over the parameters.
                     for j in xrange(len(relax_data_store.res[run][i].params)):
