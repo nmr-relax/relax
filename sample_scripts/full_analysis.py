@@ -367,13 +367,15 @@ class Main:
         prev_models = ''
         for i in xrange(len(relax_data_store.res['previous'])):
             if hasattr(relax_data_store.res['previous'][i], 'model'):
-                prev_models = prev_models + relax_data_store.res['previous'][i].model
+                if not relax_data_store.res['previous'][i].model == 'None':
+                    prev_models = prev_models + relax_data_store.res['previous'][i].model
 
         # Create a string representation of the model-free models of the current run.
         curr_models = ''
         for i in xrange(len(relax_data_store.res[run])):
             if hasattr(relax_data_store.res[run][i], 'model'):
-                curr_models = curr_models + relax_data_store.res[run][i].model
+                if not relax_data_store.res[run][i].model == 'None':
+                    curr_models = curr_models + relax_data_store.res[run][i].model
 
         # The test.
         if prev_models == curr_models:
