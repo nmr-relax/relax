@@ -8,7 +8,7 @@ http://svn.gna.org/svn/relax/tags/1.2.11
         * Automatic looping over iterations in the 'full_analysis.py' sample script is now possible.
 
     Changes:
-        * The 'full_analysis.py' sample script has been significantly improved will all user modifiable options shifted to the top of the script.
+        * The 'full_analysis.py' sample script has been significantly improved with all user modifiable options shifted to the top of the script.
         * The default CSA value is now -172 ppm.
 
     Bugfixes:
@@ -16,7 +16,7 @@ http://svn.gna.org/svn/relax/tags/1.2.11
         * The synopsis of the system/functional tests now says '[ Failed ]' if one the tests fails (see bug #8682).
         * relax now works with Python 2.5 (see bug #9093).
         * The writing of the model-free results file, which failed under certain circumstances because of the 'heteronuc' and 'proton' attributes, has been fixed (see bug #8996).
-        * The problem whereby there is data loss for deselected residues when using 'results.write()' followed by 'results.read()' has been resolved (see bug #8996).
+        * The problem whereby there is data loss for deselected residues when using 'results.write()' followed by 'results.read()' has been resolved (see bug #8953).
         * Relaxation data can now be read if deselected spin systems have a relaxation data value or error value set to 'None' (see bug #9101).
         * The fatal bug of the reduced spectral density mapping values being incorrectly calculated has been fixed (see bug #9238).
         * When using the alternate model-free parameter set {S2f, tf, S2s, ts}, the incorrect functions were being called (see bug #9189).
