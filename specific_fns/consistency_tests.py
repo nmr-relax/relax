@@ -225,7 +225,7 @@ class Consistency_tests(Common_functions):
         |                                       |               |                             |
         | Bond length                           | 'r'           | 1.02 * 1e-10                |
         |                                       |               |                             |
-        | CSA                                   | 'csa'         | -170 * 1e-6                 |
+        | CSA                                   | 'csa'         | -172 * 1e-6                 |
         |                                       |               |                             |
         | Angle Theta                           | 'orientation' | 15.7                        |
         |                                       |               |                             |
@@ -240,7 +240,7 @@ class Consistency_tests(Common_functions):
 
         # CSA.
         if param == 'CSA':
-            return -170 * 1e-6
+            return -172 * 1e-6
 
         # Angle Theta
         if param == 'orientation':
