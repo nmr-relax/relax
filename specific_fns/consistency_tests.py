@@ -417,8 +417,8 @@ class Consistency_tests(Common_functions):
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         In consistency testing, only four values can be set, the bond length, CSA, angle
-        Theta and correlation time values.  These must be set prior to the calculation
-        of consistency functions.
+        Theta ('orientation') and correlation time values. These must be set prior to the
+        calculation of consistency functions.
 
         """
 

@@ -37,9 +37,14 @@ class Consistency:
 
         This code calculates three functions for each residue. When comparing datasets from
         different magnetic field, the value should be the same for each function as these are field
-        field independent. The J(0) function is the spectral density at the zero frequency and is
-        obtained using a reduced spectral density approach. The F_eta and F_R2 functions are the
+        independent. The J(0) function is the spectral density at the zero frequency and is obtained
+        using a reduced spectral density approach. The F_eta and F_R2 functions are the
         consistency functions proposed by Fushman D. et al. (1998) JACS, 120: 10947-10952.
+
+        To assess the consistency of its datasets, one should first calculate those values (J(0),
+        F_eta and F_R2) for each field. Then, the user should compare values obtained for different
+        magnetic fields. Comparisons could proceed using correlation plots and histograms, and the
+        user could also calculate correlation, skewness and kurtosis coefficients.
         """
 
         # Initialise the data container.
@@ -109,6 +114,9 @@ class Consistency:
         # Calculate P_2.
         # p_2 is a second rank Legendre polynomial as p_2(x) = 0.5 * (3 * (x ** 2) -1)
         # where x is the cosine of the angle Theta when expressed in radians.
+        #
+        # Note that the angle Theta (called 'orientation' in relax) is the angle between the 15N-1H
+        # vector and the principal axis of the 15N chemical shift tensor.
         p_2 = 0.5 * ((3.0 * (cos(orientation * pi / 180)) ** 2) -1)
 
         # Calculate eta.
