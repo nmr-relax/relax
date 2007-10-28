@@ -248,3 +248,30 @@ class Test_residue(TestCase):
 
         # Supply an atom id.
         self.assertRaises(RelaxSpinSelectDisallowError, residue.delete, res_id='@2')
+
+
+    def test_rename(self):
+        """Test the renaming of a residue.
+
+        The function tested is generic_fns.residue.rename().
+        """
+
+        # Create the first residue and add some data to its spin container.
+        residue.create(-10, 'His')
+        relax_data_store['orig'].mol[0].res[0].spin[0].num = 10
+
+        # Rename the residue.
+        residue.rename(res_from='@-10', new_name='K')
+
+        # Test that the residue has been renamed.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'K')
+
+
+    def test_rename_no_spin(self):
+        """Test the failure of renaming a residue when a spin id is given.
+
+        The function tested is generic_fns.residue.rename().
+        """
+
+        # Try renaming using a atom id.
+        self.assertRaises(RelaxSpinSelectDisallowError, residue.rename, res_from='@111', new_name='K')
