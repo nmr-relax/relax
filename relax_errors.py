@@ -683,17 +683,30 @@ class RelaxNaNError(BaseError):
 # An object of all the RelaxErrors.
 ###################################
 
-# Loop over all objects of this module.
-for name in dir():
-    # Get the object.
-    object = globals()[name]
+# Function for setting up the AllRelaxErrors object.
+def all_errors(names):
+    """Function for returning all the RelaxErrors to allow the AllRelaxError object to be created."""
 
-    # Skip over all non error class objects.
-    if type(object) != ClassType or not match('Relax', name):
-        continue
+    # Empty list.
+    list = None
 
-    # Tuple of all the errors.
-    if 'AllRelaxErrors' in dir():
-        AllRelaxErrors = AllRelaxErrors, object
-    else:
-        AllRelaxErrors = object,
+    # Loop over all objects of this module.
+    for name in names:
+        # Get the object.
+        object = globals()[name]
+
+        # Skip over all non error class objects.
+        if not (isinstance(object, ClassType) or isinstance(object, type(type))) or not match('Relax', name):
+            continue
+
+        # Tuple of all the errors.
+        if list == None:
+            list = object,
+        else:
+            list = list, object
+
+    # Return the list of RelaxErrors
+    return list
+
+# Initialise the AllRelaxErrors structure so it can be imported.
+AllRelaxErrors = all_errors(dir())
