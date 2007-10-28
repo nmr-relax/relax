@@ -72,7 +72,6 @@ The molecule.add() user function should be used to create all the residue and sp
     residue.copy()
     residue.create()    # This is currently named 'sequence.add()'.
     residue.delete()
-    residue.merge()
     residue.rename()
     residue.renumber()
 
