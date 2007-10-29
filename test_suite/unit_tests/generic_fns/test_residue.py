@@ -258,7 +258,6 @@ class Test_residue(TestCase):
 
         # Create the first residue and add some data to its spin container.
         residue.create(-10, 'His')
-        relax_data_store['orig'].mol[0].res[0].spin[0].num = 10
 
         # Rename the residue.
         residue.rename(res_from='@-10', new_name='K')
