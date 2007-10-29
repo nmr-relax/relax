@@ -267,6 +267,38 @@ class Test_residue(TestCase):
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'K')
 
 
+    def test_rename_many(self):
+        """Test the renaming of multiple residues.
+
+        The function used is generic_fns.residue.rename().
+        """
+
+        # Create the first residue and add some data to its spin container.
+        residue.create(1, 'Ala')
+        relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
+
+        # Copy the residue a few times.
+        residue.copy(res_num_from=1, res_num_to=2)
+        residue.copy(res_num_from=1, res_name_from='Ala', res_num_to=3)
+
+        # Change the first residue's data.
+        relax_data_store['orig'].mol[0].res[0].spin[0].name = 'His'
+
+        # Copy the residue once more.
+        residue.copy(res_num_from=1, res_num_to=4, res_name_to='Met')
+
+        # Rename all alanines.
+        residue.rename(res_from='Ala', new_name='Gln')
+
+        # Test the renaming of alanines.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[1].name, 'Gln')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[2].name, 'Gln')
+
+        # Test that the other residues have not changed.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'His')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[3].name, 'Met')
+
+
     def test_rename_no_spin(self):
         """Test the failure of renaming a residue when a spin id is given.
 
