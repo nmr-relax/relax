@@ -306,3 +306,52 @@ class Test_residue(TestCase):
 
         # Try renaming using a atom id.
         self.assertRaises(RelaxSpinSelectDisallowError, residue.rename, res_from='@111', new_name='K')
+
+
+    def test_renumber(self):
+        """Test the renumbering of a residue.
+
+        The function tested is generic_fns.residue.renumber().
+        """
+
+        # Create the first residue and add some data to its spin container.
+        residue.create(-10, 'His')
+
+        # Rename the residue.
+        residue.renumber(res_from='@-10', new_number=10)
+
+        # Test that the residue has been renumbered.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 10)
+
+
+    def test_renumber_many_fail(self):
+        """Test the renaming of multiple residues.
+
+        The function used is generic_fns.residue.renumber().
+        """
+
+        # Create the first residue and add some data to its spin container.
+        residue.create(1, 'Ala')
+
+        # Copy the residue a few times.
+        residue.copy(res_num_from=1, res_num_to=2)
+        residue.copy(res_num_from=1, res_name_from='Ala', res_num_to=3)
+
+        # Change the first residue's data.
+        relax_data_store['orig'].mol[0].res[0].spin[0].name = 'His'
+
+        # Copy the residue once more.
+        residue.copy(res_num_from=1, res_num_to=4, res_name_to='Met')
+
+        # Try renumbering all alanines.
+        self.assertRaises(RelaxError, residue.renumber, res_from='Ala', new_number=10)
+
+
+    def test_renumber_no_spin(self):
+        """Test the failure of renaming a residue when a spin id is given.
+
+        The function tested is generic_fns.residue.renumber().
+        """
+
+        # Try renaming using a atom id.
+        self.assertRaises(RelaxSpinSelectDisallowError, residue.renumber, res_from='@111', new_number=10)
