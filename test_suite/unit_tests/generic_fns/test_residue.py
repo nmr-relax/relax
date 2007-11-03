@@ -42,6 +42,9 @@ class Test_residue(TestCase):
         # Add a data pipe to the data store.
         relax_data_store.add(pipe_name='orig', pipe_type='mf')
 
+        # Add a second data pipe for copying tests.
+        relax_data_store.add(pipe_name='test', pipe_type='mf')
+
 
     def tearDown(self):
         """Reset the relax data storage object."""
@@ -49,10 +52,90 @@ class Test_residue(TestCase):
         relax_data_store.__reset__()
 
 
-    def test_copy(self):
-        """Test the copying of the residue data.
+    def test_copy_between_molecules(self):
+        """Test the copying of the residue data between different molecules.
 
-        The function used is generic_fns.residues.copy().
+        The function used is generic_fns.residue.copy().
+        """
+
+        # Create the first residue and add some data to its spin container.
+        residue.create(1, 'Ala')
+        relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
+        relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
+
+        # Create a second molecule.
+        relax_data_store['orig'].mol.add_item('New mol')
+
+        # Copy the residue to the new molecule.
+        residue.copy(res_from=':1', res_to='#New mol')
+        residue.copy(res_from=':1', res_to='#New mol:5')
+
+        # Change the first residue's data.
+        relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
+        relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
+
+        # Test the original residue.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'Ala')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 222)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].x, 2)
+
+        # Test the new residue 1.
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].num, 1)
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].name, 'Ala')
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].num, 111)
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].x, 1)
+
+        # Test the new residue 5.
+        self.assertEqual(relax_data_store['orig'].mol[1].res[1].num, 5)
+        self.assertEqual(relax_data_store['orig'].mol[1].res[1].name, 'Ala')
+        self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[0].num, 111)
+        self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[0].x, 1)
+
+
+
+    def test_copy_between_pipes(self):
+        """Test the copying of the residue data between different data pipes.
+
+        The function used is generic_fns.residue.copy().
+        """
+
+        # Create the first residue and add some data to its spin container.
+        residue.create(1, 'Ala')
+        relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
+        relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
+
+        # Copy the residue to the second data pipe.
+        residue.copy(res_from=':1', pipe_to='test')
+        residue.copy(pipe_from='orig', res_from=':1', pipe_to='test', res_to=':5')
+
+        # Change the first residue's data.
+        relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
+        relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
+
+        # Test the original residue.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'Ala')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 222)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].x, 2)
+
+        # Test the new residue 1.
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].num, 1)
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].name, 'Ala')
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].spin[0].num, 111)
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].spin[0].x, 1)
+
+        # Test the new residue 5.
+        self.assertEqual(relax_data_store['test'].mol[0].res[1].num, 5)
+        self.assertEqual(relax_data_store['test'].mol[0].res[1].name, 'Ala')
+        self.assertEqual(relax_data_store['test'].mol[0].res[1].spin[0].num, 111)
+        self.assertEqual(relax_data_store['test'].mol[0].res[1].spin[0].x, 1)
+
+
+    def test_copy_within_molecule(self):
+        """Test the copying of the residue data within a single molecule.
+
+        The function used is generic_fns.residue.copy().
         """
 
         # Create the first residue and add some data to its spin container.
@@ -61,8 +144,10 @@ class Test_residue(TestCase):
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
 
         # Copy the residue a few times.
-        residue.copy(res_num_from=1, res_num_to=2)
-        residue.copy(res_num_from=1, res_name_from='Ala', res_num_to=3)
+        residue.copy(res_from=':1', res_num_to=2)
+        residue.copy(res_from=':1', pipe_to='orig', res_name_from='Ala', res_num_to=3)
+        residue.copy(pipe_from='orig', res_from=':1', pipe_to='orig', res_name_from='Ala', res_num_to=3)
+        residue.copy(pipe_from='orig', res_from=':1', pipe_to='test', res_name_from='Ala', res_num_to=4)
 
         # Change the first residue's data.
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
