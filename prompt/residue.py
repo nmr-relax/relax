@@ -44,6 +44,52 @@ class Residue:
         self.__relax__ = relax
 
 
+    def copy(self, run1=None, run2=None):
+        """Function for copying the sequence from run1 to run2.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run1:  The name of the run to copy the sequence from.
+
+        run2:  The name of the run to copy the sequence to.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function will copy the sequence from 'run1' to 'run2'.  'run1' must contain sequence
+        information, while 'run2' must have no sequence loaded.
+
+
+        Examples
+        ~~~~~~~~
+
+        To copy the sequence from the run 'm1' to the run 'm2', type:
+
+        relax> sequence.copy('m1', 'm2')
+        relax> sequence.copy(run1='m1', run2='m2')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "sequence.copy("
+            text = text + "run1=" + `run1`
+            text = text + ", run2=" + `run2` + ")"
+            print text
+
+        # The run1 argument.
+        if type(run1) != str:
+            raise RelaxStrError, ('run1', run1)
+
+        # The run2 argument.
+        if type(run2) != str:
+            raise RelaxStrError, ('run2', run2)
+
+        # Execute the functional code.
+        self.__relax__.generic.sequence.copy(run1=run1, run2=run2)
+
+
     def create(self, res_num=None, res_name=None):
         """Function for creating a new residue.
 
@@ -93,52 +139,6 @@ class Residue:
 
         # Execute the functional code.
         residue.create(res_num=res_num, res_name=res_name)
-
-
-    def copy(self, run1=None, run2=None):
-        """Function for copying the sequence from run1 to run2.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run1:  The name of the run to copy the sequence from.
-
-        run2:  The name of the run to copy the sequence to.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This function will copy the sequence from 'run1' to 'run2'.  'run1' must contain sequence
-        information, while 'run2' must have no sequence loaded.
-
-
-        Examples
-        ~~~~~~~~
-
-        To copy the sequence from the run 'm1' to the run 'm2', type:
-
-        relax> sequence.copy('m1', 'm2')
-        relax> sequence.copy(run1='m1', run2='m2')
-        """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.copy("
-            text = text + "run1=" + `run1`
-            text = text + ", run2=" + `run2` + ")"
-            print text
-
-        # The run1 argument.
-        if type(run1) != str:
-            raise RelaxStrError, ('run1', run1)
-
-        # The run2 argument.
-        if type(run2) != str:
-            raise RelaxStrError, ('run2', run2)
-
-        # Execute the functional code.
-        self.__relax__.generic.sequence.copy(run1=run1, run2=run2)
 
 
     def delete(self, res_id=None):
