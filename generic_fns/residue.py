@@ -29,7 +29,7 @@ from selection import molecule_loop, parse_token, tokenise
 def copy(res_num_from=None, res_name_from=None, res_num_to=None, res_name_to=None):
     """Copy the contents of the residue structure from one residue to a new residue.
 
-    For copying to be successful, the res_num_from and res_name_from must match an existant residue.
+    For copying to be successful, the res_num_from and res_name_from must match an existent residue.
     The res_name_from and res_name_to arguments need not be supplied.  The new residue number must
     be unique.
 
