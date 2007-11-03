@@ -302,14 +302,20 @@ def desel_res(self, run=None, num=None, name=None, change_all=None):
         print "No residues match."
 
 
-def molecule_loop(selection=None):
+def molecule_loop(selection=None, pipe=None):
     """Generator function for looping over all the molecules of the given selection.
 
     @param selection:   The molecule selection identifier.
     @type selection:    str
+    @param pipe:        The data pipe containing the molecule.  Defaults to the current data pipe.
+    @type pipe:         str
     @return:            The molecule specific data container.
     @rtype:             instance of the MoleculeContainer class.
     """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = relax_data_store.current_pipe
 
     # Parse the selection string.
     select_obj = Selection(selection)
@@ -321,7 +327,7 @@ def molecule_loop(selection=None):
         raise RelaxSpinSelectDisallowError
 
     # Loop over the molecules.
-    for mol in relax_data_store[relax_data_store.current_pipe].mol:
+    for mol in relax_data_store[pipe].mol:
         # Skip the molecule if there is no match to the selection.
         if mol not in select_obj:
             continue
@@ -403,14 +409,20 @@ def parse_token(token):
     return list
 
 
-def residue_loop(selection=None):
+def residue_loop(selection=None, pipe=None):
     """Generator function for looping over all the residues of the given selection.
 
     @param selection:   The residue selection identifier.
     @type selection:    str
+    @param pipe:        The data pipe containing the residue.  Defaults to the current data pipe.
+    @type pipe:         str
     @return:            The residue specific data container.
-    @rtype:             instance of the MoleculeContainer class.
+    @rtype:             instance of the ResidueContainer class.
     """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = relax_data_store.current_pipe
 
     # Parse the selection string.
     select_obj = Selection(selection)
@@ -420,7 +432,7 @@ def residue_loop(selection=None):
         raise RelaxSpinSelectDisallowError
 
     # Loop over the molecules.
-    for mol in relax_data_store[relax_data_store.current_pipe].mol:
+    for mol in relax_data_store[pipe].mol:
         # Skip the molecule if there is no match to the selection.
         if mol not in select_obj:
             continue
@@ -433,6 +445,136 @@ def residue_loop(selection=None):
 
             # Yield the residue data container.
             yield res
+
+
+def return_molecule(selection=None, pipe=None):
+    """Function for returning the molecule data container of the given selection.
+
+    @param selection:   The molecule selection identifier.
+    @type selection:    str
+    @param pipe:        The data pipe containing the molecule.  Defaults to the current data pipe.
+    @type pipe:         str
+    @return:            The molecule specific data container.
+    @rtype:             instance of the MoleculeContainer class.
+    """
+
+    # No selection.
+    if selection == None:
+        return relax_data_store[pipe].mol[0]
+
+    # The data pipe.
+    if pipe == None:
+        pipe = relax_data_store.current_pipe
+
+    # Parse the selection string.
+    select_obj = Selection(selection)
+
+    # Loop over the molecules.
+    mol = None
+    mol_num = 0
+    mol_container = relax_data_store[pipe].mol[0]
+    for mol in relax_data_store[pipe].mol:
+        # Skip the molecule if there is no match to the selection.
+        if mol not in select_obj:
+            continue
+
+        # Store the molecule container.
+        mol_container = mol
+
+        # Increment the molecule number counter.
+        mol_num = mol_num + 1
+
+    # No unique identifier.
+    if mol_num > 1:
+        raise RelaxError, "The identifier " + `selection` + " corresponds to more than a single molecule in the " + `pipe` + " data pipe."
+
+    # Return the molecule container.
+    return mol_container
+
+
+def return_residue(selection=None, pipe=None):
+    """Function for returning the residue data container of the given selection.
+
+    @param selection:   The residue selection identifier.
+    @type selection:    str
+    @param pipe:        The data pipe containing the residue.  Defaults to the current data pipe.
+    @type pipe:         str
+    @return:            The residue specific data container.
+    @rtype:             instance of the ResidueContainer class.
+    """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = relax_data_store.current_pipe
+
+    # Parse the selection string.
+    select_obj = Selection(selection)
+
+    # No selection.
+    if len(select_obj.residues) == 0:
+        return None
+
+    # Loop over the molecules.
+    res = None
+    res_num = 0
+    res_container = None
+    for mol in relax_data_store[pipe].mol:
+        # Skip the molecule if there is no match to the selection.
+        if mol not in select_obj:
+            continue
+
+        # Loop over the residues.
+        for res in mol.res:
+            # Skip the residue if there is no match to the selection.
+            if res not in select_obj:
+                continue
+
+            # Store the residue container.
+            res_container = res
+
+            # Increment the residue number counter.
+            res_num = res_num + 1
+
+    # No unique identifier.
+    if res_num > 1:
+        raise RelaxError, "The identifier " + `selection` + " corresponds to more than a single residue in the " + `pipe` + " data pipe."
+
+    # Return the residue container.
+    return res_container
+
+
+def return_single_residue_info(residue_token):
+    """Return the single residue number and name corresponding to the residue token.
+
+    @param residue_token:   The residue identification string.
+    @type residue_token:    str
+    @return:                A tuple containing the residue number and the residue name.
+    @rtype:                 (int, str)
+    """
+
+    # Parse the residue token for renaming and renumbering.
+    residue_info = parse_token(residue_token)
+
+    # Determine the residue number and name.
+    res_num = None
+    res_name = None
+    for info in residue_info:
+        # A residue name identifier.
+        if type(info) == str:
+            if res_name == None:
+                res_name = info
+            else:
+                raise RelaxError, "The residue identifier " + `residue_token` + " does not correspond to a single residue."
+
+        # A residue number identifier.
+        if type(info) == int:
+            if res_num == None:
+                res_num = info
+            else:
+                raise RelaxError, "The residue identifier " + `residue_token` + " does not correspond to a single residue."
+
+    # Return the residue number and name.
+    return res_num, res_name
 
 
 def reverse(selection=None):
@@ -654,20 +796,26 @@ def sel_res(self, run=None, num=None, name=None, boolean='OR', change_all=0):
         print "No residues match."
 
 
-def spin_loop(selection=None):
+def spin_loop(selection=None, pipe=None):
     """Generator function for looping over all the spin systems of the given selection.
 
     @param selection:   The spin system selection identifier.
     @type selection:    str
+    @param pipe:        The data pipe containing the spin.  Defaults to the current data pipe.
+    @type pipe:         str
     @return:            The spin system specific data container.
     @rtype:             instance of the SpinContainer class.
     """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = relax_data_store.current_pipe
 
     # Parse the selection string.
     select_obj = Selection(selection)
 
     # Loop over the molecules.
-    for mol in relax_data_store[relax_data_store.current_pipe].mol:
+    for mol in relax_data_store[pipe].mol:
         # Skip the molecule if there is no match to the selection.
         if mol not in select_obj:
             continue

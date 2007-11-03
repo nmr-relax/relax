@@ -23,66 +23,74 @@
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoRunError, RelaxNoSequenceError, RelaxSequenceError, RelaxSpinSelectDisallowError
-from selection import molecule_loop, parse_token, tokenise
+from selection import molecule_loop, parse_token, residue_loop, return_molecule, return_residue, return_single_residue_info, tokenise
 
 
-def copy(res_num_from=None, res_name_from=None, res_num_to=None, res_name_to=None):
+def copy(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
     """Copy the contents of the residue structure from one residue to a new residue.
 
-    For copying to be successful, the res_num_from and res_name_from must match an existent residue.
-    The res_name_from and res_name_to arguments need not be supplied.  The new residue number must
-    be unique.
+    For copying to be successful, the res_from identification string must match an existent residue.
+    The new residue number must be unique.
 
-    @param res_num_from:    The residue number identifying the structure to copy the data from.
-        This argument must be supplied.
-    @type res_num_from:     int
-    @param res_name_from:   The residue name identifying the structure to copy the data from.  This
-        argument is optional.
-    @type res_name_from:    str
-    @param res_num_to:      The residue number identifying the structure to copy the data to.  This
-        argument must be supplied.
-    @type res_num_to:       int
-    @param res_name_to:     The residue name identifying the structure to copy the data to.  This
-        argument is optional but if supplied will rename the copied residue.
-    @type res_name_to:      str
+    @param pipe_from:   The data pipe to copy the residue from.  This defaults to the current data
+                        pipe.
+    @type pipe_from:    str
+    @param res_from:    The residue identification string for the structure to copy the data from.
+    @type res_from:     str
+    @param pipe_to:     The data pipe to copy the residue to.  This defaults to the current data
+                        pipe.
+    @type pipe_to:      str
+    @param res_to:      The residue identification string for the structure to copy the data to.
+    @type res_to:       str
     """
 
-    # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    # The current data pipe.
+    if pipe_from == None:
+        pipe_from = relax_data_store.current_pipe
+    if pipe_to == None:
+        pipe_to = relax_data_store.current_pipe
+
+    # The second pipe does not exist.
+    if pipe_to not in relax_data_store.keys():
+        raise RelaxNoRunError, pipe_to
+
+    # Split up the selection string.
+    mol_from_token, res_from_token, spin_from_token = tokenise(res_from)
+    mol_to_token, res_to_token, spin_to_token = tokenise(res_to)
+
+    # Disallow spin selections.
+    if spin_from_token != None or spin_to_token != None:
+        raise RelaxSpinSelectDisallowError
+
+    # Parse the residue token for renaming and renumbering.
+    res_num_to, res_name_to = return_single_residue_info(res_to_token)
 
     # Test if the residue number already exists.
-    for i in xrange(len(cdp.mol[0].res)):
-        if cdp.mol[0].res[i].num == res_num_to:
-            raise RelaxError, "The residue number '" + `res_num_to` + "' already exists in the sequence."
+    res_to_cont = return_residue(res_to, pipe_to)
+    if res_to_cont:
+        raise RelaxError, "The residue " + `res_to` + " already exists in the " + `pipe_from` + " data pipe."
 
-    # Find the index corresponding to the residue number and name.
-    index = None
-    for i in xrange(len(cdp.mol[0].res)):
-        # Residue number match.
-        if cdp.mol[0].res[i].num == res_num_from:
-            # Residue name match (if required).
-            if res_name_from:
-                if cdp.mol[0].res[i].name == res_name_from:
-                    index = i
-            else:
-                index = i
+    # Get the single residue data container.
+    res_from_cont = return_residue(res_from, pipe_from)
 
     # No residue to copy data from.
-    if index == None:
-        if res_name_from:
-            raise RelaxError, "The residue '" + `res_num_from` + " " + res_name_from + "' does not exist."
-        else:
-            raise RelaxError, "The residue number '" + `res_num_from` + "' does not exist."
+    if res_from_cont == None:
+        raise RelaxError, "The residue " + `res_from` + " does not exist in the " + `pipe_from` + " data pipe."
+
+    # Get the single molecule data container to copy the residue to.
+    mol_to_container = return_molecule(res_to, pipe_to)
 
     # Copy the data.
-    cdp.mol[0].res.append(cdp.mol[0].res[index].__clone__())
+    if mol_to_container.res[0].num == None and mol_to_container.res[0].name == None and len(mol_to_container.res) == 1:
+        mol_to_container.res[0] = res_from_cont.__clone__()
+    else:
+        mol_to_container.res.append(res_from_cont.__clone__())
 
-    # Change the new residue number.
-    cdp.mol[0].res[-1].num = res_num_to
-
-    # Change the new residue name.
-    if res_name_to:
-        cdp.mol[0].res[-1].name = res_name_to
+    # Change the new residue number and name.
+    if res_num_to != None:
+        mol_to_container.res[-1].num = res_num_to
+    if res_name_to != None:
+        mol_to_container.res[-1].name = res_name_to
 
 
 def create(res_num=None, res_name=None):

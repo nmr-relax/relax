@@ -45,6 +45,9 @@ class Test_residue(TestCase):
         # Add a second data pipe for copying tests.
         relax_data_store.add(pipe_name='test', pipe_type='mf')
 
+        # Set the current data pipe to 'orig'.
+        relax_data_store.current_pipe = 'orig'
+
 
     def tearDown(self):
         """Reset the relax data storage object."""
@@ -62,13 +65,14 @@ class Test_residue(TestCase):
         residue.create(1, 'Ala')
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
+        relax_data_store['orig'].mol[0].name = 'Old mol'
 
         # Create a second molecule.
         relax_data_store['orig'].mol.add_item('New mol')
 
         # Copy the residue to the new molecule.
         residue.copy(res_from=':1', res_to='#New mol')
-        residue.copy(res_from=':1', res_to='#New mol:5')
+        residue.copy(res_from='#Old mol:1', res_to='#New mol:5')
 
         # Change the first residue's data.
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
@@ -81,6 +85,7 @@ class Test_residue(TestCase):
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].x, 2)
 
         # Test the new residue 1.
+        self.assertEqual(relax_data_store['orig'].mol[1].name, 'New mol')
         self.assertEqual(relax_data_store['orig'].mol[1].res[0].num, 1)
         self.assertEqual(relax_data_store['orig'].mol[1].res[0].name, 'Ala')
         self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].num, 111)
@@ -132,6 +137,21 @@ class Test_residue(TestCase):
         self.assertEqual(relax_data_store['test'].mol[0].res[1].spin[0].x, 1)
 
 
+    def test_copy_between_pipes_fail_no_pipe(self):
+        """Test the copying of the residue data between different data pipes.
+
+        The function used is generic_fns.residue.copy().
+        """
+
+        # Create the first residue and add some data to its spin container.
+        residue.create(1, 'Ala')
+        relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
+        relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
+
+        # Copy the residue to the second data pipe.
+        self.assertRaises(RelaxNoRunError, residue.copy, res_from=':1', pipe_to='test2')
+
+
     def test_copy_within_molecule(self):
         """Test the copying of the residue data within a single molecule.
 
@@ -144,17 +164,21 @@ class Test_residue(TestCase):
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
 
         # Copy the residue a few times.
-        residue.copy(res_from=':1', res_num_to=2)
-        residue.copy(res_from=':1', pipe_to='orig', res_name_from='Ala', res_num_to=3)
-        residue.copy(pipe_from='orig', res_from=':1', pipe_to='orig', res_name_from='Ala', res_num_to=3)
-        residue.copy(pipe_from='orig', res_from=':1', pipe_to='test', res_name_from='Ala', res_num_to=4)
+        residue.copy(res_from=':1', res_to=':2')
+        residue.copy(res_from=':1', pipe_to='orig', res_to=':3')
 
         # Change the first residue's data.
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
 
         # Copy the residue once more.
-        residue.copy(res_num_from=1, res_num_to=4, res_name_to='Met')
+        residue.copy(res_from=':1', res_to=':4,Met')
+
+        # Test the original residue.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'Ala')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 222)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].x, 2)
 
         # Test the new residue 2.
         self.assertEqual(relax_data_store['orig'].mol[0].res[1].num, 2)
@@ -175,21 +199,21 @@ class Test_residue(TestCase):
         self.assertEqual(relax_data_store['orig'].mol[0].res[3].spin[0].x, 2)
 
 
-    def test_copy_fail(self):
-        """Test the failure of the copying of the residue data.
+    def test_copy_within_molecule_fail(self):
+        """Test the failure of the copying of the residue data within a molecule.
 
         The function used is generic_fns.residues.copy().
         """
 
-        # Create the a few residues.
+        # Create a few residues.
         residue.create(1, 'Ala')
         residue.create(-1, 'His')
 
-        # Copy a non-existant residue (1 Met).
-        self.assertRaises(RelaxError, residue.copy, 1, 'Met', 2, 'Gly')
+        # Copy a non-existent residue (1 Met).
+        self.assertRaises(RelaxError, residue.copy, res_from=':Met', res_to=':2,Gly')
 
         # Copy a residue to a number which already exists.
-        self.assertRaises(RelaxError, residue.copy, 1, 'Ala', -1, 'Gly')
+        self.assertRaises(RelaxError, residue.copy, res_from=':1', res_to=':-1,Gly')
 
 
     def test_creation(self):
@@ -362,14 +386,14 @@ class Test_residue(TestCase):
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
 
         # Copy the residue a few times.
-        residue.copy(res_num_from=1, res_num_to=2)
-        residue.copy(res_num_from=1, res_name_from='Ala', res_num_to=3)
+        residue.copy(res_from=':1', res_to=':2')
+        residue.copy(res_from=':1', res_to=':3')
 
         # Change the first residue's data.
         relax_data_store['orig'].mol[0].res[0].name = 'His'
 
         # Copy the residue once more.
-        residue.copy(res_num_from=1, res_num_to=4, res_name_to='Met')
+        residue.copy(res_from=':1', res_to=':4,Met')
 
         # Rename all alanines.
         residue.rename(res_id=':Ala', new_name='Gln')
@@ -419,14 +443,14 @@ class Test_residue(TestCase):
         residue.create(1, 'Ala')
 
         # Copy the residue a few times.
-        residue.copy(res_num_from=1, res_num_to=2)
-        residue.copy(res_num_from=1, res_name_from='Ala', res_num_to=3)
+        residue.copy(res_from=':1', res_to=':2')
+        residue.copy(res_from=':1', res_to=':3')
 
         # Change the first residue's data.
         relax_data_store['orig'].mol[0].res[0].spin[0].name = 'His'
 
         # Copy the residue once more.
-        residue.copy(res_num_from=1, res_num_to=4, res_name_to='Met')
+        residue.copy(res_from=':1', res_to=':4,Met')
 
         # Try renumbering all alanines.
         self.assertRaises(RelaxError, residue.renumber, res_id=':Ala', new_number=10)

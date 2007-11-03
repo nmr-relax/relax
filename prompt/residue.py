@@ -44,50 +44,76 @@ class Residue:
         self.__relax__ = relax
 
 
-    def copy(self, run1=None, run2=None):
-        """Function for copying the sequence from run1 to run2.
+    def copy(self, pipe_from=None, res_from=None, pipe_to=None, res_to=None):
+        """Function for copying all data associated with a residue.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run1:  The name of the run to copy the sequence from.
+        pipe_from:  The data pipe containing the residue from which the data will be copied.  This
+            defaults to the current data pipe.
 
-        run2:  The name of the run to copy the sequence to.
+        res_from:  The residue identifier string of the residue to copy the data from.
+
+        pipe_to:  The data pipe to copy the data to.  This defaults to the current data pipe.
+
+        res_to:  The residue identifier string of the residue to copy the data to.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function will copy the sequence from 'run1' to 'run2'.  'run1' must contain sequence
-        information, while 'run2' must have no sequence loaded.
+        This function will copy all the data associated with the identified residue to the new,
+        non-existent residue.  The new residue must not already exist.
 
 
         Examples
         ~~~~~~~~
 
-        To copy the sequence from the run 'm1' to the run 'm2', type:
+        To copy the residue data from residue 1 to the new residue 2, type:
 
-        relax> sequence.copy('m1', 'm2')
-        relax> sequence.copy(run1='m1', run2='m2')
+        relax> residue.copy(res_from=':1', res_to=':2')
+
+
+        To copy residue 1 of the molecule 'Old mol' to residue 5 of the molecule 'New mol', type:
+
+        relax> residue.copy(res_from='#Old mol:1', res_to='#New mol:5')
+
+
+        To copy the residue data of residue 1 from the data pipe 'm1' to 'm2', assuming the current
+        data pipe is 'm1', type:
+
+        relax> residue.copy(res_from=':1', pipe_to='m2')
+        relax> residue.copy(pipe_from='m1', res_from=':1', pipe_to='m2', res_to=':1')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.copy("
-            text = text + "run1=" + `run1`
-            text = text + ", run2=" + `run2` + ")"
+            text = sys.ps3 + "residue.copy("
+            text = text + "pipe_from=" + `pipe_from`
+            text = text + "res_from=" + `res_from`
+            text = text + "pipe_to=" + `pipe_to`
+            text = text + ", res_to=" + `res_to` + ")"
             print text
 
-        # The run1 argument.
-        if type(run1) != str:
-            raise RelaxStrError, ('run1', run1)
+        # The pipe_from argument.
+        if type(pipe_from) != str:
+            raise RelaxStrError, ('pipe_from', pipe_from)
 
-        # The run2 argument.
-        if type(run2) != str:
-            raise RelaxStrError, ('run2', run2)
+        # The res_from argument.
+        if type(res_from) != str:
+            raise RelaxStrError, ('res_from', res_from)
+
+        # The pipe_to argument.
+        if type(pipe_to) != str:
+            raise RelaxStrError, ('pipe_to', pipe_to)
+
+        # The res_to argument.
+        if type(res_to) != str:
+            raise RelaxStrError, ('res_to', res_to)
 
         # Execute the functional code.
-        self.__relax__.generic.sequence.copy(run1=run1, run2=run2)
+        residue.copy(pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
 
 
     def create(self, res_num=None, res_name=None):
