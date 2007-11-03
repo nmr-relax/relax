@@ -260,7 +260,7 @@ class Test_residue(TestCase):
         residue.create(-10, 'His')
 
         # Rename the residue.
-        residue.rename(res_from='@-10', new_name='K')
+        residue.rename(res_id=':-10', new_name='K')
 
         # Test that the residue has been renamed.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'K')
@@ -281,13 +281,13 @@ class Test_residue(TestCase):
         residue.copy(res_num_from=1, res_name_from='Ala', res_num_to=3)
 
         # Change the first residue's data.
-        relax_data_store['orig'].mol[0].res[0].spin[0].name = 'His'
+        relax_data_store['orig'].mol[0].res[0].name = 'His'
 
         # Copy the residue once more.
         residue.copy(res_num_from=1, res_num_to=4, res_name_to='Met')
 
         # Rename all alanines.
-        residue.rename(res_from='Ala', new_name='Gln')
+        residue.rename(res_id=':Ala', new_name='Gln')
 
         # Test the renaming of alanines.
         self.assertEqual(relax_data_store['orig'].mol[0].res[1].name, 'Gln')
@@ -305,7 +305,7 @@ class Test_residue(TestCase):
         """
 
         # Try renaming using a atom id.
-        self.assertRaises(RelaxSpinSelectDisallowError, residue.rename, res_from='@111', new_name='K')
+        self.assertRaises(RelaxSpinSelectDisallowError, residue.rename, res_id='@111', new_name='K')
 
 
     def test_renumber(self):
@@ -318,7 +318,7 @@ class Test_residue(TestCase):
         residue.create(-10, 'His')
 
         # Rename the residue.
-        residue.renumber(res_from='@-10', new_number=10)
+        residue.renumber(res_id='@-10', new_number=10)
 
         # Test that the residue has been renumbered.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 10)
@@ -344,7 +344,7 @@ class Test_residue(TestCase):
         residue.copy(res_num_from=1, res_num_to=4, res_name_to='Met')
 
         # Try renumbering all alanines.
-        self.assertRaises(RelaxError, residue.renumber, res_from='Ala', new_number=10)
+        self.assertRaises(RelaxError, residue.renumber, res_id=':Ala', new_number=10)
 
 
     def test_renumber_no_spin(self):
@@ -354,4 +354,4 @@ class Test_residue(TestCase):
         """
 
         # Try renaming using a atom id.
-        self.assertRaises(RelaxSpinSelectDisallowError, residue.renumber, res_from='@111', new_number=10)
+        self.assertRaises(RelaxSpinSelectDisallowError, residue.renumber, res_id='@111', new_number=10)
