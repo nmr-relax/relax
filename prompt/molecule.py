@@ -25,11 +25,11 @@ import sys
 
 # relax module imports.
 import help
-from generic_fns import residue
+from generic_fns import molecule
 from relax_errors import RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxStrError
 
 
-class Residue:
+class Molecule:
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \

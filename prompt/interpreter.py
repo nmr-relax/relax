@@ -57,6 +57,7 @@ from grace import Grace
 from jw_mapping import Jw_mapping
 from model_free import Model_free
 from molmol import Molmol
+from molecule import Molecule
 from monte_carlo import Monte_carlo
 from noe import Noe
 from palmer import Palmer
@@ -116,6 +117,7 @@ class Interpreter:
         self._Jw_mapping = Jw_mapping(relax)
         self._Model_free = Model_free(relax)
         self._Molmol = Molmol(relax)
+        self._Molecule = Molecule(relax)
         self._Monte_carlo = Monte_carlo(relax)
         self._Noe = Noe(relax)
         self._Palmer = Palmer(relax)
@@ -175,6 +177,7 @@ class Interpreter:
         jw_mapping = self._Jw_mapping
         model_free = self._Model_free
         molmol = self._Molmol
+        molecule = self._Molecule
         monte_carlo = self._Monte_carlo
         noe = self._Noe
         palmer = self._Palmer
