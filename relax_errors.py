@@ -532,8 +532,8 @@ class RelaxNoRunError(BaseError):
             self.save_state()
 
 
-# Selection errors.
-###################
+# Spin-Residue-Molecule errors.
+###############################
 
 # Disallow molecule selection.
 class RelaxMolSelectDisallowError(BaseError):

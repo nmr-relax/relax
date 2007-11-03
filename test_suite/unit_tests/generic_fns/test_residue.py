@@ -318,7 +318,7 @@ class Test_residue(TestCase):
         residue.create(-10, 'His')
 
         # Rename the residue.
-        residue.renumber(res_id='@-10', new_number=10)
+        residue.renumber(res_id=':-10', new_number=10)
 
         # Test that the residue has been renumbered.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 10)
