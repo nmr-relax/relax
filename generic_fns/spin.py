@@ -27,7 +27,7 @@ from selection import molecule_loop, parse_token, residue_loop, return_molecule,
 
 
 # Module doc.
-"""Functions for manipulating the residue information content in the relax data storage singleton.
+"""Functions for manipulating the spin information content in the relax data storage singleton.
 
 This touches part of the molecule-residue-spin data structure.
 """
