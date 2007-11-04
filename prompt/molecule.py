@@ -82,50 +82,72 @@ class Molecule:
         molecule.create(mol_name=mol_name)
 
 
-    def copy(self, run1=None, run2=None):
-        """Function for copying the sequence from run1 to run2.
+    def copy(self, pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
+        """Function for copying all data associated with a molecule.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run1:  The name of the run to copy the sequence from.
+        pipe_from:  The data pipe containing the molecule from which the data will be copied.  This
+            defaults to the current data pipe.
 
-        run2:  The name of the run to copy the sequence to.
+        mol_from:  The molecule identifier string of the molecule to copy the data from.
+
+        pipe_to:  The data pipe to copy the data to.  This defaults to the current data pipe.
+
+        mol_to:  The molecule identifier string of the molecule to copy the data to.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function will copy the sequence from 'run1' to 'run2'.  'run1' must contain sequence
-        information, while 'run2' must have no sequence loaded.
+        This function will copy all the data associated with a molecule to a second molecule.  This
+        includes residue and spin system information.  The new molecule must not yet exist.
 
 
         Examples
         ~~~~~~~~
 
-        To copy the sequence from the run 'm1' to the run 'm2', type:
+        To copy the molecule data from the molecule 'GST' to the new molecule 'wt-GST', type:
 
-        relax> sequence.copy('m1', 'm2')
-        relax> sequence.copy(run1='m1', run2='m2')
+        relax> molecule.copy('#GST', '#wt-GST')
+        relax> molecule.copy(mol_from='#GST', mol_to='#wt-GST')
+
+
+        To copy the molecule data of the molecule 'Ap4Aase' from the data pipe 'm1' to 'm2', assuming the current
+        data pipe is 'm1', type:
+
+        relax> molecule.copy(mol_from='#ApAase', pipe_to='m2')
+        relax> molecule.copy(pipe_from='m1', mol_from='#ApAase', pipe_to='m2', mol_to='#ApAase')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.copy("
-            text = text + "run1=" + `run1`
-            text = text + ", run2=" + `run2` + ")"
+            text = sys.ps3 + "molecule.copy("
+            text = text + "pipe_from=" + `pipe_from`
+            text = text + "mol_from=" + `mol_from`
+            text = text + "pipe_to=" + `pipe_to`
+            text = text + ", mol_to=" + `mol_to` + ")"
             print text
 
-        # The run1 argument.
-        if type(run1) != str:
-            raise RelaxStrError, ('run1', run1)
+        # The pipe_from argument.
+        if type(pipe_from) != str:
+            raise RelaxStrError, ('data pipe from', pipe_from)
 
-        # The run2 argument.
-        if type(run2) != str:
-            raise RelaxStrError, ('run2', run2)
+        # The molecule from argument.
+        if type(mol_from) != str:
+            raise RelaxStrError, ('molecule from', mol_from)
+
+        # The pipe_to argument.
+        if type(pipe_to) != str:
+            raise RelaxStrError, ('data pipe to', pipe_to)
+
+        # The molecule to argument.
+        if type(mol_to) != str:
+            raise RelaxStrError, ('molecule to', mol_to)
 
         # Execute the functional code.
-        self.__relax__.generic.sequence.copy(run1=run1, run2=run2)
+        molecule.copy(pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
 
 
     def delete(self, res_id=None):
