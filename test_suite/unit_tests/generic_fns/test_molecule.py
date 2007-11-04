@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns import molecule
+from generic_fns import molecule, residue
 from relax_errors import RelaxError
 
 
@@ -74,6 +74,48 @@ class Test_molecule(TestCase):
         # Change the first residue's data.
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
+
+
+    def test_copy_between_pipes(self):
+        """Test the copying of the molecule data between different data pipes.
+
+        The function used is generic_fns.molecule.copy().
+        """
+
+        # Create the first molecule and residue and add some data to its spin container.
+        molecule.create('Old mol')
+        residue.create(1, 'Ala')
+        relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
+        relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
+
+        # Copy the molecule to the second data pipe.
+        molecule.copy(mol_from='#Old mol', pipe_to='test')
+        molecule.copy(pipe_from='orig', mol_from='#Old mol', pipe_to='test', mol_to='#New mol')
+
+        # Change the first molecule's data.
+        relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
+        relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
+
+        # Test the original molecule.
+        self.assertEqual(relax_data_store['orig'].mol[0].name, 'Old mol')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'Ala')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 222)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].x, 2)
+
+        # Test the new molecule.
+        self.assertEqual(relax_data_store['test'].mol[0].name, 'Old mol')
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].num, 1)
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].name, 'Ala')
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].spin[0].num, 111)
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].spin[0].x, 1)
+
+        # Test the second new molecule.
+        self.assertEqual(relax_data_store['test'].mol[1].name, 'New mol')
+        self.assertEqual(relax_data_store['test'].mol[1].res[0].num, 1)
+        self.assertEqual(relax_data_store['test'].mol[1].res[0].name, 'Ala')
+        self.assertEqual(relax_data_store['test'].mol[1].res[0].spin[0].num, 111)
+        self.assertEqual(relax_data_store['test'].mol[1].res[0].spin[0].x, 1)
 
 
     def test_creation(self):
