@@ -61,7 +61,7 @@ This syntax will need to be properly referenced (in addition to being fully desc
     pipe.list()         # Print the details of all pipes.
     pipe.switch()       # Switch to a different pipe.
 
-10.  Create the 'molecule' user function class:
+10 [Done].  Create the 'molecule' user function class:
     molecule.create()
     molecule.copy()     # Copy the molecule information (name and num) from another pipe.
     molecule.delete()
