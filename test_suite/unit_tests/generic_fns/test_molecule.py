@@ -24,15 +24,17 @@
 from unittest import TestCase
 
 # relax module imports.
+from data import Data as relax_data_store
 from generic_fns import molecule
+from relax_errors import RelaxError
 
 
 
-class Test_spin(TestCase):
+class Test_molecule(TestCase):
     """Unit tests for the functions of the 'generic_fns.molecule' module."""
 
     def setUp(self):
-        """Set up for all the residue unit tests."""
+        """Set up for all the molecule unit tests."""
 
         # Reset the relax data storage object.
         relax_data_store.__reset__()
@@ -74,4 +76,32 @@ class Test_spin(TestCase):
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
 
 
+    def test_creation(self):
+        """Test the creation of a molecule data structure.
+
+        The function used is generic_fns.molecule.create().
+        """
+
+        # Create a few new molecules.
+        molecule.create('Ap4Aase')
+        molecule.create('ATP')
+        molecule.create(mol_name='MgF4')
+
+        # Test that the molecule names are correct.
+        self.assertEqual(relax_data_store['orig'].mol[0].name, 'Ap4Aase')
+        self.assertEqual(relax_data_store['orig'].mol[1].name, 'ATP')
+        self.assertEqual(relax_data_store['orig'].mol[2].name, 'MgF4')
+
+
+    def test_creation_fail(self):
+        """Test the failure of molecule creation by supplying two molecules with the same name.
+
+        The function used is generic_fns.molecule.create().
+        """
+
+        # Create the first molecule.
+        molecule.create('CaM')
+
+        # Assert that a RelaxError occurs when the next added molecule has the same name as the first.
+        self.assertRaises(RelaxError, molecule.create, 'CaM')
 

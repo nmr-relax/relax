@@ -32,22 +32,21 @@ This touches part of the molecule-residue-spin data structure.
 """
 
 
-def copy(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
-    """Copy the contents of the residue structure from one residue to a new residue.
+def copy(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
+    """Copy the contents of a molecule container to a new molecule.
 
-    For copying to be successful, the res_from identification string must match an existent residue.
-    The new residue number must be unique.
+    For copying to be successful, the mol_from identification string must match an existent molecule.
 
-    @param pipe_from:   The data pipe to copy the residue from.  This defaults to the current data
-                        pipe.
+    @param pipe_from:   The data pipe to copy the molecule data from.  This defaults to the current
+                        data pipe.
     @type pipe_from:    str
-    @param res_from:    The residue identification string for the structure to copy the data from.
-    @type res_from:     str
-    @param pipe_to:     The data pipe to copy the residue to.  This defaults to the current data
-                        pipe.
+    @param mol_from:    The molecule identification string for the structure to copy the data from.
+    @type mol_from:     str
+    @param pipe_to:     The data pipe to copy the molecule data to.  This defaults to the current
+                        data pipe.
     @type pipe_to:      str
-    @param res_to:      The residue identification string for the structure to copy the data to.
-    @type res_to:       str
+    @param mol_to:      The molecule identification string for the structure to copy the data to.
+    @type mol_to:       str
     """
 
     # The current data pipe.
@@ -99,8 +98,8 @@ def copy(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
         mol_to_container.res[-1].name = res_name_to
 
 
-def create(res_num=None, res_name=None):
-    """Function for adding a residue into the relax data store."""
+def create(mol_name=None):
+    """Function for adding a molecule into the relax data store."""
 
     # Test if the current data pipe exists.
     if not relax_data_store.current_pipe:
@@ -109,19 +108,18 @@ def create(res_num=None, res_name=None):
     # Alias the current data pipe.
     cdp = relax_data_store[relax_data_store.current_pipe]
 
-    # Test if the residue number already exists.
-    for i in xrange(len(cdp.mol[0].res)):
-        if cdp.mol[0].res[i].num == res_num:
-            raise RelaxError, "The residue number '" + `res_num` + "' already exists in the sequence."
+    # Test if the molecule name already exists.
+    for i in xrange(len(cdp.mol)):
+        if cdp.mol[i].name == mol_name:
+            raise RelaxError, "The molecule '" + `mol_name` + "' already exists in the relax data store."
 
-    # If no residue data exists, replace the empty first residue with this residue.
-    if cdp.mol[0].res[0].num == None and cdp.mol[0].res[0].name == None and len(cdp.mol[0].res) == 1:
-        cdp.mol[0].res[0].num = res_num
-        cdp.mol[0].res[0].name = res_name
+    # If no molecule data exists, replace the empty first molecule with this molecule (just a renaming).
+    if cdp.mol[0].name == None and len(cdp.mol[0].res) == 1 and len(cdp.mol[0].res[0].spin) == 1:
+        cdp.mol[0].name = mol_name
 
-    # Append the residue.
+    # Append the molecule.
     else:
-        cdp.mol[0].res.add_item(res_num=res_num, res_name=res_name)
+        cdp.mol.add_item(mol_name=mol_name)
 
 
 def delete(res_id=None):

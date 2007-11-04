@@ -42,55 +42,44 @@ class Molecule:
         self.__relax__ = relax
 
 
-    def create(self, res_num=None, res_name=None):
-        """Function for creating a new residue.
+    def create(self, mol_name=None):
+        """Function for creating a new molecule.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        res_num:  The residue number.
-
-        res_name:  The name of the residue.
+        mol_name:  The name of the molecule.
 
 
         Description
         ~~~~~~~~~~~
 
-        Using this function a new sequence can be generated without using the sequence user
-        functions.  However if the sequence already exists, the new residue will be added to the end
-        of the residue list (the residue numbers of this list need not be sequential).  The same
-        residue number cannot be used more than once.  A corresponding single spin system will be
-        created for this residue.  The spin system number and name or additional spin systems can be
-        added later if desired.
+        This function will add a new molecule data container to the relax data storage object.  The
+        same molecule name cannot be used more than once.
 
 
         Examples
         ~~~~~~~~
 
-        The following sequence of commands will generate the sequence 1 ALA, 2 GLY, 3 LYS:
+        To create the molecules 'Ap4Aase', 'ATP', and 'MgF4', type:
 
-        relax> residue.create(1, 'ALA')
-        relax> residue.create(2, 'GLY')
-        relax> residue.create(3, 'LYS')
+        relax> molecule.create('Ap4Aase')
+        relax> molecule.create('ATP')
+        relax> molecule.create('MgF4')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "residue.create("
-            text = text + ", res_num=" + `res_num`
-            text = text + ", res_name=" + `res_name` + ")"
+            text = sys.ps3 + "molecule.create("
+            text = text + "mol_name=" + `mol_name` + ")"
             print text
 
-        # Residue number.
-        if type(res_num) != int:
-            raise RelaxIntError, ('residue number', res_num)
-
-        # Residue name.
-        if type(res_name) != str:
-            raise RelaxStrError, ('residue name', res_name)
+        # Molecule name.
+        if type(mol_name) != str:
+            raise RelaxStrError, ('molecule name', mol_name)
 
         # Execute the functional code.
-        residue.create(res_num=res_num, res_name=res_name)
+        molecule.create(mol_name=mol_name)
 
 
     def copy(self, run1=None, run2=None):
