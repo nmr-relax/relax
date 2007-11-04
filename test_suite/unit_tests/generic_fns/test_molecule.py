@@ -336,4 +336,27 @@ class Test_molecule(TestCase):
         self.assertEqual(relax_data_store['orig'].mol[1].name, 'K')
 
 
+    def test_rename_fail(self):
+        """Test the failure of renaming a molecule when a residue or spin id is given.
 
+        The function tested is generic_fns.molecule.rename().
+        """
+
+        # Try renaming using a spin id.
+        self.assertRaises(RelaxSpinSelectDisallowError, molecule.rename, mol_id='@111', new_name='K')
+
+        # Try renaming using a residue id.
+        self.assertRaises(RelaxResSelectDisallowError, molecule.rename, mol_id=':1', new_name='K')
+
+
+    def test_rename_many_fail(self):
+        """Test the failure of the renaming of multiple molecules to the same name.
+
+        The function used is generic_fns.molecule.rename().
+        """
+
+        # Set up some data.
+        self.setup_data()
+
+        # Test for the failure.
+        self.assertRaises(RelaxError, molecule.rename, mol_id='#Old mol,New mol', new_name='K')
