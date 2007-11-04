@@ -76,9 +76,7 @@ def copy(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
     mol_name_to = return_single_molecule_info(mol_to_token)
 
     # Test if the molecule name already exists.
-    print relax_data_store[pipe_to].mol
     mol_to_cont = return_molecule(mol_to, pipe_to)
-    print "mol_to_cont: " + `mol_to_cont`
     if mol_to_cont:
         raise RelaxError, "The molecule " + `mol_to` + " already exists in the " + `pipe_to` + " data pipe."
 
