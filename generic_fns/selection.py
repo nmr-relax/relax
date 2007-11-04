@@ -458,10 +458,6 @@ def return_molecule(selection=None, pipe=None):
     @rtype:             instance of the MoleculeContainer class.
     """
 
-    # No selection.
-    if selection == None:
-        return relax_data_store[pipe].mol[0]
-
     # The data pipe.
     if pipe == None:
         pipe = relax_data_store.current_pipe
