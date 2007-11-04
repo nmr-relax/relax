@@ -474,9 +474,8 @@ def return_molecule(selection=None, pipe=None):
         return None
 
     # Loop over the molecules.
-    mol = None
     mol_num = 0
-    mol_container = relax_data_store[pipe].mol[0]
+    mol_container = None
     for mol in relax_data_store[pipe].mol:
         # Skip the molecule if there is no match to the selection.
         if mol not in select_obj:
