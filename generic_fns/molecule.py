@@ -22,8 +22,8 @@
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError
-from selection import return_molecule, return_single_molecule_info, tokenise
+from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
+from selection import parse_token, return_molecule, return_single_molecule_info, tokenise
 
 
 # Module doc.
@@ -124,44 +124,49 @@ def create(mol_name=None):
         cdp.mol.add_item(mol_name=mol_name)
 
 
-def delete(res_id=None):
-    """Function for deleting residues from the current data pipe.
+def delete(mol_id=None):
+    """Function for deleting molecules from the current data pipe.
 
-    @param res_id:  The molecule and residue identifier string.
-    @type res_id:   str
+    @param mol_id:  The molecule identifier string.
+    @type mol_id:   str
     """
 
     # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(res_id)
+    mol_token, res_token, spin_token = tokenise(mol_id)
 
     # Disallow spin selections.
     if spin_token != None:
         raise RelaxSpinSelectDisallowError
 
-    # Parse the tokens.
-    residues = parse_token(res_token)
+    # Disallow residue selections.
+    if res_token != None:
+        raise RelaxResSelectDisallowError
 
-    # Molecule loop.
-    for mol in molecule_loop(mol_token):
-        # List of indecies to delete.
-        indecies = []
+    # Parse the token.
+    molecules = parse_token(mol_token)
 
-        # Loop over the residues of the molecule.
-        for i in xrange(len(mol.res)):
-            # Remove the residue is there is a match.
-            if mol.res[i].num in residues or mol.res[i].name in residues:
-                indecies.append(i)
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
-        # Reverse the indecies.
-        indecies.reverse()
+    # List of indecies to delete.
+    indecies = []
 
-        # Delete the residues.
-        for index in indecies:
-            mol.res.pop(index)
+    # Loop over the molecules.
+    for i in xrange(len(cdp.mol)):
+        # Remove the residue is there is a match.
+        if cdp.mol[i].name in molecules:
+            indecies.append(i)
 
-        # Create an empty residue container if no residues remain.
-        if len(mol.res) == 0:
-            mol.res.add_item()
+    # Reverse the indecies.
+    indecies.reverse()
+
+    # Delete the molecules.
+    for index in indecies:
+        cdp.mol.pop(index)
+
+    # Create an empty residue container if no residues remain.
+    if len(cdp.mol) == 0:
+        cdp.mol.add_item()
 
 
 def display(res_id=None):
