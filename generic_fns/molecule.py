@@ -169,19 +169,23 @@ def delete(mol_id=None):
         cdp.mol.add_item()
 
 
-def display(res_id=None):
-    """Function for displaying the information associated with the residue.
+def display(mol_id=None):
+    """Function for displaying the information associated with the molecule.
 
-    @param res_id:  The molecule and residue identifier string.
-    @type res_id:   str
+    @param mol_id:  The molecule identifier string.
+    @type mol_id:   str
     """
 
     # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(res_id)
+    mol_token, res_token, spin_token = tokenise(mol_id)
 
     # Disallow spin selections.
     if spin_token != None:
         raise RelaxSpinSelectDisallowError
+
+    # Disallow residue selections.
+    if res_token != None:
+        raise RelaxResSelectDisallowError
 
     # The molecule selection string.
     if mol_token:
@@ -189,21 +193,14 @@ def display(res_id=None):
     else:
         mol_sel = None
 
+    # Print a header.
+    print "\nMolecule information:"
+    print "%-8s%-10s" % ("Name", "Number of residues")
+
     # Molecule loop.
     for mol in molecule_loop(mol_sel):
-        # Print a header.
-        print "\n\nMolecule: " + `mol.name`
-        print "%-8s%-8s%-10s" % ("Number", "Name", "Number of spins")
-
-        # The residue identifier for this molecule.
-        res_sel = '#' + mol.name
-        if res_token:
-            res_sel = res_sel + ':' + res_token
-
-        # Loop over the residues of this molecule.
-        for res in residue_loop(res_sel):
-            # Print the residue data.
-            print "%-8i%-8s%-10i" % (res.num, res.name, len(res.spin))
+        # Print the molecule data.
+        print "%-8i%-8s%-10i" % (mol.name, len(mol.res))
 
 
 def rename(res_id, new_name=None):
