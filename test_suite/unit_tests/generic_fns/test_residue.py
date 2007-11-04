@@ -55,12 +55,7 @@ class Test_residue(TestCase):
         relax_data_store.__reset__()
 
 
-    def test_copy_between_molecules(self):
-        """Test the copying of the residue data between different molecules.
-
-        The function used is generic_fns.residue.copy().
-        """
-
+    def setup_data(self):
         # Create the first residue and add some data to its spin container.
         residue.create(1, 'Ala')
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
@@ -77,6 +72,16 @@ class Test_residue(TestCase):
         # Change the first residue's data.
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
+
+
+    def test_copy_between_molecules(self):
+        """Test the copying of the residue data between different molecules.
+
+        The function used is generic_fns.residue.copy().
+        """
+
+        # Set up some data.
+        self.setup_data()
 
         # Test the original residue.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
@@ -357,6 +362,35 @@ class Test_residue(TestCase):
 
         # Supply an atom id.
         self.assertRaises(RelaxSpinSelectDisallowError, residue.delete, res_id='@2')
+
+
+    def test_display(self):
+        """Test the display of residue information.
+
+        The function used is generic_fns.residue.display().
+        """
+
+        # Set up some data.
+        self.setup_data()
+
+        # The following should all work without error.
+        residue.display()
+        residue.display(':1')
+        residue.display('#New mol:5')
+        residue.display('#Old mol:1')
+
+
+    def test_display_fail(self):
+        """Test the failure of the display of residue information.
+
+        The function used is generic_fns.residue.display().
+        """
+
+        # Set up some data.
+        self.setup_data()
+
+        # The following should fail.
+        self.assertRaises(RelaxSpinSelectDisallowError, residue.display, '@N')
 
 
     def test_rename(self):

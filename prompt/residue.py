@@ -198,27 +198,27 @@ class Residue:
         residue.delete(res_id=res_id)
 
 
-    def display(self, run=None):
-        """Function for displaying the sequence.
+    def display(self, res_id=None):
+        """Function for displaying information about the residue(s).
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
+        res_id:  The residue identification string.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.display("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "residue.display("
+            text = text + "res_id=" + `res_id` + ")"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
+        # The res_id argument.
+        if type(res_id) != str:
+            raise RelaxStrError, ('residue identification string', res_id)
 
         # Execute the functional code.
-        self.__relax__.generic.sequence.display(run=run)
+        residue.display(res_id=res_id)
 
 
     def rename(self, res_id=None, new_name=None):
@@ -328,5 +328,6 @@ class Residue:
     # Add the residue identification string description.
     copy.__doc__ = copy.__doc__ + "\n\n" + id_string_doc + "\n"
     delete.__doc__ = delete.__doc__ + "\n\n" + id_string_doc + "\n"
+    display.__doc__ = display.__doc__ + "\n\n" + id_string_doc + "\n"
     rename.__doc__ = rename.__doc__ + "\n\n" + id_string_doc + "\n"
     renumber.__doc__ = renumber.__doc__ + "\n\n" + id_string_doc + "\n"

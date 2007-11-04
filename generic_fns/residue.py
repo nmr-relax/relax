@@ -158,6 +158,43 @@ def delete(res_id=None):
             mol.res.add_item()
 
 
+def display(res_id=None):
+    """Function for displaying the information associated with the residue.
+
+    @param res_id:  The molecule and residue identifier string.
+    @type res_id:   str
+    """
+
+    # Split up the selection string.
+    mol_token, res_token, spin_token = tokenise(res_id)
+
+    # Disallow spin selections.
+    if spin_token != None:
+        raise RelaxSpinSelectDisallowError
+
+    # The molecule selection string.
+    if mol_token:
+        mol_sel = '#' + mol_token
+    else:
+        mol_sel = None
+
+    # Molecule loop.
+    for mol in molecule_loop(mol_sel):
+        # Print a header.
+        print "\n\nMolecule: " + `mol.name`
+        print "%-8s%-8s%-10s" % ("Number", "Name", "Number of spins")
+
+        # The residue identifier for this molecule.
+        res_sel = '#' + mol.name
+        if res_token:
+            res_sel = res_sel + ':' + res_token
+
+        # Loop over the residues of this molecule.
+        for res in residue_loop(res_sel):
+            # Print the residue data.
+            print "%-8i%-8s%-10i" % (res.num, res.name, len(res.spin))
+
+
 def rename(res_id, new_name=None):
     """Function for renaming residues.
 
@@ -239,24 +276,6 @@ class Residue:
 
         return [ 'res' ]
 
-
-    def display(self, run=None):
-        """Function for displaying the sequence."""
-
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoPipeError, run
-
-        # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(run):
-            raise RelaxNoSequenceError, run
-
-        # Print a header.
-        print "%-8s%-8s%-10s" % ("Number", "Name", "Selected")
-
-        # Print the sequence.
-        for i in xrange(len(relax_data_store.res[run])):
-            print "%-8i%-8s%-10i" % (relax_data_store.res[run][i].num, relax_data_store.res[run][i].name, relax_data_store.res[run][i].select)
 
 
     def load_PDB_sequence(self, run=None):
