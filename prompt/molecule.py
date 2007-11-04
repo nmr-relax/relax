@@ -179,24 +179,24 @@ class Molecule:
         molecule.delete(mol_id=mol_id)
 
 
-    def display(self, run=None):
-        """Function for displaying the sequence.
+    def display(self, mol_id=None):
+        """Function for displaying the molecule information.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
+        mol_id:  The molecule identifier string.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.display("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "molecule.display("
+            text = text + "mol_id=" + `mol_id` + ")"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
+        # The molecule identifier argument.
+        if type(mol_id) != str:
+            raise RelaxStrError, ('molecule identifier', mol_id)
 
         # Execute the functional code.
-        self.__relax__.generic.sequence.display(run=run)
+        molecule.display(mol_id=mol_id)
