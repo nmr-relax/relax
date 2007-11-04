@@ -267,7 +267,8 @@ class Test_molecule(TestCase):
         self.setup_data()
 
         # Delete all molecules.
-        molecule.delete(mol_id='#*')
+        molecule.delete(mol_id='#Old mol')
+        molecule.delete(mol_id='#New mol')
 
         # Test that the first molecule defaults back to the empty container.
         self.assertEqual(relax_data_store['orig'].mol[0].name, None)
