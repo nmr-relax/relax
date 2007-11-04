@@ -25,6 +25,7 @@ from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxSpinSelectDisallowError
 from selection import molecule_loop, parse_token, residue_loop, return_molecule, return_residue, return_single_residue_info, tokenise
 
+
 # Module doc.
 """Functions for manipulating the residue information content in the relax data storage singleton.
 
