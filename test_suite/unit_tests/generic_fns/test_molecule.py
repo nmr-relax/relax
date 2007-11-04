@@ -291,4 +291,32 @@ class Test_molecule(TestCase):
         self.assertRaises(RelaxResSelectDisallowError, molecule.delete, mol_id=':1')
 
 
+    def test_display(self):
+        """Test the display of molecular information.
+
+        The function used is generic_fns.molecule.display().
+        """
+
+        # Set up some data.
+        self.setup_data()
+
+        # The following should all work without error.
+        molecule.display()
+        molecule.display('#Old mol')
+        molecule.display('#New mol')
+
+
+    def test_display_fail(self):
+        """Test the failure of the display of molecule information.
+
+        The function used is generic_fns.molecule.display().
+        """
+
+        # Set up some data.
+        self.setup_data()
+
+        # The following should fail.
+        self.assertRaises(RelaxSpinSelectDisallowError, molecule.display, '@N')
+        self.assertRaises(RelaxResSelectDisallowError, molecule.display, ':1')
+
 
