@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns import selection
-from relax_errors import RelaxError
+from relax_errors import RelaxError, RelaxNoRunError
 
 
 class Test_selection(TestCase):
@@ -304,6 +304,16 @@ class Test_selection(TestCase):
 
         # Test loop length.
         self.assertEqual(i, 5)
+
+
+    def test_return_residue_pipe_fail(self):
+        """Test the failure of the function for returning the desired residue data container.
+
+        The function tested is generic_fns.selection.return_residue().
+        """
+
+        # Try to get a residue from a missing data pipe.
+        self.assertRaises(RelaxNoRunError, selection.return_residue, selection=':2', pipe='new')
 
 
     def test_reverse(self):
