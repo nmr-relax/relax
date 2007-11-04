@@ -218,7 +218,7 @@ def rename(mol_id, new_name=None):
         raise RelaxSpinSelectDisallowError
 
     # Disallow residue selections.
-    if spin_token != None:
+    if res_token != None:
         raise RelaxResSelectDisallowError
 
     # Alias the current data pipe.
