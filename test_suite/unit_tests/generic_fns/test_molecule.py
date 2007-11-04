@@ -56,7 +56,7 @@ class Test_molecule(TestCase):
 
 
     def setup_data(self):
-        """Function for setting up some data for testing."""
+        """Function for setting up some data for the unit tests."""
 
         # Create the first residue and add some data to its spin container.
         residue.create(1, 'Ala')
