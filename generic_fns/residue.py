@@ -84,8 +84,10 @@ def copy(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
     if res_from_cont == None:
         raise RelaxError, "The residue " + `res_from` + " does not exist in the " + `pipe_from` + " data pipe."
 
-    # Get the single molecule data container to copy the residue to.
+    # Get the single molecule data container to copy the residue to (default to the first molecule).
     mol_to_container = return_molecule(res_to, pipe_to)
+    if mol_to_container == None:
+        mol_to_container = relax_data_store[pipe_to].mol[0]
 
     # Copy the data.
     if mol_to_container.res[0].num == None and mol_to_container.res[0].name == None and len(mol_to_container.res) == 1:
