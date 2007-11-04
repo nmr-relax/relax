@@ -23,6 +23,7 @@
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError
+from selection import return_molecule, return_single_molecule_info, tokenise
 
 
 # Module doc.
@@ -60,42 +61,43 @@ def copy(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
         raise RelaxNoPipeError, pipe_to
 
     # Split up the selection string.
-    mol_from_token, res_from_token, spin_from_token = tokenise(res_from)
-    mol_to_token, res_to_token, spin_to_token = tokenise(res_to)
+    mol_from_token, res_from_token, spin_from_token = tokenise(mol_from)
+    mol_to_token, res_to_token, spin_to_token = tokenise(mol_to)
 
     # Disallow spin selections.
     if spin_from_token != None or spin_to_token != None:
         raise RelaxSpinSelectDisallowError
 
-    # Parse the residue token for renaming and renumbering.
-    res_num_to, res_name_to = return_single_residue_info(res_to_token)
+    # Disallow residue selections.
+    if res_from_token != None or res_to_token != None:
+        raise RelaxResSelectDisallowError
 
-    # Test if the residue number already exists.
-    res_to_cont = return_residue(res_to, pipe_to)
-    if res_to_cont:
-        raise RelaxError, "The residue " + `res_to` + " already exists in the " + `pipe_from` + " data pipe."
+    # Parse the molecule token for renaming.
+    mol_name_to = return_single_molecule_info(mol_to_token)
 
-    # Get the single residue data container.
-    res_from_cont = return_residue(res_from, pipe_from)
+    # Test if the molecule name already exists.
+    print relax_data_store[pipe_to].mol
+    mol_to_cont = return_molecule(mol_to, pipe_to)
+    print "mol_to_cont: " + `mol_to_cont`
+    if mol_to_cont:
+        raise RelaxError, "The molecule " + `mol_to` + " already exists in the " + `pipe_to` + " data pipe."
 
-    # No residue to copy data from.
-    if res_from_cont == None:
-        raise RelaxError, "The residue " + `res_from` + " does not exist in the " + `pipe_from` + " data pipe."
+    # Get the single molecule data container.
+    mol_from_cont = return_molecule(mol_from, pipe_from)
 
-    # Get the single molecule data container to copy the residue to.
-    mol_to_container = return_molecule(res_to, pipe_to)
+    # No molecule to copy data from.
+    if mol_from_cont == None:
+        raise RelaxError, "The molecule " + `mol_from` + " does not exist in the " + `pipe_from` + " data pipe."
 
     # Copy the data.
-    if mol_to_container.res[0].num == None and mol_to_container.res[0].name == None and len(mol_to_container.res) == 1:
-        mol_to_container.res[0] = res_from_cont.__clone__()
+    if relax_data_store[pipe_to].mol[0].name == None and len(relax_data_store[pipe_to].mol) == 1:
+        relax_data_store[pipe_to].mol[0] = mol_from_cont.__clone__()
     else:
-        mol_to_container.res.append(res_from_cont.__clone__())
+        relax_data_store[pipe_to].mol.append(mol_from_cont.__clone__())
 
-    # Change the new residue number and name.
-    if res_num_to != None:
-        mol_to_container.res[-1].num = res_num_to
-    if res_name_to != None:
-        mol_to_container.res[-1].name = res_name_to
+    # Change the new molecule name.
+    if mol_name_to != None:
+        relax_data_store[pipe_to].mol[-1].name = mol_name_to
 
 
 def create(mol_name=None):
