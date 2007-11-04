@@ -22,7 +22,7 @@
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 from selection import molecule_loop, parse_token, return_molecule, return_single_molecule_info, tokenise
 
 
