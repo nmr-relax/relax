@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns import molecule, residue
-from relax_errors import RelaxError, RelaxNoPipeError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 
 
 
@@ -275,6 +275,19 @@ class Test_molecule(TestCase):
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, None)
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, None)
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, None)
+
+
+    def test_delete_fail(self):
+        """Test the failure of molecule deletion when a residue or spin id is supplied.
+
+        The function used is generic_fns.molecule.delete().
+        """
+
+        # Supply a spin id.
+        self.assertRaises(RelaxSpinSelectDisallowError, molecule.delete, mol_id='@2')
+
+        # Supply a residue id.
+        self.assertRaises(RelaxResSelectDisallowError, molecule.delete, mol_id=':1')
 
 
 
