@@ -27,7 +27,7 @@ from unittest import TestCase
 from data import Data as relax_data_store
 from data.pipe_container import PipeContainer
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxRunError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError
 
 
 class Test_pipes(TestCase):
@@ -129,8 +129,8 @@ class Test_pipes(TestCase):
         The function tested is generic_fns.pipes.copy()
         """
 
-        # Assert that a RelaxRunError occurs when the data pipe to copy data to already exists.
-        self.assertRaises(RelaxRunError, pipes.copy, 'orig', 'empty')
+        # Assert that a RelaxPipeError occurs when the data pipe to copy data to already exists.
+        self.assertRaises(RelaxPipeError, pipes.copy, 'orig', 'empty')
 
 
     def test_creation(self):

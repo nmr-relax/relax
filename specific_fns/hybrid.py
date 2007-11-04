@@ -22,7 +22,7 @@
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRunError, RelaxSequenceError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxPipeError, RelaxSequenceError
 
 
 # The relax data storage object.
@@ -62,7 +62,7 @@ class Hybrid:
 
         # Test if the hybrid run already exists.
         if hybrid in relax_data_store.run_names:
-            raise RelaxRunError, hybrid
+            raise RelaxPipeError, hybrid
 
         # Loop over the runs to be hybridised.
         for run in runs:

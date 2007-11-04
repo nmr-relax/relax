@@ -22,7 +22,7 @@
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxRunError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError
 from specific_fns.relax_fit import C_module_exp_fn
 
 
@@ -46,7 +46,7 @@ def copy(pipe_from=None, pipe_to=None):
 
     # Test if the pipe already exists.
     if pipe_to in relax_data_store.keys():
-        raise RelaxRunError, pipe_to
+        raise RelaxPipeError, pipe_to
 
     # The current data pipe.
     if pipe_from == None:

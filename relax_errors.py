@@ -511,13 +511,13 @@ class RelaxInvalidDataError(BaseError):
             self.save_state()
 
 
-# Run errors.
-#############
+# Data pipe errors.
+###################
 
-# Run already exists.
-class RelaxRunError(BaseError):
-    def __init__(self, run):
-        self.text = "The run " + `run` + " already exists."
+# The data pipe already exists.
+class RelaxPipeError(BaseError):
+    def __init__(self, pipe):
+        self.text = "The data pipe " + `pipe` + " already exists."
         if Debug:
             self.save_state()
 

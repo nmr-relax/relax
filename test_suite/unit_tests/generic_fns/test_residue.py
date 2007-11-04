@@ -27,7 +27,7 @@ from unittest import TestCase
 from data import Data as relax_data_store
 from data.pipe_container import PipeContainer
 from generic_fns import residue
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxRunError, RelaxSpinSelectDisallowError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxSpinSelectDisallowError
 
 
 class Test_residue(TestCase):
