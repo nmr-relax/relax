@@ -27,7 +27,7 @@ from unittest import TestCase
 from data import Data as relax_data_store
 from data.pipe_container import PipeContainer
 from generic_fns import residue
-from relax_errors import RelaxError, RelaxNoRunError, RelaxRunError, RelaxSpinSelectDisallowError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxRunError, RelaxSpinSelectDisallowError
 
 
 class Test_residue(TestCase):
@@ -149,7 +149,7 @@ class Test_residue(TestCase):
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
 
         # Copy the residue to the second data pipe.
-        self.assertRaises(RelaxNoRunError, residue.copy, res_from=':1', pipe_to='test2')
+        self.assertRaises(RelaxNoPipeError, residue.copy, res_from=':1', pipe_to='test2')
 
 
     def test_copy_within_molecule(self):

@@ -27,7 +27,7 @@ from Numeric import Float64, array, dot, identity, transpose, zeros
 from re import search
 
 # relax module imports.
-from relax_errors import RelaxError, RelaxNoRunError, RelaxNoTensorError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
 
 def calc_Diso(tm):
@@ -519,11 +519,11 @@ class Diffusion_tensor:
 
         # Test if run1 exists.
         if not run1 in relax_data_store.run_names:
-            raise RelaxNoRunError, run1
+            raise RelaxNoPipeError, run1
 
         # Test if run2 exists.
         if not run2 in relax_data_store.run_names:
-            raise RelaxNoRunError, run2
+            raise RelaxNoPipeError, run2
 
         # Test if run1 contains diffusion tensor data.
         if not relax_data_store.diff.has_key(run1):
@@ -607,7 +607,7 @@ class Diffusion_tensor:
 
         # Test if the run exists.
         if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
+            raise RelaxNoPipeError, run
 
         # Test if diffusion tensor data for the run exists.
         if not relax_data_store.diff.has_key(run):
@@ -625,7 +625,7 @@ class Diffusion_tensor:
 
         # Test if the run exists.
         if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
+            raise RelaxNoPipeError, run
 
         # Test if diffusion tensor data for the run exists.
         if not relax_data_store.diff.has_key(run):
@@ -939,7 +939,7 @@ class Diffusion_tensor:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if diffusion tensor data corresponding to the run already exists.
         if relax_data_store.diff.has_key(self.run):

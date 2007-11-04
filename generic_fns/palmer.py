@@ -34,7 +34,7 @@ except ImportError:
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxDirError, RelaxFileError, RelaxFileOverwriteError, RelaxNoPdbError, RelaxNoRunError, RelaxNoSequenceError, RelaxNucleusError, RelaxProgFailError
+from relax_errors import RelaxDirError, RelaxFileError, RelaxFileOverwriteError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNucleusError, RelaxProgFailError
 
 
 # The relax data storage object.
@@ -61,7 +61,7 @@ class Palmer:
 
         # Test if the run exists.
         if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
+            raise RelaxNoPipeError, run
 
         # Test if sequence data is loaded.
         if not relax_data_store.res.has_key(run):

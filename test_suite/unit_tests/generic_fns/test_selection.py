@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns import selection
-from relax_errors import RelaxError, RelaxNoRunError
+from relax_errors import RelaxError, RelaxNoPipeError
 
 
 class Test_selection(TestCase):
@@ -330,8 +330,8 @@ class Test_selection(TestCase):
         """
 
         # Try to get a molecule from a missing data pipe.
-        self.assertRaises(RelaxNoRunError, selection.return_molecule, selection='#Ap4Aase', pipe='new')
-        self.assertRaises(RelaxNoRunError, selection.return_molecule, selection='#RNA', pipe='new')
+        self.assertRaises(RelaxNoPipeError, selection.return_molecule, selection='#Ap4Aase', pipe='new')
+        self.assertRaises(RelaxNoPipeError, selection.return_molecule, selection='#RNA', pipe='new')
 
 
     def test_return_residue(self):
@@ -371,7 +371,7 @@ class Test_selection(TestCase):
         """
 
         # Try to get a residue from a missing data pipe.
-        self.assertRaises(RelaxNoRunError, selection.return_residue, selection=':2', pipe='new')
+        self.assertRaises(RelaxNoPipeError, selection.return_residue, selection=':2', pipe='new')
 
 
     def test_return_single_residue_info(self):

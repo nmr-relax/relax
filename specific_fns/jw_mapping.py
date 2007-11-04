@@ -28,7 +28,7 @@ from string import replace
 from data import Data as relax_data_store
 from base_class import Common_functions
 from maths_fns.jw_mapping import Mapping
-from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoValueError, RelaxNucleusError
+from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError, RelaxNucleusError
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 
 
@@ -438,7 +438,7 @@ class Jw_mapping(Common_functions):
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if the run type is set to 'jw'.
         function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
@@ -587,7 +587,7 @@ class Jw_mapping(Common_functions):
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
         if not relax_data_store.res.has_key(self.run):

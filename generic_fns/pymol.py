@@ -26,7 +26,7 @@ from string import split
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxImplementError, RelaxNoRunError, RelaxNoSequenceError
+from relax_errors import RelaxError, RelaxImplementError, RelaxNoPipeError, RelaxNoSequenceError
 
 
 # The relax data storage object.
@@ -51,7 +51,7 @@ class Pymol:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Identifier.
         pdb_file = relax_data_store.pdb[self.run].file_name
@@ -81,7 +81,7 @@ class Pymol:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Pass the command to PyMOL.
         self.pipe_write(command)
@@ -116,7 +116,7 @@ class Pymol:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if the sequence data is loaded.
         if not relax_data_store.res.has_key(self.run):
@@ -210,7 +210,7 @@ class Pymol:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Read in the tensor PDB file.
         self.pipe_write("load " + file)
@@ -283,7 +283,7 @@ class Pymol:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # The file root.
         file_root = self.relax.IO.file_root(file)
@@ -328,7 +328,7 @@ class Pymol:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if the sequence data is loaded.
         if not relax_data_store.res.has_key(self.run):

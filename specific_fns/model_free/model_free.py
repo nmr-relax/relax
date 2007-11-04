@@ -36,7 +36,7 @@ from specific_fns.base_class import Common_functions
 from float import isNaN,isInf
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
-from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxStyleError, RelaxTensorError, RelaxUnknownDataTypeError
+from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxStyleError, RelaxTensorError, RelaxUnknownDataTypeError
 
 
 # The relax data storage object.
@@ -569,11 +569,11 @@ class Model_free(Common_functions):
 
         # Test if run1 exists.
         if not run1 in relax_data_store.run_names:
-            raise RelaxNoRunError, run1
+            raise RelaxNoPipeError, run1
 
         # Test if run2 exists.
         if not run2 in relax_data_store.run_names:
-            raise RelaxNoRunError, run2
+            raise RelaxNoPipeError, run2
 
         # Test if the run type of run1 is set to 'mf'.
         function_type = relax_data_store.run_types[relax_data_store.run_names.index(run1)]
@@ -663,7 +663,7 @@ class Model_free(Common_functions):
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if the run type is set to 'mf'.
         function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
@@ -980,7 +980,7 @@ class Model_free(Common_functions):
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if the run type is set to 'mf'.
         function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
@@ -3498,7 +3498,7 @@ class Model_free(Common_functions):
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if the run type is set to 'mf'.
         function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
@@ -3749,7 +3749,7 @@ class Model_free(Common_functions):
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if the run type is set to 'mf'.
         function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]

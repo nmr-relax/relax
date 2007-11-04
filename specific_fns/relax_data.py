@@ -26,7 +26,7 @@ import sys
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxNoResError, RelaxNoRiError, RelaxNoRunError, RelaxNoSequenceError, RelaxRiError
+from relax_errors import RelaxError, RelaxNoResError, RelaxNoRiError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRiError
 
 
 # The relax data storage object.
@@ -54,7 +54,7 @@ class Rx_data:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
         if not relax_data_store.res.has_key(self.run):
@@ -163,7 +163,7 @@ class Rx_data:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
         if not relax_data_store.res.has_key(self.run):
@@ -236,11 +236,11 @@ class Rx_data:
 
         # Test if run1 exists.
         if not run1 in relax_data_store.run_names:
-            raise RelaxNoRunError, run1
+            raise RelaxNoPipeError, run1
 
         # Test if run2 exists.
         if not run2 in relax_data_store.run_names:
-            raise RelaxNoRunError, run2
+            raise RelaxNoPipeError, run2
 
         # Test if the sequence data for run1 is loaded.
         if not relax_data_store.res.has_key(run1):
@@ -424,7 +424,7 @@ class Rx_data:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if the sequence data is loaded.
         if not relax_data_store.res.has_key(self.run):
@@ -494,7 +494,7 @@ class Rx_data:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if the sequence data is loaded.
         if not relax_data_store.res.has_key(self.run):
@@ -547,7 +547,7 @@ class Rx_data:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
         if not relax_data_store.res.has_key(self.run):
@@ -840,7 +840,7 @@ class Rx_data:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if the sequence data is loaded.
         if not relax_data_store.res.has_key(self.run):

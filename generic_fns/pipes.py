@@ -22,7 +22,7 @@
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxNoRunError, RelaxRunError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxRunError
 from specific_fns.relax_fit import C_module_exp_fn
 
 
@@ -103,7 +103,7 @@ def delete(pipe_name=None):
 
     # Test if the data pipe exists.
     if pipe_name != None and not relax_data_store.has_key(pipe_name):
-        raise RelaxNoRunError, pipe_name
+        raise RelaxNoPipeError, pipe_name
 
     # Delete the data pipe.
     del relax_data_store[pipe_name]
@@ -133,7 +133,7 @@ def switch(pipe_name=None):
 
     # Test if the data pipe exists.
     if not relax_data_store.has_key(pipe_name):
-        raise RelaxNoRunError, pipe_name
+        raise RelaxNoPipeError, pipe_name
 
     # Switch the current data pipe.
     relax_data_store.current_pipe = pipe_name

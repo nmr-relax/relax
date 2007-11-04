@@ -26,7 +26,7 @@ from math import log
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxDiffSeqError, RelaxError, RelaxNoRunError, RelaxNoSequenceError
+from relax_errors import RelaxDiffSeqError, RelaxError, RelaxNoPipeError, RelaxNoSequenceError
 
 
 
@@ -44,7 +44,7 @@ class Model_selection:
 
         # Test if the model selection run exists.
         if not modsel_run in relax_data_store.run_names:
-            raise RelaxNoRunError, modsel_run
+            raise RelaxNoPipeError, modsel_run
 
         # The runs argument.
         if runs == None:
@@ -301,7 +301,7 @@ class Model_selection:
 
         # Test if the run exists.
         if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
+            raise RelaxNoPipeError, run
 
         # Find the index of the run.
         index = relax_data_store.run_names.index(run)

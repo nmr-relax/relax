@@ -26,7 +26,7 @@ from string import split
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
 
 
 
@@ -56,7 +56,7 @@ class Molmol:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Pass the command to Molmol.
         self.pipe_write(command)
@@ -88,7 +88,7 @@ class Molmol:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if the sequence data is loaded.
         if not relax_data_store.res.has_key(self.run):
@@ -186,7 +186,7 @@ class Molmol:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Calculate the protons.
         self.pipe_write("CalcAtom 'H'")
@@ -207,7 +207,7 @@ class Molmol:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # To overlay the structure with the diffusion tensor, select all and reorient to the PDB frame.
         self.pipe_write("SelectAtom ''")
@@ -263,7 +263,7 @@ class Molmol:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if the sequence data is loaded.
         if not relax_data_store.res.has_key(self.run):

@@ -22,7 +22,7 @@
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoRunError, RelaxNoSequenceError, RelaxSequenceError, RelaxSpinSelectDisallowError
+from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError, RelaxSpinSelectDisallowError
 from selection import molecule_loop, parse_token, residue_loop, return_molecule, return_residue, return_single_residue_info, tokenise
 
 
@@ -52,7 +52,7 @@ def copy(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
 
     # The second pipe does not exist.
     if pipe_to not in relax_data_store.keys():
-        raise RelaxNoRunError, pipe_to
+        raise RelaxNoPipeError, pipe_to
 
     # Split up the selection string.
     mol_from_token, res_from_token, spin_from_token = tokenise(res_from)
@@ -98,7 +98,7 @@ def create(res_num=None, res_name=None):
 
     # Test if the current data pipe exists.
     if not relax_data_store.current_pipe:
-        raise RelaxNoRunError
+        raise RelaxNoPipeError
 
     # Alias the current data pipe.
     cdp = relax_data_store[relax_data_store.current_pipe]
@@ -245,7 +245,7 @@ class Residue:
 
         # Test if the run exists.
         if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
+            raise RelaxNoPipeError, run
 
         # Test if the sequence data is loaded.
         if not relax_data_store.res.has_key(run):
@@ -304,7 +304,7 @@ class Residue:
 
         # Test if the run exists.
         if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
+            raise RelaxNoPipeError, run
 
         # Test if the sequence data has already been read.
         if relax_data_store.res.has_key(run):
@@ -359,7 +359,7 @@ class Residue:
 
         # Test if the run exists.
         if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
+            raise RelaxNoPipeError, run
 
         # Test if the sequence data is loaded.
         if not relax_data_store.res.has_key(run):
@@ -385,7 +385,7 @@ class Residue:
 
         # Test if the run exists.
         if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
+            raise RelaxNoPipeError, run
 
         # Test if the sequence data is loaded.
         if not relax_data_store.res.has_key(run):

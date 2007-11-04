@@ -29,7 +29,7 @@ from textwrap import fill
 # relax module imports.
 from data import Data as relax_data_store
 from data.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
-from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError, RelaxRegExpError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRegExpError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 
 
 id_string_doc = """
@@ -162,7 +162,7 @@ def desel_all(self, run=None):
     for self.run in self.runs:
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
         if not len(relax_data_store.res[self.run]):
@@ -211,7 +211,7 @@ def desel_read(self, run=None, file=None, dir=None, change_all=None, column=None
     for self.run in self.runs:
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
         if not len(relax_data_store.res[self.run]):
@@ -263,7 +263,7 @@ def desel_res(self, run=None, num=None, name=None, change_all=None):
     for self.run in self.runs:
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
         if not len(relax_data_store.res[self.run]):
@@ -468,7 +468,7 @@ def return_molecule(selection=None, pipe=None):
 
     # Test that the data pipe exists.
     if pipe not in relax_data_store.keys():
-        raise RelaxNoRunError, pipe
+        raise RelaxNoPipeError, pipe
 
     # Parse the selection string.
     select_obj = Selection(selection)
@@ -513,7 +513,7 @@ def return_residue(selection=None, pipe=None):
 
     # Test that the data pipe exists.
     if pipe not in relax_data_store.keys():
-        raise RelaxNoRunError, pipe
+        raise RelaxNoPipeError, pipe
 
     # Parse the selection string.
     select_obj = Selection(selection)
@@ -607,7 +607,7 @@ def sel_all(self, run=None):
     for self.run in self.runs:
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
         if not len(relax_data_store.res[self.run]):
@@ -671,7 +671,7 @@ def sel_read(self, run=None, file=None, dir=None, boolean='OR', change_all=0, co
     for self.run in self.runs:
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
         if not len(relax_data_store.res[self.run]):
@@ -748,7 +748,7 @@ def sel_res(self, run=None, num=None, name=None, boolean='OR', change_all=0):
     for self.run in self.runs:
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
         if not len(relax_data_store.res[self.run]):

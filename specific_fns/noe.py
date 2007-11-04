@@ -26,7 +26,7 @@ from re import match
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxArgNotInListError, RelaxError, RelaxInvalidDataError, RelaxNoRunError, RelaxNoSequenceError, RelaxRegExpError
+from relax_errors import RelaxArgNotInListError, RelaxError, RelaxInvalidDataError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRegExpError
 
 
 # The relax data storage object.
@@ -65,7 +65,7 @@ class Noe:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Loop over the sequence.
         for i in xrange(len(relax_data_store.res[self.run])):
@@ -343,7 +343,7 @@ class Noe:
 
         # Test if the run exists.
         if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
+            raise RelaxNoPipeError, run
 
         # Test if the sequence data is loaded.
         if not relax_data_store.res.has_key(run):
@@ -397,7 +397,7 @@ class Noe:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if the sequence data is loaded.
         if not relax_data_store.res.has_key(self.run):
@@ -444,7 +444,7 @@ class Noe:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
         if not relax_data_store.res.has_key(self.run):

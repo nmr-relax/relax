@@ -27,7 +27,7 @@ from unittest import TestCase
 from data import Data as relax_data_store
 from data.pipe_container import PipeContainer
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxNoRunError, RelaxRunError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxRunError
 
 
 class Test_pipes(TestCase):
@@ -186,8 +186,8 @@ class Test_pipes(TestCase):
         The function tested is generic_fns.pipes.delete()
         """
 
-        # Assert that a RelaxNoRunError occurs when the data pipe does not exist.
-        self.assertRaises(RelaxNoRunError, pipes.delete, 'x')
+        # Assert that a RelaxNoPipeError occurs when the data pipe does not exist.
+        self.assertRaises(RelaxNoPipeError, pipes.delete, 'x')
 
 
     def test_switch(self):
@@ -215,5 +215,5 @@ class Test_pipes(TestCase):
         The function used is generic_fns.pipes.switch().
         """
 
-        # Assert that a RelaxNoRunError occurs when the pipe type is invalid.
-        self.assertRaises(RelaxNoRunError, pipes.switch, 'x')
+        # Assert that a RelaxNoPipeError occurs when the pipe type is invalid.
+        self.assertRaises(RelaxNoPipeError, pipes.switch, 'x')

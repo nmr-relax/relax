@@ -22,7 +22,7 @@
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError, RelaxRunError, RelaxSequenceError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRunError, RelaxSequenceError
 
 
 # The relax data storage object.
@@ -40,11 +40,11 @@ class Hybrid:
 
         # Test that the new run exists.
         if not new_run in relax_data_store.run_names:
-            raise RelaxNoRunError, new_run
+            raise RelaxNoPipeError, new_run
 
         # Test that the old run exists.
         if not old_run in relax_data_store.run_names:
-            raise RelaxNoRunError, old_run
+            raise RelaxNoPipeError, old_run
 
         # Test that the new run has no sequence loaded.
         if relax_data_store.res.has_key(new_run):
@@ -68,7 +68,7 @@ class Hybrid:
         for run in runs:
             # Test if the run exists.
             if not run in relax_data_store.run_names:
-                raise RelaxNoRunError, run
+                raise RelaxNoPipeError, run
 
             # Test if sequence data is loaded.
             if not relax_data_store.res.has_key(run):

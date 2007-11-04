@@ -28,7 +28,7 @@ from random import gauss
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
 
 
 # The relax data storage object.
@@ -53,7 +53,7 @@ class Monte_carlo:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if simulations have been set up.
         if not hasattr(relax_data_store, 'sim_state'):
@@ -134,7 +134,7 @@ class Monte_carlo:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if simulations have been set up.
         if not hasattr(relax_data_store, 'sim_state'):
@@ -264,7 +264,7 @@ class Monte_carlo:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if simulations have been set up.
         if not hasattr(relax_data_store, 'sim_state'):
@@ -288,7 +288,7 @@ class Monte_carlo:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if simulations have been set up.
         if not hasattr(relax_data_store, 'sim_state'):
@@ -306,7 +306,7 @@ class Monte_carlo:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if simulations have been set up.
         if not hasattr(relax_data_store, 'sim_state'):
@@ -361,7 +361,7 @@ class Monte_carlo:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if Monte Carlo simulations have already been set up for the given run.
         if hasattr(relax_data_store, 'sim_number') and relax_data_store.sim_number.has_key(self.run):

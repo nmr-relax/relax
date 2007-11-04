@@ -27,7 +27,7 @@ from re import search
 # relax module imports.
 from data import Data as elax_data_store
 #from processes import RelaxPopen3
-from relax_errors import RelaxError, RelaxNoRunError
+from relax_errors import RelaxError, RelaxNoPipeError
 from thread_classes import RelaxParentThread, RelaxThread
 
 
@@ -46,7 +46,7 @@ class Minimise:
 
         # Test if the run exists.
         if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
+            raise RelaxNoPipeError, run
 
         # Function type.
         function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
@@ -77,7 +77,7 @@ class Minimise:
 
         # Test if the run exists.
         if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
+            raise RelaxNoPipeError, run
 
         # Function type.
         function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
@@ -107,7 +107,7 @@ class Minimise:
 
         # Test if the run exists.
         if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
+            raise RelaxNoPipeError, run
 
         # Function type.
         function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
