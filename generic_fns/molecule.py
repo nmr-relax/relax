@@ -25,7 +25,11 @@ from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError
 
 
-# The relax data storage object.
+# Module doc.
+"""Functions for manipulating the molecule information content in the relax data storage singleton.
+
+This touches part of the molecule-residue-spin data structure.
+"""
 
 
 def copy(res_num_from=None, res_name_from=None, res_num_to=None, res_name_to=None):
