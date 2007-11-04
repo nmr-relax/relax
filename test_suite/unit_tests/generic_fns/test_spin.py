@@ -30,3 +30,49 @@ from generic_fns import spin
 
 class Test_spin(TestCase):
     """Unit tests for the functions of the 'generic_fns.spin' module."""
+
+
+    def setUp(self):
+        """Set up for all the residue unit tests."""
+
+        # Reset the relax data storage object.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
+        # Add a second data pipe for copying tests.
+        relax_data_store.add(pipe_name='test', pipe_type='mf')
+
+        # Set the current data pipe to 'orig'.
+        relax_data_store.current_pipe = 'orig'
+
+
+    def tearDown(self):
+        """Reset the relax data storage object."""
+
+        relax_data_store.__reset__()
+
+
+    def setup_data(self):
+        """Function for setting up some data for the unit tests."""
+
+        # Create the first residue and add some data to its spin container.
+        residue.create(1, 'Ala')
+        relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
+        relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
+        relax_data_store['orig'].mol[0].name = 'Old mol'
+
+        # Create a second molecule.
+        relax_data_store['orig'].mol.add_item('New mol')
+
+        # Copy the residue to the new molecule.
+        residue.copy(res_from=':1', res_to='#New mol')
+        residue.copy(res_from='#Old mol:1', res_to='#New mol:5')
+
+        # Change the first residue's data.
+        relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
+        relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
+
+
+
