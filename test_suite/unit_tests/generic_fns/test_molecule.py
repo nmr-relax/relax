@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns import molecule, residue
-from relax_errors import RelaxError
+from relax_errors import RelaxError, RelaxNoPipeError
 
 
 
@@ -116,6 +116,22 @@ class Test_molecule(TestCase):
         self.assertEqual(relax_data_store['test'].mol[1].res[0].name, 'Ala')
         self.assertEqual(relax_data_store['test'].mol[1].res[0].spin[0].num, 111)
         self.assertEqual(relax_data_store['test'].mol[1].res[0].spin[0].x, 1)
+
+
+    def test_copy_between_pipes_fail_no_pipe(self):
+        """Test the failure of copying of the molecule data between different data pipes.
+
+        The function used is generic_fns.molecule.copy().
+        """
+
+        # Create the first molecule and residue and add some data to its spin container.
+        molecule.create('Old mol')
+        residue.create(1, 'Ala')
+        relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
+        relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
+
+        # Copy the molecule to the second data pipe.
+        self.assertRaises(RelaxNoPipeError, molecule.copy, mol_from='#Old mol', pipe_to='test2')
 
 
     def test_creation(self):
