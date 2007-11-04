@@ -221,6 +221,57 @@ class Residue:
         self.__relax__.generic.sequence.display(run=run)
 
 
+    def rename(self, res_id=None, new_name=None):
+        """Function for renaming an existent residue(s).
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        res_id:  The residue identification string corresponding to one or more residues.
+
+        new_name:  The new name.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function simply allows residues to be renamed.
+
+
+        Examples
+        ~~~~~~~~
+
+        The following sequence of commands will rename the sequence {1 ALA, 2 GLY, 3 LYS} to {1 XXX,
+        2 XXX, 3 XXX}:
+
+        relax> residue.rename(':1', 'XXX')
+        relax> residue.rename(':2', 'XXX')
+        relax> residue.rename(':3', 'XXX')
+
+        Alternatively:
+
+        relax> residue.rename(':1,2,3', 'XXX')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "residue.rename("
+            text = text + ", res_id=" + `res_id`
+            text = text + ", new_name=" + `new_name` + ")"
+            print text
+
+        # Residue identification string.
+        if type(res_id) != int:
+            raise RelaxIntError, ('residue identification string', res_id)
+
+        # New residue name.
+        if type(new_name) != str:
+            raise RelaxStrError, ('new residue name', new_name)
+
+        # Execute the functional code.
+        residue.create(res_num=res_num, new_name=new_name)
+
+
 
     # Docstring modification.
     #########################
@@ -228,3 +279,4 @@ class Residue:
     # Add the residue identification string description.
     copy.__doc__ = copy.__doc__ + "\n\n" + id_string_doc + "\n"
     delete.__doc__ = delete.__doc__ + "\n\n" + id_string_doc + "\n"
+    rename.__doc__ = rename.__doc__ + "\n\n" + id_string_doc + "\n"
