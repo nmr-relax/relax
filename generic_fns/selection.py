@@ -473,6 +473,10 @@ def return_molecule(selection=None, pipe=None):
     # Parse the selection string.
     select_obj = Selection(selection)
 
+    # No selection.
+    if len(select_obj.molecules) == 0:
+        return None
+
     # Loop over the molecules.
     mol = None
     mol_num = 0
@@ -549,6 +553,31 @@ def return_residue(selection=None, pipe=None):
 
     # Return the residue container.
     return res_container
+
+
+def return_single_molecule_info(molecule_token):
+    """Return the single molecule name corresponding to the molecule token.
+
+    @param molecule_token:  The molecule identification string.
+    @type molecule_token:   str
+    @return:                The molecule name.
+    @rtype:                 str
+    """
+
+    # Parse the molecule token for renaming and renumbering.
+    molecule_info = parse_token(molecule_token)
+
+    # Determine the molecule name.
+    mol_name = None
+    for info in molecule_info:
+        # A molecule name identifier.
+        if mol_name == None:
+            mol_name = info
+        else:
+            raise RelaxError, "The molecule identifier " + `molecule_token` + " does not correspond to a single molecule."
+
+    # Return the molecule name.
+    return mol_name
 
 
 def return_single_residue_info(residue_token):
