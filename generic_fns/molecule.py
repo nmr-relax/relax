@@ -23,7 +23,7 @@
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
-from selection import parse_token, return_molecule, return_single_molecule_info, tokenise
+from selection import molecule_loop, parse_token, return_molecule, return_single_molecule_info, tokenise
 
 
 # Module doc.
@@ -195,12 +195,12 @@ def display(mol_id=None):
 
     # Print a header.
     print "\nMolecule information:"
-    print "%-8s%-10s" % ("Name", "Number of residues")
+    print "%-20s%-10s" % ("Name", "Number of residues")
 
     # Molecule loop.
     for mol in molecule_loop(mol_sel):
         # Print the molecule data.
-        print "%-8i%-8s%-10i" % (mol.name, len(mol.res))
+        print "%-20s%-10i" % (mol.name, len(mol.res))
 
 
 def rename(res_id, new_name=None):
