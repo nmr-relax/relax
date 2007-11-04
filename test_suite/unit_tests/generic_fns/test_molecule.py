@@ -134,6 +134,75 @@ class Test_molecule(TestCase):
         self.assertRaises(RelaxNoPipeError, molecule.copy, mol_from='#Old mol', pipe_to='test2')
 
 
+    def test_copy_within_pipe(self):
+        """Test the copying of the molecule data within a single data pipe.
+
+        The function used is generic_fns.molecule.copy().
+        """
+
+        # Create the first molecule and residue and add some data to its spin container.
+        molecule.create('Old mol')
+        residue.create(1, 'Ala')
+        relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
+        relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
+
+        # Copy the molecule a few times.
+        molecule.copy(mol_from='#Old mol', mol_to='#2')
+        molecule.copy(mol_from='#Old mol', pipe_to='orig', mol_to='#3')
+
+        # Change the first molecule's data.
+        relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
+        relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
+
+        # Copy the molecule once more.
+        molecule.copy(mol_from='#Old mol', mol_to='#4')
+
+        # Test the original molecule.
+        self.assertEqual(relax_data_store['orig'].mol[0].name, 'Old mol')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'Ala')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 222)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].x, 2)
+
+        # Test the new molecule 2.
+        self.assertEqual(relax_data_store['orig'].mol[1].name, 2)
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].num, 1)
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].name, 'Ala')
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].num, 111)
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].x, 1)
+
+        # Test the new molecule 3.
+        self.assertEqual(relax_data_store['orig'].mol[2].name, 3)
+        self.assertEqual(relax_data_store['orig'].mol[2].res[0].num, 1)
+        self.assertEqual(relax_data_store['orig'].mol[2].res[0].name, 'Ala')
+        self.assertEqual(relax_data_store['orig'].mol[2].res[0].spin[0].num, 111)
+        self.assertEqual(relax_data_store['orig'].mol[2].res[0].spin[0].x, 1)
+
+        # Test the new molecule 4.
+        self.assertEqual(relax_data_store['orig'].mol[3].name, 4)
+        self.assertEqual(relax_data_store['orig'].mol[3].res[0].num, 1)
+        self.assertEqual(relax_data_store['orig'].mol[3].res[0].name, 'Ala')
+        self.assertEqual(relax_data_store['orig'].mol[3].res[0].spin[0].num, 222)
+        self.assertEqual(relax_data_store['orig'].mol[3].res[0].spin[0].x, 2)
+
+
+    def test_copy_within_pipe_fail(self):
+        """Test the failure of the copying of the molecule data within a molecule.
+
+        The function used is generic_fns.molecule.copy().
+        """
+
+        # Create a few molecules.
+        molecule.create('GST')
+        molecule.create('GB1')
+
+        # Copy a non-existent molecule (MBP).
+        self.assertRaises(RelaxError, molecule.copy, mol_from='#MBP', mol_to='#IL4')
+
+        # Copy a molecule to one which already exists.
+        self.assertRaises(RelaxError, molecule.copy, mol_from='#GST', mol_to='#GB1')
+
+
     def test_creation(self):
         """Test the creation of a molecule data structure.
 
