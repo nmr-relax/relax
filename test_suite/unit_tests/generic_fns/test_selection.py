@@ -374,6 +374,43 @@ class Test_selection(TestCase):
         self.assertRaises(RelaxNoRunError, selection.return_residue, selection=':2', pipe='new')
 
 
+    def test_return_single_residue_info(self):
+        """Test the function for returning the desired residue data container.
+
+        The function tested is generic_fns.selection.return_single_residue_info().
+        """
+
+        # Ask for a few residues.
+        res1 = selection.return_single_residue_info('1')
+        res2 = selection.return_single_residue_info('2,Glu')
+        res4 = selection.return_single_residue_info('Pro,4')
+        res5 = selection.return_single_residue_info('-5')
+
+        # Test the data of residue 1.
+        self.assertEqual(res1, (1, None))
+
+        # Test the data of residue 2.
+        self.assertEqual(res2, (2, 'Glu'))
+
+        # Test the data of residue 4.
+        self.assertEqual(res4, (4, 'Pro'))
+
+        # Test the data of the RNA residue -5.
+        self.assertEqual(res5, (-5, None))
+
+
+    def test_return_single_residue_info_fail(self):
+        """Test the failure of the function for returning the desired residue data container.
+
+        The function tested is generic_fns.selection.return_single_residue_info().
+        """
+
+        # Ask for a few residues.
+        self.assertRaises(RelaxError, selection.return_single_residue_info, '1,2')
+        self.assertRaises(RelaxError, selection.return_single_residue_info, '1,Glu,Pro')
+        self.assertRaises(RelaxError, selection.return_single_residue_info, '1,2,Glu,Pro')
+
+
     def test_reverse(self):
         """Test spin system selection reversal.
 
