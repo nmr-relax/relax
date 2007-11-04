@@ -272,6 +272,55 @@ class Residue:
         residue.create(res_num=res_num, new_name=new_name)
 
 
+    def renumber(self, res_id=None, new_number=None):
+        """Function for renumbering an existent residue.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        res_id:  The residue identification string corresponding to a single residue.
+
+        new_number:  The new residue number.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function simply allows residues to be renumbered.  The new number cannot correspond to
+        an existing residue.
+
+
+        Examples
+        ~~~~~~~~
+
+        The following sequence of commands will renumber the sequence {1 ALA, 2 GLY, 3 LYS} to
+        {101 ALA, 102 GLY, 103 LYS}:
+
+        relax> residue.renumber(':1', 101)
+        relax> residue.renumber(':2', 102)
+        relax> residue.renumber(':3', 103)
+
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "residue.renumber("
+            text = text + ", res_id=" + `res_id`
+            text = text + ", new_number=" + `new_number` + ")"
+            print text
+
+        # Residue identification string.
+        if type(res_id) != int:
+            raise RelaxIntError, ('residue identification string', res_id)
+
+        # New residue number.
+        if type(new_number) != str:
+            raise RelaxStrError, ('new residue number', new_number)
+
+        # Execute the functional code.
+        residue.create(res_num=res_num, new_number=new_number)
+
+
 
     # Docstring modification.
     #########################
@@ -280,3 +329,4 @@ class Residue:
     copy.__doc__ = copy.__doc__ + "\n\n" + id_string_doc + "\n"
     delete.__doc__ = delete.__doc__ + "\n\n" + id_string_doc + "\n"
     rename.__doc__ = rename.__doc__ + "\n\n" + id_string_doc + "\n"
+    renumber.__doc__ = renumber.__doc__ + "\n\n" + id_string_doc + "\n"

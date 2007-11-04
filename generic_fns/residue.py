@@ -189,7 +189,7 @@ def rename(res_id, new_name=None):
 def renumber(res_id, new_number=None):
     """Function for renumbering residues.
 
-    @param res_id:      The identifier string for the residue(s) to renumber.
+    @param res_id:      The identifier string for the residue to renumber.
     @type res_id:       str
     @param new_number:  The new residue number.
     @type new_number:   str
