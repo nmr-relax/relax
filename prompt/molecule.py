@@ -150,33 +150,33 @@ class Molecule:
         molecule.copy(pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
 
 
-    def delete(self, res_id=None):
-        """Function for deleting residues.
+    def delete(self, mol_id=None):
+        """Function for deleting molecules.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        res_id:  The residue identifier string.
+        mol_id:  The molecule identifier string.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function can be used to delete a single or sets of residues.
+        This function can be used to delete a single or sets of molecules.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "residue.delete("
-            text = text + "res_id=" + `res_id` + ")"
+            text = sys.ps3 + "molecule.delete("
+            text = text + "mol_id=" + `mol_id` + ")"
             print text
 
-        # The residue identifier argument.
-        if type(res_id) != str:
-            raise RelaxStrError, ('residue identifier', res_id)
+        # The molecule identifier argument.
+        if type(mol_id) != str:
+            raise RelaxStrError, ('molecule identifier', mol_id)
 
         # Execute the functional code.
-        residue.delete(res_id=res_id)
+        molecule.delete(mol_id=mol_id)
 
 
     def display(self, run=None):
