@@ -303,7 +303,7 @@ class Test_molecule(TestCase):
         # The following should all work without error.
         molecule.display()
         molecule.display('#Old mol')
-        molecule.display('#New mol')
+        molecule.display(mol_id='#New mol')
 
 
     def test_display_fail(self):
