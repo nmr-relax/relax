@@ -320,3 +320,20 @@ class Test_molecule(TestCase):
         self.assertRaises(RelaxResSelectDisallowError, molecule.display, ':1')
 
 
+    def test_rename(self):
+        """Test the renaming of a molecule.
+
+        The function tested is generic_fns.molecule.rename().
+        """
+
+        # Set up some data.
+        self.setup_data()
+
+        # Rename the molecule.
+        molecule.rename(mol_id='#New mol', new_name='K')
+
+        # Test that the molecule has been renamed.
+        self.assertEqual(relax_data_store['orig'].mol[1].name, 'K')
+
+
+
