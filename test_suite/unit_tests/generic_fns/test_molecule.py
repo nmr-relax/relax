@@ -232,3 +232,29 @@ class Test_molecule(TestCase):
         # Assert that a RelaxError occurs when the next added molecule has the same name as the first.
         self.assertRaises(RelaxError, molecule.create, 'CaM')
 
+
+    def test_delete(self):
+        """Test molecule deletion.
+
+        The function used is generic_fns.molecule.delete().
+        """
+
+        # Set up some data.
+        self.setup_data()
+
+        # Delete the first molecule.
+        molecule.delete(mol_id='#Old mol')
+
+        # Test that the first molecule is now 'New mol'.
+        self.assertEqual(relax_data_store['orig'].mol[0].name, 'New mol')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'Ala')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 111)
+        self.assert_(hasattr(relax_data_store['orig'].mol[0].res[0].spin[0], 'x'))
+        self.assertEqual(relax_data_store['orig'].mol[0].res[1].num, 5)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[1].name, 'Ala')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].num, 111)
+        self.assert_(hasattr(relax_data_store['orig'].mol[0].res[1].spin[0], 'x'))
+
+
+
