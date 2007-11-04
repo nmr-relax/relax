@@ -207,7 +207,7 @@ class Test_residue(TestCase):
     def test_copy_within_molecule_fail(self):
         """Test the failure of the copying of the residue data within a molecule.
 
-        The function used is generic_fns.residues.copy().
+        The function used is generic_fns.residue.copy().
         """
 
         # Create a few residues.
@@ -224,7 +224,7 @@ class Test_residue(TestCase):
     def test_creation(self):
         """Test the creation of a residue.
 
-        The function used is generic_fns.residues.create().
+        The function used is generic_fns.residue.create().
         """
 
         # Create a few new residues.
@@ -259,7 +259,7 @@ class Test_residue(TestCase):
     def test_delete_name(self):
         """Test residue deletion using residue name identifiers.
 
-        The function used is generic_fns.residues.delete().
+        The function used is generic_fns.residue.delete().
         """
 
         # Create some residues and add some data to the spin containers.
@@ -283,7 +283,7 @@ class Test_residue(TestCase):
     def test_delete_num(self):
         """Test residue deletion using residue number identifiers.
 
-        The function used is generic_fns.residues.delete().
+        The function used is generic_fns.residue.delete().
         """
 
         # Create some residues and add some data to the spin containers.
@@ -311,7 +311,7 @@ class Test_residue(TestCase):
     def test_delete_all(self):
         """Test the deletion of all residues.
 
-        The function used is generic_fns.residues.delete().
+        The function used is generic_fns.residue.delete().
         """
 
         # Create some residues and add some data to the spin containers.
@@ -333,7 +333,7 @@ class Test_residue(TestCase):
     def test_delete_shift(self):
         """Test the deletion of multiple residues.
 
-        The function used is generic_fns.residues.delete().
+        The function used is generic_fns.residue.delete().
         """
 
         # Create some residues and add some data to the spin containers.
@@ -357,7 +357,7 @@ class Test_residue(TestCase):
     def test_delete_fail(self):
         """Test the failure of residue deletion when an atom id is supplied.
 
-        The function used is generic_fns.residues.delete().
+        The function used is generic_fns.residue.delete().
         """
 
         # Supply an atom id.
