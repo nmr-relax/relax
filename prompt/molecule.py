@@ -200,3 +200,15 @@ class Molecule:
 
         # Execute the functional code.
         molecule.display(mol_id=mol_id)
+
+
+
+    # Docstring modification.
+    #########################
+
+    # Add the residue identification string description.
+    copy.__doc__ = copy.__doc__ + "\n\n" + id_string_doc + "\n"
+    delete.__doc__ = delete.__doc__ + "\n\n" + id_string_doc + "\n"
+    display.__doc__ = display.__doc__ + "\n\n" + id_string_doc + "\n"
+    #rename.__doc__ = rename.__doc__ + "\n\n" + id_string_doc + "\n"
+    #renumber.__doc__ = renumber.__doc__ + "\n\n" + id_string_doc + "\n"
