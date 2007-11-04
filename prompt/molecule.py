@@ -27,7 +27,7 @@ import sys
 import help
 from generic_fns import molecule
 from generic_fns.selection import id_string_doc
-from relax_errors import RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxIntError, RelaxStrError
 
 
 class Molecule:
