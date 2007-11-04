@@ -201,32 +201,38 @@ def display(mol_id=None):
         print "%-20s%-10i" % (mol.name, len(mol.res))
 
 
-def rename(res_id, new_name=None):
-    """Function for renaming residues.
+def rename(mol_id, new_name=None):
+    """Function for renaming molecules.
 
-    @param res_id:      The identifier string for the residue(s) to rename.
-    @type res_id:       str
-    @param new_name:    The new residue name.
+    @param mol_id:      The identifier string for the molecule to rename.
+    @type mol_id:       str
+    @param new_name:    The new molecule name.
     @type new_name:     str
     """
 
     # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(res_id)
+    mol_token, res_token, spin_token = tokenise(mol_id)
 
     # Disallow spin selections.
     if spin_token != None:
         raise RelaxSpinSelectDisallowError
 
-    # Parse the tokens.
-    residues = parse_token(res_token)
+    # Disallow residue selections.
+    if spin_token != None:
+        raise RelaxResSelectDisallowError
 
-    # Molecule loop.
-    for mol in molecule_loop(mol_token):
-        # Loop over the residues of the molecule.
-        for i in xrange(len(mol.res)):
-            # Rename the residue is there is a match.
-            if mol.res[i].num in residues or mol.res[i].name in residues:
-                mol.res[i].name = new_name
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Parse the tokens.
+    molecules = parse_token(mol_token)
+
+    # Get the single molecule data container.
+    mol = return_molecule(mol_id)
+
+    # Rename the molecule is there is a match.
+    if mol:
+        mol.name = new_name
 
 
 def renumber(res_id, new_number=None):
