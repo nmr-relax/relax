@@ -257,4 +257,24 @@ class Test_molecule(TestCase):
         self.assert_(hasattr(relax_data_store['orig'].mol[0].res[1].spin[0], 'x'))
 
 
+    def test_delete_all(self):
+        """Test the deletion of all molecules.
+
+        The function used is generic_fns.molecule.delete().
+        """
+
+        # Set up some data.
+        self.setup_data()
+
+        # Delete all molecules.
+        molecule.delete(mol_id='#*')
+
+        # Test that the first molecule defaults back to the empty container.
+        self.assertEqual(relax_data_store['orig'].mol[0].name, None)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, None)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, None)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, None)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, None)
+
+
 
