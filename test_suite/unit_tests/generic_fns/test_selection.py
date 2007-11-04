@@ -306,6 +306,34 @@ class Test_selection(TestCase):
         self.assertEqual(i, 5)
 
 
+    def test_return_molecule(self):
+        """Test the function for returning the desired molecule data container.
+
+        The function tested is generic_fns.selection.return_molecule().
+        """
+
+        # Ask for a few molecules.
+        mol1 = selection.return_molecule('#Ap4Aase')
+        mol2 = selection.return_molecule(selection='#RNA', pipe='orig')
+
+        # Test the data of molecule 1.
+        self.assertEqual(mol1.name, 'Ap4Aase')
+
+        # Test the data of molecule 2.
+        self.assertEqual(mol2.name, 'RNA')
+
+
+    def test_return_molecule_pipe_fail(self):
+        """Test the failure of the function for returning the desired molecule data container.
+
+        The function tested is generic_fns.selection.return_molecule().
+        """
+
+        # Try to get a molecule from a missing data pipe.
+        self.assertRaises(RelaxNoRunError, selection.return_molecule, selection='#Ap4Aase', pipe='new')
+        self.assertRaises(RelaxNoRunError, selection.return_molecule, selection='#RNA', pipe='new')
+
+
     def test_return_residue(self):
         """Test the function for returning the desired residue data container.
 

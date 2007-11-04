@@ -466,6 +466,10 @@ def return_molecule(selection=None, pipe=None):
     if pipe == None:
         pipe = relax_data_store.current_pipe
 
+    # Test that the data pipe exists.
+    if pipe not in relax_data_store.keys():
+        raise RelaxNoRunError, pipe
+
     # Parse the selection string.
     select_obj = Selection(selection)
 
