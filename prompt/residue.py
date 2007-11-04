@@ -225,8 +225,6 @@ class Residue:
     # Docstring modification.
     #########################
 
-    # Indent the identification string documentation.
-    #id_string_doc = replace(id_string_doc, '\n', '\n' + 8*' ')
-
-    # Delete function.
+    # Add the residue identification string description.
+    copy.__doc__ = copy.__doc__ + "\n\n" + id_string_doc + "\n"
     delete.__doc__ = delete.__doc__ + "\n\n" + id_string_doc + "\n"
