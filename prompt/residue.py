@@ -96,21 +96,21 @@ class Residue:
             text = text + ", res_to=" + `res_to` + ")"
             print text
 
-        # The pipe_from argument.
+        # The data pipe from argument.
         if type(pipe_from) != str:
-            raise RelaxStrError, ('pipe_from', pipe_from)
+            raise RelaxStrError, ('data pipe from', pipe_from)
 
-        # The res_from argument.
+        # The residue from argument.
         if type(res_from) != str:
-            raise RelaxStrError, ('res_from', res_from)
+            raise RelaxStrError, ('residue from', res_from)
 
-        # The pipe_to argument.
+        # The data pipe to argument.
         if type(pipe_to) != str:
-            raise RelaxStrError, ('pipe_to', pipe_to)
+            raise RelaxStrError, ('data pipe to', pipe_to)
 
-        # The res_to argument.
+        # The residue to argument.
         if type(res_to) != str:
-            raise RelaxStrError, ('res_to', res_to)
+            raise RelaxStrError, ('residue to', res_to)
 
         # Execute the functional code.
         residue.copy(pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
