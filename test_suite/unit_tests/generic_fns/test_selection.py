@@ -306,6 +306,36 @@ class Test_selection(TestCase):
         self.assertEqual(i, 5)
 
 
+    def test_return_residue(self):
+        """Test the function for returning the desired residue data container.
+
+        The function tested is generic_fns.selection.return_residue().
+        """
+
+        # Ask for a few residues.
+        res1 = selection.return_residue(':1')
+        res2 = selection.return_residue(selection=':2')
+        res4 = selection.return_residue(selection=':4', pipe='orig')
+        res5 = selection.return_residue(selection='#RNA:-5', pipe='orig')
+
+        # Test the data of residue 1.
+        self.assertEqual(res1.num, 1)
+        self.assertEqual(res1.name, None)
+
+        # Test the data of residue 2.
+        self.assertEqual(res2.num, 2)
+        self.assertEqual(res2.name, 'Glu')
+
+        # Test the data of residue 4.
+        self.assertEqual(res4.num, 4)
+        self.assertEqual(res4.name, 'Pro')
+
+        # Test the data of the RNA residue -5.
+        self.assertEqual(res5.num, -5)
+        self.assertEqual(res5.name, None)
+        self.assertEqual(res5.spin[1].name, 'N5')
+
+
     def test_return_residue_pipe_fail(self):
         """Test the failure of the function for returning the desired residue data container.
 
