@@ -21,5 +21,9 @@
 ###############################################################################
 
 
-__all__ = ['test_pipes']
+__all__ = ['test_molecule',
+           'test_pipes',
+           'test_residue',
+           'test_selection',
+           'test_spin']
 
