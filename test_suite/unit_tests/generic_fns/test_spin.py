@@ -26,6 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns import residue, spin
+from relax_errors import RelaxNoPipeError
 
 
 
@@ -163,3 +164,19 @@ class Test_spin(TestCase):
         # Test the new spin.
         self.assertEqual(relax_data_store['test'].mol[0].res[0].spin[0].num, 111)
         self.assertEqual(relax_data_store['test'].mol[0].res[0].spin[0].x, 1)
+
+
+    def test_copy_between_pipes_fail_no_pipe(self):
+        """Test the copying of the spin data between different data pipes.
+
+        The function used is generic_fns.spin.copy().
+        """
+
+        # Set up the data.
+        self.setup_data()
+
+        # Copy the spin to the second data pipe.
+        self.assertRaises(RelaxNoPipeError, spin.copy, spin_from='#Old mol:1@111', pipe_to='test2')
+
+
+
