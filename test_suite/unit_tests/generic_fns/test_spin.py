@@ -328,7 +328,7 @@ class Test_spin(TestCase):
         self.setup_data()
 
         # Delete all spins.
-        spin.delete(spin_id=':1-200')
+        spin.delete(spin_id='@1-200')
 
         # Test that the first spin defaults back to the empty spin.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, None)
