@@ -103,26 +103,44 @@ class Selection(object):
 
 
     def __contains__(self, obj):
+        """Replacement function for determining if an object matches the selection.
+
+        @param obj:     The data object.
+        @type obj:      MoleculeContainer, ResidueContainer, or SpinContainer object.
+        @return:        The answer of whether the object matches the selection.
+        @rtype:         Boolean
+        """
+
+        # The selection object is a union.
         if self._union:
             return (obj in self._union[0]) or (obj in self._union[1])
+
+        # The selection object is an intersection.
         elif self._intersect:
             return (obj in self._intersect[0]) and (obj in self._intersect[1])
+
+        # The object is a molecule.
         elif isinstance(obj, MoleculeContainer):
             if not self.molecules:
                 return True
             elif obj.name in self.molecules:
                 return True
+
+        # The object is a residue.
         elif isinstance(obj, ResidueContainer):
             if not self.residues:
                 return True
             elif obj.name in self.residues or obj.num in self.residues:
                 return True
+
+        # The object is a spin.
         elif isinstance(obj, SpinContainer):
             if not self.spins:
                 return True
             elif obj.name in self.spins or obj.num in self.spins:
                 return True
 
+        # No match.
         return False
 
 
