@@ -237,3 +237,39 @@ class Test_spin(TestCase):
         # Copy a spin to a number which already exists.
         self.assertRaises(RelaxError, spin.copy, spin_from=':1', spin_to=':2@78')
 
+
+    def test_creation(self):
+        """Test the creation of a spin.
+
+        The function used is generic_fns.spin.create().
+        """
+
+        # Create a few new spins.
+        spin.create(1, 'C3')
+        spin.create(2, 'C17')
+        spin.create(-3, 'N7')
+
+        # Test that the spin numbers are correct.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 1)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].num, 2)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].num, -3)
+
+        # Test that the spin names are correct.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C3')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].name, 'C17')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].name, 'N7')
+
+
+    def test_creation_fail(self):
+        """Test the failure of spin creation (by supplying two spins with the same number).
+
+        The function used is generic_fns.spin.create().
+        """
+
+        # Create the first spin.
+        spin.create(1, 'P1')
+
+        # Assert that a RelaxError occurs when the next added spin has the same number as the first.
+        self.assertRaises(RelaxError, spin.create, 1, 'P3')
+
+
