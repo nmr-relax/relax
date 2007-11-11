@@ -550,6 +550,67 @@ def return_residue(selection=None, pipe=None):
     return res_container
 
 
+def return_spin(selection=None, pipe=None):
+    """Function for returning the spin data container of the given selection.
+
+    @param selection:   The spin selection identifier.
+    @type selection:    str
+    @param pipe:        The data pipe containing the spin.  Defaults to the current data pipe.
+    @type pipe:         str
+    @return:            The spin specific data container.
+    @rtype:             instance of the ResidueContainer class.
+    """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = relax_data_store.current_pipe
+
+    # Test that the data pipe exists.
+    if pipe not in relax_data_store.keys():
+        raise RelaxNoPipeError, pipe
+
+    # Parse the selection string.
+    select_obj = Selection(selection)
+
+    # No selection.
+    if len(select_obj.spins) == 0:
+        return None
+
+    # Loop over the molecules.
+    spin = None
+    spin_num = 0
+    spin_container = None
+    for mol in relax_data_store[pipe].mol:
+        # Skip the molecule if there is no match to the selection.
+        if mol not in select_obj:
+            continue
+
+        # Loop over the residues.
+        for res in mol.res:
+            # Skip the residue if there is no match to the selection.
+            if res not in select_obj:
+                continue
+
+            # Loop over the spins.
+            for spin in res.spin:
+                # Skip the spin if there is no match to the selection.
+                if spin not in select_obj:
+                    continue
+
+                # Store the spin container.
+                spin_container = spin
+
+                # Increment the spin number counter.
+                spin_num = spin_num + 1
+
+    # No unique identifier.
+    if spin_num > 1:
+        raise RelaxError, "The identifier " + `selection` + " corresponds to more than a single spin in the " + `pipe` + " data pipe."
+
+    # Return the spin container.
+    return spin_container
+
+
 def return_single_molecule_info(molecule_token):
     """Return the single molecule name corresponding to the molecule token.
 
