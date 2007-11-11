@@ -445,10 +445,6 @@ def residue_loop(selection=None, pipe=None):
     # Parse the selection string.
     select_obj = Selection(selection)
 
-    # Disallowed selections.
-    if select_obj.spins:
-        raise RelaxSpinSelectDisallowError
-
     # Loop over the molecules.
     for mol in relax_data_store[pipe].mol:
         # Skip the molecule if there is no match to the selection.
