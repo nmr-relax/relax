@@ -138,3 +138,28 @@ class Test_spin(TestCase):
         self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].num, 111)
         self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].num, 'C8')
         self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].x, 1)
+
+
+    def test_copy_between_pipes(self):
+        """Test the copying of the spin data between different data pipes.
+
+        The function used is generic_fns.spin.copy().
+        """
+
+        # Set up the data.
+        self.setup_data()
+
+        # Copy the spin data.
+        spin.copy(spin_from='#Old mol:1@111', pipe_to='test')
+
+        # Change the first spin's data.
+        relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
+        relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
+
+        # Test the original spin.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 222)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].x, 2)
+
+        # Test the new spin.
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].spin[0].num, 111)
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].spin[0].x, 1)
