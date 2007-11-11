@@ -200,25 +200,10 @@ def display(spin_id=None):
     # Print a header.
     print "\n\n%-15s%-15s%-15s%-15s%-15s" % ("Molecule", "Res number", "Res name", "Spin number", "Spin name")
 
-    # Molecule loop.
-    for mol in molecule_loop(mol_sel):
-        # The residue identifier for this molecule.
-        res_sel = '#' + mol.name
-        if res_token:
-            res_sel = res_sel + ':' + res_token
-
-        # Loop over the residues of this molecule.
-        for res in residue_loop(res_sel):
-            # The spin identifier for this residue.
-            spin_sel = res_sel
-            if spin_token:
-                spin_sel = spin_sel + '@' + spin_token
-
-            # Loop over the spins of this residue.
-            for spin in spin_loop(spin_sel):
-                # Print the residue data.
-                print "%-15s%-15s%-15s%-15s%-15s" % (mol.name, `res.num`, res.name, `spin.num`, spin.name)
-
+    # Spin loop.
+    for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
+        # Print the residue data.
+        print "%-15s%-15s%-15s%-15s%-15s" % (mol_name, `res_num`, res_name, `spin.num`, spin.name)
 
 
 def rename(res_id, new_name=None):
