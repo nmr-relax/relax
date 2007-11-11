@@ -184,8 +184,8 @@ class Test_spin(TestCase):
 
 
 
-    def test_copy_fail(self):
-        """Test the failure of the copying of the spin data.
+    def test_copy_fail1(self):
+        """Test the failure of the copying of the spin data of a non-existent residue.
 
         The function used is generic_fns.spin.copy().
         """
@@ -196,14 +196,42 @@ class Test_spin(TestCase):
         # Copy a non-existent residue (1 Met, @111).
         self.assertRaises(RelaxError, spin.copy, spin_from=':Met@111', spin_to=':2,Gly')
 
+
+    def test_copy_fail2(self):
+        """Test the failure of the copying of the spin data of a non-existent spin.
+
+        The function used is generic_fns.spin.copy().
+        """
+
+        # Set up the data.
+        self.setup_data()
+
         # Copy a non-existent spin (1 Ala, @234).
         self.assertRaises(RelaxError, spin.copy, spin_from=':Ala@234', spin_to=':2,Gly')
+
+
+    def test_copy_fail3(self):
+        """Test the failure of the copying of the spin data to a non-existent residue.
+
+        The function used is generic_fns.spin.copy().
+        """
+
+        # Set up the data.
+        self.setup_data()
 
         # Copy to a non-existent residue (3).
         self.assertRaises(RelaxError, spin.copy, spin_from='#Old mol:1@111', spin_to='#Old mol:3')
 
+
+    def test_copy_fail4(self):
+        """Test the failure of the copying of the spin data to a number which already exists.
+
+        The function used is generic_fns.spin.copy().
+        """
+
+        # Set up the data.
+        self.setup_data()
+
         # Copy a spin to a number which already exists.
         self.assertRaises(RelaxError, spin.copy, spin_from=':1', spin_to=':2@78')
-
-
 
