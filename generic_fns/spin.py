@@ -62,8 +62,8 @@ def copy(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
         raise RelaxNoPipeError, pipe_to
 
     # Split up the selection string.
-    mol_from_token, spin_from_token, spin_from_token = tokenise(spin_from)
-    mol_to_token, spin_to_token, spin_to_token = tokenise(spin_to)
+    mol_from_token, res_from_token, spin_from_token = tokenise(spin_from)
+    mol_to_token, res_to_token, spin_to_token = tokenise(spin_to)
 
     # Parse the spin token for renaming and renumbering.
     spin_num_to, spin_name_to = return_single_spin_info(spin_to_token)
@@ -74,11 +74,11 @@ def copy(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
         raise RelaxError, "The spin " + `spin_to` + " already exists in the " + `pipe_from` + " data pipe."
 
     # Get the single residue data container.
-    res_from_cont = return_residue(res_from, pipe_from)
+    res_from_cont = return_residue(spin_from, pipe_from)
 
     # No residue to copy data from.
     if res_from_cont == None:
-        raise RelaxError, "The residue " + `res_from` + " does not exist in the " + `pipe_from` + " data pipe."
+        raise RelaxError, "The residue in " + `spin_from` + " does not exist in the " + `pipe_from` + " data pipe."
 
     # Get the single spin data container.
     spin_from_cont = return_spin(spin_from, pipe_from)
