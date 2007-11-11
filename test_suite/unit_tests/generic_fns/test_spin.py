@@ -259,13 +259,13 @@ class Test_spin(TestCase):
         spin.create(-3, 'N7', res_id='#New mol:6')
 
         # Test that the spin numbers are correct.
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].num, 1)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].num, 2)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[5].num, 1)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[6].num, 2)
         self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[2].num, -3)
 
         # Test that the spin names are correct.
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].name, 'C3')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].name, 'C17')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[5].name, 'C3')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[6].name, 'C17')
         self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[2].name, 'N7')
 
 
