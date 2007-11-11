@@ -345,7 +345,7 @@ class Test_spin(TestCase):
         self.setup_data()
 
         # Delete the first and third spins.
-        spin.delete(spin_id=':111,7')
+        spin.delete(spin_id='@111,7')
 
         # Test that the remaining spins.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 6)
