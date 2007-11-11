@@ -73,6 +73,8 @@ class Test_spin(TestCase):
 
         # Create a second residue.
         cdp.mol[0].res.add_item(2, 'Arg')
+        cdp.mol[0].res[0].spin[0].num = 78
+        cdp.mol[0].res[0].spin[0].name = 'NH'
 
         # Create a second molecule.
         cdp.mol.add_item('New mol')
@@ -166,7 +168,7 @@ class Test_spin(TestCase):
         self.assertEqual(relax_data_store['test'].mol[0].res[0].spin[0].x, 1)
 
 
-    def test_copy_between_pipes_fail_no_pipe(self):
+    def test_copy_between_pipes_fail(self):
         """Test the copying of the spin data between different data pipes.
 
         The function used is generic_fns.spin.copy().
@@ -177,6 +179,26 @@ class Test_spin(TestCase):
 
         # Copy the spin to the second data pipe.
         self.assertRaises(RelaxNoPipeError, spin.copy, spin_from='#Old mol:1@111', pipe_to='test2')
+
+
+
+    def test_copy_fail(self):
+        """Test the failure of the copying of the spin data.
+
+        The function used is generic_fns.spin.copy().
+        """
+
+        # Set up the data.
+        self.setup_data()
+
+        # Copy a non-existent residue (1 Met, @111).
+        self.assertRaises(RelaxError, spin.copy, spin_from=':Met@111', spin_to=':2,Gly')
+
+        # Copy a non-existent spin (1 Ala, @234).
+        self.assertRaises(RelaxError, spin.copy, spin_from=':Ala@234', spin_to=':2,Gly')
+
+        # Copy a spin to a number which already exists.
+        self.assertRaises(RelaxError, spin.copy, spin_from=':1', spin_to=':2@78')
 
 
 
