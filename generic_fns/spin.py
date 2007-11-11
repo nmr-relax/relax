@@ -145,32 +145,28 @@ def create(spin_num=None, spin_name=None, res_id=None):
         res_to_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
 
 
-def delete(res_id=None):
-    """Function for deleting residues from the current data pipe.
+def delete(spin_id=None):
+    """Function for deleting spins from the current data pipe.
 
-    @param res_id:  The molecule and residue identifier string.
-    @type res_id:   str
+    @param spin_id: The molecule, residue, and spin identifier string.
+    @type spin_id:  str
     """
 
     # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(res_id)
-
-    # Disallow spin selections.
-    if spin_token != None:
-        raise RelaxSpinSelectDisallowError
+    mol_token, res_token, spin_token = tokenise(spin_id)
 
     # Parse the tokens.
-    residues = parse_token(res_token)
+    spins = parse_token(spin_token)
 
-    # Molecule loop.
-    for mol in molecule_loop(mol_token):
+    # Residue loop.
+    for res in residue_loop(spin_id):
         # List of indecies to delete.
         indecies = []
 
-        # Loop over the residues of the molecule.
-        for i in xrange(len(mol.res)):
-            # Remove the residue is there is a match.
-            if mol.res[i].num in residues or mol.res[i].name in residues:
+        # Loop over the spins of the residue.
+        for i in xrange(len(res.spin)):
+            # Remove the spin is there is a match.
+            if res.spin[i].num in spins or res.spin[i].name in spins:
                 indecies.append(i)
 
         # Reverse the indecies.
@@ -178,14 +174,14 @@ def delete(res_id=None):
 
         # Delete the residues.
         for index in indecies:
-            mol.res.pop(index)
+            res.spin.pop(index)
 
         # Create an empty residue container if no residues remain.
-        if len(mol.res) == 0:
-            mol.res.add_item()
+        if len(res.spin) == 0:
+            res.spin.add_item()
 
 
-def display(res_id=None):
+def display(spin_id=None):
     """Function for displaying the information associated with the residue.
 
     @param res_id:  The molecule and residue identifier string.
