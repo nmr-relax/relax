@@ -127,22 +127,22 @@ class Test_spin(TestCase):
         # Set up the data.
         self.setup_data()
 
-        # Copy the spin '111' from the first residue to the fifth residue.
-        spin.copy(spin_from='#Old mol:1@111', spin_to='#Old mol:2')
+        # Copy the spin '111' from the first residue to the third residue.
+        spin.copy(spin_from='#Old mol:1@111', spin_to='#Old mol:3')
 
         # Test the original spin.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'Ala')
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 111)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C7')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C8')
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].x, 1)
 
         # Test the new spin.
-        self.assertEqual(relax_data_store['orig'].mol[0].res[1].num, 2)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[1].name, 'Arg')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].num, 111)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].num, 'C8')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].x, 1)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[2].num, 3)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[2].name, 'Ala')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[2].spin[0].num, 111)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[2].spin[0].name, 'C8')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[2].spin[0].x, 1)
 
 
     def test_copy_between_pipes(self):
