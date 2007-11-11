@@ -128,7 +128,7 @@ def create(spin_num=None, spin_name=None, res_id=None):
     if not relax_data_store.current_pipe:
         raise RelaxNoPipeError
 
-    # No residue to add the spin to.
+    # Get the residue container to add the spin to.
     res_to_cont = return_residue(res_id)
     if res_to_cont == None and res_id:
         raise RelaxError, "The residue in " + `res_id` + " does not exist in the current data pipe."
