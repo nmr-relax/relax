@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns import residue, spin
-from relax_errors import RelaxNoPipeError
+from relax_errors import RelaxError, RelaxNoPipeError
 
 
 
