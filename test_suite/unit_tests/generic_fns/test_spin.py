@@ -109,12 +109,12 @@ class Test_spin(TestCase):
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].x, 1)
 
         # Test the new spin.
-        self.assertEqual(relax_data_store['orig'].mol[1].res[0].num, 1)
-        self.assertEqual(relax_data_store['orig'].mol[1].res[0].name, 'Ala')
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].num, 5)
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].name, 'Lys')
         self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].num, 239)
         self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].name, 'NH')
         self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[1].num, 334)
-        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].name, 'C8')
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[1].name, 'C8')
         self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[1].x, 1)
 
 
