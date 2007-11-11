@@ -23,7 +23,7 @@
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxSpinSelectDisallowError
-from selection import molecule_loop, parse_token, residue_loop, return_molecule, return_residue, return_single_residue_info, tokenise
+from selection import molecule_loop, parse_token, residue_loop, return_molecule, return_residue, return_single_residue_info, return_single_spin_info, tokenise
 
 
 # Module doc.
@@ -33,22 +33,22 @@ This touches part of the molecule-residue-spin data structure.
 """
 
 
-def copy(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
-    """Copy the contents of the residue structure from one residue to a new residue.
+def copy(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
+    """Copy the contents of the spin structure from one spin to a new spin.
 
-    For copying to be successful, the res_from identification string must match an existent residue.
-    The new residue number must be unique.
+    For copying to be successful, the spin_from identification string must match an existent spin.
+    The new spin number must be unique.
 
-    @param pipe_from:   The data pipe to copy the residue from.  This defaults to the current data
+    @param pipe_from:   The data pipe to copy the spin from.  This defaults to the current data
                         pipe.
     @type pipe_from:    str
-    @param res_from:    The residue identification string for the structure to copy the data from.
-    @type res_from:     str
-    @param pipe_to:     The data pipe to copy the residue to.  This defaults to the current data
+    @param spin_from:   The spin identification string for the structure to copy the data from.
+    @type spin_from:    str
+    @param pipe_to:     The data pipe to copy the spin to.  This defaults to the current data
                         pipe.
     @type pipe_to:      str
-    @param res_to:      The residue identification string for the structure to copy the data to.
-    @type res_to:       str
+    @param spin_to:     The spin identification string for the structure to copy the data to.
+    @type spin_to:      str
     """
 
     # The current data pipe.
@@ -62,44 +62,40 @@ def copy(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
         raise RelaxNoPipeError, pipe_to
 
     # Split up the selection string.
-    mol_from_token, res_from_token, spin_from_token = tokenise(res_from)
-    mol_to_token, res_to_token, spin_to_token = tokenise(res_to)
+    mol_from_token, spin_from_token, spin_from_token = tokenise(spin_from)
+    mol_to_token, spin_to_token, spin_to_token = tokenise(spin_to)
 
-    # Disallow spin selections.
-    if spin_from_token != None or spin_to_token != None:
-        raise RelaxSpinSelectDisallowError
+    # Parse the spin token for renaming and renumbering.
+    spin_num_to, spin_name_to = return_single_spin_info(spin_to_token)
 
-    # Parse the residue token for renaming and renumbering.
-    res_num_to, res_name_to = return_single_residue_info(res_to_token)
+    # Test if the spin number already exists.
+    spin_to_cont = return_spin(spin_to, pipe_to)
+    if spin_to_cont:
+        raise RelaxError, "The spin " + `spin_to` + " already exists in the " + `pipe_from` + " data pipe."
 
-    # Test if the residue number already exists.
-    res_to_cont = return_residue(res_to, pipe_to)
-    if res_to_cont:
-        raise RelaxError, "The residue " + `res_to` + " already exists in the " + `pipe_from` + " data pipe."
+    # Get the single spin data container.
+    spin_from_cont = return_spin(spin_from, pipe_from)
 
-    # Get the single residue data container.
-    res_from_cont = return_residue(res_from, pipe_from)
+    # No spin to copy data from.
+    if spin_from_cont == None:
+        raise RelaxError, "The spin " + `spin_from` + " does not exist in the " + `pipe_from` + " data pipe."
 
-    # No residue to copy data from.
-    if res_from_cont == None:
-        raise RelaxError, "The residue " + `res_from` + " does not exist in the " + `pipe_from` + " data pipe."
-
-    # Get the single molecule data container to copy the residue to (default to the first molecule).
-    mol_to_container = return_molecule(res_to, pipe_to)
-    if mol_to_container == None:
-        mol_to_container = relax_data_store[pipe_to].mol[0]
+    # Get the single residue data container to copy the spin to (default to the first molecule, first residue).
+    res_to_container = return_residue(spin_to, pipe_to)
+    if res_to_container == None:
+        res_to_container = relax_data_store[pipe_to].mol[0].res[0]
 
     # Copy the data.
-    if mol_to_container.res[0].num == None and mol_to_container.res[0].name == None and len(mol_to_container.res) == 1:
-        mol_to_container.res[0] = res_from_cont.__clone__()
+    if res_to_container.spin[0].num == None and res_to_container.spin[0].name == None and len(res_to_container.spin) == 1:
+        res_to_container.spin[0] = spin_from_cont.__clone__()
     else:
-        mol_to_container.res.append(res_from_cont.__clone__())
+        res_to_container.spin.append(spin_from_cont.__clone__())
 
-    # Change the new residue number and name.
-    if res_num_to != None:
-        mol_to_container.res[-1].num = res_num_to
-    if res_name_to != None:
-        mol_to_container.res[-1].name = res_name_to
+    # Change the new spin number and name.
+    if spin_num_to != None:
+        res_to_container.spin[-1].num = spin_num_to
+    if spin_name_to != None:
+        res_to_container.spin[-1].name = spin_name_to
 
 
 def create(res_num=None, res_name=None):
