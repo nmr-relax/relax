@@ -73,7 +73,7 @@ class Test_spin(TestCase):
         cdp.mol[0].res[0].spin[0].x = 1
 
         # Create a second residue.
-        cdp.mol[0].res.add_item(2, 'Arg')
+        cdp.mol[0].res.add_item('Arg', 2)
         cdp.mol[0].res[1].spin[0].num = 78
         cdp.mol[0].res[1].spin[0].name = 'NH'
 
@@ -85,8 +85,8 @@ class Test_spin(TestCase):
         cdp.mol[1].res[0].name = 'Lys'
         cdp.mol[1].res[0].spin[0].num = 239
         cdp.mol[1].res[0].spin[0].name = 'NH'
-        cdp.mol[1].res.add_item(6, 'Thr')
-        cdp.mol[1].res[1].spin.add_item(3239, 'NH')
+        cdp.mol[1].res.add_item('Thr', 6)
+        cdp.mol[1].res[1].spin.add_item('NH', 3239)
 
 
     def test_copy_between_molecules(self):
@@ -134,7 +134,7 @@ class Test_spin(TestCase):
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'Ala')
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 111)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C8')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C7')
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].x, 1)
 
         # Test the new spin.
