@@ -199,6 +199,9 @@ class Test_spin(TestCase):
         # Copy a non-existent spin (1 Ala, @234).
         self.assertRaises(RelaxError, spin.copy, spin_from=':Ala@234', spin_to=':2,Gly')
 
+        # Copy to a non-existent residue (3).
+        self.assertRaises(RelaxError, spin.copy, spin_from='#Old mol:1@111', spin_to='#Old mol:3')
+
         # Copy a spin to a number which already exists.
         self.assertRaises(RelaxError, spin.copy, spin_from=':1', spin_to=':2@78')
 
