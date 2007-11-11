@@ -427,15 +427,21 @@ def parse_token(token):
     return list
 
 
-def residue_loop(selection=None, pipe=None):
+def residue_loop(selection=None, pipe=None, full_info=False):
     """Generator function for looping over all the residues of the given selection.
 
     @param selection:   The residue selection identifier.
     @type selection:    str
     @param pipe:        The data pipe containing the residue.  Defaults to the current data pipe.
     @type pipe:         str
-    @return:            The residue specific data container.
-    @rtype:             instance of the ResidueContainer class.
+    @param full_info:   A flag specifying if the amount of information to be returned.  If false,
+                        only the data container is returned.  If true, the molecule name, residue
+                        number, and residue name is additionally returned.
+    @type full_info:    boolean
+    @return:            The residue specific data container and, if full_info=True, the molecule
+                        name.
+    @rtype:             instance of the ResidueContainer class.  If full_info=True, the type is the
+                        tuple (ResidueContainer, str).
     """
 
     # The data pipe.
@@ -458,7 +464,10 @@ def residue_loop(selection=None, pipe=None):
                 continue
 
             # Yield the residue data container.
-            yield res
+            if full_info:
+                yield res, mol.name
+            else:
+                yield res
 
 
 def return_molecule(selection=None, pipe=None):
@@ -947,6 +956,7 @@ def spin_loop(selection=None, pipe=None, full_info=False):
     @param full_info:   A flag specifying if the amount of information to be returned.  If false,
                         only the data container is returned.  If true, the molecule name, residue
                         number, and residue name is additionally returned.
+    @type full_info:    boolean
     @return:            The spin system specific data container and, if full_info=True, the molecule
                         name, residue number, and residue name.
     @rtype:             instance of the SpinContainer class.  If full_info=True, the type is the
