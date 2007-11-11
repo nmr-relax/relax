@@ -937,15 +937,20 @@ def sel_res(self, run=None, num=None, name=None, boolean='OR', change_all=0):
         print "No residues match."
 
 
-def spin_loop(selection=None, pipe=None):
+def spin_loop(selection=None, pipe=None, full_info=False):
     """Generator function for looping over all the spin systems of the given selection.
 
     @param selection:   The spin system selection identifier.
     @type selection:    str
     @param pipe:        The data pipe containing the spin.  Defaults to the current data pipe.
     @type pipe:         str
-    @return:            The spin system specific data container.
-    @rtype:             instance of the SpinContainer class.
+    @param full_info:   A flag specifying if the amount of information to be returned.  If false,
+                        only the data container is returned.  If true, the molecule name, residue
+                        number, and residue name is additionally returned.
+    @return:            The spin system specific data container and, if full_info=True, the molecule
+                        name, residue number, and residue name.
+    @rtype:             instance of the SpinContainer class.  If full_info=True, the type is the
+                        tuple (SpinContainer, str, int, str).
     """
 
     # The data pipe.
@@ -974,7 +979,10 @@ def spin_loop(selection=None, pipe=None):
                     continue
 
                 # Yield the spin system data container.
-                yield spin
+                if full_info:
+                    yield spin, mol.name, res.num, res.name
+                else:
+                    yield spin
 
 
 def tokenise(selection):
