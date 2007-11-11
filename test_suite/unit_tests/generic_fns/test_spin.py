@@ -72,6 +72,12 @@ class Test_spin(TestCase):
         cdp.mol[0].res[0].spin[0].name = 'C8'
         cdp.mol[0].res[0].spin[0].x = 1
 
+        # Add some more spins.
+        cdp.mol[0].res[0].spin.add_item('C19', 6)
+        cdp.mol[0].res[0].spin.add_item('C21', 7)
+        cdp.mol[0].res[0].spin.add_item('C24', 8)
+        cdp.mol[0].res[0].spin.add_item('C26', 9)
+
         # Create a second residue.
         cdp.mol[0].res.add_item('Arg', 2)
         cdp.mol[0].res[1].spin[0].num = 78
@@ -276,3 +282,75 @@ class Test_spin(TestCase):
         self.assertRaises(RelaxError, spin.create, 1, 'P3')
 
 
+    def test_delete_name(self):
+        """Test spin deletion using spin name identifiers.
+
+        The function used is generic_fns.spin.delete().
+        """
+
+        # Set up the data.
+        self.setup_data()
+
+        # Delete the first spin.
+        spin.delete(spin_id='@C8')
+
+        # Test that the first spin is now 6, C19.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 6)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C19')
+        self.assert_(not hasattr(relax_data_store['orig'].mol[0].res[0].spin[0], 'x'))
+
+
+    def test_delete_num(self):
+        """Test spin deletion using spin number identifiers.
+
+        The function used is generic_fns.spin.delete().
+        """
+
+        # Set up the data.
+        self.setup_data()
+
+        # Delete the first spin.
+        spin.delete(spin_id=':111')
+
+        # Test that the first spin is now 6, C19.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 6)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C19')
+        self.assert_(not hasattr(relax_data_store['orig'].mol[0].res[0].spin[0], 'x'))
+
+
+    def test_delete_all(self):
+        """Test the deletion of all spins in one residue.
+
+        The function used is generic_fns.spin.delete().
+        """
+
+        # Set up the data.
+        self.setup_data()
+
+        # Delete all spins.
+        spin.delete(spin_id=':1-200')
+
+        # Test that the first spin defaults back to the empty spin.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, None)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, None)
+
+
+    def test_delete_shift(self):
+        """Test the deletion of multiple spins.
+
+        The function used is generic_fns.spin.delete().
+        """
+
+        # Set up the data.
+        self.setup_data()
+
+        # Delete the first and third spins.
+        spin.delete(spin_id=':111,7')
+
+        # Test that the remaining spins.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 6)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C19')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].num, 8)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].name, 'C24')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].num, 9)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].name, 'C26')
