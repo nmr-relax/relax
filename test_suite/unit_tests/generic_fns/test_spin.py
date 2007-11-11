@@ -310,7 +310,7 @@ class Test_spin(TestCase):
         self.setup_data()
 
         # Delete the first spin.
-        spin.delete(spin_id=':111')
+        spin.delete(spin_id='@111')
 
         # Test that the first spin is now 6, C19.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 6)
