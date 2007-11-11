@@ -62,26 +62,15 @@ def copy(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
         raise RelaxNoPipeError, pipe_to
 
     # Split up the selection string.
-    mol_from_token, res_from_token, spin_from_token = tokenise(spin_from)
     mol_to_token, res_to_token, spin_to_token = tokenise(spin_to)
 
-    # Parse the spin token for renaming and renumbering.
-    spin_num_to, spin_name_to = return_single_spin_info(spin_to_token)
-
     # Test if the spin number already exists.
-    spin_to_cont = return_spin(spin_to, pipe_to)
-    if spin_to_cont:
+    if return_spin(spin_to, pipe_to):
         raise RelaxError, "The spin " + `spin_to` + " already exists in the " + `pipe_from` + " data pipe."
 
     # No residue to copy data from.
-    res_from_cont = return_residue(spin_from, pipe_from)
-    if res_from_cont == None:
+    if not return_residue(spin_from, pipe_from):
         raise RelaxError, "The residue in " + `spin_from` + " does not exist in the " + `pipe_from` + " data pipe."
-
-    # No residue to copy data to.
-    res_to_cont = return_residue(spin_to, pipe_from)
-    if res_to_cont == None and spin_to:
-        raise RelaxError, "The residue in " + `spin_to` + " does not exist in the " + `pipe_from` + " data pipe."
 
     # No spin to copy data from.
     spin_from_cont = return_spin(spin_from, pipe_from)
@@ -89,21 +78,27 @@ def copy(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
         raise RelaxError, "The spin " + `spin_from` + " does not exist in the " + `pipe_from` + " data pipe."
 
     # Get the single residue data container to copy the spin to (default to the first molecule, first residue).
-    res_to_container = return_residue(spin_to, pipe_to)
-    if res_to_container == None:
-        res_to_container = relax_data_store[pipe_to].mol[0].res[0]
+    res_to_cont = return_residue(spin_to, pipe_from)
+    if res_to_cont == None and spin_to:
+        # No residue to copy data to.
+        raise RelaxError, "The residue in " + `spin_to` + " does not exist in the " + `pipe_from` + " data pipe."
+    if res_to_cont == None:
+        res_to_cont = relax_data_store[pipe_to].mol[0].res[0]
 
     # Copy the data.
-    if res_to_container.spin[0].num == None and res_to_container.spin[0].name == None and len(res_to_container.spin) == 1:
-        res_to_container.spin[0] = spin_from_cont.__clone__()
+    if res_to_cont.spin[0].num == None and res_to_cont.spin[0].name == None and len(res_to_cont.spin) == 1:
+        res_to_cont.spin[0] = spin_from_cont.__clone__()
     else:
-        res_to_container.spin.append(spin_from_cont.__clone__())
+        res_to_cont.spin.append(spin_from_cont.__clone__())
+
+    # Parse the spin token for renaming and renumbering.
+    spin_num_to, spin_name_to = return_single_spin_info(spin_to_token)
 
     # Change the new spin number and name.
     if spin_num_to != None:
-        res_to_container.spin[-1].num = spin_num_to
+        res_to_cont.spin[-1].num = spin_num_to
     if spin_name_to != None:
-        res_to_container.spin[-1].name = spin_name_to
+        res_to_cont.spin[-1].name = spin_name_to
 
 
 def create(spin_num=None, spin_name=None, res_id=None):
