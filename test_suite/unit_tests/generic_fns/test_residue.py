@@ -206,8 +206,8 @@ class Test_residue(TestCase):
         self.assertEqual(relax_data_store['orig'].mol[0].res[3].spin[0].x, 2)
 
 
-    def test_copy_within_molecule_fail(self):
-        """Test the failure of the copying of the residue data within a molecule.
+    def test_copy_within_molecule_fail1(self):
+        """The failure of copying residue data within a molecule of a non-existent residue.
 
         The function used is generic_fns.residue.copy().
         """
@@ -218,6 +218,17 @@ class Test_residue(TestCase):
 
         # Copy a non-existent residue (1 Met).
         self.assertRaises(RelaxError, residue.copy, res_from=':Met', res_to=':2,Gly')
+
+
+    def test_copy_within_molecule_fail2(self):
+        """The failure of copying residue data within a molecule to a residue which already exists.
+
+        The function used is generic_fns.residue.copy().
+        """
+
+        # Create a few residues.
+        residue.create(1, 'Ala')
+        residue.create(-1, 'His')
 
         # Copy a residue to a number which already exists.
         self.assertRaises(RelaxError, residue.copy, res_from=':1', res_to=':-1,Gly')
