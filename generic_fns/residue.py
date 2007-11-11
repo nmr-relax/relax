@@ -103,7 +103,15 @@ def copy(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
 
 
 def create(res_num=None, res_name=None):
-    """Function for adding a residue into the relax data store."""
+    """Function for adding a residue into the relax data store.
+
+    @param res_num:     The identification number of the new residue.
+    @type res_num:      int
+    @param res_name:    The name of the new residue.
+    @type res_name:     str
+    @param mol_id:      The molecule identification string.
+    @type mol_id:       str
+    """
 
     # Test if the current data pipe exists.
     if not relax_data_store.current_pipe:
