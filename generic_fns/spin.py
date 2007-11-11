@@ -73,6 +73,13 @@ def copy(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
     if spin_to_cont:
         raise RelaxError, "The spin " + `spin_to` + " already exists in the " + `pipe_from` + " data pipe."
 
+    # Get the single residue data container.
+    res_from_cont = return_residue(res_from, pipe_from)
+
+    # No residue to copy data from.
+    if res_from_cont == None:
+        raise RelaxError, "The residue " + `res_from` + " does not exist in the " + `pipe_from` + " data pipe."
+
     # Get the single spin data container.
     spin_from_cont = return_spin(spin_from, pipe_from)
 
