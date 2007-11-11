@@ -23,7 +23,7 @@
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxSpinSelectDisallowError
-from selection import molecule_loop, parse_token, residue_loop, return_molecule, return_residue, return_spin, return_single_residue_info, return_single_spin_info, tokenise
+from selection import molecule_loop, parse_token, residue_loop, return_molecule, return_residue, return_spin, return_single_residue_info, return_single_spin_info, spin_loop, tokenise
 
 
 # Module doc.
@@ -182,18 +182,14 @@ def delete(spin_id=None):
 
 
 def display(spin_id=None):
-    """Function for displaying the information associated with the residue.
+    """Function for displaying the information associated with the spin.
 
-    @param res_id:  The molecule and residue identifier string.
-    @type res_id:   str
+    @param spin_id: The molecule and residue identifier string.
+    @type spin_id:  str
     """
 
     # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(res_id)
-
-    # Disallow spin selections.
-    if spin_token != None:
-        raise RelaxSpinSelectDisallowError
+    mol_token, res_token, spin_token = tokenise(spin_id)
 
     # The molecule selection string.
     if mol_token:
@@ -201,12 +197,11 @@ def display(spin_id=None):
     else:
         mol_sel = None
 
+    # Print a header.
+    print "\n\n%-15s%-15s%-15s%-15s%-15s" % ("Molecule", "Res number", "Res name", "Spin number", "Spin name")
+
     # Molecule loop.
     for mol in molecule_loop(mol_sel):
-        # Print a header.
-        print "\n\nMolecule: " + `mol.name`
-        print "%-8s%-8s%-10s" % ("Number", "Name", "Number of spins")
-
         # The residue identifier for this molecule.
         res_sel = '#' + mol.name
         if res_token:
@@ -214,8 +209,16 @@ def display(spin_id=None):
 
         # Loop over the residues of this molecule.
         for res in residue_loop(res_sel):
-            # Print the residue data.
-            print "%-8i%-8s%-10i" % (res.num, res.name, len(res.spin))
+            # The spin identifier for this residue.
+            spin_sel = res_sel
+            if spin_token:
+                spin_sel = spin_sel + '@' + spin_token
+
+            # Loop over the spins of this residue.
+            for spin in spin_loop(spin_sel):
+                # Print the residue data.
+                print "%-15s%-15s%-15s%-15s%-15s" % (mol.name, `res.num`, res.name, `spin.num`, spin.name)
+
 
 
 def rename(res_id, new_name=None):
