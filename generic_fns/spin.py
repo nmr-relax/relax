@@ -106,8 +106,15 @@ def copy(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
         res_to_container.spin[-1].name = spin_name_to
 
 
-def create(res_num=None, res_name=None):
-    """Function for adding a residue into the relax data store."""
+def create(spin_num=None, spin_name=None, res_id=None):
+    """Function for adding a spin into the relax data store."""
+
+    # Split up the selection string.
+    mol_token, res_token, spin_token = tokenise(res_id)
+
+    # Disallow spin selections.
+    if spin_token != None:
+        raise RelaxSpinSelectDisallowError
 
     # Test if the current data pipe exists.
     if not relax_data_store.current_pipe:
@@ -116,19 +123,26 @@ def create(res_num=None, res_name=None):
     # Alias the current data pipe.
     cdp = relax_data_store[relax_data_store.current_pipe]
 
-    # Test if the residue number already exists.
-    for i in xrange(len(cdp.mol[0].res)):
-        if cdp.mol[0].res[i].num == res_num:
-            raise RelaxError, "The residue number '" + `res_num` + "' already exists in the sequence."
+    # No residue to add the spin to.
+    res_to_cont = return_residue(res_id)
+    if res_to_cont == None and res_id:
+        raise RelaxError, "The residue in " + `res_id` + " does not exist in the current data pipe."
+    else:
+        res_to_cont = cdp.mol[0].res[0]
 
-    # If no residue data exists, replace the empty first residue with this residue.
-    if cdp.mol[0].res[0].num == None and cdp.mol[0].res[0].name == None and len(cdp.mol[0].res) == 1:
-        cdp.mol[0].res[0].num = res_num
-        cdp.mol[0].res[0].name = res_name
+    # Test if the spin number already exists.
+    for i in xrange(len(res_to_cont.spin)):
+        if res_to_cont.spin[i].num == spin_num:
+            raise RelaxError, "The spin number '" + `spin_num` + "' already exists."
+
+    # If no spin data exists, replace the empty first spin with this spin.
+    if res_to_cont.spin[0].num == None and res_to_cont.spin[0].name == None and len(res_to_cont.spin) == 1:
+        res_to_cont.spin[0].num = spin_num
+        res_to_cont.spin[0].name = spin_name
 
     # Append the residue.
     else:
-        cdp.mol[0].res.add_item(res_num=res_num, res_name=res_name)
+        res_to_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
 
 
 def delete(res_id=None):
