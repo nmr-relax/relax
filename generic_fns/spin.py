@@ -128,15 +128,12 @@ def create(spin_num=None, spin_name=None, res_id=None):
     if not relax_data_store.current_pipe:
         raise RelaxNoPipeError
 
-    # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
-
     # No residue to add the spin to.
     res_to_cont = return_residue(res_id)
     if res_to_cont == None and res_id:
         raise RelaxError, "The residue in " + `res_id` + " does not exist in the current data pipe."
     elif res_to_cont == None:
-        res_to_cont = cdp.mol[0].res[0]
+        res_to_cont = relax_data_store[relax_data_store.current_pipe].mol[0].res[0]
 
     # Test if the spin number already exists.
     for i in xrange(len(res_to_cont.spin)):
