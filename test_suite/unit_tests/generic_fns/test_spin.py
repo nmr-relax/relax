@@ -354,3 +354,20 @@ class Test_spin(TestCase):
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].name, 'C24')
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].num, 9)
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].name, 'C26')
+
+
+    def test_display(self):
+        """Test the display of spin information.
+
+        The function used is generic_fns.spin.display().
+        """
+
+        # Set up some data.
+        self.setup_data()
+
+        # The following should all work without error.
+        spin.display()
+        spin.display(':1')
+        spin.display('#Old mol:1')
+        spin.display('#New mol:5')
+        spin.display('#New mol:6@3239')
