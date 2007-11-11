@@ -58,22 +58,30 @@ class Test_spin(TestCase):
     def setup_data(self):
         """Function for setting up some data for the unit tests."""
 
+        # Alias the relax data store.
+        cdp = relax_data_store['orig']
+
+        # Name the first molecule.
+        cdp.mol[0].name = 'Old mol'
+
         # Create the first residue and add some data to its spin container.
-        residue.create(1, 'Ala')
-        relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
-        relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
-        relax_data_store['orig'].mol[0].name = 'Old mol'
+        cdp.mol[0].res.add_item(1, 'Ala')
+        cdp.mol[0].res[0].spin[0].num = 111
+        cdp.mol[0].res[0].spin[0].name = 'C8'
+        cdp.mol[0].res[0].spin[0].x = 1
+
+        # Create a second residue.
+        cdp.mol[0].res.add_item(2, 'Arg')
 
         # Create a second molecule.
-        relax_data_store['orig'].mol.add_item('New mol')
+        cdp.mol.add_item('New mol')
 
-        # Copy the residue to the new molecule.
-        residue.copy(res_from=':1', res_to='#New mol')
-        residue.copy(res_from='#Old mol:1', res_to='#New mol:5')
-
-        # Change the first residue's data.
-        relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
-        relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
+        # Create the first and second residue of the second molecule and add some data to its spin container.
+        cdp.mol[1].res.add_item(5, 'Lys')
+        cdp.mol[1].res[0].spin[0].num = 239
+        cdp.mol[1].res[0].spin[0].name = 'NH'
+        cdp.mol[1].res.add_item(6, 'Thr')
+        cdp.mol[1].res[1].spin.add_item(3239, 'NH')
 
 
     def test_copy_between_molecules(self):
@@ -85,17 +93,48 @@ class Test_spin(TestCase):
         # Set up the data.
         self.setup_data()
 
-        # Copy the spin '222' from the first molecule, first residue to the second molecule, fifth residue.
-        spin.copy(spin_from='#Old mol:1@222', spin_to='#New mol:5@3')
+        # Copy the spin '111' from the first molecule, first residue to the second molecule, fifth residue.
+        spin.copy(spin_from='#Old mol:1@111', spin_to='#New mol:5@334')
 
         # Test the original spin.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'Ala')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 222)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].x, 2)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 111)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C8')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].x, 1)
 
         # Test the new spin.
         self.assertEqual(relax_data_store['orig'].mol[1].res[0].num, 1)
         self.assertEqual(relax_data_store['orig'].mol[1].res[0].name, 'Ala')
-        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].num, 222)
-        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].x, 2)
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].num, 239)
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].name, 'NH')
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[1].num, 334)
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].name, 'C8')
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[1].x, 1)
+
+
+    def test_copy_between_residues(self):
+        """Test the copying of the spin data between different residues.
+
+        The function used is generic_fns.spin.copy().
+        """
+
+        # Set up the data.
+        self.setup_data()
+
+        # Copy the spin '111' from the first residue to the fifth residue.
+        spin.copy(spin_from='#Old mol:1@111', spin_to='#Old mol:2')
+
+        # Test the original spin.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'Ala')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 111)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 'C8')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].x, 1)
+
+        # Test the new spin.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[1].num, 2)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[1].name, 'Arg')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].num, 111)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].num, 'C8')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].x, 1)
