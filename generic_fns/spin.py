@@ -107,7 +107,15 @@ def copy(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
 
 
 def create(spin_num=None, spin_name=None, res_id=None):
-    """Function for adding a spin into the relax data store."""
+    """Function for adding a spin into the relax data store.
+    
+    @param spin_num:    The identification number of the new spin.
+    @type spin_num:     int
+    @param spin_name:   The name of the new spin.
+    @type spin_name:    str
+    @param res_id:      The molecule and residue identification string.
+    @type res_id:       str
+    """
 
     # Split up the selection string.
     mol_token, res_token, spin_token = tokenise(res_id)
