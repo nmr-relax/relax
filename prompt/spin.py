@@ -30,7 +30,7 @@ from generic_fns.selection import id_string_doc
 from relax_errors import RelaxIntError, RelaxStrError
 
 
-class Residue:
+class Spin:
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \

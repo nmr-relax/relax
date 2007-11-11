@@ -70,6 +70,7 @@ from results import Results
 from pipe import Pipe
 from select import Select
 from sequence import Sequence
+from spin import Spin
 from state import State
 from thread import Threading
 from unselect import Unselect
@@ -130,6 +131,7 @@ class Interpreter:
         self._Pipe = Pipe(relax)
         self._Select = Select(relax)
         self._Sequence = Sequence(relax)
+        self._Spin = Spin(relax)
         self._State = State(relax)
         self._Threading = Threading(relax)
         self._Unselect = Unselect(relax)
@@ -190,6 +192,7 @@ class Interpreter:
         pipe = self._Pipe
         select = self._Select
         sequence = self._Sequence
+        spin = self._Spin
         state = self._State
         thread = self._Threading
         unselect = self._Unselect
