@@ -182,11 +182,11 @@ def display(res_id=None):
         raise RelaxSpinSelectDisallowError
 
     # Print a header.
-    print "\n\n%-15s%-15s%-15s%-15s" % ("Molecule", "Res number", "Res name", "Number of spins")
+    print "\n\n%-15s %-15s %-15s %-15s" % ("Molecule", "Res number", "Res name", "Number of spins")
 
     # Residue loop.
     for res, mol_name in residue_loop(res_id, full_info=True):
-        print "%-15s%-15s%-15s%-15s" % (mol_name, `res.num`, res.name, `len(res.spin)`)
+        print "%-15s %-15s %-15s %-15s" % (mol_name, `res.num`, res.name, `len(res.spin)`)
 
 
 def rename(res_id, new_name=None):
