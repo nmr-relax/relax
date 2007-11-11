@@ -236,21 +236,16 @@ def renumber(res_id, new_number=None):
 
     # Catch multiple renumberings!
     number = 0
-    for mol in molecule_loop(mol_token):
-        # Loop over the residues of the molecule.
-        for i in xrange(len(mol.res)):
-            # Rename the residue is there is a match.
-            if mol.res[i].num in residues or mol.res[i].name in residues:
-                number = number + 1
+    for res in residue_loop(res_id):
+        if res.num in residues or res.name in residues:
+            number = number + 1
 
     # Fail if multiple residues are numbered.
     if number > 1:
         raise RelaxError, "The renumbering of multiple residues is disallowed."
 
-    # Molecule loop.
-    for mol in molecule_loop(mol_token):
-        # Loop over the residues of the molecule.
-        for i in xrange(len(mol.res)):
-            # Rename the residue is there is a match.
-            if mol.res[i].num in residues or mol.res[i].name in residues:
-                mol.res[i].num = new_number
+    # Residue loop.
+    for res in residue_loop(res_id):
+        # Rename the residue is there is a match.
+        if res.num in residues or res.name in residues:
+            res.num = new_number
