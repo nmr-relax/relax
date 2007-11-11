@@ -82,9 +82,6 @@ The molecule.add() user function should be used to create all the residue and sp
     spin.create()
     spin.delete()
     spin.display()
-    spin.read()
-    spin.sort()
-    spin.write()
 
 
 
