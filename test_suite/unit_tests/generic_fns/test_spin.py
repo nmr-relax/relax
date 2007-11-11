@@ -244,6 +244,9 @@ class Test_spin(TestCase):
         The function used is generic_fns.spin.create().
         """
 
+        # Set up the data.
+        self.setup_data()
+
         # Create a few new spins.
         spin.create(1, 'C3')
         spin.create(2, 'C17')
