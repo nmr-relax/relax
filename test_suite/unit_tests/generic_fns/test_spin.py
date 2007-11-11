@@ -81,7 +81,8 @@ class Test_spin(TestCase):
         cdp.mol.add_item('New mol')
 
         # Create the first and second residue of the second molecule and add some data to its spin container.
-        cdp.mol[1].res.add_item(5, 'Lys')
+        cdp.mol[1].res[0].num = 5
+        cdp.mol[1].res[0].name = 'Lys'
         cdp.mol[1].res[0].spin[0].num = 239
         cdp.mol[1].res[0].spin[0].name = 'NH'
         cdp.mol[1].res.add_item(6, 'Thr')
