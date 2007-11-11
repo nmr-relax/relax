@@ -188,15 +188,6 @@ def display(spin_id=None):
     @type spin_id:  str
     """
 
-    # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(spin_id)
-
-    # The molecule selection string.
-    if mol_token:
-        mol_sel = '#' + mol_token
-    else:
-        mol_sel = None
-
     # Print a header.
     print "\n\n%-15s%-15s%-15s%-15s%-15s" % ("Molecule", "Res number", "Res name", "Spin number", "Spin name")
 
