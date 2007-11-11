@@ -247,17 +247,17 @@ class Test_spin(TestCase):
         # Create a few new spins.
         spin.create(1, 'C3')
         spin.create(2, 'C17')
-        spin.create(-3, 'N7')
+        spin.create(-3, 'N7', res_id='#New mol:6')
 
         # Test that the spin numbers are correct.
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 1)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].num, 2)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].num, -3)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].num, 1)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].num, 2)
+        self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[1].num, -3)
 
         # Test that the spin names are correct.
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C3')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].name, 'C17')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].name, 'N7')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].name, 'C3')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].name, 'C17')
+        self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[1].name, 'N7')
 
 
     def test_creation_fail(self):
