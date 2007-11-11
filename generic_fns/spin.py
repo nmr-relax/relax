@@ -140,7 +140,7 @@ def create(spin_num=None, spin_name=None, res_id=None):
         res_to_cont.spin[0].num = spin_num
         res_to_cont.spin[0].name = spin_name
 
-    # Append the residue.
+    # Append the spin.
     else:
         res_to_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
 
