@@ -208,13 +208,11 @@ def rename(res_id, new_name=None):
     # Parse the tokens.
     residues = parse_token(res_token)
 
-    # Molecule loop.
-    for mol in molecule_loop(mol_token):
-        # Loop over the residues of the molecule.
-        for i in xrange(len(mol.res)):
-            # Rename the residue is there is a match.
-            if mol.res[i].num in residues or mol.res[i].name in residues:
-                mol.res[i].name = new_name
+    # Residue loop.
+    for res in residue_loop(res_id):
+        # Rename the residue is there is a match.
+        if res.num in residues or res.name in residues:
+            res.name = new_name
 
 
 def renumber(res_id, new_number=None):
