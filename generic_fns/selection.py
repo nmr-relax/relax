@@ -609,6 +609,40 @@ def return_single_residue_info(residue_token):
     return res_num, res_name
 
 
+def return_single_spin_info(spin_token):
+    """Return the single spin number and name corresponding to the spin token.
+
+    @param spin_token:  The spin identification string.
+    @type spin_token:   str
+    @return:            A tuple containing the spin number and the spin name.
+    @rtype:             (int, str)
+    """
+
+    # Parse the spin token for renaming and renumbering.
+    spin_info = parse_token(spin_token)
+
+    # Determine the spin number and name.
+    spin_num = None
+    spin_name = None
+    for info in spin_info:
+        # A spin name identifier.
+        if type(info) == str:
+            if spin_name == None:
+                spin_name = info
+            else:
+                raise RelaxError, "The spin identifier " + `spin_token` + " does not correspond to a single spin."
+
+        # A spin number identifier.
+        if type(info) == int:
+            if spin_num == None:
+                spin_num = info
+            else:
+                raise RelaxError, "The spin identifier " + `spin_token` + " does not correspond to a single spin."
+
+    # Return the spin number and name.
+    return spin_num, spin_name
+
+
 def reverse(selection=None):
     """Function for the reversal of the spin system selection."""
 
