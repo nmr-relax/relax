@@ -177,13 +177,11 @@ def display(mol_id=None):
     # Split up the selection string.
     mol_token, res_token, spin_token = tokenise(mol_id)
 
-    # Disallow spin selections.
-    if spin_token != None:
-        raise RelaxSpinSelectDisallowError
-
-    # Disallow residue selections.
+    # Disallowed selections.
     if res_token != None:
         raise RelaxResSelectDisallowError
+    if spin_token != None:
+        raise RelaxSpinSelectDisallowError
 
     # The molecule selection string.
     if mol_token:
@@ -192,13 +190,12 @@ def display(mol_id=None):
         mol_sel = None
 
     # Print a header.
-    print "\nMolecule information:"
-    print "%-20s%-10s" % ("Name", "Number of residues")
+    print "\n\n%-15s %-15s" % ("Molecule", "Number of residues")
 
     # Molecule loop.
     for mol in molecule_loop(mol_sel):
         # Print the molecule data.
-        print "%-20s%-10i" % (mol.name, len(mol.res))
+        print "%-15s %-15s" % (mol.name, `len(mol.res)`)
 
 
 def rename(mol_id, new_name=None):
