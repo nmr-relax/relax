@@ -127,7 +127,7 @@ def create(spin_num=None, spin_name=None, res_id=None):
     res_to_cont = return_residue(res_id)
     if res_to_cont == None and res_id:
         raise RelaxError, "The residue in " + `res_id` + " does not exist in the current data pipe."
-    else:
+    elif res_to_cont == None:
         res_to_cont = cdp.mol[0].res[0]
 
     # Test if the spin number already exists.
