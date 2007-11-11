@@ -186,7 +186,7 @@ def display(res_id=None):
 
     # Residue loop.
     for res, mol_name in residue_loop(res_id, full_info=True):
-        print "%-15s%-15s%-15s" % (mol_name, `res.num`, res.name, len(res.spin))
+        print "%-15s%-15s%-15s%-15s" % (mol_name, `res.num`, res.name, `len(res.spin)`)
 
 
 def rename(res_id, new_name=None):
