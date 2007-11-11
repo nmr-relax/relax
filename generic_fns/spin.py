@@ -189,12 +189,12 @@ def display(spin_id=None):
     """
 
     # Print a header.
-    print "\n\n%-15s%-15s%-15s%-15s%-15s" % ("Molecule", "Res number", "Res name", "Spin number", "Spin name")
+    print "\n\n%-15s %-15s %-15s %-15s %-15s" % ("Molecule", "Res number", "Res name", "Spin number", "Spin name")
 
     # Spin loop.
     for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
         # Print the residue data.
-        print "%-15s%-15s%-15s%-15s%-15s" % (mol_name, `res_num`, res_name, `spin.num`, spin.name)
+        print "%-15s %-15s %-15s %-15s %-15s" % (mol_name, `res_num`, res_name, `spin.num`, spin.name)
 
 
 def rename(res_id, new_name=None):
