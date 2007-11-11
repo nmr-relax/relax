@@ -181,27 +181,12 @@ def display(res_id=None):
     if spin_token != None:
         raise RelaxSpinSelectDisallowError
 
-    # The molecule selection string.
-    if mol_token:
-        mol_sel = '#' + mol_token
-    else:
-        mol_sel = None
+    # Print a header.
+    print "\n\n%-15s%-15s%-15s%-15s" % ("Molecule", "Res number", "Res name", "Number of spins")
 
-    # Molecule loop.
-    for mol in molecule_loop(mol_sel):
-        # Print a header.
-        print "\n\nMolecule: " + `mol.name`
-        print "%-8s%-8s%-10s" % ("Number", "Name", "Number of spins")
-
-        # The residue identifier for this molecule.
-        res_sel = '#' + mol.name
-        if res_token:
-            res_sel = res_sel + ':' + res_token
-
-        # Loop over the residues of this molecule.
-        for res in residue_loop(res_sel):
-            # Print the residue data.
-            print "%-8i%-8s%-10i" % (res.num, res.name, len(res.spin))
+    # Residue loop.
+    for res, mol_name in residue_loop(res_id, full_info=True):
+        print "%-15s%-15s%-15s" % (mol_name, `res.num`, res.name, len(res.spin))
 
 
 def rename(res_id, new_name=None):
