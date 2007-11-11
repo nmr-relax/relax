@@ -24,7 +24,8 @@
 from unittest import TestCase
 
 # relax module imports.
-from generic_fns import spin
+from data import Data as relax_data_store
+from generic_fns import residue, spin
 
 
 
@@ -75,4 +76,26 @@ class Test_spin(TestCase):
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
 
 
+    def test_copy_between_molecules(self):
+        """Test the copying of the spin data between different molecules.
 
+        The function used is generic_fns.spin.copy().
+        """
+
+        # Set up the data.
+        self.setup_data()
+
+        # Copy the spin '222' from the first molecule, first residue to the second molecule, fifth residue.
+        spin.copy(spin_from='#Old mol:1@222', spin_to='#New mol:5@3')
+
+        # Test the original spin.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'Ala')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 222)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].x, 2)
+
+        # Test the new spin.
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].num, 1)
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].name, 'Ala')
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].num, 222)
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].x, 2)
