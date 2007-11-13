@@ -665,16 +665,18 @@ class Jw_mapping(Common_functions):
             ri_error = []
             if hasattr(relax_data_store, 'num_ri'):
                 for i in xrange(relax_data_store.num_ri[self.run]):
-                    # Find the residue specific data corresponding to i.
-                    index = None
-                    for j in xrange(data.num_ri):
-                        if data.ri_labels[j] == relax_data_store.ri_labels[self.run][i] and data.frq_labels[data.remap_table[j]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][i]]:
-                            index = j
-
-                    # Data exists for this data type.
                     try:
+                        # Find the residue specific data corresponding to i.
+                        index = None
+                        for j in xrange(data.num_ri):
+                            if data.ri_labels[j] == relax_data_store.ri_labels[self.run][i] and data.frq_labels[data.remap_table[j]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][i]]:
+                                index = j
+
+                        # Data exists for this data type.
                         ri.append(`data.relax_data[index]`)
                         ri_error.append(`data.relax_error[index]`)
+
+                    # No data exists for this data type.
                     except:
                         ri.append(None)
                         ri_error.append(None)
@@ -771,20 +773,23 @@ class Jw_mapping(Common_functions):
                 # Relaxation data and errors.
                 ri = []
                 ri_error = []
-                for k in xrange(relax_data_store.num_ri[self.run]):
-                    # Find the residue specific data corresponding to k.
-                    index = None
-                    for l in xrange(data.num_ri):
-                        if data.ri_labels[l] == relax_data_store.ri_labels[self.run][k] and data.frq_labels[data.remap_table[l]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][k]]:
-                            index = l
+                if hasattr(self.relax.data, 'num_ri'):
+                    for k in xrange(relax_data_store.num_ri[self.run]):
+                        try:
+                            # Find the residue specific data corresponding to k.
+                            index = None
+                            for l in xrange(data.num_ri):
+                                if data.ri_labels[l] == relax_data_store.ri_labels[self.run][k] and data.frq_labels[data.remap_table[l]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][k]]:
+                                    index = l
 
-                    # Data exists for this data type.
-                    try:
-                        ri.append(`data.relax_sim_data[i][index]`)
-                        ri_error.append(`data.relax_error[index]`)
-                    except:
-                        ri.append(None)
-                        ri_error.append(None)
+                            # Data exists for this data type.
+                            ri.append(`data.relax_sim_data[i][index]`)
+                            ri_error.append(`data.relax_error[index]`)
+
+                        # No data exists for this data type.
+                        except:
+                            ri.append(None)
+                            ri_error.append(None)
 
                 # Write the line.
                 self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='sim_'+`i`, nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
