@@ -5149,24 +5149,23 @@ class Model_free(Common_functions):
                     # Relaxation data and errors.
                     ri = []
                     ri_error = []
-                    for k in xrange(relax_data_store.num_ri[self.run]):
-                        # No relaxation data.
-                        if not hasattr(data, 'num_ri'):
-                            break
+                    if hasattr(relax_data_store, 'num_ri'):
+                        for k in xrange(relax_data_store.num_ri[self.run]):
+                            try:
+                                # Find the residue specific data corresponding to k.
+                                index = None
+                                for l in xrange(data.num_ri):
+                                    if data.ri_labels[l] == relax_data_store.ri_labels[self.run][k] and data.frq_labels[data.remap_table[l]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][k]]:
+                                        index = l
 
-                        # Find the residue specific data corresponding to k.
-                        index = None
-                        for l in xrange(data.num_ri):
-                            if data.ri_labels[l] == relax_data_store.ri_labels[self.run][k] and data.frq_labels[data.remap_table[l]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][k]]:
-                                index = l
+                                # Data exists for this data type.
+                                ri.append(`data.relax_sim_data[i][index]`)
+                                ri_error.append(`data.relax_error[index]`)
 
-                        # Data exists for this data type.
-                        try:
-                            ri.append(`data.relax_sim_data[i][index]`)
-                            ri_error.append(`data.relax_error[index]`)
-                        except:
-                            ri.append(None)
-                            ri_error.append(None)
+                            # No data exists for this data type.
+                            except:
+                                ri.append(None)
+                                ri_error.append(None)
 
                     # XH vector.
                     xh_vect = None
