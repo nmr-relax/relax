@@ -1023,7 +1023,7 @@ class Model_free(Common_functions):
             #    continue
 
             # No params.
-            if not hasattr(self.relax.data.res[self.run][i], 'params' or not self.relax.data.res[self.run][i].params):
+            if not hasattr(self.relax.data.res[self.run][i], 'params') or not self.relax.data.res[self.run][i].params:
                 continue
 
             # Local tm.
