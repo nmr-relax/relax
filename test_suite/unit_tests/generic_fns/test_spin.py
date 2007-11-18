@@ -371,3 +371,22 @@ class Test_spin(TestCase):
         spin.display('#Old mol:1')
         spin.display('#New mol:5')
         spin.display('#New mol:6@3239')
+
+
+    def test_rename(self):
+        """Test the renaming of a spin.
+
+        The function tested is generic_fns.spin.rename().
+        """
+
+        # Set up some data.
+        self.setup_data()
+
+        # Rename some spins.
+        spin.rename(spin_id='@C26', new_name='C25')
+
+        # Test that the spin has been renamed.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[3].name, 'C25')
+
+
+
