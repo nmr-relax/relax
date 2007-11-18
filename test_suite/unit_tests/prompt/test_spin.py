@@ -96,12 +96,12 @@ class Test_spin(Spin_base_class, TestCase):
 
         # Loop over the data types.
         for data in return_data_types():
-            # Catch the str argument, and skip it.
-            if data[0] == 'str':
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or  data[0] == 'str':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.spin_fns.copy, spin_from='#Old mol:1@111', spin_to=data[1])
+            self.assertRaises(RelaxNoneStrError, self.spin_fns.copy, spin_from='#Old mol:1@111', spin_to=data[1])
 
 
 
