@@ -77,7 +77,7 @@ The molecule.add() user function should be used to create all the residue and sp
     residue.rename()
     residue.renumber()
 
-12.  Create the 'spin' user function class:
+12 [Done].  Create the 'spin' user function class:
     spin.copy()         # Copy the spin info (name and num) from another pipe.
     spin.create()
     spin.delete()
