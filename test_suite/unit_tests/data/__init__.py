@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# relax module imports.
+from data import Data
+
+
 __all__ = ['test___init__',
            'test_diff_tensor',
            'test_mol_res_spin']
