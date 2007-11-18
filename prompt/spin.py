@@ -269,53 +269,53 @@ class Spin:
         spin.create(spin_num=spin_num, new_name=new_name)
 
 
-    def renumber(self, res_id=None, new_number=None):
-        """Function for renumbering an existent residue.
+    def renumber(self, spin_id=None, new_number=None):
+        """Function for renumbering an existent spin.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        res_id:  The residue identification string corresponding to a single residue.
+        spin_id:  The spin identification string corresponding to a single spin.
 
-        new_number:  The new residue number.
+        new_number:  The new spin number.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function simply allows residues to be renumbered.  The new number cannot correspond to
-        an existing residue.
+        This function simply allows spins to be renumbered.  The new number cannot correspond to
+        an existing spin number (for that residue or that molecule).
 
 
         Examples
         ~~~~~~~~
 
-        The following sequence of commands will renumber the sequence {1 ALA, 2 GLY, 3 LYS} to
-        {101 ALA, 102 GLY, 103 LYS}:
+        The following sequence of commands will renumber the sequence {1 C1, 2 C2, 3 C3} to
+        {-1 C1, -2 C2, -3 C3}:
 
-        relax> residue.renumber(':1', 101)
-        relax> residue.renumber(':2', 102)
-        relax> residue.renumber(':3', 103)
+        relax> spin.renumber('@1', -1)
+        relax> spin.renumber('@2', -2)
+        relax> spin.renumber('@3', -3)
 
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "residue.renumber("
-            text = text + ", res_id=" + `res_id`
+            text = sys.ps3 + "spin.renumber("
+            text = text + ", spin_id=" + `spin_id`
             text = text + ", new_number=" + `new_number` + ")"
             print text
 
         # Residue identification string.
-        if type(res_id) != int:
-            raise RelaxIntError, ('residue identification string', res_id)
+        if type(spin_id) != int:
+            raise RelaxIntError, ('spin identification string', spin_id)
 
-        # New residue number.
+        # New spin number.
         if type(new_number) != str:
-            raise RelaxStrError, ('new residue number', new_number)
+            raise RelaxStrError, ('new spin number', new_number)
 
         # Execute the functional code.
-        residue.create(res_num=res_num, new_number=new_number)
+        spin.create(spin_num=spin_num, new_number=new_number)
 
 
 
