@@ -165,18 +165,18 @@ def delete(spin_id=None):
 
         # Loop over the spins of the residue.
         for i in xrange(len(res.spin)):
-            # Remove the spin is there is a match.
+            # Store the spin indecies for deletion.
             if res.spin[i].num in spins or res.spin[i].name in spins:
                 indecies.append(i)
 
         # Reverse the indecies.
         indecies.reverse()
 
-        # Delete the residues.
+        # Delete the spins.
         for index in indecies:
             res.spin.pop(index)
 
-        # Create an empty residue container if no residues remain.
+        # Create an empty spin container if no spins remain.
         if len(res.spin) == 0:
             res.spin.add_item()
 
