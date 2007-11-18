@@ -199,27 +199,27 @@ class Spin:
         spin.delete(spin_id=spin_id)
 
 
-    def display(self, res_id=None):
-        """Function for displaying information about the residue(s).
+    def display(self, spin_id=None):
+        """Function for displaying information about the spin(s).
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        res_id:  The residue identification string.
+        spin_id:  The spin identification string.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "residue.display("
-            text = text + "res_id=" + `res_id` + ")"
+            text = sys.ps3 + "spin.display("
+            text = text + "spin_id=" + `spin_id` + ")"
             print text
 
-        # The res_id argument.
-        if type(res_id) != str:
-            raise RelaxStrError, ('residue identification string', res_id)
+        # The spin_id argument.
+        if type(spin_id) != str:
+            raise RelaxStrError, ('spin identification string', spin_id)
 
         # Execute the functional code.
-        residue.display(res_id=res_id)
+        spin.display(spin_id=spin_id)
 
 
     def rename(self, res_id=None, new_name=None):
