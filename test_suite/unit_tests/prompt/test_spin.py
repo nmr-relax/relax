@@ -39,11 +39,11 @@ relax = Container()
 relax.interpreter = Container()
 relax.interpreter.intro = True
 
-# Instantiate the user function class.
-spin = Spin(relax)
-
 
 class Test_spin(Spin_base_class, TestCase):
     """Unit tests for the functions of the 'generic_fns.spin' module."""
+
+    # Instantiate the user function class.
+    spin_fns = Spin(relax)
 
 
