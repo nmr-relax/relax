@@ -409,3 +409,28 @@ class Test_spin(TestCase):
         self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[1].name, 'NHe')
 
 
+    def test_rename_many(self):
+        """Test the renaming of multiple spins.
+
+        The function used is generic_fns.spins.rename().
+        """
+
+        # Set up some data.
+        self.setup_data()
+
+        # Rename all NHs.
+        spin.rename(spin_id='@NH', new_name='N')
+
+        # Test the renaming of the NHs (and that the other residues have not changed).
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C8')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].name, 'C19')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].name, 'C21')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[3].name, 'C24')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[4].name, 'C26')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].name, 'N')
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].name, 'N')
+        self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[0].name, None)
+        self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[1].name, 'N')
+
+
+
