@@ -219,42 +219,33 @@ def rename(spin_id, new_name=None):
             spin.name = new_name
 
 
-def renumber(res_id, new_number=None):
-    """Function for renumbering residues.
+def renumber(spin_id, new_number=None):
+    """Function for renumbering spins`.
 
-    @param res_id:      The identifier string for the residue to renumber.
-    @type res_id:       str
-    @param new_number:  The new residue number.
+    @param spin_id:     The identifier string for the spin to renumber.
+    @type spin_id:      str
+    @param new_number:  The new spin number.
     @type new_number:   str
     """
 
     # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(res_id)
-
-    # Disallow spin selections.
-    if spin_token != None:
-        raise RelaxSpinSelectDisallowError
+    mol_token, res_token, spin_token = tokenise(spin_id)
 
     # Parse the tokens.
-    residues = parse_token(res_token)
+    spins = parse_token(spin_token)
 
     # Catch multiple renumberings!
     number = 0
-    for mol in molecule_loop(mol_token):
-        # Loop over the residues of the molecule.
-        for i in xrange(len(mol.res)):
-            # Rename the residue is there is a match.
-            if mol.res[i].num in residues or mol.res[i].name in residues:
-                number = number + 1
+    for spin in spin_loop(spin_id):
+        if spin.num in spins or spin.name in spins:
+            number = number + 1
 
-    # Fail if multiple residues are numbered.
+    # Fail if multiple spins are numbered.
     if number > 1:
-        raise RelaxError, "The renumbering of multiple residues is disallowed."
+        raise RelaxError, "The renumbering of multiple spins is disallowed."
 
-    # Molecule loop.
-    for mol in molecule_loop(mol_token):
-        # Loop over the residues of the molecule.
-        for i in xrange(len(mol.res)):
-            # Rename the residue is there is a match.
-            if mol.res[i].num in residues or mol.res[i].name in residues:
-                mol.res[i].num = new_number
+    # Spin loop.
+    for spin in spin_loop(spin_id):
+        # Rename the spin if there is a match.
+        if spin.num in spins or spin.name in spins:
+            spin.num = new_number
