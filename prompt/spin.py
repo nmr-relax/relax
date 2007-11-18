@@ -258,8 +258,8 @@ class Spin:
             print text
 
         # Spin identification string.
-        if type(spin_id) != int:
-            raise RelaxIntError, ('spin identification string', spin_id)
+        if type(spin_id) != str:
+            raise RelaxStrError, ('spin identification string', spin_id)
 
         # New spin name.
         if type(new_name) != str:
