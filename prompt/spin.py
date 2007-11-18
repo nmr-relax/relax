@@ -90,8 +90,8 @@ class Spin:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.copy("
             text = text + "pipe_from=" + `pipe_from`
-            text = text + "spin_from=" + `spin_from`
-            text = text + "pipe_to=" + `pipe_to`
+            text = text + ", spin_from=" + `spin_from`
+            text = text + ", pipe_to=" + `pipe_to`
             text = text + ", spin_to=" + `spin_to` + ")"
             print text
 
