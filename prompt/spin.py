@@ -96,16 +96,16 @@ class Spin:
             print text
 
         # The data pipe from argument.
-        if type(pipe_from) != str:
-            raise RelaxStrError, ('data pipe from', pipe_from)
+        if pipe_from != None and type(pipe_from) != str:
+            raise RelaxNoneStrError, ('data pipe from', pipe_from)
 
         # The spin from argument.
         if type(spin_from) != str:
             raise RelaxStrError, ('spin from', spin_from)
 
         # The data pipe to argument.
-        if type(pipe_to) != str:
-            raise RelaxStrError, ('data pipe to', pipe_to)
+        if pipe_to != None and  type(pipe_to) != str:
+            raise RelaxNoneStrError, ('data pipe to', pipe_to)
 
         # The spin to argument.
         if type(spin_to) != str:
