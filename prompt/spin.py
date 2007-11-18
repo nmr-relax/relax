@@ -306,9 +306,9 @@ class Spin:
             text = text + ", new_number=" + `new_number` + ")"
             print text
 
-        # Residue identification string.
-        if type(spin_id) != int:
-            raise RelaxIntError, ('spin identification string', spin_id)
+        # Spin identification string.
+        if type(spin_id) != str:
+            raise RelaxStrError, ('spin identification string', spin_id)
 
         # New spin number.
         if type(new_number) != str:
