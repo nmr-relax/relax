@@ -27,9 +27,9 @@ from relax_errors import RelaxError, RelaxNoPipeError
 
 
 class Spin_base_class:
-    """Base class for the tests of the 'prompt.spin' and 'generic_fns.spin' modules.
+    """Base class for the tests of both the 'prompt.spin' and 'generic_fns.spin' modules.
 
-    This base class also contains shared unit tests.
+    This base class also contains many shared unit tests.
     """
 
 
@@ -109,7 +109,7 @@ class Spin_base_class:
     def test_copy_between_molecules(self):
         """Test the copying of the spin data between different molecules.
 
-        The function used is generic_fns.spin.copy().
+        The function tested is both generic_fns.spin.copy() and prompt.spin.copy().
         """
 
         # Copy the spin '111' from the first molecule, first residue to the second molecule, fifth residue.
@@ -135,7 +135,7 @@ class Spin_base_class:
     def test_copy_between_residues(self):
         """Test the copying of the spin data between different residues.
 
-        The function used is generic_fns.spin.copy().
+        The function tested is both generic_fns.spin.copy() and prompt.spin.copy().
         """
 
         # Copy the spin '111' from the first residue to the third residue.
@@ -161,7 +161,7 @@ class Spin_base_class:
     def test_copy_between_pipes(self):
         """Test the copying of the spin data between different data pipes.
 
-        The function used is generic_fns.spin.copy().
+        The function tested is both generic_fns.spin.copy() and prompt.spin.copy().
         """
 
         # Copy the spin data.
@@ -183,7 +183,7 @@ class Spin_base_class:
     def test_copy_between_pipes_fail(self):
         """Test the copying of the spin data between different data pipes.
 
-        The function used is generic_fns.spin.copy().
+        The function tested is both generic_fns.spin.copy() and prompt.spin.copy().
         """
 
         # Copy the spin to the second data pipe.
@@ -194,7 +194,7 @@ class Spin_base_class:
     def test_copy_fail1(self):
         """Test the failure of the copying of the spin data of a non-existent residue.
 
-        The function used is generic_fns.spin.copy().
+        The function tested is both generic_fns.spin.copy() and prompt.spin.copy().
         """
 
         # Copy a non-existent residue (1 Met, @111).
@@ -204,7 +204,7 @@ class Spin_base_class:
     def test_copy_fail2(self):
         """Test the failure of the copying of the spin data of a non-existent spin.
 
-        The function used is generic_fns.spin.copy().
+        The function tested is both generic_fns.spin.copy() and prompt.spin.copy().
         """
 
         # Copy a non-existent spin (1 Ala, @234).
@@ -214,7 +214,7 @@ class Spin_base_class:
     def test_copy_fail3(self):
         """Test the failure of the copying of the spin data to a non-existent residue.
 
-        The function used is generic_fns.spin.copy().
+        The function tested is both generic_fns.spin.copy() and prompt.spin.copy().
         """
 
         # Copy to a non-existent residue (3).
@@ -224,7 +224,7 @@ class Spin_base_class:
     def test_copy_fail4(self):
         """Test the failure of the copying of the spin data to a number which already exists.
 
-        The function used is generic_fns.spin.copy().
+        The function tested is both generic_fns.spin.copy() and prompt.spin.copy().
         """
 
         # Copy a spin to a number which already exists.
@@ -234,7 +234,7 @@ class Spin_base_class:
     def test_creation(self):
         """Test the creation of a spin.
 
-        The function used is generic_fns.spin.create().
+        The function tested is both generic_fns.spin.create() and prompt.spin.create().
         """
 
         # Create a few new spins.
@@ -256,7 +256,7 @@ class Spin_base_class:
     def test_creation_fail(self):
         """Test the failure of spin creation (by supplying two spins with the same number).
 
-        The function used is generic_fns.spin.create().
+        The function tested is both generic_fns.spin.create() and prompt.spin.create().
         """
 
         # Create the first spin.
@@ -269,7 +269,7 @@ class Spin_base_class:
     def test_delete_name(self):
         """Test spin deletion using spin name identifiers.
 
-        The function used is generic_fns.spin.delete().
+        The function tested is both generic_fns.spin.delete() and prompt.spin.delete().
         """
 
         # Delete the first spin.
@@ -284,7 +284,7 @@ class Spin_base_class:
     def test_delete_num(self):
         """Test spin deletion using spin number identifiers.
 
-        The function used is generic_fns.spin.delete().
+        The function tested is both generic_fns.spin.delete() and prompt.spin.delete().
         """
 
         # Delete the first spin.
@@ -299,7 +299,7 @@ class Spin_base_class:
     def test_delete_all(self):
         """Test the deletion of all spins in one residue.
 
-        The function used is generic_fns.spin.delete().
+        The function tested is both generic_fns.spin.delete() and prompt.spin.delete().
         """
 
         # Delete all spins.
@@ -313,7 +313,7 @@ class Spin_base_class:
     def test_delete_shift(self):
         """Test the deletion of multiple spins.
 
-        The function used is generic_fns.spin.delete().
+        The function tested is both generic_fns.spin.delete() and prompt.spin.delete().
         """
 
         # Delete the first and third spins.
@@ -331,7 +331,7 @@ class Spin_base_class:
     def test_display(self):
         """Test the display of spin information.
 
-        The function used is generic_fns.spin.display().
+        The function tested is both generic_fns.spin.display() and prompt.spin.display().
         """
 
         # The following should all work without error.
@@ -345,7 +345,7 @@ class Spin_base_class:
     def test_rename(self):
         """Test the renaming of a spin.
 
-        The function tested is generic_fns.spin.rename().
+        The function tested is both generic_fns.spin.rename() and prompt.spin.rename().
         """
 
         # Rename some spins.
@@ -368,7 +368,7 @@ class Spin_base_class:
     def test_rename_many(self):
         """Test the renaming of multiple spins.
 
-        The function used is generic_fns.spins.rename().
+        The function tested is both generic_fns.spin.rename() and prompt.spin.rename().
         """
 
         # Rename all NHs.
@@ -389,7 +389,7 @@ class Spin_base_class:
     def test_renumber(self):
         """Test the renumbering of a spin.
 
-        The function tested is generic_fns.spin.renumber().
+        The function tested is both generic_fns.spin.renumber() and prompt.spin.renumber().
         """
 
         # Rename a few spins.
@@ -416,7 +416,7 @@ class Spin_base_class:
     def test_renumber_many_fail(self):
         """Test the renaming of multiple spins.
 
-        The function used is generic_fns.spin.renumber().
+        The function tested is both generic_fns.spin.renumber() and prompt.spin.renumber().
         """
 
         # Try renumbering all NHs.
