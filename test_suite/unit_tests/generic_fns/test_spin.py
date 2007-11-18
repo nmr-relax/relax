@@ -414,5 +414,11 @@ class Test_spin(TestCase):
         self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[1].num, 9)
 
 
+    def test_renumber_many_fail(self):
+        """Test the renaming of multiple spins.
 
+        The function used is generic_fns.spin.renumber().
+        """
 
+        # Try renumbering all NHs.
+        self.assertRaises(RelaxError, spin.renumber, spin_id='@NH', new_number=-6)
