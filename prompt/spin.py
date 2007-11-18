@@ -302,7 +302,7 @@ class Spin:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.renumber("
-            text = text + ", spin_id=" + `spin_id`
+            text = text + "spin_id=" + `spin_id`
             text = text + ", new_number=" + `new_number` + ")"
             print text
 
