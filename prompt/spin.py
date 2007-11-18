@@ -169,35 +169,34 @@ class Spin:
         spin.create(spin_num=spin_num, spin_name=spin_name, res_id=res_id)
 
 
-    def delete(self, res_id=None):
-        """Function for deleting residues.
+    def delete(self, spin_id=None):
+        """Function for deleting spins.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        res_id:  The residue identifier string.
+        spin_id:  The spin identifier string.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function can be used to delete a single or sets of residues.  See the identification
-        string documentation below for more information.  If spin system/atom ids are included a
-        RelaxError will be raised.
+        This function can be used to delete a single or sets of spins.  See the identification
+        string documentation below for more information.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "residue.delete("
-            text = text + "res_id=" + `res_id` + ")"
+            text = sys.ps3 + "spin.delete("
+            text = text + "spin_id=" + `spin_id` + ")"
             print text
 
-        # The residue identifier argument.
-        if type(res_id) != str:
-            raise RelaxStrError, ('residue identifier', res_id)
+        # The spin identifier argument.
+        if type(spin_id) != str:
+            raise RelaxStrError, ('spin identifier', spin_id)
 
         # Execute the functional code.
-        residue.delete(res_id=res_id)
+        spin.delete(spin_id=spin_id)
 
 
     def display(self, res_id=None):
