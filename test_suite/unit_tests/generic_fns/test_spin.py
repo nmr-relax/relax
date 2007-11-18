@@ -403,9 +403,15 @@ class Test_spin(TestCase):
         spin.rename(spin_id=':2@78', new_name='Ca')
         spin.rename(spin_id='#New mol:6@3239', new_name='NHe')
 
-        # Test that the spin has been renamed.
+        # Test that the spins have been renamed (and that the others have not).
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C8')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].name, 'C19')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].name, 'C21')
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[3].name, 'C24')
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[4].name, 'C25')
         self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].name, 'Ca')
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].name, 'NH')
+        self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[0].name, None)
         self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[1].name, 'NHe')
 
 
