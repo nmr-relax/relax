@@ -20,18 +20,17 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from unittest import TestCase
-
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns import spin
 from relax_errors import RelaxError, RelaxNoPipeError
 
 
 
-class Test_spin(TestCase):
-    """Unit tests for the functions of the 'generic_fns.spin' module."""
+class Spin_base_class:
+    """Base class for the tests of the 'prompt.spin' and 'generic_fns.spin' modules.
+
+    This base class also contains shared unit tests.
+    """
 
 
     def setUp(self):
