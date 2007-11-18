@@ -27,7 +27,7 @@ from unittest import TestCase
 from data import Data as relax_data_store
 from data_types import return_data_types
 from prompt.spin import Spin
-from relax_errors import RelaxError, RelaxNoPipeError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoneStrError
 from test_suite.unit_tests.spin_testing_base import Spin_base_class
 
 
@@ -55,4 +55,4 @@ class Test_spin(Spin_base_class, TestCase):
         # Loop over the data types.
         for data in return_data_types():
             # Copy a spin to a number which already exists.
-            self.assertRaises(RelaxError, self.spin_fns.copy, pipe_from=data, spin_from='#Old mol:1@111', spin_to='#Old mol:2')
+            self.assertRaises(RelaxNoneStrError, self.spin_fns.copy, pipe_from=data[1], spin_from='#Old mol:1@111', spin_to='#Old mol:2')
