@@ -54,5 +54,9 @@ class Test_spin(Spin_base_class, TestCase):
 
         # Loop over the data types.
         for data in return_data_types():
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
             # Copy a spin to a number which already exists.
             self.assertRaises(RelaxNoneStrError, self.spin_fns.copy, pipe_from=data[1], spin_from='#Old mol:1@111', spin_to='#Old mol:2')
