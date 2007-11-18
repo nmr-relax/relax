@@ -266,7 +266,7 @@ class Spin:
             raise RelaxStrError, ('new spin name', new_name)
 
         # Execute the functional code.
-        spin.create(spin_num=spin_num, new_name=new_name)
+        spin.rename(spin_id=spin_id, new_name=new_name)
 
 
     def renumber(self, spin_id=None, new_number=None):
