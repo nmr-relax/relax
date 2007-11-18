@@ -57,7 +57,23 @@ class Test_spin(TestCase):
 
 
     def setup_data(self):
-        """Function for setting up some data for the unit tests."""
+        """Function for setting up some data for the unit tests.
+        
+        The data is:
+
+        ID      Molecule        Res number      Res name        Spin number     Spin name
+        0,0,0   Old mol         1               Ala             111             C8
+        0,0,1   Old mol         1               Ala             6               C19
+        0,0,2   Old mol         1               Ala             7               C21
+        0,0,3   Old mol         1               Ala             8               C24
+        0,0,4   Old mol         1               Ala             9               C26
+        0,1,0   Old mol         2               Arg             78              NH
+        1,0,0   New mol         5               Lys             239             NH
+        1,1,0   New mol         6               Thr             None            None
+        1,1,1   New mol         6               Thr             3239            NH
+
+        The IDs correspond to the molecule, residue and spin indecies.
+        """
 
         # Alias the relax data store.
         cdp = relax_data_store['orig']
@@ -391,6 +407,5 @@ class Test_spin(TestCase):
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[4].name, 'C25')
         self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].name, 'Ca')
         self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[1].name, 'NHe')
-
 
 
