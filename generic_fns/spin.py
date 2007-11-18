@@ -197,32 +197,26 @@ def display(spin_id=None):
         print "%-15s %-15s %-15s %-15s %-15s" % (mol_name, `res_num`, res_name, `spin.num`, spin.name)
 
 
-def rename(res_id, new_name=None):
-    """Function for renaming residues.
+def rename(spin_id, new_name=None):
+    """Function for renaming spins.
 
-    @param res_id:      The identifier string for the residue(s) to rename.
+    @param res_id:      The identifier string for the spin(s) to rename.
     @type res_id:       str
-    @param new_name:    The new residue name.
+    @param new_name:    The new spin name.
     @type new_name:     str
     """
 
     # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(res_id)
-
-    # Disallow spin selections.
-    if spin_token != None:
-        raise RelaxSpinSelectDisallowError
+    mol_token, res_token, spin_token = tokenise(spin_id)
 
     # Parse the tokens.
-    residues = parse_token(res_token)
+    spins = parse_token(spin_token)
 
-    # Molecule loop.
-    for mol in molecule_loop(mol_token):
-        # Loop over the residues of the molecule.
-        for i in xrange(len(mol.res)):
-            # Rename the residue is there is a match.
-            if mol.res[i].num in residues or mol.res[i].name in residues:
-                mol.res[i].name = new_name
+    # Spin loop.
+    for spin in spin_loop(spin_id):
+        # Rename the residue is there is a match.
+        if spin.num in spins or spin.name in spins:
+            spin.name = new_name
 
 
 def renumber(res_id, new_number=None):
