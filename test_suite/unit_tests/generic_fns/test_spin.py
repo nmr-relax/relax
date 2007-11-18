@@ -427,7 +427,7 @@ class Test_spin(TestCase):
         # Rename all NHs.
         spin.rename(spin_id='@NH', new_name='N')
 
-        # Test the renaming of the NHs (and that the other residues have not changed).
+        # Test the renaming of the NHs (and that the other spin have not changed).
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C8')
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].name, 'C19')
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].name, 'C21')
