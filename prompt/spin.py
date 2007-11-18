@@ -148,7 +148,7 @@ class Spin:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.create("
-            text = text + ", spin_num=" + `spin_num`
+            text = text + "spin_num=" + `spin_num`
             text = text + ", spin_name=" + `spin_name`
             text = text + ", res_id=" + `res_id` + ")"
             print text
