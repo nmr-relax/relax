@@ -34,7 +34,7 @@ class Spin:
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \
-        """Class for manipulating the residue data."""
+        """Class for manipulating the spin data."""
 
         # Add the generic help string.
         self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
@@ -43,76 +43,76 @@ class Spin:
         self.__relax__ = relax
 
 
-    def copy(self, pipe_from=None, res_from=None, pipe_to=None, res_to=None):
-        """Function for copying all data associated with a residue.
+    def copy(self, pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
+        """Function for copying all data associated with a spin.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        pipe_from:  The data pipe containing the residue from which the data will be copied.  This
+        pipe_from:  The data pipe containing the spin from which the data will be copied.  This
             defaults to the current data pipe.
 
-        res_from:  The residue identifier string of the residue to copy the data from.
+        spin_from:  The spin identifier string of the spin to copy the data from.
 
         pipe_to:  The data pipe to copy the data to.  This defaults to the current data pipe.
 
-        res_to:  The residue identifier string of the residue to copy the data to.
+        spin_to:  The spin identifier string of the spin to copy the data to.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function will copy all the data associated with the identified residue to the new,
-        non-existent residue.  The new residue must not already exist.
+        This function will copy all the data associated with the identified spin to the new,
+        non-existent spin.  The new spin must not already exist.
 
 
         Examples
         ~~~~~~~~
 
-        To copy the residue data from residue 1 to the new residue 2, type:
+        To copy the spin data from spin 1 to the new spin 2, type:
 
-        relax> residue.copy(res_from=':1', res_to=':2')
-
-
-        To copy residue 1 of the molecule 'Old mol' to residue 5 of the molecule 'New mol', type:
-
-        relax> residue.copy(res_from='#Old mol:1', res_to='#New mol:5')
+        relax> spin.copy(spin_from='@1', spin_to='@2')
 
 
-        To copy the residue data of residue 1 from the data pipe 'm1' to 'm2', assuming the current
+        To copy spin 1 of the molecule 'Old mol' to spin 5 of the molecule 'New mol', type:
+
+        relax> spin.copy(spin_from='#Old mol@1', spin_to='#New mol@5')
+
+
+        To copy the spin data of spin 1 from the data pipe 'm1' to 'm2', assuming the current
         data pipe is 'm1', type:
 
-        relax> residue.copy(res_from=':1', pipe_to='m2')
-        relax> residue.copy(pipe_from='m1', res_from=':1', pipe_to='m2', res_to=':1')
+        relax> spin.copy(spin_from='@1', pipe_to='m2')
+        relax> spin.copy(pipe_from='m1', spin_from='@1', pipe_to='m2', spin_to='@1')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "residue.copy("
+            text = sys.ps3 + "spin.copy("
             text = text + "pipe_from=" + `pipe_from`
-            text = text + "res_from=" + `res_from`
+            text = text + "spin_from=" + `spin_from`
             text = text + "pipe_to=" + `pipe_to`
-            text = text + ", res_to=" + `res_to` + ")"
+            text = text + ", spin_to=" + `spin_to` + ")"
             print text
 
         # The data pipe from argument.
         if type(pipe_from) != str:
             raise RelaxStrError, ('data pipe from', pipe_from)
 
-        # The residue from argument.
-        if type(res_from) != str:
-            raise RelaxStrError, ('residue from', res_from)
+        # The spin from argument.
+        if type(spin_from) != str:
+            raise RelaxStrError, ('spin from', spin_from)
 
         # The data pipe to argument.
         if type(pipe_to) != str:
             raise RelaxStrError, ('data pipe to', pipe_to)
 
-        # The residue to argument.
-        if type(res_to) != str:
-            raise RelaxStrError, ('residue to', res_to)
+        # The spin to argument.
+        if type(spin_to) != str:
+            raise RelaxStrError, ('spin to', spin_to)
 
         # Execute the functional code.
-        residue.copy(pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
+        spin.copy(pipe_from=pipe_from, spin_from=spin_from, pipe_to=pipe_to, spin_to=spin_to)
 
 
     def create(self, res_num=None, res_name=None):
