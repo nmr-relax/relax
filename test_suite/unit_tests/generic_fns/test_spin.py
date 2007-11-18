@@ -439,4 +439,37 @@ class Test_spin(TestCase):
         self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[1].name, 'N')
 
 
+    def test_renumber(self):
+        """Test the renumbering of a spin.
+
+        The function tested is generic_fns.spin.renumber().
+        """
+
+        # Set up some data.
+        self.setup_data()
+
+        # Rename a few spins.
+        spin.renumber(spin_id='@111', new_number=1)
+        spin.renumber(spin_id='@6', new_number=2)
+        spin.renumber(spin_id='@7', new_number=3)
+        spin.renumber(spin_id='@8', new_number=4)
+        spin.renumber(spin_id='@9', new_number=5)
+        spin.renumber(spin_id='@78', new_number=6)
+        spin.renumber(spin_id='@239', new_number=7)
+        spin.renumber(spin_id='@None', new_number=8)
+        spin.renumber(spin_id='@3239', new_number=9)
+
+        # Test that the spins have been renumbered.
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 1)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].name, 2)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].name, 3)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[3].name, 4)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[4].name, 5)
+        self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].name, 6)
+        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].name, 7)
+        self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[0].name, 8)
+        self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[1].name, 9)
+
+
+
 
