@@ -27,7 +27,7 @@ from unittest import TestCase
 from data import Data as relax_data_store
 from data_types import return_data_types
 from prompt.spin import Spin
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoneStrError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.spin_testing_base import Spin_base_class
 
 
@@ -58,5 +58,19 @@ class Test_spin(Spin_base_class, TestCase):
             if data[0] == 'None' or data[0] == 'str':
                 continue
 
-            # Copy a spin to a number which already exists.
+            # The argument test.
             self.assertRaises(RelaxNoneStrError, self.spin_fns.copy, pipe_from=data[1], spin_from='#Old mol:1@111', spin_to='#Old mol:2')
+
+
+    def test_copy_argfail_spin_from(self):
+        """Test the proper failure of the spin.copy() user function for the spin_from argument."""
+
+
+        # Loop over the data types.
+        for data in return_data_types():
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.spin_fns.copy, spin_from=data[1], spin_to='#Old mol:2')
