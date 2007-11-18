@@ -35,31 +35,9 @@ class Test_spin(TestCase):
 
 
     def setUp(self):
-        """Set up for all the residue unit tests."""
+        """Set up for all the generic_fns.spin unit tests.
 
-        # Reset the relax data storage object.
-        relax_data_store.__reset__()
-
-        # Add a data pipe to the data store.
-        relax_data_store.add(pipe_name='orig', pipe_type='mf')
-
-        # Add a second data pipe for copying tests.
-        relax_data_store.add(pipe_name='test', pipe_type='mf')
-
-        # Set the current data pipe to 'orig'.
-        relax_data_store.current_pipe = 'orig'
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        relax_data_store.__reset__()
-
-
-    def setup_data(self):
-        """Function for setting up some data for the unit tests.
-        
-        The data is:
+        The data contained within the 'orig' data pipe is:
 
         ID      Molecule        Res number      Res name        Spin number     Spin name
         0,0,0   Old mol         1               Ala             111             C8
@@ -75,7 +53,19 @@ class Test_spin(TestCase):
         The IDs correspond to the molecule, residue and spin indecies.
         """
 
-        # Alias the relax data store.
+        # Reset the relax data storage object.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
+        # Add a second data pipe for copying tests.
+        relax_data_store.add(pipe_name='test', pipe_type='mf')
+
+        # Set the current data pipe to 'orig'.
+        relax_data_store.current_pipe = 'orig'
+
+        # Alias the 'orig' relax data store.
         cdp = relax_data_store['orig']
 
         # Name the first molecule.
@@ -109,6 +99,12 @@ class Test_spin(TestCase):
         cdp.mol[1].res[0].spin[0].name = 'NH'
         cdp.mol[1].res.add_item('Thr', 6)
         cdp.mol[1].res[1].spin.add_item('NH', 3239)
+
+
+    def tearDown(self):
+        """Reset the relax data storage object."""
+
+        relax_data_store.__reset__()
 
 
     def test_copy_between_molecules(self):
