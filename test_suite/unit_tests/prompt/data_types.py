@@ -39,7 +39,7 @@ def dummy_fn2():
     return "Hello"
 
 
-def return_data_types(self):
+def return_data_types():
     """Function for returning an array of many different Python objects.
     
     These objects are to test the correct behaviour towards the user function arguments.
