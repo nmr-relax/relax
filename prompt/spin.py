@@ -311,8 +311,8 @@ class Spin:
             raise RelaxStrError, ('spin identification string', spin_id)
 
         # New spin number.
-        if type(new_number) != str:
-            raise RelaxStrError, ('new spin number', new_number)
+        if type(new_number) != int:
+            raise RelaxIntError, ('new spin number', new_number)
 
         # Execute the functional code.
         spin.create(spin_num=spin_num, new_number=new_number)
