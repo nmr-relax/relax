@@ -113,9 +113,6 @@ class Test_spin(TestCase):
         The function used is generic_fns.spin.copy().
         """
 
-        # Set up the data.
-        self.setup_data()
-
         # Copy the spin '111' from the first molecule, first residue to the second molecule, fifth residue.
         spin.copy(spin_from='#Old mol:1@111', spin_to='#New mol:5@334')
 
@@ -141,9 +138,6 @@ class Test_spin(TestCase):
 
         The function used is generic_fns.spin.copy().
         """
-
-        # Set up the data.
-        self.setup_data()
 
         # Copy the spin '111' from the first residue to the third residue.
         spin.copy(spin_from='#Old mol:1@111', spin_to='#Old mol:2')
@@ -171,9 +165,6 @@ class Test_spin(TestCase):
         The function used is generic_fns.spin.copy().
         """
 
-        # Set up the data.
-        self.setup_data()
-
         # Copy the spin data.
         spin.copy(spin_from='#Old mol:1@111', pipe_to='test')
 
@@ -196,9 +187,6 @@ class Test_spin(TestCase):
         The function used is generic_fns.spin.copy().
         """
 
-        # Set up the data.
-        self.setup_data()
-
         # Copy the spin to the second data pipe.
         self.assertRaises(RelaxNoPipeError, spin.copy, spin_from='#Old mol:1@111', pipe_to='test2')
 
@@ -210,9 +198,6 @@ class Test_spin(TestCase):
         The function used is generic_fns.spin.copy().
         """
 
-        # Set up the data.
-        self.setup_data()
-
         # Copy a non-existent residue (1 Met, @111).
         self.assertRaises(RelaxError, spin.copy, spin_from=':Met@111', spin_to=':2,Gly')
 
@@ -222,9 +207,6 @@ class Test_spin(TestCase):
 
         The function used is generic_fns.spin.copy().
         """
-
-        # Set up the data.
-        self.setup_data()
 
         # Copy a non-existent spin (1 Ala, @234).
         self.assertRaises(RelaxError, spin.copy, spin_from=':Ala@234', spin_to=':2,Gly')
@@ -236,9 +218,6 @@ class Test_spin(TestCase):
         The function used is generic_fns.spin.copy().
         """
 
-        # Set up the data.
-        self.setup_data()
-
         # Copy to a non-existent residue (3).
         self.assertRaises(RelaxError, spin.copy, spin_from='#Old mol:1@111', spin_to='#Old mol:3')
 
@@ -249,9 +228,6 @@ class Test_spin(TestCase):
         The function used is generic_fns.spin.copy().
         """
 
-        # Set up the data.
-        self.setup_data()
-
         # Copy a spin to a number which already exists.
         self.assertRaises(RelaxError, spin.copy, spin_from=':1', spin_to=':2@78')
 
@@ -261,9 +237,6 @@ class Test_spin(TestCase):
 
         The function used is generic_fns.spin.create().
         """
-
-        # Set up the data.
-        self.setup_data()
 
         # Create a few new spins.
         spin.create(1, 'C3')
@@ -300,9 +273,6 @@ class Test_spin(TestCase):
         The function used is generic_fns.spin.delete().
         """
 
-        # Set up the data.
-        self.setup_data()
-
         # Delete the first spin.
         spin.delete(spin_id='@C8')
 
@@ -317,9 +287,6 @@ class Test_spin(TestCase):
 
         The function used is generic_fns.spin.delete().
         """
-
-        # Set up the data.
-        self.setup_data()
 
         # Delete the first spin.
         spin.delete(spin_id='@111')
@@ -336,9 +303,6 @@ class Test_spin(TestCase):
         The function used is generic_fns.spin.delete().
         """
 
-        # Set up the data.
-        self.setup_data()
-
         # Delete all spins.
         spin.delete(spin_id='@1-200')
 
@@ -352,9 +316,6 @@ class Test_spin(TestCase):
 
         The function used is generic_fns.spin.delete().
         """
-
-        # Set up the data.
-        self.setup_data()
 
         # Delete the first and third spins.
         spin.delete(spin_id='@111,7')
@@ -374,9 +335,6 @@ class Test_spin(TestCase):
         The function used is generic_fns.spin.display().
         """
 
-        # Set up some data.
-        self.setup_data()
-
         # The following should all work without error.
         spin.display()
         spin.display(':1')
@@ -390,9 +348,6 @@ class Test_spin(TestCase):
 
         The function tested is generic_fns.spin.rename().
         """
-
-        # Set up some data.
-        self.setup_data()
 
         # Rename some spins.
         spin.rename(spin_id='@C26', new_name='C25')
@@ -417,9 +372,6 @@ class Test_spin(TestCase):
         The function used is generic_fns.spins.rename().
         """
 
-        # Set up some data.
-        self.setup_data()
-
         # Rename all NHs.
         spin.rename(spin_id='@NH', new_name='N')
 
@@ -440,9 +392,6 @@ class Test_spin(TestCase):
 
         The function tested is generic_fns.spin.renumber().
         """
-
-        # Set up some data.
-        self.setup_data()
 
         # Rename a few spins.
         spin.renumber(spin_id='@111', new_number=1)
