@@ -39,6 +39,14 @@ relax = Container()
 relax.interpreter = Container()
 relax.interpreter.intro = True
 
+# A dummy function for testing data types.
+def dummy_fn():
+    pass
+
+# A second dummy function for testing data types.
+def dummy_fn2():
+    return "Hello"
+
 
 class Test_spin(Spin_base_class, TestCase):
     """Unit tests for the functions of the 'generic_fns.spin' module."""
@@ -47,3 +55,59 @@ class Test_spin(Spin_base_class, TestCase):
     spin_fns = Spin(relax)
 
 
+    def return_data_types(self):
+        """Function for returning an array of many different Python objects.
+        
+        These objects are to test the correct behaviour towards the user function arguments.
+        """
+
+        # Create the array.
+        data_types = []
+
+        # None.
+        data_types.append(['None', None])
+
+        # Integers.
+        data_types.append(['int', 0])
+        data_types.append(['int', 10])
+        data_types.append(['int', -10])
+
+        # Binaries.
+        data_types.append(['bin', 0])
+        data_types.append(['bin', 1])
+
+        # Floats.
+        data_types.append(['float', 0.0])
+        data_types.append(['float', 1e-7])
+        data_types.append(['float', 1000000.0])
+
+        # Functions.
+        data_types.append(['function', dummy_fn])
+        data_types.append(['function', dummy_fn2])
+
+        # Strings.
+        data_types.append(['str', 'a'])
+        data_types.append(['str', '10'])
+
+        # List.
+        data_types.append(['list', []])
+        data_types.append(['list', [None, None]])
+
+        # List of integers.
+        data_types.append(['int list', [-1, 0, 1]])
+
+        # List of floats.
+        data_types.append(['float list', [-1., 0., 1.]])
+
+        # List of numbers.
+        data_types.append(['number list', [-1., 0, 1.]])
+
+        # List of strings.
+        data_types.append(['str list', ['a']])
+        data_types.append(['str list', ['a', 'asldfjk']])
+
+        # Tuple.
+        data_types.append(['tuple', (None, None)])
+
+        # Return the data type array.
+        return data_types
