@@ -162,8 +162,8 @@ class Spin:
             raise RelaxStrError, ('spin name', spin_name)
 
         # The residue ID.
-        if type(res_id) != str:
-            raise RelaxStrError, ('residue identification string', res_id)
+        if res_id != None and type(res_id) != str:
+            raise RelaxNoneStrError, ('residue identification string', res_id)
 
         # Execute the functional code.
         spin.create(spin_num=spin_num, spin_name=spin_name, res_id=res_id)
