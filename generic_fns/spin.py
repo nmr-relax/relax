@@ -200,8 +200,8 @@ def display(spin_id=None):
 def rename(spin_id, new_name=None):
     """Function for renaming spins.
 
-    @param res_id:      The identifier string for the spin(s) to rename.
-    @type res_id:       str
+    @param spin_id:      The identifier string for the spin(s) to rename.
+    @type spin_id:       str
     @param new_name:    The new spin name.
     @type new_name:     str
     """
@@ -214,7 +214,7 @@ def rename(spin_id, new_name=None):
 
     # Spin loop.
     for spin in spin_loop(spin_id):
-        # Rename the residue is there is a match.
+        # Rename the spin if there is a match.
         if spin.num in spins or spin.name in spins:
             spin.name = new_name
 
