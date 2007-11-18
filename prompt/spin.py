@@ -104,12 +104,12 @@ class Spin:
             raise RelaxStrError, ('spin from', spin_from)
 
         # The data pipe to argument.
-        if pipe_to != None and  type(pipe_to) != str:
+        if pipe_to != None and type(pipe_to) != str:
             raise RelaxNoneStrError, ('data pipe to', pipe_to)
 
         # The spin to argument.
-        if type(spin_to) != str:
-            raise RelaxStrError, ('spin to', spin_to)
+        if spin_to != None and type(spin_to) != str:
+            raise RelaxNoneStrError, ('spin to', spin_to)
 
         # Execute the functional code.
         spin.copy(pipe_from=pipe_from, spin_from=spin_from, pipe_to=pipe_to, spin_to=spin_to)
