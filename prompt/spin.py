@@ -315,7 +315,7 @@ class Spin:
             raise RelaxIntError, ('new spin number', new_number)
 
         # Execute the functional code.
-        spin.create(spin_num=spin_num, new_number=new_number)
+        spin.renumber(spin_id=spin_id, new_number=new_number)
 
 
 
