@@ -101,7 +101,7 @@ class Test_spin(Spin_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.spin_fns.copy, spin_from='#Old mol:1', spin_to=data[1])
+            self.assertRaises(RelaxStrError, self.spin_fns.copy, spin_from='#Old mol:1@111', spin_to=data[1])
 
 
 
