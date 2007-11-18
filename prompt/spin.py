@@ -27,7 +27,7 @@ import sys
 import help
 from generic_fns import spin
 from generic_fns.selection import id_string_doc
-from relax_errors import RelaxIntError, RelaxStrError
+from relax_errors import RelaxIntError, RelaxNoneStrError, RelaxStrError
 
 
 class Spin:
