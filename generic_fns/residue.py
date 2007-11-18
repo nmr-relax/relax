@@ -242,7 +242,7 @@ def renumber(res_id, new_number=None):
     @param res_id:      The identifier string for the residue to renumber.
     @type res_id:       str
     @param new_number:  The new residue number.
-    @type new_number:   str
+    @type new_number:   int
     """
 
     # Split up the selection string.

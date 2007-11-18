@@ -200,8 +200,8 @@ def display(spin_id=None):
 def rename(spin_id, new_name=None):
     """Function for renaming spins.
 
-    @param spin_id:      The identifier string for the spin(s) to rename.
-    @type spin_id:       str
+    @param spin_id:     The identifier string for the spin(s) to rename.
+    @type spin_id:      str
     @param new_name:    The new spin name.
     @type new_name:     str
     """
@@ -220,12 +220,12 @@ def rename(spin_id, new_name=None):
 
 
 def renumber(spin_id, new_number=None):
-    """Function for renumbering spins`.
+    """Function for renumbering spins.
 
     @param spin_id:     The identifier string for the spin to renumber.
     @type spin_id:      str
     @param new_number:  The new spin number.
-    @type new_number:   str
+    @type new_number:   int
     """
 
     # Split up the selection string.
