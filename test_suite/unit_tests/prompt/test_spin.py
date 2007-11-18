@@ -25,6 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Data as relax_data_store
+from data_types import return_data_types
 from prompt.spin import Spin
 from relax_errors import RelaxError, RelaxNoPipeError
 from test_suite.unit_tests.spin_testing_base import Spin_base_class
@@ -47,3 +48,11 @@ class Test_spin(Spin_base_class, TestCase):
     spin_fns = Spin(relax)
 
 
+    def test_copy_argfail_pipe_from(self):
+        """Test the proper failure of the spin.copy() user function for the pipe_from argument."""
+
+
+        # Loop over the data types.
+        for data in return_data_types():
+            # Copy a spin to a number which already exists.
+            self.assertRaises(RelaxError, self.spin_fns.copy, pipe_from=data, spin_from='#Old mol:1@111', spin_to='#Old mol:2')
