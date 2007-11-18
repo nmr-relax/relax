@@ -25,9 +25,21 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns import spin
+from prompt.spin import Spin
 from relax_errors import RelaxError, RelaxNoPipeError
 
+
+# A class to act as a container.
+class Container:
+    pass
+
+# Fake normal relax usage of the user function class.
+relax = Container()
+relax.interpreter = Container()
+relax.interpreter.intro = True
+
+# Instantiate the user function class.
+spin = Spin(relax)
 
 
 class Test_spin(TestCase):
