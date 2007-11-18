@@ -253,7 +253,7 @@ class Spin:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.rename("
-            text = text + ", spin_id=" + `spin_id`
+            text = text + "spin_id=" + `spin_id`
             text = text + ", new_name=" + `new_name` + ")"
             print text
 
