@@ -115,55 +115,58 @@ class Spin:
         spin.copy(pipe_from=pipe_from, spin_from=spin_from, pipe_to=pipe_to, spin_to=spin_to)
 
 
-    def create(self, res_num=None, res_name=None):
-        """Function for creating a new residue.
+    def create(self, spin_num=None, spin_name=None, res_id=None):
+        """Function for creating a new spin.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        res_num:  The residue number.
+        spin_num:  The spin number.
 
-        res_name:  The name of the residue.
+        spin_name:  The name of the spin.
+
+        res_id:  The residue ID string identifying the residue to add the spin to.
 
 
         Description
         ~~~~~~~~~~~
 
-        Using this function a new sequence can be generated without using the sequence user
-        functions.  However if the sequence already exists, the new residue will be added to the end
-        of the residue list (the residue numbers of this list need not be sequential).  The same
-        residue number cannot be used more than once.  A corresponding single spin system will be
-        created for this residue.  The spin system number and name or additional spin systems can be
-        added later if desired.
+        This function will add a new spin data container to the relax data storage object.  The same
+        spin number cannot be used more than once.
 
 
         Examples
         ~~~~~~~~
 
-        The following sequence of commands will generate the sequence 1 ALA, 2 GLY, 3 LYS:
+        The following sequence of commands will generate the sequence 1 C4, 2 C9, 3 C15:
 
-        relax> residue.create(1, 'ALA')
-        relax> residue.create(2, 'GLY')
-        relax> residue.create(3, 'LYS')
+        relax> spin.create(1, 'C4')
+        relax> spin.create(2, 'C9')
+        relax> spin.create(3, 'C15')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "residue.create("
-            text = text + ", res_num=" + `res_num`
-            text = text + ", res_name=" + `res_name` + ")"
+            text = sys.ps3 + "spin.create("
+            text = text + ", spin_num=" + `spin_num`
+            text = text + ", spin_name=" + `spin_name`
+            text = text + ", res_id=" + `res_id` + ")"
             print text
 
-        # Residue number.
-        if type(res_num) != int:
-            raise RelaxIntError, ('residue number', res_num)
+        # Spin number.
+        if type(spin_num) != int:
+            raise RelaxIntError, ('spin number', spin_num)
 
-        # Residue name.
-        if type(res_name) != str:
-            raise RelaxStrError, ('residue name', res_name)
+        # Spin name.
+        if type(spin_name) != str:
+            raise RelaxStrError, ('spin name', spin_name)
+
+        # The residue ID.
+        if type(res_id) != str:
+            raise RelaxStrError, ('residue identification string', res_id)
 
         # Execute the functional code.
-        residue.create(res_num=res_num, res_name=res_name)
+        spin.create(spin_num=spin_num, spin_name=spin_name, res_id=res_id)
 
 
     def delete(self, res_id=None):
