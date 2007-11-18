@@ -222,13 +222,13 @@ class Spin:
         spin.display(spin_id=spin_id)
 
 
-    def rename(self, res_id=None, new_name=None):
-        """Function for renaming an existent residue(s).
+    def rename(self, spin_id=None, new_name=None):
+        """Function for renaming an existent spin(s).
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        res_id:  The residue identification string corresponding to one or more residues.
+        spin_id:  The spin identification string corresponding to one or more spins.
 
         new_name:  The new name.
 
@@ -236,41 +236,37 @@ class Spin:
         Description
         ~~~~~~~~~~~
 
-        This function simply allows residues to be renamed.
+        This function simply allows spins to be renamed.
 
 
         Examples
         ~~~~~~~~
 
-        The following sequence of commands will rename the sequence {1 ALA, 2 GLY, 3 LYS} to {1 XXX,
-        2 XXX, 3 XXX}:
+        The following sequence of commands will rename the sequence {1 C1, 2 C2, 3 C3} to {1 C11,
+        2 C12, 3 C13}:
 
-        relax> residue.rename(':1', 'XXX')
-        relax> residue.rename(':2', 'XXX')
-        relax> residue.rename(':3', 'XXX')
-
-        Alternatively:
-
-        relax> residue.rename(':1,2,3', 'XXX')
+        relax> spin.rename('@1', 'C11')
+        relax> spin.rename('@2', 'C12')
+        relax> spin.rename('@3', 'C13')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "residue.rename("
-            text = text + ", res_id=" + `res_id`
+            text = sys.ps3 + "spin.rename("
+            text = text + ", spin_id=" + `spin_id`
             text = text + ", new_name=" + `new_name` + ")"
             print text
 
-        # Residue identification string.
-        if type(res_id) != int:
-            raise RelaxIntError, ('residue identification string', res_id)
+        # Spin identification string.
+        if type(spin_id) != int:
+            raise RelaxIntError, ('spin identification string', spin_id)
 
-        # New residue name.
+        # New spin name.
         if type(new_name) != str:
-            raise RelaxStrError, ('new residue name', new_name)
+            raise RelaxStrError, ('new spin name', new_name)
 
         # Execute the functional code.
-        residue.create(res_num=res_num, new_name=new_name)
+        spin.create(spin_num=spin_num, new_name=new_name)
 
 
     def renumber(self, res_id=None, new_number=None):
