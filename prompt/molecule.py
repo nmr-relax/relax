@@ -43,46 +43,6 @@ class Molecule:
         self.__relax__ = relax
 
 
-    def create(self, mol_name=None):
-        """Function for creating a new molecule.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        mol_name:  The name of the molecule.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This function will add a new molecule data container to the relax data storage object.  The
-        same molecule name cannot be used more than once.
-
-
-        Examples
-        ~~~~~~~~
-
-        To create the molecules 'Ap4Aase', 'ATP', and 'MgF4', type:
-
-        relax> molecule.create('Ap4Aase')
-        relax> molecule.create('ATP')
-        relax> molecule.create('MgF4')
-        """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "molecule.create("
-            text = text + "mol_name=" + `mol_name` + ")"
-            print text
-
-        # Molecule name.
-        if type(mol_name) != str:
-            raise RelaxStrError, ('molecule name', mol_name)
-
-        # Execute the functional code.
-        molecule.create(mol_name=mol_name)
-
-
     def copy(self, pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
         """Function for copying all data associated with a molecule.
 
@@ -149,6 +109,46 @@ class Molecule:
 
         # Execute the functional code.
         molecule.copy(pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
+
+
+    def create(self, mol_name=None):
+        """Function for creating a new molecule.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        mol_name:  The name of the molecule.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function will add a new molecule data container to the relax data storage object.  The
+        same molecule name cannot be used more than once.
+
+
+        Examples
+        ~~~~~~~~
+
+        To create the molecules 'Ap4Aase', 'ATP', and 'MgF4', type:
+
+        relax> molecule.create('Ap4Aase')
+        relax> molecule.create('ATP')
+        relax> molecule.create('MgF4')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "molecule.create("
+            text = text + "mol_name=" + `mol_name` + ")"
+            print text
+
+        # Molecule name.
+        if type(mol_name) != str:
+            raise RelaxStrError, ('molecule name', mol_name)
+
+        # Execute the functional code.
+        molecule.create(mol_name=mol_name)
 
 
     def delete(self, mol_id=None):
