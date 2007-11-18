@@ -90,4 +90,18 @@ class Test_spin(Spin_base_class, TestCase):
             self.assertRaises(RelaxNoneStrError, self.spin_fns.copy, pipe_to=data[1], spin_from='#Old mol:1@111', spin_to='#Old mol:2')
 
 
+    def test_copy_argfail_spin_to(self):
+        """Test the proper failure of the spin.copy() user function for the spin_to argument."""
+
+
+        # Loop over the data types.
+        for data in return_data_types():
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.spin_fns.copy, spin_from='#Old mol:1', spin_to=data[1])
+
+
 
