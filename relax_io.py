@@ -39,6 +39,7 @@ except ImportError, message:
     devnull_import = 0
     devnull_import_message = message.args[0]
 
+# Python module imports.
 from os import F_OK, X_OK, access, altsep, getenv, makedirs, pathsep, remove, sep, stat
 from os.path import expanduser, basename, splitext
 from re import match, search
@@ -46,6 +47,7 @@ from string import split
 import sys
 from sys import stdin, stdout, stderr
 
+# relax module imports.
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
 
 
