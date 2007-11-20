@@ -122,6 +122,73 @@ def open_read_file(file_name=None, dir=None, compress_type=0, print_flag=1):
     return file
 
 
+def open_write_file(file_name=None, dir=None, force=0, compress_type=0, print_flag=1, return_path=0):
+    """Function for opening a file for writing and creating directories if necessary."""
+
+    # The null device.
+    if search('devnull', file_name):
+        # Devnull could not be imported!
+        if not devnull_import:
+            raise RelaxError, devnull_import_message + ".  To use devnull, please upgrade to Python >= 2.4."
+
+        # Print out.
+        if print_flag:
+            print "Opening the null device file for writing."
+
+        # Open the null device.
+        file = open(devnull, 'w')
+
+        # Return the file.
+        if return_path:
+            return file, None
+        else:
+            return file
+
+    # Create the directories.
+    mkdir(dir, print_flag=0)
+
+    # File path.
+    file_path = file_path(file_name, dir)
+
+    # Bzip2 compression.
+    if compress_type == 1 and not search('.bz2$', file_path):
+        # Bz2 module exists.
+        if bz2_module:
+            file_path = file_path + '.bz2'
+
+        # Switch to gzip compression.
+        else:
+            print "Cannot use bz2 compression, using gzip compression instead.  " + bz2_module_message + "."
+            compress_type = 2
+
+    # Gzip compression.
+    if compress_type == 2 and not search('.gz$', file_path):
+        file_path = file_path + '.gz'
+
+    # Fail if the file already exists and the force flag is set to 0.
+    if access(file_path, F_OK) and not force:
+        raise RelaxFileOverwriteError, (file_path, 'force flag')
+
+    # Open the file for writing.
+    try:
+        if print_flag:
+            print "Opening the file " + `file_path` + " for writing."
+        if compress_type == 0:
+            file = open(file_path, 'w')
+        elif compress_type == 1:
+            file = BZ2File(file_path, 'w')
+        elif compress_type == 2:
+            file = GzipFile(file_path, 'w')
+    except IOError, message:
+        raise RelaxError, "Cannot open the file " + `file_path` + ".  " + message.args[1] + "."
+
+    # Return the opened file.
+    if return_path:
+        return file, file_path
+    else:
+        return file
+
+
 
 
 class IO:
@@ -266,73 +333,6 @@ class IO:
         except OSError:
             if print_flag:
                 print "Directory ./" + dir + " already exists.\n"
-
-
-    def open_write_file(self, file_name=None, dir=None, force=0, compress_type=0, print_flag=1, return_path=0):
-        """Function for opening a file for writing and creating directories if necessary."""
-
-        # The null device.
-        if search('devnull', file_name):
-            # Devnull could not be imported!
-            if not devnull_import:
-                raise RelaxError, devnull_import_message + ".  To use devnull, please upgrade to Python >= 2.4."
-
-            # Print out.
-            if print_flag:
-                print "Opening the null device file for writing."
-
-            # Open the null device.
-            file = open(devnull, 'w')
-
-            # Return the file.
-            if return_path:
-                return file, None
-            else:
-                return file
-
-        # Create the directories.
-        self.mkdir(dir, print_flag=0)
-
-        # File path.
-        file_path = self.file_path(file_name, dir)
-
-        # Bzip2 compression.
-        if compress_type == 1 and not search('.bz2$', file_path):
-            # Bz2 module exists.
-            if bz2_module:
-                file_path = file_path + '.bz2'
-
-            # Switch to gzip compression.
-            else:
-                print "Cannot use bz2 compression, using gzip compression instead.  " + bz2_module_message + "."
-                compress_type = 2
-
-        # Gzip compression.
-        if compress_type == 2 and not search('.gz$', file_path):
-            file_path = file_path + '.gz'
-
-        # Fail if the file already exists and the force flag is set to 0.
-        if access(file_path, F_OK) and not force:
-            raise RelaxFileOverwriteError, (file_path, 'force flag')
-
-        # Open the file for writing.
-        try:
-            if print_flag:
-                print "Opening the file " + `file_path` + " for writing."
-            if compress_type == 0:
-                file = open(file_path, 'w')
-            elif compress_type == 1:
-                file = BZ2File(file_path, 'w')
-            elif compress_type == 2:
-                file = GzipFile(file_path, 'w')
-        except IOError, message:
-            raise RelaxError, "Cannot open the file " + `file_path` + ".  " + message.args[1] + "."
-
-        # Return the opened file.
-        if return_path:
-            return file, file_path
-        else:
-            return file
 
 
     def strip(self, data):
