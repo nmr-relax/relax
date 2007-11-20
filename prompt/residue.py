@@ -260,8 +260,8 @@ class Residue:
             print text
 
         # Residue identification string.
-        if type(res_id) != int:
-            raise RelaxIntError, ('residue identification string', res_id)
+        if type(res_id) != str:
+            raise RelaxStrError, ('residue identification string', res_id)
 
         # New residue name.
         if type(new_name) != str:
