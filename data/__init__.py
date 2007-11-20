@@ -34,7 +34,7 @@ __all__ = [ 'data_classes',
             'main' ]
 
 
-class Data(dict):
+class Data2(dict):
     """The relax data storage object."""
 
     # The current data pipe.
@@ -127,4 +127,4 @@ class Data(dict):
 
 # Rebind the name Data with an instance to prevent accidental creation
 # of multiple instances of the Data class
-Data = Data()
+Data = Data2()
