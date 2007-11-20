@@ -96,8 +96,8 @@ class Residue:
             print text
 
         # The data pipe from argument.
-        if type(pipe_from) != str:
-            raise RelaxStrError, ('data pipe from', pipe_from)
+        if pipe_from != None and type(pipe_from) != str:
+            raise RelaxNoneStrError, ('data pipe from', pipe_from)
 
         # The residue from argument.
         if type(res_from) != str:
