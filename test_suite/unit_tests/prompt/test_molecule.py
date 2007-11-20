@@ -62,11 +62,11 @@ class Test_molecule(Molecule_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.molecule_fns.copy, pipe_from=data[1], mol_from='#Old mol:1@111', mol_to='#Old mol:2')
+            self.assertRaises(RelaxNoneStrError, self.molecule_fns.copy, pipe_from=data[1], mol_from='#Old mol', mol_to='#Old mol')
 
 
-    def test_copy_argfail_spin_from(self):
-        """Test the proper failure of the spin.copy() user function for the spin_from argument."""
+    def test_copy_argfail_mol_from(self):
+        """Test the proper failure of the molecule.copy() user function for the mol_from argument."""
 
         # Loop over the data types.
         for data in return_data_types():
@@ -75,7 +75,7 @@ class Test_molecule(Molecule_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.spin_fns.copy, spin_from=data[1], spin_to='#Old mol:2')
+            self.assertRaises(RelaxStrError, self.molecule_fns.copy, mol_from=data[1], mol_to='#Old mol')
 
 
     def test_copy_argfail_pipe_to(self):
