@@ -82,7 +82,10 @@ class Test_state(TestCase):
 
 
     def test_save(self):
-        """Test the normal operation of the generic_fns.state.save() function."""
+        """The pickling and saving of the relax data storage singleton.
+
+        This tests the normal operation of the generic_fns.state.save() function.
+        """
 
         # Save the state.
         state.save('test')
