@@ -143,8 +143,8 @@ class Test_residue(Residue_base_class, TestCase):
             self.assertRaises(RelaxNoneStrError, self.residue_fns.create, mol_id=data[1], res_num=1, res_name='NH')
 
 
-    def test_delete_argfail_spin_id(self):
-        """Test the proper failure of the spin.delete() user function for the spin_id argument."""
+    def test_delete_argfail_res_id(self):
+        """Test the proper failure of the residue.delete() user function for the res_id argument."""
 
         # Loop over the data types.
         for data in return_data_types():
@@ -153,7 +153,7 @@ class Test_residue(Residue_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.spin_fns.delete, spin_id=data[1])
+            self.assertRaises(RelaxStrError, self.residue_fns.delete, res_id=data[1])
 
 
     def test_display_argfail_spin_id(self):
