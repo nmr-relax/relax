@@ -25,6 +25,7 @@ from cPickle import dump, load
 
 # relax module imports.
 from data import Data as relax_data_store
+from relax_io import open_write_file
 
 
 def load(file=None, dir=None, compress_type=1):
@@ -44,7 +45,7 @@ def save(file=None, dir=None, force=0, compress_type=1):
     """Function for saving the program state."""
 
     # Open the file for writing.
-    file = self.relax.IO.open_write_file(file_name=file, dir=dir, force=force, compress_type=compress_type)
+    open_write_file(file_name=file, dir=dir, force=force, compress_type=compress_type)
 
     # Pickle the data class and write it to file
     dump(relax_data_store, file, 1)
