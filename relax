@@ -68,7 +68,7 @@ from colour import Colour
 from io import IO
 from generic_fns.main import Generic
 from prompt.gpl import gpl
-from prompt.interpreter import Interpreter
+from prompt import interpreter
 import relax_errors
 import relax_warnings
 from specific_fns.main import Specific
@@ -129,9 +129,10 @@ class Relax:
         # Process the command line arguments and determine the relax mode.
         mode, log_file, tee_file = self.arguments()
 
-        # Set up the debugging flag.
+        # Place the debugging flag in a number of modules which don't have access to the 'self.relax' namespace.
         relax_errors.Debug = self.Debug
         relax_warnings.Debug = self.Debug
+        interpreter.Debug = self.Debug
 
         # Set up the pedantic flag.
         relax_warnings.Pedantic = self.Pedantic
@@ -159,7 +160,7 @@ class Relax:
             self.set_intro_string()
 
             # Run the interpreter.
-            self.interpreter = Interpreter(self)
+            self.interpreter = interpreter.Interpreter(self)
             self.interpreter.run()
 
         # Threading mode.
