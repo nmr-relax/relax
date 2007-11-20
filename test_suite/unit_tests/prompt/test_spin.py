@@ -105,8 +105,8 @@ class Test_spin(Spin_base_class, TestCase):
 
         # Loop over the data types.
         for data in return_data_types():
-            # Catch the int arguments, and skip them.
-            if data[0] == 'int':
+            # Catch the int and bin arguments, and skip them.
+            if data[0] == 'int' or data[0] == 'bin':
                 continue
 
             # The argument test.
