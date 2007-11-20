@@ -26,7 +26,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns import state
+from generic_fns.state import load_state, save_state
 
 
 
@@ -66,7 +66,7 @@ class Test_state(TestCase):
         """
 
         # Save the state.
-        state.save('test')
+        save_state('test')
 
         # Reset the relax data store.
         relax_data_store.__reset__()
@@ -76,7 +76,7 @@ class Test_state(TestCase):
         self.assertEqual(relax_data_store.current_pipe, None)
 
         # Load the state.
-        state.load('test')
+        load_state('test')
 
         # Test the contents of the restored singleton.
         self.assertEqual(relax_data_store.keys(), ['orig'])
@@ -91,4 +91,4 @@ class Test_state(TestCase):
         """
 
         # Save the state.
-        state.save('test')
+        save_state('test')
