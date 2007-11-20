@@ -32,7 +32,7 @@ class Test_relax_io(TestCase):
 
 
     def test_get_file_path(self):
-        """Test for file paths which should remain unmodified."""
+        """Test for file paths which should remain unmodified by relax_io.get_file_path."""
 
         # Some file paths that shouldn't change.
         file1 = 'test'
