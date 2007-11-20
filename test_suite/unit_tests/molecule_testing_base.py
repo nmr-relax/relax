@@ -59,7 +59,7 @@ class Molecule_base_class:
         """Function for setting up some data for the unit tests."""
 
         # Create the first residue and add some data to its spin container.
-        residue.create(1, 'Ala')
+        self.residue_fns.create(1, 'Ala')
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
         relax_data_store['orig'].mol[0].name = 'Old mol'
@@ -68,8 +68,8 @@ class Molecule_base_class:
         relax_data_store['orig'].mol.add_item('New mol')
 
         # Copy the residue to the new molecule.
-        residue.copy(res_from=':1', res_to='#New mol')
-        residue.copy(res_from='#Old mol:1', res_to='#New mol:5')
+        self.residue_fns.copy(res_from=':1', res_to='#New mol')
+        self.residue_fns.copy(res_from='#Old mol:1', res_to='#New mol:5')
 
         # Change the first residue's data.
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
@@ -84,7 +84,7 @@ class Molecule_base_class:
 
         # Create the first molecule and residue and add some data to its spin container.
         self.molecule_fns.create('Old mol')
-        residue.create(1, 'Ala')
+        self.residue_fns.create(1, 'Ala')
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
 
@@ -126,7 +126,7 @@ class Molecule_base_class:
 
         # Create the first molecule and residue and add some data to its spin container.
         self.molecule_fns.create('Old mol')
-        residue.create(1, 'Ala')
+        self.residue_fns.create(1, 'Ala')
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
 
@@ -142,7 +142,7 @@ class Molecule_base_class:
 
         # Create the first molecule and residue and add some data to its spin container.
         self.molecule_fns.create('Old mol')
-        residue.create(1, 'Ala')
+        self.residue_fns.create(1, 'Ala')
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
 

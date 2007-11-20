@@ -36,3 +36,4 @@ class Test_molecule(Molecule_base_class, TestCase):
 
     # Place the generic_fns.spin module into the class namespace.
     molecule_fns = molecule
+    residue_fns = residue
