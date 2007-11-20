@@ -156,8 +156,8 @@ class Test_residue(Residue_base_class, TestCase):
             self.assertRaises(RelaxStrError, self.residue_fns.delete, res_id=data[1])
 
 
-    def test_display_argfail_spin_id(self):
-        """Test the proper failure of the spin.display() user function for the spin_id argument."""
+    def test_display_argfail_res_id(self):
+        """Test the proper failure of the residue.display() user function for the res_id argument."""
 
         # Loop over the data types.
         for data in return_data_types():
@@ -166,7 +166,7 @@ class Test_residue(Residue_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spin_fns.display, spin_id=data[1])
+            self.assertRaises(RelaxNoneStrError, self.residue_fns.display, res_id=data[1])
 
 
     def test_rename_argfail_spin_id(self):
