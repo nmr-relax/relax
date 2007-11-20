@@ -139,5 +139,18 @@ class Test_spin(Spin_base_class, TestCase):
             self.assertRaises(RelaxNoneStrError, self.spin_fns.create, res_id=data[1], spin_num=1, spin_name='NH')
 
 
+    def test_delete_argfail_spin_id(self):
+        """Test the proper failure of the spin.create() user function for the spin_id argument."""
+
+        # Loop over the data types.
+        for data in return_data_types():
+            # Catch the str arguments, and skip them.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.spin_fns.delete, spin_id=data[1])
+
+
 
 
