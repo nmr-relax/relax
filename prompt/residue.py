@@ -104,7 +104,7 @@ class Residue:
             raise RelaxStrError, ('residue from', res_from)
 
         # The data pipe to argument.
-        if pipe_from != None and type(pipe_to) != str:
+        if pipe_to != None and type(pipe_to) != str:
             raise RelaxNoneStrError, ('data pipe to', pipe_to)
 
         # The residue to argument.
