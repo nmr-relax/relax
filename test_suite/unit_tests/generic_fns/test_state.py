@@ -21,10 +21,12 @@
 ###############################################################################
 
 # Python module imports.
+from os import remove
 from unittest import TestCase
 
 # relax module imports.
 from data import Data as relax_data_store
+from generic_fns import state
 
 
 
@@ -47,7 +49,15 @@ class Test_state(TestCase):
     def tearDown(self):
         """Reset the relax data storage object."""
 
+        # Reset the relax data store.
         relax_data_store.__reset__()
 
+        # Clean up the temporarily created dump files.
+        remove('test.bz2')
 
 
+    def test_save(self):
+        """Test the normal operation of the generic_fns.state.save() function."""
+
+        # Save the state.
+        state.save('test')
