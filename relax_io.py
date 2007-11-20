@@ -51,6 +51,13 @@ from sys import stdin, stdout, stderr
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
 
 
+"""Module containing advanced IO functions for relax.
+
+This includes IO redirection, automatic loading and writing of compressed files (both Gzip and BZ2
+compression), reading and writing of files, processing of the contents of files, etc.
+"""
+
+
 class IO:
     def __init__(self, relax):
         """Class containing the file operations.
