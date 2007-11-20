@@ -44,12 +44,16 @@ relax = Container()
 relax.interpreter = Container()
 relax.interpreter.intro = True
 
+# Instantiate the user function class.
+state = State(relax)
+
  
 class Test_state(State_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.state' module."""
 
-    # Instantiate the user function class.
-    state = State(relax)
+    # Place the user functions into the class namespace, and rename them.
+    load_state = state.load
+    save_state = state.save
 
 
     def test_load_argfail_file(self):

@@ -25,7 +25,6 @@ from os import remove
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns.state import load_state, save_state
 
 
 
@@ -72,7 +71,7 @@ class State_base_class:
         """
 
         # Save the state.
-        save_state('test')
+        self.save_state('test')
 
         # Reset the relax data store.
         relax_data_store.__reset__()
@@ -83,7 +82,7 @@ class State_base_class:
         self.assert_(not hasattr(relax_data_store, 'y'))
 
         # Load the state.
-        load_state('test')
+        self.load_state('test')
 
         # Test the contents of the restored singleton.
         self.assertEqual(relax_data_store.keys(), ['orig'])
@@ -98,4 +97,4 @@ class State_base_class:
         """
 
         # Save the state.
-        save_state('test')
+        self.save_state('test')
