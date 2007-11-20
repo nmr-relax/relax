@@ -178,5 +178,18 @@ class Test_spin(Spin_base_class, TestCase):
             self.assertRaises(RelaxStrError, self.spin_fns.rename, spin_id=data[1])
 
 
+    def test_rename_argfail_new_name(self):
+        """Test the proper failure of the spin.rename() user function for the new_name argument."""
+
+        # Loop over the data types.
+        for data in return_data_types():
+            # Catch the str arguments, and skip them.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.spin_fns.rename, new_name=data[1])
+
+
 
 
