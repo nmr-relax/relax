@@ -28,17 +28,43 @@ from data import Data as relax_data_store
 from relax_io import open_read_file, open_write_file
 
 
-def load_state(file=None, dir=None, compress_type=1):
+def load_state(file=None, dir_name=None, compress_type=1):
     """Function for loading a saved program state."""
 
     # Open the file for reading.
-    file = open_read_file(file_name=file, dir=dir, compress_type=compress_type)
+    file = open_read_file(file_name=file, dir=dir_name, compress_type=compress_type)
 
     # Unpickle the data class.
-    relax_data_store = load(file)
+    state = load(file)
 
     # Close the file.
     file.close()
+
+    # Reset the relax data storage object.
+    relax_data_store.__reset__()
+
+    # Black list of objects.
+    black_list = ['__weakref__']
+
+    # Loop over the objects in the saved state, and dump them into the relax data store.
+    for name in dir(state):
+        # Skip blacklisted objects.
+        if name in black_list:
+            continue
+
+        # Get the object.
+        obj = getattr(state, name)
+
+        # Place ALL objects into the singleton!
+        setattr(relax_data_store, name, obj)
+ 
+    # Loop over the keys of the dictionary.
+    for key in state.keys():
+        # Shift the PipeContainer.
+        relax_data_store[key] = state[key]
+
+    # Delete the state object.
+    del state
 
 
 def save_state(file=None, dir=None, force=0, compress_type=1):
