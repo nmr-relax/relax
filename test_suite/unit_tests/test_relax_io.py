@@ -43,3 +43,22 @@ class Test_relax_io(TestCase):
         self.assertEqual(relax_io.get_file_path(file1), file1)
         self.assertEqual(relax_io.get_file_path(file2), file2)
         self.assertEqual(relax_io.get_file_path(file3), file3)
+
+
+    def test_get_file_path_with_dir(self):
+        """The modification of file paths by relax_io.get_file_path when a directory is supplied."""
+
+        # Some file paths.
+        file1 = 'test'
+        file2 = 'test/aaa'
+        file3 = '/home/test/aaa'
+
+        # Some directories.
+        dir1 = '/usr'
+        dir2 = 'usr'
+        dir3 = '/usr'
+
+        # Check that nothing changes.
+        self.assertEqual(relax_io.get_file_path(file1, dir1), dir1+'/'+file1)
+        self.assertEqual(relax_io.get_file_path(file2, dir2), dir2+'/'+file2)
+        self.assertEqual(relax_io.get_file_path(file3, dir=dir3), dir3+'/'+file3)
