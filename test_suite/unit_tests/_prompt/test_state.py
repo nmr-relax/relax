@@ -28,7 +28,7 @@ import sys
 from test_suite.unit_tests.state_testing_base import State_base_class
 from data_types import return_data_types
 from prompt.state import State
-from relax_errors import RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxBinError, RelaxNoneStrError, RelaxStrError
 
 
 # Set the variable sys.ps3 (this is required by the user functions).
@@ -106,6 +106,19 @@ class Test_state(State_base_class, TestCase):
 
             # The argument test.
             self.assertRaises(RelaxNoneStrError, self.state.save_state, file='a', dir=data[1])
+
+
+    def test_save_argfail_force(self):
+        """Test the proper failure of the state.save() user function for the force argument."""
+
+        # Loop over the data types.
+        for data in return_data_types():
+            # Catch the bin arguments, and skip them.
+            if data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxBinError, self.state.save_state, file='a', force=data[1])
 
 
 
