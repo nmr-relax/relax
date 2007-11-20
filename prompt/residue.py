@@ -115,7 +115,7 @@ class Residue:
         residue.copy(pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
 
 
-    def create(self, res_num=None, res_name=None):
+    def create(self, res_num=None, res_name=None, mol_id=None):
         """Function for creating a new residue.
 
         Keyword Arguments
@@ -124,6 +124,8 @@ class Residue:
         res_num:  The residue number.
 
         res_name:  The name of the residue.
+
+        mol_id:  The ID string for selecting the molecule to add the residue to.
 
 
         Description
@@ -151,7 +153,8 @@ class Residue:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "residue.create("
             text = text + ", res_num=" + `res_num`
-            text = text + ", res_name=" + `res_name` + ")"
+            text = text + ", res_name=" + `res_name`
+            text = text + ", mol_id=" + `mol_id` + ")"
             print text
 
         # Residue number.
@@ -162,8 +165,12 @@ class Residue:
         if type(res_name) != str:
             raise RelaxStrError, ('residue name', res_name)
 
+        # The molecule ID.
+        if mol_id != None and type(mol_id) != str:
+            raise RelaxNoneStrError, ('molecule identification string', mol_id)
+
         # Execute the functional code.
-        residue.create(res_num=res_num, res_name=res_name)
+        residue.create(res_num=res_num, res_name=res_name, mol_id=mol_id)
 
 
     def delete(self, res_id=None):
