@@ -79,6 +79,10 @@ def return_data_types():
     data_types.append(['str', 'a'])
     data_types.append(['str', '10'])
 
+    # Booleans.
+    data_types.append(['bool', True])
+    data_types.append(['bool', False])
+
     # List.
     data_types.append(['list', []])
     data_types.append(['list', [None, None]])
