@@ -213,8 +213,8 @@ class Residue:
             print text
 
         # The res_id argument.
-        if type(res_id) != str:
-            raise RelaxStrError, ('residue identification string', res_id)
+        if res_id != None and type(res_id) != str:
+            raise RelaxNoneStrError, ('residue identification string', res_id)
 
         # Execute the functional code.
         residue.display(res_id=res_id)
