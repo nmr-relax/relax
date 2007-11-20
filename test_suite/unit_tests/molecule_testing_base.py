@@ -22,7 +22,6 @@
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns import molecule, residue
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 
 
