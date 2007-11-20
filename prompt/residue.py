@@ -310,7 +310,7 @@ class Residue:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "residue.renumber("
-            text = text + ", res_id=" + `res_id`
+            text = text + "res_id=" + `res_id`
             text = text + ", new_number=" + `new_number` + ")"
             print text
 
