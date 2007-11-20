@@ -245,7 +245,7 @@ class Molecule:
             raise RelaxStrError, ('new molecule name', new_name)
 
         # Execute the functional code.
-        molecule.create(mol_num=mol_num, new_name=new_name)
+        molecule.create(mol_id=mol_id, new_name=new_name)
 
 
 
