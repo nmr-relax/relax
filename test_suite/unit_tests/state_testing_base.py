@@ -71,7 +71,7 @@ class State_base_class:
         """
 
         # Save the state.
-        self.save_state('test')
+        self.save_state(file='test')
 
         # Reset the relax data store.
         relax_data_store.__reset__()
@@ -82,7 +82,7 @@ class State_base_class:
         self.assert_(not hasattr(relax_data_store, 'y'))
 
         # Load the state.
-        self.load_state('test')
+        self.load_state(file='test')
 
         # Test the contents of the restored singleton.
         self.assertEqual(relax_data_store.keys(), ['orig'])
@@ -97,4 +97,4 @@ class State_base_class:
         """
 
         # Save the state.
-        self.save_state('test')
+        self.save_state(file='test')
