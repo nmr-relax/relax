@@ -309,12 +309,12 @@ class Residue:
             print text
 
         # Residue identification string.
-        if type(res_id) != int:
-            raise RelaxIntError, ('residue identification string', res_id)
+        if type(res_id) != str:
+            raise RelaxStrError, ('residue identification string', res_id)
 
         # New residue number.
-        if type(new_number) != str:
-            raise RelaxStrError, ('new residue number', new_number)
+        if type(new_number) != int:
+            raise RelaxIntError, ('new residue number', new_number)
 
         # Execute the functional code.
         residue.create(res_num=res_num, new_number=new_number)
