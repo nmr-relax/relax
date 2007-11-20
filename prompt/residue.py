@@ -268,7 +268,7 @@ class Residue:
             raise RelaxStrError, ('new residue name', new_name)
 
         # Execute the functional code.
-        residue.create(res_num=res_num, new_name=new_name)
+        residue.create(res_id=res_id, new_name=new_name)
 
 
     def renumber(self, res_id=None, new_number=None):
