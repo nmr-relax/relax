@@ -44,16 +44,16 @@ relax = Container()
 relax.interpreter = Container()
 relax.interpreter.intro = True
 
-# Instantiate the user function class.
-state = State(relax)
-
  
 class Test_state(State_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.state' module."""
 
-    # Place the user functions into the class namespace, and rename them.
-    load_state = state.load
-    save_state = state.save
+    # Instantiate the user function class.
+    state = State(relax)
+
+    # Rename the user functions.
+    state.load_state = state.load
+    state.save_state = state.save
 
 
     def test_load_argfail_file(self):
@@ -66,7 +66,7 @@ class Test_state(State_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.load_state, file=data[1])
+            self.assertRaises(RelaxStrError, self.state.load_state, file=data[1])
 
 
     def test_load_argfail_dir(self):
@@ -79,7 +79,7 @@ class Test_state(State_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.load_state, file='a', dir=data[1])
+            self.assertRaises(RelaxNoneStrError, self.state.load_state, file='a', dir=data[1])
 
 
 

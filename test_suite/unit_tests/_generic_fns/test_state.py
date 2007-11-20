@@ -32,6 +32,5 @@ from test_suite.unit_tests.state_testing_base import State_base_class
 class Test_state(State_base_class, TestCase):
     """Unit tests for the functions of the 'generic_fns.state' module."""
 
-    # Place the generic_fns.state functions into the class namespace.
-    load_state = state.load_state
-    save_state = state.save_state
+    # Place the generic_fns.state module into the class namespace.
+    state = state
