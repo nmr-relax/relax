@@ -209,7 +209,7 @@ class Test_residue(Residue_base_class, TestCase):
 
 
     def test_renumber_argfail_new_name(self):
-        """Test the proper failure of the spin.renumber() user function for the new_number argument."""
+        """Test the proper failure of the residue.renumber() user function for the new_number argument."""
 
         # Loop over the data types.
         for data in return_data_types():
@@ -218,9 +218,4 @@ class Test_residue(Residue_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.spin_fns.renumber, spin_id='@111', new_number=data[1])
-
-
-
-
-
+            self.assertRaises(RelaxIntError, self.residue_fns.renumber, res_id=':1', new_number=data[1])
