@@ -45,6 +45,9 @@ class Test_state(TestCase):
         # Add a single object to the 'orig' data pipe.
         relax_data_store['orig'].x = 1
 
+        # Add a single object to the storage object.
+        relax_data_store.y = 'Hello'
+
 
     def tearDown(self):
         """Reset the relax data storage object."""
@@ -74,6 +77,7 @@ class Test_state(TestCase):
         # Test the contents of the empty singleton.
         self.assertEqual(relax_data_store.keys(), [])
         self.assertEqual(relax_data_store.current_pipe, None)
+        self.assert_(not hasattr(relax_data_store, 'y'))
 
         # Load the state.
         load_state('test')
