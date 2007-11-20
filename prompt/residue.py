@@ -317,7 +317,7 @@ class Residue:
             raise RelaxIntError, ('new residue number', new_number)
 
         # Execute the functional code.
-        residue.create(res_id=res_id, new_number=new_number)
+        residue.renumber(res_id=res_id, new_number=new_number)
 
 
 
