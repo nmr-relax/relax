@@ -25,7 +25,6 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Data as relax_data_store
-from data.pipe_container import PipeContainer
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError
 

@@ -24,9 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
 from generic_fns import spin
-from relax_errors import RelaxError, RelaxNoPipeError
 from test_suite.unit_tests.spin_testing_base import Spin_base_class
 
 

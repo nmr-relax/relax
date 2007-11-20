@@ -24,9 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
 from generic_fns import residue
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxSpinSelectDisallowError
 from test_suite.unit_tests.residue_testing_base import Residue_base_class
 
 
