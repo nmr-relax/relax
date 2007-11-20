@@ -52,7 +52,7 @@ def return_data_types():
     data_types.append(['None', None])
 
     # Integers.
-    data_types.append(['int', 0])
+    data_types.append(['int', 2])
     data_types.append(['int', 10])
     data_types.append(['int', -10])
 
