@@ -32,7 +32,7 @@ def load(file=None, dir=None, compress_type=1):
     """Function for loading a saved program state."""
 
     # Open the file for reading.
-    open_read_file(file_name=file, dir=dir, compress_type=compress_type)
+    file = open_read_file(file_name=file, dir=dir, compress_type=compress_type)
 
     # Unpickle the data class.
     relax_data_store = load(file)
@@ -45,7 +45,7 @@ def save(file=None, dir=None, force=0, compress_type=1):
     """Function for saving the program state."""
 
     # Open the file for writing.
-    open_write_file(file_name=file, dir=dir, force=force, compress_type=compress_type)
+    file = open_write_file(file_name=file, dir=dir, force=force, compress_type=compress_type)
 
     # Pickle the data class and write it to file
     dump(relax_data_store, file, 1)
