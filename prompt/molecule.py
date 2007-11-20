@@ -100,8 +100,8 @@ class Molecule:
             raise RelaxStrError, ('molecule from', mol_from)
 
         # The pipe_to argument.
-        if type(pipe_to) != str:
-            raise RelaxStrError, ('data pipe to', pipe_to)
+        if pipe_to != None and type(pipe_to) != str:
+            raise RelaxNoneStrError, ('data pipe to', pipe_to)
 
         # The molecule to argument.
         if type(mol_to) != str:
