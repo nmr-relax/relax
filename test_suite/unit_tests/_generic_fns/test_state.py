@@ -24,6 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
+from generic_fns import state
 from test_suite.unit_tests.state_testing_base import State_base_class
 
 
@@ -31,3 +32,5 @@ from test_suite.unit_tests.state_testing_base import State_base_class
 class Test_state(State_base_class, TestCase):
     """Unit tests for the functions of the 'generic_fns.state' module."""
 
+    # Place the generic_fns.state module into the class namespace.
+    state = state
