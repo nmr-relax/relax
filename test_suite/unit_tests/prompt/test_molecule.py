@@ -101,12 +101,12 @@ class Test_molecule(Molecule_base_class, TestCase):
 
         # Loop over the data types.
         for data in return_data_types():
-            # Catch the str arguments, and skip them.
-            if data[0] == 'str':
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.molecule_fns.copy, mol_from='#Old mol', mol_to=data[1])
+            self.assertRaises(RelaxNoneStrError, self.molecule_fns.copy, mol_from='#Old mol', mol_to=data[1])
 
 
     def test_create_argfail_mol_name(self):
