@@ -208,7 +208,7 @@ class Test_residue(Residue_base_class, TestCase):
             self.assertRaises(RelaxStrError, self.residue_fns.renumber, res_id=data[1])
 
 
-    def test_renumber_argfail_new_name(self):
+    def test_renumber_argfail_new_number(self):
         """Test the proper failure of the residue.renumber() user function for the new_number argument."""
 
         # Loop over the data types.
