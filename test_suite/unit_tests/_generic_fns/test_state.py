@@ -24,8 +24,6 @@
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
-from generic_fns.state import load_state, save_state
 from test_suite.unit_tests.state_testing_base import State_base_class
 
 
