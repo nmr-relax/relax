@@ -152,7 +152,7 @@ class Residue:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "residue.create("
-            text = text + ", res_num=" + `res_num`
+            text = text + "res_num=" + `res_num`
             text = text + ", res_name=" + `res_name`
             text = text + ", mol_id=" + `mol_id` + ")"
             print text
