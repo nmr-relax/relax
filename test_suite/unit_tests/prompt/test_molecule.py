@@ -104,21 +104,8 @@ class Test_molecule(Molecule_base_class, TestCase):
             self.assertRaises(RelaxStrError, self.molecule_fns.copy, mol_from='#Old mol', mol_to=data[1])
 
 
-    def test_create_argfail_spin_num(self):
-        """Test the proper failure of the spin.create() user function for the spin_num argument."""
-
-        # Loop over the data types.
-        for data in return_data_types():
-            # Catch the int and bin arguments, and skip them.
-            if data[0] == 'int' or data[0] == 'bin':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxIntError, self.spin_fns.create, spin_num=data[1], spin_name='NH')
-
-
-    def test_create_argfail_spin_name(self):
-        """Test the proper failure of the spin.create() user function for the spin_name argument."""
+    def test_create_argfail_mol_name(self):
+        """Test the proper failure of the molecule.create() user function for the mol_name argument."""
 
         # Loop over the data types.
         for data in return_data_types():
@@ -127,20 +114,7 @@ class Test_molecule(Molecule_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.spin_fns.create, spin_name=data[1], spin_num=1)
-
-
-    def test_create_argfail_res_id(self):
-        """Test the proper failure of the spin.create() user function for the res_id argument."""
-
-        # Loop over the data types.
-        for data in return_data_types():
-            # Catch the None and str arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'str':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spin_fns.create, res_id=data[1], spin_num=1, spin_name='NH')
+            self.assertRaises(RelaxStrError, self.molecule_fns.create, mol_name=data[1])
 
 
     def test_delete_argfail_spin_id(self):
