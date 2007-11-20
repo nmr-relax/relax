@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007 Edward d'Auvergne                             #
+# Copyright (C) 2007 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,34 +21,43 @@
 ###############################################################################
 
 # Python module imports.
-from cPickle import dump, load
+from os import remove
+from unittest import TestCase
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_io import open_read_file, open_write_file
+from generic_fns import state
 
 
-def load(file=None, dir=None, compress_type=1):
-    """Function for loading a saved program state."""
 
-    # Open the file for reading.
-    file = open_read_file(file_name=file, dir=dir, compress_type=compress_type)
+class Test_state(TestCase):
+    """Unit tests for the functions of the 'generic_fns.state' module."""
 
-    # Unpickle the data class.
-    relax_data_store = load(file)
+    def setUp(self):
+        """Set up for all the data pipe unit tests."""
 
-    # Close the file.
-    file.close()
+        # Reset the relax data storage object.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
+        # Add a single object to the 'orig' data pipe.
+        relax_data_store['orig'].x = 1
 
 
-def save(file=None, dir=None, force=0, compress_type=1):
-    """Function for saving the program state."""
+    def tearDown(self):
+        """Reset the relax data storage object."""
 
-    # Open the file for writing.
-    file = open_write_file(file_name=file, dir=dir, force=force, compress_type=compress_type)
+        # Reset the relax data store.
+        relax_data_store.__reset__()
 
-    # Pickle the data class and write it to file
-    dump(relax_data_store, file, 1)
+        # Clean up the temporarily created dump files.
+        remove('test.bz2')
 
-    # Close the file.
-    file.close()
+
+    def test_save(self):
+        """Test the normal operation of the generic_fns.state.save() function."""
+
+        # Save the state.
+        state.save('test')

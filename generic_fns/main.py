@@ -38,7 +38,6 @@ from structure import Structure
 from pymol import Pymol
 from results import Results
 from sequence import Sequence
-from state import State
 from value import Value
 from vmd import Vmd
 
@@ -69,6 +68,5 @@ class Generic:
         self.pymol = Pymol(self.relax)
         self.results = Results(self.relax)
         self.sequence = Sequence(self.relax)
-        self.state = State(self.relax)
         self.value = Value(self.relax)
         self.vmd = Vmd(self.relax)
