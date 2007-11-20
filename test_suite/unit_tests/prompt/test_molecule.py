@@ -91,17 +91,17 @@ class Test_molecule(Molecule_base_class, TestCase):
             self.assertRaises(RelaxNoneStrError, self.molecule_fns.copy, pipe_to=data[1], mol_from='#Old mol', mol_to='#New mol2')
 
 
-    def test_copy_argfail_spin_to(self):
-        """Test the proper failure of the spin.copy() user function for the spin_to argument."""
+    def test_copy_argfail_mol_to(self):
+        """Test the proper failure of the molecule.copy() user function for the mol_to argument."""
 
         # Loop over the data types.
         for data in return_data_types():
-            # Catch the None and str arguments, and skip them.
-            if data[0] == 'None' or  data[0] == 'str':
+            # Catch the str arguments, and skip them.
+            if data[0] == 'str':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spin_fns.copy, spin_from='#Old mol:1@111', spin_to=data[1])
+            self.assertRaises(RelaxStrError, self.molecule_fns.copy, mol_from='#Old mol', mol_to=data[1])
 
 
     def test_create_argfail_spin_num(self):
