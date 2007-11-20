@@ -27,7 +27,7 @@ import sys
 import help
 from generic_fns import molecule
 from generic_fns.selection import id_string_doc
-from relax_errors import RelaxIntError, RelaxStrError
+from relax_errors import RelaxIntError, RelaxNoneStrError, RelaxStrError
 
 
 class Molecule:
@@ -92,8 +92,8 @@ class Molecule:
             print text
 
         # The pipe_from argument.
-        if type(pipe_from) != str:
-            raise RelaxStrError, ('data pipe from', pipe_from)
+        if pipe_from != None and type(pipe_from) != str:
+            raise RelaxNoneStrError, ('data pipe from', pipe_from)
 
         # The molecule from argument.
         if type(mol_from) != str:
