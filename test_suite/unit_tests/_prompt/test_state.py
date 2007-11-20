@@ -66,7 +66,7 @@ class Test_state(State_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.state.load, file=data[1])
+            self.assertRaises(RelaxStrError, self.load_state, file=data[1])
 
 
     def test_load_argfail_dir(self):
@@ -79,7 +79,7 @@ class Test_state(State_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.state.load, file='a', dir=data[1])
+            self.assertRaises(RelaxNoneStrError, self.load_state, file='a', dir=data[1])
 
 
 
