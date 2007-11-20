@@ -126,5 +126,18 @@ class Test_spin(Spin_base_class, TestCase):
             self.assertRaises(RelaxStrError, self.spin_fns.create, spin_name=data[1], spin_num=1)
 
 
+    def test_create_argfail_res_id(self):
+        """Test the proper failure of the spin.create() user function for the res_id argument."""
+
+        # Loop over the data types.
+        for data in return_data_types():
+            # Catch the None and str arguments, and skip them.
+            if data[0] == None or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.spin_fns.create, res_id=data[1], spin_num=1, spin_name='NH')
+
+
 
 
