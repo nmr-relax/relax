@@ -96,6 +96,9 @@ class Test_molecule(Molecule_base_class, TestCase):
     def test_copy_argfail_mol_to(self):
         """Test the proper failure of the molecule.copy() user function for the mol_to argument."""
 
+        # Set up some data.
+        self.setup_data()
+
         # Loop over the data types.
         for data in return_data_types():
             # Catch the str arguments, and skip them.
