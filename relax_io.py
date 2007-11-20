@@ -58,6 +58,29 @@ compression), reading and writing of files, processing of the contents of files,
 """
 
 
+def log(file_name=None, dir=None, compress_type=0, print_flag=1):
+    """Function for turning logging on."""
+
+    # Log file.
+    log_file, file_path = open_write_file(file_name=file_name, dir=dir, force=1, compress_type=compress_type, print_flag=print_flag, return_path=1)
+
+    # Print out.
+    if print_flag:
+        print "Redirecting the sys.stdin IO stream to the python stdin IO stream."
+        print "Redirecting the sys.stdout IO stream to the log file '%s'." % file_path
+        print "Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path
+
+    # Set the logging IO streams.
+    log_stdout = log_file
+    log_stderr.split(python_stderr, log_file)
+
+    # IO stream redirection.
+    sys.stdin  = log_stdin
+    sys.stdout = log_stdout
+    sys.stderr = log_stderr
+
+
+
 class IO:
     def __init__(self, relax):
         """Class containing the file operations.
@@ -170,28 +193,6 @@ class IO:
 
         root,ext = splitext(file_path)
         return basename(root)
-
-
-    def log(self, file_name=None, dir=None, compress_type=0, print_flag=1):
-        """Function for turning logging on."""
-
-        # Log file.
-        self.log_file, file_path = self.open_write_file(file_name=file_name, dir=dir, force=1, compress_type=compress_type, print_flag=print_flag, return_path=1)
-
-        # Print out.
-        if print_flag:
-            print "Redirecting the sys.stdin IO stream to the python stdin IO stream."
-            print "Redirecting the sys.stdout IO stream to the log file '%s'." % file_path
-            print "Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path
-
-        # Set the logging IO streams.
-        self.log_stdout = self.log_file
-        self.log_stderr.split(self.python_stderr, self.log_file)
-
-        # IO stream redirection.
-        sys.stdin  = self.log_stdin
-        sys.stdout = self.log_stdout
-        sys.stderr = self.log_stderr
 
 
     def logging_off(self, file_name=None, dir=None, print_flag=1):
