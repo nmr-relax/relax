@@ -196,7 +196,7 @@ class Molecule:
             print text
 
         # The molecule identifier argument.
-        if mol_id != None or type(mol_id) != str:
+        if mol_id != None and type(mol_id) != str:
             raise RelaxNoneStrError, ('molecule identifier', mol_id)
 
         # Execute the functional code.
