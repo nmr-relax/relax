@@ -209,9 +209,9 @@ class Molecule:
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        mol_id:  The molecule identification string corresponding to one or more residues.
+        mol_id:  The molecule identification string corresponding to one or more molecules.
 
-        new_name:  The new name.
+        new_name:  The new molecule name.
 
 
         Description
@@ -227,6 +227,8 @@ class Molecule:
 
         relax> molecule.rename('#Ap4Aase', 'Inhib Ap4Aase')
         relax> molecule.rename(mol_id='#Ap4Aase', new_name='Inhib Ap4Aase')
+
+        This assumes the molecule 'Ap4Aase' already exists.
         """
 
         # Function intro text.
