@@ -58,6 +58,23 @@ compression), reading and writing of files, processing of the contents of files,
 """
 
 
+def get_file_path(file_name=None, dir=None):
+    """Generate and expand the full file path."""
+
+    # File name.
+    file_path = file_name
+
+    # Add the directory.
+    if dir:
+        file_path = dir + '/' + file_path
+
+    # Expand any ~ characters.
+    file_path = expanduser(file_path)
+
+    # Return the file path.
+    return file_path
+
+
 def log(file_name=None, dir=None, compress_type=0, print_flag=1):
     """Function for turning logging on."""
 
@@ -99,7 +116,7 @@ def open_read_file(file_name=None, dir=None, compress_type=0, print_flag=1):
     """Open the file 'file' and return all the data."""
 
     # File path.
-    file_path = file_path(file_name, dir)
+    file_path = get_file_path(file_name, dir)
 
     # Test if the file exists and determine the compression type.
     if access(file_path, F_OK):
@@ -163,7 +180,7 @@ def open_write_file(file_name=None, dir=None, force=0, compress_type=0, print_fl
     mkdir_nofail(dir, print_flag=0)
 
     # File path.
-    file_path = file_path(file_name, dir)
+    file_path = get_file_path(file_name, dir)
 
     # Bzip2 compression.
     if compress_type == 1 and not search('.bz2$', file_path):
@@ -254,7 +271,7 @@ class IO:
         """Function for deleting the given file."""
 
         # File path.
-        file_path = self.file_path(file_name, dir)
+        file_path = get_file_path(file_name, dir)
 
         # Test if the file exists and determine the compression type.
         if access(file_path, F_OK):
@@ -294,23 +311,6 @@ class IO:
         # Close the file.
         if not file_data:
             file.close()
-
-
-    def file_path(self, file_name=None, dir=None):
-        """Generate and expand the full file path."""
-
-        # File name.
-        file_path = file_name
-
-        # Add the directory.
-        if dir:
-            file_path = dir + '/' + file_path
-
-        # Expand any ~ characters.
-        file_path = expanduser(file_path)
-
-        # Return the file path.
-        return file_path
 
 
     def file_root(self, file_path):
