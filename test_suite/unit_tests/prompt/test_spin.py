@@ -27,7 +27,7 @@ from unittest import TestCase
 from data import Data as relax_data_store
 from data_types import return_data_types
 from prompt.spin import Spin
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxError, RelaxIntError, RelaxNoPipeError, RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.spin_testing_base import Spin_base_class
 
 
@@ -51,7 +51,6 @@ class Test_spin(Spin_base_class, TestCase):
     def test_copy_argfail_pipe_from(self):
         """Test the proper failure of the spin.copy() user function for the pipe_from argument."""
 
-
         # Loop over the data types.
         for data in return_data_types():
             # Catch the None and str arguments, and skip them.
@@ -64,7 +63,6 @@ class Test_spin(Spin_base_class, TestCase):
 
     def test_copy_argfail_spin_from(self):
         """Test the proper failure of the spin.copy() user function for the spin_from argument."""
-
 
         # Loop over the data types.
         for data in return_data_types():
@@ -79,7 +77,6 @@ class Test_spin(Spin_base_class, TestCase):
     def test_copy_argfail_pipe_to(self):
         """Test the proper failure of the spin.copy() user function for the pipe_to argument."""
 
-
         # Loop over the data types.
         for data in return_data_types():
             # Catch the None and str arguments, and skip them.
@@ -93,7 +90,6 @@ class Test_spin(Spin_base_class, TestCase):
     def test_copy_argfail_spin_to(self):
         """Test the proper failure of the spin.copy() user function for the spin_to argument."""
 
-
         # Loop over the data types.
         for data in return_data_types():
             # Catch the None and str arguments, and skip them.
@@ -102,6 +98,19 @@ class Test_spin(Spin_base_class, TestCase):
 
             # The argument test.
             self.assertRaises(RelaxNoneStrError, self.spin_fns.copy, spin_from='#Old mol:1@111', spin_to=data[1])
+
+
+    def test_create_argfail_spin_num(self):
+        """Test the proper failure of the spin.create() user function for the spin_num argument."""
+
+        # Loop over the data types.
+        for data in return_data_types():
+            # Catch the int arguments, and skip them.
+            if data[0] == 'int':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxIntError, self.spin_fns.create, spin_num=data[1], spin_name='NH')
 
 
 
