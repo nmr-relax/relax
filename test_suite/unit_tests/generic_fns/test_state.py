@@ -68,7 +68,6 @@ class Test_state(TestCase):
         # Test the contents of the empty singleton.
         self.assertEqual(relax_data_store.keys(), [])
         self.assertEqual(relax_data_store.current_pipe, None)
-        self.assertRaises(AttributeError, relax_data_store['orig'].x)
 
         # Load the state.
         state.load('test')
