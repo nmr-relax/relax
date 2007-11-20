@@ -298,7 +298,6 @@ class Residue:
         relax> residue.renumber(':1', 101)
         relax> residue.renumber(':2', 102)
         relax> residue.renumber(':3', 103)
-
         """
 
         # Function intro text.
