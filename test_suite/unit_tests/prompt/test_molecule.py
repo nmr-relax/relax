@@ -47,7 +47,7 @@ relax.interpreter.intro = True
 
 
 class Test_molecule(Molecule_base_class, TestCase):
-    """Unit tests for the functions of the 'generic_fns.molecule' module."""
+    """Unit tests for the functions of the 'prompt.molecule' module."""
 
     # Instantiate the user function class.
     molecule_fns = Molecule(relax)
