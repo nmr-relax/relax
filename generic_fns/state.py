@@ -25,14 +25,14 @@ from cPickle import dump, load
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_io import open_write_file
+from relax_io import open_read_file, open_write_file
 
 
 def load(file=None, dir=None, compress_type=1):
     """Function for loading a saved program state."""
 
     # Open the file for reading.
-    file = self.relax.IO.open_read_file(file_name=file, dir=dir, compress_type=compress_type)
+    open_read_file(file_name=file, dir=dir, compress_type=compress_type)
 
     # Unpickle the data class.
     relax_data_store = load(file)
