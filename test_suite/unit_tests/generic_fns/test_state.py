@@ -57,7 +57,10 @@ class Test_state(TestCase):
 
 
     def test_load(self):
-        """Test the normal operation of the generic_fns.state.load() function."""
+        """The unpickling and restoration of the relax data storage singleton.
+
+        This tests the normal operation of the generic_fns.state.load() function.
+        """
 
         # Save the state.
         state.save('test')
