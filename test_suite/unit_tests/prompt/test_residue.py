@@ -117,8 +117,8 @@ class Test_residue(Residue_base_class, TestCase):
             self.assertRaises(RelaxIntError, self.residue_fns.create, res_num=data[1], res_name='NH')
 
 
-    def test_create_argfail_spin_name(self):
-        """Test the proper failure of the spin.create() user function for the spin_name argument."""
+    def test_create_argfail_res_name(self):
+        """Test the proper failure of the residue.create() user function for the res_name argument."""
 
         # Loop over the data types.
         for data in return_data_types():
@@ -127,7 +127,7 @@ class Test_residue(Residue_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.spin_fns.create, spin_name=data[1], spin_num=1)
+            self.assertRaises(RelaxStrError, self.residue_fns.create, res_name=data[1], res_num=1)
 
 
     def test_create_argfail_res_id(self):
