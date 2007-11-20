@@ -28,7 +28,7 @@ import sys
 from test_suite.unit_tests.state_testing_base import State_base_class
 from data_types import return_data_types
 from prompt.state import State
-from relax_errors import RelaxStrError
+from relax_errors import RelaxNoneStrError, RelaxStrError
 
 
 # Set the variable sys.ps3 (this is required by the user functions).
@@ -63,6 +63,19 @@ class Test_state(State_base_class, TestCase):
 
             # The argument test.
             self.assertRaises(RelaxStrError, state.load, file=data[1])
+
+
+    def test_load_argfail_dir(self):
+        """Test the proper failure of the state.load() user function for the dir argument."""
+
+        # Loop over the data types.
+        for data in return_data_types():
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' and data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, state.load, file='a', dir=data[1])
 
 
 
