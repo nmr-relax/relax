@@ -262,7 +262,7 @@ class Residue:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "residue.rename("
-            text = text + ", res_id=" + `res_id`
+            text = text + "res_id=" + `res_id`
             text = text + ", new_name=" + `new_name` + ")"
             print text
 
