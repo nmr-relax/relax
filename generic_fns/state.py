@@ -27,38 +27,27 @@ from cPickle import dump, load
 from data import Data as relax_data_store
 
 
-# The relax data storage object.
+def load(file=None, dir=None, compress_type=1):
+    """Function for loading a saved program state."""
+
+    # Open the file for reading.
+    file = self.relax.IO.open_read_file(file_name=file, dir=dir, compress_type=compress_type)
+
+    # Unpickle the data class.
+    relax_data_store = load(file)
+
+    # Close the file.
+    file.close()
 
 
+def save(file=None, dir=None, force=0, compress_type=1):
+    """Function for saving the program state."""
 
-class State:
-    def __init__(self, relax):
-        """Class containing the functions for manipulating the program state."""
+    # Open the file for writing.
+    file = self.relax.IO.open_write_file(file_name=file, dir=dir, force=force, compress_type=compress_type)
 
-        self.relax = relax
+    # Pickle the data class and write it to file
+    dump(relax_data_store, file, 1)
 
-
-    def load(self, file=None, dir=None, compress_type=1):
-        """Function for loading a saved program state."""
-
-        # Open the file for reading.
-        file = self.relax.IO.open_read_file(file_name=file, dir=dir, compress_type=compress_type)
-
-        # Unpickle the data class.
-        relax_data_store = load(file)
-
-        # Close the file.
-        file.close()
-
-
-    def save(self, file=None, dir=None, force=0, compress_type=1):
-        """Function for saving the program state."""
-
-        # Open the file for writing.
-        file = self.relax.IO.open_write_file(file_name=file, dir=dir, force=force, compress_type=compress_type)
-
-        # Pickle the data class and write it to file
-        dump(relax_data_store, file, 1)
-
-        # Close the file.
-        file.close()
+    # Close the file.
+    file.close()
