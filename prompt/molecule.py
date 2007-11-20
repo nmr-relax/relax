@@ -234,7 +234,7 @@ class Molecule:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molecule.rename("
-            text = text + ", mol_id=" + `mol_id`
+            text = text + "mol_id=" + `mol_id`
             text = text + ", new_name=" + `new_name` + ")"
             print text
 
