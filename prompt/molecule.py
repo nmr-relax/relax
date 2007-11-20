@@ -86,8 +86,8 @@ class Molecule:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molecule.copy("
             text = text + "pipe_from=" + `pipe_from`
-            text = text + "mol_from=" + `mol_from`
-            text = text + "pipe_to=" + `pipe_to`
+            text = text + ", mol_from=" + `mol_from`
+            text = text + ", pipe_to=" + `pipe_to`
             text = text + ", mol_to=" + `mol_to` + ")"
             print text
 
