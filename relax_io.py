@@ -80,6 +80,21 @@ def log(file_name=None, dir=None, compress_type=0, print_flag=1):
     sys.stderr = log_stderr
 
 
+def mkdir_nofail(dir=None, print_flag=1):
+    """Create the given directory, or exit if the directory exists."""
+
+    # No directory given.
+    if dir == None:
+        return
+
+    # Make the directory.
+    try:
+        makedirs(dir)
+    except OSError:
+        if print_flag:
+            print "Directory ./" + dir + " already exists.\n"
+
+
 def open_read_file(file_name=None, dir=None, compress_type=0, print_flag=1):
     """Open the file 'file' and return all the data."""
 
@@ -145,7 +160,7 @@ def open_write_file(file_name=None, dir=None, force=0, compress_type=0, print_fl
             return file
 
     # Create the directories.
-    mkdir(dir, print_flag=0)
+    mkdir_nofail(dir, print_flag=0)
 
     # File path.
     file_path = file_path(file_name, dir)
@@ -318,21 +333,6 @@ class IO:
         sys.stdin  = self.python_stdin
         sys.stdout = self.python_stdout
         sys.stderr = self.python_stderr
-
-
-    def mkdir(self, dir=None, print_flag=1):
-        """Create the given directory, or exit if the directory exists."""
-
-        # No directory given.
-        if dir == None:
-            return
-
-        # Make the directory.
-        try:
-            makedirs(dir)
-        except OSError:
-            if print_flag:
-                print "Directory ./" + dir + " already exists.\n"
 
 
     def strip(self, data):
