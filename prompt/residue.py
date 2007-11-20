@@ -108,8 +108,8 @@ class Residue:
             raise RelaxNoneStrError, ('data pipe to', pipe_to)
 
         # The residue to argument.
-        if type(res_to) != str:
-            raise RelaxStrError, ('residue to', res_to)
+        if res_to != None and type(res_to) != str:
+            raise RelaxNoneStrError, ('residue to', res_to)
 
         # Execute the functional code.
         residue.copy(pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
