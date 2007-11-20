@@ -65,11 +65,11 @@ except ImportError:
 
 # relax modules.
 from colour import Colour
-from io import IO
 from generic_fns.main import Generic
 from prompt.gpl import gpl
 from prompt import interpreter
 import relax_errors
+from relax_io import log
 import relax_warnings
 from specific_fns.main import Specific
 from specific_fns.specific_setup import Specific_setup
@@ -108,9 +108,6 @@ class Relax:
         # The thread data storage object.
         self.thread_data = ThreadData()
 
-        # File operation functions.
-        self.IO = IO(self)
-
         # Colour operations.
         self.colour = Colour()
 
@@ -148,11 +145,11 @@ class Relax:
 
         # Logging.
         if log_file and mode != 'thread':
-            self.IO.log(log_file)
+            log(log_file)
 
         # Tee.
         elif tee_file and mode != 'thread':
-            self.IO.tee(tee_file)
+            tee(tee_file)
 
         # Run the interpreter for the prompt or script modes.
         if mode == 'prompt' or mode == 'script':
@@ -171,11 +168,11 @@ class Relax:
 
             # Logging (silent IO redirection).
             if log_file:
-                self.IO.log(log_file, print_flag=0)
+                log(log_file, print_flag=0)
 
             # Tee (silent IO redirection).
             elif tee_file:
-                self.IO.tee(tee_file, print_flag=0)
+                tee(tee_file, print_flag=0)
 
             # Execute the script.
             self.threading.execute()
