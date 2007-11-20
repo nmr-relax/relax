@@ -53,7 +53,10 @@ class Test_state(TestCase):
         relax_data_store.__reset__()
 
         # Clean up the temporarily created dump files.
-        remove('test.bz2')
+        try:
+            remove('test.bz2')
+        except OSError:
+            pass
 
 
     def test_load(self):
