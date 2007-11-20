@@ -28,7 +28,7 @@ from data import Data as relax_data_store
 from relax_io import open_read_file, open_write_file
 
 
-def load(file=None, dir=None, compress_type=1):
+def load_state(file=None, dir=None, compress_type=1):
     """Function for loading a saved program state."""
 
     # Open the file for reading.
@@ -41,7 +41,7 @@ def load(file=None, dir=None, compress_type=1):
     file.close()
 
 
-def save(file=None, dir=None, force=0, compress_type=1):
+def save_state(file=None, dir=None, force=0, compress_type=1):
     """Function for saving the program state."""
 
     # Open the file for writing.
