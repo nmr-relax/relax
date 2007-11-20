@@ -79,7 +79,7 @@ class Test_molecule(Molecule_base_class, TestCase):
 
 
     def test_copy_argfail_pipe_to(self):
-        """Test the proper failure of the spin.copy() user function for the pipe_to argument."""
+        """Test the proper failure of the molecule.copy() user function for the pipe_to argument."""
 
         # Loop over the data types.
         for data in return_data_types():
@@ -88,7 +88,7 @@ class Test_molecule(Molecule_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spin_fns.copy, pipe_to=data[1], spin_from='#Old mol:1@111', spin_to='#Old mol:2')
+            self.assertRaises(RelaxNoneStrError, self.molecule_fns.copy, pipe_to=data[1], mol_from='#Old mol', mol_to='#New mol2')
 
 
     def test_copy_argfail_spin_to(self):
