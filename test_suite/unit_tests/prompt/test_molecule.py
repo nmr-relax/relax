@@ -117,8 +117,8 @@ class Test_molecule(Molecule_base_class, TestCase):
             self.assertRaises(RelaxStrError, self.molecule_fns.create, mol_name=data[1])
 
 
-    def test_delete_argfail_spin_id(self):
-        """Test the proper failure of the spin.delete() user function for the spin_id argument."""
+    def test_delete_argfail_mol_id(self):
+        """Test the proper failure of the molecule.delete() user function for the mol_id argument."""
 
         # Loop over the data types.
         for data in return_data_types():
@@ -127,7 +127,7 @@ class Test_molecule(Molecule_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.spin_fns.delete, spin_id=data[1])
+            self.assertRaises(RelaxStrError, self.molecule_fns.delete, mol_id=data[1])
 
 
     def test_display_argfail_spin_id(self):
