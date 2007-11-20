@@ -35,4 +35,4 @@ class Test_molecule(Molecule_base_class, TestCase):
     """Unit tests for the functions of the 'generic_fns.molecule' module."""
 
     # Place the generic_fns.spin module into the class namespace.
-    spin_fns = molecule
+    molecule_fns = molecule
