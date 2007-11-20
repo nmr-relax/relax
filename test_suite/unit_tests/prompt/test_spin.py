@@ -46,7 +46,7 @@ relax.interpreter.intro = True
 
 
 class Test_spin(Spin_base_class, TestCase):
-    """Unit tests for the functions of the 'generic_fns.spin' module."""
+    """Unit tests for the functions of the 'prompt.spin' module."""
 
     # Instantiate the user function class.
     spin_fns = Spin(relax)
