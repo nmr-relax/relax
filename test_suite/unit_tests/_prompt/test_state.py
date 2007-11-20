@@ -71,7 +71,7 @@ class Test_state(State_base_class, TestCase):
         # Loop over the data types.
         for data in return_data_types():
             # Catch the None and str arguments, and skip them.
-            if data[0] == 'None' and data[0] == 'str':
+            if data[0] == 'None' or data[0] == 'str':
                 continue
 
             # The argument test.
