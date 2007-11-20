@@ -283,7 +283,7 @@ class Residue_base_class:
         relax_data_store['orig'].mol[0].res[3].spin[0].x = 1
 
         # Delete the first residue.
-        residue.delete(res_id=':Ala')
+        self.residue_fns.delete(res_id=':Ala')
 
         # Test that the first residue is 4 Gly.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 4)
@@ -307,7 +307,7 @@ class Residue_base_class:
         relax_data_store['orig'].mol[0].res[3].spin[0].x = 1
 
         # Delete the first residue.
-        residue.delete(res_id=':1')
+        self.residue_fns.delete(res_id=':1')
 
         # Test that the sequence.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 2)
@@ -335,7 +335,7 @@ class Residue_base_class:
         relax_data_store['orig'].mol[0].res[3].spin[0].x = 1
 
         # Delete all residues.
-        residue.delete(res_id=':1-4')
+        self.residue_fns.delete(res_id=':1-4')
 
         # Test that the first residue defaults back to the empty residue.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, None)
@@ -357,7 +357,7 @@ class Residue_base_class:
         relax_data_store['orig'].mol[0].res[3].spin[0].x = 1
 
         # Delete the first and third residues.
-        residue.delete(res_id=':1,3')
+        self.residue_fns.delete(res_id=':1,3')
 
         # Test that the remaining residues.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 2)
@@ -373,7 +373,7 @@ class Residue_base_class:
         """
 
         # Supply an atom id.
-        self.assertRaises(RelaxSpinSelectDisallowError, residue.delete, res_id='@2')
+        self.assertRaises(RelaxSpinSelectDisallowError, self.residue_fns.delete, res_id='@2')
 
 
     def test_display(self):
@@ -386,10 +386,10 @@ class Residue_base_class:
         self.setup_data()
 
         # The following should all work without error.
-        residue.display()
-        residue.display(':1')
-        residue.display('#New mol:5')
-        residue.display('#Old mol:1')
+        self.residue_fns.display()
+        self.residue_fns.display(':1')
+        self.residue_fns.display('#New mol:5')
+        self.residue_fns.display('#Old mol:1')
 
 
     def test_display_fail(self):
@@ -402,7 +402,7 @@ class Residue_base_class:
         self.setup_data()
 
         # The following should fail.
-        self.assertRaises(RelaxSpinSelectDisallowError, residue.display, '@N')
+        self.assertRaises(RelaxSpinSelectDisallowError, self.residue_fns.display, '@N')
 
 
     def test_rename(self):
@@ -415,7 +415,7 @@ class Residue_base_class:
         self.residue_fns.create(-10, 'His')
 
         # Rename the residue.
-        residue.rename(res_id=':-10', new_name='K')
+        self.residue_fns.rename(res_id=':-10', new_name='K')
 
         # Test that the residue has been renamed.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'K')
@@ -442,7 +442,7 @@ class Residue_base_class:
         self.residue_fns.copy(res_from=':1', res_to=':4,Met')
 
         # Rename all alanines.
-        residue.rename(res_id=':Ala', new_name='Gln')
+        self.residue_fns.rename(res_id=':Ala', new_name='Gln')
 
         # Test the renaming of alanines.
         self.assertEqual(relax_data_store['orig'].mol[0].res[1].name, 'Gln')
@@ -460,7 +460,7 @@ class Residue_base_class:
         """
 
         # Try renaming using a atom id.
-        self.assertRaises(RelaxSpinSelectDisallowError, residue.rename, res_id='@111', new_name='K')
+        self.assertRaises(RelaxSpinSelectDisallowError, self.residue_fns.rename, res_id='@111', new_name='K')
 
 
     def test_renumber(self):
@@ -473,7 +473,7 @@ class Residue_base_class:
         self.residue_fns.create(-10, 'His')
 
         # Rename the residue.
-        residue.renumber(res_id=':-10', new_number=10)
+        self.residue_fns.renumber(res_id=':-10', new_number=10)
 
         # Test that the residue has been renumbered.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 10)
@@ -499,7 +499,7 @@ class Residue_base_class:
         self.residue_fns.copy(res_from=':1', res_to=':4,Met')
 
         # Try renumbering all alanines.
-        self.assertRaises(RelaxError, residue.renumber, res_id=':Ala', new_number=10)
+        self.assertRaises(RelaxError, self.residue_fns.renumber, res_id=':Ala', new_number=10)
 
 
     def test_renumber_no_spin(self):
@@ -509,4 +509,4 @@ class Residue_base_class:
         """
 
         # Try renaming using a atom id.
-        self.assertRaises(RelaxSpinSelectDisallowError, residue.renumber, res_id='@111', new_number=10)
+        self.assertRaises(RelaxSpinSelectDisallowError, self.residue_fns.renumber, res_id='@111', new_number=10)
