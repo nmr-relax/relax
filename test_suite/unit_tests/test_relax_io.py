@@ -29,3 +29,17 @@ import relax_io
 
 class Test_relax_io(TestCase):
     """Unit tests for the functions of the 'relax_io' module."""
+
+
+    def test_get_file_path(self):
+        """Test for file paths which should remain unmodified."""
+
+        # Some file paths that shouldn't change.
+        file1 = 'test'
+        file2 = 'test/aaa'
+        file3 = '/home/test/aaa'
+
+        # Check that nothing changes.
+        self.assertEqual(relax_io.get_file_path(file1), file1)
+        self.assertEqual(relax_io.get_file_path(file2), file2)
+        self.assertEqual(relax_io.get_file_path(file3), file3)
