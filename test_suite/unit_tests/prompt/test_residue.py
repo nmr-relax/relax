@@ -91,8 +91,8 @@ class Test_residue(Residue_base_class, TestCase):
             self.assertRaises(RelaxNoneStrError, self.residue_fns.copy, pipe_to=data[1], res_from='#Old mol:1', res_to='#Old mol:2')
 
 
-    def test_copy_argfail_spin_to(self):
-        """Test the proper failure of the spin.copy() user function for the spin_to argument."""
+    def test_copy_argfail_res_to(self):
+        """Test the proper failure of the residue.copy() user function for the res_to argument."""
 
         # Loop over the data types.
         for data in return_data_types():
@@ -101,7 +101,7 @@ class Test_residue(Residue_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spin_fns.copy, spin_from='#Old mol:1@111', spin_to=data[1])
+            self.assertRaises(RelaxNoneStrError, self.residue_fns.copy, res_from='#Old mol:1@111', res_to=data[1])
 
 
     def test_create_argfail_spin_num(self):
