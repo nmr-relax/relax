@@ -104,8 +104,8 @@ class Molecule:
             raise RelaxNoneStrError, ('data pipe to', pipe_to)
 
         # The molecule to argument.
-        if type(mol_to) != str:
-            raise RelaxStrError, ('molecule to', mol_to)
+        if mol_to != None and type(mol_to) != str:
+            raise RelaxNoneStrError, ('molecule to', mol_to)
 
         # Execute the functional code.
         molecule.copy(pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
