@@ -157,7 +157,7 @@ class Test_molecule(Molecule_base_class, TestCase):
 
 
     def test_rename_argfail_new_name(self):
-        """Test the proper failure of the spin.rename() user function for the new_name argument."""
+        """Test the proper failure of the molecule.rename() user function for the new_name argument."""
 
         # Loop over the data types.
         for data in return_data_types():
@@ -166,7 +166,7 @@ class Test_molecule(Molecule_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.spin_fns.rename, new_name=data[1])
+            self.assertRaises(RelaxStrError, self.molecule_fns.rename, new_name=data[1])
 
 
     def test_renumber_argfail_spin_id(self):
