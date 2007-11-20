@@ -524,7 +524,7 @@ class RelaxPipeError(BaseError):
 # No data pipe exists.
 class RelaxNoPipeError(BaseError):
     def __init__(self, pipe=None):
-        if pipe:
+        if pipe != None:
             self.text = "The data pipe " + `pipe` + " has not been created yet."
         else:
             self.text = "No data pipes currently exist.  Please use the pipe.create() user function first."
