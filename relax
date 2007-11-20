@@ -186,7 +186,7 @@ class Relax:
             self.set_intro_string()
 
             # Load the interpreter and turn intros on.
-            self.interpreter = Interpreter(self)
+            self.interpreter = interpreter.Interpreter(self)
             self.interpreter._on()
 
             # Run the tests.
