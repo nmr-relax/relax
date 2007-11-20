@@ -169,8 +169,8 @@ class Test_residue(Residue_base_class, TestCase):
             self.assertRaises(RelaxNoneStrError, self.residue_fns.display, res_id=data[1])
 
 
-    def test_rename_argfail_spin_id(self):
-        """Test the proper failure of the spin.rename() user function for the spin_id argument."""
+    def test_rename_argfail_res_id(self):
+        """Test the proper failure of the residue.rename() user function for the res_id argument."""
 
         # Loop over the data types.
         for data in return_data_types():
@@ -179,7 +179,7 @@ class Test_residue(Residue_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.spin_fns.rename, spin_id=data[1])
+            self.assertRaises(RelaxStrError, self.residue_fns.rename, res_id=data[1])
 
 
     def test_rename_argfail_new_name(self):
