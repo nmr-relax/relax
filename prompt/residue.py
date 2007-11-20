@@ -90,8 +90,8 @@ class Residue:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "residue.copy("
             text = text + "pipe_from=" + `pipe_from`
-            text = text + "res_from=" + `res_from`
-            text = text + "pipe_to=" + `pipe_to`
+            text = text + ", res_from=" + `res_from`
+            text = text + ", pipe_to=" + `pipe_to`
             text = text + ", res_to=" + `res_to` + ")"
             print text
 
