@@ -56,6 +56,29 @@ class Test_state(TestCase):
         remove('test.bz2')
 
 
+    def test_load(self):
+        """Test the normal operation of the generic_fns.state.load() function."""
+
+        # Save the state.
+        state.save('test')
+
+        # Reset the relax data store.
+        relax_data_store.__reset__()
+
+        # Test the contents of the empty singleton.
+        self.assertEqual(relax_data_store.keys(), [])
+        self.assertEqual(relax_data_store.current_pipe, None)
+        self.assertRaises(AttributeError, relax_data_store['orig'].x)
+
+        # Load the state.
+        state.load('test')
+
+        # Test the contents of the restored singleton.
+        self.assertEqual(relax_data_store.keys(), ['orig'])
+        self.assertEqual(relax_data_store.current_pipe, 'orig')
+        self.assertEqual(relax_data_store['orig'].x, 1)
+
+
     def test_save(self):
         """Test the normal operation of the generic_fns.state.save() function."""
 
