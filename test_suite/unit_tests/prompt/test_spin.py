@@ -208,7 +208,7 @@ class Test_spin(Spin_base_class, TestCase):
             self.assertRaises(RelaxStrError, self.spin_fns.renumber, spin_id=data[1])
 
 
-    def test_renumber_argfail_new_name(self):
+    def test_renumber_argfail_new_number(self):
         """Test the proper failure of the spin.renumber() user function for the new_number argument."""
 
         # Loop over the data types.
@@ -219,8 +219,3 @@ class Test_spin(Spin_base_class, TestCase):
 
             # The argument test.
             self.assertRaises(RelaxIntError, self.spin_fns.renumber, spin_id='@111', new_number=data[1])
-
-
-
-
-
