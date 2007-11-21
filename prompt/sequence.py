@@ -26,7 +26,7 @@ import sys
 # relax module imports.
 import help
 from generic_fns import sequence
-from relax_errors import RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxBinError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 
 
 class Sequence:
