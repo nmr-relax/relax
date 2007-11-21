@@ -47,4 +47,19 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
 
     # Instantiate the user function class.
     align_tensor_fns = Align_tensor(relax)
+
+
+    def test_init_argfail_params(self):
+        """Test the proper failure of the align_tensor.init() user function for the params argument."""
+
+        # Loop over the data types.
+        for data in return_data_types():
+            # Catch the float list arguments, and skip them.
+            if data[0] == 'float list':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxListFloatError, self.align_tensor_fns.copy, params=data[1])
+
+
  
