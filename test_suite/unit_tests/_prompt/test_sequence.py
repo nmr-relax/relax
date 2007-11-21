@@ -28,7 +28,7 @@ import sys
 from data import Data as relax_data_store
 from data_types import return_data_types
 from prompt.sequence import Sequence
-from relax_errors import RelaxStrError
+from relax_errors import RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.sequence_testing_base import Sequence_base_class
 
 # Set the variable sys.ps3 (this is required by the user functions).
@@ -65,4 +65,14 @@ class Test_sequence(Sequence_base_class, TestCase):
             self.assertRaises(RelaxStrError, self.sequence_fns.read, file=data[1])
 
 
+    def test_read_argfail_dir(self):
+        """Test the proper failure of the sequence.read() user function for the dir argument."""
 
+        # Loop over the data types.
+        for data in return_data_types():
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.sequence_fns.read, file='a', dir=data[1])
