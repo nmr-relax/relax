@@ -25,7 +25,7 @@ from unittest import TestCase
 import sys
 
 # relax module imports.
-from prompt.molecule import Molecule
+from prompt.align_tensor import Align_tensor
 from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_class
 
 # Set the variable sys.ps3 (this is required by the user functions).
@@ -43,7 +43,7 @@ relax.interpreter.intro = True
 
 
 class Test_align_tensor(Align_tensor_base_class, TestCase):
-    """Unit tests for the functions of the 'prompt.molecule' module."""
+    """Unit tests for the functions of the 'prompt.align_tensor' module."""
 
     # Instantiate the user function class.
     align_tensor_fns = Align_tensor(relax)
