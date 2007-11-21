@@ -89,14 +89,14 @@ class Align_tensor:
             print text
 
         # Parameter argument.
-        if type(params) != int and type(params) != float and type(params) != tuple:
-            raise RelaxNumTupleError, ('diffusion parameters', params)
-        if type(params) == tuple:
-            if len(params) != 4 and len(params) != 6:
-                raise RelaxError, "The diffusion parameters argument must either be a number or a tuple of numbers of length 4 or 6."
+        if type(params) != tuple:
+            raise RelaxNumTupleError, ('alignment tensor parameters', params)
+        else:
+            if len(params) != 5:
+                raise RelaxError, "The alignment tensor parameters argument must be a tuple of numbers of length 5."
             for i in xrange(len(params)):
                 if type(params[i]) != float and type(params[i]) != int:
-                    raise RelaxNumTupleError, ('diffusion parameters', params)
+                    raise RelaxNumTupleError, ('alignment tensor parameters', params)
 
         # Parameter types argument.
         if type(param_types) != int:
