@@ -153,23 +153,23 @@ class Sequence:
             raise RelaxNoneStrError, ('directory name', dir)
 
         # Molecule name column.
-        if mol_name_col != None or type(mol_name_col) != int:
+        if mol_name_col != None and type(mol_name_col) != int:
             raise RelaxNoneIntError, ('molecule name column', mol_name_col)
 
         # Residue number column.
-        if res_name_col != None or type(res_num_col) != int:
+        if res_name_col != None and type(res_num_col) != int:
             raise RelaxNoneIntError, ('residue number column', res_num_col)
 
         # Residue name column.
-        if res_name_col != None or type(res_name_col) != int:
+        if res_name_col != None and type(res_name_col) != int:
             raise RelaxNoneIntError, ('residue name column', res_name_col)
 
         # Spin number column.
-        if spin_name_col != None or type(spin_num_col) != int:
+        if spin_name_col != None and type(spin_num_col) != int:
             raise RelaxNoneIntError, ('spin number column', spin_num_col)
 
         # Spin name column.
-        if spin_name_col != None or type(spin_name_col) != int:
+        if spin_name_col != None and type(spin_name_col) != int:
             raise RelaxNoneIntError, ('spin name column', spin_name_col)
 
         # Column separator.
