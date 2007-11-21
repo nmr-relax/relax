@@ -59,7 +59,20 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxListFloatError, self.align_tensor_fns.copy, params=data[1])
+            self.assertRaises(RelaxListFloatError, self.align_tensor_fns.init, params=data[1])
 
 
- 
+    def test_init_argfail_param_types(self):
+        """The proper failure of the align_tensor.init() user function for the param_types argument."""
+
+        # Loop over the data types.
+        for data in return_data_types():
+            # Catch the int and bin arguments, and skip them.
+            if data[0] == 'int' or data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxIntError, self.align_tensor_fns.init, param_types=data[1])
+
+
+
