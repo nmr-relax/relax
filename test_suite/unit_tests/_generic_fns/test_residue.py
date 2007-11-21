@@ -24,16 +24,12 @@
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
-from generic_fns import molecule, residue
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
-from test_suite.unit_tests.molecule_testing_base import Molecule_base_class
+from generic_fns import residue
+from test_suite.unit_tests.residue_testing_base import Residue_base_class
 
 
+class Test_residue(Residue_base_class, TestCase):
+    """Unit tests for the functions of the 'generic_fns.residue' module."""
 
-class Test_molecule(Molecule_base_class, TestCase):
-    """Unit tests for the functions of the 'generic_fns.molecule' module."""
-
-    # Place the generic_fns.spin module into the class namespace.
-    molecule_fns = molecule
+    # Place the generic_fns.residue module into the class namespace.
     residue_fns = residue

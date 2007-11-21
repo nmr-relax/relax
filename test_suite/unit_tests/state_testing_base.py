@@ -22,16 +22,18 @@
 
 # Python module imports.
 from os import remove
-from unittest import TestCase
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns.state import load_state, save_state
 
 
 
-class Test_state(TestCase):
-    """Unit tests for the functions of the 'generic_fns.state' module."""
+class State_base_class:
+    """Base class for the tests of both the 'prompt.state' and 'generic_fns.state' modules.
+
+    This base class also contains shared unit tests.
+    """
+
 
     def setUp(self):
         """Set up for all the data pipe unit tests."""
@@ -69,7 +71,7 @@ class Test_state(TestCase):
         """
 
         # Save the state.
-        save_state('test')
+        self.state.save_state(file='test')
 
         # Reset the relax data store.
         relax_data_store.__reset__()
@@ -80,7 +82,7 @@ class Test_state(TestCase):
         self.assert_(not hasattr(relax_data_store, 'y'))
 
         # Load the state.
-        load_state('test')
+        self.state.load_state(file='test')
 
         # Test the contents of the restored singleton.
         self.assertEqual(relax_data_store.keys(), ['orig'])
@@ -95,4 +97,4 @@ class Test_state(TestCase):
         """
 
         # Save the state.
-        save_state('test')
+        self.state.save_state(file='test')

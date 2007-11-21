@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2005, 2007 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,10 +20,13 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
 
+# relax module imports.
 import help
 from relax_errors import RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxStrError
+from generic_fns.state import load_state, save_state
 
 
 class State:
@@ -92,7 +95,7 @@ class State:
             raise RelaxNoneStrError, ('directory', dir)
 
         # Execute the functional code.
-        self.__relax__.generic.state.load(file=file, dir=dir)
+        load_state(file=file, dir_name=dir)
 
 
     def save(self, file=None, dir=None, force=0, compress_type=1):
@@ -172,4 +175,4 @@ class State:
             raise RelaxIntError, ('compression type', compress_type)
 
         # Execute the functional code.
-        self.__relax__.generic.state.save(file=file, dir=dir, force=force, compress_type=compress_type)
+        save_state(file=file, dir=dir, force=force, compress_type=compress_type)
