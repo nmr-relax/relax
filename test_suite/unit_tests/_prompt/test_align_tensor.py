@@ -27,7 +27,7 @@ import sys
 # relax module imports.
 from data_types import return_data_types
 from prompt.align_tensor import Align_tensor
-from relax_errors import RelaxBinError, RelaxIntError, RelaxListFloatError
+from relax_errors import RelaxBinError, RelaxIntError, RelaxNumTupleError
 from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_class
 
 # Set the variable sys.ps3 (this is required by the user functions).
@@ -57,11 +57,11 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
         # Loop over the data types.
         for data in return_data_types():
             # Catch the float list arguments, and skip them.
-            if data[0] == 'float list':
+            if data[0] == 'float tuple':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxListFloatError, self.align_tensor_fns.init, params=data[1])
+            self.assertRaises(RelaxNumTupleError, self.align_tensor_fns.init, params=data[1])
 
 
     def test_init_argfail_param_types(self):
