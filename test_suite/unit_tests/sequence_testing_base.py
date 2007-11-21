@@ -25,7 +25,7 @@ from data import Data as relax_data_store
 
 
 
-class Molecule_base_class:
+class Sequence_base_class:
     """Base class for the tests of both the 'prompt.sequence' and 'generic_fns.sequence' modules.
 
     This base class also contains many shared unit tests.
