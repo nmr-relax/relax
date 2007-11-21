@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003, 2004, 2007 Edward d'Auvergne                            #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,8 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
 
+# relax module imports.
 import help
 from relax_errors import RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxStrError
 
@@ -37,146 +39,6 @@ class Sequence:
 
         # Place relax in the class namespace.
         self.__relax__ = relax
-
-
-    def add(self, run=None, res_num=None, res_name=None, select=1):
-        """Function for adding a residue onto the sequence.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
-
-        res_num:  The residue number.
-
-        res_name:  The name of the residue.
-
-        select:  A flag specifying if the residue should be selected.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        Using this function a new sequence can be generated without having to load the sequence from
-        a file.  However if the sequence already exists, the new residue will be added to the end.
-        The same residue number cannot be used more than once.
-
-
-        Examples
-        ~~~~~~~~
-
-        The following sequence of commands will generate the sequence 1 ALA, 2 GLY, 3 LYS and assign
-        it to the run 'm3':
-
-        relax> run = 'm3'
-        relax> sequence.add(run, 1, 'ALA')
-        relax> sequence.add(run, 2, 'GLY')
-        relax> sequence.add(run, 3, 'LYS')
-        """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.add("
-            text = text + "run=" + `run`
-            text = text + ", res_num=" + `res_num`
-            text = text + ", res_name=" + `res_name`
-            text = text + ", select=" + `select` + ")"
-            print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
-        # Residue number.
-        if type(res_num) != int:
-            raise RelaxIntError, ('residue number', res_num)
-
-        # Residue name.
-        if type(res_name) != str:
-            raise RelaxStrError, ('residue name', res_name)
-
-        # Select flag.
-        if type(select) != int or (select != 0 and select != 1):
-            raise RelaxBinError, ('select', select)
-
-        # Execute the functional code.
-        self.__relax__.generic.sequence.add(run=run, res_num=res_num, res_name=res_name, select=select)
-
-
-    def copy(self, run1=None, run2=None):
-        """Function for copying the sequence from run1 to run2.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run1:  The name of the run to copy the sequence from.
-
-        run2:  The name of the run to copy the sequence to.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This function will copy the sequence from 'run1' to 'run2'.  'run1' must contain sequence
-        information, while 'run2' must have no sequence loaded.
-
-
-        Examples
-        ~~~~~~~~
-
-        To copy the sequence from the run 'm1' to the run 'm2', type:
-
-        relax> sequence.copy('m1', 'm2')
-        relax> sequence.copy(run1='m1', run2='m2')
-        """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.copy("
-            text = text + "run1=" + `run1`
-            text = text + ", run2=" + `run2` + ")"
-            print text
-
-        # The run1 argument.
-        if type(run1) != str:
-            raise RelaxStrError, ('run1', run1)
-
-        # The run2 argument.
-        if type(run2) != str:
-            raise RelaxStrError, ('run2', run2)
-
-        # Execute the functional code.
-        self.__relax__.generic.sequence.copy(run1=run1, run2=run2)
-
-
-    def delete(self, run=None):
-        """Function for deleting the sequence.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        This function has the same effect as using the 'delete' function to delete all residue
-        specific data.
-        """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.delete("
-            text = text + "run=" + `run` + ")"
-            print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
-        # Execute the functional code.
-        self.__relax__.generic.sequence.delete(run=run)
 
 
     def display(self, run=None):
@@ -292,29 +154,6 @@ class Sequence:
 
         # Execute the functional code.
         self.__relax__.generic.sequence.read(run=run, file=file, dir=dir, num_col=num_col, name_col=name_col, sep=sep)
-
-
-    def sort(self, run=None):
-        """Function for numerically sorting the sequence by residue number.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
-        """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.sort("
-            text = text + "run=" + `run` + ")"
-            print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
-        # Execute the functional code.
-        self.__relax__.generic.sequence.sort(run=run)
 
 
     def write(self, run=None, file=None, dir=None, force=0):
