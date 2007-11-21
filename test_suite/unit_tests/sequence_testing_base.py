@@ -31,5 +31,51 @@ class Sequence_base_class:
     This base class also contains many shared unit tests.
     """
 
+    def setUp(self):
+        """Set up for all the molecule unit tests."""
+
+        # Reset the relax data storage object.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
 
 
+    def tearDown(self):
+        """Reset the relax data storage object."""
+
+        relax_data_store.__reset__()
+
+
+    def test_read_protein_noe_data(self):
+        """Test the reading of the amino acid sequence out of a protein NOE data file.
+
+        The functions tested are generic_fns.sequence.read() and prompt.sequence.read().
+        """
+
+        # Read the residue sequence out of the Ap4Aase 600 MHz NOE data file.
+        self.sequence_fns.read(file='Ap4Aase.Noe.600.bz2', dir='../../shared_data/relaxation_data')
+
+        # Test parts of the sequence.
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].num, 1)
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].name, 'GLY')
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].num, 2)
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].name, 'PRO')
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].num, 3)
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].name, 'LEU')
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].num, 4)
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].name, 'GLY')
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].num, 5)
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].name, 'SER')
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].num, 90)
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].name, 'GLU')
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].num, 91)
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].name, 'LYS')
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].num, 92)
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].name, 'LEU')
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].num, 163)
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].name, 'PRO')
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].num, 164)
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].name, 'ISS')
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].num, 165)
+        self.assertEqual(relax_data_store['test'].mol[0].res[0].name, 'LEU')
