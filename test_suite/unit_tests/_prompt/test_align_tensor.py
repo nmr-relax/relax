@@ -25,7 +25,9 @@ from unittest import TestCase
 import sys
 
 # relax module imports.
+from data_types import return_data_types
 from prompt.align_tensor import Align_tensor
+from relax_errors import RelaxIntError, RelaxListFloatError
 from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_class
 
 # Set the variable sys.ps3 (this is required by the user functions).
