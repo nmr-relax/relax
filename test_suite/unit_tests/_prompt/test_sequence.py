@@ -28,7 +28,7 @@ import sys
 from data import Data as relax_data_store
 from data_types import return_data_types
 from prompt.sequence import Sequence
-from relax_errors import RelaxError
+from relax_errors import RelaxStrError
 from test_suite.unit_tests.sequence_testing_base import Sequence_base_class
 
 # Set the variable sys.ps3 (this is required by the user functions).
@@ -50,6 +50,19 @@ class Test_sequence(Sequence_base_class, TestCase):
 
     # Instantiate the user function class.
     sequence_fns = Sequence(relax)
+
+
+    def test_read_argfail_file(self):
+        """Test the proper failure of the sequence.read() user function for the file argument."""
+
+        # Loop over the data types.
+        for data in return_data_types():
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.sequence_fns.read, file=data[1])
 
 
 
