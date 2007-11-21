@@ -74,7 +74,7 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.align_tensor_fns.init, param_types=data[1])
+            self.assertRaises(RelaxIntError, self.align_tensor_fns.init, params=(0.0, 0.0, 0.0, 0.0, 0.0), param_types=data[1])
 
 
     def test_init_argfail_errors(self):
@@ -87,7 +87,7 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxBinError, self.align_tensor_fns.init, errors=data[1])
+            self.assertRaises(RelaxBinError, self.align_tensor_fns.init, params=(0.0, 0.0, 0.0, 0.0, 0.0), errors=data[1])
 
 
 
