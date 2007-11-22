@@ -100,6 +100,10 @@ def return_data_types():
     data_types.append(['str list', ['a']])
     data_types.append(['str list', ['a', 'asldfjk']])
 
+    # Dictionary.
+    data_types.append(['dict', {}])
+    data_types.append(['dict', {'a': 0, 'b': 1}])
+
     # Tuple.
     data_types.append(['tuple', (None, None)])
 

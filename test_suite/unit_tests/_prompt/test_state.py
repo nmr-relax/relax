@@ -28,7 +28,7 @@ import sys
 from test_suite.unit_tests.state_testing_base import State_base_class
 from data_types import return_data_types
 from prompt.state import State
-from relax_errors import RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxStrFileError
 
 
 # Set the variable sys.ps3 (this is required by the user functions).
@@ -56,47 +56,21 @@ class Test_state(State_base_class, TestCase):
     state.save_state = state.save
 
 
-    def test_load_argfail_file(self):
-        """Test the proper failure of the state.load() user function for the file argument."""
+    def test_load_argfail_state(self):
+        """Test the proper failure of the state.load() user function for the state argument."""
 
         # Loop over the data types.
         for data in return_data_types():
-            # Catch the str arguments, and skip them.
-            if data[0] == 'str':
+            # Catch the str and file arguments, and skip them.
+            if data[0] == 'str' or data[0] == 'file':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.state.load_state, file=data[1])
+            self.assertRaises(RelaxStrFileError, self.state.load_state, state=data[1])
 
 
-    def test_load_argfail_dir(self):
-        """Test the proper failure of the state.load() user function for the dir argument."""
-
-        # Loop over the data types.
-        for data in return_data_types():
-            # Catch the None and str arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'str':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.state.load_state, file='a', dir=data[1])
-
-
-    def test_save_argfail_file(self):
-        """Test the proper failure of the state.save() user function for the file argument."""
-
-        # Loop over the data types.
-        for data in return_data_types():
-            # Catch the str arguments, and skip them.
-            if data[0] == 'str':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxStrError, self.state.save_state, file=data[1])
-
-
-    def test_save_argfail_dir(self):
-        """Test the proper failure of the state.save() user function for the dir argument."""
+    def test_load_argfail_dir_name(self):
+        """Test the proper failure of the state.load() user function for the dir_name argument."""
 
         # Loop over the data types.
         for data in return_data_types():
@@ -105,7 +79,33 @@ class Test_state(State_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.state.save_state, file='a', dir=data[1])
+            self.assertRaises(RelaxNoneStrError, self.state.load_state, state='a', dir_name=data[1])
+
+
+    def test_save_argfail_state(self):
+        """Test the proper failure of the state.save() user function for the state argument."""
+
+        # Loop over the data types.
+        for data in return_data_types():
+            # Catch the str and file arguments, and skip them.
+            if data[0] == 'str' or data[0] == 'file':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrFileError, self.state.save_state, state=data[1])
+
+
+    def test_save_argfail_dir_name(self):
+        """Test the proper failure of the state.save() user function for the dir_name argument."""
+
+        # Loop over the data types.
+        for data in return_data_types():
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.state.save_state, state='a', dir_name=data[1])
 
 
     def test_save_argfail_force(self):
@@ -118,7 +118,7 @@ class Test_state(State_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxBinError, self.state.save_state, file='a', force=data[1])
+            self.assertRaises(RelaxBinError, self.state.save_state, state='a', force=data[1])
 
 
     def test_save_argfail_compress_type(self):
@@ -131,7 +131,7 @@ class Test_state(State_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.state.save_state, file='a', compress_type=data[1])
+            self.assertRaises(RelaxIntError, self.state.save_state, state='a', compress_type=data[1])
 
 
 

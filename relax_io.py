@@ -115,6 +115,11 @@ def mkdir_nofail(dir=None, print_flag=1):
 def open_read_file(file_name=None, dir=None, compress_type=0, print_flag=1):
     """Open the file 'file' and return all the data."""
 
+    # A file descriptor object.
+    if type(file_name) == file:
+        # Nothing to do here!
+        return file_name
+
     # File path.
     file_path = get_file_path(file_name, dir)
 
@@ -139,23 +144,28 @@ def open_read_file(file_name=None, dir=None, compress_type=0, print_flag=1):
         if print_flag:
             print "Opening the file " + `file_path` + " for reading."
         if compress_type == 0:
-            file = open(file_path, 'r')
+            file_obj = open(file_path, 'r')
         elif compress_type == 1:
             if bz2_module:
-                file = BZ2File(file_path, 'r')
+                file_obj = BZ2File(file_path, 'r')
             else:
                 raise RelaxError, "Cannot open the file " + `file_path` + ", try uncompressing first.  " + bz2_module_message + "."
         elif compress_type == 2:
-            file = GzipFile(file_path, 'r')
+            file_obj = GzipFile(file_path, 'r')
     except IOError, message:
         raise RelaxError, "Cannot open the file " + `file_path` + ".  " + message.args[1] + "."
 
     # Return the opened file.
-    return file
+    return file_obj
 
 
 def open_write_file(file_name=None, dir=None, force=0, compress_type=0, print_flag=1, return_path=0):
     """Function for opening a file for writing and creating directories if necessary."""
+
+    # A file descriptor object.
+    if type(file_name) == file:
+        # Nothing to do here!
+        return file_name
 
     # The null device.
     if search('devnull', file_name):
@@ -168,13 +178,13 @@ def open_write_file(file_name=None, dir=None, force=0, compress_type=0, print_fl
             print "Opening the null device file for writing."
 
         # Open the null device.
-        file = open(devnull, 'w')
+        file_obj = open(devnull, 'w')
 
         # Return the file.
         if return_path:
-            return file, None
+            return file_obj, None
         else:
-            return file
+            return file_obj
 
     # Create the directories.
     mkdir_nofail(dir, print_flag=0)
@@ -206,19 +216,19 @@ def open_write_file(file_name=None, dir=None, force=0, compress_type=0, print_fl
         if print_flag:
             print "Opening the file " + `file_path` + " for writing."
         if compress_type == 0:
-            file = open(file_path, 'w')
+            file_obj = open(file_path, 'w')
         elif compress_type == 1:
-            file = BZ2File(file_path, 'w')
+            file_obj = BZ2File(file_path, 'w')
         elif compress_type == 2:
-            file = GzipFile(file_path, 'w')
+            file_obj = GzipFile(file_path, 'w')
     except IOError, message:
         raise RelaxError, "Cannot open the file " + `file_path` + ".  " + message.args[1] + "."
 
     # Return the opened file.
     if return_path:
-        return file, file_path
+        return file_obj, file_path
     else:
-        return file
+        return file_obj
 
 
 

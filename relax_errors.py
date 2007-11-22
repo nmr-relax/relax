@@ -236,10 +236,17 @@ class RelaxIntListIntError(BaseError):
         if Debug:
             self.save_state()
 
-# Integer or string
+# Integer or string.
 class RelaxIntStrError(BaseError):
     def __init__(self, name, value):
         self.text = "The " + name + " argument " + `value` + " must either be an integer or a string."
+        if Debug:
+            self.save_state()
+
+# String or file descriptor.
+class RelaxStrFileError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + `value` + " must either be a string or a file descriptor."
         if Debug:
             self.save_state()
 
