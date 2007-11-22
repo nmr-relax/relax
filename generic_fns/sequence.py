@@ -23,9 +23,130 @@
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError
+from relax_io import extract_data
 
 
-# The relax data storage object.
+
+def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, sep=None):
+    """Function for reading sequence data."""
+
+    # Test if sequence data already exists.
+    if sequence_exists():
+        raise RelaxSequenceError
+
+    # Extract the data from the file.
+    file_data = extract_data(file, dir)
+
+    # Count the number of header lines.
+    header_lines = 0
+    for i in xrange(len(file_data)):
+        try:
+            int(file_data[i][num_col])
+        except:
+            header_lines = header_lines + 1
+        else:
+            break
+
+    # Remove the header.
+    file_data = file_data[header_lines:]
+
+    # Strip data.
+    file_data = strip(file_data)
+
+    # Do nothing if the file does not exist.
+    if not file_data:
+        raise RelaxFileEmptyError
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Test if the sequence data is valid.
+    # Add the run to 'relax_data_store.res'.
+    relax_data_store.res.add_list(run)
+
+    # Fill the array 'relax_data_store.res[run]' with data containers and place sequence data into the array.
+    for i in xrange(len(file_data)):
+        # Append a data container.
+        relax_data_store.res[run].add_item()
+
+        # Insert the data.
+        relax_data_store.res[run][i].num = int(file_data[i][num_col])
+        relax_data_store.res[run][i].name = file_data[i][name_col]
+        relax_data_store.res[run][i].select = 1
+
+
+def sequence_exists():
+    """Function for determining if sequence data already exists in the current data pipe.
+
+    @return:    The answer to the question.
+    @rtype:     Boolean
+    """
+
+    # Dummy return
+    return False
+
+
+def valid_sequence(data):
+    """Function for testing if the sequence data is valid.
+
+    The only function this performs is to raise a RelaxError if the data is invalid.
+
+
+    @param data:    The sequence data.
+    @type data:     list of lists.
+    """
+
+    # Loop over the data.
+    for i in xrange(len(file_data)):
+        # Molecule name data.
+        if mol_name_col != None:
+            try:
+                file_data[i][mol_name_col]
+            except IndexError:
+                raise RelaxInvalidSeqError, file_data[i]
+
+        # Residue number data.
+        if res_num_col != None:
+            # No data in column.
+            try:
+                file_data[i][res_num_col]
+            except IndexError:
+                raise RelaxInvalidSeqError, file_data[i]
+
+            # Bad data in column.
+            try:
+                int(file_data[i][res_num_col])
+            except ValueError:
+                raise RelaxInvalidSeqError, file_data[i]
+
+        # Residue name data.
+        if res_name_col != None:
+            try:
+                file_data[i][res_name_col]
+            except IndexError:
+                raise RelaxInvalidSeqError, file_data[i]
+
+        # Spin number data.
+        if spin_num_col != None:
+            # No data in column.
+            try:
+                file_data[i][spin_num_col]
+            except IndexError:
+                raise RelaxInvalidSeqError, file_data[i]
+
+            # Bad data in column.
+            try:
+                int(file_data[i][spin_num_col])
+            except ValueError:
+                raise RelaxInvalidSeqError, file_data[i]
+
+        # Spin name data.
+        if spin_name_col != None:
+            try:
+                file_data[i][spin_name_col]
+            except IndexError:
+                raise RelaxInvalidSeqError, file_data[i]
+
 
 
 
@@ -178,61 +299,6 @@ class Sequence:
                 relax_data_store.res[run][i].name = res[i].name
 
             # Select the residue.
-            relax_data_store.res[run][i].select = 1
-
-
-    def read(self, run=None, file=None, dir=None, num_col=0, name_col=1, sep=None):
-        """Function for reading sequence data."""
-
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoPipeError, run
-
-        # Test if the sequence data has already been read.
-        if relax_data_store.res.has_key(run):
-            raise RelaxSequenceError, run
-
-        # Extract the data from the file.
-        file_data = self.relax.IO.extract_data(file, dir)
-
-        # Count the number of header lines.
-        header_lines = 0
-        for i in xrange(len(file_data)):
-            try:
-                int(file_data[i][num_col])
-            except:
-                header_lines = header_lines + 1
-            else:
-                break
-
-        # Remove the header.
-        file_data = file_data[header_lines:]
-
-        # Strip data.
-        file_data = self.relax.IO.strip(file_data)
-
-        # Do nothing if the file does not exist.
-        if not file_data:
-            raise RelaxFileEmptyError
-
-        # Test if the sequence data is valid.
-        for i in xrange(len(file_data)):
-            try:
-                int(file_data[i][num_col])
-            except ValueError:
-                raise RelaxError, "Sequence data is invalid."
-
-        # Add the run to 'relax_data_store.res'.
-        relax_data_store.res.add_list(run)
-
-        # Fill the array 'relax_data_store.res[run]' with data containers and place sequence data into the array.
-        for i in xrange(len(file_data)):
-            # Append a data container.
-            relax_data_store.res[run].add_item()
-
-            # Insert the data.
-            relax_data_store.res[run][i].num = int(file_data[i][num_col])
-            relax_data_store.res[run][i].name = file_data[i][name_col]
             relax_data_store.res[run][i].select = 1
 
 
