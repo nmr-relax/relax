@@ -72,6 +72,8 @@ def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, 
     cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Test if the sequence data is valid.
+    validate_sequence(file_data)
+
     # Add the run to 'relax_data_store.res'.
     relax_data_store.res.add_list(run)
 
@@ -97,7 +99,7 @@ def sequence_exists():
     return False
 
 
-def valid_sequence(data):
+def validate_sequence(data):
     """Function for testing if the sequence data is valid.
 
     The only function this performs is to raise a RelaxError if the data is invalid.
