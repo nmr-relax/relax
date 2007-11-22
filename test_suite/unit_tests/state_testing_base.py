@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from os import remove
+from os import remove, tmpfile
 
 # relax module imports.
 from data import Data as relax_data_store
@@ -38,6 +38,9 @@ class State_base_class:
     def setUp(self):
         """Set up for all the data pipe unit tests."""
 
+        # Create a temporary file descriptor.
+        self.tmp_file = tmpfile()
+
         # Reset the relax data storage object.
         relax_data_store.__reset__()
 
@@ -53,6 +56,9 @@ class State_base_class:
 
     def tearDown(self):
         """Reset the relax data storage object."""
+
+        # Delete the temporary file descriptor.
+        del self.tmp_file
 
         # Reset the relax data store.
         relax_data_store.__reset__()
@@ -71,7 +77,7 @@ class State_base_class:
         """
 
         # Save the state.
-        self.state.save_state(file='test')
+        self.state.save_state(file=self.tmp_file)
 
         # Reset the relax data store.
         relax_data_store.__reset__()
@@ -82,7 +88,7 @@ class State_base_class:
         self.assert_(not hasattr(relax_data_store, 'y'))
 
         # Load the state.
-        self.state.load_state(file='test')
+        self.state.load_state(file=self.tmp_file)
 
         # Test the contents of the restored singleton.
         self.assertEqual(relax_data_store.keys(), ['orig'])
@@ -96,5 +102,8 @@ class State_base_class:
         This tests the normal operation of the generic_fns.state.save() function.
         """
 
+        # Create a temporary file descriptor.
+        self.tmp_file = tmpfile()
+
         # Save the state.
-        self.state.save_state(file='test')
+        self.state.save_state(file=self.tmp_file)
