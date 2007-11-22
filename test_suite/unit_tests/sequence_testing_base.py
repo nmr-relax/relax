@@ -71,7 +71,7 @@ class Sequence_base_class:
         """
 
         # Read the residue sequence out of the Ap4Aase 600 MHz NOE data file.
-        self.sequence_fns.read(file='Ap4Aase.Noe.600.bz2', dir='../../shared_data/relaxation_data')
+        self.sequence_fns.read(file='Ap4Aase.Noe.600.bz2', dir='../shared_data/relaxation_data')
 
         # Test parts of the sequence.
         self.assertEqual(relax_data_store['test'].mol[0].res[0].num, 1)
