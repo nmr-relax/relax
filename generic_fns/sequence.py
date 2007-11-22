@@ -72,7 +72,7 @@ def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, 
     cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Test if the sequence data is valid.
-    validate_sequence(file_data)
+    validate_sequence(file_data, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
 
     # Init some indecies.
     mol_index = 0
@@ -112,7 +112,7 @@ def sequence_exists():
     return False
 
 
-def validate_sequence(data):
+def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None):
     """Function for testing if the sequence data is valid.
 
     The only function this performs is to raise a RelaxError if the data is invalid.
