@@ -257,6 +257,31 @@ def open_write_file(file_name=None, dir=None, force=0, compress_type=0, print_fl
         return file_obj
 
 
+def strip(data):
+    """Function to remove all comment and empty lines from the file data structure."""
+
+    # Initialise the new data array.
+    new = []
+
+    # Loop over the data.
+    for i in xrange(len(data)):
+        # Empty lines.
+        if len(data[i]) == 0:
+            continue
+
+        # Comment lines.
+        elif match("#", data[i][0]):
+            continue
+
+        # Data lines.
+        else:
+            new.append(data[i])
+
+    # Return the new data structure.
+    return new
+
+
+
 
 
 class IO:
@@ -343,30 +368,6 @@ class IO:
         sys.stdin  = self.python_stdin
         sys.stdout = self.python_stdout
         sys.stderr = self.python_stderr
-
-
-    def strip(self, data):
-        """Function to remove all comment and empty lines from the file data structure."""
-
-        # Initialise the new data array.
-        new = []
-
-        # Loop over the data.
-        for i in xrange(len(data)):
-            # Empty lines.
-            if len(data[i]) == 0:
-                continue
-
-            # Comment lines.
-            elif match("#", data[i][0]):
-                continue
-
-            # Data lines.
-            else:
-                new.append(data[i])
-
-        # Return the new data structure.
-        return new
 
 
     def tee(self, file_name=None, dir=None, compress_type=0, print_flag=1):
