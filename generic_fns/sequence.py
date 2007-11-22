@@ -74,18 +74,31 @@ def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, 
     # Test if the sequence data is valid.
     validate_sequence(file_data)
 
-    # Add the run to 'relax_data_store.res'.
-    relax_data_store.res.add_list(run)
+    # Init some indecies.
+    mol_index = 0
+    res_index = 0
 
-    # Fill the array 'relax_data_store.res[run]' with data containers and place sequence data into the array.
+    # Fill the molecule-residue-spin data.
     for i in xrange(len(file_data)):
-        # Append a data container.
-        relax_data_store.res[run].add_item()
+        # A new molecule.
+        if mol_name_col and cdp.mol[mol_index].name != file_data[i][mol_name_col]:
+            # Create a new molecule.
+            cdp.mol.add_item(mol_name=file_data[i][mol_name_col])
 
-        # Insert the data.
-        relax_data_store.res[run][i].num = int(file_data[i][num_col])
-        relax_data_store.res[run][i].name = file_data[i][name_col]
-        relax_data_store.res[run][i].select = 1
+            # Increment the molecule index.
+            mol_index = mol_index + 1
+
+        # A new residue.
+        if res_name_col and cdp.mol[mol_index].res[res_index].name != file_data[i][res_name_col]:
+            # Create a new residue.
+            cdp.mol[mol_index].res.add_item(res_name=file_data[i][res_name_col], res_num=int(file_data[i][res_num_col]))
+
+            # Increment the residue index.
+            res_index = res_index + 1
+
+        # A new spin.
+        if spin_num_col:
+            cdp.mol[mol_index].res[res_index].spin.add_item(spin_name=file_data[i][spin_name_col], spin_num=int(file_data[i][spin_num_col]))
 
 
 def sequence_exists():
