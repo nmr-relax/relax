@@ -46,17 +46,28 @@ DATA_TYPES = []
 """An array of many different Python objects for testing the correct behaviour of user function args."""
 
 
-# None.
-DATA_TYPES.append(['None', None])
+# Binaries.
+DATA_TYPES.append(['bin', 0])
+DATA_TYPES.append(['bin', 1])
+
+# Booleans.
+DATA_TYPES.append(['bool', True])
+DATA_TYPES.append(['bool', False])
+
+# Class objects.
+DATA_TYPES.append(['class obj', Container()])
+
+# Classes.
+DATA_TYPES.append(['class', Container])
+
+# Dictionaries.
+DATA_TYPES.append(['dict', {}])
+DATA_TYPES.append(['dict', {'a': 0, 'b': 1}])
 
 # Integers.
 DATA_TYPES.append(['int', 2])
 DATA_TYPES.append(['int', 10])
 DATA_TYPES.append(['int', -10])
-
-# Binaries.
-DATA_TYPES.append(['bin', 0])
-DATA_TYPES.append(['bin', 1])
 
 # File descriptor.
 DATA_TYPES.append(['file', tmpfile()])
@@ -70,21 +81,7 @@ DATA_TYPES.append(['float', 1000000.0])
 DATA_TYPES.append(['function', dummy_fn])
 DATA_TYPES.append(['function', dummy_fn2])
 
-# Classes.
-DATA_TYPES.append(['class', Container])
-
-# Class objects.
-DATA_TYPES.append(['class obj', Container()])
-
-# Strings.
-DATA_TYPES.append(['str', 'a'])
-DATA_TYPES.append(['str', '10'])
-
-# Booleans.
-DATA_TYPES.append(['bool', True])
-DATA_TYPES.append(['bool', False])
-
-# List.
+# Lists.
 DATA_TYPES.append(['list', []])
 DATA_TYPES.append(['list', [None, None]])
 
@@ -97,13 +94,16 @@ DATA_TYPES.append(['float list', [-1., 0., 1.]])
 # List of numbers.
 DATA_TYPES.append(['number list', [-1., 0, 1.]])
 
-# List of strings.
+# Lists of strings.
 DATA_TYPES.append(['str list', ['a']])
 DATA_TYPES.append(['str list', ['a', 'asldfjk']])
 
-# Dictionary.
-DATA_TYPES.append(['dict', {}])
-DATA_TYPES.append(['dict', {'a': 0, 'b': 1}])
+# None.
+DATA_TYPES.append(['None', None])
+
+# Strings.
+DATA_TYPES.append(['str', 'a'])
+DATA_TYPES.append(['str', '10'])
 
 # Tuple.
 DATA_TYPES.append(['tuple', (None, None)])
