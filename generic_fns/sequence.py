@@ -28,7 +28,26 @@ from relax_io import extract_data, strip
 
 
 def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, sep=None):
-    """Function for reading sequence data."""
+    """Function for reading molecule, residue, and/or spin sequence data.
+
+    @param file:            The name of the file to open.
+    @type file:             str
+    @param dir:             The directory containing the file (defaults to the current directory if
+                            None).
+    @type dir:              str or None
+    @param mol_name_col:    The column containing the molecule name information.
+    @type mol_name_col:     int or None
+    @param res_name_col:    The column containing the residue name information.
+    @type res_name_col:     int or None
+    @param res_num_col:     The column containing the residue number information.
+    @type res_num_col:      int or None
+    @param spin_name_col:   The column containing the spin name information.
+    @type spin_name_col:    int or None
+    @param spin_num_col:    The column containing the spin number information.
+    @type spin_num_col:     int or None
+    @param sep:             The column seperator which, if None, defaults to whitespace.
+    @type sep:              str or None
+    """
 
     # Test if sequence data already exists.
     if sequence_exists():
