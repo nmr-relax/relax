@@ -26,7 +26,7 @@ import sys
 
 # relax module imports.
 from data import Data as relax_data_store
-from data_types import return_data_types
+from data_types import DATA_TYPES
 from prompt.spin import Spin
 from relax_errors import RelaxError, RelaxIntError, RelaxNoPipeError, RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.spin_testing_base import Spin_base_class
@@ -56,7 +56,7 @@ class Test_spin(Spin_base_class, TestCase):
         """Test the proper failure of the spin.copy() user function for the pipe_from argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the None and str arguments, and skip them.
             if data[0] == 'None' or data[0] == 'str':
                 continue
@@ -69,7 +69,7 @@ class Test_spin(Spin_base_class, TestCase):
         """Test the proper failure of the spin.copy() user function for the spin_from argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the str argument, and skip it.
             if data[0] == 'str':
                 continue
@@ -82,7 +82,7 @@ class Test_spin(Spin_base_class, TestCase):
         """Test the proper failure of the spin.copy() user function for the pipe_to argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the None and str arguments, and skip them.
             if data[0] == 'None' or data[0] == 'str':
                 continue
@@ -95,7 +95,7 @@ class Test_spin(Spin_base_class, TestCase):
         """Test the proper failure of the spin.copy() user function for the spin_to argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the None and str arguments, and skip them.
             if data[0] == 'None' or  data[0] == 'str':
                 continue
@@ -108,7 +108,7 @@ class Test_spin(Spin_base_class, TestCase):
         """Test the proper failure of the spin.create() user function for the spin_num argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the int and bin arguments, and skip them.
             if data[0] == 'int' or data[0] == 'bin':
                 continue
@@ -121,7 +121,7 @@ class Test_spin(Spin_base_class, TestCase):
         """Test the proper failure of the spin.create() user function for the spin_name argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the str arguments, and skip them.
             if data[0] == 'str':
                 continue
@@ -134,7 +134,7 @@ class Test_spin(Spin_base_class, TestCase):
         """Test the proper failure of the spin.create() user function for the res_id argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the None and str arguments, and skip them.
             if data[0] == 'None' or data[0] == 'str':
                 continue
@@ -147,7 +147,7 @@ class Test_spin(Spin_base_class, TestCase):
         """Test the proper failure of the spin.delete() user function for the spin_id argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the str arguments, and skip them.
             if data[0] == 'str':
                 continue
@@ -160,7 +160,7 @@ class Test_spin(Spin_base_class, TestCase):
         """Test the proper failure of the spin.display() user function for the spin_id argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the None and str arguments, and skip them.
             if data[0] == 'None' or data[0] == 'str':
                 continue
@@ -173,7 +173,7 @@ class Test_spin(Spin_base_class, TestCase):
         """Test the proper failure of the spin.rename() user function for the spin_id argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the str arguments, and skip them.
             if data[0] == 'str':
                 continue
@@ -186,7 +186,7 @@ class Test_spin(Spin_base_class, TestCase):
         """Test the proper failure of the spin.rename() user function for the new_name argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the str arguments, and skip them.
             if data[0] == 'str':
                 continue
@@ -199,7 +199,7 @@ class Test_spin(Spin_base_class, TestCase):
         """Test the proper failure of the spin.renumber() user function for the spin_id argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the str arguments, and skip them.
             if data[0] == 'str':
                 continue
@@ -212,7 +212,7 @@ class Test_spin(Spin_base_class, TestCase):
         """Test the proper failure of the spin.renumber() user function for the new_number argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the int and bin arguments, and skip them.
             if data[0] == 'int' or data[0] == 'bin':
                 continue

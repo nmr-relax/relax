@@ -58,6 +58,32 @@ compression), reading and writing of files, processing of the contents of files,
 """
 
 
+def extract_data(file_name=None, dir=None, file_data=None, sep=None, compress_type=0):
+    """Open the file 'file' and return all the data."""
+
+    # Data not already extracted from the file.
+    if not file_data:
+        # Open the file.
+        file = open_read_file(file_name=file_name, dir=dir, compress_type=compress_type)
+
+        # Read lines.
+        file_data = file.readlines()
+
+    # Create a data structure from the contents of the file split by either whitespace or the separator, sep.
+    data = []
+    for i in xrange(len(file_data)):
+        if sep:
+            row = split(file_data[i], sep)
+        else:
+            row = split(file_data[i])
+        data.append(row)
+    return data
+
+    # Close the file.
+    if not file_data:
+        file.close()
+
+
 def get_file_path(file_name=None, dir=None):
     """Generate and expand the full file path."""
 
@@ -231,6 +257,31 @@ def open_write_file(file_name=None, dir=None, force=0, compress_type=0, print_fl
         return file_obj
 
 
+def strip(data):
+    """Function to remove all comment and empty lines from the file data structure."""
+
+    # Initialise the new data array.
+    new = []
+
+    # Loop over the data.
+    for i in xrange(len(data)):
+        # Empty lines.
+        if len(data[i]) == 0:
+            continue
+
+        # Comment lines.
+        elif match("#", data[i][0]):
+            continue
+
+        # Data lines.
+        else:
+            new.append(data[i])
+
+    # Return the new data structure.
+    return new
+
+
+
 
 
 class IO:
@@ -297,32 +348,6 @@ class IO:
         remove(file_path)
 
 
-    def extract_data(self, file_name=None, dir=None, file_data=None, sep=None, compress_type=0):
-        """Open the file 'file' and return all the data."""
-
-        # Data not already extracted from the file.
-        if not file_data:
-            # Open the file.
-            file = self.open_read_file(file_name=file_name, dir=dir, compress_type=compress_type)
-
-            # Read lines.
-            file_data = file.readlines()
-
-        # Create a data structure from the contents of the file split by either whitespace or the separator, sep.
-        data = []
-        for i in xrange(len(file_data)):
-            if sep:
-                row = split(file_data[i], sep)
-            else:
-                row = split(file_data[i])
-            data.append(row)
-        return data
-
-        # Close the file.
-        if not file_data:
-            file.close()
-
-
     def file_root(self, file_path):
         """Return the root file name, striped of path and extension details"""
 
@@ -343,30 +368,6 @@ class IO:
         sys.stdin  = self.python_stdin
         sys.stdout = self.python_stdout
         sys.stderr = self.python_stderr
-
-
-    def strip(self, data):
-        """Function to remove all comment and empty lines from the file data structure."""
-
-        # Initialise the new data array.
-        new = []
-
-        # Loop over the data.
-        for i in xrange(len(data)):
-            # Empty lines.
-            if len(data[i]) == 0:
-                continue
-
-            # Comment lines.
-            elif match("#", data[i][0]):
-                continue
-
-            # Data lines.
-            else:
-                new.append(data[i])
-
-        # Return the new data structure.
-        return new
 
 
     def tee(self, file_name=None, dir=None, compress_type=0, print_flag=1):

@@ -26,9 +26,9 @@ import sys
 
 # relax module imports.
 from data import Data as relax_data_store
-from data_types import return_data_types
+from data_types import DATA_TYPES
 from prompt.sequence import Sequence
-from relax_errors import RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxBinError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.sequence_testing_base import Sequence_base_class
 
 # Set the variable sys.ps3 (this is required by the user functions).
@@ -56,7 +56,7 @@ class Test_sequence(Sequence_base_class, TestCase):
         """Test the proper failure of the sequence.read() user function for the file argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the str argument, and skip it.
             if data[0] == 'str':
                 continue
@@ -69,7 +69,7 @@ class Test_sequence(Sequence_base_class, TestCase):
         """Test the proper failure of the sequence.read() user function for the dir argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the None and str arguments, and skip them.
             if data[0] == 'None' or data[0] == 'str':
                 continue
@@ -82,7 +82,7 @@ class Test_sequence(Sequence_base_class, TestCase):
         """The proper failure of the sequence.read() user function for the mol_name_col argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the None, int, and bin arguments, and skip them.
             if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
                 continue
@@ -95,7 +95,7 @@ class Test_sequence(Sequence_base_class, TestCase):
         """The proper failure of the sequence.read() user function for the res_num_col argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the None, int, and bin arguments, and skip them.
             if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
                 continue
@@ -108,7 +108,7 @@ class Test_sequence(Sequence_base_class, TestCase):
         """The proper failure of the sequence.read() user function for the res_name_col argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the None, int, and bin arguments, and skip them.
             if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
                 continue
@@ -121,7 +121,7 @@ class Test_sequence(Sequence_base_class, TestCase):
         """The proper failure of the sequence.read() user function for the spin_num_col argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the None, int, and bin arguments, and skip them.
             if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
                 continue
@@ -134,7 +134,7 @@ class Test_sequence(Sequence_base_class, TestCase):
         """The proper failure of the sequence.read() user function for the spin_name_col argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the None, int, and bin arguments, and skip them.
             if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
                 continue
@@ -147,7 +147,7 @@ class Test_sequence(Sequence_base_class, TestCase):
         """The proper failure of the sequence.read() user function for the sep argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the None and str arguments, and skip them.
             if data[0] == 'None' or data[0] == 'str':
                 continue
@@ -156,4 +156,118 @@ class Test_sequence(Sequence_base_class, TestCase):
             self.assertRaises(RelaxNoneStrError, self.sequence_fns.read, file='a', sep=data[1])
 
 
+    def test_write_argfail_file(self):
+        """Test the proper failure of the sequence.write() user function for the file argument."""
 
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.sequence_fns.write, file=data[1])
+
+
+    def test_write_argfail_dir(self):
+        """Test the proper failure of the sequence.write() user function for the dir argument."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.sequence_fns.write, file='a', dir=data[1])
+
+
+    def test_write_argfail_mol_name_col(self):
+        """The proper failure of the sequence.write() user function for the mol_name_col argument."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None, int, and bin arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneIntError, self.sequence_fns.write, file='a', mol_name_col=data[1])
+
+
+    def test_write_argfail_res_num_col(self):
+        """The proper failure of the sequence.write() user function for the res_num_col argument."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None, int, and bin arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneIntError, self.sequence_fns.write, file='a', res_num_col=data[1])
+
+
+    def test_write_argfail_res_name_col(self):
+        """The proper failure of the sequence.write() user function for the res_name_col argument."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None, int, and bin arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneIntError, self.sequence_fns.write, file='a', res_name_col=data[1])
+
+
+    def test_write_argfail_spin_num_col(self):
+        """The proper failure of the sequence.write() user function for the spin_num_col argument."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None, int, and bin arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneIntError, self.sequence_fns.write, file='a', spin_num_col=data[1])
+
+
+    def test_write_argfail_spin_name_col(self):
+        """The proper failure of the sequence.write() user function for the spin_name_col argument."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None, int, and bin arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneIntError, self.sequence_fns.write, file='a', spin_name_col=data[1])
+
+
+    def test_write_argfail_sep(self):
+        """The proper failure of the sequence.write() user function for the sep argument."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.sequence_fns.write, file='a', sep=data[1])
+
+
+    def test_write_argfail_force(self):
+        """Test the proper failure of the sequence.write() user function for the force argument."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the bin arguments, and skip them.
+            if data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxBinError, self.sequence_fns.write, file='a', force=data[1])

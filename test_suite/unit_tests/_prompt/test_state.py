@@ -26,7 +26,7 @@ import sys
 
 # relax module imports.
 from test_suite.unit_tests.state_testing_base import State_base_class
-from data_types import return_data_types
+from data_types import DATA_TYPES
 from prompt.state import State
 from relax_errors import RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxStrFileError
 
@@ -60,7 +60,7 @@ class Test_state(State_base_class, TestCase):
         """Test the proper failure of the state.load() user function for the state argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the str and file arguments, and skip them.
             if data[0] == 'str' or data[0] == 'file':
                 continue
@@ -73,7 +73,7 @@ class Test_state(State_base_class, TestCase):
         """Test the proper failure of the state.load() user function for the dir_name argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the None and str arguments, and skip them.
             if data[0] == 'None' or data[0] == 'str':
                 continue
@@ -86,7 +86,7 @@ class Test_state(State_base_class, TestCase):
         """Test the proper failure of the state.save() user function for the state argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the str and file arguments, and skip them.
             if data[0] == 'str' or data[0] == 'file':
                 continue
@@ -99,7 +99,7 @@ class Test_state(State_base_class, TestCase):
         """Test the proper failure of the state.save() user function for the dir_name argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the None and str arguments, and skip them.
             if data[0] == 'None' or data[0] == 'str':
                 continue
@@ -112,7 +112,7 @@ class Test_state(State_base_class, TestCase):
         """Test the proper failure of the state.save() user function for the force argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the bin arguments, and skip them.
             if data[0] == 'bin':
                 continue
@@ -125,7 +125,7 @@ class Test_state(State_base_class, TestCase):
         """Test the proper failure of the state.save() user function for the compress_type argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the int and bin arguments, and skip them.
             if data[0] == 'int' or data[0] == 'bin':
                 continue

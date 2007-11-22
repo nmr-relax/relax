@@ -425,6 +425,14 @@ class RelaxNoResError(BaseError):
         if Debug:
             self.save_state()
 
+# The sequence data is not valid.
+class RelaxInvalidSeqError(BaseError):
+    def __init__(self, line):
+        self.text = "The line " + `line` + " of the sequence data is invalid."
+        if Debug:
+            self.save_state()
+
+
 
 # Relaxation data errors.
 #########################
