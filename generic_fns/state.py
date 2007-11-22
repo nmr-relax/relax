@@ -67,11 +67,11 @@ def load_state(state=None, dir_name=None, compress_type=1):
     del state
 
 
-def save_state(state=None, dir=None, force=0, compress_type=1):
+def save_state(state=None, dir_name=None, force=0, compress_type=1):
     """Function for saving the program state."""
 
     # Open the file for writing.
-    file = open_write_file(file_name=state, dir=dir, force=force, compress_type=compress_type)
+    file = open_write_file(file_name=state, dir=dir_name, force=force, compress_type=compress_type)
 
     # Pickle the data class and write it to file
     dump(relax_data_store, file, 1)
