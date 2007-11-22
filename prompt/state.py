@@ -42,7 +42,7 @@ class State:
         self.__relax__ = relax
 
 
-    def load(self, state=None, dir=None):
+    def load(self, state=None, dir_name=None):
         """Function for loading a saved program state.
 
         Keyword Arguments
@@ -51,7 +51,7 @@ class State:
         state:  The file name, which can be a string or a file descriptor object, of a saved program
                 state.
 
-        dir:  Directory which the file is found in.
+        dir_name:  The name of the directory in which the file is found.
 
 
         Description
@@ -85,7 +85,7 @@ class State:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "state.load("
             text = text + "state=" + `state`
-            text = text + ", dir=" + `dir` + ")"
+            text = text + ", dir_name=" + `dir_name` + ")"
             print text
 
         # File name.
@@ -93,14 +93,14 @@ class State:
             raise RelaxStrFileError, ('file name', state)
 
         # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory', dir)
+        if dir_name != None and type(dir_name) != str:
+            raise RelaxNoneStrError, ('directory', dir_name)
 
         # Execute the functional code.
-        load_state(state=state, dir_name=dir)
+        load_state(state=state, dir_name=dir_name)
 
 
-    def save(self, state=None, dir=None, force=0, compress_type=1):
+    def save(self, state=None, dir_name=None, force=0, compress_type=1):
         """Function for saving the program state.
 
         Keyword Arguments
@@ -109,7 +109,7 @@ class State:
         state:  The file name, which can be a string or a file descriptor object, to save the
                 current program state in.
 
-        dir:  The directory to place the file in.
+        dir_name:  The name of the directory in which to place the file.
 
         force:  A flag which if set to 1 will cause the file to be overwritten.
 
@@ -156,7 +156,7 @@ class State:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "state.save("
             text = text + "state=" + `state`
-            text = text + ", dir=" + `dir`
+            text = text + ", dir_name=" + `dir_name`
             text = text + ", force=" + `force`
             text = text + ", compress_type=" + `compress_type` + ")"
             print text
@@ -166,8 +166,8 @@ class State:
             raise RelaxStrFileError, ('file name', state)
 
         # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory', dir)
+        if dir_name != None and type(dir_name) != str:
+            raise RelaxNoneStrError, ('directory', dir_name)
 
         # The force flag.
         if type(force) != int or (force != 0 and force != 1):
@@ -178,4 +178,4 @@ class State:
             raise RelaxIntError, ('compression type', compress_type)
 
         # Execute the functional code.
-        save_state(state=state, dir=dir, force=force, compress_type=compress_type)
+        save_state(state=state, dir_name=dir_name, force=force, compress_type=compress_type)
