@@ -165,7 +165,7 @@ class Sequence:
             raise RelaxNoneIntError, ('residue name column', res_name_col)
 
         # Spin number column.
-        if spin_name_col != None and type(spin_num_col) != int:
+        if spin_num_col != None and type(spin_num_col) != int:
             raise RelaxNoneIntError, ('spin number column', spin_num_col)
 
         # Spin name column.
