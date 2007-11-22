@@ -141,3 +141,19 @@ class Test_sequence(Sequence_base_class, TestCase):
 
             # The argument test.
             self.assertRaises(RelaxNoneIntError, self.sequence_fns.read, file='a', spin_name_col=data[1])
+
+
+    def test_read_argfail_sep(self):
+        """The proper failure of the sequence.read() user function for the sep argument."""
+
+        # Loop over the data types.
+        for data in return_data_types():
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.sequence_fns.read, file='a', sep=data[1])
+
+
+
