@@ -20,6 +20,8 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
+from os import tmpfile
 
 
 class Container:
@@ -55,6 +57,9 @@ DATA_TYPES.append(['int', -10])
 # Binaries.
 DATA_TYPES.append(['bin', 0])
 DATA_TYPES.append(['bin', 1])
+
+# File descriptor.
+DATA_TYPES.append(['file', tmpfile()])
 
 # Floats.
 DATA_TYPES.append(['float', 0.0])
