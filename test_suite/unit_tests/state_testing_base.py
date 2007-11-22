@@ -77,7 +77,7 @@ class State_base_class:
         """
 
         # Save the state.
-        self.state.save_state(file=self.tmp_file)
+        self.state.save_state(state=self.tmp_file)
 
         # Reset the relax data store.
         relax_data_store.__reset__()
@@ -88,7 +88,7 @@ class State_base_class:
         self.assert_(not hasattr(relax_data_store, 'y'))
 
         # Load the state.
-        self.state.load_state(file=self.tmp_file)
+        self.state.load_state(state=self.tmp_file)
 
         # Test the contents of the restored singleton.
         self.assertEqual(relax_data_store.keys(), ['orig'])
@@ -102,8 +102,5 @@ class State_base_class:
         This tests the normal operation of the generic_fns.state.save() function.
         """
 
-        # Create a temporary file descriptor.
-        self.tmp_file = tmpfile()
-
         # Save the state.
-        self.state.save_state(file=self.tmp_file)
+        self.state.save_state(state=self.tmp_file)
