@@ -38,11 +38,52 @@ class State_base_class:
     def setUp(self):
         """Set up for all the data pipe unit tests."""
 
-        # Create a temporary file descriptor.
-        self.tmp_file = tmpfile()
-
         # Reset the relax data storage object.
         relax_data_store.__reset__()
+
+
+    def tearDown(self):
+        """Reset the relax data storage object."""
+
+        # Delete the temporary file descriptor.
+        try:
+            del self.tmp_file
+        except AttributeError:
+            pass
+
+        # Reset the relax data store.
+        relax_data_store.__reset__()
+
+
+    def test_load(self):
+        """The unpickling and restoration of the relax data storage singleton.
+
+        This tests the normal operation of the generic_fns.state.load() function.
+        """
+
+        # Test the contents of the empty singleton.
+        self.assertEqual(relax_data_store.keys(), [])
+        self.assertEqual(relax_data_store.current_pipe, None)
+        self.assert_(not hasattr(relax_data_store, 'y'))
+
+        # Load the state.
+        self.state.load_state(state='basic_single_pipe', dir='../../shared_data/saved_states')
+
+        # Test the contents of the restored singleton.
+        self.assertEqual(relax_data_store.keys(), ['orig'])
+        self.assertEqual(relax_data_store.current_pipe, 'orig')
+        self.assertEqual(relax_data_store['orig'].x, 1)
+        self.assertEqual(relax_data_store.y, 'Hello')
+
+
+    def test_save(self):
+        """The pickling and saving of the relax data storage singleton.
+
+        This tests the normal operation of the generic_fns.state.save() function.
+        """
+
+        # Create a temporary file descriptor.
+        self.tmp_file = tmpfile()
 
         # Add a data pipe to the data store.
         relax_data_store.add(pipe_name='orig', pipe_type='mf')
@@ -52,55 +93,6 @@ class State_base_class:
 
         # Add a single object to the storage object.
         relax_data_store.y = 'Hello'
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Delete the temporary file descriptor.
-        del self.tmp_file
-
-        # Reset the relax data store.
-        relax_data_store.__reset__()
-
-        # Clean up the temporarily created dump files.
-        try:
-            remove('test.bz2')
-        except OSError:
-            pass
-
-
-    def test_load(self):
-        """The unpickling and restoration of the relax data storage singleton.
-
-        This tests the normal operation of the generic_fns.state.load() function.
-        """
-
-        # Save the state.
-        self.state.save_state(state=self.tmp_file)
-
-        # Reset the relax data store.
-        relax_data_store.__reset__()
-
-        # Test the contents of the empty singleton.
-        self.assertEqual(relax_data_store.keys(), [])
-        self.assertEqual(relax_data_store.current_pipe, None)
-        self.assert_(not hasattr(relax_data_store, 'y'))
-
-        # Load the state.
-        self.state.load_state(state=self.tmp_file)
-
-        # Test the contents of the restored singleton.
-        self.assertEqual(relax_data_store.keys(), ['orig'])
-        self.assertEqual(relax_data_store.current_pipe, 'orig')
-        self.assertEqual(relax_data_store['orig'].x, 1)
-
-
-    def test_save(self):
-        """The pickling and saving of the relax data storage singleton.
-
-        This tests the normal operation of the generic_fns.state.save() function.
-        """
 
         # Save the state.
         self.state.save_state(state=self.tmp_file)
