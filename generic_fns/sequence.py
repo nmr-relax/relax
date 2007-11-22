@@ -118,8 +118,18 @@ def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=No
     The only function this performs is to raise a RelaxError if the data is invalid.
 
 
-    @param data:    The sequence data.
-    @type data:     list of lists.
+    @param data:            The sequence data.
+    @type data:             list of lists.
+    @param mol_name_col:    The column containing the molecule name information.
+    @type mol_name_col:     int or None
+    @param res_name_col:    The column containing the residue name information.
+    @type res_name_col:     int or None
+    @param res_num_col:     The column containing the residue number information.
+    @type res_num_col:      int or None
+    @param spin_name_col:   The column containing the spin name information.
+    @type spin_name_col:    int or None
+    @param spin_num_col:    The column containing the spin number information.
+    @type spin_num_col:     int or None
     """
 
     # Loop over the data.
