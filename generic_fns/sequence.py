@@ -123,55 +123,55 @@ def validate_sequence(data):
     """
 
     # Loop over the data.
-    for i in xrange(len(file_data)):
+    for i in xrange(len(data)):
         # Molecule name data.
         if mol_name_col != None:
             try:
-                file_data[i][mol_name_col]
+                data[i][mol_name_col]
             except IndexError:
-                raise RelaxInvalidSeqError, file_data[i]
+                raise RelaxInvalidSeqError, data[i]
 
         # Residue number data.
         if res_num_col != None:
             # No data in column.
             try:
-                file_data[i][res_num_col]
+                data[i][res_num_col]
             except IndexError:
-                raise RelaxInvalidSeqError, file_data[i]
+                raise RelaxInvalidSeqError, data[i]
 
             # Bad data in column.
             try:
-                int(file_data[i][res_num_col])
+                int(data[i][res_num_col])
             except ValueError:
-                raise RelaxInvalidSeqError, file_data[i]
+                raise RelaxInvalidSeqError, data[i]
 
         # Residue name data.
         if res_name_col != None:
             try:
-                file_data[i][res_name_col]
+                data[i][res_name_col]
             except IndexError:
-                raise RelaxInvalidSeqError, file_data[i]
+                raise RelaxInvalidSeqError, data[i]
 
         # Spin number data.
         if spin_num_col != None:
             # No data in column.
             try:
-                file_data[i][spin_num_col]
+                data[i][spin_num_col]
             except IndexError:
-                raise RelaxInvalidSeqError, file_data[i]
+                raise RelaxInvalidSeqError, data[i]
 
             # Bad data in column.
             try:
-                int(file_data[i][spin_num_col])
+                int(data[i][spin_num_col])
             except ValueError:
-                raise RelaxInvalidSeqError, file_data[i]
+                raise RelaxInvalidSeqError, data[i]
 
         # Spin name data.
         if spin_name_col != None:
             try:
-                file_data[i][spin_name_col]
+                data[i][spin_name_col]
             except IndexError:
-                raise RelaxInvalidSeqError, file_data[i]
+                raise RelaxInvalidSeqError, data[i]
 
 
 
