@@ -39,73 +39,66 @@ def dummy_fn2():
     return "Hello"
 
 
-def return_data_types():
-    """Function for returning an array of many different Python objects.
-    
-    These objects are to test the correct behaviour towards the user function arguments.
-    """
+# Create the array.
+DATA_TYPES = []
+"""An array of many different Python objects for testing the correct behaviour of user function args."""
 
-    # Create the array.
-    data_types = []
 
-    # None.
-    data_types.append(['None', None])
+# None.
+DATA_TYPES.append(['None', None])
 
-    # Integers.
-    data_types.append(['int', 2])
-    data_types.append(['int', 10])
-    data_types.append(['int', -10])
+# Integers.
+DATA_TYPES.append(['int', 2])
+DATA_TYPES.append(['int', 10])
+DATA_TYPES.append(['int', -10])
 
-    # Binaries.
-    data_types.append(['bin', 0])
-    data_types.append(['bin', 1])
+# Binaries.
+DATA_TYPES.append(['bin', 0])
+DATA_TYPES.append(['bin', 1])
 
-    # Floats.
-    data_types.append(['float', 0.0])
-    data_types.append(['float', 1e-7])
-    data_types.append(['float', 1000000.0])
+# Floats.
+DATA_TYPES.append(['float', 0.0])
+DATA_TYPES.append(['float', 1e-7])
+DATA_TYPES.append(['float', 1000000.0])
 
-    # Functions.
-    data_types.append(['function', dummy_fn])
-    data_types.append(['function', dummy_fn2])
+# Functions.
+DATA_TYPES.append(['function', dummy_fn])
+DATA_TYPES.append(['function', dummy_fn2])
 
-    # Classes.
-    data_types.append(['class', Container])
+# Classes.
+DATA_TYPES.append(['class', Container])
 
-    # Class objects.
-    data_types.append(['class obj', Container()])
+# Class objects.
+DATA_TYPES.append(['class obj', Container()])
 
-    # Strings.
-    data_types.append(['str', 'a'])
-    data_types.append(['str', '10'])
+# Strings.
+DATA_TYPES.append(['str', 'a'])
+DATA_TYPES.append(['str', '10'])
 
-    # Booleans.
-    data_types.append(['bool', True])
-    data_types.append(['bool', False])
+# Booleans.
+DATA_TYPES.append(['bool', True])
+DATA_TYPES.append(['bool', False])
 
-    # List.
-    data_types.append(['list', []])
-    data_types.append(['list', [None, None]])
+# List.
+DATA_TYPES.append(['list', []])
+DATA_TYPES.append(['list', [None, None]])
 
-    # List of integers.
-    data_types.append(['int list', [-1, 0, 1]])
+# List of integers.
+DATA_TYPES.append(['int list', [-1, 0, 1]])
 
-    # List of floats.
-    data_types.append(['float list', [-1., 0., 1.]])
+# List of floats.
+DATA_TYPES.append(['float list', [-1., 0., 1.]])
 
-    # List of numbers.
-    data_types.append(['number list', [-1., 0, 1.]])
+# List of numbers.
+DATA_TYPES.append(['number list', [-1., 0, 1.]])
 
-    # List of strings.
-    data_types.append(['str list', ['a']])
-    data_types.append(['str list', ['a', 'asldfjk']])
+# List of strings.
+DATA_TYPES.append(['str list', ['a']])
+DATA_TYPES.append(['str list', ['a', 'asldfjk']])
 
-    # Dictionary.
-    data_types.append(['dict', {}])
-    data_types.append(['dict', {'a': 0, 'b': 1}])
+# Dictionary.
+DATA_TYPES.append(['dict', {}])
+DATA_TYPES.append(['dict', {'a': 0, 'b': 1}])
 
-    # Tuple.
-    data_types.append(['tuple', (None, None)])
-
-    # Return the data type array.
-    return data_types
+# Tuple.
+DATA_TYPES.append(['tuple', (None, None)])
