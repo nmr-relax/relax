@@ -22,6 +22,7 @@
 
 # Python module imports.
 from os import remove, tempnam
+import sys
 try:
     from hashlib import md5
 except ImportError:
@@ -70,8 +71,13 @@ class Sequence_base_class:
         The functions tested are generic_fns.sequence.read() and prompt.sequence.read().
         """
 
+        # Get the relative path of relax.
+        path = sys.path[0]
+        if path == '.':
+            path = sys.path[-1]
+
         # Read the residue sequence out of the Ap4Aase 600 MHz NOE data file.
-        self.sequence_fns.read(file='Ap4Aase.Noe.600.bz2', dir='../shared_data/relaxation_data')
+        self.sequence_fns.read(file='Ap4Aase.Noe.600.bz2', dir=path+'/test_suite/shared_data/relaxation_data')
 
         # Test parts of the sequence.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
