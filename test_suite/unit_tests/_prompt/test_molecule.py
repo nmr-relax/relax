@@ -26,7 +26,7 @@ import sys
 
 # relax module imports.
 from data import Data as relax_data_store
-from data_types import return_data_types
+from data_types import DATA_TYPES
 from generic_fns import residue
 from prompt.molecule import Molecule
 from relax_errors import RelaxError, RelaxIntError, RelaxNoPipeError, RelaxNoneStrError, RelaxStrError
@@ -58,7 +58,7 @@ class Test_molecule(Molecule_base_class, TestCase):
         """Test the proper failure of the molecule.copy() user function for the pipe_from argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the None and str arguments, and skip them.
             if data[0] == 'None' or data[0] == 'str':
                 continue
@@ -71,7 +71,7 @@ class Test_molecule(Molecule_base_class, TestCase):
         """Test the proper failure of the molecule.copy() user function for the mol_from argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the str argument, and skip it.
             if data[0] == 'str':
                 continue
@@ -84,7 +84,7 @@ class Test_molecule(Molecule_base_class, TestCase):
         """Test the proper failure of the molecule.copy() user function for the pipe_to argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the None and str arguments, and skip them.
             if data[0] == 'None' or data[0] == 'str':
                 continue
@@ -100,7 +100,7 @@ class Test_molecule(Molecule_base_class, TestCase):
         self.setup_data()
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the None and str arguments, and skip them.
             if data[0] == 'None' or data[0] == 'str':
                 continue
@@ -113,7 +113,7 @@ class Test_molecule(Molecule_base_class, TestCase):
         """Test the proper failure of the molecule.create() user function for the mol_name argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the str arguments, and skip them.
             if data[0] == 'str':
                 continue
@@ -126,7 +126,7 @@ class Test_molecule(Molecule_base_class, TestCase):
         """Test the proper failure of the molecule.delete() user function for the mol_id argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the str arguments, and skip them.
             if data[0] == 'str':
                 continue
@@ -139,7 +139,7 @@ class Test_molecule(Molecule_base_class, TestCase):
         """Test the proper failure of the molecule.display() user function for the mol_id argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the None and str arguments, and skip them.
             if data[0] == 'None' or data[0] == 'str':
                 continue
@@ -152,7 +152,7 @@ class Test_molecule(Molecule_base_class, TestCase):
         """Test the proper failure of the molecule.rename() user function for the mol_id argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the str arguments, and skip them.
             if data[0] == 'str':
                 continue
@@ -165,7 +165,7 @@ class Test_molecule(Molecule_base_class, TestCase):
         """Test the proper failure of the molecule.rename() user function for the new_name argument."""
 
         # Loop over the data types.
-        for data in return_data_types():
+        for data in DATA_TYPES:
             # Catch the str arguments, and skip them.
             if data[0] == 'str':
                 continue
