@@ -102,7 +102,7 @@ def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, 
         # A new molecule.
         if mol_name_col and cdp.mol[mol_index].name != file_data[i][mol_name_col]:
             # Replace the first empty molecule.
-            if mol_index = 0 and cdp.mol[0].name == None:
+            if mol_index == 0 and cdp.mol[0].name == None:
                 cdp.mol[0].name = file_data[i][mol_name_col]
 
             # Create a new molecule.
@@ -116,7 +116,7 @@ def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, 
         # A new residue.
         if res_name_col and cdp.mol[mol_index].res[res_index].name != file_data[i][res_name_col]:
             # Replace the first empty residue.
-            if res_index = 0 and cdp.mol[mol_index].res[0].name == None:
+            if res_index == 0 and cdp.mol[mol_index].res[0].name == None:
                 cdp.mol[mol_index].res[0].name = file_data[i][res_name_col]
                 cdp.mol[mol_index].res[0].num = int(file_data[i][res_num_col])
 
