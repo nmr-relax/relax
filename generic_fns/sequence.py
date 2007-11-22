@@ -101,19 +101,32 @@ def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, 
     for i in xrange(len(file_data)):
         # A new molecule.
         if mol_name_col and cdp.mol[mol_index].name != file_data[i][mol_name_col]:
-            # Create a new molecule.
-            cdp.mol.add_item(mol_name=file_data[i][mol_name_col])
+            # Replace the first empty molecule.
+            if mol_index = 0 and cdp.mol[0].name == None:
+                cdp.mol[0].name = file_data[i][mol_name_col]
 
-            # Increment the molecule index.
-            mol_index = mol_index + 1
+            # Create a new molecule.
+            else:
+                # Add the molecule.
+                cdp.mol.add_item(mol_name=file_data[i][mol_name_col])
+
+                # Increment the molecule index.
+                mol_index = mol_index + 1
 
         # A new residue.
         if res_name_col and cdp.mol[mol_index].res[res_index].name != file_data[i][res_name_col]:
-            # Create a new residue.
-            cdp.mol[mol_index].res.add_item(res_name=file_data[i][res_name_col], res_num=int(file_data[i][res_num_col]))
+            # Replace the first empty residue.
+            if res_index = 0 and cdp.mol[mol_index].res[0].name == None:
+                cdp.mol[mol_index].res[0].name = file_data[i][res_name_col]
+                cdp.mol[mol_index].res[0].num = int(file_data[i][res_num_col])
 
-            # Increment the residue index.
-            res_index = res_index + 1
+            # Create a new residue.
+            else:
+                # Add the residue.
+                cdp.mol[mol_index].res.add_item(res_name=file_data[i][res_name_col], res_num=int(file_data[i][res_num_col]))
+
+                # Increment the residue index.
+                res_index = res_index + 1
 
         # A new spin.
         if spin_num_col:
