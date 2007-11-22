@@ -102,3 +102,16 @@ class Test_sequence(Sequence_base_class, TestCase):
 
             # The argument test.
             self.assertRaises(RelaxNoneIntError, self.sequence_fns.read, file='a', res_num_col=data[1])
+
+
+    def test_read_argfail_res_name_col(self):
+        """The proper failure of the sequence.read() user function for the res_name_col argument."""
+
+        # Loop over the data types.
+        for data in return_data_types():
+            # Catch the None, int, and bin arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneIntError, self.sequence_fns.read, file='a', res_name_col=data[1])
