@@ -20,6 +20,13 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
+from os import remove, tempnam
+try:
+    from hashlib import md5
+except ImportError:
+    from md5 import new as md5
+
 # relax module imports.
 from data import Data as relax_data_store
 
@@ -40,11 +47,21 @@ class Sequence_base_class:
         # Add a data pipe to the data store.
         relax_data_store.add(pipe_name='orig', pipe_type='mf')
 
+        # Get a temporary file name.
+        self.tmpfile = tempnam()
+
 
     def tearDown(self):
         """Reset the relax data storage object."""
 
+        # Reset the relax data storage object.
         relax_data_store.__reset__()
+
+        # Delete the temporary file.
+        try:
+            remove(self.tmpfile)
+        except OSError:
+            pass
 
 
     def test_read_protein_noe_data(self):
@@ -79,3 +96,36 @@ class Sequence_base_class:
         self.assertEqual(relax_data_store['test'].mol[0].res[0].name, 'ISS')
         self.assertEqual(relax_data_store['test'].mol[0].res[0].num, 165)
         self.assertEqual(relax_data_store['test'].mol[0].res[0].name, 'LEU')
+
+
+    def test_write_protein_sequence(self):
+        """Test the writing of an amino acid sequence.
+
+        The functions tested are generic_fns.sequence.write() and prompt.sequence.write().
+        """
+
+        # Alias the 'orig' relax data store.
+        cdp = relax_data_store['orig']
+
+        # Create a simple animo acid sequence.
+        cdp.mol[0].res.add_item('GLY', 1)
+        cdp.mol[0].res.add_item('PRO', 2)
+        cdp.mol[0].res.add_item('LEU', 3)
+        cdp.mol[0].res.add_item('GLY', 4)
+        cdp.mol[0].res.add_item('SER', 5)
+
+        # The temporary file.
+        tmpfile = tempnam()
+
+        # Write the residue sequence.
+        self.sequence_fns.write(file=tmpfile)
+
+        # Open the temp file.
+        file = open(tmpfile)
+
+        # Get the md5sum of the file.
+        file_md5 = md5()
+        file_md5.update(file.read())
+
+        # Test the md5sum.
+        self.assertEqual(file_md5, '')
