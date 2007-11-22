@@ -40,12 +40,23 @@ def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, 
     # Count the number of header lines.
     header_lines = 0
     for i in xrange(len(file_data)):
-        try:
-            int(file_data[i][num_col])
-        except:
-            header_lines = header_lines + 1
-        else:
-            break
+        # Residue number.
+        if res_num_col != None:
+            try:
+                int(file_data[i][res_num_col])
+            except ValueError:
+                header_lines = header_lines + 1
+            else:
+                break
+
+        # Spin number.
+        elif spin_num_col != None:
+            try:
+                int(file_data[i][spin_num_col])
+            except ValueError:
+                header_lines = header_lines + 1
+            else:
+                break
 
     # Remove the header.
     file_data = file_data[header_lines:]
