@@ -28,7 +28,7 @@ import sys
 from test_suite.unit_tests.state_testing_base import State_base_class
 from data_types import return_data_types
 from prompt.state import State
-from relax_errors import RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxStrFileError
 
 
 # Set the variable sys.ps3 (this is required by the user functions).
@@ -61,12 +61,12 @@ class Test_state(State_base_class, TestCase):
 
         # Loop over the data types.
         for data in return_data_types():
-            # Catch the str arguments, and skip them.
-            if data[0] == 'str':
+            # Catch the str and file arguments, and skip them.
+            if data[0] == 'str' or data[0] == 'file':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.state.load_state, state=data[1])
+            self.assertRaises(RelaxStrFileError, self.state.load_state, state=data[1])
 
 
     def test_load_argfail_dir(self):
@@ -87,12 +87,12 @@ class Test_state(State_base_class, TestCase):
 
         # Loop over the data types.
         for data in return_data_types():
-            # Catch the str arguments, and skip them.
-            if data[0] == 'str':
+            # Catch the str and file arguments, and skip them.
+            if data[0] == 'str' or data[0] == 'file':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.state.save_state, state=data[1])
+            self.assertRaises(RelaxStrFileError, self.state.save_state, state=data[1])
 
 
     def test_save_argfail_dir(self):
