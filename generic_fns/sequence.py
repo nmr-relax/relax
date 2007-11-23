@@ -25,22 +25,36 @@ from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError
 from relax_io import extract_data, open_write_file, strip
 from generic_fns.selection import count_spins, spin_loop
+from sys import stdout
 
 
 
-def display():
-    """Function for displaying the molecule, residue, and spin sequence."""
+def display(mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None):
+    """Function for displaying the molecule, residue, and/or spin sequence data.
+
+    This calls the write_body() function to do most of the work.
+
+
+    @param mol_name_col:    The column to contain the molecule name information.
+    @type mol_name_col:     int or None
+    @param res_name_col:    The column to contain the residue name information.
+    @type res_name_col:     int or None
+    @param res_num_col:     The column to contain the residue number information.
+    @type res_num_col:      int or None
+    @param spin_name_col:   The column to contain the spin name information.
+    @type spin_name_col:    int or None
+    @param spin_num_col:    The column to contain the spin number information.
+    @type spin_num_col:     int or None
+    @param sep:             The column seperator which, if None, defaults to whitespace.
+    @type sep:              str or None
+    """
 
     # Test if the sequence data is loaded.
     if not count_spins():
         raise RelaxNoSequenceError
 
-    # Print a header.
-    print "%-8s%-8s%-8s%-8s%-8s%-10s" % ("Mol name", "Res num", "Res name", "Spin num", "Spin name", "Selected")
-
-    # Print the data.
-    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
-        print "%-8s%-8i%-8s%-8i%-8s%-10i" % (mol_name, res_num, res_name, spin.num, spin.name, spin.select)
+    # Write the data.
+    write_body(file=stdout, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep)
 
 
 def load_PDB_sequence():
