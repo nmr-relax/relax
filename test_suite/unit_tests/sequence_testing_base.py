@@ -65,6 +65,27 @@ class Sequence_base_class:
             pass
 
 
+    def test_display_protein_sequence(self):
+        """Test the display of an amino acid sequence.
+
+        The functions tested are generic_fns.sequence.display() and prompt.sequence.display().
+        """
+
+        # Alias the 'orig' relax data store.
+        cdp = relax_data_store['orig']
+
+        # Create a simple animo acid sequence.
+        cdp.mol[0].res[0].num = 1
+        cdp.mol[0].res[0].name = 'GLY'
+        cdp.mol[0].res.add_item('PRO', 2)
+        cdp.mol[0].res.add_item('LEU', 3)
+        cdp.mol[0].res.add_item('GLY', 4)
+        cdp.mol[0].res.add_item('SER', 5)
+
+        # Try displaying the residue sequence.
+        self.sequence_fns.display(res_num_col=0, res_name_col=1)
+
+
     def test_read_protein_noe_data(self):
         """Test the reading of the amino acid sequence out of a protein NOE data file.
 
