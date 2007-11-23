@@ -37,8 +37,8 @@ def format(message, category, filename, lineno):
     """ Replacement for warnings.formatwarning to customise output format."""
 
     # Add the text 'RelaxWarning: ' to the start of the warning message.
-    if issubclass(category, BaseWarning):
-        message = "RelaxWarning: %s\n\n" % message
+    #if issubclass(category, BaseWarning):
+    message = "RelaxWarning: %s\n\n" % message
 
     # Print stack-trace in debug mode.
     if Debug:

@@ -22,6 +22,7 @@
 
 # Python module imports.
 from os import remove, tmpfile
+import sys
 
 # relax module imports.
 from data import Data as relax_data_store
@@ -66,8 +67,13 @@ class State_base_class:
         self.assertEqual(relax_data_store.current_pipe, None)
         self.assert_(not hasattr(relax_data_store, 'y'))
 
+        # Get the relative path of relax.
+        path = sys.path[0]
+        if path == '.':
+            path = sys.path[-1]
+
         # Load the state.
-        self.state.load_state(state='basic_single_pipe', dir_name='../shared_data/saved_states')
+        self.state.load_state(state='basic_single_pipe', dir_name=path+'/test_suite/shared_data/saved_states')
 
         # Test the contents of the restored singleton.
         self.assertEqual(relax_data_store.keys(), ['orig'])
