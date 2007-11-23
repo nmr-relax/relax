@@ -40,43 +40,43 @@ class Generic:
         # Value difference test.
         if test_name == 'value_diff':
             # The name of the test.
-            self.name = "S2 difference stored in a new run."
+            self.name = "S2 difference stored in a new data pipe."
 
             # The test.
             self.test = self.value_diff
 
 
-    def value_diff(self, run):
-        """The test of storing an S2 difference in a new run."""
+    def value_diff(self, pipe):
+        """The test of storing an S2 difference in a new data pipe."""
 
         # Arguments.
-        self.run = run
+        self.pipe = pipe
 
-        # Create three runs.
-        self.relax.interpreter._Run.create('orig1', "mf")
-        self.relax.interpreter._Run.create('orig2', "mf")
-        self.relax.interpreter._Run.create('new', "mf")
+        # Init.
+        pipes = ['orig1', 'orig2', 'new']
+        s2 = [0.9, 0.7, None]
 
-        # Load the Lupin Ap4Aase sequence.
-        self.relax.interpreter._Sequence.read('orig1', file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/system_tests/data")
-        self.relax.interpreter._Sequence.read('orig2', file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/system_tests/data")
-        self.relax.interpreter._Sequence.read('new', file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/system_tests/data")
+        # Loop over the data pipes to create and fill.
+        for i in xrange(3):
+            # Create the data pipe.
+            self.relax.interpreter._Pipe.create(pipes[i], 'mf')
 
-        # Only select residue 8.
-        self.relax.interpreter._Select.res('orig1', num=8, change_all=1)
-        self.relax.interpreter._Select.res('orig2', num=8, change_all=1)
-        self.relax.interpreter._Select.res('new', num=8, change_all=1)
+            # Load the Lupin Ap4Aase sequence.
+            self.relax.interpreter._Sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/system_tests/data")
 
-        # Set two order parameter values.
-        self.relax.interpreter._Value.set('orig1', 0.9, 'S2', res_num=8)
-        self.relax.interpreter._Value.set('orig2', 0.7, 'S2', res_num=8)
+            # Only select residue 8.
+            self.relax.interpreter._Select.res(num=8, change_all=1)
+
+            # Set the order parameter value.
+            if s2[i]:
+                self.relax.interpreter._Value.set(s2[i], 'S2', res_num=8)
 
         # Calculate the difference and assign it to residue 8 (located in position 7).
-        diff = relax_data_store.res['orig1'][7].s2 - relax_data_store.res['orig2'][7].s2
-        self.relax.interpreter._Value.set('new', diff, 'S2', res_num=8)
+        diff = relax_data_store['orig1'].mol[0].res[7].spin[0].s2 - relax_data_store['orig2'].mol[0].res[7].spin[0].s2
+        self.relax.interpreter._Value.set(diff, 'S2', res_num=8)
 
         # Test if the difference is 0.2!
-        if abs(relax_data_store.res['new'][7].s2 - 0.2) > 0.00001:
+        if abs(relax_data_store['new'].mol[0].res[7].spin[0].s2 - 0.2) > 0.00001:
             print "The difference of '" + `diff` + "' should be equal to 0.2."
             return
 

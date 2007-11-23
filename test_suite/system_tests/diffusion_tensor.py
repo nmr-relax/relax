@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2006-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -50,16 +50,16 @@ class Diffusion_tensor:
             self.test = self.copy
 
 
-    def copy(self, run):
+    def copy(self, pipe):
         """The copy test."""
 
         # Initialise.
         self.initialise_tensors()
 
-        # Create three additional runs for copying the spherical, spheroidal, and ellipsoidal diffusion data.
-        self.relax.generic.runs.create('sphere2', 'mf')
-        self.relax.generic.runs.create('spheroid2', 'mf')
-        self.relax.generic.runs.create('ellipsoid2', 'mf')
+        # Create three additional data pipes for copying the spherical, spheroidal, and ellipsoidal diffusion data.
+        self.relax.interpreter._Pipe.create('sphere2', 'mf')
+        self.relax.interpreter._Pipe.create('spheroid2', 'mf')
+        self.relax.interpreter._Pipe.create('ellipsoid2', 'mf')
 
         # Delete the data.
         self.relax.interpreter._Diffusion_tensor.copy('sphere', 'sphere2')
@@ -70,37 +70,43 @@ class Diffusion_tensor:
         return 1
 
 
-    def delete(self, run):
+    def delete(self, pipe):
         """The deletion test."""
 
         # Initialise.
         self.initialise_tensors()
 
         # Delete the data.
-        self.relax.interpreter._Diffusion_tensor.delete('sphere')
-        self.relax.interpreter._Diffusion_tensor.delete('spheroid')
-        self.relax.interpreter._Diffusion_tensor.delete('ellipsoid')
+        self.relax.interpreter._Pipe.switch('sphere')
+        self.relax.interpreter._Diffusion_tensor.delete()
+        self.relax.interpreter._Pipe.switch('spheroid')
+        self.relax.interpreter._Diffusion_tensor.delete()
+        self.relax.interpreter._Pipe.switch('ellipsoid')
+        self.relax.interpreter._Diffusion_tensor.delete()
 
         # Success.
         return 1
 
 
-    def display(self, run):
+    def display(self, pipe):
         """The display test."""
 
         # Initialise some tensors.
         self.initialise_tensors()
 
         # Display the data.
-        self.relax.interpreter._Diffusion_tensor.display('sphere')
-        self.relax.interpreter._Diffusion_tensor.display('spheroid')
-        self.relax.interpreter._Diffusion_tensor.display('ellipsoid')
+        self.relax.interpreter._Pipe.switch('sphere')
+        self.relax.interpreter._Diffusion_tensor.display()
+        self.relax.interpreter._Pipe.switch('spheroid')
+        self.relax.interpreter._Diffusion_tensor.display()
+        self.relax.interpreter._Pipe.switch('ellipsoid')
+        self.relax.interpreter._Diffusion_tensor.display()
 
         # Success.
         return 1
 
 
-    def init(self, run):
+    def init(self, pipe):
         """The initialisation test."""
 
         # Initialise some tensors.
@@ -113,12 +119,15 @@ class Diffusion_tensor:
     def initialise_tensors(self):
         """Fucntion for initialising a spherical, spheroidal, and ellipsoidal diffusion tensor."""
 
-        # Create three runs for spherical, spheroidal, and ellipsoidal diffusion.
-        self.relax.generic.runs.create('sphere', 'mf')
-        self.relax.generic.runs.create('spheroid', 'mf')
-        self.relax.generic.runs.create('ellipsoid', 'mf')
+        # Create three data pipes for spherical, spheroidal, and ellipsoidal diffusion.
+        self.relax.interpreter._Pipe.create('sphere', 'mf')
+        self.relax.interpreter._Pipe.create('spheroid', 'mf')
+        self.relax.interpreter._Pipe.create('ellipsoid', 'mf')
 
         # Initialise some data.
+        self.relax.interpreter._Pipe.switch('sphere')
         self.relax.interpreter._Diffusion_tensor.init('sphere', 10e-9, fixed=1)
+        self.relax.interpreter._Pipe.switch('spheroid')
         self.relax.interpreter._Diffusion_tensor.init('spheroid', (2e-8, 1.3, 60-360, 290), param_types=2, spheroid_type='prolate', fixed=1)
+        self.relax.interpreter._Pipe.switch('ellipsoid')
         self.relax.interpreter._Diffusion_tensor.init('ellipsoid', (9e-8, 5e6, 0.3, 60+360, 290, 100), fixed=0)

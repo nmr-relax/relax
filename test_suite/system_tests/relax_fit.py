@@ -46,23 +46,20 @@ class Relax_fit:
             self.test = self.read_sparky
 
 
-    def read_sparky(self, run):
+    def read_sparky(self, pipe):
         """The Sparky peak height loading test."""
-
-        # Arguments.
-        self.run = run
 
         # Load the original state.
         self.relax.interpreter._State.load(file='rx.save', dir=sys.path[-1] + '/test_suite/system_tests/data/curve_fitting')
 
-        # Create the run.
-        self.relax.generic.runs.create(self.run, "mf")
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create(pipe, 'mf')
 
         # Load the Lupin Ap4Aase sequence.
-        self.relax.interpreter._Sequence.read(self.run, file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/system_tests/data")
+        self.relax.interpreter._Sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/system_tests/data")
 
         # Read the peak heights.
-        self.relax.interpreter._Relax_fit.read(self.run, file="T2_ncyc1_ave.list", dir=sys.path[-1] + "/test_suite/system_tests/data/curve_fitting", relax_time=0.0176)
+        self.relax.interpreter._Relax_fit.read(file="T2_ncyc1_ave.list", dir=sys.path[-1] + "/test_suite/system_tests/data/curve_fitting", relax_time=0.0176)
 
 
         # Test the integrity of the data.
@@ -72,10 +69,10 @@ class Relax_fit:
         print "\nTesting the integrity of the loaded data.\n"
 
         # Loop over the residues of the original data.
-        for i in xrange(len(relax_data_store.res['rx'])):
+        for i in xrange(len(relax_data_store['rx'].mol[0].res)):
             # Aliases
-            orig_data = relax_data_store.res['rx'][i]
-            new_data = relax_data_store.res[self.run][i]
+            orig_data = relax_data_store['rx'].mol[0].res[i]
+            new_data = relax_data_store[pipe].mol[0].res[i]
 
             # Residue alias.
             self.orig_res = `orig_data.num` + orig_data.name
@@ -92,11 +89,11 @@ class Relax_fit:
                 return
 
             # Skip unselected residues.
-            if not orig_data.select:
+            if not orig_data.spin[0].select:
                 continue
 
             # The intensity.
-            if orig_data.intensities[0][0] != new_data.intensities[0][0]:
+            if orig_data.spin[0].intensities[0][0] != new_data.spin[0].intensities[0][0]:
                 self.print_error('intensities')
                 return
 
