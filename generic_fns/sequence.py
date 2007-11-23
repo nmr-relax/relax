@@ -275,6 +275,9 @@ def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=No
 def write(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, force=0):
     """Function for writing molecule, residue, and/or sequence data.
 
+    This calls the write_body() function to do most of the work.
+
+
     @param file:            The name of the file to write the data to.
     @type file:             str
     @param dir:             The directory to contain the file (defaults to the current directory if
@@ -303,36 +306,60 @@ def write(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col
     # Open the file for writing.
     seq_file = open_write_file(file, dir, force)
 
+    # Write the data.
+    write_body(file=seq_file, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep)
+
+    # Close the results file.
+    seq_file.close()
+
+
+
+def write_body(file=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None):
+    """Function for writing to the given file object the molecule, residue, and/or sequence data.
+
+    @param file:            The file object to write the data to.
+    @type file:             file object
+    @param mol_name_col:    The column to contain the molecule name information.
+    @type mol_name_col:     int or None
+    @param res_name_col:    The column to contain the residue name information.
+    @type res_name_col:     int or None
+    @param res_num_col:     The column to contain the residue number information.
+    @type res_num_col:      int or None
+    @param spin_name_col:   The column to contain the spin name information.
+    @type spin_name_col:    int or None
+    @param spin_num_col:    The column to contain the spin number information.
+    @type spin_num_col:     int or None
+    @param sep:             The column seperator which, if None, defaults to whitespace.
+    @type sep:              str or None
+    """
+
     # No special seperator character.
     if sep == None:
         sep = ''
 
     # Write a header.
     if mol_name_col != None:
-        seq_file.write("%-10s " % ("Mol_name"+sep))
+        file.write("%-10s " % ("Mol_name"+sep))
     if res_num_col != None:
-        seq_file.write("%-10s " % ("Res_num"+sep))
+        file.write("%-10s " % ("Res_num"+sep))
     if res_name_col != None:
-        seq_file.write("%-10s " % ("Res_name"+sep))
+        file.write("%-10s " % ("Res_name"+sep))
     if spin_num_col != None:
-        seq_file.write("%-10s " % ("Spin_num"+sep))
+        file.write("%-10s " % ("Spin_num"+sep))
     if spin_name_col != None:
-        seq_file.write("%-10s " % ("Spin_name"+sep))
-    seq_file.write('\n')
+        file.write("%-10s " % ("Spin_name"+sep))
+    file.write('\n')
 
     # Loop over the spins.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         if mol_name_col != None:
-            seq_file.write("%-10s " % (str(mol_name)+sep))
+            file.write("%-10s " % (str(mol_name)+sep))
         if res_num_col != None:
-            seq_file.write("%-10s " % (str(res_num)+sep))
+            file.write("%-10s " % (str(res_num)+sep))
         if res_name_col != None:
-            seq_file.write("%-10s " % (str(res_name)+sep))
+            file.write("%-10s " % (str(res_name)+sep))
         if spin_num_col != None:
-            seq_file.write("%-10s " % (str(spin.num)+sep))
+            file.write("%-10s " % (str(spin.num)+sep))
         if spin_name_col != None:
-            seq_file.write("%-10s " % (str(spin.name)+sep))
-        seq_file.write('\n')
-
-    # Close the results file.
-    seq_file.close()
+            file.write("%-10s " % (str(spin.name)+sep))
+        file.write('\n')
