@@ -272,7 +272,7 @@ def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=No
                 raise RelaxInvalidSeqError, data[i]
 
 
-def write(file=None, dir=None, force=0):
+def write(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=',', force=0):
     """Function for writing sequence data."""
 
     # Test if the sequence data is loaded.
@@ -282,12 +282,36 @@ def write(file=None, dir=None, force=0):
     # Open the file for writing.
     seq_file = open_write_file(file, dir, force)
 
+    # No special seperator character.
+    if sep == None:
+        sep = ''
+
     # Write a header.
-    seq_file.write("%-8s%-8s%-8s%-8s%-8s%-10s\n" % ("Mol name", "Res num", "Res name", "Spin num", "Spin name", "Selected"))
+    if mol_name_col != None:
+        seq_file.write("%-10s " % ("Mol_name"+sep))
+    if res_num_col != None:
+        seq_file.write("%-10s " % ("Res_num"+sep))
+    if res_name_col != None:
+        seq_file.write("%-10s " % ("Res_name"+sep))
+    if spin_num_col != None:
+        seq_file.write("%-10s " % ("Spin_num"+sep))
+    if spin_name_col != None:
+        seq_file.write("%-10s " % ("Spin_name"+sep))
+    seq_file.write('\n')
 
     # Loop over the spins.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
-        seq_file.write("%-8s%-8s%-8s%-8s%-8s%-10s\n" % (str(mol_name), str(res_num), str(res_name), str(spin.num), str(spin.name), str(spin.select)))
+        if mol_name_col != None:
+            seq_file.write("%-10s " % (str(mol_name)+sep))
+        if res_num_col != None:
+            seq_file.write("%-10s " % (str(res_num)+sep))
+        if res_name_col != None:
+            seq_file.write("%-10s " % (str(res_name)+sep))
+        if spin_num_col != None:
+            seq_file.write("%-10s " % (str(spin.num)+sep))
+        if spin_name_col != None:
+            seq_file.write("%-10s " % (str(spin.name)+sep))
+        seq_file.write('\n')
 
     # Close the results file.
     seq_file.close()
