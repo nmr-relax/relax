@@ -42,27 +42,63 @@ class Sequence:
         self.__relax__ = relax
 
 
-    def display(self, run=None):
-        """Function for displaying the sequence.
+    def display(self, mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4, sep=None):
+        """Function for displaying sequences of molecules, residues, and/or spins.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
+        mol_name_col:  The molecule name column (the default is 0, i.e. the first column).
+
+        res_num_col:  The residue number column (the default is 1, i.e. the second column).
+
+        res_name_col:  The residue name column (the default is 2, i.e. the third column).
+
+        spin_num_col:  The spin number column (the default is 3, i.e. the forth column).
+
+        spin_name_col:  The spin name column (the default is 4, i.e. the fifth column).
+
+        sep:  The column separator (the default is white space).
+
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "sequence.display("
-            text = text + "run=" + `run` + ")"
+            text = text + "mol_name_col=" + `mol_name_col`
+            text = text + ", res_num_col=" + `res_num_col`
+            text = text + ", res_name_col=" + `res_name_col`
+            text = text + ", spin_num_col=" + `spin_num_col`
+            text = text + ", spin_name_col=" + `spin_name_col`
+            text = text + ", sep=" + `sep` + ")"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
+        # Molecule name column.
+        if mol_name_col != None and type(mol_name_col) != int:
+            raise RelaxNoneIntError, ('molecule name column', mol_name_col)
+
+        # Residue number column.
+        if res_name_col != None and type(res_num_col) != int:
+            raise RelaxNoneIntError, ('residue number column', res_num_col)
+
+        # Residue name column.
+        if res_name_col != None and type(res_name_col) != int:
+            raise RelaxNoneIntError, ('residue name column', res_name_col)
+
+        # Spin number column.
+        if spin_num_col != None and type(spin_num_col) != int:
+            raise RelaxNoneIntError, ('spin number column', spin_num_col)
+
+        # Spin name column.
+        if spin_name_col != None and type(spin_name_col) != int:
+            raise RelaxNoneIntError, ('spin name column', spin_name_col)
+
+        # Column separator.
+        if sep != None and type(sep) != str:
+            raise RelaxNoneStrError, ('column separator', sep)
 
         # Execute the functional code.
-        self.__relax__.generic.sequence.display(run=run)
+        sequence.display(mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep)
 
 
     def read(self, file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, sep=None):
