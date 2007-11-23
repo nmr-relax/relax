@@ -121,14 +121,11 @@ class Sequence_base_class:
         cdp.mol[0].res.add_item('GLY', 4)
         cdp.mol[0].res.add_item('SER', 5)
 
-        # The temporary file.
-        tmpfile = tempnam()
-
         # Write the residue sequence.
-        self.sequence_fns.write(file=tmpfile)
+        self.sequence_fns.write(file=self.tmpfile, res_num_col=0, res_name_col=1)
 
         # Open the temp file.
-        file = open(tmpfile)
+        file = open(self.tmpfile)
 
         # Get the md5sum of the file.
         file_md5 = md5()
