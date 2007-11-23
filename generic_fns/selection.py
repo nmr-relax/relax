@@ -170,6 +170,26 @@ class Selection(object):
         self._union = (select_obj0, select_obj1)
 
 
+def count_spins(selection=None):
+    """Function for counting the number of spins for which there is data.
+
+    @param selection:   The selection string.
+    @type selection:    str
+    @return:            The number of non-empty spins.
+    @return type:       int
+    """
+
+    # Init.
+    spin_num = 0
+
+    # Spin loop.
+    for spin in spin_loop(selection):
+        spin_num = spin_num + 1
+
+    # Return the number of spins.
+    return spin_num
+
+
 def desel_all(self, run=None):
     """Function for deselecting all residues."""
 
