@@ -46,47 +46,50 @@ class Modsel:
             self.test = self.diff
 
 
-    def diff(self, run):
+    def diff(self, pipe):
         """The test of selecting between diffusion tensors using AIC."""
 
-        # Create the three runs.
-        self.relax.generic.runs.create('sphere', 'mf')
-        self.relax.generic.runs.create('spheroid', 'mf')
-        self.relax.generic.runs.create('aic', 'mf')
+        # Init.
+        pipes = ['sphere', 'spheroid']
+        tensors = [1e-9, (1e-9, 0, 0, 0)]
 
         # Path of the files.
         path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
 
-        # Read the sequence.
-        self.relax.interpreter._Sequence.read('sphere', file='r1.600.out', dir=path)
-        self.relax.interpreter._Sequence.read('spheroid', file='r1.600.out', dir=path)
+        # Loop over the data pipes.
+        for i in xrange(2):
+            # Create the data pipe.
+            self.relax.interpreter._Pipe.create(pipes[i], 'mf')
 
-        # Select the model.
-        self.relax.interpreter._Model_free.select_model('sphere', model='m4')
-        self.relax.interpreter._Model_free.select_model('spheroid', model='m4')
+            # Read the sequence.
+            self.relax.interpreter._Sequence.read(file='r1.600.out', dir=path)
 
-        # Read the relaxation data.
-        self.relax.interpreter._Relax_data.read('sphere', 'R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read('sphere', 'R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read('sphere', 'NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read('sphere', 'R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path)
-        self.relax.interpreter._Relax_data.read('sphere', 'R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path)
-        self.relax.interpreter._Relax_data.read('sphere', 'NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
-        self.relax.interpreter._Relax_data.copy('sphere', 'spheroid')
+            # Select the model.
+            self.relax.interpreter._Model_free.select_model(model='m4')
 
-        # Set the diffusion tensors.
-        self.relax.interpreter._Diffusion_tensor.init('sphere', 1e-9, fixed=0)
-        self.relax.interpreter._Diffusion_tensor.init('spheroid', (1e-9, 0, 0, 0), fixed=0)
+            # Read the relaxation data.
+            self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
+            self.relax.interpreter._Relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path)
+            self.relax.interpreter._Relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path)
+            self.relax.interpreter._Relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path)
+            self.relax.interpreter._Relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path)
+            self.relax.interpreter._Relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
+
+            # Set the diffusion tensors.
+            self.relax.interpreter._Diffusion_tensor.init('sphere', tensors[i], fixed=0)
 
         # Set some global stats.
-        relax_data_store.chi2['sphere'] = 200
-        relax_data_store.chi2['spheroid'] = 0
+        relax_data_store['sphere'].chi2 = 200
+        relax_data_store['spheroid'].chi2 = 0
+
+        # Create the data pipe for model selection.
+        self.relax.interpreter._Pipe.create('aic', 'mf')
 
         # Model selection.
-        self.relax.interpreter._Modsel.model_selection(method='AIC', modsel_run='aic')
+        self.relax.interpreter._Modsel.model_selection(method='AIC')
 
         # Test if the spheroid has been selected.
-        if not relax_data_store.diff.has_key('aic') or not relax_data_store.diff['aic'].type == 'spheroid':
+        if not hasattr(relax_data_store['aic'], 'diff') or not relax_data_store['aic'].diff.type == 'spheroid':
             print "\nThe spheroid diffusion tensor has not been selected."
             return
 

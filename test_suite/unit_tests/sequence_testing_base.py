@@ -114,24 +114,22 @@ class Sequence_base_class:
         cdp = relax_data_store['orig']
 
         # Create a simple animo acid sequence.
-        cdp.mol[0].res.add_item('GLY', 1)
+        cdp.mol[0].res[0].num = 1
+        cdp.mol[0].res[0].name = 'GLY'
         cdp.mol[0].res.add_item('PRO', 2)
         cdp.mol[0].res.add_item('LEU', 3)
         cdp.mol[0].res.add_item('GLY', 4)
         cdp.mol[0].res.add_item('SER', 5)
 
-        # The temporary file.
-        tmpfile = tempnam()
-
         # Write the residue sequence.
-        self.sequence_fns.write(file=tmpfile)
+        self.sequence_fns.write(file=self.tmpfile, res_num_col=0, res_name_col=1)
 
         # Open the temp file.
-        file = open(tmpfile)
+        file = open(self.tmpfile)
 
         # Get the md5sum of the file.
         file_md5 = md5()
         file_md5.update(file.read())
 
         # Test the md5sum.
-        self.assertEqual(file_md5, '')
+        self.assertEqual(file_md5.digest(), 'O1\xb3D\x0e8\xd1\xe7_Q\x9c\xd1\xd6v\xc8\xde')

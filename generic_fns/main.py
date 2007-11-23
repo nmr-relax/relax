@@ -37,7 +37,6 @@ from palmer import Palmer
 from structure import Structure
 from pymol import Pymol
 from results import Results
-from sequence import Sequence
 from value import Value
 from vmd import Vmd
 
@@ -67,6 +66,5 @@ class Generic:
         self.structure = Structure(self.relax)
         self.pymol = Pymol(self.relax)
         self.results = Results(self.relax)
-        self.sequence = Sequence(self.relax)
         self.value = Value(self.relax)
         self.vmd = Vmd(self.relax)

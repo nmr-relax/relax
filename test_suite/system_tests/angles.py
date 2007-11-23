@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2006-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -33,23 +33,23 @@ class Angles:
         self.name = "The user function angles()"
 
 
-    def test(self, run):
+    def test(self, pipe):
         """The actual test."""
 
-        # Create the run.
-        self.relax.interpreter._Run.create(run, 'mf')
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create(pipe, 'mf')
 
         # Read a PDB file.
-        self.relax.interpreter._Structure.read_pdb(run, file='test.pdb', dir=sys.path[-1] + '/test_suite/system_tests/data', model=1)
+        self.relax.interpreter._Structure.read_pdb(file='test.pdb', dir=sys.path[-1] + '/test_suite/system_tests/data', model=1)
 
         # Set the NH vector.
-        self.relax.interpreter._Structure.vectors(run, heteronuc='N', proton='H')
+        self.relax.interpreter._Structure.vectors(heteronuc='N', proton='H')
 
         # Initialise a diffusion tensor.
-        self.relax.interpreter._Diffusion_tensor.init(run, (1.698e7, 1.417e7, 67.174, -83.718), param_types=3)
+        self.relax.interpreter._Diffusion_tensor.init((1.698e7, 1.417e7, 67.174, -83.718), param_types=3)
 
         # Calculate the angles.
-        self.relax.interpreter._Angles.angles(run)
+        self.relax.interpreter._Angles.angles()
 
         # Success.
         return 1
