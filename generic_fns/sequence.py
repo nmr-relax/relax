@@ -225,92 +225,6 @@ class Sequence:
         self.relax = relax
 
 
-    def add(self, run=None, res_num=None, res_name=None, select=1):
-        """Function for adding a residue onto the sequence."""
-
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoPipeError, run
-
-        # Initialise the sequence data if no sequence currently exists.
-        if not relax_data_store.res.has_key(run):
-            # Add the run to 'relax_data_store.res'.
-            relax_data_store.res.add_list(run)
-
-        # Test if the residue number already exists.
-        for i in xrange(len(relax_data_store.res[run])):
-            if relax_data_store.res[run][i].num == res_num:
-                raise RelaxError, "The residue number '" + `res_num` + "' already exists in the sequence."
-
-        # Residue index.
-        index = len(relax_data_store.res[run])
-
-        # Append a data container.
-        relax_data_store.res[run].add_item()
-
-        # Insert the data.
-        relax_data_store.res[run][index].num = res_num
-        relax_data_store.res[run][index].name = res_name
-        relax_data_store.res[run][index].select = select
-
-
-    def copy(self, run1=None, run2=None):
-        """Function for copying the sequence from run1 to run2."""
-
-        # Test if run1 exists.
-        if not run1 in relax_data_store.run_names:
-            raise RelaxNoPipeError, run1
-
-        # Test if run2 exists.
-        if not run2 in relax_data_store.run_names:
-            raise RelaxNoPipeError, run2
-
-        # Test if the sequence data for run1 is loaded.
-        if not relax_data_store.res.has_key(run1):
-            raise RelaxNoSequenceError, run1
-
-        # Test if the sequence data already exists.
-        if relax_data_store.res.has_key(run2):
-            raise RelaxSequenceError, run2
-
-        # Add run2 to 'relax_data_store.res'.
-        relax_data_store.res.add_list(run2)
-
-        # Copy the data.
-        for i in xrange(len(relax_data_store.res[run1])):
-            # Append a data container to run2.
-            relax_data_store.res[run2].add_item()
-
-            # Insert the data.
-            relax_data_store.res[run2][i].num = relax_data_store.res[run1][i].num
-            relax_data_store.res[run2][i].name = relax_data_store.res[run1][i].name
-            relax_data_store.res[run2][i].select = relax_data_store.res[run1][i].select
-
-
-    def data_names(self):
-        """Function for returning a list of names of data structures associated with the sequence."""
-
-        return [ 'res' ]
-
-
-    def delete(self, run=None):
-        """Function for deleting the sequence."""
-
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoPipeError, run
-
-        # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(run):
-            raise RelaxNoSequenceError, run
-
-        # Delete the data.
-        del(relax_data_store.res[run])
-
-        # Clean up the runs.
-        self.relax.generic.runs.eliminate_unused_runs()
-
-
     def display(self, run=None):
         """Function for displaying the sequence."""
 
@@ -368,32 +282,6 @@ class Sequence:
 
             # Select the residue.
             relax_data_store.res[run][i].select = 1
-
-
-    def sort(self, run=None):
-        """Function for sorting the sequence by residue number."""
-
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoPipeError, run
-
-        # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(run):
-            raise RelaxNoSequenceError, run
-
-        # Sort the sequence.
-        relax_data_store.res[run].sort(self.sort_cmpfunc)
-
-
-    def sort_cmpfunc(self, x, y):
-        """Sequence comparison function given to the ListType function 'sort'."""
-
-        if x.num > y.num:
-            return 1
-        elif x.num < y.num:
-            return -1
-        elif x.num == y.num:
-            return 0
 
 
     def write(self, run=None, file=None, dir=None, force=0):
