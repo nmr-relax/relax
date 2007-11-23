@@ -287,7 +287,7 @@ def write(file=None, dir=None, force=0):
 
     # Loop over the spins.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
-        seq_file.write("%-8s%-8i%-8s%-8i%-8s%-10i\n" % (mol_name, res_num, res_name, spin.num, spin.name, spin.select))
+        seq_file.write("%-8s%-8s%-8s%-8s%-8s%-10s\n" % (str(mol_name), str(res_num), str(res_name), str(spin.num), str(spin.name), str(spin.select)))
 
     # Close the results file.
     seq_file.close()
