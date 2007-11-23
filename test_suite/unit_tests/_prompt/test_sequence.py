@@ -62,7 +62,7 @@ class Test_sequence(Sequence_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.sequence_fns.display, file='a', mol_name_col=data[1])
+            self.assertRaises(RelaxNoneIntError, self.sequence_fns.display, mol_name_col=data[1])
 
 
     def test_display_argfail_res_num_col(self):
@@ -75,7 +75,7 @@ class Test_sequence(Sequence_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.sequence_fns.display, file='a', res_num_col=data[1])
+            self.assertRaises(RelaxNoneIntError, self.sequence_fns.display, res_num_col=data[1])
 
 
     def test_display_argfail_res_name_col(self):
@@ -88,7 +88,7 @@ class Test_sequence(Sequence_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.sequence_fns.display, file='a', res_name_col=data[1])
+            self.assertRaises(RelaxNoneIntError, self.sequence_fns.display, res_name_col=data[1])
 
 
     def test_display_argfail_spin_num_col(self):
@@ -101,7 +101,7 @@ class Test_sequence(Sequence_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.sequence_fns.display, file='a', spin_num_col=data[1])
+            self.assertRaises(RelaxNoneIntError, self.sequence_fns.display, spin_num_col=data[1])
 
 
     def test_display_argfail_spin_name_col(self):
@@ -114,7 +114,7 @@ class Test_sequence(Sequence_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.sequence_fns.display, file='a', spin_name_col=data[1])
+            self.assertRaises(RelaxNoneIntError, self.sequence_fns.display, spin_name_col=data[1])
 
 
     def test_display_argfail_sep(self):
@@ -127,7 +127,7 @@ class Test_sequence(Sequence_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.sequence_fns.display, file='a', sep=data[1])
+            self.assertRaises(RelaxNoneStrError, self.sequence_fns.display, sep=data[1])
 
 
     def test_read_argfail_file(self):
