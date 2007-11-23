@@ -20,7 +20,12 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
+
+# relax module imports.
+from prompt.pipe import Pipe
+from prompt.sequence import Sequence
 
 
 class Sequence:
@@ -59,14 +64,14 @@ class Sequence:
         return 1
 
 
-    def read(self, run):
+    def read(self, pipe):
         """The sequence.read() test."""
 
-        # Create the run.
-        self.relax.generic.runs.create(run, 'mf')
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create(pipe, 'mf')
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(run, file='test_seq', dir=sys.path[-1] + '/test_suite/system_tests/data')
+        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + '/test_suite/system_tests/data')
 
         # Success.
         return 1
