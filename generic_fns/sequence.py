@@ -27,19 +27,19 @@ from relax_io import extract_data, strip
 
 
 
-def display(run=None):
-    """Function for displaying the sequence."""
+def display():
+    """Function for displaying the molecule, residue, and spin sequence."""
 
     # Test if the sequence data is loaded.
-    if not relax_data_store.res.has_key(run):
-        raise RelaxNoSequenceError, run
+    if not count_spins():
+        raise RelaxNoSequenceError
 
     # Print a header.
-    print "%-8s%-8s%-10s" % ("Number", "Name", "Selected")
+    print "%-8s%-8s%-8s%-8s%-8s%-10s" % ("Mol name", "Res num", "Res name", "Spin num", "Spin name", "Selected")
 
-    # Print the sequence.
-    for i in xrange(len(relax_data_store.res[run])):
-        print "%-8i%-8s%-10i" % (relax_data_store.res[run][i].num, relax_data_store.res[run][i].name, relax_data_store.res[run][i].select)
+    # Print the data.
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+        print "%-8s%-8i%-8s%-8i%-8s%-10i" % (mol_name, res_num, res_name, spin.num, spin.name, spin.select)
 
 
 def load_PDB_sequence():
