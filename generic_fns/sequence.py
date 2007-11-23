@@ -273,7 +273,28 @@ def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=No
 
 
 def write(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, force=0):
-    """Function for writing sequence data."""
+    """Function for writing molecule, residue, and/or sequence data.
+
+    @param file:            The name of the file to write the data to.
+    @type file:             str
+    @param dir:             The directory to contain the file (defaults to the current directory if
+                            None).
+    @type dir:              str or None
+    @param mol_name_col:    The column to contain the molecule name information.
+    @type mol_name_col:     int or None
+    @param res_name_col:    The column to contain the residue name information.
+    @type res_name_col:     int or None
+    @param res_num_col:     The column to contain the residue number information.
+    @type res_num_col:      int or None
+    @param spin_name_col:   The column to contain the spin name information.
+    @type spin_name_col:    int or None
+    @param spin_num_col:    The column to contain the spin number information.
+    @type spin_num_col:     int or None
+    @param sep:             The column seperator which, if None, defaults to whitespace.
+    @type sep:              str or None
+    @param force:           A flag which if set to 1 will cause an existing file to be overwritten.
+    @type force:            bin
+    """
 
     # Test if the sequence data is loaded.
     if not count_spins():
