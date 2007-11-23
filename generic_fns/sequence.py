@@ -27,6 +27,21 @@ from relax_io import extract_data, strip
 
 
 
+def display(run=None):
+    """Function for displaying the sequence."""
+
+    # Test if the sequence data is loaded.
+    if not relax_data_store.res.has_key(run):
+        raise RelaxNoSequenceError, run
+
+    # Print a header.
+    print "%-8s%-8s%-10s" % ("Number", "Name", "Selected")
+
+    # Print the sequence.
+    for i in xrange(len(relax_data_store.res[run])):
+        print "%-8i%-8s%-10i" % (relax_data_store.res[run][i].num, relax_data_store.res[run][i].name, relax_data_store.res[run][i].select)
+
+
 def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, sep=None):
     """Function for reading molecule, residue, and/or spin sequence data.
 
@@ -223,25 +238,6 @@ class Sequence:
         """Class containing functions specific to amino-acid sequence."""
 
         self.relax = relax
-
-
-    def display(self, run=None):
-        """Function for displaying the sequence."""
-
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoPipeError, run
-
-        # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(run):
-            raise RelaxNoSequenceError, run
-
-        # Print a header.
-        print "%-8s%-8s%-10s" % ("Number", "Name", "Selected")
-
-        # Print the sequence.
-        for i in xrange(len(relax_data_store.res[run])):
-            print "%-8i%-8s%-10i" % (relax_data_store.res[run][i].num, relax_data_store.res[run][i].name, relax_data_store.res[run][i].select)
 
 
     def load_PDB_sequence(self, run=None):
