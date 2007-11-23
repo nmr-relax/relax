@@ -275,22 +275,18 @@ def write(file=None, dir=None, force=0):
     """Function for writing sequence data."""
 
     # Test if the sequence data is loaded.
-    if not count_spins:
-        raise RelaxNoSequenceError, run
+    if not count_spins():
+        raise RelaxNoSequenceError
 
     # Open the file for writing.
     seq_file = open_write_file(file, dir, force)
 
-    # Loop over the sequence.
-    for i in xrange(len(relax_data_store.res[run])):
-        # Residue number.
-        seq_file.write("%-5i" % relax_data_store.res[run][i].num)
+    # Write a header.
+    seq_file.write("%-8s%-8s%-8s%-8s%-8s%-10s\n" % ("Mol name", "Res num", "Res name", "Spin num", "Spin name", "Selected"))
 
-        # Residue name.
-        seq_file.write("%-6s" % relax_data_store.res[run][i].name)
-
-        # New line.
-        seq_file.write("\n")
+    # Loop over the spins.
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+        seq_file.write("%-8s%-8i%-8s%-8i%-8s%-10i\n" % (mol_name, res_num, res_name, spin.num, spin.name, spin.select))
 
     # Close the results file.
     seq_file.close()
