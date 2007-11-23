@@ -272,7 +272,7 @@ def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=No
                 raise RelaxInvalidSeqError, data[i]
 
 
-def write(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=',', force=0):
+def write(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, force=0):
     """Function for writing sequence data."""
 
     # Test if the sequence data is loaded.
