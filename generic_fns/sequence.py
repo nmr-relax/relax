@@ -231,6 +231,31 @@ def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=No
                 raise RelaxInvalidSeqError, data[i]
 
 
+def write(file=None, dir=None, force=0):
+    """Function for writing sequence data."""
+
+    # Test if the sequence data is loaded.
+    if not count_spins:
+        raise RelaxNoSequenceError, run
+
+    # Open the file for writing.
+    seq_file = open_write_file(file, dir, force)
+
+    # Loop over the sequence.
+    for i in xrange(len(relax_data_store.res[run])):
+        # Residue number.
+        seq_file.write("%-5i" % relax_data_store.res[run][i].num)
+
+        # Residue name.
+        seq_file.write("%-6s" % relax_data_store.res[run][i].name)
+
+        # New line.
+        seq_file.write("\n")
+
+    # Close the results file.
+    seq_file.close()
+
+
 
 
 class Sequence:
@@ -278,32 +303,3 @@ class Sequence:
 
             # Select the residue.
             relax_data_store.res[run][i].select = 1
-
-
-    def write(self, run=None, file=None, dir=None, force=0):
-        """Function for writing sequence data."""
-
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoPipeError, run
-
-        # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(run):
-            raise RelaxNoSequenceError, run
-
-        # Open the file for writing.
-        seq_file = self.relax.IO.open_write_file(file, dir, force)
-
-        # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[run])):
-            # Residue number.
-            seq_file.write("%-5i" % relax_data_store.res[run][i].num)
-
-            # Residue name.
-            seq_file.write("%-6s" % relax_data_store.res[run][i].name)
-
-            # New line.
-            seq_file.write("\n")
-
-        # Close the results file.
-        seq_file.close()
