@@ -42,6 +42,46 @@ def display(run=None):
         print "%-8i%-8s%-10i" % (relax_data_store.res[run][i].num, relax_data_store.res[run][i].name, relax_data_store.res[run][i].select)
 
 
+def load_PDB_sequence():
+    """Function for loading the sequence out of a PDB file.
+
+    This needs to be modified to handle multiple peptide chains.
+    """
+
+    # Print out.
+    print "\nLoading the sequence from the PDB file.\n"
+
+    # Reassign the sequence of the first structure.
+    if relax_data_store.pdb[run].structures[0].peptide_chains:
+        res = relax_data_store.pdb[run].structures[0].peptide_chains[0].residues
+        molecule = 'protein'
+    elif relax_data_store.pdb[run].structures[0].nucleotide_chains:
+        res = relax_data_store.pdb[run].structures[0].nucleotide_chains[0].residues
+        molecule = 'nucleic acid'
+    else:
+        raise RelaxNoPdbChainError
+
+    # Add the run to 'relax_data_store.res'.
+    relax_data_store.res.add_list(run)
+
+    # Loop over the sequence.
+    for i in xrange(len(res)):
+        # Append a data container.
+        relax_data_store.res[run].add_item()
+
+        # Residue number.
+        relax_data_store.res[run][i].num = res[i].number
+
+        # Residue name.
+        if molecule == 'nucleic acid':
+            relax_data_store.res[run][i].name = res[i].name[-1]
+        else:
+            relax_data_store.res[run][i].name = res[i].name
+
+        # Select the residue.
+        relax_data_store.res[run][i].select = 1
+
+
 def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, sep=None):
     """Function for reading molecule, residue, and/or spin sequence data.
 
@@ -254,52 +294,3 @@ def write(file=None, dir=None, force=0):
 
     # Close the results file.
     seq_file.close()
-
-
-
-
-class Sequence:
-    def __init__(self, relax):
-        """Class containing functions specific to amino-acid sequence."""
-
-        self.relax = relax
-
-
-    def load_PDB_sequence(self, run=None):
-        """Function for loading the sequence out of a PDB file.
-
-        This needs to be modified to handle multiple peptide chains.
-        """
-
-        # Print out.
-        print "\nLoading the sequence from the PDB file.\n"
-
-        # Reassign the sequence of the first structure.
-        if relax_data_store.pdb[run].structures[0].peptide_chains:
-            res = relax_data_store.pdb[run].structures[0].peptide_chains[0].residues
-            molecule = 'protein'
-        elif relax_data_store.pdb[run].structures[0].nucleotide_chains:
-            res = relax_data_store.pdb[run].structures[0].nucleotide_chains[0].residues
-            molecule = 'nucleic acid'
-        else:
-            raise RelaxNoPdbChainError
-
-        # Add the run to 'relax_data_store.res'.
-        relax_data_store.res.add_list(run)
-
-        # Loop over the sequence.
-        for i in xrange(len(res)):
-            # Append a data container.
-            relax_data_store.res[run].add_item()
-
-            # Residue number.
-            relax_data_store.res[run][i].num = res[i].number
-
-            # Residue name.
-            if molecule == 'nucleic acid':
-                relax_data_store.res[run][i].name = res[i].name[-1]
-            else:
-                relax_data_store.res[run][i].name = res[i].name
-
-            # Select the residue.
-            relax_data_store.res[run][i].select = 1
