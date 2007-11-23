@@ -135,4 +135,4 @@ class Sequence_base_class:
         file_md5.update(file.read())
 
         # Test the md5sum.
-        self.assertEqual(file_md5, '')
+        self.assertEqual(file_md5.digest(), '')
