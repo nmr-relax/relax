@@ -114,7 +114,8 @@ class Sequence_base_class:
         cdp = relax_data_store['orig']
 
         # Create a simple animo acid sequence.
-        cdp.mol[0].res.add_item('GLY', 1)
+        cdp.mol[0].res[0].num = 1
+        cdp.mol[0].res[0].name = 'GLY'
         cdp.mol[0].res.add_item('PRO', 2)
         cdp.mol[0].res.add_item('LEU', 3)
         cdp.mol[0].res.add_item('GLY', 4)
