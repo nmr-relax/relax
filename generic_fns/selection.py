@@ -354,6 +354,10 @@ def exists_mol_res_spin_data(selection=None):
     @rtype:     bool
     """
 
+    # Test that the data pipe exists.
+    if relax_data_store.current_pipe not in relax_data_store.keys():
+        raise RelaxNoPipeError
+
     # Alias the data pipe container.
     cdp = relax_data_store[relax_data_store.current_pipe]
 
