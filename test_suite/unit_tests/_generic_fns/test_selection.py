@@ -149,8 +149,8 @@ class Test_selection(TestCase):
         # Remove all data.
         relax_data_store.__reset__()
 
-        # This should be False.
-        self.failIf(selection.exists_mol_res_spin_data())
+        # This should fail.
+        self.assertRaises(RelaxNoPipeError, selection.exists_mol_res_spin_data)
 
 
     def test_exists_mol_res_spin_data_no_sel(self):
