@@ -354,9 +354,8 @@ def exists_mol_res_spin_data(selection=None):
     @rtype:             bool
     """
 
-    # Test that the data pipe exists.
-    if relax_data_store.current_pipe not in relax_data_store.keys():
-        raise RelaxNoPipeError
+    # Test the data pipe.
+    pipes.test(relax_data_store.current_pipe)
 
     # Alias the data pipe container.
     cdp = relax_data_store[relax_data_store.current_pipe]
@@ -568,9 +567,8 @@ def return_molecule(selection=None, pipe=None):
     if pipe == None:
         pipe = relax_data_store.current_pipe
 
-    # Test that the data pipe exists.
-    if pipe not in relax_data_store.keys():
-        raise RelaxNoPipeError, pipe
+    # Test the data pipe.
+    pipes.test(pipe)
 
     # Parse the selection string.
     select_obj = Selection(selection)
@@ -616,9 +614,8 @@ def return_residue(selection=None, pipe=None):
     if pipe == None:
         pipe = relax_data_store.current_pipe
 
-    # Test that the data pipe exists.
-    if pipe not in relax_data_store.keys():
-        raise RelaxNoPipeError, pipe
+    # Test the data pipe.
+    pipes.test(pipe)
 
     # Parse the selection string.
     select_obj = Selection(selection)
@@ -671,9 +668,8 @@ def return_spin(selection=None, pipe=None):
     if pipe == None:
         pipe = relax_data_store.current_pipe
 
-    # Test that the data pipe exists.
-    if pipe not in relax_data_store.keys():
-        raise RelaxNoPipeError, pipe
+    # Test the data pipe.
+    pipes.test(pipe)
 
     # Parse the selection string.
     select_obj = Selection(selection)
