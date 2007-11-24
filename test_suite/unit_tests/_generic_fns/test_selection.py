@@ -352,8 +352,13 @@ class Test_selection(TestCase):
         # Reset.
         relax_data_store.__reset__()
 
+        # Function for the problem of catching an error in a generator function.
+        def fail_test():
+            for residue in selection.residue_loop():
+                pass
+
         # Test for the no pipe error.
-        self.assertRaises(RelaxNoPipeError, selection.residue_loop)
+        self.assertRaises(RelaxNoPipeError, fail_test)
 
 
     def test_residue_loop_no_selection(self):
