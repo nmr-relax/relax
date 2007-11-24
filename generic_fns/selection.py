@@ -370,6 +370,10 @@ def exists_mol_res_spin_data(selection=None):
     if spin_num > 1:
         return True
 
+    # No spins have been selected (hence no data for the selection).
+    elif spin_num == 0:
+        return False
+
     # Test the name and number of the single spin.
     if spin.num == None and spin.name == None:
         # The object names in an empty container.
