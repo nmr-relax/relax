@@ -180,6 +180,10 @@ def count_spins(selection=None):
     @return type:       int
     """
 
+    # No data, hence no spins.
+    if not exists_mol_res_spin_data(selection):
+        return 0
+
     # Init.
     spin_num = 0
 
@@ -339,6 +343,45 @@ def desel_res(self, run=None, num=None, name=None, change_all=None):
     # No residue matched.
     if no_match:
         print "No residues match."
+
+
+def exists_mol_res_spin_data(selection=None):
+    """Function for determining if any molecule-residue-spin data exists.
+
+    @param selection:   The selection string.
+    @type selection:    str
+    @return:    The answer to the question about the existence of data.
+    @rtype:     bool
+    """
+
+    # Alias the data pipe container.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Count the number of spin containers.
+    spin_num = 0
+    for spin in spin_loop(selection):
+        spin_num = spin_num + 1
+
+    # 2 or more spins (hence data exists).
+    if spin_num > 1:
+        return True
+
+    # Test the name and number of the single spin.
+    if spin.num == None and spin.name == None:
+        # The object names in an empty container.
+        white_list = ['name', 'num'] 
+
+        # Loop over the objects in the spin container.
+        for name in dir(spin):
+            # White listed objects.
+            if name in white_list:
+                continue
+
+            # Found an object not in the white list (hence the spin container has been modified).
+            return True
+
+    # No data.
+    return False
 
 
 def molecule_loop(selection=None, pipe=None):
