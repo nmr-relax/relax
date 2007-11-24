@@ -331,6 +331,9 @@ class Test_selection(TestCase):
         # Reset.
         relax_data_store.__reset__()
 
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
         # Loop over the residues.
         i = 0
         for residue in selection.residue_loop():
@@ -338,6 +341,19 @@ class Test_selection(TestCase):
 
         # Test loop length.
         self.assertEqual(i, 0)
+
+
+    def test_residue_loop_no_pipe(self):
+        """Test the proper operation of the residue loop when no data pipe is present.
+
+        The function tested is generic_fns.selection.residue_loop().
+        """
+
+        # Reset.
+        relax_data_store.__reset__()
+
+        # Test for the no pipe error.
+        self.assertRaises(RelaxNoPipeError, selection.residue_loop)
 
 
     def test_residue_loop_no_selection(self):
