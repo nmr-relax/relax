@@ -482,6 +482,23 @@ class Test_selection(TestCase):
         self.assertEqual(i, 2)
 
 
+    def test_spin_loop_no_data(self):
+        """Test the proper operation of the spin loop when no data is present.
+
+        The function tested is generic_fns.selection.spin_loop().
+        """
+
+        # Reset.
+        relax_data_store.__reset__()
+
+        # Loop over the spins.
+        i = 0
+        for spin in selection.spin_loop():
+            i = i + 1
+
+        # Test loop length.
+        self.assertEqual(i, 0)
+
 
     def test_spin_loop_no_selection(self):
         """Test the proper operation of the spin loop when no selection is present.
