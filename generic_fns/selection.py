@@ -389,7 +389,6 @@ def exists_mol_res_spin_data(selection=None):
                 continue
 
             # Found an object not in the white list (hence the spin container has been modified).
-            raise NameError, name
             return True
 
     # No data.
