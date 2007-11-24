@@ -322,6 +322,24 @@ class Test_selection(TestCase):
         self.assertEqual(len(list(selection.residue_loop('#Ap4Aase:Glu'))), 1)
 
 
+    def test_residue_loop_no_data(self):
+        """Test the proper operation of the residue loop when no data is present.
+
+        The function tested is generic_fns.selection.residue_loop().
+        """
+
+        # Reset.
+        relax_data_store.__reset__()
+
+        # Loop over the residues.
+        i = 0
+        for residue in selection.residue_loop():
+            i = i + 1
+
+        # Test loop length.
+        self.assertEqual(i, 0)
+
+
     def test_residue_loop_no_selection(self):
         """Test the proper operation of the residue loop when no selection is present.
 
