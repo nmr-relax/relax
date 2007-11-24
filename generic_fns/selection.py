@@ -22,7 +22,7 @@
 
 # Python module imports.
 from os import F_OK, access
-from re import compile, match, split
+from re import compile, match, search, split
 from string import strip
 from textwrap import fill
 
@@ -350,8 +350,8 @@ def exists_mol_res_spin_data(selection=None):
 
     @param selection:   The selection string.
     @type selection:    str
-    @return:    The answer to the question about the existence of data.
-    @rtype:     bool
+    @return:            The answer to the question about the existence of data.
+    @rtype:             bool
     """
 
     # Test that the data pipe exists.
@@ -377,15 +377,20 @@ def exists_mol_res_spin_data(selection=None):
     # Test the name and number of the single spin.
     if spin.num == None and spin.name == None:
         # The object names in an empty container.
-        white_list = ['name', 'num'] 
+        white_list = ['name', 'num', 'select'] 
 
         # Loop over the objects in the spin container.
         for name in dir(spin):
-            # White listed objects.
+            # Skip white listed objects.
             if name in white_list:
                 continue
 
+            # Skip objects beginning with '__'.
+            if search('^__', name):
+                continue
+
             # Found an object not in the white list (hence the spin container has been modified).
+            raise NameError, name
             return True
 
     # No data.
