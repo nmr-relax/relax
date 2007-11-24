@@ -113,6 +113,24 @@ class Test_selection(TestCase):
         self.assertEqual(len(list(selection.molecule_loop('#RNA'))), 1)
 
 
+    def test_molecule_loop_no_data(self):
+        """Test the proper operation of the molecule loop when no data is present.
+
+        The function tested is generic_fns.selection.molecule_loop().
+        """
+
+        # Reset.
+        relax_data_store.__reset__()
+
+        # Loop over the molecules.
+        i = 0
+        for molecule in selection.molecule_loop():
+            i = i + 1
+
+        # Test loop length.
+        self.assertEqual(i, 0)
+
+
     def test_molecule_loop_no_selection(self):
         """Test the proper operation of the molecule loop when no selection is present.
 
