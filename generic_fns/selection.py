@@ -413,6 +413,10 @@ def molecule_loop(selection=None, pipe=None):
     # Test the data pipe.
     pipes.test(pipe)
 
+    # Test for the presence of data, and end the execution of this function if there is none.
+    if not exists_mol_res_spin_data():
+        return
+
     # Parse the selection string.
     select_obj = Selection(selection)
 
@@ -528,6 +532,10 @@ def residue_loop(selection=None, pipe=None, full_info=False):
 
     # Test the data pipe.
     pipes.test(pipe)
+
+    # Test for the presence of data, and end the execution of this function if there is none.
+    if not exists_mol_res_spin_data():
+        return
 
     # Parse the selection string.
     select_obj = Selection(selection)
@@ -1047,6 +1055,10 @@ def spin_loop(selection=None, pipe=None, full_info=False):
 
     # Test the data pipe.
     pipes.test(pipe)
+
+    # Test for the presence of data, and end the execution of this function if there is none.
+    if not exists_mol_res_spin_data():
+        return
 
     # Parse the selection string.
     select_obj = Selection(selection)
