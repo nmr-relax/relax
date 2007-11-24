@@ -360,26 +360,25 @@ def exists_mol_res_spin_data(selection=None):
     # Alias the data pipe container.
     cdp = relax_data_store[relax_data_store.current_pipe]
 
-    # Count the number of spin containers.
-    spin_num = 0
-    for spin in spin_loop(selection):
-        spin_num = spin_num + 1
-
-    # 2 or more spins (hence data exists).
-    if spin_num > 1:
+    # More than 1 molecule (hence data exists).
+    if len(cdp.mol) > 1:
         return True
 
-    # No spins have been selected (hence no data for the selection).
-    elif spin_num == 0:
-        return False
+    # More than 1 residue (hence data exists).
+    if len(cdp.mol[0].res) > 1:
+        return True
+
+    # More than 1 spin (hence data exists).
+    if len(cdp.mol[0].res[0].spin) > 1:
+        return True
 
     # Test the name and number of the single spin.
-    if spin.num == None and spin.name == None:
+    if cdp.mol[0].res[0].spin[0].num == None and cdp.mol[0].res[0].spin[0].name == None:
         # The object names in an empty container.
         white_list = ['name', 'num', 'select'] 
 
         # Loop over the objects in the spin container.
-        for name in dir(spin):
+        for name in dir(cdp.mol[0].res[0].spin[0]):
             # Skip white listed objects.
             if name in white_list:
                 continue
