@@ -101,6 +101,19 @@ class Test_selection(TestCase):
         self.assertEqual(selection.count_spins(), 0)
 
 
+    def test_count_spins_no_pipe(self):
+        """Test that the counting of the number of spins raises an error when no pipe exists.
+
+        The function tested is generic_fns.selection.count_spins().
+        """
+
+        # Remove all data.
+        relax_data_store.__reset__()
+
+        # Test for the error.
+        self.assertRaises(RelaxNoPipeError, selection.count_spins)
+
+
     def test_molecule_loop(self):
         """Test the proper operation of the molecule loop with molecule selection.
 
