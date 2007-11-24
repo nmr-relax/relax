@@ -30,6 +30,7 @@ from textwrap import fill
 from data import Data as relax_data_store
 from data.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRegExpError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
+from generic_fns import pipes
 
 
 id_string_doc = """
@@ -355,6 +356,9 @@ def molecule_loop(selection=None, pipe=None):
     if pipe == None:
         pipe = relax_data_store.current_pipe
 
+    # Test the data pipe.
+    pipes.test(pipe)
+
     # Parse the selection string.
     select_obj = Selection(selection)
 
@@ -467,6 +471,9 @@ def residue_loop(selection=None, pipe=None, full_info=False):
     # The data pipe.
     if pipe == None:
         pipe = relax_data_store.current_pipe
+
+    # Test the data pipe.
+    pipes.test(pipe)
 
     # Parse the selection string.
     select_obj = Selection(selection)
@@ -986,6 +993,9 @@ def spin_loop(selection=None, pipe=None, full_info=False):
     # The data pipe.
     if pipe == None:
         pipe = relax_data_store.current_pipe
+
+    # Test the data pipe.
+    pipes.test(pipe)
 
     # Parse the selection string.
     select_obj = Selection(selection)
