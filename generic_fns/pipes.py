@@ -137,3 +137,22 @@ def switch(pipe_name=None):
 
     # Switch the current data pipe.
     relax_data_store.current_pipe = pipe_name
+
+
+def test(pipe_name=None):
+    """Function for testing the existence of the current or supplied data pipe.
+
+    @param pipe_name:   The name of the data pipe to switch to.
+    @type pipe_name:    str
+    @return:            The answer to the question of whether the pipe exists.
+    @rtype:             Boolean
+    """
+
+    # No supplied data pipe and no current data pipe.
+    if pipe_name == None and current() == None:
+        raise RelaxNoPipeError
+
+    # Test if the data pipe exists.
+    if not relax_data_store.has_key(pipe_name):
+        raise RelaxNoPipeError, pipe_name
+
