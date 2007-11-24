@@ -85,6 +85,19 @@ class Test_selection(TestCase):
         self.assertEqual(selection.count_spins(selection='@N5'), 2)
 
 
+    def test_count_no_spins(self):
+        """Test that the number of spins (zero) can be properly counted.
+
+        The function tested is generic_fns.selection.count_spins().
+        """
+
+        # Remove all data.
+        relax_data_store.__reset__()
+
+        # Test the number of spins counted.
+        self.assertEqual(selection.count_spins(), 0)
+
+
     def test_molecule_loop(self):
         """Test the proper operation of the molecule loop with molecule selection.
 
