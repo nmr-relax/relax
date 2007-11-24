@@ -134,6 +134,24 @@ class Test_selection(TestCase):
         self.assertEqual(i, 0)
 
 
+    def test_molecule_loop_no_pipe(self):
+        """Test the proper operation of the molecule loop when no data pipe is present.
+
+        The function tested is generic_fns.selection.molecule_loop().
+        """
+
+        # Reset.
+        relax_data_store.__reset__()
+
+        # Function for the problem of catching an error in a generator function.
+        def fail_test():
+            for molecule in selection.molecule_loop():
+                pass
+
+        # Test for the no pipe error.
+        self.assertRaises(RelaxNoPipeError, fail_test)
+
+
     def test_molecule_loop_no_selection(self):
         """Test the proper operation of the molecule loop when no selection is present.
 
