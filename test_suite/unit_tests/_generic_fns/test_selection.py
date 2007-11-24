@@ -94,6 +94,9 @@ class Test_selection(TestCase):
         # Remove all data.
         relax_data_store.__reset__()
 
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
         # Test the number of spins counted.
         self.assertEqual(selection.count_spins(), 0)
 
