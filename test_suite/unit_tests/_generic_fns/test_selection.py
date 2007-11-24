@@ -122,6 +122,9 @@ class Test_selection(TestCase):
         # Reset.
         relax_data_store.__reset__()
 
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
         # Loop over the molecules.
         i = 0
         for molecule in selection.molecule_loop():
@@ -547,6 +550,9 @@ class Test_selection(TestCase):
 
         # Reset.
         relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
 
         # Loop over the spins.
         i = 0
