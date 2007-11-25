@@ -27,7 +27,7 @@ from unittest import TestCase
 from data import Data as relax_data_store
 from generic_fns import residue
 from prompt.molecule import Molecule
-from relax_errors import RelaxError, RelaxIntError, RelaxNoPipeError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.molecule_testing_base import Molecule_base_class
 
 # Unit test imports.
