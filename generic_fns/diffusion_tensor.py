@@ -827,7 +827,7 @@ def return_units(self, param):
         return 'deg'
 
 
-def set(self, run=None, value=None, param=None):
+def set(value=None, param=None):
     """
     Diffusion tensor set details
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -880,7 +880,7 @@ def set(self, run=None, value=None, param=None):
     # Loop over the parameters.
     for i in xrange(len(param)):
         # Get the object name.
-        param[i] = self.return_data_name(param[i])
+        param[i] = return_data_name(param[i])
 
         # Unknown parameter.
         if not param[i]:
@@ -888,7 +888,7 @@ def set(self, run=None, value=None, param=None):
 
         # Default value.
         if value[i] == None:
-            value[i] = self.default_value(object_names[i])
+            value[i] = default_value(object_names[i])
 
         # Geometric parameter.
         if param[i] in ['tm', 'Diso', 'Da', 'Dratio', 'Dper', 'Dpar', 'Dr', 'Dx', 'Dy', 'Dz']:
@@ -1257,7 +1257,7 @@ def set(self, run=None, value=None, param=None):
     #####################
 
     if orient_params:
-        self.fold_angles(self.run)
+        fold_angles()
 
 
 def sphere(params=None, time_scale=None, param_types=None):
