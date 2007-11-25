@@ -33,27 +33,39 @@ import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
 
-def copy(run1=None, run2=None):
-    """Function for copying diffusion tensor data from run1 to run2."""
+def copy(pipe_from=None, pipe_to=None):
+    """Function for copying diffusion tensor data from one data pipe to another.
 
-    # Test if run1 exists.
-    if not run1 in relax_data_store.run_names:
-        raise RelaxNoPipeError, run1
+    @param pipe_from:   The data pipe to copy the diffusion tensor data from.  This defaults to the
+                        current data pipe.
+    @type pipe_from:    str
+    @param pipe_to:     The data pipe to copy the diffusion tensor data to.  This defaults to the
+                        current data pipe.
+    @type pipe_to:      str
+    """
 
-    # Test if run2 exists.
-    if not run2 in relax_data_store.run_names:
-        raise RelaxNoPipeError, run2
+    # Defaults.
+    if pipe_from == None and pipe_to == None:
+        raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+    elif pipe_from == None:
+        pipe_from = relax_data_store.current_pipe
+    elif pipe_to == None:
+        pipe_from = relax_data_store.current_pipe
 
-    # Test if run1 contains diffusion tensor data.
-    if not relax_data_store.diff.has_key(run1):
-        raise RelaxNoTensorError, run1
+    # Test if the pipe_from and pipe_to data pipes exist.
+    pipes.test(pipe_from)
+    pipes.test(pipe_to)
 
-    # Test if run2 contains diffusion tensor data.
-    if relax_data_store.diff.has_key(run2):
-        raise RelaxTensorError, run2
+    # Test if pipe_from contains diffusion tensor data.
+    if not diff_data_exists(pipe_from):
+        raise RelaxNoTensorError
+
+    # Test if pipe_to contains diffusion tensor data.
+    if diff_data_exists(pipe_to):
+        raise RelaxTensorError
 
     # Copy the data.
-    relax_data_store.diff[run2] = deepcopy(relax_data_store.diff[run1])
+    relax_data_store[pipe_to].diff_tensor = deepcopy(relax_data_store[pipe_from].diff_tensor)
 
 
 def data_names():
