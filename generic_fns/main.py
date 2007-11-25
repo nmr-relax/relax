@@ -22,7 +22,6 @@
 
 from angles import Angles
 from dx.opendx import OpenDX
-from diffusion_tensor import Diffusion_tensor
 from dasha import Dasha
 from eliminate import Eliminate
 from fix import Fix
@@ -51,7 +50,6 @@ class Generic:
         # Set up all the classes.
         self.angles = Angles(self.relax)
         self.dasha = Dasha(self.relax)
-        self.diffusion_tensor = Diffusion_tensor(self.relax)
         self.eliminate = Eliminate(self.relax)
         self.fix = Fix(self.relax)
         self.grace = Grace(self.relax)
