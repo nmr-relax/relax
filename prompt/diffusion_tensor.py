@@ -114,27 +114,16 @@ class Diffusion_tensor:
         self.__relax__.generic.diffusion_tensor.delete(run=run)
 
 
-    def display(self, run=None):
-        """Function for displaying the diffusion tensor.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
-        """
+    def display(self):
+        """Function for displaying the diffusion tensor information."""
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "diffusion_tensor.display("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "diffusion_tensor.display()"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
         # Execute the functional code.
-        self.__relax__.generic.diffusion_tensor.display(run=run)
+        self.__relax__.generic.diffusion_tensor.display()
 
 
     def init(self, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=1):
