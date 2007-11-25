@@ -20,13 +20,14 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
 
-from relax_errors import RelaxBinError, RelaxError, RelaxFloatError, RelaxIntError, RelaxListFloatError, RelaxListStrError, RelaxNoneFloatListError, RelaxNoneIntError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
-
+# relax module imports.
 from doc_string import regexp_doc
 import help
-from generic_fns.diffusion_tensor import Diffusion_tensor
+from generic_fns import diffusion_tensor
+from relax_errors import RelaxBinError, RelaxError, RelaxFloatError, RelaxIntError, RelaxListFloatError, RelaxListStrError, RelaxNoneFloatListError, RelaxNoneIntError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
 from specific_fns.model_free import Model_free
 from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.relax_fit import Relax_fit
@@ -542,9 +543,9 @@ class Value:
     set.__doc__ = set.__doc__ + Jw_mapping.set.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Jw_mapping.default_value.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Diffusion_tensor.set.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Diffusion_tensor.return_data_name.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Diffusion_tensor.default_value.__doc__ + "\n\n"
+    set.__doc__ = set.__doc__ + diffusion_tensor.set.__doc__ + "\n"
+    set.__doc__ = set.__doc__ + diffusion_tensor.return_data_name.__doc__ + "\n"
+    set.__doc__ = set.__doc__ + diffusion_tensor.default_value.__doc__ + "\n\n"
     set.__doc__ = set.__doc__ + Relax_fit.set_doc.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Relax_fit.default_value.__doc__ + "\n\n"
