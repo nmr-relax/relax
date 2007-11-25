@@ -89,9 +89,13 @@ def create(pipe_name=None, pipe_type=None):
 
 
 def current():
-    """Print the name of the current data pipe."""
+    """Return the name of the current data pipe.
+    
+    @return:        The name of the current data pipe.
+    @type return:   str
+    """
 
-    print relax_data_store.current_pipe
+    return relax_data_store.current_pipe
 
 
 def delete(pipe_name=None):
