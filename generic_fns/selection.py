@@ -364,33 +364,43 @@ def exists_mol_res_spin_data(selection=None):
     if len(cdp.mol) > 1:
         return True
 
+    # The single molecule has been named.
+    if cdp.mol[0].name != None:
+        return True
+
     # More than 1 residue (hence data exists).
     if len(cdp.mol[0].res) > 1:
+        return True
+
+    # The single residue has been named or numbered.
+    if cdp.mol[0].res[0].name != None or cdp.mol[0].res[0].num != None:
         return True
 
     # More than 1 spin (hence data exists).
     if len(cdp.mol[0].res[0].spin) > 1:
         return True
 
-    # Test the name and number of the single spin.
-    if cdp.mol[0].res[0].spin[0].num == None and cdp.mol[0].res[0].spin[0].name == None:
-        # The object names in an empty container.
-        white_list = ['name', 'num', 'select'] 
+    # The single spin has been named or numbered.
+    if cdp.mol[0].res[0].spin[0].name != None or cdp.mol[0].res[0].spin[0].num != None:
+        return True
 
-        # Loop over the objects in the spin container.
-        for name in dir(cdp.mol[0].res[0].spin[0]):
-            # Skip white listed objects.
-            if name in white_list:
-                continue
+    # The object names in an empty spin container.
+    white_list = ['name', 'num', 'select'] 
 
-            # Skip objects beginning with '__'.
-            if search('^__', name):
-                continue
+    # Loop over the objects in the spin container.
+    for name in dir(cdp.mol[0].res[0].spin[0]):
+        # Skip white listed objects.
+        if name in white_list:
+            continue
 
-            # Found an object not in the white list (hence the spin container has been modified).
-            return True
+        # Skip objects beginning with '__'.
+        if search('^__', name):
+            continue
 
-    # No data.
+        # Found an object not in the white list (hence the spin container has been modified).
+        return True
+
+    # No data!
     return False
 
 
