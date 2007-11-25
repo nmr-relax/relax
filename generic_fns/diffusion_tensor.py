@@ -50,7 +50,7 @@ def copy(pipe_from=None, pipe_to=None):
     elif pipe_from == None:
         pipe_from = relax_data_store.current_pipe
     elif pipe_to == None:
-        pipe_from = relax_data_store.current_pipe
+        pipe_to = relax_data_store.current_pipe
 
     # Test if the pipe_from and pipe_to data pipes exist.
     pipes.test(pipe_from)
