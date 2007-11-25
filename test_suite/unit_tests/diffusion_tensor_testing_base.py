@@ -86,8 +86,6 @@ class Diffusion_tensor_base_class:
         self.assertEqual(relax_data_store['orig'].diff_tensor.beta, 1.8327412287183442)
         self.assertEqual(relax_data_store['orig'].diff_tensor.gamma, 0.34)
         self.assertEqual(relax_data_store['orig'].diff_tensor.fixed, 1)
-        raise NameError, dir(relax_data_store['orig'].diff_tensor)
-
 
 
     def test_init_sphere(self):
