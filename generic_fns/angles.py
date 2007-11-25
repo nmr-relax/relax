@@ -30,83 +30,85 @@ from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoS
 
 
 
-def angles(self, run):
+def angles():
     """Function for calculating the angle defining the XH vector in the diffusion frame."""
 
-    # Test if the run exists.
-    if not run in relax_data_store.run_names:
-        raise RelaxNoPipeError, run
+    # Test if the current data pipe exists.
+    pipes.test(relax_data_store.current_pipe)
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Test if the PDB file has been loaded.
-    if not relax_data_store.pdb.has_key(run):
-        raise RelaxNoPdbError, run
+    if not hasattr(relax_data_store, 'structure'):
+        raise RelaxNoPdbError
 
     # Test if sequence data is loaded.
-    if not relax_data_store.res.has_key(run):
-        raise RelaxNoSequenceError, run
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
     # Test if the diffusion tensor data is loaded.
-    if not relax_data_store.diff.has_key(run):
-        raise RelaxNoTensorError, run
-
-    # Arguments.
-    self.run = run
+    if not diff_data_exists():
+        raise RelaxNoTensorError
 
     # Sphere.
-    if relax_data_store.diff[self.run].type == 'sphere':
+    if cdp.diff_tensor.type == 'sphere':
         return
 
     # Spheroid.
-    elif relax_data_store.diff[self.run].type == 'spheroid':
-        self.spheroid_frame()
+    elif cdp.diff_tensor.type == 'spheroid':
+        spheroid_frame()
 
     # Ellipsoid.
-    elif relax_data_store.diff[self.run].type == 'ellipsoid':
+    elif cdp.diff_tensor.type == 'ellipsoid':
         raise RelaxError, "No coded yet."
 
 
-def ellipsoid_frame(self):
+def ellipsoid_frame():
     """Function for calculating the spherical angles of the XH vector in the ellipsoid frame."""
 
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
     # Get the unit vectors Dx, Dy, and Dz of the diffusion tensor axes.
-    Dx, Dy, Dz = self.relax.generic.diffusion_tensor.unit_axes()
+    Dx, Dy, Dz = diffusion_tensor.unit_axes()
 
     # Loop over the sequence.
-    for i in xrange(len(relax_data_store.res[self.run])):
+    for i in xrange(len(cdp.mol[0].res)):
         # Test if the vector exists.
-        if not hasattr(relax_data_store.res[self.run][i], 'xh_vect'):
-            print "No angles could be calculated for residue '" + `relax_data_store.res[self.run][i].num` + " " + relax_data_store.res[self.run][i].name + "'."
+        if not hasattr(cdp.mol[0].res[i], 'xh_vect'):
+            print "No angles could be calculated for residue '" + `cdp.mol[0].res[i].num` + " " + cdp.mol[0].res[i].name + "'."
             continue
 
         # dz and dx direction cosines.
-        dz = dot(Dz, relax_data_store.res[self.run][i].xh_vect)
-        dx = dot(Dx, relax_data_store.res[self.run][i].xh_vect)
+        dz = dot(Dz, cdp.mol[0].res[i].xh_vect)
+        dx = dot(Dx, cdp.mol[0].res[i].xh_vect)
 
         # Calculate the polar angle theta.
-        relax_data_store.res[self.run][i].theta = acos(dz)
+        cdp.mol[0].res[i].theta = acos(dz)
 
         # Calculate the azimuthal angle phi.
-        relax_data_store.res[self.run][i].phi = acos(dx / sin(relax_data_store.res[self.run][i].theta))
+        cdp.mol[0].res[i].phi = acos(dx / sin(cdp.mol[0].res[i].theta))
 
 
-def spheroid_frame(self):
+def spheroid_frame():
     """Function for calculating the angle alpha of the XH vector within the spheroid frame."""
 
     # Get the unit vector Dpar of the diffusion tensor axis.
-    Dpar = self.relax.generic.diffusion_tensor.unit_axes()
+    Dpar = diffusion_tensor.unit_axes()
 
     # Loop over the sequence.
-    for i in xrange(len(relax_data_store.res[self.run])):
+    for i in xrange(len(cdp.mol[0].res)):
         # Test if the vector exists.
-        if not hasattr(relax_data_store.res[self.run][i], 'xh_vect'):
-            print "No angles could be calculated for residue '" + `relax_data_store.res[self.run][i].num` + " " + relax_data_store.res[self.run][i].name + "'."
+        if not hasattr(cdp.mol[0].res[i], 'xh_vect'):
+            print "No angles could be calculated for residue '" + `cdp.mol[0].res[i].num` + " " + cdp.mol[0].res[i].name + "'."
             continue
 
         # Calculate alpha.
-        relax_data_store.res[self.run][i].alpha = acos(dot(Dpar, relax_data_store.res[self.run][i].xh_vect))
+        cdp.mol[0].res[i].alpha = acos(dot(Dpar, cdp.mol[0].res[i].xh_vect))
 
 
-def wrap_angles(self, angle, lower, upper):
+def wrap_angles(angle, lower, upper):
     """Convert the given angle to be between the lower and upper values."""
 
     while 1:
