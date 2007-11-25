@@ -22,7 +22,7 @@
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError, RelaxTensorError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError, RelaxTensorError
 
 
 
@@ -81,7 +81,7 @@ class Diffusion_tensor_base_class:
         """
 
         # Try to delete the tensor data.
-        self.assertRaises(RelaxTensorError, self.diffusion_tensor_fns.delete)
+        self.assertRaises(RelaxNoTensorError, self.diffusion_tensor_fns.delete)
 
 
     def test_delete_fail_no_pipe(self):
