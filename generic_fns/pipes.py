@@ -153,8 +153,13 @@ def test(pipe_name=None):
     """
 
     # No supplied data pipe and no current data pipe.
-    if pipe_name == None and current() == None:
-        raise RelaxNoPipeError
+    if pipe_name == None:
+        # Get the current pipe.
+        pipe_name = current()
+
+        # Still no luck.
+        if pipe_name == None:
+            raise RelaxNoPipeError
 
     # Test if the data pipe exists.
     if not relax_data_store.has_key(pipe_name):
