@@ -128,8 +128,8 @@ def delete():
     pipes.test(relax_data_store.current_pipe)
 
     # Test if diffusion tensor data exists.
-    if diff_data_exists():
-        raise RelaxTensorError
+    if not diff_data_exists():
+        raise RelaxNoTensorError
 
     # Delete the diffusion data.
     del(relax_data_store[relax_data_store.current_pipe].diff_tensor)
