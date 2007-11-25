@@ -248,16 +248,6 @@ class Test_selection(TestCase):
         self.assertRaises(RelaxNoPipeError, selection.exists_mol_res_spin_data)
 
 
-    def test_exists_mol_res_spin_data_no_sel(self):
-        """Determine if molecule-residue-spin data exists when no spins are selected.
-
-        The function tested is generic_fns.selection.exists_mol_res_spin_data().
-        """
-
-        # This should be False.
-        self.failIf(selection.exists_mol_res_spin_data(selection=':J'))
-
-
     def test_molecule_loop(self):
         """Test the proper operation of the molecule loop with molecule selection.
 

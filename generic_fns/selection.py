@@ -181,7 +181,7 @@ def count_spins(selection=None):
     """
 
     # No data, hence no spins.
-    if not exists_mol_res_spin_data(selection):
+    if not exists_mol_res_spin_data():
         return 0
 
     # Init.
@@ -345,11 +345,9 @@ def desel_res(self, run=None, num=None, name=None, change_all=None):
         print "No residues match."
 
 
-def exists_mol_res_spin_data(selection=None):
+def exists_mol_res_spin_data():
     """Function for determining if any molecule-residue-spin data exists.
 
-    @param selection:   The selection string.
-    @type selection:    str
     @return:            The answer to the question about the existence of data.
     @rtype:             bool
     """
