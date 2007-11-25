@@ -67,6 +67,25 @@ class Diffusion_tensor_base_class:
         self.assertRaises(RelaxError, self.diffusion_tensor_fns.init, params=1e-9, angle_units='aaa')
 
 
+    def test_init_ellipsoid(self):
+        """Test the setting up of a ellipsoid diffusion tensor.
+
+        The functions tested are both generic_fns.diffusion_tensor.init() and
+        prompt.diffusion_tensor.init().
+        """
+
+        # Initialise the tensor.
+        self.diffusion_tensor_fns.init(params=(13.9, 1.8, 0.7, 10.6, -23.3, 0.34), time_scale=1e-9, d_scale=1e7, angle_units='rad', param_types=0, fixed=1)
+
+        # Test the diffusion tensor.
+        self.assertEqual(relax_data_store['orig'].diff_tensor.type, 'ellipsoidal')
+        self.assertAlmostEqual(relax_data_store['orig'].diff_tensor.tm * 1e9, 13.9, 14)
+        self.assertEqual(relax_data_store['orig'].diff_tensor.Da, 5.2854122621564493e6)
+        self.assertEqual(relax_data_store['orig'].diff_tensor.theta, 2.0943951023931948)
+        self.assertEqual(relax_data_store['orig'].diff_tensor.phi, 2.7925268031909276)
+
+
+
     def test_init_sphere(self):
         """Test the setting up of a spherical diffusion tensor.
 
@@ -98,4 +117,3 @@ class Diffusion_tensor_base_class:
         self.assertEqual(relax_data_store['orig'].diff_tensor.Da, 5.2854122621564493e6)
         self.assertEqual(relax_data_store['orig'].diff_tensor.theta, 2.0943951023931948)
         self.assertEqual(relax_data_store['orig'].diff_tensor.phi, 2.7925268031909276)
-
