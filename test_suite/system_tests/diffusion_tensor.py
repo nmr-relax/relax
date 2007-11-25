@@ -126,8 +126,8 @@ class Diffusion_tensor:
 
         # Initialise some data.
         self.relax.interpreter._Pipe.switch('sphere')
-        self.relax.interpreter._Diffusion_tensor.init('sphere', 10e-9, fixed=1)
+        self.relax.interpreter._Diffusion_tensor.init(10e-9, fixed=1)
         self.relax.interpreter._Pipe.switch('spheroid')
-        self.relax.interpreter._Diffusion_tensor.init('spheroid', (2e-8, 1.3, 60-360, 290), param_types=2, spheroid_type='prolate', fixed=1)
+        self.relax.interpreter._Diffusion_tensor.init((2e-8, 1.3, 60-360, 290), param_types=2, spheroid_type='prolate', fixed=1)
         self.relax.interpreter._Pipe.switch('ellipsoid')
-        self.relax.interpreter._Diffusion_tensor.init('ellipsoid', (9e-8, 5e6, 0.3, 60+360, 290, 100), fixed=0)
+        self.relax.interpreter._Diffusion_tensor.init((9e-8, 5e6, 0.3, 60+360, 290, 100), fixed=0)
