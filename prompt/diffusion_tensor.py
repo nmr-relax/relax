@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2005, 2007 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -39,79 +39,81 @@ class Diffusion_tensor:
         self.__relax__ = relax
 
 
-    def copy(self, run1=None, run2=None):
-        """Function for copying diffusion tensor data from run1 to run2.
+    def copy(self, pipe_from=None, pipe_to=None):
+        """Function for copying diffusion tensor data from one data pipe to another.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run1:  The name of the run to copy the sequence from.
+        pipe_from:  The name of the data pipe to copy the diffusion tensor data from.
 
-        run2:  The name of the run to copy the sequence to.
+        pipe_to:  The name of the data pipe to copy the diffusion tensor data to.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function will copy the diffusion tensor data from 'run1' to 'run2'.  'run2' must not
-        contain any diffusion tensor data.
+        This function will copy the diffusion tensor data between data pipes.  The destination data
+        pipe must not contain any diffusion tensor data.  If the pipe_from or pipe_to arguments are
+        not supplied, then both will default to the current data pipe (hence giving one argument is
+        essential).
 
 
         Examples
         ~~~~~~~~
 
-        To copy the diffusion tensor from run 'm1' to run 'm2', type:
+        To copy the diffusion tensor from the data pipe 'm1' to the current data pipe, type:
+
+        relax> diffusion_tensor.copy('m1')
+        relax> diffusion_tensor.copy(pipe_from='m1')
+
+
+        To copy the diffusion tensor from the current data pipe to the data pipe 'm9', type:
+
+        relax> diffusion_tensor.copy(pipe_to='m9')
+
+
+        To copy the diffusion tensor from the data pipe 'm1' to 'm2', type:
 
         relax> diffusion_tensor.copy('m1', 'm2')
+        relax> diffusion_tensor.copy(pipe_from='m1', pipe_to='m2')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "diffusion_tensor.copy("
-            text = text + "run1=" + `run1`
-            text = text + ", run2=" + `run2` + ")"
+            text = text + "pipe_from=" + `pipe_from`
+            text = text + ", pipe_to=" + `pipe_to` + ")"
             print text
 
-        # The run1 argument.
-        if type(run1) != str:
-            raise RelaxStrError, ('run1', run1)
+        # The pipe_from argument.
+        if type(pipe_from) != str:
+            raise RelaxStrError, ('pipe from', pipe_from)
 
-        # The run2 argument.
-        if type(run2) != str:
-            raise RelaxStrError, ('run2', run2)
+        # The pipe_to argument.
+        if type(pipe_to) != str:
+            raise RelaxStrError, ('pipe to', pipe_to)
 
         # Execute the functional code.
-        self.__relax__.generic.diffusion_tensor.copy(run1=run1, run2=run2)
+        diffusion_tensor.copy(pipe_from=pipe_from, pipe_to=pipe_to)
 
 
-    def delete(self, run=None):
+    def delete(self):
         """Function for deleting diffusion tensor data.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
-
-
 
         Description
         ~~~~~~~~~~~
 
-        This function will delete all diffusion tensor data for the given run.
+        This function will delete all diffusion tensor data from the current data pipe.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "diffusion_tensor.delete("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "diffusion_tensor.delete()"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
         # Execute the functional code.
-        self.__relax__.generic.diffusion_tensor.delete(run=run)
+        diffusion_tensor.delete()
 
 
     def display(self):
@@ -123,7 +125,7 @@ class Diffusion_tensor:
             print text
 
         # Execute the functional code.
-        self.__relax__.generic.diffusion_tensor.display()
+        diffusion_tensor.display()
 
 
     def init(self, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=1):
