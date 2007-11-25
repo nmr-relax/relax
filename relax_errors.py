@@ -468,8 +468,8 @@ class RelaxMfError(BaseError):
 
 # Diffusion tensor data corresponding to the data pipe already exists.
 class RelaxTensorError(BaseError):
-    def __init__(self, pipe):
-        self.text = "Diffusion tensor data corresponding to the data pipe " + `pipe` + " already exists."
+    def __init__(self):
+        self.text = "Diffusion tensor data already exists."
         if Debug:
             self.save_state()
 

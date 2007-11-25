@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,14 +20,15 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
 from types import FunctionType
 
-from relax_errors import RelaxBinError, RelaxError, RelaxFunctionError, RelaxIntError, RelaxLenError, RelaxListError, RelaxListNumError, RelaxListStrError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
-
+# relax module imports.
 from doc_string import regexp_doc
 import help
-from generic_fns.diffusion_tensor import Diffusion_tensor
+from generic_fns import diffusion_tensor
+from relax_errors import RelaxBinError, RelaxError, RelaxFunctionError, RelaxIntError, RelaxLenError, RelaxListError, RelaxListNumError, RelaxListStrError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 from specific_fns.model_free import Model_free
 
 
@@ -286,5 +287,5 @@ class OpenDX:
 
     # Write function.
     map.__doc__ = map.__doc__ + "\n\n" + regexp_doc() + "\n"
-    map.__doc__ = map.__doc__ + Diffusion_tensor.return_data_name.__doc__ + "\n\n"
+    map.__doc__ = map.__doc__ + diffusion_tensor.return_data_name.__doc__ + "\n\n"
     map.__doc__ = map.__doc__ + Model_free.return_data_name.__doc__ + "\n\n"

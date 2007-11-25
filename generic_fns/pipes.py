@@ -90,9 +90,13 @@ def create(pipe_name=None, pipe_type=None):
 
 
 def current():
-    """Print the name of the current data pipe."""
+    """Return the name of the current data pipe.
+    
+    @return:        The name of the current data pipe.
+    @type return:   str
+    """
 
-    print relax_data_store.current_pipe
+    return relax_data_store.current_pipe
 
 
 def delete(pipe_name=None):
@@ -150,8 +154,13 @@ def test(pipe_name=None):
     """
 
     # No supplied data pipe and no current data pipe.
-    if pipe_name == None and current() == None:
-        raise RelaxNoPipeError
+    if pipe_name == None:
+        # Get the current pipe.
+        pipe_name = current()
+
+        # Still no luck.
+        if pipe_name == None:
+            raise RelaxNoPipeError
 
     # Test if the data pipe exists.
     if not relax_data_store.has_key(pipe_name):

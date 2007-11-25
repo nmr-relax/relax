@@ -65,7 +65,7 @@ except ImportError:
 
 # relax modules.
 from colour import Colour
-from generic_fns.main import Generic
+import generic_fns
 from prompt.gpl import gpl
 from prompt import interpreter
 import relax_errors
@@ -115,7 +115,7 @@ class Relax:
         self.specific_setup = Specific_setup(self)
 
         # Setup the object containing the generic functions.
-        self.generic = Generic(self)
+        self.generic = generic_fns
 
         # Setup the object containing the specific functions.
         self.specific = Specific(self)
