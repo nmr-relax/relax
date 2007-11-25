@@ -469,7 +469,30 @@ def fold_angles(self, run=None, sim_index=None):
 
 
 def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=1):
-    """Function for initialising the diffusion tensor."""
+    """Function for initialising the diffusion tensor.
+
+    @param params:          The diffusion tensor parameters.
+    @type params:           float
+    @param time_scale:      The correlation time scaling value.
+    @type time_scale:       float
+    @param d_scale:         The diffusion tensor eigenvalue scaling value.
+    @type d_scale:          float
+    @param angle_units:     The units for the angle parameters.
+    @type angle_units:      str (either 'deg' or 'rad')
+    @param param_types:     The type of parameters supplied.  For spherical diffusion, the flag
+                            values correspond to 0: tm, 1: Diso.  For spheroidal diffusion, 0: {tm,
+                            Da, theta, phi}, 1: {Diso, Da, theta, phi}, 2: {tm, Dratio, theta, phi},
+                            3:  {Dpar, Dper, theta, phi}, 4: {Diso, Dratio, theta, phi}.  For
+                            ellipsoidal diffusion, 0: {tm, Da, Dr, alpha, beta, gamma}, 1: {Diso,
+                            Da, Dr, alpha, beta, gamma}, 2: {Dx, Dy, Dz, alpha, beta, gamma}.
+    @type param_types:      int
+    @param spheroid_type:   A string which, if supplied together with spheroid parameters, will
+                            restrict the tensor to either being 'oblate' or 'prolate'.
+    @type spheroid_type:    str
+    @param fixed:           A flag specifying whether the diffusion tensor is fixed or can be
+                            optimised.
+    @type fixed:            bin
+    """
 
     # Test if the current data pipe exists.
     pipes.test(relax_data_store.current_pipe)
