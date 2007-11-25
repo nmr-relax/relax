@@ -550,25 +550,7 @@ def dependency_generator(diff_type):
 # Diffusion tensor specific data.
 #################################
 
-class DiffTensorData(SpecificData):
-    def __init__(self):
-        """Dictionary type class for the diffusion tensor data.
-
-        The non-default diffusion parameters are calculated on the fly.
-        """
-
-
-    def add_item(self, key):
-        """Function for adding an empty container to the dictionary.
-
-        This overwrites the function from the parent class SpecificData.
-        """
-
-        self[key] = DiffTensorElement()
-
-
-
-class DiffTensorElement(Element):
+class DiffTensorData(Element):
     def __init__(self):
         """An empty data container for the diffusion tensor elements."""
 
@@ -863,7 +845,7 @@ class DiffTensorSimList(ListType):
         ListType.__setitem__(self, index, value)
 
         # Then update the other lists.
-        self.diff_element._DiffTensorElement__update_sim_set(self.param_name, index)
+        self.diff_element._DiffTensorData__update_sim_set(self.param_name, index)
 
 
     def append(self, value):
@@ -873,7 +855,7 @@ class DiffTensorSimList(ListType):
         self[len(self):len(self)] = [value]
 
         # Update the other MC lists.
-        self.diff_element._DiffTensorElement__update_sim_append(self.param_name, len(self)-1)
+        self.diff_element._DiffTensorData__update_sim_append(self.param_name, len(self)-1)
 
 
     def append_untouchable_item(self, value):
