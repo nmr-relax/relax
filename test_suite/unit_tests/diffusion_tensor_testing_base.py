@@ -98,6 +98,49 @@ class Diffusion_tensor_base_class:
         self.assertRaises(RelaxNoPipeError, self.diffusion_tensor_fns.delete)
 
 
+    def test_display_ellipsoid(self):
+        """Display an ellipsoidal diffusion tensor.
+
+        The functions tested are both generic_fns.diffusion_tensor.display() and
+        prompt.diffusion_tensor.display().
+        """
+
+        # Initialise the tensor.
+        self.diffusion_tensor_fns.init(params=(13.9, 1.8, 0.7, 10.6, -23.3, 0.34), time_scale=1e-9, d_scale=1e7, angle_units='rad', param_types=0, fixed=1)
+
+        # Display the diffusion tensor.
+        self.diffusion_tensor_fns.display()
+
+
+    def test_display_sphere(self):
+        """Display a spherical diffusion tensor.
+
+        The functions tested are both generic_fns.diffusion_tensor.display() and
+        prompt.diffusion_tensor.display().
+        """
+
+        # Initialise the tensor.
+        self.diffusion_tensor_fns.init(params=1e-9)
+
+        # Display the diffusion tensor.
+        self.diffusion_tensor_fns.display()
+
+
+    def test_display_spheroid(self):
+        """Display a spheroidal diffusion tensor.
+
+        The functions tested are both generic_fns.diffusion_tensor.display() and
+        prompt.diffusion_tensor.display().
+        """
+
+        # Initialise the tensor.
+        self.diffusion_tensor_fns.init(params=(8.6, 1.3, 600, -20), time_scale=1e-9, d_scale=1e7, angle_units='deg', param_types=2, spheroid_type='prolate', fixed=0)
+
+        # Display the diffusion tensor.
+        self.diffusion_tensor_fns.display()
+
+
+
     def test_init_bad_angle_units(self):
         """Test the failure of setting up a diffusion tensor when angle_units is incorrect.
 
