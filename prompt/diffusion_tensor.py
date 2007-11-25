@@ -402,7 +402,7 @@ class Diffusion_tensor:
             raise RelaxNumTupleError, ('diffusion parameters', params)
         if type(params) == tuple:
             if len(params) != 4 and len(params) != 6:
-                raise RelaxError, "The diffusion parameters argument must either be a number or a tuple of numbers of length 4 or 6."
+                raise RelaxError, "The diffusion parameters argument " + `params` + " must either be a number or a tuple of numbers of length 4 or 6."
             for i in xrange(len(params)):
                 if type(params[i]) != float and type(params[i]) != int:
                     raise RelaxNumTupleError, ('diffusion parameters', params)

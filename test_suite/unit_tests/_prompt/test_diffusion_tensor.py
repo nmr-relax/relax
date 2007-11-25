@@ -79,12 +79,19 @@ class Test_diffusion_tensor(Diffusion_tensor_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the float list arguments, and skip them.
-            if data[0] == 'float tuple':
+            # Catch a single float, int, or bin, and skip them.
+            if data[0] == 'int' or data[0] == 'bin' or data[0] == 'float':
                 continue
 
-            # The argument test.
-            self.assertRaises(RelaxNumTupleError, self.diffusion_tensor_fns.init, params=data[1])
+            # Catch the tuple arguments.
+            if data[0] == 'tuple' or data[0] == 'float tuple':
+                # Incorrect tuple length.
+                if len(data[1]) != 4 and len(data[1]) != 6:
+                    self.assertRaises(RelaxError, self.diffusion_tensor_fns.init, params=data[1])
+
+                # Must be a number.
+                elif data[0] != 'float tuple':
+                    self.assertRaises(RelaxNumTupleError, self.diffusion_tensor_fns.init, params=data[1])
 
 
     def test_init_argfail_time_scale(self):
