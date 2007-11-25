@@ -446,7 +446,7 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     """Function for initialising the diffusion tensor."""
 
     # Test if the current data pipe exists.
-    pipes.test()
+    pipes.test(relax_data_store.current_pipe)
 
     # Alias the current data pipe.
     cdp = relax_data_store[relax_data_store.current_pipe]
