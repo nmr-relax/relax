@@ -57,7 +57,7 @@ class Diffusion_tensor_base_class:
 
 
     def test_init_bad_angle_units(self):
-        """Test the failure of setting up a diffusion tensor when the angle_units is incorrect.
+        """Test the failure of setting up a diffusion tensor when angle_units is incorrect.
 
         The functions tested are both generic_fns.diffusion_tensor.init() and
         prompt.diffusion_tensor.init().
