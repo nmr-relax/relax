@@ -54,3 +54,30 @@ class Diffusion_tensor_base_class:
         """Reset the relax data storage object."""
 
         relax_data_store.__reset__()
+
+
+    def test_init_bad_angle_units(self):
+        """Test the failure of setting up a diffusion tensor when the angle_units is incorrect.
+
+        The functions tested are both generic_fns.diffusion_tensor.init() and
+        prompt.diffusion_tensor.init().
+        """
+
+        # Initialise the tensor.
+        self.assertRaises(RelaxError, self.diffusion_tensor_fns.init, params=1e-9, angle_units='aaa')
+
+
+    def test_init_sphere(self):
+        """Test the setting up of a spherical diffusion tensor.
+
+        The functions tested are both generic_fns.diffusion_tensor.init() and
+        prompt.diffusion_tensor.init().
+        """
+
+        # Initialise the tensor.
+        self.diffusion_tensor_fns.init(params=1e-9)
+
+        # Test the diffusion tensor 
+        self.assertEqual(relax_data_pipe['orig'].diff.type, 'sphere')
+        self.assertEqual(relax_data_pipe['orig'].diff.tm, 1e-9)
+
