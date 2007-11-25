@@ -120,22 +120,21 @@ def default_value(param):
         return 1.0
 
 
-def delete(run=None):
+def delete():
     """Function for deleting diffusion tensor data."""
 
-    # Test if the run exists.
-    if not run in relax_data_store.run_names:
-        raise RelaxNoPipeError, run
+    # Test if the current data pipe exists.
+    pipes.test(relax_data_store.current_pipe)
 
-    # Test if diffusion tensor data for the run exists.
-    if not relax_data_store.diff.has_key(run):
-        raise RelaxNoTensorError, run
+    # Test if diffusion tensor data exists.
+    if not diff_data_exists():
+        raise RelaxTensorError
 
     # Delete the diffusion data.
-    del(relax_data_store.diff[run])
+    del(relax_data_store[relax_data_store.current_pipe].diff_tensor)
 
-    # Clean up the runs.
-    pipes.eliminate_unused_pipes()
+    # Put the container back (but empty).
+    self.diff_tensor = DiffTensorData()
 
 
 def diff_data_exists():

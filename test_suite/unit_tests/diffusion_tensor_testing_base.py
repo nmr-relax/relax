@@ -56,6 +56,23 @@ class Diffusion_tensor_base_class:
         relax_data_store.__reset__()
 
 
+    def test_delete(self):
+        """Test the deletion of the diffusion tensor data structure.
+
+        The functions tested are both generic_fns.diffusion_tensor.delete() and
+        prompt.diffusion_tensor.delete().
+        """
+
+        # Set the tm value.
+        relax_data_store['orig'].diff_tensor.tm = 0.0
+
+        # Delete the tensor data.
+        self.diffusion_tensor_fns.delete()
+
+        # Test that tm is not 0.0.
+        self.assertNotEqual(relax_data_store['orig'].diff_tensor.tm, 0.0)
+
+
     def test_init_bad_angle_units(self):
         """Test the failure of setting up a diffusion tensor when angle_units is incorrect.
 
