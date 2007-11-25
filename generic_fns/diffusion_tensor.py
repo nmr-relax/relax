@@ -28,6 +28,7 @@ from re import search
 # relax module imports.
 from angles import wrap_angles
 from data import Data as relax_data_store
+from data.diff_tensor import DiffTensorData
 import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
@@ -134,7 +135,7 @@ def delete():
     del(relax_data_store[relax_data_store.current_pipe].diff_tensor)
 
     # Put the container back (but empty).
-    self.diff_tensor = DiffTensorData()
+    relax_data_store[relax_data_store.current_pipe].diff_tensor = DiffTensorData()
 
 
 def diff_data_exists():
