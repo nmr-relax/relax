@@ -115,7 +115,9 @@ class Diffusion_tensor_base_class:
 
         # Test the diffusion tensor.
         self.assertEqual(relax_data_store['orig'].diff_tensor.type, 'spheroid')
+        self.assertEqual(relax_data_store['orig'].diff_tensor.spheroid_type, 'prolate')
         self.assertAlmostEqual(relax_data_store['orig'].diff_tensor.tm * 1e9, 8.6, 14)
         self.assertEqual(relax_data_store['orig'].diff_tensor.Da, 5.2854122621564493e6)
         self.assertEqual(relax_data_store['orig'].diff_tensor.theta, 2.0943951023931948)
         self.assertEqual(relax_data_store['orig'].diff_tensor.phi, 2.7925268031909276)
+        self.assertEqual(relax_data_store['orig'].diff_tensor.fixed, 0)
