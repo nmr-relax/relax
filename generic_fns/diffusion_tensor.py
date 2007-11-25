@@ -520,7 +520,7 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     # Spheroidal diffusion.
     elif (type(params) == tuple or type(params) == list) and len(params) == 4:
         num_params = 4
-        spheroid(params, time_scale, param_types)
+        spheroid(params, time_scale, d_scale, angle_units, param_types, spheroid_type)
 
     # Ellipsoidal diffusion.
     elif (type(params) == tuple or type(params) == list) and len(params) == 6:
@@ -1302,8 +1302,28 @@ def sphere(params=None, time_scale=None, param_types=None):
         raise RelaxUnknownParamCombError, ('param_types', param_types)
 
 
-def spheroid():
-    """Function for setting up spheroidal diffusion."""
+def spheroid(params=None, time_scale=None, d_scale=None, angle_units=None, param_types=None, spheroid_type=None):
+    """Function for setting up a spheroidal diffusion tensor.
+    
+    @param params:          The diffusion tensor parameter.
+    @type params:           float
+    @param time_scale:      The correlation time scaling value.
+    @type time_scale:       float
+    @param d_scale:         The diffusion tensor eigenvalue scaling value.
+    @type d_scale:          float
+    @param angle_units:     The units for the angle parameters which can be either 'deg' or 'rad'.
+    @type angle_units:      str
+    @param param_types:     The type of parameters supplied.  These correspond to 0: {tm, Da, theta,
+                            phi}, 1: {Diso, Da, theta, phi}, 2: {tm, Dratio, theta, phi}, 3:  {Dpar,
+                            Dper, theta, phi}, 4: {Diso, Dratio, theta, phi}.
+    @type param_types:      int
+    @param spheroid_type:   A string which, if supplied together with spheroid parameters, will
+                            restrict the tensor to either being 'oblate' or 'prolate'.
+    @type spheroid_type:    str
+    """
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
     # The diffusion type.
     cdp.diff_tensor.type = 'spheroid'
@@ -1324,7 +1344,7 @@ def spheroid():
         Da = Da * d_scale
 
         # Set the parameters.
-        set(run=run, value=[tm, Da], param=['tm', 'Da'])
+        set(value=[tm, Da], param=['tm', 'Da'])
 
     # (Diso, Da, theta, phi).
     elif param_types == 1:
@@ -1336,7 +1356,7 @@ def spheroid():
         Da = Da * d_scale
 
         # Set the parameters.
-        set(run=run, value=[Diso, Da], param=['Diso', 'Da'])
+        set(value=[Diso, Da], param=['Diso', 'Da'])
 
     # (tm, Dratio, theta, phi).
     elif param_types == 2:
@@ -1347,7 +1367,7 @@ def spheroid():
         tm = tm * time_scale
 
         # Set the parameters.
-        set(run=run, value=[tm, Dratio], param=['tm', 'Dratio'])
+        set(value=[tm, Dratio], param=['tm', 'Dratio'])
 
     # (Dpar, Dper, theta, phi).
     elif param_types == 3:
@@ -1359,7 +1379,7 @@ def spheroid():
         Dper = Dper * d_scale
 
         # Set the parameters.
-        set(run=run, value=[Dpar, Dper], param=['Dpar', 'Dper'])
+        set(value=[Dpar, Dper], param=['Dpar', 'Dper'])
 
     # (Diso, Dratio, theta, phi).
     elif param_types == 4:
@@ -1370,7 +1390,7 @@ def spheroid():
         Diso = Diso * d_scale
 
         # Set the parameters.
-        set(run=run, value=[Diso, Dratio], param=['Diso', 'Dratio'])
+        set(value=[Diso, Dratio], param=['Diso', 'Dratio'])
 
     # Unknown parameter combination.
     else:
@@ -1382,7 +1402,7 @@ def spheroid():
         phi = (phi / 360.0) * 2.0 * pi
 
     # Set the orientational parameters.
-    set(run=run, value=[theta, phi], param=['theta', 'phi'])
+    set(value=[theta, phi], param=['theta', 'phi'])
 
 
 def test_params(num_params):
