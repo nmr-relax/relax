@@ -34,7 +34,7 @@ class Container:
 
 
 # Fake normal relax usage of the user function class.
-def fake_relax_instance():
+def fake_instance():
     """Function which returns a similar to the relax instance.
 
     This structure is similar enough to the relax instance for the user functions to execute.

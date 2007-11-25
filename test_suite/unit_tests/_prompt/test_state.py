@@ -22,34 +22,22 @@
 
 # Python module imports.
 from unittest import TestCase
-import sys
 
 # relax module imports.
 from test_suite.unit_tests.state_testing_base import State_base_class
-from data_types import DATA_TYPES
 from prompt.state import State
 from relax_errors import RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxStrFileError
 
-
-# Set the variable sys.ps3 (this is required by the user functions).
-sys.ps3 = 'relax> '
-
-
-# A class to act as a container.
-class Container:
-    pass
-
-# Fake normal relax usage of the user function class.
-relax = Container()
-relax.interpreter = Container()
-relax.interpreter.intro = True
+# Unit test imports.
+from data_types import DATA_TYPES
+import fake_relax
 
  
 class Test_state(State_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.state' module."""
 
     # Instantiate the user function class.
-    state = State(relax)
+    state = State(fake_relax.fake_instance())
 
     # Rename the user functions.
     state.load_state = state.load

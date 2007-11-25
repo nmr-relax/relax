@@ -22,34 +22,23 @@
 
 # Python module imports.
 from unittest import TestCase
-import sys
 
 # relax module imports.
 from data import Data as relax_data_store
-from data_types import DATA_TYPES
 from prompt.spin import Spin
 from relax_errors import RelaxError, RelaxIntError, RelaxNoPipeError, RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.spin_testing_base import Spin_base_class
 
-# Set the variable sys.ps3 (this is required by the user functions).
-sys.ps3 = 'relax> '
-
-
-# A class to act as a container.
-class Container:
-    pass
-
-# Fake normal relax usage of the user function class.
-relax = Container()
-relax.interpreter = Container()
-relax.interpreter.intro = True
+# Unit test imports.
+from data_types import DATA_TYPES
+import fake_relax
 
 
 class Test_spin(Spin_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.spin' module."""
 
     # Instantiate the user function class.
-    spin_fns = Spin(relax)
+    spin_fns = Spin(fake_relax.fake_instance())
 
 
     def test_copy_argfail_pipe_from(self):
