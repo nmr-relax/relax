@@ -266,7 +266,7 @@ def ellipsoid(self):
     """Function for setting up ellipsoidal diffusion."""
 
     # The diffusion type.
-    relax_data_store.diff[self.run].type = 'ellipsoid'
+    cdp.diff_tensor.type = 'ellipsoid'
 
     # (tm, Da, Dr, alpha, beta, gamma).
     if self.param_types == 0:
@@ -354,118 +354,118 @@ def fold_angles(self, run=None, sim_index=None):
     ##################
 
     # Spheroid.
-    if relax_data_store.diff[self.run].type == 'spheroid':
+    if cdp.diff_tensor.type == 'spheroid':
         # Get the current angles.
-        theta = relax_data_store.diff[self.run].theta
-        phi = relax_data_store.diff[self.run].phi
+        theta = cdp.diff_tensor.theta
+        phi = cdp.diff_tensor.phi
 
         # Simulated values.
         if sim_index != None:
-            theta_sim = relax_data_store.diff[self.run].theta_sim[sim_index]
-            phi_sim   = relax_data_store.diff[self.run].phi_sim[sim_index]
+            theta_sim = cdp.diff_tensor.theta_sim[sim_index]
+            phi_sim   = cdp.diff_tensor.phi_sim[sim_index]
 
         # Normal value.
         if sim_index == None:
-            relax_data_store.diff[self.run].theta = self.relax.generic.angles.wrap_angles(theta, 0.0, pi)
-            relax_data_store.diff[self.run].phi = self.relax.generic.angles.wrap_angles(phi, 0.0, 2.0*pi)
+            cdp.diff_tensor.theta = self.relax.generic.angles.wrap_angles(theta, 0.0, pi)
+            cdp.diff_tensor.phi = self.relax.generic.angles.wrap_angles(phi, 0.0, 2.0*pi)
 
         # Simulated theta and phi values.
         else:
-            relax_data_store.diff[self.run].theta_sim[sim_index] = self.relax.generic.angles.wrap_angles(theta_sim, theta - pi/2.0, theta + pi/2.0)
-            relax_data_store.diff[self.run].phi_sim[sim_index]   = self.relax.generic.angles.wrap_angles(phi_sim, phi - pi, phi + pi)
+            cdp.diff_tensor.theta_sim[sim_index] = self.relax.generic.angles.wrap_angles(theta_sim, theta - pi/2.0, theta + pi/2.0)
+            cdp.diff_tensor.phi_sim[sim_index]   = self.relax.generic.angles.wrap_angles(phi_sim, phi - pi, phi + pi)
 
     # Ellipsoid.
-    elif relax_data_store.diff[self.run].type == 'ellipsoid':
+    elif cdp.diff_tensor.type == 'ellipsoid':
         # Get the current angles.
-        alpha = relax_data_store.diff[self.run].alpha
-        beta  = relax_data_store.diff[self.run].beta
-        gamma = relax_data_store.diff[self.run].gamma
+        alpha = cdp.diff_tensor.alpha
+        beta  = cdp.diff_tensor.beta
+        gamma = cdp.diff_tensor.gamma
 
         # Simulated values.
         if sim_index != None:
-            alpha_sim = relax_data_store.diff[self.run].alpha_sim[sim_index]
-            beta_sim  = relax_data_store.diff[self.run].beta_sim[sim_index]
-            gamma_sim = relax_data_store.diff[self.run].gamma_sim[sim_index]
+            alpha_sim = cdp.diff_tensor.alpha_sim[sim_index]
+            beta_sim  = cdp.diff_tensor.beta_sim[sim_index]
+            gamma_sim = cdp.diff_tensor.gamma_sim[sim_index]
 
         # Normal value.
         if sim_index == None:
-            relax_data_store.diff[self.run].alpha = self.relax.generic.angles.wrap_angles(alpha, 0.0, 2.0*pi)
-            relax_data_store.diff[self.run].beta  = self.relax.generic.angles.wrap_angles(beta, 0.0, 2.0*pi)
-            relax_data_store.diff[self.run].gamma = self.relax.generic.angles.wrap_angles(gamma, 0.0, 2.0*pi)
+            cdp.diff_tensor.alpha = self.relax.generic.angles.wrap_angles(alpha, 0.0, 2.0*pi)
+            cdp.diff_tensor.beta  = self.relax.generic.angles.wrap_angles(beta, 0.0, 2.0*pi)
+            cdp.diff_tensor.gamma = self.relax.generic.angles.wrap_angles(gamma, 0.0, 2.0*pi)
 
         # Simulated alpha, beta, and gamma values.
         else:
-            relax_data_store.diff[self.run].alpha_sim[sim_index] = self.relax.generic.angles.wrap_angles(alpha_sim, alpha - pi, alpha + pi)
-            relax_data_store.diff[self.run].beta_sim[sim_index]  = self.relax.generic.angles.wrap_angles(beta_sim, beta - pi, beta + pi)
-            relax_data_store.diff[self.run].gamma_sim[sim_index] = self.relax.generic.angles.wrap_angles(gamma_sim, gamma - pi, gamma + pi)
+            cdp.diff_tensor.alpha_sim[sim_index] = self.relax.generic.angles.wrap_angles(alpha_sim, alpha - pi, alpha + pi)
+            cdp.diff_tensor.beta_sim[sim_index]  = self.relax.generic.angles.wrap_angles(beta_sim, beta - pi, beta + pi)
+            cdp.diff_tensor.gamma_sim[sim_index] = self.relax.generic.angles.wrap_angles(gamma_sim, gamma - pi, gamma + pi)
 
 
     # Remove the glide reflection and translational symmetries.
     ###########################################################
 
     # Spheroid.
-    if relax_data_store.diff[self.run].type == 'spheroid':
+    if cdp.diff_tensor.type == 'spheroid':
         # Normal value.
         if sim_index == None:
             # Fold phi inside 0 and pi.
-            if relax_data_store.diff[self.run].phi >= pi:
-                relax_data_store.diff[self.run].theta = pi - relax_data_store.diff[self.run].theta
-                relax_data_store.diff[self.run].phi = relax_data_store.diff[self.run].phi - pi
+            if cdp.diff_tensor.phi >= pi:
+                cdp.diff_tensor.theta = pi - cdp.diff_tensor.theta
+                cdp.diff_tensor.phi = cdp.diff_tensor.phi - pi
 
         # Simulated theta and phi values.
         else:
             # Fold phi_sim inside phi-pi/2 and phi+pi/2.
-            if relax_data_store.diff[self.run].phi_sim[sim_index] >= relax_data_store.diff[self.run].phi + pi/2.0:
-                relax_data_store.diff[self.run].theta_sim[sim_index] = pi - relax_data_store.diff[self.run].theta_sim[sim_index]
-                relax_data_store.diff[self.run].phi_sim[sim_index]   = relax_data_store.diff[self.run].phi_sim[sim_index] - pi
-            elif relax_data_store.diff[self.run].phi_sim[sim_index] <= relax_data_store.diff[self.run].phi - pi/2.0:
-                relax_data_store.diff[self.run].theta_sim[sim_index] = pi - relax_data_store.diff[self.run].theta_sim[sim_index]
-                relax_data_store.diff[self.run].phi_sim[sim_index]   = relax_data_store.diff[self.run].phi_sim[sim_index] + pi
+            if cdp.diff_tensor.phi_sim[sim_index] >= cdp.diff_tensor.phi + pi/2.0:
+                cdp.diff_tensor.theta_sim[sim_index] = pi - cdp.diff_tensor.theta_sim[sim_index]
+                cdp.diff_tensor.phi_sim[sim_index]   = cdp.diff_tensor.phi_sim[sim_index] - pi
+            elif cdp.diff_tensor.phi_sim[sim_index] <= cdp.diff_tensor.phi - pi/2.0:
+                cdp.diff_tensor.theta_sim[sim_index] = pi - cdp.diff_tensor.theta_sim[sim_index]
+                cdp.diff_tensor.phi_sim[sim_index]   = cdp.diff_tensor.phi_sim[sim_index] + pi
 
     # Ellipsoid.
-    elif relax_data_store.diff[self.run].type == 'ellipsoid':
+    elif cdp.diff_tensor.type == 'ellipsoid':
         # Normal value.
         if sim_index == None:
             # Fold alpha inside 0 and pi.
-            if relax_data_store.diff[self.run].alpha >= pi:
-                relax_data_store.diff[self.run].alpha = relax_data_store.diff[self.run].alpha - pi
+            if cdp.diff_tensor.alpha >= pi:
+                cdp.diff_tensor.alpha = cdp.diff_tensor.alpha - pi
 
             # Fold beta inside 0 and pi.
-            if relax_data_store.diff[self.run].beta >= pi:
-                relax_data_store.diff[self.run].alpha = pi - relax_data_store.diff[self.run].alpha
-                relax_data_store.diff[self.run].beta = relax_data_store.diff[self.run].beta - pi
+            if cdp.diff_tensor.beta >= pi:
+                cdp.diff_tensor.alpha = pi - cdp.diff_tensor.alpha
+                cdp.diff_tensor.beta = cdp.diff_tensor.beta - pi
 
             # Fold gamma inside 0 and pi.
-            if relax_data_store.diff[self.run].gamma >= pi:
-                relax_data_store.diff[self.run].alpha = pi - relax_data_store.diff[self.run].alpha
-                relax_data_store.diff[self.run].beta = pi - relax_data_store.diff[self.run].beta
-                relax_data_store.diff[self.run].gamma = relax_data_store.diff[self.run].gamma - pi
+            if cdp.diff_tensor.gamma >= pi:
+                cdp.diff_tensor.alpha = pi - cdp.diff_tensor.alpha
+                cdp.diff_tensor.beta = pi - cdp.diff_tensor.beta
+                cdp.diff_tensor.gamma = cdp.diff_tensor.gamma - pi
 
         # Simulated theta and phi values.
         else:
             # Fold alpha_sim inside alpha-pi/2 and alpha+pi/2.
-            if relax_data_store.diff[self.run].alpha_sim[sim_index] >= relax_data_store.diff[self.run].alpha + pi/2.0:
-                relax_data_store.diff[self.run].alpha_sim[sim_index] = relax_data_store.diff[self.run].alpha_sim[sim_index] - pi
-            elif relax_data_store.diff[self.run].alpha_sim[sim_index] <= relax_data_store.diff[self.run].alpha - pi/2.0:
-                relax_data_store.diff[self.run].alpha_sim[sim_index] = relax_data_store.diff[self.run].alpha_sim[sim_index] + pi
+            if cdp.diff_tensor.alpha_sim[sim_index] >= cdp.diff_tensor.alpha + pi/2.0:
+                cdp.diff_tensor.alpha_sim[sim_index] = cdp.diff_tensor.alpha_sim[sim_index] - pi
+            elif cdp.diff_tensor.alpha_sim[sim_index] <= cdp.diff_tensor.alpha - pi/2.0:
+                cdp.diff_tensor.alpha_sim[sim_index] = cdp.diff_tensor.alpha_sim[sim_index] + pi
 
             # Fold beta_sim inside beta-pi/2 and beta+pi/2.
-            if relax_data_store.diff[self.run].beta_sim[sim_index] >= relax_data_store.diff[self.run].beta + pi/2.0:
-                relax_data_store.diff[self.run].alpha_sim[sim_index] = pi - relax_data_store.diff[self.run].alpha_sim[sim_index]
-                relax_data_store.diff[self.run].beta_sim[sim_index] = relax_data_store.diff[self.run].beta_sim[sim_index] - pi
-            elif relax_data_store.diff[self.run].beta_sim[sim_index] <= relax_data_store.diff[self.run].beta - pi/2.0:
-                relax_data_store.diff[self.run].alpha_sim[sim_index] = pi - relax_data_store.diff[self.run].alpha_sim[sim_index]
-                relax_data_store.diff[self.run].beta_sim[sim_index] = relax_data_store.diff[self.run].beta_sim[sim_index] + pi
+            if cdp.diff_tensor.beta_sim[sim_index] >= cdp.diff_tensor.beta + pi/2.0:
+                cdp.diff_tensor.alpha_sim[sim_index] = pi - cdp.diff_tensor.alpha_sim[sim_index]
+                cdp.diff_tensor.beta_sim[sim_index] = cdp.diff_tensor.beta_sim[sim_index] - pi
+            elif cdp.diff_tensor.beta_sim[sim_index] <= cdp.diff_tensor.beta - pi/2.0:
+                cdp.diff_tensor.alpha_sim[sim_index] = pi - cdp.diff_tensor.alpha_sim[sim_index]
+                cdp.diff_tensor.beta_sim[sim_index] = cdp.diff_tensor.beta_sim[sim_index] + pi
 
             # Fold gamma_sim inside gamma-pi/2 and gamma+pi/2.
-            if relax_data_store.diff[self.run].gamma_sim[sim_index] >= relax_data_store.diff[self.run].gamma + pi/2.0:
-                relax_data_store.diff[self.run].alpha_sim[sim_index] = pi - relax_data_store.diff[self.run].alpha_sim[sim_index]
-                relax_data_store.diff[self.run].beta_sim[sim_index] = pi - relax_data_store.diff[self.run].beta_sim[sim_index]
-                relax_data_store.diff[self.run].gamma_sim[sim_index] = relax_data_store.diff[self.run].gamma_sim[sim_index] - pi
-            elif relax_data_store.diff[self.run].gamma_sim[sim_index] <= relax_data_store.diff[self.run].gamma - pi/2.0:
-                relax_data_store.diff[self.run].alpha_sim[sim_index] = pi - relax_data_store.diff[self.run].alpha_sim[sim_index]
-                relax_data_store.diff[self.run].beta_sim[sim_index] = pi - relax_data_store.diff[self.run].beta_sim[sim_index]
-                relax_data_store.diff[self.run].gamma_sim[sim_index] = relax_data_store.diff[self.run].gamma_sim[sim_index] + pi
+            if cdp.diff_tensor.gamma_sim[sim_index] >= cdp.diff_tensor.gamma + pi/2.0:
+                cdp.diff_tensor.alpha_sim[sim_index] = pi - cdp.diff_tensor.alpha_sim[sim_index]
+                cdp.diff_tensor.beta_sim[sim_index] = pi - cdp.diff_tensor.beta_sim[sim_index]
+                cdp.diff_tensor.gamma_sim[sim_index] = cdp.diff_tensor.gamma_sim[sim_index] - pi
+            elif cdp.diff_tensor.gamma_sim[sim_index] <= cdp.diff_tensor.gamma - pi/2.0:
+                cdp.diff_tensor.alpha_sim[sim_index] = pi - cdp.diff_tensor.alpha_sim[sim_index]
+                cdp.diff_tensor.beta_sim[sim_index] = pi - cdp.diff_tensor.beta_sim[sim_index]
+                cdp.diff_tensor.gamma_sim[sim_index] = cdp.diff_tensor.gamma_sim[sim_index] + pi
 
 
 def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=1):
@@ -762,7 +762,7 @@ def return_eigenvalues(self, run=None):
         self.run = run
 
     # Reassign the data.
-    data = relax_data_store.diff[self.run]
+    data = cdp.diff_tensor
 
     # Diso.
     Diso = 1.0 / (6.0 * data.tm)
@@ -881,7 +881,7 @@ def set(self, run=None, value=None, param=None):
     # Spherical diffusion.
     ######################
 
-    if relax_data_store.diff[self.run].type == 'sphere':
+    if cdp.diff_tensor.type == 'sphere':
         # Geometric parameters.
         #######################
 
@@ -889,11 +889,11 @@ def set(self, run=None, value=None, param=None):
         if len(geo_params) == 1:
             # The single parameter tm.
             if geo_params[0] == 'tm':
-                relax_data_store.diff[self.run].tm = geo_values[0]
+                cdp.diff_tensor.tm = geo_values[0]
 
             # The single parameter Diso.
             elif geo_params[0] == 'Diso':
-                relax_data_store.diff[self.run].tm = 1.0 / (6.0 * geo_values[0])
+                cdp.diff_tensor.tm = 1.0 / (6.0 * geo_values[0])
 
             # Cannot set the single parameter.
             else:
@@ -915,7 +915,7 @@ def set(self, run=None, value=None, param=None):
     # Spheroidal diffusion.
     #######################
 
-    elif relax_data_store.diff[self.run].type == 'spheroid':
+    elif cdp.diff_tensor.type == 'spheroid':
         # Geometric parameters.
         #######################
 
@@ -923,20 +923,20 @@ def set(self, run=None, value=None, param=None):
         if len(geo_params) == 1:
             # The single parameter tm.
             if geo_params[0] == 'tm':
-                relax_data_store.diff[self.run].tm = geo_values[0]
+                cdp.diff_tensor.tm = geo_values[0]
 
             # The single parameter Diso.
             elif geo_params[0] == 'Diso':
-                relax_data_store.diff[self.run].tm = 1.0 / (6.0 * geo_values[0])
+                cdp.diff_tensor.tm = 1.0 / (6.0 * geo_values[0])
 
             # The single parameter Da.
             elif geo_params[0] == 'Da':
-                relax_data_store.diff[self.run].Da = geo_values[0]
+                cdp.diff_tensor.Da = geo_values[0]
 
             # The single parameter Dratio.
             elif geo_params[0] == 'Dratio':
                 Dratio = geo_values[0]
-                relax_data_store.diff[self.run].Da = (Dratio - 1.0) / (2.0 * relax_data_store.diff[self.run].tm * (Dratio + 2.0))
+                cdp.diff_tensor.Da = (Dratio - 1.0) / (2.0 * cdp.diff_tensor.tm * (Dratio + 2.0))
 
             # Cannot set the single parameter.
             else:
@@ -951,8 +951,8 @@ def set(self, run=None, value=None, param=None):
                 Da = geo_values[geo_params.index('Da')]
 
                 # Set the internal parameter values.
-                relax_data_store.diff[self.run].tm = tm
-                relax_data_store.diff[self.run].Da = Da
+                cdp.diff_tensor.tm = tm
+                cdp.diff_tensor.Da = Da
 
             # The geometric parameter set {Diso, Da}.
             elif geo_params.count('Diso') == 1 and geo_params.count('Da') == 1:
@@ -961,8 +961,8 @@ def set(self, run=None, value=None, param=None):
                 Da = geo_values[geo_params.index('Da')]
 
                 # Set the internal parameter values.
-                relax_data_store.diff[self.run].tm = 1.0 / (6.0 * Diso)
-                relax_data_store.diff[self.run].Da = Da
+                cdp.diff_tensor.tm = 1.0 / (6.0 * Diso)
+                cdp.diff_tensor.Da = Da
 
             # The geometric parameter set {tm, Dratio}.
             elif geo_params.count('tm') == 1 and geo_params.count('Dratio') == 1:
@@ -971,8 +971,8 @@ def set(self, run=None, value=None, param=None):
                 Dratio = geo_values[geo_params.index('Dratio')]
 
                 # Set the internal parameter values.
-                relax_data_store.diff[self.run].tm = tm
-                relax_data_store.diff[self.run].Da = (Dratio - 1.0) / (2.0 * tm * (Dratio + 2.0))
+                cdp.diff_tensor.tm = tm
+                cdp.diff_tensor.Da = (Dratio - 1.0) / (2.0 * tm * (Dratio + 2.0))
 
             # The geometric parameter set {Dpar, Dper}.
             elif geo_params.count('Dpar') == 1 and geo_params.count('Dpar') == 1:
@@ -981,8 +981,8 @@ def set(self, run=None, value=None, param=None):
                 Dper = geo_values[geo_params.index('Dper')]
 
                 # Set the internal parameter values.
-                relax_data_store.diff[self.run].tm = 1.0 / (2.0 * (Dpar + 2.0*Dper))
-                relax_data_store.diff[self.run].Da = Dpar - Dper
+                cdp.diff_tensor.tm = 1.0 / (2.0 * (Dpar + 2.0*Dper))
+                cdp.diff_tensor.Da = Dpar - Dper
 
             # The geometric parameter set {Diso, Dratio}.
             elif geo_params.count('Diso') == 1 and geo_params.count('Dratio') == 1:
@@ -991,8 +991,8 @@ def set(self, run=None, value=None, param=None):
                 Dratio = geo_values[geo_params.index('Dratio')]
 
                 # Set the internal parameter values.
-                relax_data_store.diff[self.run].tm = 1.0 / (6.0 * Diso)
-                relax_data_store.diff[self.run].Da = 3.0 * Diso * (Dratio - 1.0) / (Dratio + 2.0)
+                cdp.diff_tensor.tm = 1.0 / (6.0 * Diso)
+                cdp.diff_tensor.Da = 3.0 * Diso * (Dratio - 1.0) / (Dratio + 2.0)
 
             # Unknown parameter combination.
             else:
@@ -1010,18 +1010,18 @@ def set(self, run=None, value=None, param=None):
         if len(orient_params) == 1:
             # The single parameter theta.
             if orient_params[0] == 'theta':
-                relax_data_store.diff[self.run].theta = orient_values[orient_params.index('theta')]
+                cdp.diff_tensor.theta = orient_values[orient_params.index('theta')]
 
             # The single parameter phi.
             elif orient_params[0] == 'phi':
-                relax_data_store.diff[self.run].phi = orient_values[orient_params.index('phi')]
+                cdp.diff_tensor.phi = orient_values[orient_params.index('phi')]
 
         # Two orientational parameters.
         elif len(orient_params) == 2:
             # The orientational parameter set {theta, phi}.
             if orient_params.count('theta') == 1 and orient_params.count('phi') == 1:
-                relax_data_store.diff[self.run].theta = orient_values[orient_params.index('theta')]
-                relax_data_store.diff[self.run].phi = orient_values[orient_params.index('phi')]
+                cdp.diff_tensor.theta = orient_values[orient_params.index('theta')]
+                cdp.diff_tensor.phi = orient_values[orient_params.index('phi')]
 
             # Unknown parameter combination.
             else:
@@ -1035,7 +1035,7 @@ def set(self, run=None, value=None, param=None):
     # Ellipsoidal diffusion.
     ########################
 
-    elif relax_data_store.diff[self.run].type == 'ellipsoid':
+    elif cdp.diff_tensor.type == 'ellipsoid':
         # Geometric parameters.
         #######################
 
@@ -1043,19 +1043,19 @@ def set(self, run=None, value=None, param=None):
         if len(geo_params) == 1:
             # The single parameter tm.
             if geo_params[0] == 'tm':
-                relax_data_store.diff[self.run].tm = geo_values[0]
+                cdp.diff_tensor.tm = geo_values[0]
 
             # The single parameter Diso.
             elif geo_params[0] == 'Diso':
-                relax_data_store.diff[self.run].tm = 1.0 / (6.0 * geo_values[0])
+                cdp.diff_tensor.tm = 1.0 / (6.0 * geo_values[0])
 
             # The single parameter Da.
             elif geo_params[0] == 'Da':
-                relax_data_store.diff[self.run].Da = geo_values[0]
+                cdp.diff_tensor.Da = geo_values[0]
 
             # The single parameter Dr.
             elif geo_params[0] == 'Dr':
-                relax_data_store.diff[self.run].Dr = geo_values[0]
+                cdp.diff_tensor.Dr = geo_values[0]
 
             # Cannot set the single parameter.
             else:
@@ -1070,8 +1070,8 @@ def set(self, run=None, value=None, param=None):
                 Da = geo_values[geo_params.index('Da')]
 
                 # Set the internal parameter values.
-                relax_data_store.diff[self.run].tm = tm
-                relax_data_store.diff[self.run].Da = Da
+                cdp.diff_tensor.tm = tm
+                cdp.diff_tensor.Da = Da
 
             # The geometric parameter set {tm, Dr}.
             elif geo_params.count('tm') == 1 and geo_params.count('Dr') == 1:
@@ -1080,8 +1080,8 @@ def set(self, run=None, value=None, param=None):
                 Dr = geo_values[geo_params.index('Dr')]
 
                 # Set the internal parameter values.
-                relax_data_store.diff[self.run].tm = tm
-                relax_data_store.diff[self.run].Dr = Dr
+                cdp.diff_tensor.tm = tm
+                cdp.diff_tensor.Dr = Dr
 
             # The geometric parameter set {Diso, Da}.
             elif geo_params.count('Diso') == 1 and geo_params.count('Da') == 1:
@@ -1090,8 +1090,8 @@ def set(self, run=None, value=None, param=None):
                 Da = geo_values[geo_params.index('Da')]
 
                 # Set the internal parameter values.
-                relax_data_store.diff[self.run].tm = 1.0 / (6.0 * Diso)
-                relax_data_store.diff[self.run].Da = Da
+                cdp.diff_tensor.tm = 1.0 / (6.0 * Diso)
+                cdp.diff_tensor.Da = Da
 
             # The geometric parameter set {Diso, Dr}.
             elif geo_params.count('Diso') == 1 and geo_params.count('Dr') == 1:
@@ -1100,8 +1100,8 @@ def set(self, run=None, value=None, param=None):
                 Dr = geo_values[geo_params.index('Dr')]
 
                 # Set the internal parameter values.
-                relax_data_store.diff[self.run].tm = 1.0 / (6.0 * Diso)
-                relax_data_store.diff[self.run].Dr = Dr
+                cdp.diff_tensor.tm = 1.0 / (6.0 * Diso)
+                cdp.diff_tensor.Dr = Dr
 
             # The geometric parameter set {Da, Dr}.
             elif geo_params.count('Da') == 1 and geo_params.count('Dr') == 1:
@@ -1110,8 +1110,8 @@ def set(self, run=None, value=None, param=None):
                 Dr = geo_values[geo_params.index('Dr')]
 
                 # Set the internal parameter values.
-                relax_data_store.diff[self.run].Da = Da
-                relax_data_store.diff[self.run].Da = Dr
+                cdp.diff_tensor.Da = Da
+                cdp.diff_tensor.Da = Dr
 
             # Unknown parameter combination.
             else:
@@ -1127,9 +1127,9 @@ def set(self, run=None, value=None, param=None):
                 Dr = geo_values[geo_params.index('Dr')]
 
                 # Set the internal parameter values.
-                relax_data_store.diff[self.run].tm = tm
-                relax_data_store.diff[self.run].Da = Da
-                relax_data_store.diff[self.run].Dr = Dr
+                cdp.diff_tensor.tm = tm
+                cdp.diff_tensor.Da = Da
+                cdp.diff_tensor.Dr = Dr
 
             # The geometric parameter set {Diso, Da, Dr}.
             elif geo_params.count('Diso') == 1 and geo_params.count('Da') == 1 and geo_params.count('Dr') == 1:
@@ -1139,9 +1139,9 @@ def set(self, run=None, value=None, param=None):
                 Dr = geo_values[geo_params.index('Dr')]
 
                 # Set the internal parameter values.
-                relax_data_store.diff[self.run].tm = 1.0 / (6.0 * Diso)
-                relax_data_store.diff[self.run].Da = Da
-                relax_data_store.diff[self.run].Dr = Dr
+                cdp.diff_tensor.tm = 1.0 / (6.0 * Diso)
+                cdp.diff_tensor.Da = Da
+                cdp.diff_tensor.Dr = Dr
 
             # The geometric parameter set {Dx, Dy, Dz}.
             elif geo_params.count('Dx') == 1 and geo_params.count('Dy') == 1 and geo_params.count('Dz') == 1:
@@ -1152,18 +1152,18 @@ def set(self, run=None, value=None, param=None):
 
                 # Set the internal tm value.
                 if Dx + Dy + Dz == 0.0:
-                    relax_data_store.diff[self.run].tm = 1e99
+                    cdp.diff_tensor.tm = 1e99
                 else:
-                    relax_data_store.diff[self.run].tm = 0.5 / (Dx + Dy + Dz)
+                    cdp.diff_tensor.tm = 0.5 / (Dx + Dy + Dz)
 
                 # Set the internal Da value.
-                relax_data_store.diff[self.run].Da = Dz - 0.5*(Dx + Dy)
+                cdp.diff_tensor.Da = Dz - 0.5*(Dx + Dy)
 
                 # Set the internal Dr value.
-                if relax_data_store.diff[self.run].Da == 0.0:
-                    relax_data_store.diff[self.run].Dr = (Dy - Dx) * 1e99
+                if cdp.diff_tensor.Da == 0.0:
+                    cdp.diff_tensor.Dr = (Dy - Dx) * 1e99
                 else:
-                    relax_data_store.diff[self.run].Dr = (Dy - Dx) / (2.0*relax_data_store.diff[self.run].Da)
+                    cdp.diff_tensor.Dr = (Dy - Dx) / (2.0*cdp.diff_tensor.Da)
 
             # Unknown parameter combination.
             else:
@@ -1182,32 +1182,32 @@ def set(self, run=None, value=None, param=None):
         if len(orient_params) == 1:
             # The single parameter alpha.
             if orient_params[0] == 'alpha':
-                relax_data_store.diff[self.run].alpha = orient_values[orient_params.index('alpha')]
+                cdp.diff_tensor.alpha = orient_values[orient_params.index('alpha')]
 
             # The single parameter beta.
             elif orient_params[0] == 'beta':
-                relax_data_store.diff[self.run].beta = orient_values[orient_params.index('beta')]
+                cdp.diff_tensor.beta = orient_values[orient_params.index('beta')]
 
             # The single parameter gamma.
             elif orient_params[0] == 'gamma':
-                relax_data_store.diff[self.run].gamma = orient_values[orient_params.index('gamma')]
+                cdp.diff_tensor.gamma = orient_values[orient_params.index('gamma')]
 
         # Two orientational parameters.
         elif len(orient_params) == 2:
             # The orientational parameter set {alpha, beta}.
             if orient_params.count('alpha') == 1 and orient_params.count('beta') == 1:
-                relax_data_store.diff[self.run].alpha = orient_values[orient_params.index('alpha')]
-                relax_data_store.diff[self.run].beta = orient_values[orient_params.index('beta')]
+                cdp.diff_tensor.alpha = orient_values[orient_params.index('alpha')]
+                cdp.diff_tensor.beta = orient_values[orient_params.index('beta')]
 
             # The orientational parameter set {alpha, gamma}.
             if orient_params.count('alpha') == 1 and orient_params.count('gamma') == 1:
-                relax_data_store.diff[self.run].alpha = orient_values[orient_params.index('alpha')]
-                relax_data_store.diff[self.run].gamma = orient_values[orient_params.index('gamma')]
+                cdp.diff_tensor.alpha = orient_values[orient_params.index('alpha')]
+                cdp.diff_tensor.gamma = orient_values[orient_params.index('gamma')]
 
             # The orientational parameter set {beta, gamma}.
             if orient_params.count('beta') == 1 and orient_params.count('gamma') == 1:
-                relax_data_store.diff[self.run].beta = orient_values[orient_params.index('beta')]
-                relax_data_store.diff[self.run].gamma = orient_values[orient_params.index('gamma')]
+                cdp.diff_tensor.beta = orient_values[orient_params.index('beta')]
+                cdp.diff_tensor.gamma = orient_values[orient_params.index('gamma')]
 
             # Unknown parameter combination.
             else:
@@ -1217,9 +1217,9 @@ def set(self, run=None, value=None, param=None):
         elif len(orient_params) == 3:
             # The orientational parameter set {alpha, beta, gamma}.
             if orient_params.count('alpha') == 1 and orient_params.count('beta') == 1:
-                relax_data_store.diff[self.run].alpha = orient_values[orient_params.index('alpha')]
-                relax_data_store.diff[self.run].beta = orient_values[orient_params.index('beta')]
-                relax_data_store.diff[self.run].gamma = orient_values[orient_params.index('gamma')]
+                cdp.diff_tensor.alpha = orient_values[orient_params.index('alpha')]
+                cdp.diff_tensor.beta = orient_values[orient_params.index('beta')]
+                cdp.diff_tensor.gamma = orient_values[orient_params.index('gamma')]
 
             # Unknown parameter combination.
             else:
@@ -1237,11 +1237,14 @@ def set(self, run=None, value=None, param=None):
         self.fold_angles(self.run)
 
 
-def sphere(self):
+def sphere():
     """Function for setting up spherical diffusion."""
 
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
     # The diffusion type.
-    relax_data_store.diff[self.run].type = 'sphere'
+    cdp.diff_tensor.type = 'sphere'
 
     # tm.
     if self.param_types == 0:
@@ -1268,13 +1271,13 @@ def spheroid(self):
     """Function for setting up spheroidal diffusion."""
 
     # The diffusion type.
-    relax_data_store.diff[self.run].type = 'spheroid'
+    cdp.diff_tensor.type = 'spheroid'
 
     # Spheroid diffusion type.
     allowed_types = [None, 'oblate', 'prolate']
     if self.spheroid_type not in allowed_types:
         raise RelaxError, "The 'spheroid_type' argument " + `self.spheroid_type` + " should be 'oblate', 'prolate', or None."
-    relax_data_store.diff[self.run].spheroid_type = self.spheroid_type
+    cdp.diff_tensor.spheroid_type = self.spheroid_type
 
     # (tm, Da, theta, phi).
     if self.param_types == 0:
@@ -1354,15 +1357,15 @@ def test_params(self, num_params):
     error = 1e-4
 
     # tm.
-    tm = relax_data_store.diff[self.run].tm
+    tm = cdp.diff_tensor.tm
     if tm <= 0.0 or tm > 1e-6:
         raise RelaxError, "The tm value of " + `tm` + " should be between zero and one microsecond."
 
     # Spheroid.
     if num_params == 4:
         # Parameters.
-        Diso = 1.0 / (6.0 * relax_data_store.diff[self.run].tm)
-        Da = relax_data_store.diff[self.run].Da
+        Diso = 1.0 / (6.0 * cdp.diff_tensor.tm)
+        Da = cdp.diff_tensor.Da
 
         # Da.
         if Da < (-1.5*Diso - error*Diso) or Da > (3.0*Diso + error*Diso):
@@ -1371,9 +1374,9 @@ def test_params(self, num_params):
     # Ellipsoid.
     if num_params == 6:
         # Parameters.
-        Diso = 1.0 / (6.0 * relax_data_store.diff[self.run].tm)
-        Da = relax_data_store.diff[self.run].Da
-        Dr = relax_data_store.diff[self.run].Dr
+        Diso = 1.0 / (6.0 * cdp.diff_tensor.tm)
+        Da = cdp.diff_tensor.Da
+        Dr = cdp.diff_tensor.Dr
 
         # Da.
         if Da < (0.0 - error*Diso) or Da > (3.0*Diso + error*Diso):
@@ -1421,15 +1424,15 @@ def unit_axes(self):
     """
 
     # Spheroid.
-    if relax_data_store.diff[self.run].type == 'spheroid':
+    if cdp.diff_tensor.type == 'spheroid':
         # Initialise.
         Dpar = zeros(3, Float64)
 
         # Trig.
-        sin_theta = sin(relax_data_store.diff[self.run].theta)
-        cos_theta = cos(relax_data_store.diff[self.run].theta)
-        sin_phi = sin(relax_data_store.diff[self.run].phi)
-        cos_phi = cos(relax_data_store.diff[self.run].phi)
+        sin_theta = sin(cdp.diff_tensor.theta)
+        cos_theta = cos(cdp.diff_tensor.theta)
+        sin_phi = sin(cdp.diff_tensor.phi)
+        cos_phi = cos(cdp.diff_tensor.phi)
 
         # Unit Dpar axis.
         Dpar[0] = sin_theta * cos_phi
@@ -1440,19 +1443,19 @@ def unit_axes(self):
         return Dpar
 
     # Ellipsoid.
-    if relax_data_store.diff[self.run].type == 'ellipsoid':
+    if cdp.diff_tensor.type == 'ellipsoid':
         # Initialise.
         Dx = zeros(3, Float64)
         Dy = zeros(3, Float64)
         Dz = zeros(3, Float64)
 
         # Trig.
-        sin_alpha = sin(relax_data_store.diff[self.run].alpha)
-        cos_alpha = cos(relax_data_store.diff[self.run].alpha)
-        sin_beta = sin(relax_data_store.diff[self.run].beta)
-        cos_beta = cos(relax_data_store.diff[self.run].beta)
-        sin_gamma = sin(relax_data_store.diff[self.run].gamma)
-        cos_gamma = cos(relax_data_store.diff[self.run].gamma)
+        sin_alpha = sin(cdp.diff_tensor.alpha)
+        cos_alpha = cos(cdp.diff_tensor.alpha)
+        sin_beta = sin(cdp.diff_tensor.beta)
+        cos_beta = cos(cdp.diff_tensor.beta)
+        sin_gamma = sin(cdp.diff_tensor.gamma)
+        cos_gamma = cos(cdp.diff_tensor.gamma)
 
         # Unit Dx axis.
         Dx[0] = -sin_alpha * sin_gamma  +  cos_alpha * cos_beta * cos_gamma
