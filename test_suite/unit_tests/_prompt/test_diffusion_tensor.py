@@ -41,6 +41,32 @@ class Test_diffusion_tensor(Diffusion_tensor_base_class, TestCase):
     diffusion_tensor_fns = Diffusion_tensor(fake_relax.fake_instance())
 
 
+    def test_copy_argfail_pipe_from(self):
+        """Proper failure of the diffusion_tensor.copy() user function for the pipe_from argument."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.diffusion_tensor_fns.copy, pipe_from=data[1])
+
+
+    def test_copy_argfail_pipe_to(self):
+        """Proper failure of the diffusion_tensor.copy() user function for the pipe_to argument."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.diffusion_tensor_fns.copy, pipe_to=data[1])
+
+
     def test_init_argfail_params(self):
         """Proper failure of the diffusion_tensor.init() user function for the params argument."""
 
