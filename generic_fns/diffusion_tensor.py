@@ -151,17 +151,11 @@ def diff_data_exists():
     # White list objects.
     white_list = []
 
-    # Loop over the objects in the data structure.
-    for name in dir(cdp.diff_tensor):
-        # White list names.
-        if name in white_list:
-            continue
-
-        # Data exists.
+    # Test if tm exists.
+    if hasattr(cdp.diff_tensor, 'tm'):
         return True
-
-    # No data.
-    return False
+    else:
+        return False
 
 
 def display(run=None):
