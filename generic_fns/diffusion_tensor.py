@@ -1385,8 +1385,11 @@ def spheroid(self):
     self.set(run=self.run, value=[theta, phi], param=['theta', 'phi'])
 
 
-def test_params(self, num_params):
+def test_params(num_params):
     """Function for testing the validity of the input parameters."""
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
     # An allowable error to account for machine precision, optimisation quality, etc.
     error = 1e-4
