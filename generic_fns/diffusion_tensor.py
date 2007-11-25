@@ -486,11 +486,8 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     if not angle_units in valid_types:
         raise RelaxError, "The diffusion tensor 'angle_units' argument " + `angle_units` + " should be either 'deg' or 'rad'."
 
-    # Create the diffusion tensor data structure.
-    cdp.diff.add_item()
-
     # Set the fixed flag.
-    cdp.diff.fixed = fixed
+    cdp.diff_tensor.fixed = fixed
 
     # Spherical diffusion.
     if type(params) == float:
