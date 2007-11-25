@@ -78,11 +78,15 @@ class Diffusion_tensor_base_class:
         self.diffusion_tensor_fns.init(params=(13.9, 1.8, 0.7, 10.6, -23.3, 0.34), time_scale=1e-9, d_scale=1e7, angle_units='rad', param_types=0, fixed=1)
 
         # Test the diffusion tensor.
-        self.assertEqual(relax_data_store['orig'].diff_tensor.type, 'ellipsoidal')
+        self.assertEqual(relax_data_store['orig'].diff_tensor.type, 'ellipsoid')
         self.assertAlmostEqual(relax_data_store['orig'].diff_tensor.tm * 1e9, 13.9, 14)
-        self.assertEqual(relax_data_store['orig'].diff_tensor.Da, 5.2854122621564493e6)
-        self.assertEqual(relax_data_store['orig'].diff_tensor.theta, 2.0943951023931948)
-        self.assertEqual(relax_data_store['orig'].diff_tensor.phi, 2.7925268031909276)
+        self.assertEqual(relax_data_store['orig'].diff_tensor.Da, 1.8e7)
+        self.assertEqual(relax_data_store['orig'].diff_tensor.Dr, 0.7)
+        self.assertEqual(relax_data_store['orig'].diff_tensor.alpha, 1.1752220392306203)
+        self.assertEqual(relax_data_store['orig'].diff_tensor.beta, 1.8327412287183442)
+        self.assertEqual(relax_data_store['orig'].diff_tensor.gamma, 0.34)
+        self.assertEqual(relax_data_store['orig'].diff_tensor.fixed, 1)
+        raise NameError, dir(relax_data_store['orig'].diff_tensor)
 
 
 
