@@ -475,8 +475,8 @@ class RelaxTensorError(BaseError):
 
 # No diffusion tensor data loaded.
 class RelaxNoTensorError(BaseError):
-    def __init__(self, pipe):
-        self.text = "No diffusion tensor data is loaded for the data pipe " + `pipe` + "."
+    def __init__(self):
+        self.text = "No diffusion tensor data exists."
         if Debug:
             self.save_state()
 

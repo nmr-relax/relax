@@ -28,31 +28,44 @@ from re import search
 # relax module imports.
 from angles import wrap_angles
 from data import Data as relax_data_store
+from data.diff_tensor import DiffTensorData
 import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
 
-def copy(run1=None, run2=None):
-    """Function for copying diffusion tensor data from run1 to run2."""
+def copy(pipe_from=None, pipe_to=None):
+    """Function for copying diffusion tensor data from one data pipe to another.
 
-    # Test if run1 exists.
-    if not run1 in relax_data_store.run_names:
-        raise RelaxNoPipeError, run1
+    @param pipe_from:   The data pipe to copy the diffusion tensor data from.  This defaults to the
+                        current data pipe.
+    @type pipe_from:    str
+    @param pipe_to:     The data pipe to copy the diffusion tensor data to.  This defaults to the
+                        current data pipe.
+    @type pipe_to:      str
+    """
 
-    # Test if run2 exists.
-    if not run2 in relax_data_store.run_names:
-        raise RelaxNoPipeError, run2
+    # Defaults.
+    if pipe_from == None and pipe_to == None:
+        raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+    elif pipe_from == None:
+        pipe_from = relax_data_store.current_pipe
+    elif pipe_to == None:
+        pipe_to = relax_data_store.current_pipe
 
-    # Test if run1 contains diffusion tensor data.
-    if not relax_data_store.diff.has_key(run1):
-        raise RelaxNoTensorError, run1
+    # Test if the pipe_from and pipe_to data pipes exist.
+    pipes.test(pipe_from)
+    pipes.test(pipe_to)
 
-    # Test if run2 contains diffusion tensor data.
-    if relax_data_store.diff.has_key(run2):
-        raise RelaxTensorError, run2
+    # Test if pipe_from contains diffusion tensor data.
+    if not diff_data_exists(pipe_from):
+        raise RelaxNoTensorError
+
+    # Test if pipe_to contains diffusion tensor data.
+    if diff_data_exists(pipe_to):
+        raise RelaxTensorError
 
     # Copy the data.
-    relax_data_store.diff[run2] = deepcopy(relax_data_store.diff[run1])
+    relax_data_store[pipe_to].diff_tensor = deepcopy(relax_data_store[pipe_from].diff_tensor)
 
 
 def data_names():
@@ -120,147 +133,142 @@ def default_value(param):
         return 1.0
 
 
-def delete(run=None):
+def delete():
     """Function for deleting diffusion tensor data."""
 
-    # Test if the run exists.
-    if not run in relax_data_store.run_names:
-        raise RelaxNoPipeError, run
+    # Test if the current data pipe exists.
+    pipes.test(relax_data_store.current_pipe)
 
-    # Test if diffusion tensor data for the run exists.
-    if not relax_data_store.diff.has_key(run):
-        raise RelaxNoTensorError, run
+    # Test if diffusion tensor data exists.
+    if not diff_data_exists():
+        raise RelaxNoTensorError
 
     # Delete the diffusion data.
-    del(relax_data_store.diff[run])
+    del(relax_data_store[relax_data_store.current_pipe].diff_tensor)
 
-    # Clean up the runs.
-    pipes.eliminate_unused_pipes()
+    # Put the container back (but empty).
+    relax_data_store[relax_data_store.current_pipe].diff_tensor = DiffTensorData()
 
 
-def diff_data_exists():
+def diff_data_exists(pipe=None):
     """Function for determining if diffusion data exists in the current data pipe.
 
+    @param pipe:    The data pipe to search for data in.
+    @type pipe:     str
     @return:        The answer to the question.
     @type return:   bool
     """
 
+    # The data pipe to check.
+    if pipe == None:
+        pipe = relax_data_store.current_pipe
+
+    # Test if tm exists.
+    if hasattr(relax_data_store[pipe].diff_tensor, 'tm'):
+        return True
+    else:
+        return False
+
+
+def display():
+    """Function for displaying the diffusion tensor."""
+
+    # Test if the current data pipe exists.
+    pipes.test(relax_data_store.current_pipe)
+
+    # Test if diffusion tensor data exists.
+    if not diff_data_exists():
+        raise RelaxNoTensorError
+
     # Alias the current data pipe.
     cdp = relax_data_store[relax_data_store.current_pipe]
 
-    # White list objects.
-    white_list = []
-
-    # Loop over the objects in the data structure.
-    for name in dir(cdp.diff_tensor):
-        # White list names.
-        if name in white_list:
-            continue
-
-        # Data exists.
-        return True
-
-    # No data.
-    return False
-
-
-def display(run=None):
-    """Function for displaying the diffusion tensor."""
-
-    # Test if the run exists.
-    if not run in relax_data_store.run_names:
-        raise RelaxNoPipeError, run
-
-    # Test if diffusion tensor data for the run exists.
-    if not relax_data_store.diff.has_key(run):
-        raise RelaxNoTensorError, run
-
     # Spherical diffusion.
-    if relax_data_store.diff[run].type == 'sphere':
+    if cdp.diff_tensor.type == 'sphere':
         # Tensor type.
         print "Type:  Spherical diffusion"
 
         # Parameters.
         print "\nParameters {tm}."
-        print "tm (s):  " + `relax_data_store.diff[run].tm`
+        print "tm (s):  " + `cdp.diff_tensor.tm`
 
         # Alternate parameters.
         print "\nAlternate parameters {Diso}."
-        print "Diso (1/s):  " + `relax_data_store.diff[run].Diso`
+        print "Diso (1/s):  " + `cdp.diff_tensor.Diso`
 
         # Fixed flag.
-        print "\nFixed:  " + `relax_data_store.diff[run].fixed`
+        print "\nFixed:  " + `cdp.diff_tensor.fixed`
 
     # Spheroidal diffusion.
-    elif relax_data_store.diff[run].type == 'spheroid':
+    elif cdp.diff_tensor.type == 'spheroid':
         # Tensor type.
         print "Type:  Spheroidal diffusion"
 
         # Parameters.
         print "\nParameters {tm, Da, theta, phi}."
-        print "tm (s):  " + `relax_data_store.diff[run].tm`
-        print "Da (1/s):  " + `relax_data_store.diff[run].Da`
-        print "theta (rad):  " + `relax_data_store.diff[run].theta`
-        print "phi (rad):  " + `relax_data_store.diff[run].phi`
+        print "tm (s):  " + `cdp.diff_tensor.tm`
+        print "Da (1/s):  " + `cdp.diff_tensor.Da`
+        print "theta (rad):  " + `cdp.diff_tensor.theta`
+        print "phi (rad):  " + `cdp.diff_tensor.phi`
 
         # Alternate parameters.
         print "\nAlternate parameters {Diso, Da, theta, phi}."
-        print "Diso (1/s):  " + `relax_data_store.diff[run].Diso`
-        print "Da (1/s):  " + `relax_data_store.diff[run].Da`
-        print "theta (rad):  " + `relax_data_store.diff[run].theta`
-        print "phi (rad):  " + `relax_data_store.diff[run].phi`
+        print "Diso (1/s):  " + `cdp.diff_tensor.Diso`
+        print "Da (1/s):  " + `cdp.diff_tensor.Da`
+        print "theta (rad):  " + `cdp.diff_tensor.theta`
+        print "phi (rad):  " + `cdp.diff_tensor.phi`
 
         # Alternate parameters.
         print "\nAlternate parameters {Dpar, Dper, theta, phi}."
-        print "Dpar (1/s):  " + `relax_data_store.diff[run].Dpar`
-        print "Dper (1/s):  " + `relax_data_store.diff[run].Dper`
-        print "theta (rad):  " + `relax_data_store.diff[run].theta`
-        print "phi (rad):  " + `relax_data_store.diff[run].phi`
+        print "Dpar (1/s):  " + `cdp.diff_tensor.Dpar`
+        print "Dper (1/s):  " + `cdp.diff_tensor.Dper`
+        print "theta (rad):  " + `cdp.diff_tensor.theta`
+        print "phi (rad):  " + `cdp.diff_tensor.phi`
 
         # Alternate parameters.
         print "\nAlternate parameters {tm, Dratio, theta, phi}."
-        print "tm (s):  " + `relax_data_store.diff[run].tm`
-        print "Dratio:  " + `relax_data_store.diff[run].Dratio`
-        print "theta (rad):  " + `relax_data_store.diff[run].theta`
-        print "phi (rad):  " + `relax_data_store.diff[run].phi`
+        print "tm (s):  " + `cdp.diff_tensor.tm`
+        print "Dratio:  " + `cdp.diff_tensor.Dratio`
+        print "theta (rad):  " + `cdp.diff_tensor.theta`
+        print "phi (rad):  " + `cdp.diff_tensor.phi`
 
         # Fixed flag.
-        print "\nFixed:  " + `relax_data_store.diff[run].fixed`
+        print "\nFixed:  " + `cdp.diff_tensor.fixed`
 
     # Ellipsoidal diffusion.
-    elif relax_data_store.diff[run].type == 'ellipsoid':
+    elif cdp.diff_tensor.type == 'ellipsoid':
         # Tensor type.
         print "Type:  Ellipsoidal diffusion"
 
         # Parameters.
         print "\nParameters {tm, Da, Dr, alpha, beta, gamma}."
-        print "tm (s):  " + `relax_data_store.diff[run].tm`
-        print "Da (1/s):  " + `relax_data_store.diff[run].Da`
-        print "Dr:  " + `relax_data_store.diff[run].Dr`
-        print "alpha (rad):  " + `relax_data_store.diff[run].alpha`
-        print "beta (rad):  " + `relax_data_store.diff[run].beta`
-        print "gamma (rad):  " + `relax_data_store.diff[run].gamma`
+        print "tm (s):  " + `cdp.diff_tensor.tm`
+        print "Da (1/s):  " + `cdp.diff_tensor.Da`
+        print "Dr:  " + `cdp.diff_tensor.Dr`
+        print "alpha (rad):  " + `cdp.diff_tensor.alpha`
+        print "beta (rad):  " + `cdp.diff_tensor.beta`
+        print "gamma (rad):  " + `cdp.diff_tensor.gamma`
 
         # Alternate parameters.
         print "\nAlternate parameters {Diso, Da, Dr, alpha, beta, gamma}."
-        print "Diso (1/s):  " + `relax_data_store.diff[run].Diso`
-        print "Da (1/s):  " + `relax_data_store.diff[run].Da`
-        print "Dr:  " + `relax_data_store.diff[run].Dr`
-        print "alpha (rad):  " + `relax_data_store.diff[run].alpha`
-        print "beta (rad):  " + `relax_data_store.diff[run].beta`
-        print "gamma (rad):  " + `relax_data_store.diff[run].gamma`
+        print "Diso (1/s):  " + `cdp.diff_tensor.Diso`
+        print "Da (1/s):  " + `cdp.diff_tensor.Da`
+        print "Dr:  " + `cdp.diff_tensor.Dr`
+        print "alpha (rad):  " + `cdp.diff_tensor.alpha`
+        print "beta (rad):  " + `cdp.diff_tensor.beta`
+        print "gamma (rad):  " + `cdp.diff_tensor.gamma`
 
         # Alternate parameters.
         print "\nAlternate parameters {Dx, Dy, Dz, alpha, beta, gamma}."
-        print "Dx (1/s):  " + `relax_data_store.diff[run].Dx`
-        print "Dy (1/s):  " + `relax_data_store.diff[run].Dy`
-        print "Dz (1/s):  " + `relax_data_store.diff[run].Dz`
-        print "alpha (rad):  " + `relax_data_store.diff[run].alpha`
-        print "beta (rad):  " + `relax_data_store.diff[run].beta`
-        print "gamma (rad):  " + `relax_data_store.diff[run].gamma`
+        print "Dx (1/s):  " + `cdp.diff_tensor.Dx`
+        print "Dy (1/s):  " + `cdp.diff_tensor.Dy`
+        print "Dz (1/s):  " + `cdp.diff_tensor.Dz`
+        print "alpha (rad):  " + `cdp.diff_tensor.alpha`
+        print "beta (rad):  " + `cdp.diff_tensor.beta`
+        print "gamma (rad):  " + `cdp.diff_tensor.gamma`
 
         # Fixed flag.
-        print "\nFixed:  " + `relax_data_store.diff[run].fixed`
+        print "\nFixed:  " + `cdp.diff_tensor.fixed`
 
 
 def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, param_types=None):
@@ -524,7 +532,7 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Test if diffusion tensor data already exists.
-    if not diff_data_exists():
+    if diff_data_exists():
         raise RelaxTensorError
 
     # Check the validity of the angle_units argument.
