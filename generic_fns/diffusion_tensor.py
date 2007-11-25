@@ -31,7 +31,7 @@ import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
 
-def copy(self, run1=None, run2=None):
+def copy(run1=None, run2=None):
     """Function for copying diffusion tensor data from run1 to run2."""
 
     # Test if run1 exists.
@@ -54,7 +54,7 @@ def copy(self, run1=None, run2=None):
     relax_data_store.diff[run2] = deepcopy(relax_data_store.diff[run1])
 
 
-def data_names(self):
+def data_names():
     """Function for returning a list of names of data structures associated with the sequence."""
 
     names = [ 'diff_type',
@@ -63,7 +63,7 @@ def data_names(self):
     return names
 
 
-def default_value(self, param):
+def default_value(param):
     """
     Diffusion tensor parameter default values
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -119,7 +119,7 @@ def default_value(self, param):
         return 1.0
 
 
-def delete(self, run=None):
+def delete(run=None):
     """Function for deleting diffusion tensor data."""
 
     # Test if the run exists.
@@ -134,7 +134,7 @@ def delete(self, run=None):
     del(relax_data_store.diff[run])
 
     # Clean up the runs.
-    self.relax.generic.runs.eliminate_unused_runs()
+    pipes.eliminate_unused_pipes()
 
 
 def diff_data_exists():
@@ -163,7 +163,7 @@ def diff_data_exists():
     return False
 
 
-def display(self, run=None):
+def display(run=None):
     """Function for displaying the diffusion tensor."""
 
     # Test if the run exists.
@@ -262,64 +262,64 @@ def display(self, run=None):
         print "\nFixed:  " + `relax_data_store.diff[run].fixed`
 
 
-def ellipsoid(self):
+def ellipsoid():
     """Function for setting up ellipsoidal diffusion."""
 
     # The diffusion type.
     cdp.diff_tensor.type = 'ellipsoid'
 
     # (tm, Da, Dr, alpha, beta, gamma).
-    if self.param_types == 0:
+    if param_types == 0:
         # Unpack the tuple.
-        tm, Da, Dr, alpha, beta, gamma = self.params
+        tm, Da, Dr, alpha, beta, gamma = params
 
         # Scaling.
-        tm = tm * self.time_scale
-        Da = Da * self.d_scale
+        tm = tm * time_scale
+        Da = Da * d_scale
 
         # Set the parameters.
-        self.set(run=self.run, value=[tm, Da, Dr], param=['tm', 'Da', 'Dr'])
+        set(run=run, value=[tm, Da, Dr], param=['tm', 'Da', 'Dr'])
 
     # (Diso, Da, Dr, alpha, beta, gamma).
-    elif self.param_types == 1:
+    elif param_types == 1:
         # Unpack the tuple.
-        Diso, Da, Dr, alpha, beta, gamma = self.params
+        Diso, Da, Dr, alpha, beta, gamma = params
 
         # Scaling.
-        Diso = Diso * self.d_scale
-        Da = Da * self.d_scale
+        Diso = Diso * d_scale
+        Da = Da * d_scale
 
         # Set the parameters.
-        self.set(run=self.run, value=[Diso, Da, Dr], param=['Diso', 'Da', 'Dr'])
+        set(run=run, value=[Diso, Da, Dr], param=['Diso', 'Da', 'Dr'])
 
     # (Dx, Dy, Dz, alpha, beta, gamma).
-    elif self.param_types == 2:
+    elif param_types == 2:
         # Unpack the tuple.
-        Dx, Dy, Dz, alpha, beta, gamma = self.params
+        Dx, Dy, Dz, alpha, beta, gamma = params
 
         # Scaling.
-        Dx = Dx * self.d_scale
-        Dy = Dy * self.d_scale
-        Dz = Dz * self.d_scale
+        Dx = Dx * d_scale
+        Dy = Dy * d_scale
+        Dz = Dz * d_scale
 
         # Set the parameters.
-        self.set(run=self.run, value=[Dx, Dy, Dz], param=['Dx', 'Dy', 'Dz'])
+        set(run=run, value=[Dx, Dy, Dz], param=['Dx', 'Dy', 'Dz'])
 
     # Unknown parameter combination.
     else:
-        raise RelaxUnknownParamCombError, ('param_types', self.param_types)
+        raise RelaxUnknownParamCombError, ('param_types', param_types)
 
     # Convert the angles to radians.
-    if self.angle_units == 'deg':
+    if angle_units == 'deg':
         alpha = (alpha / 360.0) * 2.0 * pi
         beta = (beta / 360.0) * 2.0 * pi
         gamma = (gamma / 360.0) * 2.0 * pi
 
     # Set the orientational parameters.
-    self.set(run=self.run, value=[alpha, beta, gamma], param=['alpha', 'beta', 'gamma'])
+    set(run=run, value=[alpha, beta, gamma], param=['alpha', 'beta', 'gamma'])
 
 
-def fold_angles(self, run=None, sim_index=None):
+def fold_angles(run=None, sim_index=None):
     """Wrap the Euler or spherical angles and remove the glide reflection and translational symmetries.
 
     Wrap the angles such that
@@ -347,7 +347,7 @@ def fold_angles(self, run=None, sim_index=None):
     """
 
     # Arguments.
-    self.run = run
+    run = run
 
 
     # Wrap the angles.
@@ -366,13 +366,13 @@ def fold_angles(self, run=None, sim_index=None):
 
         # Normal value.
         if sim_index == None:
-            cdp.diff_tensor.theta = self.relax.generic.angles.wrap_angles(theta, 0.0, pi)
-            cdp.diff_tensor.phi = self.relax.generic.angles.wrap_angles(phi, 0.0, 2.0*pi)
+            cdp.diff_tensor.theta = angles.wrap_angles(theta, 0.0, pi)
+            cdp.diff_tensor.phi = angles.wrap_angles(phi, 0.0, 2.0*pi)
 
         # Simulated theta and phi values.
         else:
-            cdp.diff_tensor.theta_sim[sim_index] = self.relax.generic.angles.wrap_angles(theta_sim, theta - pi/2.0, theta + pi/2.0)
-            cdp.diff_tensor.phi_sim[sim_index]   = self.relax.generic.angles.wrap_angles(phi_sim, phi - pi, phi + pi)
+            cdp.diff_tensor.theta_sim[sim_index] = angles.wrap_angles(theta_sim, theta - pi/2.0, theta + pi/2.0)
+            cdp.diff_tensor.phi_sim[sim_index]   = angles.wrap_angles(phi_sim, phi - pi, phi + pi)
 
     # Ellipsoid.
     elif cdp.diff_tensor.type == 'ellipsoid':
@@ -389,15 +389,15 @@ def fold_angles(self, run=None, sim_index=None):
 
         # Normal value.
         if sim_index == None:
-            cdp.diff_tensor.alpha = self.relax.generic.angles.wrap_angles(alpha, 0.0, 2.0*pi)
-            cdp.diff_tensor.beta  = self.relax.generic.angles.wrap_angles(beta, 0.0, 2.0*pi)
-            cdp.diff_tensor.gamma = self.relax.generic.angles.wrap_angles(gamma, 0.0, 2.0*pi)
+            cdp.diff_tensor.alpha = angles.wrap_angles(alpha, 0.0, 2.0*pi)
+            cdp.diff_tensor.beta  = angles.wrap_angles(beta, 0.0, 2.0*pi)
+            cdp.diff_tensor.gamma = angles.wrap_angles(gamma, 0.0, 2.0*pi)
 
         # Simulated alpha, beta, and gamma values.
         else:
-            cdp.diff_tensor.alpha_sim[sim_index] = self.relax.generic.angles.wrap_angles(alpha_sim, alpha - pi, alpha + pi)
-            cdp.diff_tensor.beta_sim[sim_index]  = self.relax.generic.angles.wrap_angles(beta_sim, beta - pi, beta + pi)
-            cdp.diff_tensor.gamma_sim[sim_index] = self.relax.generic.angles.wrap_angles(gamma_sim, gamma - pi, gamma + pi)
+            cdp.diff_tensor.alpha_sim[sim_index] = angles.wrap_angles(alpha_sim, alpha - pi, alpha + pi)
+            cdp.diff_tensor.beta_sim[sim_index]  = angles.wrap_angles(beta_sim, beta - pi, beta + pi)
+            cdp.diff_tensor.gamma_sim[sim_index] = angles.wrap_angles(gamma_sim, gamma - pi, gamma + pi)
 
 
     # Remove the glide reflection and translational symmetries.
@@ -535,11 +535,11 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     test_params(num_params)
 
 
-def map_bounds(self, run, param):
+def map_bounds(run, param):
     """The function for creating bounds for the mapping function."""
 
     # Initialise.
-    self.run = run
+    run = run
 
     # tm.
     if param == 'tm':
@@ -582,7 +582,7 @@ def map_bounds(self, run, param):
         return [0, 2*pi]
 
 
-def map_labels(self, run, index, params, bounds, swap, inc):
+def map_labels(run, index, params, bounds, swap, inc):
     """Function for creating labels, tick locations, and tick values for an OpenDX map."""
 
     # Initialise.
@@ -596,10 +596,10 @@ def map_labels(self, run, index, params, bounds, swap, inc):
     # Increment over the model parameters.
     for i in xrange(n):
         # Parameter conversion factors.
-        factor = self.return_conversion_factor(params[swap[i]])
+        factor = return_conversion_factor(params[swap[i]])
 
         # Parameter units.
-        units = self.return_units(params[swap[i]])
+        units = return_units(params[swap[i]])
 
         # Labels.
         if units:
@@ -636,7 +636,7 @@ def map_labels(self, run, index, params, bounds, swap, inc):
     return labels, tick_locations, tick_values
 
 
-def return_conversion_factor(self, param):
+def return_conversion_factor(param):
     """Function for returning the factor of conversion between different parameter units.
 
     For example, the internal representation of tm is in seconds, whereas the external
@@ -644,7 +644,7 @@ def return_conversion_factor(self, param):
     """
 
     # Get the object name.
-    object_name = self.return_data_name(param)
+    object_name = return_data_name(param)
 
     # tm (nanoseconds).
     if object_name == 'tm':
@@ -777,12 +777,12 @@ def return_data_name(name):
         return 'phi'
 
 
-def return_eigenvalues(self, run=None):
+def return_eigenvalues(run=None):
     """Function for returning Dx, Dy, and Dz."""
 
     # Argument.
     if run:
-        self.run = run
+        run = run
 
     # Reassign the data.
     data = cdp.diff_tensor
@@ -803,7 +803,7 @@ def return_eigenvalues(self, run=None):
     return Dx, Dy, Dz
 
 
-def return_units(self, param):
+def return_units(param):
     """Function for returning a string representing the parameters units.
 
     For example, the internal representation of tm is in seconds, whereas the external
@@ -812,7 +812,7 @@ def return_units(self, param):
     """
 
     # Get the object name.
-    object_name = self.return_data_name(param)
+    object_name = return_data_name(param)
 
     # tm (nanoseconds).
     if object_name == 'tm':
@@ -1302,7 +1302,7 @@ def sphere(params=None, time_scale=None, param_types=None):
         raise RelaxUnknownParamCombError, ('param_types', param_types)
 
 
-def spheroid(self):
+def spheroid():
     """Function for setting up spheroidal diffusion."""
 
     # The diffusion type.
@@ -1310,79 +1310,79 @@ def spheroid(self):
 
     # Spheroid diffusion type.
     allowed_types = [None, 'oblate', 'prolate']
-    if self.spheroid_type not in allowed_types:
-        raise RelaxError, "The 'spheroid_type' argument " + `self.spheroid_type` + " should be 'oblate', 'prolate', or None."
-    cdp.diff_tensor.spheroid_type = self.spheroid_type
+    if spheroid_type not in allowed_types:
+        raise RelaxError, "The 'spheroid_type' argument " + `spheroid_type` + " should be 'oblate', 'prolate', or None."
+    cdp.diff_tensor.spheroid_type = spheroid_type
 
     # (tm, Da, theta, phi).
-    if self.param_types == 0:
+    if param_types == 0:
         # Unpack the tuple.
-        tm, Da, theta, phi = self.params
+        tm, Da, theta, phi = params
 
         # Scaling.
-        tm = tm * self.time_scale
-        Da = Da * self.d_scale
+        tm = tm * time_scale
+        Da = Da * d_scale
 
         # Set the parameters.
-        self.set(run=self.run, value=[tm, Da], param=['tm', 'Da'])
+        set(run=run, value=[tm, Da], param=['tm', 'Da'])
 
     # (Diso, Da, theta, phi).
-    elif self.param_types == 1:
+    elif param_types == 1:
         # Unpack the tuple.
-        Diso, Da, theta, phi = self.params
+        Diso, Da, theta, phi = params
 
         # Scaling.
-        Diso = Diso * self.d_scale
-        Da = Da * self.d_scale
+        Diso = Diso * d_scale
+        Da = Da * d_scale
 
         # Set the parameters.
-        self.set(run=self.run, value=[Diso, Da], param=['Diso', 'Da'])
+        set(run=run, value=[Diso, Da], param=['Diso', 'Da'])
 
     # (tm, Dratio, theta, phi).
-    elif self.param_types == 2:
+    elif param_types == 2:
         # Unpack the tuple.
-        tm, Dratio, theta, phi = self.params
+        tm, Dratio, theta, phi = params
 
         # Scaling.
-        tm = tm * self.time_scale
+        tm = tm * time_scale
 
         # Set the parameters.
-        self.set(run=self.run, value=[tm, Dratio], param=['tm', 'Dratio'])
+        set(run=run, value=[tm, Dratio], param=['tm', 'Dratio'])
 
     # (Dpar, Dper, theta, phi).
-    elif self.param_types == 3:
+    elif param_types == 3:
         # Unpack the tuple.
-        Dpar, Dper, theta, phi = self.params
+        Dpar, Dper, theta, phi = params
 
         # Scaling.
-        Dpar = Dpar * self.d_scale
-        Dper = Dper * self.d_scale
+        Dpar = Dpar * d_scale
+        Dper = Dper * d_scale
 
         # Set the parameters.
-        self.set(run=self.run, value=[Dpar, Dper], param=['Dpar', 'Dper'])
+        set(run=run, value=[Dpar, Dper], param=['Dpar', 'Dper'])
 
     # (Diso, Dratio, theta, phi).
-    elif self.param_types == 4:
+    elif param_types == 4:
         # Unpack the tuple.
-        Diso, Dratio, theta, phi = self.params
+        Diso, Dratio, theta, phi = params
 
         # Scaling.
-        Diso = Diso * self.d_scale
+        Diso = Diso * d_scale
 
         # Set the parameters.
-        self.set(run=self.run, value=[Diso, Dratio], param=['Diso', 'Dratio'])
+        set(run=run, value=[Diso, Dratio], param=['Diso', 'Dratio'])
 
     # Unknown parameter combination.
     else:
-        raise RelaxUnknownParamCombError, ('param_types', self.param_types)
+        raise RelaxUnknownParamCombError, ('param_types', param_types)
 
     # Convert the angles to radians.
-    if self.angle_units == 'deg':
+    if angle_units == 'deg':
         theta = (theta / 360.0) * 2.0 * pi
         phi = (phi / 360.0) * 2.0 * pi
 
     # Set the orientational parameters.
-    self.set(run=self.run, value=[theta, phi], param=['theta', 'phi'])
+    set(run=run, value=[theta, phi], param=['theta', 'phi'])
 
 
 def test_params(num_params):
@@ -1425,7 +1425,7 @@ def test_params(num_params):
             raise RelaxError, "The Dr value of " + `Dr` + " should be between zero and one."
 
 
-def unit_axes(self):
+def unit_axes():
     """Function for calculating the unit axes of the diffusion tensor.
 
     Spheroid
