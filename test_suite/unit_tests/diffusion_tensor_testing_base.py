@@ -78,6 +78,6 @@ class Diffusion_tensor_base_class:
         self.diffusion_tensor_fns.init(params=1e-9)
 
         # Test the diffusion tensor 
-        self.assertEqual(relax_data_pipe['orig'].diff.type, 'sphere')
-        self.assertEqual(relax_data_pipe['orig'].diff.tm, 1e-9)
+        self.assertEqual(relax_data_store['orig'].diff_tensor.type, 'sphere')
+        self.assertEqual(relax_data_store['orig'].diff_tensor.tm, 1e-9)
 
