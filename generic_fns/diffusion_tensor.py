@@ -263,8 +263,25 @@ def display(run=None):
         print "\nFixed:  " + `relax_data_store.diff[run].fixed`
 
 
-def ellipsoid():
-    """Function for setting up ellipsoidal diffusion."""
+def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, param_types=None):
+    """Function for setting up a ellipsoidal diffusion tensor.
+    
+    @param params:          The diffusion tensor parameter.
+    @type params:           float
+    @param time_scale:      The correlation time scaling value.
+    @type time_scale:       float
+    @param d_scale:         The diffusion tensor eigenvalue scaling value.
+    @type d_scale:          float
+    @param angle_units:     The units for the angle parameters which can be either 'deg' or 'rad'.
+    @type angle_units:      str
+    @param param_types:     The type of parameters supplied.  These correspond to 0: {tm, Da, theta,
+                            phi}, 1: {Diso, Da, theta, phi}, 2: {tm, Dratio, theta, phi}, 3:  {Dpar,
+                            Dper, theta, phi}, 4: {Diso, Dratio, theta, phi}.
+    @type param_types:      int
+    """
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
     # The diffusion type.
     cdp.diff_tensor.type = 'ellipsoid'
@@ -279,7 +296,7 @@ def ellipsoid():
         Da = Da * d_scale
 
         # Set the parameters.
-        set(run=run, value=[tm, Da, Dr], param=['tm', 'Da', 'Dr'])
+        set(value=[tm, Da, Dr], param=['tm', 'Da', 'Dr'])
 
     # (Diso, Da, Dr, alpha, beta, gamma).
     elif param_types == 1:
@@ -291,7 +308,7 @@ def ellipsoid():
         Da = Da * d_scale
 
         # Set the parameters.
-        set(run=run, value=[Diso, Da, Dr], param=['Diso', 'Da', 'Dr'])
+        set(value=[Diso, Da, Dr], param=['Diso', 'Da', 'Dr'])
 
     # (Dx, Dy, Dz, alpha, beta, gamma).
     elif param_types == 2:
@@ -304,7 +321,7 @@ def ellipsoid():
         Dz = Dz * d_scale
 
         # Set the parameters.
-        set(run=run, value=[Dx, Dy, Dz], param=['Dx', 'Dy', 'Dz'])
+        set(value=[Dx, Dy, Dz], param=['Dx', 'Dy', 'Dz'])
 
     # Unknown parameter combination.
     else:
@@ -317,7 +334,7 @@ def ellipsoid():
         gamma = (gamma / 360.0) * 2.0 * pi
 
     # Set the orientational parameters.
-    set(run=run, value=[alpha, beta, gamma], param=['alpha', 'beta', 'gamma'])
+    set(value=[alpha, beta, gamma], param=['alpha', 'beta', 'gamma'])
 
 
 def fold_angles(sim_index=None):
@@ -531,7 +548,7 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     # Ellipsoidal diffusion.
     elif (type(params) == tuple or type(params) == list) and len(params) == 6:
         num_params = 6
-        ellipsoid(params, time_scale, param_types)
+        ellipsoid(params, time_scale, d_scale, angle_units, param_types)
 
     # Unknown.
     else:
