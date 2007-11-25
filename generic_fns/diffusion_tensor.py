@@ -27,6 +27,7 @@ from re import search
 
 # relax module imports.
 from data import Data as relax_data_store
+import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
 
@@ -441,58 +442,51 @@ def fold_angles(self, run=None, sim_index=None):
                 relax_data_store.diff[self.run].gamma_sim[sim_index] = relax_data_store.diff[self.run].gamma_sim[sim_index] + pi
 
 
-def init(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=1):
+def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=1):
     """Function for initialising the diffusion tensor."""
 
-    # Arguments.
-    self.run = run
-    self.params = params
-    self.time_scale = time_scale
-    self.d_scale = d_scale
-    self.angle_units = angle_units
-    self.param_types = param_types
-    self.spheroid_type = spheroid_type
+    # Test if the current data pipe exists.
+    pipes.test()
 
-    # Test if the run exists.
-    if not self.run in relax_data_store.run_names:
-        raise RelaxNoPipeError, self.run
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
-    # Test if diffusion tensor data corresponding to the run already exists.
-    if relax_data_store.diff.has_key(self.run):
-        raise RelaxTensorError, self.run
+    # Test if diffusion tensor data already exists.
+    if hasattr(cdp, 'diff'):
+        raise RelaxTensorError
 
     # Check the validity of the angle_units argument.
     valid_types = ['deg', 'rad']
     if not angle_units in valid_types:
         raise RelaxError, "The diffusion tensor 'angle_units' argument " + `angle_units` + " should be either 'deg' or 'rad'."
 
-    # Add the run to the diffusion tensor data structure.
-    relax_data_store.diff.add_item(self.run)
+    # Create the diffusion tensor data structure.
+    cdp.diff.add_item()
 
     # Set the fixed flag.
-    relax_data_store.diff[self.run].fixed = fixed
+    cdp.diff.fixed = fixed
 
     # Spherical diffusion.
     if type(params) == float:
         num_params = 1
-        self.sphere()
+        sphere()
 
     # Spheroidal diffusion.
     elif (type(params) == tuple or type(params) == list) and len(params) == 4:
         num_params = 4
-        self.spheroid()
+        spheroid()
 
     # Ellipsoidal diffusion.
     elif (type(params) == tuple or type(params) == list) and len(params) == 6:
         num_params = 6
-        self.ellipsoid()
+        ellipsoid()
 
     # Unknown.
     else:
         raise RelaxError, "The diffusion tensor parameters " + `params` + " are of an unknown type."
 
     # Test the validity of the parameters.
-    self.test_params(num_params)
+    test_params(num_params)
 
 
 def map_bounds(self, run, param):
