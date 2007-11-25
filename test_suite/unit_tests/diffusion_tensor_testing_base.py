@@ -112,6 +112,31 @@ class Diffusion_tensor_base_class:
         self.diffusion_tensor_fns.display()
 
 
+    def test_display_fail_no_data(self):
+        """Failure of the display of the diffusion tensor data structure when there is no data.
+
+        The functions tested are both generic_fns.diffusion_tensor.display() and
+        prompt.diffusion_tensor.display().
+        """
+
+        # Try to display the tensor data.
+        self.assertRaises(RelaxNoTensorError, self.diffusion_tensor_fns.display)
+
+
+    def test_display_fail_no_pipe(self):
+        """Failure of the display of the diffusion tensor data structure when there is no data pipe.
+
+        The functions tested are both generic_fns.diffusion_tensor.display() and
+        prompt.diffusion_tensor.display().
+        """
+
+        # Reset the relax data store.
+        relax_data_store.__reset__()
+
+        # Try to display the tensor data.
+        self.assertRaises(RelaxNoPipeError, self.diffusion_tensor_fns.display)
+
+
     def test_display_sphere(self):
         """Display a spherical diffusion tensor.
 
