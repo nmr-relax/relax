@@ -159,6 +159,16 @@ class Test_pipes(TestCase):
         self.assertRaises(RelaxError, pipes.create, 'new', 'x')
 
 
+    def test_current(self):
+        """Get the current data pipe.
+
+        The function used is generic_fns.pipes.current().
+        """
+
+        # Test the current pipe.
+        self.assertEqual(pipes.current(), 'orig')
+
+
     def test_deletion(self):
         """Test the deletion of a data pipe.
 
