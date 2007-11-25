@@ -22,12 +22,484 @@
 
 # Python module imports.
 from re import search
+from math import cos, pi, sin
+from Numeric import Float64, dot, identity, transpose, zeros
 from types import ListType
 
 # relax module imports.
 from data_classes import Element, SpecificData
-from generic_fns.diffusion_tensor import calc_Diso, calc_Dpar, calc_Dpar_unit, calc_Dper, calc_Dratio, calc_Dx, calc_Dx_unit, calc_Dy, calc_Dy_unit, calc_Dz, calc_Dz_unit, calc_rotation, calc_tensor, calc_tensor_diag
 from relax_errors import RelaxError
+
+
+
+def calc_Diso(tm):
+    """Function for calculating the Diso value.
+
+    The equation for calculating the parameter is
+
+        Diso  =  1 / (6tm).
+
+    @keyword tm:    The global correlation time.
+    @type tm:       float
+    @return:        The isotropic diffusion rate (Diso).
+    @rtype:         float
+    """
+
+    # Calculated and return the Diso value.
+    return 1.0 / (6.0 * tm)
+
+
+def calc_Dpar(Diso, Da):
+    """Function for calculating the Dpar value.
+
+    The equation for calculating the parameter is
+
+        Dpar  =  Diso + 2/3 Da.
+
+    @keyword Diso:  The isotropic diffusion rate.
+    @type Diso:     float
+    @keyword Da:    The anisotropic diffusion rate.
+    @type Da:       float
+    @return:        The diffusion rate parallel to the unique axis of the spheroid.
+    @rtype:         float
+    """
+
+    # Dpar value.
+    return Diso + 2.0/3.0 * Da
+
+
+def calc_Dpar_unit(theta, phi):
+    """Function for calculating the Dpar unit vector.
+
+    The unit vector parallel to the unique axis of the diffusion tensor is
+
+                      | sin(theta) * cos(phi) |
+        Dpar_unit  =  | sin(theta) * sin(phi) |.
+                      |      cos(theta)       |
+
+    @keyword theta: The azimuthal angle in radians.
+    @type theta:    float
+    @keyword phi:   The polar angle in radians.
+    @type phi:      float
+    @return:        The Dpar unit vector.
+    @rtype:         Numeric array (Float64)
+    """
+
+    # Initilise the vector.
+    Dpar_unit = zeros(3, Float64)
+
+    # Calculate the x, y, and z components.
+    Dpar_unit[0] = sin(theta) * cos(phi)
+    Dpar_unit[1] = sin(theta) * sin(phi)
+    Dpar_unit[2] = cos(theta)
+
+    # Return the unit vector.
+    return Dpar_unit
+
+
+def calc_Dper(Diso, Da):
+    """Function for calculating the Dper value.
+
+    The equation for calculating the parameter is
+
+        Dper  =  Diso - 1/3 Da.
+
+    @keyword Diso:  The isotropic diffusion rate.
+    @type Diso:     float
+    @keyword Da:    The anisotropic diffusion rate.
+    @type Da:       float
+    @return:        The diffusion rate perpendicular to the unique axis of the spheroid.
+    @rtype:         float
+    """
+
+    # Dper value.
+    return Diso - 1.0/3.0 * Da
+
+
+def calc_Dratio(Dpar, Dper):
+    """Function for calculating the Dratio value.
+
+    The equation for calculating the parameter is
+
+        Dratio  =  Dpar / Dper.
+
+    @keyword Dpar:  The diffusion rate parallel to the unique axis of the spheroid.
+    @type Dpar:     float
+    @keyword Dper:  The diffusion rate perpendicular to the unique axis of the spheroid.
+    @type Dper:     float
+    @return:        The ratio of the parallel and perpendicular diffusion rates.
+    @rtype:         float
+    """
+
+    # Dratio value.
+    return Dpar / Dper
+
+
+def calc_Dx(Diso, Da, Dr):
+    """Function for calculating the Dx value.
+
+    The equation for calculating the parameter is
+
+        Dx  =  Diso - 1/3 Da(1 + 3Dr).
+
+    @keyword Diso:  The isotropic diffusion rate.
+    @type Diso:     float
+    @keyword Da:    The anisotropic diffusion rate.
+    @type Da:       float
+    @keyword Dr:    The rhombic component of the diffusion tensor.
+    @type Dr:       float
+    @return:        The diffusion rate parallel to the x-axis of the ellipsoid.
+    @rtype:         float
+    """
+
+    # Dx value.
+    return Diso - 1.0/3.0 * Da * (1.0 + 3.0*Dr)
+
+
+def calc_Dx_unit(alpha, beta, gamma):
+    """Function for calculating the Dx unit vector.
+
+    The unit Dx vector is
+
+                    | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
+        Dx_unit  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |.
+                    |                    cos(alpha) * sin(beta)                      |
+
+    @keyword alpha: The Euler angle alpha in radians using the z-y-z convention.
+    @type alpha:    float
+    @keyword beta:  The Euler angle beta in radians using the z-y-z convention.
+    @type beta:     float
+    @keyword gamma: The Euler angle gamma in radians using the z-y-z convention.
+    @type gamma:    float
+    @return:        The Dx unit vector.
+    @rtype:         Numeric array (Float64)
+    """
+
+    # Initilise the vector.
+    Dx_unit = zeros(3, Float64)
+
+    # Calculate the x, y, and z components.
+    Dx_unit[0] = -sin(alpha) * sin(gamma)  +  cos(alpha) * cos(beta) * cos(gamma)
+    Dx_unit[1] = -sin(alpha) * cos(gamma)  -  cos(alpha) * cos(beta) * sin(gamma)
+    Dx_unit[2] = cos(alpha) * sin(beta)
+
+    # Return the unit vector.
+    return Dx_unit
+
+
+def calc_Dy(Diso, Da, Dr):
+    """Function for calculating the Dy value.
+
+    The equation for calculating the parameter is
+
+        Dy  =  Diso - 1/3 Da(1 - 3Dr),
+
+    @keyword Diso:  The isotropic diffusion rate.
+    @type Diso:     float
+    @keyword Da:    The anisotropic diffusion rate.
+    @type Da:       float
+    @keyword Dr:    The rhombic component of the diffusion tensor.
+    @type Dr:       float
+    @return:        The Dy value.
+    @rtype:         float
+    """
+
+    # Dy value.
+    return Diso - 1.0/3.0 * Da * (1.0 - 3.0*Dr)
+
+
+def calc_Dy_unit(alpha, beta, gamma):
+    """Function for calculating the Dy unit vector.
+
+    The unit Dy vector is
+
+                    | cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
+        Dy_unit  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |.
+                    |                   sin(alpha) * sin(beta)                      |
+
+    @keyword alpha: The Euler angle alpha in radians using the z-y-z convention.
+    @type alpha:    float
+    @keyword beta:  The Euler angle beta in radians using the z-y-z convention.
+    @type beta:     float
+    @keyword gamma: The Euler angle gamma in radians using the z-y-z convention.
+    @type gamma:    float
+    @return:        The Dy unit vector.
+    @rtype:         Numeric array (Float64)
+    """
+
+    # Initilise the vector.
+    Dy_unit = zeros(3, Float64)
+
+    # Calculate the x, y, and z components.
+    Dy_unit[0] = cos(alpha) * sin(gamma)  +  sin(alpha) * cos(beta) * cos(gamma)
+    Dy_unit[1] = cos(alpha) * cos(gamma)  -  sin(alpha) * cos(beta) * sin(gamma)
+    Dy_unit[2] = sin(alpha) * sin(beta)
+
+    # Return the unit vector.
+    return Dy_unit
+
+
+def calc_Dz(Diso, Da):
+    """Function for calculating the Dz value.
+
+    The equation for calculating the parameter is
+
+        Dz  =  Diso + 2/3 Da.
+
+    @keyword Diso:  The isotropic diffusion rate.
+    @type Diso:     float
+    @keyword Da:    The anisotropic diffusion rate.
+    @type Da:       float
+    @return:        The Dz value.
+    @rtype:         float
+    """
+
+    # Dz value.
+    return Diso + 2.0/3.0 * Da
+
+
+def calc_Dz_unit(beta, gamma):
+    """Function for calculating the Dz unit vector.
+
+    The unit Dz vector is
+
+                    | -sin(beta) * cos(gamma) |
+        Dz_unit  =  |  sin(beta) * sin(gamma) |.
+                    |        cos(beta)        |
+
+    @keyword beta:  The Euler angle beta in radians using the z-y-z convention.
+    @type beta:     float
+    @keyword gamma: The Euler angle gamma in radians using the z-y-z convention.
+    @type gamma:    float
+    @return:        The Dz unit vector.
+    @rtype:         Numeric array (Float64)
+    """
+
+    # Initilise the vector.
+    Dz_unit = zeros(3, Float64)
+
+    # Calculate the x, y, and z components.
+    Dz_unit[0] = -sin(beta) * cos(gamma)
+    Dz_unit[1] = sin(beta) * sin(gamma)
+    Dz_unit[2] = cos(beta)
+
+    # Return the unit vector.
+    return Dz_unit
+
+
+def calc_rotation(diff_type, *args):
+    """Function for calculating the rotation matrix.
+
+    Spherical diffusion
+    ===================
+
+    As the orientation of the diffusion tensor within the structural frame is undefined when the
+    molecule diffuses as a sphere, the rotation matrix is simply the identity matrix
+
+              | 1  0  0 |
+        R  =  | 0  1  0 |.
+              | 0  0  1 |
+
+
+    Spheroidal diffusion
+    ====================
+
+    The rotation matrix required to shift from the diffusion tensor frame to the structural
+    frame is equal to
+
+              |  cos(theta) * cos(phi)  -sin(phi)   sin(theta) * cos(phi) |
+        R  =  |  cos(theta) * sin(phi)   cos(phi)   sin(theta) * sin(phi) |.
+              | -sin(theta)              0          cos(theta)            |
+
+
+    Ellipsoidal diffusion
+    =====================
+
+    The rotation matrix required to shift from the diffusion tensor frame to the structural
+    frame is equal to
+
+        R  =  | Dx_unit  Dy_unit  Dz_unit |,
+
+              | Dx_unit[0]  Dy_unit[0]  Dz_unit[0] |
+           =  | Dx_unit[1]  Dy_unit[1]  Dz_unit[1] |.
+              | Dx_unit[2]  Dy_unit[2]  Dz_unit[2] |
+
+    @param *args:       All the function arguments.
+    @type *args:        tuple
+    @param theta:       The azimuthal angle in radians.
+    @type theta:        float
+    @param phi:         The polar angle in radians.
+    @type phi:          float
+    @param Dpar_unit:   The Dpar unit vector.
+    @type Dpar_unit:    Numeric array (Float64)
+    @param Dx_unit:     The Dx unit vector.
+    @type Dx_unit:      Numeric array (Float64)
+    @param Dy_unit:     The Dy unit vector.
+    @type Dy_unit:      Numeric array (Float64)
+    @param Dz_unit:     The Dz unit vector.
+    @type Dz_unit:      Numeric array (Float64)
+    @return:            The rotation matrix.
+    @rtype:             Numeric array ((3, 3), Float64)
+    """
+
+    # The rotation matrix for the sphere.
+    if diff_type == 'sphere':
+        return identity(3, Float64)
+
+    # The rotation matrix for the spheroid.
+    elif diff_type == 'spheroid':
+        # Unpack the arguments.
+        theta, phi, Dpar_unit = args
+
+        # Initialise the rotation matrix.
+        rotation = identity(3, Float64)
+
+        # First row of the rotation matrix.
+        rotation[0, 0] = cos(theta) * cos(phi)
+        rotation[1, 0] = cos(theta) * sin(phi)
+        rotation[2, 0] = -sin(theta)
+
+        # Second row of the rotation matrix.
+        rotation[0, 1] = -sin(phi)
+        rotation[1, 1] = cos(phi)
+
+        # Replace the last row of the rotation matrix with the Dpar unit vector.
+        rotation[:, 2] = Dpar_unit
+
+        # Return the tensor.
+        return rotation
+
+    # The rotation matrix for the ellipsoid.
+    elif diff_type == 'ellipsoid':
+        # Unpack the arguments.
+        Dx_unit, Dy_unit, Dz_unit = args
+
+        # Initialise the rotation matrix.
+        rotation = identity(3, Float64)
+
+        # First column of the rotation matrix.
+        rotation[:, 0] = Dx_unit
+
+        # Second column of the rotation matrix.
+        rotation[:, 1] = Dy_unit
+
+        # Third column of the rotation matrix.
+        rotation[:, 2] = Dz_unit
+
+        # Return the tensor.
+        return rotation
+
+    # Raise an error.
+    else:
+        raise RelaxError, 'The diffusion tensor has not been specified'
+
+
+def calc_tensor(rotation, tensor_diag):
+    """Function for calculating the diffusion tensor (in the structural frame).
+
+    The diffusion tensor is calculated using the diagonalised tensor and the rotation matrix
+    through the equation
+
+        R . tensor_diag . R^T.
+
+    @keyword rotation:      The rotation matrix.
+    @type rotation:         Numeric array ((3, 3), Float64)
+    @keyword tensor_diag:   The diagonalised diffusion tensor.
+    @type tensor_diag:      Numeric array ((3, 3), Float64)
+    @return:                The diffusion tensor (within the structural frame).
+    @rtype:                 Numeric array ((3, 3), Float64)
+    """
+
+    # Rotation (R . tensor_diag . R^T).
+    return dot(rotation, dot(tensor_diag, transpose(rotation)))
+
+
+def calc_tensor_diag(diff_type, *args):
+    """Function for calculating the diagonalised diffusion tensor.
+
+    The diagonalised spherical diffusion tensor is defined as
+
+                   | Diso     0     0 |
+        tensor  =  |    0  Diso     0 |.
+                   |    0     0  Diso |
+
+    The diagonalised spheroidal tensor is defined as
+
+                   | Dper     0     0 |
+        tensor  =  |    0  Dper     0 |.
+                   |    0     0  Dpar |
+
+    The diagonalised ellipsoidal diffusion tensor is defined as
+
+                   | Dx   0   0 |
+        tensor  =  |  0  Dy   0 |.
+                   |  0   0  Dz |
+
+    @param *args:   All the arguments.
+    @type *args:    tuple
+    @param Diso:    The Diso parameter of the sphere.
+    @type Diso:     float
+    @param Dpar:    The Dpar parameter of the spheroid.
+    @type Dpar:     float
+    @param Dper:    The Dper parameter of the spheroid.
+    @type Dper:     float
+    @param Dx:      The Dx parameter of the ellipsoid.
+    @type Dx:       float
+    @param Dy:      The Dy parameter of the ellipsoid.
+    @type Dy:       float
+    @param Dz:      The Dz parameter of the ellipsoid.
+    @type Dz:       float
+    @return:        The diagonalised diffusion tensor.
+    @rtype:         Numeric array ((3, 3), Float64)
+    """
+
+    # Spherical diffusion tensor.
+    if diff_type == 'sphere':
+        # Unpack the arguments.
+        Diso, = args
+
+        # Initialise the tensor.
+        tensor = zeros((3, 3), Float64)
+
+        # Populate the diagonal elements.
+        tensor[0, 0] = Diso
+        tensor[1, 1] = Diso
+        tensor[2, 2] = Diso
+
+        # Return the tensor.
+        return tensor
+
+    # Spheroidal diffusion tensor.
+    elif diff_type == 'spheroid':
+        # Unpack the arguments.
+        Dpar, Dper = args
+
+        # Initialise the tensor.
+        tensor = zeros((3, 3), Float64)
+
+        # Populate the diagonal elements.
+        tensor[0, 0] = Dper
+        tensor[1, 1] = Dper
+        tensor[2, 2] = Dpar
+
+        # Return the tensor.
+        return tensor
+
+    # Ellipsoidal diffusion tensor.
+    elif diff_type == 'ellipsoid':
+        # Unpack the arguments.
+        Dx, Dy, Dz = args
+
+        # Initialise the tensor.
+        tensor = zeros((3, 3), Float64)
+
+        # Populate the diagonal elements.
+        tensor[0, 0] = Dx
+        tensor[1, 1] = Dy
+        tensor[2, 2] = Dz
+
+        # Return the tensor.
+        return tensor
 
 
 def dependency_generator(diff_type):
