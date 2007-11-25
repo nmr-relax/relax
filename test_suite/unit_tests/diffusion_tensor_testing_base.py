@@ -92,10 +92,10 @@ class Diffusion_tensor_base_class:
         # Initialise the tensor.
         self.diffusion_tensor_fns.init(params=(8.6, 1.3, 600, -20), time_scale=1e-9, d_scale=1e7, angle_units='deg', param_types=2, spheroid_type='prolate', fixed=0)
 
-        # Test the diffusion tensor 
+        # Test the diffusion tensor.
         self.assertEqual(relax_data_store['orig'].diff_tensor.type, 'spheroid')
-        self.assertEqual(relax_data_store['orig'].diff_tensor.tm, 8.6e-9)
-        self.assertEqual(relax_data_store['orig'].diff_tensor.Da, 1e7)
-        self.assertEqual(relax_data_store['orig'].diff_tensor.theta, 240.0)
-        self.assertEqual(relax_data_store['orig'].diff_tensor.phi, 340.0)
+        self.assertAlmostEqual(relax_data_store['orig'].diff_tensor.tm * 1e9, 8.6, 14)
+        self.assertEqual(relax_data_store['orig'].diff_tensor.Da, 5.2854122621564493e6)
+        self.assertEqual(relax_data_store['orig'].diff_tensor.theta, 2.0943951023931948)
+        self.assertEqual(relax_data_store['orig'].diff_tensor.phi, 2.7925268031909276)
 
