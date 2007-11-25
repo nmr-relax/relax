@@ -22,7 +22,7 @@
 
 # Python module imports.
 from os import F_OK, access
-from re import compile, match, split
+from re import compile, match, search, split
 from string import strip
 from textwrap import fill
 
@@ -30,6 +30,7 @@ from textwrap import fill
 from data import Data as relax_data_store
 from data.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRegExpError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
+from generic_fns import pipes
 
 
 id_string_doc = """
@@ -178,6 +179,10 @@ def count_spins(selection=None):
     @return:            The number of non-empty spins.
     @return type:       int
     """
+
+    # No data, hence no spins.
+    if not exists_mol_res_spin_data():
+        return 0
 
     # Init.
     spin_num = 0
@@ -340,6 +345,63 @@ def desel_res(self, run=None, num=None, name=None, change_all=None):
         print "No residues match."
 
 
+def exists_mol_res_spin_data():
+    """Function for determining if any molecule-residue-spin data exists.
+
+    @return:            The answer to the question about the existence of data.
+    @rtype:             bool
+    """
+
+    # Test the data pipe.
+    pipes.test(relax_data_store.current_pipe)
+
+    # Alias the data pipe container.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # More than 1 molecule (hence data exists).
+    if len(cdp.mol) > 1:
+        return True
+
+    # The single molecule has been named.
+    if cdp.mol[0].name != None:
+        return True
+
+    # More than 1 residue (hence data exists).
+    if len(cdp.mol[0].res) > 1:
+        return True
+
+    # The single residue has been named or numbered.
+    if cdp.mol[0].res[0].name != None or cdp.mol[0].res[0].num != None:
+        return True
+
+    # More than 1 spin (hence data exists).
+    if len(cdp.mol[0].res[0].spin) > 1:
+        return True
+
+    # The single spin has been named or numbered.
+    if cdp.mol[0].res[0].spin[0].name != None or cdp.mol[0].res[0].spin[0].num != None:
+        return True
+
+    # The object names in an empty spin container.
+    white_list = ['name', 'num', 'select'] 
+
+    # Loop over the objects in the spin container.
+    for name in dir(cdp.mol[0].res[0].spin[0]):
+        # Skip white listed objects.
+        if name in white_list:
+            continue
+
+        # Skip objects beginning with '__'.
+        if search('^__', name):
+            continue
+
+        # Found an object not in the white list (hence the spin container has been modified).
+        return True
+
+    # No data!
+    return False
+
+
 def molecule_loop(selection=None, pipe=None):
     """Generator function for looping over all the molecules of the given selection.
 
@@ -354,6 +416,13 @@ def molecule_loop(selection=None, pipe=None):
     # The data pipe.
     if pipe == None:
         pipe = relax_data_store.current_pipe
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Test for the presence of data, and end the execution of this function if there is none.
+    if not exists_mol_res_spin_data():
+        return
 
     # Parse the selection string.
     select_obj = Selection(selection)
@@ -468,6 +537,13 @@ def residue_loop(selection=None, pipe=None, full_info=False):
     if pipe == None:
         pipe = relax_data_store.current_pipe
 
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Test for the presence of data, and end the execution of this function if there is none.
+    if not exists_mol_res_spin_data():
+        return
+
     # Parse the selection string.
     select_obj = Selection(selection)
 
@@ -505,9 +581,8 @@ def return_molecule(selection=None, pipe=None):
     if pipe == None:
         pipe = relax_data_store.current_pipe
 
-    # Test that the data pipe exists.
-    if pipe not in relax_data_store.keys():
-        raise RelaxNoPipeError, pipe
+    # Test the data pipe.
+    pipes.test(pipe)
 
     # Parse the selection string.
     select_obj = Selection(selection)
@@ -553,9 +628,8 @@ def return_residue(selection=None, pipe=None):
     if pipe == None:
         pipe = relax_data_store.current_pipe
 
-    # Test that the data pipe exists.
-    if pipe not in relax_data_store.keys():
-        raise RelaxNoPipeError, pipe
+    # Test the data pipe.
+    pipes.test(pipe)
 
     # Parse the selection string.
     select_obj = Selection(selection)
@@ -608,9 +682,8 @@ def return_spin(selection=None, pipe=None):
     if pipe == None:
         pipe = relax_data_store.current_pipe
 
-    # Test that the data pipe exists.
-    if pipe not in relax_data_store.keys():
-        raise RelaxNoPipeError, pipe
+    # Test the data pipe.
+    pipes.test(pipe)
 
     # Parse the selection string.
     select_obj = Selection(selection)
@@ -986,6 +1059,13 @@ def spin_loop(selection=None, pipe=None, full_info=False):
     # The data pipe.
     if pipe == None:
         pipe = relax_data_store.current_pipe
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Test for the presence of data, and end the execution of this function if there is none.
+    if not exists_mol_res_spin_data():
+        return
 
     # Parse the selection string.
     select_obj = Selection(selection)

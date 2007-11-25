@@ -74,6 +74,180 @@ class Test_selection(TestCase):
         relax_data_store.__reset__()
 
 
+    def test_count_spins(self):
+        """Test that the number of spins can be properly counted.
+
+        The function tested is generic_fns.selection.count_spins().
+        """
+
+        # Test the number of spins counted.
+        self.assertEqual(selection.count_spins(), 7)
+        self.assertEqual(selection.count_spins(selection='@N5'), 2)
+
+
+    def test_count_no_spins(self):
+        """Test that the number of spins (zero) can be properly counted.
+
+        The function tested is generic_fns.selection.count_spins().
+        """
+
+        # Remove all data.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
+        # Test the number of spins counted.
+        self.assertEqual(selection.count_spins(), 0)
+
+
+    def test_count_spins_no_pipe(self):
+        """Test that the counting of the number of spins raises an error when no pipe exists.
+
+        The function tested is generic_fns.selection.count_spins().
+        """
+
+        # Remove all data.
+        relax_data_store.__reset__()
+
+        # Test for the error.
+        self.assertRaises(RelaxNoPipeError, selection.count_spins)
+
+
+    def test_exists_mol_res_spin_data(self):
+        """Test the function for determining if molecule-residue-spin data exists.
+
+        The function tested is generic_fns.selection.exists_mol_res_spin_data().
+        """
+
+        # This should be True.
+        self.failUnless(selection.exists_mol_res_spin_data())
+
+
+    def test_exists_mol_res_spin_data_single_mol(self):
+        """Determine if molecule-residue-spin data exists (with data for a single molecule).
+
+        The function tested is generic_fns.selection.exists_mol_res_spin_data().
+        """
+
+        # Remove all data.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
+        # Name the first molecule.
+        relax_data_store['orig'].mol[0].name = 'TOM40'
+
+        # This should be True.
+        self.failUnless(selection.exists_mol_res_spin_data())
+
+
+    def test_exists_mol_res_spin_data_single_res_name(self):
+        """Determine if molecule-residue-spin data exists (when a single residue is named).
+
+        The function tested is generic_fns.selection.exists_mol_res_spin_data().
+        """
+
+        # Remove all data.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
+        # Name the first residue.
+        relax_data_store['orig'].mol[0].res[0].name = 'Lys'
+
+        # This should be True.
+        self.failUnless(selection.exists_mol_res_spin_data())
+
+
+    def test_exists_mol_res_spin_data_single_res_num(self):
+        """Determine if molecule-residue-spin data exists (when a single residue is numbered).
+
+        The function tested is generic_fns.selection.exists_mol_res_spin_data().
+        """
+
+        # Remove all data.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
+        # Number the first residue.
+        relax_data_store['orig'].mol[0].res[0].num = 1
+
+        # This should be True.
+        self.failUnless(selection.exists_mol_res_spin_data())
+
+
+    def test_exists_mol_res_spin_data_single_spin_name(self):
+        """Determine if molecule-residue-spin data exists (when a single spin is named).
+
+        The function tested is generic_fns.selection.exists_mol_res_spin_data().
+        """
+
+        # Remove all data.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
+        # Name the first spin.
+        relax_data_store['orig'].mol[0].res[0].spin[0].name = 'NH'
+
+        # This should be True.
+        self.failUnless(selection.exists_mol_res_spin_data())
+
+
+    def test_exists_mol_res_spin_data_single_spin_num(self):
+        """Determine if molecule-residue-spin data exists (when a single spin is numbered).
+
+        The function tested is generic_fns.selection.exists_mol_res_spin_data().
+        """
+
+        # Remove all data.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
+        # Number the first spin.
+        relax_data_store['orig'].mol[0].res[0].spin[0].num = 234
+
+        # This should be True.
+        self.failUnless(selection.exists_mol_res_spin_data())
+
+
+    def test_exists_mol_res_spin_data_no_data(self):
+        """Determine if molecule-residue-spin data exists when no data exists.
+
+        The function tested is generic_fns.selection.exists_mol_res_spin_data().
+        """
+
+        # Remove all data.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
+        # This should be False.
+        self.failIf(selection.exists_mol_res_spin_data())
+
+
+    def test_exists_mol_res_spin_data_no_pipe(self):
+        """Determine if molecule-residue-spin data exists when no data pipe exists.
+
+        The function tested is generic_fns.selection.exists_mol_res_spin_data().
+        """
+
+        # Remove all data.
+        relax_data_store.__reset__()
+
+        # This should fail.
+        self.assertRaises(RelaxNoPipeError, selection.exists_mol_res_spin_data)
+
+
     def test_molecule_loop(self):
         """Test the proper operation of the molecule loop with molecule selection.
 
@@ -87,6 +261,45 @@ class Test_selection(TestCase):
 
         # Test loop length.
         self.assertEqual(len(list(selection.molecule_loop('#RNA'))), 1)
+
+
+    def test_molecule_loop_no_data(self):
+        """Test the proper operation of the molecule loop when no data is present.
+
+        The function tested is generic_fns.selection.molecule_loop().
+        """
+
+        # Reset.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
+        # Loop over the molecules.
+        i = 0
+        for molecule in selection.molecule_loop():
+            i = i + 1
+
+        # Test loop length.
+        self.assertEqual(i, 0)
+
+
+    def test_molecule_loop_no_pipe(self):
+        """Test the proper operation of the molecule loop when no data pipe is present.
+
+        The function tested is generic_fns.selection.molecule_loop().
+        """
+
+        # Reset.
+        relax_data_store.__reset__()
+
+        # Function for the problem of catching an error in a generator function.
+        def fail_test():
+            for molecule in selection.molecule_loop():
+                pass
+
+        # Test for the no pipe error.
+        self.assertRaises(RelaxNoPipeError, fail_test)
 
 
     def test_molecule_loop_no_selection(self):
@@ -280,6 +493,45 @@ class Test_selection(TestCase):
         self.assertEqual(len(list(selection.residue_loop('#Ap4Aase:Glu'))), 1)
 
 
+    def test_residue_loop_no_data(self):
+        """Test the proper operation of the residue loop when no data is present.
+
+        The function tested is generic_fns.selection.residue_loop().
+        """
+
+        # Reset.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
+        # Loop over the residues.
+        i = 0
+        for residue in selection.residue_loop():
+            i = i + 1
+
+        # Test loop length.
+        self.assertEqual(i, 0)
+
+
+    def test_residue_loop_no_pipe(self):
+        """Test the proper operation of the residue loop when no data pipe is present.
+
+        The function tested is generic_fns.selection.residue_loop().
+        """
+
+        # Reset.
+        relax_data_store.__reset__()
+
+        # Function for the problem of catching an error in a generator function.
+        def fail_test():
+            for residue in selection.residue_loop():
+                pass
+
+        # Test for the no pipe error.
+        self.assertRaises(RelaxNoPipeError, fail_test)
+
+
     def test_residue_loop_no_selection(self):
         """Test the proper operation of the residue loop when no selection is present.
 
@@ -457,6 +709,44 @@ class Test_selection(TestCase):
         # Test loop length.
         self.assertEqual(i, 2)
 
+
+    def test_spin_loop_no_data(self):
+        """Test the proper operation of the spin loop when no data is present.
+
+        The function tested is generic_fns.selection.spin_loop().
+        """
+
+        # Reset.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
+        # Loop over the spins.
+        i = 0
+        for spin in selection.spin_loop():
+            i = i + 1
+
+        # Test loop length.
+        self.assertEqual(i, 0)
+
+
+    def test_spin_loop_no_pipe(self):
+        """Test the proper operation of the spin loop when no data pipe is present.
+
+        The function tested is generic_fns.selection.spin_loop().
+        """
+
+        # Reset.
+        relax_data_store.__reset__()
+
+        # Function for the problem of catching an error in a generator function.
+        def fail_test():
+            for spin in selection.spin_loop():
+                pass
+
+        # Test for the no pipe error.
+        self.assertRaises(RelaxNoPipeError, fail_test)
 
 
     def test_spin_loop_no_selection(self):

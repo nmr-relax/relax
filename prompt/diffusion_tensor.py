@@ -137,13 +137,11 @@ class Diffusion_tensor:
         self.__relax__.generic.diffusion_tensor.display(run=run)
 
 
-    def init(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=1):
+    def init(self, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=1):
         """Function for initialising the diffusion tensor.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run to assign the data to.
 
         params:  The diffusion tensor data.
 
@@ -356,55 +354,44 @@ class Diffusion_tensor:
         Examples
         ~~~~~~~~
 
-        To set an isotropic diffusion tensor with a correlation time of 10 ns, assigning it to the
-        run 'm1', type:
+        To set an isotropic diffusion tensor with a correlation time of 10 ns, type:
 
-        relax> diffusion_tensor('m1', 10e-9)
-        relax> diffusion_tensor(run='m1', params=10e-9)
-        relax> diffusion_tensor('m1', 10.0, 1e-9)
-        relax> diffusion_tensor(run='m1', params=10.0, time_scale=1e-9, fixed=1)
+        relax> diffusion_tensor(10e-9)
+        relax> diffusion_tensor(params=10e-9)
+        relax> diffusion_tensor(10.0, 1e-9)
+        relax> diffusion_tensor(params=10.0, time_scale=1e-9, fixed=1)
 
 
         To select axially symmetric diffusion with a tm value of 8.5 ns, Dratio of 1.1, theta value
-        of 20 degrees, and phi value of 20 degrees, and assign it to the run 'm8', type:
+        of 20 degrees, and phi value of 20 degrees, type:
 
-        relax> diffusion_tensor('m8', (8.5e-9, 1.1, 20.0, 20.0), param_types=1)
+        relax> diffusion_tensor((8.5e-9, 1.1, 20.0, 20.0), param_types=1)
 
 
         To select a spheroid diffusion tensor with a Dpar value of 1.698e7, Dper value of 1.417e7,
-        theta value of 67.174 degrees, and phi value of -83.718 degrees, and assign it to the run
-        'spheroid', type one of:
+        theta value of 67.174 degrees, and phi value of -83.718 degrees, type one of:
 
-        relax> diffusion_tensor('spheroid', (1.698e7, 1.417e7, 67.174, -83.718), param_types=1)
-        relax> diffusion_tensor(run='spheroid', params=(1.698e7, 1.417e7, 67.174, -83.718),
-                                param_types=1)
-        relax> diffusion_tensor('spheroid', (1.698e-1, 1.417e-1, 67.174, -83.718), param_types=1,
+        relax> diffusion_tensor((1.698e7, 1.417e7, 67.174, -83.718), param_types=1)
+        relax> diffusion_tensor(params=(1.698e7, 1.417e7, 67.174, -83.718), param_types=1)
+        relax> diffusion_tensor((1.698e-1, 1.417e-1, 67.174, -83.718), param_types=1, d_scale=1e8)
+        relax> diffusion_tensor(params=(1.698e-1, 1.417e-1, 67.174, -83.718), param_types=1,
                                 d_scale=1e8)
-        relax> diffusion_tensor(run='spheroid', params=(1.698e-1, 1.417e-1, 67.174, -83.718),
-                                param_types=1, d_scale=1e8)
-        relax> diffusion_tensor('spheroid', (1.698e-1, 1.417e-1, 1.1724, -1.4612), param_types=1,
-                                d_scale=1e8, angle_units='rad')
-        relax> diffusion_tensor(run='spheroid', params=(1.698e-1, 1.417e-1, 1.1724, -1.4612),
-                                param_types=1, d_scale=1e8, angle_units='rad', fixed=1)
+        relax> diffusion_tensor((1.698e-1, 1.417e-1, 1.1724, -1.4612), param_types=1, d_scale=1e8,
+                                angle_units='rad')
+        relax> diffusion_tensor(params=(1.698e-1, 1.417e-1, 1.1724, -1.4612), param_types=1,
+                                d_scale=1e8, angle_units='rad', fixed=1)
 
 
         To select ellipsoidal diffusion, type:
 
-        relax> diffusion_tensor('m5', (1.340e7, 1.516e7, 1.691e7, -82.027, -80.573, 65.568),
+        relax> diffusion_tensor((1.340e7, 1.516e7, 1.691e7, -82.027, -80.573, 65.568),
                                 param_types=2)
-
-
-        To select and minimise a spherical diffusion tensor, type (followed by a minimisation
-        command):
-
-        relax> diffusion_tensor('diff', 10e-9, fixed=0)
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "diffusion_tensor.init("
-            text = text + "run=" + `run`
-            text = text + ", params=" + `params`
+            text = text + "params=" + `params`
             text = text + ", time_scale=" + `time_scale`
             text = text + ", d_scale=" + `d_scale`
             text = text + ", angle_units=" + `angle_units`
@@ -412,10 +399,6 @@ class Diffusion_tensor:
             text = text + ", spheroid_type=" + `spheroid_type`
             text = text + ", fixed=" + `fixed` + ")"
             print text
-
-        # The name of the run.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # Parameter argument.
         if type(params) != int and type(params) != float and type(params) != tuple:
@@ -452,4 +435,4 @@ class Diffusion_tensor:
             raise RelaxBinError, ('fixed flag', fixed)
 
         # Execute the functional code.
-        self.__relax__.generic.diffusion_tensor.init(run=run, params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, spheroid_type=spheroid_type, fixed=fixed)
+        diffusion_tensor.init(params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, spheroid_type=spheroid_type, fixed=fixed)
