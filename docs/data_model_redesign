@@ -85,7 +85,7 @@ The molecule.add() user function should be used to create all the residue and sp
     spin.rename()
     spin.renumber()
 
-13.  Create a single user function class which handles molecules, residues, and spins together with selections:
+13 [Done].  Create a single user function class which handles molecules, residues, and spins together with selections:
     sequence.display()
     sequence.read()
     sequence.write()
