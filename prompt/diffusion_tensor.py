@@ -25,6 +25,7 @@ import sys
 
 # relax module imports.
 import help
+from generic_fns import diffusion_tensor
 from relax_errors import RelaxBinError, RelaxError, RelaxFloatError, RelaxIntError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
 
 
