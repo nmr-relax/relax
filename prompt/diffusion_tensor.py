@@ -20,8 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
 
+# relax module imports.
 import help
 from relax_errors import RelaxBinError, RelaxError, RelaxFloatError, RelaxIntError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
 
@@ -93,6 +95,10 @@ class Diffusion_tensor:
         # The pipe_to argument.
         if pipe_to != None and type(pipe_to) != str:
             raise RelaxNoneStrError, ('pipe to', pipe_to)
+
+        # Both pipe arguments cannot be None.
+        if pipe_from == None and pipe_to == None:
+            raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
 
         # Execute the functional code.
         diffusion_tensor.copy(pipe_from=pipe_from, pipe_to=pipe_to)

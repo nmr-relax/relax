@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Data as relax_data_store
 from prompt.diffusion_tensor import Diffusion_tensor
-from relax_errors import RelaxBinError, RelaxFloatError, RelaxIntError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
+from relax_errors import RelaxError, RelaxBinError, RelaxFloatError, RelaxIntError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
 from test_suite.unit_tests.diffusion_tensor_testing_base import Diffusion_tensor_base_class
 
 # Unit test imports.
@@ -42,7 +42,7 @@ class Test_diffusion_tensor(Diffusion_tensor_base_class, TestCase):
 
 
     def test_copy_argfail_pipe_from(self):
-        """Proper failure of the diffusion_tensor.copy() user function for the pipe_from argument."""
+        """The pipe_from arg test of the diffusion_tensor.copy() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -55,7 +55,7 @@ class Test_diffusion_tensor(Diffusion_tensor_base_class, TestCase):
 
 
     def test_copy_argfail_pipe_to(self):
-        """Proper failure of the diffusion_tensor.copy() user function for the pipe_to argument."""
+        """The pipe_to arg test of the diffusion_tensor.copy() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -65,6 +65,13 @@ class Test_diffusion_tensor(Diffusion_tensor_base_class, TestCase):
 
             # The argument test.
             self.assertRaises(RelaxNoneStrError, self.diffusion_tensor_fns.copy, pipe_to=data[1])
+
+
+    def test_copy_argfail_both_pipes(self):
+        """The pipe_from and pipe_to arg test of the diffusion_tensor.copy() user function."""
+
+        # Test that both cannot be None (the default)!
+        self.assertRaises(RelaxError, self.diffusion_tensor_fns.copy)
 
 
     def test_init_argfail_params(self):
