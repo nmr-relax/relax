@@ -81,3 +81,21 @@ class Diffusion_tensor_base_class:
         self.assertEqual(relax_data_store['orig'].diff_tensor.type, 'sphere')
         self.assertEqual(relax_data_store['orig'].diff_tensor.tm, 1e-9)
 
+
+    def test_init_spheroid(self):
+        """Test the setting up of a spheroidal diffusion tensor.
+
+        The functions tested are both generic_fns.diffusion_tensor.init() and
+        prompt.diffusion_tensor.init().
+        """
+
+        # Initialise the tensor.
+        self.diffusion_tensor_fns.init(params=(8.6, 1.3, 600, -20), time_scale=1e-9, d_scale=1e7, angle_units='deg', param_types=2, spheroid_type='prolate', fixed=0)
+
+        # Test the diffusion tensor 
+        self.assertEqual(relax_data_store['orig'].diff_tensor.type, 'spheroid')
+        self.assertEqual(relax_data_store['orig'].diff_tensor.tm, 8.6e-9)
+        self.assertEqual(relax_data_store['orig'].diff_tensor.Da, 1e7)
+        self.assertEqual(relax_data_store['orig'].diff_tensor.theta, 240.0)
+        self.assertEqual(relax_data_store['orig'].diff_tensor.phi, 340.0)
+
