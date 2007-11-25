@@ -1237,8 +1237,17 @@ def set(self, run=None, value=None, param=None):
         self.fold_angles(self.run)
 
 
-def sphere():
-    """Function for setting up spherical diffusion."""
+def sphere(params=None, time_scale=None, param_types=None):
+    """Function for setting up a spherical diffusion tensor.
+    
+    @param params:      The diffusion tensor parameter.
+    @type params:       float
+    @param time_scale:  The correlation time scaling value.
+    @type time_scale:   float
+    @param param_types: The type of parameter supplied.  If 0, then the parameter is tm.  If 1, then
+                        the parameter is Diso.
+    @type param_types:  int
+    """
 
     # Alias the current data pipe.
     cdp = relax_data_store[relax_data_store.current_pipe]
@@ -1247,24 +1256,24 @@ def sphere():
     cdp.diff_tensor.type = 'sphere'
 
     # tm.
-    if self.param_types == 0:
+    if param_types == 0:
         # Scaling.
-        tm = self.params * self.time_scale
+        tm = params * time_scale
 
         # Set the parameters.
-        self.set(run=self.run, value=[tm], param=['tm'])
+        set(value=[tm], param=['tm'])
 
     # Diso
-    elif self.param_types == 1:
+    elif param_types == 1:
         # Scaling.
-        Diso = self.params * self.d_scale
+        Diso = params * d_scale
 
         # Set the parameters.
-        self.set(run=self.run, value=[Diso], param=['Diso'])
+        set(value=[Diso], param=['Diso'])
 
     # Unknown parameter combination.
     else:
-        raise RelaxUnknownParamCombError, ('param_types', self.param_types)
+        raise RelaxUnknownParamCombError, ('param_types', param_types)
 
 
 def spheroid(self):
