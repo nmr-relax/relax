@@ -372,13 +372,13 @@ def fold_angles(sim_index=None):
 
         # Normal value.
         if sim_index == None:
-            cdp.diff_tensor.theta = angles.wrap_angles(theta, 0.0, pi)
-            cdp.diff_tensor.phi = angles.wrap_angles(phi, 0.0, 2.0*pi)
+            cdp.diff_tensor.theta = wrap_angles(theta, 0.0, pi)
+            cdp.diff_tensor.phi = wrap_angles(phi, 0.0, 2.0*pi)
 
         # Simulated theta and phi values.
         else:
-            cdp.diff_tensor.theta_sim[sim_index] = angles.wrap_angles(theta_sim, theta - pi/2.0, theta + pi/2.0)
-            cdp.diff_tensor.phi_sim[sim_index]   = angles.wrap_angles(phi_sim, phi - pi, phi + pi)
+            cdp.diff_tensor.theta_sim[sim_index] = wrap_angles(theta_sim, theta - pi/2.0, theta + pi/2.0)
+            cdp.diff_tensor.phi_sim[sim_index]   = wrap_angles(phi_sim, phi - pi, phi + pi)
 
     # Ellipsoid.
     elif cdp.diff_tensor.type == 'ellipsoid':
@@ -395,15 +395,15 @@ def fold_angles(sim_index=None):
 
         # Normal value.
         if sim_index == None:
-            cdp.diff_tensor.alpha = angles.wrap_angles(alpha, 0.0, 2.0*pi)
-            cdp.diff_tensor.beta  = angles.wrap_angles(beta, 0.0, 2.0*pi)
-            cdp.diff_tensor.gamma = angles.wrap_angles(gamma, 0.0, 2.0*pi)
+            cdp.diff_tensor.alpha = wrap_angles(alpha, 0.0, 2.0*pi)
+            cdp.diff_tensor.beta  = wrap_angles(beta, 0.0, 2.0*pi)
+            cdp.diff_tensor.gamma = wrap_angles(gamma, 0.0, 2.0*pi)
 
         # Simulated alpha, beta, and gamma values.
         else:
-            cdp.diff_tensor.alpha_sim[sim_index] = angles.wrap_angles(alpha_sim, alpha - pi, alpha + pi)
-            cdp.diff_tensor.beta_sim[sim_index]  = angles.wrap_angles(beta_sim, beta - pi, beta + pi)
-            cdp.diff_tensor.gamma_sim[sim_index] = angles.wrap_angles(gamma_sim, gamma - pi, gamma + pi)
+            cdp.diff_tensor.alpha_sim[sim_index] = wrap_angles(alpha_sim, alpha - pi, alpha + pi)
+            cdp.diff_tensor.beta_sim[sim_index]  = wrap_angles(beta_sim, beta - pi, beta + pi)
+            cdp.diff_tensor.gamma_sim[sim_index] = wrap_angles(gamma_sim, gamma - pi, gamma + pi)
 
 
     # Remove the glide reflection and translational symmetries.
