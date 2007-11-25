@@ -148,7 +148,7 @@ def diff_data_exists():
     cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Loop over the objects in the data structure.
-    for name in cdp.diff_tensor:
+    for name in dir(cdp.diff_tensor):
         # White list names.
         if name in white_list:
             continue
