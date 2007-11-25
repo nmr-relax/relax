@@ -150,21 +150,21 @@ def delete():
     relax_data_store[relax_data_store.current_pipe].diff_tensor = DiffTensorData()
 
 
-def diff_data_exists():
+def diff_data_exists(pipe=None):
     """Function for determining if diffusion data exists in the current data pipe.
 
+    @param pipe:    The data pipe to search for data in.
+    @type pipe:     str
     @return:        The answer to the question.
     @type return:   bool
     """
 
-    # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
-
-    # White list objects.
-    white_list = []
+    # The data pipe to check.
+    if pipe == None:
+        pipe = relax_data_store.current_pipe
 
     # Test if tm exists.
-    if hasattr(cdp.diff_tensor, 'tm'):
+    if hasattr(relax_data_store[pipe].diff_tensor, 'tm'):
         return True
     else:
         return False
