@@ -515,17 +515,17 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     # Spherical diffusion.
     if type(params) == float:
         num_params = 1
-        sphere()
+        sphere(params, time_scale, param_types)
 
     # Spheroidal diffusion.
     elif (type(params) == tuple or type(params) == list) and len(params) == 4:
         num_params = 4
-        spheroid()
+        spheroid(params, time_scale, param_types)
 
     # Ellipsoidal diffusion.
     elif (type(params) == tuple or type(params) == list) and len(params) == 6:
         num_params = 6
-        ellipsoid()
+        ellipsoid(params, time_scale, param_types)
 
     # Unknown.
     else:
