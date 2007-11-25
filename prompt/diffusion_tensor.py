@@ -87,12 +87,12 @@ class Diffusion_tensor:
             print text
 
         # The pipe_from argument.
-        if type(pipe_from) != str:
-            raise RelaxStrError, ('pipe from', pipe_from)
+        if pipe_from != None and type(pipe_from) != str:
+            raise RelaxNoneStrError, ('pipe from', pipe_from)
 
         # The pipe_to argument.
-        if type(pipe_to) != str:
-            raise RelaxStrError, ('pipe to', pipe_to)
+        if pipe_to != None and type(pipe_to) != str:
+            raise RelaxNoneStrError, ('pipe to', pipe_to)
 
         # Execute the functional code.
         diffusion_tensor.copy(pipe_from=pipe_from, pipe_to=pipe_to)
