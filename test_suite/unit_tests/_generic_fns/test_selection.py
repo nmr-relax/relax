@@ -124,6 +124,101 @@ class Test_selection(TestCase):
         self.failUnless(selection.exists_mol_res_spin_data())
 
 
+    def test_exists_mol_res_spin_data_single_mol(self):
+        """Determine if molecule-residue-spin data exists (with data for a single molecule).
+
+        The function tested is generic_fns.selection.exists_mol_res_spin_data().
+        """
+
+        # Remove all data.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
+        # Name the first molecule.
+        relax_data_store['orig'].mol[0].name = 'TOM40'
+
+        # This should be True.
+        self.failUnless(selection.exists_mol_res_spin_data())
+
+
+    def test_exists_mol_res_spin_data_single_res_name(self):
+        """Determine if molecule-residue-spin data exists (when a single residue is named).
+
+        The function tested is generic_fns.selection.exists_mol_res_spin_data().
+        """
+
+        # Remove all data.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
+        # Name the first residue.
+        relax_data_store['orig'].mol[0].res[0].name = 'Lys'
+
+        # This should be True.
+        self.failUnless(selection.exists_mol_res_spin_data())
+
+
+    def test_exists_mol_res_spin_data_single_res_num(self):
+        """Determine if molecule-residue-spin data exists (when a single residue is numbered).
+
+        The function tested is generic_fns.selection.exists_mol_res_spin_data().
+        """
+
+        # Remove all data.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
+        # Number the first residue.
+        relax_data_store['orig'].mol[0].res[0].num = 1
+
+        # This should be True.
+        self.failUnless(selection.exists_mol_res_spin_data())
+
+
+    def test_exists_mol_res_spin_data_single_spin_name(self):
+        """Determine if molecule-residue-spin data exists (when a single spin is named).
+
+        The function tested is generic_fns.selection.exists_mol_res_spin_data().
+        """
+
+        # Remove all data.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
+        # Name the first spin.
+        relax_data_store['orig'].mol[0].res[0].spin[0].name = 'NH'
+
+        # This should be True.
+        self.failUnless(selection.exists_mol_res_spin_data())
+
+
+    def test_exists_mol_res_spin_data_single_spin_num(self):
+        """Determine if molecule-residue-spin data exists (when a single spin is numbered).
+
+        The function tested is generic_fns.selection.exists_mol_res_spin_data().
+        """
+
+        # Remove all data.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
+        # Number the first spin.
+        relax_data_store['orig'].mol[0].res[0].spin[0].num = 234
+
+        # This should be True.
+        self.failUnless(selection.exists_mol_res_spin_data())
+
+
     def test_exists_mol_res_spin_data_no_data(self):
         """Determine if molecule-residue-spin data exists when no data exists.
 
