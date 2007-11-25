@@ -25,9 +25,8 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns import residue
 from prompt.diffusion_tensor import Diffusion_tensor
-from relax_errors import RelaxError, RelaxIntError, RelaxNoPipeError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxNumTupleError
 from test_suite.unit_tests.diffusion_tensor_testing_base import Diffusion_tensor_base_class
 
 # Unit test imports.
@@ -40,4 +39,19 @@ class Test_diffusion_tensor(Diffusion_tensor_base_class, TestCase):
 
     # Instantiate the user function class.
     diffusion_tensor_fns = Diffusion_tensor(fake_relax.fake_instance())
-    residue_fns = residue
+
+
+    def test_init_argfail_params(self):
+        """Proper failure of the diffusion_tensor.init() user function for the params argument."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the float list arguments, and skip them.
+            if data[0] == 'float tuple':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNumTupleError, self.diffusion_tensor_fns.init, params=data[1])
+
+
+
