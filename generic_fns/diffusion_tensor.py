@@ -871,6 +871,9 @@ def set(value=None, param=None):
     supplied.
     """
 
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
     # Initialise.
     geo_params = []
     geo_values = []
