@@ -69,8 +69,8 @@ class Diffusion_tensor_base_class:
         # Delete the tensor data.
         self.diffusion_tensor_fns.delete()
 
-        # Test that tm is not 0.0.
-        self.assertNotEqual(relax_data_store['orig'].diff_tensor.tm, 0.0)
+        # Test that tm does not exist.
+        self.failIf(hasattr(relax_data_store['orig'].diff_tensor, 'tm'))
 
 
     def test_delete_fail_no_data(self):
