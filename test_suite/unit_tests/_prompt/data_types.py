@@ -107,3 +107,12 @@ DATA_TYPES.append(['str', '10'])
 
 # Tuple.
 DATA_TYPES.append(['tuple', (None, None)])
+
+# Tuples of floats.
+DATA_TYPES.append(['float tuple', (0.0,)])
+DATA_TYPES.append(['float tuple', (0.0, 0.0)])
+DATA_TYPES.append(['float tuple', (0.0, 0.0, 0.0)])
+DATA_TYPES.append(['float tuple', (0.0, 0.0, 0.0, 0.0)])
+DATA_TYPES.append(['float tuple', (0.0, 0.0, 0.0, 0.0, 0.0)])
+DATA_TYPES.append(['float tuple', (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)])
+DATA_TYPES.append(['float tuple', (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)])
