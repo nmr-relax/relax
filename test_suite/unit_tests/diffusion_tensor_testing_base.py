@@ -22,7 +22,7 @@
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError, RelaxTensorError
 
 
 
@@ -71,6 +71,31 @@ class Diffusion_tensor_base_class:
 
         # Test that tm is not 0.0.
         self.assertNotEqual(relax_data_store['orig'].diff_tensor.tm, 0.0)
+
+
+    def test_delete_fail_no_data(self):
+        """Failure of deletion of the diffusion tensor data structure when there is no data.
+
+        The functions tested are both generic_fns.diffusion_tensor.delete() and
+        prompt.diffusion_tensor.delete().
+        """
+
+        # Try to delete the tensor data.
+        self.assertRaises(RelaxTensorError, self.diffusion_tensor_fns.delete)
+
+
+    def test_delete_fail_no_pipe(self):
+        """Failure of deletion of the diffusion tensor data structure when there is no data pipe.
+
+        The functions tested are both generic_fns.diffusion_tensor.delete() and
+        prompt.diffusion_tensor.delete().
+        """
+
+        # Reset the relax data store.
+        relax_data_store.__reset__()
+
+        # Try to delete the tensor data.
+        self.assertRaises(RelaxNoPipeError, self.diffusion_tensor_fns.delete)
 
 
     def test_init_bad_angle_units(self):
