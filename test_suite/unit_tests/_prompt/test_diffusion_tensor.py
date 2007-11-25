@@ -93,6 +93,10 @@ class Test_diffusion_tensor(Diffusion_tensor_base_class, TestCase):
                 elif data[0] != 'float tuple':
                     self.assertRaises(RelaxNumTupleError, self.diffusion_tensor_fns.init, params=data[1])
 
+            # The argument test.
+            else:
+                self.assertRaises(RelaxNumTupleError, self.diffusion_tensor_fns.init, params=data[1])
+
 
     def test_init_argfail_time_scale(self):
         """The time_scale arg test of the diffusion_tensor.init() user function."""
