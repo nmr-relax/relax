@@ -26,6 +26,7 @@ from math import cos, pi, sin
 from re import search
 
 # relax module imports.
+from angles import wrap_angles
 from data import Data as relax_data_store
 import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
@@ -319,7 +320,7 @@ def ellipsoid():
     set(run=run, value=[alpha, beta, gamma], param=['alpha', 'beta', 'gamma'])
 
 
-def fold_angles(run=None, sim_index=None):
+def fold_angles(sim_index=None):
     """Wrap the Euler or spherical angles and remove the glide reflection and translational symmetries.
 
     Wrap the angles such that
@@ -344,10 +345,15 @@ def fold_angles(run=None, sim_index=None):
         alpha - pi <= alpha_sim <= alpha + pi
         beta - pi/2 <= beta_sim <= beta + pi/2
         gamma - pi <= gamma_sim <= gamma + pi
+
+
+    @param sim_index:   The simulation index.  If set to None then the actual values will be folded
+                        rather than the simulation values.
+    @type sim_index:    int or None
     """
 
-    # Arguments.
-    run = run
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
 
     # Wrap the angles.
