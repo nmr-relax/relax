@@ -101,6 +101,7 @@ class Diffusion_tensor_base_class:
         # Test the diffusion tensor 
         self.assertEqual(relax_data_store['orig'].diff_tensor.type, 'sphere')
         self.assertEqual(relax_data_store['orig'].diff_tensor.tm, 1e-9)
+        self.assertEqual(relax_data_store['orig'].diff_tensor.fixed, 1)
 
 
     def test_init_spheroid(self):
