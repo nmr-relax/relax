@@ -518,7 +518,7 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Test if diffusion tensor data already exists.
-    if not diff_data_exists():
+    if diff_data_exists():
         raise RelaxTensorError
 
     # Check the validity of the angle_units argument.
