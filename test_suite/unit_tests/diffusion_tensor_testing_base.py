@@ -142,7 +142,7 @@ class Diffusion_tensor_base_class:
         self.diffusion_tensor_fns.init(params=(13.9, 1.8, 0.7, 10.6, -23.3, 0.34), time_scale=1e-9, d_scale=1e7, angle_units='rad', param_types=0, fixed=1)
 
         # Copy the tensor to the test pipe.
-        self.diffusion_tensor_fns.copy('test')
+        self.diffusion_tensor_fns.copy(pipe_to='test')
 
         # Test the diffusion tensor.
         self.assertEqual(relax_data_store['test'].diff_tensor.type, 'ellipsoid')
