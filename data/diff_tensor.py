@@ -22,7 +22,7 @@
 
 # Python module imports.
 from re import search
-from math import cos, pi, sin
+from math import cos, sin
 from Numeric import Float64, dot, identity, transpose, zeros
 from types import ListType
 
