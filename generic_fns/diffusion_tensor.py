@@ -663,7 +663,7 @@ def return_conversion_factor(self, param):
         return 1.0
 
 
-def return_data_name(self, name):
+def return_data_name(name):
     """
     Diffusion tensor parameter string matching patterns
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
