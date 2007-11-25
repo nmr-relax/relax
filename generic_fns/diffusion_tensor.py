@@ -158,103 +158,105 @@ def diff_data_exists():
         return False
 
 
-def display(run=None):
+def display():
     """Function for displaying the diffusion tensor."""
 
-    # Test if the run exists.
-    if not run in relax_data_store.run_names:
-        raise RelaxNoPipeError, run
+    # Test if the current data pipe exists.
+    pipes.test(relax_data_store.current_pipe)
 
-    # Test if diffusion tensor data for the run exists.
-    if not relax_data_store.diff.has_key(run):
-        raise RelaxNoTensorError, run
+    # Test if diffusion tensor data exists.
+    if not diff_data_exists():
+        raise RelaxNoTensorError
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Spherical diffusion.
-    if relax_data_store.diff[run].type == 'sphere':
+    if cdp.diff_tensor.type == 'sphere':
         # Tensor type.
         print "Type:  Spherical diffusion"
 
         # Parameters.
         print "\nParameters {tm}."
-        print "tm (s):  " + `relax_data_store.diff[run].tm`
+        print "tm (s):  " + `cdp.diff_tensor.tm`
 
         # Alternate parameters.
         print "\nAlternate parameters {Diso}."
-        print "Diso (1/s):  " + `relax_data_store.diff[run].Diso`
+        print "Diso (1/s):  " + `cdp.diff_tensor.Diso`
 
         # Fixed flag.
-        print "\nFixed:  " + `relax_data_store.diff[run].fixed`
+        print "\nFixed:  " + `cdp.diff_tensor.fixed`
 
     # Spheroidal diffusion.
-    elif relax_data_store.diff[run].type == 'spheroid':
+    elif cdp.diff_tensor.type == 'spheroid':
         # Tensor type.
         print "Type:  Spheroidal diffusion"
 
         # Parameters.
         print "\nParameters {tm, Da, theta, phi}."
-        print "tm (s):  " + `relax_data_store.diff[run].tm`
-        print "Da (1/s):  " + `relax_data_store.diff[run].Da`
-        print "theta (rad):  " + `relax_data_store.diff[run].theta`
-        print "phi (rad):  " + `relax_data_store.diff[run].phi`
+        print "tm (s):  " + `cdp.diff_tensor.tm`
+        print "Da (1/s):  " + `cdp.diff_tensor.Da`
+        print "theta (rad):  " + `cdp.diff_tensor.theta`
+        print "phi (rad):  " + `cdp.diff_tensor.phi`
 
         # Alternate parameters.
         print "\nAlternate parameters {Diso, Da, theta, phi}."
-        print "Diso (1/s):  " + `relax_data_store.diff[run].Diso`
-        print "Da (1/s):  " + `relax_data_store.diff[run].Da`
-        print "theta (rad):  " + `relax_data_store.diff[run].theta`
-        print "phi (rad):  " + `relax_data_store.diff[run].phi`
+        print "Diso (1/s):  " + `cdp.diff_tensor.Diso`
+        print "Da (1/s):  " + `cdp.diff_tensor.Da`
+        print "theta (rad):  " + `cdp.diff_tensor.theta`
+        print "phi (rad):  " + `cdp.diff_tensor.phi`
 
         # Alternate parameters.
         print "\nAlternate parameters {Dpar, Dper, theta, phi}."
-        print "Dpar (1/s):  " + `relax_data_store.diff[run].Dpar`
-        print "Dper (1/s):  " + `relax_data_store.diff[run].Dper`
-        print "theta (rad):  " + `relax_data_store.diff[run].theta`
-        print "phi (rad):  " + `relax_data_store.diff[run].phi`
+        print "Dpar (1/s):  " + `cdp.diff_tensor.Dpar`
+        print "Dper (1/s):  " + `cdp.diff_tensor.Dper`
+        print "theta (rad):  " + `cdp.diff_tensor.theta`
+        print "phi (rad):  " + `cdp.diff_tensor.phi`
 
         # Alternate parameters.
         print "\nAlternate parameters {tm, Dratio, theta, phi}."
-        print "tm (s):  " + `relax_data_store.diff[run].tm`
-        print "Dratio:  " + `relax_data_store.diff[run].Dratio`
-        print "theta (rad):  " + `relax_data_store.diff[run].theta`
-        print "phi (rad):  " + `relax_data_store.diff[run].phi`
+        print "tm (s):  " + `cdp.diff_tensor.tm`
+        print "Dratio:  " + `cdp.diff_tensor.Dratio`
+        print "theta (rad):  " + `cdp.diff_tensor.theta`
+        print "phi (rad):  " + `cdp.diff_tensor.phi`
 
         # Fixed flag.
-        print "\nFixed:  " + `relax_data_store.diff[run].fixed`
+        print "\nFixed:  " + `cdp.diff_tensor.fixed`
 
     # Ellipsoidal diffusion.
-    elif relax_data_store.diff[run].type == 'ellipsoid':
+    elif cdp.diff_tensor.type == 'ellipsoid':
         # Tensor type.
         print "Type:  Ellipsoidal diffusion"
 
         # Parameters.
         print "\nParameters {tm, Da, Dr, alpha, beta, gamma}."
-        print "tm (s):  " + `relax_data_store.diff[run].tm`
-        print "Da (1/s):  " + `relax_data_store.diff[run].Da`
-        print "Dr:  " + `relax_data_store.diff[run].Dr`
-        print "alpha (rad):  " + `relax_data_store.diff[run].alpha`
-        print "beta (rad):  " + `relax_data_store.diff[run].beta`
-        print "gamma (rad):  " + `relax_data_store.diff[run].gamma`
+        print "tm (s):  " + `cdp.diff_tensor.tm`
+        print "Da (1/s):  " + `cdp.diff_tensor.Da`
+        print "Dr:  " + `cdp.diff_tensor.Dr`
+        print "alpha (rad):  " + `cdp.diff_tensor.alpha`
+        print "beta (rad):  " + `cdp.diff_tensor.beta`
+        print "gamma (rad):  " + `cdp.diff_tensor.gamma`
 
         # Alternate parameters.
         print "\nAlternate parameters {Diso, Da, Dr, alpha, beta, gamma}."
-        print "Diso (1/s):  " + `relax_data_store.diff[run].Diso`
-        print "Da (1/s):  " + `relax_data_store.diff[run].Da`
-        print "Dr:  " + `relax_data_store.diff[run].Dr`
-        print "alpha (rad):  " + `relax_data_store.diff[run].alpha`
-        print "beta (rad):  " + `relax_data_store.diff[run].beta`
-        print "gamma (rad):  " + `relax_data_store.diff[run].gamma`
+        print "Diso (1/s):  " + `cdp.diff_tensor.Diso`
+        print "Da (1/s):  " + `cdp.diff_tensor.Da`
+        print "Dr:  " + `cdp.diff_tensor.Dr`
+        print "alpha (rad):  " + `cdp.diff_tensor.alpha`
+        print "beta (rad):  " + `cdp.diff_tensor.beta`
+        print "gamma (rad):  " + `cdp.diff_tensor.gamma`
 
         # Alternate parameters.
         print "\nAlternate parameters {Dx, Dy, Dz, alpha, beta, gamma}."
-        print "Dx (1/s):  " + `relax_data_store.diff[run].Dx`
-        print "Dy (1/s):  " + `relax_data_store.diff[run].Dy`
-        print "Dz (1/s):  " + `relax_data_store.diff[run].Dz`
-        print "alpha (rad):  " + `relax_data_store.diff[run].alpha`
-        print "beta (rad):  " + `relax_data_store.diff[run].beta`
-        print "gamma (rad):  " + `relax_data_store.diff[run].gamma`
+        print "Dx (1/s):  " + `cdp.diff_tensor.Dx`
+        print "Dy (1/s):  " + `cdp.diff_tensor.Dy`
+        print "Dz (1/s):  " + `cdp.diff_tensor.Dz`
+        print "alpha (rad):  " + `cdp.diff_tensor.alpha`
+        print "beta (rad):  " + `cdp.diff_tensor.beta`
+        print "gamma (rad):  " + `cdp.diff_tensor.gamma`
 
         # Fixed flag.
-        print "\nFixed:  " + `relax_data_store.diff[run].fixed`
+        print "\nFixed:  " + `cdp.diff_tensor.fixed`
 
 
 def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, param_types=None):
