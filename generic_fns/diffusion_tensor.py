@@ -137,6 +137,29 @@ def delete(self, run=None):
     self.relax.generic.runs.eliminate_unused_runs()
 
 
+def diff_data_exists():
+    """Function for determining if diffusion data exists in the current data pipe.
+
+    @return:        The answer to the question.
+    @type return:   bool
+    """
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Loop over the objects in the data structure.
+    for name in cdp.diff_tensor:
+        # White list names.
+        if name in white_list:
+            continue
+
+        # Data exists.
+        return True
+
+    # No data.
+    return False
+
+
 def display(self, run=None):
     """Function for displaying the diffusion tensor."""
 
