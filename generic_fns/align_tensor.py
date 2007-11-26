@@ -549,32 +549,6 @@ def return_data_name(name):
     raise RelaxUnknownParamError, name
 
 
-def return_eigenvalues(run=None):
-    """Function for returning Dx, Dy, and Dz."""
-
-    # Argument.
-    if run:
-        run = run
-
-    # Reassign the data.
-    data = cdp.diff_tensor
-
-    # Diso.
-    Diso = 1.0 / (6.0 * data.tm)
-
-    # Dx.
-    Dx = Diso - 1.0/3.0 * data.Da * (1.0  +  3.0 * data.Dr)
-
-    # Dy.
-    Dy = Diso - 1.0/3.0 * data.Da * (1.0  -  3.0 * data.Dr)
-
-    # Dz.
-    Dz = Diso + 2.0/3.0 * data.Da
-
-    # Return the eigenvalues.
-    return Dx, Dy, Dz
-
-
 def return_units(param):
     """Function for returning a string representing the parameters units.
 
