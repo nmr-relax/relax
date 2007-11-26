@@ -21,16 +21,15 @@
 ###############################################################################
 
 # Python module imports.
-from math import acos, pi, sin
+from math import acos, sin
 from Numeric import dot
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError
+from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
 
 
-
-def angles():
+def angle_diff_frame():
     """Function for calculating the angle defining the XH vector in the diffusion frame."""
 
     # Test if the current data pipe exists.
@@ -49,7 +48,7 @@ def angles():
 
     # Test if the diffusion tensor data is loaded.
     if not diff_data_exists():
-        raise RelaxNoTensorError
+        raise RelaxNoTensorError, 'diffusion'
 
     # Sphere.
     if cdp.diff_tensor.type == 'sphere':

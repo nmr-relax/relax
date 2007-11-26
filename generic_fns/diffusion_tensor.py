@@ -58,11 +58,11 @@ def copy(pipe_from=None, pipe_to=None):
 
     # Test if pipe_from contains diffusion tensor data.
     if not diff_data_exists(pipe_from):
-        raise RelaxNoTensorError
+        raise RelaxNoTensorError, 'diffusion'
 
     # Test if pipe_to contains diffusion tensor data.
     if diff_data_exists(pipe_to):
-        raise RelaxTensorError
+        raise RelaxTensorError, 'diffusion'
 
     # Copy the data.
     relax_data_store[pipe_to].diff_tensor = deepcopy(relax_data_store[pipe_from].diff_tensor)
@@ -141,7 +141,7 @@ def delete():
 
     # Test if diffusion tensor data exists.
     if not diff_data_exists():
-        raise RelaxNoTensorError
+        raise RelaxNoTensorError, 'diffusion'
 
     # Delete the diffusion data.
     del(relax_data_store[relax_data_store.current_pipe].diff_tensor)
@@ -178,7 +178,7 @@ def display():
 
     # Test if diffusion tensor data exists.
     if not diff_data_exists():
-        raise RelaxNoTensorError
+        raise RelaxNoTensorError, 'diffusion'
 
     # Alias the current data pipe.
     cdp = relax_data_store[relax_data_store.current_pipe]
@@ -533,7 +533,7 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
 
     # Test if diffusion tensor data already exists.
     if diff_data_exists():
-        raise RelaxTensorError
+        raise RelaxTensorError, 'diffusion'
 
     # Check the validity of the angle_units argument.
     valid_types = ['deg', 'rad']
