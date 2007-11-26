@@ -91,8 +91,7 @@ def copy(pipe_from=None, pipe_to=None):
 def data_names():
     """Function for returning a list of names of data structures associated with the sequence."""
 
-    names = [ 'diff_type',
-              'diff_params' ]
+    names = [ 'align_params' ]
 
     return names
 
