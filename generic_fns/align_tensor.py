@@ -180,92 +180,21 @@ def display():
     # Alias the current data pipe.
     cdp = relax_data_store[relax_data_store.current_pipe]
 
-    # Spherical alignment.
-    if cdp.diff_tensor.type == 'sphere':
-        # Tensor type.
-        print "Type:  Spherical alignment"
+    # Parameters.
+    print "Parameters {Axx, Ayy, Axy, Axz, Ayz}."
+    print "%-15s%15.8f" % ("Axx (Hz):  ", cdp.align_tensor.Axx)
+    print "%-15s%15.8f" % ("Ayy (Hz):  ", cdp.align_tensor.Ayy)
+    print "%-15s%15.8f" % ("Axy (Hz):  ", cdp.align_tensor.Axy)
+    print "%-15s%15.8f" % ("Axz (Hz):  ", cdp.align_tensor.Axz)
+    print "%-15s%15.8f" % ("Ayz (Hz):  ", cdp.align_tensor.Ayz)
 
-        # Parameters.
-        print "\nParameters {tm}."
-        print "tm (s):  " + `cdp.diff_tensor.tm`
-
-        # Alternate parameters.
-        print "\nAlternate parameters {Diso}."
-        print "Diso (1/s):  " + `cdp.diff_tensor.Diso`
-
-        # Fixed flag.
-        print "\nFixed:  " + `cdp.diff_tensor.fixed`
-
-    # Spheroidal alignment.
-    elif cdp.diff_tensor.type == 'spheroid':
-        # Tensor type.
-        print "Type:  Spheroidal alignment"
-
-        # Parameters.
-        print "\nParameters {tm, Da, theta, phi}."
-        print "tm (s):  " + `cdp.diff_tensor.tm`
-        print "Da (1/s):  " + `cdp.diff_tensor.Da`
-        print "theta (rad):  " + `cdp.diff_tensor.theta`
-        print "phi (rad):  " + `cdp.diff_tensor.phi`
-
-        # Alternate parameters.
-        print "\nAlternate parameters {Diso, Da, theta, phi}."
-        print "Diso (1/s):  " + `cdp.diff_tensor.Diso`
-        print "Da (1/s):  " + `cdp.diff_tensor.Da`
-        print "theta (rad):  " + `cdp.diff_tensor.theta`
-        print "phi (rad):  " + `cdp.diff_tensor.phi`
-
-        # Alternate parameters.
-        print "\nAlternate parameters {Dpar, Dper, theta, phi}."
-        print "Dpar (1/s):  " + `cdp.diff_tensor.Dpar`
-        print "Dper (1/s):  " + `cdp.diff_tensor.Dper`
-        print "theta (rad):  " + `cdp.diff_tensor.theta`
-        print "phi (rad):  " + `cdp.diff_tensor.phi`
-
-        # Alternate parameters.
-        print "\nAlternate parameters {tm, Dratio, theta, phi}."
-        print "tm (s):  " + `cdp.diff_tensor.tm`
-        print "Dratio:  " + `cdp.diff_tensor.Dratio`
-        print "theta (rad):  " + `cdp.diff_tensor.theta`
-        print "phi (rad):  " + `cdp.diff_tensor.phi`
-
-        # Fixed flag.
-        print "\nFixed:  " + `cdp.diff_tensor.fixed`
-
-    # Ellipsoidal alignment.
-    elif cdp.diff_tensor.type == 'ellipsoid':
-        # Tensor type.
-        print "Type:  Ellipsoidal alignment"
-
-        # Parameters.
-        print "\nParameters {tm, Da, Dr, alpha, beta, gamma}."
-        print "tm (s):  " + `cdp.diff_tensor.tm`
-        print "Da (1/s):  " + `cdp.diff_tensor.Da`
-        print "Dr:  " + `cdp.diff_tensor.Dr`
-        print "alpha (rad):  " + `cdp.diff_tensor.alpha`
-        print "beta (rad):  " + `cdp.diff_tensor.beta`
-        print "gamma (rad):  " + `cdp.diff_tensor.gamma`
-
-        # Alternate parameters.
-        print "\nAlternate parameters {Diso, Da, Dr, alpha, beta, gamma}."
-        print "Diso (1/s):  " + `cdp.diff_tensor.Diso`
-        print "Da (1/s):  " + `cdp.diff_tensor.Da`
-        print "Dr:  " + `cdp.diff_tensor.Dr`
-        print "alpha (rad):  " + `cdp.diff_tensor.alpha`
-        print "beta (rad):  " + `cdp.diff_tensor.beta`
-        print "gamma (rad):  " + `cdp.diff_tensor.gamma`
-
-        # Alternate parameters.
-        print "\nAlternate parameters {Dx, Dy, Dz, alpha, beta, gamma}."
-        print "Dx (1/s):  " + `cdp.diff_tensor.Dx`
-        print "Dy (1/s):  " + `cdp.diff_tensor.Dy`
-        print "Dz (1/s):  " + `cdp.diff_tensor.Dz`
-        print "alpha (rad):  " + `cdp.diff_tensor.alpha`
-        print "beta (rad):  " + `cdp.diff_tensor.beta`
-        print "gamma (rad):  " + `cdp.diff_tensor.gamma`
-
-        # Fixed flag.
-        print "\nFixed:  " + `cdp.diff_tensor.fixed`
+    # Alternate parameters.
+    print "\nAlternate parameters {Azz, Axx-yy, Axy, Axz, Ayz} (the Pales default format)."
+    print "%-15s%15.8f" % ("Azz (Hz):  ", cdp.align_tensor.Azz)
+    print "%-15s%15.8f" % ("Axx-yy (Hz):  ", cdp.align_tensor.Axxyy)
+    print "%-15s%15.8f" % ("Axy (Hz):  ", cdp.align_tensor.Axy)
+    print "%-15s%15.8f" % ("Axz (Hz):  ", cdp.align_tensor.Axz)
+    print "%-15s%15.8f" % ("Ayz (Hz):  ", cdp.align_tensor.Ayz)
 
 
 def fold_angles(sim_index=None):
