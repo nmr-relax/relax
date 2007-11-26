@@ -817,366 +817,142 @@ def set(value=None, param=None):
             value[i] = default_value(object_names[i])
 
         # Geometric parameter.
-        if param[i] in ['tm', 'Diso', 'Da', 'Dratio', 'Dper', 'Dpar', 'Dr', 'Dx', 'Dy', 'Dz']:
+        if param[i] in ['Axx', 'Ayy', 'Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz']:
             geo_params.append(param[i])
             geo_values.append(value[i])
 
         # Orientational parameter.
-        if param[i] in ['theta', 'phi', 'alpha', 'beta', 'gamma']:
+        if param[i] in ['alpha', 'beta', 'gamma']:
             orient_params.append(param[i])
             orient_values.append(value[i])
 
 
-    # Spherical alignment.
-    ######################
-
-    if cdp.diff_tensor.type == 'sphere':
-        # Geometric parameters.
-        #######################
-
-        # A single geometric parameter.
-        if len(geo_params) == 1:
-            # The single parameter tm.
-            if geo_params[0] == 'tm':
-                cdp.diff_tensor.tm = geo_values[0]
-
-            # The single parameter Diso.
-            elif geo_params[0] == 'Diso':
-                cdp.diff_tensor.tm = 1.0 / (6.0 * geo_values[0])
-
-            # Cannot set the single parameter.
-            else:
-                raise RelaxError, "The geometric alignment parameter " + `geo_params[0]` + " cannot be set."
-
-        # More than one geometric parameters.
-        elif len(geo_params) > 1:
-            raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
-
-
-        # Orientational parameters.
-        ###########################
-
-        # ???
-        if len(orient_params):
-            raise RelaxError, "For spherical alignment, the orientation parameters " + `orient_params` + " should not exist."
-
-
-    # Spheroidal alignment.
+    # Geometric parameters.
     #######################
 
-    elif cdp.diff_tensor.type == 'spheroid':
-        # Geometric parameters.
-        #######################
+    # A single geometric parameter.
+    if len(geo_params) == 1:
+        # The single parameter Axx.
+        if geo_params[0] == 'Axx':
+            cdp.align_tensor.Axx = geo_values[0]
 
-        # A single geometric parameter.
-        if len(geo_params) == 1:
-            # The single parameter tm.
-            if geo_params[0] == 'tm':
-                cdp.diff_tensor.tm = geo_values[0]
+        # The single parameter Ayy.
+        elif geo_params[0] == 'Ayy':
+            cdp.align_tensor.Ayy = geo_values[0]
 
-            # The single parameter Diso.
-            elif geo_params[0] == 'Diso':
-                cdp.diff_tensor.tm = 1.0 / (6.0 * geo_values[0])
+        # The single parameter Axy.
+        elif geo_params[0] == 'Axy':
+            cdp.align_tensor.Axy = geo_values[0]
 
-            # The single parameter Da.
-            elif geo_params[0] == 'Da':
-                cdp.diff_tensor.Da = geo_values[0]
+        # The single parameter Axz.
+        elif geo_params[0] == 'Axz':
+            cdp.align_tensor.Axz = geo_values[0]
 
-            # The single parameter Dratio.
-            elif geo_params[0] == 'Dratio':
-                Dratio = geo_values[0]
-                cdp.diff_tensor.Da = (Dratio - 1.0) / (2.0 * cdp.diff_tensor.tm * (Dratio + 2.0))
+        # The single parameter Azy.
+        elif geo_params[0] == 'Azy':
+            cdp.align_tensor.Azy = geo_values[0]
 
-            # Cannot set the single parameter.
-            else:
-                raise RelaxError, "The geometric alignment parameter " + `geo_params[0]` + " cannot be set."
+        # Cannot set the single parameter.
+        else:
+            raise RelaxError, "The geometric alignment parameter " + `geo_params[0]` + " cannot be set."
 
-        # Two geometric parameters.
-        elif len(geo_params) == 2:
-            # The geometric parameter set {tm, Da}.
-            if geo_params.count('tm') == 1 and geo_params.count('Da') == 1:
-                # The parameters.
-                tm = geo_values[geo_params.index('tm')]
-                Da = geo_values[geo_params.index('Da')]
+    # 5 geometric parameters.
+    elif len(geo_params) == 5:
+        # The geometric parameter set {Axx, Ayy, Axy, Axz, Ayz}.
+        if geo_params.count('Axx') == 1 and geo_params.count('Ayy') == 1 and geo_params.count('Axy') == 1 and geo_params.count('Axz') == 1 and geo_params.count('Ayz') == 1:
+            # The parameters.
+            Axx = geo_values[geo_params.index('Axx')]
+            Ayy = geo_values[geo_params.index('Ayy')]
+            Axy = geo_values[geo_params.index('Axy')]
+            Axz = geo_values[geo_params.index('Axz')]
+            Ayz = geo_values[geo_params.index('Ayz')]
 
-                # Set the internal parameter values.
-                cdp.diff_tensor.tm = tm
-                cdp.diff_tensor.Da = Da
+            # Set the internal parameter values.
+            cdp.align_tensor.Axx = Axx
+            cdp.align_tensor.Ayy = Ayy
+            cdp.align_tensor.Axy = Axy
+            cdp.align_tensor.Axz = Axz
+            cdp.align_tensor.Ayz = Ayz
 
-            # The geometric parameter set {Diso, Da}.
-            elif geo_params.count('Diso') == 1 and geo_params.count('Da') == 1:
-                # The parameters.
-                Diso = geo_values[geo_params.index('Diso')]
-                Da = geo_values[geo_params.index('Da')]
+        # The geometric parameter set {Azz, Axxyy, Axy, Axz, Ayz}.
+        elif geo_params.count('Azz') == 1 and geo_params.count('Axxyy') == 1 and geo_params.count('Axy') == 1 and geo_params.count('Axz') == 1 and geo_params.count('Ayz') == 1:
+            # The parameters.
+            Azz = geo_values[geo_params.index('Azz')]
+            Axxyy = geo_values[geo_params.index('Axxyy')]
+            Axy = geo_values[geo_params.index('Axy')]
+            Axz = geo_values[geo_params.index('Axz')]
+            Ayz = geo_values[geo_params.index('Ayz')]
 
-                # Set the internal parameter values.
-                cdp.diff_tensor.tm = 1.0 / (6.0 * Diso)
-                cdp.diff_tensor.Da = Da
+            # Set the internal parameter values.
+            cdp.align_tensor.Axx = -0.5(Azz-Axxyy)
+            cdp.align_tensor.Ayy = -0.5(Azz+Axxyy)
+            cdp.align_tensor.Axy = Axy
+            cdp.align_tensor.Axz = Axz
+            cdp.align_tensor.Ayz = Ayz
 
-            # The geometric parameter set {tm, Dratio}.
-            elif geo_params.count('tm') == 1 and geo_params.count('Dratio') == 1:
-                # The parameters.
-                tm = geo_values[geo_params.index('tm')]
-                Dratio = geo_values[geo_params.index('Dratio')]
-
-                # Set the internal parameter values.
-                cdp.diff_tensor.tm = tm
-                cdp.diff_tensor.Da = (Dratio - 1.0) / (2.0 * tm * (Dratio + 2.0))
-
-            # The geometric parameter set {Dpar, Dper}.
-            elif geo_params.count('Dpar') == 1 and geo_params.count('Dpar') == 1:
-                # The parameters.
-                Dpar = geo_values[geo_params.index('Dpar')]
-                Dper = geo_values[geo_params.index('Dper')]
-
-                # Set the internal parameter values.
-                cdp.diff_tensor.tm = 1.0 / (2.0 * (Dpar + 2.0*Dper))
-                cdp.diff_tensor.Da = Dpar - Dper
-
-            # The geometric parameter set {Diso, Dratio}.
-            elif geo_params.count('Diso') == 1 and geo_params.count('Dratio') == 1:
-                # The parameters.
-                Diso = geo_values[geo_params.index('Diso')]
-                Dratio = geo_values[geo_params.index('Dratio')]
-
-                # Set the internal parameter values.
-                cdp.diff_tensor.tm = 1.0 / (6.0 * Diso)
-                cdp.diff_tensor.Da = 3.0 * Diso * (Dratio - 1.0) / (Dratio + 2.0)
-
-            # Unknown parameter combination.
-            else:
-                raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
-
-        # More than two geometric parameters.
-        elif len(geo_params) > 2:
+        # Unknown parameter combination.
+        else:
             raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
 
 
-        # Orientational parameters.
-        ###########################
+    # Unknown geometric parameters.
+    else:
+        raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
 
-        # A single orientational parameter.
-        if len(orient_params) == 1:
-            # The single parameter theta.
-            if orient_params[0] == 'theta':
-                cdp.diff_tensor.theta = orient_values[orient_params.index('theta')]
 
-            # The single parameter phi.
-            elif orient_params[0] == 'phi':
-                cdp.diff_tensor.phi = orient_values[orient_params.index('phi')]
+    # Orientational parameters.
+    ###########################
 
-        # Two orientational parameters.
-        elif len(orient_params) == 2:
-            # The orientational parameter set {theta, phi}.
-            if orient_params.count('theta') == 1 and orient_params.count('phi') == 1:
-                cdp.diff_tensor.theta = orient_values[orient_params.index('theta')]
-                cdp.diff_tensor.phi = orient_values[orient_params.index('phi')]
+    # A single orientational parameter.
+    if len(orient_params) == 1:
+        # The single parameter alpha.
+        if orient_params[0] == 'alpha':
+            cdp.align_tensor.alpha = orient_values[orient_params.index('alpha')]
 
-            # Unknown parameter combination.
-            else:
-                raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
+        # The single parameter beta.
+        elif orient_params[0] == 'beta':
+            cdp.align_tensor.beta = orient_values[orient_params.index('beta')]
 
-        # More than two orientational parameters.
-        elif len(orient_params) > 2:
+        # The single parameter gamma.
+        elif orient_params[0] == 'gamma':
+            cdp.align_tensor.gamma = orient_values[orient_params.index('gamma')]
+
+    # Two orientational parameters.
+    elif len(orient_params) == 2:
+        # The orientational parameter set {alpha, beta}.
+        if orient_params.count('alpha') == 1 and orient_params.count('beta') == 1:
+            cdp.align_tensor.alpha = orient_values[orient_params.index('alpha')]
+            cdp.align_tensor.beta = orient_values[orient_params.index('beta')]
+
+        # The orientational parameter set {alpha, gamma}.
+        if orient_params.count('alpha') == 1 and orient_params.count('gamma') == 1:
+            cdp.align_tensor.alpha = orient_values[orient_params.index('alpha')]
+            cdp.align_tensor.gamma = orient_values[orient_params.index('gamma')]
+
+        # The orientational parameter set {beta, gamma}.
+        if orient_params.count('beta') == 1 and orient_params.count('gamma') == 1:
+            cdp.align_tensor.beta = orient_values[orient_params.index('beta')]
+            cdp.align_tensor.gamma = orient_values[orient_params.index('gamma')]
+
+        # Unknown parameter combination.
+        else:
             raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
 
+    # Three orientational parameters.
+    elif len(orient_params) == 3:
+        # The orientational parameter set {alpha, beta, gamma}.
+        if orient_params.count('alpha') == 1 and orient_params.count('beta') == 1:
+            cdp.align_tensor.alpha = orient_values[orient_params.index('alpha')]
+            cdp.align_tensor.beta = orient_values[orient_params.index('beta')]
+            cdp.align_tensor.gamma = orient_values[orient_params.index('gamma')]
 
-    # Ellipsoidal alignment.
-    ########################
-
-    elif cdp.diff_tensor.type == 'ellipsoid':
-        # Geometric parameters.
-        #######################
-
-        # A single geometric parameter.
-        if len(geo_params) == 1:
-            # The single parameter tm.
-            if geo_params[0] == 'tm':
-                cdp.diff_tensor.tm = geo_values[0]
-
-            # The single parameter Diso.
-            elif geo_params[0] == 'Diso':
-                cdp.diff_tensor.tm = 1.0 / (6.0 * geo_values[0])
-
-            # The single parameter Da.
-            elif geo_params[0] == 'Da':
-                cdp.diff_tensor.Da = geo_values[0]
-
-            # The single parameter Dr.
-            elif geo_params[0] == 'Dr':
-                cdp.diff_tensor.Dr = geo_values[0]
-
-            # Cannot set the single parameter.
-            else:
-                raise RelaxError, "The geometric alignment parameter " + `geo_params[0]` + " cannot be set."
-
-        # Two geometric parameters.
-        elif len(geo_params) == 2:
-            # The geometric parameter set {tm, Da}.
-            if geo_params.count('tm') == 1 and geo_params.count('Da') == 1:
-                # The parameters.
-                tm = geo_values[geo_params.index('tm')]
-                Da = geo_values[geo_params.index('Da')]
-
-                # Set the internal parameter values.
-                cdp.diff_tensor.tm = tm
-                cdp.diff_tensor.Da = Da
-
-            # The geometric parameter set {tm, Dr}.
-            elif geo_params.count('tm') == 1 and geo_params.count('Dr') == 1:
-                # The parameters.
-                tm = geo_values[geo_params.index('tm')]
-                Dr = geo_values[geo_params.index('Dr')]
-
-                # Set the internal parameter values.
-                cdp.diff_tensor.tm = tm
-                cdp.diff_tensor.Dr = Dr
-
-            # The geometric parameter set {Diso, Da}.
-            elif geo_params.count('Diso') == 1 and geo_params.count('Da') == 1:
-                # The parameters.
-                Diso = geo_values[geo_params.index('Diso')]
-                Da = geo_values[geo_params.index('Da')]
-
-                # Set the internal parameter values.
-                cdp.diff_tensor.tm = 1.0 / (6.0 * Diso)
-                cdp.diff_tensor.Da = Da
-
-            # The geometric parameter set {Diso, Dr}.
-            elif geo_params.count('Diso') == 1 and geo_params.count('Dr') == 1:
-                # The parameters.
-                Diso = geo_values[geo_params.index('Diso')]
-                Dr = geo_values[geo_params.index('Dr')]
-
-                # Set the internal parameter values.
-                cdp.diff_tensor.tm = 1.0 / (6.0 * Diso)
-                cdp.diff_tensor.Dr = Dr
-
-            # The geometric parameter set {Da, Dr}.
-            elif geo_params.count('Da') == 1 and geo_params.count('Dr') == 1:
-                # The parameters.
-                Da = geo_values[geo_params.index('Da')]
-                Dr = geo_values[geo_params.index('Dr')]
-
-                # Set the internal parameter values.
-                cdp.diff_tensor.Da = Da
-                cdp.diff_tensor.Da = Dr
-
-            # Unknown parameter combination.
-            else:
-                raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
-
-        # Three geometric parameters.
-        elif len(geo_params) == 3:
-            # The geometric parameter set {tm, Da, Dr}.
-            if geo_params.count('tm') == 1 and geo_params.count('Da') == 1 and geo_params.count('Dr') == 1:
-                # The parameters.
-                tm = geo_values[geo_params.index('tm')]
-                Da = geo_values[geo_params.index('Da')]
-                Dr = geo_values[geo_params.index('Dr')]
-
-                # Set the internal parameter values.
-                cdp.diff_tensor.tm = tm
-                cdp.diff_tensor.Da = Da
-                cdp.diff_tensor.Dr = Dr
-
-            # The geometric parameter set {Diso, Da, Dr}.
-            elif geo_params.count('Diso') == 1 and geo_params.count('Da') == 1 and geo_params.count('Dr') == 1:
-                # The parameters.
-                Diso = geo_values[geo_params.index('Diso')]
-                Da = geo_values[geo_params.index('Da')]
-                Dr = geo_values[geo_params.index('Dr')]
-
-                # Set the internal parameter values.
-                cdp.diff_tensor.tm = 1.0 / (6.0 * Diso)
-                cdp.diff_tensor.Da = Da
-                cdp.diff_tensor.Dr = Dr
-
-            # The geometric parameter set {Dx, Dy, Dz}.
-            elif geo_params.count('Dx') == 1 and geo_params.count('Dy') == 1 and geo_params.count('Dz') == 1:
-                # The parameters.
-                Dx = geo_values[geo_params.index('Dx')]
-                Dy = geo_values[geo_params.index('Dy')]
-                Dz = geo_values[geo_params.index('Dz')]
-
-                # Set the internal tm value.
-                if Dx + Dy + Dz == 0.0:
-                    cdp.diff_tensor.tm = 1e99
-                else:
-                    cdp.diff_tensor.tm = 0.5 / (Dx + Dy + Dz)
-
-                # Set the internal Da value.
-                cdp.diff_tensor.Da = Dz - 0.5*(Dx + Dy)
-
-                # Set the internal Dr value.
-                if cdp.diff_tensor.Da == 0.0:
-                    cdp.diff_tensor.Dr = (Dy - Dx) * 1e99
-                else:
-                    cdp.diff_tensor.Dr = (Dy - Dx) / (2.0*cdp.diff_tensor.Da)
-
-            # Unknown parameter combination.
-            else:
-                raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
-
-
-        # More than three geometric parameters.
-        elif len(geo_params) > 3:
-            raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
-
-
-        # Orientational parameters.
-        ###########################
-
-        # A single orientational parameter.
-        if len(orient_params) == 1:
-            # The single parameter alpha.
-            if orient_params[0] == 'alpha':
-                cdp.diff_tensor.alpha = orient_values[orient_params.index('alpha')]
-
-            # The single parameter beta.
-            elif orient_params[0] == 'beta':
-                cdp.diff_tensor.beta = orient_values[orient_params.index('beta')]
-
-            # The single parameter gamma.
-            elif orient_params[0] == 'gamma':
-                cdp.diff_tensor.gamma = orient_values[orient_params.index('gamma')]
-
-        # Two orientational parameters.
-        elif len(orient_params) == 2:
-            # The orientational parameter set {alpha, beta}.
-            if orient_params.count('alpha') == 1 and orient_params.count('beta') == 1:
-                cdp.diff_tensor.alpha = orient_values[orient_params.index('alpha')]
-                cdp.diff_tensor.beta = orient_values[orient_params.index('beta')]
-
-            # The orientational parameter set {alpha, gamma}.
-            if orient_params.count('alpha') == 1 and orient_params.count('gamma') == 1:
-                cdp.diff_tensor.alpha = orient_values[orient_params.index('alpha')]
-                cdp.diff_tensor.gamma = orient_values[orient_params.index('gamma')]
-
-            # The orientational parameter set {beta, gamma}.
-            if orient_params.count('beta') == 1 and orient_params.count('gamma') == 1:
-                cdp.diff_tensor.beta = orient_values[orient_params.index('beta')]
-                cdp.diff_tensor.gamma = orient_values[orient_params.index('gamma')]
-
-            # Unknown parameter combination.
-            else:
-                raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
-
-        # Three orientational parameters.
-        elif len(orient_params) == 3:
-            # The orientational parameter set {alpha, beta, gamma}.
-            if orient_params.count('alpha') == 1 and orient_params.count('beta') == 1:
-                cdp.diff_tensor.alpha = orient_values[orient_params.index('alpha')]
-                cdp.diff_tensor.beta = orient_values[orient_params.index('beta')]
-                cdp.diff_tensor.gamma = orient_values[orient_params.index('gamma')]
-
-            # Unknown parameter combination.
-            else:
-                raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
-
-        # More than three orientational parameters.
-        elif len(orient_params) > 3:
+        # Unknown parameter combination.
+        else:
             raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
+
+    # More than three orientational parameters.
+    elif len(orient_params) > 3:
+        raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
 
 
     # Fold the angles in.
@@ -1186,7 +962,7 @@ def set(value=None, param=None):
         fold_angles()
 
 
-def unit_axes():
+def xxx_unit_axes():
     """Function for calculating the unit axes of the alignment tensor.
 
     Spheroid
