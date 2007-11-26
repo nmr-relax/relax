@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.align_tensor import Align_tensor
-from relax_errors import RelaxError, RelaxBinError, RelaxIntError, RelaxNumTupleError
+from relax_errors import RelaxError, RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxNumTupleError
 from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_class
 
 # Unit test imports.
