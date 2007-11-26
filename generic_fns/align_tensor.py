@@ -457,30 +457,42 @@ def init(params=None, scale=1.0, angle_units='deg', param_types=0, errors=0):
     if not angle_units in valid_types:
         raise RelaxError, "The alignment tensor 'angle_units' argument " + `angle_units` + " should be either 'deg' or 'rad'."
 
-    # Set the fixed flag.
-    cdp.diff_tensor.fixed = fixed
+    # (Axx, Ayy, Axy, Axz, Ayz).
+    if param_types == 0:
+        # Unpack the tuple.
+        Axx, Ayy, Axy, Axz, Ayz = params
 
-    # Spherical alignment.
-    if type(params) == float:
-        num_params = 1
-        sphere(params, time_scale, param_types)
+        # Scaling.
+        Axx = Axx * scale
+        Ayy = Ayy * scale
+        Axy = Axy * scale
+        Axz = Axz * scale
+        Ayz = Ayz * scale
 
-    # Spheroidal alignment.
-    elif (type(params) == tuple or type(params) == list) and len(params) == 4:
-        num_params = 4
-        spheroid(params, time_scale, d_scale, angle_units, param_types, spheroid_type)
+        # Set the parameters.
+        set(value=[Axx, Ayy, Axy, Axz, Ayz], param=['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'])
 
-    # Ellipsoidal alignment.
-    elif (type(params) == tuple or type(params) == list) and len(params) == 6:
-        num_params = 6
-        ellipsoid(params, time_scale, d_scale, angle_units, param_types)
+    # (Azz, Axx-yy, Axy, Axz, Ayz).
+    elif param_types == 1:
+        # Unpack the tuple.
+        Azz, Axxyy, Axy, Axz, Ayz = params
 
-    # Unknown.
+        # Scaling.
+        Azz = Azz * scale
+        Axxyy = Axxyy * scale
+        Axy = Axy * scale
+        Axz = Axz * scale
+        Ayz = Ayz * scale
+
+        # Set the parameters.
+        set(value=[Azz, Axxyy, Axy, Axz, Ayz], param=['Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz'])
+
+    # Unknown parameter combination.
     else:
-        raise RelaxError, "The alignment tensor parameters " + `params` + " are of an unknown type."
+        raise RelaxUnknownParamCombError, ('param_types', param_types)
 
     # Test the validity of the parameters.
-    test_params(num_params)
+    test_params()
 
 
 def map_bounds(run, param):
@@ -1209,109 +1221,6 @@ def set(value=None, param=None):
 
     if orient_params:
         fold_angles()
-
-
-def spheroid(params=None, time_scale=None, d_scale=None, angle_units=None, param_types=None, spheroid_type=None):
-    """Function for setting up a spheroidal alignment tensor.
-    
-    @param params:          The alignment tensor parameter.
-    @type params:           float
-    @param time_scale:      The correlation time scaling value.
-    @type time_scale:       float
-    @param d_scale:         The alignment tensor eigenvalue scaling value.
-    @type d_scale:          float
-    @param angle_units:     The units for the angle parameters which can be either 'deg' or 'rad'.
-    @type angle_units:      str
-    @param param_types:     The type of parameters supplied.  These correspond to 0: {tm, Da, theta,
-                            phi}, 1: {Diso, Da, theta, phi}, 2: {tm, Dratio, theta, phi}, 3:  {Dpar,
-                            Dper, theta, phi}, 4: {Diso, Dratio, theta, phi}.
-    @type param_types:      int
-    @param spheroid_type:   A string which, if supplied together with spheroid parameters, will
-                            restrict the tensor to either being 'oblate' or 'prolate'.
-    @type spheroid_type:    str
-    """
-
-    # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
-
-    # The alignment type.
-    cdp.diff_tensor.type = 'spheroid'
-
-    # Spheroid alignment type.
-    allowed_types = [None, 'oblate', 'prolate']
-    if spheroid_type not in allowed_types:
-        raise RelaxError, "The 'spheroid_type' argument " + `spheroid_type` + " should be 'oblate', 'prolate', or None."
-    cdp.diff_tensor.spheroid_type = spheroid_type
-
-    # (tm, Da, theta, phi).
-    if param_types == 0:
-        # Unpack the tuple.
-        tm, Da, theta, phi = params
-
-        # Scaling.
-        tm = tm * time_scale
-        Da = Da * d_scale
-
-        # Set the parameters.
-        set(value=[tm, Da], param=['tm', 'Da'])
-
-    # (Diso, Da, theta, phi).
-    elif param_types == 1:
-        # Unpack the tuple.
-        Diso, Da, theta, phi = params
-
-        # Scaling.
-        Diso = Diso * d_scale
-        Da = Da * d_scale
-
-        # Set the parameters.
-        set(value=[Diso, Da], param=['Diso', 'Da'])
-
-    # (tm, Dratio, theta, phi).
-    elif param_types == 2:
-        # Unpack the tuple.
-        tm, Dratio, theta, phi = params
-
-        # Scaling.
-        tm = tm * time_scale
-
-        # Set the parameters.
-        set(value=[tm, Dratio], param=['tm', 'Dratio'])
-
-    # (Dpar, Dper, theta, phi).
-    elif param_types == 3:
-        # Unpack the tuple.
-        Dpar, Dper, theta, phi = params
-
-        # Scaling.
-        Dpar = Dpar * d_scale
-        Dper = Dper * d_scale
-
-        # Set the parameters.
-        set(value=[Dpar, Dper], param=['Dpar', 'Dper'])
-
-    # (Diso, Dratio, theta, phi).
-    elif param_types == 4:
-        # Unpack the tuple.
-        Diso, Dratio, theta, phi = params
-
-        # Scaling.
-        Diso = Diso * d_scale
-
-        # Set the parameters.
-        set(value=[Diso, Dratio], param=['Diso', 'Dratio'])
-
-    # Unknown parameter combination.
-    else:
-        raise RelaxUnknownParamCombError, ('param_types', param_types)
-
-    # Convert the angles to radians.
-    if angle_units == 'deg':
-        theta = (theta / 360.0) * 2.0 * pi
-        phi = (phi / 360.0) * 2.0 * pi
-
-    # Set the orientational parameters.
-    set(value=[theta, phi], param=['theta', 'phi'])
 
 
 def test_params(num_params):
