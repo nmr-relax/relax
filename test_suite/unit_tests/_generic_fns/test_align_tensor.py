@@ -25,6 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from generic_fns import align_tensor
+from relax_errors import RelaxUnknownParamError
 from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_class
 
 
@@ -34,3 +35,40 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
 
     # Place the generic_fns.align_tensor module into the class namespace.
     align_tensor_fns = align_tensor
+
+
+    def test_return_data_name(self):
+        """The returning of alignment tensor parameter names.
+
+        The function tested is generic_fns.align_tensor.return_data_name().
+        """
+
+        # Test the return of alignment tensor components.
+        self.assertEqual(self.align_tensor_fns.return_data_name('axx'), 'Axx')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Axx'), 'Axx')
+        self.assertEqual(self.align_tensor_fns.return_data_name('ayy'), 'Ayy')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Ayy'), 'Ayy')
+        self.assertEqual(self.align_tensor_fns.return_data_name('azz'), 'Azz')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Azz'), 'Azz')
+        self.assertEqual(self.align_tensor_fns.return_data_name('axy'), 'Axy')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Axy'), 'Axy')
+        self.assertEqual(self.align_tensor_fns.return_data_name('axz'), 'Axz')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Axz'), 'Axz')
+        self.assertEqual(self.align_tensor_fns.return_data_name('ayz'), 'Ayz')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Ayz'), 'Ayz')
+        self.assertEqual(self.align_tensor_fns.return_data_name('axxyy'), 'Axxyy')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Axxyy'), 'Axxyy')
+
+        # Test the return of Euler angles.
+        self.assertEqual(self.align_tensor_fns.return_data_name('a'), 'alpha')
+        self.assertEqual(self.align_tensor_fns.return_data_name('alpha'), 'alpha')
+        self.assertEqual(self.align_tensor_fns.return_data_name('b'), 'beta')
+        self.assertEqual(self.align_tensor_fns.return_data_name('beta'), 'beta')
+        self.assertEqual(self.align_tensor_fns.return_data_name('g'), 'gamma')
+        self.assertEqual(self.align_tensor_fns.return_data_name('gamma'), 'gamma')
+
+        # Test a few things which should fail.
+        self.assertRaises(RelaxUnknownParameter, self.align_tensor_fns.return_data_name, 'c')
+        self.assertRaises(RelaxUnknownParameter, self.align_tensor_fns.return_data_name, '7')
+        self.assertRaises(RelaxUnknownParameter, self.align_tensor_fns.return_data_name, 7)
+        self.assertRaises(RelaxUnknownParameter, self.align_tensor_fns.return_data_name, 'tm')
