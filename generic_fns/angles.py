@@ -30,7 +30,7 @@ from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoS
 
 
 
-def angles():
+def angle_diff_frame():
     """Function for calculating the angle defining the XH vector in the diffusion frame."""
 
     # Test if the current data pipe exists.
