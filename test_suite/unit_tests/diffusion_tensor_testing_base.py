@@ -204,14 +204,14 @@ class Diffusion_tensor_base_class:
         prompt.diffusion_tensor.delete().
         """
 
-        # Set the tm value.
-        relax_data_store['orig'].diff_tensor.tm = 0.0
+        # Initialise the tensor.
+        self.diffusion_tensor_fns.init(params=(8.6, 1.3, 600, -20), time_scale=1e-9, d_scale=1e7, angle_units='deg', param_types=2, spheroid_type='prolate', fixed=0)
 
         # Delete the tensor data.
         self.diffusion_tensor_fns.delete()
 
-        # Test that tm does not exist.
-        self.failIf(hasattr(relax_data_store['orig'].diff_tensor, 'tm'))
+        # Test that the diff_tensor object does not exist.
+        self.failIf(hasattr(relax_data_store['orig'], 'diff_tensor'))
 
 
     def test_delete_fail_no_data(self):

@@ -146,9 +146,6 @@ def delete():
     # Delete the diffusion data.
     del(relax_data_store[relax_data_store.current_pipe].diff_tensor)
 
-    # Put the container back (but empty).
-    relax_data_store[relax_data_store.current_pipe].diff_tensor = DiffTensorData()
-
 
 def diff_data_exists(pipe=None):
     """Function for determining if diffusion data exists in the current data pipe.
@@ -163,8 +160,8 @@ def diff_data_exists(pipe=None):
     if pipe == None:
         pipe = relax_data_store.current_pipe
 
-    # Test if tm exists.
-    if hasattr(relax_data_store[pipe].diff_tensor, 'tm'):
+    # Test if the data structure exists.
+    if hasattr(relax_data_store[pipe], 'diff_tensor'):
         return True
     else:
         return False
@@ -539,6 +536,9 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     valid_types = ['deg', 'rad']
     if not angle_units in valid_types:
         raise RelaxError, "The diffusion tensor 'angle_units' argument " + `angle_units` + " should be either 'deg' or 'rad'."
+
+    # Add the diff_tensor object to the data pipe.
+    cdp.diff_tensor = DiffTensorData()
 
     # Set the fixed flag.
     cdp.diff_tensor.fixed = fixed
