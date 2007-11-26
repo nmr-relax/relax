@@ -22,33 +22,22 @@
 
 # Python module imports.
 from unittest import TestCase
-import sys
 
 # relax module imports.
-from data_types import DATA_TYPES
 from prompt.align_tensor import Align_tensor
 from relax_errors import RelaxBinError, RelaxIntError, RelaxNumTupleError
 from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_class
 
-# Set the variable sys.ps3 (this is required by the user functions).
-sys.ps3 = 'relax> '
-
-
-# A class to act as a container.
-class Container:
-    pass
-
-# Fake normal relax usage of the user function class.
-relax = Container()
-relax.interpreter = Container()
-relax.interpreter.intro = True
+# Unit test imports.
+from data_types import DATA_TYPES
+import fake_relax
 
 
 class Test_align_tensor(Align_tensor_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.align_tensor' module."""
 
     # Instantiate the user function class.
-    align_tensor_fns = Align_tensor(relax)
+    align_tensor_fns = Align_tensor(fake_relax.fake_instance())
 
 
     def test_init_argfail_params(self):
