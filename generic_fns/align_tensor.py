@@ -58,11 +58,11 @@ def copy(pipe_from=None, pipe_to=None):
 
     # Test if pipe_from contains alignment tensor data.
     if not diff_data_exists(pipe_from):
-        raise RelaxNoTensorError
+        raise RelaxNoTensorError, 'alignment'
 
     # Test if pipe_to contains alignment tensor data.
     if diff_data_exists(pipe_to):
-        raise RelaxTensorError
+        raise RelaxTensorError, 'alignment'
 
     # Copy the data.
     relax_data_store[pipe_to].diff_tensor = deepcopy(relax_data_store[pipe_from].diff_tensor)
@@ -141,7 +141,7 @@ def delete():
 
     # Test if alignment tensor data exists.
     if not diff_data_exists():
-        raise RelaxNoTensorError
+        raise RelaxNoTensorError, 'alignment'
 
     # Delete the alignment data.
     del(relax_data_store[relax_data_store.current_pipe].diff_tensor)
@@ -178,7 +178,7 @@ def display():
 
     # Test if alignment tensor data exists.
     if not diff_data_exists():
-        raise RelaxNoTensorError
+        raise RelaxNoTensorError, 'alignment'
 
     # Alias the current data pipe.
     cdp = relax_data_store[relax_data_store.current_pipe]
@@ -450,7 +450,7 @@ def init(params=None, scale=1.0, angle_units='deg', param_types=0, errors=0):
 
     # Test if alignment tensor data already exists.
     if diff_data_exists():
-        raise RelaxTensorError
+        raise RelaxTensorError, 'alignment'
 
     # Check the validity of the angle_units argument.
     valid_types = ['deg', 'rad']
