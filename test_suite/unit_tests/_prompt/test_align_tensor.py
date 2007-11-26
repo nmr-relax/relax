@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.align_tensor import Align_tensor
-from relax_errors import RelaxBinError, RelaxIntError, RelaxNumTupleError
+from relax_errors import RelaxError, RelaxBinError, RelaxIntError, RelaxNumTupleError
 from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_class
 
 # Unit test imports.
@@ -41,16 +41,23 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
 
 
     def test_init_argfail_params(self):
-        """Test the proper failure of the align_tensor.init() user function for the params argument."""
+        """Failure of the params arg of the align_tensor.init() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the float list arguments, and skip them.
-            if data[0] == 'float tuple':
-                continue
+            # Catch the tuple arguments.
+            if data[0] == 'tuple' or data[0] == 'float tuple':
+                # Incorrect tuple length.
+                if len(data[1]) != 5:
+                    self.assertRaises(RelaxError, self.align_tensor_fns.init, params=data[1])
+
+                # Must be a number.
+                elif data[0] != 'float tuple':
+                    self.assertRaises(RelaxNumTupleError, self.align_tensor_fns.init, params=data[1])
 
             # The argument test.
-            self.assertRaises(RelaxNumTupleError, self.align_tensor_fns.init, params=data[1])
+            else:
+                self.assertRaises(RelaxNumTupleError, self.align_tensor_fns.init, params=data[1])
 
 
     def test_init_argfail_param_types(self):
