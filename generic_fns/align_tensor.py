@@ -560,7 +560,7 @@ def set(value=None, param=None):
     If the alignment tensor has not been setup, use the more powerful function
     'alignment_tensor.init' to initialise the tensor parameters.
 
-    The alignment tensor parameters can only be set when the run corresponds to model-free
+    The alignment tensor parameters can only be set when the data pipe corresponds to model-free
     analysis.  The units of the parameters are:
 
         Hertz for Axx, Ayy, Azz, Axxyy, Axy, Axz, Ayz.
