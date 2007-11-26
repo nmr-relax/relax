@@ -33,6 +33,26 @@ import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
 
+def align_data_exists(pipe=None):
+    """Function for determining if alignment data exists in the current data pipe.
+
+    @param pipe:    The data pipe to search for data in.
+    @type pipe:     str
+    @return:        The answer to the question.
+    @type return:   bool
+    """
+
+    # The data pipe to check.
+    if pipe == None:
+        pipe = relax_data_store.current_pipe
+
+    # Test if tm exists.
+    if hasattr(relax_data_store[pipe].diff_tensor, 'tm'):
+        return True
+    else:
+        return False
+
+
 def copy(pipe_from=None, pipe_to=None):
     """Function for copying alignment tensor data from one data pipe to another.
 
@@ -57,11 +77,11 @@ def copy(pipe_from=None, pipe_to=None):
     pipes.test(pipe_to)
 
     # Test if pipe_from contains alignment tensor data.
-    if not diff_data_exists(pipe_from):
+    if not align_data_exists(pipe_from):
         raise RelaxNoTensorError, 'alignment'
 
     # Test if pipe_to contains alignment tensor data.
-    if diff_data_exists(pipe_to):
+    if align_data_exists(pipe_to):
         raise RelaxTensorError, 'alignment'
 
     # Copy the data.
@@ -140,7 +160,7 @@ def delete():
     pipes.test(relax_data_store.current_pipe)
 
     # Test if alignment tensor data exists.
-    if not diff_data_exists():
+    if not align_data_exists():
         raise RelaxNoTensorError, 'alignment'
 
     # Delete the alignment data.
@@ -150,26 +170,6 @@ def delete():
     relax_data_store[relax_data_store.current_pipe].diff_tensor = DiffTensorData()
 
 
-def diff_data_exists(pipe=None):
-    """Function for determining if alignment data exists in the current data pipe.
-
-    @param pipe:    The data pipe to search for data in.
-    @type pipe:     str
-    @return:        The answer to the question.
-    @type return:   bool
-    """
-
-    # The data pipe to check.
-    if pipe == None:
-        pipe = relax_data_store.current_pipe
-
-    # Test if tm exists.
-    if hasattr(relax_data_store[pipe].diff_tensor, 'tm'):
-        return True
-    else:
-        return False
-
-
 def display():
     """Function for displaying the alignment tensor."""
 
@@ -177,7 +177,7 @@ def display():
     pipes.test(relax_data_store.current_pipe)
 
     # Test if alignment tensor data exists.
-    if not diff_data_exists():
+    if not align_data_exists():
         raise RelaxNoTensorError, 'alignment'
 
     # Alias the current data pipe.
@@ -449,7 +449,7 @@ def init(params=None, scale=1.0, angle_units='deg', param_types=0, errors=0):
     cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Test if alignment tensor data already exists.
-    if diff_data_exists():
+    if align_data_exists():
         raise RelaxTensorError, 'alignment'
 
     # Check the validity of the angle_units argument.
