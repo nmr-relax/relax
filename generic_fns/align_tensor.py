@@ -846,8 +846,8 @@ def set(value=None, param=None):
         param[i] = return_data_name(param[i])
 
         # Unknown parameter.
-        if not param[i]:
-            raise RelaxUnknownParamError, ("alignment tensor", param[i])
+        if param[i] == None:
+            raise RelaxUnknownParamError, ("alignment tensor", 'None')
 
         # Default value.
         if value[i] == None:
