@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.align_tensor import Align_tensor
-from relax_errors import RelaxError, RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxNumTupleError
+from relax_errors import RelaxError, RelaxBinError, RelaxFloatError, RelaxIntError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
 from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_class
 
 # Unit test imports.
@@ -91,6 +91,32 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
             # The argument test.
             else:
                 self.assertRaises(RelaxNumTupleError, self.align_tensor_fns.init, params=data[1])
+
+
+    def test_init_argfail_scale(self):
+        """The scale arg test of the align_tensor.init() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the float argument, and skip it.
+            if data[0] == 'float':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxFloatError, self.align_tensor_fns.init, params=(0.0, 0.0, 0.0, 0.0, 0.0), scale=data[1])
+
+
+    def test_init_argfail_angle_units(self):
+        """The angle_units arg test of the align_tensor.init() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.align_tensor_fns.init, params=(0.0, 0.0, 0.0, 0.0, 0.0), angle_units=data[1])
 
 
     def test_init_argfail_param_types(self):
