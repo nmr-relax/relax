@@ -21,13 +21,12 @@
 ###############################################################################
 
 # Python module imports.
-from math import acos, pi, sin
+from math import acos, sin
 from Numeric import dot
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError
-
+from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
 
 
 def angle_diff_frame():
