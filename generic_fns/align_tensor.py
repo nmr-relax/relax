@@ -491,9 +491,6 @@ def init(params=None, scale=1.0, angle_units='deg', param_types=0, errors=0):
     else:
         raise RelaxUnknownParamCombError, ('param_types', param_types)
 
-    # Test the validity of the parameters.
-    test_params()
-
 
 def map_bounds(run, param):
     """The function for creating bounds for the mapping function."""
@@ -1187,46 +1184,6 @@ def set(value=None, param=None):
 
     if orient_params:
         fold_angles()
-
-
-def test_params(num_params):
-    """Function for testing the validity of the input parameters."""
-
-    # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
-
-    # An allowable error to account for machine precision, optimisation quality, etc.
-    error = 1e-4
-
-    # tm.
-    tm = cdp.diff_tensor.tm
-    if tm <= 0.0 or tm > 1e-6:
-        raise RelaxError, "The tm value of " + `tm` + " should be between zero and one microsecond."
-
-    # Spheroid.
-    if num_params == 4:
-        # Parameters.
-        Diso = 1.0 / (6.0 * cdp.diff_tensor.tm)
-        Da = cdp.diff_tensor.Da
-
-        # Da.
-        if Da < (-1.5*Diso - error*Diso) or Da > (3.0*Diso + error*Diso):
-            raise RelaxError, "The Da value of " + `Da` + " should be between -3/2 * Diso and 3Diso."
-
-    # Ellipsoid.
-    if num_params == 6:
-        # Parameters.
-        Diso = 1.0 / (6.0 * cdp.diff_tensor.tm)
-        Da = cdp.diff_tensor.Da
-        Dr = cdp.diff_tensor.Dr
-
-        # Da.
-        if Da < (0.0 - error*Diso) or Da > (3.0*Diso + error*Diso):
-            raise RelaxError, "The Da value of " + `Da` + " should be between zero and 3Diso."
-
-        # Dr.
-        if Dr < (0.0 - error) or Dr > (1.0 + error):
-            raise RelaxError, "The Dr value of " + `Dr` + " should be between zero and one."
 
 
 def unit_axes():
