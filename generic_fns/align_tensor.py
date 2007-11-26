@@ -30,7 +30,7 @@ from angles import wrap_angles
 from data import Data as relax_data_store
 from data.diff_tensor import DiffTensorData
 import pipes
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
 
 def copy(pipe_from=None, pipe_to=None):
@@ -654,6 +654,10 @@ def return_data_name(name):
     | The third Euler angle of the alignment tensor - gamma  | 'gamma'      | '^g$' or 'gamma' |
     |________________________________________________________|______________|__________________|
     """
+
+    # Enforce that the name must be a string.
+    if type(name) != str:
+        raise RelaxStrError, ('name', name)
 
     # Axx.
     if search('^[Aa]xx$', name):
