@@ -752,7 +752,7 @@ def return_units(param):
 
 def set(value=None, param=None):
     """
-    Diffusion tensor set details
+    Alignment tensor set details
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     If the alignment tensor has not been setup, use the more powerful function
@@ -761,37 +761,22 @@ def set(value=None, param=None):
     The alignment tensor parameters can only be set when the run corresponds to model-free
     analysis.  The units of the parameters are:
 
-        Inverse seconds for tm.
-        Seconds for Diso, Da, Dx, Dy, Dz, Dpar, Dper.
-        Unitless for Dratio and Dr.
-        Radians for all angles (alpha, beta, gamma, theta, phi).
+        Hertz for Axx, Ayy, Azz, Axxyy, Axy, Axz, Ayz.
+        Radians for all angles (alpha, beta, gamma).
 
 
     When setting a alignment tensor parameter, the residue number has no effect.  As the
     internal parameters of spherical alignment are {tm}, spheroidal alignment are {tm, Da,
     theta, phi}, and ellipsoidal alignment are {tm, Da, Dr, alpha, beta, gamma}, supplying
-    geometric parameters must be done in the following way.  If a single geometric parameter is
-    supplied, it must be one of tm, Diso, Da, Dr, or Dratio.  For the parameters Dpar, Dper, Dx,
-    Dy, and Dx, it is not possible to determine how to use the currently set values together
-    with the supplied value to calculate the new internal parameters.  For spheroidal alignment,
-    when supplying multiple geometric parameters, the set must belong to one of
+    geometric parameters must be done in the following way.  
 
-        {tm, Da},
-        {Diso, Da},
-        {tm, Dratio},
-        {Dpar, Dper},
-        {Diso, Dratio},
+    If a single geometric parameter is supplied, it must be one of Axx, Ayy, Axy, Axz, Ayz.  For the
+    parameters Azz and Axxyy , it is not possible to determine how to use the currently set values
+    together with the supplied value to calculate the new internal parameters.  When supplying
+    multiple geometric parameters, the set must belong to one of
 
-    where either theta, phi, or both orientational parameters can be additionally supplied.  For
-    ellipsoidal alignment, again when supplying multiple geometric parameters, the set must
-    belong to one of
-
-        {tm, Da, Dr},
-        {Diso, Da, Dr},
-        {Dx, Dy, Dz},
-
-    where any number of the orientational parameters, alpha, beta, or gamma can be additionally
-    supplied.
+        {Axx, Ayy, Axy, Axz, Ayz},
+        {Azz, Axxyy, Axy, Axz, Ayz}.
     """
 
     # Alias the current data pipe.
@@ -848,9 +833,9 @@ def set(value=None, param=None):
         elif geo_params[0] == 'Axz':
             cdp.align_tensor.Axz = geo_values[0]
 
-        # The single parameter Azy.
-        elif geo_params[0] == 'Azy':
-            cdp.align_tensor.Azy = geo_values[0]
+        # The single parameter Ayz.
+        elif geo_params[0] == 'Ayz':
+            cdp.align_tensor.Ayz = geo_values[0]
 
         # Cannot set the single parameter.
         else:
