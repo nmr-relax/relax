@@ -625,7 +625,7 @@ def return_conversion_factor(param):
 
 def return_data_name(name):
     """
-    Diffusion tensor parameter string matching patterns
+    Alignment tensor parameter string matching patterns
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     ____________________________________________________________________________________________
@@ -633,88 +633,55 @@ def return_data_name(name):
     | Data type                                              | Object name  | Patterns         |
     |________________________________________________________|______________|__________________|
     |                                                        |              |                  |
-    | Global correlation time - tm                           | 'tm'         | '^tm$'           |
+    | The xx component of the alignment tensor - Axx         | 'Axx'        | '[Aa]xx'         |
     |                                                        |              |                  |
-    | Isotropic component of the alignment tensor - Diso     | 'Diso'       | '[Dd]iso'        |
+    | The yy component of the alignment tensor - Ayy         | 'Ayy'        | '[Aa]yy'         |
     |                                                        |              |                  |
-    | Anisotropic component of the alignment tensor - Da     | 'Da'         | '[Dd]a'          |
+    | The zz component of the alignment tensor - Azz         | 'Azz'        | '[Aa]zz'         |
     |                                                        |              |                  |
-    | Rhombic component of the alignment tensor - Dr         | 'Dr'         | '[Dd]r$'         |
+    | The xy component of the alignment tensor - Axy         | 'Axy'        | '[Aa]xy'         |
     |                                                        |              |                  |
-    | Eigenvalue associated with the x-axis of the alignment | 'Dx'         | '[Dd]x'          |
-    | alignment tensor - Dx                                  |              |                  |
+    | The xz component of the alignment tensor - Axz         | 'Axz'        | '[Aa]xz'         |
     |                                                        |              |                  |
-    | Eigenvalue associated with the y-axis of the alignment | 'Dy'         | '[Dd]y'          |
-    | alignment tensor - Dy                                  |              |                  |
+    | The yz component of the alignment tensor - Ayz         | 'Ayz'        | '[Aa]yz'         |
     |                                                        |              |                  |
-    | Eigenvalue associated with the z-axis of the alignment | 'Dz'         | '[Dd]z'          |
-    | alignment tensor - Dz                                  |              |                  |
+    | The xx-yy component of the alignment tensor - Axx-yy   | 'Axxyy'      | '[Aa]xxyy'       |
     |                                                        |              |                  |
-    | Diffusion coefficient parallel to the major axis of    | 'Dpar'       | '[Dd]par'        |
-    | the spheroid alignment tensor - Dpar                   |              |                  |
+    | The first Euler angle of the alignment tensor - alpha  | 'alpha'      | '^a$' or 'alpha' |
     |                                                        |              |                  |
-    | Diffusion coefficient perpendicular to the major axis  | 'Dper'       | '[Dd]per'        |
-    | of the spheroid alignment tensor - Dper                |              |                  |
+    | The second Euler angle of the alignment tensor - beta  | 'beta'       | '^b$' or 'beta'  |
     |                                                        |              |                  |
-    | Ratio of the parallel and perpendicular components of  | 'Dratio'     | '[Dd]ratio'      |
-    | the spheroid alignment tensor - Dratio                 |              |                  |
-    |                                                        |              |                  |
-    | The first Euler angle of the ellipsoid alignment       | 'alpha'      | '^a$' or 'alpha' |
-    | tensor - alpha                                         |              |                  |
-    |                                                        |              |                  |
-    | The second Euler angle of the ellipsoid alignment      | 'beta'       | '^b$' or 'beta'  |
-    | tensor - beta                                          |              |                  |
-    |                                                        |              |                  |
-    | The third Euler angle of the ellipsoid alignment       | 'gamma'      | '^g$' or 'gamma' |
-    | tensor - gamma                                         |              |                  |
-    |                                                        |              |                  |
-    | The polar angle defining the major axis of the         | 'theta'      | 'theta'          |
-    | spheroid alignment tensor - theta                      |              |                  |
-    |                                                        |              |                  |
-    | The azimuthal angle defining the major axis of the     | 'phi'        | 'phi'            |
-    | spheroid alignment tensor - phi                        |              |                  |
+    | The third Euler angle of the alignment tensor - gamma  | 'gamma'      | '^g$' or 'gamma' |
     |________________________________________________________|______________|__________________|
     """
 
-    # Local tm.
-    if search('^tm$', name):
-        return 'tm'
+    # Axx.
+    if search('[Aa]xx', name):
+        return 'Axx'
 
-    # Diso.
-    if search('[Dd]iso', name):
-        return 'Diso'
+    # Ayy.
+    if search('[Aa]yy', name):
+        return 'Ayy'
 
-    # Da.
-    if search('[Dd]a', name):
-        return 'Da'
+    # Azz.
+    if search('[Aa]zz', name):
+        return 'Azz'
 
-    # Dr.
-    if search('[Dd]r$', name):
-        return 'Dr'
+    # Axy.
+    if search('[Aa]xy', name):
+        return 'Axy'
 
-    # Dx.
-    if search('[Dd]x', name):
-        return 'Dx'
+    # Axz.
+    if search('[Aa]xz', name):
+        return 'Axz'
 
-    # Dy.
-    if search('[Dd]y', name):
-        return 'Dy'
+    # Ayz.
+    if search('[Aa]yz', name):
+        return 'Ayz'
 
-    # Dz.
-    if search('[Dd]z', name):
-        return 'Dz'
-
-    # Dpar.
-    if search('[Dd]par', name):
-        return 'Dpar'
-
-    # Dper.
-    if search('[Dd]per', name):
-        return 'Dper'
-
-    # Dratio.
-    if search('[Dd]ratio', name):
-        return 'Dratio'
+    # Axx-yy.
+    if search('[Aa]xxyy', name):
+        return 'Axxyy'
 
     # alpha.
     if search('^a$', name) or search('alpha', name):
@@ -727,14 +694,6 @@ def return_data_name(name):
     # gamma.
     if search('^g$', name) or search('gamma', name):
         return 'gamma'
-
-    # theta.
-    if search('theta', name):
-        return 'theta'
-
-    # phi.
-    if search('phi', name):
-        return 'phi'
 
 
 def return_eigenvalues(run=None):
