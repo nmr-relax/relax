@@ -425,30 +425,21 @@ def fold_angles(sim_index=None):
                 cdp.diff_tensor.gamma_sim[sim_index] = cdp.diff_tensor.gamma_sim[sim_index] + pi
 
 
-def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=1):
+def init(params=None, scale=1.0, angle_units='deg', param_types=0, errors=0):
     """Function for initialising the alignment tensor.
 
     @param params:          The alignment tensor parameters.
     @type params:           float
-    @param time_scale:      The correlation time scaling value.
-    @type time_scale:       float
-    @param d_scale:         The alignment tensor eigenvalue scaling value.
-    @type d_scale:          float
-    @param angle_units:     The units for the angle parameters.
-    @type angle_units:      str (either 'deg' or 'rad')
-    @param param_types:     The type of parameters supplied.  For spherical alignment, the flag
-                            values correspond to 0: tm, 1: Diso.  For spheroidal alignment, 0: {tm,
-                            Da, theta, phi}, 1: {Diso, Da, theta, phi}, 2: {tm, Dratio, theta, phi},
-                            3:  {Dpar, Dper, theta, phi}, 4: {Diso, Dratio, theta, phi}.  For
-                            ellipsoidal alignment, 0: {tm, Da, Dr, alpha, beta, gamma}, 1: {Diso,
-                            Da, Dr, alpha, beta, gamma}, 2: {Dx, Dy, Dz, alpha, beta, gamma}.
+    @param scale:           The alignment tensor eigenvalue scaling value.
+    @type scale:            float
+    @param angle_units:     The units for the angle parameters (either 'deg' or 'rad').
+    @type angle_units:      str
+    @param param_types:     The type of parameters supplied.  The flag values correspond to, 0:
+                            {Axx, Ayy, Axy, Axz, Ayz}, and 1: {Azz, Axx-yy, Axy, Axz, Ayz}.
     @type param_types:      int
-    @param spheroid_type:   A string which, if supplied together with spheroid parameters, will
-                            restrict the tensor to either being 'oblate' or 'prolate'.
-    @type spheroid_type:    str
-    @param fixed:           A flag specifying whether the alignment tensor is fixed or can be
-                            optimised.
-    @type fixed:            bin
+    @param errors:          A flag which determines if the alignment tensor data or its errors are
+                            being input.
+    @type errors:           bin
     """
 
     # Test if the current data pipe exists.
