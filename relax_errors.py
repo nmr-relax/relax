@@ -628,10 +628,10 @@ class RelaxUnknownDataTypeError(BaseError):
 # Unknown parameter.
 class RelaxUnknownParamError(BaseError):
     def __init__(self, name, param_type=None):
-        if param_type:
-            self.text = "The " + param_type + " parameter " + `name` + " is unknown."
+        if param_type != None:
+            self.text = "The " + name + " parameter, " + `param_type` + ", is unknown."
         else:
-            self.text = "The parameter " + `name` + " is unknown."
+            self.text = "The " + name + " parameter is unknown."
         if Debug:
             self.save_state()
 
