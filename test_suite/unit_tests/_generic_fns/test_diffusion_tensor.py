@@ -25,6 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from generic_fns import diffusion_tensor
+from relax_errors import RelaxStrError, RelaxUnknownParamError
 from test_suite.unit_tests.diffusion_tensor_testing_base import Diffusion_tensor_base_class
 
 
@@ -34,3 +35,47 @@ class Test_diffusion_tensor(Diffusion_tensor_base_class, TestCase):
 
     # Place the generic_fns.diffusion_tensor module into the class namespace.
     diffusion_tensor_fns = diffusion_tensor
+
+
+    def test_return_data_name(self):
+        """The returning of diffusion tensor parameter names.
+
+        The function tested is generic_fns.diffusion_tensor.return_data_name().
+        """
+
+        # Test the return of diffusion tensor Eigenvalue components.
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('tm'), 'tm')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('diso'), 'Diso')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('Diso'), 'Diso')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('da'), 'Da')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('Da'), 'Da')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('dr'), 'Dr')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('Dr'), 'Dr')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('dx'), 'Dx')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('Dx'), 'Dx')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('dy'), 'Dy')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('Dy'), 'Dy')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('dz'), 'Dz')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('Dz'), 'Dz')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('dpar'), 'Dpar')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('Dpar'), 'Dpar')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('dper'), 'Dper')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('Dper'), 'Dper')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('dratio'), 'Dratio')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('Dratio'), 'Dratio')
+
+        # Test the return of Euler and spherical angles.
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('a'), 'alpha')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('alpha'), 'alpha')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('b'), 'beta')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('beta'), 'beta')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('g'), 'gamma')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('gamma'), 'gamma')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('theta'), 'theta')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('phi'), 'phi')
+
+        # Test a few things which should fail.
+        self.assertRaises(RelaxUnknownParamError, self.diffusion_tensor_fns.return_data_name, 'c')
+        self.assertRaises(RelaxUnknownParamError, self.diffusion_tensor_fns.return_data_name, '7')
+        self.assertRaises(RelaxStrError, self.diffusion_tensor_fns.return_data_name, 7)
+        self.assertRaises(RelaxUnknownParamError, self.diffusion_tensor_fns.return_data_name, 'tmm')
