@@ -135,13 +135,17 @@ class Align_tensor:
         align_tensor.display()
 
 
-    def init(self, params=None, param_types=0, errors=0):
+    def init(self, params=None, scale=1.0, angle_units='deg', param_types=0, errors=0):
         """Function for initialising the alignment tensor.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         params:  The alignment tensor data.
+
+        scale:  The alignment tensor eigenvalue scaling value.
+
+        angle_units:  The units for the angle parameters.
 
         param_types:  A flag to select different parameter combinations.
 
@@ -156,7 +160,8 @@ class Align_tensor:
         the parameters of the tensor, which can be specified by the param_types argument, where the
         values correspond to
 
-            0:  (Szz, Sxx-yy, Sxy, Sxz, Syz)  (in units of Hertz),
+            0:  (Axx, Ayy, Axy, Axz, Ayz)  (in units of Hertz),
+            1:  (Azz, Axx-yy, Axy, Axz, Ayz)  (Pales format in units of Hertz),
 
         (other formats may be implemented later).
 
@@ -166,18 +171,22 @@ class Align_tensor:
 
         To set a rhombic tensor to the run 'CaM', type one of:
 
-        relax> align_tensor.init((-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05, 2.8599e-04))
-        relax> align_tensor.init((-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05, 2.8599e-04), 0)
+        relax> align_tensor.init((-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05, 2.8599e-04),
+                                 param_types=1)
+        relax> align_tensor.init((-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05, 2.8599e-04),
+                                 param_types=1)
         relax> align_tensor.init(params=(-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05,
-                                 2.8599e-04))
+                                 2.8599e-04), param_types=1)
         relax> align_tensor.init(params=(-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05,
-                                 2.8599e-04), param_types=0)
+                                 2.8599e-04), param_types=1)
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.init("
             text = text + "params=" + `params`
+            text = text + ", scale=" + `scale`
+            text = text + ", angle_units=" + `angle_units`
             text = text + ", param_types=" + `param_types`
             text = text + ", errors=" + `errors` + ")"
             print text
@@ -192,6 +201,14 @@ class Align_tensor:
                 if type(params[i]) != float and type(params[i]) != int:
                     raise RelaxNumTupleError, ('alignment tensor parameters', params)
 
+        # Scale argument.
+        if type(scale) != float:
+            raise RelaxFloatError, ('scale', scale)
+
+        # Angle units argument.
+        if type(angle_units) != str:
+            raise RelaxStrError, ('angle units', angle_units)
+
         # Parameter types argument.
         if type(param_types) != int:
             raise RelaxIntError, ('parameter types', param_types)
@@ -201,4 +218,4 @@ class Align_tensor:
             raise RelaxBinError, ('errors flag', errors)
 
         # Execute the functional code.
-        align_tensor.init(params=params, param_types=param_types, errors=errors)
+        align_tensor.init(params=params, scale=scale, angle_units=angle_units, param_types=param_types, errors=errors)
