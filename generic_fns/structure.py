@@ -295,7 +295,7 @@ class Structure:
 
             # Test if the diffusion tensor data is loaded.
             if not relax_data_store.diff.has_key(self.run):
-                raise RelaxNoTensorError, self.run
+                raise RelaxNoTensorError, 'diffusion'
 
             # Test if the PDB file of the macromolecule has been loaded.
             if not relax_data_store.pdb.has_key(self.run):

@@ -49,7 +49,7 @@ def angles():
 
     # Test if the diffusion tensor data is loaded.
     if not diff_data_exists():
-        raise RelaxNoTensorError
+        raise RelaxNoTensorError, 'diffusion'
 
     # Sphere.
     if cdp.diff_tensor.type == 'sphere':

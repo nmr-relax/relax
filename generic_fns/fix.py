@@ -49,7 +49,7 @@ class Fix:
         if element == 'diff':
             # Test if the diffusion tensor data is loaded.
             if not relax_data_store.diff.has_key(run):
-                raise RelaxNoTensorError, run
+                raise RelaxNoTensorError, 'diffusion'
 
             # Set the fixed flag.
             relax_data_store.diff[run].fixed = fixed
@@ -74,7 +74,7 @@ class Fix:
 
             # Test if the diffusion tensor data is loaded.
             if not relax_data_store.diff.has_key(run):
-                raise RelaxNoTensorError, run
+                raise RelaxNoTensorError, 'diffusion'
 
             # Set the fixed flag for the diffusion tensor.
             relax_data_store.diff[run].fixed = fixed

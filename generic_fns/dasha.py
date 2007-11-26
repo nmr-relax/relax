@@ -63,7 +63,7 @@ class Dasha:
 
         # Test if diffusion tensor data for the run exists.
         if self.param_set != 'local_tm' and not relax_data_store.diff.has_key(self.run):
-            raise RelaxNoTensorError, self.run
+            raise RelaxNoTensorError, 'diffusion'
 
         # Test if the PDB file has been loaded (for the spheroid and ellipsoid).
         if self.param_set != 'local_tm' and relax_data_store.diff[self.run].type != 'sphere' and not relax_data_store.pdb.has_key(self.run):
