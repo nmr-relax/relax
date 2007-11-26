@@ -146,9 +146,6 @@ def delete():
     # Delete the diffusion data.
     del(relax_data_store[relax_data_store.current_pipe].diff_tensor)
 
-    # Put the container back (but empty).
-    relax_data_store[relax_data_store.current_pipe].diff_tensor = DiffTensorData()
-
 
 def diff_data_exists(pipe=None):
     """Function for determining if diffusion data exists in the current data pipe.
