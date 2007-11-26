@@ -40,9 +40,6 @@ class PipeContainer(Prototype):
         # Molecular structure data.
         self.structure = SpecificData()
 
-        # Diffusion data.
-        self.diff_tensor = DiffTensorData()
-
         # The molecule-residue-spin object.
         self.mol = MoleculeList()
 
