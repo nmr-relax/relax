@@ -341,39 +341,12 @@ def init(params=None, scale=1.0, angle_units='deg', param_types=0, errors=0):
         raise RelaxUnknownParamCombError, ('param_types', param_types)
 
 
-def map_bounds(run, param):
+def map_bounds(param):
     """The function for creating bounds for the mapping function."""
 
-    # Initialise.
-    run = run
-
-    # tm.
-    if param == 'tm':
-        return [0, 10.0 * 1e-9]
-
-    # {Diso, Dx, Dy, Dz, Dpar, Dper}.
-    if param == 'Diso' or param == 'Dx' or param == 'Dy' or param == 'Dz' or param == 'Dpar' or param == 'Dper':
-        return [1e6, 1e7]
-
-    # Da.
-    if param == 'Da':
-        return [-3.0/2.0 * 1e7, 3.0 * 1e7]
-
-    # Dr.
-    elif param == 'Dr':
-        return [0, 1]
-
-    # Dratio.
-    elif param == 'Dratio':
-        return [1.0/3.0, 3.0]
-
-    # theta.
-    elif param == 'theta':
-        return [0, pi]
-
-    # phi.
-    elif param == 'phi':
-        return [0, 2*pi]
+    # {Axx, Ayy, Azz, Axxyy, Axy, Axz, Ayz}
+    if param in ['Axx', 'Ayy', 'Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz']:
+        return [-50, 50]
 
     # alpha.
     elif param == 'alpha':
