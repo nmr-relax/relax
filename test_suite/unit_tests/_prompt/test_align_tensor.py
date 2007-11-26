@@ -40,6 +40,39 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
     align_tensor_fns = Align_tensor(fake_relax.fake_instance())
 
 
+    def test_copy_argfail_pipe_from(self):
+        """The pipe_from arg test of the align_tensor.copy() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.align_tensor_fns.copy, pipe_from=data[1])
+
+
+    def test_copy_argfail_pipe_to(self):
+        """The pipe_to arg test of the align_tensor.copy() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.align_tensor_fns.copy, pipe_to=data[1])
+
+
+    def test_copy_argfail_both_pipes(self):
+        """The pipe_from and pipe_to arg test of the align_tensor.copy() user function."""
+
+        # Test that both cannot be None (the default)!
+        self.assertRaises(RelaxError, self.align_tensor_fns.copy)
+
+
     def test_init_argfail_params(self):
         """Failure of the params arg of the align_tensor.init() user function."""
 
