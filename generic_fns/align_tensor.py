@@ -98,7 +98,7 @@ def data_names():
 
 def default_value(param):
     """
-    Diffusion tensor parameter default values
+    Alignment tensor parameter default values
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     ________________________________________________________________________
@@ -106,50 +106,31 @@ def default_value(param):
     | Data type              | Object name        | Value                  |
     |________________________|____________________|________________________|
     |                        |                    |                        |
-    | tm                     | 'tm'               | 10 * 1e-9              |
+    | Axx                    | 'Axx'              | 0.0                    |
     |                        |                    |                        |
-    | Diso                   | 'Diso'             | 1.666 * 1e7            |
+    | Ayy                    | 'Ayy'              | 0.0                    |
     |                        |                    |                        |
-    | Da                     | 'Da'               | 0.0                    |
+    | Azz                    | 'Azz'              | 0.0                    |
     |                        |                    |                        |
-    | Dr                     | 'Dr'               | 0.0                    |
+    | Axxyy                  | 'Axxyy'            | 0.0                    |
     |                        |                    |                        |
-    | Dx                     | 'Dx'               | 1.666 * 1e7            |
+    | Axy                    | 'Axy'              | 0.0                    |
     |                        |                    |                        |
-    | Dy                     | 'Dy'               | 1.666 * 1e7            |
+    | Axz                    | 'Axz'              | 0.0                    |
     |                        |                    |                        |
-    | Dz                     | 'Dz'               | 1.666 * 1e7            |
-    |                        |                    |                        |
-    | Dpar                   | 'Dpar'             | 1.666 * 1e7            |
-    |                        |                    |                        |
-    | Dper                   | 'Dper'             | 1.666 * 1e7            |
-    |                        |                    |                        |
-    | Dratio                 | 'Dratio'           | 1.0                    |
+    | Ayz                    | 'Ayz'              | 0.0                    |
     |                        |                    |                        |
     | alpha                  | 'alpha'            | 0.0                    |
     |                        |                    |                        |
     | beta                   | 'beta'             | 0.0                    |
     |                        |                    |                        |
     | gamma                  | 'gamma'            | 0.0                    |
-    |                        |                    |                        |
-    | theta                  | 'theta'            | 0.0                    |
-    |                        |                    |                        |
-    | phi                    | 'phi'              | 0.0                    |
     |________________________|____________________|________________________|
 
     """
 
-    # tm.
-    if param == 'tm':
-        return 10.0 * 1e-9
-
-    # Diso, Dx, Dy, Dz, Dpar, Dper.
-    elif param == 'Diso' or param == 'Dx' or param == 'Dy' or param == 'Dz' or param == 'Dpar' or param == 'Dper':
-        return 1.666 * 1e7
-
-    # Dratio.
-    elif param == 'Dratio':
-        return 1.0
+    # Return 0.0.
+    return 0.0
 
 
 def delete():
