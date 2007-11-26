@@ -68,7 +68,7 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
         self.assertEqual(self.align_tensor_fns.return_data_name('gamma'), 'gamma')
 
         # Test a few things which should fail.
-        self.assertRaises(RelaxUnknownParameter, self.align_tensor_fns.return_data_name, 'c')
-        self.assertRaises(RelaxUnknownParameter, self.align_tensor_fns.return_data_name, '7')
-        self.assertRaises(RelaxUnknownParameter, self.align_tensor_fns.return_data_name, 7)
-        self.assertRaises(RelaxUnknownParameter, self.align_tensor_fns.return_data_name, 'tm')
+        self.assertRaises(RelaxUnknownParamError, self.align_tensor_fns.return_data_name, 'c')
+        self.assertRaises(RelaxUnknownParamError, self.align_tensor_fns.return_data_name, '7')
+        self.assertRaises(RelaxUnknownParamError, self.align_tensor_fns.return_data_name, 7)
+        self.assertRaises(RelaxUnknownParamError, self.align_tensor_fns.return_data_name, 'tm')
