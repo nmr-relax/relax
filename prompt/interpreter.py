@@ -51,6 +51,7 @@ from model_selection import Modsel
 from nuclei import Nuclei
 
 # User classes.
+from align_tensor import Align_tensor
 from dasha import Dasha
 from diffusion_tensor import Diffusion_tensor
 from grace import Grace
@@ -111,6 +112,7 @@ class Interpreter:
         self._system = system
 
         # Place the user classes into the interpreter class namespace.
+        self._Align_tensor = Align_tensor(relax)
         self._Dasha = Dasha(relax)
         self._Diffusion_tensor = Diffusion_tensor(relax)
         self._OpenDX = OpenDX(relax)
@@ -172,6 +174,7 @@ class Interpreter:
         nuclei = self._Nuclei.nuclei
 
         # Place the user classes in the local namespace.
+        align_tensor = self._Align_tensor
         dasha = self._Dasha
         diffusion_tensor = self._Diffusion_tensor
         dx = self._OpenDX
