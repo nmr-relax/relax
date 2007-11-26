@@ -243,6 +243,10 @@ class Test_align_tensor(TestCase):
 
         # Set the MC sim parameter values (overwriting the initial values).
         self.align_data.Axx_sim[0] = Axx
+        self.align_data.Ayy_sim[0] = Ayy
+        self.align_data.Axy_sim[0] = Axy
+        self.align_data.Axz_sim[0] = Axz
+        self.align_data.Ayz_sim[0] = Ayz
 
         # Test the set values.
         self.assertEqual(self.align_data.Axx_sim[0], Axx)
