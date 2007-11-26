@@ -46,8 +46,8 @@ def align_data_exists(pipe=None):
     if pipe == None:
         pipe = relax_data_store.current_pipe
 
-    # Test if tm exists.
-    if hasattr(relax_data_store[pipe].diff_tensor, 'tm'):
+    # Test if Axy exists.
+    if hasattr(relax_data_store[pipe].align_tensor, 'Axy'):
         return True
     else:
         return False
