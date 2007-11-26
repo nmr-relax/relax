@@ -164,10 +164,7 @@ def delete():
         raise RelaxNoTensorError, 'alignment'
 
     # Delete the alignment data.
-    del(relax_data_store[relax_data_store.current_pipe].diff_tensor)
-
-    # Put the container back (but empty).
-    relax_data_store[relax_data_store.current_pipe].diff_tensor = DiffTensorData()
+    del(relax_data_store[relax_data_store.current_pipe].align_tensor)
 
 
 def display():
