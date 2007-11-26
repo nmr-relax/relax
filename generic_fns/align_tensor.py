@@ -28,7 +28,7 @@ from re import search
 # relax module imports.
 from angles import wrap_angles
 from data import Data as relax_data_store
-from data.diff_tensor import DiffTensorData
+from data.align_tensor import AlignTensorData
 import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
@@ -453,6 +453,9 @@ def init(params=None, scale=1.0, angle_units='deg', param_types=0, errors=0):
     valid_types = ['deg', 'rad']
     if not angle_units in valid_types:
         raise RelaxError, "The alignment tensor 'angle_units' argument " + `angle_units` + " should be either 'deg' or 'rad'."
+
+    # Add the align_tensor object to the data pipe.
+    cdp.align_tensor = AlignTensorData()
 
     # (Axx, Ayy, Axy, Axz, Ayz).
     if param_types == 0:
