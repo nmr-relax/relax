@@ -547,12 +547,6 @@ def set(value=None, param=None):
         Hertz for Axx, Ayy, Azz, Axxyy, Axy, Axz, Ayz.
         Radians for all angles (alpha, beta, gamma).
 
-
-    When setting a alignment tensor parameter, the residue number has no effect.  As the
-    internal parameters of spherical alignment are {tm}, spheroidal alignment are {tm, Da,
-    theta, phi}, and ellipsoidal alignment are {tm, Da, Dr, alpha, beta, gamma}, supplying
-    geometric parameters must be done in the following way.  
-
     If a single geometric parameter is supplied, it must be one of Axx, Ayy, Axy, Axz, Ayz.  For the
     parameters Azz and Axxyy , it is not possible to determine how to use the currently set values
     together with the supplied value to calculate the new internal parameters.  When supplying
