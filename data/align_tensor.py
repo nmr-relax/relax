@@ -265,9 +265,9 @@ def dependency_generator():
     yield ('Axx_unit',      ['alpha', 'beta', 'gamma'],                     ['alpha', 'beta', 'gamma'])
     yield ('Ayy_unit',      ['alpha', 'beta', 'gamma'],                     ['alpha', 'beta', 'gamma'])
     yield ('Azz_unit',      ['alpha', 'beta'],                              ['alpha', 'beta'])
-    yield ('tensor_diag',   ['tm', 'Da', 'Dr'],                             ['type', 'Axx', 'Ayy', 'Azz'])
-    yield ('rotation',      ['alpha', 'beta', 'gamma'],                     ['type', 'Axx_unit', 'Ayy_unit', 'Azz_unit'])
-    yield ('tensor',        ['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma'],   ['rotation', 'tensor_diag'])
+    yield ('tensor_diag',   ['Axx', 'Ayy', 'Azz'],                          ['Axx', 'Ayy', 'Azz'])
+    yield ('rotation',      ['alpha', 'beta', 'gamma'],                     ['Axx_unit', 'Ayy_unit', 'Azz_unit'])
+    yield ('tensor',        ['Axx', 'Ayy', 'Azz', 'alpha', 'beta', 'gamma'],   ['rotation', 'tensor_diag'])
 
 
 
