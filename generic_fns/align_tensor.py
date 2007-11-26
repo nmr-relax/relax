@@ -869,8 +869,8 @@ def set(value=None, param=None):
             Ayz = geo_values[geo_params.index('Ayz')]
 
             # Set the internal parameter values.
-            cdp.align_tensor.Axx = -0.5(Azz-Axxyy)
-            cdp.align_tensor.Ayy = -0.5(Azz+Axxyy)
+            cdp.align_tensor.Axx = -0.5*(Azz-Axxyy)
+            cdp.align_tensor.Ayy = -0.5*(Azz+Axxyy)
             cdp.align_tensor.Axy = Axy
             cdp.align_tensor.Axz = Axz
             cdp.align_tensor.Ayz = Ayz
