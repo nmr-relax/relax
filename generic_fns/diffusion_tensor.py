@@ -540,6 +540,9 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     if not angle_units in valid_types:
         raise RelaxError, "The diffusion tensor 'angle_units' argument " + `angle_units` + " should be either 'deg' or 'rad'."
 
+    # Add the diff_tensor object to the data pipe.
+    cdp.diff_tensor = DiffTensorData()
+
     # Set the fixed flag.
     cdp.diff_tensor.fixed = fixed
 
