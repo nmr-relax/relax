@@ -107,14 +107,14 @@ class Align_tensor_base_class:
         prompt.align_tensor.delete().
         """
 
-        # Set the Axx value.
-        relax_data_store['orig'].align_tensor.Axx = 0.0
+        # Initialise the tensor.
+        self.align_tensor_fns.init(params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
 
         # Delete the tensor data.
         self.align_tensor_fns.delete()
 
         # Test that Axx does not exist.
-        self.failIf(hasattr(relax_data_store['orig'].align_tensor, 'Axx'))
+        self.failIf(hasattr(relax_data_store['orig'], 'align_tensor'))
 
 
     def test_delete_fail_no_data(self):
