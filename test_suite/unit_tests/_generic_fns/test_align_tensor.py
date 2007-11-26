@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from generic_fns import align_tensor
-from relax_errors import RelaxUnknownParamError
+from relax_errors import RelaxStrError, RelaxUnknownParamError
 from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_class
 
 
@@ -70,5 +70,5 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
         # Test a few things which should fail.
         self.assertRaises(RelaxUnknownParamError, self.align_tensor_fns.return_data_name, 'c')
         self.assertRaises(RelaxUnknownParamError, self.align_tensor_fns.return_data_name, '7')
-        self.assertRaises(RelaxUnknownParamError, self.align_tensor_fns.return_data_name, 7)
+        self.assertRaises(RelaxStrError, self.align_tensor_fns.return_data_name, 7)
         self.assertRaises(RelaxUnknownParamError, self.align_tensor_fns.return_data_name, 'tm')
