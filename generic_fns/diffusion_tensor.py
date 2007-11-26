@@ -163,8 +163,8 @@ def diff_data_exists(pipe=None):
     if pipe == None:
         pipe = relax_data_store.current_pipe
 
-    # Test if tm exists.
-    if hasattr(relax_data_store[pipe].diff_tensor, 'tm'):
+    # Test if the data structure exists.
+    if hasattr(relax_data_store[pipe], 'diff_tensor'):
         return True
     else:
         return False
