@@ -30,7 +30,7 @@ from angles import wrap_angles
 from data import Data as relax_data_store
 from data.diff_tensor import DiffTensorData
 import pipes
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
 
 def copy(pipe_from=None, pipe_to=None):
@@ -747,6 +747,10 @@ def return_data_name(name):
     |________________________________________________________|______________|__________________|
     """
 
+    # Enforce that the name must be a string.
+    if type(name) != str:
+        raise RelaxStrError, ('name', name)
+
     # Local tm.
     if search('^tm$', name):
         return 'tm'
@@ -806,6 +810,9 @@ def return_data_name(name):
     # phi.
     if search('phi', name):
         return 'phi'
+
+    # No parameter?
+    raise RelaxUnknownParamError, name
 
 
 def return_eigenvalues(run=None):
