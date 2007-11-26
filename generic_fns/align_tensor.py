@@ -633,19 +633,19 @@ def return_data_name(name):
     | Data type                                              | Object name  | Patterns         |
     |________________________________________________________|______________|__________________|
     |                                                        |              |                  |
-    | The xx component of the alignment tensor - Axx         | 'Axx'        | '[Aa]xx'         |
+    | The xx component of the alignment tensor - Axx         | 'Axx'        | '^[Aa]xx$'       |
     |                                                        |              |                  |
-    | The yy component of the alignment tensor - Ayy         | 'Ayy'        | '[Aa]yy'         |
+    | The yy component of the alignment tensor - Ayy         | 'Ayy'        | '^[Aa]yy$'       |
     |                                                        |              |                  |
-    | The zz component of the alignment tensor - Azz         | 'Azz'        | '[Aa]zz'         |
+    | The zz component of the alignment tensor - Azz         | 'Azz'        | '^[Aa]zz$'       |
     |                                                        |              |                  |
-    | The xy component of the alignment tensor - Axy         | 'Axy'        | '[Aa]xy'         |
+    | The xy component of the alignment tensor - Axy         | 'Axy'        | '^[Aa]xy$'       |
     |                                                        |              |                  |
-    | The xz component of the alignment tensor - Axz         | 'Axz'        | '[Aa]xz'         |
+    | The xz component of the alignment tensor - Axz         | 'Axz'        | '^[Aa]xz$'       |
     |                                                        |              |                  |
-    | The yz component of the alignment tensor - Ayz         | 'Ayz'        | '[Aa]yz'         |
+    | The yz component of the alignment tensor - Ayz         | 'Ayz'        | '^[Aa]yz$'       |
     |                                                        |              |                  |
-    | The xx-yy component of the alignment tensor - Axx-yy   | 'Axxyy'      | '[Aa]xxyy'       |
+    | The xx-yy component of the alignment tensor - Axx-yy   | 'Axxyy'      | '^[Aa]xxyy$'     |
     |                                                        |              |                  |
     | The first Euler angle of the alignment tensor - alpha  | 'alpha'      | '^a$' or 'alpha' |
     |                                                        |              |                  |
@@ -656,31 +656,31 @@ def return_data_name(name):
     """
 
     # Axx.
-    if search('[Aa]xx', name):
+    if search('^[Aa]xx$', name):
         return 'Axx'
 
     # Ayy.
-    if search('[Aa]yy', name):
+    if search('^[Aa]yy$', name):
         return 'Ayy'
 
     # Azz.
-    if search('[Aa]zz', name):
+    if search('^[Aa]zz$', name):
         return 'Azz'
 
     # Axy.
-    if search('[Aa]xy', name):
+    if search('^[Aa]xy$', name):
         return 'Axy'
 
     # Axz.
-    if search('[Aa]xz', name):
+    if search('^[Aa]xz$', name):
         return 'Axz'
 
     # Ayz.
-    if search('[Aa]yz', name):
+    if search('^[Aa]yz$', name):
         return 'Ayz'
 
     # Axx-yy.
-    if search('[Aa]xxyy', name):
+    if search('^[Aa]xxyy$', name):
         return 'Axxyy'
 
     # alpha.
