@@ -331,7 +331,7 @@ class AlignTensorData(Element):
         """
 
         # Loop over the targets.
-        for target, update_if_set, depends in dependency_generator(self.type):
+        for target, update_if_set, depends in dependency_generator():
             # Only update if the parameter name is within the 'update_if_set' list.
             if not param_name in update_if_set:
                 continue
@@ -387,7 +387,7 @@ class AlignTensorData(Element):
         """
 
         # Loop over the targets.
-        for target, update_if_set, depends in dependency_generator(self.type):
+        for target, update_if_set, depends in dependency_generator():
             # Only update if the parameter name is within the 'update_if_set' list.
             if not param_name in update_if_set:
                 continue
