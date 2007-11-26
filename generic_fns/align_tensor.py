@@ -85,7 +85,7 @@ def copy(pipe_from=None, pipe_to=None):
         raise RelaxTensorError, 'alignment'
 
     # Copy the data.
-    relax_data_store[pipe_to].diff_tensor = deepcopy(relax_data_store[pipe_from].diff_tensor)
+    relax_data_store[pipe_to].align_tensor = deepcopy(relax_data_store[pipe_from].align_tensor)
 
 
 def data_names():
