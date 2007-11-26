@@ -198,14 +198,9 @@ def display():
 
 
 def fold_angles(sim_index=None):
-    """Wrap the Euler or spherical angles and remove the glide reflection and translational symmetries.
+    """Wrap the Euler angles and remove the glide reflection and translational symmetries.
 
     Wrap the angles such that
-
-        0 <= theta <= pi,
-        0 <= phi <= 2pi,
-
-    and
 
         0 <= alpha <= 2pi,
         0 <= beta <= pi,
@@ -213,11 +208,6 @@ def fold_angles(sim_index=None):
 
 
     For the simulated values, the angles are wrapped as
-
-        theta - pi/2 <= theta_sim <= theta + pi/2
-        phi - pi <= phi_sim <= phi + pi
-
-    and
 
         alpha - pi <= alpha_sim <= alpha + pi
         beta - pi/2 <= beta_sim <= beta + pi/2
@@ -236,119 +226,49 @@ def fold_angles(sim_index=None):
     # Wrap the angles.
     ##################
 
-    # Spheroid.
-    if cdp.diff_tensor.type == 'spheroid':
-        # Get the current angles.
-        theta = cdp.diff_tensor.theta
-        phi = cdp.diff_tensor.phi
+    # Get the current angles.
+    alpha = cdp.align_tensor.alpha
+    beta  = cdp.align_tensor.beta
+    gamma = cdp.align_tensor.gamma
 
-        # Simulated values.
-        if sim_index != None:
-            theta_sim = cdp.diff_tensor.theta_sim[sim_index]
-            phi_sim   = cdp.diff_tensor.phi_sim[sim_index]
+    # Simulated values.
+    if sim_index != None:
+        alpha_sim = cdp.align_tensor.alpha_sim[sim_index]
+        beta_sim  = cdp.align_tensor.beta_sim[sim_index]
+        gamma_sim = cdp.align_tensor.gamma_sim[sim_index]
 
-        # Normal value.
-        if sim_index == None:
-            cdp.diff_tensor.theta = wrap_angles(theta, 0.0, pi)
-            cdp.diff_tensor.phi = wrap_angles(phi, 0.0, 2.0*pi)
+    # Normal value.
+    if sim_index == None:
+        cdp.align_tensor.alpha = wrap_angles(alpha, 0.0, 2.0*pi)
+        cdp.align_tensor.beta  = wrap_angles(beta, 0.0, 2.0*pi)
+        cdp.align_tensor.gamma = wrap_angles(gamma, 0.0, 2.0*pi)
 
-        # Simulated theta and phi values.
-        else:
-            cdp.diff_tensor.theta_sim[sim_index] = wrap_angles(theta_sim, theta - pi/2.0, theta + pi/2.0)
-            cdp.diff_tensor.phi_sim[sim_index]   = wrap_angles(phi_sim, phi - pi, phi + pi)
-
-    # Ellipsoid.
-    elif cdp.diff_tensor.type == 'ellipsoid':
-        # Get the current angles.
-        alpha = cdp.diff_tensor.alpha
-        beta  = cdp.diff_tensor.beta
-        gamma = cdp.diff_tensor.gamma
-
-        # Simulated values.
-        if sim_index != None:
-            alpha_sim = cdp.diff_tensor.alpha_sim[sim_index]
-            beta_sim  = cdp.diff_tensor.beta_sim[sim_index]
-            gamma_sim = cdp.diff_tensor.gamma_sim[sim_index]
-
-        # Normal value.
-        if sim_index == None:
-            cdp.diff_tensor.alpha = wrap_angles(alpha, 0.0, 2.0*pi)
-            cdp.diff_tensor.beta  = wrap_angles(beta, 0.0, 2.0*pi)
-            cdp.diff_tensor.gamma = wrap_angles(gamma, 0.0, 2.0*pi)
-
-        # Simulated alpha, beta, and gamma values.
-        else:
-            cdp.diff_tensor.alpha_sim[sim_index] = wrap_angles(alpha_sim, alpha - pi, alpha + pi)
-            cdp.diff_tensor.beta_sim[sim_index]  = wrap_angles(beta_sim, beta - pi, beta + pi)
-            cdp.diff_tensor.gamma_sim[sim_index] = wrap_angles(gamma_sim, gamma - pi, gamma + pi)
+    # Simulation values.
+    else:
+        cdp.align_tensor.alpha_sim[sim_index] = wrap_angles(alpha_sim, alpha - pi, alpha + pi)
+        cdp.align_tensor.beta_sim[sim_index]  = wrap_angles(beta_sim, beta - pi, beta + pi)
+        cdp.align_tensor.gamma_sim[sim_index] = wrap_angles(gamma_sim, gamma - pi, gamma + pi)
 
 
     # Remove the glide reflection and translational symmetries.
     ###########################################################
 
-    # Spheroid.
-    if cdp.diff_tensor.type == 'spheroid':
-        # Normal value.
-        if sim_index == None:
-            # Fold phi inside 0 and pi.
-            if cdp.diff_tensor.phi >= pi:
-                cdp.diff_tensor.theta = pi - cdp.diff_tensor.theta
-                cdp.diff_tensor.phi = cdp.diff_tensor.phi - pi
+    # Normal value.
+    if sim_index == None:
+        # Fold beta inside 0 and pi.
+        if cdp.align_tensor.beta >= pi:
+            cdp.align_tensor.alpha = pi - cdp.align_tensor.alpha
+            cdp.align_tensor.beta = cdp.align_tensor.beta - pi
 
-        # Simulated theta and phi values.
-        else:
-            # Fold phi_sim inside phi-pi/2 and phi+pi/2.
-            if cdp.diff_tensor.phi_sim[sim_index] >= cdp.diff_tensor.phi + pi/2.0:
-                cdp.diff_tensor.theta_sim[sim_index] = pi - cdp.diff_tensor.theta_sim[sim_index]
-                cdp.diff_tensor.phi_sim[sim_index]   = cdp.diff_tensor.phi_sim[sim_index] - pi
-            elif cdp.diff_tensor.phi_sim[sim_index] <= cdp.diff_tensor.phi - pi/2.0:
-                cdp.diff_tensor.theta_sim[sim_index] = pi - cdp.diff_tensor.theta_sim[sim_index]
-                cdp.diff_tensor.phi_sim[sim_index]   = cdp.diff_tensor.phi_sim[sim_index] + pi
-
-    # Ellipsoid.
-    elif cdp.diff_tensor.type == 'ellipsoid':
-        # Normal value.
-        if sim_index == None:
-            # Fold alpha inside 0 and pi.
-            if cdp.diff_tensor.alpha >= pi:
-                cdp.diff_tensor.alpha = cdp.diff_tensor.alpha - pi
-
-            # Fold beta inside 0 and pi.
-            if cdp.diff_tensor.beta >= pi:
-                cdp.diff_tensor.alpha = pi - cdp.diff_tensor.alpha
-                cdp.diff_tensor.beta = cdp.diff_tensor.beta - pi
-
-            # Fold gamma inside 0 and pi.
-            if cdp.diff_tensor.gamma >= pi:
-                cdp.diff_tensor.alpha = pi - cdp.diff_tensor.alpha
-                cdp.diff_tensor.beta = pi - cdp.diff_tensor.beta
-                cdp.diff_tensor.gamma = cdp.diff_tensor.gamma - pi
-
-        # Simulated theta and phi values.
-        else:
-            # Fold alpha_sim inside alpha-pi/2 and alpha+pi/2.
-            if cdp.diff_tensor.alpha_sim[sim_index] >= cdp.diff_tensor.alpha + pi/2.0:
-                cdp.diff_tensor.alpha_sim[sim_index] = cdp.diff_tensor.alpha_sim[sim_index] - pi
-            elif cdp.diff_tensor.alpha_sim[sim_index] <= cdp.diff_tensor.alpha - pi/2.0:
-                cdp.diff_tensor.alpha_sim[sim_index] = cdp.diff_tensor.alpha_sim[sim_index] + pi
-
-            # Fold beta_sim inside beta-pi/2 and beta+pi/2.
-            if cdp.diff_tensor.beta_sim[sim_index] >= cdp.diff_tensor.beta + pi/2.0:
-                cdp.diff_tensor.alpha_sim[sim_index] = pi - cdp.diff_tensor.alpha_sim[sim_index]
-                cdp.diff_tensor.beta_sim[sim_index] = cdp.diff_tensor.beta_sim[sim_index] - pi
-            elif cdp.diff_tensor.beta_sim[sim_index] <= cdp.diff_tensor.beta - pi/2.0:
-                cdp.diff_tensor.alpha_sim[sim_index] = pi - cdp.diff_tensor.alpha_sim[sim_index]
-                cdp.diff_tensor.beta_sim[sim_index] = cdp.diff_tensor.beta_sim[sim_index] + pi
-
-            # Fold gamma_sim inside gamma-pi/2 and gamma+pi/2.
-            if cdp.diff_tensor.gamma_sim[sim_index] >= cdp.diff_tensor.gamma + pi/2.0:
-                cdp.diff_tensor.alpha_sim[sim_index] = pi - cdp.diff_tensor.alpha_sim[sim_index]
-                cdp.diff_tensor.beta_sim[sim_index] = pi - cdp.diff_tensor.beta_sim[sim_index]
-                cdp.diff_tensor.gamma_sim[sim_index] = cdp.diff_tensor.gamma_sim[sim_index] - pi
-            elif cdp.diff_tensor.gamma_sim[sim_index] <= cdp.diff_tensor.gamma - pi/2.0:
-                cdp.diff_tensor.alpha_sim[sim_index] = pi - cdp.diff_tensor.alpha_sim[sim_index]
-                cdp.diff_tensor.beta_sim[sim_index] = pi - cdp.diff_tensor.beta_sim[sim_index]
-                cdp.diff_tensor.gamma_sim[sim_index] = cdp.diff_tensor.gamma_sim[sim_index] + pi
+    # Simulation values.
+    else:
+        # Fold beta_sim inside beta-pi/2 and beta+pi/2.
+        if cdp.align_tensor.beta_sim[sim_index] >= cdp.align_tensor.beta + pi/2.0:
+            cdp.align_tensor.alpha_sim[sim_index] = pi - cdp.align_tensor.alpha_sim[sim_index]
+            cdp.align_tensor.beta_sim[sim_index] = cdp.align_tensor.beta_sim[sim_index] - pi
+        elif cdp.align_tensor.beta_sim[sim_index] <= cdp.align_tensor.beta - pi/2.0:
+            cdp.align_tensor.alpha_sim[sim_index] = pi - cdp.align_tensor.alpha_sim[sim_index]
+            cdp.align_tensor.beta_sim[sim_index] = cdp.align_tensor.beta_sim[sim_index] + pi
 
 
 def init(params=None, scale=1.0, angle_units='deg', param_types=0, errors=0):
