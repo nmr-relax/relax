@@ -344,7 +344,7 @@ def init(params=None, scale=1.0, angle_units='deg', param_types=0, errors=0):
 def map_bounds(param):
     """The function for creating bounds for the mapping function."""
 
-    # {Axx, Ayy, Azz, Axxyy, Axy, Axz, Ayz}
+    # {Axx, Ayy, Azz, Axxyy, Axy, Axz, Ayz}.
     if param in ['Axx', 'Ayy', 'Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz']:
         return [-50, 50]
 
@@ -361,8 +361,20 @@ def map_bounds(param):
         return [0, 2*pi]
 
 
-def map_labels(run, index, params, bounds, swap, inc):
-    """Function for creating labels, tick locations, and tick values for an OpenDX map."""
+def map_labels(index, params, bounds, swap, inc):
+    """Function for creating labels, tick locations, and tick values for an OpenDX map.
+
+    @param index:   The index (which isn't used here?!?).
+    @type index:    int
+    @param params:  The list of parameter names.
+    @type params:   list of str
+    @param bounds:  The bounds of the map.
+    @type params:   list of lists (of a float and bin)
+    @param swap:    An array for switching axes around.
+    @type swap:     list of int
+    @param inc:     The number of increments of one dimension in the map.
+    @type inc:      list of int
+    """
 
     # Initialise.
     labels = "{"
@@ -418,23 +430,21 @@ def map_labels(run, index, params, bounds, swap, inc):
 def return_conversion_factor(param):
     """Function for returning the factor of conversion between different parameter units.
 
-    For example, the internal representation of tm is in seconds, whereas the external
-    representation is in nanoseconds, therefore this function will return 1e-9 for tm.
+    @param param:   The parameter name.
+    @type param:    str
+    @return:        The conversion factor.
+    @type return:   float
     """
 
     # Get the object name.
     object_name = return_data_name(param)
 
-    # tm (nanoseconds).
-    if object_name == 'tm':
-        return 1e-9
-
-    # Diso, Da, Dx, Dy, Dz, Dpar, Dper.
-    elif object_name in ['Diso', 'Da', 'Dx', 'Dy', 'Dz', 'Dpar', 'Dper']:
-        return 1e6
+    # {Axx, Ayy, Azz, Axxyy, Axy, Axz, Ayz}.
+    if object_name in ['Axx', 'Ayy', 'Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz']:
+        return 1.0
 
     # Angles.
-    elif object_name in ['theta', 'phi', 'alpha', 'beta', 'gamma']:
+    elif object_name in ['alpha', 'beta', 'gamma']:
         return (2.0*pi) / 360.0
 
     # No conversion factor.
@@ -525,24 +535,21 @@ def return_data_name(name):
 def return_units(param):
     """Function for returning a string representing the parameters units.
 
-    For example, the internal representation of tm is in seconds, whereas the external
-    representation is in nanoseconds, therefore this function will return the string
-    'nanoseconds' for tm.
+    @param param:   The parameter name.
+    @type param:    str
+    @return:        The string representation of the units.
+    @type return:   str
     """
 
     # Get the object name.
     object_name = return_data_name(param)
 
-    # tm (nanoseconds).
-    if object_name == 'tm':
-        return 'ns'
-
-    # Diso, Da, Dx, Dy, Dz, Dpar, Dper.
-    elif object_name in ['Diso', 'Da', 'Dx', 'Dy', 'Dz', 'Dpar', 'Dper']:
-        return '1e6 1/s'
+    # {Axx, Ayy, Azz, Axxyy, Axy, Axz, Ayz}.
+    if object_name in ['Axx', 'Ayy', 'Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz']:
+        return 'Hz'
 
     # Angles.
-    elif object_name in ['theta', 'phi', 'alpha', 'beta', 'gamma']:
+    elif object_name in ['alpha', 'beta', 'gamma']:
         return 'deg'
 
 
