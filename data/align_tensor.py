@@ -282,6 +282,10 @@ class AlignTensorData(Element):
     def __setattr__(self, name, value):
         """Function for calculating the parameters, unit vectors, and tensors on the fly.
 
+        @param name:    The name of the object to set.
+        @type name:     str
+        @param value:   The value to set the object corresponding to the name argument to.
+        @type value:    Any Python object type
         """
 
         # Get the base parameter name and determine the object category ('val', 'err', or 'sim').
@@ -296,14 +300,11 @@ class AlignTensorData(Element):
             param_name = name
 
         # List of modifiable attributes.
-        mod_attr = ['type',
-                    'fixed',
-                    'spheroid_type',
-                    'tm',
-                    'Da',
-                    'Dr',
-                    'theta',
-                    'phi',
+        mod_attr = ['Axx',
+                    'Ayy',
+                    'Axy',
+                    'Axz',
+                    'Ayz',
                     'alpha',
                     'beta',
                     'gamma']
@@ -315,12 +316,8 @@ class AlignTensorData(Element):
         # Set the attribute normally.
         self.__dict__[name] = value
 
-        # Skip the updating process for certain objects.
-        if name in ['type', 'fixed', 'spheroid_type']:
-            return
-
         # Update the data structures.
-        for target, update_if_set, depends in dependency_generator(self.type):
+        for target, update_if_set, depends in dependency_generator():
             self.__update_object(param_name, target, update_if_set, depends, category)
 
 
