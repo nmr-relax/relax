@@ -26,7 +26,7 @@ import sys
 # relax module imports.
 import help
 from generic_fns import align_tensor
-from relax_errors import RelaxError, RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxNumTupleError
+from relax_errors import RelaxError, RelaxBinError, RelaxFloatError, RelaxIntError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
 
 
 class Align_tensor:
