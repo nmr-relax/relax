@@ -425,6 +425,13 @@ class RelaxNoResError(BaseError):
         if Debug:
             self.save_state()
 
+# Cannot find the spin in the sequence.
+class RelaxNoSpinError(BaseError):
+    def __init__(self, id):
+        self.text = "The spin " + `id` + " does not exist."
+        if Debug:
+            self.save_state()
+
 # The sequence data is not valid.
 class RelaxInvalidSeqError(BaseError):
     def __init__(self, line):
