@@ -26,6 +26,8 @@ import sys
 
 # relax module imports.
 from data import Data as relax_data_store
+from generic_fns import pipes
+from generic_fns.sequence import sequence_exists
 from relax_errors import RelaxError, RelaxNoResError, RelaxNoRiError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRiError
 
 
