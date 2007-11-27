@@ -29,14 +29,9 @@ from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxNoResError, RelaxNoRiError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRiError
 
 
-# The relax data storage object.
-
-
 class Rx_data:
-    def __init__(self, relax):
+    def __init__(self):
         """Class containing functions for relaxation data."""
-
-        self.relax = relax
 
         # Global data flag (default to residue specific data).
         self.global_flag = 0
@@ -856,3 +851,7 @@ class Rx_data:
 
         # Write the data.
         self.relax.generic.value.write(run=self.run, param=(self.ri_label, self.frq_label), file=file, dir=dir, force=force, return_value=self.return_value)
+
+
+# Instantiate the class.
+relax_data = Rx_data()
