@@ -402,6 +402,52 @@ def exists_mol_res_spin_data():
     return False
 
 
+def generate_spin_id(data=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None):
+    """Function for generating the spin selection string from the given data.
+
+    @param data:            An array containing the molecule, residue, and/or spin data.
+    @type data:             list of str
+    @param mol_name_col:    The column containing the molecule name information.
+    @type mol_name_col:     int or None
+    @param res_name_col:    The column containing the residue name information.
+    @type res_name_col:     int or None
+    @param res_num_col:     The column containing the residue number information.
+    @type res_num_col:      int or None
+    @param spin_name_col:   The column containing the spin name information.
+    @type spin_name_col:    int or None
+    @param spin_num_col:    The column containing the spin number information.
+    @type spin_num_col:     int or None
+    @return:                The spin identification string.
+    @type return:           str
+    """
+
+    # Init.
+    id = ""
+
+    # Molecule data.
+    if mol_name_col != None:
+        id = id + "#" + data[mol_name_col]
+
+    # Residue data.
+    if res_num_col != None:
+        id = id + ":" + data[res_num_col]
+    if  res_num_col != None and res_name_col != None:
+        id = id + "&" + data[res_name_col]
+    elif res_name_col != None:
+        id = id + ":" + data[res_name_col]
+
+    # Spin data.
+    if spin_num_col != None:
+        id = id + "@" + data[spin_num_col]
+    if  spin_num_col != None and spin_name_col != None:
+        id = id + "&" + data[spin_name_col]
+    elif spin_name_col != None:
+        id = id + "@" + data[spin_name_col]
+
+    # Return the spin id string.
+    return id
+
+
 def molecule_loop(selection=None, pipe=None):
     """Generator function for looping over all the molecules of the given selection.
 
