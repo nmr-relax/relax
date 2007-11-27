@@ -27,7 +27,7 @@ import sys
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns import pipes
-from generic_fns.sequence import sequence_exists
+from generic_fns.selection import exists_mol_res_spin_data
 from relax_errors import RelaxError, RelaxNoResError, RelaxNoRiError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRiError
 
 
@@ -569,7 +569,7 @@ class Rx_data:
         pipes.test(relax_data_store.current_pipe)
 
         # Test if sequence data exists.
-        if not sequence_exists():
+        if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
         # Test if relaxation data corresponding to 'self.ri_label' and 'self.frq_label' already exists.
