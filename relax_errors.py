@@ -396,8 +396,8 @@ class RelaxStrListStrError(BaseError):
 
 # No sequence loaded.
 class RelaxNoSequenceError(BaseError):
-    def __init__(self, pipe):
-        self.text = "The sequence data for the data pipe " + `pipe` + " does not exist."
+    def __init__(self):
+        self.text = "The sequence data does not exist."
         if Debug:
             self.save_state()
 
