@@ -22,8 +22,9 @@
 
 # relax module imports.
 from data import Data as relax_data_store
+from generic_fns import sequence
 from relax_errors import RelaxError
-
+import sys
 
 
 class Relax_data_base_class:
@@ -54,3 +55,21 @@ class Relax_data_base_class:
         """Reset the relax data storage object."""
 
         relax_data_store.__reset__()
+
+
+    def test_read(self):
+        """Test the reading of relaxation data.
+
+        The functions tested are both specific_fns.relax_data.read() and prompt.relax_data.read().
+        """
+
+        # Get the relative path of relax.
+        path = sys.path[0]
+        if path == '.':
+            path = sys.path[-1]
+
+        # First read the residue sequence out of the Ap4Aase 600 MHz NOE data file.
+        sequence.read(file='Ap4Aase.Noe.600.bz2', dir=path+'/test_suite/shared_data/relaxation_data')
+
+        # Then read the data out of the same file.
+        self.relax_data_fns.read(ri_label='NOE', frq_label='600', frq=600e6, file='Ap4Aase.Noe.600.bz2', dir=path+'/test_suite/shared_data/relaxation_data')
