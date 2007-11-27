@@ -531,37 +531,60 @@ class Rx_data:
         return index
 
 
-    def read(self, run=None, ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
-        """Function for reading R1, R2, or NOE relaxation data."""
+    def read(self, ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None):
+        """Function for reading R1, R2, or NOE relaxation data.
 
-        # Arguments.
-        self.run = run
-        self.ri_label = ri_label
-        self.frq_label = frq_label
-        self.frq = frq
+        @param ri_label:        The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+        @type ri_label:         str
+        @param frq_label:       The field strength label.
+        @type frq_label:        str
+        @param frq:             The spectrometer proton frequency in Hz.
+        @type frq:              float
+        @param file:            The name of the file to open.
+        @type file:             str
+        @param dir:             The directory containing the file (defaults to the current directory
+                                if None).
+        @type dir:              str or None
+        @param file_data:       An alternative opening a file, if the data already exists in the
+                                correct format.  The format is a list of lists where the first index
+                                corresponds to the row and the second the column.
+        @type file_data:        list of lists
+        @param mol_name_col:    The column containing the molecule name information.
+        @type mol_name_col:     int or None
+        @param res_name_col:    The column containing the residue name information.
+        @type res_name_col:     int or None
+        @param res_num_col:     The column containing the residue number information.
+        @type res_num_col:      int or None
+        @param spin_name_col:   The column containing the spin name information.
+        @type spin_name_col:    int or None
+        @param spin_num_col:    The column containing the spin number information.
+        @type spin_num_col:     int or None
+        @param sep:             The column seperator which, if None, defaults to whitespace.
+        @type sep:              str or None
+        """
 
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current data pipe exists.
+        pipes.test(relax_data_store.current_pipe)
 
-        # Test if sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        # Test if sequence data exists.
+        if not sequence_exists():
+            raise RelaxNoSequenceError
 
         # Test if relaxation data corresponding to 'self.ri_label' and 'self.frq_label' already exists.
-        if self.test_labels(run):
+        if self.test_labels():
             raise RelaxRiError, (self.ri_label, self.frq_label)
 
         # Minimum number of columns.
-        min_col_num = max(num_col, name_col, data_col, error_col)
+        min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col)
 
         # Extract the data from the file.
         if not file_data:
             # Extract.
-            file_data = self.relax.IO.extract_data(file, dir)
+            file_data = extract_data(file, dir)
 
             # Count the number of header lines.
             header_lines = 0
+            num_col = max(res_num_col, spin_num_col)
             for i in xrange(len(file_data)):
                 try:
                     int(file_data[i][num_col])
@@ -574,7 +597,7 @@ class Rx_data:
             file_data = file_data[header_lines:]
 
             # Strip the data.
-            file_data = self.relax.IO.strip(file_data)
+            file_data = strip(file_data)
 
             # Test the validity of the relaxation data.
             for i in xrange(len(file_data)):
@@ -586,11 +609,14 @@ class Rx_data:
 
                 # Test that the data are numbers.
                 try:
-                    int(file_data[i][num_col])
+                    if res_num_col != None:
+                        int(file_data[i][res_num_col])
+                    if spin_num_col != None:
+                        int(file_data[i][spin_num_col])
                     float(file_data[i][data_col])
                     float(file_data[i][error_col])
                 except ValueError:
-                    raise RelaxError, "The relaxation data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
+                    raise RelaxError, "The relaxation data in the line " + `file_data[i]` + " is invalid."
 
 
         # Global (non-residue specific) data.
@@ -600,7 +626,7 @@ class Rx_data:
         self.global_flag = 1
 
         # Initialise the global data if necessary.
-        self.data_init(relax_data_store)
+        self.data_init()
 
         # Update the global data.
         self.update_global_data_structures()
@@ -612,18 +638,16 @@ class Rx_data:
         # Global data flag.
         self.global_flag = 0
 
-        # Store the indecies for which relaxation data has been added.
-        index_list = []
-
         # Loop over the relaxation data.
         for i in xrange(len(file_data)):
             # Skip missing data.
             if len(file_data[i]) <= min_col_num:
                 continue
 
+            # Generate the spin identification string.
+            id = generate_spin_id(data=file_data[i], mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
+
             # Convert the data.
-            res_num = int(file_data[i][num_col])
-            res_name = file_data[i][name_col]
             value = eval(file_data[i][data_col])
             error = eval(file_data[i][error_col])
 
@@ -631,23 +655,13 @@ class Rx_data:
             if value == None or error == None:
                 continue
 
-            # Find the index of relax_data_store.res[self.run] which corresponds to the relaxation data set i.
-            index = None
-            for j in xrange(len(relax_data_store.res[self.run])):
-                if relax_data_store.res[self.run][j].num == res_num and relax_data_store.res[self.run][j].name == res_name:
-                    index = j
-                    break
-            if index == None:
-                raise RelaxNoResError, (res_num, res_name)
-
-            # Remap the data structure 'relax_data_store.res[self.run][index]'.
-            data = relax_data_store.res[self.run][index]
+            # Get the corresponding spin container.
+            spin = return_spin(id)
+            if spin == None:
+                raise RelaxNoSpinError, id
 
             # Update all data structures.
-            self.update_data_structures(data, value, error)
-
-            # Add the index to the list.
-            index_list.append(index)
+            self.update_data_structures(spin, value, error)
 
 
     def return_value(self, run, i, data_type):
