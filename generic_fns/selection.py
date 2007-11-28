@@ -362,31 +362,82 @@ def exists_mol_res_spin_data():
     if len(cdp.mol) > 1:
         return True
 
+    # The single molecule contains data.
+    if exists_mol_data(cdp.mol[0]):
+        return True
+
+    # No data!
+    return False
+
+
+def exists_mol_data(mol_container):
+    """Function for determining if any data exists in the given molecule container.
+
+    @param mol_container:   The ResidueContainer object.
+    @type mol_container:    class instance
+    @return:                The answer to the question about the existence of data.
+    @rtype:                 bool
+    """
+
     # The single molecule has been named.
-    if cdp.mol[0].name != None:
+    if mol_container.name != None:
         return True
 
     # More than 1 residue (hence data exists).
-    if len(cdp.mol[0].res) > 1:
+    if len(mol_container.res) > 1:
         return True
 
+    # The single residue contains data.
+    if exists_res_data(mol_container.res[0]):
+        return True
+
+    # No data!
+    return False
+
+
+def exists_res_data(res_container):
+    """Function for determining if any data exists in the given residue container.
+
+    @param res_container:   The ResidueContainer object.
+    @type res_container:    class instance
+    @return:                The answer to the question about the existence of data.
+    @rtype:                 bool
+    """
+
     # The single residue has been named or numbered.
-    if cdp.mol[0].res[0].name != None or cdp.mol[0].res[0].num != None:
+    if res_container.name != None or res_container.num != None:
         return True
 
     # More than 1 spin (hence data exists).
-    if len(cdp.mol[0].res[0].spin) > 1:
+    if len(res_container.spin) > 1:
         return True
 
+    # The single spin contains data.
+    if exists_spin_data(res_container.spin[0]):
+        return True
+
+    # No data!
+    return False
+
+
+def exists_spin_data(spin_container):
+    """Function for determining if any data exists in the given spin container.
+
+    @param spin_container:  The SpinContainer object.
+    @type spin_container:   class instance
+    @return:                The answer to the question about the existence of data.
+    @rtype:                 bool
+    """
+
     # The single spin has been named or numbered.
-    if cdp.mol[0].res[0].spin[0].name != None or cdp.mol[0].res[0].spin[0].num != None:
+    if spin_container.name != None or spin_container.num != None:
         return True
 
     # The object names in an empty spin container.
     white_list = ['name', 'num', 'select'] 
 
     # Loop over the objects in the spin container.
-    for name in dir(cdp.mol[0].res[0].spin[0]):
+    for name in dir(spin_container):
         # Skip white listed objects.
         if name in white_list:
             continue
