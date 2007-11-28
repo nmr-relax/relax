@@ -182,7 +182,7 @@ class Rx_data:
         self.data_init(relax_data_store)
 
         # Update the global data.
-        self.update_global_data_structures()
+        self.update_data_structures_pipe(ri_label, frq_label, frq)
 
 
         # Residue specific data.
@@ -210,7 +210,7 @@ class Rx_data:
             back_up = deepcopy(data)
 
             # Initialise all data structures.
-            self.update_data_structures(data)
+            self.update_data_structures_spin(data, ri_label, frq_label, frq)
 
             # Back-calculate the relaxation value.
             try:
@@ -222,7 +222,7 @@ class Rx_data:
                 raise
 
             # Update all data structures.
-            self.update_data_structures(data, value)
+            self.update_data_structures_spin(data, ri_label, frq_label, frq, value)
 
 
     def copy(self, run1=None, run2=None, ri_label=None, frq_label=None):
@@ -296,7 +296,7 @@ class Rx_data:
                 error = data1.relax_error[index]
 
                 # Update all data structures for run2.
-                self.update_data_structures(data2, value, error)
+                self.update_data_structures_spin(data2, ri_label, frq_label, frq, value, error)
 
 
     def data_init(self, container):
@@ -606,7 +606,7 @@ class Rx_data:
         self.data_init(relax_data_store[relax_data_store.current_pipe])
 
         # Update the global data.
-        self.update_global_data_structures()
+        self.update_data_structures_pipe(ri_label, frq_label, frq)
 
 
         # Residue specific data.
@@ -638,7 +638,7 @@ class Rx_data:
                 raise RelaxNoSpinError, id
 
             # Update all data structures.
-            self.update_data_structures(spin, value, error)
+            self.update_data_structures_spin(spin, ri_label, frq_label, frq, value, error)
 
 
     def return_value(self, run, i, data_type):
@@ -690,79 +690,7 @@ class Rx_data:
         return False
 
 
-    def update_data_structures(self, data=None, value=None, error=None):
-        """Function for updating all relaxation data structures."""
-
-        # Initialise the relaxation data structures (if needed).
-        self.data_init(data)
-
-        # Find the index corresponding to 'self.ri_label' and 'self.frq_label'.
-        index = self.find_index(data)
-
-        # Append empty data.
-        if index == None:
-            data.relax_data.append(None)
-            data.relax_error.append(None)
-            data.ri_labels.append(None)
-            data.remap_table.append(None)
-            data.noe_r1_table.append(None)
-
-        # Set the index value.
-        if index == None:
-            i = len(data.relax_data) - 1
-        else:
-            i = index
-
-        # Relaxation data and errors.
-        data.relax_data[i] = value
-        data.relax_error[i] = error
-
-        # Update the number of relaxation data points.
-        if index == None:
-            data.num_ri = data.num_ri + 1
-
-        # Add ri_label to the data types.
-        data.ri_labels[i] = self.ri_label
-
-        # Find if the frequency self.frq has already been loaded.
-        remap = len(data.frq)
-        flag = 0
-        for j in xrange(len(data.frq)):
-            if self.frq == data.frq[j]:
-                remap = j
-                flag = 1
-
-        # Update the remap table.
-        data.remap_table[i] = remap
-
-        # Update the data structures which have a length equal to the number of field strengths.
-        if not flag:
-            # Update the number of frequencies.
-            if index == None:
-                data.num_frq = data.num_frq + 1
-
-            # Update the frequency labels.
-            data.frq_labels.append(self.frq_label)
-
-            # Update the frequency array.
-            data.frq.append(self.frq)
-
-        # Update the NOE R1 translation table.
-        # If the data corresponds to 'NOE', try to find if the corresponding R1 data.
-        if self.ri_label == 'NOE':
-            for j in xrange(data.num_ri):
-                if data.ri_labels[j] == 'R1' and self.frq_label == data.frq_labels[data.remap_table[j]]:
-                    data.noe_r1_table[data.num_ri - 1] = j
-
-        # Update the NOE R1 translation table.
-        # If the data corresponds to 'R1', try to find if the corresponding NOE data.
-        if self.ri_label == 'R1':
-            for j in xrange(data.num_ri):
-                if data.ri_labels[j] == 'NOE' and self.frq_label == data.frq_labels[data.remap_table[j]]:
-                    data.noe_r1_table[j] = data.num_ri - 1
-
-
-    def update_global_data_structures(self, ri_label=None, frq_label=None, frq=None):
+    def update_data_structures_pipe(self, ri_label=None, frq_label=None, frq=None):
         """Function for updating all relaxation data structures in the current data pipe.
 
         @param ri_label:        The relaxation data type, ie 'R1', 'R2', or 'NOE'.
@@ -825,6 +753,92 @@ class Rx_data:
             for j in xrange(cdp.num_ri):
                 if cdp.ri_labels[j] == 'NOE' and frq_label == cdp.frq_labels[cdp.remap_table[j]]:
                     cdp.noe_r1_table[j] = cdp.num_ri - 1
+
+
+    def update_data_structures_spin(self, spin=None, ri_label=None, frq_label=None, frq=None, value=None, error=None):
+        """Function for updating all relaxation data structures of the given spin container.
+
+        @param spin:            The SpinContainer object.
+        @type spin:             class instance
+        @param ri_label:        The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+        @type ri_label:         str
+        @param frq_label:       The field strength label.
+        @type frq_label:        str
+        @param frq:             The spectrometer proton frequency in Hz.
+        @type frq:              float
+        @param value:           The relaxation data value.
+        @type value:            float
+        @param error:           The relaxation data error.
+        @type error:            float
+        """
+
+        # Initialise the relaxation data structures (if needed).
+        self.data_init(spin)
+
+        # Find the index corresponding to 'ri_label' and 'frq_label'.
+        index = self.find_index(spin)
+
+        # Append empty data.
+        if index == None:
+            spin.relax_data.append(None)
+            spin.relax_error.append(None)
+            spin.ri_labels.append(None)
+            spin.remap_table.append(None)
+            spin.noe_r1_table.append(None)
+
+        # Set the index value.
+        if index == None:
+            i = len(spin.relax_data) - 1
+        else:
+            i = index
+
+        # Relaxation data and errors.
+        spin.relax_data[i] = value
+        spin.relax_error[i] = error
+
+        # Update the number of relaxation data points.
+        if index == None:
+            spin.num_ri = spin.num_ri + 1
+
+        # Add ri_label to the data types.
+        spin.ri_labels[i] = ri_label
+
+        # Find if the frequency frq has already been loaded.
+        remap = len(spin.frq)
+        flag = 0
+        for j in xrange(len(spin.frq)):
+            if frq == spin.frq[j]:
+                remap = j
+                flag = 1
+
+        # Update the remap table.
+        spin.remap_table[i] = remap
+
+        # Update the data structures which have a length equal to the number of field strengths.
+        if not flag:
+            # Update the number of frequencies.
+            if index == None:
+                spin.num_frq = spin.num_frq + 1
+
+            # Update the frequency labels.
+            spin.frq_labels.append(frq_label)
+
+            # Update the frequency array.
+            spin.frq.append(frq)
+
+        # Update the NOE R1 translation table.
+        # If the data corresponds to 'NOE', try to find if the corresponding R1 data.
+        if ri_label == 'NOE':
+            for j in xrange(spin.num_ri):
+                if spin.ri_labels[j] == 'R1' and frq_label == spin.frq_labels[spin.remap_table[j]]:
+                    spin.noe_r1_table[spin.num_ri - 1] = j
+
+        # Update the NOE R1 translation table.
+        # If the data corresponds to 'R1', try to find if the corresponding NOE data.
+        if ri_label == 'R1':
+            for j in xrange(spin.num_ri):
+                if spin.ri_labels[j] == 'NOE' and frq_label == spin.frq_labels[spin.remap_table[j]]:
+                    spin.noe_r1_table[j] = spin.num_ri - 1
 
 
     def write(self, run=None, ri_label=None, frq_label=None, file=None, dir=None, force=0):

@@ -51,6 +51,10 @@ class Sequence_base_class:
         # Get a temporary file name.
         self.tmpfile = tempnam()
 
+        # Ap4Aase residue sequence data.
+        self.Ap4Aase_res_num = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165]
+        self.Ap4Aase_res_name = ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY', 'TYR', 'ARG', 'ARG', 'ASN', 'VAL', 'GLY', 'ILE', 'CYS', 'LEU', 'MET', 'ASN', 'ASN', 'ASP', 'LYS', 'LYS', 'ILE', 'PHE', 'ALA', 'ALA', 'SER', 'ARG', 'LEU', 'ASP', 'ILE', 'PRO', 'ASP', 'ALA', 'TRP', 'GLN', 'MET', 'PRO', 'GLN', 'GLY', 'GLY', 'ILE', 'ASP', 'GLU', 'GLY', 'GLU', 'ASP', 'PRO', 'ARG', 'ASN', 'ALA', 'ALA', 'ILE', 'ARG', 'GLU', 'LEU', 'ARG', 'GLU', 'GLU', 'THR', 'GLY', 'VAL', 'THR', 'SER', 'ALA', 'GLU', 'VAL', 'ILE', 'ALA', 'GLU', 'VAL', 'PRO', 'TYR', 'TRP', 'LEU', 'THR', 'TYR', 'ASP', 'PHE', 'PRO', 'PRO', 'LYS', 'VAL', 'ARG', 'GLU', 'LYS', 'LEU', 'ASN', 'ILE', 'GLN', 'TRP', 'GLY', 'SER', 'ASP', 'TRP', 'LYS', 'GLY', 'GLN', 'ALA', 'GLN', 'LYS', 'TRP', 'PHE', 'LEU', 'PHE', 'LYS', 'PHE', 'THR', 'GLY', 'GLN', 'ASP', 'GLN', 'GLU', 'ILE', 'ASN', 'LEU', 'LEU', 'GLY', 'ASP', 'GLY', 'SER', 'GLU', 'LYS', 'PRO', 'GLU', 'PHE', 'GLY', 'GLU', 'TRP', 'SER', 'TRP', 'VAL', 'THR', 'PRO', 'GLU', 'GLN', 'LEU', 'ILE', 'ASP', 'LEU', 'THR', 'VAL', 'GLU', 'PHE', 'LYS', 'LYS', 'PRO', 'VAL', 'TYR', 'LYS', 'GLU', 'VAL', 'LEU', 'SER', 'VAL', 'PHE', 'ALA', 'PRO', 'HIS', 'LEU']
+
 
     def tearDown(self):
         """Reset the relax data storage object."""
@@ -100,29 +104,10 @@ class Sequence_base_class:
         # Read the residue sequence out of the Ap4Aase 600 MHz NOE data file.
         self.sequence_fns.read(file='Ap4Aase.Noe.600.bz2', dir=path+'/test_suite/shared_data/relaxation_data')
 
-        # Test parts of the sequence.
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'GLY')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[1].num, 2)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[1].name, 'PRO')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[2].num, 3)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[2].name, 'LEU')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[3].num, 4)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[3].name, 'GLY')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[4].num, 5)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[4].name, 'SER')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[80].num, 90)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[80].name, 'GLU')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[81].num, 91)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[81].name, 'LYS')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[82].num, 92)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[82].name, 'LEU')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[151].num, 163)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[151].name, 'PRO')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[152].num, 164)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[152].name, 'HIS')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[153].num, 165)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[153].name, 'LEU')
+        # Test the entire sequence.
+        for i in xrange(len(self.Ap4Aase_res_num)):
+            self.assertEqual(relax_data_store['orig'].mol[0].res[i].num, self.Ap4Aase_res_num[i])
+            self.assertEqual(relax_data_store['orig'].mol[0].res[i].name, self.Ap4Aase_res_name[i])
 
 
     def test_write_protein_sequence(self):

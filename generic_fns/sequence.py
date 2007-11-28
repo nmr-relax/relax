@@ -184,7 +184,7 @@ def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, 
                 mol_index = mol_index + 1
 
         # A new residue.
-        if res_name_col and cdp.mol[mol_index].res[res_index].name != file_data[i][res_name_col]:
+        if res_name_col and cdp.mol[mol_index].res[res_index].num != file_data[i][res_num_col]:
             # Replace the first empty residue.
             if res_index == 0 and cdp.mol[mol_index].res[0].name == None:
                 cdp.mol[mol_index].res[0].name = file_data[i][res_name_col]
