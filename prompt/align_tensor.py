@@ -42,17 +42,17 @@ class Align_tensor:
         self.__relax__ = relax
 
 
-    def copy(self, align_from=None, pipe_from=None, align_to=None, pipe_to=None):
+    def copy(self, tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
         """Function for copying alignment tensor data.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        align_from:  The identification string of the alignment tensor to copy the data from.
+        tensor_from:  The identification string of the alignment tensor to copy the data from.
 
         pipe_from:  The name of the data pipe to copy the alignment tensor data from.
 
-        align_to:  The identification string of the alignment tensor to copy the data to.
+        tensor_to:  The identification string of the alignment tensor to copy the data to.
 
         pipe_to:  The name of the data pipe to copy the alignment tensor data to.
 
@@ -62,8 +62,8 @@ class Align_tensor:
 
         This function will copy the alignment tensor data to a new tensor or a new data pipe.  The
         destination data pipe must not contain any alignment tensor data corresponding to the
-        align_to label.  If the pipe_from or pipe_to arguments are not supplied, then both will
-        default to the current data pipe.  Both the align_from and align_to arguments must be
+        tensor_to label.  If the pipe_from or pipe_to arguments are not supplied, then both will
+        default to the current data pipe.  Both the tensor_from and tensor_to arguments must be
         supplied.
 
 
@@ -74,42 +74,42 @@ class Align_tensor:
         current data pipe, type one of:
 
         relax> align_tensor.copy('Pf1', 'old')
-        relax> align_tensor.copy(align_from='Pf1', pipe_from='old')
+        relax> align_tensor.copy(tensor_from='Pf1', pipe_from='old')
 
 
         To copy the alignment tensor data corresponding to 'Otting' from the current data pipe to
         the data pipe new, type one of:
 
         relax> align_tensor.copy('Otting', pipe_to='new')
-        relax> align_tensor.copy(align_from='Otting', pipe_to='new')
+        relax> align_tensor.copy(tensor_from='Otting', pipe_to='new')
 
 
         To copy the alignment tensor data of 'Otting' to that of 'Otting new', type one of:
 
-        relax> align_tensor.copy('Otting', align_to='Otting new')
-        relax> align_tensor.copy(align_from='Pf1', align_to='Otting new')
+        relax> align_tensor.copy('Otting', tensor_to='Otting new')
+        relax> align_tensor.copy(tensor_from='Pf1', tensor_to='Otting new')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.copy("
-            text = text + "align_from=" + `align_from`
+            text = text + "tensor_from=" + `tensor_from`
             text = text + ", pipe_from=" + `pipe_from`
-            text = text + ", align_to=" + `align_to`
+            text = text + ", tensor_to=" + `tensor_to`
             text = text + ", pipe_to=" + `pipe_to` + ")"
             print text
 
-        # The align_from argument.
-        if type(align_from) != str:
-            raise RelaxStrError, ('align from ID string', align_from)
+        # The tensor_from argument.
+        if type(tensor_from) != str:
+            raise RelaxStrError, ('align from ID string', tensor_from)
 
         # The pipe_from argument.
         if pipe_from != None and type(pipe_from) != str:
             raise RelaxNoneStrError, ('pipe from', pipe_from)
 
-        # The align_to argument.
-        if type(align_to) != str:
-            raise RelaxStrError, ('align to ID string', align_to)
+        # The tensor_to argument.
+        if type(tensor_to) != str:
+            raise RelaxStrError, ('align to ID string', tensor_to)
 
         # The pipe_to argument.
         if pipe_to != None and type(pipe_to) != str:
@@ -120,17 +120,17 @@ class Align_tensor:
             raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
 
         # Execute the functional code.
-        align_tensor.copy(align_from=align_from, pipe_from=pipe_from, align_to=align_to, pipe_to=pipe_to)
+        align_tensor.copy(tensor_from=tensor_from, pipe_from=pipe_from, tensor_to=tensor_to, pipe_to=pipe_to)
 
 
-    def delete(self, label=None):
+    def delete(self, tensor=None):
         """Function for deleting alignment tensor data.
 
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        label:  The alignment tensor identification string.
+        tensor:  The alignment tensor identification string.
 
 
         Description
@@ -142,47 +142,47 @@ class Align_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.delete("
-            text = text + "label=" + `label` + ")"
+            text = text + "tensor=" + `tensor` + ")"
             print text
 
         # Label argument.
-        if type(label) != str:
-            raise RelaxStrError, ('label', label)
+        if type(tensor) != str:
+            raise RelaxStrError, ('tensor', tensor)
 
         # Execute the functional code.
-        align_tensor.delete(label=label)
+        align_tensor.delete(tensor=tensor)
 
 
-    def display(self, label=None):
+    def display(self, tensor=None):
         """Function for displaying the alignment tensor information.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        label:  The alignment tensor identification string.
+        tensor:  The alignment tensor identification string.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.display("
-            text = text + "label=" + `label` + ")"
+            text = text + "tensor=" + `tensor` + ")"
             print text
 
         # Label argument.
-        if type(label) != str:
-            raise RelaxStrError, ('label', label)
+        if type(tensor) != str:
+            raise RelaxStrError, ('tensor', tensor)
 
         # Execute the functional code.
-        align_tensor.display(label=label)
+        align_tensor.display(tensor=tensor)
 
 
-    def init(self, label=None, params=None, scale=1.0, angle_units='deg', param_types=0, errors=0):
+    def init(self, tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, errors=0):
         """Function for initialising the alignment tensor.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        label:  The alignment tensor identification string.
+        tensor:  The alignment tensor identification string.
 
         params:  The alignment tensor data.
 
@@ -227,7 +227,7 @@ class Align_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.init("
-            text = text + "label=" + `label`
+            text = text + "tensor=" + `tensor`
             text = text + ", params=" + `params`
             text = text + ", scale=" + `scale`
             text = text + ", angle_units=" + `angle_units`
@@ -236,8 +236,8 @@ class Align_tensor:
             print text
 
         # Label argument.
-        if type(label) != str:
-            raise RelaxStrError, ('label', label)
+        if type(tensor) != str:
+            raise RelaxStrError, ('tensor', tensor)
 
         # Parameter argument.
         if type(params) != tuple:
@@ -266,4 +266,4 @@ class Align_tensor:
             raise RelaxBinError, ('errors flag', errors)
 
         # Execute the functional code.
-        align_tensor.init(label=label, params=params, scale=scale, angle_units=angle_units, param_types=param_types, errors=errors)
+        align_tensor.init(tensor=tensor, params=params, scale=scale, angle_units=angle_units, param_types=param_types, errors=errors)
