@@ -362,31 +362,82 @@ def exists_mol_res_spin_data():
     if len(cdp.mol) > 1:
         return True
 
+    # The single molecule contains data.
+    if exists_mol_data(cdp.mol[0]):
+        return True
+
+    # No data!
+    return False
+
+
+def exists_mol_data(mol_container):
+    """Function for determining if any data exists in the given molecule container.
+
+    @param mol_container:   The ResidueContainer object.
+    @type mol_container:    class instance
+    @return:                The answer to the question about the existence of data.
+    @rtype:                 bool
+    """
+
     # The single molecule has been named.
-    if cdp.mol[0].name != None:
+    if mol_container.name != None:
         return True
 
     # More than 1 residue (hence data exists).
-    if len(cdp.mol[0].res) > 1:
+    if len(mol_container.res) > 1:
         return True
 
+    # The single residue contains data.
+    if exists_res_data(mol_container.res[0]):
+        return True
+
+    # No data!
+    return False
+
+
+def exists_res_data(res_container):
+    """Function for determining if any data exists in the given residue container.
+
+    @param res_container:   The ResidueContainer object.
+    @type res_container:    class instance
+    @return:                The answer to the question about the existence of data.
+    @rtype:                 bool
+    """
+
     # The single residue has been named or numbered.
-    if cdp.mol[0].res[0].name != None or cdp.mol[0].res[0].num != None:
+    if res_container.name != None or res_container.num != None:
         return True
 
     # More than 1 spin (hence data exists).
-    if len(cdp.mol[0].res[0].spin) > 1:
+    if len(res_container.spin) > 1:
         return True
 
+    # The single spin contains data.
+    if exists_spin_data(res_container.spin[0]):
+        return True
+
+    # No data!
+    return False
+
+
+def exists_spin_data(spin_container):
+    """Function for determining if any data exists in the given spin container.
+
+    @param spin_container:  The SpinContainer object.
+    @type spin_container:   class instance
+    @return:                The answer to the question about the existence of data.
+    @rtype:                 bool
+    """
+
     # The single spin has been named or numbered.
-    if cdp.mol[0].res[0].spin[0].name != None or cdp.mol[0].res[0].spin[0].num != None:
+    if spin_container.name != None or spin_container.num != None:
         return True
 
     # The object names in an empty spin container.
     white_list = ['name', 'num', 'select'] 
 
     # Loop over the objects in the spin container.
-    for name in dir(cdp.mol[0].res[0].spin[0]):
+    for name in dir(spin_container):
         # Skip white listed objects.
         if name in white_list:
             continue
@@ -400,6 +451,52 @@ def exists_mol_res_spin_data():
 
     # No data!
     return False
+
+
+def generate_spin_id(data=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None):
+    """Function for generating the spin selection string from the given data.
+
+    @param data:            An array containing the molecule, residue, and/or spin data.
+    @type data:             list of str
+    @param mol_name_col:    The column containing the molecule name information.
+    @type mol_name_col:     int or None
+    @param res_name_col:    The column containing the residue name information.
+    @type res_name_col:     int or None
+    @param res_num_col:     The column containing the residue number information.
+    @type res_num_col:      int or None
+    @param spin_name_col:   The column containing the spin name information.
+    @type spin_name_col:    int or None
+    @param spin_num_col:    The column containing the spin number information.
+    @type spin_num_col:     int or None
+    @return:                The spin identification string.
+    @type return:           str
+    """
+
+    # Init.
+    id = ""
+
+    # Molecule data.
+    if mol_name_col != None:
+        id = id + "#" + data[mol_name_col]
+
+    # Residue data.
+    if res_num_col != None:
+        id = id + ":" + data[res_num_col]
+    if  res_num_col != None and res_name_col != None:
+        id = id + "&:" + data[res_name_col]
+    elif res_name_col != None:
+        id = id + ":" + data[res_name_col]
+
+    # Spin data.
+    if spin_num_col != None:
+        id = id + "@" + data[spin_num_col]
+    if  spin_num_col != None and spin_name_col != None:
+        id = id + "&@" + data[spin_name_col]
+    elif spin_name_col != None:
+        id = id + "@" + data[spin_name_col]
+
+    # Return the spin id string.
+    return id
 
 
 def molecule_loop(selection=None, pipe=None):
@@ -634,10 +731,6 @@ def return_residue(selection=None, pipe=None):
     # Parse the selection string.
     select_obj = Selection(selection)
 
-    # No selection.
-    if len(select_obj.residues) == 0:
-        return None
-
     # Loop over the molecules.
     res = None
     res_num = 0
@@ -675,7 +768,7 @@ def return_spin(selection=None, pipe=None):
     @param pipe:        The data pipe containing the spin.  Defaults to the current data pipe.
     @type pipe:         str
     @return:            The spin specific data container.
-    @rtype:             instance of the ResidueContainer class.
+    @rtype:             instance of the SpinContainer class.
     """
 
     # The data pipe.
@@ -687,10 +780,6 @@ def return_spin(selection=None, pipe=None):
 
     # Parse the selection string.
     select_obj = Selection(selection)
-
-    # No selection.
-    if len(select_obj.spins) == 0:
-        return None
 
     # Loop over the molecules.
     spin = None

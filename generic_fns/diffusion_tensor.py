@@ -696,56 +696,56 @@ def return_conversion_factor(param):
 
 def return_data_name(name):
     """
-    Diffusion tensor parameter string matching patterns
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Diffusion tensor parameter string matching patterns
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    ____________________________________________________________________________________________
-    |                                                        |              |                  |
-    | Data type                                              | Object name  | Patterns         |
-    |________________________________________________________|______________|__________________|
-    |                                                        |              |                  |
-    | Global correlation time - tm                           | 'tm'         | '^tm$'           |
-    |                                                        |              |                  |
-    | Isotropic component of the diffusion tensor - Diso     | 'Diso'       | '[Dd]iso'        |
-    |                                                        |              |                  |
-    | Anisotropic component of the diffusion tensor - Da     | 'Da'         | '[Dd]a'          |
-    |                                                        |              |                  |
-    | Rhombic component of the diffusion tensor - Dr         | 'Dr'         | '[Dd]r$'         |
-    |                                                        |              |                  |
-    | Eigenvalue associated with the x-axis of the diffusion | 'Dx'         | '[Dd]x'          |
-    | diffusion tensor - Dx                                  |              |                  |
-    |                                                        |              |                  |
-    | Eigenvalue associated with the y-axis of the diffusion | 'Dy'         | '[Dd]y'          |
-    | diffusion tensor - Dy                                  |              |                  |
-    |                                                        |              |                  |
-    | Eigenvalue associated with the z-axis of the diffusion | 'Dz'         | '[Dd]z'          |
-    | diffusion tensor - Dz                                  |              |                  |
-    |                                                        |              |                  |
-    | Diffusion coefficient parallel to the major axis of    | 'Dpar'       | '[Dd]par'        |
-    | the spheroid diffusion tensor - Dpar                   |              |                  |
-    |                                                        |              |                  |
-    | Diffusion coefficient perpendicular to the major axis  | 'Dper'       | '[Dd]per'        |
-    | of the spheroid diffusion tensor - Dper                |              |                  |
-    |                                                        |              |                  |
-    | Ratio of the parallel and perpendicular components of  | 'Dratio'     | '[Dd]ratio'      |
-    | the spheroid diffusion tensor - Dratio                 |              |                  |
-    |                                                        |              |                  |
-    | The first Euler angle of the ellipsoid diffusion       | 'alpha'      | '^a$' or 'alpha' |
-    | tensor - alpha                                         |              |                  |
-    |                                                        |              |                  |
-    | The second Euler angle of the ellipsoid diffusion      | 'beta'       | '^b$' or 'beta'  |
-    | tensor - beta                                          |              |                  |
-    |                                                        |              |                  |
-    | The third Euler angle of the ellipsoid diffusion       | 'gamma'      | '^g$' or 'gamma' |
-    | tensor - gamma                                         |              |                  |
-    |                                                        |              |                  |
-    | The polar angle defining the major axis of the         | 'theta'      | 'theta'          |
-    | spheroid diffusion tensor - theta                      |              |                  |
-    |                                                        |              |                  |
-    | The azimuthal angle defining the major axis of the     | 'phi'        | 'phi'            |
-    | spheroid diffusion tensor - phi                        |              |                  |
-    |________________________________________________________|______________|__________________|
-    """
+        ____________________________________________________________________________________________
+        |                                                        |              |                  |
+        | Data type                                              | Object name  | Patterns         |
+        |________________________________________________________|______________|__________________|
+        |                                                        |              |                  |
+        | Global correlation time - tm                           | 'tm'         | '^tm$'           |
+        |                                                        |              |                  |
+        | Isotropic component of the diffusion tensor - Diso     | 'Diso'       | '[Dd]iso'        |
+        |                                                        |              |                  |
+        | Anisotropic component of the diffusion tensor - Da     | 'Da'         | '[Dd]a'          |
+        |                                                        |              |                  |
+        | Rhombic component of the diffusion tensor - Dr         | 'Dr'         | '[Dd]r$'         |
+        |                                                        |              |                  |
+        | Eigenvalue associated with the x-axis of the diffusion | 'Dx'         | '[Dd]x'          |
+        | diffusion tensor - Dx                                  |              |                  |
+        |                                                        |              |                  |
+        | Eigenvalue associated with the y-axis of the diffusion | 'Dy'         | '[Dd]y'          |
+        | diffusion tensor - Dy                                  |              |                  |
+        |                                                        |              |                  |
+        | Eigenvalue associated with the z-axis of the diffusion | 'Dz'         | '[Dd]z'          |
+        | diffusion tensor - Dz                                  |              |                  |
+        |                                                        |              |                  |
+        | Diffusion coefficient parallel to the major axis of    | 'Dpar'       | '[Dd]par'        |
+        | the spheroid diffusion tensor - Dpar                   |              |                  |
+        |                                                        |              |                  |
+        | Diffusion coefficient perpendicular to the major axis  | 'Dper'       | '[Dd]per'        |
+        | of the spheroid diffusion tensor - Dper                |              |                  |
+        |                                                        |              |                  |
+        | Ratio of the parallel and perpendicular components of  | 'Dratio'     | '[Dd]ratio'      |
+        | the spheroid diffusion tensor - Dratio                 |              |                  |
+        |                                                        |              |                  |
+        | The first Euler angle of the ellipsoid diffusion       | 'alpha'      | '^a$' or 'alpha' |
+        | tensor - alpha                                         |              |                  |
+        |                                                        |              |                  |
+        | The second Euler angle of the ellipsoid diffusion      | 'beta'       | '^b$' or 'beta'  |
+        | tensor - beta                                          |              |                  |
+        |                                                        |              |                  |
+        | The third Euler angle of the ellipsoid diffusion       | 'gamma'      | '^g$' or 'gamma' |
+        | tensor - gamma                                         |              |                  |
+        |                                                        |              |                  |
+        | The polar angle defining the major axis of the         | 'theta'      | 'theta'          |
+        | spheroid diffusion tensor - theta                      |              |                  |
+        |                                                        |              |                  |
+        | The azimuthal angle defining the major axis of the     | 'phi'        | 'phi'            |
+        | spheroid diffusion tensor - phi                        |              |                  |
+        |________________________________________________________|______________|__________________|
+    """    # This docstring is to be joined onto those of the user functions, hence the 8 whitespace characters.
 
     # Enforce that the name must be a string.
     if type(name) != str:

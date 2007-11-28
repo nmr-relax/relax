@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006 Edward d'Auvergne                                  #
+# Copyright (C) 2007 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,23 +21,4 @@
 ###############################################################################
 
 
-from hybrid import Hybrid
-from jw_mapping import Jw_mapping
-from model_free import Model_free
-from noe import Noe
-from relax_fit import Relax_fit
-
-
-class Specific:
-    def __init__(self, relax):
-        """Class containing all the specific functions."""
-
-        # Place the program class structure under self.relax
-        self.relax = relax
-
-        # Set up all the functions
-        self.hybrid = Hybrid(self.relax)
-        self.jw_mapping = Jw_mapping(self.relax)
-        self.model_free = Model_free(self.relax)
-        self.noe = Noe(self.relax)
-        self.relax_fit = Relax_fit(self.relax)
+__all__ = ['']

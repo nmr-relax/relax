@@ -1,0 +1,210 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2007 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax.                                     #
+#                                                                             #
+# relax is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# relax is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with relax; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+#                                                                             #
+###############################################################################
+
+# Python module imports.
+from unittest import TestCase
+
+# relax module imports.
+from data import Data as relax_data_store
+from prompt.relax_data import Relax_data
+from relax_errors import RelaxError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from test_suite.unit_tests.relax_data_testing_base import Relax_data_base_class
+
+# Unit test imports.
+from data_types import DATA_TYPES
+import fake_relax
+
+
+class Test_relax_data(Relax_data_base_class, TestCase):
+    """Unit tests for the functions of the 'prompt.relax_data' module."""
+
+    # Instantiate the user function class.
+    relax_data_fns = Relax_data(fake_relax.fake_instance())
+
+
+    def test_read_argfail_ri_label(self):
+        """The ri_label arg test of the relax_data.read() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.relax_data_fns.read, ri_label=data[1])
+
+
+    def test_read_argfail_frq_label(self):
+        """The frq_label arg test of the relax_data.read() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.relax_data_fns.read, ri_label='R2', frq_label=data[1])
+
+
+    def test_read_argfail_frq(self):
+        """The frq arg test of the relax_data.read() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the float argument, and skip it.
+            if data[0] == 'float':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxFloatError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=data[1])
+
+
+    def test_read_argfail_file(self):
+        """The file arg test of the relax_data.read() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file=data[1])
+
+
+    def test_read_argfail_dir(self):
+        """The dir arg test of the relax_data.read() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', dir=data[1])
+
+
+    def test_read_argfail_mol_name_col(self):
+        """The mol_name_col arg test of the relax_data.read() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None, int, and bin arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneIntError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', mol_name_col=data[1])
+
+
+    def test_read_argfail_res_num_col(self):
+        """The res_num_col arg test of the relax_data.read() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None, int, and bin arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneIntError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', res_num_col=data[1])
+
+
+    def test_read_argfail_res_name_col(self):
+        """The res_name_col arg test of the relax_data.read() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None, int, and bin arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneIntError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', res_name_col=data[1])
+
+
+    def test_read_argfail_spin_num_col(self):
+        """The spin_num_col arg test of the relax_data.read() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None, int, and bin arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneIntError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', spin_num_col=data[1])
+
+
+    def test_read_argfail_spin_name_col(self):
+        """The spin_name_col arg test of the relax_data.read() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None, int, and bin arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneIntError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', spin_name_col=data[1])
+
+
+    def test_read_argfail_data_col(self):
+        """The data_col arg test of the relax_data.read() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the int and bin arguments, and skip them.
+            if data[0] == 'int' or data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxIntError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', data_col=data[1])
+
+
+    def test_read_argfail_error_col(self):
+        """The error_col arg test of the relax_data.read() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the int and bin arguments, and skip them.
+            if data[0] == 'int' or data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxIntError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', error_col=data[1])
+
+
+    def test_read_argfail_sep(self):
+        """The sep arg test of the relax_data.read() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', sep=data[1])

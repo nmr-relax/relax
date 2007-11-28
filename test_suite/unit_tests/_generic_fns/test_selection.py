@@ -52,6 +52,12 @@ class Test_selection(TestCase):
         cdp.mol[0].res.add_item(res_num=2, res_name='Glu')
         cdp.mol[0].res.add_item(res_num=4, res_name='Pro')
 
+        # Add some spin info to this molecule.
+        cdp.mol[0].res[0].spin[0].name = 'NH'
+        cdp.mol[0].res[0].spin[0].num = 60
+        cdp.mol[0].res[1].spin[0].name = 'NH'
+        cdp.mol[0].res[1].spin[0].num = 63
+
         # Add one more residue to the second molecule (and set the residue number of the first).
         cdp.mol[1].res[0].num = -5
         cdp.mol[1].res.add_item(res_num=-4)
@@ -246,6 +252,86 @@ class Test_selection(TestCase):
 
         # This should fail.
         self.assertRaises(RelaxNoPipeError, selection.exists_mol_res_spin_data)
+
+
+    def test_generate_spin_id1(self):
+        """First test of the spin ID generation function.
+
+        The function tested is generic_fns.selection.generate_spin_id().
+        """
+
+        # The data.
+        data = ['1', 'GLY']
+
+        # The ID.
+        id = selection.generate_spin_id(data)
+
+        # Test the string.
+        self.assertEqual(id, ':1&:GLY')
+
+
+    def test_generate_spin_id2(self):
+        """Second test of the spin ID generation function.
+
+        The function tested is generic_fns.selection.generate_spin_id().
+        """
+
+        # The data.
+        data = ['1', 'GLY', '234', 'NH']
+
+        # The ID.
+        id = selection.generate_spin_id(data, spin_num_col=2, spin_name_col=3)
+
+        # Test the string.
+        self.assertEqual(id, ':1&:GLY@234&@NH')
+
+
+    def test_generate_spin_id3(self):
+        """Third test of the spin ID generation function.
+
+        The function tested is generic_fns.selection.generate_spin_id().
+        """
+
+        # The data.
+        data = ['Ap4Aase', '234', 'NH']
+
+        # The ID.
+        id = selection.generate_spin_id(data, mol_name_col=0, res_num_col=None, res_name_col=None, spin_num_col=1, spin_name_col=2)
+
+        # Test the string.
+        self.assertEqual(id, '#Ap4Aase@234&@NH')
+
+
+    def test_generate_spin_id4(self):
+        """Fourth test of the spin ID generation function.
+
+        The function tested is generic_fns.selection.generate_spin_id().
+        """
+
+        # The data.
+        data = ['Ap4Aase', '1', 'GLY']
+
+        # The ID.
+        id = selection.generate_spin_id(data, mol_name_col=0, res_num_col=1, res_name_col=2)
+
+        # Test the string.
+        self.assertEqual(id, '#Ap4Aase:1&:GLY')
+
+
+    def test_generate_spin_id5(self):
+        """Fifth test of the spin ID generation function.
+
+        The function tested is generic_fns.selection.generate_spin_id().
+        """
+
+        # The data.
+        data = ['Ap4Aase', '1', 'GLY', '234', 'NH']
+
+        # The ID.
+        id = selection.generate_spin_id(data, mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4)
+
+        # Test the string.
+        self.assertEqual(id, '#Ap4Aase:1&:GLY@234&@NH')
 
 
     def test_molecule_loop(self):
@@ -663,6 +749,49 @@ class Test_selection(TestCase):
         self.assertRaises(RelaxError, selection.return_single_residue_info, '1,2,Glu,Pro')
 
 
+    def test_return_spin(self):
+        """Test the function for returning the desired spin data container.
+
+        The function tested is generic_fns.selection.return_spin().
+        """
+
+        # Ask for a few spins.
+        spin1 = selection.return_spin(':1')
+        spin2 = selection.return_spin(selection=':2&:Glu')
+        spin3 = selection.return_spin(selection=':4&:Pro', pipe='orig')
+        spin4 = selection.return_spin(selection='#RNA:-5@N5', pipe='orig')
+
+        # Test the data of spin 1.
+        self.assertNotEqual(spin1, None)
+        self.assertEqual(spin1.num, 60)
+        self.assertEqual(spin1.name, 'NH')
+
+        # Test the data of spin 2.
+        self.assertNotEqual(spin2, None)
+        self.assertEqual(spin2.num, 63)
+        self.assertEqual(spin2.name, 'NH')
+
+        # Test the data of spin 3.
+        self.assertNotEqual(spin3, None)
+        self.assertEqual(spin3.num, None)
+        self.assertEqual(spin3.name, None)
+
+        # Test the data of the RNA res -5, spin N5.
+        self.assertNotEqual(spin4, None)
+        self.assertEqual(spin4.num, None)
+        self.assertEqual(spin4.name, 'N5')
+
+
+    def test_return_spin_pipe_fail(self):
+        """Test the failure of the function for returning the desired spin data container.
+
+        The function tested is generic_fns.selection.return_spin().
+        """
+
+        # Try to get a spin from a missing data pipe.
+        self.assertRaises(RelaxNoPipeError, selection.return_spin, selection=':2', pipe='new')
+
+
     def test_reverse(self):
         """Test spin system selection reversal.
 
@@ -757,7 +886,7 @@ class Test_selection(TestCase):
 
         # Spin data.
         select = [0, 1, 0, 0, 1, 1, 0]
-        name = [None, None, None, None, 'N5', None, 'N5']
+        name = ['NH', 'NH', None, None, 'N5', None, 'N5']
 
         # Loop over the spins.
         i = 0

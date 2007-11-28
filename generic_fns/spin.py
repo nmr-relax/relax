@@ -23,7 +23,7 @@
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxSpinSelectDisallowError
-from selection import parse_token, residue_loop, return_residue, return_spin, return_single_spin_info, spin_loop, tokenise
+from selection import exists_spin_data, parse_token, residue_loop, return_residue, return_spin, return_single_spin_info, spin_loop, tokenise
 
 
 # Module doc.
@@ -65,8 +65,10 @@ def copy(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
     mol_to_token, res_to_token, spin_to_token = tokenise(spin_to)
 
     # Test if the spin number already exists.
-    if return_spin(spin_to, pipe_to):
-        raise RelaxError, "The spin " + `spin_to` + " already exists in the " + `pipe_from` + " data pipe."
+    if spin_to_token:
+        spin_to_cont = return_spin(spin_to, pipe_to)
+        if spin_to_cont and exists_spin_data(spin_to_cont):
+            raise RelaxError, "The spin " + `spin_to` + " already exists in the " + `pipe_from` + " data pipe."
 
     # No residue to copy data from.
     if not return_residue(spin_from, pipe_from):
@@ -78,7 +80,7 @@ def copy(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
         raise RelaxError, "The spin " + `spin_from` + " does not exist in the " + `pipe_from` + " data pipe."
 
     # Get the single residue data container to copy the spin to (default to the first molecule, first residue).
-    res_to_cont = return_residue(spin_to, pipe_from)
+    res_to_cont = return_residue(spin_to, pipe_to)
     if res_to_cont == None and spin_to:
         # No residue to copy data to.
         raise RelaxError, "The residue in " + `spin_to` + " does not exist in the " + `pipe_from` + " data pipe."
@@ -124,10 +126,11 @@ def create(spin_num=None, spin_name=None, res_id=None):
         raise RelaxNoPipeError
 
     # Get the residue container to add the spin to.
-    res_to_cont = return_residue(res_id)
-    if res_to_cont == None and res_id:
-        raise RelaxError, "The residue in " + `res_id` + " does not exist in the current data pipe."
-    elif res_to_cont == None:
+    if res_id:
+        res_to_cont = return_residue(res_id)
+        if res_to_cont == None:
+            raise RelaxError, "The residue in " + `res_id` + " does not exist in the current data pipe."
+    else:
         res_to_cont = relax_data_store[relax_data_store.current_pipe].mol[0].res[0]
 
     # Test if the spin number already exists.

@@ -396,8 +396,8 @@ class RelaxStrListStrError(BaseError):
 
 # No sequence loaded.
 class RelaxNoSequenceError(BaseError):
-    def __init__(self, pipe):
-        self.text = "The sequence data for the data pipe " + `pipe` + " does not exist."
+    def __init__(self):
+        self.text = "The sequence data does not exist."
         if Debug:
             self.save_state()
 
@@ -422,6 +422,13 @@ class RelaxNoResError(BaseError):
             self.text = "The residue '" + `number` + "' cannot be found in the sequence."
         else:
             self.text = "The residue '" + `number` + " " + name + "' cannot be found in the sequence."
+        if Debug:
+            self.save_state()
+
+# Cannot find the spin in the sequence.
+class RelaxNoSpinError(BaseError):
+    def __init__(self, id):
+        self.text = "The spin " + `id` + " does not exist."
         if Debug:
             self.save_state()
 
