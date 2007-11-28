@@ -299,61 +299,35 @@ class Rx_data:
                 self.update_data_structures(data2, value, error)
 
 
-    def data_init(self, data):
-        """Function for initialising the data structures."""
+    def data_init(self, container):
+        """Function for initialising the data structures for a spin container.
+
+        @param container:   The data pipe or spin data container (PipeContainer or SpinContainer).
+        @type container:    class instance
+        """
 
         # Get the data names.
         data_names = self.data_names()
 
+        # Init.
+        list_data = [ 'relax_data',
+                      'relax_error',
+                      'ri_labels',
+                      'remap_table',
+                      'noe_r1_table',
+                      'frq_labels',
+                      'frq' ]
+        zero_data = [ 'num_ri', 'num_frq' ]
+
         # Loop over the data structure names.
         for name in data_names:
-            # Global data.
-            if self.global_flag == 1:
-                # Add the global data structure if it does not exist.
-                if not hasattr(data, name):
-                    setattr(data, name, {})
+            # If the name is not in the container, add it as an empty array.
+            if name in list_data and not hasattr(container, name):
+                setattr(container, name, [])
 
-            # Data structures which are initially empty arrays.
-            list_data = [ 'relax_data',
-                          'relax_error',
-                          'ri_labels',
-                          'remap_table',
-                          'noe_r1_table',
-                          'frq_labels',
-                          'frq' ]
-            if name in list_data:
-                # Global data.
-                if self.global_flag == 1:
-                    # Get the object.
-                    object = getattr(data, name)
-
-                    # Add the data if the key is missing.
-                    if not object.has_key(self.run):
-                        object[self.run] = []
-
-                # Residue specific data.
-                else:
-                    # If the name is not in 'data', add it.
-                    if not hasattr(data, name):
-                        setattr(data, name, [])
-
-            # Data structures which are initially zero.
-            zero_data = [ 'num_ri', 'num_frq' ]
-            if name in zero_data:
-                # Global data.
-                if self.global_flag == 1:
-                    # Get the object.
-                    object = getattr(data, name)
-
-                    # Add the data if the key is missing.
-                    if not object.has_key(self.run):
-                        object[self.run] = 0
-
-                # Residue specific data.
-                else:
-                    # If the name is not in 'data', add it.
-                    if not hasattr(data, name):
-                        setattr(data, name, 0)
+            # If the name is not in the container, add it as a variable set to zero.
+            if name in zero_data and not hasattr(container, name):
+                setattr(container, name, 0)
 
 
     def data_names(self):
