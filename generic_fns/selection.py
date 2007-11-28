@@ -432,7 +432,7 @@ def generate_spin_id(data=None, mol_name_col=None, res_num_col=0, res_name_col=1
     if res_num_col != None:
         id = id + ":" + data[res_num_col]
     if  res_num_col != None and res_name_col != None:
-        id = id + "&" + data[res_name_col]
+        id = id + "&:" + data[res_name_col]
     elif res_name_col != None:
         id = id + ":" + data[res_name_col]
 
@@ -440,7 +440,7 @@ def generate_spin_id(data=None, mol_name_col=None, res_num_col=0, res_name_col=1
     if spin_num_col != None:
         id = id + "@" + data[spin_num_col]
     if  spin_num_col != None and spin_name_col != None:
-        id = id + "&" + data[spin_name_col]
+        id = id + "&@" + data[spin_name_col]
     elif spin_name_col != None:
         id = id + "@" + data[spin_name_col]
 
