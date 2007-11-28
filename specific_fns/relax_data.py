@@ -210,7 +210,7 @@ class Rx_data:
             back_up = deepcopy(data)
 
             # Initialise all data structures.
-            self.update_data_structures_spin(data)
+            self.update_data_structures_spin(data, ri_label, frq_label, frq)
 
             # Back-calculate the relaxation value.
             try:
@@ -222,7 +222,7 @@ class Rx_data:
                 raise
 
             # Update all data structures.
-            self.update_data_structures_spin(data, value)
+            self.update_data_structures_spin(data, ri_label, frq_label, frq, value)
 
 
     def copy(self, run1=None, run2=None, ri_label=None, frq_label=None):
@@ -296,7 +296,7 @@ class Rx_data:
                 error = data1.relax_error[index]
 
                 # Update all data structures for run2.
-                self.update_data_structures_spin(data2, value, error)
+                self.update_data_structures_spin(data2, ri_label, frq_label, frq, value, error)
 
 
     def data_init(self, container):
@@ -638,7 +638,7 @@ class Rx_data:
                 raise RelaxNoSpinError, id
 
             # Update all data structures.
-            self.update_data_structures_spin(spin, value, error)
+            self.update_data_structures_spin(spin, ri_label, frq_label, frq, value, error)
 
 
     def return_value(self, run, i, data_type):
