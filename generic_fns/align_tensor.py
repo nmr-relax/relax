@@ -251,9 +251,11 @@ def fold_angles(sim_index=None):
             cdp.align_tensor.beta_sim[sim_index] = cdp.align_tensor.beta_sim[sim_index] + pi
 
 
-def init(params=None, scale=1.0, angle_units='deg', param_types=0, errors=0):
+def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, errors=0):
     """Function for initialising the alignment tensor.
 
+    @param tensor:          The alignment tensor identification string.
+    @type tensor:           str
     @param params:          The alignment tensor parameters.
     @type params:           float
     @param scale:           The alignment tensor eigenvalue scaling value.
@@ -284,7 +286,9 @@ def init(params=None, scale=1.0, angle_units='deg', param_types=0, errors=0):
         raise RelaxError, "The alignment tensor 'angle_units' argument " + `angle_units` + " should be either 'deg' or 'rad'."
 
     # Add the align_tensor object to the data pipe.
-    cdp.align_tensor = AlignTensorData()
+    if not hasattr(cdp, 'align_tensor'):
+        cdp.align_tensor = {}
+    cdp.align_tensor[tensor] = AlignTensorData()
 
     # (Axx, Ayy, Axy, Axz, Ayz).
     if param_types == 0:
