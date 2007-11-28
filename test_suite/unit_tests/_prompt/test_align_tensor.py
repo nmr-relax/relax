@@ -40,6 +40,19 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
     align_tensor_fns = Align_tensor(fake_relax.fake_instance())
 
 
+    def test_copy_argfail_tensor_from(self):
+        """Failure of the tensor_from arg of the align_tensor.copy() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.align_tensor_fns.copy, tensor_from=data[1])
+
+
     def test_copy_argfail_pipe_from(self):
         """The pipe_from arg test of the align_tensor.copy() user function."""
 
@@ -51,6 +64,19 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
 
             # The argument test.
             self.assertRaises(RelaxNoneStrError, self.align_tensor_fns.copy, pipe_from=data[1])
+
+
+    def test_copy_argfail_tensor_to(self):
+        """Failure of the tensor_to arg of the align_tensor.copy() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.align_tensor_fns.copy, tensor_to=data[1])
 
 
     def test_copy_argfail_pipe_to(self):
@@ -71,6 +97,32 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
 
         # Test that both cannot be None (the default)!
         self.assertRaises(RelaxError, self.align_tensor_fns.copy)
+
+
+    def test_delete_argfail_tensor(self):
+        """Failure of the tensor arg of the align_tensor.delete() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.align_tensor_fns.delete, tensor=data[1])
+
+
+    def test_display_argfail_tensor(self):
+        """Failure of the tensor arg of the align_tensor.display() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.align_tensor_fns.display, tensor=data[1])
 
 
     def test_init_argfail_tensor(self):
