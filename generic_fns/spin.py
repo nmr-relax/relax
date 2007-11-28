@@ -80,7 +80,7 @@ def copy(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
         raise RelaxError, "The spin " + `spin_from` + " does not exist in the " + `pipe_from` + " data pipe."
 
     # Get the single residue data container to copy the spin to (default to the first molecule, first residue).
-    res_to_cont = return_residue(spin_to, pipe_from)
+    res_to_cont = return_residue(spin_to, pipe_to)
     if res_to_cont == None and spin_to:
         # No residue to copy data to.
         raise RelaxError, "The residue in " + `spin_to` + " does not exist in the " + `pipe_from` + " data pipe."
