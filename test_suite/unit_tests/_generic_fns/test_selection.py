@@ -261,7 +261,7 @@ class Test_selection(TestCase):
         id = selection.generate_spin_id(data)
 
         # Test the string.
-        self.assertEqual(id, ':1&GLY')
+        self.assertEqual(id, ':1&:GLY')
 
 
     def test_generate_spin_id2(self):
@@ -277,7 +277,7 @@ class Test_selection(TestCase):
         id = selection.generate_spin_id(data, spin_num_col=2, spin_name_col=3)
 
         # Test the string.
-        self.assertEqual(id, ':1&GLY@234&NH')
+        self.assertEqual(id, ':1&:GLY@234&@NH')
 
 
     def test_generate_spin_id3(self):
@@ -293,7 +293,7 @@ class Test_selection(TestCase):
         id = selection.generate_spin_id(data, mol_name_col=0, res_num_col=None, res_name_col=None, spin_num_col=1, spin_name_col=2)
 
         # Test the string.
-        self.assertEqual(id, '#Ap4Aase@234&NH')
+        self.assertEqual(id, '#Ap4Aase@234&@NH')
 
 
     def test_generate_spin_id4(self):
@@ -309,7 +309,7 @@ class Test_selection(TestCase):
         id = selection.generate_spin_id(data, mol_name_col=0, res_num_col=1, res_name_col=2)
 
         # Test the string.
-        self.assertEqual(id, '#Ap4Aase:1&GLY')
+        self.assertEqual(id, '#Ap4Aase:1&:GLY')
 
 
     def test_generate_spin_id5(self):
@@ -325,7 +325,7 @@ class Test_selection(TestCase):
         id = selection.generate_spin_id(data, mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4)
 
         # Test the string.
-        self.assertEqual(id, '#Ap4Aase:1&GLY@234&NH')
+        self.assertEqual(id, '#Ap4Aase:1&:GLY@234&@NH')
 
 
     def test_molecule_loop(self):
