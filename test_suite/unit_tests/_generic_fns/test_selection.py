@@ -52,6 +52,12 @@ class Test_selection(TestCase):
         cdp.mol[0].res.add_item(res_num=2, res_name='Glu')
         cdp.mol[0].res.add_item(res_num=4, res_name='Pro')
 
+        # Add some spin info to this molecule.
+        cdp.mol[0].res[0].spin[0].name = 'NH'
+        cdp.mol[0].res[0].spin[0].num = 60
+        cdp.mol[0].res[1].spin[0].name = 'NH'
+        cdp.mol[0].res[1].spin[0].num = 63
+
         # Add one more residue to the second molecule (and set the residue number of the first).
         cdp.mol[1].res[0].num = -5
         cdp.mol[1].res.add_item(res_num=-4)
@@ -751,30 +757,29 @@ class Test_selection(TestCase):
 
         # Ask for a few spins.
         spin1 = selection.return_spin(':1')
-        spin2 = selection.return_spin(selection=':2')
-        spin3 = selection.return_spin(selection=':4', pipe='orig')
-        spin4 = selection.return_spin(selection='#RNA:-5', pipe='orig')
+        spin2 = selection.return_spin(selection=':2&:Glu')
+        spin3 = selection.return_spin(selection=':4&:Pro', pipe='orig')
+        spin4 = selection.return_spin(selection='#RNA:-5@N5', pipe='orig')
 
         # Test the data of spin 1.
         self.assertNotEqual(spin1, None)
-        self.assertEqual(spin1.num, 1)
-        self.assertEqual(spin1.name, None)
+        self.assertEqual(spin1.num, 60)
+        self.assertEqual(spin1.name, 'NH')
 
         # Test the data of spin 2.
         self.assertNotEqual(spin2, None)
-        self.assertEqual(spin2.num, 2)
-        self.assertEqual(spin2.name, 'Glu')
+        self.assertEqual(spin2.num, 63)
+        self.assertEqual(spin2.name, 'NH')
 
         # Test the data of spin 3.
         self.assertNotEqual(spin3, None)
-        self.assertEqual(spin3.num, 4)
-        self.assertEqual(spin3.name, 'Pro')
+        self.assertEqual(spin3.num, None)
+        self.assertEqual(spin3.name, None)
 
-        # Test the data of the RNA spin -5.
+        # Test the data of the RNA res -5, spin N5.
         self.assertNotEqual(spin4, None)
-        self.assertEqual(spin4.num, -5)
-        self.assertEqual(spin4.name, None)
-        self.assertEqual(spin4.spin[1].name, 'N5')
+        self.assertEqual(spin4.num, None)
+        self.assertEqual(spin4.name, 'N5')
 
 
     def test_return_spin_pipe_fail(self):
@@ -881,7 +886,7 @@ class Test_selection(TestCase):
 
         # Spin data.
         select = [0, 1, 0, 0, 1, 1, 0]
-        name = [None, None, None, None, 'N5', None, 'N5']
+        name = ['NH', 'NH', None, None, 'N5', None, 'N5']
 
         # Loop over the spins.
         i = 0
