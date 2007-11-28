@@ -73,8 +73,8 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
         self.assertRaises(RelaxError, self.align_tensor_fns.copy)
 
 
-    def test_init_argfail_label(self):
-        """Failure of the label arg of the align_tensor.init() user function."""
+    def test_init_argfail_tensor(self):
+        """Failure of the tensor arg of the align_tensor.init() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -83,7 +83,7 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.align_tensor_fns.init, label=data[1])
+            self.assertRaises(RelaxStrError, self.align_tensor_fns.init, tensor=data[1])
 
 
     def test_init_argfail_params(self):
