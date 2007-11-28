@@ -73,3 +73,15 @@ class Relax_data_base_class:
 
         # Then read the data out of the same file.
         self.relax_data_fns.read(ri_label='NOE', frq_label='600', frq=600e6, file='Ap4Aase.Noe.600.bz2', dir=path+'/test_suite/shared_data/relaxation_data')
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Test the pipe data structures.
+        self.assertEqual(cdp.frq, [600e6])
+        self.assertEqual(cdp.frq_labels, ['600'])
+        self.assertEqual(cdp.noe_r1_table, [None])
+        self.assertEqual(cdp.num_frq, 1)
+        self.assertEqual(cdp.num_ri, 1)
+        self.assertEqual(cdp.remap_table, [0])
+        self.assertEqual(cdp.ri_labels, ['NOE'])
