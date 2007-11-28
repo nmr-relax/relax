@@ -680,10 +680,6 @@ def return_residue(selection=None, pipe=None):
     # Parse the selection string.
     select_obj = Selection(selection)
 
-    # No selection.
-    if len(select_obj.residues) == 0:
-        return None
-
     # Loop over the molecules.
     res = None
     res_num = 0
@@ -721,7 +717,7 @@ def return_spin(selection=None, pipe=None):
     @param pipe:        The data pipe containing the spin.  Defaults to the current data pipe.
     @type pipe:         str
     @return:            The spin specific data container.
-    @rtype:             instance of the ResidueContainer class.
+    @rtype:             instance of the SpinContainer class.
     """
 
     # The data pipe.
@@ -733,10 +729,6 @@ def return_spin(selection=None, pipe=None):
 
     # Parse the selection string.
     select_obj = Selection(selection)
-
-    # No selection.
-    if len(select_obj.spins) == 0:
-        return None
 
     # Loop over the molecules.
     spin = None
