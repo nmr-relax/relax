@@ -63,7 +63,7 @@ class Align_tensor_base_class:
         """
 
         # Initialise the tensor.
-        self.align_tensor_fns.init(params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
+        self.align_tensor_fns.init(label='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
 
         # Change the current data pipe.
         relax_data_store.current_pipe = 'test'
@@ -87,7 +87,7 @@ class Align_tensor_base_class:
         """
 
         # Initialise the tensor.
-        self.align_tensor_fns.init(params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
+        self.align_tensor_fns.init(label='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
 
         # Copy the tensor to the test pipe.
         self.align_tensor_fns.copy(pipe_to='test')
@@ -108,7 +108,7 @@ class Align_tensor_base_class:
         """
 
         # Initialise the tensor.
-        self.align_tensor_fns.init(params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
+        self.align_tensor_fns.init(label='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
 
         # Delete the tensor data.
         self.align_tensor_fns.delete()
@@ -150,7 +150,7 @@ class Align_tensor_base_class:
         """
 
         # Initialise the tensor.
-        self.align_tensor_fns.init(params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
+        self.align_tensor_fns.init(label='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
 
         # Display the alignment tensor.
         self.align_tensor_fns.display()
@@ -189,7 +189,7 @@ class Align_tensor_base_class:
         """
 
         # Initialise the tensor.
-        self.assertRaises(RelaxError, self.align_tensor_fns.init, params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), angle_units='aaa')
+        self.assertRaises(RelaxError, self.align_tensor_fns.init, label='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), angle_units='aaa')
 
 
     def test_init(self):
@@ -200,7 +200,7 @@ class Align_tensor_base_class:
         """
 
         # Initialise the tensor.
-        self.align_tensor_fns.init(params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
+        self.align_tensor_fns.init(label='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
 
         # Test the alignment tensor.
         self.assertEqual(relax_data_store['orig'].align_tensor.Axx, -16.6278)
