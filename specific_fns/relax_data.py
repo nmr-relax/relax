@@ -602,8 +602,8 @@ class Rx_data:
         # Global data flag.
         self.global_flag = 1
 
-        # Initialise the global data if necessary.
-        self.data_init()
+        # Initialise the global data for the current pipe if necessary.
+        self.data_init(relax_data_store[relax_data_store.current_pipe])
 
         # Update the global data.
         self.update_global_data_structures()
