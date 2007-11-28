@@ -167,7 +167,7 @@ class Rx_data:
             raise RelaxNoSequenceError, self.run
 
         # Test if relaxation data corresponding to 'self.ri_label' and 'self.frq_label' already exists.
-        if self.test_labels(run):
+        if self.test_labels():
             raise RelaxRiError, (self.ri_label, self.frq_label)
 
 
@@ -428,7 +428,7 @@ class Rx_data:
             raise RelaxNoSequenceError, self.run
 
         # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
-        if not self.test_labels(run):
+        if not self.test_labels():
             raise RelaxNoRiError, (self.ri_label, self.frq_label)
 
         # Loop over the sequence.
@@ -498,7 +498,7 @@ class Rx_data:
             raise RelaxNoSequenceError, self.run
 
         # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
-        if not self.test_labels(run):
+        if not self.test_labels():
             raise RelaxNoRiError, (self.ri_label, self.frq_label)
 
         # Print the data.
@@ -691,28 +691,28 @@ class Rx_data:
         return value, error
 
 
-    def test_labels(self, run):
-        """Test if data corresponding to 'self.ri_label' and 'self.frq_label' currently exists."""
+    def test_labels(self):
+        """Test if data corresponding to 'self.ri_label' and 'self.frq_label' currently exists.
 
-        # Initialise.
-        exists = 0
+        @return:        The answer to the question of whether relaxation data exists corresponding to
+                        the given labels.
+        @type return:   bool
+        """
 
-        # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[run])):
-            # Remap the data structure 'relax_data_store.res[run][i]'.
-            data = relax_data_store.res[run][i]
-
+        # Loop over the spins.
+        for spin in spin_loop():
             # No ri data.
-            if not hasattr(data, 'num_ri'):
+            if not hasattr(spin, 'num_ri'):
                 continue
 
             # Loop over the relaxation data.
-            for j in xrange(data.num_ri):
+            for j in xrange(spin.num_ri):
                 # Test if the relaxation data matches 'self.ri_label' and 'self.frq_label'.
-                if self.ri_label == data.ri_labels[j] and self.frq_label == data.frq_labels[data.remap_table[j]]:
-                    exists = 1
+                if self.ri_label == spin.ri_labels[j] and self.frq_label == spin.frq_labels[spin.remap_table[j]]:
+                    return True
 
-        return exists
+        # No match.
+        return False
 
 
     def update_data_structures(self, data=None, value=None, error=None):
@@ -858,7 +858,7 @@ class Rx_data:
             raise RelaxNoSequenceError, self.run
 
         # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
-        if not self.test_labels(run):
+        if not self.test_labels():
             raise RelaxNoRiError, (self.ri_label, self.frq_label)
 
         # Create the file name if none is given.
