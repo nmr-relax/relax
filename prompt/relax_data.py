@@ -247,7 +247,7 @@ class Relax_data:
         self.__relax__.specific.relax_data.display(run=run, ri_label=ri_label, frq_label=frq_label)
 
 
-    def read(self, ri_label=None, frq_label=None, frq=None, file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=0, spin_name_col=1, data_col=2, error_col=3, sep=None):
+    def read(self, ri_label=None, frq_label=None, frq=None, file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None):
         """Function for reading R1, R2, or NOE relaxation data from a file.
 
         Keyword Arguments
