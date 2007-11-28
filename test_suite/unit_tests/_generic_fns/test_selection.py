@@ -743,6 +743,50 @@ class Test_selection(TestCase):
         self.assertRaises(RelaxError, selection.return_single_residue_info, '1,2,Glu,Pro')
 
 
+    def test_return_spin(self):
+        """Test the function for returning the desired spin data container.
+
+        The function tested is generic_fns.selection.return_spin().
+        """
+
+        # Ask for a few spins.
+        spin1 = selection.return_spin(':1')
+        spin2 = selection.return_spin(selection=':2')
+        spin3 = selection.return_spin(selection=':4', pipe='orig')
+        spin4 = selection.return_spin(selection='#RNA:-5', pipe='orig')
+
+        # Test the data of spin 1.
+        self.assertNotEqual(spin1, None)
+        self.assertEqual(spin1.num, 1)
+        self.assertEqual(spin1.name, None)
+
+        # Test the data of spin 2.
+        self.assertNotEqual(spin2, None)
+        self.assertEqual(spin2.num, 2)
+        self.assertEqual(spin2.name, 'Glu')
+
+        # Test the data of spin 3.
+        self.assertNotEqual(spin3, None)
+        self.assertEqual(spin3.num, 4)
+        self.assertEqual(spin3.name, 'Pro')
+
+        # Test the data of the RNA spin -5.
+        self.assertNotEqual(spin4, None)
+        self.assertEqual(spin4.num, -5)
+        self.assertEqual(spin4.name, None)
+        self.assertEqual(spin4.spin[1].name, 'N5')
+
+
+    def test_return_spin_pipe_fail(self):
+        """Test the failure of the function for returning the desired spin data container.
+
+        The function tested is generic_fns.selection.return_spin().
+        """
+
+        # Try to get a spin from a missing data pipe.
+        self.assertRaises(RelaxNoPipeError, selection.return_spin, selection=':2', pipe='new')
+
+
     def test_reverse(self):
         """Test spin system selection reversal.
 
