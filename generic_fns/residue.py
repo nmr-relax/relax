@@ -127,10 +127,11 @@ def create(res_num=None, res_name=None, mol_id=None):
         raise RelaxNoPipeError
 
     # Get the molecule container to add the residue to.
-    mol_to_cont = return_molecule(mol_id)
-    if mol_to_cont == None and mol_id:
-        raise RelaxError, "The molecule in " + `mol_id` + " does not exist in the current data pipe."
-    elif mol_to_cont == None:
+    if mol_id:
+        mol_to_cont = return_molecule(mol_id)
+        if mol_to_cont == None:
+            raise RelaxError, "The molecule in " + `mol_id` + " does not exist in the current data pipe."
+    else:
         mol_to_cont = relax_data_store[relax_data_store.current_pipe].mol[0]
 
     # Test if the residue number already exists.
