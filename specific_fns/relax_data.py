@@ -182,7 +182,7 @@ class Rx_data:
         self.data_init(relax_data_store)
 
         # Update the global data.
-        self.update_data_structures_pipe()
+        self.update_data_structures_pipe(ri_label, frq_label, frq)
 
 
         # Residue specific data.
@@ -606,7 +606,7 @@ class Rx_data:
         self.data_init(relax_data_store[relax_data_store.current_pipe])
 
         # Update the global data.
-        self.update_data_structures_pipe()
+        self.update_data_structures_pipe(ri_label, frq_label, frq)
 
 
         # Residue specific data.
