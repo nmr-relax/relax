@@ -762,58 +762,69 @@ class Rx_data:
                     data.noe_r1_table[j] = data.num_ri - 1
 
 
-    def update_global_data_structures(self):
-        """Function for updating all relaxation data structures."""
+    def update_global_data_structures(self, ri_label=None, frq_label=None, frq=None):
+        """Function for updating all relaxation data structures in the current data pipe.
+
+        @param ri_label:        The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+        @type ri_label:         str
+        @param frq_label:       The field strength label.
+        @type frq_label:        str
+        @param frq:             The spectrometer proton frequency in Hz.
+        @type frq:              float
+        """
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Initialise the relaxation data structures (if needed).
-        self.data_init(relax_data_store)
+        self.data_init(cdp)
 
         # The index.
-        i = len(relax_data_store.ri_labels[self.run]) - 1
+        i = len(cdp.ri_labels) - 1
 
         # Update the number of relaxation data points.
-        relax_data_store.num_ri[self.run] = relax_data_store.num_ri[self.run] + 1
+        cdp.num_ri = cdp.num_ri + 1
 
         # Add ri_label to the data types.
-        relax_data_store.ri_labels[self.run].append(self.ri_label)
+        cdp.ri_labels.append(ri_label)
 
-        # Find if the frequency self.frq has already been loaded.
-        remap = len(relax_data_store.frq[self.run])
+        # Find if the frequency has already been loaded.
+        remap = len(cdp.frq)
         flag = 0
-        for j in xrange(len(relax_data_store.frq[self.run])):
-            if self.frq == relax_data_store.frq[self.run][j]:
+        for j in xrange(len(cdp.frq)):
+            if frq == cdp.frq[j]:
                 remap = j
                 flag = 1
 
         # Update the remap table.
-        relax_data_store.remap_table[self.run].append(remap)
+        cdp.remap_table.append(remap)
 
         # Update the data structures which have a length equal to the number of field strengths.
         if not flag:
             # Update the number of frequencies.
-            relax_data_store.num_frq[self.run] = relax_data_store.num_frq[self.run] + 1
+            cdp.num_frq = cdp.num_frq + 1
 
             # Update the frequency labels.
-            relax_data_store.frq_labels[self.run].append(self.frq_label)
+            cdp.frq_labels.append(frq_label)
 
             # Update the frequency array.
-            relax_data_store.frq[self.run].append(self.frq)
+            cdp.frq.append(frq)
 
         # Update the NOE R1 translation table.
-        relax_data_store.noe_r1_table[self.run].append(None)
+        cdp.noe_r1_table.append(None)
 
         # If the data corresponds to 'NOE', try to find if the corresponding R1 data.
-        if self.ri_label == 'NOE':
-            for j in xrange(relax_data_store.num_ri[self.run]):
-                if relax_data_store.ri_labels[self.run][j] == 'R1' and self.frq_label == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][j]]:
-                    relax_data_store.noe_r1_table[self.run][relax_data_store.num_ri[self.run] - 1] = j
+        if ri_label == 'NOE':
+            for j in xrange(cdp.num_ri):
+                if cdp.ri_labels[j] == 'R1' and frq_label == cdp.frq_labels[cdp.remap_table[j]]:
+                    cdp.noe_r1_table[cdp.num_ri - 1] = j
 
         # Update the NOE R1 translation table.
         # If the data corresponds to 'R1', try to find if the corresponding NOE data.
-        if self.ri_label == 'R1':
-            for j in xrange(relax_data_store.num_ri[self.run]):
-                if relax_data_store.ri_labels[self.run][j] == 'NOE' and self.frq_label == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][j]]:
-                    relax_data_store.noe_r1_table[self.run][j] = relax_data_store.num_ri[self.run] - 1
+        if ri_label == 'R1':
+            for j in xrange(cdp.num_ri):
+                if cdp.ri_labels[j] == 'NOE' and frq_label == cdp.frq_labels[cdp.remap_table[j]]:
+                    cdp.noe_r1_table[j] = cdp.num_ri - 1
 
 
     def write(self, run=None, ri_label=None, frq_label=None, file=None, dir=None, force=0):
