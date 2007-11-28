@@ -334,6 +334,22 @@ class Test_selection(TestCase):
         self.assertEqual(id, '#Ap4Aase:1&:GLY@234&@NH')
 
 
+    def test_generate_spin_id6(self):
+        """Sixth test of the spin ID generation function.
+
+        The function tested is generic_fns.selection.generate_spin_id().
+        """
+
+        # The data.
+        data = ['1', 'GLY', None, None]
+
+        # The ID.
+        id = selection.generate_spin_id(data)
+
+        # Test the string.
+        self.assertEqual(id, ':1&:GLY')
+
+
     def test_molecule_loop(self):
         """Test the proper operation of the molecule loop with molecule selection.
 
