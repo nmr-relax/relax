@@ -63,7 +63,7 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.align_tensor_fns.copy, pipe_from=data[1])
+            self.assertRaises(RelaxNoneStrError, self.align_tensor_fns.copy, tensor_from='Pf1', pipe_from=data[1])
 
 
     def test_copy_argfail_tensor_to(self):
@@ -89,14 +89,14 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.align_tensor_fns.copy, pipe_to=data[1])
+            self.assertRaises(RelaxNoneStrError, self.align_tensor_fns.copy, tensor_from='Pf1', tensor_to='Pf1', pipe_to=data[1])
 
 
     def test_copy_argfail_both_pipes(self):
         """The pipe_from and pipe_to arg test of the align_tensor.copy() user function."""
 
         # Test that both cannot be None (the default)!
-        self.assertRaises(RelaxError, self.align_tensor_fns.copy)
+        self.assertRaises(RelaxError, self.align_tensor_fns.copy, tensor_from='Pf1', tensor_to='Pf1')
 
 
     def test_delete_argfail_tensor(self):
@@ -147,7 +147,7 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
             if data[0] == 'tuple' or data[0] == 'float tuple':
                 # Incorrect tuple length.
                 if len(data[1]) != 5:
-                    self.assertRaises(RelaxError, self.align_tensor_fns.init, params=data[1])
+                    self.assertRaises(RelaxError, self.align_tensor_fns.init, tensor='Pf1', params=data[1])
 
                 # Must be a number.
                 elif data[0] != 'float tuple':
@@ -155,7 +155,7 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
 
             # The argument test.
             else:
-                self.assertRaises(RelaxNumTupleError, self.align_tensor_fns.init, params=data[1])
+                self.assertRaises(RelaxNumTupleError, self.align_tensor_fns.init, tensor='Pf1', params=data[1])
 
 
     def test_init_argfail_scale(self):
@@ -168,7 +168,7 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxFloatError, self.align_tensor_fns.init, params=(0.0, 0.0, 0.0, 0.0, 0.0), scale=data[1])
+            self.assertRaises(RelaxFloatError, self.align_tensor_fns.init, tensor='Pf1', params=(0.0, 0.0, 0.0, 0.0, 0.0), scale=data[1])
 
 
     def test_init_argfail_angle_units(self):
@@ -194,7 +194,7 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.align_tensor_fns.init, params=(0.0, 0.0, 0.0, 0.0, 0.0), param_types=data[1])
+            self.assertRaises(RelaxIntError, self.align_tensor_fns.init, tensor='Pf1', params=(0.0, 0.0, 0.0, 0.0, 0.0), param_types=data[1])
 
 
     def test_init_argfail_errors(self):
@@ -207,7 +207,7 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxBinError, self.align_tensor_fns.init, params=(0.0, 0.0, 0.0, 0.0, 0.0), errors=data[1])
+            self.assertRaises(RelaxBinError, self.align_tensor_fns.init, tensor='Pf1', params=(0.0, 0.0, 0.0, 0.0, 0.0), errors=data[1])
 
 
 
