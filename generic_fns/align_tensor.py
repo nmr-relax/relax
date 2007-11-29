@@ -55,20 +55,24 @@ def align_data_exists(tensor, pipe=None):
         return False
 
 
-def copy(pipe_from=None, pipe_to=None):
+def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
     """Function for copying alignment tensor data from one data pipe to another.
 
+    @param tensor_from: The identification string of the alignment tensor to copy the data from.
+    @type tensor_from:  str
     @param pipe_from:   The data pipe to copy the alignment tensor data from.  This defaults to the
                         current data pipe.
     @type pipe_from:    str
+    @param tensor_to:   The identification string of the alignment tensor to copy the data to.
+    @type tensor_to:    str
     @param pipe_to:     The data pipe to copy the alignment tensor data to.  This defaults to the
                         current data pipe.
     @type pipe_to:      str
     """
 
     # Defaults.
-    if pipe_from == None and pipe_to == None:
-        raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+    if tensor_from == tensor_to and pipe_from == None and pipe_to == None:
+        raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None when the tensor names are the same."
     elif pipe_from == None:
         pipe_from = relax_data_store.current_pipe
     elif pipe_to == None:
@@ -86,8 +90,12 @@ def copy(pipe_from=None, pipe_to=None):
     if align_data_exists(tensor_to, pipe_to):
         raise RelaxTensorError, 'alignment'
 
+    # Create the align_tensor dictionary if it doesn't yet exist.
+    if not hasattr(relax_data_store[pipe_to], 'align_tensor'):
+        relax_data_store[pipe_to].align_tensor = {}
+
     # Copy the data.
-    relax_data_store[pipe_to].align_tensor = deepcopy(relax_data_store[pipe_from].align_tensor)
+    relax_data_store[pipe_to].align_tensor[tensor_to] = deepcopy(relax_data_store[pipe_from].align_tensor[tensor_from])
 
 
 def data_names():
