@@ -101,7 +101,7 @@ class Align_tensor:
 
         # The tensor_from argument.
         if type(tensor_from) != str:
-            raise RelaxStrError, ('align from ID string', tensor_from)
+            raise RelaxStrError, ('tensor from', tensor_from)
 
         # The pipe_from argument.
         if pipe_from != None and type(pipe_from) != str:
@@ -109,7 +109,7 @@ class Align_tensor:
 
         # The tensor_to argument.
         if type(tensor_to) != str:
-            raise RelaxStrError, ('align to ID string', tensor_to)
+            raise RelaxStrError, ('tensor to', tensor_to)
 
         # The pipe_to argument.
         if pipe_to != None and type(pipe_to) != str:
