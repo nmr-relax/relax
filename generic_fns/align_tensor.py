@@ -135,8 +135,12 @@ def default_value(param):
     return 0.0
 
 
-def delete():
-    """Function for deleting alignment tensor data."""
+def delete(tensor):
+    """Function for deleting alignment tensor data.
+
+    @param tensor:          The alignment tensor identification string.
+    @type tensor:           str
+    """
 
     # Test if the current data pipe exists.
     pipes.test(relax_data_store.current_pipe)
@@ -145,11 +149,18 @@ def delete():
     if not align_data_exists(tensor):
         raise RelaxNoTensorError, 'alignment'
 
+    # Alias the tensor dictionary.
+    align_tensor = relax_data_store[relax_data_store.current_pipe].align_tensor
+
     # Delete the alignment data.
-    del(relax_data_store[relax_data_store.current_pipe].align_tensor)
+    align_tensor.pop(tensor)
+
+    # Delete the dictionary if empty.
+    if not len(align_tensor):
+        del(relax_data_store[relax_data_store.current_pipe].align_tensor)
 
 
-def display(tensor=None):
+def display(tensor):
     """Function for displaying the alignment tensor.
 
     @param tensor:          The alignment tensor identification string.
