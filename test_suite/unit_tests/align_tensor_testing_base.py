@@ -100,6 +100,20 @@ class Align_tensor_base_class:
         self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Ayz, 19.2561)
 
 
+    def test_copy_fail(self):
+        """Test the failure of copying of an alignment tensor (target and source are the same).
+
+        The functions tested are both generic_fns.align_tensor.copy() and
+        prompt.align_tensor.copy().
+        """
+
+        # Initialise the tensor.
+        self.align_tensor_fns.init(tensor='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
+
+        # Copy the tensor to the test pipe.
+        self.assertRaises(RelaxError, self.align_tensor_fns.copy, tensor_from='Pf1', tensor_to='Pf1')
+
+
     def test_delete(self):
         """Test the deletion of the alignment tensor data structure.
 
