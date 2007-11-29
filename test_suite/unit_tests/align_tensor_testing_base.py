@@ -125,7 +125,7 @@ class Align_tensor_base_class:
         """
 
         # Try to delete the tensor data.
-        self.assertRaises(RelaxNoTensorError, self.align_tensor_fns.delete)
+        self.assertRaises(RelaxNoTensorError, self.align_tensor_fns.delete, 'Pf1')
 
 
     def test_delete_fail_no_pipe(self):
@@ -139,7 +139,7 @@ class Align_tensor_base_class:
         relax_data_store.__reset__()
 
         # Try to delete the tensor data.
-        self.assertRaises(RelaxNoPipeError, self.align_tensor_fns.delete)
+        self.assertRaises(RelaxNoPipeError, self.align_tensor_fns.delete, 'Pf1')
 
 
     def test_display(self):
@@ -164,7 +164,7 @@ class Align_tensor_base_class:
         """
 
         # Try to display the tensor data.
-        self.assertRaises(RelaxNoTensorError, self.align_tensor_fns.display)
+        self.assertRaises(RelaxNoTensorError, self.align_tensor_fns.display, 'Pf1')
 
 
     def test_display_fail_no_pipe(self):
@@ -178,7 +178,7 @@ class Align_tensor_base_class:
         relax_data_store.__reset__()
 
         # Try to display the tensor data.
-        self.assertRaises(RelaxNoPipeError, self.align_tensor_fns.display)
+        self.assertRaises(RelaxNoPipeError, self.align_tensor_fns.display, 'Pf1')
 
 
     def test_init_bad_angle_units(self):
