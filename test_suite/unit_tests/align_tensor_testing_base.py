@@ -111,7 +111,7 @@ class Align_tensor_base_class:
         self.align_tensor_fns.init(tensor='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
 
         # Delete the tensor data.
-        self.align_tensor_fns.delete()
+        self.align_tensor_fns.delete(tensor='Pf1')
 
         # Test that Axx does not exist.
         self.failIf(hasattr(relax_data_store['orig'], 'align_tensor'))
@@ -153,7 +153,7 @@ class Align_tensor_base_class:
         self.align_tensor_fns.init(tensor='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
 
         # Display the alignment tensor.
-        self.align_tensor_fns.display()
+        self.align_tensor_fns.display(tensor='Pf1')
 
 
     def test_display_fail_no_data(self):
