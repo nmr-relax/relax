@@ -147,34 +147,41 @@ def delete():
     del(relax_data_store[relax_data_store.current_pipe].align_tensor)
 
 
-def display():
-    """Function for displaying the alignment tensor."""
+def display(tensor=None):
+    """Function for displaying the alignment tensor.
+
+    @param tensor:          The alignment tensor identification string.
+    @type tensor:           str
+    """
 
     # Test if the current data pipe exists.
     pipes.test(relax_data_store.current_pipe)
 
     # Test if alignment tensor data exists.
-    if not align_data_exists():
+    if not align_data_exists(tensor):
         raise RelaxNoTensorError, 'alignment'
 
     # Alias the current data pipe.
     cdp = relax_data_store[relax_data_store.current_pipe]
 
+    # Header.
+    print "Tensor: " + tensor + "\n"
+
     # Parameters.
     print "Parameters {Axx, Ayy, Axy, Axz, Ayz}."
-    print "%-15s%15.8f" % ("Axx (Hz):  ", cdp.align_tensor.Axx)
-    print "%-15s%15.8f" % ("Ayy (Hz):  ", cdp.align_tensor.Ayy)
-    print "%-15s%15.8f" % ("Axy (Hz):  ", cdp.align_tensor.Axy)
-    print "%-15s%15.8f" % ("Axz (Hz):  ", cdp.align_tensor.Axz)
-    print "%-15s%15.8f" % ("Ayz (Hz):  ", cdp.align_tensor.Ayz)
+    print "%-15s%15.8f" % ("Axx (Hz):  ", cdp.align_tensor[tensor].Axx)
+    print "%-15s%15.8f" % ("Ayy (Hz):  ", cdp.align_tensor[tensor].Ayy)
+    print "%-15s%15.8f" % ("Axy (Hz):  ", cdp.align_tensor[tensor].Axy)
+    print "%-15s%15.8f" % ("Axz (Hz):  ", cdp.align_tensor[tensor].Axz)
+    print "%-15s%15.8f" % ("Ayz (Hz):  ", cdp.align_tensor[tensor].Ayz)
 
     # Alternate parameters.
     print "\nAlternate parameters {Azz, Axx-yy, Axy, Axz, Ayz} (the Pales default format)."
-    print "%-15s%15.8f" % ("Azz (Hz):  ", cdp.align_tensor.Azz)
-    print "%-15s%15.8f" % ("Axx-yy (Hz):  ", cdp.align_tensor.Axxyy)
-    print "%-15s%15.8f" % ("Axy (Hz):  ", cdp.align_tensor.Axy)
-    print "%-15s%15.8f" % ("Axz (Hz):  ", cdp.align_tensor.Axz)
-    print "%-15s%15.8f" % ("Ayz (Hz):  ", cdp.align_tensor.Ayz)
+    print "%-15s%15.8f" % ("Azz (Hz):  ", cdp.align_tensor[tensor].Azz)
+    print "%-15s%15.8f" % ("Axx-yy (Hz):  ", cdp.align_tensor[tensor].Axxyy)
+    print "%-15s%15.8f" % ("Axy (Hz):  ", cdp.align_tensor[tensor].Axy)
+    print "%-15s%15.8f" % ("Axz (Hz):  ", cdp.align_tensor[tensor].Axz)
+    print "%-15s%15.8f" % ("Ayz (Hz):  ", cdp.align_tensor[tensor].Ayz)
 
 
 def fold_angles(sim_index=None):
