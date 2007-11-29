@@ -33,9 +33,11 @@ import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
 
-def align_data_exists(pipe=None):
+def align_data_exists(tensor, pipe=None):
     """Function for determining if alignment data exists in the current data pipe.
 
+    @param tensor:  The alignment tensor identification string.
+    @type tensor:   str
     @param pipe:    The data pipe to search for data in.
     @type pipe:     str
     @return:        The answer to the question.
@@ -47,7 +49,7 @@ def align_data_exists(pipe=None):
         pipe = relax_data_store.current_pipe
 
     # Test if Axy exists.
-    if hasattr(relax_data_store[pipe], 'align_tensor'):
+    if hasattr(relax_data_store[pipe], 'align_tensor') and relax_data_store[pipe].align_tensor.has_key(tensor):
         return True
     else:
         return False
