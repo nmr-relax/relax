@@ -69,7 +69,7 @@ class Align_tensor_base_class:
         relax_data_store.current_pipe = 'test'
 
         # Copy the tensor to the test pipe.
-        self.align_tensor_fns.copy(pipe_from='orig')
+        self.align_tensor_fns.copy(tensor_from='Pf1', pipe_from='orig', tensor_to='Pf1')
 
         # Test the alignment tensor.
         self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Axx, -16.6278)
@@ -90,7 +90,7 @@ class Align_tensor_base_class:
         self.align_tensor_fns.init(tensor='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
 
         # Copy the tensor to the test pipe.
-        self.align_tensor_fns.copy(pipe_to='test')
+        self.align_tensor_fns.copy(tensor_from='Pf1', pipe_to='test', tensor_to='Pf1')
 
         # Test the alignment tensor.
         self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Axx, -16.6278)
