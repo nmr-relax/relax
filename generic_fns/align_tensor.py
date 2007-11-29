@@ -79,11 +79,11 @@ def copy(pipe_from=None, pipe_to=None):
     pipes.test(pipe_to)
 
     # Test if pipe_from contains alignment tensor data.
-    if not align_data_exists(pipe_from):
+    if not align_data_exists(tensor_from, pipe_from):
         raise RelaxNoTensorError, 'alignment'
 
     # Test if pipe_to contains alignment tensor data.
-    if align_data_exists(pipe_to):
+    if align_data_exists(tensor_to, pipe_to):
         raise RelaxTensorError, 'alignment'
 
     # Copy the data.
@@ -142,7 +142,7 @@ def delete():
     pipes.test(relax_data_store.current_pipe)
 
     # Test if alignment tensor data exists.
-    if not align_data_exists():
+    if not align_data_exists(tensor):
         raise RelaxNoTensorError, 'alignment'
 
     # Delete the alignment data.
@@ -286,7 +286,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
     cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Test if alignment tensor data already exists.
-    if align_data_exists():
+    if align_data_exists(tensor):
         raise RelaxTensorError, 'alignment'
 
     # Check the validity of the angle_units argument.
