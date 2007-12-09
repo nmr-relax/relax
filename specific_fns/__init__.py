@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006 Edward d'Auvergne                                  #
+# Copyright (C) 2004, 2006-2007 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,11 +21,25 @@
 ###############################################################################
 
 
+# relax module imports.
+from hybrid import Hybrid
+from jw_mapping import Jw_mapping
+from model_free import Model_free
+from noe import Noe
+from relax_fit import Relax_fit
+
+
+# The available modules.
 __all__ = [ 'base_class',
             'hybrid',
             'jw_mapping',
-            'main',
             'model_free',
             'noe',
-            'relax_data',
-            'specific_setup' ]
+            'relax_data']
+
+# Set up all the classes.
+hybrid = Hybrid()
+jw_mapping = Jw_mapping()
+model_free = Model_free()
+noe = Noe()
+relax_fit = Relax_fit()
