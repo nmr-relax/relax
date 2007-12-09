@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Package docstring.
+"""This package consists of modules which are specific to the type of the data pipe."""
+
+
 
 # relax module imports.
 from specific_fns.hybrid import Hybrid
@@ -28,10 +32,6 @@ from specific_fns.model_free import Model_free
 from specific_fns.noe import Noe
 from specific_fns.relax_fit import Relax_fit
 from relax_errors import RelaxFuncSetupError
-
-
-# Module docstring.
-"""This module consists of code which is specific to the type of the data pipe."""
 
 
 # The available modules.
