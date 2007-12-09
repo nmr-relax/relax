@@ -179,8 +179,18 @@ def partition_params(val, param, return_data_name):
     return tensor_params, tensor_values, spin_params, spin_values
 
 
-def set(val=None, param=None, spin_id=None, force=0):
-    """Function for setting residue specific data values."""
+def set(val=None, param=None, spin_id=None, force=False):
+    """Function for setting residue specific data values.
+
+    @param val:     The parameter values.
+    @type val:      None, number, or list of numbers
+    @param param:   The parameter names.
+    @type val:      None, str, or list of str
+    @param spin_id: The spin identification string.
+    @type spin_id:  str
+    @param force:   A flag forcing the overwriting of current values.
+    @type force:    bool
+    """
 
     # Test if the current data pipe exists.
     if not relax_data_store.current_pipe:
