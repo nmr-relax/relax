@@ -31,7 +31,7 @@ from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.model_free import Model_free
 from specific_fns.noe import Noe
 from specific_fns.relax_fit import Relax_fit
-from relax_errors import RelaxFuncSetupError
+from relax_errors import RelaxError, RelaxFuncSetupError
 
 
 # The available modules.
@@ -56,40 +56,38 @@ def get_specific_fn(eqi, function_type, raise_error=1):
     """The function for returning the requested specific function."""
 
 
+def get_string(function_type):
+    """Function for returning a string corresponding to the function type."""
+
+    # NOE calculation.
+    if function_type == 'noe':
+        return "NOE calculations"
+
+    # Relaxation curve fitting.
+    if function_type == 'relax_fit':
+        return "relaxation curve fitting"
+
+    # Reduced spectral density mapping.
+    if function_type == 'jw':
+        return "reduced spectral density mapping"
+
+    # Model-free analysis.
+    if function_type == 'mf':
+        return "Model-free analysis"
+
+    # Hybrid models.
+    if function_type == 'hybrid':
+        return "hybrid models"
+
+    # Unknown analysis.
+    raise RelaxError, "The function_type " + `function_type` + " is unknown."
+
+
 class Specific_setup:
     def __init__(self, relax):
         """Class for equation type specific function setup."""
 
         self.relax = relax
-
-
-    def get_string(self, function_type):
-        """Function for returning a string corresponding to the function type."""
-
-        # Initialise.
-        string = "this analysis"
-
-        # NOE calculation.
-        if function_type == 'noe':
-            string = "NOE calculations"
-
-        # Relaxation curve fitting.
-        if function_type == 'relax_fit':
-            string = "relaxation curve fitting"
-
-        # Reduced spectral density mapping.
-        if function_type == 'jw':
-            string = "reduced spectral density mapping"
-
-        # Model-free analysis.
-        if function_type == 'mf':
-            string = "Model-free analysis"
-
-        # Hybrid models.
-        if function_type == 'hybrid':
-            string = "hybrid models"
-
-        return string
 
 
     def setup(self, eqi, function_type, raise_error=1):
