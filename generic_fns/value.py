@@ -27,6 +27,7 @@ import sys
 
 # relax module imports.
 from data import Data as relax_data_store
+from generic_fns import diffusion_tensor
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRegExpError, RelaxUnknownParamError, RelaxValueError
 from specific_fns import get_specific_fn
 
@@ -51,7 +52,7 @@ def partition_params(val, param):
         # Single parameter.
         if type(param) == str:
             # Get the diffusion tensor parameter name.
-            tensor_name = relax.generic.diffusion_tensor.return_data_name(param)
+            tensor_name = diffusion_tensor.return_data_name(param)
 
             # The parameter is a diffusion parameter.
             if tensor_name:
@@ -100,7 +101,7 @@ def partition_params(val, param):
             # Loop over all parameters.
             for i in xrange(len(param)):
                 # Get the diffusion tensor parameter name.
-                tensor_name = relax.generic.diffusion_tensor.return_data_name(param[i])
+                tensor_name = diffusion_tensor.return_data_name(param[i])
 
                 # The parameter is a diffusion parameter.
                 if tensor_name:
@@ -199,7 +200,7 @@ def set(val=None, param=None, spin_id=None, force=0):
 
     if diff_params:
         # Set the diffusion parameters.
-        relax.generic.diffusion_tensor.set(value=diff_values, param=diff_params)
+        diffusion_tensor.set(value=diff_values, param=diff_params)
 
 
     # Residue specific parameters.
