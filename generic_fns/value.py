@@ -101,7 +101,10 @@ def partition_params(val, param):
             # Loop over all parameters.
             for i in xrange(len(param)):
                 # Get the diffusion tensor parameter name.
-                tensor_name = diffusion_tensor.return_data_name(param[i])
+                try:
+                    tensor_name = diffusion_tensor.return_data_name(param[i])
+                except RelaxUnknownParamError:
+                    tensor_name = None
 
                 # The parameter is a diffusion parameter.
                 if tensor_name:
