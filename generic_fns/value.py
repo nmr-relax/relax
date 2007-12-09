@@ -28,6 +28,7 @@ import sys
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRegExpError, RelaxUnknownParamError, RelaxValueError
+from specific_fns import get_specific_fn
 
 
 def set(val=None, param=None, spin_id=None, force=0):
@@ -41,9 +42,9 @@ def set(val=None, param=None, spin_id=None, force=0):
     cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Specific functions.
-    return_data_name = relax.specific_setup.setup('return_data_name', cdp.pipe_type)
-    return_value = relax.specific_setup.setup('return_value', cdp.pipe_type)
-    set = relax.specific_setup.setup('set', cdp.pipe_type)
+    return_data_name = get_specific_fn('return_data_name', cdp.pipe_type)
+    return_value = get_specific_fn('return_value', cdp.pipe_type)
+    set = get_specific_fn('set', cdp.pipe_type)
 
     # Sort the parameters and their values.
     sort_params()

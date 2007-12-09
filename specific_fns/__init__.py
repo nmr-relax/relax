@@ -46,6 +46,10 @@ noe = Noe()
 relax_fit = Relax_fit()
 
 
+# The function for returning the requested specific function.
+def get_specific_fn(eqi, function_type, raise_error=1):
+    """The function for returning the requested specific function."""
+
 
 class Specific_setup:
     def __init__(self, relax):
