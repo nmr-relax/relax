@@ -31,7 +31,7 @@ from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, Relax
 from specific_fns import get_specific_fn
 
 
-def partition_params():
+def partition_params(val, param):
     """Function for sorting and partitioning the parameters and their values.
 
     The two major partitions are the tensor parameters and the spin specific parameters.
@@ -56,13 +56,13 @@ def partition_params():
             # The parameter is a diffusion parameter.
             if tensor_name:
                 # List of values.
-                if type(value) == list or type(value) == ArrayType:
+                if type(val) == list or type(val) == ArrayType:
                     # Parameter name.
-                    for i in xrange(len(value)):
+                    for i in xrange(len(val)):
                         tensor_params.append(tensor_name)
 
                     # Parameter value.
-                    tensor_values = value
+                    tensor_values = val
 
                 # Single value.
                 else:
@@ -70,18 +70,18 @@ def partition_params():
                     tensor_params.append(param)
 
                     # Parameter value.
-                    tensor_values.append(value)
+                    tensor_values.append(val)
 
             # The parameter is not a diffusion parameter.
             elif return_data_name(param):
                 # List of values.
-                if type(value) == list or type(value) == ArrayType:
+                if type(val) == list or type(val) == ArrayType:
                     # Parameter name.
-                    for i in xrange(len(value)):
+                    for i in xrange(len(val)):
                         spin_params.append(param)
 
                     # Parameter value.
-                    spin_values = value
+                    spin_values = val
 
                 # Single value.
                 else:
@@ -89,7 +89,7 @@ def partition_params():
                     spin_params.append(param)
 
                     # Parameter value.
-                    spin_values.append(value)
+                    spin_values.append(val)
 
             # Unknown parameter
             else:
@@ -108,10 +108,10 @@ def partition_params():
                     tensor_params.append(tensor_name)
 
                     # Parameter value.
-                    if type(value) == list or type(value) == ArrayType:
-                        tensor_values.append(value[i])
+                    if type(val) == list or type(val) == ArrayType:
+                        tensor_values.append(val[i])
                     else:
-                        tensor_values.append(value)
+                        tensor_values.append(val)
 
                 # The parameter is not a diffusion parameter.
                 elif return_data_name(param[i]):
@@ -119,10 +119,10 @@ def partition_params():
                     spin_params.append(param[i])
 
                     # Parameter value.
-                    if type(value) == list or type(value) == ArrayType:
-                        spin_values.append(value[i])
+                    if type(val) == list or type(val) == ArrayType:
+                        spin_values.append(val[i])
                     else:
-                        spin_values.append(value)
+                        spin_values.append(val)
 
                 # Unknown parameter
                 else:
@@ -134,13 +134,13 @@ def partition_params():
         # No parameter or a single parameter.
         if param == None or type(param) == str:
             # List of values.
-            if type(value) == list or type(value) == ArrayType:
+            if type(val) == list or type(val) == ArrayType:
                 # Parameter name.
-                for i in xrange(len(value)):
+                for i in xrange(len(val)):
                     spin_params.append(param)
 
                 # Parameter value.
-                spin_values = value
+                spin_values = val
 
             # Single value.
             else:
@@ -148,7 +148,7 @@ def partition_params():
                 spin_params.append(param)
 
                 # Parameter value.
-                spin_values.append(value)
+                spin_values.append(val)
 
         # Multiple parameters.
         elif type(param) == list:
@@ -158,10 +158,10 @@ def partition_params():
                 spin_params.append(param[i])
 
                 # Parameter value.
-                if type(value) == list or type(value) == ArrayType:
-                    spin_values.append(value[i])
+                if type(val) == list or type(val) == ArrayType:
+                    spin_values.append(val[i])
                 else:
-                    spin_values.append(value)
+                    spin_values.append(val)
 
     # Debugging.
     if len(tensor_params) != len(tensor_values) or len(spin_params) != len(spin_values):
