@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2006-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,5 +21,14 @@
 ###############################################################################
 
 
-__all__ = ['test_float',
-           'unit_test_runner']
+__all__ = ['diffusion_tensor_testing_base',
+           'molecule_testing_base',
+           'relax_data_testing_base',
+           'residue_testing_base',
+           'sequence_testing_base',
+           'spin_testing_base',
+           'state_testing_base',
+           'test_float',
+           'test_relax_io',
+           'unit_test_runner',
+           'value_testing_base']
