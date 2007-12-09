@@ -389,6 +389,8 @@ class Relax:
 
         # Copyright printout.
         string = "Copyright (C) 2001-2006 Edward d'Auvergne"
+        self.intro_string = self.intro_string + self.spacing(string, width) + '\n'
+        string = "Copyright (C) 2006-2007 the relax development team"
         self.intro_string = self.intro_string + self.spacing(string, width) + '\n\n'
 
         # Program licence and help (80 characters wide).
