@@ -27,6 +27,7 @@ import sys
 from doc_string import regexp_doc
 import help
 from generic_fns import diffusion_tensor
+from generic_fns import value
 from relax_errors import RelaxBinError, RelaxError, RelaxFloatError, RelaxIntError, RelaxListFloatError, RelaxListStrError, RelaxNoneFloatListError, RelaxNoneIntError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
 from specific_fns.model_free import Model_free
 from specific_fns.jw_mapping import Jw_mapping
@@ -248,13 +249,13 @@ class Value:
         self.__relax__.generic.value.read(run=run, param=param, scaling=scaling, file=file, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep)
 
 
-    def set(self, value=None, param=None, spin_id=None):
+    def set(self, val=None, param=None, spin_id=None):
         """Function for setting spin specific data values.
 
         Keyword arguments
         ~~~~~~~~~~~~~~~~~
 
-        value:  The value(s).
+        val:  The value(s).
 
         param:  The parameter(s).
 
@@ -269,10 +270,10 @@ class Value:
         and Hessian count) will be reset to None.
 
 
-        The value argument can be None, a single value, or an array of values while the parameter
+        The val argument can be None, a single value, or an array of values while the parameter
         argument can be None, a string, or array of strings.  The choice of which combination
         determines the behaviour of this function.  The following table describes what occurs in
-        each instance.  The Value column refers to the 'value' argument while the Param column refers
+        each instance.  The Value column refers to the 'val' argument while the Param column refers
         to the 'param' argument.  In these columns, 'None' corresponds to None, '1' corresponds
         to either a single value or single string, and 'n' corresponds to either an array of values
         or an array of strings.
@@ -288,7 +289,7 @@ class Value:
         |   1   | None  | Invalid combination.                                                     |
         |       |       |                                                                          |
         |   n   | None  | This case is used to set the model parameters prior to minimisation or   |
-        |       |       | calculation.  The length of the value array must be equal to the number  |
+        |       |       | calculation.  The length of the val array must be equal to the number    |
         |       |       | of model parameters for an individual residue.  The parameters will be   |
         |       |       | set to the corresponding number.                                         |
         |       |       |                                                                          |
@@ -329,7 +330,7 @@ class Value:
         the first given field strength.
 
         relax> value.set([0.97, 2.048*1e-9, 0.149], spin_id=':10')
-        relax> value.set(value=[0.97, 2.048*1e-9, 0.149], spin_id=':10')
+        relax> value.set(val=[0.97, 2.048*1e-9, 0.149], spin_id=':10')
 
 
         To set the CSA value of all spins to the default value, type:
@@ -340,13 +341,13 @@ class Value:
         To set the CSA value of all spins to -172 ppm, type:
 
         relax> value.set(-172 * 1e-6, 'csa')
-        relax> value.set(value=-172 * 1e-6, param='csa')
+        relax> value.set(val=-172 * 1e-6, param='csa')
 
 
         To set the NH bond length of all spins to 1.02 Angstroms, type:
 
         relax> value.set(1.02 * 1e-10, 'bond_length')
-        relax> value.set(value=1.02 * 1e-10, param='r')
+        relax> value.set(val=1.02 * 1e-10, param='r')
 
 
         To set both the bond length and the CSA value to the default values, type:
@@ -357,31 +358,31 @@ class Value:
         To set both tf and ts to 100 ps, type:
 
         relax> value.set(100e-12, ['tf', 'ts'])
-        relax> value.set(value=100e-12, param=['tf', 'ts'])
+        relax> value.set(val=100e-12, param=['tf', 'ts'])
 
 
         To set the S2 and te parameter values of residue 126, Ca spins to 0.56 and 13 ps, type:
 
         relax> value.set([0.56, 13e-12], ['S2', 'te'], ':126@Ca')
-        relax> value.set(value=[0.56, 13e-12], param=['S2', 'te'], spin_id=':126@Ca')
-        relax> value.set(value=[0.56, 13e-12], param=['S2', 'te'], spin_id=':126@Ca')
+        relax> value.set(val=[0.56, 13e-12], param=['S2', 'te'], spin_id=':126@Ca')
+        relax> value.set(val=[0.56, 13e-12], param=['S2', 'te'], spin_id=':126@Ca')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "value.set("
-            text = text + "value=" + `value`
+            text = text + "val=" + `val`
             text = text + ", param=" + `param`
             text = text + ", spin_id=" + `spin_id` + ")"
             print text
 
         # The value.
-        if value != None and type(value) != float and type(value) != int and type(value) != list:
-            raise RelaxNoneFloatListError, ('value', value)
-        if type(value) == list:
-            for i in xrange(len(value)):
-                if type(value[i]) != float and type(value[i]) != int:
-                    raise RelaxListFloatError, ('value', value)
+        if val != None and type(val) != float and type(val) != int and type(val) != list:
+            raise RelaxNoneFloatListError, ('value', val)
+        if type(val) == list:
+            for i in xrange(len(val)):
+                if type(val[i]) != float and type(val[i]) != int:
+                    raise RelaxListFloatError, ('value', val)
 
         # The parameter.
         if param != None and type(param) != str and type(param) != list:
@@ -392,15 +393,15 @@ class Value:
                     raise RelaxListStrError, ('parameter', param)
 
         # The invalid combination of a single value and no param argument.
-        if (type(value) == float or type(value) == int) and param == None:
+        if (type(val) == float or type(val) == int) and param == None:
             raise RelaxError, "Invalid value and parameter argument combination, for details by type 'help(value.set)'"
 
         # The invalid combination of an array of values and a single param string.
-        if type(value) == list and type(param) == str:
+        if type(val) == list and type(param) == str:
             raise RelaxError, "Invalid value and parameter argument combination, for details by type 'help(value.set)'"
 
         # Value array and parameter array of equal length.
-        if type(value) == list and type(param) == list and len(value) != len(param):
+        if type(val) == list and type(param) == list and len(val) != len(param):
             raise RelaxError, "Both the value array and parameter array must be of equal length."
 
         # Spin identifier.
@@ -408,7 +409,7 @@ class Value:
             raise RelaxNoneStrError, ('spin identifier', spin_id)
 
         # Execute the functional code.
-        value.set(value=value, param=param, spin_id=spin_id)
+        value.set(val=val, param=param, spin_id=spin_id)
 
 
     def write(self, run=None, param=None, file=None, dir=None, force=0):
