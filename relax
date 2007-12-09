@@ -371,7 +371,7 @@ class Relax:
         """Create the program introduction."""
 
         # The width of the printout.
-        if self.platform == 'Windows':
+        if self.platform == 'Windows' or self.platform == 'Microsoft':
             width = 80
         else:
             width = 100
