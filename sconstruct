@@ -65,7 +65,10 @@ if SYSTEM == 'Linux':
 
 
 # MS Windows.
-elif SYSTEM == 'Windows':
+elif SYSTEM == 'Windows' or SYSTEM == 'Microsoft':
+    # Set the system to 'Windows' no matter what.
+    SYSTEM = 'Windows'
+
     # Architecture.
     arch = platform.architecture()[0]
 
