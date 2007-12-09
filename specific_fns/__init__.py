@@ -56,6 +56,33 @@ def get_specific_fn(eqi, function_type, raise_error=1):
     """The function for returning the requested specific function."""
 
 
+def get_instance(function_type):
+    """Function for returning the class instance corresponding to the function type."""
+
+    # NOE calculation.
+    if function_type == 'noe':
+        return noe
+
+    # Relaxation curve fitting.
+    if function_type == 'relax_fit':
+        return relax_fit
+
+    # Reduced spectral density mapping.
+    if function_type == 'jw':
+        return jw_mapping
+
+    # Model-free analysis.
+    if function_type == 'mf':
+        return model_free
+
+    # Hybrid models.
+    if function_type == 'hybrid':
+        return hybrid
+
+    # Unknown analysis.
+    raise RelaxError, "The function_type " + `function_type` + " is unknown."
+
+
 def get_string(function_type):
     """Function for returning a string corresponding to the function type."""
 
