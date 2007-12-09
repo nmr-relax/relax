@@ -32,14 +32,9 @@ from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, Rela
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 
 
-# The relax data storage object.
-
-
 class Jw_mapping(Common_functions):
-    def __init__(self, relax):
+    def __init__(self):
         """Class containing functions specific to reduced spectral density mapping."""
-
-        self.relax = relax
 
 
     def calculate(self, run=None, print_flag=1, sim_index=None):

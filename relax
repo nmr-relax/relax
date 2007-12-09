@@ -71,8 +71,6 @@ from prompt import interpreter
 import relax_errors
 from relax_io import log
 import relax_warnings
-from specific_fns.main import Specific
-from specific_fns.specific_setup import Specific_setup
 from test_suite.runner import Test_suite_runner
 from test_suite.unit_tests.unit_test_runner import Unit_test_runner
 from thread_classes import Threading, ThreadData
@@ -111,14 +109,8 @@ class Relax:
         # Colour operations.
         self.colour = Colour()
 
-        # Setup the specific setup object.
-        self.specific_setup = Specific_setup(self)
-
         # Setup the object containing the generic functions.
         self.generic = generic_fns
-
-        # Setup the object containing the specific functions.
-        self.specific = Specific(self)
 
         # Setup the object containing the thread setup functions.
         self.threading = Threading(self)
