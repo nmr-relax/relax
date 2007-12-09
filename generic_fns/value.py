@@ -191,7 +191,7 @@ def set(val=None, param=None, spin_id=None, force=0):
     set = get_specific_fn('set', cdp.pipe_type)
 
     # Sort the parameters and their values.
-    sort_params()
+    tensor_params, tensor_values, spin_params, spin_values = partition_params(val, param)
 
 
     # Diffusion tensor parameters.
