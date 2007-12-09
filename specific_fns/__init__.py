@@ -36,7 +36,8 @@ __all__ = [ 'base_class',
             'jw_mapping',
             'model_free',
             'noe',
-            'relax_data']
+            'relax_data',
+            'relax_fit']
 
 # Set up all the classes.
 hybrid = Hybrid()
