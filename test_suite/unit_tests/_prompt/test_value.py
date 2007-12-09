@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Data as relax_data_store
 from prompt.value import Value
-from relax_errors import RelaxListFloatError, RelaxNoneFloatListError
+from relax_errors import RelaxListFloatError, RelaxNoneFloatListError, RelaxNoneStrListError
 from test_suite.unit_tests.value_testing_base import Value_base_class
 
 # Unit test imports.
@@ -57,3 +57,21 @@ class Test_value(Value_base_class, TestCase):
             # The argument test.
             else:
                 self.assertRaises(RelaxNoneFloatListError, self.value_fns.set, val=data[1], param='CSA')
+
+
+    def test_set_argfail_param(self):
+        """The param arg test of the value.set() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # Catch the list arguments.
+            if data[0] == 'list':
+                self.assertRaises(RelaxListFloatError, self.value_fns.set, param=data[1], val=None)
+
+            # The argument test.
+            else:
+                self.assertRaises(RelaxNoneStrListError, self.value_fns.set, param=data[1], val=None)
