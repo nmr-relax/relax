@@ -30,6 +30,10 @@ from specific_fns.relax_fit import Relax_fit
 from relax_errors import RelaxFuncSetupError
 
 
+# Module docstring.
+"""This module consists of code which is specific to the type of the data pipe."""
+
+
 # The available modules.
 __all__ = [ 'base_class',
             'hybrid',
