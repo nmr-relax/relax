@@ -25,7 +25,6 @@ from unittest import TestCase
 
 # relax module imports.
 from generic_fns import value
-from relax_errors import RelaxError
 import specific_fns
 from test_suite.unit_tests.value_testing_base import Value_base_class
 
