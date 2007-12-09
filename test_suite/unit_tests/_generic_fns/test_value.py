@@ -48,8 +48,8 @@ class Test_value(Value_base_class, TestCase):
         tensor_params, tensor_values, spin_params, spin_values = value.partition_params(val, param)
 
         # Tests.
-        self.assertEqual(tensor_params, None)
-        self.assertEqual(tensor_values, None)
+        self.assertEqual(tensor_params, [])
+        self.assertEqual(tensor_values, [])
         self.assertEqual(spin_params, ['S2'])
         self.assertEqual(spin_values, [0.8])
 
@@ -67,8 +67,8 @@ class Test_value(Value_base_class, TestCase):
         # Tests.
         self.assertEqual(tensor_params, ['Dx'])
         self.assertEqual(tensor_values, [1e7])
-        self.assertEqual(spin_params, None)
-        self.assertEqual(spin_values, None)
+        self.assertEqual(spin_params, [])
+        self.assertEqual(spin_values, [])
 
 
     def test_partition_params3(self):
