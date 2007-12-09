@@ -30,7 +30,116 @@ from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRegExpError, RelaxUnknownParamError, RelaxValueError
 
 
-# The relax data storage object.
+def set(val=None, param=None, spin_id=None, force=0):
+    """Function for setting residue specific data values."""
+
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Specific functions.
+    return_data_name = relax.specific_setup.setup('return_data_name', cdp.pipe_type)
+    return_value = relax.specific_setup.setup('return_value', cdp.pipe_type)
+    set = relax.specific_setup.setup('set', cdp.pipe_type)
+
+    # Sort the parameters and their values.
+    sort_params()
+
+
+    # Diffusion tensor parameters.
+    ##############################
+
+    if diff_params:
+        # Set the diffusion parameters.
+        relax.generic.diffusion_tensor.set(value=diff_values, param=diff_params)
+
+
+    # Residue specific parameters.
+    ##############################
+
+    if res_params:
+        # Test if the sequence data is loaded.
+        if not relax_data_store.res.has_key(run):
+            raise RelaxNoSequenceError, run
+
+        # Test if the residue number is a valid regular expression.
+        if type(res_num) == str:
+            try:
+                compile(res_num)
+            except:
+                raise RelaxRegExpError, ('residue number', res_num)
+
+        # Test if the residue name is a valid regular expression.
+        if res_name:
+            try:
+                compile(res_name)
+            except:
+                raise RelaxRegExpError, ('residue name', res_name)
+
+        # Test if parameter value already exists.
+        if not force:
+            # Loop over the residues.
+            for i in xrange(len(relax_data_store.res[run])):
+                # Skip unselected residues.
+                if not relax_data_store.res[run][i].select:
+                    continue
+
+                # If 'res_num' is not None, skip the residue if there is no match.
+                if type(res_num) == int and not relax_data_store.res[run][i].num == res_num:
+                    continue
+                elif type(res_num) == str and not match(res_num, `relax_data_store.res[run][i].num`):
+                    continue
+
+                # If 'res_name' is not None, skip the residue if there is no match.
+                if res_name != None and not match(res_name, relax_data_store.res[run][i].name):
+                    continue
+
+                # Loop over the parameters.
+                for param in res_params:
+                    if param:
+                        # Get the value and error.
+                        temp_value, temp_error = return_value(run, i, param)
+
+                        # Data exists.
+                        if temp_value != None or temp_error != None:
+                            raise RelaxValueError, (param, run)
+
+        # Loop over the sequence.
+        for i in xrange(len(relax_data_store.res[run])):
+            # Skip unselected residues.
+            if not relax_data_store.res[run][i].select:
+                continue
+
+            # If 'res_num' is not None, skip the residue if there is no match.
+            if type(res_num) == int and not relax_data_store.res[run][i].num == res_num:
+                continue
+            elif type(res_num) == str and not match(res_num, `relax_data_store.res[run][i].num`):
+                continue
+
+            # If 'res_name' is not None, skip the residue if there is no match.
+            if res_name != None and not match(res_name, relax_data_store.res[run][i].name):
+                continue
+
+            # Go to the specific code.
+            for j in xrange(len(res_params)):
+                set(run=run, value=res_values[j], error=None, param=res_params[j], index=i)
+
+
+    # Reset the minimisation statistics.
+    ####################################
+
+    # Reset the global minimisation statistics.
+    relax.generic.minimise.reset_min_stats(run)
+
+    # Reset the sequence specific minimisation statistics.
+    if relax_data_store.res.has_key(run):
+        for i in xrange(len(relax_data_store.res[run])):
+            relax.generic.minimise.reset_min_stats(run, i)
+
+
 
 
 
@@ -268,124 +377,6 @@ class Value:
         # Reset the global minimisation statistics.
         if not min_stat:
             self.relax.generic.minimise.reset_min_stats(self.run)
-
-
-    def set(self, run=None, value=None, param=None, res_num=None, res_name=None, force=0):
-        """Function for setting residue specific data values."""
-
-        # Arguments
-        self.run = run
-        self.value = value
-        self.param = param
-        self.res_num = res_num
-        self.res_name = res_name
-        self.force = force
-
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
-
-        # Function type.
-        self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
-
-        # Specific functions.
-        self.return_data_name = self.relax.specific_setup.setup('return_data_name', self.function_type)
-        return_value = self.relax.specific_setup.setup('return_value', self.function_type)
-        set = self.relax.specific_setup.setup('set', self.function_type)
-
-        # Sort the parameters and their values.
-        self.sort_params()
-
-
-        # Diffusion tensor parameters.
-        ##############################
-
-        if self.diff_params:
-            # Set the diffusion parameters.
-            self.relax.generic.diffusion_tensor.set(run=self.run, value=self.diff_values, param=self.diff_params)
-
-
-        # Residue specific parameters.
-        ##############################
-
-        if self.res_params:
-            # Test if the sequence data is loaded.
-            if not relax_data_store.res.has_key(self.run):
-                raise RelaxNoSequenceError, self.run
-
-            # Test if the residue number is a valid regular expression.
-            if type(self.res_num) == str:
-                try:
-                    compile(self.res_num)
-                except:
-                    raise RelaxRegExpError, ('residue number', self.res_num)
-
-            # Test if the residue name is a valid regular expression.
-            if self.res_name:
-                try:
-                    compile(self.res_name)
-                except:
-                    raise RelaxRegExpError, ('residue name', self.res_name)
-
-            # Test if parameter value already exists.
-            if not self.force:
-                # Loop over the residues.
-                for i in xrange(len(relax_data_store.res[self.run])):
-                    # Skip unselected residues.
-                    if not relax_data_store.res[self.run][i].select:
-                        continue
-
-                    # If 'res_num' is not None, skip the residue if there is no match.
-                    if type(self.res_num) == int and not relax_data_store.res[self.run][i].num == self.res_num:
-                        continue
-                    elif type(self.res_num) == str and not match(self.res_num, `relax_data_store.res[self.run][i].num`):
-                        continue
-
-                    # If 'res_name' is not None, skip the residue if there is no match.
-                    if self.res_name != None and not match(self.res_name, relax_data_store.res[self.run][i].name):
-                        continue
-
-                    # Loop over the parameters.
-                    for param in self.res_params:
-                        if param:
-                            # Get the value and error.
-                            temp_value, temp_error = return_value(self.run, i, param)
-
-                            # Data exists.
-                            if temp_value != None or temp_error != None:
-                                raise RelaxValueError, (param, self.run)
-
-            # Loop over the sequence.
-            for i in xrange(len(relax_data_store.res[self.run])):
-                # Skip unselected residues.
-                if not relax_data_store.res[self.run][i].select:
-                    continue
-
-                # If 'res_num' is not None, skip the residue if there is no match.
-                if type(self.res_num) == int and not relax_data_store.res[self.run][i].num == self.res_num:
-                    continue
-                elif type(self.res_num) == str and not match(self.res_num, `relax_data_store.res[self.run][i].num`):
-                    continue
-
-                # If 'res_name' is not None, skip the residue if there is no match.
-                if self.res_name != None and not match(self.res_name, relax_data_store.res[self.run][i].name):
-                    continue
-
-                # Go to the specific code.
-                for j in xrange(len(self.res_params)):
-                    set(run=self.run, value=self.res_values[j], error=None, param=self.res_params[j], index=i)
-
-
-        # Reset the minimisation statistics.
-        ####################################
-
-        # Reset the global minimisation statistics.
-        self.relax.generic.minimise.reset_min_stats(self.run)
-
-        # Reset the sequence specific minimisation statistics.
-        if relax_data_store.res.has_key(self.run):
-            for i in xrange(len(relax_data_store.res[self.run])):
-                self.relax.generic.minimise.reset_min_stats(self.run, i)
 
 
     def sort_params(self):
