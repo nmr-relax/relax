@@ -26,6 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from generic_fns import value
 from relax_errors import RelaxError
+import specific_fns
 from test_suite.unit_tests.value_testing_base import Value_base_class
 
 
@@ -45,7 +46,7 @@ class Test_value(Value_base_class, TestCase):
         val = [0.8]
 
         # Partition.
-        tensor_params, tensor_values, spin_params, spin_values = value.partition_params(val, param)
+        tensor_params, tensor_values, spin_params, spin_values = value.partition_params(val, param, specific_fns.model_free.return_data_name)
 
         # Tests.
         self.assertEqual(tensor_params, [])
@@ -62,7 +63,7 @@ class Test_value(Value_base_class, TestCase):
         val = [1e7]
 
         # Partition.
-        tensor_params, tensor_values, spin_params, spin_values = value.partition_params(val, param)
+        tensor_params, tensor_values, spin_params, spin_values = value.partition_params(val, param, specific_fns.model_free.return_data_name)
 
         # Tests.
         self.assertEqual(tensor_params, ['Dx'])
@@ -79,7 +80,7 @@ class Test_value(Value_base_class, TestCase):
         val = [1e7, 0.8]
 
         # Partition.
-        tensor_params, tensor_values, spin_params, spin_values = value.partition_params(val, param)
+        tensor_params, tensor_values, spin_params, spin_values = value.partition_params(val, param, specific_fns.model_free.return_data_name)
 
         # Tests.
         self.assertEqual(tensor_params, ['Dx'])
@@ -96,7 +97,7 @@ class Test_value(Value_base_class, TestCase):
         val = [1e7, 0.8, -160e-6]
 
         # Partition.
-        tensor_params, tensor_values, spin_params, spin_values = value.partition_params(val, param)
+        tensor_params, tensor_values, spin_params, spin_values = value.partition_params(val, param, specific_fns.model_free.return_data_name)
 
         # Tests.
         self.assertEqual(tensor_params, ['Dx'])
