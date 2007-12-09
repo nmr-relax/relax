@@ -31,6 +31,150 @@ from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, Relax
 from specific_fns import get_specific_fn
 
 
+def partition_params():
+    """Function for sorting and partitioning the parameters and their values.
+
+    The two major partitions are the tensor parameters and the spin specific parameters.
+
+    @return:        A tuple, of length 4, of arrays.
+    @return type:   tuple of arrays
+    """
+
+    # Initialise.
+    tensor_params = []
+    tensor_values = []
+    spin_params = []
+    spin_values = []
+
+    # Separate the residue specific parameters from the diffusion tensor parameters.
+    if param:
+        # Single parameter.
+        if type(param) == str:
+            # Get the diffusion tensor parameter name.
+            tensor_name = relax.generic.diffusion_tensor.return_data_name(param)
+
+            # The parameter is a diffusion parameter.
+            if tensor_name:
+                # List of values.
+                if type(value) == list or type(value) == ArrayType:
+                    # Parameter name.
+                    for i in xrange(len(value)):
+                        tensor_params.append(tensor_name)
+
+                    # Parameter value.
+                    tensor_values = value
+
+                # Single value.
+                else:
+                    # Parameter name.
+                    tensor_params.append(param)
+
+                    # Parameter value.
+                    tensor_values.append(value)
+
+            # The parameter is not a diffusion parameter.
+            elif return_data_name(param):
+                # List of values.
+                if type(value) == list or type(value) == ArrayType:
+                    # Parameter name.
+                    for i in xrange(len(value)):
+                        spin_params.append(param)
+
+                    # Parameter value.
+                    spin_values = value
+
+                # Single value.
+                else:
+                    # Parameter name.
+                    spin_params.append(param)
+
+                    # Parameter value.
+                    spin_values.append(value)
+
+            # Unknown parameter
+            else:
+                raise RelaxUnknownParamError, param
+
+        # Multiple parameters.
+        elif type(param) == list:
+            # Loop over all parameters.
+            for i in xrange(len(param)):
+                # Get the diffusion tensor parameter name.
+                tensor_name = relax.generic.diffusion_tensor.return_data_name(param[i])
+
+                # The parameter is a diffusion parameter.
+                if tensor_name:
+                    # Parameter name.
+                    tensor_params.append(tensor_name)
+
+                    # Parameter value.
+                    if type(value) == list or type(value) == ArrayType:
+                        tensor_values.append(value[i])
+                    else:
+                        tensor_values.append(value)
+
+                # The parameter is not a diffusion parameter.
+                elif return_data_name(param[i]):
+                    # Parameter name.
+                    spin_params.append(param[i])
+
+                    # Parameter value.
+                    if type(value) == list or type(value) == ArrayType:
+                        spin_values.append(value[i])
+                    else:
+                        spin_values.append(value)
+
+                # Unknown parameter
+                else:
+                    raise RelaxUnknownParamError, param[i]
+
+
+    # All other parameters.
+    else:
+        # No parameter or a single parameter.
+        if param == None or type(param) == str:
+            # List of values.
+            if type(value) == list or type(value) == ArrayType:
+                # Parameter name.
+                for i in xrange(len(value)):
+                    spin_params.append(param)
+
+                # Parameter value.
+                spin_values = value
+
+            # Single value.
+            else:
+                # Parameter name.
+                spin_params.append(param)
+
+                # Parameter value.
+                spin_values.append(value)
+
+        # Multiple parameters.
+        elif type(param) == list:
+            # Loop over all parameters.
+            for i in xrange(len(param)):
+                # Parameter name.
+                spin_params.append(param[i])
+
+                # Parameter value.
+                if type(value) == list or type(value) == ArrayType:
+                    spin_values.append(value[i])
+                else:
+                    spin_values.append(value)
+
+    # Debugging.
+    if len(tensor_params) != len(tensor_values) or len(spin_params) != len(spin_values):
+        print "Diff params: " + `tensor_params`
+        print "Diff values: " + `tensor_values`
+        print "Res params: " + `spin_params`
+        print "Res values: " + `spin_values`
+        raise RelaxError, "Bug in the code."
+
+    # Return the partitioned parameters and values.
+    return tensor_params, tensor_values, spin_params, spin_values
+
+
 def set(val=None, param=None, spin_id=None, force=0):
     """Function for setting residue specific data values."""
 
@@ -61,24 +205,24 @@ def set(val=None, param=None, spin_id=None, force=0):
     # Residue specific parameters.
     ##############################
 
-    if res_params:
+    if spin_params:
         # Test if the sequence data is loaded.
         if not relax_data_store.res.has_key(run):
             raise RelaxNoSequenceError, run
 
         # Test if the residue number is a valid regular expression.
-        if type(res_num) == str:
+        if type(spin_num) == str:
             try:
-                compile(res_num)
+                compile(spin_num)
             except:
-                raise RelaxRegExpError, ('residue number', res_num)
+                raise RelaxRegExpError, ('residue number', spin_num)
 
         # Test if the residue name is a valid regular expression.
-        if res_name:
+        if spin_name:
             try:
-                compile(res_name)
+                compile(spin_name)
             except:
-                raise RelaxRegExpError, ('residue name', res_name)
+                raise RelaxRegExpError, ('residue name', spin_name)
 
         # Test if parameter value already exists.
         if not force:
@@ -88,18 +232,18 @@ def set(val=None, param=None, spin_id=None, force=0):
                 if not relax_data_store.res[run][i].select:
                     continue
 
-                # If 'res_num' is not None, skip the residue if there is no match.
-                if type(res_num) == int and not relax_data_store.res[run][i].num == res_num:
+                # If 'spin_num' is not None, skip the residue if there is no match.
+                if type(spin_num) == int and not relax_data_store.res[run][i].num == spin_num:
                     continue
-                elif type(res_num) == str and not match(res_num, `relax_data_store.res[run][i].num`):
+                elif type(spin_num) == str and not match(spin_num, `relax_data_store.res[run][i].num`):
                     continue
 
-                # If 'res_name' is not None, skip the residue if there is no match.
-                if res_name != None and not match(res_name, relax_data_store.res[run][i].name):
+                # If 'spin_name' is not None, skip the residue if there is no match.
+                if spin_name != None and not match(spin_name, relax_data_store.res[run][i].name):
                     continue
 
                 # Loop over the parameters.
-                for param in res_params:
+                for param in spin_params:
                     if param:
                         # Get the value and error.
                         temp_value, temp_error = return_value(run, i, param)
@@ -114,19 +258,19 @@ def set(val=None, param=None, spin_id=None, force=0):
             if not relax_data_store.res[run][i].select:
                 continue
 
-            # If 'res_num' is not None, skip the residue if there is no match.
-            if type(res_num) == int and not relax_data_store.res[run][i].num == res_num:
+            # If 'spin_num' is not None, skip the residue if there is no match.
+            if type(spin_num) == int and not relax_data_store.res[run][i].num == spin_num:
                 continue
-            elif type(res_num) == str and not match(res_num, `relax_data_store.res[run][i].num`):
+            elif type(spin_num) == str and not match(spin_num, `relax_data_store.res[run][i].num`):
                 continue
 
-            # If 'res_name' is not None, skip the residue if there is no match.
-            if res_name != None and not match(res_name, relax_data_store.res[run][i].name):
+            # If 'spin_name' is not None, skip the residue if there is no match.
+            if spin_name != None and not match(spin_name, relax_data_store.res[run][i].name):
                 continue
 
             # Go to the specific code.
-            for j in xrange(len(res_params)):
-                set(run=run, value=res_values[j], error=None, param=res_params[j], index=i)
+            for j in xrange(len(spin_params)):
+                set(run=run, value=spin_values[j], error=None, param=spin_params[j], index=i)
 
 
     # Reset the minimisation statistics.
@@ -339,13 +483,13 @@ class Value:
                 continue
 
             # Residue number.
-            res_num = int(file_data[i][num_col])
+            spin_num = int(file_data[i][num_col])
 
             # Residue name.
             if name_col == None:
-                res_name = None
+                spin_name = None
             else:
-                res_name = file_data[i][name_col]
+                spin_name = file_data[i][name_col]
 
             # Value.
             if file_data[i][data_col] != 'None':
@@ -362,11 +506,11 @@ class Value:
             # Find the index of relax_data_store.res[self.run] which corresponds to the relaxation data set i.
             index = None
             for j in xrange(len(relax_data_store.res[self.run])):
-                if relax_data_store.res[self.run][j].num == res_num and (res_name == None or relax_data_store.res[self.run][j].name == res_name):
+                if relax_data_store.res[self.run][j].num == spin_num and (spin_name == None or relax_data_store.res[self.run][j].name == spin_name):
                     index = j
                     break
             if index == None:
-                raise RelaxNoResError, (res_num, res_name)
+                raise RelaxNoResError, (spin_num, spin_name)
 
             # Set the value.
             set(run=run, value=value, error=error, param=self.param, scaling=scaling, index=index)
@@ -378,141 +522,6 @@ class Value:
         # Reset the global minimisation statistics.
         if not min_stat:
             self.relax.generic.minimise.reset_min_stats(self.run)
-
-
-    def sort_params(self):
-        """Function for sorting the parameters and their values."""
-
-        # Initialise.
-        self.diff_params = []
-        self.diff_values = []
-        self.res_params = []
-        self.res_values = []
-
-        # Separate the residue specific parameters from the diffusion tensor parameters.
-        if self.param:
-            # Single parameter.
-            if type(self.param) == str:
-                # Get the diffusion tensor parameter name.
-                diff_name = self.relax.generic.diffusion_tensor.return_data_name(self.param)
-
-                # The parameter is a diffusion parameter.
-                if diff_name:
-                    # List of values.
-                    if type(self.value) == list or type(self.value) == ArrayType:
-                        # Parameter name.
-                        for i in xrange(len(self.value)):
-                            self.diff_params.append(diff_name)
-
-                        # Parameter value.
-                        self.diff_values = self.value
-
-                    # Single value.
-                    else:
-                        # Parameter name.
-                        self.diff_params.append(self.param)
-
-                        # Parameter value.
-                        self.diff_values.append(self.value)
-
-                # The parameter is not a diffusion parameter.
-                elif self.return_data_name(self.param):
-                    # List of values.
-                    if type(self.value) == list or type(self.value) == ArrayType:
-                        # Parameter name.
-                        for i in xrange(len(self.value)):
-                            self.res_params.append(self.param)
-
-                        # Parameter value.
-                        self.res_values = self.value
-
-                    # Single value.
-                    else:
-                        # Parameter name.
-                        self.res_params.append(self.param)
-
-                        # Parameter value.
-                        self.res_values.append(self.value)
-
-                # Unknown parameter
-                else:
-                    raise RelaxUnknownParamError, self.param
-
-            # Multiple parameters.
-            elif type(self.param) == list:
-                # Loop over all parameters.
-                for i in xrange(len(self.param)):
-                    # Get the diffusion tensor parameter name.
-                    diff_name = self.relax.generic.diffusion_tensor.return_data_name(self.param[i])
-
-                    # The parameter is a diffusion parameter.
-                    if diff_name:
-                        # Parameter name.
-                        self.diff_params.append(diff_name)
-
-                        # Parameter value.
-                        if type(self.value) == list or type(self.value) == ArrayType:
-                            self.diff_values.append(self.value[i])
-                        else:
-                            self.diff_values.append(self.value)
-
-                    # The parameter is not a diffusion parameter.
-                    elif self.return_data_name(self.param[i]):
-                        # Parameter name.
-                        self.res_params.append(self.param[i])
-
-                        # Parameter value.
-                        if type(self.value) == list or type(self.value) == ArrayType:
-                            self.res_values.append(self.value[i])
-                        else:
-                            self.res_values.append(self.value)
-
-                    # Unknown parameter
-                    else:
-                        raise RelaxUnknownParamError, self.param[i]
-
-
-        # All other parameters.
-        else:
-            # No parameter or a single parameter.
-            if self.param == None or type(self.param) == str:
-                # List of values.
-                if type(self.value) == list or type(self.value) == ArrayType:
-                    # Parameter name.
-                    for i in xrange(len(self.value)):
-                        self.res_params.append(self.param)
-
-                    # Parameter value.
-                    self.res_values = self.value
-
-                # Single value.
-                else:
-                    # Parameter name.
-                    self.res_params.append(self.param)
-
-                    # Parameter value.
-                    self.res_values.append(self.value)
-
-            # Multiple parameters.
-            elif type(self.param) == list:
-                # Loop over all parameters.
-                for i in xrange(len(self.param)):
-                    # Parameter name.
-                    self.res_params.append(self.param[i])
-
-                    # Parameter value.
-                    if type(self.value) == list or type(self.value) == ArrayType:
-                        self.res_values.append(self.value[i])
-                    else:
-                        self.res_values.append(self.value)
-
-        # Debugging.
-        if len(self.diff_params) != len(self.diff_values) or len(self.res_params) != len(self.res_values):
-            print "Diff params: " + `self.diff_params`
-            print "Diff values: " + `self.diff_values`
-            print "Res params: " + `self.res_params`
-            print "Res values: " + `self.res_values`
-            raise RelaxError, "Bug in the code."
 
 
     def write(self, run=None, param=None, file=None, dir=None, force=0, return_value=None):
