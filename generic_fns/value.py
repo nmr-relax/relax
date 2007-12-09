@@ -32,7 +32,7 @@ from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, Relax
 from specific_fns import get_specific_fn
 
 
-def partition_params(val, param):
+def partition_params(val, param, return_data_name):
     """Function for sorting and partitioning the parameters and their values.
 
     The two major partitions are the tensor parameters and the spin specific parameters.
@@ -195,7 +195,7 @@ def set(val=None, param=None, spin_id=None, force=0):
     set = get_specific_fn('set', cdp.pipe_type)
 
     # Sort the parameters and their values.
-    tensor_params, tensor_values, spin_params, spin_values = partition_params(val, param)
+    tensor_params, tensor_values, spin_params, spin_values = partition_params(val, param, return_data_name)
 
 
     # Diffusion tensor parameters.
