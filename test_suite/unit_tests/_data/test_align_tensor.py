@@ -38,7 +38,7 @@ class Test_align_tensor(TestCase):
         """Function for calculating the alignment tensor objects."""
 
         # The parameter values.
-        Szz = 1.0 - Sxx - Syy
+        Szz = - Sxx - Syy
         Sxxyy = Sxx - Syy
 
         # Matrices.
