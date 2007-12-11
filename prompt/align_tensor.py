@@ -267,3 +267,23 @@ class Align_tensor:
 
         # Execute the functional code.
         align_tensor.init(tensor=tensor, params=params, scale=scale, angle_units=angle_units, param_types=param_types, errors=errors)
+
+
+    def svd(self):
+        """Function for calculating the singular values for all tensors.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function will, using SVD, calculate the singular values of all tensors loaded for the
+        current data pipe.
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "align_tensor.svd()"
+            print text
+
+        # Execute the functional code.
+        align_tensor.singular_vals()
