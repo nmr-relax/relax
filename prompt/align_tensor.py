@@ -286,4 +286,4 @@ class Align_tensor:
             print text
 
         # Execute the functional code.
-        align_tensor.singular_vals()
+        align_tensor.singular_values()

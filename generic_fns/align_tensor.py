@@ -23,6 +23,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import cos, pi, sin
+from numpy import float64, linalg, transpose, zeros
 from re import search
 
 # relax module imports.
@@ -754,3 +755,47 @@ def set(tensor=None, value=None, param=None):
 
     if orient_params:
         fold_angles()
+
+
+def singular_values():
+    """Function for calculating the singular values of all the loaded tensors.
+
+    The matrix on which SVD will be performed is:
+
+        | Sxx1 Syy1 Sxy1 Sxz1 Syz1 |
+        | Sxx2 Syy2 Sxy2 Sxz2 Syz2 |
+        | Sxx3 Syy3 Sxy3 Sxz3 Syz3 |
+        |  .    .    .    .    .   |
+        |  .    .    .    .    .   |
+        |  .    .    .    .    .   |
+        | SxxN SyyN SxyN SxzN SyzN |
+    """
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Create the matrix to apply SVD on.
+    matrix = zeros((len(cdp.align_tensor), 5), float64)
+
+    # Pack the elements.
+    i = 0
+    for key in cdp.align_tensor.keys():
+        # The elements.
+        matrix[i,0] = cdp.align_tensor[key].Azz
+        matrix[i,1] = cdp.align_tensor[key].Axxyy
+        matrix[i,2] = cdp.align_tensor[key].Axy
+        matrix[i,3] = cdp.align_tensor[key].Axz
+        matrix[i,4] = cdp.align_tensor[key].Ayz
+
+        # Increment the index.
+        i = i + 1
+
+    print `matrix`
+
+    # SVD.
+    u, s, vh = linalg.svd(matrix)
+
+    # Store the singular values.
+    #cdp.align_tensor.singular_vals = s
+    print `s`
+
