@@ -691,16 +691,22 @@ def set(tensor=None, value=None, param=None):
     The alignment tensor parameters can only be set when the data pipe corresponds to model-free
     analysis.  The units of the parameters are:
 
-        Hertz for Axx, Ayy, Azz, Axxyy, Axy, Axz, Ayz.
+        Unitless for Sxx, Syy, Szz, Sxxyy, Sxy, Sxz, Syz.
+        Unitless for Axx, Ayy, Azz, Axxyy, Axy, Axz, Ayz.
+        Unitless for Pxx, Pyy, Pzz, Pxxyy, Pxy, Pxz, Pyz.
         Radians for all angles (alpha, beta, gamma).
 
-    If a single geometric parameter is supplied, it must be one of Axx, Ayy, Axy, Axz, Ayz.  For the
-    parameters Azz and Axxyy , it is not possible to determine how to use the currently set values
-    together with the supplied value to calculate the new internal parameters.  When supplying
-    multiple geometric parameters, the set must belong to one of
+    If a single geometric parameter is supplied, it must be one of Bxx, Byy, Bxy, Bxz, Byz, where B
+    is one of S, A, or P.  For the parameters Bzz and Bxxyy, it is not possible to determine how to
+    use the currently set values together with the supplied value to calculate the new internal
+    parameters.  When supplying multiple geometric parameters, the set must belong to one of
 
+        {Sxx, Syy, Sxy, Sxz, Syz},
+        {Szz, Sxxyy, Sxy, Sxz, Syz}.
         {Axx, Ayy, Axy, Axz, Ayz},
         {Azz, Axxyy, Axy, Axz, Ayz}.
+        {Pxx, Pyy, Pxy, Pxz, Pyz},
+        {Pzz, Pxxyy, Pxy, Pxz, Pyz}.
     """
 
     # Alias the current data pipe.
@@ -726,7 +732,7 @@ def set(tensor=None, value=None, param=None):
             value[i] = default_value(object_names[i])
 
         # Geometric parameter.
-        if param[i] in ['Axx', 'Ayy', 'Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz']:
+        if param[i] in ['Sxx', 'Syy', 'Szz', 'Sxxyy', 'Sxy', 'Sxz', 'Syz', 'Axx', 'Ayy', 'Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz', 'Pxx', 'Pyy', 'Pzz', 'Pxxyy', 'Pxy', 'Pxz', 'Pyz']:
             geo_params.append(param[i])
             geo_values.append(value[i])
 
@@ -741,25 +747,76 @@ def set(tensor=None, value=None, param=None):
 
     # A single geometric parameter.
     if len(geo_params) == 1:
+        # Saupe order matrix.
+        #####################
+
+        # The single parameter Sxx.
+        if geo_params[0] == 'Sxx':
+            cdp.align_tensor[tensor].Sxx = geo_values[0]
+
+        # The single parameter Syy.
+        elif geo_params[0] == 'Syy':
+            cdp.align_tensor[tensor].Syy = geo_values[0]
+
+        # The single parameter Sxy.
+        elif geo_params[0] == 'Sxy':
+            cdp.align_tensor[tensor].Sxy = geo_values[0]
+
+        # The single parameter Sxz.
+        elif geo_params[0] == 'Sxz':
+            cdp.align_tensor[tensor].Sxz = geo_values[0]
+
+        # The single parameter Syz.
+        elif geo_params[0] == 'Syz':
+            cdp.align_tensor[tensor].Syz = geo_values[0]
+
+
+        # Alignment tensor.
+        ###################
+
         # The single parameter Axx.
-        if geo_params[0] == 'Axx':
-            cdp.align_tensor[tensor].Axx = geo_values[0]
+        elif geo_params[0] == 'Axx':
+            cdp.align_tensor[tensor].Sxx = 3.0/2.0 * geo_values[0]
 
         # The single parameter Ayy.
         elif geo_params[0] == 'Ayy':
-            cdp.align_tensor[tensor].Ayy = geo_values[0]
+            cdp.align_tensor[tensor].Syy = 3.0/2.0 * geo_values[0]
 
         # The single parameter Axy.
         elif geo_params[0] == 'Axy':
-            cdp.align_tensor[tensor].Axy = geo_values[0]
+            cdp.align_tensor[tensor].Sxy = 3.0/2.0 * geo_values[0]
 
         # The single parameter Axz.
         elif geo_params[0] == 'Axz':
-            cdp.align_tensor[tensor].Axz = geo_values[0]
+            cdp.align_tensor[tensor].Sxz = 3.0/2.0 * geo_values[0]
 
         # The single parameter Ayz.
         elif geo_params[0] == 'Ayz':
-            cdp.align_tensor[tensor].Ayz = geo_values[0]
+            cdp.align_tensor[tensor].Syz = 3.0/2.0 * geo_values[0]
+
+
+        # Probability tensor.
+        #####################
+
+        # The single parameter Pxx.
+        elif geo_params[0] == 'Pxx':
+            cdp.align_tensor[tensor].Sxx = 3.0/2.0 * (geo_values[0] - 1.0/3.0)
+
+        # The single parameter Pyy.
+        elif geo_params[0] == 'Pyy':
+            cdp.align_tensor[tensor].Syy = 3.0/2.0 * (geo_values[0] - 1.0/3.0)
+
+        # The single parameter Pxy.
+        elif geo_params[0] == 'Pxy':
+            cdp.align_tensor[tensor].Sxy = 3.0/2.0 * geo_values[0]
+
+        # The single parameter Pxz.
+        elif geo_params[0] == 'Pxz':
+            cdp.align_tensor[tensor].Sxz = 3.0/2.0 * geo_values[0]
+
+        # The single parameter Pyz.
+        elif geo_params[0] == 'Pyz':
+            cdp.align_tensor[tensor].Syz = 3.0/2.0 * geo_values[0]
 
         # Cannot set the single parameter.
         else:
@@ -767,8 +824,40 @@ def set(tensor=None, value=None, param=None):
 
     # 5 geometric parameters.
     elif len(geo_params) == 5:
+        # The geometric parameter set {Sxx, Syy, Sxy, Sxz, Syz}.
+        if geo_params.count('Sxx') == 1 and geo_params.count('Syy') == 1 and geo_params.count('Sxy') == 1 and geo_params.count('Sxz') == 1 and geo_params.count('Syz') == 1:
+            # The parameters.
+            Sxx = geo_values[geo_params.index('Sxx')]
+            Syy = geo_values[geo_params.index('Syy')]
+            Sxy = geo_values[geo_params.index('Sxy')]
+            Sxz = geo_values[geo_params.index('Sxz')]
+            Syz = geo_values[geo_params.index('Syz')]
+
+            # Set the internal parameter values.
+            cdp.align_tensor[tensor].Sxx = Sxx
+            cdp.align_tensor[tensor].Syy = Syy
+            cdp.align_tensor[tensor].Sxy = Sxy
+            cdp.align_tensor[tensor].Sxz = Sxz
+            cdp.align_tensor[tensor].Syz = Syz
+
+        # The geometric parameter set {Szz, Sxxyy, Sxy, Sxz, Syz}.
+        elif geo_params.count('Szz') == 1 and geo_params.count('Sxxyy') == 1 and geo_params.count('Sxy') == 1 and geo_params.count('Sxz') == 1 and geo_params.count('Syz') == 1:
+            # The parameters.
+            Szz = geo_values[geo_params.index('Szz')]
+            Sxxyy = geo_values[geo_params.index('Sxxyy')]
+            Sxy = geo_values[geo_params.index('Sxy')]
+            Sxz = geo_values[geo_params.index('Sxz')]
+            Syz = geo_values[geo_params.index('Syz')]
+
+            # Set the internal parameter values.
+            cdp.align_tensor[tensor].Sxx = -0.5*(Szz-Sxxyy)
+            cdp.align_tensor[tensor].Syy = -0.5*(Szz+Sxxyy)
+            cdp.align_tensor[tensor].Sxy = Sxy
+            cdp.align_tensor[tensor].Sxz = Sxz
+            cdp.align_tensor[tensor].Syz = Syz
+
         # The geometric parameter set {Axx, Ayy, Axy, Axz, Ayz}.
-        if geo_params.count('Axx') == 1 and geo_params.count('Ayy') == 1 and geo_params.count('Axy') == 1 and geo_params.count('Axz') == 1 and geo_params.count('Ayz') == 1:
+        elif geo_params.count('Axx') == 1 and geo_params.count('Ayy') == 1 and geo_params.count('Axy') == 1 and geo_params.count('Axz') == 1 and geo_params.count('Ayz') == 1:
             # The parameters.
             Axx = geo_values[geo_params.index('Axx')]
             Ayy = geo_values[geo_params.index('Ayy')]
@@ -777,11 +866,11 @@ def set(tensor=None, value=None, param=None):
             Ayz = geo_values[geo_params.index('Ayz')]
 
             # Set the internal parameter values.
-            cdp.align_tensor[tensor].Axx = Axx
-            cdp.align_tensor[tensor].Ayy = Ayy
-            cdp.align_tensor[tensor].Axy = Axy
-            cdp.align_tensor[tensor].Axz = Axz
-            cdp.align_tensor[tensor].Ayz = Ayz
+            cdp.align_tensor[tensor].Sxx = 3.0/2.0 * Axx
+            cdp.align_tensor[tensor].Syy = 3.0/2.0 * Ayy
+            cdp.align_tensor[tensor].Sxy = 3.0/2.0 * Axy
+            cdp.align_tensor[tensor].Sxz = 3.0/2.0 * Axz
+            cdp.align_tensor[tensor].Syz = 3.0/2.0 * Ayz
 
         # The geometric parameter set {Azz, Axxyy, Axy, Axz, Ayz}.
         elif geo_params.count('Azz') == 1 and geo_params.count('Axxyy') == 1 and geo_params.count('Axy') == 1 and geo_params.count('Axz') == 1 and geo_params.count('Ayz') == 1:
@@ -793,11 +882,43 @@ def set(tensor=None, value=None, param=None):
             Ayz = geo_values[geo_params.index('Ayz')]
 
             # Set the internal parameter values.
-            cdp.align_tensor[tensor].Axx = -0.5*(Azz-Axxyy)
-            cdp.align_tensor[tensor].Ayy = -0.5*(Azz+Axxyy)
-            cdp.align_tensor[tensor].Axy = Axy
-            cdp.align_tensor[tensor].Axz = Axz
-            cdp.align_tensor[tensor].Ayz = Ayz
+            cdp.align_tensor[tensor].Sxx = 3.0/2.0 * -0.5*(Azz-Axxyy)
+            cdp.align_tensor[tensor].Syy = 3.0/2.0 * -0.5*(Azz+Axxyy)
+            cdp.align_tensor[tensor].Sxy = 3.0/2.0 * Axy
+            cdp.align_tensor[tensor].Sxz = 3.0/2.0 * Axz
+            cdp.align_tensor[tensor].Syz = 3.0/2.0 * Ayz
+
+        # The geometric parameter set {Pxx, Pyy, Pxy, Pxz, Pyz}.
+        elif geo_params.count('Pxx') == 1 and geo_params.count('Pyy') == 1 and geo_params.count('Pxy') == 1 and geo_params.count('Pxz') == 1 and geo_params.count('Pyz') == 1:
+            # The parameters.
+            Pxx = geo_values[geo_params.index('Pxx')]
+            Pyy = geo_values[geo_params.index('Pyy')]
+            Pxy = geo_values[geo_params.index('Pxy')]
+            Pxz = geo_values[geo_params.index('Pxz')]
+            Pyz = geo_values[geo_params.index('Pyz')]
+
+            # Set the internal parameter values.
+            cdp.align_tensor[tensor].Sxx = 3.0/2.0 * (Pxx - 1.0/3.0)
+            cdp.align_tensor[tensor].Syy = 3.0/2.0 * (Pyy - 1.0/3.0)
+            cdp.align_tensor[tensor].Sxy = 3.0/2.0 * Pxy
+            cdp.align_tensor[tensor].Sxz = 3.0/2.0 * Pxz
+            cdp.align_tensor[tensor].Syz = 3.0/2.0 * Pyz
+
+        # The geometric parameter set {Pzz, Pxxyy, Pxy, Pxz, Pyz}.
+        elif geo_params.count('Pzz') == 1 and geo_params.count('Pxxyy') == 1 and geo_params.count('Pxy') == 1 and geo_params.count('Pxz') == 1 and geo_params.count('Pyz') == 1:
+            # The parameters.
+            Pzz = geo_values[geo_params.index('Pzz')]
+            Pxxyy = geo_values[geo_params.index('Pxxyy')]
+            Pxy = geo_values[geo_params.index('Pxy')]
+            Pxz = geo_values[geo_params.index('Pxz')]
+            Pyz = geo_values[geo_params.index('Pyz')]
+
+            # Set the internal parameter values.
+            cdp.align_tensor[tensor].Sxx = 3.0/2.0 * (-0.5*(Pzz-Pxxyy) - 1.0/3.0)
+            cdp.align_tensor[tensor].Syy = 3.0/2.0 * (-0.5*(Pzz+Pxxyy) - 1.0/3.0)
+            cdp.align_tensor[tensor].Sxy = 3.0/2.0 * Pxy
+            cdp.align_tensor[tensor].Sxz = 3.0/2.0 * Pxz
+            cdp.align_tensor[tensor].Syz = 3.0/2.0 * Pyz
 
         # Unknown parameter combination.
         else:
