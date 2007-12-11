@@ -27,26 +27,27 @@ from unittest import TestCase
 
 # relax module imports.
 from data.align_tensor import AlignTensorData, AlignTensorSimList
+from generic_fns.align_tensor import kappa
 from relax_errors import RelaxError
 
 
 class Test_align_tensor(TestCase):
     """Unit tests for the data.align_tensor relax module."""
 
-    def calc_objects(self, Axx, Ayy, Axy, Axz, Ayz):
+    def calc_objects(self, Sxx, Syy, Sxy, Sxz, Syz):
         """Function for calculating the alignment tensor objects."""
 
         # The parameter values.
-        Azz = 1.0 - Axx - Ayy
-        Axxyy = Axx - Ayy
+        Szz = 1.0 - Sxx - Syy
+        Sxxyy = Sxx - Syy
 
         # Matrices.
-        tensor_diag = array([[ Axx,  0.0,  0.0],
-                             [  0.0, Ayy,  0.0],
-                             [  0.0,  0.0, Azz]])
+        tensor_diag = array([[ Sxx,  0.0,  0.0],
+                             [  0.0, Syy,  0.0],
+                             [  0.0,  0.0, Szz]])
 
         # Return the objects.
-        return Azz, Axxyy, tensor_diag
+        return Szz, Sxxyy, tensor_diag
 
 
     def setUp(self):
@@ -67,52 +68,52 @@ class Test_align_tensor(TestCase):
         """
 
         # The MC sim parameter values.
-        Axx = -16.6278
-        Ayy = 6.13037
-        Axy = 7.65639
-        Axz = -1.89157
-        Ayz = 19.2561
+        Sxx = 3.0/2.0 * -16.6278 / kappa() * 1.02e-10
+        Syy = 3.0/2.0 * 6.13037 / kappa() * 1.02e-10
+        Sxy = 3.0/2.0 * 7.65639 / kappa() * 1.02e-10
+        Sxz = 3.0/2.0 * -1.89157 / kappa() * 1.02e-10
+        Syz = 3.0/2.0 * 19.2561 / kappa() * 1.02e-10
 
         # Set the MC sim alignment parameter lists.
-        self.align_data.Axx_sim = AlignTensorSimList('Axx', self.align_data)
-        self.align_data.Ayy_sim = AlignTensorSimList('Ayy', self.align_data)
-        self.align_data.Axy_sim = AlignTensorSimList('Axy', self.align_data)
-        self.align_data.Axz_sim = AlignTensorSimList('Axz', self.align_data)
-        self.align_data.Ayz_sim = AlignTensorSimList('Ayz', self.align_data)
+        self.align_data.Sxx_sim = AlignTensorSimList('Sxx', self.align_data)
+        self.align_data.Syy_sim = AlignTensorSimList('Syy', self.align_data)
+        self.align_data.Sxy_sim = AlignTensorSimList('Sxy', self.align_data)
+        self.align_data.Sxz_sim = AlignTensorSimList('Sxz', self.align_data)
+        self.align_data.Syz_sim = AlignTensorSimList('Syz', self.align_data)
 
         # Append the values.
-        self.align_data.Axx_sim.append(Axx)
-        self.align_data.Ayy_sim.append(Ayy)
-        self.align_data.Axy_sim.append(Axy)
-        self.align_data.Axz_sim.append(Axz)
-        self.align_data.Ayz_sim.append(Ayz)
+        self.align_data.Sxx_sim.append(Sxx)
+        self.align_data.Syy_sim.append(Syy)
+        self.align_data.Sxy_sim.append(Sxy)
+        self.align_data.Sxz_sim.append(Sxz)
+        self.align_data.Syz_sim.append(Syz)
 
         # Test the set values.
-        self.assertEqual(self.align_data.Axx_sim[0], Axx)
-        self.assertEqual(self.align_data.Ayy_sim[0], Ayy)
-        self.assertEqual(self.align_data.Axy_sim[0], Axy)
-        self.assertEqual(self.align_data.Axz_sim[0], Axz)
-        self.assertEqual(self.align_data.Ayz_sim[0], Ayz)
+        self.assertEqual(self.align_data.Sxx_sim[0], Sxx)
+        self.assertEqual(self.align_data.Syy_sim[0], Syy)
+        self.assertEqual(self.align_data.Sxy_sim[0], Sxy)
+        self.assertEqual(self.align_data.Sxz_sim[0], Sxz)
+        self.assertEqual(self.align_data.Syz_sim[0], Syz)
 
         # Calculate the diffusion tensor objects.
-        Azz, Axxyy, tensor_diag = self.calc_objects(Axx, Ayy, Axy, Axz, Ayz)
+        Szz, Sxxyy, tensor_diag = self.calc_objects(Sxx, Syy, Sxy, Sxz, Syz)
 
         # Test the automatically created values.
-        self.assertEqual(self.align_data.Azz_sim[0], Azz)
-        self.assertEqual(self.align_data.Axxyy_sim[0], Axxyy)
+        self.assertEqual(self.align_data.Szz_sim[0], Szz)
+        self.assertEqual(self.align_data.Sxxyy_sim[0], Sxxyy)
 
         # Test the matrices.
         self.assertEqual(self.align_data.tensor_diag_sim[0].tostring(), tensor_diag.tostring())
 
 
-    def test_set_Azz(self):
-        """Test that the Azz parameter cannot be set."""
+    def test_set_Szz(self):
+        """Test that the Szz parameter cannot be set."""
 
-        # Assert that a RelaxError occurs when Azz is set.
-        self.assertRaises(RelaxError, setattr, self.align_data, 'Azz', -23.0)
+        # Assert that a RelaxError occurs when Szz is set.
+        self.assertRaises(RelaxError, setattr, self.align_data, 'Szz', -23.0)
 
-        # Make sure that the Azz parameter has not been set.
-        self.assert_(not hasattr(self.align_data, 'Azz'))
+        # Make sure that the Szz parameter has not been set.
+        self.assert_(not hasattr(self.align_data, 'Szz'))
 
 
     def test_set_errors(self):
@@ -127,32 +128,32 @@ class Test_align_tensor(TestCase):
         """
 
         # The parameter errors.
-        Axx = 0.3
-        Ayy = 0.5
-        Axy = 0.4
-        Axz = 0.1
-        Ayz = 0.2
+        Sxx = 3.0/2.0 * 0.3 / kappa() * 1.02e-10
+        Syy = 3.0/2.0 * 0.5 / kappa() * 1.02e-10
+        Sxy = 3.0/2.0 * 0.4 / kappa() * 1.02e-10
+        Sxz = 3.0/2.0 * 0.1 / kappa() * 1.02e-10
+        Syz = 3.0/2.0 * 0.2 / kappa() * 1.02e-10
 
         # Set the diffusion parameters.
-        self.align_data.Axx_err = Axx
-        self.align_data.Ayy_err = Ayy
-        self.align_data.Axy_err = Axy
-        self.align_data.Axz_err = Axz
-        self.align_data.Ayz_err = Ayz
+        self.align_data.Sxx_err = Sxx
+        self.align_data.Syy_err = Syy
+        self.align_data.Sxy_err = Sxy
+        self.align_data.Sxz_err = Sxz
+        self.align_data.Syz_err = Syz
 
         # Test the set values.
-        self.assertEqual(self.align_data.Axx_err, Axx)
-        self.assertEqual(self.align_data.Ayy_err, Ayy)
-        self.assertEqual(self.align_data.Axy_err, Axy)
-        self.assertEqual(self.align_data.Axz_err, Axz)
-        self.assertEqual(self.align_data.Ayz_err, Ayz)
+        self.assertEqual(self.align_data.Sxx_err, Sxx)
+        self.assertEqual(self.align_data.Syy_err, Syy)
+        self.assertEqual(self.align_data.Sxy_err, Sxy)
+        self.assertEqual(self.align_data.Sxz_err, Sxz)
+        self.assertEqual(self.align_data.Syz_err, Syz)
 
         # Calculate the diffusion tensor objects.
-        Azz, Axxyy, tensor_diag = self.calc_objects(Axx, Ayy, Axy, Axz, Ayz)
+        Szz, Sxxyy, tensor_diag = self.calc_objects(Sxx, Syy, Sxy, Sxz, Syz)
 
         # Test the automatically created values.
-        self.assertEqual(self.align_data.Azz_err, Azz)
-        self.assertEqual(self.align_data.Axxyy_err, Axxyy)
+        self.assertEqual(self.align_data.Szz_err, Szz)
+        self.assertEqual(self.align_data.Sxxyy_err, Sxxyy)
 
         # Test the matrices.
         self.assertEqual(self.align_data.tensor_diag_err.tostring(), tensor_diag.tostring())
@@ -170,32 +171,32 @@ class Test_align_tensor(TestCase):
         """
 
         # The parameter values.
-        Axx = -16.6278
-        Ayy = 6.13037
-        Axy = 7.65639
-        Axz = -1.89157
-        Ayz = 19.2561
+        Sxx = 3.0/2.0 * -16.6278 / kappa() * 1.02e-10
+        Syy = 3.0/2.0 * 6.13037 / kappa() * 1.02e-10
+        Sxy = 3.0/2.0 * 7.65639 / kappa() * 1.02e-10
+        Sxz = 3.0/2.0 * -1.89157 / kappa() * 1.02e-10
+        Syz = 3.0/2.0 * 19.2561 / kappa() * 1.02e-10
 
         # Set the diffusion parameters.
-        self.align_data.Axx = Axx
-        self.align_data.Ayy = Ayy
-        self.align_data.Axy = Axy
-        self.align_data.Axz = Axz
-        self.align_data.Ayz = Ayz
+        self.align_data.Sxx = Sxx
+        self.align_data.Syy = Syy
+        self.align_data.Sxy = Sxy
+        self.align_data.Sxz = Sxz
+        self.align_data.Syz = Syz
 
         # Test the set values.
-        self.assertEqual(self.align_data.Axx, Axx)
-        self.assertEqual(self.align_data.Ayy, Ayy)
-        self.assertEqual(self.align_data.Axy, Axy)
-        self.assertEqual(self.align_data.Axz, Axz)
-        self.assertEqual(self.align_data.Ayz, Ayz)
+        self.assertEqual(self.align_data.Sxx, Sxx)
+        self.assertEqual(self.align_data.Syy, Syy)
+        self.assertEqual(self.align_data.Sxy, Sxy)
+        self.assertEqual(self.align_data.Sxz, Sxz)
+        self.assertEqual(self.align_data.Syz, Syz)
 
         # Calculate the diffusion tensor objects.
-        Azz, Axxyy, tensor_diag = self.calc_objects(Axx, Ayy, Axy, Axz, Ayz)
+        Szz, Sxxyy, tensor_diag = self.calc_objects(Sxx, Syy, Sxy, Sxz, Syz)
 
         # Test the automatically created values.
-        self.assertEqual(self.align_data.Azz, Azz)
-        self.assertEqual(self.align_data.Axxyy, Axxyy)
+        self.assertEqual(self.align_data.Szz, Szz)
+        self.assertEqual(self.align_data.Sxxyy, Sxxyy)
 
         # Test the matrices.
         self.assertEqual(self.align_data.tensor_diag.tostring(), tensor_diag.tostring())
@@ -221,57 +222,57 @@ class Test_align_tensor(TestCase):
         """
 
         # Set the MC sim alignment parameter lists.
-        self.align_data.Axx_sim = AlignTensorSimList('Axx', self.align_data)
-        self.align_data.Ayy_sim = AlignTensorSimList('Ayy', self.align_data)
-        self.align_data.Axy_sim = AlignTensorSimList('Axy', self.align_data)
-        self.align_data.Axz_sim = AlignTensorSimList('Axz', self.align_data)
-        self.align_data.Ayz_sim = AlignTensorSimList('Ayz', self.align_data)
+        self.align_data.Sxx_sim = AlignTensorSimList('Sxx', self.align_data)
+        self.align_data.Syy_sim = AlignTensorSimList('Syy', self.align_data)
+        self.align_data.Sxy_sim = AlignTensorSimList('Sxy', self.align_data)
+        self.align_data.Sxz_sim = AlignTensorSimList('Sxz', self.align_data)
+        self.align_data.Syz_sim = AlignTensorSimList('Syz', self.align_data)
 
         # Append the initial values.
-        self.align_data.Axx_sim.append(-16.6278)
-        self.align_data.Ayy_sim.append(6.13037)
-        self.align_data.Axy_sim.append(7.65639)
-        self.align_data.Axz_sim.append(-1.89157)
-        self.align_data.Ayz_sim.append(19.2561)
+        self.align_data.Sxx_sim.append(3.0/2.0 * -16.6278 / kappa() * 1.02e-10)
+        self.align_data.Syy_sim.append(3.0/2.0 * 6.13037 / kappa() * 1.02e-10)
+        self.align_data.Sxy_sim.append(3.0/2.0 * 7.65639 / kappa() * 1.02e-10)
+        self.align_data.Sxz_sim.append(3.0/2.0 * -1.89157 / kappa() * 1.02e-10)
+        self.align_data.Syz_sim.append(3.0/2.0 * 19.2561 / kappa() * 1.02e-10)
 
         # The new MC sim parameter values.
-        Axx = 0.3
-        Ayy = 0.5
-        Axy = 0.4
-        Axz = 0.1
-        Ayz = 0.2
+        Sxx = 3.0/2.0 * 0.3 / kappa() * 1.02e-10
+        Syy = 3.0/2.0 * 0.5 / kappa() * 1.02e-10
+        Sxy = 3.0/2.0 * 0.4 / kappa() * 1.02e-10
+        Sxz = 3.0/2.0 * 0.1 / kappa() * 1.02e-10
+        Syz = 3.0/2.0 * 0.2 / kappa() * 1.02e-10
 
         # Set the MC sim parameter values (overwriting the initial values).
-        self.align_data.Axx_sim[0] = Axx
-        self.align_data.Ayy_sim[0] = Ayy
-        self.align_data.Axy_sim[0] = Axy
-        self.align_data.Axz_sim[0] = Axz
-        self.align_data.Ayz_sim[0] = Ayz
+        self.align_data.Sxx_sim[0] = Sxx
+        self.align_data.Syy_sim[0] = Syy
+        self.align_data.Sxy_sim[0] = Sxy
+        self.align_data.Sxz_sim[0] = Sxz
+        self.align_data.Syz_sim[0] = Syz
 
         # Test the set values.
-        self.assertEqual(self.align_data.Axx_sim[0], Axx)
-        self.assertEqual(self.align_data.Ayy_sim[0], Ayy)
-        self.assertEqual(self.align_data.Axy_sim[0], Axy)
-        self.assertEqual(self.align_data.Axz_sim[0], Axz)
-        self.assertEqual(self.align_data.Ayz_sim[0], Ayz)
+        self.assertEqual(self.align_data.Sxx_sim[0], Sxx)
+        self.assertEqual(self.align_data.Syy_sim[0], Syy)
+        self.assertEqual(self.align_data.Sxy_sim[0], Sxy)
+        self.assertEqual(self.align_data.Sxz_sim[0], Sxz)
+        self.assertEqual(self.align_data.Syz_sim[0], Syz)
 
         # Calculate the diffusion tensor objects.
-        Azz, Axxyy, tensor_diag = self.calc_objects(Axx, Ayy, Axy, Axz, Ayz)
+        Szz, Sxxyy, tensor_diag = self.calc_objects(Sxx, Syy, Sxy, Sxz, Syz)
 
         # Test the automatically created values.
-        self.assertEqual(self.align_data.Azz_sim[0], Azz)
-        self.assertEqual(self.align_data.Axxyy_sim[0], Axxyy)
+        self.assertEqual(self.align_data.Szz_sim[0], Szz)
+        self.assertEqual(self.align_data.Sxxyy_sim[0], Sxxyy)
 
         # Test the matrices.
         self.assertEqual(self.align_data.tensor_diag_sim[0].tostring(), tensor_diag.tostring())
 
 
-    def test_set_Axx(self):
-        """Test the setting of the Axx parameter."""
+    def test_set_Sxx(self):
+        """Test the setting of the Sxx parameter."""
 
-        # Set the Axx value to 10 Hz.
-        self.align_data.Axx = 10.0
+        # Set the Sxx value to 0.0001.
+        self.align_data.Sxx = 0.0001
 
-        # Test that the Axx parameter has been set correctly.
-        self.assert_(hasattr(self.align_data, 'Axx'))
-        self.assertEqual(self.align_data.Axx, 10.0)
+        # Test that the Sxx parameter has been set correctly.
+        self.assert_(hasattr(self.align_data, 'Sxx'))
+        self.assertEqual(self.align_data.Sxx, 0.0001)
