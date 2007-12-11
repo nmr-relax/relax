@@ -44,13 +44,11 @@ from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxIn
 
 
 class Model_free(Common_functions):
-    def __init__(self, relax):
+    def __init__(self):
         """Class containing functions specific to model-free analysis."""
 
-        self.relax = relax
-
         # Class containing the Molmol specific functions.
-        self.molmol = Molmol(self.relax)
+        self.molmol = Molmol()
 
 
     def are_mf_params_set(self, index=None):
@@ -5185,10 +5183,8 @@ class Model_free(Common_functions):
 ##############################
 
 class Molmol:
-    def __init__(self, relax):
+    def __init__(self):
         """Class containing the Molmol specific functions."""
-
-        self.relax = relax
 
 
     def classic(self, data_type, colour_start, colour_end, colour_list):

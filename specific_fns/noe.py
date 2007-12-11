@@ -29,15 +29,9 @@ from data import Data as relax_data_store
 from relax_errors import RelaxArgNotInListError, RelaxError, RelaxInvalidDataError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRegExpError
 
 
-# The relax data storage object.
-
-
-
 class Noe:
-    def __init__(self, relax):
+    def __init__(self):
         """Class containing functions for relaxation data."""
-
-        self.relax = relax
 
 
     def assign_function(self, run=None, i=None, intensity=None):

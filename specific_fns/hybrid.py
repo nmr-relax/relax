@@ -25,14 +25,9 @@ from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxPipeError, RelaxSequenceError
 
 
-# The relax data storage object.
-
-
 class Hybrid:
-    def __init__(self, relax):
+    def __init__(self):
         """Class containing function specific to hybrid models."""
-
-        self.relax = relax
 
 
     def duplicate_data(self, new_run=None, old_run=None, instance=None):

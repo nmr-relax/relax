@@ -43,15 +43,10 @@ else:
     C_module_exp_fn = 1
 
 
-# The relax data storage object.
-
-
 
 class Relax_fit(Common_functions):
-    def __init__(self, relax):
+    def __init__(self):
         """Class containing functions for relaxation data."""
-
-        self.relax = relax
 
 
     def assemble_param_vector(self, index=None, sim_index=None):

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006 Edward d'Auvergne                                  #
+# Copyright (C) 2007 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,24 +20,36 @@
 #                                                                             #
 ###############################################################################
 
-
-from hybrid import Hybrid
-from jw_mapping import Jw_mapping
-from model_free import Model_free
-from noe import Noe
-from relax_fit import Relax_fit
+# relax module imports.
+from data import Data as relax_data_store
+from relax_errors import RelaxError
 
 
-class Specific:
-    def __init__(self, relax):
-        """Class containing all the specific functions."""
 
-        # Place the program class structure under self.relax
-        self.relax = relax
+class Value_base_class:
+    """Base class for the tests of both the 'prompt.value' and 'generic_fns.value' modules.
 
-        # Set up all the functions
-        self.hybrid = Hybrid(self.relax)
-        self.jw_mapping = Jw_mapping(self.relax)
-        self.model_free = Model_free(self.relax)
-        self.noe = Noe(self.relax)
-        self.relax_fit = Relax_fit(self.relax)
+    This base class also contains many shared unit tests.
+    """
+
+
+    def setUp(self):
+        """Set up for all the value unit tests."""
+
+        # Reset the relax data storage object.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
+        # Add a second data pipe for copying tests.
+        relax_data_store.add(pipe_name='test', pipe_type='mf')
+
+        # Set the current data pipe to 'orig'.
+        relax_data_store.current_pipe = 'orig'
+
+
+    def tearDown(self):
+        """Reset the relax data storage object."""
+
+        relax_data_store.__reset__()
