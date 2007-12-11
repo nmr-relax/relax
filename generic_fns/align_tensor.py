@@ -30,6 +30,7 @@ from re import search
 from angles import wrap_angles
 from data import Data as relax_data_store
 from data.align_tensor import AlignTensorData
+from physical_constants import gC, gH, gN, gO, gP, h_bar, mu0
 import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
@@ -486,6 +487,52 @@ def map_bounds(param):
     # gamma.
     elif param == 'gamma':
         return [0, 2*pi]
+
+
+def kappa(nuc1='N', nuc2='H'):
+    """Function for calculating the kappa constant.
+
+    The kappa constant is
+
+        kappa = -3/(8pi^2).gI.gS.mu0.h_bar,
+
+    where gI and gS are the gyromagnetic ratios of the I and S spins, mu0 is the permeability of
+    free space, and h_bar is Planck's constant divided by 2pi.
+
+    @param nuc1:    The first nucleus type.
+    @type nuc1:     str
+    @param nuc2:    The first nucleus type.
+    @type nuc2:     str
+    @return:        The kappa constant value.
+    @return type:   float
+    """
+
+    # Gyromagnetic ratio of the first nucleus.
+    if nuc1 == 'C':
+        gI = gC
+    elif nuc1 == 'H':
+        gI = gH
+    elif nuc1 == 'N':
+        gI = gN
+    elif nuc1 == 'O':
+        gI = gO
+    elif nuc1 == 'P':
+        gI = gP
+
+    # Gyromagnetic ratio of the second nucleus.
+    if nuc2 == 'C':
+        gS = gC
+    elif nuc2 == 'H':
+        gS = gH
+    elif nuc2 == 'N':
+        gS = gN
+    elif nuc2 == 'O':
+        gS = gO
+    elif nuc2 == 'P':
+        gS = gP
+
+    # Kappa.
+    return -3.0/(8.0*pi**2) * gI * gS * mu0 * h_bar
 
 
 def map_labels(index, params, bounds, swap, inc):
