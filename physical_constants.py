@@ -39,3 +39,22 @@ N15_CSA = -172 * 1e-6
 # The length of the NH bond (default value).
 NH_BOND_LENGTH = 1.02 * 1e-10
 
+
+# Gyromagentic ratios.
+######################
+
+# 13C.
+gC = 6.728e7
+
+# 1H.
+#gH = 26.7522e7    # Old, low precision gyromagnetic ratio.
+gH = 26.7522212e7
+
+# 15N.
+gN = -2.7126e7
+
+# 17O.
+gO = -3.628e7
+
+# 31P.
+gP = 1.0841e8

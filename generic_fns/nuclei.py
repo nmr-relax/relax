@@ -26,10 +26,7 @@ from re import match
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxInvalidError
-
-
-# The relax data storage object.
-
+from physical_constants import gC, gH, gN, gO, gP
 
 
 class Nuclei:
@@ -50,6 +47,7 @@ class Nuclei:
         if relax_data_store.gx == self.gn():
             return 'N'
 
+
         # Carbon
         if relax_data_store.gx == self.gc():
             return 'C'
@@ -66,34 +64,31 @@ class Nuclei:
     def gc(self):
         """The 13C gyromagnetic ratio."""
 
-        return 6.728e7
+        return gC
 
 
     def gh(self):
         """The 1H gyromagnetic ratio."""
 
-        # Old, low precision gyromagnetic ratio.
-        #return 26.7522e7
-
-        return 26.7522212e7
+        return gH
 
 
     def gn(self):
         """The 15N gyromagnetic ratio."""
 
-        return -2.7126e7
+        return gN
 
 
     def go(self):
         """The 17O gyromagnetic ratio."""
 
-        return -3.628e7
+        return gO
 
 
     def gp(self):
         """The 31P gyromagnetic ratio."""
 
-        return 1.0841e8
+        return gP
 
 
     def set_values(self, heteronuc):
