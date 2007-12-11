@@ -43,6 +43,22 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
         The function tested is generic_fns.align_tensor.return_data_name().
         """
 
+        # Test the return of Saupe order matrix components.
+        self.assertEqual(self.align_tensor_fns.return_data_name('sxx'), 'Sxx')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Sxx'), 'Sxx')
+        self.assertEqual(self.align_tensor_fns.return_data_name('syy'), 'Syy')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Syy'), 'Syy')
+        self.assertEqual(self.align_tensor_fns.return_data_name('szz'), 'Szz')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Szz'), 'Szz')
+        self.assertEqual(self.align_tensor_fns.return_data_name('sxy'), 'Sxy')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Sxy'), 'Sxy')
+        self.assertEqual(self.align_tensor_fns.return_data_name('sxz'), 'Sxz')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Sxz'), 'Sxz')
+        self.assertEqual(self.align_tensor_fns.return_data_name('syz'), 'Syz')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Syz'), 'Syz')
+        self.assertEqual(self.align_tensor_fns.return_data_name('sxxyy'), 'Sxxyy')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Sxxyy'), 'Axxyy')
+
         # Test the return of alignment tensor components.
         self.assertEqual(self.align_tensor_fns.return_data_name('axx'), 'Axx')
         self.assertEqual(self.align_tensor_fns.return_data_name('Axx'), 'Axx')
@@ -58,6 +74,22 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
         self.assertEqual(self.align_tensor_fns.return_data_name('Ayz'), 'Ayz')
         self.assertEqual(self.align_tensor_fns.return_data_name('axxyy'), 'Axxyy')
         self.assertEqual(self.align_tensor_fns.return_data_name('Axxyy'), 'Axxyy')
+
+        # Test the return of probability matrix components.
+        self.assertEqual(self.align_tensor_fns.return_data_name('pxx'), 'Pxx')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Pxx'), 'Pxx')
+        self.assertEqual(self.align_tensor_fns.return_data_name('pyy'), 'Pyy')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Pyy'), 'Pyy')
+        self.assertEqual(self.align_tensor_fns.return_data_name('pzz'), 'Pzz')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Pzz'), 'Pzz')
+        self.assertEqual(self.align_tensor_fns.return_data_name('pxy'), 'Pxy')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Pxy'), 'Pxy')
+        self.assertEqual(self.align_tensor_fns.return_data_name('pxz'), 'Pxz')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Pxz'), 'Pxz')
+        self.assertEqual(self.align_tensor_fns.return_data_name('pyz'), 'Pyz')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Pyz'), 'Pyz')
+        self.assertEqual(self.align_tensor_fns.return_data_name('pxxyy'), 'Pxxyy')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Pxxyy'), 'Pxxyy')
 
         # Test the return of Euler angles.
         self.assertEqual(self.align_tensor_fns.return_data_name('a'), 'alpha')
