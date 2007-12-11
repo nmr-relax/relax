@@ -68,11 +68,11 @@ class Test_align_tensor(TestCase):
         """
 
         # The MC sim parameter values.
-        Sxx = 3.0/2.0 * -16.6278 / kappa() * 1.02e-10
-        Syy = 3.0/2.0 * 6.13037 / kappa() * 1.02e-10
-        Sxy = 3.0/2.0 * 7.65639 / kappa() * 1.02e-10
-        Sxz = 3.0/2.0 * -1.89157 / kappa() * 1.02e-10
-        Syz = 3.0/2.0 * 19.2561 / kappa() * 1.02e-10
+        Sxx = 3.0/2.0 * -16.6278 / kappa() * 1.02e-10**3
+        Syy = 3.0/2.0 * 6.13037 / kappa() * 1.02e-10**3
+        Sxy = 3.0/2.0 * 7.65639 / kappa() * 1.02e-10**3
+        Sxz = 3.0/2.0 * -1.89157 / kappa() * 1.02e-10**3
+        Syz = 3.0/2.0 * 19.2561 / kappa() * 1.02e-10**3
 
         # Set the MC sim alignment parameter lists.
         self.align_data.Sxx_sim = AlignTensorSimList('Sxx', self.align_data)
@@ -128,11 +128,11 @@ class Test_align_tensor(TestCase):
         """
 
         # The parameter errors.
-        Sxx = 3.0/2.0 * 0.3 / kappa() * 1.02e-10
-        Syy = 3.0/2.0 * 0.5 / kappa() * 1.02e-10
-        Sxy = 3.0/2.0 * 0.4 / kappa() * 1.02e-10
-        Sxz = 3.0/2.0 * 0.1 / kappa() * 1.02e-10
-        Syz = 3.0/2.0 * 0.2 / kappa() * 1.02e-10
+        Sxx = 3.0/2.0 * 0.3 / kappa() * 1.02e-10**3
+        Syy = 3.0/2.0 * 0.5 / kappa() * 1.02e-10**3
+        Sxy = 3.0/2.0 * 0.4 / kappa() * 1.02e-10**3
+        Sxz = 3.0/2.0 * 0.1 / kappa() * 1.02e-10**3
+        Syz = 3.0/2.0 * 0.2 / kappa() * 1.02e-10**3
 
         # Set the diffusion parameters.
         self.align_data.Sxx_err = Sxx
@@ -171,11 +171,11 @@ class Test_align_tensor(TestCase):
         """
 
         # The parameter values.
-        Sxx = 3.0/2.0 * -16.6278 / kappa() * 1.02e-10
-        Syy = 3.0/2.0 * 6.13037 / kappa() * 1.02e-10
-        Sxy = 3.0/2.0 * 7.65639 / kappa() * 1.02e-10
-        Sxz = 3.0/2.0 * -1.89157 / kappa() * 1.02e-10
-        Syz = 3.0/2.0 * 19.2561 / kappa() * 1.02e-10
+        Sxx = 3.0/2.0 * -16.6278 / kappa() * 1.02e-10**3
+        Syy = 3.0/2.0 * 6.13037 / kappa() * 1.02e-10**3
+        Sxy = 3.0/2.0 * 7.65639 / kappa() * 1.02e-10**3
+        Sxz = 3.0/2.0 * -1.89157 / kappa() * 1.02e-10**3
+        Syz = 3.0/2.0 * 19.2561 / kappa() * 1.02e-10**3
 
         # Set the diffusion parameters.
         self.align_data.Sxx = Sxx
@@ -229,18 +229,18 @@ class Test_align_tensor(TestCase):
         self.align_data.Syz_sim = AlignTensorSimList('Syz', self.align_data)
 
         # Append the initial values.
-        self.align_data.Sxx_sim.append(3.0/2.0 * -16.6278 / kappa() * 1.02e-10)
-        self.align_data.Syy_sim.append(3.0/2.0 * 6.13037 / kappa() * 1.02e-10)
-        self.align_data.Sxy_sim.append(3.0/2.0 * 7.65639 / kappa() * 1.02e-10)
-        self.align_data.Sxz_sim.append(3.0/2.0 * -1.89157 / kappa() * 1.02e-10)
-        self.align_data.Syz_sim.append(3.0/2.0 * 19.2561 / kappa() * 1.02e-10)
+        self.align_data.Sxx_sim.append(3.0/2.0 * -16.6278 / kappa() * 1.02e-10**3)
+        self.align_data.Syy_sim.append(3.0/2.0 * 6.13037 / kappa() * 1.02e-10**3)
+        self.align_data.Sxy_sim.append(3.0/2.0 * 7.65639 / kappa() * 1.02e-10**3)
+        self.align_data.Sxz_sim.append(3.0/2.0 * -1.89157 / kappa() * 1.02e-10**3)
+        self.align_data.Syz_sim.append(3.0/2.0 * 19.2561 / kappa() * 1.02e-10**3)
 
         # The new MC sim parameter values.
-        Sxx = 3.0/2.0 * 0.3 / kappa() * 1.02e-10
-        Syy = 3.0/2.0 * 0.5 / kappa() * 1.02e-10
-        Sxy = 3.0/2.0 * 0.4 / kappa() * 1.02e-10
-        Sxz = 3.0/2.0 * 0.1 / kappa() * 1.02e-10
-        Syz = 3.0/2.0 * 0.2 / kappa() * 1.02e-10
+        Sxx = 3.0/2.0 * 0.3 / kappa() * 1.02e-10**3
+        Syy = 3.0/2.0 * 0.5 / kappa() * 1.02e-10**3
+        Sxy = 3.0/2.0 * 0.4 / kappa() * 1.02e-10**3
+        Sxz = 3.0/2.0 * 0.1 / kappa() * 1.02e-10**3
+        Syz = 3.0/2.0 * 0.2 / kappa() * 1.02e-10**3
 
         # Set the MC sim parameter values (overwriting the initial values).
         self.align_data.Sxx_sim[0] = Sxx
