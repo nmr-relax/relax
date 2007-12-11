@@ -203,10 +203,25 @@ class Align_tensor:
         the parameters of the tensor, which can be specified by the param_types argument, where the
         values correspond to
 
-            0:  (Axx, Ayy, Axy, Axz, Ayz)  (in units of Hertz),
-            1:  (Azz, Axx-yy, Axy, Axz, Ayz)  (Pales format in units of Hertz),
+            0:  {Sxx, Syy, Sxy, Sxz, Syz}  (unitless),
+            1:  {Szz, Sxx-yy, Sxy, Sxz, Syz}  (Pales default format),
+            2:  {Axx, Ayy, Axy, Axz, Ayz}  (unitless),
+            3:  {Azz, Axx-yy, Axy, Axz, Ayz}  (unitless),
+            4:  {Axx, Ayy, Axy, Axz, Ayz}  (units of Hertz),
+            5:  {Azz, Axx-yy, Axy, Axz, Ayz}  (units of Hertz),
+            6:  {Pxx, Pyy, Pxy, Pxz, Pyz}  (unitless),
+            7:  {Pzz, Pxx-yy, Pxy, Pxz, Pyz}  (unitless),
+ 
+        Other formats may be added later.  The relationship between the Saupe order matrix S and the
+        alignment tensor A is
 
-        (other formats may be implemented later).
+            S = 3/2 A.
+
+        The probability matrix P is related to the alignment tensor A by
+
+            A = P - 1/3 I,
+
+        where I is the identity matrix.
 
 
         Examples
