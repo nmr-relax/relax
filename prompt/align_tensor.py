@@ -221,7 +221,8 @@ class Align_tensor:
 
             A = P - 1/3 I,
 
-        where I is the identity matrix.
+        where I is the identity matrix.  For the alignment tensor to be supplied in Hertz, the bond
+        vectors must all be of equal length.
 
 
         Examples
