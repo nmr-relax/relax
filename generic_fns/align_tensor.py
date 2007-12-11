@@ -636,6 +636,20 @@ def return_data_name(name):
     | Data type                                              | Object name  | Patterns         |
     |________________________________________________________|______________|__________________|
     |                                                        |              |                  |
+    | The xx component of the Saupe order matrix - Sxx       | 'Sxx'        | '^[Sa]xx$'       |
+    |                                                        |              |                  |
+    | The yy component of the Saupe order matrix - Syy       | 'Syy'        | '^[Sa]yy$'       |
+    |                                                        |              |                  |
+    | The zz component of the Saupe order matrix - Szz       | 'Szz'        | '^[Sa]zz$'       |
+    |                                                        |              |                  |
+    | The xy component of the Saupe order matrix - Sxy       | 'Sxy'        | '^[Sa]xy$'       |
+    |                                                        |              |                  |
+    | The xz component of the Saupe order matrix - Sxz       | 'Sxz'        | '^[Sa]xz$'       |
+    |                                                        |              |                  |
+    | The yz component of the Saupe order matrix - Syz       | 'Syz'        | '^[Sa]yz$'       |
+    |                                                        |              |                  |
+    | The xx-yy component of the Saupe order matrix - Sxx-yy | 'Sxxyy'      | '^[Sa]xxyy$'     |
+    |                                                        |              |                  |
     | The xx component of the alignment tensor - Axx         | 'Axx'        | '^[Aa]xx$'       |
     |                                                        |              |                  |
     | The yy component of the alignment tensor - Ayy         | 'Ayy'        | '^[Aa]yy$'       |
@@ -650,6 +664,20 @@ def return_data_name(name):
     |                                                        |              |                  |
     | The xx-yy component of the alignment tensor - Axx-yy   | 'Axxyy'      | '^[Aa]xxyy$'     |
     |                                                        |              |                  |
+    | The xx component of the probability matrix - Pxx       | 'Pxx'        | '^[Pa]xx$'       |
+    |                                                        |              |                  |
+    | The yy component of the probability matrix - Pyy       | 'Pyy'        | '^[Pa]yy$'       |
+    |                                                        |              |                  |
+    | The zz component of the probability matrix - Pzz       | 'Pzz'        | '^[Pa]zz$'       |
+    |                                                        |              |                  |
+    | The xy component of the probability matrix - Pxy       | 'Pxy'        | '^[Pa]xy$'       |
+    |                                                        |              |                  |
+    | The xz component of the probability matrix - Pxz       | 'Pxz'        | '^[Pa]xz$'       |
+    |                                                        |              |                  |
+    | The yz component of the probability matrix - Pyz       | 'Pyz'        | '^[Pa]yz$'       |
+    |                                                        |              |                  |
+    | The xx-yy component of the probability matrix - Pxx-yy | 'Pxxyy'      | '^[Pa]xxyy$'     |
+    |                                                        |              |                  |
     | The first Euler angle of the alignment tensor - alpha  | 'alpha'      | '^a$' or 'alpha' |
     |                                                        |              |                  |
     | The second Euler angle of the alignment tensor - beta  | 'beta'       | '^b$' or 'beta'  |
@@ -661,6 +689,34 @@ def return_data_name(name):
     # Enforce that the name must be a string.
     if type(name) != str:
         raise RelaxStrError, ('name', name)
+
+    # Sxx.
+    if search('^[Sa]xx$', name):
+        return 'Sxx'
+
+    # Syy.
+    if search('^[Sa]yy$', name):
+        return 'Syy'
+
+    # Szz.
+    if search('^[Sa]zz$', name):
+        return 'Szz'
+
+    # Sxy.
+    if search('^[Sa]xy$', name):
+        return 'Sxy'
+
+    # Sxz.
+    if search('^[Sa]xz$', name):
+        return 'Sxz'
+
+    # Syz.
+    if search('^[Sa]yz$', name):
+        return 'Syz'
+
+    # Sxx-yy.
+    if search('^[Sa]xxyy$', name):
+        return 'Sxxyy'
 
     # Axx.
     if search('^[Aa]xx$', name):
@@ -689,6 +745,34 @@ def return_data_name(name):
     # Axx-yy.
     if search('^[Aa]xxyy$', name):
         return 'Axxyy'
+
+    # Pxx.
+    if search('^[Pa]xx$', name):
+        return 'Pxx'
+
+    # Pyy.
+    if search('^[Pa]yy$', name):
+        return 'Pyy'
+
+    # Pzz.
+    if search('^[Pa]zz$', name):
+        return 'Pzz'
+
+    # Pxy.
+    if search('^[Pa]xy$', name):
+        return 'Pxy'
+
+    # Pxz.
+    if search('^[Pa]xz$', name):
+        return 'Pxz'
+
+    # Pyz.
+    if search('^[Pa]yz$', name):
+        return 'Pyz'
+
+    # Pxx-yy.
+    if search('^[Pa]xxyy$', name):
+        return 'Pxxyy'
 
     # alpha.
     if search('^a$', name) or search('alpha', name):
