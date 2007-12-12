@@ -691,31 +691,31 @@ def return_data_name(name):
         raise RelaxStrError, ('name', name)
 
     # Sxx.
-    if search('^[Sa]xx$', name):
+    if search('^[Ss]xx$', name):
         return 'Sxx'
 
     # Syy.
-    if search('^[Sa]yy$', name):
+    if search('^[Ss]yy$', name):
         return 'Syy'
 
     # Szz.
-    if search('^[Sa]zz$', name):
+    if search('^[Ss]zz$', name):
         return 'Szz'
 
     # Sxy.
-    if search('^[Sa]xy$', name):
+    if search('^[Ss]xy$', name):
         return 'Sxy'
 
     # Sxz.
-    if search('^[Sa]xz$', name):
+    if search('^[Ss]xz$', name):
         return 'Sxz'
 
     # Syz.
-    if search('^[Sa]yz$', name):
+    if search('^[Ss]yz$', name):
         return 'Syz'
 
     # Sxx-yy.
-    if search('^[Sa]xxyy$', name):
+    if search('^[Ss]xxyy$', name):
         return 'Sxxyy'
 
     # Axx.
@@ -747,31 +747,31 @@ def return_data_name(name):
         return 'Axxyy'
 
     # Pxx.
-    if search('^[Pa]xx$', name):
+    if search('^[Pp]xx$', name):
         return 'Pxx'
 
     # Pyy.
-    if search('^[Pa]yy$', name):
+    if search('^[Pp]yy$', name):
         return 'Pyy'
 
     # Pzz.
-    if search('^[Pa]zz$', name):
+    if search('^[Pp]zz$', name):
         return 'Pzz'
 
     # Pxy.
-    if search('^[Pa]xy$', name):
+    if search('^[Pp]xy$', name):
         return 'Pxy'
 
     # Pxz.
-    if search('^[Pa]xz$', name):
+    if search('^[Pp]xz$', name):
         return 'Pxz'
 
     # Pyz.
-    if search('^[Pa]yz$', name):
+    if search('^[Pp]yz$', name):
         return 'Pyz'
 
     # Pxx-yy.
-    if search('^[Pa]xxyy$', name):
+    if search('^[Pp]xxyy$', name):
         return 'Pxxyy'
 
     # alpha.
