@@ -72,11 +72,11 @@ class Align_tensor_base_class:
         self.align_tensor_fns.copy(tensor_from='Pf1', pipe_from='orig', tensor_to='Pf1')
 
         # Test the alignment tensor.
-        self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Axx, -16.6278)
-        self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Ayy, 6.13037)
-        self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Axy, 7.65639)
-        self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Axz, -1.89157)
-        self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Ayz, 19.2561)
+        self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Sxx, -16.6278)
+        self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Syy, 6.13037)
+        self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Sxy, 7.65639)
+        self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Sxz, -1.89157)
+        self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Syz, 19.2561)
 
 
     def test_copy_push(self):
@@ -93,11 +93,11 @@ class Align_tensor_base_class:
         self.align_tensor_fns.copy(tensor_from='Pf1', pipe_to='test', tensor_to='Pf1')
 
         # Test the alignment tensor.
-        self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Axx, -16.6278)
-        self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Ayy, 6.13037)
-        self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Axy, 7.65639)
-        self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Axz, -1.89157)
-        self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Ayz, 19.2561)
+        self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Sxx, -16.6278)
+        self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Syy, 6.13037)
+        self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Sxy, 7.65639)
+        self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Sxz, -1.89157)
+        self.assertEqual(relax_data_store['test'].align_tensor['Pf1'].Syz, 19.2561)
 
 
     def test_copy_fail(self):
@@ -217,8 +217,8 @@ class Align_tensor_base_class:
         self.align_tensor_fns.init(tensor='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
 
         # Test the alignment tensor.
-        self.assertEqual(relax_data_store['orig'].align_tensor['Pf1'].Axx, -16.6278)
-        self.assertEqual(relax_data_store['orig'].align_tensor['Pf1'].Ayy, 6.13037)
-        self.assertEqual(relax_data_store['orig'].align_tensor['Pf1'].Axy, 7.65639)
-        self.assertEqual(relax_data_store['orig'].align_tensor['Pf1'].Axz, -1.89157)
-        self.assertEqual(relax_data_store['orig'].align_tensor['Pf1'].Ayz, 19.2561)
+        self.assertEqual(relax_data_store['orig'].align_tensor['Pf1'].Sxx, -16.6278)
+        self.assertEqual(relax_data_store['orig'].align_tensor['Pf1'].Syy, 6.13037)
+        self.assertEqual(relax_data_store['orig'].align_tensor['Pf1'].Sxy, 7.65639)
+        self.assertEqual(relax_data_store['orig'].align_tensor['Pf1'].Sxz, -1.89157)
+        self.assertEqual(relax_data_store['orig'].align_tensor['Pf1'].Syz, 19.2561)
