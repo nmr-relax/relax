@@ -57,7 +57,7 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
         self.assertEqual(self.align_tensor_fns.return_data_name('syz'), 'Syz')
         self.assertEqual(self.align_tensor_fns.return_data_name('Syz'), 'Syz')
         self.assertEqual(self.align_tensor_fns.return_data_name('sxxyy'), 'Sxxyy')
-        self.assertEqual(self.align_tensor_fns.return_data_name('Sxxyy'), 'Axxyy')
+        self.assertEqual(self.align_tensor_fns.return_data_name('Sxxyy'), 'Sxxyy')
 
         # Test the return of alignment tensor components.
         self.assertEqual(self.align_tensor_fns.return_data_name('axx'), 'Axx')
