@@ -1180,16 +1180,14 @@ def singular_values():
     i = 0
     for key in cdp.align_tensor.keys():
         # The elements.
-        matrix[i,0] = cdp.align_tensor[key].Azz
-        matrix[i,1] = cdp.align_tensor[key].Axxyy
-        matrix[i,2] = cdp.align_tensor[key].Axy
-        matrix[i,3] = cdp.align_tensor[key].Axz
-        matrix[i,4] = cdp.align_tensor[key].Ayz
+        matrix[i,0] = cdp.align_tensor[key].Sxx
+        matrix[i,1] = cdp.align_tensor[key].Syy
+        matrix[i,2] = cdp.align_tensor[key].Sxy
+        matrix[i,3] = cdp.align_tensor[key].Sxz
+        matrix[i,4] = cdp.align_tensor[key].Syz
 
         # Increment the index.
         i = i + 1
-
-    print `matrix`
 
     # SVD.
     u, s, vh = linalg.svd(matrix)
