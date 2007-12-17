@@ -147,7 +147,7 @@ class Latex:
 
             # The residue is not selected.
             if not data.select:
-                self.file.write(res + "\\\n")
+                self.file.write("\\\n")
 
             # The model-free model.
             self.file.write("$%s$ & " % data.model)

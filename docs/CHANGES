@@ -1,3 +1,48 @@
+Version 1.2.12
+(17 November 2007, from /1.2)
+http://svn.gna.org/svn/relax/tags/1.2.12
+
+    Features:
+        N/A
+
+    Changes:
+        N/A
+
+    Bugfixes:
+        * The 'latex_mf_table.py' sample script now works (see bug #10189).
+        * The missing 'num_ri' failure when writing the model-free and J(w) mapping results files has been solved (see bug #10323).
+        * Model elimination was failing in certain situations when applied to the global models (see bug #10320).
+
+
+Version 1.2.11
+(21 October 2007, from /1.2)
+http://svn.gna.org/svn/relax/tags/1.2.11
+
+    Features:
+        * The Grace plotting abilities have been extended, especially concerning relaxation exponential curve-fitting.
+        * A sample script has been added to plot the difference between the measured and back calculated peak intensities.
+        * Automatic looping over iterations in the 'full_analysis.py' sample script is now possible.
+
+    Changes:
+        * The 'full_analysis.py' sample script has been significantly improved with all user modifiable options shifted to the top of the script.
+        * The default CSA value is now -172 ppm.
+
+    Bugfixes:
+        * The previous release had problems reading results files from relax versions 1.2.0 to 1.2.9, but now results files from all versions can be read (see bug #8248).
+        * The synopsis of the system/functional tests now says '[ Failed ]' if one the tests fails (see bug #8682).
+        * relax now works with Python 2.5 (see bug #9093).
+        * The writing of the model-free results file, which failed under certain circumstances because of the 'heteronuc' and 'proton' attributes, has been fixed (see bug #8996).
+        * The problem whereby there is data loss for deselected residues when using 'results.write()' followed by 'results.read()' has been resolved (see bug #8953).
+        * Relaxation data can now be read if deselected spin systems have a relaxation data value or error value set to 'None' (see bug #9101).
+        * The fatal bug of the reduced spectral density mapping values being incorrectly calculated has been fixed (see bug #9238).
+        * When using the alternate model-free parameter set {S2f, tf, S2s, ts}, the incorrect functions were being called (see bug #9189).
+        * A second fatal problem in the reduced spectral density mapping code, the heteronuclear frequency being overwritten by that of the proton, has been fixed (see bug #9259).
+        * Another problem with relax and Python 2.5, because of the Scientific package, has been resolved (see bug #9390).
+        * The XH bond length is now correctly set in the reduced spectral density mapping analysis (see bug #9562).
+        * The convergence test in the 'full_analysis.py' sample script was failing if spin systems were deselected (see bug #9892 and bug #10022).
+
+
+
 Version 1.2.10
 (12 January 2007, from /1.2)
 http://svn.gna.org/svn/relax/tags/1.2.10

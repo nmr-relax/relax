@@ -344,10 +344,10 @@ class Value:
 
 
         To set the CSA value of all residues in the reduced spectral density mapping run '600MHz' to
-        -170 ppm, type:
+        -172 ppm, type:
 
-        relax> value.set('600MHz', -170 * 1e-6, 'csa')
-        relax> value.set('600MHz', value=-170 * 1e-6, param='csa')
+        relax> value.set('600MHz', -172 * 1e-6, 'csa')
+        relax> value.set('600MHz', value=-172 * 1e-6, param='csa')
 
 
         To set the NH bond length of all residues in the model-free run 'm5' to 1.02 Angstroms,

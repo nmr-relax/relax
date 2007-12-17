@@ -925,7 +925,7 @@ class Model_free(Common_functions):
         |                                       |                    |                        |
         | Bond length                           | 'r'                | 1.02 * 1e-10           |
         |                                       |                    |                        |
-        | CSA                                   | 'csa'              | -170 * 1e-6            |
+        | CSA                                   | 'csa'              | -172 * 1e-6            |
         |_______________________________________|____________________|________________________|
 
         """
@@ -960,7 +960,7 @@ class Model_free(Common_functions):
 
         # CSA.
         elif param == 'CSA':
-            return -170 * 1e-6
+            return -172 * 1e-6
 
 
     def delete(self, run):
@@ -1023,7 +1023,7 @@ class Model_free(Common_functions):
             #    continue
 
             # No params.
-            if not hasattr(self.relax.data.res[self.run][i], 'params' or not self.relax.data.res[self.run][i].params):
+            if not hasattr(self.relax.data.res[self.run][i], 'params') or not self.relax.data.res[self.run][i].params:
                 continue
 
             # Local tm.
@@ -5145,24 +5145,23 @@ class Model_free(Common_functions):
                     # Relaxation data and errors.
                     ri = []
                     ri_error = []
-                    for k in xrange(self.relax.data.num_ri[self.run]):
-                        # No relaxation data.
-                        if not hasattr(data, 'num_ri'):
-                            break
+                    if hasattr(self.relax.data, 'num_ri'):
+                        for k in xrange(self.relax.data.num_ri[self.run]):
+                            try:
+                                # Find the residue specific data corresponding to k.
+                                index = None
+                                for l in xrange(data.num_ri):
+                                    if data.ri_labels[l] == self.relax.data.ri_labels[self.run][k] and data.frq_labels[data.remap_table[l]] == self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][k]]:
+                                        index = l
 
-                        # Find the residue specific data corresponding to k.
-                        index = None
-                        for l in xrange(data.num_ri):
-                            if data.ri_labels[l] == self.relax.data.ri_labels[self.run][k] and data.frq_labels[data.remap_table[l]] == self.relax.data.frq_labels[self.run][self.relax.data.remap_table[self.run][k]]:
-                                index = l
+                                # Data exists for this data type.
+                                ri.append(`data.relax_sim_data[i][index]`)
+                                ri_error.append(`data.relax_error[index]`)
 
-                        # Data exists for this data type.
-                        try:
-                            ri.append(`data.relax_sim_data[i][index]`)
-                            ri_error.append(`data.relax_error[index]`)
-                        except:
-                            ri.append(None)
-                            ri_error.append(None)
+                            # No data exists for this data type.
+                            except:
+                                ri.append(None)
+                                ri_error.append(None)
 
                     # XH vector.
                     xh_vect = None

@@ -67,8 +67,8 @@ class Jw:
     def calc_integrity(self):
         
         # Correct jw values:
-        j0 = [4.0958793960056238e-09, 3.7976266046729745e-09]
-        jwx = [1.85720953886864e-10, 1.6450121628270092e-10]
+        j0 = [4.0703318681008998e-09, 3.7739393907014834e-09]
+        jwx = [1.8456254300773903e-10, 1.6347516082378241e-10]
         jwh = [1.5598167512718012e-12, 2.9480536599037041e-12]
 
         # Loop over residues.
@@ -127,7 +127,7 @@ class Jw:
 
         # Set r and csa.
         self.relax.interpreter._Value.set(self.run, 1.02 * 1e-10, 'bond_length')
-        self.relax.interpreter._Value.set(self.run, -170 * 1e-6, 'csa')
+        self.relax.interpreter._Value.set(self.run, -172 * 1e-6, 'csa')
 
         # Select the frequency.
         self.relax.interpreter._Jw_mapping.set_frq(self.run, frq=600.0 * 1e6)
@@ -147,7 +147,7 @@ class Jw:
 
         # Try to set the values.
         bond_length = 1.02 * 1e-10
-        csa = -170 * 1e-6
+        csa = -172 * 1e-6
         self.relax.interpreter._Value.set(self.run, bond_length, 'bond_length')
         self.relax.interpreter._Value.set(self.run, csa, 'csa')
 
