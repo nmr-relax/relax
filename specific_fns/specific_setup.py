@@ -37,6 +37,10 @@ class Specific_setup:
         # Initialise.
         string = "this analysis"
 
+        # Consistency testing.
+        if function_type == 'ct':
+            string = "consistency testing"
+
         # NOE calculation.
         if function_type == 'noe':
             string = "NOE calculations"
@@ -69,6 +73,10 @@ class Specific_setup:
 
         # Get the function.
         try:
+            # Consistency testing.            
+            if function_type == 'ct':
+                function = self.ct_funcs()
+
             # NOE calculation.
             if function_type == 'noe':
                 function = self.noe()
@@ -205,6 +213,86 @@ class Specific_setup:
         # Write results function (Columnar format).
         if self.eqi == 'write_columnar_results':
             return self.relax.specific.jw_mapping.write_columnar_results
+
+
+    def ct_funcs(self):
+        """Consistency testing functions."""
+
+        # Calculate function.
+        if self.eqi == 'calculate':
+            return self.relax.specific.consistency_tests.calculate
+
+        # Copy function.
+        if self.eqi == 'copy':
+            return self.relax.specific.consistency_tests.copy
+
+        # Create Monte Carlo data function (same as data returning function).
+        if self.eqi == 'create_mc_data':
+            return self.relax.specific.consistency_tests.return_data
+
+        # Number of instances.
+        if self.eqi == 'num_instances':
+            return self.relax.specific.consistency_tests.num_instances
+
+        # Overfit deselect.
+        if self.eqi == 'overfit_deselect':
+            return self.relax.specific.consistency_tests.overfit_deselect
+
+        # Pack Monte Carlo simulation data function.
+        if self.eqi == 'pack_sim_data':
+            return self.relax.specific.consistency_tests.sim_pack_data
+
+        # Data returning function.
+        if self.eqi == 'return_data':
+            return self.relax.specific.consistency_tests.return_data
+
+        # Data or parameter name returning function.
+        if self.eqi == 'return_data_name':
+            return self.relax.specific.consistency_tests.return_data_name
+
+        # Factor of conversion between different parameter units returning function.
+        if self.eqi == 'return_conversion_factor':
+            return self.relax.specific.consistency_tests.return_conversion_factor
+
+        # Data error returning function.
+        if self.eqi == 'return_error':
+            return self.relax.specific.consistency_tests.return_error
+
+        # Grace string returning function.
+        if self.eqi == 'return_grace_string':
+            return self.relax.specific.consistency_tests.return_grace_string
+
+        # Simulation parameter array returning function.
+        if self.eqi == 'return_sim_param':
+            return self.relax.specific.consistency_tests.sim_return_param
+
+        # Simulation parameter array returning function.
+        if self.eqi == 'return_selected_sim':
+            return self.relax.specific.consistency_tests.sim_return_selected
+
+        # String of the external parameter units returning function.
+        if self.eqi == 'return_units':
+            return self.relax.specific.consistency_tests.return_units
+
+        # Value and error returning function.
+        if self.eqi == 'return_value':
+            return self.relax.specific.consistency_tests.return_value
+
+        # Set function.
+        if self.eqi == 'set':
+            return self.relax.specific.consistency_tests.set
+
+        # Set error function.
+        if self.eqi == 'set_error':
+            return self.relax.specific.consistency_tests.set_error
+
+        # Set error function.
+        if self.eqi == 'set_selected_sim':
+            return self.relax.specific.consistency_tests.set_selected_sim
+
+        # Write results function (Columnar format).
+        if self.eqi == 'write_columnar_results':
+            return self.relax.specific.consistency_tests.write_columnar_results
 
 
     def mf_funcs(self):
