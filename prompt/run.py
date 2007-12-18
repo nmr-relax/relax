@@ -54,7 +54,6 @@ class Run:
 
         The run name can be any string however the run type can only be one of the following
 
-            'ct':  Consistency tests.
             'jw':  Reduced spectral density mapping,
             'mf':  Model-free analysis,
             'noe':  Steady state NOE calculation,

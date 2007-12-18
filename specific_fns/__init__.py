@@ -21,8 +21,7 @@
 ###############################################################################
 
 
-__all__ = [ 'consistency_tests',
-            'base_class',
+__all__ = [ 'base_class',
             'hybrid',
             'jw_mapping',
             'main',

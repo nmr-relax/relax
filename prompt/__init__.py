@@ -22,7 +22,6 @@
 
 
 __all__ = ['angles',
-           'consistency_tests',
            'command',
            'dasha',
            'diffusion_tensor',

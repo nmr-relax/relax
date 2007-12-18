@@ -27,7 +27,6 @@ import sys
 
 # Import the tests.
 from angles import Angles
-from consistency_tests import Consistent
 from diffusion_tensor import Diffusion_tensor
 from generic import Generic
 from jw_mapping import Jw
@@ -191,23 +190,6 @@ class Test_suite:
 
         # Execute the tests.
         self.exec_tests(self.jw_test_array)
-
-
-        # Consistency tests tests.
-        ##########################
-
-        # Heading
-        self.heading("The consistency tests tests")
-
-        # Initialise the array containing each test element.
-        self.consistent_test_array = []
-
-        # User function value.set() test.
-        self.consistent_test_array.append(Consistent(self.relax, 'set'))
-        self.consistent_test_array.append(Consistent(self.relax, 'calc'))
-
-        # Execute the tests.
-        self.exec_tests(self.consistent_test_array)
 
 
         # Model selection tests.
@@ -415,21 +397,6 @@ class Test_suite:
 
         # Loop over the tests.
         for test in self.jw_test_array:
-            # Synopsis.
-            global_pass = global_pass and test.passed
-
-            # Print the summary line.
-            self.summary_line(test)
-
-
-        # Consistentcy tests test.
-        ##########################
-
-        # Heading.
-        sys.stdout.write("\nThe consistency tests tests:\n")
-
-        # Loop over the tests.
-        for test in self.consistent_test_array:
             # Synopsis.
             global_pass = global_pass and test.passed
 
