@@ -34,9 +34,9 @@ from physical_constants import N15_CSA, NH_BOND_LENGTH
 
 
 
-class Jw:
+class Ct:
     def __init__(self, relax, test_name):
-        """Class for testing various aspects specific to reduced spectral density mapping."""
+        """Class for testing various aspects specific to consistency testing."""
 
         self.relax = relax
 
@@ -49,18 +49,18 @@ class Jw:
             # The test.
             self.test = self.set_value
 
-        # Spectral density calculation test.
+        # Consistency tests calculation test.
         if test_name == 'calc':
 
             # The name of the test.
-            self.name = "Spectral density calculation"
+            self.name = "Consistency tests calculation"
 
             # The test.
             self.test = self.calc
 
 
     def calc(self, pipe):
-        """The spectral density calculation test."""
+        """The consistency tests calculation test."""
 
         # Arguments.
         self.pipe = pipe
@@ -68,7 +68,7 @@ class Jw:
         # Setup.
         self.calc_setup()
 
-        # Try the reduced spectral density mapping.
+        # Try the consistency testing.
         self.relax.interpreter._Minimisation.calc()
 
         # Success.
@@ -77,10 +77,10 @@ class Jw:
 
     def calc_integrity(self):
 
-        # Correct jw values:
+        # Correct consistency functions values:
         j0 = [4.0703318681008998e-09, 3.7739393907014834e-09]
-        jwx = [1.8456254300773903e-10, 1.6347516082378241e-10]
-        jwh = [1.5598167512718012e-12, 2.9480536599037041e-12]
+        f_eta = [0.35164988964635652, 0.32556427866911447]
+        f_r2 = [2.0611470814962761e-09, 1.9117396355237641e-09]
 
         # Loop over residues.
         for res in residue_loop:
@@ -93,11 +93,11 @@ class Jw:
                 if abs(res.spin[0].j0 - j0[index]) > j0[index]/1e6:
                     print 'Error in residue', res.num, 'j0 calculated value'
                     return
-                if abs(res.spin[0].jwh - jwh[index]) > jwh[index]/1e6:
-                    print 'Error in residue', res.num, 'jwh calculated value'
+                if abs(res.spin[0].f_eta - f_eta[index]) > f_eta[index]/1e6:
+                    print 'Error in residue', res.num, 'f_eta calculated value'
                     return
-                if abs(res.spin[0].jwx - jwx[index]) > jwx[index]/1e6:
-                    print 'Error in residue', res.num, 'jwx calculated value'
+                if abs(res.spin[0].f_r2 - f_r2[index]) > f_r2[index]/1e6:
+                    print 'Error in residue', res.num, 'f_r2 calculated value'
                     return
 
             # Other residues have insufficient data.
@@ -124,7 +124,7 @@ class Jw:
                      ('R2', '600', 600.0e6)]
 
         # Create the data pipe.
-        self.relax.interpreter._Pipe.create(self.pipe, 'jw')
+        self.relax.interpreter._Pipe.create(self.pipe, 'ct')
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + '/test_suite/system_tests/data')
@@ -141,14 +141,14 @@ class Jw:
         self.relax.interpreter._Value.set(N15_CSA, 'csa')
 
         # Select the frequency.
-        self.relax.interpreter._Jw_mapping.set_frq(frq=600.0 * 1e6)
+        self.relax.interpreter._Consistency_tests.set_frq(frq=600.0 * 1e6)
 
 
     def set_value(self, pipe):
         """The value.set test."""
 
         # Create the data pipe.
-        self.relax.interpreter._Pipe.create(pipe, 'jw')
+        self.relax.interpreter._Pipe.create(pipe, 'ct')
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + '/test_suite/system_tests/data')
