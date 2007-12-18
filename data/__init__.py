@@ -25,7 +25,7 @@ from re import match
 
 # relax module imports.
 from pipe_container import PipeContainer
-from relax_errors import RelaxRunError
+from relax_errors import RelaxPipeError
 
 
 __all__ = [ 'data_classes',
@@ -34,7 +34,7 @@ __all__ = [ 'data_classes',
             'main' ]
 
 
-class Data(dict):
+class Data2(dict):
     """The relax data storage object."""
 
     # The current data pipe.
@@ -114,7 +114,7 @@ class Data(dict):
 
         # Test if the pipe already exists.
         if pipe_name in self.keys():
-            raise RelaxRunError, pipe_name
+            raise RelaxPipeError, pipe_name
 
         # Create a new container.
         self[pipe_name] = PipeContainer()
@@ -127,4 +127,4 @@ class Data(dict):
 
 # Rebind the name Data with an instance to prevent accidental creation
 # of multiple instances of the Data class
-Data = Data()
+Data = Data2()

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007 Edward d'Auvergne                             #
+# Copyright (C) 2007 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,292 +22,233 @@
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoRunError, RelaxNoSequenceError, RelaxSequenceError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxSpinSelectDisallowError
+from selection import exists_spin_data, parse_token, residue_loop, return_residue, return_spin, return_single_spin_info, spin_loop, tokenise
 
 
-# The relax data storage object.
+# Module doc.
+"""Functions for manipulating the spin information content in the relax data storage singleton.
+
+This touches part of the molecule-residue-spin data structure.
+"""
 
 
+def copy(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
+    """Copy the contents of the spin structure from one spin to a new spin.
 
-def copy(res_num_from=None, res_name_from=None, res_num_to=None, res_name_to=None):
-    """Copy the contents of the residue structure from one residue to a new residue.
+    For copying to be successful, the spin_from identification string must match an existent spin.
+    The new spin number must be unique.
 
-    For copying to be successful, the res_num_from and res_name_from must match an existant residue.
-    The res_name_from and res_name_to arguments need not be supplied.  The new residue number must
-    be unique.
-
-    @param res_num_from:    The residue number identifying the structure to copy the data from.
-        This argument must be supplied.
-    @type res_num_from:     int
-    @param res_name_from:   The residue name identifying the structure to copy the data from.  This
-        argument is optional.
-    @type res_name_from:    str
-    @param res_num_to:      The residue number identifying the structure to copy the data to.  This
-        argument must be supplied.
-    @type res_num_to:       int
-    @param res_name_to:     The residue name identifying the structure to copy the data to.  This
-        argument is optional but if supplied will rename the copied residue.
-    @type res_name_to:      str
+    @param pipe_from:   The data pipe to copy the spin from.  This defaults to the current data
+                        pipe.
+    @type pipe_from:    str
+    @param spin_from:   The spin identification string for the structure to copy the data from.
+    @type spin_from:    str
+    @param pipe_to:     The data pipe to copy the spin to.  This defaults to the current data
+                        pipe.
+    @type pipe_to:      str
+    @param spin_to:     The spin identification string for the structure to copy the data to.
+    @type spin_to:      str
     """
 
-    # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    # The current data pipe.
+    if pipe_from == None:
+        pipe_from = relax_data_store.current_pipe
+    if pipe_to == None:
+        pipe_to = relax_data_store.current_pipe
 
-    # Test if the residue number already exists.
-    for i in xrange(len(cdp.mol[0].res)):
-        if cdp.mol[0].res[i].num == res_num_to:
-            raise RelaxError, "The residue number '" + `res_num_to` + "' already exists in the sequence."
+    # The second pipe does not exist.
+    if pipe_to not in relax_data_store.keys():
+        raise RelaxNoPipeError, pipe_to
 
-    # Find the index corresponding to the residue number and name.
-    index = None
-    for i in xrange(len(cdp.mol[0].res)):
-        # Residue number match.
-        if cdp.mol[0].res[i].num == res_num_from:
-            # Residue name match (if required).
-            if res_name_from:
-                if cdp.mol[0].res[i].name == res_name_from:
-                    index = i
-            else:
-                index = i
+    # Split up the selection string.
+    mol_to_token, res_to_token, spin_to_token = tokenise(spin_to)
+
+    # Test if the spin number already exists.
+    if spin_to_token:
+        spin_to_cont = return_spin(spin_to, pipe_to)
+        if spin_to_cont and exists_spin_data(spin_to_cont):
+            raise RelaxError, "The spin " + `spin_to` + " already exists in the " + `pipe_from` + " data pipe."
 
     # No residue to copy data from.
-    if index == None:
-        if res_name_from:
-            raise RelaxError, "The residue '" + `res_num_from` + " " + res_name_from + "' does not exist."
-        else:
-            raise RelaxError, "The residue number '" + `res_num_from` + "' does not exist."
+    if not return_residue(spin_from, pipe_from):
+        raise RelaxError, "The residue in " + `spin_from` + " does not exist in the " + `pipe_from` + " data pipe."
+
+    # No spin to copy data from.
+    spin_from_cont = return_spin(spin_from, pipe_from)
+    if spin_from_cont == None:
+        raise RelaxError, "The spin " + `spin_from` + " does not exist in the " + `pipe_from` + " data pipe."
+
+    # Get the single residue data container to copy the spin to (default to the first molecule, first residue).
+    res_to_cont = return_residue(spin_to, pipe_to)
+    if res_to_cont == None and spin_to:
+        # No residue to copy data to.
+        raise RelaxError, "The residue in " + `spin_to` + " does not exist in the " + `pipe_from` + " data pipe."
+    if res_to_cont == None:
+        res_to_cont = relax_data_store[pipe_to].mol[0].res[0]
 
     # Copy the data.
-    cdp.mol[0].res.append(cdp.mol[0].res[index].__clone__())
+    if res_to_cont.spin[0].num == None and res_to_cont.spin[0].name == None and len(res_to_cont.spin) == 1:
+        res_to_cont.spin[0] = spin_from_cont.__clone__()
+    else:
+        res_to_cont.spin.append(spin_from_cont.__clone__())
 
-    # Change the new residue number.
-    cdp.mol[0].res[-1].num = res_num_to
+    # Parse the spin token for renaming and renumbering.
+    spin_num_to, spin_name_to = return_single_spin_info(spin_to_token)
 
-    # Change the new residue name.
-    if res_name_to:
-        cdp.mol[0].res[-1].name = res_name_to
+    # Change the new spin number and name.
+    if spin_num_to != None:
+        res_to_cont.spin[-1].num = spin_num_to
+    if spin_name_to != None:
+        res_to_cont.spin[-1].name = spin_name_to
 
 
-def create(res_num=None, res_name=None):
-    """Function for adding a residue into the relax data store."""
+def create(spin_num=None, spin_name=None, res_id=None):
+    """Function for adding a spin into the relax data store.
+    
+    @param spin_num:    The identification number of the new spin.
+    @type spin_num:     int
+    @param spin_name:   The name of the new spin.
+    @type spin_name:    str
+    @param res_id:      The molecule and residue identification string.
+    @type res_id:       str
+    """
+
+    # Split up the selection string.
+    mol_token, res_token, spin_token = tokenise(res_id)
+
+    # Disallow spin selections.
+    if spin_token != None:
+        raise RelaxSpinSelectDisallowError
 
     # Test if the current data pipe exists.
     if not relax_data_store.current_pipe:
-        raise RelaxNoRunError
+        raise RelaxNoPipeError
 
-    # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
-
-    # Test if the residue number already exists.
-    for i in xrange(len(cdp.mol[0].res)):
-        if cdp.mol[0].res[i].num == res_num:
-            raise RelaxError, "The residue number '" + `res_num` + "' already exists in the sequence."
-
-    # If no residue data exists, replace the empty first residue with this residue.
-    if cdp.mol[0].res[0].num == None and cdp.mol[0].res[0].name == None and len(cdp.mol[0].res) == 1:
-        cdp.mol[0].res[0].num = res_num
-        cdp.mol[0].res[0].name = res_name
-
-    # Append the residue.
+    # Get the residue container to add the spin to.
+    if res_id:
+        res_to_cont = return_residue(res_id)
+        if res_to_cont == None:
+            raise RelaxError, "The residue in " + `res_id` + " does not exist in the current data pipe."
     else:
-        cdp.mol[0].res.add_item(res_num=res_num, res_name=res_name)
+        res_to_cont = relax_data_store[relax_data_store.current_pipe].mol[0].res[0]
+
+    # Test if the spin number already exists.
+    for i in xrange(len(res_to_cont.spin)):
+        if res_to_cont.spin[i].num == spin_num:
+            raise RelaxError, "The spin number '" + `spin_num` + "' already exists."
+
+    # If no spin data exists, replace the empty first spin with this spin.
+    if res_to_cont.spin[0].num == None and res_to_cont.spin[0].name == None and len(res_to_cont.spin) == 1:
+        res_to_cont.spin[0].num = spin_num
+        res_to_cont.spin[0].name = spin_name
+
+    # Append the spin.
+    else:
+        res_to_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
 
 
-class Residue:
-    def __init__(self, relax):
-        """Class containing functions specific to amino-acid sequence."""
+def delete(spin_id=None):
+    """Function for deleting spins from the current data pipe.
 
-        self.relax = relax
+    @param spin_id: The molecule, residue, and spin identifier string.
+    @type spin_id:  str
+    """
 
+    # Split up the selection string.
+    mol_token, res_token, spin_token = tokenise(spin_id)
 
-    def data_names(self):
-        """Function for returning a list of names of data structures associated with the sequence."""
+    # Parse the tokens.
+    spins = parse_token(spin_token)
 
-        return [ 'res' ]
+    # Residue loop.
+    for res in residue_loop(spin_id):
+        # List of indecies to delete.
+        indecies = []
 
+        # Loop over the spins of the residue.
+        for i in xrange(len(res.spin)):
+            # Store the spin indecies for deletion.
+            if res.spin[i].num in spins or res.spin[i].name in spins:
+                indecies.append(i)
 
-    def delete(self, run=None):
-        """Function for deleting the sequence."""
+        # Reverse the indecies.
+        indecies.reverse()
 
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
+        # Delete the spins.
+        for index in indecies:
+            res.spin.pop(index)
 
-        # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(run):
-            raise RelaxNoSequenceError, run
-
-        # Delete the data.
-        del(relax_data_store.res[run])
-
-        # Clean up the runs.
-        self.relax.generic.runs.eliminate_unused_runs()
-
-
-    def display(self, run=None):
-        """Function for displaying the sequence."""
-
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
-
-        # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(run):
-            raise RelaxNoSequenceError, run
-
-        # Print a header.
-        print "%-8s%-8s%-10s" % ("Number", "Name", "Selected")
-
-        # Print the sequence.
-        for i in xrange(len(relax_data_store.res[run])):
-            print "%-8i%-8s%-10i" % (relax_data_store.res[run][i].num, relax_data_store.res[run][i].name, relax_data_store.res[run][i].select)
+        # Create an empty spin container if no spins remain.
+        if len(res.spin) == 0:
+            res.spin.add_item()
 
 
-    def load_PDB_sequence(self, run=None):
-        """Function for loading the sequence out of a PDB file.
+def display(spin_id=None):
+    """Function for displaying the information associated with the spin.
 
-        This needs to be modified to handle multiple peptide chains.
-        """
+    @param spin_id: The molecule and residue identifier string.
+    @type spin_id:  str
+    """
 
-        # Print out.
-        print "\nLoading the sequence from the PDB file.\n"
+    # Print a header.
+    print "\n\n%-15s %-15s %-15s %-15s %-15s" % ("Molecule", "Res number", "Res name", "Spin number", "Spin name")
 
-        # Reassign the sequence of the first structure.
-        if relax_data_store.pdb[run].structures[0].peptide_chains:
-            res = relax_data_store.pdb[run].structures[0].peptide_chains[0].residues
-            molecule = 'protein'
-        elif relax_data_store.pdb[run].structures[0].nucleotide_chains:
-            res = relax_data_store.pdb[run].structures[0].nucleotide_chains[0].residues
-            molecule = 'nucleic acid'
-        else:
-            raise RelaxNoPdbChainError
-
-        # Add the run to 'relax_data_store.res'.
-        relax_data_store.res.add_list(run)
-
-        # Loop over the sequence.
-        for i in xrange(len(res)):
-            # Append a data container.
-            relax_data_store.res[run].add_item()
-
-            # Residue number.
-            relax_data_store.res[run][i].num = res[i].number
-
-            # Residue name.
-            if molecule == 'nucleic acid':
-                relax_data_store.res[run][i].name = res[i].name[-1]
-            else:
-                relax_data_store.res[run][i].name = res[i].name
-
-            # Select the residue.
-            relax_data_store.res[run][i].select = 1
+    # Spin loop.
+    for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
+        # Print the residue data.
+        print "%-15s %-15s %-15s %-15s %-15s" % (mol_name, `res_num`, res_name, `spin.num`, spin.name)
 
 
-    def read(self, run=None, file=None, dir=None, num_col=0, name_col=1, sep=None):
-        """Function for reading sequence data."""
+def rename(spin_id, new_name=None):
+    """Function for renaming spins.
 
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
+    @param spin_id:     The identifier string for the spin(s) to rename.
+    @type spin_id:      str
+    @param new_name:    The new spin name.
+    @type new_name:     str
+    """
 
-        # Test if the sequence data has already been read.
-        if relax_data_store.res.has_key(run):
-            raise RelaxSequenceError, run
+    # Split up the selection string.
+    mol_token, res_token, spin_token = tokenise(spin_id)
 
-        # Extract the data from the file.
-        file_data = self.relax.IO.extract_data(file, dir)
+    # Parse the tokens.
+    spins = parse_token(spin_token)
 
-        # Count the number of header lines.
-        header_lines = 0
-        for i in xrange(len(file_data)):
-            try:
-                int(file_data[i][num_col])
-            except:
-                header_lines = header_lines + 1
-            else:
-                break
-
-        # Remove the header.
-        file_data = file_data[header_lines:]
-
-        # Strip data.
-        file_data = self.relax.IO.strip(file_data)
-
-        # Do nothing if the file does not exist.
-        if not file_data:
-            raise RelaxFileEmptyError
-
-        # Test if the sequence data is valid.
-        for i in xrange(len(file_data)):
-            try:
-                int(file_data[i][num_col])
-            except ValueError:
-                raise RelaxError, "Sequence data is invalid."
-
-        # Add the run to 'relax_data_store.res'.
-        relax_data_store.res.add_list(run)
-
-        # Fill the array 'relax_data_store.res[run]' with data containers and place sequence data into the array.
-        for i in xrange(len(file_data)):
-            # Append a data container.
-            relax_data_store.res[run].add_item()
-
-            # Insert the data.
-            relax_data_store.res[run][i].num = int(file_data[i][num_col])
-            relax_data_store.res[run][i].name = file_data[i][name_col]
-            relax_data_store.res[run][i].select = 1
+    # Spin loop.
+    for spin in spin_loop(spin_id):
+        # Rename the spin if there is a match.
+        if spin.num in spins or spin.name in spins:
+            spin.name = new_name
 
 
-    def sort(self, run=None):
-        """Function for sorting the sequence by residue number."""
+def renumber(spin_id, new_number=None):
+    """Function for renumbering spins.
 
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
+    @param spin_id:     The identifier string for the spin to renumber.
+    @type spin_id:      str
+    @param new_number:  The new spin number.
+    @type new_number:   int
+    """
 
-        # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(run):
-            raise RelaxNoSequenceError, run
+    # Split up the selection string.
+    mol_token, res_token, spin_token = tokenise(spin_id)
 
-        # Sort the sequence.
-        relax_data_store.res[run].sort(self.sort_cmpfunc)
+    # Parse the tokens.
+    spins = parse_token(spin_token)
 
+    # Catch multiple renumberings!
+    number = 0
+    for spin in spin_loop(spin_id):
+        if spin.num in spins or spin.name in spins:
+            number = number + 1
 
-    def sort_cmpfunc(self, x, y):
-        """Sequence comparison function given to the ListType function 'sort'."""
+    # Fail if multiple spins are numbered.
+    if number > 1:
+        raise RelaxError, "The renumbering of multiple spins is disallowed."
 
-        if x.num > y.num:
-            return 1
-        elif x.num < y.num:
-            return -1
-        elif x.num == y.num:
-            return 0
-
-
-    def write(self, run=None, file=None, dir=None, force=0):
-        """Function for writing sequence data."""
-
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
-
-        # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(run):
-            raise RelaxNoSequenceError, run
-
-        # Open the file for writing.
-        seq_file = self.relax.IO.open_write_file(file, dir, force)
-
-        # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[run])):
-            # Residue number.
-            seq_file.write("%-5i" % relax_data_store.res[run][i].num)
-
-            # Residue name.
-            seq_file.write("%-6s" % relax_data_store.res[run][i].name)
-
-            # New line.
-            seq_file.write("\n")
-
-        # Close the results file.
-        seq_file.close()
+    # Spin loop.
+    for spin in spin_loop(spin_id):
+        # Rename the spin if there is a match.
+        if spin.num in spins or spin.name in spins:
+            spin.num = new_number

@@ -23,6 +23,7 @@
 
 from Numeric import sqrt
 
+
 def cubic_int(a, b, fa, fb, ga, gb):
     """Cubic interpolation using f(a), f(b), g(a), and g(b).
 

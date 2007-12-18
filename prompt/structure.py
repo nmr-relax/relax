@@ -64,7 +64,7 @@ class Structure:
         tensor is represented by an ellipsoidal, spheroidal, or spherical geometric object with its
         origin located at the centre of mass (of the selected residues).  This diffusion tensor PDB
         file can subsequently read into any molecular viewer.
-        
+
         There are four different types of residue within the PDB.  The centre of mass of the
         selected residues is represented as a single carbon atom of the residue 'COM'.  The
         ellipsoidal geometric shape consists of numerous H atoms of the residue 'TNS'.  The axes
@@ -111,7 +111,7 @@ class Structure:
         | 30        | 5.56e6        | 10                |
         |___________|_______________|___________________|
 
-        
+
         The scaling value has been fixed to facilitate comparisons within or between publications,
         but can be changed to vary the size of the tensor geometric object if necessary.  Reporting
         the rotational diffusion rate per Angstrom within figure legends would be useful.

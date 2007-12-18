@@ -22,14 +22,15 @@
 
 # Python module imports.
 from os import F_OK, access
-from re import compile, match, split
+from re import compile, match, search, split
 from string import strip
 from textwrap import fill
 
 # relax module imports.
 from data import Data as relax_data_store
 from data.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
-from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError, RelaxRegExpError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRegExpError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
+from generic_fns import pipes
 
 
 id_string_doc = """
@@ -54,13 +55,13 @@ string = ''
 for line in split('\n', id_string_doc):
     string = string + fill(line, width=100, initial_indent=8*' ', subsequent_indent=8*' ') + '\n'
 id_string_doc = string
-    
+
 
 
 class Selection(object):
     """An object containing mol-res-spin selections.
-    
-    A Selection object represents either a set of selected 
+
+    A Selection object represents either a set of selected
     molecules, residues and spins, or the union or intersection
     of two other Selection objects."""
 
@@ -79,12 +80,12 @@ class Selection(object):
 
         if not select_string:
             return
-        
+
         # Read boolean symbols from right to left:
         and_index = select_string.rfind('&')
         or_index = select_string.rfind('|')
-        
-        if and_index > or_index: 
+
+        if and_index > or_index:
             sel0 = Selection(select_string[:and_index].strip())
             sel1 = Selection(select_string[and_index+1:].strip())
             self.intersection(sel0, sel1)
@@ -101,41 +102,62 @@ class Selection(object):
             self.residues = parse_token(res_token)
             self.spins = parse_token(spin_token)
 
+
     def __contains__(self, obj):
+        """Replacement function for determining if an object matches the selection.
+
+        @param obj:     The data object.
+        @type obj:      MoleculeContainer, ResidueContainer, or SpinContainer object.
+        @return:        The answer of whether the object matches the selection.
+        @rtype:         Boolean
+        """
+
+        # The selection object is a union.
         if self._union:
             return (obj in self._union[0]) or (obj in self._union[1])
+
+        # The selection object is an intersection.
         elif self._intersect:
             return (obj in self._intersect[0]) and (obj in self._intersect[1])
+
+        # The object is a molecule.
         elif isinstance(obj, MoleculeContainer):
             if not self.molecules:
                 return True
             elif obj.name in self.molecules:
                 return True
+
+        # The object is a residue.
         elif isinstance(obj, ResidueContainer):
             if not self.residues:
                 return True
             elif obj.name in self.residues or obj.num in self.residues:
                 return True
+
+        # The object is a spin.
         elif isinstance(obj, SpinContainer):
             if not self.spins:
                 return True
             elif obj.name in self.spins or obj.num in self.spins:
                 return True
 
+        # No match.
         return False
+
 
     def intersection(self, select_obj0, select_obj1):
         """Make a Selection object the intersection of two Selection objects
-        
+
         @type select_obj0: Instance of class Selection
         @param select_obj0: First Selection object in intersection
         @type select_obj1: Instance of class Selection
         @param select_obj1: First Selection object in intersection"""
-        
+
         if self._union or self._intersect or self.molecules or self.residues or self.spins:
             raise RelaxError, "Cannot define multiple Boolean relationships between Selection objects"
         self._intersect = (select_obj0, select_obj1)
-   
+
+
     def union(self, select_obj0, select_obj1):
         """Make a Selection object the union of two Selection objects
 
@@ -149,6 +171,30 @@ class Selection(object):
         self._union = (select_obj0, select_obj1)
 
 
+def count_spins(selection=None):
+    """Function for counting the number of spins for which there is data.
+
+    @param selection:   The selection string.
+    @type selection:    str
+    @return:            The number of non-empty spins.
+    @return type:       int
+    """
+
+    # No data, hence no spins.
+    if not exists_mol_res_spin_data():
+        return 0
+
+    # Init.
+    spin_num = 0
+
+    # Spin loop.
+    for spin in spin_loop(selection):
+        spin_num = spin_num + 1
+
+    # Return the number of spins.
+    return spin_num
+
+
 def desel_all(self, run=None):
     """Function for deselecting all residues."""
 
@@ -159,7 +205,7 @@ def desel_all(self, run=None):
     for self.run in self.runs:
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
         if not len(relax_data_store.res[self.run]):
@@ -208,7 +254,7 @@ def desel_read(self, run=None, file=None, dir=None, change_all=None, column=None
     for self.run in self.runs:
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
         if not len(relax_data_store.res[self.run]):
@@ -260,7 +306,7 @@ def desel_res(self, run=None, num=None, name=None, change_all=None):
     for self.run in self.runs:
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
         if not len(relax_data_store.res[self.run]):
@@ -299,14 +345,181 @@ def desel_res(self, run=None, num=None, name=None, change_all=None):
         print "No residues match."
 
 
-def molecule_loop(selection=None):
+def exists_mol_res_spin_data():
+    """Function for determining if any molecule-residue-spin data exists.
+
+    @return:            The answer to the question about the existence of data.
+    @rtype:             bool
+    """
+
+    # Test the data pipe.
+    pipes.test(relax_data_store.current_pipe)
+
+    # Alias the data pipe container.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # More than 1 molecule (hence data exists).
+    if len(cdp.mol) > 1:
+        return True
+
+    # The single molecule contains data.
+    if exists_mol_data(cdp.mol[0]):
+        return True
+
+    # No data!
+    return False
+
+
+def exists_mol_data(mol_container):
+    """Function for determining if any data exists in the given molecule container.
+
+    @param mol_container:   The ResidueContainer object.
+    @type mol_container:    class instance
+    @return:                The answer to the question about the existence of data.
+    @rtype:                 bool
+    """
+
+    # The single molecule has been named.
+    if mol_container.name != None:
+        return True
+
+    # More than 1 residue (hence data exists).
+    if len(mol_container.res) > 1:
+        return True
+
+    # The single residue contains data.
+    if exists_res_data(mol_container.res[0]):
+        return True
+
+    # No data!
+    return False
+
+
+def exists_res_data(res_container):
+    """Function for determining if any data exists in the given residue container.
+
+    @param res_container:   The ResidueContainer object.
+    @type res_container:    class instance
+    @return:                The answer to the question about the existence of data.
+    @rtype:                 bool
+    """
+
+    # The single residue has been named or numbered.
+    if res_container.name != None or res_container.num != None:
+        return True
+
+    # More than 1 spin (hence data exists).
+    if len(res_container.spin) > 1:
+        return True
+
+    # The single spin contains data.
+    if exists_spin_data(res_container.spin[0]):
+        return True
+
+    # No data!
+    return False
+
+
+def exists_spin_data(spin_container):
+    """Function for determining if any data exists in the given spin container.
+
+    @param spin_container:  The SpinContainer object.
+    @type spin_container:   class instance
+    @return:                The answer to the question about the existence of data.
+    @rtype:                 bool
+    """
+
+    # The single spin has been named or numbered.
+    if spin_container.name != None or spin_container.num != None:
+        return True
+
+    # The object names in an empty spin container.
+    white_list = ['name', 'num', 'select'] 
+
+    # Loop over the objects in the spin container.
+    for name in dir(spin_container):
+        # Skip white listed objects.
+        if name in white_list:
+            continue
+
+        # Skip objects beginning with '__'.
+        if search('^__', name):
+            continue
+
+        # Found an object not in the white list (hence the spin container has been modified).
+        return True
+
+    # No data!
+    return False
+
+
+def generate_spin_id(data=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None):
+    """Function for generating the spin selection string from the given data.
+
+    @param data:            An array containing the molecule, residue, and/or spin data.
+    @type data:             list of str
+    @param mol_name_col:    The column containing the molecule name information.
+    @type mol_name_col:     int or None
+    @param res_name_col:    The column containing the residue name information.
+    @type res_name_col:     int or None
+    @param res_num_col:     The column containing the residue number information.
+    @type res_num_col:      int or None
+    @param spin_name_col:   The column containing the spin name information.
+    @type spin_name_col:    int or None
+    @param spin_num_col:    The column containing the spin number information.
+    @type spin_num_col:     int or None
+    @return:                The spin identification string.
+    @type return:           str
+    """
+
+    # Init.
+    id = ""
+
+    # Molecule data.
+    if mol_name_col != None:
+        id = id + "#" + data[mol_name_col]
+
+    # Residue data.
+    if res_num_col != None:
+        id = id + ":" + data[res_num_col]
+    if  res_num_col != None and res_name_col != None:
+        id = id + "&:" + data[res_name_col]
+    elif res_name_col != None:
+        id = id + ":" + data[res_name_col]
+
+    # Spin data.
+    if spin_num_col != None:
+        id = id + "@" + data[spin_num_col]
+    if  spin_num_col != None and spin_name_col != None:
+        id = id + "&@" + data[spin_name_col]
+    elif spin_name_col != None:
+        id = id + "@" + data[spin_name_col]
+
+    # Return the spin id string.
+    return id
+
+
+def molecule_loop(selection=None, pipe=None):
     """Generator function for looping over all the molecules of the given selection.
 
     @param selection:   The molecule selection identifier.
     @type selection:    str
+    @param pipe:        The data pipe containing the molecule.  Defaults to the current data pipe.
+    @type pipe:         str
     @return:            The molecule specific data container.
     @rtype:             instance of the MoleculeContainer class.
     """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = relax_data_store.current_pipe
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Test for the presence of data, and end the execution of this function if there is none.
+    if not exists_mol_res_spin_data():
+        return
 
     # Parse the selection string.
     select_obj = Selection(selection)
@@ -318,7 +531,7 @@ def molecule_loop(selection=None):
         raise RelaxSpinSelectDisallowError
 
     # Loop over the molecules.
-    for mol in relax_data_store[relax_data_store.current_pipe].mol:
+    for mol in relax_data_store[pipe].mol:
         # Skip the molecule if there is no match to the selection.
         if mol not in select_obj:
             continue
@@ -400,24 +613,39 @@ def parse_token(token):
     return list
 
 
-def residue_loop(selection=None):
+def residue_loop(selection=None, pipe=None, full_info=False):
     """Generator function for looping over all the residues of the given selection.
 
     @param selection:   The residue selection identifier.
     @type selection:    str
-    @return:            The residue specific data container.
-    @rtype:             instance of the MoleculeContainer class.
+    @param pipe:        The data pipe containing the residue.  Defaults to the current data pipe.
+    @type pipe:         str
+    @param full_info:   A flag specifying if the amount of information to be returned.  If false,
+                        only the data container is returned.  If true, the molecule name, residue
+                        number, and residue name is additionally returned.
+    @type full_info:    boolean
+    @return:            The residue specific data container and, if full_info=True, the molecule
+                        name.
+    @rtype:             instance of the ResidueContainer class.  If full_info=True, the type is the
+                        tuple (ResidueContainer, str).
     """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = relax_data_store.current_pipe
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Test for the presence of data, and end the execution of this function if there is none.
+    if not exists_mol_res_spin_data():
+        return
 
     # Parse the selection string.
     select_obj = Selection(selection)
-        
-    # Disallowed selections.
-    if select_obj.spins:
-        raise RelaxSpinSelectDisallowError
 
     # Loop over the molecules.
-    for mol in relax_data_store[relax_data_store.current_pipe].mol:
+    for mol in relax_data_store[pipe].mol:
         # Skip the molecule if there is no match to the selection.
         if mol not in select_obj:
             continue
@@ -429,7 +657,256 @@ def residue_loop(selection=None):
                 continue
 
             # Yield the residue data container.
-            yield res
+            if full_info:
+                yield res, mol.name
+            else:
+                yield res
+
+
+def return_molecule(selection=None, pipe=None):
+    """Function for returning the molecule data container of the given selection.
+
+    @param selection:   The molecule selection identifier.
+    @type selection:    str
+    @param pipe:        The data pipe containing the molecule.  Defaults to the current data pipe.
+    @type pipe:         str
+    @return:            The molecule specific data container.
+    @rtype:             instance of the MoleculeContainer class.
+    """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = relax_data_store.current_pipe
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Parse the selection string.
+    select_obj = Selection(selection)
+
+    # No selection.
+    if len(select_obj.molecules) == 0:
+        return None
+
+    # Loop over the molecules.
+    mol_num = 0
+    mol_container = None
+    for mol in relax_data_store[pipe].mol:
+        # Skip the molecule if there is no match to the selection.
+        if mol not in select_obj:
+            continue
+
+        # Store the molecule container.
+        mol_container = mol
+
+        # Increment the molecule number counter.
+        mol_num = mol_num + 1
+
+    # No unique identifier.
+    if mol_num > 1:
+        raise RelaxError, "The identifier " + `selection` + " corresponds to more than a single molecule in the " + `pipe` + " data pipe."
+
+    # Return the molecule container.
+    return mol_container
+
+
+def return_residue(selection=None, pipe=None):
+    """Function for returning the residue data container of the given selection.
+
+    @param selection:   The residue selection identifier.
+    @type selection:    str
+    @param pipe:        The data pipe containing the residue.  Defaults to the current data pipe.
+    @type pipe:         str
+    @return:            The residue specific data container.
+    @rtype:             instance of the ResidueContainer class.
+    """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = relax_data_store.current_pipe
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Parse the selection string.
+    select_obj = Selection(selection)
+
+    # Loop over the molecules.
+    res = None
+    res_num = 0
+    res_container = None
+    for mol in relax_data_store[pipe].mol:
+        # Skip the molecule if there is no match to the selection.
+        if mol not in select_obj:
+            continue
+
+        # Loop over the residues.
+        for res in mol.res:
+            # Skip the residue if there is no match to the selection.
+            if res not in select_obj:
+                continue
+
+            # Store the residue container.
+            res_container = res
+
+            # Increment the residue number counter.
+            res_num = res_num + 1
+
+    # No unique identifier.
+    if res_num > 1:
+        raise RelaxError, "The identifier " + `selection` + " corresponds to more than a single residue in the " + `pipe` + " data pipe."
+
+    # Return the residue container.
+    return res_container
+
+
+def return_spin(selection=None, pipe=None):
+    """Function for returning the spin data container of the given selection.
+
+    @param selection:   The spin selection identifier.
+    @type selection:    str
+    @param pipe:        The data pipe containing the spin.  Defaults to the current data pipe.
+    @type pipe:         str
+    @return:            The spin specific data container.
+    @rtype:             instance of the SpinContainer class.
+    """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = relax_data_store.current_pipe
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Parse the selection string.
+    select_obj = Selection(selection)
+
+    # Loop over the molecules.
+    spin = None
+    spin_num = 0
+    spin_container = None
+    for mol in relax_data_store[pipe].mol:
+        # Skip the molecule if there is no match to the selection.
+        if mol not in select_obj:
+            continue
+
+        # Loop over the residues.
+        for res in mol.res:
+            # Skip the residue if there is no match to the selection.
+            if res not in select_obj:
+                continue
+
+            # Loop over the spins.
+            for spin in res.spin:
+                # Skip the spin if there is no match to the selection.
+                if spin not in select_obj:
+                    continue
+
+                # Store the spin container.
+                spin_container = spin
+
+                # Increment the spin number counter.
+                spin_num = spin_num + 1
+
+    # No unique identifier.
+    if spin_num > 1:
+        raise RelaxError, "The identifier " + `selection` + " corresponds to more than a single spin in the " + `pipe` + " data pipe."
+
+    # Return the spin container.
+    return spin_container
+
+
+def return_single_molecule_info(molecule_token):
+    """Return the single molecule name corresponding to the molecule token.
+
+    @param molecule_token:  The molecule identification string.
+    @type molecule_token:   str
+    @return:                The molecule name.
+    @rtype:                 str
+    """
+
+    # Parse the molecule token for renaming and renumbering.
+    molecule_info = parse_token(molecule_token)
+
+    # Determine the molecule name.
+    mol_name = None
+    for info in molecule_info:
+        # A molecule name identifier.
+        if mol_name == None:
+            mol_name = info
+        else:
+            raise RelaxError, "The molecule identifier " + `molecule_token` + " does not correspond to a single molecule."
+
+    # Return the molecule name.
+    return mol_name
+
+
+def return_single_residue_info(residue_token):
+    """Return the single residue number and name corresponding to the residue token.
+
+    @param residue_token:   The residue identification string.
+    @type residue_token:    str
+    @return:                A tuple containing the residue number and the residue name.
+    @rtype:                 (int, str)
+    """
+
+    # Parse the residue token for renaming and renumbering.
+    residue_info = parse_token(residue_token)
+
+    # Determine the residue number and name.
+    res_num = None
+    res_name = None
+    for info in residue_info:
+        # A residue name identifier.
+        if type(info) == str:
+            if res_name == None:
+                res_name = info
+            else:
+                raise RelaxError, "The residue identifier " + `residue_token` + " does not correspond to a single residue."
+
+        # A residue number identifier.
+        if type(info) == int:
+            if res_num == None:
+                res_num = info
+            else:
+                raise RelaxError, "The residue identifier " + `residue_token` + " does not correspond to a single residue."
+
+    # Return the residue number and name.
+    return res_num, res_name
+
+
+def return_single_spin_info(spin_token):
+    """Return the single spin number and name corresponding to the spin token.
+
+    @param spin_token:  The spin identification string.
+    @type spin_token:   str
+    @return:            A tuple containing the spin number and the spin name.
+    @rtype:             (int, str)
+    """
+
+    # Parse the spin token for renaming and renumbering.
+    spin_info = parse_token(spin_token)
+
+    # Determine the spin number and name.
+    spin_num = None
+    spin_name = None
+    for info in spin_info:
+        # A spin name identifier.
+        if type(info) == str:
+            if spin_name == None:
+                spin_name = info
+            else:
+                raise RelaxError, "The spin identifier " + `spin_token` + " does not correspond to a single spin."
+
+        # A spin number identifier.
+        if type(info) == int:
+            if spin_num == None:
+                spin_num = info
+            else:
+                raise RelaxError, "The spin identifier " + `spin_token` + " does not correspond to a single spin."
+
+    # Return the spin number and name.
+    return spin_num, spin_name
 
 
 def reverse(selection=None):
@@ -454,7 +931,7 @@ def sel_all(self, run=None):
     for self.run in self.runs:
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
         if not len(relax_data_store.res[self.run]):
@@ -518,7 +995,7 @@ def sel_read(self, run=None, file=None, dir=None, boolean='OR', change_all=0, co
     for self.run in self.runs:
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
         if not len(relax_data_store.res[self.run]):
@@ -595,7 +1072,7 @@ def sel_res(self, run=None, num=None, name=None, boolean='OR', change_all=0):
     for self.run in self.runs:
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
         if not len(relax_data_store.res[self.run]):
@@ -651,20 +1128,39 @@ def sel_res(self, run=None, num=None, name=None, boolean='OR', change_all=0):
         print "No residues match."
 
 
-def spin_loop(selection=None):
+def spin_loop(selection=None, pipe=None, full_info=False):
     """Generator function for looping over all the spin systems of the given selection.
 
     @param selection:   The spin system selection identifier.
     @type selection:    str
-    @return:            The spin system specific data container.
-    @rtype:             instance of the SpinContainer class.
+    @param pipe:        The data pipe containing the spin.  Defaults to the current data pipe.
+    @type pipe:         str
+    @param full_info:   A flag specifying if the amount of information to be returned.  If false,
+                        only the data container is returned.  If true, the molecule name, residue
+                        number, and residue name is additionally returned.
+    @type full_info:    boolean
+    @return:            The spin system specific data container and, if full_info=True, the molecule
+                        name, residue number, and residue name.
+    @rtype:             instance of the SpinContainer class.  If full_info=True, the type is the
+                        tuple (SpinContainer, str, int, str).
     """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = relax_data_store.current_pipe
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Test for the presence of data, and end the execution of this function if there is none.
+    if not exists_mol_res_spin_data():
+        return
 
     # Parse the selection string.
     select_obj = Selection(selection)
 
     # Loop over the molecules.
-    for mol in relax_data_store[relax_data_store.current_pipe].mol:
+    for mol in relax_data_store[pipe].mol:
         # Skip the molecule if there is no match to the selection.
         if mol not in select_obj:
             continue
@@ -682,7 +1178,10 @@ def spin_loop(selection=None):
                     continue
 
                 # Yield the spin system data container.
-                yield spin
+                if full_info:
+                    yield spin, mol.name, res.num, res.name
+                else:
+                    yield spin
 
 
 def tokenise(selection):

@@ -128,17 +128,17 @@ class RelaxProgFailError(BaseError):
 # PDB errors.
 #############
 
-# PDB data corresponding to the run already exists.
+# PDB data corresponding to the data pipe already exists.
 class RelaxPdbError(BaseError):
-    def __init__(self, run):
-        self.text = "PDB data corresponding to the run " + `run` + " already exists."
+    def __init__(self, pipe):
+        self.text = "PDB data corresponding to the data pipe " + `pipe` + " already exists."
         if Debug:
             self.save_state()
 
 # No PDB loaded.
 class RelaxNoPdbError(BaseError):
-    def __init__(self, run):
-        self.text = "No PDB file has been loaded for the run " + `run` + "."
+    def __init__(self, pipe):
+        self.text = "No PDB file has been loaded for the data pipe " + `pipe` + "."
         if Debug:
             self.save_state()
 
@@ -151,8 +151,8 @@ class RelaxPdbLoadError(BaseError):
 
 # No unit vectors.
 class RelaxNoVectorsError(BaseError):
-    def __init__(self, run):
-        self.text = "The unit XH bond vectors for the run " + `run` + " have not been calculated."
+    def __init__(self, pipe):
+        self.text = "The unit XH bond vectors for the data pipe " + `pipe` + " have not been calculated."
         if Debug:
             self.save_state()
 
@@ -236,10 +236,17 @@ class RelaxIntListIntError(BaseError):
         if Debug:
             self.save_state()
 
-# Integer or string
+# Integer or string.
 class RelaxIntStrError(BaseError):
     def __init__(self, name, value):
         self.text = "The " + name + " argument " + `value` + " must either be an integer or a string."
+        if Debug:
+            self.save_state()
+
+# String or file descriptor.
+class RelaxStrFileError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + `value` + " must either be a string or a file descriptor."
         if Debug:
             self.save_state()
 
@@ -389,22 +396,22 @@ class RelaxStrListStrError(BaseError):
 
 # No sequence loaded.
 class RelaxNoSequenceError(BaseError):
-    def __init__(self, run):
-        self.text = "The sequence data for the run " + `run` + " does not exist."
+    def __init__(self):
+        self.text = "The sequence data does not exist."
         if Debug:
             self.save_state()
 
 # The sequence already exists.
 class RelaxSequenceError(BaseError):
-    def __init__(self, run):
-        self.text = "The sequence data for the run " + `run` + " already exists."
+    def __init__(self, pipe):
+        self.text = "The sequence data for the data pipe " + `pipe` + " already exists."
         if Debug:
             self.save_state()
 
 # The two sequences are different.
 class RelaxDiffSeqError(BaseError):
-    def __init__(self, run1, run2):
-        self.text = "The sequences for the runs " + `run1` + " and " + `run2` + " are not the same."
+    def __init__(self, pipe1, pipe2):
+        self.text = "The sequences for the data pipes " + `pipe1` + " and " + `pipe2` + " are not the same."
         if Debug:
             self.save_state()
 
@@ -417,6 +424,21 @@ class RelaxNoResError(BaseError):
             self.text = "The residue '" + `number` + " " + name + "' cannot be found in the sequence."
         if Debug:
             self.save_state()
+
+# Cannot find the spin in the sequence.
+class RelaxNoSpinError(BaseError):
+    def __init__(self, id):
+        self.text = "The spin " + `id` + " does not exist."
+        if Debug:
+            self.save_state()
+
+# The sequence data is not valid.
+class RelaxInvalidSeqError(BaseError):
+    def __init__(self, line):
+        self.text = "The line " + `line` + " of the sequence data is invalid."
+        if Debug:
+            self.save_state()
+
 
 
 # Relaxation data errors.
@@ -442,8 +464,8 @@ class RelaxRiError(BaseError):
 
 # Model-free data already exists.
 class RelaxMfError(BaseError):
-    def __init__(self, run):
-        self.text = "Model-free data corresponding to the run " + `run` + " already exists."
+    def __init__(self, pipe):
+        self.text = "Model-free data corresponding to the data pipe " + `pipe` + " already exists."
         if Debug:
             self.save_state()
 
@@ -451,17 +473,17 @@ class RelaxMfError(BaseError):
 # Tensor errors.
 ################
 
-# Diffusion tensor data corresponding to the run already exists.
+# Tensor data corresponding to the data pipe already exists.
 class RelaxTensorError(BaseError):
-    def __init__(self, run):
-        self.text = "Diffusion tensor data corresponding to the run " + `run` + " already exists."
+    def __init__(self, tensor_type):
+        self.text = "The " + tensor_type + " tensor data already exists."
         if Debug:
             self.save_state()
 
-# No diffusion tensor data loaded.
+# No tensor data exists.
 class RelaxNoTensorError(BaseError):
-    def __init__(self, run):
-        self.text = "No diffusion tensor data is loaded for the run " + `run` + "."
+    def __init__(self, tensor_type):
+        self.text = "No " + tensor_type + " tensor data exists."
         if Debug:
             self.save_state()
 
@@ -511,29 +533,29 @@ class RelaxInvalidDataError(BaseError):
             self.save_state()
 
 
-# Run errors.
-#############
+# Data pipe errors.
+###################
 
-# Run already exists.
-class RelaxRunError(BaseError):
-    def __init__(self, run):
-        self.text = "The run " + `run` + " already exists."
+# The data pipe already exists.
+class RelaxPipeError(BaseError):
+    def __init__(self, pipe):
+        self.text = "The data pipe " + `pipe` + " already exists."
         if Debug:
             self.save_state()
 
-# No run.
-class RelaxNoRunError(BaseError):
-    def __init__(self, run=None):
-        if run:
-            self.text = "The run " + `run` + " has not been created yet."
+# No data pipe exists.
+class RelaxNoPipeError(BaseError):
+    def __init__(self, pipe=None):
+        if pipe != None:
+            self.text = "The data pipe " + `pipe` + " has not been created yet."
         else:
             self.text = "No data pipes currently exist.  Please use the pipe.create() user function first."
         if Debug:
             self.save_state()
 
 
-# Selection errors.
-###################
+# Spin-Residue-Molecule errors.
+###############################
 
 # Disallow molecule selection.
 class RelaxMolSelectDisallowError(BaseError):
@@ -569,8 +591,8 @@ class RelaxFuncSetupError(BaseError):
 
 # The model has not been setup.
 class RelaxNoModelError(BaseError):
-    def __init__(self, run):
-        self.text = "The models corresponding to the run " + `run` + " have not been setup."
+    def __init__(self, pipe):
+        self.text = "The models corresponding to the data pipe " + `pipe` + " have not been setup."
         if Debug:
             self.save_state()
 
@@ -591,8 +613,8 @@ class RelaxRegExpError(BaseError):
 
 # Value already exists.
 class RelaxValueError(BaseError):
-    def __init__(self, data_type, run):
-        self.text = "The data type " + `data_type` + " already exists for " + `run` + "."
+    def __init__(self, data_type, pipe):
+        self.text = "The data type " + `data_type` + " already exists for the data pipe " + `pipe` + "."
         if Debug:
             self.save_state()
 
@@ -613,10 +635,10 @@ class RelaxUnknownDataTypeError(BaseError):
 # Unknown parameter.
 class RelaxUnknownParamError(BaseError):
     def __init__(self, name, param_type=None):
-        if param_type:
-            self.text = "The " + param_type + " parameter " + `name` + " is unknown."
+        if param_type != None:
+            self.text = "The " + name + " parameter, " + `param_type` + ", is unknown."
         else:
-            self.text = "The parameter " + `name` + " is unknown."
+            self.text = "The " + name + " parameter is unknown."
         if Debug:
             self.save_state()
 
@@ -633,8 +655,8 @@ class RelaxUnknownParamCombError(BaseError):
 
 # No simulations.
 class RelaxNoSimError(BaseError):
-    def __init__(self, run):
-        self.text = "Simulations for the run " + `run` + " have not been setup."
+    def __init__(self, pipe):
+        self.text = "Simulations for the data pipe " + `pipe` + " have not been setup."
         if Debug:
             self.save_state()
 
@@ -683,17 +705,30 @@ class RelaxNaNError(BaseError):
 # An object of all the RelaxErrors.
 ###################################
 
-# Loop over all objects of this module.
-for name in dir():
-    # Get the object.
-    object = globals()[name]
+# Function for setting up the AllRelaxErrors object.
+def all_errors(names):
+    """Function for returning all the RelaxErrors to allow the AllRelaxError object to be created."""
 
-    # Skip over all non error class objects.
-    if type(object) != ClassType or not match('Relax', name):
-        continue
+    # Empty list.
+    list = None
 
-    # Tuple of all the errors.
-    if 'AllRelaxErrors' in dir():
-        AllRelaxErrors = AllRelaxErrors, object
-    else:
-        AllRelaxErrors = object,
+    # Loop over all objects of this module.
+    for name in names:
+        # Get the object.
+        object = globals()[name]
+
+        # Skip over all non error class objects.
+        if not (isinstance(object, ClassType) or isinstance(object, type(type))) or not match('Relax', name):
+            continue
+
+        # Tuple of all the errors.
+        if list == None:
+            list = object,
+        else:
+            list = list, object
+
+    # Return the list of RelaxErrors
+    return list
+
+# Initialise the AllRelaxErrors structure so it can be imported.
+AllRelaxErrors = all_errors(dir())

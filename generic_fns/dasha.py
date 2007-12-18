@@ -29,7 +29,7 @@ import sys
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxDirError, RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNucleusError
+from relax_errors import RelaxDirError, RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNucleusError
 
 
 
@@ -52,7 +52,7 @@ class Dasha:
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
         if not relax_data_store.res.has_key(self.run):
@@ -63,7 +63,7 @@ class Dasha:
 
         # Test if diffusion tensor data for the run exists.
         if self.param_set != 'local_tm' and not relax_data_store.diff.has_key(self.run):
-            raise RelaxNoTensorError, self.run
+            raise RelaxNoTensorError, 'diffusion'
 
         # Test if the PDB file has been loaded (for the spheroid and ellipsoid).
         if self.param_set != 'local_tm' and relax_data_store.diff[self.run].type != 'sphere' and not relax_data_store.pdb.has_key(self.run):

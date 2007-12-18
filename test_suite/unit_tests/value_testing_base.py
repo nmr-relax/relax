@@ -20,6 +20,36 @@
 #                                                                             #
 ###############################################################################
 
+# relax module imports.
+from data import Data as relax_data_store
+from relax_errors import RelaxError
 
-__all__ = ['test_pipes']
 
+
+class Value_base_class:
+    """Base class for the tests of both the 'prompt.value' and 'generic_fns.value' modules.
+
+    This base class also contains many shared unit tests.
+    """
+
+
+    def setUp(self):
+        """Set up for all the value unit tests."""
+
+        # Reset the relax data storage object.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
+        # Add a second data pipe for copying tests.
+        relax_data_store.add(pipe_name='test', pipe_type='mf')
+
+        # Set the current data pipe to 'orig'.
+        relax_data_store.current_pipe = 'orig'
+
+
+    def tearDown(self):
+        """Reset the relax data storage object."""
+
+        relax_data_store.__reset__()

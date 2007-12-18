@@ -22,270 +22,358 @@
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoRunError, RelaxNoSequenceError, RelaxSequenceError
+from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError
+from relax_io import extract_data, open_write_file, strip
+from generic_fns.selection import count_spins, spin_loop
+from sys import stdout
 
 
-# The relax data storage object.
+
+def display(mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None):
+    """Function for displaying the molecule, residue, and/or spin sequence data.
+
+    This calls the write_body() function to do most of the work.
 
 
+    @param mol_name_col:    The column to contain the molecule name information.
+    @type mol_name_col:     int or None
+    @param res_name_col:    The column to contain the residue name information.
+    @type res_name_col:     int or None
+    @param res_num_col:     The column to contain the residue number information.
+    @type res_num_col:      int or None
+    @param spin_name_col:   The column to contain the spin name information.
+    @type spin_name_col:    int or None
+    @param spin_num_col:    The column to contain the spin number information.
+    @type spin_num_col:     int or None
+    @param sep:             The column seperator which, if None, defaults to whitespace.
+    @type sep:              str or None
+    """
 
-class Sequence:
-    def __init__(self, relax):
-        """Class containing functions specific to amino-acid sequence."""
+    # Test if the sequence data is loaded.
+    if not count_spins():
+        raise RelaxNoSequenceError
 
-        self.relax = relax
+    # Write the data.
+    write_body(file=stdout, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep)
 
 
-    def add(self, run=None, res_num=None, res_name=None, select=1):
-        """Function for adding a residue onto the sequence."""
+def load_PDB_sequence():
+    """Function for loading the sequence out of a PDB file.
 
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
+    This needs to be modified to handle multiple peptide chains.
+    """
 
-        # Initialise the sequence data if no sequence currently exists.
-        if not relax_data_store.res.has_key(run):
-            # Add the run to 'relax_data_store.res'.
-            relax_data_store.res.add_list(run)
+    # Print out.
+    print "\nLoading the sequence from the PDB file.\n"
 
-        # Test if the residue number already exists.
-        for i in xrange(len(relax_data_store.res[run])):
-            if relax_data_store.res[run][i].num == res_num:
-                raise RelaxError, "The residue number '" + `res_num` + "' already exists in the sequence."
+    # Reassign the sequence of the first structure.
+    if relax_data_store.pdb[run].structures[0].peptide_chains:
+        res = relax_data_store.pdb[run].structures[0].peptide_chains[0].residues
+        molecule = 'protein'
+    elif relax_data_store.pdb[run].structures[0].nucleotide_chains:
+        res = relax_data_store.pdb[run].structures[0].nucleotide_chains[0].residues
+        molecule = 'nucleic acid'
+    else:
+        raise RelaxNoPdbChainError
 
-        # Residue index.
-        index = len(relax_data_store.res[run])
+    # Add the run to 'relax_data_store.res'.
+    relax_data_store.res.add_list(run)
 
+    # Loop over the sequence.
+    for i in xrange(len(res)):
         # Append a data container.
         relax_data_store.res[run].add_item()
 
-        # Insert the data.
-        relax_data_store.res[run][index].num = res_num
-        relax_data_store.res[run][index].name = res_name
-        relax_data_store.res[run][index].select = select
+        # Residue number.
+        relax_data_store.res[run][i].num = res[i].number
 
-
-    def copy(self, run1=None, run2=None):
-        """Function for copying the sequence from run1 to run2."""
-
-        # Test if run1 exists.
-        if not run1 in relax_data_store.run_names:
-            raise RelaxNoRunError, run1
-
-        # Test if run2 exists.
-        if not run2 in relax_data_store.run_names:
-            raise RelaxNoRunError, run2
-
-        # Test if the sequence data for run1 is loaded.
-        if not relax_data_store.res.has_key(run1):
-            raise RelaxNoSequenceError, run1
-
-        # Test if the sequence data already exists.
-        if relax_data_store.res.has_key(run2):
-            raise RelaxSequenceError, run2
-
-        # Add run2 to 'relax_data_store.res'.
-        relax_data_store.res.add_list(run2)
-
-        # Copy the data.
-        for i in xrange(len(relax_data_store.res[run1])):
-            # Append a data container to run2.
-            relax_data_store.res[run2].add_item()
-
-            # Insert the data.
-            relax_data_store.res[run2][i].num = relax_data_store.res[run1][i].num
-            relax_data_store.res[run2][i].name = relax_data_store.res[run1][i].name
-            relax_data_store.res[run2][i].select = relax_data_store.res[run1][i].select
-
-
-    def data_names(self):
-        """Function for returning a list of names of data structures associated with the sequence."""
-
-        return [ 'res' ]
-
-
-    def delete(self, run=None):
-        """Function for deleting the sequence."""
-
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
-
-        # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(run):
-            raise RelaxNoSequenceError, run
-
-        # Delete the data.
-        del(relax_data_store.res[run])
-
-        # Clean up the runs.
-        self.relax.generic.runs.eliminate_unused_runs()
-
-
-    def display(self, run=None):
-        """Function for displaying the sequence."""
-
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
-
-        # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(run):
-            raise RelaxNoSequenceError, run
-
-        # Print a header.
-        print "%-8s%-8s%-10s" % ("Number", "Name", "Selected")
-
-        # Print the sequence.
-        for i in xrange(len(relax_data_store.res[run])):
-            print "%-8i%-8s%-10i" % (relax_data_store.res[run][i].num, relax_data_store.res[run][i].name, relax_data_store.res[run][i].select)
-
-
-    def load_PDB_sequence(self, run=None):
-        """Function for loading the sequence out of a PDB file.
-
-        This needs to be modified to handle multiple peptide chains.
-        """
-
-        # Print out.
-        print "\nLoading the sequence from the PDB file.\n"
-
-        # Reassign the sequence of the first structure.
-        if relax_data_store.pdb[run].structures[0].peptide_chains:
-            res = relax_data_store.pdb[run].structures[0].peptide_chains[0].residues
-            molecule = 'protein'
-        elif relax_data_store.pdb[run].structures[0].nucleotide_chains:
-            res = relax_data_store.pdb[run].structures[0].nucleotide_chains[0].residues
-            molecule = 'nucleic acid'
+        # Residue name.
+        if molecule == 'nucleic acid':
+            relax_data_store.res[run][i].name = res[i].name[-1]
         else:
-            raise RelaxNoPdbChainError
+            relax_data_store.res[run][i].name = res[i].name
 
-        # Add the run to 'relax_data_store.res'.
-        relax_data_store.res.add_list(run)
-
-        # Loop over the sequence.
-        for i in xrange(len(res)):
-            # Append a data container.
-            relax_data_store.res[run].add_item()
-
-            # Residue number.
-            relax_data_store.res[run][i].num = res[i].number
-
-            # Residue name.
-            if molecule == 'nucleic acid':
-                relax_data_store.res[run][i].name = res[i].name[-1]
-            else:
-                relax_data_store.res[run][i].name = res[i].name
-
-            # Select the residue.
-            relax_data_store.res[run][i].select = 1
+        # Select the residue.
+        relax_data_store.res[run][i].select = 1
 
 
-    def read(self, run=None, file=None, dir=None, num_col=0, name_col=1, sep=None):
-        """Function for reading sequence data."""
+def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, sep=None):
+    """Function for reading molecule, residue, and/or spin sequence data.
 
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
+    @param file:            The name of the file to open.
+    @type file:             str
+    @param dir:             The directory containing the file (defaults to the current directory if
+                            None).
+    @type dir:              str or None
+    @param mol_name_col:    The column containing the molecule name information.
+    @type mol_name_col:     int or None
+    @param res_name_col:    The column containing the residue name information.
+    @type res_name_col:     int or None
+    @param res_num_col:     The column containing the residue number information.
+    @type res_num_col:      int or None
+    @param spin_name_col:   The column containing the spin name information.
+    @type spin_name_col:    int or None
+    @param spin_num_col:    The column containing the spin number information.
+    @type spin_num_col:     int or None
+    @param sep:             The column seperator which, if None, defaults to whitespace.
+    @type sep:              str or None
+    """
 
-        # Test if the sequence data has already been read.
-        if relax_data_store.res.has_key(run):
-            raise RelaxSequenceError, run
+    # Test if sequence data already exists.
+    if sequence_exists():
+        raise RelaxSequenceError
 
-        # Extract the data from the file.
-        file_data = self.relax.IO.extract_data(file, dir)
+    # Extract the data from the file.
+    file_data = extract_data(file, dir)
 
-        # Count the number of header lines.
-        header_lines = 0
-        for i in xrange(len(file_data)):
+    # Count the number of header lines.
+    header_lines = 0
+    for i in xrange(len(file_data)):
+        # Residue number.
+        if res_num_col != None:
             try:
-                int(file_data[i][num_col])
-            except:
+                int(file_data[i][res_num_col])
+            except ValueError:
                 header_lines = header_lines + 1
             else:
                 break
 
-        # Remove the header.
-        file_data = file_data[header_lines:]
-
-        # Strip data.
-        file_data = self.relax.IO.strip(file_data)
-
-        # Do nothing if the file does not exist.
-        if not file_data:
-            raise RelaxFileEmptyError
-
-        # Test if the sequence data is valid.
-        for i in xrange(len(file_data)):
+        # Spin number.
+        elif spin_num_col != None:
             try:
-                int(file_data[i][num_col])
+                int(file_data[i][spin_num_col])
             except ValueError:
-                raise RelaxError, "Sequence data is invalid."
+                header_lines = header_lines + 1
+            else:
+                break
 
-        # Add the run to 'relax_data_store.res'.
-        relax_data_store.res.add_list(run)
+    # Remove the header.
+    file_data = file_data[header_lines:]
 
-        # Fill the array 'relax_data_store.res[run]' with data containers and place sequence data into the array.
-        for i in xrange(len(file_data)):
-            # Append a data container.
-            relax_data_store.res[run].add_item()
+    # Strip data.
+    file_data = strip(file_data)
 
-            # Insert the data.
-            relax_data_store.res[run][i].num = int(file_data[i][num_col])
-            relax_data_store.res[run][i].name = file_data[i][name_col]
-            relax_data_store.res[run][i].select = 1
+    # Do nothing if the file does not exist.
+    if not file_data:
+        raise RelaxFileEmptyError
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Test if the sequence data is valid.
+    validate_sequence(file_data, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
+
+    # Init some indecies.
+    mol_index = 0
+    res_index = 0
+
+    # Fill the molecule-residue-spin data.
+    for i in xrange(len(file_data)):
+        # A new molecule.
+        if mol_name_col and cdp.mol[mol_index].name != file_data[i][mol_name_col]:
+            # Replace the first empty molecule.
+            if mol_index == 0 and cdp.mol[0].name == None:
+                cdp.mol[0].name = file_data[i][mol_name_col]
+
+            # Create a new molecule.
+            else:
+                # Add the molecule.
+                cdp.mol.add_item(mol_name=file_data[i][mol_name_col])
+
+                # Increment the molecule index.
+                mol_index = mol_index + 1
+
+        # A new residue.
+        if res_name_col and cdp.mol[mol_index].res[res_index].num != file_data[i][res_num_col]:
+            # Replace the first empty residue.
+            if res_index == 0 and cdp.mol[mol_index].res[0].name == None:
+                cdp.mol[mol_index].res[0].name = file_data[i][res_name_col]
+                cdp.mol[mol_index].res[0].num = int(file_data[i][res_num_col])
+
+            # Create a new residue.
+            else:
+                # Add the residue.
+                cdp.mol[mol_index].res.add_item(res_name=file_data[i][res_name_col], res_num=int(file_data[i][res_num_col]))
+
+                # Increment the residue index.
+                res_index = res_index + 1
+
+        # A new spin.
+        if spin_num_col:
+            cdp.mol[mol_index].res[res_index].spin.add_item(spin_name=file_data[i][spin_name_col], spin_num=int(file_data[i][spin_num_col]))
 
 
-    def sort(self, run=None):
-        """Function for sorting the sequence by residue number."""
+def sequence_exists():
+    """Function for determining if sequence data already exists in the current data pipe.
 
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
+    @return:    The answer to the question.
+    @rtype:     Boolean
+    """
 
-        # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(run):
-            raise RelaxNoSequenceError, run
-
-        # Sort the sequence.
-        relax_data_store.res[run].sort(self.sort_cmpfunc)
+    # Dummy return
+    return False
 
 
-    def sort_cmpfunc(self, x, y):
-        """Sequence comparison function given to the ListType function 'sort'."""
+def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None):
+    """Function for testing if the sequence data is valid.
 
-        if x.num > y.num:
-            return 1
-        elif x.num < y.num:
-            return -1
-        elif x.num == y.num:
-            return 0
+    The only function this performs is to raise a RelaxError if the data is invalid.
 
 
-    def write(self, run=None, file=None, dir=None, force=0):
-        """Function for writing sequence data."""
+    @param data:            The sequence data.
+    @type data:             list of lists.
+    @param mol_name_col:    The column containing the molecule name information.
+    @type mol_name_col:     int or None
+    @param res_name_col:    The column containing the residue name information.
+    @type res_name_col:     int or None
+    @param res_num_col:     The column containing the residue number information.
+    @type res_num_col:      int or None
+    @param spin_name_col:   The column containing the spin name information.
+    @type spin_name_col:    int or None
+    @param spin_num_col:    The column containing the spin number information.
+    @type spin_num_col:     int or None
+    """
 
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
+    # Loop over the data.
+    for i in xrange(len(data)):
+        # Molecule name data.
+        if mol_name_col != None:
+            try:
+                data[i][mol_name_col]
+            except IndexError:
+                raise RelaxInvalidSeqError, data[i]
 
-        # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(run):
-            raise RelaxNoSequenceError, run
+        # Residue number data.
+        if res_num_col != None:
+            # No data in column.
+            try:
+                data[i][res_num_col]
+            except IndexError:
+                raise RelaxInvalidSeqError, data[i]
 
-        # Open the file for writing.
-        seq_file = self.relax.IO.open_write_file(file, dir, force)
+            # Bad data in column.
+            try:
+                int(data[i][res_num_col])
+            except ValueError:
+                raise RelaxInvalidSeqError, data[i]
 
-        # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[run])):
-            # Residue number.
-            seq_file.write("%-5i" % relax_data_store.res[run][i].num)
+        # Residue name data.
+        if res_name_col != None:
+            try:
+                data[i][res_name_col]
+            except IndexError:
+                raise RelaxInvalidSeqError, data[i]
 
-            # Residue name.
-            seq_file.write("%-6s" % relax_data_store.res[run][i].name)
+        # Spin number data.
+        if spin_num_col != None:
+            # No data in column.
+            try:
+                data[i][spin_num_col]
+            except IndexError:
+                raise RelaxInvalidSeqError, data[i]
 
-            # New line.
-            seq_file.write("\n")
+            # Bad data in column.
+            try:
+                int(data[i][spin_num_col])
+            except ValueError:
+                raise RelaxInvalidSeqError, data[i]
 
-        # Close the results file.
-        seq_file.close()
+        # Spin name data.
+        if spin_name_col != None:
+            try:
+                data[i][spin_name_col]
+            except IndexError:
+                raise RelaxInvalidSeqError, data[i]
+
+
+def write(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, force=0):
+    """Function for writing molecule, residue, and/or sequence data.
+
+    This calls the write_body() function to do most of the work.
+
+
+    @param file:            The name of the file to write the data to.
+    @type file:             str
+    @param dir:             The directory to contain the file (defaults to the current directory if
+                            None).
+    @type dir:              str or None
+    @param mol_name_col:    The column to contain the molecule name information.
+    @type mol_name_col:     int or None
+    @param res_name_col:    The column to contain the residue name information.
+    @type res_name_col:     int or None
+    @param res_num_col:     The column to contain the residue number information.
+    @type res_num_col:      int or None
+    @param spin_name_col:   The column to contain the spin name information.
+    @type spin_name_col:    int or None
+    @param spin_num_col:    The column to contain the spin number information.
+    @type spin_num_col:     int or None
+    @param sep:             The column seperator which, if None, defaults to whitespace.
+    @type sep:              str or None
+    @param force:           A flag which if set to 1 will cause an existing file to be overwritten.
+    @type force:            bin
+    """
+
+    # Test if the sequence data is loaded.
+    if not count_spins():
+        raise RelaxNoSequenceError
+
+    # Open the file for writing.
+    seq_file = open_write_file(file, dir, force)
+
+    # Write the data.
+    write_body(file=seq_file, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep)
+
+    # Close the results file.
+    seq_file.close()
+
+
+
+def write_body(file=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None):
+    """Function for writing to the given file object the molecule, residue, and/or sequence data.
+
+    @param file:            The file object to write the data to.
+    @type file:             file object
+    @param mol_name_col:    The column to contain the molecule name information.
+    @type mol_name_col:     int or None
+    @param res_name_col:    The column to contain the residue name information.
+    @type res_name_col:     int or None
+    @param res_num_col:     The column to contain the residue number information.
+    @type res_num_col:      int or None
+    @param spin_name_col:   The column to contain the spin name information.
+    @type spin_name_col:    int or None
+    @param spin_num_col:    The column to contain the spin number information.
+    @type spin_num_col:     int or None
+    @param sep:             The column seperator which, if None, defaults to whitespace.
+    @type sep:              str or None
+    """
+
+    # No special seperator character.
+    if sep == None:
+        sep = ''
+
+    # Write a header.
+    if mol_name_col != None:
+        file.write("%-10s " % ("Mol_name"+sep))
+    if res_num_col != None:
+        file.write("%-10s " % ("Res_num"+sep))
+    if res_name_col != None:
+        file.write("%-10s " % ("Res_name"+sep))
+    if spin_num_col != None:
+        file.write("%-10s " % ("Spin_num"+sep))
+    if spin_name_col != None:
+        file.write("%-10s " % ("Spin_name"+sep))
+    file.write('\n')
+
+    # Loop over the spins.
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+        if mol_name_col != None:
+            file.write("%-10s " % (str(mol_name)+sep))
+        if res_num_col != None:
+            file.write("%-10s " % (str(res_num)+sep))
+        if res_name_col != None:
+            file.write("%-10s " % (str(res_name)+sep))
+        if spin_num_col != None:
+            file.write("%-10s " % (str(spin.num)+sep))
+        if spin_name_col != None:
+            file.write("%-10s " % (str(spin.name)+sep))
+        file.write('\n')

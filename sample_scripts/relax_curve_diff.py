@@ -33,7 +33,6 @@ from maths_fns.relax_fit import back_calc_I, func, setup
 # The relax data storage object.
 
 
-
 def back_calc(name):
     """Back calculate the peak intensities.
 

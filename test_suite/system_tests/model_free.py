@@ -26,6 +26,7 @@ import sys
 
 # relax module imports.
 from data import Data as relax_data_store
+from physical_constants import N15_CSA, NH_BOND_LENGTH
 
 
 # The relax data storage object.
@@ -63,7 +64,7 @@ class Mf:
             # The test.
             self.test = self.set_csa
 
-         # Test of setting the CSA and the bond length.
+        # Test of setting the CSA and the bond length.
         if test_name == 'set csa and bond length':
             # The name of the test.
             self.name = "Setting both the CSA value and bond length through the user function value.set()"
@@ -71,7 +72,7 @@ class Mf:
             # The test.
             self.test = self.set_csa_bond_length
 
-       # Test of selecting model-free model m4.
+        # Test of selecting model-free model m4.
         if test_name == 'select m4':
             # The name of the test.
             self.name = "Selecting model m4 with parameters {S2, te, Rex} using model_free.select_model()"
@@ -201,45 +202,39 @@ class Mf:
             self.test = self.opt_constr_newton_gmw_mt_S2_0_970_te_2048_Rex_0_149
 
 
-    def create_m4(self, run):
+    def create_m4(self, pipe):
         """Testing the creation of model-free model m4."""
 
-        # Arguments.
-        self.run = run
-
-        # Create the run.
-        self.relax.generic.runs.create(self.run, 'mf')
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create(pipe, 'mf')
 
         # Path of the files.
         path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
 
         # Select the model.
-        self.relax.interpreter._Model_free.create_model(self.run, model='m4', equation='mf_orig', params=['S2', 'te', 'Rex'])
+        self.relax.interpreter._Model_free.create_model(model='m4', equation='mf_orig', params=['S2', 'te', 'Rex'], spin_id=None)
 
         # Test the model.
-        if relax_data_store.res[self.run][1].model != 'm4':
+        if relax_data_store[pipe].mol[0].res[1].spin[0].model != 'm4':
             print "The model has not been selected."
             return
 
         # Test the parameters.
-        if relax_data_store.res[self.run][1].params != ['S2', 'te', 'Rex']:
+        if relax_data_store[pipe].mol[0].res[1].spin[0].params != ['S2', 'te', 'Rex']:
             print "The parameters are incorrect."
             return
 
         return 1
 
 
-    def opendx_s2_te_rex(self, run):
+    def opendx_s2_te_rex(self, pipe):
         """The OpenDX {S2, te, Rex} mapping test."""
 
-        # Arguments.
-        self.run = run
-
-        # Create the run.
-        self.relax.generic.runs.create(self.run, 'mf')
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create(pipe, 'mf')
 
         # Path of the files.
         path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
@@ -248,37 +243,34 @@ class Mf:
         self.relax.interpreter._Nuclei.nuclei('N')
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
 
         # Read the relaxation data.
-        self.relax.interpreter._Relax_data.read(self.run, 'R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read(self.run, 'R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read(self.run, 'NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read(self.run, 'R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path)
-        self.relax.interpreter._Relax_data.read(self.run, 'R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path)
-        self.relax.interpreter._Relax_data.read(self.run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
 
         # Setup other values.
-        self.relax.interpreter._Diffusion_tensor.init(self.run, 1e-8, fixed=1)
-        self.relax.interpreter._Value.set(self.run, [-170 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
+        self.relax.interpreter._Diffusion_tensor.init(1e-8, fixed=1)
+        self.relax.interpreter._Value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
 
         # Select the model.
-        self.relax.interpreter._Model_free.select_model(self.run, model='m4')
+        self.relax.interpreter._Model_free.select_model(model='m4')
 
         # Map the space.
-        self.relax.interpreter._OpenDX.map(self.run, params=['S2', 'te', 'Rex'], res_num=2, inc=2, lower=[0.0, 0, 0], upper=[1.0, 10000e-12, 3.0 / (2.0 * pi * 600000000.0)**2], point=[0.970, 2048.0e-12, 0.149 / (2.0 * pi * 600000000.0)**2], file='devnull', point_file='devnull')
+        self.relax.interpreter._OpenDX.map(params=['S2', 'te', 'Rex'], res_num=2, inc=2, lower=[0.0, 0, 0], upper=[1.0, 10000e-12, 3.0 / (2.0 * pi * 600000000.0)**2], point=[0.970, 2048.0e-12, 0.149 / (2.0 * pi * 600000000.0)**2], file='devnull', point_file='devnull')
 
         return 1
 
 
-    def opendx_theta_phi_da(self, run):
+    def opendx_theta_phi_da(self, pipe):
         """The OpenDX {theta, phi, Da} mapping test."""
 
-        # Arguments.
-        self.run = run
-
-        # Create the run.
-        self.relax.generic.runs.create(self.run, 'mf')
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create(pipe, 'mf')
 
         # Path of the files.
         path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
@@ -287,42 +279,39 @@ class Mf:
         self.relax.interpreter._Nuclei.nuclei('N')
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
 
         # Read the PDF file and set the vectors.
-        self.relax.interpreter._Structure.read_pdb(run, file='pdb', dir=path, model=1, load_seq=0)
-        self.relax.interpreter._Structure.vectors(run, heteronuc='N', proton='H')
+        self.relax.interpreter._Structure.read_pdb(file='pdb', dir=path, model=1, load_seq=0)
+        self.relax.interpreter._Structure.vectors(heteronuc='N', proton='H')
 
         # Read the relaxation data.
-        self.relax.interpreter._Relax_data.read(self.run, 'R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read(self.run, 'R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read(self.run, 'NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read(self.run, 'R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path)
-        self.relax.interpreter._Relax_data.read(self.run, 'R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path)
-        self.relax.interpreter._Relax_data.read(self.run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
 
         # Setup other values.
-        self.relax.interpreter._Diffusion_tensor.init(self.run, (1.601 * 1e7, 1.34, 72.4, 90-77.9), param_types=4)
-        self.relax.interpreter._Value.set(self.run, [-170 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
-        self.relax.interpreter._Value.set(self.run, [0.8, 50 * 1e-12, 0.0], ['S2', 'te', 'Rex'])
+        self.relax.interpreter._Diffusion_tensor.init((1.601 * 1e7, 1.34, 72.4, 90-77.9), param_types=4)
+        self.relax.interpreter._Value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
+        self.relax.interpreter._Value.set([0.8, 50 * 1e-12, 0.0], ['S2', 'te', 'Rex'])
 
         # Select the model.
-        self.relax.interpreter._Model_free.select_model(self.run, model='m4')
+        self.relax.interpreter._Model_free.select_model(model='m4')
 
         # Map the space.
-        self.relax.interpreter._OpenDX.map(self.run, params=['theta', 'phi', 'Da'], res_num=2, inc=2, lower=[0, 0, -0.5*1e7], upper=[pi, 2.0*pi, 1.0*1e7], file='devnull')
+        self.relax.interpreter._OpenDX.map(params=['theta', 'phi', 'Da'], res_num=2, inc=2, lower=[0, 0, -0.5*1e7], upper=[pi, 2.0*pi, 1.0*1e7], file='devnull')
 
         return 1
 
 
-    def opendx_tm_s2_te(self, run):
+    def opendx_tm_s2_te(self, pipe):
         """The OpenDX {local_tm, S2, te} mapping test."""
 
-        # Arguments.
-        self.run = run
-
-        # Create the run.
-        self.relax.generic.runs.create(self.run, 'mf')
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create(pipe, 'mf')
 
         # Path of the files.
         path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
@@ -331,29 +320,29 @@ class Mf:
         self.relax.interpreter._Nuclei.nuclei('N')
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
 
         # Read the relaxation data.
-        self.relax.interpreter._Relax_data.read(self.run, 'R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read(self.run, 'R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read(self.run, 'NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read(self.run, 'R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path)
-        self.relax.interpreter._Relax_data.read(self.run, 'R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path)
-        self.relax.interpreter._Relax_data.read(self.run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
 
         # Setup other values.
-        self.relax.interpreter._Value.set(self.run, [-170 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
+        self.relax.interpreter._Value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
 
         # Select the model.
-        self.relax.interpreter._Model_free.select_model(self.run, model='tm2')
+        self.relax.interpreter._Model_free.select_model(model='tm2')
 
         # Map the space.
-        self.relax.interpreter._OpenDX.map(self.run, params=['local_tm', 'S2', 'te'], res_num=2, inc=2, file='devnull')
+        self.relax.interpreter._OpenDX.map(params=['local_tm', 'S2', 'te'], res_num=2, inc=2, file='devnull')
 
         return 1
 
 
-    def opt_constr_bfgs_back_S2_0_970_te_2048_Rex_0_149(self, run):
+    def opt_constr_bfgs_back_S2_0_970_te_2048_Rex_0_149(self, pipe):
         """Optimisation test.
 
         The optimisation options are:
@@ -367,21 +356,21 @@ class Mf:
             Rex = 0.149 s^-1
         """
 
-        # Setup the run for optimisation.
-        self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
+        # Setup the data pipe for optimisation.
+        self.opt_setup_S2_0_970_te_2048_Rex_0_149(pipe)
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.relax.interpreter._Value.set(self.run, [1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
-        self.relax.interpreter._Minimisation.minimise('bfgs', 'back', run=self.run)
+        self.relax.interpreter._Minimisation.minimise('bfgs', 'back')
 
 
         # Test the optimisation statistics and parameter values.
         ########################################################
 
-        # Alias the data structure.
-        data = relax_data_store.res[self.run][1]
+        # Alias the relevent spin container.
+        data = relax_data_store.res[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
         # Error tolerance.
         error = 1e-8
@@ -414,7 +403,7 @@ class Mf:
         return success
 
 
-    def opt_constr_bfgs_mt_S2_0_970_te_2048_Rex_0_149(self, run):
+    def opt_constr_bfgs_mt_S2_0_970_te_2048_Rex_0_149(self, pipe):
         """Optimisation test.
 
         The optimisation options are:
@@ -428,21 +417,21 @@ class Mf:
             Rex = 0.149 s^-1
         """
 
-        # Setup the run for optimisation.
-        self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
+        # Setup the data pipe for optimisation.
+        self.opt_setup_S2_0_970_te_2048_Rex_0_149(pipe)
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.relax.interpreter._Value.set(self.run, [1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
-        self.relax.interpreter._Minimisation.minimise('bfgs', 'mt', run=self.run)
+        self.relax.interpreter._Minimisation.minimise('bfgs', 'mt')
 
 
         # Test the optimisation statistics and parameter values.
         ########################################################
 
-        # Alias the data structure.
-        data = relax_data_store.res[self.run][1]
+        # Alias the relevent spin container.
+        data = relax_data_store.res[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
         # Error tolerance.
         error = 1e-8
@@ -475,7 +464,7 @@ class Mf:
         return success
 
 
-    def opt_constr_cd_back_S2_0_970_te_2048_Rex_0_149(self, run):
+    def opt_constr_cd_back_S2_0_970_te_2048_Rex_0_149(self, pipe):
         """Optimisation test.
 
         The optimisation options are:
@@ -489,21 +478,21 @@ class Mf:
             Rex = 0.149 s^-1
         """
 
-        # Setup the run for optimisation.
-        self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
+        # Setup the data pipe for optimisation.
+        self.opt_setup_S2_0_970_te_2048_Rex_0_149(pipe)
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.relax.interpreter._Value.set(self.run, [1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
-        self.relax.interpreter._Minimisation.minimise('cd', 'back', max_iter=50, run=self.run)
+        self.relax.interpreter._Minimisation.minimise('cd', 'back', max_iter=50)
 
 
         # Test the optimisation statistics and parameter values.
         ########################################################
 
-        # Alias the data structure.
-        data = relax_data_store.res[self.run][1]
+        # Alias the relevent spin container.
+        data = relax_data_store.res[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
         # Error tolerance.
         error = 1e-8
@@ -536,7 +525,7 @@ class Mf:
         return success
 
 
-    def opt_constr_cd_mt_S2_0_970_te_2048_Rex_0_149(self, run):
+    def opt_constr_cd_mt_S2_0_970_te_2048_Rex_0_149(self, pipe):
         """Optimisation test.
 
         The optimisation options are:
@@ -550,21 +539,21 @@ class Mf:
             Rex = 0.149 s^-1
         """
 
-        # Setup the run for optimisation.
-        self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
+        # Setup the data pipe for optimisation.
+        self.opt_setup_S2_0_970_te_2048_Rex_0_149(pipe)
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.relax.interpreter._Value.set(self.run, [1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
-        self.relax.interpreter._Minimisation.minimise('cd', 'mt', max_iter=50, run=self.run)
+        self.relax.interpreter._Minimisation.minimise('cd', 'mt', max_iter=50)
 
 
         # Test the optimisation statistics and parameter values.
         ########################################################
 
-        # Alias the data structure.
-        data = relax_data_store.res[self.run][1]
+        # Alias the relevent spin container.
+        data = relax_data_store.res[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
         # Error tolerance.
         error = 1e-8
@@ -597,7 +586,7 @@ class Mf:
         return success
 
 
-    def opt_constr_newton_gmw_back_S2_0_970_te_2048_Rex_0_149(self, run):
+    def opt_constr_newton_gmw_back_S2_0_970_te_2048_Rex_0_149(self, pipe):
         """Optimisation test.
 
         The optimisation options are:
@@ -612,21 +601,21 @@ class Mf:
             Rex = 0.149 s^-1
         """
 
-        # Setup the run for optimisation.
-        self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
+        # Setup the data pipe for optimisation.
+        self.opt_setup_S2_0_970_te_2048_Rex_0_149(pipe)
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.relax.interpreter._Value.set(self.run, [1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
-        self.relax.interpreter._Minimisation.minimise('newton', 'gmw', 'back', run=self.run)
+        self.relax.interpreter._Minimisation.minimise('newton', 'gmw', 'back')
 
 
         # Test the optimisation statistics and parameter values.
         ########################################################
 
-        # Alias the data structure.
-        data = relax_data_store.res[self.run][1]
+        # Alias the relevent spin container.
+        data = relax_data_store.res[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
         # Error tolerance.
         error = 1e-8
@@ -659,7 +648,7 @@ class Mf:
         return success
 
 
-    def opt_constr_newton_gmw_mt_S2_0_970_te_2048_Rex_0_149(self, run):
+    def opt_constr_newton_gmw_mt_S2_0_970_te_2048_Rex_0_149(self, pipe):
         """Optimisation test.
 
         The optimisation options are:
@@ -674,21 +663,21 @@ class Mf:
             Rex = 0.149 s^-1
         """
 
-        # Setup the run for optimisation.
-        self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
+        # Setup the data pipe for optimisation.
+        self.opt_setup_S2_0_970_te_2048_Rex_0_149(pipe)
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.relax.interpreter._Value.set(self.run, [1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
-        self.relax.interpreter._Minimisation.minimise('newton', 'gmw', 'mt', run=self.run)
+        self.relax.interpreter._Minimisation.minimise('newton', 'gmw', 'mt')
 
 
         # Test the optimisation statistics and parameter values.
         ########################################################
 
-        # Alias the data structure.
-        data = relax_data_store.res[self.run][1]
+        # Alias the relevent spin container.
+        data = relax_data_store.res[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
         # Error tolerance.
         error = 1e-8
@@ -721,7 +710,7 @@ class Mf:
         return success
 
 
-    def opt_constr_sd_back_S2_0_970_te_2048_Rex_0_149(self, run):
+    def opt_constr_sd_back_S2_0_970_te_2048_Rex_0_149(self, pipe):
         """Optimisation test.
 
         The optimisation options are:
@@ -735,21 +724,21 @@ class Mf:
             Rex = 0.149 s^-1
         """
 
-        # Setup the run for optimisation.
-        self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
+        # Setup the data pipe for optimisation.
+        self.opt_setup_S2_0_970_te_2048_Rex_0_149(pipe)
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.relax.interpreter._Value.set(self.run, [1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
-        self.relax.interpreter._Minimisation.minimise('sd', 'back', max_iter=50, run=self.run)
+        self.relax.interpreter._Minimisation.minimise('sd', 'back', max_iter=50)
 
 
         # Test the optimisation statistics and parameter values.
         ########################################################
 
-        # Alias the data structure.
-        data = relax_data_store.res[self.run][1]
+        # Alias the relevent spin container.
+        data = relax_data_store.res[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
         # Error tolerance.
         error = 1e-8
@@ -782,7 +771,7 @@ class Mf:
         return success
 
 
-    def opt_constr_sd_mt_S2_0_970_te_2048_Rex_0_149(self, run):
+    def opt_constr_sd_mt_S2_0_970_te_2048_Rex_0_149(self, pipe):
         """Optimisation test.
 
         The optimisation options are:
@@ -796,21 +785,21 @@ class Mf:
             Rex = 0.149 s^-1
         """
 
-        # Setup the run for optimisation.
-        self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
+        # Setup the data pipe for optimisation.
+        self.opt_setup_S2_0_970_te_2048_Rex_0_149(pipe)
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
-        self.relax.interpreter._Value.set(self.run, [1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
+        self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
-        self.relax.interpreter._Minimisation.minimise('sd', 'mt', max_iter=50, run=self.run)
+        self.relax.interpreter._Minimisation.minimise('sd', 'mt', max_iter=50)
 
 
         # Test the optimisation statistics and parameter values.
         ########################################################
 
-        # Alias the data structure.
-        data = relax_data_store.res[self.run][1]
+        # Alias the relevent spin container.
+        data = relax_data_store.res[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
         # Error tolerance.
         error = 1e-8
@@ -843,7 +832,7 @@ class Mf:
         return success
 
 
-    def opt_grid_search_S2_0_970_te_2048_Rex_0_149(self, run):
+    def opt_grid_search_S2_0_970_te_2048_Rex_0_149(self, pipe):
         """Optimisation test.
 
         The optimisation options are:
@@ -855,17 +844,17 @@ class Mf:
             Rex = 0.149 s^-1
         """
 
-        # Setup the run for optimisation.
-        self.opt_setup_S2_0_970_te_2048_Rex_0_149(run)
+        # Setup the data pipe for optimisation.
+        self.opt_setup_S2_0_970_te_2048_Rex_0_149(pipe)
 
         # Grid search.
-        self.relax.interpreter._Minimisation.grid_search(self.run, inc=11)
+        self.relax.interpreter._Minimisation.grid_search(inc=11)
 
         # Test the optimisation statistics and parameter values.
         ########################################################
 
-        # Alias the data structure.
-        data = relax_data_store.res[self.run][1]
+        # Alias the relevent spin container.
+        data = relax_data_store.res[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
         # Error tolerance.
         error = 1e-8
@@ -898,8 +887,8 @@ class Mf:
         return success
 
 
-    def opt_setup_S2_0_970_te_2048_Rex_0_149(self, run):
-        """Setup the run for testing optimisation.
+    def opt_setup_S2_0_970_te_2048_Rex_0_149(self, pipe):
+        """Setup the data pipe for testing optimisation.
 
         The data set is:
             S2 = 0.970.
@@ -907,9 +896,8 @@ class Mf:
             Rex = 0.149 s^-1.
         """
 
-        # Create the run.
-        self.run = run
-        self.relax.generic.runs.create(self.run, 'mf')
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create(pipe, 'mf')
 
         # Path of the files.
         path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
@@ -918,102 +906,108 @@ class Mf:
         self.relax.interpreter._Nuclei.nuclei('N')
 
         # Load the sequence.
-        self.relax.interpreter._Sequence.read(self.run, 'noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read('noe.500.out', dir=path)
 
         # Load the relaxation data.
-        self.relax.interpreter._Relax_data.read(self.run, 'R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read(self.run, 'R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read(self.run, 'NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read(self.run, 'R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path)
-        self.relax.interpreter._Relax_data.read(self.run, 'R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path)
-        self.relax.interpreter._Relax_data.read(self.run, 'NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
 
         # Setup other values.
-        self.relax.interpreter._Diffusion_tensor.init(self.run, 10e-9, fixed=1)
-        self.relax.interpreter._Value.set(self.run, 1.02 * 1e-10, 'bond_length')
-        self.relax.interpreter._Value.set(self.run, -160 * 1e-6, 'csa')
+        self.relax.interpreter._Diffusion_tensor.init(10e-9, fixed=1)
+        self.relax.interpreter._Value.set(NH_BOND_LENGTH, 'bond_length')
+        self.relax.interpreter._Value.set(-160 * 1e-6, 'csa')
 
         # Select the model-free model.
-        self.relax.interpreter._Model_free.select_model(run=self.run, model='m4')
+        self.relax.interpreter._Model_free.select_model(model='m4')
 
 
-    def read_relax_data(self, run):
+    def read_relax_data(self, pipe):
         """The relaxation data reading test."""
 
-        # Arguments.
-        self.run = run
-
-        # Create the run.
-        self.relax.generic.runs.create(self.run, 'mf')
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create(pipe, 'mf')
 
         # Path of the files.
         path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
 
         # Read the relaxation data.
-        self.relax.interpreter._Relax_data.read(self.run, 'R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
 
         # Test the data.
-        if relax_data_store.res[self.run][1].relax_data[0] != 1.3874977659397683:
+        if relax_data_store[pipe].mol[0].res[1].spin[0].relax_data[0] != 1.3874977659397683:
             print "The relaxation data does not match."
             return
 
         # Test the error.
-        if relax_data_store.res[self.run][1].relax_error[0] != 0.027749955318795365:
+        if relax_data_store[pipe].mol[0].res[1].spin[0].relax_error[0] != 0.027749955318795365:
             print "The relaxation error does not match."
             return
 
         return 1
 
 
-    def read_results(self, run):
+    def read_results(self, pipe):
         """The results reading test."""
-
-        # Arguments.
-        self.run = run
 
         # Load the original state.
         self.relax.interpreter._State.load(file='orig_state', dir=sys.path[-1] + '/test_suite/system_tests/data/model_free')
 
-        # Create the run.
-        self.relax.generic.runs.create(self.run, 'mf')
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create(pipe, 'mf')
 
         # Read the results.
-        self.relax.interpreter._Results.read(self.run, dir=sys.path[-1] + '/test_suite/system_tests/data/model_free')
+        self.relax.interpreter._Results.read(dir=sys.path[-1] + '/test_suite/system_tests/data/model_free')
 
         # Print out.
         print "\nTesting the integrity of the loaded data.\n"
 
         # Diffusion tensor type.
-        if relax_data_store.diff['orig'].type != relax_data_store.diff[self.run].type:
+        if relax_data_store.diff['orig'].type != relax_data_store[pipe].diff.type:
             print "The diffusion tensor types do not match."
             return
 
         # tm.
-        if relax_data_store.diff['orig'].tm != relax_data_store.diff[self.run].tm:
+        if relax_data_store.diff['orig'].tm != relax_data_store[pipe].diff.tm:
             print "The tm values do not match."
             return
 
         # Loop over the residues of the original data.
-        for i in xrange(len(relax_data_store.res['orig'])):
+        for i in xrange(len(relax_data_store[pipe].mol[0].res)):
             # Aliases
-            orig_data = relax_data_store.res['orig'][i]
-            new_data = relax_data_store.res[self.run][i]
+            orig_data_res = relax_data_store['orig'].mol[0].res[i]
+            new_data_res = relax_data_store[pipe].mol[0].res[i]
+            orig_data = relax_data_store['orig'].mol[0].res[i].spin[0]
+            new_data = relax_data_store[pipe].mol[0].res[i].spin[0]
 
             # Residue alias.
             self.orig_res = `orig_data.num` + orig_data.name
             self.new_res = `new_data.num` + new_data.name
 
             # Residue numbers.
-            if orig_data.num != new_data.num:
+            if orig_data_res.num != new_data_res.num:
                 self.print_error('residue numbers')
                 return
 
             # Residue names.
-            if orig_data.name != new_data.name:
+            if orig_data_res.name != new_data_res.name:
                 self.print_error('residue names')
+                return
+
+            # Spin numbers.
+            if orig_data.num != new_data.num:
+                self.print_error('spin numbers')
+                return
+
+            # Spin names.
+            if orig_data.name != new_data.name:
+                self.print_error('spin names')
                 return
 
             # Selection.
@@ -1151,114 +1145,102 @@ class Mf:
         print "The " + name + " of " + self.orig_res + " and " + self.new_res + " do not match."
 
 
-    def select_m4(self, run):
+    def select_m4(self, pipe):
         """Testing the selection of model-free model m4."""
 
-        # Arguments.
-        self.run = run
-
-        # Create the run.
-        self.relax.generic.runs.create(self.run, 'mf')
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create(pipe, 'mf')
 
         # Path of the files.
         path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
 
         # Select the model.
-        self.relax.interpreter._Model_free.select_model(self.run, model='m4')
+        self.relax.interpreter._Model_free.select_model(model='m4')
 
         # Test the model.
-        if relax_data_store.res[self.run][1].model != 'm4':
+        if relax_data_store[pipe].mol[0].res[1].spin[0].model != 'm4':
             print "The model has not been selected."
             return
 
         # Test the parameters.
-        if relax_data_store.res[self.run][1].params != ['S2', 'te', 'Rex']:
+        if relax_data_store[pipe].mol[0].res[1].spin[0].params != ['S2', 'te', 'Rex']:
             print "The parameters are incorrect."
             return
 
         return 1
 
 
-    def set_bond_length(self, run):
+    def set_bond_length(self, pipe):
         """Testing the setting of the bond length."""
 
-        # Arguments.
-        self.run = run
-
-        # Create the run.
-        self.relax.generic.runs.create(self.run, 'mf')
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create(pipe, 'mf')
 
         # Path of the files.
         path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
 
         # Set the CSA value.
-        self.relax.interpreter._Value.set(self.run, 1.02 * 1e-10, 'bond_length')
+        self.relax.interpreter._Value.set(NH_BOND_LENGTH, 'bond_length')
 
         # Test the value.
-        if relax_data_store.res[self.run][1].r != 1.02 * 1e-10:
+        if relax_data_store[pipe].mol[0].res[1].spin[0].r != NH_BOND_LENGTH:
             print "The bond length has not been set correctly."
             return
 
         return 1
 
 
-    def set_csa(self, run):
+    def set_csa(self, pipe):
         """Testing the setting of the CSA value."""
 
-        # Arguments.
-        self.run = run
-
-        # Create the run.
-        self.relax.generic.runs.create(self.run, 'mf')
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create(pipe, 'mf')
 
         # Path of the files.
         path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
 
         # Set the CSA value.
-        self.relax.interpreter._Value.set(self.run, -170 * 1e-6, 'csa')
+        self.relax.interpreter._Value.set(N15_CSA, 'csa')
 
         # Test the value.
-        if relax_data_store.res[self.run][1].csa != -170*1e-6:
+        if relax_data_store[pipe].mol[0].res[1].spin[0].csa != N15_CSA:
             print "The CSA value has not been set correctly."
             return
 
         return 1
 
 
-    def set_csa_bond_length(self, run):
+    def set_csa_bond_length(self, pipe):
         """Testing the setting of the CSA value and bond length simultaneously."""
 
-        # Arguments.
-        self.run = run
-
-        # Create the run.
-        self.relax.generic.runs.create(self.run, 'mf')
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create(pipe, 'mf')
 
         # Path of the files.
         path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(self.run, file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
 
         # Set the CSA value and bond length simultaneously.
-        self.relax.interpreter._Value.set(self.run, [-170 * 1e-6, 1.02 * 1e-10], ['csa', 'bond_length'])
+        self.relax.interpreter._Value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
 
         # Test the CSA value.
-        if relax_data_store.res[self.run][1].csa != -170*1e-6:
+        if relax_data_store[pipe].mol[0].res[1].spin[0].csa != N15_CSA:
             print "The CSA value has not been set correctly."
             return
 
         # Test the bond length.
-        if relax_data_store.res[self.run][1].r != 1.02 * 1e-10:
+        if relax_data_store[pipe].mol[0].res[1].spin[0].r != NH_BOND_LENGTH:
             print "The bond length has not been set correctly."
             return
 

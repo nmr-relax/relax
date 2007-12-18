@@ -23,1094 +23,679 @@
 # Python module imports.
 from copy import deepcopy
 from math import cos, pi, sin
-from Numeric import Float64, array, dot, identity, transpose, zeros
 from re import search
 
 # relax module imports.
-from relax_errors import RelaxError, RelaxNoRunError, RelaxNoTensorError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
+from angles import wrap_angles
+from data import Data as relax_data_store
+from data.diff_tensor import DiffTensorData
+import pipes
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
 
-def calc_Diso(tm):
-    """Function for calculating the Diso value.
+def copy(pipe_from=None, pipe_to=None):
+    """Function for copying diffusion tensor data from one data pipe to another.
 
-    The equation for calculating the parameter is
-
-        Diso  =  1 / (6tm).
-
-    @keyword tm:    The global correlation time.
-    @type tm:       float
-    @return:        The isotropic diffusion rate (Diso).
-    @rtype:         float
+    @param pipe_from:   The data pipe to copy the diffusion tensor data from.  This defaults to the
+                        current data pipe.
+    @type pipe_from:    str
+    @param pipe_to:     The data pipe to copy the diffusion tensor data to.  This defaults to the
+                        current data pipe.
+    @type pipe_to:      str
     """
 
-    # Calculated and return the Diso value.
-    return 1.0 / (6.0 * tm)
+    # Defaults.
+    if pipe_from == None and pipe_to == None:
+        raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+    elif pipe_from == None:
+        pipe_from = relax_data_store.current_pipe
+    elif pipe_to == None:
+        pipe_to = relax_data_store.current_pipe
+
+    # Test if the pipe_from and pipe_to data pipes exist.
+    pipes.test(pipe_from)
+    pipes.test(pipe_to)
+
+    # Test if pipe_from contains diffusion tensor data.
+    if not diff_data_exists(pipe_from):
+        raise RelaxNoTensorError, 'diffusion'
+
+    # Test if pipe_to contains diffusion tensor data.
+    if diff_data_exists(pipe_to):
+        raise RelaxTensorError, 'diffusion'
+
+    # Copy the data.
+    relax_data_store[pipe_to].diff_tensor = deepcopy(relax_data_store[pipe_from].diff_tensor)
 
 
-def calc_Dpar(Diso, Da):
-    """Function for calculating the Dpar value.
+def data_names():
+    """Function for returning a list of names of data structures associated with the sequence."""
 
-    The equation for calculating the parameter is
+    names = [ 'diff_type',
+              'diff_params' ]
 
-        Dpar  =  Diso + 2/3 Da.
+    return names
 
-    @keyword Diso:  The isotropic diffusion rate.
-    @type Diso:     float
-    @keyword Da:    The anisotropic diffusion rate.
-    @type Da:       float
-    @return:        The diffusion rate parallel to the unique axis of the spheroid.
-    @rtype:         float
+
+def default_value(param):
+    """
+    Diffusion tensor parameter default values
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    ________________________________________________________________________
+    |                        |                    |                        |
+    | Data type              | Object name        | Value                  |
+    |________________________|____________________|________________________|
+    |                        |                    |                        |
+    | tm                     | 'tm'               | 10 * 1e-9              |
+    |                        |                    |                        |
+    | Diso                   | 'Diso'             | 1.666 * 1e7            |
+    |                        |                    |                        |
+    | Da                     | 'Da'               | 0.0                    |
+    |                        |                    |                        |
+    | Dr                     | 'Dr'               | 0.0                    |
+    |                        |                    |                        |
+    | Dx                     | 'Dx'               | 1.666 * 1e7            |
+    |                        |                    |                        |
+    | Dy                     | 'Dy'               | 1.666 * 1e7            |
+    |                        |                    |                        |
+    | Dz                     | 'Dz'               | 1.666 * 1e7            |
+    |                        |                    |                        |
+    | Dpar                   | 'Dpar'             | 1.666 * 1e7            |
+    |                        |                    |                        |
+    | Dper                   | 'Dper'             | 1.666 * 1e7            |
+    |                        |                    |                        |
+    | Dratio                 | 'Dratio'           | 1.0                    |
+    |                        |                    |                        |
+    | alpha                  | 'alpha'            | 0.0                    |
+    |                        |                    |                        |
+    | beta                   | 'beta'             | 0.0                    |
+    |                        |                    |                        |
+    | gamma                  | 'gamma'            | 0.0                    |
+    |                        |                    |                        |
+    | theta                  | 'theta'            | 0.0                    |
+    |                        |                    |                        |
+    | phi                    | 'phi'              | 0.0                    |
+    |________________________|____________________|________________________|
+
     """
 
-    # Dpar value.
-    return Diso + 2.0/3.0 * Da
+    # tm.
+    if param == 'tm':
+        return 10.0 * 1e-9
+
+    # Diso, Dx, Dy, Dz, Dpar, Dper.
+    elif param == 'Diso' or param == 'Dx' or param == 'Dy' or param == 'Dz' or param == 'Dpar' or param == 'Dper':
+        return 1.666 * 1e7
+
+    # Dratio.
+    elif param == 'Dratio':
+        return 1.0
 
 
-def calc_Dpar_unit(theta, phi):
-    """Function for calculating the Dpar unit vector.
+def delete():
+    """Function for deleting diffusion tensor data."""
 
-    The unit vector parallel to the unique axis of the diffusion tensor is
+    # Test if the current data pipe exists.
+    pipes.test(relax_data_store.current_pipe)
 
-                      | sin(theta) * cos(phi) |
-        Dpar_unit  =  | sin(theta) * sin(phi) |.
-                      |      cos(theta)       |
+    # Test if diffusion tensor data exists.
+    if not diff_data_exists():
+        raise RelaxNoTensorError, 'diffusion'
 
-    @keyword theta: The azimuthal angle in radians.
-    @type theta:    float
-    @keyword phi:   The polar angle in radians.
-    @type phi:      float
-    @return:        The Dpar unit vector.
-    @rtype:         Numeric array (Float64)
+    # Delete the diffusion data.
+    del(relax_data_store[relax_data_store.current_pipe].diff_tensor)
+
+
+def diff_data_exists(pipe=None):
+    """Function for determining if diffusion data exists in the current data pipe.
+
+    @param pipe:    The data pipe to search for data in.
+    @type pipe:     str
+    @return:        The answer to the question.
+    @type return:   bool
     """
 
-    # Initilise the vector.
-    Dpar_unit = zeros(3, Float64)
-
-    # Calculate the x, y, and z components.
-    Dpar_unit[0] = sin(theta) * cos(phi)
-    Dpar_unit[1] = sin(theta) * sin(phi)
-    Dpar_unit[2] = cos(theta)
-
-    # Return the unit vector.
-    return Dpar_unit
-
-
-def calc_Dper(Diso, Da):
-    """Function for calculating the Dper value.
-
-    The equation for calculating the parameter is
-
-        Dper  =  Diso - 1/3 Da.
-
-    @keyword Diso:  The isotropic diffusion rate.
-    @type Diso:     float
-    @keyword Da:    The anisotropic diffusion rate.
-    @type Da:       float
-    @return:        The diffusion rate perpendicular to the unique axis of the spheroid.
-    @rtype:         float
-    """
-
-    # Dper value.
-    return Diso - 1.0/3.0 * Da
-
-
-def calc_Dratio(Dpar, Dper):
-    """Function for calculating the Dratio value.
-
-    The equation for calculating the parameter is
-
-        Dratio  =  Dpar / Dper.
-
-    @keyword Dpar:  The diffusion rate parallel to the unique axis of the spheroid.
-    @type Dpar:     float
-    @keyword Dper:  The diffusion rate perpendicular to the unique axis of the spheroid.
-    @type Dper:     float
-    @return:        The ratio of the parallel and perpendicular diffusion rates.
-    @rtype:         float
-    """
-
-    # Dratio value.
-    return Dpar / Dper
-
-
-def calc_Dx(Diso, Da, Dr):
-    """Function for calculating the Dx value.
-
-    The equation for calculating the parameter is
-
-        Dx  =  Diso - 1/3 Da(1 + 3Dr).
-
-    @keyword Diso:  The isotropic diffusion rate.
-    @type Diso:     float
-    @keyword Da:    The anisotropic diffusion rate.
-    @type Da:       float
-    @keyword Dr:    The rhombic component of the diffusion tensor.
-    @type Dr:       float
-    @return:        The diffusion rate parallel to the x-axis of the ellipsoid.
-    @rtype:         float
-    """
-
-    # Dx value.
-    return Diso - 1.0/3.0 * Da * (1.0 + 3.0*Dr)
-
-
-def calc_Dx_unit(alpha, beta, gamma):
-    """Function for calculating the Dx unit vector.
-
-    The unit Dx vector is
-
-                    | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
-        Dx_unit  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |.
-                    |                    cos(alpha) * sin(beta)                      |
-
-    @keyword alpha: The Euler angle alpha in radians using the z-y-z convention.
-    @type alpha:    float
-    @keyword beta:  The Euler angle beta in radians using the z-y-z convention.
-    @type beta:     float
-    @keyword gamma: The Euler angle gamma in radians using the z-y-z convention.
-    @type gamma:    float
-    @return:        The Dx unit vector.
-    @rtype:         Numeric array (Float64)
-    """
-
-    # Initilise the vector.
-    Dx_unit = zeros(3, Float64)
-
-    # Calculate the x, y, and z components.
-    Dx_unit[0] = -sin(alpha) * sin(gamma)  +  cos(alpha) * cos(beta) * cos(gamma)
-    Dx_unit[1] = -sin(alpha) * cos(gamma)  -  cos(alpha) * cos(beta) * sin(gamma)
-    Dx_unit[2] = cos(alpha) * sin(beta)
-
-    # Return the unit vector.
-    return Dx_unit
-
-
-def calc_Dy(Diso, Da, Dr):
-    """Function for calculating the Dy value.
-
-    The equation for calculating the parameter is
-
-        Dy  =  Diso - 1/3 Da(1 - 3Dr),
-
-    @keyword Diso:  The isotropic diffusion rate.
-    @type Diso:     float
-    @keyword Da:    The anisotropic diffusion rate.
-    @type Da:       float
-    @keyword Dr:    The rhombic component of the diffusion tensor.
-    @type Dr:       float
-    @return:        The Dy value.
-    @rtype:         float
-    """
-
-    # Dy value.
-    return Diso - 1.0/3.0 * Da * (1.0 - 3.0*Dr)
-
-
-def calc_Dy_unit(alpha, beta, gamma):
-    """Function for calculating the Dy unit vector.
-
-    The unit Dy vector is
-
-                    | cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
-        Dy_unit  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |.
-                    |                   sin(alpha) * sin(beta)                      |
-
-    @keyword alpha: The Euler angle alpha in radians using the z-y-z convention.
-    @type alpha:    float
-    @keyword beta:  The Euler angle beta in radians using the z-y-z convention.
-    @type beta:     float
-    @keyword gamma: The Euler angle gamma in radians using the z-y-z convention.
-    @type gamma:    float
-    @return:        The Dy unit vector.
-    @rtype:         Numeric array (Float64)
-    """
-
-    # Initilise the vector.
-    Dy_unit = zeros(3, Float64)
-
-    # Calculate the x, y, and z components.
-    Dy_unit[0] = cos(alpha) * sin(gamma)  +  sin(alpha) * cos(beta) * cos(gamma)
-    Dy_unit[1] = cos(alpha) * cos(gamma)  -  sin(alpha) * cos(beta) * sin(gamma)
-    Dy_unit[2] = sin(alpha) * sin(beta)
-
-    # Return the unit vector.
-    return Dy_unit
-
-
-def calc_Dz(Diso, Da):
-    """Function for calculating the Dz value.
-
-    The equation for calculating the parameter is
-
-        Dz  =  Diso + 2/3 Da.
-
-    @keyword Diso:  The isotropic diffusion rate.
-    @type Diso:     float
-    @keyword Da:    The anisotropic diffusion rate.
-    @type Da:       float
-    @return:        The Dz value.
-    @rtype:         float
-    """
-
-    # Dz value.
-    return Diso + 2.0/3.0 * Da
-
-
-def calc_Dz_unit(beta, gamma):
-    """Function for calculating the Dz unit vector.
-
-    The unit Dz vector is
-
-                    | -sin(beta) * cos(gamma) |
-        Dz_unit  =  |  sin(beta) * sin(gamma) |.
-                    |        cos(beta)        |
-
-    @keyword beta:  The Euler angle beta in radians using the z-y-z convention.
-    @type beta:     float
-    @keyword gamma: The Euler angle gamma in radians using the z-y-z convention.
-    @type gamma:    float
-    @return:        The Dz unit vector.
-    @rtype:         Numeric array (Float64)
-    """
-
-    # Initilise the vector.
-    Dz_unit = zeros(3, Float64)
-
-    # Calculate the x, y, and z components.
-    Dz_unit[0] = -sin(beta) * cos(gamma)
-    Dz_unit[1] = sin(beta) * sin(gamma)
-    Dz_unit[2] = cos(beta)
-
-    # Return the unit vector.
-    return Dz_unit
-
-
-def calc_rotation(diff_type, *args):
-    """Function for calculating the rotation matrix.
-
-    Spherical diffusion
-    ===================
-
-    As the orientation of the diffusion tensor within the structural frame is undefined when the
-    molecule diffuses as a sphere, the rotation matrix is simply the identity matrix
-
-              | 1  0  0 |
-        R  =  | 0  1  0 |.
-              | 0  0  1 |
-
-
-    Spheroidal diffusion
-    ====================
-
-    The rotation matrix required to shift from the diffusion tensor frame to the structural
-    frame is equal to
-
-              |  cos(theta) * cos(phi)  -sin(phi)   sin(theta) * cos(phi) |
-        R  =  |  cos(theta) * sin(phi)   cos(phi)   sin(theta) * sin(phi) |.
-              | -sin(theta)              0          cos(theta)            |
-
-
-    Ellipsoidal diffusion
-    =====================
-
-    The rotation matrix required to shift from the diffusion tensor frame to the structural
-    frame is equal to
-
-        R  =  | Dx_unit  Dy_unit  Dz_unit |,
-
-              | Dx_unit[0]  Dy_unit[0]  Dz_unit[0] |
-           =  | Dx_unit[1]  Dy_unit[1]  Dz_unit[1] |.
-              | Dx_unit[2]  Dy_unit[2]  Dz_unit[2] |
-
-    @param *args:       All the function arguments.
-    @type *args:        tuple
-    @param theta:       The azimuthal angle in radians.
-    @type theta:        float
-    @param phi:         The polar angle in radians.
-    @type phi:          float
-    @param Dpar_unit:   The Dpar unit vector.
-    @type Dpar_unit:    Numeric array (Float64)
-    @param Dx_unit:     The Dx unit vector.
-    @type Dx_unit:      Numeric array (Float64)
-    @param Dy_unit:     The Dy unit vector.
-    @type Dy_unit:      Numeric array (Float64)
-    @param Dz_unit:     The Dz unit vector.
-    @type Dz_unit:      Numeric array (Float64)
-    @return:            The rotation matrix.
-    @rtype:             Numeric array ((3, 3), Float64)
-    """
-
-    # The rotation matrix for the sphere.
-    if diff_type == 'sphere':
-        return identity(3, Float64)
-
-    # The rotation matrix for the spheroid.
-    elif diff_type == 'spheroid':
-        # Unpack the arguments.
-        theta, phi, Dpar_unit = args
-
-        # Initialise the rotation matrix.
-        rotation = identity(3, Float64)
-
-        # First row of the rotation matrix.
-        rotation[0, 0] = cos(theta) * cos(phi)
-        rotation[1, 0] = cos(theta) * sin(phi)
-        rotation[2, 0] = -sin(theta)
-
-        # Second row of the rotation matrix.
-        rotation[0, 1] = -sin(phi)
-        rotation[1, 1] = cos(phi)
-
-        # Replace the last row of the rotation matrix with the Dpar unit vector.
-        rotation[:, 2] = Dpar_unit
-
-        # Return the tensor.
-        return rotation
-
-    # The rotation matrix for the ellipsoid.
-    elif diff_type == 'ellipsoid':
-        # Unpack the arguments.
-        Dx_unit, Dy_unit, Dz_unit = args
-
-        # Initialise the rotation matrix.
-        rotation = identity(3, Float64)
-
-        # First column of the rotation matrix.
-        rotation[:, 0] = Dx_unit
-
-        # Second column of the rotation matrix.
-        rotation[:, 1] = Dy_unit
-
-        # Third column of the rotation matrix.
-        rotation[:, 2] = Dz_unit
-
-        # Return the tensor.
-        return rotation
-
-    # Raise an error.
+    # The data pipe to check.
+    if pipe == None:
+        pipe = relax_data_store.current_pipe
+
+    # Test if the data structure exists.
+    if hasattr(relax_data_store[pipe], 'diff_tensor'):
+        return True
     else:
-        raise RelaxError, 'The diffusion tensor has not been specified'
+        return False
 
 
-def calc_tensor(rotation, tensor_diag):
-    """Function for calculating the diffusion tensor (in the structural frame).
+def display():
+    """Function for displaying the diffusion tensor."""
 
-    The diffusion tensor is calculated using the diagonalised tensor and the rotation matrix
-    through the equation
+    # Test if the current data pipe exists.
+    pipes.test(relax_data_store.current_pipe)
 
-        R . tensor_diag . R^T.
+    # Test if diffusion tensor data exists.
+    if not diff_data_exists():
+        raise RelaxNoTensorError, 'diffusion'
 
-    @keyword rotation:      The rotation matrix.
-    @type rotation:         Numeric array ((3, 3), Float64)
-    @keyword tensor_diag:   The diagonalised diffusion tensor.
-    @type tensor_diag:      Numeric array ((3, 3), Float64)
-    @return:                The diffusion tensor (within the structural frame).
-    @rtype:                 Numeric array ((3, 3), Float64)
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Spherical diffusion.
+    if cdp.diff_tensor.type == 'sphere':
+        # Tensor type.
+        print "Type:  Spherical diffusion"
+
+        # Parameters.
+        print "\nParameters {tm}."
+        print "tm (s):  " + `cdp.diff_tensor.tm`
+
+        # Alternate parameters.
+        print "\nAlternate parameters {Diso}."
+        print "Diso (1/s):  " + `cdp.diff_tensor.Diso`
+
+        # Fixed flag.
+        print "\nFixed:  " + `cdp.diff_tensor.fixed`
+
+    # Spheroidal diffusion.
+    elif cdp.diff_tensor.type == 'spheroid':
+        # Tensor type.
+        print "Type:  Spheroidal diffusion"
+
+        # Parameters.
+        print "\nParameters {tm, Da, theta, phi}."
+        print "tm (s):  " + `cdp.diff_tensor.tm`
+        print "Da (1/s):  " + `cdp.diff_tensor.Da`
+        print "theta (rad):  " + `cdp.diff_tensor.theta`
+        print "phi (rad):  " + `cdp.diff_tensor.phi`
+
+        # Alternate parameters.
+        print "\nAlternate parameters {Diso, Da, theta, phi}."
+        print "Diso (1/s):  " + `cdp.diff_tensor.Diso`
+        print "Da (1/s):  " + `cdp.diff_tensor.Da`
+        print "theta (rad):  " + `cdp.diff_tensor.theta`
+        print "phi (rad):  " + `cdp.diff_tensor.phi`
+
+        # Alternate parameters.
+        print "\nAlternate parameters {Dpar, Dper, theta, phi}."
+        print "Dpar (1/s):  " + `cdp.diff_tensor.Dpar`
+        print "Dper (1/s):  " + `cdp.diff_tensor.Dper`
+        print "theta (rad):  " + `cdp.diff_tensor.theta`
+        print "phi (rad):  " + `cdp.diff_tensor.phi`
+
+        # Alternate parameters.
+        print "\nAlternate parameters {tm, Dratio, theta, phi}."
+        print "tm (s):  " + `cdp.diff_tensor.tm`
+        print "Dratio:  " + `cdp.diff_tensor.Dratio`
+        print "theta (rad):  " + `cdp.diff_tensor.theta`
+        print "phi (rad):  " + `cdp.diff_tensor.phi`
+
+        # Fixed flag.
+        print "\nFixed:  " + `cdp.diff_tensor.fixed`
+
+    # Ellipsoidal diffusion.
+    elif cdp.diff_tensor.type == 'ellipsoid':
+        # Tensor type.
+        print "Type:  Ellipsoidal diffusion"
+
+        # Parameters.
+        print "\nParameters {tm, Da, Dr, alpha, beta, gamma}."
+        print "tm (s):  " + `cdp.diff_tensor.tm`
+        print "Da (1/s):  " + `cdp.diff_tensor.Da`
+        print "Dr:  " + `cdp.diff_tensor.Dr`
+        print "alpha (rad):  " + `cdp.diff_tensor.alpha`
+        print "beta (rad):  " + `cdp.diff_tensor.beta`
+        print "gamma (rad):  " + `cdp.diff_tensor.gamma`
+
+        # Alternate parameters.
+        print "\nAlternate parameters {Diso, Da, Dr, alpha, beta, gamma}."
+        print "Diso (1/s):  " + `cdp.diff_tensor.Diso`
+        print "Da (1/s):  " + `cdp.diff_tensor.Da`
+        print "Dr:  " + `cdp.diff_tensor.Dr`
+        print "alpha (rad):  " + `cdp.diff_tensor.alpha`
+        print "beta (rad):  " + `cdp.diff_tensor.beta`
+        print "gamma (rad):  " + `cdp.diff_tensor.gamma`
+
+        # Alternate parameters.
+        print "\nAlternate parameters {Dx, Dy, Dz, alpha, beta, gamma}."
+        print "Dx (1/s):  " + `cdp.diff_tensor.Dx`
+        print "Dy (1/s):  " + `cdp.diff_tensor.Dy`
+        print "Dz (1/s):  " + `cdp.diff_tensor.Dz`
+        print "alpha (rad):  " + `cdp.diff_tensor.alpha`
+        print "beta (rad):  " + `cdp.diff_tensor.beta`
+        print "gamma (rad):  " + `cdp.diff_tensor.gamma`
+
+        # Fixed flag.
+        print "\nFixed:  " + `cdp.diff_tensor.fixed`
+
+
+def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, param_types=None):
+    """Function for setting up a ellipsoidal diffusion tensor.
+    
+    @param params:          The diffusion tensor parameter.
+    @type params:           float
+    @param time_scale:      The correlation time scaling value.
+    @type time_scale:       float
+    @param d_scale:         The diffusion tensor eigenvalue scaling value.
+    @type d_scale:          float
+    @param angle_units:     The units for the angle parameters which can be either 'deg' or 'rad'.
+    @type angle_units:      str
+    @param param_types:     The type of parameters supplied.  These correspond to 0: {tm, Da, theta,
+                            phi}, 1: {Diso, Da, theta, phi}, 2: {tm, Dratio, theta, phi}, 3:  {Dpar,
+                            Dper, theta, phi}, 4: {Diso, Dratio, theta, phi}.
+    @type param_types:      int
     """
 
-    # Rotation (R . tensor_diag . R^T).
-    return dot(rotation, dot(tensor_diag, transpose(rotation)))
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # The diffusion type.
+    cdp.diff_tensor.type = 'ellipsoid'
+
+    # (tm, Da, Dr, alpha, beta, gamma).
+    if param_types == 0:
+        # Unpack the tuple.
+        tm, Da, Dr, alpha, beta, gamma = params
+
+        # Scaling.
+        tm = tm * time_scale
+        Da = Da * d_scale
+
+        # Set the parameters.
+        set(value=[tm, Da, Dr], param=['tm', 'Da', 'Dr'])
+
+    # (Diso, Da, Dr, alpha, beta, gamma).
+    elif param_types == 1:
+        # Unpack the tuple.
+        Diso, Da, Dr, alpha, beta, gamma = params
+
+        # Scaling.
+        Diso = Diso * d_scale
+        Da = Da * d_scale
+
+        # Set the parameters.
+        set(value=[Diso, Da, Dr], param=['Diso', 'Da', 'Dr'])
+
+    # (Dx, Dy, Dz, alpha, beta, gamma).
+    elif param_types == 2:
+        # Unpack the tuple.
+        Dx, Dy, Dz, alpha, beta, gamma = params
+
+        # Scaling.
+        Dx = Dx * d_scale
+        Dy = Dy * d_scale
+        Dz = Dz * d_scale
+
+        # Set the parameters.
+        set(value=[Dx, Dy, Dz], param=['Dx', 'Dy', 'Dz'])
+
+    # Unknown parameter combination.
+    else:
+        raise RelaxUnknownParamCombError, ('param_types', param_types)
+
+    # Convert the angles to radians.
+    if angle_units == 'deg':
+        alpha = (alpha / 360.0) * 2.0 * pi
+        beta = (beta / 360.0) * 2.0 * pi
+        gamma = (gamma / 360.0) * 2.0 * pi
+
+    # Set the orientational parameters.
+    set(value=[alpha, beta, gamma], param=['alpha', 'beta', 'gamma'])
 
 
-def calc_tensor_diag(diff_type, *args):
-    """Function for calculating the diagonalised diffusion tensor.
+def fold_angles(sim_index=None):
+    """Wrap the Euler or spherical angles and remove the glide reflection and translational symmetries.
 
-    The diagonalised spherical diffusion tensor is defined as
+    Wrap the angles such that
 
-                   | Diso     0     0 |
-        tensor  =  |    0  Diso     0 |.
-                   |    0     0  Diso |
+        0 <= theta <= pi,
+        0 <= phi <= 2pi,
 
-    The diagonalised spheroidal tensor is defined as
+    and
 
-                   | Dper     0     0 |
-        tensor  =  |    0  Dper     0 |.
-                   |    0     0  Dpar |
+        0 <= alpha <= 2pi,
+        0 <= beta <= pi,
+        0 <= gamma <= 2pi.
 
-    The diagonalised ellipsoidal diffusion tensor is defined as
 
-                   | Dx   0   0 |
-        tensor  =  |  0  Dy   0 |.
-                   |  0   0  Dz |
+    For the simulated values, the angles are wrapped as
 
-    @param *args:   All the arguments.
-    @type *args:    tuple
-    @param Diso:    The Diso parameter of the sphere.
-    @type Diso:     float
-    @param Dpar:    The Dpar parameter of the spheroid.
-    @type Dpar:     float
-    @param Dper:    The Dper parameter of the spheroid.
-    @type Dper:     float
-    @param Dx:      The Dx parameter of the ellipsoid.
-    @type Dx:       float
-    @param Dy:      The Dy parameter of the ellipsoid.
-    @type Dy:       float
-    @param Dz:      The Dz parameter of the ellipsoid.
-    @type Dz:       float
-    @return:        The diagonalised diffusion tensor.
-    @rtype:         Numeric array ((3, 3), Float64)
+        theta - pi/2 <= theta_sim <= theta + pi/2
+        phi - pi <= phi_sim <= phi + pi
+
+    and
+
+        alpha - pi <= alpha_sim <= alpha + pi
+        beta - pi/2 <= beta_sim <= beta + pi/2
+        gamma - pi <= gamma_sim <= gamma + pi
+
+
+    @param sim_index:   The simulation index.  If set to None then the actual values will be folded
+                        rather than the simulation values.
+    @type sim_index:    int or None
     """
 
-    # Spherical diffusion tensor.
-    if diff_type == 'sphere':
-        # Unpack the arguments.
-        Diso, = args
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
-        # Initialise the tensor.
-        tensor = zeros((3, 3), Float64)
 
-        # Populate the diagonal elements.
-        tensor[0, 0] = Diso
-        tensor[1, 1] = Diso
-        tensor[2, 2] = Diso
+    # Wrap the angles.
+    ##################
 
-        # Return the tensor.
-        return tensor
+    # Spheroid.
+    if cdp.diff_tensor.type == 'spheroid':
+        # Get the current angles.
+        theta = cdp.diff_tensor.theta
+        phi = cdp.diff_tensor.phi
 
-    # Spheroidal diffusion tensor.
-    elif diff_type == 'spheroid':
-        # Unpack the arguments.
-        Dpar, Dper = args
+        # Simulated values.
+        if sim_index != None:
+            theta_sim = cdp.diff_tensor.theta_sim[sim_index]
+            phi_sim   = cdp.diff_tensor.phi_sim[sim_index]
 
-        # Initialise the tensor.
-        tensor = zeros((3, 3), Float64)
+        # Normal value.
+        if sim_index == None:
+            cdp.diff_tensor.theta = wrap_angles(theta, 0.0, pi)
+            cdp.diff_tensor.phi = wrap_angles(phi, 0.0, 2.0*pi)
 
-        # Populate the diagonal elements.
-        tensor[0, 0] = Dper
-        tensor[1, 1] = Dper
-        tensor[2, 2] = Dpar
-
-        # Return the tensor.
-        return tensor
-
-    # Ellipsoidal diffusion tensor.
-    elif diff_type == 'ellipsoid':
-        # Unpack the arguments.
-        Dx, Dy, Dz = args
-
-        # Initialise the tensor.
-        tensor = zeros((3, 3), Float64)
-
-        # Populate the diagonal elements.
-        tensor[0, 0] = Dx
-        tensor[1, 1] = Dy
-        tensor[2, 2] = Dz
-
-        # Return the tensor.
-        return tensor
-
-
-class Diffusion_tensor:
-    def __init__(self, relax):
-        """Class containing the function for setting up the diffusion tensor."""
-
-        self.relax = relax
-
-        # relax data store module import.  This import statement has to be here to prevent circular import issues.
-        from data import Data
-
-        # The relax data storage object.
-        global relax_data_store
-        relax_data_store = Data
-
-
-
-
-    def copy(self, run1=None, run2=None):
-        """Function for copying diffusion tensor data from run1 to run2."""
-
-        # Test if run1 exists.
-        if not run1 in relax_data_store.run_names:
-            raise RelaxNoRunError, run1
-
-        # Test if run2 exists.
-        if not run2 in relax_data_store.run_names:
-            raise RelaxNoRunError, run2
-
-        # Test if run1 contains diffusion tensor data.
-        if not relax_data_store.diff.has_key(run1):
-            raise RelaxNoTensorError, run1
-
-        # Test if run2 contains diffusion tensor data.
-        if relax_data_store.diff.has_key(run2):
-            raise RelaxTensorError, run2
-
-        # Copy the data.
-        relax_data_store.diff[run2] = deepcopy(relax_data_store.diff[run1])
-
-
-    def data_names(self):
-        """Function for returning a list of names of data structures associated with the sequence."""
-
-        names = [ 'diff_type',
-                  'diff_params' ]
-
-        return names
-
-
-    def default_value(self, param):
-        """
-        Diffusion tensor parameter default values
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        ________________________________________________________________________
-        |                        |                    |                        |
-        | Data type              | Object name        | Value                  |
-        |________________________|____________________|________________________|
-        |                        |                    |                        |
-        | tm                     | 'tm'               | 10 * 1e-9              |
-        |                        |                    |                        |
-        | Diso                   | 'Diso'             | 1.666 * 1e7            |
-        |                        |                    |                        |
-        | Da                     | 'Da'               | 0.0                    |
-        |                        |                    |                        |
-        | Dr                     | 'Dr'               | 0.0                    |
-        |                        |                    |                        |
-        | Dx                     | 'Dx'               | 1.666 * 1e7            |
-        |                        |                    |                        |
-        | Dy                     | 'Dy'               | 1.666 * 1e7            |
-        |                        |                    |                        |
-        | Dz                     | 'Dz'               | 1.666 * 1e7            |
-        |                        |                    |                        |
-        | Dpar                   | 'Dpar'             | 1.666 * 1e7            |
-        |                        |                    |                        |
-        | Dper                   | 'Dper'             | 1.666 * 1e7            |
-        |                        |                    |                        |
-        | Dratio                 | 'Dratio'           | 1.0                    |
-        |                        |                    |                        |
-        | alpha                  | 'alpha'            | 0.0                    |
-        |                        |                    |                        |
-        | beta                   | 'beta'             | 0.0                    |
-        |                        |                    |                        |
-        | gamma                  | 'gamma'            | 0.0                    |
-        |                        |                    |                        |
-        | theta                  | 'theta'            | 0.0                    |
-        |                        |                    |                        |
-        | phi                    | 'phi'              | 0.0                    |
-        |________________________|____________________|________________________|
-
-        """
-
-        # tm.
-        if param == 'tm':
-            return 10.0 * 1e-9
-
-        # Diso, Dx, Dy, Dz, Dpar, Dper.
-        elif param == 'Diso' or param == 'Dx' or param == 'Dy' or param == 'Dz' or param == 'Dpar' or param == 'Dper':
-            return 1.666 * 1e7
-
-        # Dratio.
-        elif param == 'Dratio':
-            return 1.0
-
-
-    def delete(self, run=None):
-        """Function for deleting diffusion tensor data."""
-
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
-
-        # Test if diffusion tensor data for the run exists.
-        if not relax_data_store.diff.has_key(run):
-            raise RelaxNoTensorError, run
-
-        # Delete the diffusion data.
-        del(relax_data_store.diff[run])
-
-        # Clean up the runs.
-        self.relax.generic.runs.eliminate_unused_runs()
-
-
-    def display(self, run=None):
-        """Function for displaying the diffusion tensor."""
-
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
-
-        # Test if diffusion tensor data for the run exists.
-        if not relax_data_store.diff.has_key(run):
-            raise RelaxNoTensorError, run
-
-        # Spherical diffusion.
-        if relax_data_store.diff[run].type == 'sphere':
-            # Tensor type.
-            print "Type:  Spherical diffusion"
-
-            # Parameters.
-            print "\nParameters {tm}."
-            print "tm (s):  " + `relax_data_store.diff[run].tm`
-
-            # Alternate parameters.
-            print "\nAlternate parameters {Diso}."
-            print "Diso (1/s):  " + `relax_data_store.diff[run].Diso`
-
-            # Fixed flag.
-            print "\nFixed:  " + `relax_data_store.diff[run].fixed`
-
-        # Spheroidal diffusion.
-        elif relax_data_store.diff[run].type == 'spheroid':
-            # Tensor type.
-            print "Type:  Spheroidal diffusion"
-
-            # Parameters.
-            print "\nParameters {tm, Da, theta, phi}."
-            print "tm (s):  " + `relax_data_store.diff[run].tm`
-            print "Da (1/s):  " + `relax_data_store.diff[run].Da`
-            print "theta (rad):  " + `relax_data_store.diff[run].theta`
-            print "phi (rad):  " + `relax_data_store.diff[run].phi`
-
-            # Alternate parameters.
-            print "\nAlternate parameters {Diso, Da, theta, phi}."
-            print "Diso (1/s):  " + `relax_data_store.diff[run].Diso`
-            print "Da (1/s):  " + `relax_data_store.diff[run].Da`
-            print "theta (rad):  " + `relax_data_store.diff[run].theta`
-            print "phi (rad):  " + `relax_data_store.diff[run].phi`
-
-            # Alternate parameters.
-            print "\nAlternate parameters {Dpar, Dper, theta, phi}."
-            print "Dpar (1/s):  " + `relax_data_store.diff[run].Dpar`
-            print "Dper (1/s):  " + `relax_data_store.diff[run].Dper`
-            print "theta (rad):  " + `relax_data_store.diff[run].theta`
-            print "phi (rad):  " + `relax_data_store.diff[run].phi`
-
-            # Alternate parameters.
-            print "\nAlternate parameters {tm, Dratio, theta, phi}."
-            print "tm (s):  " + `relax_data_store.diff[run].tm`
-            print "Dratio:  " + `relax_data_store.diff[run].Dratio`
-            print "theta (rad):  " + `relax_data_store.diff[run].theta`
-            print "phi (rad):  " + `relax_data_store.diff[run].phi`
-
-            # Fixed flag.
-            print "\nFixed:  " + `relax_data_store.diff[run].fixed`
-
-        # Ellipsoidal diffusion.
-        elif relax_data_store.diff[run].type == 'ellipsoid':
-            # Tensor type.
-            print "Type:  Ellipsoidal diffusion"
-
-            # Parameters.
-            print "\nParameters {tm, Da, Dr, alpha, beta, gamma}."
-            print "tm (s):  " + `relax_data_store.diff[run].tm`
-            print "Da (1/s):  " + `relax_data_store.diff[run].Da`
-            print "Dr:  " + `relax_data_store.diff[run].Dr`
-            print "alpha (rad):  " + `relax_data_store.diff[run].alpha`
-            print "beta (rad):  " + `relax_data_store.diff[run].beta`
-            print "gamma (rad):  " + `relax_data_store.diff[run].gamma`
-
-            # Alternate parameters.
-            print "\nAlternate parameters {Diso, Da, Dr, alpha, beta, gamma}."
-            print "Diso (1/s):  " + `relax_data_store.diff[run].Diso`
-            print "Da (1/s):  " + `relax_data_store.diff[run].Da`
-            print "Dr:  " + `relax_data_store.diff[run].Dr`
-            print "alpha (rad):  " + `relax_data_store.diff[run].alpha`
-            print "beta (rad):  " + `relax_data_store.diff[run].beta`
-            print "gamma (rad):  " + `relax_data_store.diff[run].gamma`
-
-            # Alternate parameters.
-            print "\nAlternate parameters {Dx, Dy, Dz, alpha, beta, gamma}."
-            print "Dx (1/s):  " + `relax_data_store.diff[run].Dx`
-            print "Dy (1/s):  " + `relax_data_store.diff[run].Dy`
-            print "Dz (1/s):  " + `relax_data_store.diff[run].Dz`
-            print "alpha (rad):  " + `relax_data_store.diff[run].alpha`
-            print "beta (rad):  " + `relax_data_store.diff[run].beta`
-            print "gamma (rad):  " + `relax_data_store.diff[run].gamma`
-
-            # Fixed flag.
-            print "\nFixed:  " + `relax_data_store.diff[run].fixed`
-
-
-    def ellipsoid(self):
-        """Function for setting up ellipsoidal diffusion."""
-
-        # The diffusion type.
-        relax_data_store.diff[self.run].type = 'ellipsoid'
-
-        # (tm, Da, Dr, alpha, beta, gamma).
-        if self.param_types == 0:
-            # Unpack the tuple.
-            tm, Da, Dr, alpha, beta, gamma = self.params
-
-            # Scaling.
-            tm = tm * self.time_scale
-            Da = Da * self.d_scale
-
-            # Set the parameters.
-            self.set(run=self.run, value=[tm, Da, Dr], param=['tm', 'Da', 'Dr'])
-
-        # (Diso, Da, Dr, alpha, beta, gamma).
-        elif self.param_types == 1:
-            # Unpack the tuple.
-            Diso, Da, Dr, alpha, beta, gamma = self.params
-
-            # Scaling.
-            Diso = Diso * self.d_scale
-            Da = Da * self.d_scale
-
-            # Set the parameters.
-            self.set(run=self.run, value=[Diso, Da, Dr], param=['Diso', 'Da', 'Dr'])
-
-        # (Dx, Dy, Dz, alpha, beta, gamma).
-        elif self.param_types == 2:
-            # Unpack the tuple.
-            Dx, Dy, Dz, alpha, beta, gamma = self.params
-
-            # Scaling.
-            Dx = Dx * self.d_scale
-            Dy = Dy * self.d_scale
-            Dz = Dz * self.d_scale
-
-            # Set the parameters.
-            self.set(run=self.run, value=[Dx, Dy, Dz], param=['Dx', 'Dy', 'Dz'])
-
-        # Unknown parameter combination.
+        # Simulated theta and phi values.
         else:
-            raise RelaxUnknownParamCombError, ('param_types', self.param_types)
+            cdp.diff_tensor.theta_sim[sim_index] = wrap_angles(theta_sim, theta - pi/2.0, theta + pi/2.0)
+            cdp.diff_tensor.phi_sim[sim_index]   = wrap_angles(phi_sim, phi - pi, phi + pi)
 
-        # Convert the angles to radians.
-        if self.angle_units == 'deg':
-            alpha = (alpha / 360.0) * 2.0 * pi
-            beta = (beta / 360.0) * 2.0 * pi
-            gamma = (gamma / 360.0) * 2.0 * pi
+    # Ellipsoid.
+    elif cdp.diff_tensor.type == 'ellipsoid':
+        # Get the current angles.
+        alpha = cdp.diff_tensor.alpha
+        beta  = cdp.diff_tensor.beta
+        gamma = cdp.diff_tensor.gamma
 
-        # Set the orientational parameters.
-        self.set(run=self.run, value=[alpha, beta, gamma], param=['alpha', 'beta', 'gamma'])
+        # Simulated values.
+        if sim_index != None:
+            alpha_sim = cdp.diff_tensor.alpha_sim[sim_index]
+            beta_sim  = cdp.diff_tensor.beta_sim[sim_index]
+            gamma_sim = cdp.diff_tensor.gamma_sim[sim_index]
 
+        # Normal value.
+        if sim_index == None:
+            cdp.diff_tensor.alpha = wrap_angles(alpha, 0.0, 2.0*pi)
+            cdp.diff_tensor.beta  = wrap_angles(beta, 0.0, 2.0*pi)
+            cdp.diff_tensor.gamma = wrap_angles(gamma, 0.0, 2.0*pi)
 
-    def fold_angles(self, run=None, sim_index=None):
-        """Wrap the Euler or spherical angles and remove the glide reflection and translational symmetries.
-
-        Wrap the angles such that
-
-            0 <= theta <= pi,
-            0 <= phi <= 2pi,
-
-        and
-
-            0 <= alpha <= 2pi,
-            0 <= beta <= pi,
-            0 <= gamma <= 2pi.
-
-
-        For the simulated values, the angles are wrapped as
-
-            theta - pi/2 <= theta_sim <= theta + pi/2
-            phi - pi <= phi_sim <= phi + pi
-
-        and
-
-            alpha - pi <= alpha_sim <= alpha + pi
-            beta - pi/2 <= beta_sim <= beta + pi/2
-            gamma - pi <= gamma_sim <= gamma + pi
-        """
-
-        # Arguments.
-        self.run = run
-
-
-        # Wrap the angles.
-        ##################
-
-        # Spheroid.
-        if relax_data_store.diff[self.run].type == 'spheroid':
-            # Get the current angles.
-            theta = relax_data_store.diff[self.run].theta
-            phi = relax_data_store.diff[self.run].phi
-
-            # Simulated values.
-            if sim_index != None:
-                theta_sim = relax_data_store.diff[self.run].theta_sim[sim_index]
-                phi_sim   = relax_data_store.diff[self.run].phi_sim[sim_index]
-
-            # Normal value.
-            if sim_index == None:
-                relax_data_store.diff[self.run].theta = self.relax.generic.angles.wrap_angles(theta, 0.0, pi)
-                relax_data_store.diff[self.run].phi = self.relax.generic.angles.wrap_angles(phi, 0.0, 2.0*pi)
-
-            # Simulated theta and phi values.
-            else:
-                relax_data_store.diff[self.run].theta_sim[sim_index] = self.relax.generic.angles.wrap_angles(theta_sim, theta - pi/2.0, theta + pi/2.0)
-                relax_data_store.diff[self.run].phi_sim[sim_index]   = self.relax.generic.angles.wrap_angles(phi_sim, phi - pi, phi + pi)
-
-        # Ellipsoid.
-        elif relax_data_store.diff[self.run].type == 'ellipsoid':
-            # Get the current angles.
-            alpha = relax_data_store.diff[self.run].alpha
-            beta  = relax_data_store.diff[self.run].beta
-            gamma = relax_data_store.diff[self.run].gamma
-
-            # Simulated values.
-            if sim_index != None:
-                alpha_sim = relax_data_store.diff[self.run].alpha_sim[sim_index]
-                beta_sim  = relax_data_store.diff[self.run].beta_sim[sim_index]
-                gamma_sim = relax_data_store.diff[self.run].gamma_sim[sim_index]
-
-            # Normal value.
-            if sim_index == None:
-                relax_data_store.diff[self.run].alpha = self.relax.generic.angles.wrap_angles(alpha, 0.0, 2.0*pi)
-                relax_data_store.diff[self.run].beta  = self.relax.generic.angles.wrap_angles(beta, 0.0, 2.0*pi)
-                relax_data_store.diff[self.run].gamma = self.relax.generic.angles.wrap_angles(gamma, 0.0, 2.0*pi)
-
-            # Simulated alpha, beta, and gamma values.
-            else:
-                relax_data_store.diff[self.run].alpha_sim[sim_index] = self.relax.generic.angles.wrap_angles(alpha_sim, alpha - pi, alpha + pi)
-                relax_data_store.diff[self.run].beta_sim[sim_index]  = self.relax.generic.angles.wrap_angles(beta_sim, beta - pi, beta + pi)
-                relax_data_store.diff[self.run].gamma_sim[sim_index] = self.relax.generic.angles.wrap_angles(gamma_sim, gamma - pi, gamma + pi)
-
-
-        # Remove the glide reflection and translational symmetries.
-        ###########################################################
-
-        # Spheroid.
-        if relax_data_store.diff[self.run].type == 'spheroid':
-            # Normal value.
-            if sim_index == None:
-                # Fold phi inside 0 and pi.
-                if relax_data_store.diff[self.run].phi >= pi:
-                    relax_data_store.diff[self.run].theta = pi - relax_data_store.diff[self.run].theta
-                    relax_data_store.diff[self.run].phi = relax_data_store.diff[self.run].phi - pi
-
-            # Simulated theta and phi values.
-            else:
-                # Fold phi_sim inside phi-pi/2 and phi+pi/2.
-                if relax_data_store.diff[self.run].phi_sim[sim_index] >= relax_data_store.diff[self.run].phi + pi/2.0:
-                    relax_data_store.diff[self.run].theta_sim[sim_index] = pi - relax_data_store.diff[self.run].theta_sim[sim_index]
-                    relax_data_store.diff[self.run].phi_sim[sim_index]   = relax_data_store.diff[self.run].phi_sim[sim_index] - pi
-                elif relax_data_store.diff[self.run].phi_sim[sim_index] <= relax_data_store.diff[self.run].phi - pi/2.0:
-                    relax_data_store.diff[self.run].theta_sim[sim_index] = pi - relax_data_store.diff[self.run].theta_sim[sim_index]
-                    relax_data_store.diff[self.run].phi_sim[sim_index]   = relax_data_store.diff[self.run].phi_sim[sim_index] + pi
-
-        # Ellipsoid.
-        elif relax_data_store.diff[self.run].type == 'ellipsoid':
-            # Normal value.
-            if sim_index == None:
-                # Fold alpha inside 0 and pi.
-                if relax_data_store.diff[self.run].alpha >= pi:
-                    relax_data_store.diff[self.run].alpha = relax_data_store.diff[self.run].alpha - pi
-
-                # Fold beta inside 0 and pi.
-                if relax_data_store.diff[self.run].beta >= pi:
-                    relax_data_store.diff[self.run].alpha = pi - relax_data_store.diff[self.run].alpha
-                    relax_data_store.diff[self.run].beta = relax_data_store.diff[self.run].beta - pi
-
-                # Fold gamma inside 0 and pi.
-                if relax_data_store.diff[self.run].gamma >= pi:
-                    relax_data_store.diff[self.run].alpha = pi - relax_data_store.diff[self.run].alpha
-                    relax_data_store.diff[self.run].beta = pi - relax_data_store.diff[self.run].beta
-                    relax_data_store.diff[self.run].gamma = relax_data_store.diff[self.run].gamma - pi
-
-            # Simulated theta and phi values.
-            else:
-                # Fold alpha_sim inside alpha-pi/2 and alpha+pi/2.
-                if relax_data_store.diff[self.run].alpha_sim[sim_index] >= relax_data_store.diff[self.run].alpha + pi/2.0:
-                    relax_data_store.diff[self.run].alpha_sim[sim_index] = relax_data_store.diff[self.run].alpha_sim[sim_index] - pi
-                elif relax_data_store.diff[self.run].alpha_sim[sim_index] <= relax_data_store.diff[self.run].alpha - pi/2.0:
-                    relax_data_store.diff[self.run].alpha_sim[sim_index] = relax_data_store.diff[self.run].alpha_sim[sim_index] + pi
-
-                # Fold beta_sim inside beta-pi/2 and beta+pi/2.
-                if relax_data_store.diff[self.run].beta_sim[sim_index] >= relax_data_store.diff[self.run].beta + pi/2.0:
-                    relax_data_store.diff[self.run].alpha_sim[sim_index] = pi - relax_data_store.diff[self.run].alpha_sim[sim_index]
-                    relax_data_store.diff[self.run].beta_sim[sim_index] = relax_data_store.diff[self.run].beta_sim[sim_index] - pi
-                elif relax_data_store.diff[self.run].beta_sim[sim_index] <= relax_data_store.diff[self.run].beta - pi/2.0:
-                    relax_data_store.diff[self.run].alpha_sim[sim_index] = pi - relax_data_store.diff[self.run].alpha_sim[sim_index]
-                    relax_data_store.diff[self.run].beta_sim[sim_index] = relax_data_store.diff[self.run].beta_sim[sim_index] + pi
-
-                # Fold gamma_sim inside gamma-pi/2 and gamma+pi/2.
-                if relax_data_store.diff[self.run].gamma_sim[sim_index] >= relax_data_store.diff[self.run].gamma + pi/2.0:
-                    relax_data_store.diff[self.run].alpha_sim[sim_index] = pi - relax_data_store.diff[self.run].alpha_sim[sim_index]
-                    relax_data_store.diff[self.run].beta_sim[sim_index] = pi - relax_data_store.diff[self.run].beta_sim[sim_index]
-                    relax_data_store.diff[self.run].gamma_sim[sim_index] = relax_data_store.diff[self.run].gamma_sim[sim_index] - pi
-                elif relax_data_store.diff[self.run].gamma_sim[sim_index] <= relax_data_store.diff[self.run].gamma - pi/2.0:
-                    relax_data_store.diff[self.run].alpha_sim[sim_index] = pi - relax_data_store.diff[self.run].alpha_sim[sim_index]
-                    relax_data_store.diff[self.run].beta_sim[sim_index] = pi - relax_data_store.diff[self.run].beta_sim[sim_index]
-                    relax_data_store.diff[self.run].gamma_sim[sim_index] = relax_data_store.diff[self.run].gamma_sim[sim_index] + pi
-
-
-    def init(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=1):
-        """Function for initialising the diffusion tensor."""
-
-        # Arguments.
-        self.run = run
-        self.params = params
-        self.time_scale = time_scale
-        self.d_scale = d_scale
-        self.angle_units = angle_units
-        self.param_types = param_types
-        self.spheroid_type = spheroid_type
-
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
-
-        # Test if diffusion tensor data corresponding to the run already exists.
-        if relax_data_store.diff.has_key(self.run):
-            raise RelaxTensorError, self.run
-
-        # Check the validity of the angle_units argument.
-        valid_types = ['deg', 'rad']
-        if not angle_units in valid_types:
-            raise RelaxError, "The diffusion tensor 'angle_units' argument " + `angle_units` + " should be either 'deg' or 'rad'."
-
-        # Add the run to the diffusion tensor data structure.
-        relax_data_store.diff.add_item(self.run)
-
-        # Set the fixed flag.
-        relax_data_store.diff[self.run].fixed = fixed
-
-        # Spherical diffusion.
-        if type(params) == float:
-            num_params = 1
-            self.sphere()
-
-        # Spheroidal diffusion.
-        elif (type(params) == tuple or type(params) == list) and len(params) == 4:
-            num_params = 4
-            self.spheroid()
-
-        # Ellipsoidal diffusion.
-        elif (type(params) == tuple or type(params) == list) and len(params) == 6:
-            num_params = 6
-            self.ellipsoid()
-
-        # Unknown.
+        # Simulated alpha, beta, and gamma values.
         else:
-            raise RelaxError, "The diffusion tensor parameters " + `params` + " are of an unknown type."
-
-        # Test the validity of the parameters.
-        self.test_params(num_params)
-
-
-    def map_bounds(self, run, param):
-        """The function for creating bounds for the mapping function."""
-
-        # Initialise.
-        self.run = run
-
-        # tm.
-        if param == 'tm':
-            return [0, 10.0 * 1e-9]
-
-        # {Diso, Dx, Dy, Dz, Dpar, Dper}.
-        if param == 'Diso' or param == 'Dx' or param == 'Dy' or param == 'Dz' or param == 'Dpar' or param == 'Dper':
-            return [1e6, 1e7]
-
-        # Da.
-        if param == 'Da':
-            return [-3.0/2.0 * 1e7, 3.0 * 1e7]
-
-        # Dr.
-        elif param == 'Dr':
-            return [0, 1]
-
-        # Dratio.
-        elif param == 'Dratio':
-            return [1.0/3.0, 3.0]
-
-        # theta.
-        elif param == 'theta':
-            return [0, pi]
-
-        # phi.
-        elif param == 'phi':
-            return [0, 2*pi]
-
-        # alpha.
-        elif param == 'alpha':
-            return [0, 2*pi]
-
-        # beta.
-        elif param == 'beta':
-            return [0, pi]
-
-        # gamma.
-        elif param == 'gamma':
-            return [0, 2*pi]
+            cdp.diff_tensor.alpha_sim[sim_index] = wrap_angles(alpha_sim, alpha - pi, alpha + pi)
+            cdp.diff_tensor.beta_sim[sim_index]  = wrap_angles(beta_sim, beta - pi, beta + pi)
+            cdp.diff_tensor.gamma_sim[sim_index] = wrap_angles(gamma_sim, gamma - pi, gamma + pi)
 
 
-    def map_labels(self, run, index, params, bounds, swap, inc):
-        """Function for creating labels, tick locations, and tick values for an OpenDX map."""
+    # Remove the glide reflection and translational symmetries.
+    ###########################################################
 
-        # Initialise.
-        labels = "{"
-        tick_locations = []
-        tick_values = []
-        n = len(params)
-        axis_incs = 5
-        loc_inc = inc / axis_incs
+    # Spheroid.
+    if cdp.diff_tensor.type == 'spheroid':
+        # Normal value.
+        if sim_index == None:
+            # Fold phi inside 0 and pi.
+            if cdp.diff_tensor.phi >= pi:
+                cdp.diff_tensor.theta = pi - cdp.diff_tensor.theta
+                cdp.diff_tensor.phi = cdp.diff_tensor.phi - pi
 
-        # Increment over the model parameters.
-        for i in xrange(n):
-            # Parameter conversion factors.
-            factor = self.return_conversion_factor(params[swap[i]])
-
-            # Parameter units.
-            units = self.return_units(params[swap[i]])
-
-            # Labels.
-            if units:
-                labels = labels + "\"" + params[swap[i]] + " (" + units + ")\""
-            else:
-                labels = labels + "\"" + params[swap[i]] + "\""
-
-            # Tick values.
-            vals = bounds[swap[i], 0] / factor
-            val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / (axis_incs * factor)
-
-            if i < n - 1:
-                labels = labels + " "
-            else:
-                labels = labels + "}"
-
-            # Tick locations.
-            string = "{"
-            val = 0.0
-            for j in xrange(axis_incs + 1):
-                string = string + " " + `val`
-                val = val + loc_inc
-            string = string + " }"
-            tick_locations.append(string)
-
-            # Tick values.
-            string = "{"
-            for j in xrange(axis_incs + 1):
-                string = string + "\"" + "%.2f" % vals + "\" "
-                vals = vals + val_inc
-            string = string + "}"
-            tick_values.append(string)
-
-        return labels, tick_locations, tick_values
-
-
-    def return_conversion_factor(self, param):
-        """Function for returning the factor of conversion between different parameter units.
-
-        For example, the internal representation of tm is in seconds, whereas the external
-        representation is in nanoseconds, therefore this function will return 1e-9 for tm.
-        """
-
-        # Get the object name.
-        object_name = self.return_data_name(param)
-
-        # tm (nanoseconds).
-        if object_name == 'tm':
-            return 1e-9
-
-        # Diso, Da, Dx, Dy, Dz, Dpar, Dper.
-        elif object_name in ['Diso', 'Da', 'Dx', 'Dy', 'Dz', 'Dpar', 'Dper']:
-            return 1e6
-
-        # Angles.
-        elif object_name in ['theta', 'phi', 'alpha', 'beta', 'gamma']:
-            return (2.0*pi) / 360.0
-
-        # No conversion factor.
+        # Simulated theta and phi values.
         else:
-            return 1.0
+            # Fold phi_sim inside phi-pi/2 and phi+pi/2.
+            if cdp.diff_tensor.phi_sim[sim_index] >= cdp.diff_tensor.phi + pi/2.0:
+                cdp.diff_tensor.theta_sim[sim_index] = pi - cdp.diff_tensor.theta_sim[sim_index]
+                cdp.diff_tensor.phi_sim[sim_index]   = cdp.diff_tensor.phi_sim[sim_index] - pi
+            elif cdp.diff_tensor.phi_sim[sim_index] <= cdp.diff_tensor.phi - pi/2.0:
+                cdp.diff_tensor.theta_sim[sim_index] = pi - cdp.diff_tensor.theta_sim[sim_index]
+                cdp.diff_tensor.phi_sim[sim_index]   = cdp.diff_tensor.phi_sim[sim_index] + pi
+
+    # Ellipsoid.
+    elif cdp.diff_tensor.type == 'ellipsoid':
+        # Normal value.
+        if sim_index == None:
+            # Fold alpha inside 0 and pi.
+            if cdp.diff_tensor.alpha >= pi:
+                cdp.diff_tensor.alpha = cdp.diff_tensor.alpha - pi
+
+            # Fold beta inside 0 and pi.
+            if cdp.diff_tensor.beta >= pi:
+                cdp.diff_tensor.alpha = pi - cdp.diff_tensor.alpha
+                cdp.diff_tensor.beta = cdp.diff_tensor.beta - pi
+
+            # Fold gamma inside 0 and pi.
+            if cdp.diff_tensor.gamma >= pi:
+                cdp.diff_tensor.alpha = pi - cdp.diff_tensor.alpha
+                cdp.diff_tensor.beta = pi - cdp.diff_tensor.beta
+                cdp.diff_tensor.gamma = cdp.diff_tensor.gamma - pi
+
+        # Simulated theta and phi values.
+        else:
+            # Fold alpha_sim inside alpha-pi/2 and alpha+pi/2.
+            if cdp.diff_tensor.alpha_sim[sim_index] >= cdp.diff_tensor.alpha + pi/2.0:
+                cdp.diff_tensor.alpha_sim[sim_index] = cdp.diff_tensor.alpha_sim[sim_index] - pi
+            elif cdp.diff_tensor.alpha_sim[sim_index] <= cdp.diff_tensor.alpha - pi/2.0:
+                cdp.diff_tensor.alpha_sim[sim_index] = cdp.diff_tensor.alpha_sim[sim_index] + pi
+
+            # Fold beta_sim inside beta-pi/2 and beta+pi/2.
+            if cdp.diff_tensor.beta_sim[sim_index] >= cdp.diff_tensor.beta + pi/2.0:
+                cdp.diff_tensor.alpha_sim[sim_index] = pi - cdp.diff_tensor.alpha_sim[sim_index]
+                cdp.diff_tensor.beta_sim[sim_index] = cdp.diff_tensor.beta_sim[sim_index] - pi
+            elif cdp.diff_tensor.beta_sim[sim_index] <= cdp.diff_tensor.beta - pi/2.0:
+                cdp.diff_tensor.alpha_sim[sim_index] = pi - cdp.diff_tensor.alpha_sim[sim_index]
+                cdp.diff_tensor.beta_sim[sim_index] = cdp.diff_tensor.beta_sim[sim_index] + pi
+
+            # Fold gamma_sim inside gamma-pi/2 and gamma+pi/2.
+            if cdp.diff_tensor.gamma_sim[sim_index] >= cdp.diff_tensor.gamma + pi/2.0:
+                cdp.diff_tensor.alpha_sim[sim_index] = pi - cdp.diff_tensor.alpha_sim[sim_index]
+                cdp.diff_tensor.beta_sim[sim_index] = pi - cdp.diff_tensor.beta_sim[sim_index]
+                cdp.diff_tensor.gamma_sim[sim_index] = cdp.diff_tensor.gamma_sim[sim_index] - pi
+            elif cdp.diff_tensor.gamma_sim[sim_index] <= cdp.diff_tensor.gamma - pi/2.0:
+                cdp.diff_tensor.alpha_sim[sim_index] = pi - cdp.diff_tensor.alpha_sim[sim_index]
+                cdp.diff_tensor.beta_sim[sim_index] = pi - cdp.diff_tensor.beta_sim[sim_index]
+                cdp.diff_tensor.gamma_sim[sim_index] = cdp.diff_tensor.gamma_sim[sim_index] + pi
 
 
-    def return_data_name(self, name):
-        """
+def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=1):
+    """Function for initialising the diffusion tensor.
+
+    @param params:          The diffusion tensor parameters.
+    @type params:           float
+    @param time_scale:      The correlation time scaling value.
+    @type time_scale:       float
+    @param d_scale:         The diffusion tensor eigenvalue scaling value.
+    @type d_scale:          float
+    @param angle_units:     The units for the angle parameters.
+    @type angle_units:      str (either 'deg' or 'rad')
+    @param param_types:     The type of parameters supplied.  For spherical diffusion, the flag
+                            values correspond to 0: tm, 1: Diso.  For spheroidal diffusion, 0: {tm,
+                            Da, theta, phi}, 1: {Diso, Da, theta, phi}, 2: {tm, Dratio, theta, phi},
+                            3:  {Dpar, Dper, theta, phi}, 4: {Diso, Dratio, theta, phi}.  For
+                            ellipsoidal diffusion, 0: {tm, Da, Dr, alpha, beta, gamma}, 1: {Diso,
+                            Da, Dr, alpha, beta, gamma}, 2: {Dx, Dy, Dz, alpha, beta, gamma}.
+    @type param_types:      int
+    @param spheroid_type:   A string which, if supplied together with spheroid parameters, will
+                            restrict the tensor to either being 'oblate' or 'prolate'.
+    @type spheroid_type:    str
+    @param fixed:           A flag specifying whether the diffusion tensor is fixed or can be
+                            optimised.
+    @type fixed:            bin
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test(relax_data_store.current_pipe)
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Test if diffusion tensor data already exists.
+    if diff_data_exists():
+        raise RelaxTensorError, 'diffusion'
+
+    # Check the validity of the angle_units argument.
+    valid_types = ['deg', 'rad']
+    if not angle_units in valid_types:
+        raise RelaxError, "The diffusion tensor 'angle_units' argument " + `angle_units` + " should be either 'deg' or 'rad'."
+
+    # Add the diff_tensor object to the data pipe.
+    cdp.diff_tensor = DiffTensorData()
+
+    # Set the fixed flag.
+    cdp.diff_tensor.fixed = fixed
+
+    # Spherical diffusion.
+    if type(params) == float:
+        num_params = 1
+        sphere(params, time_scale, param_types)
+
+    # Spheroidal diffusion.
+    elif (type(params) == tuple or type(params) == list) and len(params) == 4:
+        num_params = 4
+        spheroid(params, time_scale, d_scale, angle_units, param_types, spheroid_type)
+
+    # Ellipsoidal diffusion.
+    elif (type(params) == tuple or type(params) == list) and len(params) == 6:
+        num_params = 6
+        ellipsoid(params, time_scale, d_scale, angle_units, param_types)
+
+    # Unknown.
+    else:
+        raise RelaxError, "The diffusion tensor parameters " + `params` + " are of an unknown type."
+
+    # Test the validity of the parameters.
+    test_params(num_params)
+
+
+def map_bounds(run, param):
+    """The function for creating bounds for the mapping function."""
+
+    # Initialise.
+    run = run
+
+    # tm.
+    if param == 'tm':
+        return [0, 10.0 * 1e-9]
+
+    # {Diso, Dx, Dy, Dz, Dpar, Dper}.
+    if param == 'Diso' or param == 'Dx' or param == 'Dy' or param == 'Dz' or param == 'Dpar' or param == 'Dper':
+        return [1e6, 1e7]
+
+    # Da.
+    if param == 'Da':
+        return [-3.0/2.0 * 1e7, 3.0 * 1e7]
+
+    # Dr.
+    elif param == 'Dr':
+        return [0, 1]
+
+    # Dratio.
+    elif param == 'Dratio':
+        return [1.0/3.0, 3.0]
+
+    # theta.
+    elif param == 'theta':
+        return [0, pi]
+
+    # phi.
+    elif param == 'phi':
+        return [0, 2*pi]
+
+    # alpha.
+    elif param == 'alpha':
+        return [0, 2*pi]
+
+    # beta.
+    elif param == 'beta':
+        return [0, pi]
+
+    # gamma.
+    elif param == 'gamma':
+        return [0, 2*pi]
+
+
+def map_labels(run, index, params, bounds, swap, inc):
+    """Function for creating labels, tick locations, and tick values for an OpenDX map."""
+
+    # Initialise.
+    labels = "{"
+    tick_locations = []
+    tick_values = []
+    n = len(params)
+    axis_incs = 5
+    loc_inc = inc / axis_incs
+
+    # Increment over the model parameters.
+    for i in xrange(n):
+        # Parameter conversion factors.
+        factor = return_conversion_factor(params[swap[i]])
+
+        # Parameter units.
+        units = return_units(params[swap[i]])
+
+        # Labels.
+        if units:
+            labels = labels + "\"" + params[swap[i]] + " (" + units + ")\""
+        else:
+            labels = labels + "\"" + params[swap[i]] + "\""
+
+        # Tick values.
+        vals = bounds[swap[i], 0] / factor
+        val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / (axis_incs * factor)
+
+        if i < n - 1:
+            labels = labels + " "
+        else:
+            labels = labels + "}"
+
+        # Tick locations.
+        string = "{"
+        val = 0.0
+        for j in xrange(axis_incs + 1):
+            string = string + " " + `val`
+            val = val + loc_inc
+        string = string + " }"
+        tick_locations.append(string)
+
+        # Tick values.
+        string = "{"
+        for j in xrange(axis_incs + 1):
+            string = string + "\"" + "%.2f" % vals + "\" "
+            vals = vals + val_inc
+        string = string + "}"
+        tick_values.append(string)
+
+    return labels, tick_locations, tick_values
+
+
+def return_conversion_factor(param):
+    """Function for returning the factor of conversion between different parameter units.
+
+    For example, the internal representation of tm is in seconds, whereas the external
+    representation is in nanoseconds, therefore this function will return 1e-9 for tm.
+    """
+
+    # Get the object name.
+    object_name = return_data_name(param)
+
+    # tm (nanoseconds).
+    if object_name == 'tm':
+        return 1e-9
+
+    # Diso, Da, Dx, Dy, Dz, Dpar, Dper.
+    elif object_name in ['Diso', 'Da', 'Dx', 'Dy', 'Dz', 'Dpar', 'Dper']:
+        return 1e6
+
+    # Angles.
+    elif object_name in ['theta', 'phi', 'alpha', 'beta', 'gamma']:
+        return (2.0*pi) / 360.0
+
+    # No conversion factor.
+    else:
+        return 1.0
+
+
+def return_data_name(name):
+    """
         Diffusion tensor parameter string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1160,783 +745,828 @@ class Diffusion_tensor:
         | The azimuthal angle defining the major axis of the     | 'phi'        | 'phi'            |
         | spheroid diffusion tensor - phi                        |              |                  |
         |________________________________________________________|______________|__________________|
-        """
+    """    # This docstring is to be joined onto those of the user functions, hence the 8 whitespace characters.
 
-        # Local tm.
-        if search('^tm$', name):
-            return 'tm'
+    # Enforce that the name must be a string.
+    if type(name) != str:
+        raise RelaxStrError, ('name', name)
 
-        # Diso.
-        if search('[Dd]iso', name):
-            return 'Diso'
+    # Local tm.
+    if search('^tm$', name):
+        return 'tm'
 
-        # Da.
-        if search('[Dd]a', name):
-            return 'Da'
+    # Diso.
+    if search('[Dd]iso', name):
+        return 'Diso'
 
-        # Dr.
-        if search('[Dd]r$', name):
-            return 'Dr'
+    # Da.
+    if search('[Dd]a', name):
+        return 'Da'
 
-        # Dx.
-        if search('[Dd]x', name):
-            return 'Dx'
+    # Dr.
+    if search('[Dd]r$', name):
+        return 'Dr'
 
-        # Dy.
-        if search('[Dd]y', name):
-            return 'Dy'
+    # Dx.
+    if search('[Dd]x', name):
+        return 'Dx'
 
-        # Dz.
-        if search('[Dd]z', name):
-            return 'Dz'
+    # Dy.
+    if search('[Dd]y', name):
+        return 'Dy'
 
-        # Dpar.
-        if search('[Dd]par', name):
-            return 'Dpar'
+    # Dz.
+    if search('[Dd]z', name):
+        return 'Dz'
 
-        # Dper.
-        if search('[Dd]per', name):
-            return 'Dper'
+    # Dpar.
+    if search('[Dd]par', name):
+        return 'Dpar'
 
-        # Dratio.
-        if search('[Dd]ratio', name):
-            return 'Dratio'
+    # Dper.
+    if search('[Dd]per', name):
+        return 'Dper'
 
-        # alpha.
-        if search('^a$', name) or search('alpha', name):
-            return 'alpha'
+    # Dratio.
+    if search('[Dd]ratio', name):
+        return 'Dratio'
 
-        # beta.
-        if search('^b$', name) or search('beta', name):
-            return 'beta'
+    # alpha.
+    if search('^a$', name) or search('alpha', name):
+        return 'alpha'
 
-        # gamma.
-        if search('^g$', name) or search('gamma', name):
-            return 'gamma'
+    # beta.
+    if search('^b$', name) or search('beta', name):
+        return 'beta'
 
-        # theta.
-        if search('theta', name):
-            return 'theta'
+    # gamma.
+    if search('^g$', name) or search('gamma', name):
+        return 'gamma'
 
-        # phi.
-        if search('phi', name):
-            return 'phi'
+    # theta.
+    if search('theta', name):
+        return 'theta'
 
+    # phi.
+    if search('phi', name):
+        return 'phi'
 
-    def return_eigenvalues(self, run=None):
-        """Function for returning Dx, Dy, and Dz."""
-
-        # Argument.
-        if run:
-            self.run = run
-
-        # Reassign the data.
-        data = relax_data_store.diff[self.run]
-
-        # Diso.
-        Diso = 1.0 / (6.0 * data.tm)
-
-        # Dx.
-        Dx = Diso - 1.0/3.0 * data.Da * (1.0  +  3.0 * data.Dr)
-
-        # Dy.
-        Dy = Diso - 1.0/3.0 * data.Da * (1.0  -  3.0 * data.Dr)
-
-        # Dz.
-        Dz = Diso + 2.0/3.0 * data.Da
-
-        # Return the eigenvalues.
-        return Dx, Dy, Dz
+    # No parameter?
+    raise RelaxUnknownParamError, name
 
 
-    def return_units(self, param):
-        """Function for returning a string representing the parameters units.
+def return_eigenvalues(run=None):
+    """Function for returning Dx, Dy, and Dz."""
 
-        For example, the internal representation of tm is in seconds, whereas the external
-        representation is in nanoseconds, therefore this function will return the string
-        'nanoseconds' for tm.
-        """
+    # Argument.
+    if run:
+        run = run
 
+    # Reassign the data.
+    data = cdp.diff_tensor
+
+    # Diso.
+    Diso = 1.0 / (6.0 * data.tm)
+
+    # Dx.
+    Dx = Diso - 1.0/3.0 * data.Da * (1.0  +  3.0 * data.Dr)
+
+    # Dy.
+    Dy = Diso - 1.0/3.0 * data.Da * (1.0  -  3.0 * data.Dr)
+
+    # Dz.
+    Dz = Diso + 2.0/3.0 * data.Da
+
+    # Return the eigenvalues.
+    return Dx, Dy, Dz
+
+
+def return_units(param):
+    """Function for returning a string representing the parameters units.
+
+    For example, the internal representation of tm is in seconds, whereas the external
+    representation is in nanoseconds, therefore this function will return the string
+    'nanoseconds' for tm.
+    """
+
+    # Get the object name.
+    object_name = return_data_name(param)
+
+    # tm (nanoseconds).
+    if object_name == 'tm':
+        return 'ns'
+
+    # Diso, Da, Dx, Dy, Dz, Dpar, Dper.
+    elif object_name in ['Diso', 'Da', 'Dx', 'Dy', 'Dz', 'Dpar', 'Dper']:
+        return '1e6 1/s'
+
+    # Angles.
+    elif object_name in ['theta', 'phi', 'alpha', 'beta', 'gamma']:
+        return 'deg'
+
+
+def set(value=None, param=None):
+    """
+    Diffusion tensor set details
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    If the diffusion tensor has not been setup, use the more powerful function
+    'diffusion_tensor.init' to initialise the tensor parameters.
+
+    The diffusion tensor parameters can only be set when the run corresponds to model-free
+    analysis.  The units of the parameters are:
+
+        Inverse seconds for tm.
+        Seconds for Diso, Da, Dx, Dy, Dz, Dpar, Dper.
+        Unitless for Dratio and Dr.
+        Radians for all angles (alpha, beta, gamma, theta, phi).
+
+
+    When setting a diffusion tensor parameter, the residue number has no effect.  As the
+    internal parameters of spherical diffusion are {tm}, spheroidal diffusion are {tm, Da,
+    theta, phi}, and ellipsoidal diffusion are {tm, Da, Dr, alpha, beta, gamma}, supplying
+    geometric parameters must be done in the following way.  If a single geometric parameter is
+    supplied, it must be one of tm, Diso, Da, Dr, or Dratio.  For the parameters Dpar, Dper, Dx,
+    Dy, and Dx, it is not possible to determine how to use the currently set values together
+    with the supplied value to calculate the new internal parameters.  For spheroidal diffusion,
+    when supplying multiple geometric parameters, the set must belong to one of
+
+        {tm, Da},
+        {Diso, Da},
+        {tm, Dratio},
+        {Dpar, Dper},
+        {Diso, Dratio},
+
+    where either theta, phi, or both orientational parameters can be additionally supplied.  For
+    ellipsoidal diffusion, again when supplying multiple geometric parameters, the set must
+    belong to one of
+
+        {tm, Da, Dr},
+        {Diso, Da, Dr},
+        {Dx, Dy, Dz},
+
+    where any number of the orientational parameters, alpha, beta, or gamma can be additionally
+    supplied.
+    """
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Initialise.
+    geo_params = []
+    geo_values = []
+    orient_params = []
+    orient_values = []
+
+    # Loop over the parameters.
+    for i in xrange(len(param)):
         # Get the object name.
-        object_name = self.return_data_name(param)
+        param[i] = return_data_name(param[i])
 
-        # tm (nanoseconds).
-        if object_name == 'tm':
-            return 'ns'
+        # Unknown parameter.
+        if not param[i]:
+            raise RelaxUnknownParamError, ("diffusion tensor", param[i])
 
-        # Diso, Da, Dx, Dy, Dz, Dpar, Dper.
-        elif object_name in ['Diso', 'Da', 'Dx', 'Dy', 'Dz', 'Dpar', 'Dper']:
-            return '1e6 1/s'
+        # Default value.
+        if value[i] == None:
+            value[i] = default_value(object_names[i])
 
-        # Angles.
-        elif object_name in ['theta', 'phi', 'alpha', 'beta', 'gamma']:
-            return 'deg'
+        # Geometric parameter.
+        if param[i] in ['tm', 'Diso', 'Da', 'Dratio', 'Dper', 'Dpar', 'Dr', 'Dx', 'Dy', 'Dz']:
+            geo_params.append(param[i])
+            geo_values.append(value[i])
 
-
-    def set(self, run=None, value=None, param=None):
-        """
-        Diffusion tensor set details
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        If the diffusion tensor has not been setup, use the more powerful function
-        'diffusion_tensor.init' to initialise the tensor parameters.
-
-        The diffusion tensor parameters can only be set when the run corresponds to model-free
-        analysis.  The units of the parameters are:
-
-            Inverse seconds for tm.
-            Seconds for Diso, Da, Dx, Dy, Dz, Dpar, Dper.
-            Unitless for Dratio and Dr.
-            Radians for all angles (alpha, beta, gamma, theta, phi).
+        # Orientational parameter.
+        if param[i] in ['theta', 'phi', 'alpha', 'beta', 'gamma']:
+            orient_params.append(param[i])
+            orient_values.append(value[i])
 
 
-        When setting a diffusion tensor parameter, the residue number has no effect.  As the
-        internal parameters of spherical diffusion are {tm}, spheroidal diffusion are {tm, Da,
-        theta, phi}, and ellipsoidal diffusion are {tm, Da, Dr, alpha, beta, gamma}, supplying
-        geometric parameters must be done in the following way.  If a single geometric parameter is
-        supplied, it must be one of tm, Diso, Da, Dr, or Dratio.  For the parameters Dpar, Dper, Dx,
-        Dy, and Dx, it is not possible to determine how to use the currently set values together
-        with the supplied value to calculate the new internal parameters.  For spheroidal diffusion,
-        when supplying multiple geometric parameters, the set must belong to one of
+    # Spherical diffusion.
+    ######################
 
-            {tm, Da},
-            {Diso, Da},
-            {tm, Dratio},
-            {Dpar, Dper},
-            {Diso, Dratio},
-
-        where either theta, phi, or both orientational parameters can be additionally supplied.  For
-        ellipsoidal diffusion, again when supplying multiple geometric parameters, the set must
-        belong to one of
-
-            {tm, Da, Dr},
-            {Diso, Da, Dr},
-            {Dx, Dy, Dz},
-
-        where any number of the orientational parameters, alpha, beta, or gamma can be additionally
-        supplied.
-        """
-
-        # Initialise.
-        geo_params = []
-        geo_values = []
-        orient_params = []
-        orient_values = []
-
-        # Loop over the parameters.
-        for i in xrange(len(param)):
-            # Get the object name.
-            param[i] = self.return_data_name(param[i])
-
-            # Unknown parameter.
-            if not param[i]:
-                raise RelaxUnknownParamError, ("diffusion tensor", param[i])
-
-            # Default value.
-            if value[i] == None:
-                value[i] = self.default_value(object_names[i])
-
-            # Geometric parameter.
-            if param[i] in ['tm', 'Diso', 'Da', 'Dratio', 'Dper', 'Dpar', 'Dr', 'Dx', 'Dy', 'Dz']:
-                geo_params.append(param[i])
-                geo_values.append(value[i])
-
-            # Orientational parameter.
-            if param[i] in ['theta', 'phi', 'alpha', 'beta', 'gamma']:
-                orient_params.append(param[i])
-                orient_values.append(value[i])
-
-
-        # Spherical diffusion.
-        ######################
-
-        if relax_data_store.diff[self.run].type == 'sphere':
-            # Geometric parameters.
-            #######################
-
-            # A single geometric parameter.
-            if len(geo_params) == 1:
-                # The single parameter tm.
-                if geo_params[0] == 'tm':
-                    relax_data_store.diff[self.run].tm = geo_values[0]
-
-                # The single parameter Diso.
-                elif geo_params[0] == 'Diso':
-                    relax_data_store.diff[self.run].tm = 1.0 / (6.0 * geo_values[0])
-
-                # Cannot set the single parameter.
-                else:
-                    raise RelaxError, "The geometric diffusion parameter " + `geo_params[0]` + " cannot be set."
-
-            # More than one geometric parameters.
-            elif len(geo_params) > 1:
-                raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
-
-
-            # Orientational parameters.
-            ###########################
-
-            # ???
-            if len(orient_params):
-                raise RelaxError, "For spherical diffusion, the orientation parameters " + `orient_params` + " should not exist."
-
-
-        # Spheroidal diffusion.
+    if cdp.diff_tensor.type == 'sphere':
+        # Geometric parameters.
         #######################
 
-        elif relax_data_store.diff[self.run].type == 'spheroid':
-            # Geometric parameters.
-            #######################
+        # A single geometric parameter.
+        if len(geo_params) == 1:
+            # The single parameter tm.
+            if geo_params[0] == 'tm':
+                cdp.diff_tensor.tm = geo_values[0]
 
-            # A single geometric parameter.
-            if len(geo_params) == 1:
-                # The single parameter tm.
-                if geo_params[0] == 'tm':
-                    relax_data_store.diff[self.run].tm = geo_values[0]
+            # The single parameter Diso.
+            elif geo_params[0] == 'Diso':
+                cdp.diff_tensor.tm = 1.0 / (6.0 * geo_values[0])
 
-                # The single parameter Diso.
-                elif geo_params[0] == 'Diso':
-                    relax_data_store.diff[self.run].tm = 1.0 / (6.0 * geo_values[0])
+            # Cannot set the single parameter.
+            else:
+                raise RelaxError, "The geometric diffusion parameter " + `geo_params[0]` + " cannot be set."
 
-                # The single parameter Da.
-                elif geo_params[0] == 'Da':
-                    relax_data_store.diff[self.run].Da = geo_values[0]
+        # More than one geometric parameters.
+        elif len(geo_params) > 1:
+            raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
 
-                # The single parameter Dratio.
-                elif geo_params[0] == 'Dratio':
-                    Dratio = geo_values[0]
-                    relax_data_store.diff[self.run].Da = (Dratio - 1.0) / (2.0 * relax_data_store.diff[self.run].tm * (Dratio + 2.0))
 
-                # Cannot set the single parameter.
+        # Orientational parameters.
+        ###########################
+
+        # ???
+        if len(orient_params):
+            raise RelaxError, "For spherical diffusion, the orientation parameters " + `orient_params` + " should not exist."
+
+
+    # Spheroidal diffusion.
+    #######################
+
+    elif cdp.diff_tensor.type == 'spheroid':
+        # Geometric parameters.
+        #######################
+
+        # A single geometric parameter.
+        if len(geo_params) == 1:
+            # The single parameter tm.
+            if geo_params[0] == 'tm':
+                cdp.diff_tensor.tm = geo_values[0]
+
+            # The single parameter Diso.
+            elif geo_params[0] == 'Diso':
+                cdp.diff_tensor.tm = 1.0 / (6.0 * geo_values[0])
+
+            # The single parameter Da.
+            elif geo_params[0] == 'Da':
+                cdp.diff_tensor.Da = geo_values[0]
+
+            # The single parameter Dratio.
+            elif geo_params[0] == 'Dratio':
+                Dratio = geo_values[0]
+                cdp.diff_tensor.Da = (Dratio - 1.0) / (2.0 * cdp.diff_tensor.tm * (Dratio + 2.0))
+
+            # Cannot set the single parameter.
+            else:
+                raise RelaxError, "The geometric diffusion parameter " + `geo_params[0]` + " cannot be set."
+
+        # Two geometric parameters.
+        elif len(geo_params) == 2:
+            # The geometric parameter set {tm, Da}.
+            if geo_params.count('tm') == 1 and geo_params.count('Da') == 1:
+                # The parameters.
+                tm = geo_values[geo_params.index('tm')]
+                Da = geo_values[geo_params.index('Da')]
+
+                # Set the internal parameter values.
+                cdp.diff_tensor.tm = tm
+                cdp.diff_tensor.Da = Da
+
+            # The geometric parameter set {Diso, Da}.
+            elif geo_params.count('Diso') == 1 and geo_params.count('Da') == 1:
+                # The parameters.
+                Diso = geo_values[geo_params.index('Diso')]
+                Da = geo_values[geo_params.index('Da')]
+
+                # Set the internal parameter values.
+                cdp.diff_tensor.tm = 1.0 / (6.0 * Diso)
+                cdp.diff_tensor.Da = Da
+
+            # The geometric parameter set {tm, Dratio}.
+            elif geo_params.count('tm') == 1 and geo_params.count('Dratio') == 1:
+                # The parameters.
+                tm = geo_values[geo_params.index('tm')]
+                Dratio = geo_values[geo_params.index('Dratio')]
+
+                # Set the internal parameter values.
+                cdp.diff_tensor.tm = tm
+                cdp.diff_tensor.Da = (Dratio - 1.0) / (2.0 * tm * (Dratio + 2.0))
+
+            # The geometric parameter set {Dpar, Dper}.
+            elif geo_params.count('Dpar') == 1 and geo_params.count('Dpar') == 1:
+                # The parameters.
+                Dpar = geo_values[geo_params.index('Dpar')]
+                Dper = geo_values[geo_params.index('Dper')]
+
+                # Set the internal parameter values.
+                cdp.diff_tensor.tm = 1.0 / (2.0 * (Dpar + 2.0*Dper))
+                cdp.diff_tensor.Da = Dpar - Dper
+
+            # The geometric parameter set {Diso, Dratio}.
+            elif geo_params.count('Diso') == 1 and geo_params.count('Dratio') == 1:
+                # The parameters.
+                Diso = geo_values[geo_params.index('Diso')]
+                Dratio = geo_values[geo_params.index('Dratio')]
+
+                # Set the internal parameter values.
+                cdp.diff_tensor.tm = 1.0 / (6.0 * Diso)
+                cdp.diff_tensor.Da = 3.0 * Diso * (Dratio - 1.0) / (Dratio + 2.0)
+
+            # Unknown parameter combination.
+            else:
+                raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
+
+        # More than two geometric parameters.
+        elif len(geo_params) > 2:
+            raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
+
+
+        # Orientational parameters.
+        ###########################
+
+        # A single orientational parameter.
+        if len(orient_params) == 1:
+            # The single parameter theta.
+            if orient_params[0] == 'theta':
+                cdp.diff_tensor.theta = orient_values[orient_params.index('theta')]
+
+            # The single parameter phi.
+            elif orient_params[0] == 'phi':
+                cdp.diff_tensor.phi = orient_values[orient_params.index('phi')]
+
+        # Two orientational parameters.
+        elif len(orient_params) == 2:
+            # The orientational parameter set {theta, phi}.
+            if orient_params.count('theta') == 1 and orient_params.count('phi') == 1:
+                cdp.diff_tensor.theta = orient_values[orient_params.index('theta')]
+                cdp.diff_tensor.phi = orient_values[orient_params.index('phi')]
+
+            # Unknown parameter combination.
+            else:
+                raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
+
+        # More than two orientational parameters.
+        elif len(orient_params) > 2:
+            raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
+
+
+    # Ellipsoidal diffusion.
+    ########################
+
+    elif cdp.diff_tensor.type == 'ellipsoid':
+        # Geometric parameters.
+        #######################
+
+        # A single geometric parameter.
+        if len(geo_params) == 1:
+            # The single parameter tm.
+            if geo_params[0] == 'tm':
+                cdp.diff_tensor.tm = geo_values[0]
+
+            # The single parameter Diso.
+            elif geo_params[0] == 'Diso':
+                cdp.diff_tensor.tm = 1.0 / (6.0 * geo_values[0])
+
+            # The single parameter Da.
+            elif geo_params[0] == 'Da':
+                cdp.diff_tensor.Da = geo_values[0]
+
+            # The single parameter Dr.
+            elif geo_params[0] == 'Dr':
+                cdp.diff_tensor.Dr = geo_values[0]
+
+            # Cannot set the single parameter.
+            else:
+                raise RelaxError, "The geometric diffusion parameter " + `geo_params[0]` + " cannot be set."
+
+        # Two geometric parameters.
+        elif len(geo_params) == 2:
+            # The geometric parameter set {tm, Da}.
+            if geo_params.count('tm') == 1 and geo_params.count('Da') == 1:
+                # The parameters.
+                tm = geo_values[geo_params.index('tm')]
+                Da = geo_values[geo_params.index('Da')]
+
+                # Set the internal parameter values.
+                cdp.diff_tensor.tm = tm
+                cdp.diff_tensor.Da = Da
+
+            # The geometric parameter set {tm, Dr}.
+            elif geo_params.count('tm') == 1 and geo_params.count('Dr') == 1:
+                # The parameters.
+                tm = geo_values[geo_params.index('tm')]
+                Dr = geo_values[geo_params.index('Dr')]
+
+                # Set the internal parameter values.
+                cdp.diff_tensor.tm = tm
+                cdp.diff_tensor.Dr = Dr
+
+            # The geometric parameter set {Diso, Da}.
+            elif geo_params.count('Diso') == 1 and geo_params.count('Da') == 1:
+                # The parameters.
+                Diso = geo_values[geo_params.index('Diso')]
+                Da = geo_values[geo_params.index('Da')]
+
+                # Set the internal parameter values.
+                cdp.diff_tensor.tm = 1.0 / (6.0 * Diso)
+                cdp.diff_tensor.Da = Da
+
+            # The geometric parameter set {Diso, Dr}.
+            elif geo_params.count('Diso') == 1 and geo_params.count('Dr') == 1:
+                # The parameters.
+                Diso = geo_values[geo_params.index('Diso')]
+                Dr = geo_values[geo_params.index('Dr')]
+
+                # Set the internal parameter values.
+                cdp.diff_tensor.tm = 1.0 / (6.0 * Diso)
+                cdp.diff_tensor.Dr = Dr
+
+            # The geometric parameter set {Da, Dr}.
+            elif geo_params.count('Da') == 1 and geo_params.count('Dr') == 1:
+                # The parameters.
+                Da = geo_values[geo_params.index('Da')]
+                Dr = geo_values[geo_params.index('Dr')]
+
+                # Set the internal parameter values.
+                cdp.diff_tensor.Da = Da
+                cdp.diff_tensor.Da = Dr
+
+            # Unknown parameter combination.
+            else:
+                raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
+
+        # Three geometric parameters.
+        elif len(geo_params) == 3:
+            # The geometric parameter set {tm, Da, Dr}.
+            if geo_params.count('tm') == 1 and geo_params.count('Da') == 1 and geo_params.count('Dr') == 1:
+                # The parameters.
+                tm = geo_values[geo_params.index('tm')]
+                Da = geo_values[geo_params.index('Da')]
+                Dr = geo_values[geo_params.index('Dr')]
+
+                # Set the internal parameter values.
+                cdp.diff_tensor.tm = tm
+                cdp.diff_tensor.Da = Da
+                cdp.diff_tensor.Dr = Dr
+
+            # The geometric parameter set {Diso, Da, Dr}.
+            elif geo_params.count('Diso') == 1 and geo_params.count('Da') == 1 and geo_params.count('Dr') == 1:
+                # The parameters.
+                Diso = geo_values[geo_params.index('Diso')]
+                Da = geo_values[geo_params.index('Da')]
+                Dr = geo_values[geo_params.index('Dr')]
+
+                # Set the internal parameter values.
+                cdp.diff_tensor.tm = 1.0 / (6.0 * Diso)
+                cdp.diff_tensor.Da = Da
+                cdp.diff_tensor.Dr = Dr
+
+            # The geometric parameter set {Dx, Dy, Dz}.
+            elif geo_params.count('Dx') == 1 and geo_params.count('Dy') == 1 and geo_params.count('Dz') == 1:
+                # The parameters.
+                Dx = geo_values[geo_params.index('Dx')]
+                Dy = geo_values[geo_params.index('Dy')]
+                Dz = geo_values[geo_params.index('Dz')]
+
+                # Set the internal tm value.
+                if Dx + Dy + Dz == 0.0:
+                    cdp.diff_tensor.tm = 1e99
                 else:
-                    raise RelaxError, "The geometric diffusion parameter " + `geo_params[0]` + " cannot be set."
+                    cdp.diff_tensor.tm = 0.5 / (Dx + Dy + Dz)
 
-            # Two geometric parameters.
-            elif len(geo_params) == 2:
-                # The geometric parameter set {tm, Da}.
-                if geo_params.count('tm') == 1 and geo_params.count('Da') == 1:
-                    # The parameters.
-                    tm = geo_values[geo_params.index('tm')]
-                    Da = geo_values[geo_params.index('Da')]
+                # Set the internal Da value.
+                cdp.diff_tensor.Da = Dz - 0.5*(Dx + Dy)
 
-                    # Set the internal parameter values.
-                    relax_data_store.diff[self.run].tm = tm
-                    relax_data_store.diff[self.run].Da = Da
-
-                # The geometric parameter set {Diso, Da}.
-                elif geo_params.count('Diso') == 1 and geo_params.count('Da') == 1:
-                    # The parameters.
-                    Diso = geo_values[geo_params.index('Diso')]
-                    Da = geo_values[geo_params.index('Da')]
-
-                    # Set the internal parameter values.
-                    relax_data_store.diff[self.run].tm = 1.0 / (6.0 * Diso)
-                    relax_data_store.diff[self.run].Da = Da
-
-                # The geometric parameter set {tm, Dratio}.
-                elif geo_params.count('tm') == 1 and geo_params.count('Dratio') == 1:
-                    # The parameters.
-                    tm = geo_values[geo_params.index('tm')]
-                    Dratio = geo_values[geo_params.index('Dratio')]
-
-                    # Set the internal parameter values.
-                    relax_data_store.diff[self.run].tm = tm
-                    relax_data_store.diff[self.run].Da = (Dratio - 1.0) / (2.0 * tm * (Dratio + 2.0))
-
-                # The geometric parameter set {Dpar, Dper}.
-                elif geo_params.count('Dpar') == 1 and geo_params.count('Dpar') == 1:
-                    # The parameters.
-                    Dpar = geo_values[geo_params.index('Dpar')]
-                    Dper = geo_values[geo_params.index('Dper')]
-
-                    # Set the internal parameter values.
-                    relax_data_store.diff[self.run].tm = 1.0 / (2.0 * (Dpar + 2.0*Dper))
-                    relax_data_store.diff[self.run].Da = Dpar - Dper
-
-                # The geometric parameter set {Diso, Dratio}.
-                elif geo_params.count('Diso') == 1 and geo_params.count('Dratio') == 1:
-                    # The parameters.
-                    Diso = geo_values[geo_params.index('Diso')]
-                    Dratio = geo_values[geo_params.index('Dratio')]
-
-                    # Set the internal parameter values.
-                    relax_data_store.diff[self.run].tm = 1.0 / (6.0 * Diso)
-                    relax_data_store.diff[self.run].Da = 3.0 * Diso * (Dratio - 1.0) / (Dratio + 2.0)
-
-                # Unknown parameter combination.
+                # Set the internal Dr value.
+                if cdp.diff_tensor.Da == 0.0:
+                    cdp.diff_tensor.Dr = (Dy - Dx) * 1e99
                 else:
-                    raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
+                    cdp.diff_tensor.Dr = (Dy - Dx) / (2.0*cdp.diff_tensor.Da)
 
-            # More than two geometric parameters.
-            elif len(geo_params) > 2:
+            # Unknown parameter combination.
+            else:
                 raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
 
 
-            # Orientational parameters.
-            ###########################
+        # More than three geometric parameters.
+        elif len(geo_params) > 3:
+            raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
 
-            # A single orientational parameter.
-            if len(orient_params) == 1:
-                # The single parameter theta.
-                if orient_params[0] == 'theta':
-                    relax_data_store.diff[self.run].theta = orient_values[orient_params.index('theta')]
 
-                # The single parameter phi.
-                elif orient_params[0] == 'phi':
-                    relax_data_store.diff[self.run].phi = orient_values[orient_params.index('phi')]
+        # Orientational parameters.
+        ###########################
 
-            # Two orientational parameters.
-            elif len(orient_params) == 2:
-                # The orientational parameter set {theta, phi}.
-                if orient_params.count('theta') == 1 and orient_params.count('phi') == 1:
-                    relax_data_store.diff[self.run].theta = orient_values[orient_params.index('theta')]
-                    relax_data_store.diff[self.run].phi = orient_values[orient_params.index('phi')]
+        # A single orientational parameter.
+        if len(orient_params) == 1:
+            # The single parameter alpha.
+            if orient_params[0] == 'alpha':
+                cdp.diff_tensor.alpha = orient_values[orient_params.index('alpha')]
 
-                # Unknown parameter combination.
-                else:
-                    raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
+            # The single parameter beta.
+            elif orient_params[0] == 'beta':
+                cdp.diff_tensor.beta = orient_values[orient_params.index('beta')]
 
-            # More than two orientational parameters.
-            elif len(orient_params) > 2:
+            # The single parameter gamma.
+            elif orient_params[0] == 'gamma':
+                cdp.diff_tensor.gamma = orient_values[orient_params.index('gamma')]
+
+        # Two orientational parameters.
+        elif len(orient_params) == 2:
+            # The orientational parameter set {alpha, beta}.
+            if orient_params.count('alpha') == 1 and orient_params.count('beta') == 1:
+                cdp.diff_tensor.alpha = orient_values[orient_params.index('alpha')]
+                cdp.diff_tensor.beta = orient_values[orient_params.index('beta')]
+
+            # The orientational parameter set {alpha, gamma}.
+            if orient_params.count('alpha') == 1 and orient_params.count('gamma') == 1:
+                cdp.diff_tensor.alpha = orient_values[orient_params.index('alpha')]
+                cdp.diff_tensor.gamma = orient_values[orient_params.index('gamma')]
+
+            # The orientational parameter set {beta, gamma}.
+            if orient_params.count('beta') == 1 and orient_params.count('gamma') == 1:
+                cdp.diff_tensor.beta = orient_values[orient_params.index('beta')]
+                cdp.diff_tensor.gamma = orient_values[orient_params.index('gamma')]
+
+            # Unknown parameter combination.
+            else:
                 raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
 
+        # Three orientational parameters.
+        elif len(orient_params) == 3:
+            # The orientational parameter set {alpha, beta, gamma}.
+            if orient_params.count('alpha') == 1 and orient_params.count('beta') == 1:
+                cdp.diff_tensor.alpha = orient_values[orient_params.index('alpha')]
+                cdp.diff_tensor.beta = orient_values[orient_params.index('beta')]
+                cdp.diff_tensor.gamma = orient_values[orient_params.index('gamma')]
 
-        # Ellipsoidal diffusion.
-        ########################
-
-        elif relax_data_store.diff[self.run].type == 'ellipsoid':
-            # Geometric parameters.
-            #######################
-
-            # A single geometric parameter.
-            if len(geo_params) == 1:
-                # The single parameter tm.
-                if geo_params[0] == 'tm':
-                    relax_data_store.diff[self.run].tm = geo_values[0]
-
-                # The single parameter Diso.
-                elif geo_params[0] == 'Diso':
-                    relax_data_store.diff[self.run].tm = 1.0 / (6.0 * geo_values[0])
-
-                # The single parameter Da.
-                elif geo_params[0] == 'Da':
-                    relax_data_store.diff[self.run].Da = geo_values[0]
-
-                # The single parameter Dr.
-                elif geo_params[0] == 'Dr':
-                    relax_data_store.diff[self.run].Dr = geo_values[0]
-
-                # Cannot set the single parameter.
-                else:
-                    raise RelaxError, "The geometric diffusion parameter " + `geo_params[0]` + " cannot be set."
-
-            # Two geometric parameters.
-            elif len(geo_params) == 2:
-                # The geometric parameter set {tm, Da}.
-                if geo_params.count('tm') == 1 and geo_params.count('Da') == 1:
-                    # The parameters.
-                    tm = geo_values[geo_params.index('tm')]
-                    Da = geo_values[geo_params.index('Da')]
-
-                    # Set the internal parameter values.
-                    relax_data_store.diff[self.run].tm = tm
-                    relax_data_store.diff[self.run].Da = Da
-
-                # The geometric parameter set {tm, Dr}.
-                elif geo_params.count('tm') == 1 and geo_params.count('Dr') == 1:
-                    # The parameters.
-                    tm = geo_values[geo_params.index('tm')]
-                    Dr = geo_values[geo_params.index('Dr')]
-
-                    # Set the internal parameter values.
-                    relax_data_store.diff[self.run].tm = tm
-                    relax_data_store.diff[self.run].Dr = Dr
-
-                # The geometric parameter set {Diso, Da}.
-                elif geo_params.count('Diso') == 1 and geo_params.count('Da') == 1:
-                    # The parameters.
-                    Diso = geo_values[geo_params.index('Diso')]
-                    Da = geo_values[geo_params.index('Da')]
-
-                    # Set the internal parameter values.
-                    relax_data_store.diff[self.run].tm = 1.0 / (6.0 * Diso)
-                    relax_data_store.diff[self.run].Da = Da
-
-                # The geometric parameter set {Diso, Dr}.
-                elif geo_params.count('Diso') == 1 and geo_params.count('Dr') == 1:
-                    # The parameters.
-                    Diso = geo_values[geo_params.index('Diso')]
-                    Dr = geo_values[geo_params.index('Dr')]
-
-                    # Set the internal parameter values.
-                    relax_data_store.diff[self.run].tm = 1.0 / (6.0 * Diso)
-                    relax_data_store.diff[self.run].Dr = Dr
-
-                # The geometric parameter set {Da, Dr}.
-                elif geo_params.count('Da') == 1 and geo_params.count('Dr') == 1:
-                    # The parameters.
-                    Da = geo_values[geo_params.index('Da')]
-                    Dr = geo_values[geo_params.index('Dr')]
-
-                    # Set the internal parameter values.
-                    relax_data_store.diff[self.run].Da = Da
-                    relax_data_store.diff[self.run].Da = Dr
-
-                # Unknown parameter combination.
-                else:
-                    raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
-
-            # Three geometric parameters.
-            elif len(geo_params) == 3:
-                # The geometric parameter set {tm, Da, Dr}.
-                if geo_params.count('tm') == 1 and geo_params.count('Da') == 1 and geo_params.count('Dr') == 1:
-                    # The parameters.
-                    tm = geo_values[geo_params.index('tm')]
-                    Da = geo_values[geo_params.index('Da')]
-                    Dr = geo_values[geo_params.index('Dr')]
-
-                    # Set the internal parameter values.
-                    relax_data_store.diff[self.run].tm = tm
-                    relax_data_store.diff[self.run].Da = Da
-                    relax_data_store.diff[self.run].Dr = Dr
-
-                # The geometric parameter set {Diso, Da, Dr}.
-                elif geo_params.count('Diso') == 1 and geo_params.count('Da') == 1 and geo_params.count('Dr') == 1:
-                    # The parameters.
-                    Diso = geo_values[geo_params.index('Diso')]
-                    Da = geo_values[geo_params.index('Da')]
-                    Dr = geo_values[geo_params.index('Dr')]
-
-                    # Set the internal parameter values.
-                    relax_data_store.diff[self.run].tm = 1.0 / (6.0 * Diso)
-                    relax_data_store.diff[self.run].Da = Da
-                    relax_data_store.diff[self.run].Dr = Dr
-
-                # The geometric parameter set {Dx, Dy, Dz}.
-                elif geo_params.count('Dx') == 1 and geo_params.count('Dy') == 1 and geo_params.count('Dz') == 1:
-                    # The parameters.
-                    Dx = geo_values[geo_params.index('Dx')]
-                    Dy = geo_values[geo_params.index('Dy')]
-                    Dz = geo_values[geo_params.index('Dz')]
-
-                    # Set the internal tm value.
-                    if Dx + Dy + Dz == 0.0:
-                        relax_data_store.diff[self.run].tm = 1e99
-                    else:
-                        relax_data_store.diff[self.run].tm = 0.5 / (Dx + Dy + Dz)
-
-                    # Set the internal Da value.
-                    relax_data_store.diff[self.run].Da = Dz - 0.5*(Dx + Dy)
-
-                    # Set the internal Dr value.
-                    if relax_data_store.diff[self.run].Da == 0.0:
-                        relax_data_store.diff[self.run].Dr = (Dy - Dx) * 1e99
-                    else:
-                        relax_data_store.diff[self.run].Dr = (Dy - Dx) / (2.0*relax_data_store.diff[self.run].Da)
-
-                # Unknown parameter combination.
-                else:
-                    raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
-
-
-            # More than three geometric parameters.
-            elif len(geo_params) > 3:
-                raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
-
-
-            # Orientational parameters.
-            ###########################
-
-            # A single orientational parameter.
-            if len(orient_params) == 1:
-                # The single parameter alpha.
-                if orient_params[0] == 'alpha':
-                    relax_data_store.diff[self.run].alpha = orient_values[orient_params.index('alpha')]
-
-                # The single parameter beta.
-                elif orient_params[0] == 'beta':
-                    relax_data_store.diff[self.run].beta = orient_values[orient_params.index('beta')]
-
-                # The single parameter gamma.
-                elif orient_params[0] == 'gamma':
-                    relax_data_store.diff[self.run].gamma = orient_values[orient_params.index('gamma')]
-
-            # Two orientational parameters.
-            elif len(orient_params) == 2:
-                # The orientational parameter set {alpha, beta}.
-                if orient_params.count('alpha') == 1 and orient_params.count('beta') == 1:
-                    relax_data_store.diff[self.run].alpha = orient_values[orient_params.index('alpha')]
-                    relax_data_store.diff[self.run].beta = orient_values[orient_params.index('beta')]
-
-                # The orientational parameter set {alpha, gamma}.
-                if orient_params.count('alpha') == 1 and orient_params.count('gamma') == 1:
-                    relax_data_store.diff[self.run].alpha = orient_values[orient_params.index('alpha')]
-                    relax_data_store.diff[self.run].gamma = orient_values[orient_params.index('gamma')]
-
-                # The orientational parameter set {beta, gamma}.
-                if orient_params.count('beta') == 1 and orient_params.count('gamma') == 1:
-                    relax_data_store.diff[self.run].beta = orient_values[orient_params.index('beta')]
-                    relax_data_store.diff[self.run].gamma = orient_values[orient_params.index('gamma')]
-
-                # Unknown parameter combination.
-                else:
-                    raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
-
-            # Three orientational parameters.
-            elif len(orient_params) == 3:
-                # The orientational parameter set {alpha, beta, gamma}.
-                if orient_params.count('alpha') == 1 and orient_params.count('beta') == 1:
-                    relax_data_store.diff[self.run].alpha = orient_values[orient_params.index('alpha')]
-                    relax_data_store.diff[self.run].beta = orient_values[orient_params.index('beta')]
-                    relax_data_store.diff[self.run].gamma = orient_values[orient_params.index('gamma')]
-
-                # Unknown parameter combination.
-                else:
-                    raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
-
-            # More than three orientational parameters.
-            elif len(orient_params) > 3:
+            # Unknown parameter combination.
+            else:
                 raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
 
+        # More than three orientational parameters.
+        elif len(orient_params) > 3:
+            raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
+
+
+    # Fold the angles in.
+    #####################
+
+    if orient_params:
+        fold_angles()
+
+
+def sphere(params=None, time_scale=None, param_types=None):
+    """Function for setting up a spherical diffusion tensor.
+    
+    @param params:      The diffusion tensor parameter.
+    @type params:       float
+    @param time_scale:  The correlation time scaling value.
+    @type time_scale:   float
+    @param param_types: The type of parameter supplied.  If 0, then the parameter is tm.  If 1, then
+                        the parameter is Diso.
+    @type param_types:  int
+    """
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # The diffusion type.
+    cdp.diff_tensor.type = 'sphere'
+
+    # tm.
+    if param_types == 0:
+        # Scaling.
+        tm = params * time_scale
+
+        # Set the parameters.
+        set(value=[tm], param=['tm'])
+
+    # Diso
+    elif param_types == 1:
+        # Scaling.
+        Diso = params * d_scale
+
+        # Set the parameters.
+        set(value=[Diso], param=['Diso'])
+
+    # Unknown parameter combination.
+    else:
+        raise RelaxUnknownParamCombError, ('param_types', param_types)
+
+
+def spheroid(params=None, time_scale=None, d_scale=None, angle_units=None, param_types=None, spheroid_type=None):
+    """Function for setting up a spheroidal diffusion tensor.
+    
+    @param params:          The diffusion tensor parameter.
+    @type params:           float
+    @param time_scale:      The correlation time scaling value.
+    @type time_scale:       float
+    @param d_scale:         The diffusion tensor eigenvalue scaling value.
+    @type d_scale:          float
+    @param angle_units:     The units for the angle parameters which can be either 'deg' or 'rad'.
+    @type angle_units:      str
+    @param param_types:     The type of parameters supplied.  These correspond to 0: {tm, Da, theta,
+                            phi}, 1: {Diso, Da, theta, phi}, 2: {tm, Dratio, theta, phi}, 3:  {Dpar,
+                            Dper, theta, phi}, 4: {Diso, Dratio, theta, phi}.
+    @type param_types:      int
+    @param spheroid_type:   A string which, if supplied together with spheroid parameters, will
+                            restrict the tensor to either being 'oblate' or 'prolate'.
+    @type spheroid_type:    str
+    """
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # The diffusion type.
+    cdp.diff_tensor.type = 'spheroid'
+
+    # Spheroid diffusion type.
+    allowed_types = [None, 'oblate', 'prolate']
+    if spheroid_type not in allowed_types:
+        raise RelaxError, "The 'spheroid_type' argument " + `spheroid_type` + " should be 'oblate', 'prolate', or None."
+    cdp.diff_tensor.spheroid_type = spheroid_type
+
+    # (tm, Da, theta, phi).
+    if param_types == 0:
+        # Unpack the tuple.
+        tm, Da, theta, phi = params
+
+        # Scaling.
+        tm = tm * time_scale
+        Da = Da * d_scale
+
+        # Set the parameters.
+        set(value=[tm, Da], param=['tm', 'Da'])
+
+    # (Diso, Da, theta, phi).
+    elif param_types == 1:
+        # Unpack the tuple.
+        Diso, Da, theta, phi = params
+
+        # Scaling.
+        Diso = Diso * d_scale
+        Da = Da * d_scale
 
-        # Fold the angles in.
-        #####################
+        # Set the parameters.
+        set(value=[Diso, Da], param=['Diso', 'Da'])
 
-        if orient_params:
-            self.fold_angles(self.run)
+    # (tm, Dratio, theta, phi).
+    elif param_types == 2:
+        # Unpack the tuple.
+        tm, Dratio, theta, phi = params
 
+        # Scaling.
+        tm = tm * time_scale
 
-    def sphere(self):
-        """Function for setting up spherical diffusion."""
+        # Set the parameters.
+        set(value=[tm, Dratio], param=['tm', 'Dratio'])
 
-        # The diffusion type.
-        relax_data_store.diff[self.run].type = 'sphere'
+    # (Dpar, Dper, theta, phi).
+    elif param_types == 3:
+        # Unpack the tuple.
+        Dpar, Dper, theta, phi = params
 
-        # tm.
-        if self.param_types == 0:
-            # Scaling.
-            tm = self.params * self.time_scale
+        # Scaling.
+        Dpar = Dpar * d_scale
+        Dper = Dper * d_scale
 
-            # Set the parameters.
-            self.set(run=self.run, value=[tm], param=['tm'])
+        # Set the parameters.
+        set(value=[Dpar, Dper], param=['Dpar', 'Dper'])
 
-        # Diso
-        elif self.param_types == 1:
-            # Scaling.
-            Diso = self.params * self.d_scale
+    # (Diso, Dratio, theta, phi).
+    elif param_types == 4:
+        # Unpack the tuple.
+        Diso, Dratio, theta, phi = params
 
-            # Set the parameters.
-            self.set(run=self.run, value=[Diso], param=['Diso'])
+        # Scaling.
+        Diso = Diso * d_scale
 
-        # Unknown parameter combination.
-        else:
-            raise RelaxUnknownParamCombError, ('param_types', self.param_types)
+        # Set the parameters.
+        set(value=[Diso, Dratio], param=['Diso', 'Dratio'])
 
+    # Unknown parameter combination.
+    else:
+        raise RelaxUnknownParamCombError, ('param_types', param_types)
 
-    def spheroid(self):
-        """Function for setting up spheroidal diffusion."""
+    # Convert the angles to radians.
+    if angle_units == 'deg':
+        theta = (theta / 360.0) * 2.0 * pi
+        phi = (phi / 360.0) * 2.0 * pi
 
-        # The diffusion type.
-        relax_data_store.diff[self.run].type = 'spheroid'
+    # Set the orientational parameters.
+    set(value=[theta, phi], param=['theta', 'phi'])
 
-        # Spheroid diffusion type.
-        allowed_types = [None, 'oblate', 'prolate']
-        if self.spheroid_type not in allowed_types:
-            raise RelaxError, "The 'spheroid_type' argument " + `self.spheroid_type` + " should be 'oblate', 'prolate', or None."
-        relax_data_store.diff[self.run].spheroid_type = self.spheroid_type
 
-        # (tm, Da, theta, phi).
-        if self.param_types == 0:
-            # Unpack the tuple.
-            tm, Da, theta, phi = self.params
+def test_params(num_params):
+    """Function for testing the validity of the input parameters."""
 
-            # Scaling.
-            tm = tm * self.time_scale
-            Da = Da * self.d_scale
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
-            # Set the parameters.
-            self.set(run=self.run, value=[tm, Da], param=['tm', 'Da'])
+    # An allowable error to account for machine precision, optimisation quality, etc.
+    error = 1e-4
 
-        # (Diso, Da, theta, phi).
-        elif self.param_types == 1:
-            # Unpack the tuple.
-            Diso, Da, theta, phi = self.params
+    # tm.
+    tm = cdp.diff_tensor.tm
+    if tm <= 0.0 or tm > 1e-6:
+        raise RelaxError, "The tm value of " + `tm` + " should be between zero and one microsecond."
 
-            # Scaling.
-            Diso = Diso * self.d_scale
-            Da = Da * self.d_scale
+    # Spheroid.
+    if num_params == 4:
+        # Parameters.
+        Diso = 1.0 / (6.0 * cdp.diff_tensor.tm)
+        Da = cdp.diff_tensor.Da
 
-            # Set the parameters.
-            self.set(run=self.run, value=[Diso, Da], param=['Diso', 'Da'])
+        # Da.
+        if Da < (-1.5*Diso - error*Diso) or Da > (3.0*Diso + error*Diso):
+            raise RelaxError, "The Da value of " + `Da` + " should be between -3/2 * Diso and 3Diso."
 
-        # (tm, Dratio, theta, phi).
-        elif self.param_types == 2:
-            # Unpack the tuple.
-            tm, Dratio, theta, phi = self.params
+    # Ellipsoid.
+    if num_params == 6:
+        # Parameters.
+        Diso = 1.0 / (6.0 * cdp.diff_tensor.tm)
+        Da = cdp.diff_tensor.Da
+        Dr = cdp.diff_tensor.Dr
 
-            # Scaling.
-            tm = tm * self.time_scale
+        # Da.
+        if Da < (0.0 - error*Diso) or Da > (3.0*Diso + error*Diso):
+            raise RelaxError, "The Da value of " + `Da` + " should be between zero and 3Diso."
 
-            # Set the parameters.
-            self.set(run=self.run, value=[tm, Dratio], param=['tm', 'Dratio'])
+        # Dr.
+        if Dr < (0.0 - error) or Dr > (1.0 + error):
+            raise RelaxError, "The Dr value of " + `Dr` + " should be between zero and one."
 
-        # (Dpar, Dper, theta, phi).
-        elif self.param_types == 3:
-            # Unpack the tuple.
-            Dpar, Dper, theta, phi = self.params
 
-            # Scaling.
-            Dpar = Dpar * self.d_scale
-            Dper = Dper * self.d_scale
+def unit_axes():
+    """Function for calculating the unit axes of the diffusion tensor.
 
-            # Set the parameters.
-            self.set(run=self.run, value=[Dpar, Dper], param=['Dpar', 'Dper'])
+    Spheroid
+    ~~~~~~~~
 
-        # (Diso, Dratio, theta, phi).
-        elif self.param_types == 4:
-            # Unpack the tuple.
-            Diso, Dratio, theta, phi = self.params
+    The unit Dpar vector is
 
-            # Scaling.
-            Diso = Diso * self.d_scale
+                 | sin(theta) * cos(phi) |
+        Dpar  =  | sin(theta) * sin(phi) |
+                 |      cos(theta)       |
 
-            # Set the parameters.
-            self.set(run=self.run, value=[Diso, Dratio], param=['Diso', 'Dratio'])
 
-        # Unknown parameter combination.
-        else:
-            raise RelaxUnknownParamCombError, ('param_types', self.param_types)
+    Ellipsoid
+    ~~~~~~~~~
 
-        # Convert the angles to radians.
-        if self.angle_units == 'deg':
-            theta = (theta / 360.0) * 2.0 * pi
-            phi = (phi / 360.0) * 2.0 * pi
+    The unit Dx vector is
 
-        # Set the orientational parameters.
-        self.set(run=self.run, value=[theta, phi], param=['theta', 'phi'])
+               | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
+        Dx  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |
+               |                    cos(alpha) * sin(beta)                      |
 
+    The unit Dy vector is
 
-    def test_params(self, num_params):
-        """Function for testing the validity of the input parameters."""
+               | cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
+        Dy  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |
+               |                   sin(alpha) * sin(beta)                      |
 
-        # An allowable error to account for machine precision, optimisation quality, etc.
-        error = 1e-4
+    The unit Dz vector is
 
-        # tm.
-        tm = relax_data_store.diff[self.run].tm
-        if tm <= 0.0 or tm > 1e-6:
-            raise RelaxError, "The tm value of " + `tm` + " should be between zero and one microsecond."
+               | -sin(beta) * cos(gamma) |
+        Dz  =  |  sin(beta) * sin(gamma) |
+               |        cos(beta)        |
 
-        # Spheroid.
-        if num_params == 4:
-            # Parameters.
-            Diso = 1.0 / (6.0 * relax_data_store.diff[self.run].tm)
-            Da = relax_data_store.diff[self.run].Da
+    """
 
-            # Da.
-            if Da < (-1.5*Diso - error*Diso) or Da > (3.0*Diso + error*Diso):
-                raise RelaxError, "The Da value of " + `Da` + " should be between -3/2 * Diso and 3Diso."
+    # Spheroid.
+    if cdp.diff_tensor.type == 'spheroid':
+        # Initialise.
+        Dpar = zeros(3, Float64)
 
-        # Ellipsoid.
-        if num_params == 6:
-            # Parameters.
-            Diso = 1.0 / (6.0 * relax_data_store.diff[self.run].tm)
-            Da = relax_data_store.diff[self.run].Da
-            Dr = relax_data_store.diff[self.run].Dr
+        # Trig.
+        sin_theta = sin(cdp.diff_tensor.theta)
+        cos_theta = cos(cdp.diff_tensor.theta)
+        sin_phi = sin(cdp.diff_tensor.phi)
+        cos_phi = cos(cdp.diff_tensor.phi)
 
-            # Da.
-            if Da < (0.0 - error*Diso) or Da > (3.0*Diso + error*Diso):
-                raise RelaxError, "The Da value of " + `Da` + " should be between zero and 3Diso."
+        # Unit Dpar axis.
+        Dpar[0] = sin_theta * cos_phi
+        Dpar[1] = sin_theta * sin_phi
+        Dpar[2] = cos_theta
 
-            # Dr.
-            if Dr < (0.0 - error) or Dr > (1.0 + error):
-                raise RelaxError, "The Dr value of " + `Dr` + " should be between zero and one."
+        # Return the vector.
+        return Dpar
 
+    # Ellipsoid.
+    if cdp.diff_tensor.type == 'ellipsoid':
+        # Initialise.
+        Dx = zeros(3, Float64)
+        Dy = zeros(3, Float64)
+        Dz = zeros(3, Float64)
 
-    def unit_axes(self):
-        """Function for calculating the unit axes of the diffusion tensor.
+        # Trig.
+        sin_alpha = sin(cdp.diff_tensor.alpha)
+        cos_alpha = cos(cdp.diff_tensor.alpha)
+        sin_beta = sin(cdp.diff_tensor.beta)
+        cos_beta = cos(cdp.diff_tensor.beta)
+        sin_gamma = sin(cdp.diff_tensor.gamma)
+        cos_gamma = cos(cdp.diff_tensor.gamma)
 
-        Spheroid
-        ~~~~~~~~
+        # Unit Dx axis.
+        Dx[0] = -sin_alpha * sin_gamma  +  cos_alpha * cos_beta * cos_gamma
+        Dx[1] = -sin_alpha * cos_gamma  -  cos_alpha * cos_beta * sin_gamma
+        Dx[2] =  cos_alpha * sin_beta
 
-        The unit Dpar vector is
+        # Unit Dy axis.
+        Dx[0] = cos_alpha * sin_gamma  +  sin_alpha * cos_beta * cos_gamma
+        Dx[1] = cos_alpha * cos_gamma  -  sin_alpha * cos_beta * sin_gamma
+        Dx[2] = sin_alpha * sin_beta
 
-                     | sin(theta) * cos(phi) |
-            Dpar  =  | sin(theta) * sin(phi) |
-                     |      cos(theta)       |
+        # Unit Dz axis.
+        Dx[0] = -sin_beta * cos_gamma
+        Dx[1] =  sin_beta * sin_gamma
+        Dx[2] =  cos_beta
 
-
-        Ellipsoid
-        ~~~~~~~~~
-
-        The unit Dx vector is
-
-                   | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
-            Dx  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |
-                   |                    cos(alpha) * sin(beta)                      |
-
-        The unit Dy vector is
-
-                   | cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
-            Dy  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |
-                   |                   sin(alpha) * sin(beta)                      |
-
-        The unit Dz vector is
-
-                   | -sin(beta) * cos(gamma) |
-            Dz  =  |  sin(beta) * sin(gamma) |
-                   |        cos(beta)        |
-
-        """
-
-        # Spheroid.
-        if relax_data_store.diff[self.run].type == 'spheroid':
-            # Initialise.
-            Dpar = zeros(3, Float64)
-
-            # Trig.
-            sin_theta = sin(relax_data_store.diff[self.run].theta)
-            cos_theta = cos(relax_data_store.diff[self.run].theta)
-            sin_phi = sin(relax_data_store.diff[self.run].phi)
-            cos_phi = cos(relax_data_store.diff[self.run].phi)
-
-            # Unit Dpar axis.
-            Dpar[0] = sin_theta * cos_phi
-            Dpar[1] = sin_theta * sin_phi
-            Dpar[2] = cos_theta
-
-            # Return the vector.
-            return Dpar
-
-        # Ellipsoid.
-        if relax_data_store.diff[self.run].type == 'ellipsoid':
-            # Initialise.
-            Dx = zeros(3, Float64)
-            Dy = zeros(3, Float64)
-            Dz = zeros(3, Float64)
-
-            # Trig.
-            sin_alpha = sin(relax_data_store.diff[self.run].alpha)
-            cos_alpha = cos(relax_data_store.diff[self.run].alpha)
-            sin_beta = sin(relax_data_store.diff[self.run].beta)
-            cos_beta = cos(relax_data_store.diff[self.run].beta)
-            sin_gamma = sin(relax_data_store.diff[self.run].gamma)
-            cos_gamma = cos(relax_data_store.diff[self.run].gamma)
-
-            # Unit Dx axis.
-            Dx[0] = -sin_alpha * sin_gamma  +  cos_alpha * cos_beta * cos_gamma
-            Dx[1] = -sin_alpha * cos_gamma  -  cos_alpha * cos_beta * sin_gamma
-            Dx[2] =  cos_alpha * sin_beta
-
-            # Unit Dy axis.
-            Dx[0] = cos_alpha * sin_gamma  +  sin_alpha * cos_beta * cos_gamma
-            Dx[1] = cos_alpha * cos_gamma  -  sin_alpha * cos_beta * sin_gamma
-            Dx[2] = sin_alpha * sin_beta
-
-            # Unit Dz axis.
-            Dx[0] = -sin_beta * cos_gamma
-            Dx[1] =  sin_beta * sin_gamma
-            Dx[2] =  cos_beta
-
-            # Return the vectors.
-            return Dx, Dy, Dz
+        # Return the vectors.
+        return Dx, Dy, Dz

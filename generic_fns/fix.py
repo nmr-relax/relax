@@ -25,7 +25,7 @@ from re import match
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoTensorError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError
 
 
 
@@ -43,13 +43,13 @@ class Fix:
 
         # Test if the run exists.
         if not run in relax_data_store.run_names:
-            raise RelaxNoRunError, run
+            raise RelaxNoPipeError, run
 
         # Diffusion tensor.
         if element == 'diff':
             # Test if the diffusion tensor data is loaded.
             if not relax_data_store.diff.has_key(run):
-                raise RelaxNoTensorError, run
+                raise RelaxNoTensorError, 'diffusion'
 
             # Set the fixed flag.
             relax_data_store.diff[run].fixed = fixed
@@ -74,7 +74,7 @@ class Fix:
 
             # Test if the diffusion tensor data is loaded.
             if not relax_data_store.diff.has_key(run):
-                raise RelaxNoTensorError, run
+                raise RelaxNoTensorError, 'diffusion'
 
             # Set the fixed flag for the diffusion tensor.
             relax_data_store.diff[run].fixed = fixed

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006 Edward d'Auvergne                                  #
+# Copyright (C) 2007 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,26 +20,18 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
+from unittest import TestCase
 
-from hybrid import Hybrid
-from jw_mapping import Jw_mapping
-from model_free import Model_free
-from noe import Noe
-from relax_data import Rx_data
-from relax_fit import Relax_fit
+# relax module imports.
+from generic_fns import molecule, residue
+from test_suite.unit_tests.molecule_testing_base import Molecule_base_class
 
 
-class Specific:
-    def __init__(self, relax):
-        """Class containing all the specific functions."""
 
-        # Place the program class structure under self.relax
-        self.relax = relax
+class Test_molecule(Molecule_base_class, TestCase):
+    """Unit tests for the functions of the 'generic_fns.molecule' module."""
 
-        # Set up all the functions
-        self.hybrid = Hybrid(self.relax)
-        self.jw_mapping = Jw_mapping(self.relax)
-        self.model_free = Model_free(self.relax)
-        self.noe = Noe(self.relax)
-        self.relax_data = Rx_data(self.relax)
-        self.relax_fit = Relax_fit(self.relax)
+    # Place the generic_fns.molecule and generic_fns.residue modules into the class namespace.
+    molecule_fns = molecule
+    residue_fns = residue

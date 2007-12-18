@@ -33,10 +33,10 @@ import sys
 # relax module imports.
 from data import Data as relax_data_store
 from specific_fns.base_class import Common_functions
-from float import isNaN,isInf 
+from float import isNaN,isInf
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
-from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxStyleError, RelaxTensorError, RelaxUnknownDataTypeError
+from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxStyleError, RelaxTensorError, RelaxUnknownDataTypeError
 
 
 # The relax data storage object.
@@ -44,13 +44,11 @@ from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxIn
 
 
 class Model_free(Common_functions):
-    def __init__(self, relax):
+    def __init__(self):
         """Class containing functions specific to model-free analysis."""
 
-        self.relax = relax
-
         # Class containing the Molmol specific functions.
-        self.molmol = Molmol(self.relax)
+        self.molmol = Molmol()
 
 
     def are_mf_params_set(self, index=None):
@@ -569,11 +567,11 @@ class Model_free(Common_functions):
 
         # Test if run1 exists.
         if not run1 in relax_data_store.run_names:
-            raise RelaxNoRunError, run1
+            raise RelaxNoPipeError, run1
 
         # Test if run2 exists.
         if not run2 in relax_data_store.run_names:
-            raise RelaxNoRunError, run2
+            raise RelaxNoPipeError, run2
 
         # Test if the run type of run1 is set to 'mf'.
         function_type = relax_data_store.run_types[relax_data_store.run_names.index(run1)]
@@ -663,7 +661,7 @@ class Model_free(Common_functions):
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if the run type is set to 'mf'.
         function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
@@ -980,7 +978,7 @@ class Model_free(Common_functions):
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if the run type is set to 'mf'.
         function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
@@ -3498,7 +3496,7 @@ class Model_free(Common_functions):
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if the run type is set to 'mf'.
         function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
@@ -3749,7 +3747,7 @@ class Model_free(Common_functions):
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if the run type is set to 'mf'.
         function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
@@ -5149,24 +5147,23 @@ class Model_free(Common_functions):
                     # Relaxation data and errors.
                     ri = []
                     ri_error = []
-                    for k in xrange(relax_data_store.num_ri[self.run]):
-                        # No relaxation data.
-                        if not hasattr(data, 'num_ri'):
-                            break
+                    if hasattr(relax_data_store, 'num_ri'):
+                        for k in xrange(relax_data_store.num_ri[self.run]):
+                            try:
+                                # Find the residue specific data corresponding to k.
+                                index = None
+                                for l in xrange(data.num_ri):
+                                    if data.ri_labels[l] == relax_data_store.ri_labels[self.run][k] and data.frq_labels[data.remap_table[l]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][k]]:
+                                        index = l
 
-                        # Find the residue specific data corresponding to k.
-                        index = None
-                        for l in xrange(data.num_ri):
-                            if data.ri_labels[l] == relax_data_store.ri_labels[self.run][k] and data.frq_labels[data.remap_table[l]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][k]]:
-                                index = l
+                                # Data exists for this data type.
+                                ri.append(`data.relax_sim_data[i][index]`)
+                                ri_error.append(`data.relax_error[index]`)
 
-                        # Data exists for this data type.
-                        try:
-                            ri.append(`data.relax_sim_data[i][index]`)
-                            ri_error.append(`data.relax_error[index]`)
-                        except:
-                            ri.append(None)
-                            ri_error.append(None)
+                            # No data exists for this data type.
+                            except:
+                                ri.append(None)
+                                ri_error.append(None)
 
                     # XH vector.
                     xh_vect = None
@@ -5186,10 +5183,8 @@ class Model_free(Common_functions):
 ##############################
 
 class Molmol:
-    def __init__(self, relax):
+    def __init__(self):
         """Class containing the Molmol specific functions."""
-
-        self.relax = relax
 
 
     def classic(self, data_type, colour_start, colour_end, colour_list):

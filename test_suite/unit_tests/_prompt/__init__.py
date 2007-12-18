@@ -20,13 +20,5 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from unittest import TestCase
 
-# relax module imports.
-from generic_fns import molecule
-
-
-
-class Test_spin(TestCase):
-    """Unit tests for the functions of the 'generic_fns.molecule' module."""
+__all__ = ['test_spin']

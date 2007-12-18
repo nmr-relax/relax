@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2006-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,7 +20,12 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
+
+# relax module imports.
+from prompt.pipe import Pipe
+from prompt.sequence import Sequence
 
 
 class Sequence:
@@ -46,27 +51,27 @@ class Sequence:
             self.test = self.pdb
 
 
-    def pdb(self, run):
+    def pdb(self, pipe):
         """The sequence loading from a PDB file test."""
 
-        # Create the run.
-        self.relax.generic.runs.create(run, 'mf')
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create(pipe, 'mf')
 
         # Read the sequence.
-        self.relax.interpreter._Structure.read_pdb(run, file='test.pdb', dir=sys.path[-1] + '/test_suite/system_tests/data', model=1, load_seq=1)
+        self.relax.interpreter._Structure.read_pdb(file='test.pdb', dir=sys.path[-1] + '/test_suite/system_tests/data', model=1, load_seq=1)
 
         # Success.
         return 1
 
 
-    def read(self, run):
+    def read(self, pipe):
         """The sequence.read() test."""
 
-        # Create the run.
-        self.relax.generic.runs.create(run, 'mf')
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create(pipe, 'mf')
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(run, file='test_seq', dir=sys.path[-1] + '/test_suite/system_tests/data')
+        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + '/test_suite/system_tests/data')
 
         # Success.
         return 1

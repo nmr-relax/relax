@@ -25,10 +25,8 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Data as relax_data_store
-from data.pipe_container import PipeContainer
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxNoRunError, RelaxRunError
-
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError
 
 
 class Test_pipes(TestCase):
@@ -130,8 +128,8 @@ class Test_pipes(TestCase):
         The function tested is generic_fns.pipes.copy()
         """
 
-        # Assert that a RelaxRunError occurs when the data pipe to copy data to already exists.
-        self.assertRaises(RelaxRunError, pipes.copy, 'orig', 'empty')
+        # Assert that a RelaxPipeError occurs when the data pipe to copy data to already exists.
+        self.assertRaises(RelaxPipeError, pipes.copy, 'orig', 'empty')
 
 
     def test_creation(self):
@@ -161,6 +159,16 @@ class Test_pipes(TestCase):
         self.assertRaises(RelaxError, pipes.create, 'new', 'x')
 
 
+    def test_current(self):
+        """Get the current data pipe.
+
+        The function used is generic_fns.pipes.current().
+        """
+
+        # Test the current pipe.
+        self.assertEqual(pipes.current(), 'orig')
+
+
     def test_deletion(self):
         """Test the deletion of a data pipe.
 
@@ -187,8 +195,8 @@ class Test_pipes(TestCase):
         The function tested is generic_fns.pipes.delete()
         """
 
-        # Assert that a RelaxNoRunError occurs when the data pipe does not exist.
-        self.assertRaises(RelaxNoRunError, pipes.delete, 'x')
+        # Assert that a RelaxNoPipeError occurs when the data pipe does not exist.
+        self.assertRaises(RelaxNoPipeError, pipes.delete, 'x')
 
 
     def test_switch(self):
@@ -216,5 +224,28 @@ class Test_pipes(TestCase):
         The function used is generic_fns.pipes.switch().
         """
 
-        # Assert that a RelaxNoRunError occurs when the pipe type is invalid.
-        self.assertRaises(RelaxNoRunError, pipes.switch, 'x')
+        # Assert that a RelaxNoPipeError occurs when the pipe type is invalid.
+        self.assertRaises(RelaxNoPipeError, pipes.switch, 'x')
+
+
+    def test_test(self):
+        """The throwing of RelaxNoPipeError when the pipe does not exist.
+
+        The function tested is generic_fns.pipes.test().
+        """
+
+        # The following should do nothing as the pipes exist.
+        pipes.test()
+        pipes.test('orig')
+        pipes.test('empty')
+
+        # Assert that a RelaxNoPipeError occurs when the pipe doesn't exist.
+        self.assertRaises(RelaxNoPipeError, pipes.test, 'x')
+
+        # Reset the relax data storage object.
+        relax_data_store.__reset__()
+
+        # Now none of the following pipes exist, hence errors should be thrown.
+        self.assertRaises(RelaxNoPipeError, pipes.test)
+        self.assertRaises(RelaxNoPipeError, pipes.test, 'orig')
+        self.assertRaises(RelaxNoPipeError, pipes.test, 'empty')

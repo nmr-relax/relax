@@ -26,6 +26,7 @@ from Numeric import copy, dot, sqrt
 from interpolate import cubic_ext, quadratic_fafbga
 quadratic = quadratic_fafbga
 
+
 def nocedal_wright_interpol(func, args, x, f, g, p, a_init=1.0, mu=0.001, print_flag=0):
     """A line search algorithm based on interpolation.
 

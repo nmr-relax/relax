@@ -57,6 +57,7 @@ from grace import Grace
 from jw_mapping import Jw_mapping
 from model_free import Model_free
 from molmol import Molmol
+from molecule import Molecule
 from monte_carlo import Monte_carlo
 from noe import Noe
 from palmer import Palmer
@@ -69,6 +70,7 @@ from results import Results
 from pipe import Pipe
 from select import Select
 from sequence import Sequence
+from spin import Spin
 from state import State
 from thread import Threading
 from unselect import Unselect
@@ -116,6 +118,7 @@ class Interpreter:
         self._Jw_mapping = Jw_mapping(relax)
         self._Model_free = Model_free(relax)
         self._Molmol = Molmol(relax)
+        self._Molecule = Molecule(relax)
         self._Monte_carlo = Monte_carlo(relax)
         self._Noe = Noe(relax)
         self._Palmer = Palmer(relax)
@@ -128,6 +131,7 @@ class Interpreter:
         self._Pipe = Pipe(relax)
         self._Select = Select(relax)
         self._Sequence = Sequence(relax)
+        self._Spin = Spin(relax)
         self._State = State(relax)
         self._Threading = Threading(relax)
         self._Unselect = Unselect(relax)
@@ -175,6 +179,7 @@ class Interpreter:
         jw_mapping = self._Jw_mapping
         model_free = self._Model_free
         molmol = self._Molmol
+        molecule = self._Molecule
         monte_carlo = self._Monte_carlo
         noe = self._Noe
         palmer = self._Palmer
@@ -187,6 +192,7 @@ class Interpreter:
         pipe = self._Pipe
         select = self._Select
         sequence = self._Sequence
+        spin = self._Spin
         state = self._State
         thread = self._Threading
         unselect = self._Unselect

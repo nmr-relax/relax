@@ -168,6 +168,7 @@ class Simplex(Min):
 
     def order_simplex(self):
         """Order the vertecies of the simplex according to accending function values."""
+
         sorted = argsort(self.simplex_vals)
         self.simplex = take(self.simplex, sorted)
         self.simplex_vals = take(self.simplex_vals, sorted)

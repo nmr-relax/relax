@@ -154,7 +154,7 @@ class Threading:
         $ ssh zucchini "chmod 644 ~/.ssh/*.pub"
 
         Finally, if all else fails, make sure the three lines
-        
+
         -----
         RSAAuthentication yes
         PubkeyAuthentication yes

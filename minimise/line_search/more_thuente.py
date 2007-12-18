@@ -264,7 +264,6 @@ def more_thuente(func, func_prime, args, x, f, g, p, a_init=1.0, a_min=1e-25, a_
         Ik = copy.deepcopy(Ik_new)
 
 
-
 def print_data(text, k, a, Ik, Ik_lim):
     """Temp func for debugging."""
 

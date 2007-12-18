@@ -26,7 +26,7 @@ from Numeric import array, dot, transpose
 from unittest import TestCase
 
 # relax module imports.
-from data.diff_tensor import DiffTensorElement, DiffTensorSimList
+from data.diff_tensor import DiffTensorData, DiffTensorSimList
 from relax_errors import RelaxError
 
 
@@ -59,9 +59,9 @@ class Test_diff_tensor(TestCase):
 
 
     def setUp(self):
-        """Set 'self.diff_data' to an empty instance of the DiffTensorElement class."""
+        """Set 'self.diff_data' to an empty instance of the DiffTensorData class."""
 
-        self.diff_data = DiffTensorElement()
+        self.diff_data = DiffTensorData()
 
 
     def test_append_spheroid_sim(self):

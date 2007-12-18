@@ -22,7 +22,7 @@
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxNoRunError, RelaxRunError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError
 from specific_fns.relax_fit import C_module_exp_fn
 
 
@@ -46,7 +46,7 @@ def copy(pipe_from=None, pipe_to=None):
 
     # Test if the pipe already exists.
     if pipe_to in relax_data_store.keys():
-        raise RelaxRunError, pipe_to
+        raise RelaxPipeError, pipe_to
 
     # The current data pipe.
     if pipe_from == None:
@@ -89,9 +89,13 @@ def create(pipe_name=None, pipe_type=None):
 
 
 def current():
-    """Print the name of the current data pipe."""
+    """Return the name of the current data pipe.
+    
+    @return:        The name of the current data pipe.
+    @type return:   str
+    """
 
-    print relax_data_store.current_pipe
+    return relax_data_store.current_pipe
 
 
 def delete(pipe_name=None):
@@ -103,7 +107,7 @@ def delete(pipe_name=None):
 
     # Test if the data pipe exists.
     if pipe_name != None and not relax_data_store.has_key(pipe_name):
-        raise RelaxNoRunError, pipe_name
+        raise RelaxNoPipeError, pipe_name
 
     # Delete the data pipe.
     del relax_data_store[pipe_name]
@@ -133,7 +137,31 @@ def switch(pipe_name=None):
 
     # Test if the data pipe exists.
     if not relax_data_store.has_key(pipe_name):
-        raise RelaxNoRunError, pipe_name
+        raise RelaxNoPipeError, pipe_name
 
     # Switch the current data pipe.
     relax_data_store.current_pipe = pipe_name
+
+
+def test(pipe_name=None):
+    """Function for testing the existence of the current or supplied data pipe.
+
+    @param pipe_name:   The name of the data pipe to switch to.
+    @type pipe_name:    str
+    @return:            The answer to the question of whether the pipe exists.
+    @rtype:             Boolean
+    """
+
+    # No supplied data pipe and no current data pipe.
+    if pipe_name == None:
+        # Get the current pipe.
+        pipe_name = current()
+
+        # Still no luck.
+        if pipe_name == None:
+            raise RelaxNoPipeError
+
+    # Test if the data pipe exists.
+    if not relax_data_store.has_key(pipe_name):
+        raise RelaxNoPipeError, pipe_name
+

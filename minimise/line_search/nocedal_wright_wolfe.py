@@ -26,6 +26,7 @@ from Numeric import copy, dot, sqrt
 from interpolate import cubic_ext, quadratic_fafbga
 quadratic = quadratic_fafbga
 
+
 def nocedal_wright_wolfe(func, func_prime, args, x, f, g, p, a_init=1.0, max_a=1e5, mu=0.001, eta=0.9, tol=1e-10, print_flag=0):
     """A line search algorithm implemented using the strong Wolfe conditions.
 

@@ -25,11 +25,12 @@ import sys
 
 # relax module imports.
 import help
-from generic_fns import residue
-from relax_errors import RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxStrError
+from generic_fns import molecule
+from generic_fns.selection import id_string_doc
+from relax_errors import RelaxIntError, RelaxNoneStrError, RelaxStrError
 
 
-class Residue:
+class Molecule:
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \
@@ -42,315 +43,220 @@ class Residue:
         self.__relax__ = relax
 
 
-    def create(self, res_num=None, res_name=None):
-        """Function for creating a new residue.
+    def copy(self, pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
+        """Function for copying all data associated with a molecule.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        res_num:  The residue number.
+        pipe_from:  The data pipe containing the molecule from which the data will be copied.  This
+            defaults to the current data pipe.
 
-        res_name:  The name of the residue.
+        mol_from:  The molecule identifier string of the molecule to copy the data from.
+
+        pipe_to:  The data pipe to copy the data to.  This defaults to the current data pipe.
+
+        mol_to:  The molecule identifier string of the molecule to copy the data to.
 
 
         Description
         ~~~~~~~~~~~
 
-        Using this function a new sequence can be generated without using the sequence user
-        functions.  However if the sequence already exists, the new residue will be added to the end
-        of the residue list (the residue numbers of this list need not be sequential).  The same
-        residue number cannot be used more than once.  A corresponding single spin system will be
-        created for this residue.  The spin system number and name or additional spin systems can be
-        added later if desired.
+        This function will copy all the data associated with a molecule to a second molecule.  This
+        includes residue and spin system information.  The new molecule must not yet exist.
 
 
         Examples
         ~~~~~~~~
 
-        The following sequence of commands will generate the sequence 1 ALA, 2 GLY, 3 LYS:
+        To copy the molecule data from the molecule 'GST' to the new molecule 'wt-GST', type:
 
-        relax> residue.create(1, 'ALA')
-        relax> residue.create(2, 'GLY')
-        relax> residue.create(3, 'LYS')
+        relax> molecule.copy('#GST', '#wt-GST')
+        relax> molecule.copy(mol_from='#GST', mol_to='#wt-GST')
+
+
+        To copy the molecule data of the molecule 'Ap4Aase' from the data pipe 'm1' to 'm2', assuming the current
+        data pipe is 'm1', type:
+
+        relax> molecule.copy(mol_from='#ApAase', pipe_to='m2')
+        relax> molecule.copy(pipe_from='m1', mol_from='#ApAase', pipe_to='m2', mol_to='#ApAase')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "residue.create("
-            text = text + ", res_num=" + `res_num`
-            text = text + ", res_name=" + `res_name` + ")"
+            text = sys.ps3 + "molecule.copy("
+            text = text + "pipe_from=" + `pipe_from`
+            text = text + ", mol_from=" + `mol_from`
+            text = text + ", pipe_to=" + `pipe_to`
+            text = text + ", mol_to=" + `mol_to` + ")"
             print text
 
-        # Residue number.
-        if type(res_num) != int:
-            raise RelaxIntError, ('residue number', res_num)
+        # The pipe_from argument.
+        if pipe_from != None and type(pipe_from) != str:
+            raise RelaxNoneStrError, ('data pipe from', pipe_from)
 
-        # Residue name.
-        if type(res_name) != str:
-            raise RelaxStrError, ('residue name', res_name)
+        # The molecule from argument.
+        if type(mol_from) != str:
+            raise RelaxStrError, ('molecule from', mol_from)
+
+        # The pipe_to argument.
+        if pipe_to != None and type(pipe_to) != str:
+            raise RelaxNoneStrError, ('data pipe to', pipe_to)
+
+        # The molecule to argument.
+        if mol_to != None and type(mol_to) != str:
+            raise RelaxNoneStrError, ('molecule to', mol_to)
 
         # Execute the functional code.
-        residue.create(res_num=res_num, res_name=res_name)
+        molecule.copy(pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
 
 
-    def copy(self, run1=None, run2=None):
-        """Function for copying the sequence from run1 to run2.
+    def create(self, mol_name=None):
+        """Function for creating a new molecule.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run1:  The name of the run to copy the sequence from.
-
-        run2:  The name of the run to copy the sequence to.
+        mol_name:  The name of the molecule.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function will copy the sequence from 'run1' to 'run2'.  'run1' must contain sequence
-        information, while 'run2' must have no sequence loaded.
+        This function will add a new molecule data container to the relax data storage object.  The
+        same molecule name cannot be used more than once.
 
 
         Examples
         ~~~~~~~~
 
-        To copy the sequence from the run 'm1' to the run 'm2', type:
+        To create the molecules 'Ap4Aase', 'ATP', and 'MgF4', type:
 
-        relax> sequence.copy('m1', 'm2')
-        relax> sequence.copy(run1='m1', run2='m2')
+        relax> molecule.create('Ap4Aase')
+        relax> molecule.create('ATP')
+        relax> molecule.create('MgF4')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.copy("
-            text = text + "run1=" + `run1`
-            text = text + ", run2=" + `run2` + ")"
+            text = sys.ps3 + "molecule.create("
+            text = text + "mol_name=" + `mol_name` + ")"
             print text
 
-        # The run1 argument.
-        if type(run1) != str:
-            raise RelaxStrError, ('run1', run1)
-
-        # The run2 argument.
-        if type(run2) != str:
-            raise RelaxStrError, ('run2', run2)
+        # Molecule name.
+        if type(mol_name) != str:
+            raise RelaxStrError, ('molecule name', mol_name)
 
         # Execute the functional code.
-        self.__relax__.generic.sequence.copy(run1=run1, run2=run2)
+        molecule.create(mol_name=mol_name)
 
 
-    def delete(self, res_id=None):
-        """Function for deleting residues.
+    def delete(self, mol_id=None):
+        """Function for deleting molecules.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        res_id:  The residue identifier string.
+        mol_id:  The molecule identifier string.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function can be used to delete a single or sets of residues.
+        This function can be used to delete a single or sets of molecules.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "residue.delete("
-            text = text + "res_id=" + `res_id` + ")"
+            text = sys.ps3 + "molecule.delete("
+            text = text + "mol_id=" + `mol_id` + ")"
             print text
 
-        # The residue identifier argument.
-        if type(res_id) != str:
-            raise RelaxStrError, ('residue identifier', res_id)
+        # The molecule identifier argument.
+        if type(mol_id) != str:
+            raise RelaxStrError, ('molecule identifier', mol_id)
 
         # Execute the functional code.
-        residue.delete(res_id=res_id)
+        molecule.delete(mol_id=mol_id)
 
 
-    def display(self, run=None):
-        """Function for displaying the sequence.
+    def display(self, mol_id=None):
+        """Function for displaying the molecule information.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
+        mol_id:  The molecule identifier string.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.display("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "molecule.display("
+            text = text + "mol_id=" + `mol_id` + ")"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
+        # The molecule identifier argument.
+        if mol_id != None and type(mol_id) != str:
+            raise RelaxNoneStrError, ('molecule identifier', mol_id)
 
         # Execute the functional code.
-        self.__relax__.generic.sequence.display(run=run)
+        molecule.display(mol_id=mol_id)
 
 
-    def read(self, run=None, file=None, dir=None, num_col=0, name_col=1, sep=None):
-        """Function for reading sequence data.
+    def rename(self, mol_id=None, new_name=None):
+        """Function for renaming an existent molecule.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
+        mol_id:  The molecule identification string corresponding to one or more molecules.
 
-        file:  The name of the file containing the sequence data.
-
-        dir:  The directory where the file is located.
-
-        num_col:  The residue number column (the default is 0, ie the first column).
-
-        name_col:  The residue name column (the default is 1).
-
-        sep:  The column separator (the default is white space).
+        new_name:  The new molecule name.
 
 
         Description
         ~~~~~~~~~~~
 
-        If no directory is given, the file will be assumed to be in the current working directory.
+        This function simply allows molecules to be renamed.
 
 
         Examples
         ~~~~~~~~
 
-        The following commands will read the sequence data out of a file called 'seq' where the
-        residue numbers and names are in the first and second columns respectively and assign it to
-        the run 'm1'.
+        To rename the molecule 'Ap4Aase' to 'Inhib Ap4Aase', type:
 
-        relax> sequence.read('m1', 'seq')
-        relax> sequence.read('m1', 'seq', num_col=0, name_col=1)
-        relax> sequence.read(run='m1', file='seq', num_col=0, name_col=1, sep=None)
+        relax> molecule.rename('#Ap4Aase', 'Inhib Ap4Aase')
+        relax> molecule.rename(mol_id='#Ap4Aase', new_name='Inhib Ap4Aase')
 
-
-        The following commands will read the sequence out of the file 'noe.out' which also contains
-        the NOE values.
-
-        relax> sequence.read('m1', 'noe.out')
-        relax> sequence.read('m1', 'noe.out', num_col=0, name_col=1)
-        relax> sequence.read(run='m1', file='noe.out', num_col=0, name_col=1)
-
-
-        The following commands will read the sequence out of the file 'noe.600.out' where the
-        residue numbers are in the second column, the names are in the sixth column and the columns
-        are separated by commas and assign it to the run 'm5'.
-
-        relax> sequence.read('m5', 'noe.600.out', num_col=1, name_col=5, sep=',')
-        relax> sequence.read(run='m5', file='noe.600.out', num_col=1, name_col=5, sep=',')
+        This assumes the molecule 'Ap4Aase' already exists.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.read("
-            text = text + "run=" + `run`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", num_col=" + `num_col`
-            text = text + ", name_col=" + `name_col`
-            text = text + ", sep=" + `sep` + ")"
+            text = sys.ps3 + "molecule.rename("
+            text = text + "mol_id=" + `mol_id`
+            text = text + ", new_name=" + `new_name` + ")"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
+        # Residue identification string.
+        if type(mol_id) != str:
+            raise RelaxStrError, ('molecule identification string', mol_id)
 
-        # The file name.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
-
-        # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
-
-        # Number column.
-        if type(num_col) != int:
-            raise RelaxIntError, ('residue number column', num_col)
-
-        # Name column.
-        if type(name_col) != int:
-            raise RelaxIntError, ('residue name column', name_col)
-
-        # Column separator.
-        if sep != None and type(sep) != str:
-            raise RelaxNoneStrError, ('column separator', sep)
+        # New molecule name.
+        if type(new_name) != str:
+            raise RelaxStrError, ('new molecule name', new_name)
 
         # Execute the functional code.
-        self.__relax__.generic.sequence.read(run=run, file=file, dir=dir, num_col=num_col, name_col=name_col, sep=sep)
+        molecule.rename(mol_id=mol_id, new_name=new_name)
 
 
-    def sort(self, run=None):
-        """Function for numerically sorting the sequence by residue number.
 
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
+    # Docstring modification.
+    #########################
 
-        run:  The name of the run.
-        """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.sort("
-            text = text + "run=" + `run` + ")"
-            print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
-        # Execute the functional code.
-        self.__relax__.generic.sequence.sort(run=run)
-
-
-    def write(self, run=None, file=None, dir=None, force=0):
-        """Function for writing the sequence to a file.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
-
-        file:  The name of the file.
-
-        dir:  The directory name.
-
-        force:  A flag which, if set to 1, will cause the file to be overwritten.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        If no directory name is given, the file will be placed in the current working directory.
-        """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.write("
-            text = text + "run=" + `run`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force` + ")"
-            print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
-        # File.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
-
-        # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
-
-        # The force flag.
-        if type(force) != int or (force != 0 and force != 1):
-            raise RelaxBinError, ('force flag', force)
-
-        # Execute the functional code.
-        self.__relax__.generic.sequence.write(run=run, file=file, dir=dir, force=force)
+    # Add the residue identification string description.
+    copy.__doc__ = copy.__doc__ + "\n\n" + id_string_doc + "\n"
+    delete.__doc__ = delete.__doc__ + "\n\n" + id_string_doc + "\n"
+    display.__doc__ = display.__doc__ + "\n\n" + id_string_doc + "\n"
+    rename.__doc__ = rename.__doc__ + "\n\n" + id_string_doc + "\n"
+    #renumber.__doc__ = renumber.__doc__ + "\n\n" + id_string_doc + "\n"

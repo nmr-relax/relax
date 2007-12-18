@@ -253,6 +253,8 @@ class ExtendedException(Exception):
     def __init__(self,e,module):
         self.e=e
         self.module=module
+
+
     def __str__(self):
         result = self.e.__str__()
         result = result + '\n\n***WARNING: no tests from module %s will be run!!!' % self.module
@@ -263,9 +265,11 @@ class ImportErrorTestCase(unittest.TestCase):
         super(ImportErrorTestCase,self).__init__('testImportError')
         self.syntax_error=syntax_error
 
+
     def testImportError(self):
         raise self.syntax_error
         #self.fail(self.syntax_error.__str__())
+
 
 def load_test_case(package_path,  module_name, class_name):
     ''' load a testCase from the file system using a package path, file name
@@ -284,6 +288,7 @@ def load_test_case(package_path,  module_name, class_name):
         @rtype:
         @return:
         '''
+
     result = None
     packages = None
     package_path=get_module_relative_path(package_path, module_name)
@@ -374,8 +379,6 @@ class Test_finder:
         for pattern in pattern_list:
             self.patterns.append(re.compile(pattern))
         self.paths_scanned = False
-
-
 
 
     def scan_paths(self):
@@ -579,12 +582,6 @@ class Unit_test_runner(object):
         self.verbose = verbose
 
 
-
-
-
-
-
-
     def get_first_instance_path(self, path, target_path, offset_path=os.curdir):
         '''Get the minimal path searching up the file system to target_directory.
 
@@ -642,7 +639,6 @@ class Unit_test_runner(object):
             result = os.path.normpath(join_path_segments(found_seg_path))
 
         return result
-
 
 
     def paths_from_test_module(self, test_module):
@@ -716,9 +712,6 @@ class Unit_test_runner(object):
 
 
         return result
-
-
-
 
 
     def run(self, runner=None):

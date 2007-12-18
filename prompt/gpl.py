@@ -26,6 +26,7 @@ class GPL:
         help(gpl)
         return "The GNU General Public License."
 
+
 def gpl():
     """
                     GNU GENERAL PUBLIC LICENSE

@@ -40,9 +40,6 @@ class PipeContainer(Prototype):
         # Molecular structure data.
         self.structure = SpecificData()
 
-        # Diffusion data.
-        self.diff = DiffTensorData()
-
         # The molecule-residue-spin object.
         self.mol = MoleculeList()
 
@@ -72,7 +69,7 @@ class PipeContainer(Prototype):
         text = "The data pipe storage object.\n"
 
         # Special objects/methods (to avoid the getattr() function call on).
-        spec_obj = ['mol', 'diff', 'structure']
+        spec_obj = ['mol', 'diff_tensor', 'structure']
 
         # Objects.
         text = text + "\n"
@@ -83,8 +80,8 @@ class PipeContainer(Prototype):
                 text = text + "  mol: The molecule list (for the storage of the spin system specific data)\n"
 
             # Diffusion tensor.
-            if name == 'diff':
-                text = text + "  diff: The Brownian rotational diffusion tensor data object\n"
+            if name == 'diff_tensor':
+                text = text + "  diff_tensor: The Brownian rotational diffusion tensor data object\n"
 
             # Molecular structure.
             if name == 'structure':

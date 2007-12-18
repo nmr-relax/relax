@@ -39,6 +39,7 @@ except ImportError, message:
     devnull_import = 0
     devnull_import_message = message.args[0]
 
+# Python module imports.
 from os import F_OK, X_OK, access, altsep, getenv, makedirs, pathsep, remove, sep, stat
 from os.path import expanduser, basename, splitext
 from re import match, search
@@ -46,7 +47,241 @@ from string import split
 import sys
 from sys import stdin, stdout, stderr
 
+# relax module imports.
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
+
+
+"""Module containing advanced IO functions for relax.
+
+This includes IO redirection, automatic loading and writing of compressed files (both Gzip and BZ2
+compression), reading and writing of files, processing of the contents of files, etc.
+"""
+
+
+def extract_data(file_name=None, dir=None, file_data=None, sep=None, compress_type=0):
+    """Open the file 'file' and return all the data."""
+
+    # Data not already extracted from the file.
+    if not file_data:
+        # Open the file.
+        file = open_read_file(file_name=file_name, dir=dir, compress_type=compress_type)
+
+        # Read lines.
+        file_data = file.readlines()
+
+    # Create a data structure from the contents of the file split by either whitespace or the separator, sep.
+    data = []
+    for i in xrange(len(file_data)):
+        if sep:
+            row = split(file_data[i], sep)
+        else:
+            row = split(file_data[i])
+        data.append(row)
+    return data
+
+    # Close the file.
+    if not file_data:
+        file.close()
+
+
+def get_file_path(file_name=None, dir=None):
+    """Generate and expand the full file path."""
+
+    # File name.
+    file_path = file_name
+
+    # Add the directory.
+    if dir:
+        file_path = dir + '/' + file_path
+
+    # Expand any ~ characters.
+    file_path = expanduser(file_path)
+
+    # Return the file path.
+    return file_path
+
+
+def log(file_name=None, dir=None, compress_type=0, print_flag=1):
+    """Function for turning logging on."""
+
+    # Log file.
+    log_file, file_path = open_write_file(file_name=file_name, dir=dir, force=1, compress_type=compress_type, print_flag=print_flag, return_path=1)
+
+    # Print out.
+    if print_flag:
+        print "Redirecting the sys.stdin IO stream to the python stdin IO stream."
+        print "Redirecting the sys.stdout IO stream to the log file '%s'." % file_path
+        print "Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path
+
+    # Set the logging IO streams.
+    log_stdout = log_file
+    log_stderr.split(python_stderr, log_file)
+
+    # IO stream redirection.
+    sys.stdin  = log_stdin
+    sys.stdout = log_stdout
+    sys.stderr = log_stderr
+
+
+def mkdir_nofail(dir=None, print_flag=1):
+    """Create the given directory, or exit if the directory exists."""
+
+    # No directory given.
+    if dir == None:
+        return
+
+    # Make the directory.
+    try:
+        makedirs(dir)
+    except OSError:
+        if print_flag:
+            print "Directory ./" + dir + " already exists.\n"
+
+
+def open_read_file(file_name=None, dir=None, compress_type=0, print_flag=1):
+    """Open the file 'file' and return all the data."""
+
+    # A file descriptor object.
+    if type(file_name) == file:
+        # Nothing to do here!
+        return file_name
+
+    # File path.
+    file_path = get_file_path(file_name, dir)
+
+    # Test if the file exists and determine the compression type.
+    if access(file_path, F_OK):
+        compress_type = 0
+        if search('.bz2$', file_path):
+            compress_type = 1
+        elif search('.gz$', file_path):
+            compress_type = 2
+    elif access(file_path + '.bz2', F_OK):
+        file_path = file_path + '.bz2'
+        compress_type = 1
+    elif access(file_path + '.gz', F_OK):
+        file_path = file_path + '.gz'
+        compress_type = 2
+    else:
+        raise RelaxFileError, file_path
+
+    # Open the file for reading.
+    try:
+        if print_flag:
+            print "Opening the file " + `file_path` + " for reading."
+        if compress_type == 0:
+            file_obj = open(file_path, 'r')
+        elif compress_type == 1:
+            if bz2_module:
+                file_obj = BZ2File(file_path, 'r')
+            else:
+                raise RelaxError, "Cannot open the file " + `file_path` + ", try uncompressing first.  " + bz2_module_message + "."
+        elif compress_type == 2:
+            file_obj = GzipFile(file_path, 'r')
+    except IOError, message:
+        raise RelaxError, "Cannot open the file " + `file_path` + ".  " + message.args[1] + "."
+
+    # Return the opened file.
+    return file_obj
+
+
+def open_write_file(file_name=None, dir=None, force=0, compress_type=0, print_flag=1, return_path=0):
+    """Function for opening a file for writing and creating directories if necessary."""
+
+    # A file descriptor object.
+    if type(file_name) == file:
+        # Nothing to do here!
+        return file_name
+
+    # The null device.
+    if search('devnull', file_name):
+        # Devnull could not be imported!
+        if not devnull_import:
+            raise RelaxError, devnull_import_message + ".  To use devnull, please upgrade to Python >= 2.4."
+
+        # Print out.
+        if print_flag:
+            print "Opening the null device file for writing."
+
+        # Open the null device.
+        file_obj = open(devnull, 'w')
+
+        # Return the file.
+        if return_path:
+            return file_obj, None
+        else:
+            return file_obj
+
+    # Create the directories.
+    mkdir_nofail(dir, print_flag=0)
+
+    # File path.
+    file_path = get_file_path(file_name, dir)
+
+    # Bzip2 compression.
+    if compress_type == 1 and not search('.bz2$', file_path):
+        # Bz2 module exists.
+        if bz2_module:
+            file_path = file_path + '.bz2'
+
+        # Switch to gzip compression.
+        else:
+            print "Cannot use bz2 compression, using gzip compression instead.  " + bz2_module_message + "."
+            compress_type = 2
+
+    # Gzip compression.
+    if compress_type == 2 and not search('.gz$', file_path):
+        file_path = file_path + '.gz'
+
+    # Fail if the file already exists and the force flag is set to 0.
+    if access(file_path, F_OK) and not force:
+        raise RelaxFileOverwriteError, (file_path, 'force flag')
+
+    # Open the file for writing.
+    try:
+        if print_flag:
+            print "Opening the file " + `file_path` + " for writing."
+        if compress_type == 0:
+            file_obj = open(file_path, 'w')
+        elif compress_type == 1:
+            file_obj = BZ2File(file_path, 'w')
+        elif compress_type == 2:
+            file_obj = GzipFile(file_path, 'w')
+    except IOError, message:
+        raise RelaxError, "Cannot open the file " + `file_path` + ".  " + message.args[1] + "."
+
+    # Return the opened file.
+    if return_path:
+        return file_obj, file_path
+    else:
+        return file_obj
+
+
+def strip(data):
+    """Function to remove all comment and empty lines from the file data structure."""
+
+    # Initialise the new data array.
+    new = []
+
+    # Loop over the data.
+    for i in xrange(len(data)):
+        # Empty lines.
+        if len(data[i]) == 0:
+            continue
+
+        # Comment lines.
+        elif match("#", data[i][0]):
+            continue
+
+        # Data lines.
+        else:
+            new.append(data[i])
+
+    # Return the new data structure.
+    return new
+
+
+
 
 
 class IO:
@@ -97,7 +332,7 @@ class IO:
         """Function for deleting the given file."""
 
         # File path.
-        file_path = self.file_path(file_name, dir)
+        file_path = get_file_path(file_name, dir)
 
         # Test if the file exists and determine the compression type.
         if access(file_path, F_OK):
@@ -113,76 +348,11 @@ class IO:
         remove(file_path)
 
 
-    def extract_data(self, file_name=None, dir=None, file_data=None, sep=None, compress_type=0):
-        """Open the file 'file' and return all the data."""
-
-        # Data not already extracted from the file.
-        if not file_data:
-            # Open the file.
-            file = self.open_read_file(file_name=file_name, dir=dir, compress_type=compress_type)
-
-            # Read lines.
-            file_data = file.readlines()
-
-        # Create a data structure from the contents of the file split by either whitespace or the separator, sep.
-        data = []
-        for i in xrange(len(file_data)):
-            if sep:
-                row = split(file_data[i], sep)
-            else:
-                row = split(file_data[i])
-            data.append(row)
-        return data
-
-        # Close the file.
-        if not file_data:
-            file.close()
-
-
-    def file_path(self, file_name=None, dir=None):
-        """Generate and expand the full file path."""
-
-        # File name.
-        file_path = file_name
-
-        # Add the directory.
-        if dir:
-            file_path = dir + '/' + file_path
-
-        # Expand any ~ characters.
-        file_path = expanduser(file_path)
-
-        # Return the file path.
-        return file_path
-
-
     def file_root(self, file_path):
         """Return the root file name, striped of path and extension details"""
-        
+
         root,ext = splitext(file_path)
         return basename(root)
-
-
-    def log(self, file_name=None, dir=None, compress_type=0, print_flag=1):
-        """Function for turning logging on."""
-
-        # Log file.
-        self.log_file, file_path = self.open_write_file(file_name=file_name, dir=dir, force=1, compress_type=compress_type, print_flag=print_flag, return_path=1)
-
-        # Print out.
-        if print_flag:
-            print "Redirecting the sys.stdin IO stream to the python stdin IO stream."
-            print "Redirecting the sys.stdout IO stream to the log file '%s'." % file_path
-            print "Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path
-
-        # Set the logging IO streams.
-        self.log_stdout = self.log_file
-        self.log_stderr.split(self.python_stderr, self.log_file)
-
-        # IO stream redirection.
-        sys.stdin  = self.log_stdin
-        sys.stdout = self.log_stdout
-        sys.stderr = self.log_stderr
 
 
     def logging_off(self, file_name=None, dir=None, print_flag=1):
@@ -198,154 +368,6 @@ class IO:
         sys.stdin  = self.python_stdin
         sys.stdout = self.python_stdout
         sys.stderr = self.python_stderr
-
-
-    def mkdir(self, dir=None, print_flag=1):
-        """Create the given directory, or exit if the directory exists."""
-
-        # No directory given.
-        if dir == None:
-            return
-
-        # Make the directory.
-        try:
-            makedirs(dir)
-        except OSError:
-            if print_flag:
-                print "Directory ./" + dir + " already exists.\n"
-
-
-    def open_read_file(self, file_name=None, dir=None, compress_type=0, print_flag=1):
-        """Open the file 'file' and return all the data."""
-
-        # File path.
-        file_path = self.file_path(file_name, dir)
-
-        # Test if the file exists and determine the compression type.
-        if access(file_path, F_OK):
-            compress_type = 0
-            if search('.bz2$', file_path):
-                compress_type = 1
-            elif search('.gz$', file_path):
-                compress_type = 2
-        elif access(file_path + '.bz2', F_OK):
-            file_path = file_path + '.bz2'
-            compress_type = 1
-        elif access(file_path + '.gz', F_OK):
-            file_path = file_path + '.gz'
-            compress_type = 2
-        else:
-            raise RelaxFileError, file_path
-
-        # Open the file for reading.
-        try:
-            if print_flag:
-                print "Opening the file " + `file_path` + " for reading."
-            if compress_type == 0:
-                file = open(file_path, 'r')
-            elif compress_type == 1:
-                if bz2_module:
-                    file = BZ2File(file_path, 'r')
-                else:
-                    raise RelaxError, "Cannot open the file " + `file_path` + ", try uncompressing first.  " + bz2_module_message + "."
-            elif compress_type == 2:
-                file = GzipFile(file_path, 'r')
-        except IOError, message:
-            raise RelaxError, "Cannot open the file " + `file_path` + ".  " + message.args[1] + "."
-
-        # Return the opened file.
-        return file
-
-
-    def open_write_file(self, file_name=None, dir=None, force=0, compress_type=0, print_flag=1, return_path=0):
-        """Function for opening a file for writing and creating directories if necessary."""
-
-        # The null device.
-        if search('devnull', file_name):
-            # Devnull could not be imported!
-            if not devnull_import:
-                raise RelaxError, devnull_import_message + ".  To use devnull, please upgrade to Python >= 2.4."
-
-            # Print out.
-            if print_flag:
-                print "Opening the null device file for writing."
-
-            # Open the null device.
-            file = open(devnull, 'w')
-
-            # Return the file.
-            if return_path:
-                return file, None
-            else:
-                return file
-
-        # Create the directories.
-        self.mkdir(dir, print_flag=0)
-
-        # File path.
-        file_path = self.file_path(file_name, dir)
-
-        # Bzip2 compression.
-        if compress_type == 1 and not search('.bz2$', file_path):
-            # Bz2 module exists.
-            if bz2_module:
-                file_path = file_path + '.bz2'
-
-            # Switch to gzip compression.
-            else:
-                print "Cannot use bz2 compression, using gzip compression instead.  " + bz2_module_message + "."
-                compress_type = 2
-
-        # Gzip compression.
-        if compress_type == 2 and not search('.gz$', file_path):
-            file_path = file_path + '.gz'
-
-        # Fail if the file already exists and the force flag is set to 0.
-        if access(file_path, F_OK) and not force:
-            raise RelaxFileOverwriteError, (file_path, 'force flag')
-
-        # Open the file for writing.
-        try:
-            if print_flag:
-                print "Opening the file " + `file_path` + " for writing."
-            if compress_type == 0:
-                file = open(file_path, 'w')
-            elif compress_type == 1:
-                file = BZ2File(file_path, 'w')
-            elif compress_type == 2:
-                file = GzipFile(file_path, 'w')
-        except IOError, message:
-            raise RelaxError, "Cannot open the file " + `file_path` + ".  " + message.args[1] + "."
-
-        # Return the opened file.
-        if return_path:
-            return file, file_path
-        else:
-            return file
-
-
-    def strip(self, data):
-        """Function to remove all comment and empty lines from the file data structure."""
-
-        # Initialise the new data array.
-        new = []
-
-        # Loop over the data.
-        for i in xrange(len(data)):
-            # Empty lines.
-            if len(data[i]) == 0:
-                continue
-
-            # Comment lines.
-            elif match("#", data[i][0]):
-                continue
-
-            # Data lines.
-            else:
-                new.append(data[i])
-
-        # Return the new data structure.
-        return new
 
 
     def tee(self, file_name=None, dir=None, compress_type=0, print_flag=1):

@@ -25,15 +25,16 @@ import sys
 
 # relax module imports.
 import help
-from generic_fns import residue
-from relax_errors import RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxStrError
+from generic_fns import spin
+from generic_fns.selection import id_string_doc
+from relax_errors import RelaxIntError, RelaxNoneStrError, RelaxStrError
 
 
-class Residue:
+class Spin:
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \
-        """Class for manipulating the residue data."""
+        """Class for manipulating the spin data."""
 
         # Add the generic help string.
         self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
@@ -42,315 +43,289 @@ class Residue:
         self.__relax__ = relax
 
 
-    def create(self, res_num=None, res_name=None):
-        """Function for creating a new residue.
+    def copy(self, pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
+        """Function for copying all data associated with a spin.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        res_num:  The residue number.
+        pipe_from:  The data pipe containing the spin from which the data will be copied.  This
+            defaults to the current data pipe.
 
-        res_name:  The name of the residue.
+        spin_from:  The spin identifier string of the spin to copy the data from.
+
+        pipe_to:  The data pipe to copy the data to.  This defaults to the current data pipe.
+
+        spin_to:  The spin identifier string of the spin to copy the data to.
 
 
         Description
         ~~~~~~~~~~~
 
-        Using this function a new sequence can be generated without using the sequence user
-        functions.  However if the sequence already exists, the new residue will be added to the end
-        of the residue list (the residue numbers of this list need not be sequential).  The same
-        residue number cannot be used more than once.  A corresponding single spin system will be
-        created for this residue.  The spin system number and name or additional spin systems can be
-        added later if desired.
+        This function will copy all the data associated with the identified spin to the new,
+        non-existent spin.  The new spin must not already exist.
 
 
         Examples
         ~~~~~~~~
 
-        The following sequence of commands will generate the sequence 1 ALA, 2 GLY, 3 LYS:
+        To copy the spin data from spin 1 to the new spin 2, type:
 
-        relax> residue.create(1, 'ALA')
-        relax> residue.create(2, 'GLY')
-        relax> residue.create(3, 'LYS')
+        relax> spin.copy(spin_from='@1', spin_to='@2')
+
+
+        To copy spin 1 of the molecule 'Old mol' to spin 5 of the molecule 'New mol', type:
+
+        relax> spin.copy(spin_from='#Old mol@1', spin_to='#New mol@5')
+
+
+        To copy the spin data of spin 1 from the data pipe 'm1' to 'm2', assuming the current
+        data pipe is 'm1', type:
+
+        relax> spin.copy(spin_from='@1', pipe_to='m2')
+        relax> spin.copy(pipe_from='m1', spin_from='@1', pipe_to='m2', spin_to='@1')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "residue.create("
-            text = text + ", res_num=" + `res_num`
-            text = text + ", res_name=" + `res_name` + ")"
+            text = sys.ps3 + "spin.copy("
+            text = text + "pipe_from=" + `pipe_from`
+            text = text + ", spin_from=" + `spin_from`
+            text = text + ", pipe_to=" + `pipe_to`
+            text = text + ", spin_to=" + `spin_to` + ")"
             print text
 
-        # Residue number.
-        if type(res_num) != int:
-            raise RelaxIntError, ('residue number', res_num)
+        # The data pipe from argument.
+        if pipe_from != None and type(pipe_from) != str:
+            raise RelaxNoneStrError, ('data pipe from', pipe_from)
 
-        # Residue name.
-        if type(res_name) != str:
-            raise RelaxStrError, ('residue name', res_name)
+        # The spin from argument.
+        if type(spin_from) != str:
+            raise RelaxStrError, ('spin from', spin_from)
+
+        # The data pipe to argument.
+        if pipe_to != None and type(pipe_to) != str:
+            raise RelaxNoneStrError, ('data pipe to', pipe_to)
+
+        # The spin to argument.
+        if spin_to != None and type(spin_to) != str:
+            raise RelaxNoneStrError, ('spin to', spin_to)
 
         # Execute the functional code.
-        residue.create(res_num=res_num, res_name=res_name)
+        spin.copy(pipe_from=pipe_from, spin_from=spin_from, pipe_to=pipe_to, spin_to=spin_to)
 
 
-    def copy(self, run1=None, run2=None):
-        """Function for copying the sequence from run1 to run2.
+    def create(self, spin_num=None, spin_name=None, res_id=None):
+        """Function for creating a new spin.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run1:  The name of the run to copy the sequence from.
+        spin_num:  The spin number.
 
-        run2:  The name of the run to copy the sequence to.
+        spin_name:  The name of the spin.
+
+        res_id:  The residue ID string identifying the residue to add the spin to.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function will copy the sequence from 'run1' to 'run2'.  'run1' must contain sequence
-        information, while 'run2' must have no sequence loaded.
+        This function will add a new spin data container to the relax data storage object.  The same
+        spin number cannot be used more than once.
 
 
         Examples
         ~~~~~~~~
 
-        To copy the sequence from the run 'm1' to the run 'm2', type:
+        The following sequence of commands will generate the sequence 1 C4, 2 C9, 3 C15:
 
-        relax> sequence.copy('m1', 'm2')
-        relax> sequence.copy(run1='m1', run2='m2')
+        relax> spin.create(1, 'C4')
+        relax> spin.create(2, 'C9')
+        relax> spin.create(3, 'C15')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.copy("
-            text = text + "run1=" + `run1`
-            text = text + ", run2=" + `run2` + ")"
+            text = sys.ps3 + "spin.create("
+            text = text + "spin_num=" + `spin_num`
+            text = text + ", spin_name=" + `spin_name`
+            text = text + ", res_id=" + `res_id` + ")"
             print text
 
-        # The run1 argument.
-        if type(run1) != str:
-            raise RelaxStrError, ('run1', run1)
+        # Spin number.
+        if type(spin_num) != int:
+            raise RelaxIntError, ('spin number', spin_num)
 
-        # The run2 argument.
-        if type(run2) != str:
-            raise RelaxStrError, ('run2', run2)
+        # Spin name.
+        if type(spin_name) != str:
+            raise RelaxStrError, ('spin name', spin_name)
+
+        # The residue ID.
+        if res_id != None and type(res_id) != str:
+            raise RelaxNoneStrError, ('residue identification string', res_id)
 
         # Execute the functional code.
-        self.__relax__.generic.sequence.copy(run1=run1, run2=run2)
+        spin.create(spin_num=spin_num, spin_name=spin_name, res_id=res_id)
 
 
-    def delete(self, res_id=None):
-        """Function for deleting residues.
+    def delete(self, spin_id=None):
+        """Function for deleting spins.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        res_id:  The residue identifier string.
+        spin_id:  The spin identifier string.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function can be used to delete a single or sets of residues.
+        This function can be used to delete a single or sets of spins.  See the identification
+        string documentation below for more information.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "residue.delete("
-            text = text + "res_id=" + `res_id` + ")"
+            text = sys.ps3 + "spin.delete("
+            text = text + "spin_id=" + `spin_id` + ")"
             print text
 
-        # The residue identifier argument.
-        if type(res_id) != str:
-            raise RelaxStrError, ('residue identifier', res_id)
+        # The spin identifier argument.
+        if type(spin_id) != str:
+            raise RelaxStrError, ('spin identifier', spin_id)
 
         # Execute the functional code.
-        residue.delete(res_id=res_id)
+        spin.delete(spin_id=spin_id)
 
 
-    def display(self, run=None):
-        """Function for displaying the sequence.
+    def display(self, spin_id=None):
+        """Function for displaying information about the spin(s).
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
+        spin_id:  The spin identification string.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.display("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "spin.display("
+            text = text + "spin_id=" + `spin_id` + ")"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
+        # The spin_id argument.
+        if spin_id != None and type(spin_id) != str:
+            raise RelaxNoneStrError, ('spin identification string', spin_id)
 
         # Execute the functional code.
-        self.__relax__.generic.sequence.display(run=run)
+        spin.display(spin_id=spin_id)
 
 
-    def read(self, run=None, file=None, dir=None, num_col=0, name_col=1, sep=None):
-        """Function for reading sequence data.
+    def rename(self, spin_id=None, new_name=None):
+        """Function for renaming an existent spin(s).
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
+        spin_id:  The spin identification string corresponding to one or more spins.
 
-        file:  The name of the file containing the sequence data.
-
-        dir:  The directory where the file is located.
-
-        num_col:  The residue number column (the default is 0, ie the first column).
-
-        name_col:  The residue name column (the default is 1).
-
-        sep:  The column separator (the default is white space).
+        new_name:  The new name.
 
 
         Description
         ~~~~~~~~~~~
 
-        If no directory is given, the file will be assumed to be in the current working directory.
+        This function simply allows spins to be renamed.
 
 
         Examples
         ~~~~~~~~
 
-        The following commands will read the sequence data out of a file called 'seq' where the
-        residue numbers and names are in the first and second columns respectively and assign it to
-        the run 'm1'.
+        The following sequence of commands will rename the sequence {1 C1, 2 C2, 3 C3} to {1 C11,
+        2 C12, 3 C13}:
 
-        relax> sequence.read('m1', 'seq')
-        relax> sequence.read('m1', 'seq', num_col=0, name_col=1)
-        relax> sequence.read(run='m1', file='seq', num_col=0, name_col=1, sep=None)
-
-
-        The following commands will read the sequence out of the file 'noe.out' which also contains
-        the NOE values.
-
-        relax> sequence.read('m1', 'noe.out')
-        relax> sequence.read('m1', 'noe.out', num_col=0, name_col=1)
-        relax> sequence.read(run='m1', file='noe.out', num_col=0, name_col=1)
-
-
-        The following commands will read the sequence out of the file 'noe.600.out' where the
-        residue numbers are in the second column, the names are in the sixth column and the columns
-        are separated by commas and assign it to the run 'm5'.
-
-        relax> sequence.read('m5', 'noe.600.out', num_col=1, name_col=5, sep=',')
-        relax> sequence.read(run='m5', file='noe.600.out', num_col=1, name_col=5, sep=',')
+        relax> spin.rename('@1', 'C11')
+        relax> spin.rename('@2', 'C12')
+        relax> spin.rename('@3', 'C13')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.read("
-            text = text + "run=" + `run`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", num_col=" + `num_col`
-            text = text + ", name_col=" + `name_col`
-            text = text + ", sep=" + `sep` + ")"
+            text = sys.ps3 + "spin.rename("
+            text = text + "spin_id=" + `spin_id`
+            text = text + ", new_name=" + `new_name` + ")"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
+        # Spin identification string.
+        if type(spin_id) != str:
+            raise RelaxStrError, ('spin identification string', spin_id)
 
-        # The file name.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
-
-        # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
-
-        # Number column.
-        if type(num_col) != int:
-            raise RelaxIntError, ('residue number column', num_col)
-
-        # Name column.
-        if type(name_col) != int:
-            raise RelaxIntError, ('residue name column', name_col)
-
-        # Column separator.
-        if sep != None and type(sep) != str:
-            raise RelaxNoneStrError, ('column separator', sep)
+        # New spin name.
+        if type(new_name) != str:
+            raise RelaxStrError, ('new spin name', new_name)
 
         # Execute the functional code.
-        self.__relax__.generic.sequence.read(run=run, file=file, dir=dir, num_col=num_col, name_col=name_col, sep=sep)
+        spin.rename(spin_id=spin_id, new_name=new_name)
 
 
-    def sort(self, run=None):
-        """Function for numerically sorting the sequence by residue number.
+    def renumber(self, spin_id=None, new_number=None):
+        """Function for renumbering an existent spin.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
-        """
+        spin_id:  The spin identification string corresponding to a single spin.
 
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.sort("
-            text = text + "run=" + `run` + ")"
-            print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
-        # Execute the functional code.
-        self.__relax__.generic.sequence.sort(run=run)
-
-
-    def write(self, run=None, file=None, dir=None, force=0):
-        """Function for writing the sequence to a file.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
-
-        file:  The name of the file.
-
-        dir:  The directory name.
-
-        force:  A flag which, if set to 1, will cause the file to be overwritten.
+        new_number:  The new spin number.
 
 
         Description
         ~~~~~~~~~~~
 
-        If no directory name is given, the file will be placed in the current working directory.
+        This function simply allows spins to be renumbered.  The new number cannot correspond to
+        an existing spin number (for that residue or that molecule).
+
+
+        Examples
+        ~~~~~~~~
+
+        The following sequence of commands will renumber the sequence {1 C1, 2 C2, 3 C3} to
+        {-1 C1, -2 C2, -3 C3}:
+
+        relax> spin.renumber('@1', -1)
+        relax> spin.renumber('@2', -2)
+        relax> spin.renumber('@3', -3)
+
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.write("
-            text = text + "run=" + `run`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force` + ")"
+            text = sys.ps3 + "spin.renumber("
+            text = text + "spin_id=" + `spin_id`
+            text = text + ", new_number=" + `new_number` + ")"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
+        # Spin identification string.
+        if type(spin_id) != str:
+            raise RelaxStrError, ('spin identification string', spin_id)
 
-        # File.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
-
-        # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
-
-        # The force flag.
-        if type(force) != int or (force != 0 and force != 1):
-            raise RelaxBinError, ('force flag', force)
+        # New spin number.
+        if type(new_number) != int:
+            raise RelaxIntError, ('new spin number', new_number)
 
         # Execute the functional code.
-        self.__relax__.generic.sequence.write(run=run, file=file, dir=dir, force=force)
+        spin.renumber(spin_id=spin_id, new_number=new_number)
+
+
+
+    # Docstring modification.
+    #########################
+
+    # Add the identification string description.
+    copy.__doc__ = copy.__doc__ + "\n\n" + id_string_doc + "\n"
+    create.__doc__ = create.__doc__ + "\n\n" + id_string_doc + "\n"
+    delete.__doc__ = delete.__doc__ + "\n\n" + id_string_doc + "\n"
+    display.__doc__ = display.__doc__ + "\n\n" + id_string_doc + "\n"
+    rename.__doc__ = rename.__doc__ + "\n\n" + id_string_doc + "\n"
+    renumber.__doc__ = renumber.__doc__ + "\n\n" + id_string_doc + "\n"

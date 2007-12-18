@@ -238,7 +238,6 @@ class System_tests:
         return global_pass
 
 
-
     def exec_tests(self, test_array):
         """Function for running the tests."""
 
@@ -254,15 +253,15 @@ class System_tests:
             # Reset relax.
             self.relax.interpreter._Reset.reset()
 
-            # The run name.
-            self.run = 'test'
+            # The data pipe name, used by many tests.
+            self.pipe = 'test'
 
             # Flag indicating whether the test passed or failed.
             test_array[i].passed = 0
 
             # Execute the test.
             try:
-                test_array[i].passed = test_array[i].test(self.run)
+                test_array[i].passed = test_array[i].test(self.pipe)
 
             # The test failed.
             except:

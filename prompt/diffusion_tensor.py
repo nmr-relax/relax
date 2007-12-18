@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2005, 2007 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,9 +20,12 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
 
+# relax module imports.
 import help
+from generic_fns import diffusion_tensor
 from relax_errors import RelaxBinError, RelaxError, RelaxFloatError, RelaxIntError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
 
 
@@ -39,111 +42,104 @@ class Diffusion_tensor:
         self.__relax__ = relax
 
 
-    def copy(self, run1=None, run2=None):
-        """Function for copying diffusion tensor data from run1 to run2.
+    def copy(self, pipe_from=None, pipe_to=None):
+        """Function for copying diffusion tensor data from one data pipe to another.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run1:  The name of the run to copy the sequence from.
+        pipe_from:  The name of the data pipe to copy the diffusion tensor data from.
 
-        run2:  The name of the run to copy the sequence to.
+        pipe_to:  The name of the data pipe to copy the diffusion tensor data to.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function will copy the diffusion tensor data from 'run1' to 'run2'.  'run2' must not
-        contain any diffusion tensor data.
+        This function will copy the diffusion tensor data between data pipes.  The destination data
+        pipe must not contain any diffusion tensor data.  If the pipe_from or pipe_to arguments are
+        not supplied, then both will default to the current data pipe (hence giving one argument is
+        essential).
 
 
         Examples
         ~~~~~~~~
 
-        To copy the diffusion tensor from run 'm1' to run 'm2', type:
+        To copy the diffusion tensor from the data pipe 'm1' to the current data pipe, type:
+
+        relax> diffusion_tensor.copy('m1')
+        relax> diffusion_tensor.copy(pipe_from='m1')
+
+
+        To copy the diffusion tensor from the current data pipe to the data pipe 'm9', type:
+
+        relax> diffusion_tensor.copy(pipe_to='m9')
+
+
+        To copy the diffusion tensor from the data pipe 'm1' to 'm2', type:
 
         relax> diffusion_tensor.copy('m1', 'm2')
+        relax> diffusion_tensor.copy(pipe_from='m1', pipe_to='m2')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "diffusion_tensor.copy("
-            text = text + "run1=" + `run1`
-            text = text + ", run2=" + `run2` + ")"
+            text = text + "pipe_from=" + `pipe_from`
+            text = text + ", pipe_to=" + `pipe_to` + ")"
             print text
 
-        # The run1 argument.
-        if type(run1) != str:
-            raise RelaxStrError, ('run1', run1)
+        # The pipe_from argument.
+        if pipe_from != None and type(pipe_from) != str:
+            raise RelaxNoneStrError, ('pipe from', pipe_from)
 
-        # The run2 argument.
-        if type(run2) != str:
-            raise RelaxStrError, ('run2', run2)
+        # The pipe_to argument.
+        if pipe_to != None and type(pipe_to) != str:
+            raise RelaxNoneStrError, ('pipe to', pipe_to)
+
+        # Both pipe arguments cannot be None.
+        if pipe_from == None and pipe_to == None:
+            raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
 
         # Execute the functional code.
-        self.__relax__.generic.diffusion_tensor.copy(run1=run1, run2=run2)
+        diffusion_tensor.copy(pipe_from=pipe_from, pipe_to=pipe_to)
 
 
-    def delete(self, run=None):
+    def delete(self):
         """Function for deleting diffusion tensor data.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
-
-
 
         Description
         ~~~~~~~~~~~
 
-        This function will delete all diffusion tensor data for the given run.
+        This function will delete all diffusion tensor data from the current data pipe.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "diffusion_tensor.delete("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "diffusion_tensor.delete()"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
         # Execute the functional code.
-        self.__relax__.generic.diffusion_tensor.delete(run=run)
+        diffusion_tensor.delete()
 
 
-    def display(self, run=None):
-        """Function for displaying the diffusion tensor.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
-        """
+    def display(self):
+        """Function for displaying the diffusion tensor information."""
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "diffusion_tensor.display("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "diffusion_tensor.display()"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
         # Execute the functional code.
-        self.__relax__.generic.diffusion_tensor.display(run=run)
+        diffusion_tensor.display()
 
 
-    def init(self, run=None, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=1):
+    def init(self, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=1):
         """Function for initialising the diffusion tensor.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run to assign the data to.
 
         params:  The diffusion tensor data.
 
@@ -356,55 +352,44 @@ class Diffusion_tensor:
         Examples
         ~~~~~~~~
 
-        To set an isotropic diffusion tensor with a correlation time of 10 ns, assigning it to the
-        run 'm1', type:
+        To set an isotropic diffusion tensor with a correlation time of 10 ns, type:
 
-        relax> diffusion_tensor('m1', 10e-9)
-        relax> diffusion_tensor(run='m1', params=10e-9)
-        relax> diffusion_tensor('m1', 10.0, 1e-9)
-        relax> diffusion_tensor(run='m1', params=10.0, time_scale=1e-9, fixed=1)
+        relax> diffusion_tensor(10e-9)
+        relax> diffusion_tensor(params=10e-9)
+        relax> diffusion_tensor(10.0, 1e-9)
+        relax> diffusion_tensor(params=10.0, time_scale=1e-9, fixed=1)
 
 
         To select axially symmetric diffusion with a tm value of 8.5 ns, Dratio of 1.1, theta value
-        of 20 degrees, and phi value of 20 degrees, and assign it to the run 'm8', type:
+        of 20 degrees, and phi value of 20 degrees, type:
 
-        relax> diffusion_tensor('m8', (8.5e-9, 1.1, 20.0, 20.0), param_types=1)
+        relax> diffusion_tensor((8.5e-9, 1.1, 20.0, 20.0), param_types=1)
 
 
         To select a spheroid diffusion tensor with a Dpar value of 1.698e7, Dper value of 1.417e7,
-        theta value of 67.174 degrees, and phi value of -83.718 degrees, and assign it to the run
-        'spheroid', type one of:
+        theta value of 67.174 degrees, and phi value of -83.718 degrees, type one of:
 
-        relax> diffusion_tensor('spheroid', (1.698e7, 1.417e7, 67.174, -83.718), param_types=1)
-        relax> diffusion_tensor(run='spheroid', params=(1.698e7, 1.417e7, 67.174, -83.718),
-                                param_types=1)
-        relax> diffusion_tensor('spheroid', (1.698e-1, 1.417e-1, 67.174, -83.718), param_types=1,
+        relax> diffusion_tensor((1.698e7, 1.417e7, 67.174, -83.718), param_types=1)
+        relax> diffusion_tensor(params=(1.698e7, 1.417e7, 67.174, -83.718), param_types=1)
+        relax> diffusion_tensor((1.698e-1, 1.417e-1, 67.174, -83.718), param_types=1, d_scale=1e8)
+        relax> diffusion_tensor(params=(1.698e-1, 1.417e-1, 67.174, -83.718), param_types=1,
                                 d_scale=1e8)
-        relax> diffusion_tensor(run='spheroid', params=(1.698e-1, 1.417e-1, 67.174, -83.718),
-                                param_types=1, d_scale=1e8)
-        relax> diffusion_tensor('spheroid', (1.698e-1, 1.417e-1, 1.1724, -1.4612), param_types=1,
-                                d_scale=1e8, angle_units='rad')
-        relax> diffusion_tensor(run='spheroid', params=(1.698e-1, 1.417e-1, 1.1724, -1.4612),
-                                param_types=1, d_scale=1e8, angle_units='rad', fixed=1)
+        relax> diffusion_tensor((1.698e-1, 1.417e-1, 1.1724, -1.4612), param_types=1, d_scale=1e8,
+                                angle_units='rad')
+        relax> diffusion_tensor(params=(1.698e-1, 1.417e-1, 1.1724, -1.4612), param_types=1,
+                                d_scale=1e8, angle_units='rad', fixed=1)
 
 
         To select ellipsoidal diffusion, type:
 
-        relax> diffusion_tensor('m5', (1.340e7, 1.516e7, 1.691e7, -82.027, -80.573, 65.568),
+        relax> diffusion_tensor((1.340e7, 1.516e7, 1.691e7, -82.027, -80.573, 65.568),
                                 param_types=2)
-
-
-        To select and minimise a spherical diffusion tensor, type (followed by a minimisation
-        command):
-
-        relax> diffusion_tensor('diff', 10e-9, fixed=0)
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "diffusion_tensor.init("
-            text = text + "run=" + `run`
-            text = text + ", params=" + `params`
+            text = text + "params=" + `params`
             text = text + ", time_scale=" + `time_scale`
             text = text + ", d_scale=" + `d_scale`
             text = text + ", angle_units=" + `angle_units`
@@ -413,16 +398,12 @@ class Diffusion_tensor:
             text = text + ", fixed=" + `fixed` + ")"
             print text
 
-        # The name of the run.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
         # Parameter argument.
         if type(params) != int and type(params) != float and type(params) != tuple:
             raise RelaxNumTupleError, ('diffusion parameters', params)
         if type(params) == tuple:
             if len(params) != 4 and len(params) != 6:
-                raise RelaxError, "The diffusion parameters argument must either be a number or a tuple of numbers of length 4 or 6."
+                raise RelaxError, "The diffusion parameters argument " + `params` + " must either be a number or a tuple of numbers of length 4 or 6."
             for i in xrange(len(params)):
                 if type(params[i]) != float and type(params[i]) != int:
                     raise RelaxNumTupleError, ('diffusion parameters', params)
@@ -452,4 +433,4 @@ class Diffusion_tensor:
             raise RelaxBinError, ('fixed flag', fixed)
 
         # Execute the functional code.
-        self.__relax__.generic.diffusion_tensor.init(run=run, params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, spheroid_type=spheroid_type, fixed=fixed)
+        diffusion_tensor.init(params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, spheroid_type=spheroid_type, fixed=fixed)

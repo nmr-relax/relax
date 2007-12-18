@@ -65,14 +65,12 @@ except ImportError:
 
 # relax modules.
 from colour import Colour
-from io import IO
-from generic_fns.main import Generic
+import generic_fns
 from prompt.gpl import gpl
-from prompt.interpreter import Interpreter
+from prompt import interpreter
 import relax_errors
+from relax_io import log
 import relax_warnings
-from specific_fns.main import Specific
-from specific_fns.specific_setup import Specific_setup
 from test_suite.runner import Test_suite_runner
 from test_suite.unit_tests.unit_test_runner import Unit_test_runner
 from thread_classes import Threading, ThreadData
@@ -108,20 +106,11 @@ class Relax:
         # The thread data storage object.
         self.thread_data = ThreadData()
 
-        # File operation functions.
-        self.IO = IO(self)
-
         # Colour operations.
         self.colour = Colour()
 
-        # Setup the specific setup object.
-        self.specific_setup = Specific_setup(self)
-
         # Setup the object containing the generic functions.
-        self.generic = Generic(self)
-
-        # Setup the object containing the specific functions.
-        self.specific = Specific(self)
+        self.generic = generic_fns
 
         # Setup the object containing the thread setup functions.
         self.threading = Threading(self)
@@ -129,9 +118,10 @@ class Relax:
         # Process the command line arguments and determine the relax mode.
         mode, log_file, tee_file = self.arguments()
 
-        # Set up the debugging flag.
+        # Place the debugging flag in a number of modules which don't have access to the 'self.relax' namespace.
         relax_errors.Debug = self.Debug
         relax_warnings.Debug = self.Debug
+        interpreter.Debug = self.Debug
 
         # Set up the pedantic flag.
         relax_warnings.Pedantic = self.Pedantic
@@ -147,11 +137,11 @@ class Relax:
 
         # Logging.
         if log_file and mode != 'thread':
-            self.IO.log(log_file)
+            log(log_file)
 
         # Tee.
         elif tee_file and mode != 'thread':
-            self.IO.tee(tee_file)
+            tee(tee_file)
 
         # Run the interpreter for the prompt or script modes.
         if mode == 'prompt' or mode == 'script':
@@ -159,7 +149,7 @@ class Relax:
             self.set_intro_string()
 
             # Run the interpreter.
-            self.interpreter = Interpreter(self)
+            self.interpreter = interpreter.Interpreter(self)
             self.interpreter.run()
 
         # Threading mode.
@@ -170,11 +160,11 @@ class Relax:
 
             # Logging (silent IO redirection).
             if log_file:
-                self.IO.log(log_file, print_flag=0)
+                log(log_file, print_flag=0)
 
             # Tee (silent IO redirection).
             elif tee_file:
-                self.IO.tee(tee_file, print_flag=0)
+                tee(tee_file, print_flag=0)
 
             # Execute the script.
             self.threading.execute()
@@ -185,7 +175,7 @@ class Relax:
             self.set_intro_string()
 
             # Load the interpreter and turn intros on.
-            self.interpreter = Interpreter(self)
+            self.interpreter = interpreter.Interpreter(self)
             self.interpreter._on()
 
             # Run the tests.
@@ -373,7 +363,7 @@ class Relax:
         """Create the program introduction."""
 
         # The width of the printout.
-        if self.platform == 'Windows':
+        if self.platform == 'Windows' or self.platform == 'Microsoft':
             width = 80
         else:
             width = 100
@@ -391,6 +381,8 @@ class Relax:
 
         # Copyright printout.
         string = "Copyright (C) 2001-2006 Edward d'Auvergne"
+        self.intro_string = self.intro_string + self.spacing(string, width) + '\n'
+        string = "Copyright (C) 2006-2007 the relax development team"
         self.intro_string = self.intro_string + self.spacing(string, width) + '\n\n'
 
         # Program licence and help (80 characters wide).

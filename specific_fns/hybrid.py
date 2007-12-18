@@ -22,17 +22,12 @@
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError, RelaxNoRunError, RelaxNoSequenceError, RelaxRunError, RelaxSequenceError
-
-
-# The relax data storage object.
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxPipeError, RelaxSequenceError
 
 
 class Hybrid:
-    def __init__(self, relax):
+    def __init__(self):
         """Class containing function specific to hybrid models."""
-
-        self.relax = relax
 
 
     def duplicate_data(self, new_run=None, old_run=None, instance=None):
@@ -40,11 +35,11 @@ class Hybrid:
 
         # Test that the new run exists.
         if not new_run in relax_data_store.run_names:
-            raise RelaxNoRunError, new_run
+            raise RelaxNoPipeError, new_run
 
         # Test that the old run exists.
         if not old_run in relax_data_store.run_names:
-            raise RelaxNoRunError, old_run
+            raise RelaxNoPipeError, old_run
 
         # Test that the new run has no sequence loaded.
         if relax_data_store.res.has_key(new_run):
@@ -62,13 +57,13 @@ class Hybrid:
 
         # Test if the hybrid run already exists.
         if hybrid in relax_data_store.run_names:
-            raise RelaxRunError, hybrid
+            raise RelaxPipeError, hybrid
 
         # Loop over the runs to be hybridised.
         for run in runs:
             # Test if the run exists.
             if not run in relax_data_store.run_names:
-                raise RelaxNoRunError, run
+                raise RelaxNoPipeError, run
 
             # Test if sequence data is loaded.
             if not relax_data_store.res.has_key(run):

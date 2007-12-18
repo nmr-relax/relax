@@ -23,6 +23,7 @@
 
 from Numeric import dot
 
+
 def backtrack(func, args, x, f, g, p, a_init=1.0, rho=0.5, c=1e-4, max_iter=500):
     """Backtracking line search.
 

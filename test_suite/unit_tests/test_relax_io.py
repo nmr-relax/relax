@@ -24,9 +24,53 @@
 from unittest import TestCase
 
 # relax module imports.
-from generic_fns import spin
+import relax_io
 
 
+class Test_relax_io(TestCase):
+    """Unit tests for the functions of the 'relax_io' module."""
 
-class Test_spin(TestCase):
-    """Unit tests for the functions of the 'generic_fns.spin' module."""
+
+    def test_get_file_path(self):
+        """Test for file paths which should remain unmodified by relax_io.get_file_path."""
+
+        # Some file paths that shouldn't change.
+        file1 = 'test'
+        file2 = 'test/aaa'
+        file3 = '/home/test/aaa'
+
+        # Check that nothing changes.
+        self.assertEqual(relax_io.get_file_path(file1), file1)
+        self.assertEqual(relax_io.get_file_path(file2), file2)
+        self.assertEqual(relax_io.get_file_path(file3), file3)
+
+
+    def test_get_file_path_with_dir(self):
+        """The modification of file paths by relax_io.get_file_path when a directory is supplied."""
+
+        # Some file paths.
+        file1 = 'test'
+        file2 = 'test/aaa'
+        file3 = '/home/test/aaa'
+
+        # Some directories.
+        dir1 = '/usr'
+        dir2 = 'usr'
+        dir3 = '/usr'
+
+        # Check that nothing changes.
+        self.assertEqual(relax_io.get_file_path(file1, dir1), dir1+'/'+file1)
+        self.assertEqual(relax_io.get_file_path(file2, dir2), dir2+'/'+file2)
+        self.assertEqual(relax_io.get_file_path(file3, dir=dir3), dir3+'/'+file3)
+
+
+    def test_get_file_path_with_homedir(self):
+        """The modification of file paths with '~', by relax_io.get_file_path."""
+
+        # Some file paths.
+        file1 = '~/test'
+        file2 = '~/test/aaa'
+
+        # Check that nothing changes.
+        self.assertNotEqual(relax_io.get_file_path(file1), file1)
+        self.assertNotEqual(relax_io.get_file_path(file2), file2)

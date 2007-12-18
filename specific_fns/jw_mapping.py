@@ -28,17 +28,13 @@ from string import replace
 from data import Data as relax_data_store
 from base_class import Common_functions
 from maths_fns.jw_mapping import Mapping
-from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoRunError, RelaxNoSequenceError, RelaxNoValueError, RelaxNucleusError
-
-
-# The relax data storage object.
+from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError, RelaxNucleusError
+from physical_constants import N15_CSA, NH_BOND_LENGTH
 
 
 class Jw_mapping(Common_functions):
-    def __init__(self, relax):
+    def __init__(self):
         """Class containing functions specific to reduced spectral density mapping."""
-
-        self.relax = relax
 
 
     def calculate(self, run=None, print_flag=1, sim_index=None):
@@ -208,6 +204,7 @@ class Jw_mapping(Common_functions):
         """
         Reduced spectral density mapping default values
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        These default values are found in the file 'physical_constants.py'.
 
         _______________________________________________________________________________________
         |                                       |              |                              |
@@ -216,18 +213,18 @@ class Jw_mapping(Common_functions):
         |                                       |              |                              |
         | Bond length                           | 'r'          | 1.02 * 1e-10                 |
         |                                       |              |                              |
-        | CSA                                   | 'csa'        | -170 * 1e-6                  |
+        | CSA                                   | 'csa'        | -172 * 1e-6                  |
         |_______________________________________|______________|______________________________|
 
         """
 
         # Bond length.
         if param == 'r':
-            return 1.02 * 1e-10
+            return NH_BOND_LENGTH
 
         # CSA.
         if param == 'CSA':
-            return -170 * 1e-6
+            return N15_CSA
 
 
     def num_instances(self, run=None):
@@ -253,7 +250,7 @@ class Jw_mapping(Common_functions):
 
         # Loop over residue data:
         for residue in relax_data_store.res[run]:
-    
+
             # Check for sufficient data
             if not hasattr(residue, 'relax_data'):
                 residue.select = 0
@@ -395,7 +392,7 @@ class Jw_mapping(Common_functions):
                 value.append(self.default_value('r'))
 
             # Initilise data.
-            if not hasattr(relax_data_store.res[self.run][index], 'csa') or not hasattr(relax_data_store.res[self.run][index], 'csa'):
+            if not hasattr(relax_data_store.res[self.run][index], 'csa') or not hasattr(relax_data_store.res[self.run][index], 'r'):
                 self.data_init(relax_data_store.res[self.run][index])
 
             # CSA and Bond length.
@@ -436,7 +433,7 @@ class Jw_mapping(Common_functions):
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if the run type is set to 'jw'.
         function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
@@ -585,7 +582,7 @@ class Jw_mapping(Common_functions):
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
-            raise RelaxNoRunError, self.run
+            raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
         if not relax_data_store.res.has_key(self.run):
@@ -663,16 +660,18 @@ class Jw_mapping(Common_functions):
             ri_error = []
             if hasattr(relax_data_store, 'num_ri'):
                 for i in xrange(relax_data_store.num_ri[self.run]):
-                    # Find the residue specific data corresponding to i.
-                    index = None
-                    for j in xrange(data.num_ri):
-                        if data.ri_labels[j] == relax_data_store.ri_labels[self.run][i] and data.frq_labels[data.remap_table[j]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][i]]:
-                            index = j
-
-                    # Data exists for this data type.
                     try:
+                        # Find the residue specific data corresponding to i.
+                        index = None
+                        for j in xrange(data.num_ri):
+                            if data.ri_labels[j] == relax_data_store.ri_labels[self.run][i] and data.frq_labels[data.remap_table[j]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][i]]:
+                                index = j
+
+                        # Data exists for this data type.
                         ri.append(`data.relax_data[index]`)
                         ri_error.append(`data.relax_error[index]`)
+
+                    # No data exists for this data type.
                     except:
                         ri.append(None)
                         ri_error.append(None)
@@ -769,20 +768,23 @@ class Jw_mapping(Common_functions):
                 # Relaxation data and errors.
                 ri = []
                 ri_error = []
-                for k in xrange(relax_data_store.num_ri[self.run]):
-                    # Find the residue specific data corresponding to k.
-                    index = None
-                    for l in xrange(data.num_ri):
-                        if data.ri_labels[l] == relax_data_store.ri_labels[self.run][k] and data.frq_labels[data.remap_table[l]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][k]]:
-                            index = l
+                if hasattr(self.relax.data, 'num_ri'):
+                    for k in xrange(relax_data_store.num_ri[self.run]):
+                        try:
+                            # Find the residue specific data corresponding to k.
+                            index = None
+                            for l in xrange(data.num_ri):
+                                if data.ri_labels[l] == relax_data_store.ri_labels[self.run][k] and data.frq_labels[data.remap_table[l]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][k]]:
+                                    index = l
 
-                    # Data exists for this data type.
-                    try:
-                        ri.append(`data.relax_sim_data[i][index]`)
-                        ri_error.append(`data.relax_error[index]`)
-                    except:
-                        ri.append(None)
-                        ri_error.append(None)
+                            # Data exists for this data type.
+                            ri.append(`data.relax_sim_data[i][index]`)
+                            ri_error.append(`data.relax_error[index]`)
+
+                        # No data exists for this data type.
+                        except:
+                            ri.append(None)
+                            ri_error.append(None)
 
                 # Write the line.
                 self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='sim_'+`i`, nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)

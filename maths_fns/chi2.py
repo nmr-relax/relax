@@ -27,6 +27,7 @@ from Numeric import Float64, sum, transpose, zeros
 # Chi-squared value.
 ####################
 
+
 def chi2(data, back_calc_vals, errors):
     """Function to calculate the chi-squared value.
 
@@ -53,6 +54,7 @@ def chi2(data, back_calc_vals, errors):
 # Chi-squared gradient.
 #######################
 
+
 def dchi2(data, back_calc_vals, back_calc_grad, errors):
     """Function to create the chi-squared gradient.
 
@@ -78,6 +80,7 @@ def dchi2(data, back_calc_vals, back_calc_grad, errors):
 
 # Chi-squared Hessian.
 ######################
+
 
 def d2chi2(data, back_calc_vals, back_calc_grad_j, back_calc_grad_k, back_calc_hess, errors):
     """Function to create the chi-squared Hessian.

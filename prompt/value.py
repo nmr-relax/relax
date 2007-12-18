@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,13 +20,15 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
 
-from relax_errors import RelaxBinError, RelaxError, RelaxFloatError, RelaxIntError, RelaxListFloatError, RelaxListStrError, RelaxNoneFloatListError, RelaxNoneIntError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
-
+# relax module imports.
 from doc_string import regexp_doc
 import help
-from generic_fns.diffusion_tensor import Diffusion_tensor
+from generic_fns import diffusion_tensor
+from generic_fns import value
+from relax_errors import RelaxBinError, RelaxError, RelaxFloatError, RelaxIntError, RelaxListFloatError, RelaxListStrError, RelaxNoneFloatListError, RelaxNoneIntError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
 from specific_fns.model_free import Model_free
 from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.relax_fit import Relax_fit
@@ -247,35 +249,31 @@ class Value:
         self.__relax__.generic.value.read(run=run, param=param, scaling=scaling, file=file, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep)
 
 
-    def set(self, run=None, value=None, param=None, res_num=None, res_name=None):
-        """Function for setting residue specific data values.
+    def set(self, val=None, param=None, spin_id=None):
+        """Function for setting spin specific data values.
 
         Keyword arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The run to assign the values to.
-
-        value:  The value(s).
+        val:  The value(s).
 
         param:  The parameter(s).
 
-        res_num:  The residue number.
-
-        res_name:  The residue name.
+        spin_id:  The spin identifier.
 
 
         Description
         ~~~~~~~~~~~
 
-        If this function is used to change values of previously minimised runs, then the
+        If this function is used to change values of previously minimised results, then the
         minimisation statistics (chi-squared value, iteration count, function count, gradient count,
         and Hessian count) will be reset to None.
 
 
-        The value argument can be None, a single value, or an array of values while the parameter
+        The val argument can be None, a single value, or an array of values while the parameter
         argument can be None, a string, or array of strings.  The choice of which combination
         determines the behaviour of this function.  The following table describes what occurs in
-        each instance.  The Value column refers to the 'value' argument while the Param column refers
+        each instance.  The Value column refers to the 'val' argument while the Param column refers
         to the 'param' argument.  In these columns, 'None' corresponds to None, '1' corresponds
         to either a single value or single string, and 'n' corresponds to either an array of values
         or an array of strings.
@@ -291,7 +289,7 @@ class Value:
         |   1   | None  | Invalid combination.                                                     |
         |       |       |                                                                          |
         |   n   | None  | This case is used to set the model parameters prior to minimisation or   |
-        |       |       | calculation.  The length of the value array must be equal to the number  |
+        |       |       | calculation.  The length of the val array must be equal to the number    |
         |       |       | of model parameters for an individual residue.  The parameters will be   |
         |       |       | set to the corresponding number.                                         |
         |       |       |                                                                          |
@@ -310,94 +308,81 @@ class Value:
         |_______|_______|__________________________________________________________________________|
 
 
-        Residue number and name argument
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Spin identification
+        ~~~~~~~~~~~~~~~~~~~
 
-        If the 'res_num' and 'res_name' arguments are left as the defaults of None, then the
-        function will be applied to all residues.  Otherwise the residue number can be set to either
-        an integer for selecting a single residue or a python regular expression string for
-        selecting multiple residues.  The residue name argument must be a string and can use regular
-        expression as well.  If the data is global non-residue specific data, such as diffusion
-        tensor parameters, supplying the residue number and name will terminate the program with an
-        error.
+        If the 'spin_id' argument is left as the default of None, then the function will be applied
+        to all spins.  If the data is global non-residue specific data, such as diffusion tensor
+        parameters, supplying the spin identifier will terminate the program with an error.
 
 
         Examples
         ~~~~~~~~
 
-        To set the parameter values for the run 'test' to the default values, for all residues,
+        To set the parameter values for the current data pipe to the default values, for all spins,
         type:
 
-        relax> value.set('test')
+        relax> value.set()
 
 
-        To set the parameter values of residue 10, which is the model-free run 'm4' and has the
-        parameters {S2, te, Rex}, the following can be used.  Rex term is the value for the first
-        given field strength.
+        To set the parameter values of residue 10, which is in the current model-free data pipe 'm4'
+        and has the parameters {S2, te, Rex}, the following can be used.  Rex term is the value for
+        the first given field strength.
 
-        relax> value.set('m4', [0.97, 2.048*1e-9, 0.149], res_num=10)
-        relax> value.set('m4', value=[0.97, 2.048*1e-9, 0.149], res_num=10)
-
-
-        To set the CSA value for the model-free run 'tm3' to the default value, type:
-
-        relax> value.set('tm3', param='csa')
+        relax> value.set([0.97, 2.048*1e-9, 0.149], spin_id=':10')
+        relax> value.set(val=[0.97, 2.048*1e-9, 0.149], spin_id=':10')
 
 
-        To set the CSA value of all residues in the reduced spectral density mapping run '600MHz' to
-        -170 ppm, type:
+        To set the CSA value of all spins to the default value, type:
 
-        relax> value.set('600MHz', -170 * 1e-6, 'csa')
-        relax> value.set('600MHz', value=-170 * 1e-6, param='csa')
+        relax> value.set(param='csa')
 
 
-        To set the NH bond length of all residues in the model-free run 'm5' to 1.02 Angstroms,
-        type:
+        To set the CSA value of all spins to -172 ppm, type:
 
-        relax> value.set('m5', 1.02 * 1e-10, 'bond_length')
-        relax> value.set('m5', value=1.02 * 1e-10, param='r')
-
-
-        To set both the bond length and the CSA value for the run 'new' to the default values, type:
-
-        relax> value.set('new', param=['bond length', 'csa'])
+        relax> value.set(-172 * 1e-6, 'csa')
+        relax> value.set(val=-172 * 1e-6, param='csa')
 
 
-        To set both tf and ts in the model-free run 'm6' to 100 ps, type:
+        To set the NH bond length of all spins to 1.02 Angstroms, type:
 
-        relax> value.set('m6', 100e-12, ['tf', 'ts'])
-        relax> value.set('m6', value=100e-12, param=['tf', 'ts'])
+        relax> value.set(1.02 * 1e-10, 'bond_length')
+        relax> value.set(val=1.02 * 1e-10, param='r')
 
 
-        To set the S2 and te parameter values for model-free run 'm4' which has the parameters
-        {S2, te, Rex} to 0.56 and 13 ps, type:
+        To set both the bond length and the CSA value to the default values, type:
 
-        relax> value.set('m4', [0.56, 13e-12], ['S2', 'te'], 10)
-        relax> value.set('m4', value=[0.56, 13e-12], param=['S2', 'te'], res_num=10)
-        relax> value.set(run='m4', value=[0.56, 13e-12], param=['S2', 'te'], res_num=10)
+        relax> value.set(param=['bond length', 'csa'])
+
+
+        To set both tf and ts to 100 ps, type:
+
+        relax> value.set(100e-12, ['tf', 'ts'])
+        relax> value.set(val=100e-12, param=['tf', 'ts'])
+
+
+        To set the S2 and te parameter values of residue 126, Ca spins to 0.56 and 13 ps, type:
+
+        relax> value.set([0.56, 13e-12], ['S2', 'te'], ':126@Ca')
+        relax> value.set(val=[0.56, 13e-12], param=['S2', 'te'], spin_id=':126@Ca')
+        relax> value.set(val=[0.56, 13e-12], param=['S2', 'te'], spin_id=':126@Ca')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "value.set("
-            text = text + "run=" + `run`
-            text = text + ", value=" + `value`
+            text = text + "val=" + `val`
             text = text + ", param=" + `param`
-            text = text + ", res_num=" + `res_num`
-            text = text + ", res_name=" + `res_name` + ")"
+            text = text + ", spin_id=" + `spin_id` + ")"
             print text
 
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
         # The value.
-        if value != None and type(value) != float and type(value) != int and type(value) != list:
-            raise RelaxNoneFloatListError, ('value', value)
-        if type(value) == list:
-            for i in xrange(len(value)):
-                if type(value[i]) != float and type(value[i]) != int:
-                    raise RelaxListFloatError, ('value', value)
+        if val != None and type(val) != float and type(val) != int and type(val) != list:
+            raise RelaxNoneFloatListError, ('value', val)
+        if type(val) == list:
+            for i in xrange(len(val)):
+                if type(val[i]) != float and type(val[i]) != int:
+                    raise RelaxListFloatError, ('value', val)
 
         # The parameter.
         if param != None and type(param) != str and type(param) != list:
@@ -408,27 +393,23 @@ class Value:
                     raise RelaxListStrError, ('parameter', param)
 
         # The invalid combination of a single value and no param argument.
-        if (type(value) == float or type(value) == int) and param == None:
+        if (type(val) == float or type(val) == int) and param == None:
             raise RelaxError, "Invalid value and parameter argument combination, for details by type 'help(value.set)'"
 
         # The invalid combination of an array of values and a single param string.
-        if type(value) == list and type(param) == str:
+        if type(val) == list and type(param) == str:
             raise RelaxError, "Invalid value and parameter argument combination, for details by type 'help(value.set)'"
 
         # Value array and parameter array of equal length.
-        if type(value) == list and type(param) == list and len(value) != len(param):
+        if type(val) == list and type(param) == list and len(val) != len(param):
             raise RelaxError, "Both the value array and parameter array must be of equal length."
 
-        # Residue number.
-        if res_num != None and type(res_num) != int and type(res_num) != str:
-            raise RelaxNoneIntStrError, ('residue number', res_num)
-
-        # Residue name.
-        if res_name != None and type(res_name) != str:
-            raise RelaxNoneStrError, ('residue name', res_name)
+        # Spin identifier.
+        if spin_id != None and type(spin_id) != str:
+            raise RelaxNoneStrError, ('spin identifier', spin_id)
 
         # Execute the functional code.
-        self.__relax__.generic.value.set(run=run, value=value, param=param, res_num=res_num, res_name=res_name)
+        value.set(val=val, param=param, spin_id=spin_id)
 
 
     def write(self, run=None, param=None, file=None, dir=None, force=0):
@@ -542,9 +523,9 @@ class Value:
     set.__doc__ = set.__doc__ + Jw_mapping.set.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Jw_mapping.default_value.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Diffusion_tensor.set.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Diffusion_tensor.return_data_name.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Diffusion_tensor.default_value.__doc__ + "\n\n"
+    set.__doc__ = set.__doc__ + diffusion_tensor.set.__doc__ + "\n"
+    set.__doc__ = set.__doc__ + diffusion_tensor.return_data_name.__doc__ + "\n"
+    set.__doc__ = set.__doc__ + diffusion_tensor.default_value.__doc__ + "\n\n"
     set.__doc__ = set.__doc__ + Relax_fit.set_doc.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Relax_fit.default_value.__doc__ + "\n\n"
