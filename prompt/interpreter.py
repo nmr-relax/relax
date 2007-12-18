@@ -50,6 +50,7 @@ from nuclei import Nuclei
 from pdb import PDB
 
 # User classes.
+from consistency_tests import Consistency_tests
 from dasha import Dasha
 from diffusion_tensor import Diffusion_tensor
 from grace import Grace
@@ -106,6 +107,7 @@ class Interpreter:
         self._system = system
 
         # Place the user classes into the interpreter class namespace.
+        self._Consistency_tests = Consistency_tests(relax)
         self._Dasha = Dasha(relax)
         self._Diffusion_tensor = Diffusion_tensor(relax)
         self._OpenDX = OpenDX(relax)
@@ -163,6 +165,7 @@ class Interpreter:
         pdb = self._PDB.pdb
 
         # Place the user classes in the local namespace.
+        consistency_tests = self._Consistency_tests
         dasha = self._Dasha
         diffusion_tensor = self._Diffusion_tensor
         dx = self._OpenDX
