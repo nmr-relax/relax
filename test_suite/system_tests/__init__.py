@@ -22,6 +22,7 @@
 
 
 __all__ = ['angles',
+           'consistency_tests',
            'diffusion_tensor',
            'generic.py',
            'jw_mapping',

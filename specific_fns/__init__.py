@@ -26,6 +26,7 @@
 
 
 # relax module imports.
+from specific_fns.consistency_tests import Consistency_tests
 from specific_fns.hybrid import Hybrid
 from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.model_free import Model_free
@@ -36,6 +37,7 @@ from relax_errors import RelaxError, RelaxFuncSetupError
 
 # The available modules.
 __all__ = [ 'base_class',
+            'consistency_tests',
             'hybrid',
             'jw_mapping',
             'model_free',
@@ -44,6 +46,7 @@ __all__ = [ 'base_class',
             'relax_fit']
 
 # Set up all the classes.
+consistency_tests = Consistency_tests()
 hybrid = Hybrid()
 jw_mapping = Jw_mapping()
 model_free = Model_free()
@@ -236,6 +239,10 @@ def get_instance(function_type):
     if function_type == 'relax_fit':
         return relax_fit
 
+    # Consistency testing.
+    if function_type == 'ct':
+        return consistency_tests
+
     # Reduced spectral density mapping.
     if function_type == 'jw':
         return jw_mapping
@@ -262,6 +269,10 @@ def get_string(function_type):
     # Relaxation curve fitting.
     if function_type == 'relax_fit':
         return "relaxation curve fitting"
+
+    # Consistency testing.
+    if function_type == 'ct':
+        return "consistency testing"
 
     # Reduced spectral density mapping.
     if function_type == 'jw':

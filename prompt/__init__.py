@@ -23,6 +23,7 @@
 
 __all__ = ['angles',
            'command',
+           'consistency_tests',
            'dasha',
            'diffusion_tensor',
            'dx',
