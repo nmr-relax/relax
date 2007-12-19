@@ -1156,7 +1156,7 @@ def set(tensor=None, value=None, param=None):
         fold_angles()
 
 
-def singular_values():
+def singular_values(basis_set=0):
     """Function for calculating the singular values of all the loaded tensors.
 
     The matrix on which SVD will be performed is:
@@ -1168,6 +1168,25 @@ def singular_values():
         |  .    .    .    .    .   |
         |  .    .    .    .    .   |
         | SxxN SyyN SxyN SxzN SyzN |
+
+    This is the default unitary basis set (selected when basis_set is 0).  Alternatively a geometric
+    basis set consisting of the stretching and skewing parameters Szz and Sxx-yy respectively
+    replacing Sxx and Syy can be chosen by setting basis_set to 1.  The matrix in this case is:
+
+        | Szz1 Sxxyy1 Sxy1 Sxz1 Syz1 |
+        | Szz2 Sxxyy2 Sxy2 Sxz2 Syz2 |
+        | Szz3 Sxxyy3 Sxy3 Sxz3 Syz3 |
+        |  .     .     .    .    .   |
+        |  .     .     .    .    .   |
+        |  .     .     .    .    .   |
+        | SzzN SxxyyN SxyN SxzN SyzN |
+
+    The relationships between the geometric and unitary basis sets are:
+
+        Szz = - Sxx - Syy,
+        Sxxyy = Sxx - Syy,
+
+    The SVD values and condition number are dependendent upon the basis set chosen.
     """
 
     # Alias the current data pipe.
@@ -1179,12 +1198,21 @@ def singular_values():
     # Pack the elements.
     i = 0
     for key in cdp.align_tensor.keys():
-        # The elements.
-        matrix[i,0] = cdp.align_tensor[key].Sxx
-        matrix[i,1] = cdp.align_tensor[key].Syy
-        matrix[i,2] = cdp.align_tensor[key].Sxy
-        matrix[i,3] = cdp.align_tensor[key].Sxz
-        matrix[i,4] = cdp.align_tensor[key].Syz
+        # Unitary basis set.
+        if basis_set == 0:
+            matrix[i,0] = cdp.align_tensor[key].Sxx
+            matrix[i,1] = cdp.align_tensor[key].Syy
+            matrix[i,2] = cdp.align_tensor[key].Sxy
+            matrix[i,3] = cdp.align_tensor[key].Sxz
+            matrix[i,4] = cdp.align_tensor[key].Syz
+
+        # Geometric basis set.
+        elif basis_set == 1:
+            matrix[i,0] = cdp.align_tensor[key].Szz
+            matrix[i,1] = cdp.align_tensor[key].Sxxyy
+            matrix[i,2] = cdp.align_tensor[key].Sxy
+            matrix[i,3] = cdp.align_tensor[key].Sxz
+            matrix[i,4] = cdp.align_tensor[key].Syz
 
         # Increment the index.
         i = i + 1
