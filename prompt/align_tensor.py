@@ -285,21 +285,56 @@ class Align_tensor:
         align_tensor.init(tensor=tensor, params=params, scale=scale, angle_units=angle_units, param_types=param_types, errors=errors)
 
 
-    def svd(self):
-        """Function for calculating the singular values for all tensors.
+    def svd(self, basis_set=0):
+        """Function for calculating the singular values for all tensors and the condition number.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        basis_set:  The basis set to operate with.
 
 
         Description
         ~~~~~~~~~~~
 
         This function will, using SVD, calculate the singular values of all tensors loaded for the
-        current data pipe.
+        current data pipe.  If the basis_set argument is set to the default of 0, the matrix on
+        which SVD will be performed is composed of the unitary basis set {Sxx, Syy, Sxy, Sxz, Syz}
+        layed out as:
+
+            | Sxx1 Syy1 Sxy1 Sxz1 Syz1 |
+            | Sxx2 Syy2 Sxy2 Sxz2 Syz2 |
+            | Sxx3 Syy3 Sxy3 Sxz3 Syz3 |
+            |  .    .    .    .    .   |
+            |  .    .    .    .    .   |
+            |  .    .    .    .    .   |
+            | SxxN SyyN SxyN SxzN SyzN |
+
+        If basis_set is set to 1, the geometric basis set consisting of the stretching and skewing
+        parameters Szz and Sxx-yy respectively {Szz, Sxxyy, Sxy, Sxz, Syz} will be used instead.
+        The matrix is:
+
+        | Szz1 Sxxyy1 Sxy1 Sxz1 Syz1 |
+        | Szz2 Sxxyy2 Sxy2 Sxz2 Syz2 |
+        | Szz3 Sxxyy3 Sxy3 Sxz3 Syz3 |
+        |  .     .     .    .    .   |
+        |  .     .     .    .    .   |
+        |  .     .     .    .    .   |
+        | SzzN SxxyyN SxyN SxzN SyzN |
+
+        The relationships between the geometric and unitary basis sets are:
+
+            Szz = - Sxx - Syy,
+            Sxxyy = Sxx - Syy,
+
+        The SVD values and condition number are dependendent upon the basis set chosen.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "align_tensor.svd()"
+            text = sys.ps3 + "align_tensor.svd("
+            text = text + "basis_set=" + `basis_set` + ")"
             print text
 
         # Execute the functional code.
-        align_tensor.singular_values()
+        align_tensor.singular_values(basis_set)
