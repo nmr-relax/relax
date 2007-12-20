@@ -29,6 +29,7 @@
 from specific_fns.hybrid import Hybrid
 from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.model_free import Model_free
+from specific_fns.n_state_model import N_state_model
 from specific_fns.noe import Noe
 from specific_fns.relax_fit import Relax_fit
 from relax_errors import RelaxError, RelaxFuncSetupError
@@ -39,6 +40,7 @@ __all__ = [ 'base_class',
             'hybrid',
             'jw_mapping',
             'model_free',
+            'n_state_model',
             'noe',
             'relax_data',
             'relax_fit']
@@ -48,6 +50,7 @@ hybrid = Hybrid()
 jw_mapping = Jw_mapping()
 model_free = Model_free()
 noe = Noe()
+n_state_model = N_state_model()
 relax_fit = Relax_fit()
 
 
@@ -232,6 +235,10 @@ def get_instance(function_type):
     if function_type == 'noe':
         return noe
 
+    # The N-state model.
+    if function_type == 'N-state':
+        return n_state_model
+
     # Relaxation curve fitting.
     if function_type == 'relax_fit':
         return relax_fit
@@ -258,6 +265,10 @@ def get_string(function_type):
     # NOE calculation.
     if function_type == 'noe':
         return "NOE calculations"
+
+    # The N-state model.
+    if function_type == 'N-state':
+        return "the N-state model"
 
     # Relaxation curve fitting.
     if function_type == 'relax_fit':
