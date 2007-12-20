@@ -2,7 +2,7 @@
 
 # Create the run.
 name = 'consistency'
-run.create(name, 'ct')
+pipe.create(name, 'ct')
 
 # Nuclei type
 nuclei('N')
