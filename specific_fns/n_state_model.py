@@ -22,9 +22,10 @@
 
 # relax module imports.
 from data import Data as relax_data_store
+from specific_fns.base_class import Common_functions
 
 
-class N_state_model:
+class N_state_model(Common_functions):
     def __init__(self):
         """Class containing functions for the N-state model."""
 
