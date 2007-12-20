@@ -27,3 +27,29 @@ from data import Data as relax_data_store
 class N_state_model:
     def __init__(self):
         """Class containing functions for the N-state model."""
+
+
+    def return_data_name(self, name):
+        """
+        N-state model data type string matching patterns
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        ____________________________________________________________________________________________
+        |                        |              |                                                  |
+        | Data type              | Object name  | Patterns                                         |
+        |________________________|______________|__________________________________________________|
+        |                        |              |                                                  |
+        | Bond length            | 'r'          | '^r$' or '[Bb]ond[ -_][Ll]ength'                 |
+        |                        |              |                                                  |
+        | CSA                    | 'csa'        | '^[Cc][Ss][Aa]$'                                 |
+        |________________________|______________|__________________________________________________|
+
+        """
+
+        # Bond length.
+        if search('^r$', name) or search('[Bb]ond[ -_][Ll]ength', name):
+            return 'r'
+
+        # CSA.
+        if search('^[Cc][Ss][Aa]$', name):
+            return 'csa'
