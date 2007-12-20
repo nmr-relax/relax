@@ -216,11 +216,6 @@ def get_specific_fn(eqi, function_type, raise_error=1):
 
     # Raise an error if the function doesn't exist.
     if raise_error and function == None:
-        # Some debugging output.
-        if Debug:
-            print "Function type: " + `function_type`
-            print "Eqi: " + `eqi`
-
         # Raise the error.
         raise RelaxFuncSetupError, get_string(function_type)
 
