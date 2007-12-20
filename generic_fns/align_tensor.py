@@ -1221,11 +1221,10 @@ def singular_values(basis_set=0):
     u, s, vh = linalg.svd(matrix)
 
     # Store the singular values.
-    #cdp.align_tensor.singular_vals = s
+    cdp.align_tensor.singular_vals = s
 
     # Calculate and store the condition number.
-    cond_num = s[0] / s[4]
-    #cdp.align_tensor.cond_num = s[0] / s[4]
+    cdp.align_tensor.cond_num = s[0] / s[4]
 
     # Print out.
     print "\nSingular values:"
@@ -1234,4 +1233,4 @@ def singular_values(basis_set=0):
     print "\t" + `s[2]`
     print "\t" + `s[3]`
     print "\t" + `s[4]`
-    print "\nCondition number: " + `cond_num`
+    print "\nCondition number: " + `cdp.align_tensor.cond_num`
