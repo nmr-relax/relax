@@ -1227,6 +1227,7 @@ def singular_values(basis_set=0):
     cdp.align_tensor.cond_num = s[0] / s[4]
 
     # Print out.
+    print "\nData pipe: " + `relax_data_store.current_pipe`
     print "\nSingular values:"
     print "\t" + `s[0]`
     print "\t" + `s[1]`
