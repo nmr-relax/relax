@@ -222,3 +222,29 @@ class Align_tensor_base_class:
         self.assertEqual(relax_data_store['orig'].align_tensor['Pf1'].Sxy, 7.65639)
         self.assertEqual(relax_data_store['orig'].align_tensor['Pf1'].Sxz, -1.89157)
         self.assertEqual(relax_data_store['orig'].align_tensor['Pf1'].Syz, 19.2561)
+
+
+    def test_svd_identity(self):
+        """Test the SVD and condition number for a 5x5 identity matrix.
+
+        The functions tested are both generic_fns.align_tensor.svd() and
+        prompt.align_tensor.svd().
+        """
+
+        # Initialise the 5 tensors.
+        self.align_tensor_fns.init(tensor='1', params=(1, 0, 0, 0, 0))
+        self.align_tensor_fns.init(tensor='2', params=(0, 1, 0, 0, 0))
+        self.align_tensor_fns.init(tensor='3', params=(0, 0, 1, 0, 0))
+        self.align_tensor_fns.init(tensor='4', params=(0, 0, 0, 1, 0))
+        self.align_tensor_fns.init(tensor='5', params=(0, 0, 0, 0, 1))
+
+        # SVD.
+        self.align_tensor_fns.svd()
+
+        # Test the values
+        self.assertEqual(relax_data_store['orig'].align_tensor.singular_vals[0], 1.0)
+        self.assertEqual(relax_data_store['orig'].align_tensor.singular_vals[1], 1.0)
+        self.assertEqual(relax_data_store['orig'].align_tensor.singular_vals[2], 1.0)
+        self.assertEqual(relax_data_store['orig'].align_tensor.singular_vals[3], 1.0)
+        self.assertEqual(relax_data_store['orig'].align_tensor.singular_vals[4], 1.0)
+        self.assertEqual(relax_data_store['orig'].align_tensor.cond_num, 1.0)
