@@ -211,6 +211,22 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
             self.assertRaises(RelaxBinError, self.align_tensor_fns.init, tensor='Pf1', params=(0.0, 0.0, 0.0, 0.0, 0.0), errors=data[1])
 
 
+    def test_matrix_angles_argfail_basis_set(self):
+        """The proper failure of the align_tensor.matrix_angles() user function for the basis_set argument."""
+
+        # Add an alignment tensor.
+        align_tensor.init('a', (0.0, 0.0, 0.0, 0.0, 0.0))
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the int and bin arguments, and skip them.
+            if data[0] == 'int' or data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxIntError, self.align_tensor_fns.matrix_angles, basis_set=data[1])
+
+
     def test_svd_argfail_basis_set(self):
         """The proper failure of the align_tensor.svd() user function for the basis_set argument."""
 
