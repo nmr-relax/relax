@@ -24,6 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
+from generic_fns import align_tensor
 from prompt.align_tensor import Align_tensor
 from relax_errors import RelaxError, RelaxBinError, RelaxFloatError, RelaxIntError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
 from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_class
@@ -212,6 +213,9 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
 
     def test_svd_argfail_basis_set(self):
         """The proper failure of the align_tensor.svd() user function for the basis_set argument."""
+
+        # Add an alignment tensor.
+        align_tensor.init('a', (0.0, 0.0, 0.0, 0.0, 0.0))
 
         # Loop over the data types.
         for data in DATA_TYPES:
