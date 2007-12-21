@@ -23,8 +23,9 @@
 # Python module imports.
 from copy import deepcopy
 from math import cos, pi, sin
-from numpy import float64, linalg, transpose, zeros
+from numpy import arccos, dot, float64, linalg, transpose, zeros
 from re import search
+from sys import stdout
 
 # relax module imports.
 from angles import wrap_angles
@@ -633,6 +634,72 @@ def map_labels(index, params, bounds, swap, inc):
         tick_values.append(string)
 
     return labels, tick_locations, tick_values
+
+
+def matrix_angles():
+    """Function for calculating the 5D angles between the alignment tensors.
+
+    The basis set used for the 5D vector construction does not effect the angles calculated.
+    """
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Test that alignment tensor data exists.
+    if not hasattr(cdp, 'align_tensor') or len(cdp.align_tensor) == 0:
+        raise RelaxNoTensorError, 'alignment'
+
+    # The number of tensors.
+    tensor_num = len(cdp.align_tensor)
+
+    # Create the matrix which contains the 5D vectors.
+    matrix = zeros((tensor_num, 5), float64)
+
+    # Loop over the tensors.
+    i = 0
+    for key in cdp.align_tensor.keys():
+        # Pack the elements.
+        matrix[i,0] = cdp.align_tensor[key].Szz
+        matrix[i,1] = cdp.align_tensor[key].Sxxyy
+        matrix[i,2] = cdp.align_tensor[key].Sxy
+        matrix[i,3] = cdp.align_tensor[key].Sxz
+        matrix[i,4] = cdp.align_tensor[key].Syz
+
+        # Normalisation.
+        norm = linalg.norm(matrix[i])
+        matrix[i] = matrix[i] / norm
+
+        # Increment the index.
+        i = i + 1
+
+    # Initialise the matrix of angles.
+    cdp.align_tensor.angles = zeros((tensor_num, tensor_num), float64)
+
+    # Header print out.
+    stdout.write("\nData pipe: " + `relax_data_store.current_pipe` + "\n")
+    stdout.write("\n5D angles (deg):\n")
+    stdout.write("%8s" % '')
+    for i in xrange(tensor_num):
+        stdout.write("%8i" % i)
+    stdout.write("\n")
+
+    # First loop.
+    for i in xrange(tensor_num):
+        # Print out.
+        stdout.write("%8i" % i)
+
+        # Second loop.
+        for j in xrange(tensor_num):
+            # Skip the diagonal and arccos problems.
+            if i != j:
+                # The angle (in rad).
+                cdp.align_tensor.angles[i, j] = arccos(dot(matrix[i], matrix[j]))
+
+            # Print out the angles in degrees.
+            stdout.write("%8.1f" % (cdp.align_tensor.angles[i, j]*180.0/pi))
+
+        # Print out.
+        stdout.write("\n")
 
 
 def return_conversion_factor(param):
