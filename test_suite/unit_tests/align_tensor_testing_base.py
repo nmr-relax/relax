@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
+from math import pi
+
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError
@@ -222,6 +225,55 @@ class Align_tensor_base_class:
         self.assertEqual(relax_data_store['orig'].align_tensor['Pf1'].Sxy, 7.65639)
         self.assertEqual(relax_data_store['orig'].align_tensor['Pf1'].Sxz, -1.89157)
         self.assertEqual(relax_data_store['orig'].align_tensor['Pf1'].Syz, 19.2561)
+
+
+    def test_matrix_angles_identity(self):
+        """Test the matrix angles for a 5x5 identity matrix.
+
+        The functions tested are both generic_fns.align_tensor.matrix_angles() and
+        prompt.align_tensor.matrix_angles().
+        """
+
+        # Initialise the 5 tensors.
+        self.align_tensor_fns.init(tensor='1', params=(1, 0, 0, 0, 0))
+        self.align_tensor_fns.init(tensor='2', params=(0, 1, 0, 0, 0))
+        self.align_tensor_fns.init(tensor='3', params=(0, 0, 1, 0, 0))
+        self.align_tensor_fns.init(tensor='4', params=(0, 0, 0, 1, 0))
+        self.align_tensor_fns.init(tensor='5', params=(0, 0, 0, 0, 1))
+
+        # Matrix angles.
+        self.align_tensor_fns.matrix_angles()
+
+        # Test the angles.
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[0,0], 0.0)
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[0,1], pi/2)
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[0,2], pi/2)
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[0,3], pi/2)
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[0,4], pi/2)
+
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[1,0], pi/2)
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[1,1], 0.0)
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[1,2], pi/2)
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[1,3], pi/2)
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[1,4], pi/2)
+
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[2,0], pi/2)
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[2,1], pi/2)
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[2,2], 0.0)
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[2,3], pi/2)
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[2,4], pi/2)
+
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[3,0], pi/2)
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[3,1], pi/2)
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[3,2], pi/2)
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[3,3], 0.0)
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[3,4], pi/2)
+
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[4,0], pi/2)
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[4,1], pi/2)
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[4,2], pi/2)
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[4,3], pi/2)
+        self.assertEqual(relax_data_store['orig'].align_tensor.angles[4,4], 0.0)
 
 
     def test_svd_identity(self):
