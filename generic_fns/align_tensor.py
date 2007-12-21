@@ -636,10 +636,15 @@ def map_labels(index, params, bounds, swap, inc):
     return labels, tick_locations, tick_values
 
 
-def matrix_angles():
+def matrix_angles(basis_set=0):
     """Function for calculating the 5D angles between the alignment tensors.
 
-    The basis set used for the 5D vector construction does not effect the angles calculated.
+    The basis set used for the 5D vector construction changes the angles calculated.
+
+    @param basis_set:   The basis set to use for constructing the 5D vectors.  If set to 0, the
+                        basis set is {Sxx, Syy, Sxy, Sxz, Syz}.  If 1, then the basis set is {Szz,
+                        Sxxyy, Sxy, Sxz, Syz}.
+    @type basis_set:    int
     """
 
     # Alias the current data pipe.
@@ -658,12 +663,23 @@ def matrix_angles():
     # Loop over the tensors.
     i = 0
     for key in cdp.align_tensor.keys():
-        # Pack the elements.
-        matrix[i,0] = cdp.align_tensor[key].Szz
-        matrix[i,1] = cdp.align_tensor[key].Sxxyy
-        matrix[i,2] = cdp.align_tensor[key].Sxy
-        matrix[i,3] = cdp.align_tensor[key].Sxz
-        matrix[i,4] = cdp.align_tensor[key].Syz
+        # Unitary basis set.
+        if basis_set == 0:
+            # Pack the elements.
+            matrix[i,0] = cdp.align_tensor[key].Sxx
+            matrix[i,1] = cdp.align_tensor[key].Syy
+            matrix[i,2] = cdp.align_tensor[key].Sxy
+            matrix[i,3] = cdp.align_tensor[key].Sxz
+            matrix[i,4] = cdp.align_tensor[key].Syz
+
+        # Geometric basis set.
+        elif basis_set == 1:
+            # Pack the elements.
+            matrix[i,0] = cdp.align_tensor[key].Szz
+            matrix[i,1] = cdp.align_tensor[key].Sxxyy
+            matrix[i,2] = cdp.align_tensor[key].Sxy
+            matrix[i,3] = cdp.align_tensor[key].Sxz
+            matrix[i,4] = cdp.align_tensor[key].Syz
 
         # Normalisation.
         norm = linalg.norm(matrix[i])
