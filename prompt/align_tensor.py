@@ -361,4 +361,4 @@ class Align_tensor:
             raise RelaxIntError, ('basis set', basis_set)
 
         # Execute the functional code.
-        align_tensor.singular_values(basis_set)
+        align_tensor.svd(basis_set)

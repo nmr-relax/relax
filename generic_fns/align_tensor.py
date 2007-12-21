@@ -1157,7 +1157,7 @@ def set(tensor=None, value=None, param=None):
         fold_angles()
 
 
-def singular_values(basis_set=0):
+def svd(basis_set=0):
     """Function for calculating the singular values of all the loaded tensors.
 
     The matrix on which SVD will be performed is:
