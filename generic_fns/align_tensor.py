@@ -1193,6 +1193,10 @@ def singular_values(basis_set=0):
     # Alias the current data pipe.
     cdp = relax_data_store[relax_data_store.current_pipe]
 
+    # Test that alignment tensor data exists.
+    if not hasattr(cdp, 'align_tensor') or len(cdp.align_tensor) == 0:
+        raise RelaxNoTensorError, 'alignment'
+
     # Create the matrix to apply SVD on.
     matrix = zeros((len(cdp.align_tensor), 5), float64)
 
