@@ -1229,14 +1229,11 @@ def singular_values(basis_set=0):
     cdp.align_tensor.singular_vals = s
 
     # Calculate and store the condition number.
-    cdp.align_tensor.cond_num = s[0] / s[4]
+    cdp.align_tensor.cond_num = s[0] / s[-1]
 
     # Print out.
     print "\nData pipe: " + `relax_data_store.current_pipe`
     print "\nSingular values:"
-    print "\t" + `s[0]`
-    print "\t" + `s[1]`
-    print "\t" + `s[2]`
-    print "\t" + `s[3]`
-    print "\t" + `s[4]`
+    for val in s:
+        print "\t" + `val`
     print "\nCondition number: " + `cdp.align_tensor.cond_num`
