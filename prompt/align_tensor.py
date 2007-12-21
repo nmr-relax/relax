@@ -285,6 +285,26 @@ class Align_tensor:
         align_tensor.init(tensor=tensor, params=params, scale=scale, angle_units=angle_units, param_types=param_types, errors=errors)
 
 
+    def matrix_angles(self):
+        """Function for calculating the 5D angles between all alignment tensors.
+
+        Description
+        ~~~~~~~~~~~
+
+        This function will calculate the angles between all loaded alignment tensors for the current
+        data pipe.  The matrices are first converted to a 5D vector form and then then angles are
+        calculated.  Unlike SVD, the basis set choice has no effect on the angles.
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "align_tensor.matrix_angles()"
+            print text
+
+        # Execute the functional code.
+        align_tensor.matrix_angles()
+
+
     def svd(self, basis_set=0):
         """Function for calculating the singular values for all tensors and the condition number.
 
