@@ -336,5 +336,9 @@ class Align_tensor:
             text = text + "basis_set=" + `basis_set` + ")"
             print text
 
+        # Basis set argument.
+        if type(basis_set) != int:
+            raise RelaxIntError, ('basis set', basis_set)
+
         # Execute the functional code.
         align_tensor.singular_values(basis_set)
