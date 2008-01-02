@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007 Edward d'Auvergne                             #
+# Copyright (C) 2003-2005, 2007-2008 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,12 +25,80 @@ from Queue import Queue
 from re import search
 
 # relax module imports.
-from data import Data as elax_data_store
+from data import Data as relax_data_store
+from selection import spin_loop
 #from processes import RelaxPopen3
 from relax_errors import RelaxError, RelaxNoPipeError
 from thread_classes import RelaxParentThread, RelaxThread
 
 
+def reset_min_stats(data_pipe=None, index=None):
+    """Function for resetting the minimisation statistics."""
+
+    # The data pipe.
+    if data_pipe == None:
+        data_pipe = relax_data_store.current_pipe
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[data_pipe]
+
+
+    # Global minimisation statistics.
+    #################################
+
+    # Chi-squared.
+    if hasattr(cdp, 'chi2'):
+        cdp.chi2 = None
+
+    # Iteration count.
+    if hasattr(cdp, 'iter'):
+        cdp.iter = None
+
+    # Function count.
+    if hasattr(cdp, 'f_count'):
+        cdp.f_count = None
+
+    # Gradient count.
+    if hasattr(cdp, 'g_count'):
+        cdp.g_count = None
+
+    # Hessian count.
+    if hasattr(cdp, 'h_count'):
+        cdp.h_count = None
+
+    # Warning.
+    if hasattr(cdp, 'warning'):
+        cdp.warning = None
+
+
+    # Sequence specific minimisation statistics.
+    ############################################
+
+    # Loop over all spins.
+    for spin in spin_loop():
+        # Chi-squared.
+        if hasattr(spin, 'chi2'):
+            spin.chi2 = None
+
+        # Iteration count.
+        if hasattr(spin, 'iter'):
+            spin.iter = None
+
+        # Function count.
+        if hasattr(spin, 'f_count'):
+            spin.f_count = None
+
+        # Gradient count.
+        if hasattr(spin, 'g_count'):
+            spin.g_count = None
+
+        # Hessian count.
+        if hasattr(spin, 'h_count'):
+            spin.h_count = None
+
+        # Warning.
+        if hasattr(spin, 'warning'):
+            spin.warning = None
 
 
 
@@ -143,65 +211,6 @@ class Minimise:
         # Standard minimisation.
         else:
             minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag)
-
-
-    def reset_min_stats(self, run, index=None):
-        """Function for resetting the minimisation statistics."""
-
-        # Arguments.
-        self.run = run
-
-        # Global minimisation statistics.
-        if index == None:
-            # Chi-squared.
-            if hasattr(relax_data_store, 'chi2') and relax_data_store.chi2.has_key(self.run):
-                relax_data_store.chi2[self.run] = None
-
-            # Iteration count.
-            if hasattr(relax_data_store, 'iter') and relax_data_store.iter.has_key(self.run):
-                relax_data_store.iter[self.run] = None
-
-            # Function count.
-            if hasattr(relax_data_store, 'f_count') and relax_data_store.f_count.has_key(self.run):
-                relax_data_store.f_count[self.run] = None
-
-            # Gradient count.
-            if hasattr(relax_data_store, 'g_count') and relax_data_store.g_count.has_key(self.run):
-                relax_data_store.g_count[self.run] = None
-
-            # Hessian count.
-            if hasattr(relax_data_store, 'h_count') and relax_data_store.h_count.has_key(self.run):
-                relax_data_store.h_count[self.run] = None
-
-            # Warning.
-            if hasattr(relax_data_store, 'warning') and relax_data_store.warning.has_key(self.run):
-                relax_data_store.warning[self.run] = None
-
-        # Sequence specific minimisation statistics.
-        else:
-            # Chi-squared.
-            if hasattr(relax_data_store.res[self.run][index], 'chi2'):
-                relax_data_store.res[self.run][index].chi2 = None
-
-            # Iteration count.
-            if hasattr(relax_data_store.res[self.run][index], 'iter'):
-                relax_data_store.res[self.run][index].iter = None
-
-            # Function count.
-            if hasattr(relax_data_store.res[self.run][index], 'f_count'):
-                relax_data_store.res[self.run][index].f_count = None
-
-            # Gradient count.
-            if hasattr(relax_data_store.res[self.run][index], 'g_count'):
-                relax_data_store.res[self.run][index].g_count = None
-
-            # Hessian count.
-            if hasattr(relax_data_store.res[self.run][index], 'h_count'):
-                relax_data_store.res[self.run][index].h_count = None
-
-            # Warning.
-            if hasattr(relax_data_store.res[self.run][index], 'warning'):
-                relax_data_store.res[self.run][index].warning = None
 
 
     def return_conversion_factor(self, stat_type):

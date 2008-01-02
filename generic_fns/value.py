@@ -288,18 +288,8 @@ def set(val=None, param=None, spin_id=None, force=False):
                 set(run=run, value=spin_values[j], error=None, param=spin_params[j], index=i)
 
 
-    # Reset the minimisation statistics.
-    ####################################
-
-    # Reset the global minimisation statistics.
-    reset_min_stats(run)
-
-    # Reset the sequence specific minimisation statistics.
-    if relax_data_store.res.has_key(run):
-        for i in xrange(len(relax_data_store.res[run])):
-            reset_min_stats(run, i)
-
-
+    # Reset all minimisation statistics.
+    reset_min_stats()
 
 
 
