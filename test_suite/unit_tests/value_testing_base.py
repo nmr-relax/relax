@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -39,14 +39,14 @@ class Value_base_class:
         # Reset the relax data storage object.
         relax_data_store.__reset__()
 
-        # Add a data pipe to the data store.
-        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+        # Add a model-free data pipe to the data store for testing model-free and diffusion parameters.
+        relax_data_store.add(pipe_name='mf', pipe_type='mf')
 
-        # Add a second data pipe for copying tests.
-        relax_data_store.add(pipe_name='test', pipe_type='mf')
+        # Add a second model-free data pipe for copying tests.
+        relax_data_store.add(pipe_name='mf2', pipe_type='mf')
 
-        # Set the current data pipe to 'orig'.
-        relax_data_store.current_pipe = 'orig'
+        # Set the current data pipe to 'mf'.
+        relax_data_store.current_pipe = 'mf'
 
 
     def tearDown(self):
