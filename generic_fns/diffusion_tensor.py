@@ -871,7 +871,8 @@ def set(value=None, param=None):
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     If the diffusion tensor has not been setup, use the more powerful function
-    'diffusion_tensor.init' to initialise the tensor parameters.
+    'diffusion_tensor.init' to initialise the tensor parameters.  This function cannot be used to
+    initialise a diffusion tensor.
 
     The units of the parameters are:
 
