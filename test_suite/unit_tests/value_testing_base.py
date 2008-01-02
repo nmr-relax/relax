@@ -295,7 +295,7 @@ class Value_base_class:
         self.value_fns.set(param='local tm', val=1e-8, spin_id=':112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'local_tm')
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'local_tm'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].local_tm, 1e-8)
 
 
@@ -315,7 +315,7 @@ class Value_base_class:
         self.value_fns.set(param='S2', val=0.8, spin_id=':112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2')
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].s2, 0.8)
 
 
@@ -335,7 +335,7 @@ class Value_base_class:
         self.value_fns.set(param='S2f', val=0.45, spin_id=':112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2f')
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2f'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].s2f, 0.45)
 
 
@@ -355,7 +355,7 @@ class Value_base_class:
         self.value_fns.set(param='S2s', val=0.1, spin_id=':112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2s')
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2s'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].s2s, 0.1)
 
 
@@ -375,7 +375,7 @@ class Value_base_class:
         self.value_fns.set(param='te', val=12.5e-12, spin_id=':112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'te')
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'te'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].te, 12.5e-12)
 
 
@@ -395,7 +395,7 @@ class Value_base_class:
         self.value_fns.set(param='tf', val=20.1e-12, spin_id=':112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'tf')
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'tf'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].tf, 20.1e-12)
 
 
@@ -415,7 +415,7 @@ class Value_base_class:
         self.value_fns.set(param='ts', val=1.23e-9, spin_id=':112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'ts')
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'ts'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].ts, 1.23e-9)
 
 
@@ -435,7 +435,7 @@ class Value_base_class:
         self.value_fns.set(param='Rex', val=2.34, spin_id=':112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'rex')
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'rex'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].rex, 2.34)
 
 
@@ -455,7 +455,7 @@ class Value_base_class:
         self.value_fns.set(param='Bond length', val=1.02e-10, spin_id=':112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'r')
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'r'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].r, 1.02e-10)
 
 
@@ -475,5 +475,5 @@ class Value_base_class:
         self.value_fns.set(param='CSA', val=-172e-6, spin_id=':112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'csa')
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'csa'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -172e-6)
