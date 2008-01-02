@@ -811,9 +811,6 @@ def return_data_name(name):
     if search('phi', name):
         return 'phi'
 
-    # No parameter?
-    raise RelaxUnknownParamError, name
-
 
 def return_eigenvalues(run=None):
     """Function for returning Dx, Dy, and Dz."""
