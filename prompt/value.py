@@ -380,6 +380,8 @@ class Value:
         if val != None and type(val) != float and type(val) != int and type(val) != list:
             raise RelaxNoneFloatListError, ('value', val)
         if type(val) == list:
+            if val == []:
+                raise RelaxListFloatError, ('value', val)
             for i in xrange(len(val)):
                 if type(val[i]) != float and type(val[i]) != int:
                     raise RelaxListFloatError, ('value', val)
