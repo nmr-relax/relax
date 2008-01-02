@@ -76,7 +76,6 @@ class Test_value(Value_base_class, TestCase):
 
             # Catch the string list arguments.
             if data[0] == 'str list':
-                self.assertRaises(RelaxError, self.value_fns.set, param=data[1], val=1.0)
                 if len(data[1]) != 1:
                     self.assertRaises(RelaxError, self.value_fns.set, param=data[1], val=[1.0])
                 else:
