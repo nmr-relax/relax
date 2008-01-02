@@ -45,6 +45,9 @@ class Value_base_class:
         # Add a second model-free data pipe for copying tests.
         relax_data_store.add(pipe_name='mf2', pipe_type='mf')
 
+        # Set up some spins.
+        self.set_up_spins(pipe_name='mf')
+
         # Set the current data pipe to 'mf'.
         relax_data_store.current_pipe = 'mf'
 
@@ -53,3 +56,27 @@ class Value_base_class:
         """Reset the relax data storage object."""
 
         relax_data_store.__reset__()
+
+
+    def set_up_spins(self, pipe_name=None):
+        """Function for setting up a few spins for the given pipe."""
+
+        # Alias the pipe.
+        pipe = relax_data_store[pipe_name]
+
+        # Name the first molecule.
+        pipe.mol[0].name = 'Test mol'
+
+        # Create the first residue and add some data to its spin container.
+        pipe.mol[0].res[0].num = 1
+        pipe.mol[0].res[0].name = 'Met'
+        pipe.mol[0].res[0].spin[0].num = 111
+        pipe.mol[0].res[0].spin[0].name = 'NH'
+
+        # Add some more spins.
+        pipe.mol[0].res[0].spin.add_item('Ca', 114)
+
+        # Create a second residue.
+        pipe.mol[0].res.add_item('Trp', 2)
+        pipe.mol[0].res[1].spin[0].num = 112
+        pipe.mol[0].res[1].spin[0].name = 'NH'
