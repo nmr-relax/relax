@@ -57,7 +57,7 @@ class Test_value(Value_base_class, TestCase):
                     self.assertRaises(RelaxError, self.value_fns.set, val=data[1], param=['CSA'])
 
             # Catch all other list arguments.
-            if type(data[1]) == list:
+            elif type(data[1]) == list:
                 self.assertRaises(RelaxListFloatError, self.value_fns.set, val=data[1], param=None)
 
             # All other arguments.
