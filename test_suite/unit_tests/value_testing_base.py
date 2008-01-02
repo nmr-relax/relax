@@ -79,6 +79,206 @@ class Value_base_class:
         pipe.mol[0].res[1].spin[0].name = 'NH'
 
 
+    def test_set_mf_all_spins_local_tm(self):
+        """Set the model-free local tm parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'mf'.
+        relax_data_store.current_pipe = 'mf'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='local tm', val=1e-8)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].local_tm, 1e-8)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].local_tm, 1e-8)
+
+
+    def test_set_mf_all_spins_s2(self):
+        """Set the model-free S2 parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'mf'.
+        relax_data_store.current_pipe = 'mf'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='S2', val=0.8)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].s2, 0.8)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].s2, 0.8)
+
+
+    def test_set_mf_all_spins_s2f(self):
+        """Set the model-free S2f parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'mf'.
+        relax_data_store.current_pipe = 'mf'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='S2f', val=0.45)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].s2f, 0.45)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].s2f, 0.45)
+
+
+    def test_set_mf_all_spins_s2s(self):
+        """Set the model-free S2s parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'mf'.
+        relax_data_store.current_pipe = 'mf'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='S2s', val=0.1)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].s2s, 0.1)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].s2s, 0.1)
+
+
+    def test_set_mf_all_spins_te(self):
+        """Set the model-free te parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'mf'.
+        relax_data_store.current_pipe = 'mf'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='te', val=12.5e-12)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].te, 12.5e-12)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].te, 12.5e-12)
+
+
+    def test_set_mf_all_spins_tf(self):
+        """Set the model-free tf parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'mf'.
+        relax_data_store.current_pipe = 'mf'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='tf', val=20.1e-12)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].tf, 20.1e-12)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].tf, 20.1e-12)
+
+
+    def test_set_mf_all_spins_ts(self):
+        """Set the model-free ts parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'mf'.
+        relax_data_store.current_pipe = 'mf'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='ts', val=1.23e-9)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].ts, 1.23e-9)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].ts, 1.23e-9)
+
+
+    def test_set_mf_all_spins_rex(self):
+        """Set the model-free Rex parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'mf'.
+        relax_data_store.current_pipe = 'mf'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='Rex', val=2.34)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].rex, 2.34)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].rex, 2.34)
+
+
+    def test_set_mf_all_spins_r(self):
+        """Set the model-free bond length parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'mf'.
+        relax_data_store.current_pipe = 'mf'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='Bond length', val=1.02e-10)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].r, 1.02e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].r, 1.02e-10)
+
+
+    def test_set_mf_all_spins_csa(self):
+        """Set the model-free CSA parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'mf'.
+        relax_data_store.current_pipe = 'mf'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='CSA', val=-172e-6)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].csa, -172e-6)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -172e-6)
+
+
     def test_set_mf_single_spin_local_tm(self):
         """Set the model-free local tm parameter for a single spin.
 
