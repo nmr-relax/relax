@@ -910,6 +910,10 @@ def set(value=None, param=None):
     # Alias the current data pipe.
     cdp = relax_data_store[relax_data_store.current_pipe]
 
+    # Set up the diffusion tensor data if it doesn't exist.
+    if not diff_data_exists():
+        raise RelaxNoTensorError, 'diffusion'
+
     # Initialise.
     geo_params = []
     geo_values = []
