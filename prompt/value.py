@@ -380,6 +380,11 @@ class Value:
         if val != None and type(val) != float and type(val) != int and type(val) != list:
             raise RelaxNoneFloatListError, ('value', val)
         if type(val) == list:
+            # Empty list.
+            if val == []:
+                raise RelaxListFloatError, ('value', val)
+
+            # Check for values.
             for i in xrange(len(val)):
                 if type(val[i]) != float and type(val[i]) != int:
                     raise RelaxListFloatError, ('value', val)
@@ -388,6 +393,11 @@ class Value:
         if param != None and type(param) != str and type(param) != list:
             raise RelaxNoneStrListError, ('parameter', param)
         if type(param) == list:
+            # Empty list.
+            if param == []:
+                raise RelaxListStrError, ('parameter', param)
+
+            # Check for strings.
             for i in xrange(len(param)):
                 if type(param[i]) != str:
                     raise RelaxListStrError, ('parameter', param)

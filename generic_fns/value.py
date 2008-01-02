@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,6 +28,7 @@ import sys
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns import diffusion_tensor
+from generic_fns.minimise import reset_min_stats
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRegExpError, RelaxUnknownParamError, RelaxValueError
 from specific_fns import get_specific_fn
 
@@ -211,9 +212,9 @@ def set(val=None, param=None, spin_id=None, force=False):
     # Diffusion tensor parameters.
     ##############################
 
-    if diff_params:
+    if tensor_params:
         # Set the diffusion parameters.
-        diffusion_tensor.set(value=diff_values, param=diff_params)
+        diffusion_tensor.set(value=tensor_values, param=tensor_params)
 
 
     # Residue specific parameters.
@@ -287,18 +288,8 @@ def set(val=None, param=None, spin_id=None, force=False):
                 set(run=run, value=spin_values[j], error=None, param=spin_params[j], index=i)
 
 
-    # Reset the minimisation statistics.
-    ####################################
-
-    # Reset the global minimisation statistics.
-    relax.generic.minimise.reset_min_stats(run)
-
-    # Reset the sequence specific minimisation statistics.
-    if relax_data_store.res.has_key(run):
-        for i in xrange(len(relax_data_store.res[run])):
-            relax.generic.minimise.reset_min_stats(run, i)
-
-
+    # Reset all minimisation statistics.
+    reset_min_stats()
 
 
 
