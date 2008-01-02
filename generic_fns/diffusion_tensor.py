@@ -873,14 +873,12 @@ def set(value=None, param=None):
     If the diffusion tensor has not been setup, use the more powerful function
     'diffusion_tensor.init' to initialise the tensor parameters.
 
-    The diffusion tensor parameters can only be set when the run corresponds to model-free
-    analysis.  The units of the parameters are:
+    The units of the parameters are:
 
         Inverse seconds for tm.
         Seconds for Diso, Da, Dx, Dy, Dz, Dpar, Dper.
         Unitless for Dratio and Dr.
         Radians for all angles (alpha, beta, gamma, theta, phi).
-
 
     When setting a diffusion tensor parameter, the residue number has no effect.  As the
     internal parameters of spherical diffusion are {tm}, spheroidal diffusion are {tm, Da,
