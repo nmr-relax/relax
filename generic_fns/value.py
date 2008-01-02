@@ -214,7 +214,7 @@ def set(val=None, param=None, spin_id=None, force=False):
 
     if tensor_params:
         # Set the diffusion parameters.
-        diffusion_tensor.set(value=diff_values, param=tensor_params)
+        diffusion_tensor.set(value=tensor_values, param=tensor_params)
 
 
     # Residue specific parameters.
