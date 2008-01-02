@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Data as relax_data_store
 from prompt.value import Value
-from relax_errors import RelaxListFloatError, RelaxNoneFloatListError, RelaxNoneStrError, RelaxNoneStrListError
+from relax_errors import RelaxError, RelaxListFloatError, RelaxNoneFloatListError, RelaxNoneStrError, RelaxNoneStrListError
 from test_suite.unit_tests.value_testing_base import Value_base_class
 
 # Unit test imports.
@@ -50,11 +50,17 @@ class Test_value(Value_base_class, TestCase):
             if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin' or data[0] == 'float':
                 continue
 
-            # Catch the list arguments.
-            if data[0] == 'list':
+            # Catch all number lists.
+            if data[0] == 'int list' or data[0] == 'float list' or data[0] == 'number list':
+                self.assertRaises(RelaxError, self.value_fns.set, val=data[1], param='CSA')
+                if len(data[1]) != 1:
+                    self.assertRaises(RelaxError, self.value_fns.set, val=data[1], param=['CSA'])
+
+            # Catch all other list arguments.
+            if type(data[1]) == list:
                 self.assertRaises(RelaxListFloatError, self.value_fns.set, val=data[1], param=None)
 
-            # The argument test.
+            # All other arguments.
             else:
                 self.assertRaises(RelaxNoneFloatListError, self.value_fns.set, val=data[1], param='CSA')
 
