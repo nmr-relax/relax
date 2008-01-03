@@ -1080,6 +1080,10 @@ def set(value=None, param=None):
             elif orient_params[0] == 'phi':
                 cdp.diff_tensor.phi = orient_values[orient_params.index('phi')]
 
+            # Disallowed parameter.
+            else:
+                raise RelaxError, "For spheroidal diffusion, the orientation parameter " + `orient_params` + " cannot be set."
+
         # Two orientational parameters.
         elif len(orient_params) == 2:
             # The orientational parameter set {theta, phi}.
@@ -1255,6 +1259,10 @@ def set(value=None, param=None):
             # The single parameter gamma.
             elif orient_params[0] == 'gamma':
                 cdp.diff_tensor.gamma = orient_values[orient_params.index('gamma')]
+
+            # Disallowed parameter.
+            else:
+                raise RelaxError, "For spheroidal diffusion, the orientation parameter " + `orient_params` + " cannot be set."
 
         # Two orientational parameters.
         elif len(orient_params) == 2:
