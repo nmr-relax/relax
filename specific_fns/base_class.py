@@ -143,7 +143,19 @@ class Common_functions:
 
 
     def set(self, value=None, error=None, param=None, scaling=1.0, spin=None):
-        """Common function for setting parameter values."""
+        """Common function for setting parameter values.
+
+        @param value:   The value to change the parameter to.
+        @type value:    float
+        @param error:   The error value associated with the parameter, also to be set.
+        @type error:    float
+        @param param:   The name of the parameter to change.
+        @type param:    str
+        @param scaling: The scaling factor for the value or error parameters.
+        @type scaling:  float
+        @param spin:    The SpinContainer object.
+        @type spin:     SpinContainer
+        """
 
         # Setting the model parameters prior to minimisation.
         #####################################################
@@ -237,7 +249,13 @@ class Common_functions:
 
 
     def set_update(self, param, spin):
-        """Dummy function to do nothing!"""
+        """Dummy function to do nothing!
+
+        @param param:   The name of the parameter which has been changed.
+        @type param:    str
+        @param spin:    The SpinContainer object.
+        @type spin:     SpinContainer
+        """
 
         return
 

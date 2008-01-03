@@ -4172,7 +4172,13 @@ class Model_free(Common_functions):
 
 
     def set_update(self, param, spin):
-        """Function to update the other model-free parameters."""
+        """Function to update the other model-free parameters.
+
+        @param param:   The name of the parameter which has been changed.
+        @type param:    str
+        @param spin:    The SpinContainer object.
+        @type spin:     SpinContainer
+        """
 
         # S2f parameter.
         if param == 'S2f':
