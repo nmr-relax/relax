@@ -1262,7 +1262,7 @@ def set(value=None, param=None):
 
             # Disallowed parameter.
             else:
-                raise RelaxError, "For spheroidal diffusion, the orientation parameter " + `orient_params` + " cannot be set."
+                raise RelaxError, "For ellipsoidal diffusion, the orientation parameter " + `orient_params` + " cannot be set."
 
         # Two orientational parameters.
         elif len(orient_params) == 2:
