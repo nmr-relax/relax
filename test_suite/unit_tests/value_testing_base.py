@@ -54,6 +54,7 @@ class Value_base_class:
 
         # Set up some spins.
         self.set_up_spins(pipe_name='mf')
+        self.set_up_spins(pipe_name='jw')
 
 
     def tearDown(self):
