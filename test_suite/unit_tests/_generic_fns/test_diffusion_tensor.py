@@ -75,7 +75,7 @@ class Test_diffusion_tensor(Diffusion_tensor_base_class, TestCase):
         self.assertEqual(self.diffusion_tensor_fns.return_data_name('phi'), 'phi')
 
         # Test a few things which should fail.
-        self.assertRaises(RelaxUnknownParamError, self.diffusion_tensor_fns.return_data_name, 'c')
-        self.assertRaises(RelaxUnknownParamError, self.diffusion_tensor_fns.return_data_name, '7')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('c'), None)
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('7'), None)
         self.assertRaises(RelaxStrError, self.diffusion_tensor_fns.return_data_name, 7)
-        self.assertRaises(RelaxUnknownParamError, self.diffusion_tensor_fns.return_data_name, 'tmm')
+        self.assertEqual(self.diffusion_tensor_fns.return_data_name('tmm'), None)

@@ -79,46 +79,46 @@ def data_names():
 
 def default_value(param):
     """
-    Diffusion tensor parameter default values
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Diffusion tensor parameter default values
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    ________________________________________________________________________
-    |                        |                    |                        |
-    | Data type              | Object name        | Value                  |
-    |________________________|____________________|________________________|
-    |                        |                    |                        |
-    | tm                     | 'tm'               | 10 * 1e-9              |
-    |                        |                    |                        |
-    | Diso                   | 'Diso'             | 1.666 * 1e7            |
-    |                        |                    |                        |
-    | Da                     | 'Da'               | 0.0                    |
-    |                        |                    |                        |
-    | Dr                     | 'Dr'               | 0.0                    |
-    |                        |                    |                        |
-    | Dx                     | 'Dx'               | 1.666 * 1e7            |
-    |                        |                    |                        |
-    | Dy                     | 'Dy'               | 1.666 * 1e7            |
-    |                        |                    |                        |
-    | Dz                     | 'Dz'               | 1.666 * 1e7            |
-    |                        |                    |                        |
-    | Dpar                   | 'Dpar'             | 1.666 * 1e7            |
-    |                        |                    |                        |
-    | Dper                   | 'Dper'             | 1.666 * 1e7            |
-    |                        |                    |                        |
-    | Dratio                 | 'Dratio'           | 1.0                    |
-    |                        |                    |                        |
-    | alpha                  | 'alpha'            | 0.0                    |
-    |                        |                    |                        |
-    | beta                   | 'beta'             | 0.0                    |
-    |                        |                    |                        |
-    | gamma                  | 'gamma'            | 0.0                    |
-    |                        |                    |                        |
-    | theta                  | 'theta'            | 0.0                    |
-    |                        |                    |                        |
-    | phi                    | 'phi'              | 0.0                    |
-    |________________________|____________________|________________________|
+        ________________________________________________________________________
+        |                        |                    |                        |
+        | Data type              | Object name        | Value                  |
+        |________________________|____________________|________________________|
+        |                        |                    |                        |
+        | tm                     | 'tm'               | 10 * 1e-9              |
+        |                        |                    |                        |
+        | Diso                   | 'Diso'             | 1.666 * 1e7            |
+        |                        |                    |                        |
+        | Da                     | 'Da'               | 0.0                    |
+        |                        |                    |                        |
+        | Dr                     | 'Dr'               | 0.0                    |
+        |                        |                    |                        |
+        | Dx                     | 'Dx'               | 1.666 * 1e7            |
+        |                        |                    |                        |
+        | Dy                     | 'Dy'               | 1.666 * 1e7            |
+        |                        |                    |                        |
+        | Dz                     | 'Dz'               | 1.666 * 1e7            |
+        |                        |                    |                        |
+        | Dpar                   | 'Dpar'             | 1.666 * 1e7            |
+        |                        |                    |                        |
+        | Dper                   | 'Dper'             | 1.666 * 1e7            |
+        |                        |                    |                        |
+        | Dratio                 | 'Dratio'           | 1.0                    |
+        |                        |                    |                        |
+        | alpha                  | 'alpha'            | 0.0                    |
+        |                        |                    |                        |
+        | beta                   | 'beta'             | 0.0                    |
+        |                        |                    |                        |
+        | gamma                  | 'gamma'            | 0.0                    |
+        |                        |                    |                        |
+        | theta                  | 'theta'            | 0.0                    |
+        |                        |                    |                        |
+        | phi                    | 'phi'              | 0.0                    |
+        |________________________|____________________|________________________|
 
-    """
+    """    # This docstring is to be joined onto those of the user functions, hence the 8 whitespace characters.
 
     # tm.
     if param == 'tm':
@@ -811,9 +811,6 @@ def return_data_name(name):
     if search('phi', name):
         return 'phi'
 
-    # No parameter?
-    raise RelaxUnknownParamError, name
-
 
 def return_eigenvalues(run=None):
     """Function for returning Dx, Dy, and Dz."""
@@ -867,46 +864,46 @@ def return_units(param):
 
 def set(value=None, param=None):
     """
-    Diffusion tensor set details
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Diffusion tensor set details
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    If the diffusion tensor has not been setup, use the more powerful function
-    'diffusion_tensor.init' to initialise the tensor parameters.  This function cannot be used to
-    initialise a diffusion tensor.
+        If the diffusion tensor has not been setup, use the more powerful function
+        'diffusion_tensor.init' to initialise the tensor parameters.  This function cannot be used
+        to initialise a diffusion tensor.
 
-    The units of the parameters are:
+        The units of the parameters are:
 
-        Inverse seconds for tm.
-        Seconds for Diso, Da, Dx, Dy, Dz, Dpar, Dper.
-        Unitless for Dratio and Dr.
-        Radians for all angles (alpha, beta, gamma, theta, phi).
+            Inverse seconds for tm.
+            Seconds for Diso, Da, Dx, Dy, Dz, Dpar, Dper.
+            Unitless for Dratio and Dr.
+            Radians for all angles (alpha, beta, gamma, theta, phi).
 
-    When setting a diffusion tensor parameter, the residue number has no effect.  As the
-    internal parameters of spherical diffusion are {tm}, spheroidal diffusion are {tm, Da,
-    theta, phi}, and ellipsoidal diffusion are {tm, Da, Dr, alpha, beta, gamma}, supplying
-    geometric parameters must be done in the following way.  If a single geometric parameter is
-    supplied, it must be one of tm, Diso, Da, Dr, or Dratio.  For the parameters Dpar, Dper, Dx,
-    Dy, and Dx, it is not possible to determine how to use the currently set values together
-    with the supplied value to calculate the new internal parameters.  For spheroidal diffusion,
-    when supplying multiple geometric parameters, the set must belong to one of
+        When setting a diffusion tensor parameter, the residue number has no effect.  As the
+        internal parameters of spherical diffusion are {tm}, spheroidal diffusion are {tm, Da,
+        theta, phi}, and ellipsoidal diffusion are {tm, Da, Dr, alpha, beta, gamma}, supplying
+        geometric parameters must be done in the following way.  If a single geometric parameter is
+        supplied, it must be one of tm, Diso, Da, Dr, or Dratio.  For the parameters Dpar, Dper, Dx,
+        Dy, and Dx, it is not possible to determine how to use the currently set values together
+        with the supplied value to calculate the new internal parameters.  For spheroidal diffusion,
+        when supplying multiple geometric parameters, the set must belong to one of
 
-        {tm, Da},
-        {Diso, Da},
-        {tm, Dratio},
-        {Dpar, Dper},
-        {Diso, Dratio},
+            {tm, Da},
+            {Diso, Da},
+            {tm, Dratio},
+            {Dpar, Dper},
+            {Diso, Dratio},
 
-    where either theta, phi, or both orientational parameters can be additionally supplied.  For
-    ellipsoidal diffusion, again when supplying multiple geometric parameters, the set must
-    belong to one of
+        where either theta, phi, or both orientational parameters can be additionally supplied.  For
+        ellipsoidal diffusion, again when supplying multiple geometric parameters, the set must
+        belong to one of
 
-        {tm, Da, Dr},
-        {Diso, Da, Dr},
-        {Dx, Dy, Dz},
+            {tm, Da, Dr},
+            {Diso, Da, Dr},
+            {Dx, Dy, Dz},
 
-    where any number of the orientational parameters, alpha, beta, or gamma can be additionally
-    supplied.
-    """
+        where any number of the orientational parameters, alpha, beta, or gamma can be additionally
+        supplied.
+    """    # This docstring is to be joined onto those of the user functions, hence the 8 whitespace characters.
 
     # Alias the current data pipe.
     cdp = relax_data_store[relax_data_store.current_pipe]
@@ -1083,6 +1080,10 @@ def set(value=None, param=None):
             elif orient_params[0] == 'phi':
                 cdp.diff_tensor.phi = orient_values[orient_params.index('phi')]
 
+            # Disallowed parameter.
+            else:
+                raise RelaxError, "For spheroidal diffusion, the orientation parameter " + `orient_params` + " cannot be set."
+
         # Two orientational parameters.
         elif len(orient_params) == 2:
             # The orientational parameter set {theta, phi}.
@@ -1258,6 +1259,10 @@ def set(value=None, param=None):
             # The single parameter gamma.
             elif orient_params[0] == 'gamma':
                 cdp.diff_tensor.gamma = orient_values[orient_params.index('gamma')]
+
+            # Disallowed parameter.
+            else:
+                raise RelaxError, "For ellipsoidal diffusion, the orientation parameter " + `orient_params` + " cannot be set."
 
         # Two orientational parameters.
         elif len(orient_params) == 2:
