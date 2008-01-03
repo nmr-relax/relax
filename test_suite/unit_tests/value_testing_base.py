@@ -1496,8 +1496,8 @@ class Value_base_class:
         self.value_fns.set(param='bond-Length')
 
         # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].r, 1.02e-10)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].r, 1.02e-10)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r, 1.02e-10)
+        self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].r, 1.02e-10)
 
 
     def test_set_jw_defaults_csa(self):
