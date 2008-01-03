@@ -942,7 +942,7 @@ class Model_free(Common_functions):
             return 10.0 * 1e-9
 
         # {S2, S2f, S2s}.
-        elif search('^S2', param):
+        elif search('^s2', param):
             return 0.8
 
         # te.
@@ -958,7 +958,7 @@ class Model_free(Common_functions):
             return 1000.0 * 1e-12
 
         # Rex.
-        elif param == 'Rex':
+        elif param == 'rex':
             return 0.0
 
         # Bond length.
@@ -966,7 +966,7 @@ class Model_free(Common_functions):
             return 1.02 * 1e-10
 
         # CSA.
-        elif param == 'CSA':
+        elif param == 'csa':
             return -170 * 1e-6
 
 
