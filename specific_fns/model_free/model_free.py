@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,11 +32,12 @@ import sys
 
 # relax module imports.
 from data import Data as relax_data_store
-from specific_fns.base_class import Common_functions
 from float import isNaN,isInf
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
+from physical_constants import N15_CSA, NH_BOND_LENGTH
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxStyleError, RelaxTensorError, RelaxUnknownDataTypeError
+from specific_fns.base_class import Common_functions
 
 
 # The relax data storage object.
@@ -932,7 +933,7 @@ class Model_free(Common_functions):
         |                                       |                    |                        |
         | Bond length                           | 'r'                | 1.02 * 1e-10           |
         |                                       |                    |                        |
-        | CSA                                   | 'csa'              | -170 * 1e-6            |
+        | CSA                                   | 'csa'              | -172 * 1e-6            |
         |_______________________________________|____________________|________________________|
 
         """
@@ -963,11 +964,11 @@ class Model_free(Common_functions):
 
         # Bond length.
         elif param == 'r':
-            return 1.02 * 1e-10
+            return NH_BOND_LENGTH
 
         # CSA.
         elif param == 'csa':
-            return -170 * 1e-6
+            return N15_CSA
 
 
     def delete(self, run):
