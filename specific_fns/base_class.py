@@ -79,14 +79,22 @@ class Common_functions:
         return relax_data_store.res[run][i].relax_error
 
 
-    def return_value(self, run, i, param, sim=None):
-        """Function for returning the value and error corresponding to 'param'.
+    def return_value(self, spin, param, sim=None):
+        """Return the value and error corresponding to the parameter 'param'.
 
-        If sim is set to an integer, return the value of the simulation and None.
+        If sim is set to an integer, return the value of the simulation and None.  The values are
+        taken from the given SpinContainer object.
+
+
+        @param spin:    The SpinContainer object.
+        @type spin:     SpinContainer
+        @param param:   The name of the parameter to return values for.
+        @type param:    str
+        @param sim:     The Monte Carlo simulation index.
+        @type sim:      None or int
+        @return:        The value and error corresponding to 
+        @return type:   tuple of length 2 of floats or None
         """
-
-        # Arguments.
-        self.run = run
 
         # Get the object name.
         object_name = self.return_data_name(param)
@@ -99,46 +107,39 @@ class Common_functions:
         object_error = object_name + '_err'
         object_sim = object_name + '_sim'
 
-        # Alias the residue specific data structure.
-        data = relax_data_store.res[self.run][i]
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Initial values.
+        value = None
+        error = None
 
         # Value and error.
         if sim == None:
             # Get the value.
-            if hasattr(data, object_name):
-                value = getattr(data, object_name)
-            elif hasattr(relax_data_store, object_name):
-                object = getattr(relax_data_store, object_name)
-                value = object[self.run]
-            else:
-                value = None
+            if hasattr(spin, object_name):
+                value = getattr(spin, object_name)
+            elif hasattr(cdp, object_name):
+                value = getattr(cdp, object_name)
 
             # Get the error.
-            if hasattr(data, object_error):
-                error = getattr(data, object_error)
-            elif hasattr(relax_data_store, object_error):
-                object = getattr(relax_data_store, object_error)
-                error = object[self.run]
-            else:
-                error = None
-
-            # Return the data.
-            return value, error
+            if hasattr(spin, object_error):
+                error = getattr(spin, object_error)
+            elif hasattr(cdp, object_error):
+                error = getattr(cdp, object_error)
 
         # Simulation value.
         else:
             # Get the value.
-            if hasattr(data, object_sim):
-                object = getattr(data, object_sim)
+            if hasattr(spin, object_sim):
+                object = getattr(spin, object_sim)
                 value = object[sim]
-            elif hasattr(self.relax.dat, object_sim):
-                object = getattr(self.relax.dat, object_sim)
-                value = object[self.run][sim]
-            else:
-                value = None
+            elif hasattr(cdp, object_sim):
+                object = getattr(cdp, object_sim)
+                value = object[sim]
 
-            # Return the data.
-            return value, None
+        # Return the data.
+        return value, error
 
 
     def set(self, run=None, value=None, error=None, param=None, scaling=1.0, index=None):
