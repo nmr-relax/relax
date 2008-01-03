@@ -26,7 +26,7 @@ from math import pi
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns import diffusion_tensor
-from relax_errors import RelaxError, RelaxUnknownParamCombError
+from relax_errors import RelaxError, RelaxParamSetError, RelaxUnknownParamCombError
 
 
 
@@ -1433,11 +1433,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='j0')
-
-        # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].j0, 4.5e-9)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 4.5e-9)
+        self.assertRaises(RelaxParamSetError, self.value_fns.set, param='j0')
 
 
     def test_set_jw_defaults_jwx(self):
@@ -1453,11 +1449,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='jwx')
-
-        # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].jwx, 2.3e-10)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].jwx, 2.3e-10)
+        self.assertRaises(RelaxParamSetError, self.value_fns.set, param='jwx')
 
 
     def test_set_jw_defaults_jwh(self):
@@ -1473,11 +1465,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='J(wH)')
-
-        # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].jwh, 1.7e-12)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].jwh, 1.7e-12)
+        self.assertRaises(RelaxParamSetError, self.value_fns.set, param='J(wH)')
 
 
     def test_set_jw_defaults_r(self):
@@ -1533,15 +1521,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'])
-
-        # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].j0, 6.4e-9)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].jwx, 3.5e-10)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].jwh, 2.3e-12)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 6.4e-9)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].jwx, 3.5e-10)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].jwh, 2.3e-12)
+        self.assertRaises(RelaxParamSetError, self.value_fns.set, param=['J(0)', 'jwx', 'J(wH)'])
 
 
     def test_set_jw_single_spin_j0(self):

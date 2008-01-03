@@ -611,6 +611,16 @@ class RelaxRegExpError(BaseError):
 # Data type errors.
 ###################
 
+# Parameter cannot be set.
+class RelaxParamSetError(BaseError):
+    def __init__(self, name, param_type=None):
+        if param_type != None:
+            self.text = "The " + name + " parameter, " + `param_type` + ", cannot be set."
+        else:
+            self.text = "The " + name + " parameter cannot be set."
+        if Debug:
+            self.save_state()
+
 # Value already exists.
 class RelaxValueError(BaseError):
     def __init__(self, data_type, pipe):
