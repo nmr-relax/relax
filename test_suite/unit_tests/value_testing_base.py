@@ -26,7 +26,7 @@ from math import pi
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns import diffusion_tensor
-from relax_errors import RelaxError
+from relax_errors import RelaxError, RelaxUnknownParamCombError
 
 
 
@@ -825,7 +825,7 @@ class Value_base_class:
 
 
     def test_set_mf_diff_spheroid_diff_Dpar_Dratio(self):
-        """Set the spheroidal diffusion tensor parameters {Dpar, Dratio}.
+        """Set the spheroidal diffusion tensor parameters {Dpar, Dratio} (this should not be possible).
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
         """
@@ -840,7 +840,7 @@ class Value_base_class:
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
         # Set the parameters.
-        self.assertRaises(RelaxError, self.value_fns.set, param=['Dpar', 'Dratio'], val=[1e7, 1.2])
+        self.assertRaises(RelaxUnknownParamCombError, self.value_fns.set, param=['Dpar', 'Dratio'], val=[1e7, 1.2])
 
 
     def test_set_mf_diff_ellipsoid_tm(self):
@@ -1261,7 +1261,7 @@ class Value_base_class:
         diffusion_tensor.init((1e-9, 2e6, 0.4, 0, 0, 0))
 
         # Set the parameters.
-        self.assertRaises(RelaxError, self.value_fns.set, param=['tm', 'Diso', 'Dr'], val=[1e-8, 1e6, 0.2])
+        self.assertRaises(RelaxUnknownParamCombError, self.value_fns.set, param=['tm', 'Diso', 'Dr'], val=[1e-8, 1e6, 0.2])
 
 
 
