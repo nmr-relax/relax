@@ -79,14 +79,22 @@ class Common_functions:
         return relax_data_store.res[run][i].relax_error
 
 
-    def return_value(self, run, i, param, sim=None):
-        """Function for returning the value and error corresponding to 'param'.
+    def return_value(self, spin, param, sim=None):
+        """Return the value and error corresponding to the parameter 'param'.
 
-        If sim is set to an integer, return the value of the simulation and None.
+        If sim is set to an integer, return the value of the simulation and None.  The values are
+        taken from the given SpinContainer object.
+
+
+        @param spin:    The SpinContainer object.
+        @type spin:     SpinContainer
+        @param param:   The name of the parameter to return values for.
+        @type param:    str
+        @param sim:     The Monte Carlo simulation index.
+        @type sim:      None or int
+        @return:        The value and error corresponding to 
+        @return type:   tuple of length 2 of floats or None
         """
-
-        # Arguments.
-        self.run = run
 
         # Get the object name.
         object_name = self.return_data_name(param)
@@ -99,53 +107,55 @@ class Common_functions:
         object_error = object_name + '_err'
         object_sim = object_name + '_sim'
 
-        # Alias the residue specific data structure.
-        data = relax_data_store.res[self.run][i]
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Initial values.
+        value = None
+        error = None
 
         # Value and error.
         if sim == None:
             # Get the value.
-            if hasattr(data, object_name):
-                value = getattr(data, object_name)
-            elif hasattr(relax_data_store, object_name):
-                object = getattr(relax_data_store, object_name)
-                value = object[self.run]
-            else:
-                value = None
+            if hasattr(spin, object_name):
+                value = getattr(spin, object_name)
+            elif hasattr(cdp, object_name):
+                value = getattr(cdp, object_name)
 
             # Get the error.
-            if hasattr(data, object_error):
-                error = getattr(data, object_error)
-            elif hasattr(relax_data_store, object_error):
-                object = getattr(relax_data_store, object_error)
-                error = object[self.run]
-            else:
-                error = None
-
-            # Return the data.
-            return value, error
+            if hasattr(spin, object_error):
+                error = getattr(spin, object_error)
+            elif hasattr(cdp, object_error):
+                error = getattr(cdp, object_error)
 
         # Simulation value.
         else:
             # Get the value.
-            if hasattr(data, object_sim):
-                object = getattr(data, object_sim)
+            if hasattr(spin, object_sim):
+                object = getattr(spin, object_sim)
                 value = object[sim]
-            elif hasattr(self.relax.dat, object_sim):
-                object = getattr(self.relax.dat, object_sim)
-                value = object[self.run][sim]
-            else:
-                value = None
+            elif hasattr(cdp, object_sim):
+                object = getattr(cdp, object_sim)
+                value = object[sim]
 
-            # Return the data.
-            return value, None
+        # Return the data.
+        return value, error
 
 
-    def set(self, run=None, value=None, error=None, param=None, scaling=1.0, index=None):
-        """Common function for setting parameter values."""
+    def set(self, value=None, error=None, param=None, scaling=1.0, spin=None):
+        """Common function for setting parameter values.
 
-        # Arguments.
-        self.run = run
+        @param value:   The value to change the parameter to.
+        @type value:    float
+        @param error:   The error value associated with the parameter, also to be set.
+        @type error:    float
+        @param param:   The name of the parameter to change.
+        @type param:    str
+        @param scaling: The scaling factor for the value or error parameters.
+        @type scaling:  float
+        @param spin:    The SpinContainer object.
+        @type spin:     SpinContainer
+        """
 
         # Setting the model parameters prior to minimisation.
         #####################################################
@@ -154,8 +164,8 @@ class Common_functions:
             # The values are supplied by the user:
             if value:
                 # Test if the length of the value array is equal to the length of the parameter array.
-                if len(value) != len(relax_data_store.res[self.run][index].params):
-                    raise RelaxError, "The length of " + `len(value)` + " of the value array must be equal to the length of the parameter array, " + `relax_data_store.res[self.run][index].params` + ", for residue " + `relax_data_store.res[self.run][index].num` + " " + relax_data_store.res[self.run][index].name + "."
+                if len(value) != len(spin.params):
+                    raise RelaxError, "The length of " + `len(value)` + " of the value array must be equal to the length of the parameter array, " + `spin.params` + ", for residue " + `spin.num` + " " + spin.name + "."
 
             # Default values.
             else:
@@ -163,25 +173,25 @@ class Common_functions:
                 value = []
 
                 # Loop over the parameters.
-                for i in xrange(len(relax_data_store.res[self.run][index].params)):
-                    value.append(self.default_value(relax_data_store.res[self.run][index].params[i]))
+                for i in xrange(len(spin.params)):
+                    value.append(self.default_value(spin.params[i]))
 
             # Loop over the parameters.
-            for i in xrange(len(relax_data_store.res[self.run][index].params)):
+            for i in xrange(len(spin.params)):
                 # Get the object.
-                object_name = self.return_data_name(relax_data_store.res[self.run][index].params[i])
+                object_name = self.return_data_name(spin.params[i])
                 if not object_name:
-                    raise RelaxError, "The data type " + `relax_data_store.res[self.run][index].params[i]` + " does not exist."
+                    raise RelaxError, "The data type " + `spin.params[i]` + " does not exist."
 
                 # Initialise all data if it doesn't exist.
-                if not hasattr(relax_data_store.res[self.run][index], object_name):
-                    self.data_init(relax_data_store.res[self.run][index])
+                if not hasattr(spin, object_name):
+                    self.data_init(spin)
 
                 # Set the value.
                 if value[i] == None:
-                    setattr(relax_data_store.res[self.run][index], object_name, None)
+                    setattr(spin, object_name, None)
                 else:
-                    setattr(relax_data_store.res[self.run][index], object_name, float(value[i]) * scaling)
+                    setattr(spin, object_name, float(value[i]) * scaling)
 
 
         # Individual data type.
@@ -194,8 +204,8 @@ class Common_functions:
                 raise RelaxError, "The data type " + `param` + " does not exist."
 
             # Initialise all data if it doesn't exist.
-            if not hasattr(relax_data_store.res[self.run][index], object_name):
-                self.data_init(relax_data_store.res[self.run][index])
+            if not hasattr(spin, object_name):
+                self.data_init(spin)
 
             # Default value.
             if value == None:
@@ -203,16 +213,16 @@ class Common_functions:
 
             # Set the value.
             if value == None:
-                setattr(relax_data_store.res[self.run][index], object_name, None)
+                setattr(spin, object_name, None)
             else:
-                setattr(relax_data_store.res[self.run][index], object_name, float(value) * scaling)
+                setattr(spin, object_name, float(value) * scaling)
 
             # Set the error.
             if error != None:
-                setattr(relax_data_store.res[self.run][index], object_name+'_err', float(error) * scaling)
+                setattr(spin, object_name+'_err', float(error) * scaling)
 
             # Update the other parameters if necessary.
-            self.set_update(run=run, param=param, index=index)
+            self.set_update(param=param, spin=spin)
 
 
     def set_error(self, run, instance, index, error):
@@ -238,8 +248,14 @@ class Common_functions:
             inc = inc + 1
 
 
-    def set_update(self, run, param, index):
-        """Dummy function to do nothing!"""
+    def set_update(self, param, spin):
+        """Dummy function to do nothing!
+
+        @param param:   The name of the parameter which has been changed.
+        @type param:    str
+        @param spin:    The SpinContainer object.
+        @type spin:     SpinContainer
+        """
 
         return
 

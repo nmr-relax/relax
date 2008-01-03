@@ -26,7 +26,7 @@ from math import pi
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns import diffusion_tensor
-from relax_errors import RelaxError
+from relax_errors import RelaxError, RelaxParamSetError, RelaxUnknownParamCombError
 
 
 
@@ -54,6 +54,7 @@ class Value_base_class:
 
         # Set up some spins.
         self.set_up_spins(pipe_name='mf')
+        self.set_up_spins(pipe_name='jw')
 
 
     def tearDown(self):
@@ -825,7 +826,7 @@ class Value_base_class:
 
 
     def test_set_mf_diff_spheroid_diff_Dpar_Dratio(self):
-        """Set the spheroidal diffusion tensor parameters {Dpar, Dratio}.
+        """Set the spheroidal diffusion tensor parameters {Dpar, Dratio} (this should not be possible).
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
         """
@@ -840,7 +841,7 @@ class Value_base_class:
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
         # Set the parameters.
-        self.assertRaises(RelaxError, self.value_fns.set, param=['Dpar', 'Dratio'], val=[1e7, 1.2])
+        self.assertRaises(RelaxUnknownParamCombError, self.value_fns.set, param=['Dpar', 'Dratio'], val=[1e7, 1.2])
 
 
     def test_set_mf_diff_ellipsoid_tm(self):
@@ -1261,7 +1262,7 @@ class Value_base_class:
         diffusion_tensor.init((1e-9, 2e6, 0.4, 0, 0, 0))
 
         # Set the parameters.
-        self.assertRaises(RelaxError, self.value_fns.set, param=['tm', 'Diso', 'Dr'], val=[1e-8, 1e6, 0.2])
+        self.assertRaises(RelaxUnknownParamCombError, self.value_fns.set, param=['tm', 'Diso', 'Dr'], val=[1e-8, 1e6, 0.2])
 
 
 
@@ -1432,11 +1433,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='j0')
-
-        # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].j0, 4.5e-9)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 4.5e-9)
+        self.assertRaises(RelaxParamSetError, self.value_fns.set, param='j0')
 
 
     def test_set_jw_defaults_jwx(self):
@@ -1452,11 +1449,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='jwx')
-
-        # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].jwx, 2.3e-10)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].jwx, 2.3e-10)
+        self.assertRaises(RelaxParamSetError, self.value_fns.set, param='jwx')
 
 
     def test_set_jw_defaults_jwh(self):
@@ -1472,11 +1465,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='J(wH)')
-
-        # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].jwh, 1.7e-12)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].jwh, 1.7e-12)
+        self.assertRaises(RelaxParamSetError, self.value_fns.set, param='J(wH)')
 
 
     def test_set_jw_defaults_r(self):
@@ -1495,8 +1484,8 @@ class Value_base_class:
         self.value_fns.set(param='bond-Length')
 
         # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].r, 1.02e-10)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].r, 1.02e-10)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r, 1.02e-10)
+        self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].r, 1.02e-10)
 
 
     def test_set_jw_defaults_csa(self):
@@ -1515,8 +1504,8 @@ class Value_base_class:
         self.value_fns.set(param='csa')
 
         # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].csa, -172e-6)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -172e-6)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].csa, -172e-6)
+        self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].csa, -172e-6)
 
 
     def test_set_jw_defaults_j0_jwx_jwh(self):
@@ -1532,15 +1521,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'])
-
-        # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].j0, 6.4e-9)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].jwx, 3.5e-10)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].jwh, 2.3e-12)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 6.4e-9)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].jwx, 3.5e-10)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].jwh, 2.3e-12)
+        self.assertRaises(RelaxParamSetError, self.value_fns.set, param=['J(0)', 'jwx', 'J(wH)'])
 
 
     def test_set_jw_single_spin_j0(self):
@@ -1556,7 +1537,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='j0', val=4.5e-9, spin_id=':112')
+        self.value_fns.set(param='j0', val=4.5e-9, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
@@ -1576,7 +1557,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='jwx', val=2.3e-10, spin_id=':112')
+        self.value_fns.set(param='jwx', val=2.3e-10, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'jwx'))
@@ -1596,7 +1577,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='J(wH)', val=1.7e-12, spin_id=':112')
+        self.value_fns.set(param='J(wH)', val=1.7e-12, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'jwh'))
@@ -1616,7 +1597,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='Bond_length', val=1.04e-10, spin_id=':112')
+        self.value_fns.set(param='Bond_length', val=1.04e-10, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'r'))
@@ -1636,7 +1617,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='csa', val=-160e-6, spin_id=':112')
+        self.value_fns.set(param='csa', val=-160e-6, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'csa'))
@@ -1656,7 +1637,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'], val=[6.4e-9, 3.5e-10, 2.3e-12], spin_id=':112')
+        self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'], val=[6.4e-9, 3.5e-10, 2.3e-12], spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
@@ -1680,7 +1661,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'], val=1.9e-10, spin_id=':112')
+        self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'], val=1.9e-10, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
@@ -2176,7 +2157,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='local tm', val=1e-8, spin_id=':112')
+        self.value_fns.set(param='local tm', val=1e-8, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'local_tm'))
@@ -2196,7 +2177,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='S2', val=0.8, spin_id=':112')
+        self.value_fns.set(param='S2', val=0.8, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2'))
@@ -2216,7 +2197,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='S2f', val=0.45, spin_id=':112')
+        self.value_fns.set(param='S2f', val=0.45, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2f'))
@@ -2236,7 +2217,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='S2s', val=0.1, spin_id=':112')
+        self.value_fns.set(param='S2s', val=0.1, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2s'))
@@ -2256,7 +2237,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='te', val=12.5e-12, spin_id=':112')
+        self.value_fns.set(param='te', val=12.5e-12, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'te'))
@@ -2276,7 +2257,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='tf', val=20.1e-12, spin_id=':112')
+        self.value_fns.set(param='tf', val=20.1e-12, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'tf'))
@@ -2296,7 +2277,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='ts', val=1.23e-9, spin_id=':112')
+        self.value_fns.set(param='ts', val=1.23e-9, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'ts'))
@@ -2316,7 +2297,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='Rex', val=2.34, spin_id=':112')
+        self.value_fns.set(param='Rex', val=2.34, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'rex'))
@@ -2336,7 +2317,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='Bond length', val=1.02e-10, spin_id=':112')
+        self.value_fns.set(param='Bond length', val=1.02e-10, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'r'))
@@ -2356,7 +2337,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='CSA', val=-172e-6, spin_id=':112')
+        self.value_fns.set(param='CSA', val=-172e-6, spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'csa'))
@@ -2376,7 +2357,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param=['S2f', 'S2s'], val=[0.7, 0.9], spin_id=':112')
+        self.value_fns.set(param=['S2f', 'S2s'], val=[0.7, 0.9], spin_id='@112')
 
         # Test the parameters.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2f'))
@@ -2398,7 +2379,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param=['S2f', 'S2s'], val=0.7, spin_id=':112')
+        self.value_fns.set(param=['S2f', 'S2s'], val=0.7, spin_id='@112')
 
         # Test the parameters.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2f'))

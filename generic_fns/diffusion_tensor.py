@@ -1039,7 +1039,7 @@ def set(value=None, param=None):
                 cdp.diff_tensor.Da = (Dratio - 1.0) / (2.0 * tm * (Dratio + 2.0))
 
             # The geometric parameter set {Dpar, Dper}.
-            elif geo_params.count('Dpar') == 1 and geo_params.count('Dpar') == 1:
+            elif geo_params.count('Dpar') == 1 and geo_params.count('Dper') == 1:
                 # The parameters.
                 Dpar = geo_values[geo_params.index('Dpar')]
                 Dper = geo_values[geo_params.index('Dper')]

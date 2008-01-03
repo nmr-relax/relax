@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,11 +32,12 @@ import sys
 
 # relax module imports.
 from data import Data as relax_data_store
-from specific_fns.base_class import Common_functions
 from float import isNaN,isInf
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
+from physical_constants import N15_CSA, NH_BOND_LENGTH
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxStyleError, RelaxTensorError, RelaxUnknownDataTypeError
+from specific_fns.base_class import Common_functions
 
 
 # The relax data storage object.
@@ -932,17 +933,18 @@ class Model_free(Common_functions):
         |                                       |                    |                        |
         | Bond length                           | 'r'                | 1.02 * 1e-10           |
         |                                       |                    |                        |
-        | CSA                                   | 'csa'              | -170 * 1e-6            |
+        | CSA                                   | 'csa'              | -172 * 1e-6            |
         |_______________________________________|____________________|________________________|
 
         """
+        __docformat__ = "plaintext"
 
         # Local tm.
         if param == 'local_tm':
             return 10.0 * 1e-9
 
         # {S2, S2f, S2s}.
-        elif search('^S2', param):
+        elif search('^s2', param):
             return 0.8
 
         # te.
@@ -958,16 +960,16 @@ class Model_free(Common_functions):
             return 1000.0 * 1e-12
 
         # Rex.
-        elif param == 'Rex':
+        elif param == 'rex':
             return 0.0
 
         # Bond length.
         elif param == 'r':
-            return 1.02 * 1e-10
+            return NH_BOND_LENGTH
 
         # CSA.
-        elif param == 'CSA':
-            return -170 * 1e-6
+        elif param == 'csa':
+            return N15_CSA
 
 
     def delete(self, run):
@@ -1410,6 +1412,7 @@ class Model_free(Common_functions):
         example, to eliminate models which have a local tm value greater than 25 ns and models with
         internal correlation times greater than 1.5 times tm, set 'args' to (25 * 1e-9, 1.5).
         """
+        __docformat__ = "plaintext"
 
         # Default values.
         c1 = 50.0 * 1e-9
@@ -3618,6 +3621,7 @@ class Model_free(Common_functions):
         |________________________|______________|__________________________________________________|
 
         """
+        __docformat__ = "plaintext"
 
         # Local tm.
         if search('[Ll]ocal[ -_]tm', name):
@@ -4050,6 +4054,7 @@ class Model_free(Common_functions):
             pi is in the namespace of relax, ie just type 'pi'.
             frequency is the proton frequency corresponding to the data.
         """
+        __docformat__ = "plaintext"
 
 
     def set_error(self, run, instance, index, error):
@@ -4171,24 +4176,27 @@ class Model_free(Common_functions):
             relax_data_store.res[self.run][instance].select_sim = select_sim
 
 
-    def set_update(self, run, param, index):
-        """Function to update the other model-free parameters."""
+    def set_update(self, param, spin):
+        """Function to update the other model-free parameters.
 
-        # Alias the residue specific data structure.
-        data = relax_data_store.res[self.run][index]
+        @param param:   The name of the parameter which has been changed.
+        @type param:    str
+        @param spin:    The SpinContainer object.
+        @type spin:     SpinContainer
+        """
 
         # S2f parameter.
         if param == 'S2f':
             # Update S2 if S2s exists.
-            if hasattr(data, 's2s') and data.s2s != None:
-                data.s2 = data.s2f * data.s2s
+            if hasattr(spin, 's2s') and spin.s2s != None:
+                spin.s2 = spin.s2f * spin.s2s
 
 
         # S2s parameter.
         if param == 'S2s':
             # Update S2 if S2f exists.
-            if hasattr(data, 's2f') and data.s2f != None:
-                data.s2 = data.s2f * data.s2s
+            if hasattr(spin, 's2f') and spin.s2f != None:
+                spin.s2 = spin.s2f * spin.s2s
 
 
     def sim_init_values(self, run):
@@ -5267,6 +5275,8 @@ class Molmol:
         |                |             | gradient starts at 'yellow' and finishes at 'red'.        |
         |________________|_____________|___________________________________________________________|
         """
+        __docformat__ = "plaintext"
+
 
         # Generate the macro header.
         ############################
