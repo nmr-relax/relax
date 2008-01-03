@@ -236,7 +236,7 @@ class Common_functions:
             inc = inc + 1
 
 
-    def set_update(self, run, param, index):
+    def set_update(self, param, spin):
         """Dummy function to do nothing!"""
 
         return
