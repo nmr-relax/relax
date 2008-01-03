@@ -217,6 +217,7 @@ class Jw_mapping(Common_functions):
         |_______________________________________|______________|______________________________|
 
         """
+        __docformat__ = "plaintext"
 
         # Bond length.
         if param == 'r':
@@ -290,6 +291,7 @@ class Jw_mapping(Common_functions):
         |________________________|______________|__________________________________________________|
 
         """
+        __docformat__ = "plaintext"
 
         # J(0).
         if search('^[Jj]0$', name) or search('[Jj]\(0\)', name):
