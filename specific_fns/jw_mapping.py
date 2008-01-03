@@ -224,7 +224,7 @@ class Jw_mapping(Common_functions):
             return NH_BOND_LENGTH
 
         # CSA.
-        if param == 'CSA':
+        if param == 'csa':
             return N15_CSA
 
 
