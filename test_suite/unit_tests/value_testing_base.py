@@ -1516,8 +1516,8 @@ class Value_base_class:
         self.value_fns.set(param='csa')
 
         # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].csa, -172e-6)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -172e-6)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].csa, -172e-6)
+        self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].csa, -172e-6)
 
 
     def test_set_jw_defaults_j0_jwx_jwh(self):
