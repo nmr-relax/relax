@@ -45,6 +45,9 @@ class Value_base_class:
         # Add a second model-free data pipe for copying tests.
         relax_data_store.add(pipe_name='mf2', pipe_type='mf')
 
+        # Add a reduced spectral density mapping data pipe to the data store for testing RSDM parameters.
+        relax_data_store.add(pipe_name='jw', pipe_type='jw')
+
         # Set up some spins.
         self.set_up_spins(pipe_name='mf')
 
@@ -77,6 +80,438 @@ class Value_base_class:
         pipe.mol[0].res.add_item('Trp', 2)
         pipe.mol[0].res[1].spin[0].num = 112
         pipe.mol[0].res[1].spin[0].name = 'NH'
+
+
+
+    ###############################################
+    # Reduced spectral density mapping parameters #
+    ###############################################
+
+
+    def test_set_jw_all_spins_j0(self):
+        """Set the RSDM parameter J(0) for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='j0', val=4.5e-9)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].j0, 4.5e-9)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 4.5e-9)
+
+
+    def test_set_jw_all_spins_jwx(self):
+        """Set the RSDM parameter J(wX) for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='jwx', val=2.3e-10)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].jwx, 2.3e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].jwx, 2.3e-10)
+
+
+    def test_set_jw_all_spins_jwh(self):
+        """Set the RSDM parameter J(wH) for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='J(wH)', val=1.7e-12)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].jwh, 1.7e-12)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].jwh, 1.7e-12)
+
+
+    def test_set_jw_all_spins_r(self):
+        """Set the RSDM bond length parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='Bond_length', val=1.04e-10)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].r, 1.04e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].r, 1.04e-10)
+
+
+    def test_set_jw_all_spins_csa(self):
+        """Set the RSDM CSA parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='csa', val=-160e-6)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].csa, -160e-6)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -160e-6)
+
+
+    def test_set_jw_all_spins_diff_j0_jwx_jwh(self):
+        """Set different RSDM parameters J(0), J(wX), J(wH) for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'], val=[6.4e-9, 3.5e-10, 2.3e-12])
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].j0, 6.4e-9)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].jwx, 3.5e-10)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].jwh, 2.3e-12)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 6.4e-9)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].jwx, 3.5e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].jwh, 2.3e-12)
+
+
+    def test_set_jw_all_spins_same_j0_jwx_jwh(self):
+        """Set RSDM parameters J(0), J(wX), J(wH) for all spins to the same value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'], val=1.9e-10)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].j0, 1.9e-10)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].jwx, 1.9e-10)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].jwh, 1.9e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 1.9e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].jwx, 1.9e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].jwh, 1.9e-10)
+
+
+    def test_set_jw_defaults_j0(self):
+        """Set the RSDM parameter J(0) to the default value (there is none!).
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='j0')
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].j0, 4.5e-9)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 4.5e-9)
+
+
+    def test_set_jw_defaults_jwx(self):
+        """Set the RSDM parameter J(wX) to the default value (there is none!).
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='jwx')
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].jwx, 2.3e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].jwx, 2.3e-10)
+
+
+    def test_set_jw_defaults_jwh(self):
+        """Set the RSDM parameter J(wH) to the default value (there is none!).
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='J(wH)')
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].jwh, 1.7e-12)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].jwh, 1.7e-12)
+
+
+    def test_set_jw_defaults_r(self):
+        """Set the RSDM bond length parameter to the default value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='bond-Length')
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].r, 1.02e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].r, 1.02e-10)
+
+
+    def test_set_jw_defaults_csa(self):
+        """Set the RSDM CSA parameter to the default value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='csa')
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].csa, -172e-6)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -172e-6)
+
+
+    def test_set_jw_defaults_j0_jwx_jwh(self):
+        """Set different RSDM parameters J(0), J(wX), J(wH) to the default values (there are none!).
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'])
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].j0, 6.4e-9)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].jwx, 3.5e-10)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].jwh, 2.3e-12)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 6.4e-9)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].jwx, 3.5e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].jwh, 2.3e-12)
+
+
+    def test_set_jw_single_spin_j0(self):
+        """Set the RSDM parameter J(0) for a single spin.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='j0', val=4.5e-9, spin_id=':112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 4.5e-9)
+
+
+    def test_set_jw_single_spin_jwx(self):
+        """Set the RSDM parameter J(wX) for a single spin.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='jwx', val=2.3e-10, spin_id=':112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'jwx'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].jwx, 2.3e-10)
+
+
+    def test_set_jw_single_spin_jwh(self):
+        """Set the RSDM parameter J(wH) for a single spin.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='J(wH)', val=1.7e-12, spin_id=':112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'jwh'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].jwh, 1.7e-12)
+
+
+    def test_set_jw_single_spin_r(self):
+        """Set the RSDM bond length parameter for a single spin.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='Bond_length', val=1.04e-10, spin_id=':112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'r'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].r, 1.04e-10)
+
+
+    def test_set_jw_single_spin_csa(self):
+        """Set the RSDM CSA parameter for a single spin.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='csa', val=-160e-6, spin_id=':112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'csa'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -160e-6)
+
+
+    def test_set_jw_single_spin_diff_j0_jwx_jwh(self):
+        """Set different RSDM parameters J(0), J(wX), J(wH) for a single spin.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'], val=[6.4e-9, 3.5e-10, 2.3e-12], spin_id=':112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'jwx'))
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'jwh'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 6.4e-9)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].jwx, 3.5e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].jwh, 2.3e-12)
+
+
+    def test_set_jw_single_spin_same_j0_jwx_jwh(self):
+        """Set RSDM parameters J(0), J(wX), J(wH) for a single spin to the same value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'], val=1.9e-10, spin_id=':112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'jwx'))
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'jwh'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 1.9e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].jwx, 1.9e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].jwh, 1.9e-10)
+
+
+
+    #########################
+    # Model-free parameters #
+    #########################
 
 
     def test_set_mf_all_spins_local_tm(self):
