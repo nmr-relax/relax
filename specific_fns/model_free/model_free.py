@@ -937,6 +937,7 @@ class Model_free(Common_functions):
         |_______________________________________|____________________|________________________|
 
         """
+        __docformat__ = "plaintext"
 
         # Local tm.
         if param == 'local_tm':
@@ -1411,6 +1412,7 @@ class Model_free(Common_functions):
         example, to eliminate models which have a local tm value greater than 25 ns and models with
         internal correlation times greater than 1.5 times tm, set 'args' to (25 * 1e-9, 1.5).
         """
+        __docformat__ = "plaintext"
 
         # Default values.
         c1 = 50.0 * 1e-9
@@ -3619,6 +3621,7 @@ class Model_free(Common_functions):
         |________________________|______________|__________________________________________________|
 
         """
+        __docformat__ = "plaintext"
 
         # Local tm.
         if search('[Ll]ocal[ -_]tm', name):
@@ -4051,6 +4054,7 @@ class Model_free(Common_functions):
             pi is in the namespace of relax, ie just type 'pi'.
             frequency is the proton frequency corresponding to the data.
         """
+        __docformat__ = "plaintext"
 
 
     def set_error(self, run, instance, index, error):
@@ -5271,6 +5275,8 @@ class Molmol:
         |                |             | gradient starts at 'yellow' and finishes at 'red'.        |
         |________________|_____________|___________________________________________________________|
         """
+        __docformat__ = "plaintext"
+
 
         # Generate the macro header.
         ############################
