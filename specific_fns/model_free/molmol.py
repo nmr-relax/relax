@@ -25,6 +25,7 @@ from math import pi
 from re import search
 
 # relax module imports.
+from colour import linear_gradient
 from data import Data as relax_data_store
 from relax_errors import RelaxStyleError, RelaxUnknownDataTypeError
 
@@ -33,7 +34,7 @@ from relax_errors import RelaxStyleError, RelaxUnknownDataTypeError
 class Molmol:
     """Class containing the Molmol specific functions for model-free analysis."""
 
-    def molmol_classic_style(self, data_type, colour_start, colour_end, colour_list):
+    def molmol_classic_style(self, data_type=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
         """
         Classic style
         ~~~~~~~~~~~~~
@@ -42,10 +43,10 @@ class Molmol:
 
         Argument string:  "classic"
 
-        Description:  The classic style draws the backbone of the protein in the Molmol 'neon'
-        style.  Rather than colouring the amino acids to which the NH bond belongs, the three
-        covalent bonds of the peptide bond from Ca to Ca in which the NH bond is located are
-        coloured.  Deselected residues are shown as black lines.
+        Description:  The classic style draws the backbone of a protein in the Molmol 'neon' style.
+        Rather than colouring the amino acids to which the NH bond belongs, the three covalent bonds
+        of the peptide bond from Ca to Ca in which the NH bond is located are coloured.  Deselected
+        residues are shown as black lines.
 
         Supported data types:
         ____________________________________________________________________________________________
@@ -116,6 +117,23 @@ class Molmol:
         __docformat__ = "plaintext"
 
 
+        # Test the validity of the data (only a single spin per residue).
+        #################################################################
+
+        # Init some variables.
+        prev_res_num = None
+        num = 0
+
+        # Loop over the spins.
+        for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+            # More than one spin.
+            if prev_res_num == res_num:
+                raise RelaxError, "Only a single spin per residue is allowed for the classic Molmol macro style."
+
+            # Update the previous residue number.
+            prev_res_num = res_num
+
+
         # Generate the macro header.
         ############################
 
@@ -126,89 +144,89 @@ class Molmol:
         #####
 
         if data_type == 'S2':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
+            # Loop over the spins.
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+                # Skip unselected spins.
+                if not spin.select:
                     continue
 
-                # Skip residues which don't have an S2 value.
-                if not hasattr(residue, 's2') or residue.s2 == None:
+                # Skip spins which don't have an S2 value.
+                if not hasattr(spin, 's2') or spin.s2 == None:
                     continue
 
                 # S2 width and colour.
-                self.molmol_classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
+                self.molmol_classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
 
 
         # S2f.
         ######
 
         elif data_type == 'S2f':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
+            # Loop over the spins.
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+                # Skip unselected spins.
+                if not spin.select:
                     continue
 
                 # Colour residues which don't have an S2f value white.
-                if not hasattr(residue, 's2f') or residue.s2f == None:
-                    self.molmol_classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
+                if not hasattr(spin, 's2f') or spin.s2f == None:
+                    self.molmol_classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
 
                 # S2f width and colour.
                 else:
-                    self.molmol_classic_order_param(residue, residue.s2f, colour_start, colour_end, colour_list)
+                    self.molmol_classic_order_param(res_num, spin.s2f, colour_start, colour_end, colour_list)
 
 
         # S2s.
         ######
 
         elif data_type == 'S2s':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
+            # Loop over the spins.
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+                # Skip unselected spins.
+                if not spin.select:
                     continue
 
                 # Colour residues which don't have an S2s value white.
-                if not hasattr(residue, 's2s') or residue.s2s == None:
-                    self.molmol_classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
+                if not hasattr(spin, 's2s') or spin.s2s == None:
+                    self.molmol_classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
 
                 # S2s width and colour.
                 else:
-                    self.molmol_classic_order_param(residue, residue.s2s, colour_start, colour_end, colour_list)
+                    self.molmol_classic_order_param(res_num, spin.s2s, colour_start, colour_end, colour_list)
 
 
         # Amplitude of fast motions.
         ############################
 
         elif data_type == 'amp_fast':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
+            # Loop over the spins.
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+                # Skip unselected spins.
+                if not spin.select:
                     continue
 
                 # The model.
-                if search('tm[0-9]', residue.model):
-                    model = residue.model[1:]
+                if search('tm[0-9]', spin.model):
+                    model = spin.model[1:]
                 else:
-                    model = residue.model
+                    model = spin.model
 
                 # S2f width and colour (for models m5 to m8).
-                if hasattr(residue, 's2f') and residue.s2f != None:
-                    self.molmol_classic_order_param(residue, residue.s2f, colour_start, colour_end, colour_list)
+                if hasattr(spin, 's2f') and spin.s2f != None:
+                    self.molmol_classic_order_param(res_num, spin.s2f, colour_start, colour_end, colour_list)
 
                 # S2 width and colour (for models m1 and m3).
                 elif model == 'm1' or model == 'm3':
-                    self.molmol_classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
+                    self.molmol_classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
 
                 # S2 width and colour (for models m2 and m4 when te <= 200 ps).
-                elif (model == 'm2' or model == 'm4') and residue.te <= 200e-12:
-                    self.molmol_classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
+                elif (model == 'm2' or model == 'm4') and spin.te <= 200e-12:
+                    self.molmol_classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
 
                 # White bonds (for models m2 and m4 when te > 200 ps).
-                elif (model == 'm2' or model == 'm4') and residue.te > 200e-12:
-                    self.molmol_classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
+                elif (model == 'm2' or model == 'm4') and spin.te > 200e-12:
+                    self.molmol_classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
 
                 # Catch errors.
                 else:
@@ -219,78 +237,78 @@ class Molmol:
         ############################
 
         elif data_type == 'amp_slow':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
+            # Loop over the spins.
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+                # Skip unselected spins.
+                if not spin.select:
                     continue
 
                 # The model.
-                if search('tm[0-9]', residue.model):
-                    model = residue.model[1:]
+                if search('tm[0-9]', spin.model):
+                    model = spin.model[1:]
                 else:
-                    model = residue.model
+                    model = spin.model
 
                 # S2 width and colour (for models m5 to m8).
-                if hasattr(residue, 'ts') and residue.ts != None:
-                    self.molmol_classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
+                if hasattr(spin, 'ts') and spin.ts != None:
+                    self.molmol_classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
 
                 # S2 width and colour (for models m2 and m4 when te > 200 ps).
-                elif (model == 'm2' or model == 'm4') and residue.te > 200 * 1e-12:
-                    self.molmol_classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
+                elif (model == 'm2' or model == 'm4') and spin.te > 200 * 1e-12:
+                    self.molmol_classic_order_param(res_num, spin.s2, colour_start, colour_end, colour_list)
 
                 # White bonds for fast motions.
                 else:
-                    self.molmol_classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
+                    self.molmol_classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
 
         # te.
         #####
 
         elif data_type == 'te':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
+            # Loop over the spins.
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+                # Skip unselected spins.
+                if not spin.select:
                     continue
 
-                # Skip residues which don't have a te value.
-                if not hasattr(residue, 'te') or residue.te == None:
+                # Skip spins which don't have a te value.
+                if not hasattr(spin, 'te') or spin.te == None:
                     continue
 
                 # te width and colour.
-                self.molmol_classic_correlation_time(residue, residue.te, colour_start, colour_end, colour_list)
+                self.molmol_classic_correlation_time(res_num, spin.te, colour_start, colour_end, colour_list)
 
 
         # tf.
         #####
 
         elif data_type == 'tf':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
+            # Loop over the spins.
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+                # Skip unselected spins.
+                if not spin.select:
                     continue
 
-                # Skip residues which don't have a tf value.
-                if not hasattr(residue, 'tf') or residue.tf == None:
+                # Skip spins which don't have a tf value.
+                if not hasattr(spin, 'tf') or spin.tf == None:
                     continue
 
                 # tf width and colour.
-                self.molmol_classic_correlation_time(residue, residue.tf, colour_start, colour_end, colour_list)
+                self.molmol_classic_correlation_time(res_num, spin.tf, colour_start, colour_end, colour_list)
 
 
         # ts.
         #####
 
         elif data_type == 'ts':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
+            # Loop over the spins.
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+                # Skip unselected spins.
+                if not spins.select:
                     continue
 
-                # Skip residues which don't have a ts value.
-                if not hasattr(residue, 'ts') or residue.ts == None:
+                # Skip spins which don't have a ts value.
+                if not hasattr(spin, 'ts') or spin.ts == None:
                     continue
 
                 # The default start and end colours.
@@ -300,54 +318,54 @@ class Molmol:
                     colour_end = 'black'
 
                 # ts width and colour.
-                self.molmol_classic_correlation_time(residue, residue.ts / 10.0, colour_start, colour_end, colour_list)
+                self.molmol_classic_correlation_time(res_num, spin.ts / 10.0, colour_start, colour_end, colour_list)
 
 
         # Timescale of fast motions.
         ############################
 
         elif data_type == 'time_fast':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
+            # Loop over the spins.
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+                # Skip unselected spins.
+                if not spin.select:
                     continue
 
                 # The model.
-                if search('tm[0-9]', residue.model):
-                    model = residue.model[1:]
+                if search('tm[0-9]', spin.model):
+                    model = spin.model[1:]
                 else:
-                    model = residue.model
+                    model = spin.model
 
                 # tf width and colour (for models m5 to m8).
-                if hasattr(residue, 'tf') and residue.tf != None:
-                    self.molmol_classic_correlation_time(residue, residue.tf, colour_start, colour_end, colour_list)
+                if hasattr(spin, 'tf') and spin.tf != None:
+                    self.molmol_classic_correlation_time(res_num, spin.tf, colour_start, colour_end, colour_list)
 
                 # te width and colour (for models m2 and m4 when te <= 200 ps).
-                elif (model == 'm2' or model == 'm4') and residue.te <= 200e-12:
-                    self.molmol_classic_correlation_time(residue, residue.te, colour_start, colour_end, colour_list)
+                elif (model == 'm2' or model == 'm4') and spin.te <= 200e-12:
+                    self.molmol_classic_correlation_time(res_num, spin.te, colour_start, colour_end, colour_list)
 
                 # All other residues are assumed to have a fast correlation time of zero (statistically zero, not real zero!).
                 # Colour these bonds white.
                 else:
-                    self.molmol_classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
+                    self.molmol_classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
 
 
         # Timescale of slow motions.
         ############################
 
         elif data_type == 'time_slow':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
+            # Loop over the spins.
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+                # Skip unselected spins.
+                if not spin.select:
                     continue
 
                 # The model.
-                if search('tm[0-9]', residue.model):
-                    model = residue.model[1:]
+                if search('tm[0-9]', spin.model):
+                    model = spin.model[1:]
                 else:
-                    model = residue.model
+                    model = spin.model
 
                 # The default start and end colours.
                 if colour_start == None:
@@ -356,35 +374,35 @@ class Molmol:
                     colour_end = 'black'
 
                 # ts width and colour (for models m5 to m8).
-                if hasattr(residue, 'ts') and residue.ts != None:
-                    self.molmol_classic_correlation_time(residue, residue.ts / 10.0, colour_start, colour_end, colour_list)
+                if hasattr(spin, 'ts') and spin.ts != None:
+                    self.molmol_classic_correlation_time(res_num, spin.ts / 10.0, colour_start, colour_end, colour_list)
 
                 # te width and colour (for models m2 and m4 when te > 200 ps).
-                elif (model == 'm2' or model == 'm4') and residue.te > 200e-12:
-                    self.molmol_classic_correlation_time(residue, residue.te / 10.0, colour_start, colour_end, colour_list)
+                elif (model == 'm2' or model == 'm4') and spin.te > 200e-12:
+                    self.molmol_classic_correlation_time(res_num, spin.te / 10.0, colour_start, colour_end, colour_list)
 
                 # White bonds for the rest.
                 else:
-                    self.molmol_classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
+                    self.molmol_classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
 
 
         # Rex.
         ######
 
         elif data_type == 'Rex':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
+            # Loop over the spins.
+            for spin, mol_name, res_num, res_name in spin_loop(spin_id):
+                # Skip unselected spins.
+                if not spin.select:
                     continue
 
                 # Residues which chemical exchange.
-                if hasattr(residue, 'rex') and residue.rex != None:
-                    self.molmol_classic_rex(residue, residue.rex, colour_start, colour_end, colour_list)
+                if hasattr(spin, 'rex') and spin.rex != None:
+                    self.molmol_classic_rex(res_num, spin.rex, colour_start, colour_end, colour_list)
 
                 # White bonds for the rest.
                 else:
-                    self.molmol_classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
+                    self.molmol_classic_colour(res_num=res_num, width=0.3, rgb_array=[1, 1, 1])
 
 
         # Unknown data type.
@@ -419,7 +437,7 @@ class Molmol:
         self.commands.append("")
 
 
-    def molmol_classic_correlation_time(self, residue, te, colour_start, colour_end, colour_list):
+    def molmol_classic_correlation_time(self, res_num, te, colour_start, colour_end, colour_list):
         """Function for generating the bond width and colours for correlation times."""
 
         # The te value in picoseconds.
@@ -451,7 +469,7 @@ class Molmol:
         rgb_array = self.relax.colour.linear_gradient(colour_value, colour_end, colour_start, colour_list)
 
         # Colour the peptide bond.
-        self.molmol_classic_colour(residue.num, width, rgb_array)
+        self.molmol_classic_colour(res_num, width, rgb_array)
 
 
     def molmol_classic_header(self):
@@ -469,7 +487,7 @@ class Molmol:
         self.commands.append("ColorBond 0 0 0")
 
 
-    def molmol_classic_order_param(self, residue, s2, colour_start, colour_end, colour_list):
+    def molmol_classic_order_param(self, res_num, s2, colour_start, colour_end, colour_list):
         """Function for generating the bond width and colours for order parameters."""
 
         # The bond width (aiming for a width range of 2 to 0 for S2 values of 0.0 to 1.0).
@@ -498,17 +516,17 @@ class Molmol:
             colour_end = 'yellow'
 
         # Get the RGB colour array.
-        rgb_array = self.relax.colour.linear_gradient(colour_value, colour_start, colour_end, colour_list)
+        rgb_array = linear_gradient(colour_value, colour_start, colour_end, colour_list)
 
         # Colour the peptide bond.
-        self.molmol_classic_colour(residue.num, width, rgb_array)
+        self.molmol_classic_colour(res_num, width, rgb_array)
 
 
-    def molmol_classic_rex(self, residue, rex, colour_start, colour_end, colour_list):
+    def molmol_classic_rex(self, res_num, rex, colour_start, colour_end, colour_list):
         """Function for generating the bond width and colours for correlation times."""
 
         # The Rex value at the first field strength.
-        rex = rex * (2.0 * pi * relax_data_store.frq[self.run][0])**2
+        rex = rex * (2.0 * pi * relax_data_store[relax_data_store.current_pipe].frq[0])**2
 
         # The bond width (aiming for a width range of 2 to 0 for Rex values of 0 to 25 s^-1).
         width = 2.0 - 2.0 / (rex/5.0 + 1.0)
@@ -536,21 +554,18 @@ class Molmol:
         rgb_array = self.relax.colour.linear_gradient(colour_value, colour_end, colour_start, colour_list)
 
         # Colour the peptide bond.
-        self.molmol_classic_colour(residue.num, width, rgb_array)
+        self.molmol_classic_colour(res_num, width, rgb_array)
 
 
-    def molmol_macro(self, run, data_type, style, colour_start, colour_end, colour_list):
+    def molmol_macro(self, data_type=None, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
         """Create and return an array of Molmol macros of the model-free parameters."""
-
-        # Arguments.
-        self.run = run
 
         # Initialise.
         self.commands = []
 
         # The classic style.
         if style == 'classic':
-            self.molmol_classic(data_type, colour_start, colour_end, colour_list)
+            self.molmol_classic_style(data_type, colour_start, colour_end, colour_list, spin_id)
 
         # Unknown style.
         else:
