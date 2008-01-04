@@ -134,7 +134,7 @@ class Value_base_class:
         self.value_fns.set(param='Diso')
 
         # Test the parameter.
-        self.assertEqual(cdp.diff_tensor.Diso, 1.666e7)
+        self.assertAlmostEqual(cdp.diff_tensor.Diso, 1.666e7)
 
 
     def test_set_mf_diff_sphere_default_Da(self):
@@ -583,7 +583,7 @@ class Value_base_class:
         self.value_fns.set(param='Dratio')
 
         # Test the parameter.
-        self.assertAlmostEqual(cdp.diff_tensor.Dratio, 1.2)
+        self.assertEqual(cdp.diff_tensor.Dratio, 1.0)
 
 
     def test_set_mf_diff_spheroid_default_alpha(self):
@@ -729,7 +729,7 @@ class Value_base_class:
         self.value_fns.set(param=['Diso', 'Da'])
 
         # Test the parameter.
-        self.assertEqual(cdp.diff_tensor.Diso, 1.666e7)
+        self.assertAlmostEqual(cdp.diff_tensor.Diso, 1.666e7)
         self.assertEqual(cdp.diff_tensor.Da, 0.0)
 
 
@@ -775,8 +775,8 @@ class Value_base_class:
         self.value_fns.set(param=['Dpar', 'Dper'])
 
         # Test the parameter.
-        self.assertAlmostEqual(cdp.diff_tensor.Dpar, 1e7)
-        self.assertAlmostEqual(cdp.diff_tensor.Dper, 2e7)
+        self.assertAlmostEqual(cdp.diff_tensor.Dpar, 1.666e7)
+        self.assertAlmostEqual(cdp.diff_tensor.Dper, 1.666e7)
 
 
     def test_set_mf_diff_spheroid_default_Dper_Dpar(self):
@@ -798,8 +798,8 @@ class Value_base_class:
         self.value_fns.set(param=['Dper', 'Dpar'])
 
         # Test the parameter.
-        self.assertAlmostEqual(cdp.diff_tensor.Dper, 1e7)
-        self.assertAlmostEqual(cdp.diff_tensor.Dpar, 2e7)
+        self.assertAlmostEqual(cdp.diff_tensor.Dper, 1.666e7)
+        self.assertAlmostEqual(cdp.diff_tensor.Dpar, 1.666e7)
 
 
     def test_set_mf_diff_spheroid_default_Diso_Dratio(self):
@@ -821,7 +821,7 @@ class Value_base_class:
         self.value_fns.set(param=['Diso', 'Dratio'])
 
         # Test the parameter.
-        self.assertEqual(cdp.diff_tensor.Diso, 1.666e7)
+        self.assertAlmostEqual(cdp.diff_tensor.Diso, 1.666e7)
         self.assertEqual(cdp.diff_tensor.Dratio, 1.0)
 
 
@@ -1217,9 +1217,9 @@ class Value_base_class:
         self.value_fns.set(param=['Dx', 'Dy', 'Dz'])
 
         # Test the parameters.
-        self.assertEqual(cdp.diff_tensor.Dx, 1.666e7)
-        self.assertEqual(cdp.diff_tensor.Dy, 1.666e7)
-        self.assertEqual(cdp.diff_tensor.Dz, 1.666e7)
+        self.assertAlmostEqual(cdp.diff_tensor.Dx, 1.666e7)
+        self.assertAlmostEqual(cdp.diff_tensor.Dy, 1.666e7)
+        self.assertAlmostEqual(cdp.diff_tensor.Dz, 1.666e7)
 
 
     def test_set_mf_diff_ellipsoid_default_tm_Diso_Dr(self):
