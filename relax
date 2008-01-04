@@ -184,6 +184,10 @@ class Relax:
             # Create a string to pass to the interpreter to print.
             self.set_intro_string()
 
+            # Load the interpreter and turn intros on.
+            self.interpreter = interpreter.Interpreter(self)
+            self.interpreter._on()
+
             # Run the tests.
             sys_runner = System_tests(self)
             system_result = sys_runner.run()
