@@ -128,9 +128,17 @@ def default_value(param):
     elif param == 'Diso' or param == 'Dx' or param == 'Dy' or param == 'Dz' or param == 'Dpar' or param == 'Dper':
         return 1.666 * 1e7
 
+    # Da, Dr.
+    elif param == 'Da' or param == 'Dr':
+        return 0.0
+
     # Dratio.
     elif param == 'Dratio':
         return 1.0
+
+    # All angles.
+    elif param == 'alpha' or param == 'beta' or param == 'gamma' or param == 'theta' or param == 'phi':
+        return 0.0
 
 
 def delete():
@@ -929,7 +937,7 @@ def set(value=None, param=None):
 
         # Default value.
         if value[i] == None:
-            value[i] = default_value(object_names[i])
+            value[i] = default_value(param[i])
 
         # Geometric parameter.
         if param[i] in ['tm', 'Diso', 'Da', 'Dratio', 'Dper', 'Dpar', 'Dr', 'Dx', 'Dy', 'Dz']:
