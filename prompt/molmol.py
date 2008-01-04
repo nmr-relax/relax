@@ -22,7 +22,7 @@
 
 import sys
 
-from colour import Colour
+import colour
 import help
 from relax_errors import RelaxBinError, RelaxListNumError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
 from specific_fns.model_free import Molmol
@@ -474,7 +474,7 @@ class Molmol:
     write.__doc__ = write.__doc__ + "\n\n" + Molmol.classic.__doc__ + "\n\n"
 
     # Molmol RGB colour list.
-    write.__doc__ = write.__doc__ + "\n\n" + Colour.molmol_colours.__doc__ + "\n\n"
+    write.__doc__ = write.__doc__ + "\n\n" + colour.molmol_colours.__doc__ + "\n\n"
 
     # X11 RGB colour list.
-    write.__doc__ = write.__doc__ + "\n\n" + Colour.x11_colours.__doc__ + "\n\n"
+    write.__doc__ = write.__doc__ + "\n\n" + colour.x11_colours.__doc__ + "\n\n"
