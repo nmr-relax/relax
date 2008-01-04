@@ -3546,7 +3546,7 @@ class Value_base_class:
     #######################################
 
 
-    def test_set_relax_data_all_spins_rx(self):
+    def test_set_relax_fit_all_spins_rx(self):
         """Set the relaxation curve fitting Rx parameter for all spins.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -3566,7 +3566,7 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].rx, 1.2)
 
 
-    def test_set_relax_data_all_spins_i0(self):
+    def test_set_relax_fit_all_spins_i0(self):
         """Set the relaxation curve fitting I0 parameter for all spins.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -3586,7 +3586,7 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].i0, 520)
 
 
-    def test_set_relax_data_all_spins_iinf(self):
+    def test_set_relax_fit_all_spins_iinf(self):
         """Set the relaxation curve fitting Iinf parameter for all spins.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -3606,7 +3606,7 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].iinf, -1.7)
 
 
-    def test_set_relax_data_all_spins_diff_i0_iinf(self):
+    def test_set_relax_fit_all_spins_diff_i0_iinf(self):
         """Set the relaxation curve fitting parameters {I0, Iinf} for all spins to different values.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -3628,7 +3628,7 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].iinf, -1.7)
 
 
-    def test_set_relax_data_all_spins_same_i0_iinf(self):
+    def test_set_relax_fit_all_spins_same_i0_iinf(self):
         """Set the relaxation curve fitting parameters {I0, Iinf} for all spins to the same value.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -3650,7 +3650,7 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].iinf, 0.0)
 
 
-    def test_set_relax_data_defaults_rx(self):
+    def test_set_relax_fit_defaults_rx(self):
         """Set the relaxation curve fitting Rx parameter to the default value.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -3670,7 +3670,7 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].rx, 8.0)
 
 
-    def test_set_relax_data_defaults_i0(self):
+    def test_set_relax_fit_defaults_i0(self):
         """Set the relaxation curve fitting I0 parameter to the default value.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -3690,7 +3690,7 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].i0, 10000.0)
 
 
-    def test_set_relax_data_defaults_iinf(self):
+    def test_set_relax_fit_defaults_iinf(self):
         """Set the relaxation curve fitting Iinf parameter to the default value.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -3710,7 +3710,7 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].iinf, 0.0)
 
 
-    def test_set_relax_data_defaults_i0_iinf(self):
+    def test_set_relax_fit_defaults_i0_iinf(self):
         """Set the relaxation curve fitting parameters {I0, Iinf} to the default values.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -3732,7 +3732,7 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].iinf, 0.0)
 
 
-    def test_set_relax_data_single_spin_rx(self):
+    def test_set_relax_fit_single_spin_rx(self):
         """Set the relaxation curve fitting Rx parameter for all spins.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -3752,7 +3752,7 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].rx, 1.2)
 
 
-    def test_set_relax_data_single_spin_i0(self):
+    def test_set_relax_fit_single_spin_i0(self):
         """Set the relaxation curve fitting I0 parameter for all spins.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -3772,7 +3772,7 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].i0, 520)
 
 
-    def test_set_relax_data_single_spin_iinf(self):
+    def test_set_relax_fit_single_spin_iinf(self):
         """Set the relaxation curve fitting Iinf parameter for all spins.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -3792,7 +3792,7 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].iinf, -1.7)
 
 
-    def test_set_relax_data_single_spin_diff_i0_iinf(self):
+    def test_set_relax_fit_single_spin_diff_i0_iinf(self):
         """Set the relaxation curve fitting parameters {I0, Iinf} for all spins to different values.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -3814,7 +3814,7 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].iinf, -1.7)
 
 
-    def test_set_relax_data_single_spin_same_i0_iinf(self):
+    def test_set_relax_fit_single_spin_same_i0_iinf(self):
         """Set the relaxation curve fitting parameters {I0, Iinf} for all spins to the same value.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
