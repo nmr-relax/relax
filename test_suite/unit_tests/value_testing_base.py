@@ -1193,7 +1193,7 @@ class Value_base_class:
         self.value_fns.set(param=['Diso', 'Da', 'Dr'])
 
         # Test the parameters.
-        self.assertEqual(cdp.diff_tensor.Diso, 1.666e7)
+        self.assertAlmostEqual(cdp.diff_tensor.Diso, 1.666e7)
         self.assertEqual(cdp.diff_tensor.Da, 0.0)
         self.assertEqual(cdp.diff_tensor.Dr, 0.0)
 
