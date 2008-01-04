@@ -71,6 +71,7 @@ from prompt import interpreter
 import relax_errors
 from relax_io import log
 import relax_warnings
+from test_suite.relax_test_runner import RelaxTestRunner
 from test_suite.runner import Test_suite_runner
 from test_suite.system_tests.main import System_tests
 from test_suite.unit_tests.unit_test_runner import Unit_test_runner
@@ -199,7 +200,7 @@ class Relax:
 
             # Run the tests.
             runner = Unit_test_runner(root_path='test_suite/unit_tests')
-            runner.run()
+            runner.run(runner=RelaxTestRunner())
 
         # Test mode.
         elif mode == 'test':
