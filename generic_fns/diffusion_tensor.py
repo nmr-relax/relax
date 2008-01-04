@@ -929,7 +929,7 @@ def set(value=None, param=None):
 
         # Default value.
         if value[i] == None:
-            value[i] = default_value(object_names[i])
+            value[i] = default_value(param[i])
 
         # Geometric parameter.
         if param[i] in ['tm', 'Diso', 'Da', 'Dratio', 'Dper', 'Dpar', 'Dr', 'Dx', 'Dy', 'Dz']:
