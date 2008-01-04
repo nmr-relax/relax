@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,5 +20,11 @@
 #                                                                             #
 ###############################################################################
 
+# relax module imports.
+from model_free import Model_free_main
+from molmol import Molmol
+from specific_fns.base_class import Common_functions
 
-from model_free import *
+
+class Model_free(Common_functions, Model_free_main, Molmol):
+    """Parent class containing all the model-free specific functions."""
