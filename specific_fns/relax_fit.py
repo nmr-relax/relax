@@ -327,7 +327,7 @@ class Relax_fit(Common_functions):
             return 10000.0
 
         # Intensity at infinity.
-        if param == 'te':
+        if param == 'iinf':
             return 0.0
 
 
