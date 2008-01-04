@@ -90,6 +90,8 @@ class Sequence_base_class:
         # Try displaying the residue sequence.
         self.sequence_fns.display(mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None)
 
+        raise NameError, "Hello"
+
 
     def test_read_protein_noe_data(self):
         """Test the reading of the amino acid sequence out of a protein NOE data file.
