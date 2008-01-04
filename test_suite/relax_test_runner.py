@@ -59,8 +59,20 @@ class _RelaxTestResult(_TextTestResult):
         # Restore stdout.
         sys.stdout = sys.__stdout__
 
-        # Close the buffer.
-        self.capt_stdout.close()
+
+    def addError(self, test, err):
+        """Override of the TestResult.addError() method.
+
+        The STDOUT captured text is prepended to the error text here.
+        """
+
+        # Execute the normal addError method.
+        _TextTestResult.addError(self, test, err)
+
+        # Prepend STDOUT to the second element of the tuple.
+        self.errors[-1] = (self.errors[-1][0], self.capt_stdout.getvalue() + self.errors[-1][1])
+
+
 
 
 class RelaxTestRunner(TextTestRunner):
