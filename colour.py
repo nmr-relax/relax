@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,8 +20,10 @@
 #                                                                             #
 ###############################################################################
 
-from Numeric import Float64, array
+# Python module imports.
+from numpy import float64, array
 
+# relax module imports.
 from relax_errors import RelaxInvalidColourError
 
 
@@ -174,7 +176,7 @@ class Colour:
 
         # Convert to Numeric arrays.
         for key in colours:
-            colours[key] = array(colours[key], Float64)
+            colours[key] = array(colours[key], float64)
 
         # Invalid colour string.
         if not colours.has_key(name):
@@ -1306,4 +1308,4 @@ class Colour:
             raise RelaxInvalidColourError, name
 
         # Return the RGB colour array (in Numeric format and between 0 and 1).
-        return array(colours[name], Float64) / 255.
+        return array(colours[name], float64) / 255.
