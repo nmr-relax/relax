@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006 Edward d'Auvergne                                  #
+# Copyright (C) 2004, 2006-2008 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,8 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
 
+# relax module imports.
 import colour
 import help
 from relax_errors import RelaxBinError, RelaxListNumError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
