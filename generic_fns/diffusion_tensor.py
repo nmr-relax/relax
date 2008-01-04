@@ -128,9 +128,17 @@ def default_value(param):
     elif param == 'Diso' or param == 'Dx' or param == 'Dy' or param == 'Dz' or param == 'Dpar' or param == 'Dper':
         return 1.666 * 1e7
 
+    # Da, Dr.
+    elif param == 'Da' or param == 'Dr':
+        return 0.0
+
     # Dratio.
     elif param == 'Dratio':
         return 1.0
+
+    # All angles.
+    elif param == 'alpha' or param == 'beta' or param == 'gamma' or param == 'theta' or param == 'phi':
+        return 0.0
 
 
 def delete():
