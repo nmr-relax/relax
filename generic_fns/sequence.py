@@ -25,7 +25,7 @@ from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError
 from relax_io import extract_data, open_write_file, strip
 from generic_fns.selection import count_spins, spin_loop
-from sys import stdout
+import sys
 
 
 
@@ -54,7 +54,7 @@ def display(mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col
         raise RelaxNoSequenceError
 
     # Write the data.
-    write_body(file=stdout, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep)
+    write_body(file=sys.stdout, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep)
 
 
 def load_PDB_sequence():

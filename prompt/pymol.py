@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2003-2004, 2006-2008 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,9 +20,11 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
 
-from colour import Colour
+# relax module imports.
+import colour
 import help
 from relax_errors import RelaxBinError, RelaxListNumError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
 
@@ -508,7 +510,7 @@ class Pymol:
     #write.__doc__ = write.__doc__ + "\n\n" + Pymol.classic.__doc__ + "\n\n"
 
     # Molmol RGB colour list.
-    write.__doc__ = write.__doc__ + "\n\n" + Colour.molmol_colours.__doc__ + "\n\n"
+    write.__doc__ = write.__doc__ + "\n\n" + colour.molmol_colours.__doc__ + "\n\n"
 
     # X11 RGB colour list.
-    write.__doc__ = write.__doc__ + "\n\n" + Colour.x11_colours.__doc__ + "\n\n"
+    write.__doc__ = write.__doc__ + "\n\n" + colour.x11_colours.__doc__ + "\n\n"

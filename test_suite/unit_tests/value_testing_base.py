@@ -52,9 +52,13 @@ class Value_base_class:
         # Add a reduced spectral density mapping data pipe to the data store for testing RSDM parameters.
         relax_data_store.add(pipe_name='jw', pipe_type='jw')
 
+        # Add a relaxation curve fitting data pipe to the data store for testing the associated parameters.
+        relax_data_store.add(pipe_name='relax_fit', pipe_type='relax_fit')
+
         # Set up some spins.
         self.set_up_spins(pipe_name='mf')
         self.set_up_spins(pipe_name='jw')
+        self.set_up_spins(pipe_name='relax_fit')
 
 
     def tearDown(self):
@@ -3534,3 +3538,299 @@ class Value_base_class:
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 's2s'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].s2f, 0.7)
         self.assertEqual(cdp.mol[0].res[1].spin[0].s2s, 0.7)
+
+
+
+    #######################################
+    # Relaxation curve fitting parameters #
+    #######################################
+
+
+    def test_set_relax_fit_all_spins_rx(self):
+        """Set the relaxation curve fitting Rx parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'relax_fit'.
+        relax_data_store.current_pipe = 'relax_fit'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='rx', val=1.2)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].rx, 1.2)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].rx, 1.2)
+
+
+    def test_set_relax_fit_all_spins_i0(self):
+        """Set the relaxation curve fitting I0 parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'relax_fit'.
+        relax_data_store.current_pipe = 'relax_fit'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='i0', val=520)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].i0, 520)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].i0, 520)
+
+
+    def test_set_relax_fit_all_spins_iinf(self):
+        """Set the relaxation curve fitting Iinf parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'relax_fit'.
+        relax_data_store.current_pipe = 'relax_fit'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='Iinf', val=-1.7)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].iinf, -1.7)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].iinf, -1.7)
+
+
+    def test_set_relax_fit_all_spins_diff_i0_iinf(self):
+        """Set the relaxation curve fitting parameters {I0, Iinf} for all spins to different values.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'relax_fit'.
+        relax_data_store.current_pipe = 'relax_fit'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param=['I0', 'iinf'], val=[123456, -1.7])
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].i0, 123456)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].iinf, -1.7)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].i0, 123456)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].iinf, -1.7)
+
+
+    def test_set_relax_fit_all_spins_same_i0_iinf(self):
+        """Set the relaxation curve fitting parameters {I0, Iinf} for all spins to the same value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'relax_fit'.
+        relax_data_store.current_pipe = 'relax_fit'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param=['I0', 'iinf'], val=0.0)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].i0, 0.0)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].iinf, 0.0)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].i0, 0.0)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].iinf, 0.0)
+
+
+    def test_set_relax_fit_defaults_rx(self):
+        """Set the relaxation curve fitting Rx parameter to the default value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'relax_fit'.
+        relax_data_store.current_pipe = 'relax_fit'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='rx')
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].rx, 8.0)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].rx, 8.0)
+
+
+    def test_set_relax_fit_defaults_i0(self):
+        """Set the relaxation curve fitting I0 parameter to the default value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'relax_fit'.
+        relax_data_store.current_pipe = 'relax_fit'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='i0')
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].i0, 10000.0)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].i0, 10000.0)
+
+
+    def test_set_relax_fit_defaults_iinf(self):
+        """Set the relaxation curve fitting Iinf parameter to the default value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'relax_fit'.
+        relax_data_store.current_pipe = 'relax_fit'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='Iinf')
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].iinf, 0.0)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].iinf, 0.0)
+
+
+    def test_set_relax_fit_defaults_i0_iinf(self):
+        """Set the relaxation curve fitting parameters {I0, Iinf} to the default values.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'relax_fit'.
+        relax_data_store.current_pipe = 'relax_fit'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param=['I0', 'iinf'])
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].i0, 10000.0)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].iinf, 0.0)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].i0, 10000.0)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].iinf, 0.0)
+
+
+    def test_set_relax_fit_single_spin_rx(self):
+        """Set the relaxation curve fitting Rx parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'relax_fit'.
+        relax_data_store.current_pipe = 'relax_fit'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='rx', val=1.2, spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'rx'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].rx, 1.2)
+
+
+    def test_set_relax_fit_single_spin_i0(self):
+        """Set the relaxation curve fitting I0 parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'relax_fit'.
+        relax_data_store.current_pipe = 'relax_fit'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='i0', val=520, spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'i0'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].i0, 520)
+
+
+    def test_set_relax_fit_single_spin_iinf(self):
+        """Set the relaxation curve fitting Iinf parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'relax_fit'.
+        relax_data_store.current_pipe = 'relax_fit'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='Iinf', val=-1.7, spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'iinf'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].iinf, -1.7)
+
+
+    def test_set_relax_fit_single_spin_diff_i0_iinf(self):
+        """Set the relaxation curve fitting parameters {I0, Iinf} for all spins to different values.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'relax_fit'.
+        relax_data_store.current_pipe = 'relax_fit'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param=['I0', 'iinf'], val=[123456, -1.7], spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'i0'))
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'iinf'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].i0, 123456)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].iinf, -1.7)
+
+
+    def test_set_relax_fit_single_spin_same_i0_iinf(self):
+        """Set the relaxation curve fitting parameters {I0, Iinf} for all spins to the same value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'relax_fit'.
+        relax_data_store.current_pipe = 'relax_fit'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param=['I0', 'iinf'], val=0.0, spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'i0'))
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'iinf'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].i0, 0.0)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].iinf, 0.0)

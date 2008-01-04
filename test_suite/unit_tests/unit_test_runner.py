@@ -64,7 +64,6 @@ from textwrap import dedent
 from copy import copy
 
 
-
 # constants
 ###########
 PY_FILE_EXTENSION='.py'
@@ -803,8 +802,10 @@ class Unit_test_runner(object):
 
         # Run the unit tests and catch the TestResult object.
         if tests != None and tests.countTestCases() != 0:
+            # Run the test.
             results = runner.run(tests)
             result_string = results.wasSuccessful()
+
         elif tests == None:
             results=None
             result_string = 'Error: no test directories found for input module: %s' % self.test_module
