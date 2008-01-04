@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,6 +28,8 @@ import sys
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns import diffusion_tensor
+from generic_fns.minimise import reset_min_stats
+from generic_fns.selection import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRegExpError, RelaxUnknownParamError, RelaxValueError
 from specific_fns import get_specific_fn
 
@@ -211,9 +213,9 @@ def set(val=None, param=None, spin_id=None, force=False):
     # Diffusion tensor parameters.
     ##############################
 
-    if diff_params:
+    if tensor_params:
         # Set the diffusion parameters.
-        diffusion_tensor.set(value=diff_values, param=diff_params)
+        diffusion_tensor.set(value=tensor_values, param=tensor_params)
 
 
     # Residue specific parameters.
@@ -221,84 +223,38 @@ def set(val=None, param=None, spin_id=None, force=False):
 
     if spin_params:
         # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(run):
-            raise RelaxNoSequenceError, run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
-        # Test if the residue number is a valid regular expression.
-        if type(spin_num) == str:
-            try:
-                compile(spin_num)
-            except:
-                raise RelaxRegExpError, ('residue number', spin_num)
-
-        # Test if the residue name is a valid regular expression.
-        if spin_name:
-            try:
-                compile(spin_name)
-            except:
-                raise RelaxRegExpError, ('residue name', spin_name)
-
-        # Test if parameter value already exists.
+        # First test if parameter value already exists, prior to setting any params.
         if not force:
-            # Loop over the residues.
-            for i in xrange(len(relax_data_store.res[run])):
-                # Skip unselected residues.
-                if not relax_data_store.res[run][i].select:
-                    continue
-
-                # If 'spin_num' is not None, skip the residue if there is no match.
-                if type(spin_num) == int and not relax_data_store.res[run][i].num == spin_num:
-                    continue
-                elif type(spin_num) == str and not match(spin_num, `relax_data_store.res[run][i].num`):
-                    continue
-
-                # If 'spin_name' is not None, skip the residue if there is no match.
-                if spin_name != None and not match(spin_name, relax_data_store.res[run][i].name):
+            # Loop over the spins.
+            for spin in spin_loop(spin_id):
+                # Skip unselected spins.
+                if not spin.select:
                     continue
 
                 # Loop over the parameters.
                 for param in spin_params:
-                    if param:
-                        # Get the value and error.
-                        temp_value, temp_error = return_value(run, i, param)
+                    # Get the value and error.
+                    temp_value, temp_error = return_value(spin, param)
 
-                        # Data exists.
-                        if temp_value != None or temp_error != None:
-                            raise RelaxValueError, (param, run)
+                    # Data exists.
+                    if temp_value != None or temp_error != None:
+                        raise RelaxValueError, (param)
 
-        # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[run])):
+        # Loop over the spins.
+        for spin in spin_loop(spin_id):
             # Skip unselected residues.
-            if not relax_data_store.res[run][i].select:
-                continue
-
-            # If 'spin_num' is not None, skip the residue if there is no match.
-            if type(spin_num) == int and not relax_data_store.res[run][i].num == spin_num:
-                continue
-            elif type(spin_num) == str and not match(spin_num, `relax_data_store.res[run][i].num`):
-                continue
-
-            # If 'spin_name' is not None, skip the residue if there is no match.
-            if spin_name != None and not match(spin_name, relax_data_store.res[run][i].name):
+            if not spin.select:
                 continue
 
             # Go to the specific code.
             for j in xrange(len(spin_params)):
-                set(run=run, value=spin_values[j], error=None, param=spin_params[j], index=i)
+                set(value=spin_values[j], error=None, spin=spin, param=spin_params[j])
 
-
-    # Reset the minimisation statistics.
-    ####################################
-
-    # Reset the global minimisation statistics.
-    relax.generic.minimise.reset_min_stats(run)
-
-    # Reset the sequence specific minimisation statistics.
-    if relax_data_store.res.has_key(run):
-        for i in xrange(len(relax_data_store.res[run])):
-            relax.generic.minimise.reset_min_stats(run, i)
-
-
+    # Reset all minimisation statistics.
+    reset_min_stats()
 
 
 

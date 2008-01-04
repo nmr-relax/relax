@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,18 +32,15 @@ import sys
 
 # relax module imports.
 from data import Data as relax_data_store
-from specific_fns.base_class import Common_functions
 from float import isNaN,isInf
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
-from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxStyleError, RelaxTensorError, RelaxUnknownDataTypeError
-
-
-# The relax data storage object.
+from physical_constants import N15_CSA, NH_BOND_LENGTH
+from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxTensorError
 
 
 
-class Model_free(Common_functions):
+class Model_free_main:
     def __init__(self):
         """Class containing functions specific to model-free analysis."""
 
@@ -932,17 +929,18 @@ class Model_free(Common_functions):
         |                                       |                    |                        |
         | Bond length                           | 'r'                | 1.02 * 1e-10           |
         |                                       |                    |                        |
-        | CSA                                   | 'csa'              | -170 * 1e-6            |
+        | CSA                                   | 'csa'              | -172 * 1e-6            |
         |_______________________________________|____________________|________________________|
 
         """
+        __docformat__ = "plaintext"
 
         # Local tm.
         if param == 'local_tm':
             return 10.0 * 1e-9
 
         # {S2, S2f, S2s}.
-        elif search('^S2', param):
+        elif search('^s2', param):
             return 0.8
 
         # te.
@@ -958,16 +956,16 @@ class Model_free(Common_functions):
             return 1000.0 * 1e-12
 
         # Rex.
-        elif param == 'Rex':
+        elif param == 'rex':
             return 0.0
 
         # Bond length.
         elif param == 'r':
-            return 1.02 * 1e-10
+            return NH_BOND_LENGTH
 
         # CSA.
-        elif param == 'CSA':
-            return -170 * 1e-6
+        elif param == 'csa':
+            return N15_CSA
 
 
     def delete(self, run):
@@ -1410,6 +1408,7 @@ class Model_free(Common_functions):
         example, to eliminate models which have a local tm value greater than 25 ns and models with
         internal correlation times greater than 1.5 times tm, set 'args' to (25 * 1e-9, 1.5).
         """
+        __docformat__ = "plaintext"
 
         # Default values.
         c1 = 50.0 * 1e-9
@@ -3618,6 +3617,7 @@ class Model_free(Common_functions):
         |________________________|______________|__________________________________________________|
 
         """
+        __docformat__ = "plaintext"
 
         # Local tm.
         if search('[Ll]ocal[ -_]tm', name):
@@ -4050,6 +4050,7 @@ class Model_free(Common_functions):
             pi is in the namespace of relax, ie just type 'pi'.
             frequency is the proton frequency corresponding to the data.
         """
+        __docformat__ = "plaintext"
 
 
     def set_error(self, run, instance, index, error):
@@ -4171,24 +4172,27 @@ class Model_free(Common_functions):
             relax_data_store.res[self.run][instance].select_sim = select_sim
 
 
-    def set_update(self, run, param, index):
-        """Function to update the other model-free parameters."""
+    def set_update(self, param, spin):
+        """Function to update the other model-free parameters.
 
-        # Alias the residue specific data structure.
-        data = relax_data_store.res[self.run][index]
+        @param param:   The name of the parameter which has been changed.
+        @type param:    str
+        @param spin:    The SpinContainer object.
+        @type spin:     SpinContainer
+        """
 
         # S2f parameter.
         if param == 'S2f':
             # Update S2 if S2s exists.
-            if hasattr(data, 's2s') and data.s2s != None:
-                data.s2 = data.s2f * data.s2s
+            if hasattr(spin, 's2s') and spin.s2s != None:
+                spin.s2 = spin.s2f * spin.s2s
 
 
         # S2s parameter.
         if param == 'S2s':
             # Update S2 if S2f exists.
-            if hasattr(data, 's2f') and data.s2f != None:
-                data.s2 = data.s2f * data.s2s
+            if hasattr(spin, 's2f') and spin.s2f != None:
+                spin.s2 = spin.s2f * spin.s2s
 
 
     def sim_init_values(self, run):
@@ -5172,541 +5176,3 @@ class Model_free(Common_functions):
 
                     # Write the line.
                     self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, select_sim=select_sim, data_set='sim_'+`i`, nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=heteronuc, pdb_proton=proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
-
-
-
-
-
-
-##############################
-# Molmol specific functions. #
-##############################
-
-class Molmol:
-    def __init__(self):
-        """Class containing the Molmol specific functions."""
-
-
-    def classic(self, data_type, colour_start, colour_end, colour_list):
-        """
-        Classic style
-        ~~~~~~~~~~~~~
-
-        Creator:  Edward d'Auvergne
-
-        Argument string:  "classic"
-
-        Description:  The classic style draws the backbone of the protein in the Molmol 'neon'
-        style.  Rather than colouring the amino acids to which the NH bond belongs, the three
-        covalent bonds of the peptide bond from Ca to Ca in which the NH bond is located are
-        coloured.  Deselected residues are shown as black lines.
-
-        Supported data types:
-        ____________________________________________________________________________________________
-        |                |             |                                                           |
-        | Data type      | String      | Description                                               |
-        |________________|_____________|___________________________________________________________|
-        |                |             |                                                           |
-        | S2.            | 'S2'        | The standard model-free order parameter, equal to S2f.S2s |
-        |                |             | for the two timescale models.  The default colour         |
-        |                |             | gradient starts at 'yellow' and ends at 'red'.            |
-        |                |             |                                                           |
-        | S2f.           | 'S2f'       | The order parameter of the faster of two internal         |
-        |                |             | motions.  Residues which are described by model-free      |
-        |                |             | models m1 to m4, the single timescale models, are         |
-        |                |             | illustrated as white neon bonds.  The default colour      |
-        |                |             | gradient is the same as that for the S2 data type.        |
-        |                |             |                                                           |
-        | S2s.           | 'S2s'       | The order parameter of the slower of two internal         |
-        |                |             | motions.  This functions exactly as S2f except that S2s   |
-        |                |             | is plotted instead.                                       |
-        |                |             |                                                           |
-        | Amplitude of   | 'amp_fast'  | Model independent display of the amplite of fast motions. |
-        | fast motions.  |             | For residues described by model-free models m5 to m8, the |
-        |                |             | value plotted is that of S2f.  However, for residues      |
-        |                |             | described by models m1 to m4, what is shown is dependent  |
-        |                |             | on the timescale of the motions.  This is because these   |
-        |                |             | single timescale models can, at times, be perfect         |
-        |                |             | approximations to the more complex two timescale models.  |
-        |                |             | Hence if te is less than 200 ps, S2 is plotted. Otherwise |
-        |                |             | the peptide bond is coloured white.  The default colour   |
-        |                |             | gradient  is the same as that for S2.                     |
-        |                |             |                                                           |
-        | Amplitude of   | 'amp_slow'  | Model independent display of the amplite of slow motions, |
-        | slow motions.  |             | arbitrarily defined as motions slower than 200 ps.  For   |
-        |                |             | residues described by model-free models m5 to m8, the     |
-        |                |             | order parameter S2 is plotted if ts > 200 ps.  For models |
-        |                |             | m1 to m4, S2 is plotted if te > 200 ps.  The default      |
-        |                |             | colour gradient is the same as that for S2.               |
-        |                |             |                                                           |
-        | te.            | 'te'        | The correlation time, te.  The default colour gradient    |
-        |                |             | starts at 'turquoise' and ends at 'blue'.                 |
-        |                |             |                                                           |
-        | tf.            | 'tf'        | The correlation time, tf.  The default colour gradient is |
-        |                |             | the same as that of te.                                   |
-        |                |             |                                                           |
-        | ts.            | 'ts'        | The correlation time, ts.  The default colour gradient    |
-        |                |             | starts at 'blue' and ends at 'black'.                     |
-        |                |             |                                                           |
-        | Timescale of   | 'time_fast' | Model independent display of the timescale of fast        |
-        | fast motions   |             | motions.  For models m5 to m8, only the parameter tf is   |
-        |                |             | plotted.  For models m2 and m4, the parameter te is       |
-        |                |             | plotted only if it is less than 200 ps.  All other        |
-        |                |             | residues are assumed to have a correlation time of zero.  |
-        |                |             | The default colour gradient is the same as that of te.    |
-        |                |             |                                                           |
-        | Timescale of   | 'time_slow' | Model independent display of the timescale of slow        |
-        | slow motions   |             | motions.  For models m5 to m8, only the parameter ts is   |
-        |                |             | plotted.  For models m2 and m4, the parameter te is       |
-        |                |             | plotted only if it is greater than 200 ps.  All other     |
-        |                |             | residues are coloured white.  The default colour gradient |
-        |                |             | is the same as that of ts.                                |
-        |                |             |                                                           |
-        | Chemical       | 'Rex'       | The chemical exchange, Rex.  Residues which experience no |
-        | exchange       |             | chemical exchange are coloured white.  The default colour |
-        |                |             | gradient starts at 'yellow' and finishes at 'red'.        |
-        |________________|_____________|___________________________________________________________|
-        """
-
-        # Generate the macro header.
-        ############################
-
-        self.classic_header()
-
-
-        # S2.
-        #####
-
-        if data_type == 'S2':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
-                    continue
-
-                # Skip residues which don't have an S2 value.
-                if not hasattr(residue, 's2') or residue.s2 == None:
-                    continue
-
-                # S2 width and colour.
-                self.classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
-
-
-        # S2f.
-        ######
-
-        elif data_type == 'S2f':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
-                    continue
-
-                # Colour residues which don't have an S2f value white.
-                if not hasattr(residue, 's2f') or residue.s2f == None:
-                    self.classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
-
-                # S2f width and colour.
-                else:
-                    self.classic_order_param(residue, residue.s2f, colour_start, colour_end, colour_list)
-
-
-        # S2s.
-        ######
-
-        elif data_type == 'S2s':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
-                    continue
-
-                # Colour residues which don't have an S2s value white.
-                if not hasattr(residue, 's2s') or residue.s2s == None:
-                    self.classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
-
-                # S2s width and colour.
-                else:
-                    self.classic_order_param(residue, residue.s2s, colour_start, colour_end, colour_list)
-
-
-        # Amplitude of fast motions.
-        ############################
-
-        elif data_type == 'amp_fast':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
-                    continue
-
-                # The model.
-                if search('tm[0-9]', residue.model):
-                    model = residue.model[1:]
-                else:
-                    model = residue.model
-
-                # S2f width and colour (for models m5 to m8).
-                if hasattr(residue, 's2f') and residue.s2f != None:
-                    self.classic_order_param(residue, residue.s2f, colour_start, colour_end, colour_list)
-
-                # S2 width and colour (for models m1 and m3).
-                elif model == 'm1' or model == 'm3':
-                    self.classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
-
-                # S2 width and colour (for models m2 and m4 when te <= 200 ps).
-                elif (model == 'm2' or model == 'm4') and residue.te <= 200e-12:
-                    self.classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
-
-                # White bonds (for models m2 and m4 when te > 200 ps).
-                elif (model == 'm2' or model == 'm4') and residue.te > 200e-12:
-                    self.classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
-
-                # Catch errors.
-                else:
-                    raise RelaxFault
-
-
-        # Amplitude of slow motions.
-        ############################
-
-        elif data_type == 'amp_slow':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
-                    continue
-
-                # The model.
-                if search('tm[0-9]', residue.model):
-                    model = residue.model[1:]
-                else:
-                    model = residue.model
-
-                # S2 width and colour (for models m5 to m8).
-                if hasattr(residue, 'ts') and residue.ts != None:
-                    self.classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
-
-                # S2 width and colour (for models m2 and m4 when te > 200 ps).
-                elif (model == 'm2' or model == 'm4') and residue.te > 200 * 1e-12:
-                    self.classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
-
-                # White bonds for fast motions.
-                else:
-                    self.classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
-
-        # te.
-        #####
-
-        elif data_type == 'te':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
-                    continue
-
-                # Skip residues which don't have a te value.
-                if not hasattr(residue, 'te') or residue.te == None:
-                    continue
-
-                # te width and colour.
-                self.classic_correlation_time(residue, residue.te, colour_start, colour_end, colour_list)
-
-
-        # tf.
-        #####
-
-        elif data_type == 'tf':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
-                    continue
-
-                # Skip residues which don't have a tf value.
-                if not hasattr(residue, 'tf') or residue.tf == None:
-                    continue
-
-                # tf width and colour.
-                self.classic_correlation_time(residue, residue.tf, colour_start, colour_end, colour_list)
-
-
-        # ts.
-        #####
-
-        elif data_type == 'ts':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
-                    continue
-
-                # Skip residues which don't have a ts value.
-                if not hasattr(residue, 'ts') or residue.ts == None:
-                    continue
-
-                # The default start and end colours.
-                if colour_start == None:
-                    colour_start = 'blue'
-                if colour_end == None:
-                    colour_end = 'black'
-
-                # ts width and colour.
-                self.classic_correlation_time(residue, residue.ts / 10.0, colour_start, colour_end, colour_list)
-
-
-        # Timescale of fast motions.
-        ############################
-
-        elif data_type == 'time_fast':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
-                    continue
-
-                # The model.
-                if search('tm[0-9]', residue.model):
-                    model = residue.model[1:]
-                else:
-                    model = residue.model
-
-                # tf width and colour (for models m5 to m8).
-                if hasattr(residue, 'tf') and residue.tf != None:
-                    self.classic_correlation_time(residue, residue.tf, colour_start, colour_end, colour_list)
-
-                # te width and colour (for models m2 and m4 when te <= 200 ps).
-                elif (model == 'm2' or model == 'm4') and residue.te <= 200e-12:
-                    self.classic_correlation_time(residue, residue.te, colour_start, colour_end, colour_list)
-
-                # All other residues are assumed to have a fast correlation time of zero (statistically zero, not real zero!).
-                # Colour these bonds white.
-                else:
-                    self.classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
-
-
-        # Timescale of slow motions.
-        ############################
-
-        elif data_type == 'time_slow':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
-                    continue
-
-                # The model.
-                if search('tm[0-9]', residue.model):
-                    model = residue.model[1:]
-                else:
-                    model = residue.model
-
-                # The default start and end colours.
-                if colour_start == None:
-                    colour_start = 'blue'
-                if colour_end == None:
-                    colour_end = 'black'
-
-                # ts width and colour (for models m5 to m8).
-                if hasattr(residue, 'ts') and residue.ts != None:
-                    self.classic_correlation_time(residue, residue.ts / 10.0, colour_start, colour_end, colour_list)
-
-                # te width and colour (for models m2 and m4 when te > 200 ps).
-                elif (model == 'm2' or model == 'm4') and residue.te > 200e-12:
-                    self.classic_correlation_time(residue, residue.te / 10.0, colour_start, colour_end, colour_list)
-
-                # White bonds for the rest.
-                else:
-                    self.classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
-
-
-        # Rex.
-        ######
-
-        elif data_type == 'Rex':
-            # Loop over the sequence.
-            for residue in relax_data_store.res[self.run]:
-                # Skip unselected residues.
-                if not residue.select:
-                    continue
-
-                # Residues which chemical exchange.
-                if hasattr(residue, 'rex') and residue.rex != None:
-                    self.classic_rex(residue, residue.rex, colour_start, colour_end, colour_list)
-
-                # White bonds for the rest.
-                else:
-                    self.classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
-
-
-        # Unknown data type.
-        ####################
-
-        else:
-            raise RelaxUnknownDataTypeError, data_type
-
-
-    def classic_colour(self, res_num=None, width=None, rgb_array=None):
-        """Colour the given peptide bond."""
-
-        # Ca to C bond.
-        self.commands.append("SelectBond 'atom1.name = \"CA\"  & atom2.name = \"C\" & res.num = " + `res_num-1` + "'")
-        self.commands.append("StyleBond neon")
-        self.commands.append("RadiusBond " + `width`)
-        self.commands.append("ColorBond " + `rgb_array[0]` + " " + `rgb_array[1]` + " " + `rgb_array[2]`)
-
-        # C to N bond.
-        self.commands.append("SelectBond 'atom1.name = \"C\"  & atom2.name = \"N\" & res.num = " + `res_num-1` + "'")
-        self.commands.append("StyleBond neon")
-        self.commands.append("RadiusBond " + `width`)
-        self.commands.append("ColorBond " + `rgb_array[0]` + " " + `rgb_array[1]` + " " + `rgb_array[2]`)
-
-        # N to Ca bond.
-        self.commands.append("SelectBond 'atom1.name = \"N\"  & atom2.name = \"CA\" & res.num = " + `res_num` + "'")
-        self.commands.append("StyleBond neon")
-        self.commands.append("RadiusBond " + `width`)
-        self.commands.append("ColorBond " + `rgb_array[0]` + " " + `rgb_array[1]` + " " + `rgb_array[2]`)
-
-        # Blank line.
-        self.commands.append("")
-
-
-    def classic_correlation_time(self, residue, te, colour_start, colour_end, colour_list):
-        """Function for generating the bond width and colours for correlation times."""
-
-        # The te value in picoseconds.
-        te = te * 1e12
-
-        # The bond width (aiming for a width range of 2 to 0 for te values of 0 to 10 ns).
-        width = 2.0 - 200.0 / (te + 100.0)
-
-        # Catch invalid widths.
-        if width <= 0.0:
-            width = 0.001
-
-        # Colour value (hyperbolic).
-        colour_value = 1.0 / (te / 100.0 + 1.0)
-
-        # Catch invalid colours.
-        if colour_value < 0.0:
-            colour_value = 0.0
-        elif colour_value > 1.0:
-            colour_value = 1.0
-
-        # Default colours.
-        if colour_start == None:
-            colour_start = 'turquoise'
-        if colour_end == None:
-            colour_end = 'blue'
-
-        # Get the RGB colour array (swap the colours because of the inverted hyperbolic colour value).
-        rgb_array = self.relax.colour.linear_gradient(colour_value, colour_end, colour_start, colour_list)
-
-        # Colour the peptide bond.
-        self.classic_colour(residue.num, width, rgb_array)
-
-
-    def classic_header(self):
-        """Create the header for the molmol macro."""
-
-        # Hide all bonds.
-        self.commands.append("SelectBond ''")
-        self.commands.append("StyleBond invisible")
-
-        # Show the backbone bonds as lines.
-        self.commands.append("SelectBond 'bb'")
-        self.commands.append("StyleBond line")
-
-        # Colour the backbone black.
-        self.commands.append("ColorBond 0 0 0")
-
-
-    def classic_order_param(self, residue, s2, colour_start, colour_end, colour_list):
-        """Function for generating the bond width and colours for order parameters."""
-
-        # The bond width (aiming for a width range of 2 to 0 for S2 values of 0.0 to 1.0).
-        if s2 <= 0.0:
-            width = 2.0
-        else:
-            width = 2.0 * (1.0 - s2**2)
-
-        # Catch invalid widths.
-        if width <= 0.0:
-            width = 0.001
-
-        # Colour value (quartic).
-        colour_value = s2 ** 4
-
-        # Catch invalid colours.
-        if colour_value < 0.0:
-            colour_value = 0.0
-        elif colour_value > 1.0:
-            colour_value = 1.0
-
-        # Default colours.
-        if colour_start == None:
-            colour_start = 'red'
-        if colour_end == None:
-            colour_end = 'yellow'
-
-        # Get the RGB colour array.
-        rgb_array = self.relax.colour.linear_gradient(colour_value, colour_start, colour_end, colour_list)
-
-        # Colour the peptide bond.
-        self.classic_colour(residue.num, width, rgb_array)
-
-
-    def classic_rex(self, residue, rex, colour_start, colour_end, colour_list):
-        """Function for generating the bond width and colours for correlation times."""
-
-        # The Rex value at the first field strength.
-        rex = rex * (2.0 * pi * relax_data_store.frq[self.run][0])**2
-
-        # The bond width (aiming for a width range of 2 to 0 for Rex values of 0 to 25 s^-1).
-        width = 2.0 - 2.0 / (rex/5.0 + 1.0)
-
-        # Catch invalid widths.
-        if width <= 0.0:
-            width = 0.001
-
-        # Colour value (hyperbolic).
-        colour_value = 1.0 / (rex + 1.0)
-
-        # Catch invalid colours.
-        if colour_value < 0.0:
-            colour_value = 0.0
-        elif colour_value > 1.0:
-            colour_value = 1.0
-
-        # Default colours.
-        if colour_start == None:
-            colour_start = 'yellow'
-        if colour_end == None:
-            colour_end = 'red'
-
-        # Get the RGB colour array (swap the colours because of the inverted hyperbolic colour value).
-        rgb_array = self.relax.colour.linear_gradient(colour_value, colour_end, colour_start, colour_list)
-
-        # Colour the peptide bond.
-        self.classic_colour(residue.num, width, rgb_array)
-
-
-    def macro(self, run, data_type, style, colour_start, colour_end, colour_list):
-        """Create and return an array of Molmol macros of the model-free parameters."""
-
-        # Arguments.
-        self.run = run
-
-        # Initialise.
-        self.commands = []
-
-        # The classic style.
-        if style == 'classic':
-            self.classic(data_type, colour_start, colour_end, colour_list)
-
-        # Unknown style.
-        else:
-            raise RelaxStyleError, style
-
-        # Return the command array.
-        return self.commands

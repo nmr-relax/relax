@@ -209,39 +209,26 @@ class Relax_fit(Common_functions):
         return mc_data
 
 
-    def data_init(self):
+    def data_init(self, spin):
         """Function for initialising the data structures."""
-
-        # Curve type.
-        if not hasattr(relax_data_store, 'curve_type'):
-            relax_data_store.curve_type = {}
 
         # Get the data names.
         data_names = self.data_names()
 
-        # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Alias the residue specific data structure.
-            data = relax_data_store.res[self.run][i]
+        # Loop over the data structure names.
+        for name in data_names:
+            # Data structures which are initially empty arrays.
+            list_data = [ 'params' ]
+            if name in list_data:
+                init_data = []
 
-            # Skip unselected residues.
-            if not data.select:
-                continue
+            # Otherwise initialise the data structure to None.
+            else:
+                init_data = None
 
-            # Loop over the data structure names.
-            for name in data_names:
-                # Data structures which are initially empty arrays.
-                list_data = [ 'params' ]
-                if name in list_data:
-                    init_data = []
-
-                # Otherwise initialise the data structure to None.
-                else:
-                    init_data = None
-
-                # If the name is not in 'data', add it.
-                if not hasattr(data, name):
-                    setattr(data, name, init_data)
+            # If the name is not in 'spin', add it.
+            if not hasattr(spin, name):
+                setattr(spin, name, init_data)
 
 
     def data_names(self, set='all'):
@@ -329,7 +316,7 @@ class Relax_fit(Common_functions):
             return 10000.0
 
         # Intensity at infinity.
-        if param == 'te':
+        if param == 'iinf':
             return 0.0
 
 

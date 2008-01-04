@@ -28,7 +28,7 @@ from string import replace
 from data import Data as relax_data_store
 from base_class import Common_functions
 from maths_fns.jw_mapping import Mapping
-from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError, RelaxNucleusError
+from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError, RelaxNucleusError, RelaxParamSetError
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 
 
@@ -217,13 +217,14 @@ class Jw_mapping(Common_functions):
         |_______________________________________|______________|______________________________|
 
         """
+        __docformat__ = "plaintext"
 
         # Bond length.
         if param == 'r':
             return NH_BOND_LENGTH
 
         # CSA.
-        if param == 'CSA':
+        if param == 'csa':
             return N15_CSA
 
 
@@ -290,6 +291,7 @@ class Jw_mapping(Common_functions):
         |________________________|______________|__________________________________________________|
 
         """
+        __docformat__ = "plaintext"
 
         # J(0).
         if search('^[Jj]0$', name) or search('[Jj]\(0\)', name):
@@ -359,7 +361,7 @@ class Jw_mapping(Common_functions):
             return 'ppm'
 
 
-    def set(self, run=None, value=None, error=None, param=None, index=None):
+    def set(self, value=None, error=None, param=None, spin=None):
         """
         Reduced spectral density mapping set details
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -368,9 +370,8 @@ class Jw_mapping(Common_functions):
         value.  These must be set prior to the calculation of spectral density values.
 
         """
+        __docformat__ = "plaintext"
 
-        # Arguments.
-        self.run = run
 
         # Setting the model parameters prior to calculation.
         ####################################################
@@ -392,12 +393,12 @@ class Jw_mapping(Common_functions):
                 value.append(self.default_value('r'))
 
             # Initilise data.
-            if not hasattr(relax_data_store.res[self.run][index], 'csa') or not hasattr(relax_data_store.res[self.run][index], 'r'):
-                self.data_init(relax_data_store.res[self.run][index])
+            if not hasattr(spin, 'csa') or not hasattr(spin, 'r'):
+                self.data_init(spin)
 
             # CSA and Bond length.
-            setattr(relax_data_store.res[self.run][index], 'csa', float(value[0]))
-            setattr(relax_data_store.res[self.run][index], 'r', float(value[1]))
+            setattr(spin, 'csa', float(value[0]))
+            setattr(spin, 'r', float(value[1]))
 
 
         # Individual data type.
@@ -410,19 +411,23 @@ class Jw_mapping(Common_functions):
                 raise RelaxError, "The reduced spectral density mapping data type " + `param` + " does not exist."
 
             # Initialise all data if it doesn't exist.
-            if not hasattr(relax_data_store.res[self.run][index], object_name):
-                self.data_init(relax_data_store.res[self.run][index])
+            if not hasattr(spin, object_name):
+                self.data_init(spin)
 
             # Default value.
             if value == None:
                 value = self.default_value(object_name)
 
+            # No default value, hence the parameter cannot be set.
+            if value == None:
+                raise RelaxParamSetError, param
+
             # Set the value.
-            setattr(relax_data_store.res[self.run][index], object_name, float(value))
+            setattr(spin, object_name, float(value))
 
             # Set the error.
             if error != None:
-                setattr(relax_data_store.res[self.run][index], object_name+'_err', float(error))
+                setattr(spin, object_name+'_err', float(error))
 
 
     def set_frq(self, run=None, frq=None):
