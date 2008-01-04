@@ -27,6 +27,9 @@ from formatting import *
 from system_tests.main import System_tests
 from unit_tests.unit_test_runner import Unit_test_runner
 
+# relax module imports.
+from relax_test_runner import RelaxTestRunner
+
 
 class Test_suite_runner:
     """Class for running all components of the relax test suite.
@@ -51,7 +54,7 @@ class Test_suite_runner:
 
         # Execute the unit tests.
         unit_runner = Unit_test_runner(root_path='test_suite/unit_tests')
-        unit_result = unit_runner.run()
+        unit_result = unit_runner.run(runner=RelaxTestRunner())
 
         # Print out a summary of the test suite.
         ########################################
