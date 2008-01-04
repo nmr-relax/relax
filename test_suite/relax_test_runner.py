@@ -46,6 +46,9 @@ class _RelaxTestResult(_TextTestResult):
         self.capt_stdout = StringIO()
         sys.stdout = self.capt_stdout
 
+        # Execute the normal startTest method.
+        _TextTestResult.startTest(self, test)
+
 
     def stopTest(self, test):
         """Override of the TestResult.stopTest() method.
