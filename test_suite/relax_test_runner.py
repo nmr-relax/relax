@@ -87,19 +87,3 @@ class RelaxTestRunner(TextTestRunner):
 
         # Run the tests.
         return _RelaxTestResult(self.stream, self.descriptions, self.verbosity)
-
-
-    def run(self, test):
-        """Override of the TextTestRunner.run() method."""
-
-        # Execute the normal run method.
-        result = TextTestRunner.run(self, test)
-
-        #print "\n\n\n\n\n\n\n"
-        #print dir(results)
-        #print "\n\n"
-        #print results.failures
-        #print `buf.getvalue()`
-
-        # Return the results object.
-        return result
