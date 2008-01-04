@@ -33,7 +33,7 @@ from relax_errors import RelaxStyleError, RelaxUnknownDataTypeError
 class Molmol:
     """Class containing the Molmol specific functions for model-free analysis."""
 
-    def classic(self, data_type, colour_start, colour_end, colour_list):
+    def molmol_classic_style(self, data_type, colour_start, colour_end, colour_list):
         """
         Classic style
         ~~~~~~~~~~~~~
@@ -119,7 +119,7 @@ class Molmol:
         # Generate the macro header.
         ############################
 
-        self.classic_header()
+        self.molmol_classic_header()
 
 
         # S2.
@@ -137,7 +137,7 @@ class Molmol:
                     continue
 
                 # S2 width and colour.
-                self.classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
+                self.molmol_classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
 
 
         # S2f.
@@ -152,11 +152,11 @@ class Molmol:
 
                 # Colour residues which don't have an S2f value white.
                 if not hasattr(residue, 's2f') or residue.s2f == None:
-                    self.classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
+                    self.molmol_classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
 
                 # S2f width and colour.
                 else:
-                    self.classic_order_param(residue, residue.s2f, colour_start, colour_end, colour_list)
+                    self.molmol_classic_order_param(residue, residue.s2f, colour_start, colour_end, colour_list)
 
 
         # S2s.
@@ -171,11 +171,11 @@ class Molmol:
 
                 # Colour residues which don't have an S2s value white.
                 if not hasattr(residue, 's2s') or residue.s2s == None:
-                    self.classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
+                    self.molmol_classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
 
                 # S2s width and colour.
                 else:
-                    self.classic_order_param(residue, residue.s2s, colour_start, colour_end, colour_list)
+                    self.molmol_classic_order_param(residue, residue.s2s, colour_start, colour_end, colour_list)
 
 
         # Amplitude of fast motions.
@@ -196,19 +196,19 @@ class Molmol:
 
                 # S2f width and colour (for models m5 to m8).
                 if hasattr(residue, 's2f') and residue.s2f != None:
-                    self.classic_order_param(residue, residue.s2f, colour_start, colour_end, colour_list)
+                    self.molmol_classic_order_param(residue, residue.s2f, colour_start, colour_end, colour_list)
 
                 # S2 width and colour (for models m1 and m3).
                 elif model == 'm1' or model == 'm3':
-                    self.classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
+                    self.molmol_classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
 
                 # S2 width and colour (for models m2 and m4 when te <= 200 ps).
                 elif (model == 'm2' or model == 'm4') and residue.te <= 200e-12:
-                    self.classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
+                    self.molmol_classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
 
                 # White bonds (for models m2 and m4 when te > 200 ps).
                 elif (model == 'm2' or model == 'm4') and residue.te > 200e-12:
-                    self.classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
+                    self.molmol_classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
 
                 # Catch errors.
                 else:
@@ -233,15 +233,15 @@ class Molmol:
 
                 # S2 width and colour (for models m5 to m8).
                 if hasattr(residue, 'ts') and residue.ts != None:
-                    self.classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
+                    self.molmol_classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
 
                 # S2 width and colour (for models m2 and m4 when te > 200 ps).
                 elif (model == 'm2' or model == 'm4') and residue.te > 200 * 1e-12:
-                    self.classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
+                    self.molmol_classic_order_param(residue, residue.s2, colour_start, colour_end, colour_list)
 
                 # White bonds for fast motions.
                 else:
-                    self.classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
+                    self.molmol_classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
 
         # te.
         #####
@@ -258,7 +258,7 @@ class Molmol:
                     continue
 
                 # te width and colour.
-                self.classic_correlation_time(residue, residue.te, colour_start, colour_end, colour_list)
+                self.molmol_classic_correlation_time(residue, residue.te, colour_start, colour_end, colour_list)
 
 
         # tf.
@@ -276,7 +276,7 @@ class Molmol:
                     continue
 
                 # tf width and colour.
-                self.classic_correlation_time(residue, residue.tf, colour_start, colour_end, colour_list)
+                self.molmol_classic_correlation_time(residue, residue.tf, colour_start, colour_end, colour_list)
 
 
         # ts.
@@ -300,7 +300,7 @@ class Molmol:
                     colour_end = 'black'
 
                 # ts width and colour.
-                self.classic_correlation_time(residue, residue.ts / 10.0, colour_start, colour_end, colour_list)
+                self.molmol_classic_correlation_time(residue, residue.ts / 10.0, colour_start, colour_end, colour_list)
 
 
         # Timescale of fast motions.
@@ -321,16 +321,16 @@ class Molmol:
 
                 # tf width and colour (for models m5 to m8).
                 if hasattr(residue, 'tf') and residue.tf != None:
-                    self.classic_correlation_time(residue, residue.tf, colour_start, colour_end, colour_list)
+                    self.molmol_classic_correlation_time(residue, residue.tf, colour_start, colour_end, colour_list)
 
                 # te width and colour (for models m2 and m4 when te <= 200 ps).
                 elif (model == 'm2' or model == 'm4') and residue.te <= 200e-12:
-                    self.classic_correlation_time(residue, residue.te, colour_start, colour_end, colour_list)
+                    self.molmol_classic_correlation_time(residue, residue.te, colour_start, colour_end, colour_list)
 
                 # All other residues are assumed to have a fast correlation time of zero (statistically zero, not real zero!).
                 # Colour these bonds white.
                 else:
-                    self.classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
+                    self.molmol_classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
 
 
         # Timescale of slow motions.
@@ -357,15 +357,15 @@ class Molmol:
 
                 # ts width and colour (for models m5 to m8).
                 if hasattr(residue, 'ts') and residue.ts != None:
-                    self.classic_correlation_time(residue, residue.ts / 10.0, colour_start, colour_end, colour_list)
+                    self.molmol_classic_correlation_time(residue, residue.ts / 10.0, colour_start, colour_end, colour_list)
 
                 # te width and colour (for models m2 and m4 when te > 200 ps).
                 elif (model == 'm2' or model == 'm4') and residue.te > 200e-12:
-                    self.classic_correlation_time(residue, residue.te / 10.0, colour_start, colour_end, colour_list)
+                    self.molmol_classic_correlation_time(residue, residue.te / 10.0, colour_start, colour_end, colour_list)
 
                 # White bonds for the rest.
                 else:
-                    self.classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
+                    self.molmol_classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
 
 
         # Rex.
@@ -380,11 +380,11 @@ class Molmol:
 
                 # Residues which chemical exchange.
                 if hasattr(residue, 'rex') and residue.rex != None:
-                    self.classic_rex(residue, residue.rex, colour_start, colour_end, colour_list)
+                    self.molmol_classic_rex(residue, residue.rex, colour_start, colour_end, colour_list)
 
                 # White bonds for the rest.
                 else:
-                    self.classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
+                    self.molmol_classic_colour(res_num=residue.num, width=0.3, rgb_array=[1, 1, 1])
 
 
         # Unknown data type.
@@ -394,7 +394,7 @@ class Molmol:
             raise RelaxUnknownDataTypeError, data_type
 
 
-    def classic_colour(self, res_num=None, width=None, rgb_array=None):
+    def molmol_classic_colour(self, res_num=None, width=None, rgb_array=None):
         """Colour the given peptide bond."""
 
         # Ca to C bond.
@@ -419,7 +419,7 @@ class Molmol:
         self.commands.append("")
 
 
-    def classic_correlation_time(self, residue, te, colour_start, colour_end, colour_list):
+    def molmol_classic_correlation_time(self, residue, te, colour_start, colour_end, colour_list):
         """Function for generating the bond width and colours for correlation times."""
 
         # The te value in picoseconds.
@@ -451,10 +451,10 @@ class Molmol:
         rgb_array = self.relax.colour.linear_gradient(colour_value, colour_end, colour_start, colour_list)
 
         # Colour the peptide bond.
-        self.classic_colour(residue.num, width, rgb_array)
+        self.molmol_classic_colour(residue.num, width, rgb_array)
 
 
-    def classic_header(self):
+    def molmol_classic_header(self):
         """Create the header for the molmol macro."""
 
         # Hide all bonds.
@@ -469,7 +469,7 @@ class Molmol:
         self.commands.append("ColorBond 0 0 0")
 
 
-    def classic_order_param(self, residue, s2, colour_start, colour_end, colour_list):
+    def molmol_classic_order_param(self, residue, s2, colour_start, colour_end, colour_list):
         """Function for generating the bond width and colours for order parameters."""
 
         # The bond width (aiming for a width range of 2 to 0 for S2 values of 0.0 to 1.0).
@@ -501,10 +501,10 @@ class Molmol:
         rgb_array = self.relax.colour.linear_gradient(colour_value, colour_start, colour_end, colour_list)
 
         # Colour the peptide bond.
-        self.classic_colour(residue.num, width, rgb_array)
+        self.molmol_classic_colour(residue.num, width, rgb_array)
 
 
-    def classic_rex(self, residue, rex, colour_start, colour_end, colour_list):
+    def molmol_classic_rex(self, residue, rex, colour_start, colour_end, colour_list):
         """Function for generating the bond width and colours for correlation times."""
 
         # The Rex value at the first field strength.
@@ -536,10 +536,10 @@ class Molmol:
         rgb_array = self.relax.colour.linear_gradient(colour_value, colour_end, colour_start, colour_list)
 
         # Colour the peptide bond.
-        self.classic_colour(residue.num, width, rgb_array)
+        self.molmol_classic_colour(residue.num, width, rgb_array)
 
 
-    def macro(self, run, data_type, style, colour_start, colour_end, colour_list):
+    def molmol_macro(self, run, data_type, style, colour_start, colour_end, colour_list):
         """Create and return an array of Molmol macros of the model-free parameters."""
 
         # Arguments.
@@ -550,7 +550,7 @@ class Molmol:
 
         # The classic style.
         if style == 'classic':
-            self.classic(data_type, colour_start, colour_end, colour_list)
+            self.molmol_classic(data_type, colour_start, colour_end, colour_list)
 
         # Unknown style.
         else:
