@@ -93,7 +93,7 @@ class Value_base_class:
     #####################################################
 
 
-    def test_set_mf_diff_sphere_tm(self):
+    def test_set_mf_diff_sphere_set_tm(self):
         """Set the spherical diffusion tensor tm parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -115,7 +115,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.tm, 1e-8)
 
 
-    def test_set_mf_diff_sphere_Diso(self):
+    def test_set_mf_diff_sphere_set_Diso(self):
         """Set the spherical diffusion tensor Diso parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -137,7 +137,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.Diso, 5e7)
 
 
-    def test_set_mf_diff_sphere_Da(self):
+    def test_set_mf_diff_sphere_set_Da(self):
         """Try to set the spherical diffusion tensor Da parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -156,7 +156,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='Da', val=2e6)
 
 
-    def test_set_mf_diff_sphere_Dr(self):
+    def test_set_mf_diff_sphere_set_Dr(self):
         """Try to set the spherical diffusion tensor Dr parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -175,7 +175,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='Dr', val=2e6)
 
 
-    def test_set_mf_diff_sphere_Dx(self):
+    def test_set_mf_diff_sphere_set_Dx(self):
         """Try to set the spherical diffusion tensor Dx parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -194,7 +194,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='Dx', val=2e6)
 
 
-    def test_set_mf_diff_sphere_Dy(self):
+    def test_set_mf_diff_sphere_set_Dy(self):
         """Try to set the spherical diffusion tensor Dy parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -213,7 +213,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='Dy', val=2e6)
 
 
-    def test_set_mf_diff_sphere_Dz(self):
+    def test_set_mf_diff_sphere_set_Dz(self):
         """Try to set the spherical diffusion tensor Dz parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -232,7 +232,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='Dz', val=2e6)
 
 
-    def test_set_mf_diff_sphere_Dpar(self):
+    def test_set_mf_diff_sphere_set_Dpar(self):
         """Try to set the spherical diffusion tensor Dpar parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -251,7 +251,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='Dpar', val=2e6)
 
 
-    def test_set_mf_diff_sphere_Dper(self):
+    def test_set_mf_diff_sphere_set_Dper(self):
         """Try to set the spherical diffusion tensor Dper parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -270,7 +270,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='Dper', val=2e6)
 
 
-    def test_set_mf_diff_sphere_Dratio(self):
+    def test_set_mf_diff_sphere_set_Dratio(self):
         """Try to set the spherical diffusion tensor Dratio parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -289,7 +289,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='Dratio', val=1.2)
 
 
-    def test_set_mf_diff_sphere_alpha(self):
+    def test_set_mf_diff_sphere_set_alpha(self):
         """Try to set the spherical diffusion tensor alpha parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -308,7 +308,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='alpha', val=pi/2)
 
 
-    def test_set_mf_diff_sphere_beta(self):
+    def test_set_mf_diff_sphere_set_beta(self):
         """Try to set the spherical diffusion tensor beta parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -327,7 +327,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='beta', val=pi/2)
 
 
-    def test_set_mf_diff_sphere_gamma(self):
+    def test_set_mf_diff_sphere_set_gamma(self):
         """Try to set the spherical diffusion tensor gamma parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -346,7 +346,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='gamma', val=pi/2)
 
 
-    def test_set_mf_diff_sphere_theta(self):
+    def test_set_mf_diff_sphere_set_theta(self):
         """Try to set the spherical diffusion tensor theta parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -365,7 +365,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='theta', val=pi/2)
 
 
-    def test_set_mf_diff_sphere_phi(self):
+    def test_set_mf_diff_sphere_set_phi(self):
         """Try to set the spherical diffusion tensor phi parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -384,7 +384,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='phi', val=pi/2)
 
 
-    def test_set_mf_diff_spheroid_tm(self):
+    def test_set_mf_diff_spheroid_set_tm(self):
         """Set the spheroidal diffusion tensor tm parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -406,7 +406,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.tm, 1e-8)
 
 
-    def test_set_mf_diff_spheroid_Diso(self):
+    def test_set_mf_diff_spheroid_set_Diso(self):
         """Set the spheroidal diffusion tensor Diso parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -428,7 +428,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.tm, 1./(6*5e7))
 
 
-    def test_set_mf_diff_spheroid_Da(self):
+    def test_set_mf_diff_spheroid_set_Da(self):
         """Set the spheroidal diffusion tensor Da parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -450,7 +450,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.Da, 1e6)
 
 
-    def test_set_mf_diff_spheroid_Dr(self):
+    def test_set_mf_diff_spheroid_set_Dr(self):
         """Set the spheroidal diffusion tensor Dr parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -469,7 +469,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='Dr', val=0.2)
 
 
-    def test_set_mf_diff_spheroid_Dx(self):
+    def test_set_mf_diff_spheroid_set_Dx(self):
         """Set the spheroidal diffusion tensor Dx parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -488,7 +488,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='Dx', val=1e6)
 
 
-    def test_set_mf_diff_spheroid_Dy(self):
+    def test_set_mf_diff_spheroid_set_Dy(self):
         """Set the spheroidal diffusion tensor Dy parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -507,7 +507,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='Dy', val=1e6)
 
 
-    def test_set_mf_diff_spheroid_Dz(self):
+    def test_set_mf_diff_spheroid_set_Dz(self):
         """Set the spheroidal diffusion tensor Dz parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -526,7 +526,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='Dz', val=1e6)
 
 
-    def test_set_mf_diff_spheroid_Dpar(self):
+    def test_set_mf_diff_spheroid_set_Dpar(self):
         """Try to set the spheroidal diffusion tensor Dpar parameter (this should not be possible).
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -545,7 +545,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='Dpar', val=1e6)
 
 
-    def test_set_mf_diff_spheroid_Dper(self):
+    def test_set_mf_diff_spheroid_set_Dper(self):
         """Try to set the spheroidal diffusion tensor Dper parameter (this should not be possible).
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -564,7 +564,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='Dper', val=1e6)
 
 
-    def test_set_mf_diff_spheroid_Dratio(self):
+    def test_set_mf_diff_spheroid_set_Dratio(self):
         """Set the spheroidal diffusion tensor Dratio parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -586,7 +586,7 @@ class Value_base_class:
         self.assertAlmostEqual(cdp.diff_tensor.Dratio, 1.2)
 
 
-    def test_set_mf_diff_spheroid_alpha(self):
+    def test_set_mf_diff_spheroid_set_alpha(self):
         """Try to set the spheroidal diffusion tensor alpha parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -605,7 +605,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='alpha', val=pi/2)
 
 
-    def test_set_mf_diff_spheroid_beta(self):
+    def test_set_mf_diff_spheroid_set_beta(self):
         """Try to set the spheroidal diffusion tensor beta parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -624,7 +624,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='beta', val=pi/2)
 
 
-    def test_set_mf_diff_spheroid_gamma(self):
+    def test_set_mf_diff_spheroid_set_gamma(self):
         """Try to set the spheroidal diffusion tensor gamma parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -643,7 +643,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='gamma', val=pi/2)
 
 
-    def test_set_mf_diff_spheroid_theta(self):
+    def test_set_mf_diff_spheroid_set_theta(self):
         """Set the spheroidal diffusion tensor theta parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -665,7 +665,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.theta, pi/2)
 
 
-    def test_set_mf_diff_spheroid_phi(self):
+    def test_set_mf_diff_spheroid_set_phi(self):
         """Set the spheroidal diffusion tensor phi parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -687,7 +687,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.phi, pi/2)
 
 
-    def test_set_mf_diff_spheroid_diff_tm_Da(self):
+    def test_set_mf_diff_spheroid_set_diff_tm_Da(self):
         """Set the spheroidal diffusion tensor parameters {tm, Da}.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -710,7 +710,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.Da, 1e6)
 
 
-    def test_set_mf_diff_spheroid_diff_Diso_Da(self):
+    def test_set_mf_diff_spheroid_set_diff_Diso_Da(self):
         """Set the spheroidal diffusion tensor parameters {Diso, Da}.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -733,7 +733,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.Da, 1e6)
 
 
-    def test_set_mf_diff_spheroid_diff_tm_Dratio(self):
+    def test_set_mf_diff_spheroid_set_diff_tm_Dratio(self):
         """Set the spheroidal diffusion tensor parameters {tm, Dratio}.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -756,7 +756,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.Dratio, 1.6)
 
 
-    def test_set_mf_diff_spheroid_diff_Dpar_Dper(self):
+    def test_set_mf_diff_spheroid_set_diff_Dpar_Dper(self):
         """Set the spheroidal diffusion tensor parameters {Dpar, Dper}.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -779,7 +779,7 @@ class Value_base_class:
         self.assertAlmostEqual(cdp.diff_tensor.Dper, 2e7)
 
 
-    def test_set_mf_diff_spheroid_diff_Dper_Dpar(self):
+    def test_set_mf_diff_spheroid_set_diff_Dper_Dpar(self):
         """Set the spheroidal diffusion tensor parameters {Dper, Dpar}.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -802,7 +802,7 @@ class Value_base_class:
         self.assertAlmostEqual(cdp.diff_tensor.Dpar, 2e7)
 
 
-    def test_set_mf_diff_spheroid_diff_Diso_Dratio(self):
+    def test_set_mf_diff_spheroid_set_diff_Diso_Dratio(self):
         """Set the spheroidal diffusion tensor parameters {Diso, Dratio}.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -825,7 +825,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.Dratio, 1.2)
 
 
-    def test_set_mf_diff_spheroid_diff_Dpar_Dratio(self):
+    def test_set_mf_diff_spheroid_set_diff_Dpar_Dratio(self):
         """Set the spheroidal diffusion tensor parameters {Dpar, Dratio} (this should not be possible).
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -844,7 +844,7 @@ class Value_base_class:
         self.assertRaises(RelaxUnknownParamCombError, self.value_fns.set, param=['Dpar', 'Dratio'], val=[1e7, 1.2])
 
 
-    def test_set_mf_diff_ellipsoid_tm(self):
+    def test_set_mf_diff_ellipsoid_set_tm(self):
         """Set the ellipsoidal diffusion tensor tm parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -866,7 +866,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.tm, 1e-8)
 
 
-    def test_set_mf_diff_ellipsoid_Diso(self):
+    def test_set_mf_diff_ellipsoid_set_Diso(self):
         """Set the ellipsoidal diffusion tensor Diso parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -888,7 +888,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.tm, 1./(6*5e7))
 
 
-    def test_set_mf_diff_ellipsoid_Da(self):
+    def test_set_mf_diff_ellipsoid_set_Da(self):
         """Set the ellipsoidal diffusion tensor Da parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -910,7 +910,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.Da, 1e6)
 
 
-    def test_set_mf_diff_ellipsoid_Dr(self):
+    def test_set_mf_diff_ellipsoid_set_Dr(self):
         """Set the ellipsoidal diffusion tensor Dr parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -932,7 +932,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.Dr, 0.3)
 
 
-    def test_set_mf_diff_ellipsoid_Dx(self):
+    def test_set_mf_diff_ellipsoid_set_Dx(self):
         """Set the ellipsoidal diffusion tensor Dx parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -951,7 +951,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='Dx', val=1e6)
 
 
-    def test_set_mf_diff_ellipsoid_Dy(self):
+    def test_set_mf_diff_ellipsoid_set_Dy(self):
         """Set the ellipsoidal diffusion tensor Dy parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -970,7 +970,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='Dy', val=1e6)
 
 
-    def test_set_mf_diff_ellipsoid_Dz(self):
+    def test_set_mf_diff_ellipsoid_set_Dz(self):
         """Set the ellipsoidal diffusion tensor Dz parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -989,7 +989,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='Dz', val=1e6)
 
 
-    def test_set_mf_diff_ellipsoid_Dpar(self):
+    def test_set_mf_diff_ellipsoid_set_Dpar(self):
         """Try to set the ellipsoidal diffusion tensor Dpar parameter (this should not be possible).
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -1008,7 +1008,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='Dpar', val=1e6)
 
 
-    def test_set_mf_diff_ellipsoid_Dper(self):
+    def test_set_mf_diff_ellipsoid_set_Dper(self):
         """Try to set the ellipsoidal diffusion tensor Dper parameter (this should not be possible).
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -1027,7 +1027,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='Dper', val=1e6)
 
 
-    def test_set_mf_diff_ellipsoid_Dratio(self):
+    def test_set_mf_diff_ellipsoid_set_Dratio(self):
         """Set the ellipsoidal diffusion tensor Dratio parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -1046,7 +1046,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='Dratio', val=1.2)
 
 
-    def test_set_mf_diff_ellipsoid_alpha(self):
+    def test_set_mf_diff_ellipsoid_set_alpha(self):
         """Try to set the ellipsoidal diffusion tensor alpha parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -1068,7 +1068,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.alpha, pi/2)
 
 
-    def test_set_mf_diff_ellipsoid_beta(self):
+    def test_set_mf_diff_ellipsoid_set_beta(self):
         """Try to set the ellipsoidal diffusion tensor beta parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -1090,7 +1090,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.beta, pi/2)
 
 
-    def test_set_mf_diff_ellipsoid_gamma(self):
+    def test_set_mf_diff_ellipsoid_set_gamma(self):
         """Try to set the ellipsoidal diffusion tensor gamma parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -1112,7 +1112,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.gamma, pi/2)
 
 
-    def test_set_mf_diff_ellipsoid_theta(self):
+    def test_set_mf_diff_ellipsoid_set_theta(self):
         """Set the ellipsoidal diffusion tensor theta parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -1131,7 +1131,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='theta', val=pi/2)
 
 
-    def test_set_mf_diff_ellipsoid_phi(self):
+    def test_set_mf_diff_ellipsoid_set_phi(self):
         """Set the ellipsoidal diffusion tensor phi parameter.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -1150,7 +1150,7 @@ class Value_base_class:
         self.assertRaises(RelaxError, self.value_fns.set, param='phi', val=pi/2)
 
 
-    def test_set_mf_diff_ellipsoid_diff_tm_Da_Dr(self):
+    def test_set_mf_diff_ellipsoid_set_diff_tm_Da_Dr(self):
         """Set the ellipsoidal diffusion tensor parameters {tm, Da, Dr}.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -1174,7 +1174,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.Dr, 0.2)
 
 
-    def test_set_mf_diff_ellipsoid_diff_Diso_Da_Dr(self):
+    def test_set_mf_diff_ellipsoid_set_diff_Diso_Da_Dr(self):
         """Set the ellipsoidal diffusion tensor parameters {Diso, Da, Dr}.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -1198,7 +1198,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.Dr, 0.2)
 
 
-    def test_set_mf_diff_ellipsoid_diff_Dx_Dy_Dz(self):
+    def test_set_mf_diff_ellipsoid_set_diff_Dx_Dy_Dz(self):
         """Set the ellipsoidal diffusion tensor parameters {Dx, Dy, Dz}.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -1222,7 +1222,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.Dz, 3e7)
 
 
-    def test_set_mf_diff_ellipsoid_same_Dx_Dy_Dz(self):
+    def test_set_mf_diff_ellipsoid_set_same_Dx_Dy_Dz(self):
         """Set the ellipsoidal diffusion tensor parameters {Dx, Dy, Dz} all to the same value.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -1246,7 +1246,7 @@ class Value_base_class:
         self.assertEqual(cdp.diff_tensor.Dz, 1e7)
 
 
-    def test_set_mf_diff_ellipsoid_diff_tm_Diso_Dr(self):
+    def test_set_mf_diff_ellipsoid_set_diff_tm_Diso_Dr(self):
         """Try to set the ellipsoidal diffusion tensor parameters {tm, Diso, Dr} (this should not be possible).
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
