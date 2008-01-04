@@ -74,7 +74,7 @@ class RelaxTestRunner(TextTestRunner):
         return _RelaxTestResult(self.stream, self.descriptions, self.verbosity)
 
 
-    def run2(self, test):
+    def run(self, test):
         """Override of the TextTestRunner.run() method."""
 
         # Execute the normal run method.
