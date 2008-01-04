@@ -851,7 +851,7 @@ class Diffusion_tensor:
 
             # Default value.
             if value[i] == None:
-                value[i] = self.default_value(object_names[i])
+                value[i] = self.default_value(param[i])
 
             # Geometric parameter.
             if param[i] in ['tm', 'Diso', 'Da', 'Dratio', 'Dper', 'Dpar', 'Dr', 'Dx', 'Dy', 'Dz']:
