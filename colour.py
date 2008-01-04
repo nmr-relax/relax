@@ -174,7 +174,7 @@ class Colour:
         colours['ivory']        = [1.000, 1.000, 0.941]
         colours['white']        = [1.000, 1.000, 1.000]
 
-        # Convert to Numeric arrays.
+        # Convert to numpy arrays.
         for key in colours:
             colours[key] = array(colours[key], float64)
 
@@ -1307,5 +1307,5 @@ class Colour:
         if not colours.has_key(name):
             raise RelaxInvalidColourError, name
 
-        # Return the RGB colour array (in Numeric format and between 0 and 1).
+        # Return the RGB colour array (in numpy format and between 0 and 1).
         return array(colours[name], float64) / 255.
