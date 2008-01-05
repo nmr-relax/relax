@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,30 +23,30 @@
 # Python module imports.
 from math import pi
 import sys
+from unittest import TestCase
 
 # relax module imports.
 from data import Data as relax_data_store
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 
 
-# The relax data storage object.
+class Mf(TestCase):
+    """TestCase class for the functional tests of model-free analysis."""
+
+    def setUp(self):
+        """Set up for all the functional tests."""
+
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create('mf', 'mf')
 
 
+    def tearDown(self):
+        """Reset the relax data storage object."""
+
+        relax_data_store.__reset__()
 
 
-class Mf:
-    def __init__(self, relax, test_name):
-        """Class for testing various aspects specific to model-free analysis."""
-
-        self.relax = relax
-
-        # Relaxation data reading test.
-        if test_name == 'read relaxation data':
-            # The name of the test.
-            self.name = "The user function relax_data.read()"
-
-            # The test.
-            self.test = self.read_relax_data
+    def old_code(self):
 
         # Test of setting the CSA.
         if test_name == 'set csa':
@@ -925,11 +925,8 @@ class Mf:
         self.relax.interpreter._Model_free.select_model(model='m4')
 
 
-    def read_relax_data(self, pipe):
-        """The relaxation data reading test."""
-
-        # Create the data pipe.
-        self.relax.interpreter._Pipe.create(pipe, 'mf')
+    def test_read_relax_data(self):
+        """Reading of relaxation data using the user function relax_data.read()."""
 
         # Path of the files.
         path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
@@ -940,17 +937,12 @@ class Mf:
         # Read the relaxation data.
         self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
 
-        # Test the data.
-        if relax_data_store[pipe].mol[0].res[1].spin[0].relax_data[0] != 1.3874977659397683:
-            print "The relaxation data does not match."
-            return
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
-        # Test the error.
-        if relax_data_store[pipe].mol[0].res[1].spin[0].relax_error[0] != 0.027749955318795365:
-            print "The relaxation error does not match."
-            return
-
-        return 1
+        # Test the data and error.
+        self.assertEqual(cdp.mol[0].res[1].spin[0].relax_data[0], 1.3874977659397683)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].relax_error[0], 0.027749955318795365)
 
 
     def read_results(self, pipe):

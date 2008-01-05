@@ -28,6 +28,7 @@ from test_suite.relax_test_runner import RelaxTestRunner
 
 # relax system/functional test module imports.
 from test_pipe_create import Test_pipe_create
+from model_free import Mf
 
 
 __all__ = ['angles',
@@ -61,6 +62,7 @@ class System_test_runner:
 
         # Create the test suite (add your new TestCase classes here).
         suite = TestLoader().loadTestsFromTestCase(Test_pipe_create)
+        suite = TestLoader().loadTestsFromTestCase(Mf)
 
         # Add the relax namespace to each TestCase object.
         for test in suite._tests:

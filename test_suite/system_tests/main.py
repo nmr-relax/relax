@@ -32,7 +32,6 @@ from angles import Angles
 from diffusion_tensor import Diffusion_tensor
 from generic import Generic
 from jw_mapping import Jw
-from model_free import Mf
 from model_selection import Modsel
 from relax_fit import Relax_fit
 from sequence import Sequence
@@ -129,40 +128,6 @@ class System_tests:
 
         # Execute the tests.
         self.exec_tests(self.relax_fit_test_array)
-
-
-        # Model-free tests.
-        ###################
-
-        # Heading.
-        heading("The model-free tests")
-
-        # Initialise the array containing each test element.
-        self.mf_test_array = []
-
-        # User function results.read() test.
-        self.mf_test_array.append(Mf(self.relax, 'read relaxation data'))
-        self.mf_test_array.append(Mf(self.relax, 'set csa'))
-        self.mf_test_array.append(Mf(self.relax, 'set bond length'))
-        self.mf_test_array.append(Mf(self.relax, 'set csa and bond length'))
-        self.mf_test_array.append(Mf(self.relax, 'select m4'))
-        self.mf_test_array.append(Mf(self.relax, 'create m4'))
-        self.mf_test_array.append(Mf(self.relax, 'read results'))
-        self.mf_test_array.append(Mf(self.relax, 'opendx {S2, te, Rex} map'))
-        self.mf_test_array.append(Mf(self.relax, 'opendx {theta, phi, Da} map'))
-        self.mf_test_array.append(Mf(self.relax, 'opendx {local_tm, S2, te} map'))
-        self.mf_test_array.append(Mf(self.relax, 'Constrained grid search {S2=0.970, te=2048, Rex=0.149}'))
-        self.mf_test_array.append(Mf(self.relax, 'Constrained SD, backtracking opt {S2=0.970, te=2048, Rex=0.149}'))
-        self.mf_test_array.append(Mf(self.relax, 'Constrained SD, MT opt {S2=0.970, te=2048, Rex=0.149}'))
-        self.mf_test_array.append(Mf(self.relax, 'Constrained CD, backtracking opt {S2=0.970, te=2048, Rex=0.149}'))
-        self.mf_test_array.append(Mf(self.relax, 'Constrained CD, MT opt {S2=0.970, te=2048, Rex=0.149}'))
-        self.mf_test_array.append(Mf(self.relax, 'Constrained BFGS, backtracking opt {S2=0.970, te=2048, Rex=0.149}'))
-        self.mf_test_array.append(Mf(self.relax, 'Constrained BFGS, backtracking opt {S2=0.970, te=2048, Rex=0.149}'))
-        self.mf_test_array.append(Mf(self.relax, 'Constrained Newton, GMW, backtracking opt {S2=0.970, te=2048, Rex=0.149}'))
-        self.mf_test_array.append(Mf(self.relax, 'Constrained Newton, GMW, MT opt {S2=0.970, te=2048, Rex=0.149}'))
-
-        # Execute the tests.
-        self.exec_tests(self.mf_test_array)
 
 
         # Reduced spectral density mapping tests.
@@ -322,21 +287,6 @@ class System_tests:
 
         # Loop over the tests.
         for test in self.relax_fit_test_array:
-            # Synopsis.
-            global_pass = global_pass and test.passed
-
-            # Print the summary line.
-            summary_line(test.name, test.passed)
-
-
-        # Model-free tests.
-        ###################
-
-        # Heading.
-        sys.stdout.write("\nThe model-free tests:\n")
-
-        # Loop over the tests.
-        for test in self.mf_test_array:
             # Synopsis.
             global_pass = global_pass and test.passed
 
