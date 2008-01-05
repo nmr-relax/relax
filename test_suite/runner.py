@@ -55,7 +55,7 @@ class Test_suite_runner:
 
         # Execute the system/functional tests.
         system_runner = System_test_runner(self.relax)
-        system_result = system_runner.run(runner=RelaxTestRunner())
+        system_result = system_runner.run()
 
         # Execute the unit tests.
         unit_runner = Unit_test_runner(root_path='test_suite/unit_tests')
