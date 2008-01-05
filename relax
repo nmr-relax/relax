@@ -178,7 +178,8 @@ class Relax:
             self.interpreter._on()
 
             # Run the tests.
-            Test_suite_runner(self)
+            runner = Test_suite_runner(self)
+            runner.run_all_tests()
 
         # Execute the relax system tests.
         elif mode == 'system tests':

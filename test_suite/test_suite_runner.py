@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Formatting.
-from formatting import *
+from formatting import heading, summary_line
 
 # Import the test suite categories.
 from system_tests.main import System_tests
@@ -49,20 +49,58 @@ class Test_suite_runner:
 
         self.relax = relax
 
+
+    def run_all_tests(self):
+        """Execute all of the test suite test types."""
+
         # Execute the old system/functional tests.
-        sys_runner = System_tests(self.relax)
-        system_result_old = sys_runner.run()
+        self.run_old_system_tests()
 
         # Execute the system/functional tests.
-        system_runner = System_test_runner(self.relax)
-        system_result = system_runner.run()
+        self.run_system_tests()
 
         # Execute the unit tests.
-        unit_runner = Unit_test_runner(root_path='test_suite/unit_tests')
-        unit_result = unit_runner.run(runner=RelaxTestRunner())
+        self.run_unit_tests()
 
         # Print out a summary of the test suite.
-        ########################################
+        self.summary()
+
+
+    def run_old_system_tests(self):
+        """Function for executing the old style system/functional tests."""
+
+        # Print a header.
+        heading('Old system / functional tests')
+
+        # Run the tests.
+        sys_runner = System_tests(self.relax)
+        self.system_result_old = sys_runner.run()
+
+
+    def run_system_tests(self):
+        """Function for executing the system/functional tests."""
+
+        # Print a header.
+        heading('System / functional tests')
+
+        # Run the tests.
+        system_runner = System_test_runner(self.relax)
+        self.system_result = system_runner.run()
+
+
+    def run_unit_tests(self):
+        """Function for executing the unit tests."""
+
+        # Print a header.
+        heading('Unit tests')
+
+        # Run the tests.
+        unit_runner = Unit_test_runner(root_path='test_suite/unit_tests')
+        self.unit_result = unit_runner.run(runner=RelaxTestRunner())
+
+
+    def summary(self):
+        """Print out a summary of the relax test suite."""
 
         # Heading.
         print "\n\n\n"
@@ -71,13 +109,13 @@ class Test_suite_runner:
         print "###################################\n"
 
         # Old system/functional test summary.
-        summary_line("Old system/functional tests", system_result_old)
+        summary_line("Old system/functional tests", self.system_result_old)
 
         # System/functional test summary.
-        summary_line("System/functional tests", system_result)
+        summary_line("System/functional tests", self.system_result)
 
         # Unit test summary.
-        summary_line("Unit tests", unit_result)
+        summary_line("Unit tests", self.unit_result)
 
         # Synopsis.
-        summary_line("Synopsis", system_result and unit_result)
+        summary_line("Synopsis", self.system_result_old and self.system_result and self.unit_result)
