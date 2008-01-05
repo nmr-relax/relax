@@ -23,6 +23,8 @@
 # Python module imports.
 from unittest import TestCase
 
+# relax module imports.
+from data import Data as relax_data_store
 
 class Test_pipe_create(TestCase):
     """TestCase class for the functional tests of relax data pipes."""
