@@ -61,8 +61,12 @@ class System_test_runner:
         @type runner:   instance
         """
 
-        # Create the test suite.
+        # Create the test suite (add your new classes here).
         suite = TestLoader().loadTestsFromTestCase(Test_pipe_create)
+
+        # Add the relax namespace to each TestCase object.
+        for test in suite._tests:
+            test.relax = self.relax
 
         # Run the test suite.
         TextTestRunner().run(suite)
