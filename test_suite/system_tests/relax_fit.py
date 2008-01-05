@@ -48,7 +48,7 @@ class Relax_fit(TestCase):
         """The Sparky peak height loading test."""
 
         # Load the original state.
-        self.relax.interpreter._State.load(state='rx.save', dir=sys.path[-1] + '/test_suite/system_tests/data/curve_fitting')
+        self.relax.interpreter._State.load(state='rx.save', dir_name=sys.path[-1] + '/test_suite/system_tests/data/curve_fitting')
 
         # Load the Lupin Ap4Aase sequence.
         self.relax.interpreter._Sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/system_tests/data")

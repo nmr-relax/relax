@@ -561,7 +561,7 @@ class Mf(TestCase):
         """The reading of model-free results using the user function results.read()."""
 
         # Load the original state.
-        self.relax.interpreter._State.load(state='orig_state', dir=sys.path[-1] + '/test_suite/system_tests/data/model_free')
+        self.relax.interpreter._State.load(state='orig_state', dir_name=sys.path[-1] + '/test_suite/system_tests/data/model_free')
 
         # Read the results.
         self.relax.interpreter._Results.read(dir=sys.path[-1] + '/test_suite/system_tests/data/model_free')
