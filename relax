@@ -189,7 +189,6 @@ class Relax:
 
             # Run the tests.
             runner = Test_suite_runner(self)
-            runner.run_old_system_tests()
             runner.run_system_tests()
 
         # Execute the relax unit tests.

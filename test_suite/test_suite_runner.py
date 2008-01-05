@@ -24,7 +24,6 @@
 from formatting import heading, summary_line
 
 # Import the test suite categories.
-from system_tests.main import System_tests
 from system_tests import System_test_runner
 from unit_tests.unit_test_runner import Unit_test_runner
 
@@ -53,9 +52,6 @@ class Test_suite_runner:
     def run_all_tests(self):
         """Execute all of the test suite test types."""
 
-        # Execute the old system/functional tests.
-        self.run_old_system_tests()
-
         # Execute the system/functional tests.
         self.run_system_tests()
 
@@ -64,17 +60,6 @@ class Test_suite_runner:
 
         # Print out a summary of the test suite.
         self.summary()
-
-
-    def run_old_system_tests(self):
-        """Function for executing the old style system/functional tests."""
-
-        # Print a header.
-        heading('Old system / functional tests')
-
-        # Run the tests.
-        sys_runner = System_tests(self.relax)
-        self.system_result_old = sys_runner.run()
 
 
     def run_system_tests(self):
@@ -108,9 +93,6 @@ class Test_suite_runner:
         print "# Summary of the relax test suite #"
         print "###################################\n"
 
-        # Old system/functional test summary.
-        summary_line("Old system/functional tests", self.system_result_old)
-
         # System/functional test summary.
         summary_line("System/functional tests", self.system_result)
 
@@ -118,4 +100,4 @@ class Test_suite_runner:
         summary_line("Unit tests", self.unit_result)
 
         # Synopsis.
-        summary_line("Synopsis", self.system_result_old and self.system_result and self.unit_result)
+        summary_line("Synopsis", self.system_result and self.unit_result)
