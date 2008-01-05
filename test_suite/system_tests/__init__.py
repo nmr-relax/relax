@@ -27,9 +27,10 @@ from unittest import TestLoader, TestSuite
 from test_suite.relax_test_runner import RelaxTestRunner
 
 # relax system/functional test module imports.
-from test_pipe_create import Test_pipe_create
-from model_free import Mf
+from angles import Angles
 from diffusion_tensor import Diffusion_tensor
+from model_free import Mf
+from test_pipe_create import Test_pipe_create
 
 
 __all__ = ['angles',
@@ -63,9 +64,10 @@ class System_test_runner:
 
         # Create an array of test suites (add your new TestCase classes here).
         suite_array = []
-        suite_array.append(TestLoader().loadTestsFromTestCase(Test_pipe_create))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Angles))
         suite_array.append(TestLoader().loadTestsFromTestCase(Diffusion_tensor))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Test_pipe_create))
 
         # Add the relax namespace to each TestCase object.
         for i in xrange(len(suite_array)):

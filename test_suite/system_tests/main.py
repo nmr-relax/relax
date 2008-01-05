@@ -28,7 +28,6 @@ import sys
 from test_suite.formatting import *
 
 # Import the tests.
-from angles import Angles
 from generic import Generic
 from jw_mapping import Jw
 from model_selection import Modsel
@@ -76,22 +75,6 @@ class System_tests:
 
         # Execute the tests.
         self.exec_tests(self.seq_test_array)
-
-
-        # Angle calculation tests.
-        ##########################
-
-        # Heading.
-        heading("Angle calculation tests")
-
-        # Initialise the array containing each test element.
-        self.angles_test_array = []
-
-        # User function tests.
-        self.angles_test_array.append(Angles(self.relax))
-
-        # Execute the tests.
-        self.exec_tests(self.angles_test_array)
 
 
         # Relaxation curve-fitting tests.
@@ -222,21 +205,6 @@ class System_tests:
 
         # Loop over the tests.
         for test in self.seq_test_array:
-            # Synopsis.
-            global_pass = global_pass and test.passed
-
-            # Print the summary line.
-            summary_line(test.name, test.passed)
-
-
-        # Angle calculation tests.
-        ##########################
-
-        # Heading.
-        sys.stdout.write("\nAngle calculation tests:\n")
-
-        # Loop over the tests.
-        for test in self.angles_test_array:
             # Synopsis.
             global_pass = global_pass and test.passed
 
