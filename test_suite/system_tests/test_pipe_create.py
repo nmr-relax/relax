@@ -38,4 +38,4 @@ class Test_pipe_create(TestCase):
         """Create a data pipe."""
 
         # Create the data pipe.
-        self.relax.interpreter._Pipe.create(pipe, 'mf')
+        self.relax.interpreter._Pipe.create('test', 'mf')
