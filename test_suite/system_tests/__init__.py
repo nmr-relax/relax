@@ -31,3 +31,24 @@ __all__ = ['angles',
            'relax_fit',
            'run_create',
            'sequence']
+
+
+class System_test_runner:
+    """Class for executing all of the system/functional tests."""
+
+    def __init__(self, relax):
+        """Place the relax namespace into self.relax when instantiating the class.
+
+        @param relax:   The relax namespace.
+        @type relax:    instance
+        """
+
+        self.relax = relax
+
+
+    def run(self, runner=None):
+        """Function for running all of the system/functional tests.
+
+        @param runner:  The unit test runner which defaults to TextTestRunner.
+        @type runner:   instance
+        """

@@ -25,6 +25,7 @@ from formatting import *
 
 # Import the test suite categories.
 from system_tests.main import System_tests
+from system_tests import System_test_runner
 from unit_tests.unit_test_runner import Unit_test_runner
 
 # relax module imports.
