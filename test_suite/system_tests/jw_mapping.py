@@ -89,7 +89,7 @@ class Jw(TestCase):
         self.relax.interpreter._Minimisation.calc()
 
         # Loop over residues.
-        for res in residue_loop:
+        for res in residue_loop():
             # Residues -2 and -1 have data.
             if res.num == -2 or res.num == -1:
                 self.assert_(res.spin[0].select)
@@ -115,6 +115,6 @@ class Jw(TestCase):
         self.relax.interpreter._Value.set(csa, 'csa')
 
         # Loop over residues.
-        for res in residue_loop:
+        for res in residue_loop():
             self.assertEqual(res.spin[0].r, NH_BOND_LENGTH)
             self.assertEqual(res.spin[0].csa, N15_CSA)
