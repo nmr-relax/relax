@@ -29,6 +29,7 @@ from test_suite.relax_test_runner import RelaxTestRunner
 # relax system/functional test module imports.
 from test_pipe_create import Test_pipe_create
 from model_free import Mf
+from diffusion_tensor import Diffusion_tensor
 
 
 __all__ = ['angles',
@@ -64,6 +65,7 @@ class System_test_runner:
         suite_array = []
         suite_array.append(TestLoader().loadTestsFromTestCase(Test_pipe_create))
         suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Diffusion_tensor))
 
         # Add the relax namespace to each TestCase object.
         for i in xrange(len(suite_array)):

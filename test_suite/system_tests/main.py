@@ -29,7 +29,6 @@ from test_suite.formatting import *
 
 # Import the tests.
 from angles import Angles
-from diffusion_tensor import Diffusion_tensor
 from generic import Generic
 from jw_mapping import Jw
 from model_selection import Modsel
@@ -77,25 +76,6 @@ class System_tests:
 
         # Execute the tests.
         self.exec_tests(self.seq_test_array)
-
-
-        # Diffusion tensor tests.
-        #########################
-
-        # Heading.
-        heading("The diffusion tensor tests")
-
-        # Initialise the array containing each test element.
-        self.diff_tensor_test_array = []
-
-        # User function tests.
-        self.diff_tensor_test_array.append(Diffusion_tensor(self.relax, 'init'))
-        self.diff_tensor_test_array.append(Diffusion_tensor(self.relax, 'delete'))
-        self.diff_tensor_test_array.append(Diffusion_tensor(self.relax, 'display'))
-        self.diff_tensor_test_array.append(Diffusion_tensor(self.relax, 'copy'))
-
-        # Execute the tests.
-        self.exec_tests(self.diff_tensor_test_array)
 
 
         # Angle calculation tests.
@@ -242,21 +222,6 @@ class System_tests:
 
         # Loop over the tests.
         for test in self.seq_test_array:
-            # Synopsis.
-            global_pass = global_pass and test.passed
-
-            # Print the summary line.
-            summary_line(test.name, test.passed)
-
-
-        # Diffusion tensor tests.
-        #########################
-
-        # Heading.
-        sys.stdout.write("\nThe diffusion tensor tests:\n")
-
-        # Loop over the tests.
-        for test in self.diff_tensor_test_array:
             # Synopsis.
             global_pass = global_pass and test.passed
 
