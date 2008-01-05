@@ -51,7 +51,6 @@ class Mf(TestCase):
         # Test of setting the CSA.
         if test_name == 'set csa':
             # The name of the test.
-            self.name = "Setting the CSA value through the user function value.set()"
 
             # The test.
             self.test = self.set_csa
@@ -1188,11 +1187,8 @@ class Mf(TestCase):
         return 1
 
 
-    def set_csa(self, pipe):
-        """Testing the setting of the CSA value."""
-
-        # Create the data pipe.
-        self.relax.interpreter._Pipe.create(pipe, 'mf')
+    def test_set_csa(self):
+        """Setting the CSA value through the user function value.set()."""
 
         # Path of the files.
         path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
@@ -1203,12 +1199,11 @@ class Mf(TestCase):
         # Set the CSA value.
         self.relax.interpreter._Value.set(N15_CSA, 'csa')
 
-        # Test the value.
-        if relax_data_store[pipe].mol[0].res[1].spin[0].csa != N15_CSA:
-            print "The CSA value has not been set correctly."
-            return
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
-        return 1
+        # Test the value.
+        self.assertEqual(cdp.mol[0].res[1].spin[0].csa, N15_CSA)
 
 
     def set_csa_bond_length(self, pipe):
