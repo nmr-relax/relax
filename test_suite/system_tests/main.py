@@ -28,8 +28,6 @@ import sys
 from test_suite.formatting import *
 
 # Import the tests.
-from jw_mapping import Jw
-from sequence import Sequence
 
 
 class System_tests:
@@ -53,42 +51,6 @@ class System_tests:
 
         # Heading.
         heading("The relax test suite")
-
-
-        # Sequence tests.
-        #################
-
-        # Heading.
-        heading("The sequence tests")
-
-        # Initialise the array containing each test element.
-        self.seq_test_array = []
-
-        # User function sequence.read() test.
-        self.seq_test_array.append(Sequence(self.relax, 'read'))
-
-        # Loading the sequence from a PDB file.
-        self.seq_test_array.append(Sequence(self.relax, 'pdb'))
-
-        # Execute the tests.
-        self.exec_tests(self.seq_test_array)
-
-
-        # Reduced spectral density mapping tests.
-        #########################################
-
-        # Heading.
-        heading("The reduced spectral density mapping tests")
-
-        # Initialise the array containing each test element.
-        self.jw_test_array = []
-
-        # User function value.set() test.
-        self.jw_test_array.append(Jw(self.relax, 'set'))
-        self.jw_test_array.append(Jw(self.relax, 'calc'))
-
-        # Execute the tests.
-        self.exec_tests(self.jw_test_array)
 
 
         # Fin.
@@ -144,36 +106,6 @@ class System_tests:
 
         # Synopsis.
         global_pass = 1
-
-
-        # Sequence tests.
-        #################
-
-        # Heading.
-        sys.stdout.write("\nThe sequence tests:\n")
-
-        # Loop over the tests.
-        for test in self.seq_test_array:
-            # Synopsis.
-            global_pass = global_pass and test.passed
-
-            # Print the summary line.
-            summary_line(test.name, test.passed)
-
-
-        # Reduced spectral density Mapping tests.
-        #########################################
-
-        # Heading.
-        sys.stdout.write("\nThe reduced spectral density tests:\n")
-
-        # Loop over the tests.
-        for test in self.jw_test_array:
-            # Synopsis.
-            global_pass = global_pass and test.passed
-
-            # Print the summary line.
-            summary_line(test.name, test.passed)
 
 
         # Synposis.

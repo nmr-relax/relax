@@ -30,6 +30,7 @@ from test_suite.relax_test_runner import RelaxTestRunner
 from angles import Angles
 from diffusion_tensor import Diffusion_tensor
 from generic import Generic
+from jw_mapping import Jw
 from model_free import Mf
 from model_selection import Modsel
 from relax_fit import Relax_fit
@@ -70,6 +71,7 @@ class System_test_runner:
         suite_array.append(TestLoader().loadTestsFromTestCase(Angles))
         suite_array.append(TestLoader().loadTestsFromTestCase(Diffusion_tensor))
         suite_array.append(TestLoader().loadTestsFromTestCase(Generic))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Jw))
         suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
         suite_array.append(TestLoader().loadTestsFromTestCase(Modsel))
         suite_array.append(TestLoader().loadTestsFromTestCase(Relax_fit))
