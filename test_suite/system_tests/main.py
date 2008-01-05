@@ -35,7 +35,6 @@ from jw_mapping import Jw
 from model_free import Mf
 from model_selection import Modsel
 from relax_fit import Relax_fit
-from pipe_create import Pipe_create
 from sequence import Sequence
 
 
@@ -60,22 +59,6 @@ class System_tests:
 
         # Heading.
         heading("The relax test suite")
-
-
-        # Data pipe tests.
-        ##################
-
-        # Heading.
-        heading("The data pipe tests")
-
-        # Initialise the array containing each test element.
-        self.pipe_test_array = []
-
-        # User function pipe.create() test.
-        self.pipe_test_array.append(Pipe_create(self.relax))
-
-        # Execute the tests.
-        self.exec_tests(self.pipe_test_array)
 
 
         # Sequence tests.
@@ -284,21 +267,6 @@ class System_tests:
 
         # Synopsis.
         global_pass = 1
-
-
-        # Data pipe tests.
-        ##################
-
-        # Heading.
-        sys.stdout.write("\nThe data pipe tests:\n")
-
-        # Loop over the tests.
-        for test in self.pipe_test_array:
-            # Synopsis.
-            global_pass = global_pass and test.passed
-
-            # Print the summary line.
-            summary_line(test.name, test.passed)
 
 
         # Sequence tests.
