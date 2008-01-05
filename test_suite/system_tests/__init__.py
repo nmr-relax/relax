@@ -67,4 +67,7 @@ class System_test_runner:
             test.relax = self.relax
 
         # Run the test suite.
-        RelaxTestRunner().run(suite)
+        results = RelaxTestRunner().run(suite)
+
+        # Return the status of the tests.
+        return results.wasSuccessful()
