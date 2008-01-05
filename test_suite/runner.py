@@ -49,9 +49,13 @@ class Test_suite_runner:
 
         self.relax = relax
 
-        # Execute the system/functional tests.
+        # Execute the old system/functional tests.
         sys_runner = System_tests(self.relax)
-        system_result = sys_runner.run()
+        system_result_old = sys_runner.run()
+
+        # Execute the system/functional tests.
+        system_runner = System_test_runner(self.relax)
+        system_result = system_runner.run(runner=RelaxTestRunner())
 
         # Execute the unit tests.
         unit_runner = Unit_test_runner(root_path='test_suite/unit_tests')
@@ -65,6 +69,9 @@ class Test_suite_runner:
         print "###################################"
         print "# Summary of the relax test suite #"
         print "###################################\n"
+
+        # Old system/functional test summary.
+        summary_line("Old system/functional tests", system_result_old)
 
         # System/functional test summary.
         summary_line("System/functional tests", system_result)
