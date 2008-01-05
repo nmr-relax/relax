@@ -27,9 +27,6 @@ from unittest import TestCase
 class Test_pipe_create(TestCase):
     """TestCase class for the functional tests of relax data pipes."""
 
-    def __init__(self, relax):
-        self.relax = relax
-
 
     def tearDown(self):
         """Reset the relax data storage object."""
