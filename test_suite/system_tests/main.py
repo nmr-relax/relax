@@ -29,7 +29,6 @@ from test_suite.formatting import *
 
 # Import the tests.
 from jw_mapping import Jw
-from model_selection import Modsel
 from relax_fit import Relax_fit
 from sequence import Sequence
 
@@ -107,22 +106,6 @@ class System_tests:
 
         # Execute the tests.
         self.exec_tests(self.jw_test_array)
-
-
-        # Model selection tests.
-        ########################
-
-        # Heading.
-        heading("The model selection tests")
-
-        # Initialise the array containing each test element.
-        self.modsel_test_array = []
-
-        # The tests.
-        self.modsel_test_array.append(Modsel(self.relax, 'diff tensor'))
-
-        # Execute the tests.
-        self.exec_tests(self.modsel_test_array)
 
 
         # Fin.
@@ -218,21 +201,6 @@ class System_tests:
 
         # Loop over the tests.
         for test in self.jw_test_array:
-            # Synopsis.
-            global_pass = global_pass and test.passed
-
-            # Print the summary line.
-            summary_line(test.name, test.passed)
-
-
-        # Model selection tests.
-        ########################
-
-        # Heading.
-        sys.stdout.write("\nThe model selection tests:\n")
-
-        # Loop over the tests.
-        for test in self.modsel_test_array:
             # Synopsis.
             global_pass = global_pass and test.passed
 

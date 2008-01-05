@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,32 +22,23 @@
 
 # Python module imports.
 import sys
+from unittest import TestCase
 
 # relax module imports.
 from data import Data as relax_data_store
 
 
-# The relax data storage object.
+class Modsel(TestCase):
+    """Class for testing model selection."""
+
+    def tearDown(self):
+        """Reset the relax data storage object."""
+
+        relax_data_store.__reset__()
 
 
-
-class Modsel:
-    def __init__(self, relax, test_name):
-        """Class for testing model selection."""
-
-        self.relax = relax
-
-        # Diffusion tensor selection.
-        if test_name == 'diff tensor':
-            # The name of the test.
-            self.name = "AIC model selection between two diffusion tensors"
-
-            # The test.
-            self.test = self.diff
-
-
-    def diff(self, pipe):
-        """The test of selecting between diffusion tensors using AIC."""
+    def test_diff(self):
+        """AIC model selection between two diffusion tensors."""
 
         # Init.
         pipes = ['sphere', 'spheroid']
@@ -89,9 +80,5 @@ class Modsel:
         self.relax.interpreter._Modsel.model_selection(method='AIC')
 
         # Test if the spheroid has been selected.
-        if not hasattr(relax_data_store['aic'], 'diff') or not relax_data_store['aic'].diff.type == 'spheroid':
-            print "\nThe spheroid diffusion tensor has not been selected."
-            return
-
-        # Success.
-        return 1
+        self._assert(hasattr(relax_data_store['aic'], 'diff'))
+        self.assertEqual(relax_data_store['aic'].diff.type, 'spheroid')
