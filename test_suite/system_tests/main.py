@@ -28,7 +28,6 @@ import sys
 from test_suite.formatting import *
 
 # Import the tests.
-from generic import Generic
 from jw_mapping import Jw
 from model_selection import Modsel
 from relax_fit import Relax_fit
@@ -124,22 +123,6 @@ class System_tests:
 
         # Execute the tests.
         self.exec_tests(self.modsel_test_array)
-
-
-        # Generic tests.
-        ################
-
-        # Heading.
-        heading("The generic tests")
-
-        # Initialise the array containing each test element.
-        self.generic_test_array = []
-
-        # The tests.
-        self.generic_test_array.append(Generic(self.relax, 'value_diff'))
-
-        # Execute the tests.
-        self.exec_tests(self.generic_test_array)
 
 
         # Fin.
@@ -250,21 +233,6 @@ class System_tests:
 
         # Loop over the tests.
         for test in self.modsel_test_array:
-            # Synopsis.
-            global_pass = global_pass and test.passed
-
-            # Print the summary line.
-            summary_line(test.name, test.passed)
-
-
-        # Generic tests.
-        ################
-
-        # Heading.
-        sys.stdout.write("\nThe generic tests:\n")
-
-        # Loop over the tests.
-        for test in self.generic_test_array:
             # Synopsis.
             global_pass = global_pass and test.passed
 

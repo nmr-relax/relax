@@ -29,6 +29,7 @@ from test_suite.relax_test_runner import RelaxTestRunner
 # relax system/functional test module imports.
 from angles import Angles
 from diffusion_tensor import Diffusion_tensor
+from generic import Generic
 from model_free import Mf
 from test_pipe_create import Test_pipe_create
 
@@ -66,6 +67,7 @@ class System_test_runner:
         suite_array = []
         suite_array.append(TestLoader().loadTestsFromTestCase(Angles))
         suite_array.append(TestLoader().loadTestsFromTestCase(Diffusion_tensor))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Generic))
         suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
         suite_array.append(TestLoader().loadTestsFromTestCase(Test_pipe_create))
 

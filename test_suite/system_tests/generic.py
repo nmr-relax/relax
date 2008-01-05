@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,36 +21,25 @@
 ###############################################################################
 
 # Python module imports.
+from unittest import TestCase
 import sys
 
 # relax module imports.
 from data import Data as relax_data_store
 
 
-# The relax data storage object.
+
+class Generic(TestCase):
+    """Class for testing various aspects specific to relaxation curve-fitting."""
+
+    def tearDown(self):
+        """Reset the relax data storage object."""
+
+        relax_data_store.__reset__()
 
 
-
-class Generic:
-    def __init__(self, relax, test_name):
-        """Class for testing various aspects specific to relaxation curve-fitting."""
-
-        self.relax = relax
-
-        # Value difference test.
-        if test_name == 'value_diff':
-            # The name of the test.
-            self.name = "S2 difference stored in a new data pipe."
-
-            # The test.
-            self.test = self.value_diff
-
-
-    def value_diff(self, pipe):
-        """The test of storing an S2 difference in a new data pipe."""
-
-        # Arguments.
-        self.pipe = pipe
+    def test_value_diff(self):
+        """S2 difference stored in a new data pipe."""
 
         # Init.
         pipes = ['orig1', 'orig2', 'new']
@@ -76,11 +65,4 @@ class Generic:
         self.relax.interpreter._Value.set(diff, 'S2', res_num=8)
 
         # Test if the difference is 0.2!
-        if abs(relax_data_store['new'].mol[0].res[7].spin[0].s2 - 0.2) > 0.00001:
-            print "The difference of '" + `diff` + "' should be equal to 0.2."
-            return
-
-        # Success.
-        else:
-            return 1
-
+        self.assertAlmostEqual(relax_data_store['new'].mol[0].res[7].spin[0].s2, 0.2)
