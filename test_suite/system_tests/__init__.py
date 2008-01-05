@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from unittest import TestLoader
+from unittest import TestLoader, TestSuite
 
 # relax module imports.
 from test_suite.relax_test_runner import RelaxTestRunner
@@ -60,16 +60,21 @@ class System_test_runner:
     def run(self):
         """Function for running all of the system/functional tests."""
 
-        # Create the test suite (add your new TestCase classes here).
-        suite = TestLoader().loadTestsFromTestCase(Test_pipe_create)
-        suite = TestLoader().loadTestsFromTestCase(Mf)
+        # Create an array of test suites (add your new TestCase classes here).
+        suite_array = []
+        suite_array.append(TestLoader().loadTestsFromTestCase(Test_pipe_create))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
 
         # Add the relax namespace to each TestCase object.
-        for test in suite._tests:
-            test.relax = self.relax
+        for i in xrange(len(suite_array)):
+            for test in suite_array[i]._tests:
+                test.relax = self.relax
+
+        # Group all tests together.
+        full_suite = TestSuite(suite_array)
 
         # Run the test suite.
-        results = RelaxTestRunner().run(suite)
+        results = RelaxTestRunner().run(full_suite)
 
         # Return the status of the tests.
         return results.wasSuccessful()
