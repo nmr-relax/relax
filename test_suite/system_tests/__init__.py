@@ -54,12 +54,8 @@ class System_test_runner:
         self.relax = relax
 
 
-    def run(self, runner=None):
-        """Function for running all of the system/functional tests.
-
-        @param runner:  The unit test runner which defaults to TextTestRunner.
-        @type runner:   instance
-        """
+    def run(self):
+        """Function for running all of the system/functional tests."""
 
         # Create the test suite (add your new classes here).
         suite = TestLoader().loadTestsFromTestCase(Test_pipe_create)
