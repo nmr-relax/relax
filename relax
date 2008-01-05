@@ -71,10 +71,7 @@ from prompt import interpreter
 import relax_errors
 from relax_io import log
 import relax_warnings
-from test_suite.relax_test_runner import RelaxTestRunner
 from test_suite.test_suite_runner import Test_suite_runner
-from test_suite.system_tests.main import System_tests
-from test_suite.unit_tests.unit_test_runner import Unit_test_runner
 from thread_classes import Threading, ThreadData
 import version
 
@@ -191,8 +188,9 @@ class Relax:
             self.interpreter._on()
 
             # Run the tests.
-            sys_runner = System_tests(self)
-            system_result = sys_runner.run()
+            runner = Test_suite_runner(self)
+            runner.run_old_system_tests()
+            runner.run_system_tests()
 
         # Execute the relax unit tests.
         elif mode == 'unit tests':
@@ -200,8 +198,8 @@ class Relax:
             self.set_intro_string()
 
             # Run the tests.
-            runner = Unit_test_runner(root_path='test_suite/unit_tests')
-            runner.run(runner=RelaxTestRunner())
+            runner = Test_suite_runner(self)
+            runner.run_unit_tests()
 
         # Test mode.
         elif mode == 'test':
