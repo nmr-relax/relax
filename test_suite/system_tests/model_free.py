@@ -48,22 +48,6 @@ class Mf(TestCase):
 
     def old_code(self):
 
-        # Test of setting the bond length.
-        if test_name == 'set bond length':
-            # The name of the test.
-            self.name = "Setting the bond length through the user function value.set()"
-
-            # The test.
-            self.test = self.set_csa
-
-        # Test of setting the CSA and the bond length.
-        if test_name == 'set csa and bond length':
-            # The name of the test.
-            self.name = "Setting both the CSA value and bond length through the user function value.set()"
-
-            # The test.
-            self.test = self.set_csa_bond_length
-
         # Test of selecting model-free model m4.
         if test_name == 'select m4':
             # The name of the test.
@@ -1195,11 +1179,8 @@ class Mf(TestCase):
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, N15_CSA)
 
 
-    def set_csa_bond_length(self, pipe):
-        """Testing the setting of the CSA value and bond length simultaneously."""
-
-        # Create the data pipe.
-        self.relax.interpreter._Pipe.create(pipe, 'mf')
+    def test_set_csa_bond_length(self):
+        """Setting both the CSA value and bond length through the user function value.set()."""
 
         # Path of the files.
         path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
@@ -1210,17 +1191,12 @@ class Mf(TestCase):
         # Set the CSA value and bond length simultaneously.
         self.relax.interpreter._Value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
 
-        # Test the CSA value.
-        if relax_data_store[pipe].mol[0].res[1].spin[0].csa != N15_CSA:
-            print "The CSA value has not been set correctly."
-            return
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
-        # Test the bond length.
-        if relax_data_store[pipe].mol[0].res[1].spin[0].r != NH_BOND_LENGTH:
-            print "The bond length has not been set correctly."
-            return
-
-        return 1
+        # Test the values.
+        self.assertEqual(cdp.mol[0].res[1].spin[0].csa, N15_CSA)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].r, NH_BOND_LENGTH)
 
 
     def test_values(self, val1, val2, error=None, name=None, scale=1.0, max=0):
