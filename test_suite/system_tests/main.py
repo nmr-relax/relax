@@ -29,7 +29,6 @@ from test_suite.formatting import *
 
 # Import the tests.
 from jw_mapping import Jw
-from relax_fit import Relax_fit
 from sequence import Sequence
 
 
@@ -73,22 +72,6 @@ class System_tests:
 
         # Execute the tests.
         self.exec_tests(self.seq_test_array)
-
-
-        # Relaxation curve-fitting tests.
-        #################################
-
-        # Heading.
-        heading("The relaxation curve-fitting tests")
-
-        # Initialise the array containing each test element.
-        self.relax_fit_test_array = []
-
-        # Loading Sparky peak heights.
-        self.relax_fit_test_array.append(Relax_fit(self.relax, 'read_sparky'))
-
-        # Execute the tests.
-        self.exec_tests(self.relax_fit_test_array)
 
 
         # Reduced spectral density mapping tests.
@@ -171,21 +154,6 @@ class System_tests:
 
         # Loop over the tests.
         for test in self.seq_test_array:
-            # Synopsis.
-            global_pass = global_pass and test.passed
-
-            # Print the summary line.
-            summary_line(test.name, test.passed)
-
-
-        # Relaxation curve-fitting tests.
-        #################################
-
-        # Heading.
-        sys.stdout.write("\nThe relaxation curve-fitting tests:\n")
-
-        # Loop over the tests.
-        for test in self.relax_fit_test_array:
             # Synopsis.
             global_pass = global_pass and test.passed
 
