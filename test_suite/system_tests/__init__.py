@@ -21,11 +21,13 @@
 ###############################################################################
 
 # Python module imports.
-from unittest import TestLoader, TextTestRunner
+from unittest import TestLoader
 
 # relax module imports.
-from test_pipe_create import Test_pipe_create
 from test_suite.relax_test_runner import RelaxTestRunner
+
+# relax system/functional test module imports.
+from test_pipe_create import Test_pipe_create
 
 
 __all__ = ['angles',
@@ -57,7 +59,7 @@ class System_test_runner:
     def run(self):
         """Function for running all of the system/functional tests."""
 
-        # Create the test suite (add your new classes here).
+        # Create the test suite (add your new TestCase classes here).
         suite = TestLoader().loadTestsFromTestCase(Test_pipe_create)
 
         # Add the relax namespace to each TestCase object.
@@ -65,4 +67,4 @@ class System_test_runner:
             test.relax = self.relax
 
         # Run the test suite.
-        TextTestRunner().run(suite)
+        RelaxTestRunner().run(suite)
