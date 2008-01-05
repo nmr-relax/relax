@@ -146,9 +146,9 @@ class Common_functions:
         """Common function for setting parameter values.
 
         @param value:   The value to change the parameter to.
-        @type value:    float
+        @type value:    float or str
         @param error:   The error value associated with the parameter, also to be set.
-        @type error:    float
+        @type error:    float or str
         @param param:   The name of the parameter to change.
         @type param:    str
         @param scaling: The scaling factor for the value or error parameters.
@@ -191,7 +191,14 @@ class Common_functions:
                 if value[i] == None:
                     setattr(spin, object_name, None)
                 else:
-                    setattr(spin, object_name, float(value[i]) * scaling)
+                    # Catch parameters with string values.
+                    try:
+                        value[i] = float(value[i]) * scaling
+                    except ValueError:
+                        pass
+
+                    # Set the attribute.
+                    setattr(spin, object_name, value[i])
 
 
         # Individual data type.
@@ -215,11 +222,25 @@ class Common_functions:
             if value == None:
                 setattr(spin, object_name, None)
             else:
-                setattr(spin, object_name, float(value) * scaling)
+                # Catch parameters with string values.
+                try:
+                    value = float(value) * scaling
+                except ValueError:
+                    pass
+
+                # Set the attribute.
+                setattr(spin, object_name, value)
 
             # Set the error.
             if error != None:
-                setattr(spin, object_name+'_err', float(error) * scaling)
+                # Catch parameters with string values.
+                try:
+                    error = float(error) * scaling
+                except ValueError:
+                    pass
+
+                # Set the attribute.
+                setattr(spin, object_name+'_err', error)
 
             # Update the other parameters if necessary.
             self.set_update(param=param, spin=spin)
