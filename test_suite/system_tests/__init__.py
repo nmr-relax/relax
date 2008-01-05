@@ -20,6 +20,13 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
+from unittest import TestLoader, TextTestRunner
+
+# relax module imports.
+from test_pipe_create import Test_pipe_create
+from test_suite.relax_test_runner import RelaxTestRunner
+
 
 __all__ = ['angles',
            'diffusion_tensor',
@@ -28,6 +35,7 @@ __all__ = ['angles',
            'main',
            'model_free',
            'model_selection',
+           'test_pipe_create',
            'relax_fit',
            'run_create',
            'sequence']
@@ -52,3 +60,9 @@ class System_test_runner:
         @param runner:  The unit test runner which defaults to TextTestRunner.
         @type runner:   instance
         """
+
+        # Create the test suite.
+        suite = TestLoader().loadTestsFromTestCase(Test_pipe_create)
+
+        # Run the test suite.
+        TextTestRunner().run(suite)
