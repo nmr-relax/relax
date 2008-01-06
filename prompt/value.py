@@ -28,7 +28,7 @@ from doc_string import regexp_doc
 import help
 from generic_fns import diffusion_tensor
 from generic_fns import value
-from relax_errors import RelaxBinError, RelaxError, RelaxFloatError, RelaxIntError, RelaxListFloatError, RelaxListStrError, RelaxNoneFloatListError, RelaxNoneIntError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
+from relax_errors import RelaxBinError, RelaxError, RelaxFloatError, RelaxIntError, RelaxListFloatError, RelaxListStrError, RelaxNoneFloatStrListError, RelaxNoneIntError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
 from specific_fns.model_free import Model_free
 from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.relax_fit import Relax_fit
@@ -377,17 +377,17 @@ class Value:
             print text
 
         # The value.
-        if val != None and type(val) != float and type(val) != int and type(val) != list:
-            raise RelaxNoneFloatListError, ('value', val)
+        if val != None and type(val) != float and type(val) != int and type(val) != str and type(val) != list:
+            raise RelaxNoneFloatStrListError, ('value', val)
         if type(val) == list:
             # Empty list.
             if val == []:
-                raise RelaxListFloatError, ('value', val)
+                raise RelaxListFloatStrError, ('value', val)
 
             # Check for values.
             for i in xrange(len(val)):
                 if type(val[i]) != float and type(val[i]) != int:
-                    raise RelaxListFloatError, ('value', val)
+                    raise RelaxListFloatStrError, ('value', val)
 
         # The parameter.
         if param != None and type(param) != str and type(param) != list:

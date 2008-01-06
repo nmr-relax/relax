@@ -271,6 +271,13 @@ class RelaxListFloatError(BaseError):
         if Debug:
             self.save_state()
 
+# List of floating point numbers or strings.
+class RelaxListFloatStrError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + `value` + " must be an array of floating point numbers or strings."
+        if Debug:
+            self.save_state()
+
 # List of integers.
 class RelaxListIntError(BaseError):
     def __init__(self, name, value):
@@ -324,6 +331,13 @@ class RelaxNoneFloatError(BaseError):
 class RelaxNoneFloatListError(BaseError):
     def __init__(self, name, value):
         self.text = "The " + name + " argument " + `value` + " must either be a floating point number, a list, or None."
+        if Debug:
+            self.save_state()
+
+# None, float, str, or list.
+class RelaxNoneFloatStrListError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + `value` + " must either be a floating point number, a string, a list, or None."
         if Debug:
             self.save_state()
 
