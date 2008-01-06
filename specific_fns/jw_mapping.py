@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -376,73 +376,15 @@ class Jw_mapping(Common_functions):
             return 'ppm'
 
 
-    def set(self, value=None, error=None, param=None, spin=None):
+    def set_doc(self, value=None, error=None, param=None, spin=None):
         """
         Reduced spectral density mapping set details
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        In reduced spectral density mapping, only two values can be set, the bond length and CSA
-        value.  These must be set prior to the calculation of spectral density values.
-
+        In reduced spectral density mapping, three values must be set prior to the calculation of
+        spectral density values:  the bond length, CSA, and heteronucleus type.
         """
         __docformat__ = "plaintext"
-
-
-        # Setting the model parameters prior to calculation.
-        ####################################################
-
-        if param == None:
-            # The values are supplied by the user:
-            if value:
-                # Test if the length of the value array is equal to 2.
-                if len(value) != 2:
-                    raise RelaxError, "The length of " + `len(value)` + " of the value array must be equal to two."
-
-            # Default values.
-            else:
-                # Set 'value' to an empty array.
-                value = []
-
-                # CSA and Bond length.
-                value.append(self.default_value('csa'))
-                value.append(self.default_value('r'))
-
-            # Initilise data.
-            if not hasattr(spin, 'csa') or not hasattr(spin, 'r'):
-                self.data_init(spin)
-
-            # CSA and Bond length.
-            setattr(spin, 'csa', float(value[0]))
-            setattr(spin, 'r', float(value[1]))
-
-
-        # Individual data type.
-        #######################
-
-        else:
-            # Get the object.
-            object_name = self.return_data_name(param)
-            if not object_name:
-                raise RelaxError, "The reduced spectral density mapping data type " + `param` + " does not exist."
-
-            # Initialise all data if it doesn't exist.
-            if not hasattr(spin, object_name):
-                self.data_init(spin)
-
-            # Default value.
-            if value == None:
-                value = self.default_value(object_name)
-
-            # No default value, hence the parameter cannot be set.
-            if value == None:
-                raise RelaxParamSetError, param
-
-            # Set the value.
-            setattr(spin, object_name, float(value))
-
-            # Set the error.
-            if error != None:
-                setattr(spin, object_name+'_err', float(error))
 
 
     def set_frq(self, run=None, frq=None):
