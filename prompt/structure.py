@@ -303,7 +303,7 @@ class Structure:
         structure.read_pdb(file=file, dir=dir, model=model, load_seq=load_seq)
 
 
-    def vectors(self, heteronuc='N', proton='H', res_num=None, res_name=None):
+    def vectors(self, heteronuc='N', proton='H', spin_id=None):
         """Function for calculating/extracting XH vectors from the structure.
 
         Keyword arguments
@@ -313,9 +313,7 @@ class Structure:
 
         proton:  The name of the proton as specified in the PDB file.
 
-        res_num:  The residue number.
-
-        res_name:  The name of the residue.
+        spin_id:  The spin identification string.
 
 
         Description
@@ -346,8 +344,8 @@ class Structure:
         If you are working with RNA, you can use the residue name identifier to calculate the
         vectors for each residue separately.  For example:
 
-        relax> structure.vectors('N1', 'H1', res_name='G')
-        relax> structure.vectors('N3', 'H3', res_name='U')
+        relax> structure.vectors('N1', 'H1', spin_id=':G')
+        relax> structure.vectors('N3', 'H3', spin_id=':U')
 
         """
 
@@ -356,8 +354,7 @@ class Structure:
             text = sys.ps3 + "structure.vectors("
             text = text + "heteronuc=" + `heteronuc`
             text = text + ", proton=" + `proton`
-            text = text + ", res_num=" + `res_num`
-            text = text + ", res_name=" + `res_name` + ")"
+            text = text + ", spin_id=" + `spin_id` + ")"
             print text
 
         # The heteronucleus argument.
@@ -368,13 +365,9 @@ class Structure:
         if type(proton) != str:
             raise RelaxStrError, ('proton', proton)
 
-        # Residue number.
-        if res_num != None and type(res_num) != int:
-            raise RelaxNoneIntError, ('residue number', res_num)
-
-        # Residue name.
-        if res_name != None and type(res_name) != str:
-            raise RelaxNoneStrError, ('residue name', res_name)
+        # Spin identification string.
+        if spin_id != None and type(spin_id) != str:
+            raise RelaxNoneStrError, ('Spin identification string', spin_id)
 
         # Execute the functional code.
-        structure.vectors(heteronuc=heteronuc, proton=proton, res_num=res_num, res_name=res_name)
+        structure.vectors(heteronuc=heteronuc, proton=proton, spin_id=spin_id)
