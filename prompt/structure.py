@@ -293,7 +293,7 @@ class Structure:
 
         # The model argument.
         if model != None and type(model) != int:
-            raise RelaxIntError, ('model', model)
+            raise RelaxNoneIntError, ('model', model)
 
         # The load sequence argument.
         if type(load_seq) != int or (load_seq != 0 and load_seq != 1):
