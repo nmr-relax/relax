@@ -46,8 +46,8 @@ class Test_value(Value_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the None, float, int, or bin arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin' or data[0] == 'float':
+            # Catch the None, float, int, str, or bin arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin' or data[0] == 'str' or data[0] == 'float':
                 continue
 
             # Catch all number lists.
