@@ -46,8 +46,8 @@ class Test_structure(Structure_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the float and int arguments, and skip them.
-            if data[0] == 'float' or data[0] == 'int':
+            # Catch the float, bin, and int arguments, and skip them.
+            if data[0] == 'float' or data[0] == 'bin' or data[0] == 'int':
                 continue
 
             # The argument test.
