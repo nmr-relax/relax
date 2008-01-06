@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006-2007 Edward d'Auvergne                             #
+# Copyright (C) 2004, 2006-2008 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,7 @@ from copy import deepcopy
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError
+from relax_errors import RelaxError, RelaxParamSetError
 
 
 # The relax data storage object.
@@ -217,6 +217,10 @@ class Common_functions:
             # Default value.
             if value == None:
                 value = self.default_value(object_name)
+
+            # No default value, hence the parameter cannot be set.
+            if value == None:
+                raise RelaxParamSetError, param
 
             # Set the value.
             if value == None:
