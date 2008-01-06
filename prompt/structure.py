@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2006 Edward d'Auvergne                            #
+# Copyright (C) 2003, 2004, 2006-2008 Edward d'Auvergne                       #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,8 +20,11 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
 
+# relax module imports.
+from generic_fns import structure
 import help
 from relax_errors import RelaxBinError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 
@@ -39,13 +42,11 @@ class Structure:
         self.__relax__ = relax
 
 
-    def create_diff_tensor_pdb(self, run=None, scale=1.8e-6, file='tensor.pdb', dir=None, force=0):
+    def create_diff_tensor_pdb(self, scale=1.8e-6, file='tensor.pdb', dir=None, force=0):
         """Create a PDB file to represent the diffusion tensor.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The run to assign the structure to.
 
         scale:  Value for scaling the diffusion rates.
 
@@ -139,20 +140,15 @@ class Structure:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "structure.create_diff_tensor_pdb("
-            text = text + "run=" + `run`
-            text = text + ", scale=" + `scale`
+            text = text + "scale=" + `scale`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force` + ")"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
         # Scaling.
-        #if type(scale) != float and type(scale) != int:
-        #    raise RelaxNumError, ('scaling factor', scale)
+        if type(scale) != float and type(scale) != int:
+            raise RelaxNumError, ('scaling factor', scale)
 
         # File name.
         if type(file) != str:
@@ -167,16 +163,14 @@ class Structure:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        self.__relax__.generic.structure.create_diff_tensor_pdb(run=run, scale=scale, file=file, dir=dir, force=force)
+        structure.create_diff_tensor_pdb(scale=scale, file=file, dir=dir, force=force)
 
 
-    def create_vector_dist(self, run=None, length=2e-9, symmetry=1, file='XH_dist.pdb', dir=None, force=0):
+    def create_vector_dist(self, length=2e-9, symmetry=1, file='XH_dist.pdb', dir=None, force=0):
         """Create a PDB file representation of the distribution of XH bond vectors.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The run to assign the structure to.
 
         length:  The length of the vectors in the PDB representation (meters).
 
@@ -207,17 +201,12 @@ class Structure:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "structure.create_vector_dist("
-            text = text + "run=" + `run`
-            text = text + ", length=" + `length`
+            text = text + "length=" + `length`
             text = text + ", symmetry=" + `symmetry`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # Vector length.
         if type(length) != float:
@@ -240,16 +229,14 @@ class Structure:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        self.__relax__.generic.structure.create_vector_dist(run=run, length=length, symmetry=symmetry, file=file, dir=dir, force=force)
+        structure.create_vector_dist(length=length, symmetry=symmetry, file=file, dir=dir, force=force)
 
 
-    def read_pdb(self, run=None, file=None, dir=None, model=None, load_seq=1):
+    def read_pdb(self, file=None, dir=None, model=None, load_seq=1):
         """The pdb loading function.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The run to assign the structure to.
 
         file:  The name of the PDB file.
 
@@ -274,33 +261,27 @@ class Structure:
         Example
         ~~~~~~~
 
-        To load all structures from the PDB file 'test.pdb' in the directory '~/pdb' for use in the
-        model-free analysis run 'm8', type:
+        To load all structures from the PDB file 'test.pdb' in the directory '~/pdb', type:
 
-        relax> structure.read_pdb('m8', 'test.pdb', '~/pdb', 1)
-        relax> structure.read_pdb(run='m8', file='test.pdb', dir='pdb', model=1)
+        relax> structure.read_pdb('test.pdb', '~/pdb', 1)
+        relax> structure.read_pdb(file='test.pdb', dir='pdb', model=1)
 
 
         To load the 10th model from the file 'test.pdb', use:
 
-        relax> structure.read_pdb('m1', 'test.pdb', model=10)
-        relax> structure.read_pdb(run='m1', file='test.pdb', model=10)
+        relax> structure.read_pdb('test.pdb', model=10)
+        relax> structure.read_pdb(file='test.pdb', model=10)
 
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "structure.read_pdb("
-            text = text + "run=" + `run`
-            text = text + ", file=" + `file`
+            text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", model=" + `model`
             text = text + ", load_seq=" + `load_seq` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # File name.
         if type(file) != str:
@@ -319,16 +300,14 @@ class Structure:
             raise RelaxBinError, ('load sequence flag', load_seq)
 
         # Execute the functional code.
-        self.__relax__.generic.structure.read_pdb(run=run, file=file, dir=dir, model=model, load_seq=load_seq)
+        structure.read_pdb(file=file, dir=dir, model=model, load_seq=load_seq)
 
 
-    def vectors(self, run=None, heteronuc='N', proton='H', res_num=None, res_name=None):
+    def vectors(self, heteronuc='N', proton='H', res_num=None, res_name=None):
         """Function for calculating/extracting XH vectors from the structure.
 
         Keyword arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The run to assign the vectors to.
 
         heteronuc:  The heteronucleus name as specified in the PDB file.
 
@@ -353,39 +332,33 @@ class Structure:
         ~~~~~~~
 
         To calculate the XH vectors of the backbone amide nitrogens where in the PDB file the
-        backbone nitrogen is called 'N' and the attached proton is called 'H', assuming the run
-        'test', type:
+        backbone nitrogen is called 'N' and the attached proton is called 'H', type:
 
-        relax> structure.vectors('test')
-        relax> structure.vectors('test', 'N')
-        relax> structure.vectors('test', 'N', 'H')
-        relax> structure.vectors('test', heteronuc='N', proton='H')
+        relax> structure.vectors()
+        relax> structure.vectors('N')
+        relax> structure.vectors('N', 'H')
+        relax> structure.vectors(heteronuc='N', proton='H')
 
         If the attached proton is called 'HN', type:
 
-        relax> structure.vectors('test', proton='HN')
+        relax> structure.vectors(proton='HN')
 
         If you are working with RNA, you can use the residue name identifier to calculate the
         vectors for each residue separately.  For example:
 
-        relax> structure.vectors('m1', 'N1', 'H1', res_name='G')
-        relax> structure.vectors('m1', 'N3', 'H3', res_name='U')
+        relax> structure.vectors('N1', 'H1', res_name='G')
+        relax> structure.vectors('N3', 'H3', res_name='U')
 
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "structure.vectors("
-            text = text + "run=" + `run`
-            text = text + ", heteronuc=" + `heteronuc`
+            text = text + "heteronuc=" + `heteronuc`
             text = text + ", proton=" + `proton`
             text = text + ", res_num=" + `res_num`
             text = text + ", res_name=" + `res_name` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The heteronucleus argument.
         if type(heteronuc) != str:
@@ -404,4 +377,4 @@ class Structure:
             raise RelaxNoneStrError, ('residue name', res_name)
 
         # Execute the functional code.
-        self.__relax__.generic.structure.vectors(run=run, heteronuc=heteronuc, proton=proton, res_num=res_num, res_name=res_name)
+        structure.vectors(heteronuc=heteronuc, proton=proton, res_num=res_num, res_name=res_name)
