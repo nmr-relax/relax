@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Data as relax_data_store
 from prompt.value import Value
-from relax_errors import RelaxError, RelaxListFloatError, RelaxListStrError, RelaxNoneFloatListError, RelaxNoneStrError, RelaxNoneStrListError
+from relax_errors import RelaxError, RelaxListFloatError, RelaxListStrError, RelaxNoneFloatStrListError, RelaxNoneStrError, RelaxNoneStrListError
 from test_suite.unit_tests.value_testing_base import Value_base_class
 
 # Unit test imports.
@@ -62,7 +62,7 @@ class Test_value(Value_base_class, TestCase):
 
             # All other arguments.
             else:
-                self.assertRaises(RelaxNoneFloatListError, self.value_fns.set, val=data[1], param='CSA')
+                self.assertRaises(RelaxNoneFloatStrListError, self.value_fns.set, val=data[1], param='CSA')
 
 
     def test_set_argfail_param(self):
