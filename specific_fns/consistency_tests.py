@@ -28,24 +28,24 @@ from string import replace
 # relax module imports.
 from data import Data as relax_data_store
 from base_class import Common_functions
-from maths_fns.jw_mapping import Mapping
-from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError, RelaxNucleusError
-from physical_constants import N15_CSA, NH_BOND_LENGTH
+from maths_fns.consistency_tests import Consistency
+from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError, RelaxNucleusError, RelaxParamSetError
+from physical_constants import N15_CSA, NH_BOND_LENGTH, ORIENTATION, TC
 
 
-class Jw_mapping(Common_functions):
+class Consistency_tests(Common_functions):
     def __init__(self):
-        """Class containing functions specific to reduced spectral density mapping."""
+        """Class containing functions specific to consistency testing."""
 
 
     def calculate(self, run=None, print_flag=1, sim_index=None):
-        """Calculation of the spectral density values."""
+        """Calculation of the consistency functions."""
 
         # Run argument.
         self.run = run
 
         # Test if the frequency has been set.
-        if not hasattr(relax_data_store, 'jw_frq') or not relax_data_store.jw_frq.has_key(self.run) or type(relax_data_store.jw_frq[self.run]) != float:
+        if not hasattr(relax_data_store, 'ct_frq') or not relax_data_store.ct_frq.has_key(self.run) or type(relax_data_store.ct_frq[self.run]) != float:
             raise RelaxError, "The frequency for the run " + `self.run` + " has not been set up."
 
         # Test if the nucleus type has been set.
@@ -56,7 +56,7 @@ class Jw_mapping(Common_functions):
         if not relax_data_store.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
-        # Test if the CSA and bond length values have been set.
+        # Test if the CSA, bond length, angle Theta and correlation time values have been set.
         for i in xrange(len(relax_data_store.res[self.run])):
             # Skip unselected residues.
             if not relax_data_store.res[self.run][i].select:
@@ -70,11 +70,19 @@ class Jw_mapping(Common_functions):
             if not hasattr(relax_data_store.res[self.run][i], 'r') or relax_data_store.res[self.run][i].r == None:
                 raise RelaxNoValueError, "bond length"
 
-        # Frequency index.
-        if relax_data_store.jw_frq[self.run] not in relax_data_store.frq[self.run]:
-            raise RelaxError, "No relaxation data corresponding to the frequency " + `relax_data_store.jw_frq[self.run]` + " has been loaded."
+            # Angle Theta
+            if not hasattr(self.relax.data.res[self.run][i], 'orientation') or self.relax.data.res[self.run][i].orientation == None:
+                raise RelaxNoValueError, "angle Theta"
 
-        # Reduced spectral density mapping.
+            # Correlation time
+            if not hasattr(self.relax.data.res[self.run][i], 'tc') or self.relax.data.res[self.run][i].tc == None:
+                raise RelaxNoValueError, "correlation time"
+
+        # Frequency index.
+        if relax_data_store.ct_frq[self.run] not in relax_data_store.frq[self.run]:
+            raise RelaxError, "No relaxation data corresponding to the frequency " + `relax_data_store.ct_frq[self.run]` + " has been loaded."
+
+        # Consistency testing.
         for i in xrange(len(relax_data_store.res[self.run])):
             # Reassign data structure.
             data = relax_data_store.res[self.run][i]
@@ -86,7 +94,7 @@ class Jw_mapping(Common_functions):
             # Residue specific frequency index.
             frq_index = None
             for j in xrange(data.num_frq):
-                if data.frq[j] == relax_data_store.jw_frq[self.run]:
+                if data.frq[j] == relax_data_store.ct_frq[self.run]:
                     frq_index = j
             if frq_index == None:
                 continue
@@ -124,16 +132,16 @@ class Jw_mapping(Common_functions):
                 continue
 
             # Initialise the function to calculate.
-            self.jw = Mapping(frq=relax_data_store.jw_frq[self.run], gx=relax_data_store.gx, gh=relax_data_store.gh, mu0=relax_data_store.mu0, h_bar=relax_data_store.h_bar)
+            self.ct = Consistency(frq=relax_data_store.ct_frq[self.run], gx=relax_data_store.gx, gh=relax_data_store.gh, mu0=relax_data_store.mu0, h_bar=relax_data_store.h_bar)
 
             # Calculate the spectral density values.
-            j0, jwx, jwh = self.jw.func(r=data.r, csa=data.csa, r1=r1, r2=r2, noe=noe)
+            j0, f_eta, f_r2 = self.ct.func(orientation=data.orientation, tc=data.tc, r=data.r, csa=data.csa, r1=r1, r2=r2, noe=noe)
 
             # Reduced spectral density values.
             if sim_index == None:
                 data.j0 = j0
-                data.jwx = jwx
-                data.jwh = jwh
+                data.f_eta = f_eta
+                data.f_r2 = f_r2
 
             # Monte Carlo simulated reduced spectral density values.
             else:
@@ -141,13 +149,13 @@ class Jw_mapping(Common_functions):
                 self.data_init(data, sim=1)
                 if data.j0_sim == None:
                     data.j0_sim = []
-                    data.jwx_sim = []
-                    data.jwh_sim = []
+                    data.f_eta_sim = []
+                    data.f_r2_sim = []
 
                 # Reduced spectral density values.
                 data.j0_sim.append(j0)
-                data.jwx_sim.append(jwx)
-                data.jwh_sim.append(jwh)
+                data.f_eta_sim.append(f_eta)
+                data.f_r2_sim.append(f_r2)
 
 
     def data_init(self, data, sim=0):
@@ -179,11 +187,19 @@ class Jw_mapping(Common_functions):
 
         csa:  CSA value.
 
+        nucleus:  The heteronucleus type.
+
+        orientation:  Angle between the 15N-1H vector and the principal axis of the 15N chemical
+                     shift tensor.
+
+        tc:  Correlation time.
+
         j0:  Spectral density value at 0 MHz.
 
-        jwx:  Spectral density value at the frequency of the heteronucleus.
+        f_eta:  Eta-test (from Fushman D. et al. (1998) JACS, 120: 10947-10952).
 
-        jwh:  Spectral density value at the frequency of the heteronucleus.
+        f_r2:  R2-test (from Fushman D. et al. (1998) JACS, 120: 10947-10952).
+
         """
 
         # Initialise.
@@ -192,40 +208,62 @@ class Jw_mapping(Common_functions):
         # Values.
         names.append('r')
         names.append('csa')
+        names.append('nucleus')
+        names.append('orientation')
+        names.append('tc')
 
         # Spectral density values.
         names.append('j0')
-        names.append('jwx')
-        names.append('jwh')
+        names.append('f_eta')
+        names.append('f_r2')
 
         return names
 
 
     def default_value(self, param):
         """
-        Reduced spectral density mapping default values
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Consistency testing default values
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         These default values are found in the file 'physical_constants.py'.
 
-        _______________________________________________________________________________________
-        |                                       |              |                              |
-        | Data type                             | Object name  | Value                        |
-        |_______________________________________|______________|______________________________|
-        |                                       |              |                              |
-        | Bond length                           | 'r'          | 1.02 * 1e-10                 |
-        |                                       |              |                              |
-        | CSA                                   | 'csa'        | -172 * 1e-6                  |
-        |_______________________________________|______________|______________________________|
+        ________________________________________________________________________________________
+        |                                       |               |                              |
+        | Data type                             | Object name   | Value                        |
+        |_______________________________________|_______________|______________________________|
+        |                                       |               |                              |
+        | Bond length                           | 'r'           | 1.02 * 1e-10                 |
+        |                                       |               |                              |
+        | CSA                                   | 'csa'         | -172 * 1e-6                  |
+        |                                       |               |                              |
+        | Heteronucleus type                    | 'nucleus'     | 'N'                          |
+        |                                       |               |                              |
+        | Angle Theta                           | 'orientation' | 15.7                         |
+        |                                       |               |                              |
+        | Correlation time                      | 'tc'          | 13 * 1e-9                    |
+        |_______________________________________|_______________|______________________________|
 
         """
+        __docformat__ = "plaintext"
 
         # Bond length.
         if param == 'r':
             return NH_BOND_LENGTH
 
         # CSA.
-        if param == 'CSA':
+        elif param == 'csa':
             return N15_CSA
+
+        # Heteronucleus type.
+        elif param == 'nucleus':
+            return 'N'
+
+        # Angle Theta
+        elif param == 'orientation':
+            return THETA
+
+        # Correlation time
+        elif param == 'tc':
+            return TC
 
 
     def num_instances(self, run=None):
@@ -264,33 +302,39 @@ class Jw_mapping(Common_functions):
 
 
     def return_conversion_factor(self, stat_type):
-        """Dummy function for returning 1.0."""
+        """Dummy function for returning 1.0. This function is essential when writing grace files."""
 
         return 1.0
 
 
     def return_data_name(self, name):
         """
-        Reduced spectral density mapping data type string matching patterns
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Consistency testing data type string matching patterns
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         ____________________________________________________________________________________________
-        |                        |              |                                                  |
-        | Data type              | Object name  | Patterns                                         |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | J(0)                   | 'j0'         | '^[Jj]0$' or '[Jj]\(0\)'                         |
-        |                        |              |                                                  |
-        | J(wX)                  | 'jwx'        | '^[Jj]w[Xx]$' or '[Jj]\(w[Xx]\)'                 |
-        |                        |              |                                                  |
-        | J(wH)                  | 'jwh'        | '^[Jj]w[Hh]$' or '[Jj]\(w[Hh]\)'                 |
-        |                        |              |                                                  |
-        | Bond length            | 'r'          | '^r$' or '[Bb]ond[ -_][Ll]ength'                 |
-        |                        |              |                                                  |
-        | CSA                    | 'csa'        | '^[Cc][Ss][Aa]$'                                 |
-        |________________________|______________|__________________________________________________|
-
+        |                       |               |                                                  |
+        | Data type             | Object name   | Patterns                                         |
+        |_______________________|_______________|__________________________________________________|
+        |                       |               |                                                  |
+        | J(0)                  | 'j0'          | '^[Jj]0$' or '[Jj]\(0\)'                         |
+        |                       |               |                                                  |
+        | F_eta                 | 'f_eta'       | '^[Ff]_[Ee][Tt][Aa]$'                            |
+        |                       |               |                                                  |
+        | F_R2                  | 'f_r2'        | '^[Ff]_[Rr]2$'                                   |
+        |                       |               |                                                  |
+        | Bond length           | 'r'           | '^r$' or '[Bb]ond[ -_][Ll]ength'                 |
+        |                       |               |                                                  |
+        | CSA                   | 'csa'         | '^[Cc][Ss][Aa]$'                                 |
+        |                       |               |                                                  |
+        | Heteronucleus type    | 'nucleus'     | '^[Nn]ucleus$'                                   |
+        |                       |               |                                                  |
+        | Angle Theta           | 'orientation' | '^[Oo][Rr][Ii][Ee][Nn][Tt][Aa][Tt][Ii][Oo][Nn]$' |
+        |                       |               |                                                  |
+        | Correlation time      | 'tc'          | '^[Tt]c$'                                        |
+        |_______________________|_______________|__________________________________________________|
         """
+        __docformat__ = "plaintext"
 
         # J(0).
         if search('^[Jj]0$', name) or search('[Jj]\(0\)', name):
@@ -311,6 +355,18 @@ class Jw_mapping(Common_functions):
         # CSA.
         if search('^[Cc][Ss][Aa]$', name):
             return 'csa'
+
+        # Heteronucleus type.
+        if search('^[Nn]ucleus$', name):
+            return 'nucleus'
+
+        # Angle Theta
+        if search('^[Oo][Rr][Ii][Ee][Nn][Tt][Aa][Tt][Ii][Oo][Nn]$', name):
+            return 'orientation'
+
+        # Correlation time
+        if search('^[Tt]c$', name):
+            return 'tc'
 
 
     def return_grace_string(self, data_type):
@@ -339,6 +395,14 @@ class Jw_mapping(Common_functions):
         elif object_name == 'csa':
             return '\\qCSA\\Q'
 
+        # Angle Theta
+        elif object_name == 'orientation':
+            return '\\q\\xq\\Q'
+
+        # Correlation time
+        elif object_name == 'tc':
+            return '\\q\\xt\\f{}c\\Q'
+
 
     def return_units(self, data_type):
         """Function for returning a string representing the parameters units.
@@ -359,16 +423,26 @@ class Jw_mapping(Common_functions):
         elif object_name == 'csa':
             return 'ppm'
 
+        # Angle Theta
+        elif object_name == 'orientation':
+            return 'degrees'
 
-    def set(self, run=None, value=None, error=None, param=None, index=None):
+        # Correlation time
+        elif object_name == 'tc':
+            return 'ns'
+
+
+    def set_doc(self, value=None, error=None, param=None, spin=None):
         """
-        Reduced spectral density mapping set details
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Consistency testing set details
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        In reduced spectral density mapping, only two values can be set, the bond length and CSA
-        value.  These must be set prior to the calculation of spectral density values.
+        In consistency testing, only four values can be set, the bond length, CSA, angle
+        Theta ('orientation') and correlation time values. These must be set prior to the
+        calculation of consistency functions.
 
         """
+	__docformat__ = "plaintext"
 
         # Arguments.
         self.run = run
@@ -391,14 +465,18 @@ class Jw_mapping(Common_functions):
                 # CSA and Bond length.
                 value.append(self.default_value('csa'))
                 value.append(self.default_value('r'))
+                value.append(self.default_value('orientation'))
+                value.append(self.default_value('tc'))
 
             # Initilise data.
-            if not hasattr(relax_data_store.res[self.run][index], 'csa') or not hasattr(relax_data_store.res[self.run][index], 'r'):
+            if not hasattr(relax_data_store.res[self.run][index], 'csa') or not hasattr(relax_data_store.res[self.run][index], 'r') or not hasattr(self.relax.data.res[self.run][index], 'orientation') or not hasattr(self.relax.data.res[self.run][index], 'tc'):
                 self.data_init(relax_data_store.res[self.run][index])
 
             # CSA and Bond length.
             setattr(relax_data_store.res[self.run][index], 'csa', float(value[0]))
             setattr(relax_data_store.res[self.run][index], 'r', float(value[1]))
+            setattr(self.relax.data.res[self.run][index], 'orientation', float(value[2]))
+            setattr(self.relax.data.res[self.run][index], 'tc', float(value[3]))
 
 
         # Individual data type.
@@ -408,7 +486,7 @@ class Jw_mapping(Common_functions):
             # Get the object.
             object_name = self.return_data_name(param)
             if not object_name:
-                raise RelaxError, "The reduced spectral density mapping data type " + `param` + " does not exist."
+                raise RelaxError, "The consistency tests data type " + `param` + " does not exist."
 
             # Initialise all data if it doesn't exist.
             if not hasattr(relax_data_store.res[self.run][index], object_name):
@@ -427,7 +505,7 @@ class Jw_mapping(Common_functions):
 
 
     def set_frq(self, run=None, frq=None):
-        """Function for selecting which relaxation data to use in the J(w) mapping."""
+        """Function for selecting which relaxation data to use in the consistency tests."""
 
         # Run argument.
         self.run = run
@@ -436,21 +514,21 @@ class Jw_mapping(Common_functions):
         if not self.run in relax_data_store.run_names:
             raise RelaxNoPipeError, self.run
 
-        # Test if the run type is set to 'jw'.
+        # Test if the run type is set to 'ct'.
         function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
-        if function_type != 'jw':
+        if function_type != 'ct':
             raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 
         # Test if the frequency has been set.
-        if hasattr(relax_data_store, 'jw_frq') and relax_data_store.jw_frq.has_key(self.run):
+        if hasattr(relax_data_store, 'ct_frq') and relax_data_store.ct_frq.has_key(self.run):
             raise RelaxError, "The frequency for the run " + `self.run` + " has already been set."
 
         # Create the data structure if it doesn't exist.
-        if not hasattr(relax_data_store, 'jw_frq'):
-            relax_data_store.jw_frq = {}
+        if not hasattr(relax_data_store, 'ct_frq'):
+            relax_data_store.ct_frq = {}
 
         # Set the frequency.
-        relax_data_store.jw_frq[self.run] = frq
+        relax_data_store.ct_frq[self.run] = frq
 
 
     def set_error(self, run, instance, index, error):
@@ -463,13 +541,13 @@ class Jw_mapping(Common_functions):
         if index == 0:
             relax_data_store.res[self.run][instance].j0_err = error
 
-        # Return J(wX) sim data.
+        # Return F_eta sim data.
         if index == 1:
-            relax_data_store.res[self.run][instance].jwx_err = error
+            relax_data_store.res[self.run][instance].f_eta_err = error
 
-        # Return J(wH) sim data.
+        # Return F_R2 sim data.
         if index == 2:
-            relax_data_store.res[self.run][instance].jwh_err = error
+            relax_data_store.res[self.run][instance].f_r2_err = error
 
 
     def sim_return_param(self, run, instance, index):
@@ -486,13 +564,13 @@ class Jw_mapping(Common_functions):
         if index == 0:
             return relax_data_store.res[self.run][instance].j0_sim
 
-        # Return J(wX) sim data.
+        # Return F_eta sim data.
         if index == 1:
-            return relax_data_store.res[self.run][instance].jwx_sim
+            return relax_data_store.res[self.run][instance].f_eta_sim
 
-        # Return J(wH) sim data.
+        # Return F_R2 sim data.
         if index == 2:
-            return relax_data_store.res[self.run][instance].jwh_sim
+            return relax_data_store.res[self.run][instance].f_r2_sim
 
 
     def sim_return_selected(self, run, instance):
@@ -526,7 +604,7 @@ class Jw_mapping(Common_functions):
         relax_data_store.res[run][i].relax_sim_data = sim_data
 
 
-    def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, nucleus=None, wH=None, j0=None, jwx=None, jwh=None, r=None, csa=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
+    def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, nucleus=None, wH=None, j0=None, f_eta=None, f_r2=None, r=None, csa=None, orientation=None, tc=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
         """Function for printing a single line of the columnar formatted results."""
 
         # Residue number and name.
@@ -543,10 +621,12 @@ class Jw_mapping(Common_functions):
 
         # Parameters.
         file.write("%-25s " % j0)
-        file.write("%-25s " % jwx)
-        file.write("%-25s " % jwh)
+        file.write("%-25s " % f_eta)
+        file.write("%-25s " % f_r2)
         file.write("%-25s " % r)
         file.write("%-25s " % csa)
+        file.write("%-25s " % orientation)
+        file.write("%-25s " % tc)
 
         # Relaxation data setup.
         if ri_labels:
@@ -602,7 +682,7 @@ class Jw_mapping(Common_functions):
                 ri_error.append('Ri_error_(' + relax_data_store.ri_labels[self.run][i] + "_" + relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][i]] + ")")
 
         # Write the header line.
-        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', wH='Proton_frq_(MHz)', j0='J(0)', jwx='J(wX)', jwh='J(wH)', r='Bond_length_(A)', csa='CSA_(ppm)', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
+        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', wH='Proton_frq_(MHz)', j0='J(0)', f_eta='F_eta', f_r2='F_R2', r='Bond_length_(A)', csa='CSA_(ppm)', orientation='Angle_Theta_(degrees)', tc='Correlation_time_(ns)', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
 
 
         # Values.
@@ -612,7 +692,7 @@ class Jw_mapping(Common_functions):
         nucleus = self.relax.generic.nuclei.find_nucleus()
 
         # The proton frequency in MHz.
-        wH = relax_data_store.jw_frq[self.run] / 1e6
+        wH = relax_data_store.ct_frq[self.run] / 1e6
 
         # Relaxation data setup.
         try:
@@ -636,15 +716,15 @@ class Jw_mapping(Common_functions):
             if hasattr(data, 'j0'):
                 j0 = data.j0
 
-            # J(wX).
-            jwx = None
-            if hasattr(data, 'jwx'):
-                jwx = data.jwx
+            # F_eta.
+            f_eta = None
+            if hasattr(data, 'f_eta'):
+                f_eta = data.f_eta
 
-            # J(wH).
-            jwh = None
-            if hasattr(data, 'jwh'):
-                jwh = data.jwh
+            # F_R2.
+            f_r2 = None
+            if hasattr(data, 'f_r2'):
+                f_r2 = data.f_r2
 
             # Bond length.
             r = None
@@ -678,7 +758,7 @@ class Jw_mapping(Common_functions):
                         ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='value', nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='value', nucleus=nucleus, wH=`wH`, j0=`j0`, f_eta=`f_eta`, f_r2=`f_r2`, r=`r`, csa=`csa`, orientation=`orientation`, tc=`tc`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Errors.
@@ -700,15 +780,15 @@ class Jw_mapping(Common_functions):
             if hasattr(data, 'j0_err'):
                 j0 = data.j0_err
 
-            # J(wX).
-            jwx = None
-            if hasattr(data, 'jwx_err'):
-                jwx = data.jwx_err
+            # F_eta.
+            f_eta = None
+            if hasattr(data, 'f_eta_err'):
+                f_eta = data.f_eta_err
 
-            # J(wH).
-            jwh = None
-            if hasattr(data, 'jwh_err'):
-                jwh = data.jwh_err
+            # F_R2.
+            f_r2 = None
+            if hasattr(data, 'f_r2_err'):
+                f_r2 = data.f_r2_err
 
             # Bond length.
             r = None
@@ -720,6 +800,16 @@ class Jw_mapping(Common_functions):
             if hasattr(data, 'csa_err') and data.csa_err != None:
                 csa = data.csa_err / 1e-6
 
+            # Angle Theta.
+            orientation = None
+            if hasattr(data, 'orientation_err') and data.orientation_err != None:
+                orientation = data.orientation_err
+
+            # Correlation time.
+            tc = None
+            if hasattr(data, 'tc_err') and data.tc_err != None:
+                tc = data.tc_err / 1e-6
+
             # Relaxation data and errors.
             ri = []
             ri_error = []
@@ -728,7 +818,7 @@ class Jw_mapping(Common_functions):
                 ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, wH=`wH`, j0=`j0`, f_eta=`f_eta`, f_r2=`f_r2`, r=`r`, csa=`csa`, orientation=`orientation`, tc=`tc`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Simulation values.
@@ -746,15 +836,15 @@ class Jw_mapping(Common_functions):
                 if hasattr(data, 'j0_sim'):
                     j0 = data.j0_sim[i]
 
-                # J(wX).
-                jwx = None
-                if hasattr(data, 'jwx_sim'):
-                    jwx = data.jwx_sim[i]
+                # F_eta.
+                f_eta = None
+                if hasattr(data, 'f_eta_sim'):
+                    f_eta = data.f_eta_sim[i]
 
-                # J(wH).
-                jwh = None
-                if hasattr(data, 'jwh_sim'):
-                    jwh = data.jwh_sim[i]
+                # F_R2.
+                f_r2 = None
+                if hasattr(data, 'f_r2_sim'):
+                    f_r2 = data.f_r2_sim[i]
 
                 # Bond length.
                 r = None
@@ -765,6 +855,16 @@ class Jw_mapping(Common_functions):
                 csa = None
                 if hasattr(data, 'csa_sim') and data.csa_sim != None and data.csa_sim[i] != None:
                     csa = data.csa_sim[i] / 1e-6
+
+                # Angle Theta.
+                orientation = None
+                if hasattr(data, 'orientation_sim') and data.orientation_sim != None and data.orientation_sim[i] != None:
+                    orientation = data.orientation_sim[i]
+
+                # Correlation time.
+                tc = None
+                if hasattr(data, 'tc_sim') and data.tc_sim != None and data.tc_sim[i] != None:
+                    tc = data.tc_sim[i] / 1e-6
 
                 # Relaxation data and errors.
                 ri = []
@@ -788,4 +888,4 @@ class Jw_mapping(Common_functions):
                             ri_error.append(None)
 
                 # Write the line.
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='sim_'+`i`, nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='sim_'+`i`, nucleus=nucleus, wH=`wH`, j0=`j0`, f_eta=`f_eta`, f_r2=`f_r2`, r=`r`, csa=`csa`, orientation=`orientation`, tc=`tc`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
