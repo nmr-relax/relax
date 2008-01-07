@@ -8,6 +8,10 @@ The 5 states correspond to the Euler angles (z-y-z notation):
     State 5:    {0, -pi/4, 0}
 """
 
+# Python module imports.
+from math import sqrt
+
+
 # Create the data pipe.
 pipe.create('C domain', 'N-state')
 
