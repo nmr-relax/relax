@@ -145,7 +145,7 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the tuple arguments.
-            if data[0] == 'tuple' or data[0] == 'float tuple':
+            if data[0] == 'tuple' or data[0] == 'float tuple' or data[0] == 'str tuple':
                 # Incorrect tuple length.
                 if len(data[1]) != 5:
                     self.assertRaises(RelaxError, self.align_tensor_fns.init, tensor='Pf1', params=data[1])
