@@ -49,8 +49,5 @@ class N_state_model(TestCase):
             State 5:    {0, -pi/4, 0}
         """
 
-        # Place the script file name into self.relax.script_file.
-        self.relax.script_file = 'test_suite/system_tests/scripts/5_state_xz.py'
-
-        # Execute relax in script mode.
-        self.relax.interpreter.run()
+        # Execute the script.
+        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/5_state_xz.py')
