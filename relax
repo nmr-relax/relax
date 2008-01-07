@@ -146,7 +146,7 @@ class Relax:
 
             # Run the interpreter.
             self.interpreter = interpreter.Interpreter(self)
-            self.interpreter.run()
+            self.interpreter.run(self.script_file)
 
         # Threading mode.
         elif mode == 'thread':
