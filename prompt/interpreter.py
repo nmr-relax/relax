@@ -78,21 +78,23 @@ from vmd import Vmd
 
 
 class Interpreter:
-    def __init__(self, relax, intro_string=None):
+    def __init__(self, relax, intro_string=None, show_script=True):
         """The interpreter class.
 
         @param relax:           The relax instance.
         @type relax:            instance
         @param intro_string:    The string to print at the start of execution.
         @type intro_string:     str
+        @param show_script:     If true, the relax will print the script contents prior to executing
+                                the script.
+        @type show_script:      bool
         """
 
-        # Place the program class structure under self.relax
+        # Place the arguments in the class namespace.
         self.relax = relax
-
-        # Program intro string.
         self.intro_string = intro_string
-
+        self.show_script = show_script
+        
         # The prompts.
         sys.ps1 = 'relax> '
         sys.ps2 = 'relax| '
@@ -237,7 +239,7 @@ class Interpreter:
             self.intro = 1
 
             # Run the script.
-            run_script(intro=self.intro_string, local=self.local, script_file=script_file, quit=quit)
+            run_script(intro=self.intro_string, local=self.local, script_file=script_file, quit=quit, show_script=self.show_script)
 
         # Test for the dummy mode for generating documentation (then exit).
         elif hasattr(self.relax, 'dummy_mode'):
@@ -333,7 +335,7 @@ def interact_prompt(self, intro, local):
             more = 0
 
 
-def interact_script(self, intro, local, script_file, quit):
+def interact_script(self, intro, local, script_file, quit, show_script=True):
     """Replacement function for 'code.InteractiveConsole.interact'.
 
     This will execute the script file.
@@ -347,20 +349,21 @@ def interact_script(self, intro, local, script_file, quit):
     local['self'].intro = 1
 
     # Print the script.
-    try:
-        file = open(script_file, 'r')
-    except IOError, warning:
+    if show_script:
         try:
-            raise RelaxError, "The script file '" + script_file + "' does not exist."
-        except AllRelaxErrors, instance:
-            sys.stdout.write(instance.__str__())
-            sys.stdout.write("\n")
-            return
-    sys.stdout.write("script = " + `script_file` + "\n")
-    sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
-    sys.stdout.write(file.read())
-    sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
-    file.close()
+            file = open(script_file, 'r')
+        except IOError, warning:
+            try:
+                raise RelaxError, "The script file '" + script_file + "' does not exist."
+            except AllRelaxErrors, instance:
+                sys.stdout.write(instance.__str__())
+                sys.stdout.write("\n")
+                return
+        sys.stdout.write("script = " + `script_file` + "\n")
+        sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
+        sys.stdout.write(file.read())
+        sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
+        file.close()
 
     # Execute the script.
     try:
@@ -400,7 +403,7 @@ def prompt(intro=None, local=None):
     console.interact(intro, local)
 
 
-def run_script(intro=None, local=None, script_file=None, quit=1):
+def run_script(intro=None, local=None, script_file=None, quit=1, show_script=True):
     """Python interpreter emulation.
 
     This function replaces 'code.interact'.
@@ -412,7 +415,7 @@ def run_script(intro=None, local=None, script_file=None, quit=1):
 
     # The console.
     console = InteractiveConsole(local)
-    console.interact(intro, local, script_file, quit)
+    console.interact(intro, local, script_file, quit, show_script=show_script)
 
 
 def runcode(self, code):
