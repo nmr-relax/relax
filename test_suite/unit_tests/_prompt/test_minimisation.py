@@ -42,7 +42,7 @@ class Test_minimisation(Minimisation_base_class, TestCase):
 
 
     def test_calc_argfail_print_flag(self):
-        """The print_flag arg test of the minimisation.calc() user function."""
+        """The print_flag arg test of the calc() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -55,7 +55,7 @@ class Test_minimisation(Minimisation_base_class, TestCase):
 
 
     def test_grid_search_argfail_lower(self):
-        """The lower arg test of the minimisation.grid_search() user function."""
+        """The lower arg test of the grid_search() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -73,7 +73,7 @@ class Test_minimisation(Minimisation_base_class, TestCase):
 
 
     def test_grid_search_argfail_upper(self):
-        """The upper arg test of the minimisation.grid_search() user function."""
+        """The upper arg test of the grid_search() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -91,7 +91,7 @@ class Test_minimisation(Minimisation_base_class, TestCase):
 
 
     def test_grid_search_argfail_inc(self):
-        """The inc arg test of the minimisation.grid_search() user function."""
+        """The inc arg test of the grid_search() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -104,7 +104,7 @@ class Test_minimisation(Minimisation_base_class, TestCase):
 
 
     def test_grid_search_argfail_constraints(self):
-        """The constraints arg test of the minimisation.grid_search() user function."""
+        """The constraints arg test of the grid_search() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -117,7 +117,7 @@ class Test_minimisation(Minimisation_base_class, TestCase):
 
 
     def test_grid_search_argfail_print_flag(self):
-        """The print_flag arg test of the minimisation.grid_search() user function."""
+        """The print_flag arg test of the grid_search() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
