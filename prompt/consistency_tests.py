@@ -27,11 +27,12 @@ import help
 from relax_errors import RelaxStrError
 
 
-class Jw_mapping:
+class Consistency_tests:
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \
-        """Class containing functions specific to reduced spectral density mapping."""
+        """Class containing functions specific to consistency tests for datasets from different
+        fields."""
 
         # Add the generic help string.
         self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
@@ -41,7 +42,7 @@ class Jw_mapping:
 
 
     def set_frq(self, run=None, frq=None):
-        """Function for selecting which relaxation data to use in the J(w) mapping.
+        """Function for selecting which relaxation data to use in the consistency tests.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -54,20 +55,20 @@ class Jw_mapping:
         Description
         ~~~~~~~~~~~
 
-        This function will select the relaxation data to use in the reduced spectral density mapping
-        corresponding to the given frequency.
+        This function will select the relaxation data to use in the consistency tests corresponding
+        to the given frequencies.
 
 
         Examples
         ~~~~~~~~
 
-        relax> jw_mapping.set_frq('jw', 600.0 * 1e6)
-        relax> jw_mapping.set_frq(run='jw', frq=600.0 * 1e6)
+        relax> consistency_tests.set_frq('ct', 600.0 * 1e6)
+        relax> consistency_tests.set_frq(run='ct', frq=600.0 * 1e6)
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "jw_mapping.set_frq("
+            text = sys.ps3 + "consistency_tests.set_frq("
             text = text + "run=" + `run`
             text = text + ", frq=" + `frq` + ")"
             print text
@@ -81,4 +82,4 @@ class Jw_mapping:
             raise RelaxStrError, ('frq', frq)
 
         # Execute the functional code.
-        self.__relax__.specific.jw_mapping.set_frq(run=run, frq=frq)
+        self.__relax__.specific.consistency_tests.set_frq(run=run, frq=frq)
