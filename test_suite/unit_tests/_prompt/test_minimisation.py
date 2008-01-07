@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Data as relax_data_store
 from prompt.minimisation import Minimisation
-from relax_errors import RelaxBinError, RelaxIntError, RelaxIntListIntError, RelaxListError, RelaxListNumError, RelaxNoneError, RelaxStrError
+from relax_errors import RelaxError, RelaxBinError, RelaxIntError, RelaxIntListIntError, RelaxListError, RelaxListNumError, RelaxNoneError, RelaxStrError
 from test_suite.unit_tests.minimisation_testing_base import Minimisation_base_class
 
 # Unit test imports.
@@ -145,3 +145,12 @@ class Test_minimisation(Minimisation_base_class, TestCase):
             self.assertRaises(RelaxStrError, self.minimisation_fns.minimise, data[1])
             self.assertRaises(RelaxStrError, self.minimisation_fns.minimise, 'a', data[1])
             self.assertRaises(RelaxStrError, self.minimisation_fns.minimise, 'a', 'b', data[1])
+
+
+    def test_minimise_argfail_bad_keyword(self):
+        """The test of a bad keyword argument in the minimise() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # The argument test.
+            self.assertRaises(RelaxError, self.minimisation_fns.minimise, 'Newton', step_tol=data[1])
