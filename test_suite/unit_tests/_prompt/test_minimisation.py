@@ -133,11 +133,7 @@ class Test_minimisation(Minimisation_base_class, TestCase):
         """The test of the arguments of the minimise() user function."""
 
         # No arguments.
-        ###############
-
-        # The argument test.
         self.assertRaises(RelaxNoneError, self.minimisation_fns.minimise)
-
 
         # Loop over the data types.
         for data in DATA_TYPES:
