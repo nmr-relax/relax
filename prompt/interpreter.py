@@ -78,11 +78,20 @@ from vmd import Vmd
 
 
 class Interpreter:
-    def __init__(self, relax):
-        """The interpreter class."""
+    def __init__(self, relax, intro_string=None):
+        """The interpreter class.
+
+        @param relax:           The relax instance.
+        @type relax:            instance
+        @param intro_string:    The string to print at the start of execution.
+        @type intro_string:     str
+        """
 
         # Place the program class structure under self.relax
         self.relax = relax
+
+        # Program intro string.
+        self.intro_string = intro_string
 
         # The prompts.
         sys.ps1 = 'relax> '
@@ -143,8 +152,9 @@ class Interpreter:
         The namespace of this function is the namespace seen inside the interpreter.  All user
         accessible functions, classes, etc, should be placed in this namespace.
 
-        @param script_file: The script file to be executed.  For the interpreter mode, this should
-                            be left as None.
+
+        @param script_file: The script file to be executed.  For the interpreter mode, this
+                            should be left as None.
         @type script_file:  None or str
         @param quit:        If true, the default, then relax will exit after running this function.
         @type quit:         bool
@@ -227,7 +237,7 @@ class Interpreter:
             self.intro = 1
 
             # Run the script.
-            run_script(intro=self.relax.intro_string, local=self.local, script_file=script_file, quit=quit)
+            run_script(intro=self.intro_string, local=self.local, script_file=script_file, quit=quit)
 
         # Test for the dummy mode for generating documentation (then exit).
         elif hasattr(self.relax, 'dummy_mode'):
@@ -237,7 +247,7 @@ class Interpreter:
 
         # Go to the prompt.
         else:
-            prompt(intro=self.relax.intro_string, local=self.local)
+            prompt(intro=self.intro_string, local=self.local)
 
 
     def _off(self):
