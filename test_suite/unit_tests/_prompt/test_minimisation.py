@@ -63,8 +63,13 @@ class Test_minimisation(Minimisation_base_class, TestCase):
             if data[0] == 'None':
                 continue
 
-            # Catch the non-number list arguments.
-            if type(data[1]) == list and (data[0] != 'int list' or data[0] != 'float list' or data[0] != 'number list'):
+            # Catch the list arguments.
+            if type(data[1]) == list:
+                # Catch the int, float, and number list arguments, and skip them.
+                if data[0] == 'int list' or data[0] == 'float list' or data[0] == 'number list':
+                    continue
+
+                # The argument test.
                 self.assertRaises(RelaxListNumError, self.minimisation_fns.grid_search, lower=data[1])
 
             # All other arguments.
@@ -81,8 +86,13 @@ class Test_minimisation(Minimisation_base_class, TestCase):
             if data[0] == 'None':
                 continue
 
-            # Catch the non-number list arguments.
-            if type(data[1]) == list and (data[0] != 'int list' or data[0] != 'float list' or data[0] != 'number list'):
+            # Catch the list arguments.
+            if type(data[1]) == list:
+                # Catch the int, float, and number list arguments, and skip them.
+                if data[0] == 'int list' or data[0] == 'float list' or data[0] == 'number list':
+                    continue
+
+                # The argument test.
                 self.assertRaises(RelaxListNumError, self.minimisation_fns.grid_search, upper=data[1])
 
             # All other arguments.
