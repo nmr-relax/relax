@@ -139,8 +139,8 @@ class Test_minimisation(Minimisation_base_class, TestCase):
         self.assertRaises(RelaxNoneError, self.minimisation_fns.minimise)
 
 
-        # 1 argument.
-        #############
+        # 1st argument.
+        ###############
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -150,35 +150,5 @@ class Test_minimisation(Minimisation_base_class, TestCase):
 
             # The argument test.
             self.assertRaises(RelaxStrError, self.minimisation_fns.minimise, data[1])
-
-
-        # 2 arguments.
-        ##############
-
-        # Loop over the data types.
-        for data1 in DATA_TYPES:
-            # Loop over the data types.
-            for data2 in DATA_TYPES:
-                # Catch the str arguments, and skip them.
-                if data1[0] == 'str' and data2[0] == 'str':
-                    continue
-
-                # The argument test.
-                self.assertRaises(RelaxStrError, self.minimisation_fns.minimise, data1[1], data2[1])
-
-
-        # 3 arguments.
-        ##############
-
-        # Loop over the data types.
-        for data1 in DATA_TYPES:
-            # Loop over the data types.
-            for data2 in DATA_TYPES:
-                # Loop over the data types.
-                for data3 in DATA_TYPES:
-                    # Catch the str arguments, and skip them.
-                    if data1[0] == 'str' and data2[0] == 'str' and data3[0] == 'str':
-                        continue
-
-                    # The argument test.
-                    self.assertRaises(RelaxStrError, self.minimisation_fns.minimise, data1[1], data2[1], data3[1])
+            self.assertRaises(RelaxStrError, self.minimisation_fns.minimise, 'a', data[1])
+            self.assertRaises(RelaxStrError, self.minimisation_fns.minimise, 'a', 'b', data[1])
