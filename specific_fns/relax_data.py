@@ -284,8 +284,8 @@ class Rx_data:
                 data1 = relax_data_store.res[run1][i]
                 data2 = relax_data_store.res[run2][i]
 
-                # Find the index corresponding to 'self.ri_label' and 'self.frq_label'.
-                index = self.find_index(data1)
+                # Find the index corresponding to 'ri_label' and 'frq_label'.
+                index = self.find_index(data1, ri_label, frq_label)
 
                 # Catch any problems.
                 if index == None:
@@ -414,8 +414,8 @@ class Rx_data:
             # Global data flag.
             self.global_flag = 0
 
-            # Find the index corresponding to 'self.ri_label' and 'self.frq_label'.
-            index = self.find_index(data)
+            # Find the index corresponding to 'ri_label' and 'frq_label'.
+            index = self.find_index(data, ri_label, frq_label)
 
             # Catch any problems.
             if index == None:
@@ -656,7 +656,7 @@ class Rx_data:
         value = None
         error = None
 
-        # Find the index corresponding to 'self.ri_label' and 'self.frq_label'.
+        # Find the index corresponding to 'ri_label' and 'frq_label'.
         index = self.find_index(relax_data_store.res[self.run][i])
 
         # Get the data.
@@ -778,7 +778,7 @@ class Rx_data:
         self.data_init(spin)
 
         # Find the index corresponding to 'ri_label' and 'frq_label'.
-        index = self.find_index(spin)
+        index = self.find_index(spin, ri_label, frq_label)
 
         # Append empty data.
         if index == None:
