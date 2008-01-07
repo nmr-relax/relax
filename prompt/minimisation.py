@@ -100,6 +100,11 @@ class Minimisation:
         elif type(lower) != list:
             raise RelaxListError, ('lower bounds', lower)
         else:
+            # Empty list.
+            if lower == []:
+                raise RelaxListNumError, ('lower bounds', lower)
+
+            # Check the values.
             for i in xrange(len(lower)):
                 if type(lower[i]) != float and type(lower[i]) != int:
                     raise RelaxListNumError, ('lower bounds', lower)
@@ -110,6 +115,11 @@ class Minimisation:
         elif type(upper) != list:
             raise RelaxListError, ('upper bounds', upper)
         else:
+            # Empty list.
+            if upper == []:
+                raise RelaxListNumError, ('upper bounds', upper)
+
+            # Check the values.
             for i in xrange(len(upper)):
                 if type(upper[i]) != float and type(upper[i]) != int:
                     raise RelaxListNumError, ('upper bounds', upper)
@@ -118,6 +128,11 @@ class Minimisation:
         if type(inc) == int:
             pass
         elif type(inc) == list:
+            # Empty list.
+            if inc == []:
+                raise RelaxIntListIntError, ('incrementation value', inc)
+
+            # Check the values.
             for i in xrange(len(inc)):
                 if type(inc[i]) != int:
                     raise RelaxIntListIntError, ('incrementation value', inc)
