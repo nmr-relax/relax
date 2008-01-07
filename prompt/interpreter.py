@@ -139,11 +139,14 @@ class Interpreter:
         self._Vmd = Vmd(relax)
 
 
-    def run(self):
+    def run(self, quit=True):
         """Run the python interpreter.
 
         The namespace of this function is the namespace seen inside the interpreter.  All user
         accessible functions, classes, etc, should be placed in this namespace.
+
+        @param quit:    If true, the default, then relax will exit after running this function.
+        @type quit:     bool
         """
 
         # Python modules.
@@ -224,7 +227,7 @@ class Interpreter:
             self.intro = 1
 
             # Run the script.
-            run_script(intro=self.relax.intro_string, local=self.local, script_file=self.relax.script_file, quit=1)
+            run_script(intro=self.relax.intro_string, local=self.local, script_file=self.relax.script_file, quit=quit)
 
         # Test for the dummy mode for generating documentation (then exit).
         elif hasattr(self.relax, 'dummy_mode'):
