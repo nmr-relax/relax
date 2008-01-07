@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2008 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,56 +20,29 @@
 #                                                                             #
 ###############################################################################
 
-# Formatting.
-from formatting import *
-
-# Import the test suite categories.
-from system_tests.main import System_tests
-from unit_tests.unit_test_runner import Unit_test_runner
-
 # relax module imports.
-from relax_test_runner import RelaxTestRunner
+from data import Data as relax_data_store
 
 
-class Test_suite_runner:
-    """Class for running all components of the relax test suite.
-
-    This currently includes the following categories of tests:
-        System/functional tests.
-        Unit tests.
+class Minimisation_base_class:
+    """Base class for the tests of the minimisation modules.
+    
+    This includes both the 'prompt.minimisation' and 'generic_fns.minimise' modules.
+    The base class also contains many shared unit tests.
     """
 
-    def __init__(self, relax):
-        """Run the system/functional and unit test suite components.
 
-        @param relax:   The relax namespace.
-        @type relax:    instance
-        """
+    def setUp(self):
+        """Set up for all the minimisation unit tests."""
 
-        self.relax = relax
+        # Reset the relax data storage object.
+        relax_data_store.__reset__()
 
-        # Execute the system/functional tests.
-        sys_runner = System_tests(self.relax)
-        system_result = sys_runner.run()
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
 
-        # Execute the unit tests.
-        unit_runner = Unit_test_runner(root_path='test_suite/unit_tests')
-        unit_result = unit_runner.run(runner=RelaxTestRunner())
 
-        # Print out a summary of the test suite.
-        ########################################
+    def tearDown(self):
+        """Reset the relax data storage object."""
 
-        # Heading.
-        print "\n\n\n"
-        print "###################################"
-        print "# Summary of the relax test suite #"
-        print "###################################\n"
-
-        # System/functional test summary.
-        summary_line("System/functional tests", system_result)
-
-        # Unit test summary.
-        summary_line("Unit tests", unit_result)
-
-        # Synopsis.
-        summary_line("Synopsis", system_result and unit_result)
+        relax_data_store.__reset__()

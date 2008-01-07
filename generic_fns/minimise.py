@@ -29,11 +29,19 @@ from data import Data as relax_data_store
 from selection import spin_loop
 #from processes import RelaxPopen3
 from relax_errors import RelaxError, RelaxNoPipeError
+from specific_fns import get_specific_fn
 from thread_classes import RelaxParentThread, RelaxThread
 
 
-def reset_min_stats(data_pipe=None, index=None):
-    """Function for resetting the minimisation statistics."""
+def reset_min_stats(data_pipe=None, spin=None):
+    """Function for resetting the minimisation statistics.
+
+    @param data_pipe:   The name of the data pipe to reset the minimisation statisics of.  This
+                        defaults to the current data pipe.
+    @type data_pipe:    str
+    @param spin:        The spin data container if spin specific data is to be reset.
+    @type spin:         SpinContainer
+    """
 
     # The data pipe.
     if data_pipe == None:
@@ -102,125 +110,159 @@ def reset_min_stats(data_pipe=None, index=None):
 
 
 
-class Minimise:
-    def __init__(self, relax):
-        """Class containing the calc, grid_search, minimise, and set functions."""
+def calc(print_flag=1):
+    """Function for calculating the function value.
 
-        self.relax = relax
+    @param print_flag:  A flag specifying the amount of information to print.  The higher the value,
+                        the greater the verbosity.
+    @type print_flag:   int
+    """
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Specific calculate function setup.
+    calculate = get_specific_fn('calculate', cdp.pipe_type)
+    overfit_deselect = get_specific_fn('overfit_deselect', cdp.pipe_type)
+
+    # Deselect residues lacking data:
+    overfit_deselect()
+
+    # Monte Carlo simulation calculation.
+    if hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
+        # Loop over the simulations.
+        for i in xrange(cdp.sim_number):
+            if print_flag:
+                print "Simulation " + `i+1`
+            calculate(print_flag=print_flag-1, sim_index=i)
+
+    # Minimisation.
+    else:
+        calculate(print_flag=print_flag)
 
 
-    def calc(self, run=None, print_flag=1):
-        """Function for calculating the function value."""
+def grid_search(lower=None, upper=None, inc=None, constraints=1, print_flag=1):
+    """The grid search function.
 
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoPipeError, run
+    @param lower:       The lower bounds of the grid search which must be equal to the number of
+                        parameters in the model.
+    @type lower:        array of numbers
+    @param upper:       The upper bounds of the grid search which must be equal to the number of
+                        parameters in the model.
+    @type upper:        array of numbers
+    @param inc:         The increments for each dimension of the space for the grid search.  The
+                        number of elements in the array must equal to the number of parameters in
+                        the model.
+    @type inc:          array of int
+    @param constraints: If true, constraints are applied during the grid search (elinating parts of
+                        the grid).  If false, no constraints are used.
+    @type constraints:  bool
+    @param print_flag:  A flag specifying the amount of information to print.  The higher the value,
+                        the greater the verbosity.
+    @type print_flag:   int
+    """
 
-        # Function type.
-        function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
-        # Specific calculate function setup.
-        calculate = self.relax.specific_setup.setup('calculate', function_type)
-        overfit_deselect = self.relax.specific_setup.setup('overfit_deselect', function_type)
+    # Specific grid search function.
+    grid_search = get_specific_fn('grid_search', cdp.pipe_type)
+    overfit_deselect = get_specific_fn('overfit_deselect', cdp.pipe_type)
 
-        # Deselect residues lacking data:
-        overfit_deselect(run)
+    # Deselect residues lacking data:
+    overfit_deselect()
 
-        # Monte Carlo simulation calculation.
-        if hasattr(relax_data_store, 'sim_state') and relax_data_store.sim_state.has_key(run) and relax_data_store.sim_state[run] == 1:
-            # Loop over the simulations.
-            for i in xrange(relax_data_store.sim_number[run]):
+    # Monte Carlo simulation grid search.
+    if hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
+        # Loop over the simulations.
+        for i in xrange(cdp.sim_number):
+            if print_flag:
+                print "Simulation " + `i+1`
+            grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag-1, sim_index=i)
+
+    # Grid search.
+    else:
+        grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag)
+
+
+def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=1, scaling=1, print_flag=1, sim_index=None):
+    """Minimisation function.
+
+    @param min_algor:       The minimisation algorithm to use.
+    @type min_algor:        str
+    @param min_options:     An array of options to be used by the minimisation algorithm.
+    @type min_options:      array of str
+    @param func_tol:        The function tolerence which, when reached, terminates optimisation.
+                            Setting this to None turns of the check.
+    @type func_tol:         None or float
+    @param grad_tol:        The gradient tolerence which, when reached, terminates optimisation.
+                            Setting this to None turns of the check.
+    @type grad_tol:         None or float
+    @param max_iterations:  The maximum number of iterations for the algorithm.
+    @type max_iterations:   int
+    @param constraints:     If true, constraints are used during optimisation.
+    @type constraints:      bool
+    @param scaling:         If true, diagonal scaling is enabled during optimisation to allow the
+                            problem to be better conditioned.
+    @type scaling:          bool
+    @param print_flag:      A flag specifying the amount of information to print.  The higher the
+                            value, the greater the verbosity.
+    @type print_flag:       int
+    @param sim_index:       The index of the simulation to optimise.  This should be None if normal
+                            optimisation is desired.
+    @type sim_index:        None or int
+    """
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Specific minimisation function.
+    minimise = get_specific_fn('minimise', cdp.pipe_type)
+    overfit_deselect = get_specific_fn('overfit_deselect', cdp.pipe_type)
+
+    # Deselect residues lacking data:
+    overfit_deselect()
+
+    # Single Monte Carlo simulation.
+    if sim_index != None:
+        minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag, sim_index=sim_index)
+
+    # Monte Carlo simulation minimisation.
+    elif hasattr(relax_data_store, 'sim_state') and relax_data_store.sim_state == 1:
+        # Threaded minimisation of simulations.
+        if self.relax.thread_data.status:
+            # Print out.
+            print "Threaded minimisation of Monte Carlo simulations.\n"
+
+            # Run the main threading loop.
+            RelaxMinParentThread(self.relax, min_algor, min_options, func_tol, grad_tol, max_iterations, constraints, scaling, print_flag)
+
+        # Non-threaded minimisation of simulations.
+        else:
+            for i in xrange(relax_data_store.sim_number):
                 if print_flag:
                     print "Simulation " + `i+1`
-                calculate(run=run, print_flag=print_flag-1, sim_index=i)
+                minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag-1, sim_index=i)
 
-        # Minimisation.
-        else:
-
-            calculate(run=run, print_flag=print_flag)
-
-
-    def grid_search(self, run=None, lower=None, upper=None, inc=None, constraints=1, print_flag=1):
-        """The grid search function."""
-
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoPipeError, run
-
-        # Function type.
-        function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
-
-        # Specific grid search function.
-        grid_search = self.relax.specific_setup.setup('grid_search', function_type)
-        overfit_deselect = self.relax.specific_setup.setup('overfit_deselect', function_type)
-
-        # Deselect residues lacking data:
-        overfit_deselect(run)
-
-        # Monte Carlo simulation grid search.
-        if hasattr(relax_data_store, 'sim_state') and relax_data_store.sim_state.has_key(run) and relax_data_store.sim_state[run] == 1:
-            # Loop over the simulations.
-            for i in xrange(relax_data_store.sim_number[run]):
-                if print_flag:
-                    print "Simulation " + `i+1`
-                grid_search(run=run, lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag-1, sim_index=i)
-
-        # Grid search.
-        else:
-            grid_search(run=run, lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag)
+    # Standard minimisation.
+    else:
+        minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag)
 
 
-    def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=1, scaling=1, print_flag=1, sim_index=None):
-        """Minimisation function."""
+def return_conversion_factor(stat_type):
+    """Dummy function for returning 1.0.
 
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoPipeError, run
+    @param stat_type:   The name of the statistic.  This is unused!
+    @type stat_type:    str
+    @return:            A conversion factor of 1.0.
+    @type return:       float
+    """
 
-        # Function type.
-        function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
-
-        # Specific minimisation function.
-        minimise = self.relax.specific_setup.setup('minimise', function_type)
-        overfit_deselect = self.relax.specific_setup.setup('overfit_deselect', function_type)
-
-        # Deselect residues lacking data:
-        overfit_deselect(run)
-
-        # Single Monte Carlo simulation.
-        if sim_index != None:
-            minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag, sim_index=sim_index)
-
-        # Monte Carlo simulation minimisation.
-        elif hasattr(relax_data_store, 'sim_state') and relax_data_store.sim_state.has_key(run) and relax_data_store.sim_state[run] == 1:
-            # Threaded minimisation of simulations.
-            if self.relax.thread_data.status:
-                # Print out.
-                print "Threaded minimisation of Monte Carlo simulations.\n"
-
-                # Run the main threading loop.
-                RelaxMinParentThread(self.relax, run, min_algor, min_options, func_tol, grad_tol, max_iterations, constraints, scaling, print_flag)
-
-            # Non-threaded minimisation of simulations.
-            else:
-                for i in xrange(relax_data_store.sim_number[run]):
-                    if print_flag:
-                        print "Simulation " + `i+1`
-                    minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag-1, sim_index=i)
-
-        # Standard minimisation.
-        else:
-            minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag)
+    return 1.0
 
 
-    def return_conversion_factor(self, stat_type):
-        """Dummy function for returning 1.0."""
-
-        return 1.0
-
-
-    def return_data_name(self, name):
-        """
+def return_data_name(name):
+    """
         Minimisation statistic data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -240,174 +282,196 @@ class Minimise:
         | Hessian call count     | 'h_count'    | '^[Hh].*[ -_][Cc]ount'                           |
         |________________________|______________|__________________________________________________|
 
-        """
+    """
+    __docformat__ = "plaintext"
 
-        # Chi-squared.
-        if search('^[Cc]hi2$', name) or search('^[Cc]hi[-_ ][Ss]quare', name):
-            return 'chi2'
+    # Chi-squared.
+    if search('^[Cc]hi2$', name) or search('^[Cc]hi[-_ ][Ss]quare', name):
+        return 'chi2'
 
-        # Iteration count.
-        if search('^[Ii]ter', name):
-            return 'iter'
+    # Iteration count.
+    if search('^[Ii]ter', name):
+        return 'iter'
 
-        # Function call count.
-        if search('^[Ff].*[ -_][Cc]ount', name):
-            return 'f_count'
+    # Function call count.
+    if search('^[Ff].*[ -_][Cc]ount', name):
+        return 'f_count'
 
-        # Gradient call count.
-        if search('^[Gg].*[ -_][Cc]ount', name):
-            return 'g_count'
+    # Gradient call count.
+    if search('^[Gg].*[ -_][Cc]ount', name):
+        return 'g_count'
 
-        # Hessian call count.
-        if search('^[Hh].*[ -_][Cc]ount', name):
-            return 'h_count'
-
-
-    def return_grace_string(self, stat_type):
-        """Function for returning the Grace string representing the data type for axis labelling."""
-
-        # Get the object name.
-        object_name = self.return_data_name(stat_type)
-
-        # Chi-squared.
-        if object_name == 'chi2':
-            grace_string = '\\xc\\S2'
-
-        # Iteration count.
-        elif object_name == 'iter':
-            grace_string = 'Iteration count'
-
-        # Function call count.
-        elif object_name == 'f_count':
-            grace_string = 'Function call count'
-
-        # Gradient call count.
-        elif object_name == 'g_count':
-            grace_string = 'Gradient call count'
-
-        # Hessian call count.
-        elif object_name == 'h_count':
-            grace_string = 'Hessian call count'
-
-        # Return the Grace string.
-        return grace_string
+    # Hessian call count.
+    if search('^[Hh].*[ -_][Cc]ount', name):
+        return 'h_count'
 
 
-    def return_units(self, stat_type):
-        """Dummy function which returns None as the stats have no units."""
+def return_grace_string(stat_type):
+    """Function for returning the Grace string representing the data type for axis labelling.
 
-        return None
+    @param stat_type:   The name of the statistic to return the Grace string for.
+    @type stat_type:    str
+    @return:            The Grace string.
+    @type return:       str
+    """
+
+    # Get the object name.
+    object_name = return_data_name(stat_type)
+
+    # Chi-squared.
+    if object_name == 'chi2':
+        grace_string = '\\xc\\S2'
+
+    # Iteration count.
+    elif object_name == 'iter':
+        grace_string = 'Iteration count'
+
+    # Function call count.
+    elif object_name == 'f_count':
+        grace_string = 'Function call count'
+
+    # Gradient call count.
+    elif object_name == 'g_count':
+        grace_string = 'Gradient call count'
+
+    # Hessian call count.
+    elif object_name == 'h_count':
+        grace_string = 'Hessian call count'
+
+    # Return the Grace string.
+    return grace_string
 
 
-    def return_value(self, run, index=None, stat_type=None, sim=None):
-        """Function for returning the minimisation statistic corresponding to 'stat_type'."""
+def return_units(stat_type):
+    """Dummy function which returns None as the stats have no units.
 
-        # Arguments.
-        self.run = run
+    @param stat_type:   The name of the statistic.  This is unused!
+    @type stat_type:    str
+    @return:            Nothing.
+    @type return:       None
+    """
 
-        # Get the object name.
-        object_name = self.return_data_name(stat_type)
+    return None
 
-        # The statistic type does not exist.
-        if not object_name:
-            raise RelaxError, "The statistic type " + `stat_type` + " does not exist."
 
-        # The simulation object name.
-        object_sim = object_name + '_sim'
+def return_value(spin=None, stat_type=None, sim=None):
+    """Function for returning the minimisation statistic corresponding to 'stat_type'.
 
-        # Get the global statistic.
-        if index == None:
-            # Get the statistic.
-            if sim == None:
-                if hasattr(relax_data_store, object_name) and getattr(relax_data_store.res[self.run][index], object_name).has_key(self.run):
-                    stat = getattr(relax_data_store, object_name)[self.run]
-                else:
-                    stat = None
+    @param spin:        The spin data container if spin specific data is to be reset.
+    @type spin:         SpinContainer
+    @param stat_type:   The name of the statistic to return the value for.
+    @type stat_type:    str
+    @param sim:         The index of the simulation to return the value for.  If None, then the
+                        normal value is returned.
+    @type sim:          None or int
+    """
 
-            # Get the simulation statistic.
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Get the object name.
+    object_name = return_data_name(stat_type)
+
+    # The statistic type does not exist.
+    if not object_name:
+        raise RelaxError, "The statistic type " + `stat_type` + " does not exist."
+
+    # The simulation object name.
+    object_sim = object_name + '_sim'
+
+    # Get the global statistic.
+    if spin == None:
+        # Get the statistic.
+        if sim == None:
+            if hasattr(cdp, object_name):
+                stat = getattr(cdp, object_name)
             else:
-                if hasattr(relax_data_store, object_sim) and getattr(relax_data_store.res[self.run][index], object_sim).has_key(self.run):
-                    stat = getattr(relax_data_store, object_sim)[self.run][sim]
-                else:
-                    stat = None
+                stat = None
 
-        # Residue specific statistic.
+        # Get the simulation statistic.
         else:
-            # Get the statistic.
-            if sim == None:
-                if hasattr(relax_data_store.res[self.run][index], object_name):
-                    stat = getattr(relax_data_store.res[self.run][index], object_name)
-                else:
-                    stat = None
-
-            # Get the simulation statistic.
+            if hasattr(cdp, object_sim):
+                stat = getattr(cdp, object_sim)[sim]
             else:
-                if hasattr(relax_data_store.res[self.run][index], object_sim):
-                    stat = getattr(relax_data_store.res[self.run][index], object_sim)[sim]
-                else:
-                    stat = None
+                stat = None
 
-        # Return the statistic (together with None to indicate that there are no errors associated with the statistic).
-        return stat, None
+    # Residue specific statistic.
+    else:
+        # Get the statistic.
+        if sim == None:
+            if hasattr(spin, object_name):
+                stat = getattr(spin, object_name)
+            else:
+                stat = None
+
+        # Get the simulation statistic.
+        else:
+            if hasattr(spin, object_sim):
+                stat = getattr(spin, object_sim)[sim]
+            else:
+                stat = None
+
+    # Return the statistic (together with None to indicate that there are no errors associated with the statistic).
+    return stat, None
 
 
-    def set(self, run=None, value=None, error=None, param=None, scaling=None, index=None):
-        """
+def set(value=None, error=None, param=None, scaling=None, spin=None):
+    """
         Minimisation statistic set details
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         This shouldn't really be executed by a user.
-        """
+    """
 
-        # Arguments.
-        self.run = run
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
-        # Get the parameter name.
-        param_name = self.return_data_name(param)
+    # Get the parameter name.
+    param_name = return_data_name(param)
 
-        # Global minimisation stats.
-        if index == None:
-            # Chi-squared.
-            if param_name == 'chi2':
-                relax_data_store.chi2[self.run] = value
+    # Global minimisation stats.
+    if index == None:
+        # Chi-squared.
+        if param_name == 'chi2':
+            cdp.chi2 = value
 
-            # Iteration count.
-            elif param_name == 'iter':
-                relax_data_store.iter[self.run] = value
+        # Iteration count.
+        elif param_name == 'iter':
+            cdp.iter = value
 
-            # Function call count.
-            elif param_name == 'f_count':
-                relax_data_store.f_count[self.run] = value
+        # Function call count.
+        elif param_name == 'f_count':
+            cdp.f_count = value
 
-            # Gradient call count.
-            elif param_name == 'g_count':
-                relax_data_store.g_count[self.run] = value
+        # Gradient call count.
+        elif param_name == 'g_count':
+            cdp.g_count = value
 
-            # Hessian call count.
-            elif param_name == 'h_count':
-                relax_data_store.h_count[self.run] = value
+        # Hessian call count.
+        elif param_name == 'h_count':
+            cdp.h_count = value
 
-        # Residue specific minimisation.
-        else:
-            # Chi-squared.
-            if param_name == 'chi2':
-                relax_data_store.res[self.run][index].chi2 = value
+    # Residue specific minimisation.
+    else:
+        # Chi-squared.
+        if param_name == 'chi2':
+            spin.chi2 = value
 
-            # Iteration count.
-            elif param_name == 'iter':
-                relax_data_store.res[self.run][index].iter = value
+        # Iteration count.
+        elif param_name == 'iter':
+            spin.iter = value
 
-            # Function call count.
-            elif param_name == 'f_count':
-                relax_data_store.res[self.run][index].f_count = value
+        # Function call count.
+        elif param_name == 'f_count':
+            spin.f_count = value
 
-            # Gradient call count.
-            elif param_name == 'g_count':
-                relax_data_store.res[self.run][index].g_count = value
+        # Gradient call count.
+        elif param_name == 'g_count':
+            spin.g_count = value
 
-            # Hessian call count.
-            elif param_name == 'h_count':
-                relax_data_store.res[self.run][index].h_count = value
+        # Hessian call count.
+        elif param_name == 'h_count':
+            spin.h_count = value
 
 
 

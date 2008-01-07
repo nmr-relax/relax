@@ -810,6 +810,7 @@ class Model_free_main:
                           'rex',
                           'r',
                           'csa',
+                          'nucleus',
                           'chi2',
                           'iter',
                           'f_count',
@@ -858,6 +859,8 @@ class Model_free_main:
 
         csa:  CSA value.
 
+        nucleus:  The heteronucleus type.
+
         chi2:  Chi-squared value.
 
         iter:  Iterations.
@@ -892,6 +895,7 @@ class Model_free_main:
             names.append('rex')
             names.append('r')
             names.append('csa')
+            names.append('nucleus')
 
         # Minimisation statistics.
         if set == 'all' or set == 'min':
@@ -930,6 +934,8 @@ class Model_free_main:
         | Bond length                           | 'r'                | 1.02 * 1e-10           |
         |                                       |                    |                        |
         | CSA                                   | 'csa'              | -172 * 1e-6            |
+        |                                       |                    |                        |
+        | Heteronucleus type                    | 'nucleus'          | 'N'                    |
         |_______________________________________|____________________|________________________|
 
         """
@@ -966,6 +972,10 @@ class Model_free_main:
         # CSA.
         elif param == 'csa':
             return N15_CSA
+
+        # Heteronucleus type.
+        elif param == 'nucleus':
+            return 'N'
 
 
     def delete(self, run):
@@ -3614,6 +3624,8 @@ class Model_free_main:
         | Bond length            | 'r'          | '^r$' or '[Bb]ond[ -_][Ll]ength'                 |
         |                        |              |                                                  |
         | CSA                    | 'csa'        | '^[Cc][Ss][Aa]$'                                 |
+        |                        |              |                                                  |
+        | Heteronucleus type     | 'nucleus'    | '^[Nn]ucleus$'                                   |
         |________________________|______________|__________________________________________________|
 
         """
@@ -3658,6 +3670,10 @@ class Model_free_main:
         # CSA.
         if search('^[Cc][Ss][Aa]$', name):
             return 'csa'
+
+        # Heteronucleus type.
+        if search('^[Nn]ucleus$', name):
+            return 'nucleus'
 
 
     def return_grace_string(self, param):

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,56 +22,37 @@
 
 # Python module imports.
 import sys
+from unittest import TestCase
 
 # relax module imports.
-from prompt.pipe import Pipe
-from prompt.sequence import Sequence
+from data import Data as relax_data_store
 
 
-class Sequence:
-    def __init__(self, relax, test_name):
-        """Class for testing the sequence functions."""
+class Sequence(TestCase):
+    """Class for testing the sequence functions."""
 
-        self.relax = relax
-
-        # Sequence reading test.
-        if test_name == 'read':
-            # The name of the test.
-            self.name = "The user function sequence.read()"
-
-            # The test.
-            self.test = self.read
-
-        # Loading the sequence from a PDB file test.
-        if test_name == 'pdb':
-            # The name of the test.
-            self.name = "Loading the sequence from a PDB file"
-
-            # The test.
-            self.test = self.pdb
-
-
-    def pdb(self, pipe):
-        """The sequence loading from a PDB file test."""
+    def setUp(self):
+        """Set up for all the functional tests."""
 
         # Create the data pipe.
-        self.relax.interpreter._Pipe.create(pipe, 'mf')
+        self.relax.interpreter._Pipe.create('mf', 'mf')
+
+
+    def tearDown(self):
+        """Reset the relax data storage object."""
+
+        relax_data_store.__reset__()
+
+
+    def test_pdb(self):
+        """Load the sequence from a PDB file."""
 
         # Read the sequence.
         self.relax.interpreter._Structure.read_pdb(file='test.pdb', dir=sys.path[-1] + '/test_suite/system_tests/data', model=1, load_seq=1)
 
-        # Success.
-        return 1
 
-
-    def read(self, pipe):
+    def test_read(self):
         """The sequence.read() test."""
-
-        # Create the data pipe.
-        self.relax.interpreter._Pipe.create(pipe, 'mf')
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + '/test_suite/system_tests/data')
-
-        # Success.
-        return 1

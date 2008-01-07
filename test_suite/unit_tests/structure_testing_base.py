@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,45 +20,29 @@
 #                                                                             #
 ###############################################################################
 
-import sys
-
-from relax_errors import RelaxStrError
-
-
-class Nuclei:
-    def __init__(self, relax):
-        """Class containing the function for setting the gyromagnetic ratio of the heteronucleus."""
-
-        self.relax = relax
+# relax module imports.
+from data import Data as relax_data_store
 
 
-    def nuclei(self, heteronuc='N'):
-        """Function for setting the gyromagnetic ratio of the heteronucleus.
 
-        Keyword arguments
-        ~~~~~~~~~~~~~~~~~
+class Structure_base_class:
+    """Base class for the tests of both the 'prompt.structure' and 'generic_fns.structure' modules.
 
-        heteronuc:  The type of heteronucleus.
+    This base class also contains many shared unit tests.
+    """
+
+    def setUp(self):
+        """Set up for all the molecule unit tests."""
+
+        # Reset the relax data storage object.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
 
 
-        Description
-        ~~~~~~~~~~~
+    def tearDown(self):
+        """Reset the relax data storage object."""
 
-        The heteronuc argument can be set to the following strings:
-
-            N:  Nitrogen, -2.7126e7
-            C:  Carbon, 2.2e7
-        """
-
-        # Function intro text.
-        if self.relax.interpreter.intro:
-            text = sys.ps3 + "nuclei("
-            text = text + "heteronuc=" + `heteronuc` + ")"
-            print text
-
-        # The heteronucleus argument.
-        if type(heteronuc) != str:
-            raise RelaxStrError, ('heteronucleus', heteronuc)
-
-        # Execute the functional code.
-        self.relax.generic.nuclei.set_values(heteronuc=heteronuc)
+        # Reset the relax data storage object.
+        relax_data_store.__reset__()

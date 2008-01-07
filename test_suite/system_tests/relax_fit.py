@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,38 +22,33 @@
 
 # Python module imports.
 import sys
+from unittest import TestCase
 
 # relax module imports.
 from data import Data as relax_data_store
 
 
-# The relax data storage object.
+class Relax_fit(TestCase):
+    """Class for testing various aspects specific to relaxation curve-fitting."""
+
+    def setUp(self):
+        """Set up for all the functional tests."""
+
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create('mf', 'mf')
 
 
+    def tearDown(self):
+        """Reset the relax data storage object."""
 
-class Relax_fit:
-    def __init__(self, relax, test_name):
-        """Class for testing various aspects specific to relaxation curve-fitting."""
-
-        self.relax = relax
-
-        # Sparky loading test.
-        if test_name == 'read_sparky':
-            # The name of the test.
-            self.name = "Loading of Sparky peak heights"
-
-            # The test.
-            self.test = self.read_sparky
+        relax_data_store.__reset__()
 
 
-    def read_sparky(self, pipe):
+    def test_read_sparky(self):
         """The Sparky peak height loading test."""
 
         # Load the original state.
-        self.relax.interpreter._State.load(file='rx.save', dir=sys.path[-1] + '/test_suite/system_tests/data/curve_fitting')
-
-        # Create the data pipe.
-        self.relax.interpreter._Pipe.create(pipe, 'mf')
+        self.relax.interpreter._State.load(state='rx.save', dir_name=sys.path[-1] + '/test_suite/system_tests/data/curve_fitting')
 
         # Load the Lupin Ap4Aase sequence.
         self.relax.interpreter._Sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/system_tests/data")
@@ -65,44 +60,21 @@ class Relax_fit:
         # Test the integrity of the data.
         #################################
 
-        # Print out.
-        print "\nTesting the integrity of the loaded data.\n"
-
         # Loop over the residues of the original data.
         for i in xrange(len(relax_data_store['rx'].mol[0].res)):
             # Aliases
             orig_data = relax_data_store['rx'].mol[0].res[i]
-            new_data = relax_data_store[pipe].mol[0].res[i]
-
-            # Residue alias.
-            self.orig_res = `orig_data.num` + orig_data.name
-            self.new_res = `new_data.num` + new_data.name
+            new_data = relax_data_store[relax_data_store.current_pipe].mol[0].res[i]
 
             # Residue numbers.
-            if orig_data.num != new_data.num:
-                self.print_error('residue numbers')
-                return
+            self.assertEqual(orig_data.num, new_data.num)
 
             # Residue names.
-            if orig_data.name != new_data.name:
-                self.print_error('residue names')
-                return
+            self.assertEqual(orig_data.name, new_data.name)
 
             # Skip unselected residues.
             if not orig_data.spin[0].select:
                 continue
 
             # The intensity.
-            if orig_data.spin[0].intensities[0][0] != new_data.spin[0].intensities[0][0]:
-                self.print_error('intensities')
-                return
-
-        # Success.
-        print "The data structures have been created successfully."
-        return 1
-
-
-    def print_error(self, name):
-        """Function for printing a residue mismatch."""
-
-        print "The " + name + " of " + self.orig_res + " and " + self.new_res + " do not match."
+            self.assertEqual(orig_data.spin[0].intensities[0][0], new_data.spin[0].intensities[0][0])

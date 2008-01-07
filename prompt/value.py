@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,7 +28,7 @@ from doc_string import regexp_doc
 import help
 from generic_fns import diffusion_tensor
 from generic_fns import value
-from relax_errors import RelaxBinError, RelaxError, RelaxFloatError, RelaxIntError, RelaxListFloatError, RelaxListStrError, RelaxNoneFloatListError, RelaxNoneIntError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
+from relax_errors import RelaxBinError, RelaxError, RelaxFloatError, RelaxIntError, RelaxListFloatStrError, RelaxListStrError, RelaxNoneFloatStrListError, RelaxNoneIntError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
 from specific_fns.model_free import Model_free
 from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.relax_fit import Relax_fit
@@ -377,17 +377,17 @@ class Value:
             print text
 
         # The value.
-        if val != None and type(val) != float and type(val) != int and type(val) != list:
-            raise RelaxNoneFloatListError, ('value', val)
+        if val != None and type(val) != float and type(val) != int and type(val) != str and type(val) != list:
+            raise RelaxNoneFloatStrListError, ('value', val)
         if type(val) == list:
             # Empty list.
             if val == []:
-                raise RelaxListFloatError, ('value', val)
+                raise RelaxListFloatStrError, ('value', val)
 
             # Check for values.
             for i in xrange(len(val)):
                 if type(val[i]) != float and type(val[i]) != int:
-                    raise RelaxListFloatError, ('value', val)
+                    raise RelaxListFloatStrError, ('value', val)
 
         # The parameter.
         if param != None and type(param) != str and type(param) != list:
@@ -505,7 +505,7 @@ class Value:
     copy.__doc__ = copy.__doc__ + "\n\n" + regexp_doc() + "\n"
     copy.__doc__ = copy.__doc__ + Model_free.set_doc.__doc__ + "\n\n"
     copy.__doc__ = copy.__doc__ + Model_free.return_data_name.__doc__ + "\n"
-    copy.__doc__ = copy.__doc__ + Jw_mapping.set.__doc__ + "\n"
+    copy.__doc__ = copy.__doc__ + Jw_mapping.set_doc.__doc__ + "\n"
     copy.__doc__ = copy.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
     copy.__doc__ = copy.__doc__ + Relax_fit.set_doc.__doc__ + "\n"
     copy.__doc__ = copy.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
@@ -520,7 +520,7 @@ class Value:
     read.__doc__ = read.__doc__ + "\n\n" + regexp_doc() + "\n"
     read.__doc__ = read.__doc__ + Model_free.set_doc.__doc__ + "\n\n"
     read.__doc__ = read.__doc__ + Model_free.return_data_name.__doc__ + "\n"
-    read.__doc__ = read.__doc__ + Jw_mapping.set.__doc__ + "\n"
+    read.__doc__ = read.__doc__ + Jw_mapping.set_doc.__doc__ + "\n"
     read.__doc__ = read.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
     read.__doc__ = read.__doc__ + Relax_fit.set_doc.__doc__ + "\n"
     read.__doc__ = read.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
@@ -530,7 +530,7 @@ class Value:
     set.__doc__ = set.__doc__ + Model_free.set_doc.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Model_free.return_data_name.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Model_free.default_value.__doc__ + "\n\n"
-    set.__doc__ = set.__doc__ + Jw_mapping.set.__doc__ + "\n"
+    set.__doc__ = set.__doc__ + Jw_mapping.set_doc.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
     set.__doc__ = set.__doc__ + Jw_mapping.default_value.__doc__ + "\n"
     set.__doc__ = set.__doc__ + diffusion_tensor.set.__doc__ + "\n"

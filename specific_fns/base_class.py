@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006-2007 Edward d'Auvergne                             #
+# Copyright (C) 2004, 2006-2008 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,7 @@ from copy import deepcopy
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxError
+from relax_errors import RelaxError, RelaxParamSetError
 
 
 # The relax data storage object.
@@ -146,9 +146,9 @@ class Common_functions:
         """Common function for setting parameter values.
 
         @param value:   The value to change the parameter to.
-        @type value:    float
+        @type value:    float or str
         @param error:   The error value associated with the parameter, also to be set.
-        @type error:    float
+        @type error:    float or str
         @param param:   The name of the parameter to change.
         @type param:    str
         @param scaling: The scaling factor for the value or error parameters.
@@ -191,7 +191,14 @@ class Common_functions:
                 if value[i] == None:
                     setattr(spin, object_name, None)
                 else:
-                    setattr(spin, object_name, float(value[i]) * scaling)
+                    # Catch parameters with string values.
+                    try:
+                        value[i] = float(value[i]) * scaling
+                    except ValueError:
+                        pass
+
+                    # Set the attribute.
+                    setattr(spin, object_name, value[i])
 
 
         # Individual data type.
@@ -211,15 +218,33 @@ class Common_functions:
             if value == None:
                 value = self.default_value(object_name)
 
+            # No default value, hence the parameter cannot be set.
+            if value == None:
+                raise RelaxParamSetError, param
+
             # Set the value.
             if value == None:
                 setattr(spin, object_name, None)
             else:
-                setattr(spin, object_name, float(value) * scaling)
+                # Catch parameters with string values.
+                try:
+                    value = float(value) * scaling
+                except ValueError:
+                    pass
+
+                # Set the attribute.
+                setattr(spin, object_name, value)
 
             # Set the error.
             if error != None:
-                setattr(spin, object_name+'_err', float(error) * scaling)
+                # Catch parameters with string values.
+                try:
+                    error = float(error) * scaling
+                except ValueError:
+                    pass
+
+                # Set the attribute.
+                setattr(spin, object_name+'_err', error)
 
             # Update the other parameters if necessary.
             self.set_update(param=param, spin=spin)

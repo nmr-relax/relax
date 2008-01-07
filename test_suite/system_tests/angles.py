@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,24 +20,32 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
+from unittest import TestCase
+
+# relax module imports.
+from data import Data as relax_data_store
 
 
-class Angles:
-    def __init__(self, relax):
-        """Class for testing the angle calculation function."""
+class Angles(TestCase):
+    """Class for testing the angle calculation function."""
 
-        self.relax = relax
-
-        # The name of the test.
-        self.name = "The user function angles()"
-
-
-    def test(self, pipe):
-        """The actual test."""
+    def setUp(self):
+        """Set up for all the functional tests."""
 
         # Create the data pipe.
-        self.relax.interpreter._Pipe.create(pipe, 'mf')
+        self.relax.interpreter._Pipe.create('mf', 'mf')
+
+
+    def tearDown(self):
+        """Reset the relax data storage object."""
+
+        relax_data_store.__reset__()
+
+
+    def test_angles(self):
+        """The user function angles()."""
 
         # Read a PDB file.
         self.relax.interpreter._Structure.read_pdb(file='test.pdb', dir=sys.path[-1] + '/test_suite/system_tests/data', model=1)
@@ -50,6 +58,3 @@ class Angles:
 
         # Calculate the angles.
         self.relax.interpreter._Angles.angles()
-
-        # Success.
-        return 1

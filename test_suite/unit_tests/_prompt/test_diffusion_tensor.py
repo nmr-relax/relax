@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -75,7 +75,7 @@ class Test_diffusion_tensor(Diffusion_tensor_base_class, TestCase):
 
 
     def test_init_argfail_params(self):
-        """Proper failure of the diffusion_tensor.init() user function for the params argument."""
+        """The params arg test of diffusion_tensor.init() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -84,7 +84,7 @@ class Test_diffusion_tensor(Diffusion_tensor_base_class, TestCase):
                 continue
 
             # Catch the tuple arguments.
-            if data[0] == 'tuple' or data[0] == 'float tuple':
+            if data[0] == 'tuple' or data[0] == 'float tuple' or data[0] == 'str tuple':
                 # Incorrect tuple length.
                 if len(data[1]) != 4 and len(data[1]) != 6:
                     self.assertRaises(RelaxError, self.diffusion_tensor_fns.init, params=data[1])

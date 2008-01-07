@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,22 +20,25 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
+from unittest import TestCase
 
-class Pipe_create:
-    def __init__(self, relax):
-        """Class for testing the creation of data pipes."""
-
-        self.relax = relax
-
-        # The name of the test.
-        self.name = "The user function pipe.create()"
+# relax module imports.
+from data import Data as relax_data_store
 
 
-    def test(self, pipe):
-        """The actual test."""
+class Pipe_create(TestCase):
+    """TestCase class for the functional tests of relax data pipes."""
+
+
+    def tearDown(self):
+        """Reset the relax data storage object."""
+
+        relax_data_store.__reset__()
+
+
+    def test_pipe_create(self):
+        """Create a data pipe."""
 
         # Create the data pipe.
-        self.relax.interpreter._Pipe.create(pipe, 'mf')
-
-        # Success.
-        return 1
+        self.relax.interpreter._Pipe.create('test', 'mf')
