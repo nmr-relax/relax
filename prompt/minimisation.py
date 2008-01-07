@@ -320,8 +320,8 @@ class Minimisation:
             raise RelaxNoneNumError, ('gradient tolerance', grad_tol)
 
         # The maximum number of iterations.
-        if type(max_iterations) != int and type(max_iterations) != float:
-            raise RelaxNumError, ('maximum number of iterations', max_iterations)
+        if type(max_iterations) != int:
+            raise RelaxIntError, ('maximum number of iterations', max_iterations)
 
         # Constraint flag.
         if type(constraints) != int or (constraints != 0 and constraints != 1):
