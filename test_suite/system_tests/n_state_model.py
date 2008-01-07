@@ -87,10 +87,10 @@ class N_state_model(TestCase):
         self.relax.interpreter._Align_tensor.matrix_angles(basis_set=1)
 
         # Grid search.
-        self.relax.interpreter._Grid_search(inc=11)
+        self.relax.interpreter._Minimisation.grid_search(inc=11)
 
         # Minimise.
-        self.relax.interpreter._Minimise('simplex')
+        self.relax.interpreter._Minimisation.minimise('simplex')
 
         # Finish.
-        self.relax.interpreter._Results.write(file='devnull', force=1)
+        #self.relax.interpreter._Results.write(file='devnull', force=1)
