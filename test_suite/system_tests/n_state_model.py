@@ -49,6 +49,11 @@ class N_state_model(TestCase):
             State 5:    {0, -pi/4, 0}
         """
 
+        # Execute the script '5_state_xz.py'.
+        self.relax.interpreter.script('test_suite/system_tests/scripts/5_state_xz.py')
+
+        return
+
         # Create the data pipe.
         self.relax.interpreter._Pipe.create('C domain', 'N-state')
 
