@@ -693,7 +693,12 @@ def matrix_angles(basis_set=0):
 
     # Header print out.
     sys.stdout.write("\nData pipe: " + `relax_data_store.current_pipe` + "\n")
-    sys.stdout.write("\n5D angles (deg):\n")
+    sys.stdout.write("\n5D angles in deg between the vectors ")
+    if basis_set == 0:
+        sys.stdout.write("{Sxx, Syy, Sxy, Sxz, Syz}")
+    elif basis_set == 1:
+        sys.stdout.write("{Szz, Sxx-yy, Sxy, Sxz, Syz}")
+    sys.stdout.write(":\n")
     sys.stdout.write("%8s" % '')
     for i in xrange(tensor_num):
         sys.stdout.write("%8i" % i)
