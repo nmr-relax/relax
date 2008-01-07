@@ -116,3 +116,8 @@ DATA_TYPES.append(['float tuple', (0.0, 0.0, 0.0, 0.0)])
 DATA_TYPES.append(['float tuple', (0.0, 0.0, 0.0, 0.0, 0.0)])
 DATA_TYPES.append(['float tuple', (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)])
 DATA_TYPES.append(['float tuple', (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)])
+
+# Tuples of strings.
+DATA_TYPES.append(['str tuple', ('a',)])
+DATA_TYPES.append(['str tuple', ('a', 'b')])
+DATA_TYPES.append(['str tuple', ('a', 'b', 'c')])
