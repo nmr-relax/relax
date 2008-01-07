@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2004-2006 Edward d'Auvergne                                   #
-# Copyright (C) 2007 Sebastien Morin <sebastien.morin.1 at ulaval.ca>         #
+# Copyright (C) 2007 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
