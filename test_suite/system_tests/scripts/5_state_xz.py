@@ -50,10 +50,10 @@ align_tensor.matrix_angles(basis_set=0)
 align_tensor.matrix_angles(basis_set=1)
 
 # Grid search.
-minimisation.grid_search(inc=11)
+grid_search(inc=11)
 
 # Minimise.
-minimisation.minimise('simplex')
+minimise('simplex')
 
 # Finish.
 #results.write(file='devnull', force=1)
