@@ -40,7 +40,7 @@ from sequence import Sequence
 
 __all__ = ['angles',
            'diffusion_tensor',
-           'generic.py',
+           'generic',
            'jw_mapping',
            'main',
            'model_free',
