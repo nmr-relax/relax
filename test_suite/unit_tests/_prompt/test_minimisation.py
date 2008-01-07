@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Data as relax_data_store
 from prompt.minimisation import Minimisation
-from relax_errors import RelaxBinError, RelaxIntError, RelaxIntListIntError, RelaxListError, RelaxListNumError
+from relax_errors import RelaxBinError, RelaxIntError, RelaxIntListIntError, RelaxListError, RelaxListNumError, RelaxNoneError, RelaxStrError
 from test_suite.unit_tests.minimisation_testing_base import Minimisation_base_class
 
 # Unit test imports.
@@ -127,3 +127,58 @@ class Test_minimisation(Minimisation_base_class, TestCase):
 
             # The argument test.
             self.assertRaises(RelaxIntError, self.minimisation_fns.grid_search, print_flag=data[1])
+
+
+    def test_minimise_argfail_args(self):
+        """The test of the arguments of the minimise() user function."""
+
+        # No arguments.
+        ###############
+
+        # The argument test.
+        self.assertRaises(RelaxNoneError, self.minimisation_fns.minimise)
+
+
+        # 1 argument.
+        #############
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str arguments, and skip them.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.minimisation_fns.minimise, data[1])
+
+
+        # 2 arguments.
+        ##############
+
+        # Loop over the data types.
+        for data1 in DATA_TYPES:
+            # Loop over the data types.
+            for data2 in DATA_TYPES:
+                # Catch the str arguments, and skip them.
+                if data1[0] == 'str' and data2[0] == 'str':
+                    continue
+
+                # The argument test.
+                self.assertRaises(RelaxStrError, self.minimisation_fns.minimise, data1[1], data2[1])
+
+
+        # 3 arguments.
+        ##############
+
+        # Loop over the data types.
+        for data1 in DATA_TYPES:
+            # Loop over the data types.
+            for data2 in DATA_TYPES:
+                # Loop over the data types.
+                for data3 in DATA_TYPES:
+                    # Catch the str arguments, and skip them.
+                    if data1[0] == 'str' and data2[0] == 'str' and data3[0] == 'str':
+                        continue
+
+                    # The argument test.
+                    self.assertRaises(RelaxStrError, self.minimisation_fns.minimise, data1[1], data2[1], data3[1])
