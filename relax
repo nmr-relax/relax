@@ -139,13 +139,13 @@ class Relax:
         elif tee_file and mode != 'thread':
             tee(tee_file)
 
+        # Create a string to pass to the interpreter to print.
+        intro_string = self.get_intro_string()
+
         # Run the interpreter for the prompt or script modes.
         if mode == 'prompt' or mode == 'script':
-            # Create a string to pass to the interpreter to print.
-            self.set_intro_string()
-
             # Run the interpreter.
-            self.interpreter = interpreter.Interpreter(self)
+            self.interpreter = interpreter.Interpreter(self, intro_string)
             self.interpreter.run(self.script_file)
 
         # Threading mode.
@@ -167,11 +167,8 @@ class Relax:
 
         # Execute the relax test suite
         elif mode == 'test suite':
-            # Create a string to pass to the interpreter to print.
-            self.set_intro_string()
-
             # Load the interpreter and turn intros on.
-            self.interpreter = interpreter.Interpreter(self)
+            self.interpreter = interpreter.Interpreter(self, show_script=False, quit=False)
             self.interpreter._on()
 
             # Run the tests.
@@ -180,11 +177,8 @@ class Relax:
 
         # Execute the relax system tests.
         elif mode == 'system tests':
-            # Create a string to pass to the interpreter to print.
-            self.set_intro_string()
-
             # Load the interpreter and turn intros on.
-            self.interpreter = interpreter.Interpreter(self)
+            self.interpreter = interpreter.Interpreter(self, show_script=False, quit=False)
             self.interpreter._on()
 
             # Run the tests.
@@ -193,9 +187,6 @@ class Relax:
 
         # Execute the relax unit tests.
         elif mode == 'unit tests':
-            # Create a string to pass to the interpreter to print.
-            self.set_intro_string()
-
             # Run the tests.
             runner = Test_suite_runner(self)
             runner.run_unit_tests()
@@ -366,14 +357,12 @@ class Relax:
         return mode, log_file, tee_file
 
 
-    def licence(self):
-        """Function for displaying the licence."""
+    def get_intro_string(self):
+        """Create the program introduction.
 
-        help(gpl)
-
-
-    def set_intro_string(self):
-        """Create the program introduction."""
+        @return:        The program introduction string.
+        @type return:   str
+        """
 
         # The width of the printout.
         if self.platform == 'Windows' or self.platform == 'Microsoft':
@@ -382,36 +371,45 @@ class Relax:
             width = 100
 
         # Some new lines.
-        self.intro_string = '\n\n\n'
+        intro_string = '\n\n\n'
 
         # Program name and version.
         string = "relax " + self.version
-        self.intro_string = self.intro_string + self.spacing(string, width) + '\n\n'
+        intro_string = intro_string + self.spacing(string, width) + '\n\n'
 
         # Program description.
         string = "Protein dynamics by NMR relaxation data analysis"
-        self.intro_string = self.intro_string + self.spacing(string, width) + '\n\n'
+        intro_string = intro_string + self.spacing(string, width) + '\n\n'
 
         # Copyright printout.
         string = "Copyright (C) 2001-2006 Edward d'Auvergne"
-        self.intro_string = self.intro_string + self.spacing(string, width) + '\n'
+        intro_string = intro_string + self.spacing(string, width) + '\n'
         string = "Copyright (C) 2006-2008 the relax development team"
-        self.intro_string = self.intro_string + self.spacing(string, width) + '\n\n'
+        intro_string = intro_string + self.spacing(string, width) + '\n\n'
 
         # Program licence and help (80 characters wide).
         if width == 80:
-            self.intro_string = self.intro_string + "This is free software which you are welcome to modify and redistribute under\n"
-            self.intro_string = self.intro_string + "the conditions of the GNU General Public License (GPL).  This program,\n"
-            self.intro_string = self.intro_string + "including all modules, is licensed under the GPL and comes with absolutely no\n"
-            self.intro_string = self.intro_string + "warranty.  For details type 'GPL'.  Assistance in using this program can be\n"
-            self.intro_string = self.intro_string + "accessed by typing 'help'.\n"
+            intro_string = intro_string + "This is free software which you are welcome to modify and redistribute under\n"
+            intro_string = intro_string + "the conditions of the GNU General Public License (GPL).  This program,\n"
+            intro_string = intro_string + "including all modules, is licensed under the GPL and comes with absolutely no\n"
+            intro_string = intro_string + "warranty.  For details type 'GPL'.  Assistance in using this program can be\n"
+            intro_string = intro_string + "accessed by typing 'help'.\n"
 
         # Program licence and help (100 characters wide).
         else:
-            self.intro_string = self.intro_string + "This is free software which you are welcome to modify and redistribute under the conditions of the\n"
-            self.intro_string = self.intro_string + "GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL\n"
-            self.intro_string = self.intro_string + "and comes with absolutely no warranty.  For details type 'GPL'.  Assistance in using this program\n"
-            self.intro_string = self.intro_string + "can be accessed by typing 'help'.\n"
+            intro_string = intro_string + "This is free software which you are welcome to modify and redistribute under the conditions of the\n"
+            intro_string = intro_string + "GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL\n"
+            intro_string = intro_string + "and comes with absolutely no warranty.  For details type 'GPL'.  Assistance in using this program\n"
+            intro_string = intro_string + "can be accessed by typing 'help'.\n"
+
+        # Return the string.
+        return intro_string
+
+
+    def licence(self):
+        """Function for displaying the licence."""
+
+        help(gpl)
 
 
     def spacing(self, string, width=100):

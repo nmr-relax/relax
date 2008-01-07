@@ -82,11 +82,8 @@ class Mf(TestCase):
     def test_create_m4(self):
         """Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()."""
 
-        # Place the script file name into self.relax.script_file.
-        self.relax.script_file = 'test_suite/system_tests/scripts/create_m4.py'
-
-        # Execute relax in script mode.
-        self.relax.interpreter.run(quit=False)
+        # Execute the script.
+        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/create_m4.py')
 
         # Alias the current data pipe.
         cdp = relax_data_store[relax_data_store.current_pipe]
