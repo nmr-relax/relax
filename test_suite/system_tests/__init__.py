@@ -42,7 +42,7 @@ from sequence import Sequence
 __all__ = ['angles',
            'consistency_tests',
            'diffusion_tensor',
-           'generic.py',
+           'generic',
            'jw_mapping',
            'main',
            'model_free',

@@ -82,14 +82,8 @@ class Mf(TestCase):
     def test_create_m4(self):
         """Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()."""
 
-        # Path of the files.
-        path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
-
-        # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
-
-        # Select the model.
-        self.relax.interpreter._Model_free.create_model(model='m4', equation='mf_orig', params=['S2', 'te', 'Rex'], spin_id=None)
+        # Execute the script.
+        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/create_m4.py')
 
         # Alias the current data pipe.
         cdp = relax_data_store[relax_data_store.current_pipe]
