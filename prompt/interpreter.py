@@ -48,7 +48,6 @@ from gpl import GPL
 from reset import Reset
 from minimisation import Minimisation
 from model_selection import Modsel
-from nuclei import Nuclei
 
 # User classes.
 from dasha import Dasha
@@ -106,7 +105,6 @@ class Interpreter:
         self._Reset = Reset(relax)
         self._Minimisation = Minimisation(relax)
         self._Modsel = Modsel(relax)
-        self._Nuclei = Nuclei(relax)
         self._OpenDX = OpenDX(relax)
         self._system = system
 
@@ -169,7 +167,6 @@ class Interpreter:
         reset = self._Reset.reset
         minimise = self._Minimisation.minimise
         model_selection = self._Modsel.model_selection
-        nuclei = self._Nuclei.nuclei
 
         # Place the user classes in the local namespace.
         dasha = self._Dasha
