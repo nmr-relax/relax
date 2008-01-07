@@ -125,6 +125,7 @@ class Interpreter:
         self._system = system
 
         # Place the user classes into the interpreter class namespace.
+        self._Consistency_tests = Consistency_tests(relax)
         self._Dasha = Dasha(relax)
         self._Diffusion_tensor = Diffusion_tensor(relax)
         self._OpenDX = OpenDX(relax)
