@@ -67,6 +67,35 @@ class N_state_model(Common_functions):
         """Dummy function nornally for deselecting spins with insufficient data for minimisation."""
 
 
+    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, scaling=1, print_flag=0, sim_index=None):
+        """Minimisation function.
+
+        @param min_algor:       The minimisation algorithm to use.
+        @type min_algor:        str
+        @param min_options:     An array of options to be used by the minimisation algorithm.
+        @type min_options:      array of str
+        @param func_tol:        The function tolerence which, when reached, terminates optimisation.
+                                Setting this to None turns of the check.
+        @type func_tol:         None or float
+        @param grad_tol:        The gradient tolerence which, when reached, terminates optimisation.
+                                Setting this to None turns of the check.
+        @type grad_tol:         None or float
+        @param max_iterations:  The maximum number of iterations for the algorithm.
+        @type max_iterations:   int
+        @param constraints:     If true, constraints are used during optimisation.
+        @type constraints:      bool
+        @param scaling:         If true, diagonal scaling is enabled during optimisation to allow
+                                the problem to be better conditioned.
+        @type scaling:          bool
+        @param print_flag:      A flag specifying the amount of information to print.  The higher
+                                the value, the greater the verbosity.
+        @type print_flag:       int
+        @param sim_index:       The index of the simulation to optimise.  This should be None if
+                                normal optimisation is desired.
+        @type sim_index:        None or int
+        """
+
+
     def return_data_name(self, name):
         """
         N-state model data type string matching patterns
