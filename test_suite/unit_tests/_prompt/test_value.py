@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Data as relax_data_store
 from prompt.value import Value
-from relax_errors import RelaxError, RelaxListFloatError, RelaxListStrError, RelaxNoneFloatListError, RelaxNoneStrError, RelaxNoneStrListError
+from relax_errors import RelaxError, RelaxListFloatStrError, RelaxListStrError, RelaxNoneFloatStrListError, RelaxNoneStrError, RelaxNoneStrListError
 from test_suite.unit_tests.value_testing_base import Value_base_class
 
 # Unit test imports.
@@ -46,8 +46,8 @@ class Test_value(Value_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the None, float, int, or bin arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin' or data[0] == 'float':
+            # Catch the None, float, int, str, or bin arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin' or data[0] == 'str' or data[0] == 'float':
                 continue
 
             # Catch all number lists.
@@ -58,11 +58,11 @@ class Test_value(Value_base_class, TestCase):
 
             # Catch all other list arguments.
             elif type(data[1]) == list:
-                self.assertRaises(RelaxListFloatError, self.value_fns.set, val=data[1], param=None)
+                self.assertRaises(RelaxListFloatStrError, self.value_fns.set, val=data[1], param=None)
 
             # All other arguments.
             else:
-                self.assertRaises(RelaxNoneFloatListError, self.value_fns.set, val=data[1], param='CSA')
+                self.assertRaises(RelaxNoneFloatStrListError, self.value_fns.set, val=data[1], param='CSA')
 
 
     def test_set_argfail_param(self):

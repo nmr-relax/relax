@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2008 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,61 +20,29 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-import sys
-from unittest import TestCase
-
 # relax module imports.
 from data import Data as relax_data_store
 
 
-class Relax_fit(TestCase):
-    """Class for testing various aspects specific to relaxation curve-fitting."""
+class Minimisation_base_class:
+    """Base class for the tests of the minimisation modules.
+    
+    This includes both the 'prompt.minimisation' and 'generic_fns.minimise' modules.
+    The base class also contains many shared unit tests.
+    """
+
 
     def setUp(self):
-        """Set up for all the functional tests."""
+        """Set up for all the minimisation unit tests."""
 
-        # Create the data pipe.
-        self.relax.interpreter._Pipe.create('mf', 'mf')
+        # Reset the relax data storage object.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
 
 
     def tearDown(self):
         """Reset the relax data storage object."""
 
         relax_data_store.__reset__()
-
-
-    def test_read_sparky(self):
-        """The Sparky peak height loading test."""
-
-        # Load the original state.
-        self.relax.interpreter._State.load(state='rx.save', dir_name=sys.path[-1] + '/test_suite/system_tests/data/curve_fitting')
-
-        # Load the Lupin Ap4Aase sequence.
-        self.relax.interpreter._Sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/system_tests/data")
-
-        # Read the peak heights.
-        self.relax.interpreter._Relax_fit.read(file="T2_ncyc1_ave.list", dir=sys.path[-1] + "/test_suite/system_tests/data/curve_fitting", relax_time=0.0176)
-
-
-        # Test the integrity of the data.
-        #################################
-
-        # Loop over the residues of the original data.
-        for i in xrange(len(relax_data_store['rx'].mol[0].res)):
-            # Aliases
-            orig_data = relax_data_store['rx'].mol[0].res[i]
-            new_data = relax_data_store[relax_data_store.current_pipe].mol[0].res[i]
-
-            # Residue numbers.
-            self.assertEqual(orig_data.num, new_data.num)
-
-            # Residue names.
-            self.assertEqual(orig_data.name, new_data.name)
-
-            # Skip unselected residues.
-            if not orig_data.spin[0].select:
-                continue
-
-            # The intensity.
-            self.assertEqual(orig_data.spin[0].intensities[0][0], new_data.spin[0].intensities[0][0])

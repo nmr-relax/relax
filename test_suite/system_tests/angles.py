@@ -47,9 +47,6 @@ class Angles(TestCase):
     def test_angles(self):
         """The user function angles()."""
 
-        # Create the data pipe.
-        self.relax.interpreter._Pipe.create(pipe, 'mf')
-
         # Read a PDB file.
         self.relax.interpreter._Structure.read_pdb(file='test.pdb', dir=sys.path[-1] + '/test_suite/system_tests/data', model=1)
 

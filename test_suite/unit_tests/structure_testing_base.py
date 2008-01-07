@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,37 +20,29 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from math import pi
+# relax module imports.
+from data import Data as relax_data_store
 
 
-# Planck's constant.
-h = 6.62606876e-34
 
-# Dirac's constant.
-h_bar = h / (2.0*pi)
+class Structure_base_class:
+    """Base class for the tests of both the 'prompt.structure' and 'generic_fns.structure' modules.
 
-# The magnetic constant or the permeability of vacuum.
-mu0 = 4.0 * pi * 1e-7
+    This base class also contains many shared unit tests.
+    """
 
-# The 15N CSA in the NH bond (default value).
-N15_CSA = -172 * 1e-6
+    def setUp(self):
+        """Set up for all the molecule unit tests."""
 
-# The length of the NH bond (default value).
-NH_BOND_LENGTH = 1.02 * 1e-10
+        # Reset the relax data storage object.
+        relax_data_store.__reset__()
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
 
 
-# The 13C gyromagnetic ratio.
-g13C = 6.728e7
+    def tearDown(self):
+        """Reset the relax data storage object."""
 
-# The 1H gyromagnetic ratio.
-g1H = 26.7522212e7
-
-# The 15N gyromagnetic ratio.
-g15N = -2.7126e7
-
-# The 17O gyromagnetic ratio.
-g17O = -3.628e7
-
-# The 31P gyromagnetic ratio.
-g31P = 1.0841e8
+        # Reset the relax data storage object.
+        relax_data_store.__reset__()

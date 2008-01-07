@@ -2524,6 +2524,26 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -160e-6)
 
 
+    def test_set_jw_all_spins_nucleus(self):
+        """Set the RSDM heteronucleus type for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='nucleus', val='C')
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].nucleus, 'C')
+        self.assertEqual(cdp.mol[0].res[1].spin[0].nucleus, 'C')
+
+
     def test_set_jw_all_spins_diff_j0_jwx_jwh(self):
         """Set different RSDM parameters J(0), J(wX), J(wH) for all spins.
 
@@ -2660,6 +2680,26 @@ class Value_base_class:
         self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].csa, -172e-6)
 
 
+    def test_set_jw_defaults_nucleus(self):
+        """Set the RSDM heteronucleus type to the default value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='nucleus')
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].nucleus, 'N')
+        self.assertEqual(cdp.mol[0].res[1].spin[0].nucleus, 'N')
+
+
     def test_set_jw_defaults_j0_jwx_jwh(self):
         """Set different RSDM parameters J(0), J(wX), J(wH) to the default values (there are none!).
 
@@ -2774,6 +2814,26 @@ class Value_base_class:
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'csa'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -160e-6)
+
+
+    def test_set_jw_single_spin_nucleus(self):
+        """Set the RSDM heteronucleus type for a single spin.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'jw'.
+        relax_data_store.current_pipe = 'jw'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='nucleus', val='C', spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'nucleus'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].nucleus, 'C')
 
 
     def test_set_jw_single_spin_diff_j0_jwx_jwh(self):
@@ -3030,6 +3090,26 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -172e-6)
 
 
+    def test_set_mf_all_spins_nucleus(self):
+        """Set the model-free heteronucleus type for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'mf'.
+        relax_data_store.current_pipe = 'mf'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='nucleus', val='C')
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].nucleus, 'C')
+        self.assertEqual(cdp.mol[0].res[1].spin[0].nucleus, 'C')
+
+
     def test_set_mf_all_spins_diff_s2f_s2s(self):
         """Set the model-free S2f and S2s parameters for all spins to different values.
 
@@ -3274,6 +3354,26 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -172 * 1e-6)
 
 
+    def test_set_mf_defaults_nucleus(self):
+        """Set the model-free heteronucleus type to the default value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'mf'.
+        relax_data_store.current_pipe = 'mf'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='nucleus')
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].nucleus, 'N')
+        self.assertEqual(cdp.mol[0].res[1].spin[0].nucleus, 'N')
+
+
     def test_set_mf_defaults_s2f_s2s(self):
         """Set the model-free S2f and S2s parameters to the default values.
 
@@ -3494,6 +3594,26 @@ class Value_base_class:
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'csa'))
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -172e-6)
+
+
+    def test_set_mf_single_spin_nucleus(self):
+        """Set the model-free heteronucleus type for a single spin.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'mf'.
+        relax_data_store.current_pipe = 'mf'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='nucleus', val='C', spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'nucleus'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].nucleus, 'C')
 
 
     def test_set_mf_single_spin_diff_s2f_s2s(self):
