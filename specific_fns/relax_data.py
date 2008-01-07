@@ -547,9 +547,9 @@ class Rx_data:
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # Test if relaxation data corresponding to 'self.ri_label' and 'self.frq_label' already exists.
-        if self.test_labels():
-            raise RelaxRiError, (self.ri_label, self.frq_label)
+        # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
+        if self.test_labels(ri_label, frq_label):
+            raise RelaxRiError, (ri_label, frq_label)
 
         # Minimum number of columns.
         min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col)
@@ -666,8 +666,8 @@ class Rx_data:
         return value, error
 
 
-    def test_labels(self):
-        """Test if data corresponding to 'self.ri_label' and 'self.frq_label' currently exists.
+    def test_labels(self, ri_label, frq_label):
+        """Test if data corresponding to 'ri_label' and 'frq_label' currently exists.
 
         @return:        The answer to the question of whether relaxation data exists corresponding to
                         the given labels.
@@ -682,8 +682,8 @@ class Rx_data:
 
             # Loop over the relaxation data.
             for j in xrange(spin.num_ri):
-                # Test if the relaxation data matches 'self.ri_label' and 'self.frq_label'.
-                if self.ri_label == spin.ri_labels[j] and self.frq_label == spin.frq_labels[spin.remap_table[j]]:
+                # Test if the relaxation data matches 'ri_label' and 'frq_label'.
+                if ri_label == spin.ri_labels[j] and frq_label == spin.frq_labels[spin.remap_table[j]]:
                     return True
 
         # No match.
