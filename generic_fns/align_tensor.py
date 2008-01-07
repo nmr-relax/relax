@@ -32,7 +32,7 @@ from angles import wrap_angles
 from data import Data as relax_data_store
 from data.align_tensor import AlignTensorData
 from data.data_classes import SpecificData
-from physical_constants import gC, gH, gN, gO, gP, h_bar, mu0
+from physical_constants import g13C, g1H, g15N, g17O, g31P, h_bar, mu0
 import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
@@ -544,27 +544,27 @@ def kappa(nuc1='N', nuc2='H'):
 
     # Gyromagnetic ratio of the first nucleus.
     if nuc1 == 'C':
-        gI = gC
+        gI = g13C
     elif nuc1 == 'H':
-        gI = gH
+        gI = g1H
     elif nuc1 == 'N':
-        gI = gN
+        gI = g15N
     elif nuc1 == 'O':
-        gI = gO
+        gI = g17O
     elif nuc1 == 'P':
-        gI = gP
+        gI = g31P
 
     # Gyromagnetic ratio of the second nucleus.
     if nuc2 == 'C':
-        gS = gC
+        gS = g13C
     elif nuc2 == 'H':
-        gS = gH
+        gS = g1H
     elif nuc2 == 'N':
-        gS = gN
+        gS = g15N
     elif nuc2 == 'O':
-        gS = gO
+        gS = g17O
     elif nuc2 == 'P':
-        gS = gP
+        gS = g31P
 
     # Kappa.
     return -3.0/(8.0*pi**2) * gI * gS * mu0 * h_bar
