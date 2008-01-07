@@ -95,9 +95,9 @@ class Interpreter:
 
         # Place the arguments in the class namespace.
         self.relax = relax
-        self.intro_string = intro_string
-        self.show_script = show_script
-        self.quit_flag = quit
+        self.__intro_string = intro_string
+        self.__show_script = show_script
+        self.__quit_flag = quit
         
         # The prompts.
         sys.ps1 = 'relax> '
@@ -241,7 +241,7 @@ class Interpreter:
             self.intro = 1
 
             # Run the script.
-            run_script(intro=self.intro_string, local=self.local, script_file=script_file, quit=self.quit_flag, show_script=self.show_script)
+            run_script(intro=self.__intro_string, local=self.local, script_file=script_file, quit=self.__quit_flag, show_script=self.__show_script)
 
         # Test for the dummy mode for generating documentation (then exit).
         elif hasattr(self.relax, 'dummy_mode'):
@@ -251,7 +251,7 @@ class Interpreter:
 
         # Go to the prompt.
         else:
-            prompt(intro=self.intro_string, local=self.local)
+            prompt(intro=self.__intro_string, local=self.local)
 
 
     def _off(self):
