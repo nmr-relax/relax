@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2005, 2008 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,12 +20,13 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from string import split
 import sys
 
-from relax_errors import RelaxBinError, RelaxError, RelaxIntError, RelaxIntListIntError, RelaxListError, RelaxListNumError, RelaxNoneError, RelaxNoneNumError, RelaxNumError, RelaxStrError
-
+# relax module imports.
 from minimise.generic import generic_minimise
+from relax_errors import RelaxBinError, RelaxError, RelaxIntError, RelaxIntListIntError, RelaxListError, RelaxListNumError, RelaxNoneError, RelaxNoneNumError, RelaxNumError, RelaxStrError
 
 
 class Minimisation:
@@ -35,41 +36,35 @@ class Minimisation:
         self.relax = relax
 
 
-    def calc(self, run=None, print_flag=1):
+    def calc(self, print_flag=1):
         """Function for calculating the function value.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
+        print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
+        output while higher values increase the amount of output.  The default value is 1.
         """
 
         # Function intro text.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "calc("
-            text = text + "run=" + `run`
-            text = text + ", print_flag=" + `print_flag` + ")"
+            text = text + "print_flag=" + `print_flag` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The print flag.
         if type(print_flag) != int:
             raise RelaxIntError, ('print flag', print_flag)
 
         # Execute the functional code.
-        self.relax.generic.minimise.calc(run=run, print_flag=print_flag)
+        minimise.calc(print_flag=print_flag)
 
 
-    def grid_search(self, run=None, lower=None, upper=None, inc=21, constraints=1, print_flag=1):
+    def grid_search(self, lower=None, upper=None, inc=21, constraints=1, print_flag=1):
         """The grid search function.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run to apply the grid search to.
 
         lower:  An array of the lower bound parameter values for the grid search.  The length of the
         array should be equal to the number of parameters in the model.
@@ -92,17 +87,12 @@ class Minimisation:
         # Function intro text.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "grid_search("
-            text = text + "run=" + `run`
-            text = text + ", lower=" + `lower`
+            text = text + "lower=" + `lower`
             text = text + ", upper=" + `upper`
             text = text + ", inc=" + `inc`
             text = text + ", constraints=" + `constraints`
             text = text + ", print_flag=" + `print_flag` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The lower bounds.
         if lower == None:
@@ -143,7 +133,7 @@ class Minimisation:
             raise RelaxIntError, ('print flag', print_flag)
 
         # Execute the functional code.
-        self.relax.generic.minimise.grid_search(run=run, lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag)
+        minimise.grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag)
 
 
     def minimise(self, *args, **keywords):
@@ -169,8 +159,6 @@ class Minimisation:
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         func_tol:  The function tolerance.  This is used to terminate minimisation once the function
         value between iterations is less than the tolerance.  The default value is 1e-25.
@@ -211,27 +199,26 @@ class Minimisation:
         Examples
         ~~~~~~~~
 
-        To minimise the model-free run 'm4' using Newton minimisation together with the GMW81
-        Hessian modification algorithm, the More and Thuente line search algorithm, a function
-        tolerance of 1e-25, no gradient tolerance, a maximum of 10,000,000 iterations, constraints
-        turned on to limit parameter values, and have normal printout, type any combination of:
+        To apply Newton minimisation together with the GMW81 Hessian modification algorithm, the
+        More and Thuente line search algorithm, a function tolerance of 1e-25, no gradient
+        tolerance, a maximum of 10,000,000 iterations, constraints turned on to limit parameter
+        values, and have normal printout, type any combination of:
 
-        relax> minimise('newton', run='m4')
-        relax> minimise('Newton', run='m4')
-        relax> minimise('newton', 'gmw', run='m4')
-        relax> minimise('newton', 'mt', run='m4')
-        relax> minimise('newton', 'gmw', 'mt', run='m4')
-        relax> minimise('newton', 'mt', 'gmw', run='m4')
-        relax> minimise('newton', run='m4', func_tol=1e-25)
-        relax> minimise('newton', run='m4', func_tol=1e-25, grad_tol=None)
-        relax> minimise('newton', run='m4', max_iter=1e7)
-        relax> minimise('newton', run=name, constraints=1, max_iter=1e7)
-        relax> minimise('newton', run='m4', print_flag=1)
+        relax> minimise('newton')
+        relax> minimise('Newton')
+        relax> minimise('newton', 'gmw')
+        relax> minimise('newton', 'mt')
+        relax> minimise('newton', 'gmw', 'mt')
+        relax> minimise('newton', 'mt', 'gmw')
+        relax> minimise('newton', func_tol=1e-25)
+        relax> minimise('newton', func_tol=1e-25, grad_tol=None)
+        relax> minimise('newton', max_iter=1e7)
+        relax> minimise('newton', constraints=1, max_iter=1e7)
+        relax> minimise('newton', print_flag=1)
 
-        To minimise the model-free run 'm5' using constrained Simplex minimisation with a maximum of
-        5000 iterations, type:
+        To use constrained Simplex minimisation with a maximum of 5000 iterations, type:
 
-        relax> minimise('simplex', run='m5', constraints=1, max_iter=5000)
+        relax> minimise('simplex', constraints=1, max_iter=5000)
 
 
 
@@ -252,13 +239,7 @@ class Minimisation:
 
         """
 
-        # Function intro text is found at the end.
-
-        # Keyword: run.
-        if keywords.has_key('run'):
-            run = keywords['run']
-        else:
-            run = None
+        # The function intro text is found at the end!
 
         # Keyword: func_tol.
         if keywords.has_key('func_tol'):
@@ -302,7 +283,6 @@ class Minimisation:
         if self.relax.interpreter.intro:
             text = sys.ps3 + "minimise("
             text = text + "*args=" + `args`
-            text = text + ", run=" + `run`
             text = text + ", func_tol=" + `func_tol`
             text = text + ", max_iterations=" + `max_iterations`
             text = text + ", constraints=" + `constraints`
@@ -321,7 +301,7 @@ class Minimisation:
         min_options = args[1:]
 
         # Test for invalid keywords.
-        valid_keywords = ['run', 'func_tol', 'grad_tol', 'max_iter', 'max_iterations', 'constraints', 'scaling', 'print_flag']
+        valid_keywords = ['func_tol', 'grad_tol', 'max_iter', 'max_iterations', 'constraints', 'scaling', 'print_flag']
         for key in keywords:
             valid = 0
             for valid_key in valid_keywords:
@@ -329,12 +309,6 @@ class Minimisation:
                     valid = 1
             if not valid:
                 raise RelaxError, "Unknown keyword argument " + `key` + "."
-
-        # The run keyword.
-        if run == None:
-            raise RelaxNoneError, 'run'
-        elif type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The function tolerance value.
         if func_tol != None and type(func_tol) != int and type(func_tol) != float:
@@ -364,7 +338,7 @@ class Minimisation:
             raise RelaxIntError, ('print flag', print_flag)
 
         # Execute the functional code.
-        self.relax.generic.minimise.minimise(run=run, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag)
+        minimise.minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag)
 
 
 
