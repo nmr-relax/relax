@@ -26,6 +26,7 @@ import sys
 
 # relax module imports.
 from minimise.generic import generic_minimise
+from generic_fns import minimise
 from relax_errors import RelaxBinError, RelaxError, RelaxIntError, RelaxIntListIntError, RelaxListError, RelaxListNumError, RelaxNoneError, RelaxNoneNumError, RelaxNumError, RelaxStrError
 
 
