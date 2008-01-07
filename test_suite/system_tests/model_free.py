@@ -58,9 +58,6 @@ class Mf(TestCase):
         # Path of the files.
         path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
 
-        # Nuclei type
-        self.relax.interpreter._Nuclei.nuclei('N')
-
         # Load the sequence.
         self.relax.interpreter._Sequence.read('noe.500.out', dir=path)
 
@@ -76,6 +73,7 @@ class Mf(TestCase):
         self.relax.interpreter._Diffusion_tensor.init(10e-9, fixed=1)
         self.relax.interpreter._Value.set(NH_BOND_LENGTH, 'bond_length')
         self.relax.interpreter._Value.set(-160 * 1e-6, 'csa')
+        self.relax.interpreter._Value.set('N', 'nucleus')
 
         # Select the model-free model.
         self.relax.interpreter._Model_free.select_model(model='m4')
@@ -107,9 +105,6 @@ class Mf(TestCase):
         # Path of the files.
         path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
 
-        # Nuclei type
-        self.relax.interpreter._Nuclei.nuclei('N')
-
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
 
@@ -124,6 +119,7 @@ class Mf(TestCase):
         # Setup other values.
         self.relax.interpreter._Diffusion_tensor.init(1e-8, fixed=1)
         self.relax.interpreter._Value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
+        self.relax.interpreter._Value.set('N', 'nucleus')
 
         # Select the model.
         self.relax.interpreter._Model_free.select_model(model='m4')
@@ -137,9 +133,6 @@ class Mf(TestCase):
 
         # Path of the files.
         path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
-
-        # Nuclei type
-        self.relax.interpreter._Nuclei.nuclei('N')
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
@@ -160,6 +153,7 @@ class Mf(TestCase):
         self.relax.interpreter._Diffusion_tensor.init((1.601 * 1e7, 1.34, 72.4, 90-77.9), param_types=4)
         self.relax.interpreter._Value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
         self.relax.interpreter._Value.set([0.8, 50 * 1e-12, 0.0], ['S2', 'te', 'Rex'])
+        self.relax.interpreter._Value.set('N', 'nucleus')
 
         # Select the model.
         self.relax.interpreter._Model_free.select_model(model='m4')
@@ -174,9 +168,6 @@ class Mf(TestCase):
         # Path of the files.
         path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
 
-        # Nuclei type
-        self.relax.interpreter._Nuclei.nuclei('N')
-
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
 
@@ -190,6 +181,7 @@ class Mf(TestCase):
 
         # Setup other values.
         self.relax.interpreter._Value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
+        self.relax.interpreter._Value.set('N', 'nucleus')
 
         # Select the model.
         self.relax.interpreter._Model_free.select_model(model='tm2')
