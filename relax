@@ -168,7 +168,7 @@ class Relax:
         # Execute the relax test suite
         elif mode == 'test suite':
             # Load the interpreter and turn intros on.
-            self.interpreter = interpreter.Interpreter(self)
+            self.interpreter = interpreter.Interpreter(self, show_script=False)
             self.interpreter._on()
 
             # Run the tests.
@@ -178,7 +178,7 @@ class Relax:
         # Execute the relax system tests.
         elif mode == 'system tests':
             # Load the interpreter and turn intros on.
-            self.interpreter = interpreter.Interpreter(self)
+            self.interpreter = interpreter.Interpreter(self, show_script=False)
             self.interpreter._on()
 
             # Run the tests.
