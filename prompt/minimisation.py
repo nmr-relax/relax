@@ -293,8 +293,9 @@ class Minimisation:
         # Minimisation algorithm.
         if len(args) == 0:
             raise RelaxNoneError, 'minimisation algorithm'
-        elif type(args[0]) != str:
-            raise RelaxStrError, ('minimisation algorithm', args[0])
+        for i in xrange(len(args)):
+            if type(args[i]) != str:
+                raise RelaxStrError, ('minimisation algorithm', args[0])
         min_algor = args[0]
 
         # Minimisation options.
