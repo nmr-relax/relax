@@ -50,6 +50,7 @@ from minimisation import Minimisation
 from model_selection import Modsel
 
 # User classes.
+from consistency_tests import Consistency_tests
 from dasha import Dasha
 from diffusion_tensor import Diffusion_tensor
 from grace import Grace
@@ -189,6 +190,7 @@ class Interpreter:
         model_selection = self._Modsel.model_selection
 
         # Place the user classes in the local namespace.
+        consistency_tests = self._Consistency_tests
         dasha = self._Dasha
         diffusion_tensor = self._Diffusion_tensor
         dx = self._OpenDX
