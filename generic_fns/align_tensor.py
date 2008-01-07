@@ -25,7 +25,7 @@ from copy import deepcopy
 from math import cos, pi, sin
 from numpy import arccos, dot, float64, linalg, transpose, zeros
 from re import search
-from sys import stdout
+import sys
 
 # relax module imports.
 from angles import wrap_angles
@@ -692,17 +692,17 @@ def matrix_angles(basis_set=0):
     cdp.align_tensor.angles = zeros((tensor_num, tensor_num), float64)
 
     # Header print out.
-    stdout.write("\nData pipe: " + `relax_data_store.current_pipe` + "\n")
-    stdout.write("\n5D angles (deg):\n")
-    stdout.write("%8s" % '')
+    sys.stdout.write("\nData pipe: " + `relax_data_store.current_pipe` + "\n")
+    sys.stdout.write("\n5D angles (deg):\n")
+    sys.stdout.write("%8s" % '')
     for i in xrange(tensor_num):
-        stdout.write("%8i" % i)
-    stdout.write("\n")
+        sys.stdout.write("%8i" % i)
+    sys.stdout.write("\n")
 
     # First loop.
     for i in xrange(tensor_num):
         # Print out.
-        stdout.write("%8i" % i)
+        sys.stdout.write("%8i" % i)
 
         # Second loop.
         for j in xrange(tensor_num):
@@ -712,10 +712,10 @@ def matrix_angles(basis_set=0):
                 cdp.align_tensor.angles[i, j] = arccos(dot(matrix[i], matrix[j]))
 
             # Print out the angles in degrees.
-            stdout.write("%8.1f" % (cdp.align_tensor.angles[i, j]*180.0/pi))
+            sys.stdout.write("%8.1f" % (cdp.align_tensor.angles[i, j]*180.0/pi))
 
         # Print out.
-        stdout.write("\n")
+        sys.stdout.write("\n")
 
 
 def return_conversion_factor(param):
