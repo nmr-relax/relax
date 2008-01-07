@@ -83,7 +83,7 @@ class Mf(TestCase):
         """Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/create_m4.py', quit=False)
+        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/create_m4.py')
 
         # Alias the current data pipe.
         cdp = relax_data_store[relax_data_store.current_pipe]

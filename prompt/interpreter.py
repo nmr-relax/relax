@@ -78,7 +78,7 @@ from vmd import Vmd
 
 
 class Interpreter:
-    def __init__(self, relax, intro_string=None, show_script=True):
+    def __init__(self, relax, intro_string=None, show_script=True, quit=True):
         """The interpreter class.
 
         @param relax:           The relax instance.
@@ -88,12 +88,16 @@ class Interpreter:
         @param show_script:     If true, the relax will print the script contents prior to executing
                                 the script.
         @type show_script:      bool
+        @param quit:            If true, the default, then relax will exit after running the run()
+                                method.
+        @type quit:             bool
         """
 
         # Place the arguments in the class namespace.
         self.relax = relax
         self.intro_string = intro_string
         self.show_script = show_script
+        self.quit_flag = quit
         
         # The prompts.
         sys.ps1 = 'relax> '
@@ -148,7 +152,7 @@ class Interpreter:
         self._Vmd = Vmd(relax)
 
 
-    def run(self, script_file=None, quit=True):
+    def run(self, script_file=None):
         """Run the python interpreter.
 
         The namespace of this function is the namespace seen inside the interpreter.  All user
@@ -158,8 +162,6 @@ class Interpreter:
         @param script_file: The script file to be executed.  For the interpreter mode, this
                             should be left as None.
         @type script_file:  None or str
-        @param quit:        If true, the default, then relax will exit after running this function.
-        @type quit:         bool
         """
 
         # Python modules.
@@ -239,7 +241,7 @@ class Interpreter:
             self.intro = 1
 
             # Run the script.
-            run_script(intro=self.intro_string, local=self.local, script_file=script_file, quit=quit, show_script=self.show_script)
+            run_script(intro=self.intro_string, local=self.local, script_file=script_file, quit=self.quit_flag, show_script=self.show_script)
 
         # Test for the dummy mode for generating documentation (then exit).
         elif hasattr(self.relax, 'dummy_mode'):
