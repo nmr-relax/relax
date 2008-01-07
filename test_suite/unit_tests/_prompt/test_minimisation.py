@@ -139,9 +139,6 @@ class Test_minimisation(Minimisation_base_class, TestCase):
         self.assertRaises(RelaxNoneError, self.minimisation_fns.minimise)
 
 
-        # 1st argument.
-        ###############
-
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the str arguments, and skip them.
