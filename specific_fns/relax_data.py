@@ -284,8 +284,8 @@ class Rx_data:
                 data1 = relax_data_store.res[run1][i]
                 data2 = relax_data_store.res[run2][i]
 
-                # Find the index corresponding to 'self.ri_label' and 'self.frq_label'.
-                index = self.find_index(data1)
+                # Find the index corresponding to 'ri_label' and 'frq_label'.
+                index = self.find_index(data1, ri_label, frq_label)
 
                 # Catch any problems.
                 if index == None:
@@ -414,8 +414,8 @@ class Rx_data:
             # Global data flag.
             self.global_flag = 0
 
-            # Find the index corresponding to 'self.ri_label' and 'self.frq_label'.
-            index = self.find_index(data)
+            # Find the index corresponding to 'ri_label' and 'frq_label'.
+            index = self.find_index(data, ri_label, frq_label)
 
             # Catch any problems.
             if index == None:
@@ -480,29 +480,31 @@ class Rx_data:
         self.relax.generic.value.write_data(self.run, (self.ri_label, self.frq_label), sys.stdout, return_value=self.return_value)
 
 
-    def find_index(self, data):
-        """Function for finding the index corresponding to self.ri_label and self.frq_label."""
+    def find_index(self, data, ri_label, frq_label):
+        """Function for finding the index corresponding to ri_label and frq_label.
+
+        @param data:        The class instance containing the ri_label and frq_label variables.
+        @type data:         PipeContainer or SpinContainer
+        @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+        @type ri_label:     str
+        @param frq_label:   The field strength label.
+        @type frq_label:    str
+        @return:            The index corresponding to the relaxation data.  If there is no
+                            relaxation data corresponding to the labels, None is returned.
+        @type return:       None or int
+        """
 
         # No data.num_ri data structure.
-        if self.global_flag == 1:
-            if not data.num_ri.has_key(self.relax):
-                return None
-        else:
-            if not hasattr(data, 'num_ri'):
-                return None
+        if not hasattr(data, 'num_ri'):
+            return None
 
         # Initialise.
         index = None
 
         # Find the index.
-        if self.global_flag == 1:
-            for j in xrange(data.num_ri[self.run]):
-                if self.ri_label == data.ri_labels[self.run][j] and self.frq_label == data.frq_labels[self.run][data.remap_table[self.run][j]]:
-                    index = j
-        else:
-            for j in xrange(data.num_ri):
-                if self.ri_label == data.ri_labels[j] and self.frq_label == data.frq_labels[data.remap_table[j]]:
-                    index = j
+        for j in xrange(data.num_ri):
+            if ri_label == data.ri_labels[j] and frq_label == data.frq_labels[data.remap_table[j]]:
+                index = j
 
         # Return the index.
         return index
@@ -547,9 +549,9 @@ class Rx_data:
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # Test if relaxation data corresponding to 'self.ri_label' and 'self.frq_label' already exists.
-        if self.test_labels():
-            raise RelaxRiError, (self.ri_label, self.frq_label)
+        # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
+        if self.test_labels(ri_label, frq_label):
+            raise RelaxRiError, (ri_label, frq_label)
 
         # Minimum number of columns.
         min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col)
@@ -654,7 +656,7 @@ class Rx_data:
         value = None
         error = None
 
-        # Find the index corresponding to 'self.ri_label' and 'self.frq_label'.
+        # Find the index corresponding to 'ri_label' and 'frq_label'.
         index = self.find_index(relax_data_store.res[self.run][i])
 
         # Get the data.
@@ -666,8 +668,8 @@ class Rx_data:
         return value, error
 
 
-    def test_labels(self):
-        """Test if data corresponding to 'self.ri_label' and 'self.frq_label' currently exists.
+    def test_labels(self, ri_label, frq_label):
+        """Test if data corresponding to 'ri_label' and 'frq_label' currently exists.
 
         @return:        The answer to the question of whether relaxation data exists corresponding to
                         the given labels.
@@ -682,8 +684,8 @@ class Rx_data:
 
             # Loop over the relaxation data.
             for j in xrange(spin.num_ri):
-                # Test if the relaxation data matches 'self.ri_label' and 'self.frq_label'.
-                if self.ri_label == spin.ri_labels[j] and self.frq_label == spin.frq_labels[spin.remap_table[j]]:
+                # Test if the relaxation data matches 'ri_label' and 'frq_label'.
+                if ri_label == spin.ri_labels[j] and frq_label == spin.frq_labels[spin.remap_table[j]]:
                     return True
 
         # No match.
@@ -776,7 +778,7 @@ class Rx_data:
         self.data_init(spin)
 
         # Find the index corresponding to 'ri_label' and 'frq_label'.
-        index = self.find_index(spin)
+        index = self.find_index(spin, ri_label, frq_label)
 
         # Append empty data.
         if index == None:
