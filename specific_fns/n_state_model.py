@@ -100,7 +100,7 @@ class N_state_model(Common_functions):
         model = N_state_model()
 
         # Setup the minimisation algorithm when constraints are present.
-        if constraints and not match('^[Gg]rid', min_algor):
+        if constraints and not search('^[Gg]rid', min_algor):
             algor = min_options[0]
         else:
             algor = min_algor
