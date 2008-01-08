@@ -444,66 +444,6 @@ class Consistency_tests(Common_functions):
         """
         __docformat__ = "plaintext"
 
-        # Arguments.
-        self.run = run
-
-        # Setting the model parameters prior to calculation.
-        ####################################################
-
-        if param == None:
-            # The values are supplied by the user:
-            if value:
-                # Test if the length of the value array is equal to 2.
-                if len(value) != 2:
-                    raise RelaxError, "The length of " + `len(value)` + " of the value array must be equal to two."
-
-            # Default values.
-            else:
-                # Set 'value' to an empty array.
-                value = []
-
-                # CSA and Bond length.
-                value.append(self.default_value('csa'))
-                value.append(self.default_value('r'))
-                value.append(self.default_value('orientation'))
-                value.append(self.default_value('tc'))
-
-            # Initilise data.
-            if not hasattr(relax_data_store.res[self.run][index], 'csa') or not hasattr(relax_data_store.res[self.run][index], 'r') or not hasattr(self.relax.data.res[self.run][index], 'orientation') or not hasattr(self.relax.data.res[self.run][index], 'tc'):
-                self.data_init(relax_data_store.res[self.run][index])
-
-            # CSA and Bond length.
-            setattr(relax_data_store.res[self.run][index], 'csa', float(value[0]))
-            setattr(relax_data_store.res[self.run][index], 'r', float(value[1]))
-            setattr(self.relax.data.res[self.run][index], 'orientation', float(value[2]))
-            setattr(self.relax.data.res[self.run][index], 'tc', float(value[3]))
-
-
-        # Individual data type.
-        #######################
-
-        else:
-            # Get the object.
-            object_name = self.return_data_name(param)
-            if not object_name:
-                raise RelaxError, "The consistency tests data type " + `param` + " does not exist."
-
-            # Initialise all data if it doesn't exist.
-            if not hasattr(relax_data_store.res[self.run][index], object_name):
-                self.data_init(relax_data_store.res[self.run][index])
-
-            # Default value.
-            if value == None:
-                value = self.default_value(object_name)
-
-            # Set the value.
-            setattr(relax_data_store.res[self.run][index], object_name, float(value))
-
-            # Set the error.
-            if error != None:
-                setattr(relax_data_store.res[self.run][index], object_name+'_err', float(error))
-
-
     def set_frq(self, run=None, frq=None):
         """Function for selecting which relaxation data to use in the consistency tests."""
 
