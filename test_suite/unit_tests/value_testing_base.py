@@ -358,6 +358,106 @@ class Value_base_class:
         self.assertRaises(RelaxParamSetError, self.value_fns.set, param='f_r2')
 
 
+    def test_set_ct_defaults_r(self):
+        """Set the consistency testing bond length parameter to the default value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='bond-Length')
+
+        # Test the parameter.
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r, 1.02e-10)
+        self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].r, 1.02e-10)
+
+
+    def test_set_ct_defaults_csa(self):
+        """Set the consistency testing CSA parameter to the default value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='csa')
+
+        # Test the parameter.
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].csa, -172e-6)
+        self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].csa, -172e-6)
+
+
+    def test_set_ct_defaults_nucleus(self):
+        """Set the consistency testing heteronucleus type to the default value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='nucleus')
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].nucleus, 'N')
+        self.assertEqual(cdp.mol[0].res[1].spin[0].nucleus, 'N')
+
+
+    def test_set_ct_defaults_orientation(self):
+        """Set the consistency testing theta angle parameter to the default value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='orientation')
+
+        # Test the parameter.
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].orientation, 15.7)
+        self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].orientation, 15.7)
+
+
+    def test_set_ct_defaults_tc(self):
+        """Set the consistency testing approximate correlation time parameter to the default value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='tc')
+
+        # Test the parameter.
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].tc, 13 * 1e-9)
+        self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].tc, 13 * 1e-9)
+
+
 
 
     #####################################################
