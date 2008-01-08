@@ -144,7 +144,7 @@ class Mf(TestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.opt_setup_S2_0_970_te_2048_Rex_0_149()
+        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -182,7 +182,7 @@ class Mf(TestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.opt_setup_S2_0_970_te_2048_Rex_0_149()
+        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -220,7 +220,7 @@ class Mf(TestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.opt_setup_S2_0_970_te_2048_Rex_0_149()
+        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -258,7 +258,7 @@ class Mf(TestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.opt_setup_S2_0_970_te_2048_Rex_0_149()
+        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -297,7 +297,7 @@ class Mf(TestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.opt_setup_S2_0_970_te_2048_Rex_0_149()
+        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -336,7 +336,7 @@ class Mf(TestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.opt_setup_S2_0_970_te_2048_Rex_0_149()
+        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -374,7 +374,7 @@ class Mf(TestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.opt_setup_S2_0_970_te_2048_Rex_0_149()
+        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -412,7 +412,7 @@ class Mf(TestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.opt_setup_S2_0_970_te_2048_Rex_0_149()
+        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -448,7 +448,7 @@ class Mf(TestCase):
         """
 
         # Setup the data pipe for optimisation.
-        self.opt_setup_S2_0_970_te_2048_Rex_0_149()
+        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Grid search.
         self.relax.interpreter._Minimisation.grid_search(inc=11)
