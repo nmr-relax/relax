@@ -25,6 +25,7 @@ from re import search
 
 # relax module imports.
 from data import Data as relax_data_store
+from maths_fns.n_state_model import setup, func
 from specific_fns.base_class import Common_functions
 
 
@@ -94,6 +95,24 @@ class N_state_model(Common_functions):
                                 normal optimisation is desired.
         @type sim_index:        None or int
         """
+
+        # Set up the target function.
+        setup()
+
+        # Setup the minimisation algorithm when constraints are present.
+        if constraints and not match('^[Gg]rid', min_algor):
+            algor = min_options[0]
+        else:
+            algor = min_algor
+
+        # Minimisation.
+        if constraints:
+            results = generic_minimise(func=func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
+        else:
+            results = generic_minimise(func=func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
+        if results == None:
+            return
+        self.param_vector, self.func, self.iter_count, self.f_count, self.g_count, self.h_count, self.warning = results
 
 
     def return_data_name(self, name):
