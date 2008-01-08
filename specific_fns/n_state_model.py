@@ -112,6 +112,7 @@ class N_state_model(Common_functions):
         |________________________|______________|__________________________________________________|
 
         """
+        __docformat__ = "plaintext"
 
         # Bond length.
         if search('^r$', name) or search('[Bb]ond[ -_][Ll]ength', name):
