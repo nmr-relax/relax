@@ -299,7 +299,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param=['J(0)', 'f_eta', 'f_r2'], val=1.9e-10)
+        self.value_fns.set(param=['j0', 'f_eta', 'f_r2'], val=1.9e-10)
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].j0, 1.9e-10)
