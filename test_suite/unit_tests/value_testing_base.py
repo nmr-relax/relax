@@ -634,6 +634,54 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].tc, 10)
 
 
+    def test_set_ct_single_spin_diff_j0_f_eta_f_r2(self):
+        """Set different consistency tests parameters J(0), F_eta, F_R2 for a single spin.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param=['j0', 'f_eta', 'f_r2'], val=[6.4e-9, 3.5e-10, 2.3e-12], spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'f_eta'))
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'f_r2'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 6.4e-9)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].f_eta, 3.5e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].f_r2, 2.3e-12)
+
+
+    def test_set_ct_single_spin_same_j0_f_eta_f_r2(self):
+        """Set consistency tests parameters J(0), F_eta, F_R2 for a single spin to the same value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param=['j0', 'f_eta', 'f_r2'], val=1.9e-10, spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'f_eta'))
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'f_r2'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 1.9e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].f_eta, 1.9e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].f_r2, 1.9e-10)
+
+
 
 
     #####################################################
