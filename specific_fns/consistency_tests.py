@@ -442,7 +442,7 @@ class Consistency_tests(Common_functions):
         calculation of consistency functions.
 
         """
-	__docformat__ = "plaintext"
+        __docformat__ = "plaintext"
 
         # Arguments.
         self.run = run
