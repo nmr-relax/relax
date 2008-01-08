@@ -162,6 +162,106 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].f_r2, 1.7e-12)
 
 
+    def test_set_ct_all_spins_r(self):
+        """Set the consistency testing bond length parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='Bond_length', val=1.04e-10)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].r, 1.04e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].r, 1.04e-10)
+
+
+    def test_set_ct_all_spins_csa(self):
+        """Set the consistency testing CSA parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='csa', val=-160e-6)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].csa, -160e-6)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -160e-6)
+
+
+    def test_set_ct_all_spins_nucleus(self):
+        """Set the consistency testing heteronucleus type for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='nucleus', val='C')
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].nucleus, 'C')
+        self.assertEqual(cdp.mol[0].res[1].spin[0].nucleus, 'C')
+
+
+    def test_set_ct_all_spins_orientation(self):
+        """Set the consistency testing theta angle for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='orientation', val='17')
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].nucleus, '17')
+        self.assertEqual(cdp.mol[0].res[1].spin[0].nucleus, '17')
+
+
+    def test_set_ct_all_spins_tc(self):
+        """Set the consistency testing approximate correlation time for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='tc', val='10')
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].nucleus, '10')
+        self.assertEqual(cdp.mol[0].res[1].spin[0].nucleus, '10')
+
+
 
 
     #####################################################
