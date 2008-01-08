@@ -78,19 +78,23 @@ from vmd import Vmd
 
 
 class Interpreter:
-    def __init__(self, relax, intro_string=None, show_script=True, quit=True):
+    def __init__(self, relax, intro_string=None, show_script=True, quit=True, raise_relax_error=False):
         """The interpreter class.
 
-        @param relax:           The relax instance.
-        @type relax:            instance
-        @param intro_string:    The string to print at the start of execution.
-        @type intro_string:     str
-        @param show_script:     If true, the relax will print the script contents prior to executing
-                                the script.
-        @type show_script:      bool
-        @param quit:            If true, the default, then relax will exit after running the run()
-                                method.
-        @type quit:             bool
+        @param relax:               The relax instance.
+        @type relax:                instance
+        @param intro_string:        The string to print at the start of execution.
+        @type intro_string:         str
+        @param show_script:         If true, the relax will print the script contents prior to
+                                    executing the script.
+        @type show_script:          bool
+        @param quit:                If true, the default, then relax will exit after running the
+                                    run() method.
+        @type quit:                 bool
+        @param raise_relax_error:   If false, the default, then relax will print a nice error
+                                    message to STDERR, without a traceback, when a RelaxError
+                                    occurs.  This is to make things nicer for the user.
+        @type raise_relax_error:    bool
         """
 
         # Place the arguments in the class namespace.
@@ -98,6 +102,7 @@ class Interpreter:
         self.__intro_string = intro_string
         self.__show_script = show_script
         self.__quit_flag = quit
+        self.__raise_relax_error = raise_relax_error
         
         # The prompts.
         sys.ps1 = 'relax> '
@@ -241,7 +246,7 @@ class Interpreter:
             self.intro = 1
 
             # Run the script.
-            return run_script(intro=self.__intro_string, local=self.local, script_file=script_file, quit=self.__quit_flag, show_script=self.__show_script)
+            return run_script(intro=self.__intro_string, local=self.local, script_file=script_file, quit=self.__quit_flag, show_script=self.__show_script, raise_relax_error=self.__raise_relax_error)
 
         # Test for the dummy mode for generating documentation (then exit).
         elif hasattr(self.relax, 'dummy_mode'):
@@ -337,7 +342,7 @@ def interact_prompt(self, intro, local):
             more = 0
 
 
-def interact_script(self, intro, local, script_file, quit, show_script=True):
+def interact_script(self, intro, local, script_file, quit, show_script=True, raise_relax_error=False):
     """Replacement function for 'code.InteractiveConsole.interact'.
 
     This will execute the script file.
@@ -389,16 +394,22 @@ def interact_script(self, intro, local, script_file, quit, show_script=True):
 
     # Catch the RelaxErrors.
     except AllRelaxErrors, instance:
-        # Print the scary traceback normally hidden from the user.
-        if Debug:
-            self.showtraceback()
+        # Throw the error.
+        if raise_relax_error:
+            raise
 
-        # Print the RelaxError message line.
+        # Nice output for the user.
         else:
-            sys.stderr.write(instance.__str__())
+            # Print the scary traceback normally hidden from the user.
+            if Debug:
+                self.showtraceback()
 
-        # The script failed.
-        status = False
+            # Print the RelaxError message line.
+            else:
+                sys.stderr.write(instance.__str__())
+
+            # The script failed.
+            status = False
 
     # Throw all other errors.
     except:
@@ -431,7 +442,7 @@ def prompt(intro=None, local=None):
     console.interact(intro, local)
 
 
-def run_script(intro=None, local=None, script_file=None, quit=1, show_script=True):
+def run_script(intro=None, local=None, script_file=None, quit=1, show_script=True, raise_relax_error=False):
     """Python interpreter emulation.
 
     This function replaces 'code.interact'.
@@ -443,7 +454,7 @@ def run_script(intro=None, local=None, script_file=None, quit=1, show_script=Tru
 
     # The console.
     console = InteractiveConsole(local)
-    return console.interact(intro, local, script_file, quit, show_script=show_script)
+    return console.interact(intro, local, script_file, quit, show_script=show_script, raise_relax_error=raise_relax_error)
 
 
 def runcode(self, code):
