@@ -457,6 +457,14 @@ def prompt(intro=None, local=None):
     """Python interpreter emulation.
 
     This function replaces 'code.interact'.
+
+
+    @param intro:   The string to print prior to jumping to the prompt mode.
+    @type intro:    str
+    @param local:   A namespace which will become that of the prompt (i.e. the namespace visible to
+                    the user when in the prompt mode).  This should be the output of a function such
+                    as locals().
+    @type local:    dict
     """
 
     # Replace the 'InteractiveConsole.interact' and 'InteractiveConsole.runcode' functions.
