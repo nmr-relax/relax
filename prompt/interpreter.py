@@ -511,7 +511,11 @@ def run_script(intro=None, local=None, script_file=None, quit=True, show_script=
 
 
 def runcode(self, code):
-    """Replacement code for code.InteractiveInterpreter.runcode"""
+    """Replacement code for code.InteractiveInterpreter.runcode.
+
+    @param code:    The code to execute.
+    @type code:     str
+    """
 
     try:
         exec code in self.locals
