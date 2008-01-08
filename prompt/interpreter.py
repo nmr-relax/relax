@@ -308,10 +308,17 @@ class _Exit:
         sys.exit()
 
 
-def interact_prompt(self, intro, local):
+def interact_prompt(self, intro=None, local={}):
     """Replacement function for 'code.InteractiveConsole.interact'.
 
     This will enter into the prompt.
+
+    @param intro:   The string to print prior to jumping to the prompt mode.
+    @type intro:    str
+    @param local:   A namespace which will become that of the prompt (i.e. the namespace visible to
+                    the user when in the prompt mode).  This should be the output of a function such
+                    as locals().
+    @type local:    dict
     """
 
     # Print the program introduction.
