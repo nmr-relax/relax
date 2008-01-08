@@ -39,13 +39,6 @@ N15_CSA = -172 * 1e-6
 # The length of the NH bond (default value).
 NH_BOND_LENGTH = 1.02 * 1e-10
 
-# The angle between the 15N-1H vector and the principal axis of the 15N chemical shift tensor
-# (default value).
-ORIENTATION = 15.7
-
-# The approximate correlation time (default value).
-TC = 13 * 1e-9
-
 
 # The 13C gyromagnetic ratio.
 g13C = 6.728e7
