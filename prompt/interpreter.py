@@ -241,7 +241,7 @@ class Interpreter:
             self.intro = 1
 
             # Run the script.
-            run_script(intro=self.__intro_string, local=self.local, script_file=script_file, quit=self.__quit_flag, show_script=self.__show_script)
+            return run_script(intro=self.__intro_string, local=self.local, script_file=script_file, quit=self.__quit_flag, show_script=self.__show_script)
 
         # Test for the dummy mode for generating documentation (then exit).
         elif hasattr(self.relax, 'dummy_mode'):
@@ -443,7 +443,7 @@ def run_script(intro=None, local=None, script_file=None, quit=1, show_script=Tru
 
     # The console.
     console = InteractiveConsole(local)
-    console.interact(intro, local, script_file, quit, show_script=show_script)
+    return console.interact(intro, local, script_file, quit, show_script=show_script)
 
 
 def runcode(self, code):
