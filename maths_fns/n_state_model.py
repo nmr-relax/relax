@@ -21,7 +21,7 @@
 ###############################################################################
 
 
-class N_state_model:
+class N_state_opt:
     """Class containing the target function of the optimisation of the N-state model."""
 
     def __init__(self):

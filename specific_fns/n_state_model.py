@@ -25,7 +25,7 @@ from re import search
 
 # relax module imports.
 from data import Data as relax_data_store
-from maths_fns.n_state_model import N_state_model
+from maths_fns.n_state_model import N_state_opt
 from minimise.generic import generic_minimise
 from specific_fns.base_class import Common_functions
 
@@ -98,7 +98,7 @@ class N_state_model(Common_functions):
         """
 
         # Set up the class instance containing the target function.
-        model = N_state_model()
+        model = N_state_opt()
 
         # Setup the minimisation algorithm when constraints are present.
         if constraints and not search('^[Gg]rid', min_algor):
