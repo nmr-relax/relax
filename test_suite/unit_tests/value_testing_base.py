@@ -458,6 +458,82 @@ class Value_base_class:
         self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].tc, 13 * 1e-9)
 
 
+    def test_set_ct_defaults_j0_f_eta_f_r2(self):
+        """Set different consistency testing parameters J(0), F_eta, F_R2 to the default values (there are none!).
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.assertRaises(RelaxParamSetError, self.value_fns.set, param=['j0', 'f_eta', 'f_r2'])
+
+
+    def test_set_ct_single_spin_j0(self):
+        """Set the consistency tests parameter J(0) for a single spin.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='j0', val=4.5e-9, spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 4.5e-9)
+
+
+    def test_set_ct_single_spin_f_eta(self):
+        """Set the consistency tests parameter F_eta for a single spin.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='f_eta', val=2.3e-10, spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'f_eta'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].f_eta, 2.3e-10)
+
+
+    def test_set_ct_single_spin_f_r2(self):
+        """Set the consistency tests parameter F_R2 for a single spin.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='f_r2', val=1.7e-12, spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'f_r2'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].f_r2, 1.7e-12)
+
+
 
 
     #####################################################
