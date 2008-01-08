@@ -190,7 +190,7 @@ class Consistency_tests(Common_functions):
         nucleus:  The heteronucleus type.
 
         orientation:  Angle between the 15N-1H vector and the principal axis of the 15N chemical
-                     shift tensor.
+                      shift tensor.
 
         tc:  Correlation time.
 
