@@ -251,7 +251,7 @@ class Interpreter:
 
         # Go to the prompt.
         else:
-            prompt(intro=self.__intro_string, local=self.local, quit=self.__quit_flag)
+            prompt(intro=self.__intro_string, local=self.local)
 
 
     def _off(self):
