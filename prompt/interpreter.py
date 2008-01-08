@@ -79,19 +79,23 @@ from vmd import Vmd
 
 
 class Interpreter:
-    def __init__(self, relax, intro_string=None, show_script=True, quit=True):
+    def __init__(self, relax, intro_string=None, show_script=True, quit=True, raise_relax_error=False):
         """The interpreter class.
 
-        @param relax:           The relax instance.
-        @type relax:            instance
-        @param intro_string:    The string to print at the start of execution.
-        @type intro_string:     str
-        @param show_script:     If true, the relax will print the script contents prior to executing
-                                the script.
-        @type show_script:      bool
-        @param quit:            If true, the default, then relax will exit after running the run()
-                                method.
-        @type quit:             bool
+        @param relax:               The relax instance.
+        @type relax:                instance
+        @param intro_string:        The string to print at the start of execution.
+        @type intro_string:         str
+        @param show_script:         If true, the relax will print the script contents prior to
+                                    executing the script.
+        @type show_script:          bool
+        @param quit:                If true, the default, then relax will exit after running the
+                                    run() method.
+        @type quit:                 bool
+        @param raise_relax_error:   If false, the default, then relax will print a nice error
+                                    message to STDERR, without a traceback, when a RelaxError
+                                    occurs.  This is to make things nicer for the user.
+        @type raise_relax_error:    bool
         """
 
         # Place the arguments in the class namespace.
@@ -99,6 +103,7 @@ class Interpreter:
         self.__intro_string = intro_string
         self.__show_script = show_script
         self.__quit_flag = quit
+        self.__raise_relax_error = raise_relax_error
         
         # The prompts.
         sys.ps1 = 'relax> '
@@ -244,7 +249,7 @@ class Interpreter:
             self.intro = 1
 
             # Run the script.
-            run_script(intro=self.__intro_string, local=self.local, script_file=script_file, quit=self.__quit_flag, show_script=self.__show_script)
+            return run_script(intro=self.__intro_string, local=self.local, script_file=script_file, quit=self.__quit_flag, show_script=self.__show_script, raise_relax_error=self.__raise_relax_error)
 
         # Test for the dummy mode for generating documentation (then exit).
         elif hasattr(self.relax, 'dummy_mode'):
@@ -254,7 +259,7 @@ class Interpreter:
 
         # Go to the prompt.
         else:
-            prompt(intro=self.__intro_string, local=self.local, quit=self.__quit_flag)
+            prompt(intro=self.__intro_string, local=self.local)
 
 
     def _off(self):
@@ -306,10 +311,17 @@ class _Exit:
         sys.exit()
 
 
-def interact_prompt(self, intro, local):
+def interact_prompt(self, intro=None, local={}):
     """Replacement function for 'code.InteractiveConsole.interact'.
 
     This will enter into the prompt.
+
+    @param intro:   The string to print prior to jumping to the prompt mode.
+    @type intro:    str
+    @param local:   A namespace which will become that of the prompt (i.e. the namespace visible to
+                    the user when in the prompt mode).  This should be the output of a function such
+                    as locals().
+    @type local:    dict
     """
 
     # Print the program introduction.
@@ -340,10 +352,29 @@ def interact_prompt(self, intro, local):
             more = 0
 
 
-def interact_script(self, intro, local, script_file, quit, show_script=True):
+def interact_script(self, intro=None, local={}, script_file=None, quit=True, show_script=True, raise_relax_error=False):
     """Replacement function for 'code.InteractiveConsole.interact'.
 
     This will execute the script file.
+
+
+    @param intro:               The string to print prior to jumping to the prompt mode.
+    @type intro:                str
+    @param local:               A namespace which will become that of the prompt (i.e. the namespace
+                                visible to the user when in the prompt mode).  This should be the
+                                output of a function such as locals().
+    @type local:                dict
+    @param script_file:         The script file to be executed.
+    @type script_file:          None or str
+    @param quit:                If true, the default, then relax will exit after running the script.
+    @type quit:                 bool
+    @param show_script:         If true, the relax will print the script contents prior to executing
+                                the script.
+    @type show_script:          bool
+    @param raise_relax_error:   If false, the default, then a nice error message will be sent to
+                                STDERR, without a traceback, when a RelaxError occurs.  This is to
+                                make things nicer for the user.
+    @type raise_relax_error:    bool
     """
 
     # Print the program introduction.
@@ -370,33 +401,73 @@ def interact_script(self, intro, local, script_file, quit, show_script=True):
         sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
         file.close()
 
+    # The execution status.
+    status = True
+
     # Execute the script.
     try:
         execfile(script_file, local)
+
+    # Catch ctrl-C.
     except KeyboardInterrupt:
+        # Throw the error.
         if Debug:
             raise
+
+        # Be nicer to the user.
         else:
             sys.stderr.write("\nScript execution cancelled.\n")
+
+        # The script failed.
+        status = False
+
+    # Catch the RelaxErrors.
     except AllRelaxErrors, instance:
-        if Debug:
-            self.showtraceback()
+        # Throw the error.
+        if raise_relax_error:
+            raise
+
+        # Nice output for the user.
         else:
-            sys.stderr.write(instance.__str__())
+            # Print the scary traceback normally hidden from the user.
+            if Debug:
+                self.showtraceback()
+
+            # Print the RelaxError message line.
+            else:
+                sys.stderr.write(instance.__str__())
+
+            # The script failed.
+            status = False
+
+    # Throw all other errors.
     except:
         raise
 
-    sys.stdout.write("\n")
+    # Add an empty line to make exiting relax look better. 
+    if show_script:
+        sys.stdout.write("\n")
 
-    # Quit.
+    # Quit relax.
     if quit:
         sys.exit()
+
+    # Return the status.
+    return status
 
 
 def prompt(intro=None, local=None):
     """Python interpreter emulation.
 
     This function replaces 'code.interact'.
+
+
+    @param intro:   The string to print prior to jumping to the prompt mode.
+    @type intro:    str
+    @param local:   A namespace which will become that of the prompt (i.e. the namespace visible to
+                    the user when in the prompt mode).  This should be the output of a function such
+                    as locals().
+    @type local:    dict
     """
 
     # Replace the 'InteractiveConsole.interact' and 'InteractiveConsole.runcode' functions.
@@ -408,10 +479,29 @@ def prompt(intro=None, local=None):
     console.interact(intro, local)
 
 
-def run_script(intro=None, local=None, script_file=None, quit=1, show_script=True):
+def run_script(intro=None, local=None, script_file=None, quit=True, show_script=True, raise_relax_error=False):
     """Python interpreter emulation.
 
     This function replaces 'code.interact'.
+
+
+    @param intro:               The string to print prior to jumping to the prompt mode.
+    @type intro:                str
+    @param local:               A namespace which will become that of the prompt (i.e. the namespace
+                                visible to the user when in the prompt mode).  This should be the
+                                output of a function such as locals().
+    @type local:                dict
+    @param script_file:         The script file to be executed.
+    @type script_file:          None or str
+    @param quit:                If true, the default, then relax will exit after running the script.
+    @type quit:                 bool
+    @param show_script:         If true, the relax will print the script contents prior to executing
+                                the script.
+    @type show_script:          bool
+    @param raise_relax_error:   If false, the default, then a nice error message will be sent to
+                                STDERR, without a traceback, when a RelaxError occurs.  This is to
+                                make things nicer for the user.
+    @type raise_relax_error:    bool
     """
 
     # Replace the 'InteractiveConsole.interact' and 'InteractiveConsole.runcode' functions.
@@ -420,11 +510,15 @@ def run_script(intro=None, local=None, script_file=None, quit=1, show_script=Tru
 
     # The console.
     console = InteractiveConsole(local)
-    console.interact(intro, local, script_file, quit, show_script=show_script)
+    return console.interact(intro, local, script_file, quit, show_script=show_script, raise_relax_error=raise_relax_error)
 
 
 def runcode(self, code):
-    """Replacement code for code.InteractiveInterpreter.runcode"""
+    """Replacement code for code.InteractiveInterpreter.runcode.
+
+    @param code:    The code to execute.
+    @type code:     str
+    """
 
     try:
         exec code in self.locals
