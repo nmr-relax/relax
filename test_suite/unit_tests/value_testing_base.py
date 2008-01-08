@@ -310,6 +310,54 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].f_r2, 1.9e-10)
 
 
+    def test_set_ct_defaults_j0(self):
+        """Set the consistency testing parameter J(0) to the default value (there is none!).
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.assertRaises(RelaxParamSetError, self.value_fns.set, param='j0')
+
+
+    def test_set_ct_defaults_f_eta(self):
+        """Set the consistency tests parameter F_eta to the default value (there is none!).
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.assertRaises(RelaxParamSetError, self.value_fns.set, param='f_eta')
+
+
+    def test_set_ct_defaults_f_r2(self):
+        """Set the consistency tests parameter F_R2 to the default value (there is none!).
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.assertRaises(RelaxParamSetError, self.value_fns.set, param='f_r2')
+
+
 
 
     #####################################################
