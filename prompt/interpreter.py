@@ -476,7 +476,7 @@ def prompt(intro=None, local=None):
     console.interact(intro, local)
 
 
-def run_script(intro=None, local=None, script_file=None, quit=1, show_script=True, raise_relax_error=False):
+def run_script(intro=None, local=None, script_file=None, quit=True, show_script=True, raise_relax_error=False):
     """Python interpreter emulation.
 
     This function replaces 'code.interact'.
