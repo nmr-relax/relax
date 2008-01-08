@@ -367,27 +367,53 @@ def interact_script(self, intro, local, script_file, quit, show_script=True):
         sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
         file.close()
 
+    # The execution status.
+    status = True
+
     # Execute the script.
     try:
         execfile(script_file, local)
+
+    # Catch ctrl-C.
     except KeyboardInterrupt:
+        # Throw the error.
         if Debug:
             raise
+
+        # Be nicer to the user.
         else:
             sys.stderr.write("\nScript execution cancelled.\n")
+
+        # The script failed.
+        status = False
+
+    # Catch the RelaxErrors.
     except AllRelaxErrors, instance:
+        # Print the scary traceback normally hidden from the user.
         if Debug:
             self.showtraceback()
+
+        # Print the RelaxError message line.
         else:
             sys.stderr.write(instance.__str__())
+
+        # The script failed.
+        status = False
+
+    # Throw all other errors.
     except:
         raise
 
-    sys.stdout.write("\n")
+    # Add an empty line to make exiting relax look better. 
+    if show_script:
+        sys.stdout.write("\n")
 
-    # Quit.
+    # Quit relax.
     if quit:
         sys.exit()
+
+    # Return the status.
+    return status
 
 
 def prompt(intro=None, local=None):
