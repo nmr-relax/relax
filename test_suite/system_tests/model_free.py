@@ -46,39 +46,6 @@ class Mf(TestCase):
         relax_data_store.__reset__()
 
 
-    def opt_setup_S2_0_970_te_2048_Rex_0_149(self):
-        """Setup the data pipe for testing optimisation.
-
-        The data set is:
-            S2 = 0.970.
-            te = 2048 ps.
-            Rex = 0.149 s^-1.
-        """
-
-        # Path of the files.
-        path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
-
-        # Load the sequence.
-        self.relax.interpreter._Sequence.read('noe.500.out', dir=path)
-
-        # Load the relaxation data.
-        self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path)
-        self.relax.interpreter._Relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path)
-        self.relax.interpreter._Relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
-
-        # Setup other values.
-        self.relax.interpreter._Diffusion_tensor.init(10e-9, fixed=1)
-        self.relax.interpreter._Value.set(NH_BOND_LENGTH, 'bond_length')
-        self.relax.interpreter._Value.set(-160 * 1e-6, 'csa')
-        self.relax.interpreter._Value.set('N', 'nucleus')
-
-        # Select the model-free model.
-        self.relax.interpreter._Model_free.select_model(model='m4')
-
-
     def test_create_m4(self):
         """Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()."""
 
@@ -98,7 +65,6 @@ class Mf(TestCase):
 
         # Execute the script.
         self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/opendx_s2_te_rex.py')
-        raise NameError, "Hello"
 
 
     def test_opendx_theta_phi_da(self):
