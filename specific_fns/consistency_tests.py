@@ -30,7 +30,7 @@ from data import Data as relax_data_store
 from base_class import Common_functions
 from maths_fns.consistency_tests import Consistency
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError, RelaxNucleusError, RelaxParamSetError
-from physical_constants import N15_CSA, NH_BOND_LENGTH, ORIENTATION, TC
+from physical_constants import N15_CSA, NH_BOND_LENGTH
 
 
 class Consistency_tests(Common_functions):
@@ -257,13 +257,13 @@ class Consistency_tests(Common_functions):
         elif param == 'nucleus':
             return 'N'
 
-        # Angle Theta
+        # Angle Theta (default value)
         elif param == 'orientation':
-            return THETA
+            return 15.7
 
-        # Correlation time
+        # Correlation time (default value)
         elif param == 'tc':
-            return TC
+            return 13 * 1e-9
 
 
     def num_instances(self, run=None):
