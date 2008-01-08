@@ -349,10 +349,29 @@ def interact_prompt(self, intro=None, local={}):
             more = 0
 
 
-def interact_script(self, intro, local, script_file, quit, show_script=True, raise_relax_error=False):
+def interact_script(self, intro=None, local={}, script_file=None, quit=True, show_script=True, raise_relax_error=False):
     """Replacement function for 'code.InteractiveConsole.interact'.
 
     This will execute the script file.
+
+
+    @param intro:               The string to print prior to jumping to the prompt mode.
+    @type intro:                str
+    @param local:               A namespace which will become that of the prompt (i.e. the namespace
+                                visible to the user when in the prompt mode).  This should be the
+                                output of a function such as locals().
+    @type local:                dict
+    @param script_file:         The script file to be executed.
+    @type script_file:          None or str
+    @param quit:                If true, the default, then relax will exit after running the script.
+    @type quit:                 bool
+    @param show_script:         If true, the relax will print the script contents prior to executing
+                                the script.
+    @type show_script:          bool
+    @param raise_relax_error:   If false, the default, then a nice error message will be sent to
+                                STDERR, without a traceback, when a RelaxError occurs.  This is to
+                                make things nicer for the user.
+    @type raise_relax_error:    bool
     """
 
     # Print the program introduction.
