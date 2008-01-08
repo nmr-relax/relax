@@ -235,11 +235,11 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='orientation', val='17')
+        self.value_fns.set(param='orientation', val=17)
 
         # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].nucleus, '17')
-        self.assertEqual(cdp.mol[0].res[1].spin[0].nucleus, '17')
+        self.assertEqual(cdp.mol[0].res[0].spin[0].orientation, 17)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].orientation, 17)
 
 
     def test_set_ct_all_spins_tc(self):
@@ -255,11 +255,11 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='tc', val='10')
+        self.value_fns.set(param='tc', val=10)
 
         # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].nucleus, '10')
-        self.assertEqual(cdp.mol[0].res[1].spin[0].nucleus, '10')
+        self.assertEqual(cdp.mol[0].res[0].spin[0].tc, 10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].tc, 10)
 
 
 
