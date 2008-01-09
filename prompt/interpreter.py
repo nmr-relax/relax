@@ -59,6 +59,7 @@ from model_free import Model_free
 from molmol import Molmol
 from molecule import Molecule
 from monte_carlo import Monte_carlo
+from n_state_model import N_state_model
 from noe import Noe
 from palmer import Palmer
 from residue import Residue
@@ -139,6 +140,7 @@ class Interpreter:
         self._Molmol = Molmol(relax)
         self._Molecule = Molecule(relax)
         self._Monte_carlo = Monte_carlo(relax)
+        self._N_state_model = N_state_model(relax)
         self._Noe = Noe(relax)
         self._Palmer = Palmer(relax)
         self._Residue = Residue(relax)
@@ -204,6 +206,7 @@ class Interpreter:
         molmol = self._Molmol
         molecule = self._Molecule
         monte_carlo = self._Monte_carlo
+        n_state_model = self._N_state_model
         noe = self._Noe
         palmer = self._Palmer
         structure = self._Structure
