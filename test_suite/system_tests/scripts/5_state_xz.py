@@ -16,12 +16,26 @@ from math import sqrt
 pipe.create('test', 'N-state')
 
 
-# Load the C-terminal alignment tensors..
-n_state_model.init(tensor='chi1', domain='C', red=False, params=(-1/2., -1/2.,  0.,   0.,     0.))
-n_state_model.init(tensor='chi2', domain='C', red=False, params=(-1/8., -7/8.,  0.,   0.,     0.))
-n_state_model.init(tensor='chi3', domain='C', red=False, params=(-1/8.,  1/16., 0.,   0.,    -15/16.))
-n_state_model.init(tensor='chi4', domain='C', red=False, params=(7/16., -7/8.,  0.,   9/16.,  0.))
-n_state_model.init(tensor='chi5', domain='C', red=False, params=(-1/2., -1/2.,  3/8., 0.,     0.))
+# Load the C-terminal alignment tensors.
+align_tensor.init(tensor='chi1 C-dom', params=(-1/2., -1/2.,  0.,   0.,     0.))
+align_tensor.init(tensor='chi2 C-dom', params=(-1/8., -7/8.,  0.,   0.,     0.))
+align_tensor.init(tensor='chi3 C-dom', params=(-1/8.,  1/16., 0.,   0.,    -15/16.))
+align_tensor.init(tensor='chi4 C-dom', params=(7/16., -7/8.,  0.,   9/16.,  0.))
+align_tensor.init(tensor='chi5 C-dom', params=(-1/2., -1/2.,  3/8., 0.,     0.))
+
+# Set the domain the tensors correspond to.
+n_state_model.set_domain(tensor='chi1 C-dom', domain='C')
+n_state_model.set_domain(tensor='chi2 C-dom', domain='C')
+n_state_model.set_domain(tensor='chi3 C-dom', domain='C')
+n_state_model.set_domain(tensor='chi4 C-dom', domain='C')
+n_state_model.set_domain(tensor='chi5 C-dom', domain='C')
+
+# Set that they are non-reduced tensors. 
+n_state_model.set_type(tensor='chi1 C-dom', red=False)
+n_state_model.set_type(tensor='chi2 C-dom', red=False)
+n_state_model.set_type(tensor='chi3 C-dom', red=False)
+n_state_model.set_type(tensor='chi4 C-dom', red=False)
+n_state_model.set_type(tensor='chi5 C-dom', red=False)
 
 # Calculate the singular values.
 n_state_model.svd(basis_set=0, domain='C')
@@ -33,11 +47,25 @@ n_state_model.matrix_angles(basis_set=1, domain='C')
 
 
 # Load the N-terminal alignment tensors.
-n_state_model.init(tensor='chi1', domain='N', red=True, params=(1/4.,   -1/2.,   0.,              3/4.,   0.))
-n_state_model.init(tensor='chi2', domain='N', red=True, params=(7/16.,  -7/8.,   0.,              9/16.,  0.))
-n_state_model.init(tensor='chi3', domain='N', red=True, params=(-1/32.,  1/16., -15/(16*sqrt(2)), 3/32., -15/(16*sqrt(2))))
-n_state_model.init(tensor='chi4', domain='N', red=True, params=(1.,     -7/8.,   0.,              0.,     0.))
-n_state_model.init(tensor='chi5', domain='N', red=True, params=(1/4.,   -1/2.,   3/(8*sqrt(2)),   3/4.,  -3/(8*sqrt(2))))
+align_tensor.init(tensor='chi1 N-dom', params=(1/4.,   -1/2.,   0.,              3/4.,   0.))
+align_tensor.init(tensor='chi2 N-dom', params=(7/16.,  -7/8.,   0.,              9/16.,  0.))
+align_tensor.init(tensor='chi3 N-dom', params=(-1/32.,  1/16., -15/(16*sqrt(2)), 3/32., -15/(16*sqrt(2))))
+align_tensor.init(tensor='chi4 N-dom', params=(1.,     -7/8.,   0.,              0.,     0.))
+align_tensor.init(tensor='chi5 N-dom', params=(1/4.,   -1/2.,   3/(8*sqrt(2)),   3/4.,  -3/(8*sqrt(2))))
+
+# Set the domain the tensors correspond to.
+n_state_model.set_domain(tensor='chi1 N-dom', domain='N')
+n_state_model.set_domain(tensor='chi2 N-dom', domain='N')
+n_state_model.set_domain(tensor='chi3 N-dom', domain='N')
+n_state_model.set_domain(tensor='chi4 N-dom', domain='N')
+n_state_model.set_domain(tensor='chi5 N-dom', domain='N')
+
+# Set that they are non-reduced tensors. 
+n_state_model.set_type(tensor='chi1 N-dom', red=True)
+n_state_model.set_type(tensor='chi2 N-dom', red=True)
+n_state_model.set_type(tensor='chi3 N-dom', red=True)
+n_state_model.set_type(tensor='chi4 N-dom', red=True)
+n_state_model.set_type(tensor='chi5 N-dom', red=True)
 
 # Calculate the singular values.
 n_state_model.svd(basis_set=0, domain='N')
