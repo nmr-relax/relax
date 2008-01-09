@@ -32,7 +32,7 @@ def load_state(state=None, dir_name=None, compress_type=1):
     """Function for loading a saved program state."""
 
     # Open the file for reading.
-    file = open_read_file(file_name=state, dir=dir_name, compress_type=compress_type)
+    file = open_read_file(file_name=state, dir=dir_name)
 
     # Unpickle the data class.
     state = load(file)
