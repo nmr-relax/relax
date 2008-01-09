@@ -21,13 +21,12 @@
 ###############################################################################
 
 # Python module imports.
-from Queue import Queue
 from re import search
 
 # relax module imports.
 from data import Data as relax_data_store
 from selection import spin_loop
-from relax_errors import RelaxError, RelaxNoPipeError
+from relax_errors import RelaxError
 from specific_fns import get_specific_fn
 
 
