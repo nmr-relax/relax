@@ -323,11 +323,11 @@ class Consistency_tests(Common_functions):
         if search('^[Jj]0$', name) or search('[Jj]\(0\)', name):
             return 'j0'
 
-        # J(wX).
+        # F_eta.
         if search('^[Ff]_[Ee][Tt][Aa]$', name):
             return 'f_eta'
 
-        # J(wH).
+        # F_R2.
         if search('^^[Ff]_[Rr]2$', name):
             return 'f_r2'
 
@@ -358,11 +358,11 @@ class Consistency_tests(Common_functions):
         if object_name == 'j0':
             return '\\qJ(0)\\Q'
 
-        # J(wX).
+        # F_eta.
         elif object_name == 'f_eta':
             return '\\qF\\s\\xh\\Q'
 
-        # J(wH).
+        # F_R2.
         elif object_name == 'f_r2':
             return '\\qF\\sR2\\Q'
 
