@@ -63,10 +63,10 @@ def determine_compression(file_path):
 
     @param file_path:   The full file path of the file.
     @type file_path:    str
-    @return:            The compression type.  A value of 0 corresponds to no compression.  Bzip2
-                        compression corresponds to a value of 1.  Gzip compression corresponds to a
-                        value of 2.
-    @type return:       int
+    @return:            A tuple of the compression type and full path of the file (including its
+                        extension).  A value of 0 corresponds to no compression.  Bzip2 compression
+                        corresponds to a value of 1.  Gzip compression corresponds to a value of 2.
+    @type return:       (int, str)
     """
 
     # The file has been supplied without its compression extension.
@@ -92,7 +92,7 @@ def determine_compression(file_path):
         raise RelaxFileError, file_path
 
     # Return the compression type.
-    return compress_type
+    return compress_type, file_path
 
 
 def extract_data(file_name=None, dir=None, file_data=None, sep=None):
@@ -238,7 +238,7 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
     file_path = get_file_path(file_name, dir)
 
     # Test if the file exists and determine the compression type.
-    compress_type = determine_compression(file_path)
+    compress_type, file_path = determine_compression(file_path)
 
     # Open the file for reading.
     try:
