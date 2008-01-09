@@ -38,18 +38,18 @@ class Consistency_tests(Common_functions):
         """Class containing functions specific to consistency testing."""
 
 
-    def calculate(self, run=None, verbosity=1, sim_index=None):
+    def calculate(self, verbosity=1, sim_spin=None):
         """Calculation of the consistency functions."""
 
-        # Run argument.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Test if the frequency has been set.
-        if not hasattr(relax_data_store, 'ct_frq') or not relax_data_store.ct_frq.has_key(self.run) or type(relax_data_store.ct_frq[self.run]) != float:
+        if not hasattr(cdp, 'ct_frq') or not relax_data_store.ct_frq.has_key(self.run) or type(relax_data_store.ct_frq[self.run]) != float:
             raise RelaxError, "The frequency for the run " + `self.run` + " has not been set up."
 
         # Test if the nucleus type has been set.
-        if not hasattr(relax_data_store, 'gx'):
+        if not hasattr(cdp, 'gx'):
             raise RelaxNucleusError
 
         # Test if the sequence data is loaded.
@@ -57,9 +57,9 @@ class Consistency_tests(Common_functions):
             raise RelaxNoSequenceError, self.run
 
         # Test if the CSA, bond length, angle Theta and correlation time values have been set.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Skip unselected residues.
-            if not relax_data_store.res[self.run][i].select:
+        for spin in spin_loop(spin_id):
+            # Skip unselected spins.
+            if not spin.select:
                 continue
 
             # CSA value.
@@ -67,15 +67,15 @@ class Consistency_tests(Common_functions):
                 raise RelaxNoValueError, "CSA"
 
             # Bond length value.
-            if not hasattr(relax_data_store.res[self.run][i], 'r') or relax_data_store.res[self.run][i].r == None:
+            if not hasattr(cdp, 'r') or relax_data_store.res[self.run][i].r == None:
                 raise RelaxNoValueError, "bond length"
 
             # Angle Theta
-            if not hasattr(self.relax.data.res[self.run][i], 'orientation') or self.relax.data.res[self.run][i].orientation == None:
+            if not hasattr(cdp, 'orientation') or relax_data_store.res[self.run][i].orientation == None:
                 raise RelaxNoValueError, "angle Theta"
 
             # Correlation time
-            if not hasattr(self.relax.data.res[self.run][i], 'tc') or self.relax.data.res[self.run][i].tc == None:
+            if not hasattr(cdp, 'tc') or relax_data_store.res[self.run][i].tc == None:
                 raise RelaxNoValueError, "correlation time"
 
         # Frequency index.
@@ -83,12 +83,12 @@ class Consistency_tests(Common_functions):
             raise RelaxError, "No relaxation data corresponding to the frequency " + `relax_data_store.ct_frq[self.run]` + " has been loaded."
 
         # Consistency testing.
-        for i in xrange(len(relax_data_store.res[self.run])):
+        for i in xrange(len(cdp)):
             # Reassign data structure.
-            data = relax_data_store.res[self.run][i]
+            data = cdp
 
-            # Skip unselected residues.
-            if not data.select:
+            # Skip unselected spins.
+            if not spin.select:
                 continue
 
             # Residue specific frequency index.
@@ -266,7 +266,7 @@ class Consistency_tests(Common_functions):
             return 13 * 1e-9
 
 
-    def num_instances(self, run=None):
+    def num_instances(self):
         """Function for returning the number of instances."""
 
         # Arguments.
@@ -280,12 +280,12 @@ class Consistency_tests(Common_functions):
         return len(relax_data_store.res[self.run])
 
 
-    def overfit_deselect(self, run):
+    def overfit_deselect(self):
         """Function for deselecting residues without sufficient data to support calculation"""
 
-        # Test the sequence data exists:
-        if not relax_data_store.res.has_key(run):
-            raise RelaxNoSequenceError, run
+        # Test if the sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Loop over residue data:
         for residue in relax_data_store.res[run]:
@@ -444,7 +444,8 @@ class Consistency_tests(Common_functions):
         """
         __docformat__ = "plaintext"
 
-    def set_frq(self, run=None, frq=None):
+
+    def set_frq(self, frq=None):
         """Function for selecting which relaxation data to use in the consistency tests."""
 
         # Run argument.
@@ -471,7 +472,7 @@ class Consistency_tests(Common_functions):
         relax_data_store.ct_frq[self.run] = frq
 
 
-    def set_error(self, run, instance, index, error):
+    def set_error(self, instance, spin, error):
         """Function for setting parameter errors."""
 
         # Arguments.
@@ -490,7 +491,7 @@ class Consistency_tests(Common_functions):
             relax_data_store.res[self.run][instance].f_r2_err = error
 
 
-    def sim_return_param(self, run, instance, index):
+    def sim_return_param(self, instance, spin):
         """Function for returning the array of simulation parameter values."""
 
         # Arguments.
@@ -513,7 +514,7 @@ class Consistency_tests(Common_functions):
             return relax_data_store.res[self.run][instance].f_r2_sim
 
 
-    def sim_return_selected(self, run, instance):
+    def sim_return_selected(self, instance):
         """Function for returning the array of selected simulation flags."""
 
         # Arguments.
@@ -523,7 +524,7 @@ class Consistency_tests(Common_functions):
         return relax_data_store.res[self.run][instance].select_sim
 
 
-    def set_selected_sim(self, run, instance, select_sim):
+    def set_selected_sim(self, instance, select_sim):
         """Function for returning the array of selected simulation flags."""
 
         # Arguments.
@@ -533,7 +534,7 @@ class Consistency_tests(Common_functions):
         relax_data_store.res[self.run][instance].select_sim = select_sim
 
 
-    def sim_pack_data(self, run, i, sim_data):
+    def sim_pack_data(self, spin, sim_data):
         """Function for packing Monte Carlo simulation data."""
 
         # Test if the simulation data already exists.
@@ -595,7 +596,7 @@ class Consistency_tests(Common_functions):
         file.write("\n")
 
 
-    def write_columnar_results(self, file, run):
+    def write_columnar_results(self, file):
         """Function for printing the results into a file."""
 
         # Arguments.
@@ -689,8 +690,8 @@ class Consistency_tests(Common_functions):
                                 index = j
 
                         # Data exists for this data type.
-                        ri.append(`data.relax_data[index]`)
-                        ri_error.append(`data.relax_error[index]`)
+                        ri.append(spin)
+                        ri_error.append(spin)
 
                     # No data exists for this data type.
                     except:
@@ -809,7 +810,7 @@ class Consistency_tests(Common_functions):
                 # Relaxation data and errors.
                 ri = []
                 ri_error = []
-                if hasattr(self.relax.data, 'num_ri'):
+                if hasattr(relax_data_store, 'num_ri'):
                     for k in xrange(relax_data_store.num_ri[self.run]):
                         try:
                             # Find the residue specific data corresponding to k.
@@ -819,8 +820,8 @@ class Consistency_tests(Common_functions):
                                     index = l
 
                             # Data exists for this data type.
-                            ri.append(`data.relax_sim_data[i][index]`)
-                            ri_error.append(`data.relax_error[index]`)
+                            ri.append(spin)
+                            ri_error.append(spin)
 
                         # No data exists for this data type.
                         except:
