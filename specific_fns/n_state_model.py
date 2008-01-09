@@ -69,7 +69,7 @@ class N_state_model(Common_functions):
         """Dummy function nornally for deselecting spins with insufficient data for minimisation."""
 
 
-    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, scaling=1, print_flag=0, sim_index=None):
+    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None):
         """Minimisation function.
 
         @param min_algor:       The minimisation algorithm to use.
@@ -84,14 +84,14 @@ class N_state_model(Common_functions):
         @type grad_tol:         None or float
         @param max_iterations:  The maximum number of iterations for the algorithm.
         @type max_iterations:   int
-        @param constraints:     If true, constraints are used during optimisation.
+        @param constraints:     If True, constraints are used during optimisation.
         @type constraints:      bool
-        @param scaling:         If true, diagonal scaling is enabled during optimisation to allow
+        @param scaling:         If True, diagonal scaling is enabled during optimisation to allow
                                 the problem to be better conditioned.
         @type scaling:          bool
-        @param print_flag:      A flag specifying the amount of information to print.  The higher
+        @param verbosity:       A flag specifying the amount of information to print.  The higher
                                 the value, the greater the verbosity.
-        @type print_flag:       int
+        @type verbosity:        int
         @param sim_index:       The index of the simulation to optimise.  This should be None if
                                 normal optimisation is desired.
         @type sim_index:        None or int
