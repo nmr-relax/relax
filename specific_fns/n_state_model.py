@@ -97,6 +97,9 @@ class N_state_model(Common_functions):
         @type sim_index:        None or int
         """
 
+        # Create the initial parameter vector.
+        param_vector = self.assemble_param_vector(sim_index=sim_index)
+
         # Set up the class instance containing the target function.
         model = N_state_opt()
 
@@ -108,12 +111,12 @@ class N_state_model(Common_functions):
 
         # Minimisation.
         if constraints:
-            results = generic_minimise(func=model.func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
+            results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
         else:
-            results = generic_minimise(func=model.func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
+            results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
         if results == None:
             return
-        self.param_vector, self.func, self.iter_count, self.f_count, self.g_count, self.h_count, self.warning = results
+        param_vector, func, iter_count, f_count, g_count, h_count, warning = results
 
 
     def return_data_name(self, name):
