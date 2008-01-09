@@ -25,7 +25,7 @@ import sys
 
 # relax module imports.
 import help
-from relax_errors import RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxStrError, RelaxStrFileError
+from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxStrError, RelaxStrFileError
 from generic_fns.state import load_state, save_state
 
 
