@@ -157,8 +157,14 @@ def log(file_name=None, dir=None, verbosity=1):
     sys.stderr = log_stderr
 
 
-def mkdir_nofail(dir=None, print_flag=1):
-    """Create the given directory, or exit if the directory exists."""
+def mkdir_nofail(dir=None, verbosity=1):
+    """Create the given directory, or exit without raising an error if the directory exists.
+
+    @param dir:         The directory to create.
+    @type dir:          str
+    @param verbosity:   The verbosity level.
+    @type verbosity:    int
+    """
 
     # No directory given.
     if dir == None:
@@ -168,7 +174,7 @@ def mkdir_nofail(dir=None, print_flag=1):
     try:
         makedirs(dir)
     except OSError:
-        if print_flag:
+        if verbosity:
             print "Directory ./" + dir + " already exists.\n"
 
 
