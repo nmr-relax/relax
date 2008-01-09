@@ -73,6 +73,8 @@ def extract_data(file_name=None, dir=None, file_data=None, sep=None):
     @param sep:             The character separating the columns in the file data.  If None, then
                             whitespace is assumed.
     @type sep:              str
+    @return:                The file data.
+    @type return:           list of lists of str
     """
 
     # Data not already extracted from the file.
