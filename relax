@@ -72,7 +72,6 @@ import relax_errors
 from relax_io import log
 import relax_warnings
 from test_suite.test_suite_runner import Test_suite_runner
-from thread_classes import Threading, ThreadData
 import version
 
 sys.path.append(sys.path[0])
@@ -102,14 +101,8 @@ class Relax:
         # Set the program introduction string to nothing.
         self.intro_string = None
 
-        # The thread data storage object.
-        self.thread_data = ThreadData()
-
         # Setup the object containing the generic functions.
         self.generic = generic_fns
-
-        # Setup the object containing the thread setup functions.
-        self.threading = Threading(self)
 
         # Process the command line arguments and determine the relax mode.
         mode, log_file, tee_file = self.arguments()
@@ -132,11 +125,11 @@ class Relax:
             sys.exit()
 
         # Logging.
-        if log_file and mode != 'thread':
+        if log_file:
             log(log_file)
 
         # Tee.
-        elif tee_file and mode != 'thread':
+        elif tee_file:
             tee(tee_file)
 
         # Create a string to pass to the interpreter to print.
@@ -147,23 +140,6 @@ class Relax:
             # Run the interpreter.
             self.interpreter = interpreter.Interpreter(self, intro_string)
             self.interpreter.run(self.script_file)
-
-        # Threading mode.
-        elif mode == 'thread':
-            # Print the PID prior to IO redirection, and then flush the buffer to send it to the parent.
-            print self.pid
-            sys.stdout.flush()
-
-            # Logging (silent IO redirection).
-            if log_file:
-                log(log_file, print_flag=0)
-
-            # Tee (silent IO redirection).
-            elif tee_file:
-                tee(tee_file, print_flag=0)
-
-            # Execute the script.
-            self.threading.execute()
 
         # Execute the relax test suite
         elif mode == 'test suite':
@@ -216,7 +192,6 @@ class Relax:
         parser.add_option('--test-suite', action='store_true', dest='test_suite', default=0, help='execute the relax test suite')
         parser.add_option('--system-tests', action='store_true', dest='system_tests', default=0, help='execute the relax system/functional tests (part of the test suite)')
         parser.add_option('--unit-tests', action='store_true', dest='unit_tests', default=0, help='execute the relax unit tests (part of the test suite)')
-        parser.add_option('--thread', action='store_true', dest='thread', default=0, help='run relax in threading mode (this mode should not be invoked by a user)')
         parser.add_option('-v', '--version', action='store_true', dest='version', default=0, help='show the version number and exit')
 
         # Parse the options.
@@ -282,8 +257,6 @@ class Relax:
             # Exclusive modes.
             if options.test:
                 parser.error("executing the relax test suite and running relax in test mode are mutually exclusive")
-            elif options.thread:
-                parser.error("executing the relax test suite and running relax in thread mode are mutually exclusive")
             elif options.licence:
                 parser.error("executing the relax test suite and running relax in licence mode are mutually exclusive")
 
@@ -305,28 +278,11 @@ class Relax:
             # Exclusive modes.
             if options.test_suite or options.system_tests or options.unit_tests:
                 parser.error("the relax test mode and executing the test suite are mutually exclusive")
-            elif options.thread:
-                parser.error("the relax modes test and thread are mutually exclusive")
             elif options.licence:
                 parser.error("the relax modes test and licence are mutually exclusive")
 
             # Set the mode.
             mode = 'test'
-
-        # Threaded mode.
-        elif options.thread:
-            # Make sure a script is supplied.
-            if not self.script_file:
-                parser.error("in threaded mode, a script is required")
-
-            # Exclusive modes.
-            if options.test:
-                parser.error("the relax modes thread and test are mutually exclusive")
-            elif options.licence:
-                parser.error("the relax modes thread and licence are mutually exclusive")
-
-            # Set the mode.
-            mode = 'thread'
 
         # Licence mode.
         elif options.licence:
@@ -339,8 +295,6 @@ class Relax:
                 parser.error("the relax licence mode and executing the test suite are mutually exclusive")
             elif options.test:
                 parser.error("the relax modes licence and test are mutually exclusive")
-            elif options.thread:
-                parser.error("the relax modes licence and thread are mutually exclusive")
 
             # Set the mode.
             mode = 'licence'
