@@ -41,8 +41,8 @@ class Test_minimisation(Minimisation_base_class, TestCase):
     minimisation_fns = Minimisation(fake_relax.fake_instance())
 
 
-    def test_calc_argfail_print_flag(self):
-        """The print_flag arg test of the calc() user function."""
+    def test_calc_argfail_verbosity(self):
+        """The verbosity arg test of the calc() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -51,7 +51,7 @@ class Test_minimisation(Minimisation_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.minimisation_fns.calc, print_flag=data[1])
+            self.assertRaises(RelaxIntError, self.minimisation_fns.calc, verbosity=data[1])
 
 
     def test_grid_search_argfail_lower(self):
@@ -126,8 +126,8 @@ class Test_minimisation(Minimisation_base_class, TestCase):
             self.assertRaises(RelaxBinError, self.minimisation_fns.grid_search, constraints=data[1])
 
 
-    def test_grid_search_argfail_print_flag(self):
-        """The print_flag arg test of the grid_search() user function."""
+    def test_grid_search_argfail_verbosity(self):
+        """The verbosity arg test of the grid_search() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -136,7 +136,7 @@ class Test_minimisation(Minimisation_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.minimisation_fns.grid_search, print_flag=data[1])
+            self.assertRaises(RelaxIntError, self.minimisation_fns.grid_search, verbosity=data[1])
 
 
     def test_minimise_argfail_args(self):
@@ -231,8 +231,8 @@ class Test_minimisation(Minimisation_base_class, TestCase):
             self.assertRaises(RelaxBinError, self.minimisation_fns.minimise, 'Newton', scaling=data[1])
 
 
-    def test_minimise_argfail_print_flag(self):
-        """The print_flag arg test of the minimise() user function."""
+    def test_minimise_argfail_verbosity(self):
+        """The verbosity arg test of the minimise() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -241,6 +241,6 @@ class Test_minimisation(Minimisation_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.minimisation_fns.minimise, 'Newton', print_flag=data[1])
+            self.assertRaises(RelaxIntError, self.minimisation_fns.minimise, 'Newton', verbosity=data[1])
 
 
