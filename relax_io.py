@@ -126,14 +126,23 @@ def get_file_path(file_name=None, dir=None):
     return file_path
 
 
-def log(file_name=None, dir=None, compress_type=0, print_flag=1):
-    """Function for turning logging on."""
+def log(file_name=None, dir=None, verbosity=1):
+    """Function for turning logging on.
+
+    @param file_name:   The name of the file to extract the data from.
+    @type file_name:    str
+    @param dir:         The path where the file is located.  If None, then the current directory is
+                        assumed.
+    @type dir:          str
+    @param verbosity:   The verbosity level.
+    @type verbosity:    int
+    """
 
     # Log file.
-    log_file, file_path = open_write_file(file_name=file_name, dir=dir, force=1, compress_type=compress_type, print_flag=print_flag, return_path=1)
+    log_file, file_path = open_write_file(file_name=file_name, dir=dir, force=True, verbosity=verbosity, return_path=True)
 
     # Print out.
-    if print_flag:
+    if verbosity:
         print "Redirecting the sys.stdin IO stream to the python stdin IO stream."
         print "Redirecting the sys.stdout IO stream to the log file '%s'." % file_path
         print "Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path
