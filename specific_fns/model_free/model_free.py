@@ -2016,7 +2016,7 @@ class Model_free_main:
             return [-100 * 1e-6, -300 * 1e-6]
 
 
-    def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, scaling=1, verbosity, sim_index=None):
+    def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, scaling=1, verbosity=0, sim_index=None):
         """Model-free minimisation.
 
         Three types of parameter sets exist for which minimisation is different.  These are:
