@@ -34,9 +34,9 @@ from gzip import GzipFile
 # Devnull.
 try:
     from os import devnull
-    devnull_import = 1
+    devnull_import = True
 except ImportError, message:
-    devnull_import = 0
+    devnull_import = False
     devnull_import_message = message.args[0]
 
 # Python module imports.
