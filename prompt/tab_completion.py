@@ -25,11 +25,11 @@ from rlcompleter import get_class_members
 
 
 class Tab_completion:
-    def __init__(self, name_space={}, print_flag=0):
+    def __init__(self, name_space={}, verbosity=0):
         """Function for tab completion."""
 
         self.name_space = name_space
-        self.print_flag = print_flag
+        self.verbosity = verbosity
 
 
     def create_list(self):
@@ -71,7 +71,7 @@ class Tab_completion:
             if match(list[-1], name):
                 self.options.append(module + '.' + name)
 
-        if self.print_flag:
+        if self.verbosity:
             print "List: " + `list`
             print "Module: " + `module`
             print "self.list: " + `self.list`
@@ -86,24 +86,24 @@ class Tab_completion:
 
         # Create a list of all possible options.
         # Find a list of options by matching the input with self.list
-        if self.print_flag:
+        if self.verbosity:
             print "\nInput: " + `self.input`
         if not "." in self.input:
-            if self.print_flag:
+            if self.verbosity:
                 print "Creating list."
             self.create_list()
-            if self.print_flag:
+            if self.verbosity:
                 print "\tOk."
         else:
-            if self.print_flag:
+            if self.verbosity:
                 print "Creating sublist."
             self.create_sublist()
-            if self.print_flag:
+            if self.verbosity:
                 print "\tOk."
 
 
         # Return the options if self.options[state] exists, or return None otherwise.
-        if self.print_flag:
+        if self.verbosity:
             print "Returning options."
         if self.state < len(self.options):
             return self.options[self.state]

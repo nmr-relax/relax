@@ -78,7 +78,7 @@ class Palmer:
         # Directory creation.
         if dir == None:
             dir = run
-        self.relax.IO.mkdir(dir, print_flag=0)
+        self.relax.IO.mkdir(dir, verbosity=0)
 
         # Place the arguments into 'self'.
         self.run = run

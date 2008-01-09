@@ -80,7 +80,7 @@ class Dasha:
         # Directory creation.
         if self.dir == None:
             self.dir = self.run
-        self.relax.IO.mkdir(self.dir, print_flag=0)
+        self.relax.IO.mkdir(self.dir, verbosity=0)
 
         # Number of field strengths and values.
         self.num_frq = 0
