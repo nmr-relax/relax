@@ -340,13 +340,13 @@ class Consistency_tests(Common_functions):
         if search('^[Jj]0$', name) or search('[Jj]\(0\)', name):
             return 'j0'
 
-        # J(wX).
-        if search('^[Jj]w[Xx]$', name) or search('[Jj]\(w[Xx]\)', name):
-            return 'jwx'
+        # F_eta.
+        if search('^[Ff]_[Ee][Tt][Aa]$', name):
+            return 'f_eta'
 
-        # J(wH).
-        if search('^[Jj]w[Hh]$', name) or search('[Jj]\(w[Hh]\)', name):
-            return 'jwh'
+        # F_R2.
+        if search('^^[Ff]_[Rr]2$', name):
+            return 'f_r2'
 
         # Bond length.
         if search('^r$', name) or search('[Bb]ond[ -_][Ll]ength', name):
@@ -380,12 +380,12 @@ class Consistency_tests(Common_functions):
             return '\\qJ(0)\\Q'
 
         # J(wX).
-        elif object_name == 'jwx':
-            return '\\qJ(\\xw\\f{}\\sX\\N)\\Q'
+        elif object_name == 'f_eta':
+            return '\\qF\\s\\xh\\Q'
 
         # J(wH).
-        elif object_name == 'jwh':
-            return '\\qJ(\\xw\\f{}\\sH\\N)\\Q'
+        elif object_name == 'f_r2':
+            return '\\qF\\sR2\\Q'
 
         # Bond length.
         elif object_name == 'r':
