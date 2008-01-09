@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -58,8 +58,22 @@ compression), reading and writing of files, processing of the contents of files,
 """
 
 
-def extract_data(file_name=None, dir=None, file_data=None, sep=None, compress_type=0):
-    """Open the file 'file' and return all the data."""
+def extract_data(file_name=None, dir=None, file_data=None, sep=None):
+    """Open the file 'file' and return all the data.
+
+    @param file_name:       The name of the file to extract the data from.
+    @type file_name:        str
+    @param dir:             The path where the file is located.  If None, then the current
+                            directory is assumed.
+    @type dir:              str
+    @param file_data:       If the file data has already been extracted from the file, it can be
+                            passed into this function using this argument.  If data is supplied
+                            here, then the file_name and dir args are ignored.
+    @type file_data:        list of str
+    @param sep:             The character separating the columns in the file data.  If None, then
+                            whitespace is assumed.
+    @type sep:              str
+    """
 
     # Data not already extracted from the file.
     if not file_data:
