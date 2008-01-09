@@ -108,12 +108,12 @@ def reset_min_stats(data_pipe=None, spin=None):
 
 
 
-def calc(print_flag=1):
+def calc(verbosity=1):
     """Function for calculating the function value.
 
-    @param print_flag:  A flag specifying the amount of information to print.  The higher the value,
-                        the greater the verbosity.
-    @type print_flag:   int
+    @param verbosity:   The amount of information to print.  The higher the value, the greater
+                        the verbosity.
+    @type verbosity:    int
     """
 
     # Alias the current data pipe.
@@ -130,16 +130,16 @@ def calc(print_flag=1):
     if hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
         # Loop over the simulations.
         for i in xrange(cdp.sim_number):
-            if print_flag:
+            if verbosity:
                 print "Simulation " + `i+1`
-            calculate(print_flag=print_flag-1, sim_index=i)
+            calculate(verbosity=verbosity-1, sim_index=i)
 
     # Minimisation.
     else:
-        calculate(print_flag=print_flag)
+        calculate(verbosity=verbosity)
 
 
-def grid_search(lower=None, upper=None, inc=None, constraints=1, print_flag=1):
+def grid_search(lower=None, upper=None, inc=None, constraints=1, verbosity=1):
     """The grid search function.
 
     @param lower:       The lower bounds of the grid search which must be equal to the number of
@@ -155,9 +155,9 @@ def grid_search(lower=None, upper=None, inc=None, constraints=1, print_flag=1):
     @param constraints: If true, constraints are applied during the grid search (elinating parts of
                         the grid).  If false, no constraints are used.
     @type constraints:  bool
-    @param print_flag:  A flag specifying the amount of information to print.  The higher the value,
-                        the greater the verbosity.
-    @type print_flag:   int
+    @param verbosity:   The amount of information to print.  The higher the value, the greater
+                        the verbosity.
+    @type verbosity:    int
     """
 
     # Alias the current data pipe.
@@ -174,16 +174,16 @@ def grid_search(lower=None, upper=None, inc=None, constraints=1, print_flag=1):
     if hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
         # Loop over the simulations.
         for i in xrange(cdp.sim_number):
-            if print_flag:
+            if verbosity:
                 print "Simulation " + `i+1`
-            grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag-1, sim_index=i)
+            grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity-1, sim_index=i)
 
     # Grid search.
     else:
-        grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag)
+        grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity)
 
 
-def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=1, scaling=1, print_flag=1, sim_index=None):
+def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=1, scaling=1, verbosity=1, sim_index=None):
     """Minimisation function.
 
     @param min_algor:       The minimisation algorithm to use.
@@ -203,9 +203,9 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
     @param scaling:         If true, diagonal scaling is enabled during optimisation to allow the
                             problem to be better conditioned.
     @type scaling:          bool
-    @param print_flag:      A flag specifying the amount of information to print.  The higher the
-                            value, the greater the verbosity.
-    @type print_flag:       int
+    @param verbosity:       The amount of information to print.  The higher the value, the greater
+                            the verbosity.
+    @type verbosity:        int
     @param sim_index:       The index of the simulation to optimise.  This should be None if normal
                             optimisation is desired.
     @type sim_index:        None or int
@@ -223,18 +223,18 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
 
     # Single Monte Carlo simulation.
     if sim_index != None:
-        minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag, sim_index=sim_index)
+        minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity, sim_index=sim_index)
 
     # Monte Carlo simulation minimisation.
     elif hasattr(relax_data_store, 'sim_state') and relax_data_store.sim_state == 1:
         for i in xrange(relax_data_store.sim_number):
-            if print_flag:
+            if verbosity:
                 print "Simulation " + `i+1`
-            minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag-1, sim_index=i)
+            minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity-1, sim_index=i)
 
     # Standard minimisation.
     else:
-        minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag)
+        minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity)
 
 
 def return_conversion_factor(stat_type):
