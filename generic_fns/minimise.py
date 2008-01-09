@@ -138,7 +138,7 @@ def calc(verbosity=1):
         calculate(verbosity=verbosity)
 
 
-def grid_search(lower=None, upper=None, inc=None, constraints=1, verbosity=1):
+def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1):
     """The grid search function.
 
     @param lower:       The lower bounds of the grid search which must be equal to the number of
@@ -151,8 +151,8 @@ def grid_search(lower=None, upper=None, inc=None, constraints=1, verbosity=1):
                         number of elements in the array must equal to the number of parameters in
                         the model.
     @type inc:          array of int
-    @param constraints: If true, constraints are applied during the grid search (elinating parts of
-                        the grid).  If false, no constraints are used.
+    @param constraints: If True, constraints are applied during the grid search (elinating parts of
+                        the grid).  If False, no constraints are used.
     @type constraints:  bool
     @param verbosity:   The amount of information to print.  The higher the value, the greater
                         the verbosity.
@@ -182,7 +182,7 @@ def grid_search(lower=None, upper=None, inc=None, constraints=1, verbosity=1):
         grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity)
 
 
-def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=1, scaling=1, verbosity=1, sim_index=None):
+def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=True, scaling=True, verbosity=1, sim_index=None):
     """Minimisation function.
 
     @param min_algor:       The minimisation algorithm to use.
@@ -197,9 +197,9 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
     @type grad_tol:         None or float
     @param max_iterations:  The maximum number of iterations for the algorithm.
     @type max_iterations:   int
-    @param constraints:     If true, constraints are used during optimisation.
+    @param constraints:     If True, constraints are used during optimisation.
     @type constraints:      bool
-    @param scaling:         If true, diagonal scaling is enabled during optimisation to allow the
+    @param scaling:         If True, diagonal scaling is enabled during optimisation to allow the
                             problem to be better conditioned.
     @type scaling:          bool
     @param verbosity:       The amount of information to print.  The higher the value, the greater
