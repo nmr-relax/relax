@@ -73,8 +73,20 @@ def load_state(state=None, dir_name=None):
     del state
 
 
-def save_state(state=None, dir_name=None, force=0, compress_type=1):
-    """Function for saving the program state."""
+def save_state(state=None, dir_name=None, force=False, compress_type=1):
+    """Function for saving the program state.
+
+    @param state:           The saved state file.
+    @type state:            str
+    @param dir_name:        The path of the state file.
+    @type dir_name:         str
+    @param force:           Boolean argument which if True causes the file to be overwritten if it
+                            already exists.
+    @type force:            bool
+    @param compress_type:   The compression type.  The integer values correspond to the compression
+                            type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
+    @type compress_type:    int
+    """
 
     # Open the file for writing.
     file = open_write_file(file_name=state, dir=dir_name, force=force, compress_type=compress_type)
