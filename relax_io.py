@@ -58,6 +58,43 @@ compression), reading and writing of files, processing of the contents of files,
 """
 
 
+def determine_compression(file_path):
+    """Function for determining the compression type, and for also testing if the file exists.
+
+    @param file_path:   The full file path of the file.
+    @type file_path:    str
+    @return:            The compression type.  A value of 0 corresponds to no compression.  Bzip2
+                        compression corresponds to a value of 1.  Gzip compression corresponds to a
+                        value of 2.
+    @type return:       int
+    """
+
+    # The file has been supplied without its compression extension.
+    if access(file_path, F_OK):
+        compress_type = 0
+        if search('.bz2$', file_path):
+            compress_type = 1
+        elif search('.gz$', file_path):
+            compress_type = 2
+
+    # The file has been supplied with the '.bz2' extension.
+    elif access(file_path + '.bz2', F_OK):
+        file_path = file_path + '.bz2'
+        compress_type = 1
+
+    # The file has been supplied with the '.gz' extension.
+    elif access(file_path + '.gz', F_OK):
+        file_path = file_path + '.gz'
+        compress_type = 2
+
+    # The file doesn't exist.
+    else:
+        raise RelaxFileError, file_path
+
+    # Return the compression type.
+    return compress_type
+
+
 def extract_data(file_name=None, dir=None, file_data=None, sep=None):
     """Open the file 'file' and return all the data.
 
@@ -201,20 +238,7 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
     file_path = get_file_path(file_name, dir)
 
     # Test if the file exists and determine the compression type.
-    if access(file_path, F_OK):
-        compress_type = 0
-        if search('.bz2$', file_path):
-            compress_type = 1
-        elif search('.gz$', file_path):
-            compress_type = 2
-    elif access(file_path + '.bz2', F_OK):
-        file_path = file_path + '.bz2'
-        compress_type = 1
-    elif access(file_path + '.gz', F_OK):
-        file_path = file_path + '.gz'
-        compress_type = 2
-    else:
-        raise RelaxFileError, file_path
+    compress_type = determine_compression(file_path)
 
     # Open the file for reading.
     try:
