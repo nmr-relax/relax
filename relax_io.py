@@ -99,8 +99,17 @@ def extract_data(file_name=None, dir=None, file_data=None, sep=None):
 
 
 def get_file_path(file_name=None, dir=None):
-    """Generate and expand the full file path."""
+    """Generate and expand the full file path.
 
+    @param file_name:   The name of the file to extract the data from.
+    @type file_name:    str
+    @param dir:         The path where the file is located.  If None, then the current directory is
+                        assumed.
+    @type dir:          str
+    @return:            The full file path.
+    @type return:       str
+    """
+ 
     # File name.
     file_path = file_name
 
