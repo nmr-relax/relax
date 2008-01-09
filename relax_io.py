@@ -355,7 +355,13 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
 
 
 def strip(data):
-    """Function to remove all comment and empty lines from the file data structure."""
+    """Function to remove all comment and empty lines from the file data structure.
+
+    @param data:    The file data.
+    @type data:     list of lists of str
+    @return:        The file data with comment and empty lines removed.
+    @rtype:         list of lists of str
+    """
 
     # Initialise the new data array.
     new = []
