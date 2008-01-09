@@ -56,11 +56,6 @@ class N_state_model(Common_functions):
         @type verbosity:    int
         """
 
-        # Arguments.
-        self.lower = lower
-        self.upper = upper
-        self.inc = inc
-
         # Minimisation.
         self.minimise(min_algor='grid', constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
