@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+from numpy import array, float64
 from re import search
 
 # relax module imports.
@@ -33,6 +34,22 @@ from specific_fns.base_class import Common_functions
 class N_state_model(Common_functions):
     def __init__(self):
         """Class containing functions for the N-state model."""
+
+
+    def assemble_param_vector(self, sim_index):
+        """Assemble all the parameters of the model into a single array."""
+
+        # Initialise.
+        param_vector = []
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # The probabilities.
+        #for i in xrange(len(cdp.align
+
+        # Return a numpy arrary.
+        return array(param_vector, float64)
 
 
     def grid_search(self, lower, upper, inc, constraints=False, verbosity=0, sim_index=None):
