@@ -37,7 +37,7 @@ class Jw_mapping(Common_functions):
         """Class containing functions specific to reduced spectral density mapping."""
 
 
-    def calculate(self, run=None, print_flag=1, sim_index=None):
+    def calculate(self, run=None, verbosity=1, sim_index=None):
         """Calculation of the spectral density values."""
 
         # Run argument.

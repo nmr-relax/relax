@@ -503,8 +503,11 @@ class RelaxTensorError(BaseError):
 
 # No tensor data exists.
 class RelaxNoTensorError(BaseError):
-    def __init__(self, tensor_type):
-        self.text = "No " + tensor_type + " tensor data exists."
+    def __init__(self, tensor_type, tensor_label=None):
+        if not tensor_label:
+            self.text = "No " + tensor_type + " tensor data exists."
+        else:
+            self.text = "No " + tensor_type + " tensor data exists for the tensor " + `tensor_label` + "."
         if Debug:
             self.save_state()
 

@@ -87,7 +87,7 @@ class Results:
         self.write_function(sys.stdout, run)
 
 
-    def read(self, run=None, file='results', directory=None, file_data=None, format='columnar', print_flag=1):
+    def read(self, run=None, file='results', directory=None, file_data=None, format='columnar', verbosity=1):
         """Function for reading the data out of a file."""
 
         # Test if the run exists.
@@ -138,10 +138,10 @@ class Results:
             raise RelaxFileEmptyError
 
         # Read the results.
-        self.read_function(run, file_data, print_flag)
+        self.read_function(run, file_data, verbosity)
 
 
-    def write(self, run=None, file="results", directory=None, force=0, format='columnar', compress_type=1, print_flag=1):
+    def write(self, run=None, file="results", directory=None, force=0, format='columnar', compress_type=1, verbosity=1):
         """Create the results file."""
 
         # Test if the run exists.
@@ -169,7 +169,7 @@ class Results:
             raise RelaxError, "The " + format + " format is not currently supported for " + self.relax.specific_setup.get_string(function_type) + "."
 
         # Open the file for writing.
-        results_file = self.relax.IO.open_write_file(file_name=file, dir=directory, force=force, compress_type=compress_type, print_flag=print_flag)
+        results_file = self.relax.IO.open_write_file(file_name=file, dir=directory, force=force, compress_type=compress_type, verbosity=verbosity)
 
         # Write the results.
         self.write_function(results_file, run)

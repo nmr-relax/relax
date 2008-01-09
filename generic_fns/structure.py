@@ -46,7 +46,7 @@ class Structure:
         self.relax = relax
 
         # Print flag.
-        self.print_flag = 1
+        self.verbosity = 1
 
 
     def atom_add(self, atom_id=None, record_name='', atom_name='', res_name='', chain_id='', res_num=None, pos=[None, None, None], segment_id='', element=''):
@@ -827,7 +827,7 @@ class Structure:
                 relax_data_store.pdb[self.run].structures = relax_data_store.pdb[run].structures
 
                 # Print out.
-                if self.print_flag:
+                if self.verbosity:
                     print "Using the structures from the run " + `run` + "."
                     for i in xrange(len(relax_data_store.pdb[self.run].structures)):
                         print relax_data_store.pdb[self.run].structures[i]
@@ -841,7 +841,7 @@ class Structure:
         # Load the structure i from the PDB file.
         if type(self.model) == int:
             # Print out.
-            if self.print_flag:
+            if self.verbosity:
                 print "Loading structure " + `self.model` + " from the PDB file."
 
             # Load the structure into 'str'.
@@ -852,7 +852,7 @@ class Structure:
                 raise RelaxPdbLoadError, self.file_path
 
             # Print the PDB info.
-            if self.print_flag:
+            if self.verbosity:
                 print str
 
             # Place the structure in 'relax_data_store.pdb[self.run]'.
@@ -862,7 +862,7 @@ class Structure:
         # Load all structures.
         else:
             # Print out.
-            if self.print_flag:
+            if self.verbosity:
                 print "Loading all structures from the PDB file."
 
             # First model.
@@ -885,7 +885,7 @@ class Structure:
                     break
 
                 # Print the PDB info.
-                if self.print_flag:
+                if self.verbosity:
                     print str
 
                 # Place the structure in 'relax_data_store.pdb[self.run]'.
@@ -895,7 +895,7 @@ class Structure:
                 i = i + 1
 
 
-    def read_pdb(self, run=None, file=None, dir=None, model=None, load_seq=1, fail=1, print_flag=1):
+    def read_pdb(self, run=None, file=None, dir=None, model=None, load_seq=1, fail=1, verbosity=1):
         """The pdb loading function."""
 
         # Arguments.
@@ -905,7 +905,7 @@ class Structure:
         self.model = model
         self.load_seq = load_seq
         self.fail = fail
-        self.print_flag = print_flag
+        self.verbosity = verbosity
 
         # Tests.
         ########
@@ -1004,7 +1004,7 @@ class Structure:
         num_str = len(relax_data_store.pdb[self.run].structures)
 
         # Print out.
-        if self.print_flag:
+        if self.verbosity:
             if num_str > 1:
                 print "\nCalculating and averaging the unit XH vectors from all structures."
             else:

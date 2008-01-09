@@ -458,11 +458,11 @@ class IO:
         return basename(root)
 
 
-    def logging_off(self, file_name=None, dir=None, print_flag=1):
+    def logging_off(self, file_name=None, dir=None, verbosity=1):
         """Function for turning logging and teeing off."""
 
         # Print out.
-        if print_flag:
+        if verbosity:
             print "Redirecting the sys.stdin IO stream to the python stdin IO stream."
             print "Redirecting the sys.stdout IO stream to the python stdout IO stream."
             print "Redirecting the sys.stderr IO stream to the python stderr IO stream."
@@ -473,14 +473,14 @@ class IO:
         sys.stderr = self.python_stderr
 
 
-    def tee(self, file_name=None, dir=None, compress_type=0, print_flag=1):
+    def tee(self, file_name=None, dir=None, compress_type=0, verbosity=1):
         """Function for turning logging on."""
 
         # Tee file.
-        self.tee_file, file_path = self.open_write_file(file_name=file_name, dir=dir, force=1, compress_type=compress_type, print_flag=print_flag, return_path=1)
+        self.tee_file, file_path = self.open_write_file(file_name=file_name, dir=dir, force=1, compress_type=compress_type, verbosity=verbosity, return_path=1)
 
         # Print out.
-        if print_flag:
+        if verbosity:
             print "Redirecting the sys.stdin IO stream to the python stdin IO stream."
             print "Redirecting the sys.stdout IO stream to both the python stdout IO stream and the log file '%s'." % file_path
             print "Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path

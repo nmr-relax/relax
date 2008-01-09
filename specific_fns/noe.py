@@ -44,7 +44,7 @@ class Noe:
             relax_data_store.res[run][i].sat = intensity
 
 
-    def calculate(self, run=None, print_flag=1):
+    def calculate(self, run=None, verbosity=1):
         """Function for calculating the NOE and its error.
 
         The error for each peak is calculated using the formula:
