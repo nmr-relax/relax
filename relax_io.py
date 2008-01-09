@@ -260,8 +260,30 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
     return file_obj
 
 
-def open_write_file(file_name=None, dir=None, force=0, compress_type=0, print_flag=1, return_path=0):
-    """Function for opening a file for writing and creating directories if necessary."""
+def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verbosity=1, return_path=False):
+    """Function for opening a file for writing and creating directories if necessary.
+
+    @param file_name:       The name of the file to extract the data from.
+    @type file_name:        str
+    @param dir:             The path where the file is located.  If None, then the current directory
+                            is assumed.
+    @type dir:              str
+    @param force:           Boolean argument which if True causes the file to be overwritten if it
+                            already exists.
+    @type force:            bool
+    @param compress_type:   The compression type.  The integer values correspond to the compression
+                            type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
+    @type compress_type:    int
+    @param verbosity:       The verbosity level.
+    @type verbosity:        int
+    @param return_path:     If True, the function will return a tuple of the file object and the
+                            full file path.
+    @type return_path:      bool
+    @return:                The open, writable file object and, if the return_path is True, then the
+                            full file path is returned as well.
+    @rtype:                 writable file object (if return_path, then a tuple of the writable file
+                            and the full file path)
+    """
 
     # A file descriptor object.
     if type(file_name) == file:
@@ -275,7 +297,7 @@ def open_write_file(file_name=None, dir=None, force=0, compress_type=0, print_fl
             raise RelaxError, devnull_import_message + ".  To use devnull, please upgrade to Python >= 2.4."
 
         # Print out.
-        if print_flag:
+        if verbosity:
             print "Opening the null device file for writing."
 
         # Open the null device.
@@ -288,7 +310,7 @@ def open_write_file(file_name=None, dir=None, force=0, compress_type=0, print_fl
             return file_obj
 
     # Create the directories.
-    mkdir_nofail(dir, print_flag=0)
+    mkdir_nofail(dir, verbosity=0)
 
     # File path.
     file_path = get_file_path(file_name, dir)
@@ -301,7 +323,7 @@ def open_write_file(file_name=None, dir=None, force=0, compress_type=0, print_fl
 
         # Switch to gzip compression.
         else:
-            print "Cannot use bz2 compression, using gzip compression instead.  " + bz2_module_message + "."
+            warn(RelaxWarning("Cannot use Bzip2 compression, using gzip compression instead.  " + bz2_module_message + "."))
             compress_type = 2
 
     # Gzip compression.
@@ -314,7 +336,7 @@ def open_write_file(file_name=None, dir=None, force=0, compress_type=0, print_fl
 
     # Open the file for writing.
     try:
-        if print_flag:
+        if verbosity:
             print "Opening the file " + `file_path` + " for writing."
         if compress_type == 0:
             file_obj = open(file_path, 'w')
