@@ -38,7 +38,7 @@ class Consistency_tests(Common_functions):
         """Class containing functions specific to consistency testing."""
 
 
-    def calculate(self, run=None, print_flag=1, sim_index=None):
+    def calculate(self, run=None, verbosity=1, sim_index=None):
         """Calculation of the consistency functions."""
 
         # Run argument.
