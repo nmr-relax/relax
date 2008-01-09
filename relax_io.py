@@ -117,7 +117,7 @@ def extract_data(file_name=None, dir=None, file_data=None, sep=None):
     # Data not already extracted from the file.
     if not file_data:
         # Open the file.
-        file = open_read_file(file_name=file_name, dir=dir, compress_type=compress_type)
+        file = open_read_file(file_name=file_name, dir=dir)
 
         # Read lines.
         file_data = file.readlines()
