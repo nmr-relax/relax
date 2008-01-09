@@ -35,7 +35,7 @@ class N_state_model(Common_functions):
         """Class containing functions for the N-state model."""
 
 
-    def grid_search(self, lower, upper, inc, constraints, print_flag, sim_index=None):
+    def grid_search(self, lower, upper, inc, constraints=False, verbosity=0, sim_index=None):
         """The grid search function.
 
         @param lower:       The lower bounds of the grid search which must be equal to the number of
@@ -48,12 +48,12 @@ class N_state_model(Common_functions):
                             number of elements in the array must equal to the number of parameters
                             in the model.
         @type inc:          array of int
-        @param constraints: If true, constraints are applied during the grid search (elinating parts
-                            of the grid).  If false, no constraints are used.
+        @param constraints: If True, constraints are applied during the grid search (elinating parts
+                            of the grid).  If False, no constraints are used.
         @type constraints:  bool
-        @param print_flag:  A flag specifying the amount of information to print.  The higher the
+        @param verbosity:   A flag specifying the amount of information to print.  The higher the
                             value, the greater the verbosity.
-        @type print_flag:   int
+        @type verbosity:    int
         """
 
         # Arguments.
@@ -62,7 +62,7 @@ class N_state_model(Common_functions):
         self.inc = inc
 
         # Minimisation.
-        self.minimise(min_algor='grid', constraints=constraints, print_flag=print_flag, sim_index=sim_index)
+        self.minimise(min_algor='grid', constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
     def overfit_deselect(self):
