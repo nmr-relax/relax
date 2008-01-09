@@ -103,7 +103,7 @@ class Iso3D(Base_Map):
                     self.relax.generic.value.set(run=self.run, value=values, param=self.params, res_num=self.res_num, force=1)
 
                     # Calculate the function values.
-                    self.calculate(run=self.run, res_num=self.res_num, print_flag=0)
+                    self.calculate(run=self.run, res_num=self.res_num, verbosity=0)
 
                     # Get the minimisation statistics for the model.
                     k, n, chi2 = self.model_stats(run=self.run, instance=self.index)
