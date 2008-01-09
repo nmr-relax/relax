@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Data as relax_data_store
 from prompt.minimisation import Minimisation
-from relax_errors import RelaxError, RelaxBinError, RelaxIntError, RelaxIntListIntError, RelaxListError, RelaxListNumError, RelaxNoneError, RelaxNoneNumError, RelaxStrError
+from relax_errors import RelaxError, RelaxBoolError, RelaxIntError, RelaxIntListIntError, RelaxListError, RelaxListNumError, RelaxNoneError, RelaxNoneNumError, RelaxStrError
 from test_suite.unit_tests.minimisation_testing_base import Minimisation_base_class
 
 # Unit test imports.
@@ -118,12 +118,12 @@ class Test_minimisation(Minimisation_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the bin arguments, and skip them.
-            if data[0] == 'bin':
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxBinError, self.minimisation_fns.grid_search, constraints=data[1])
+            self.assertRaises(RelaxBoolError, self.minimisation_fns.grid_search, constraints=data[1])
 
 
     def test_grid_search_argfail_verbosity(self):
@@ -210,12 +210,12 @@ class Test_minimisation(Minimisation_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the bin arguments, and skip them.
-            if data[0] == 'bin':
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxBinError, self.minimisation_fns.minimise, 'Newton', constraints=data[1])
+            self.assertRaises(RelaxBoolError, self.minimisation_fns.minimise, 'Newton', constraints=data[1])
 
 
     def test_minimise_argfail_scaling(self):
@@ -223,12 +223,12 @@ class Test_minimisation(Minimisation_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the bin arguments, and skip them.
-            if data[0] == 'bin':
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxBinError, self.minimisation_fns.minimise, 'Newton', scaling=data[1])
+            self.assertRaises(RelaxBoolError, self.minimisation_fns.minimise, 'Newton', scaling=data[1])
 
 
     def test_minimise_argfail_verbosity(self):
