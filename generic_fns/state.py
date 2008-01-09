@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007 Edward d'Auvergne                             #
+# Copyright (C) 2003-2004, 2007-2008 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,8 +28,14 @@ from data import Data as relax_data_store
 from relax_io import open_read_file, open_write_file
 
 
-def load_state(state=None, dir_name=None, compress_type=1):
-    """Function for loading a saved program state."""
+def load_state(state=None, dir_name=None):
+    """Function for loading a saved program state.
+
+    @param state:       The saved state file.
+    @type state:        str
+    @param dir_name:    The path of the state file.
+    @type dir_name:     str
+    """
 
     # Open the file for reading.
     file = open_read_file(file_name=state, dir=dir_name)
