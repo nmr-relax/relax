@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -191,6 +191,13 @@ class RelaxArgNotInListError(BaseError):
         for i in xrange(len(list)-1):
             self.text = self.text + `list[i]` + ', '
         self.text = self.text + 'nor ' + `list[-1]` + "."
+        if Debug:
+            self.save_state()
+
+# Boolean - the values True and False.
+class RelaxBoolError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " boolean argument " + `value` + " must either be True or False."
         if Debug:
             self.save_state()
 

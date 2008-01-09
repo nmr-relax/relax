@@ -27,7 +27,7 @@ import sys
 # relax module imports.
 from minimise.generic import generic_minimise
 from generic_fns import minimise
-from relax_errors import RelaxBinError, RelaxError, RelaxIntError, RelaxIntListIntError, RelaxListError, RelaxListNumError, RelaxNoneError, RelaxNoneNumError, RelaxNumError, RelaxStrError
+from relax_errors import RelaxBoolError, RelaxError, RelaxIntError, RelaxIntListIntError, RelaxListError, RelaxListNumError, RelaxNoneError, RelaxNoneNumError, RelaxNumError, RelaxStrError
 
 
 class Minimisation:
@@ -37,31 +37,31 @@ class Minimisation:
         self.relax = relax
 
 
-    def calc(self, print_flag=1):
+    def calc(self, verbosity=1):
         """Function for calculating the function value.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
+        verbosity:  The amount of information to print to screen.  Zero corresponds to minimal
         output while higher values increase the amount of output.  The default value is 1.
         """
 
         # Function intro text.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "calc("
-            text = text + "print_flag=" + `print_flag` + ")"
+            text = text + "verbosity=" + `verbosity` + ")"
             print text
 
-        # The print flag.
-        if type(print_flag) != int:
-            raise RelaxIntError, ('print flag', print_flag)
+        # The verbosity level.
+        if type(verbosity) != int:
+            raise RelaxIntError, ('verbosity level', verbosity)
 
         # Execute the functional code.
-        minimise.calc(print_flag=print_flag)
+        minimise.calc(verbosity=verbosity)
 
 
-    def grid_search(self, lower=None, upper=None, inc=21, constraints=1, print_flag=1):
+    def grid_search(self, lower=None, upper=None, inc=21, constraints=True, verbosity=1):
         """The grid search function.
 
         Keyword Arguments
@@ -78,10 +78,10 @@ class Minimisation:
         direction can be set if 'inc' is set to an array of integers of length equal to the number
         of parameters.
 
-        constraints:  A flag specifying whether the parameters should be constrained.  The default
-        is to turn constraints on (constraints=1).
+        constraints:  A boolean flag specifying whether the parameters should be constrained.  The
+        default is to turn constraints on (constraints=True).
 
-        print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
+        verbosity:  The amount of information to print to screen.  Zero corresponds to minimal
         output while higher values increase the amount of output.  The default value is 1.
         """
 
@@ -92,7 +92,7 @@ class Minimisation:
             text = text + ", upper=" + `upper`
             text = text + ", inc=" + `inc`
             text = text + ", constraints=" + `constraints`
-            text = text + ", print_flag=" + `print_flag` + ")"
+            text = text + ", verbosity=" + `verbosity` + ")"
             print text
 
         # The lower bounds.
@@ -141,15 +141,15 @@ class Minimisation:
             raise RelaxIntListIntError, ('incrementation value', inc)
 
         # Constraint flag.
-        if type(constraints) != int or (constraints != 0 and constraints != 1):
-            raise RelaxBinError, ('constraint flag', constraints)
+        if type(constraints) != bool:
+            raise RelaxBoolError, ('constraint flag', constraints)
 
-        # The print flag.
-        if type(print_flag) != int:
-            raise RelaxIntError, ('print flag', print_flag)
+        # The verbosity level.
+        if type(verbosity) != int:
+            raise RelaxIntError, ('verbosity level', verbosity)
 
         # Execute the functional code.
-        minimise.grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag)
+        minimise.grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity)
 
 
     def minimise(self, *args, **keywords):
@@ -184,13 +184,12 @@ class Minimisation:
 
         max_iterations:  The maximum number of iterations.  The default value is 1e7.
 
-        constraints:  A flag specifying whether the parameters should be constrained.  The default
-        is to turn constraints on (constraints=1).
+        constraints:  A boolean flag specifying whether the parameters should be constrained.  The
+        default is to turn constraints on (constraints=True).
 
-        scaling:  The diagonal scaling flag.  The default that scaling is on (scaling=1).
+        scaling:  The diagonal scaling boolean flag.  The default that scaling is on (scaling=True).
 
-
-        print_flag:  The amount of information to print to screen.  Zero corresponds to minimal
+        verbosity:  The amount of information to print to screen.  Zero corresponds to minimal
         output while higher values increase the amount of output.  The default value is 1.
 
 
@@ -229,12 +228,12 @@ class Minimisation:
         relax> minimise('newton', func_tol=1e-25)
         relax> minimise('newton', func_tol=1e-25, grad_tol=None)
         relax> minimise('newton', max_iter=1e7)
-        relax> minimise('newton', constraints=1, max_iter=1e7)
-        relax> minimise('newton', print_flag=1)
+        relax> minimise('newton', constraints=True, max_iter=1e7)
+        relax> minimise('newton', verbosity=1)
 
         To use constrained Simplex minimisation with a maximum of 5000 iterations, type:
 
-        relax> minimise('simplex', constraints=1, max_iter=5000)
+        relax> minimise('simplex', constraints=True, max_iter=5000)
 
 
 
@@ -281,19 +280,19 @@ class Minimisation:
         if keywords.has_key('constraints'):
             constraints = keywords['constraints']
         else:
-            constraints = 1
+            constraints = True
 
         # Keyword: scaling.
         if keywords.has_key('scaling'):
             scaling = keywords['scaling']
         else:
-            scaling = 1
+            scaling = True
 
-        # Keyword: print_flag.
-        if keywords.has_key('print_flag'):
-            print_flag = keywords['print_flag']
+        # Keyword: verbosity.
+        if keywords.has_key('verbosity'):
+            verbosity = keywords['verbosity']
         else:
-            print_flag = 1
+            verbosity = 1
 
         # Function intro text.
         if self.relax.interpreter.intro:
@@ -303,7 +302,7 @@ class Minimisation:
             text = text + ", max_iterations=" + `max_iterations`
             text = text + ", constraints=" + `constraints`
             text = text + ", scaling=" + `scaling`
-            text = text + ", print_flag=" + `print_flag` + ")"
+            text = text + ", verbosity=" + `verbosity` + ")"
             print text
 
         # Minimisation algorithm.
@@ -318,12 +317,12 @@ class Minimisation:
         min_options = args[1:]
 
         # Test for invalid keywords.
-        valid_keywords = ['func_tol', 'grad_tol', 'max_iter', 'max_iterations', 'constraints', 'scaling', 'print_flag']
+        valid_keywords = ['func_tol', 'grad_tol', 'max_iter', 'max_iterations', 'constraints', 'scaling', 'verbosity']
         for key in keywords:
-            valid = 0
+            valid = False
             for valid_key in valid_keywords:
                 if key == valid_key:
-                    valid = 1
+                    valid = True
             if not valid:
                 raise RelaxError, "Unknown keyword argument " + `key` + "."
 
@@ -340,22 +339,22 @@ class Minimisation:
             raise RelaxIntError, ('maximum number of iterations', max_iterations)
 
         # Constraint flag.
-        if type(constraints) != int or (constraints != 0 and constraints != 1):
-            raise RelaxBinError, ('constraint flag', constraints)
-        elif constraints == 1:
+        if type(constraints) != bool:
+            raise RelaxBoolError, ('constraint flag', constraints)
+        elif constraints:
             min_algor = 'Method of Multipliers'
             min_options = args
 
         # Scaling.
-        if type(scaling) != int or (scaling != 0 and scaling != 1):
-            raise RelaxBinError, ('scaling', scaling)
+        if type(scaling) != bool:
+            raise RelaxBoolError, ('scaling', scaling)
 
-        # Print flag.
-        if type(print_flag) != int:
-            raise RelaxIntError, ('print flag', print_flag)
+        # The verbosity level.
+        if type(verbosity) != int:
+            raise RelaxIntError, ('verbosity level', verbosity)
 
         # Execute the functional code.
-        minimise.minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag)
+        minimise.minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity)
 
 
 
