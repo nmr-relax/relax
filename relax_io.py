@@ -178,8 +178,19 @@ def mkdir_nofail(dir=None, verbosity=1):
             print "Directory ./" + dir + " already exists.\n"
 
 
-def open_read_file(file_name=None, dir=None, compress_type=0, print_flag=1):
-    """Open the file 'file' and return all the data."""
+def open_read_file(file_name=None, dir=None, verbosity=1):
+    """Open the file 'file' and return all the data.
+
+    @param file_name:   The name of the file to extract the data from.
+    @type file_name:    str
+    @param dir:         The path where the file is located.  If None, then the current directory is
+                        assumed.
+    @type dir:          str
+    @param verbosity:   The verbosity level.
+    @type verbosity:    int
+    @return:            The open file object.
+    @type return:       file object
+    """
 
     # A file descriptor object.
     if type(file_name) == file:
@@ -207,7 +218,7 @@ def open_read_file(file_name=None, dir=None, compress_type=0, print_flag=1):
 
     # Open the file for reading.
     try:
-        if print_flag:
+        if verbosity:
             print "Opening the file " + `file_path` + " for reading."
         if compress_type == 0:
             file_obj = open(file_path, 'r')
