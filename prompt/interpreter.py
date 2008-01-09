@@ -72,7 +72,6 @@ from select import Select
 from sequence import Sequence
 from spin import Spin
 from state import State
-from thread import Threading
 from unselect import Unselect
 from value import Value
 from vmd import Vmd
@@ -153,7 +152,6 @@ class Interpreter:
         self._Sequence = Sequence(relax)
         self._Spin = Spin(relax)
         self._State = State(relax)
-        self._Threading = Threading(relax)
         self._Unselect = Unselect(relax)
         self._Value = Value(relax)
         self._Vmd = Vmd(relax)
@@ -219,7 +217,6 @@ class Interpreter:
         sequence = self._Sequence
         spin = self._Spin
         state = self._State
-        thread = self._Threading
         unselect = self._Unselect
         vmd = self._Vmd
         value = self._Value

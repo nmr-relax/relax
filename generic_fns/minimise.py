@@ -21,16 +21,13 @@
 ###############################################################################
 
 # Python module imports.
-from Queue import Queue
 from re import search
 
 # relax module imports.
 from data import Data as relax_data_store
 from selection import spin_loop
-#from processes import RelaxPopen3
-from relax_errors import RelaxError, RelaxNoPipeError
+from relax_errors import RelaxError
 from specific_fns import get_specific_fn
-from thread_classes import RelaxParentThread, RelaxThread
 
 
 def reset_min_stats(data_pipe=None, spin=None):
@@ -110,12 +107,12 @@ def reset_min_stats(data_pipe=None, spin=None):
 
 
 
-def calc(print_flag=1):
+def calc(verbosity=1):
     """Function for calculating the function value.
 
-    @param print_flag:  A flag specifying the amount of information to print.  The higher the value,
-                        the greater the verbosity.
-    @type print_flag:   int
+    @param verbosity:   The amount of information to print.  The higher the value, the greater
+                        the verbosity.
+    @type verbosity:    int
     """
 
     # Alias the current data pipe.
@@ -132,16 +129,16 @@ def calc(print_flag=1):
     if hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
         # Loop over the simulations.
         for i in xrange(cdp.sim_number):
-            if print_flag:
+            if verbosity:
                 print "Simulation " + `i+1`
-            calculate(print_flag=print_flag-1, sim_index=i)
+            calculate(verbosity=verbosity-1, sim_index=i)
 
     # Minimisation.
     else:
-        calculate(print_flag=print_flag)
+        calculate(verbosity=verbosity)
 
 
-def grid_search(lower=None, upper=None, inc=None, constraints=1, print_flag=1):
+def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1):
     """The grid search function.
 
     @param lower:       The lower bounds of the grid search which must be equal to the number of
@@ -154,12 +151,12 @@ def grid_search(lower=None, upper=None, inc=None, constraints=1, print_flag=1):
                         number of elements in the array must equal to the number of parameters in
                         the model.
     @type inc:          array of int
-    @param constraints: If true, constraints are applied during the grid search (elinating parts of
-                        the grid).  If false, no constraints are used.
+    @param constraints: If True, constraints are applied during the grid search (elinating parts of
+                        the grid).  If False, no constraints are used.
     @type constraints:  bool
-    @param print_flag:  A flag specifying the amount of information to print.  The higher the value,
-                        the greater the verbosity.
-    @type print_flag:   int
+    @param verbosity:   The amount of information to print.  The higher the value, the greater
+                        the verbosity.
+    @type verbosity:    int
     """
 
     # Alias the current data pipe.
@@ -176,16 +173,16 @@ def grid_search(lower=None, upper=None, inc=None, constraints=1, print_flag=1):
     if hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
         # Loop over the simulations.
         for i in xrange(cdp.sim_number):
-            if print_flag:
+            if verbosity:
                 print "Simulation " + `i+1`
-            grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag-1, sim_index=i)
+            grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity-1, sim_index=i)
 
     # Grid search.
     else:
-        grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, print_flag=print_flag)
+        grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity)
 
 
-def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=1, scaling=1, print_flag=1, sim_index=None):
+def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=True, scaling=True, verbosity=1, sim_index=None):
     """Minimisation function.
 
     @param min_algor:       The minimisation algorithm to use.
@@ -200,14 +197,14 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
     @type grad_tol:         None or float
     @param max_iterations:  The maximum number of iterations for the algorithm.
     @type max_iterations:   int
-    @param constraints:     If true, constraints are used during optimisation.
+    @param constraints:     If True, constraints are used during optimisation.
     @type constraints:      bool
-    @param scaling:         If true, diagonal scaling is enabled during optimisation to allow the
+    @param scaling:         If True, diagonal scaling is enabled during optimisation to allow the
                             problem to be better conditioned.
     @type scaling:          bool
-    @param print_flag:      A flag specifying the amount of information to print.  The higher the
-                            value, the greater the verbosity.
-    @type print_flag:       int
+    @param verbosity:       The amount of information to print.  The higher the value, the greater
+                            the verbosity.
+    @type verbosity:        int
     @param sim_index:       The index of the simulation to optimise.  This should be None if normal
                             optimisation is desired.
     @type sim_index:        None or int
@@ -225,28 +222,18 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
 
     # Single Monte Carlo simulation.
     if sim_index != None:
-        minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag, sim_index=sim_index)
+        minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity, sim_index=sim_index)
 
     # Monte Carlo simulation minimisation.
     elif hasattr(relax_data_store, 'sim_state') and relax_data_store.sim_state == 1:
-        # Threaded minimisation of simulations.
-        if self.relax.thread_data.status:
-            # Print out.
-            print "Threaded minimisation of Monte Carlo simulations.\n"
-
-            # Run the main threading loop.
-            RelaxMinParentThread(self.relax, min_algor, min_options, func_tol, grad_tol, max_iterations, constraints, scaling, print_flag)
-
-        # Non-threaded minimisation of simulations.
-        else:
-            for i in xrange(relax_data_store.sim_number):
-                if print_flag:
-                    print "Simulation " + `i+1`
-                minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag-1, sim_index=i)
+        for i in xrange(relax_data_store.sim_number):
+            if verbosity:
+                print "Simulation " + `i+1`
+            minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity-1, sim_index=i)
 
     # Standard minimisation.
     else:
-        minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, print_flag=print_flag)
+        minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity)
 
 
 def return_conversion_factor(stat_type):
@@ -472,120 +459,3 @@ def set(value=None, error=None, param=None, scaling=None, spin=None):
         # Hessian call count.
         elif param_name == 'h_count':
             spin.h_count = value
-
-
-
-# Main threading loop for the minimisation of Monte Carlo simulations.
-######################################################################
-
-class RelaxMinParentThread(RelaxParentThread):
-    def __init__(self, relax, parent_run, *min_args):
-        """Initialisation of the Monte Carlo simulation minimisation parent thread."""
-
-        # Arguments.
-        self.relax = relax
-        self.parent_run = parent_run
-        self.min_args = min_args
-
-        # Run the RelaxParentThread __init__ function.
-        RelaxParentThread.__init__(self)
-
-        # The number of jobs.
-        self.num_jobs = relax_data_store.sim_number[self.parent_run]
-
-        # Run the main loop.
-        self.run()
-
-
-    def thread_object(self, i):
-        """Function for returning an initialised thread object."""
-
-        # Return the thread object.
-        return RelaxMinimiseThread(self.relax, i, self.job_queue, self.results_queue, self.finished_jobs, self.job_locks, self.tag, self.parent_run, self.min_args)
-
-
-
-# Threads for the minimisation of Monte Carlo simulations.
-##########################################################
-
-class RelaxMinimiseThread(RelaxThread):
-    def __init__(self, relax, i, job_queue, results_queue, finished_jobs, job_locks, tag, parent_run, min_args):
-        """Initialisation of the thread."""
-
-        # Arguments.
-        self.relax = relax
-        self.tag = tag
-        self.parent_run = parent_run
-        self.min_args = min_args
-
-        # Run the RelaxThread __init__ function (this is 'asserted' by the Thread class).
-        RelaxThread.__init__(self, i, job_queue, results_queue, finished_jobs, job_locks)
-
-        # Expand the minimisation arguments.
-        self.min_algor, self.min_options, self.func_tol, self.grad_tol, self.max_iterations, self.constraints, self.scaling, self.print_flag = self.min_args
-
-
-    def generate_script(self):
-        """Function for generating the script for the thread to minimise sim `sim`."""
-
-        # Function array.
-        fn = []
-
-        # Function: Load the program state.
-        fn.append("self.relax.generic.state.load(file='%s')" % self.save_state_file)
-
-        # Function: Minimise.
-        fn.append("self.relax.generic.minimise.minimise(run='%s', min_algor='%s', min_options=%s, func_tol=%s, grad_tol=%s, max_iterations=%s, constraints=%s, scaling=%s, print_flag=%s, sim_index=%s)" % (self.parent_run, self.min_algor, self.min_options, self.func_tol, self.grad_tol, self.max_iterations, self.constraints, self.scaling, self.print_flag, self.job_number))
-
-        # Function: Turn logging off.  This is so that the results can come back through the child's stdout pipe.
-        fn.append("self.relax.IO.logging_off()")
-
-        # Generate the main text of the script file.
-        text = ''
-        for i in xrange(len(fn)):
-            text = text + "\nprint \"\\n" + fn[i] + "\"\n"
-            text = text + fn[i] + "\n"
-
-        # Function: Write the results to stdout.
-        text = text + "self.relax.generic.results.display(run='%s')\n" % (self.parent_run)
-
-        # Cat the text into the script file.
-        cmd = "cat > %s" % self.script_file
-        cmd = self.remote_command(cmd=cmd, login_cmd=self.login_cmd)
-
-        # Start the child process.
-        self.child = RelaxPopen3(cmd, capturestderr=1)
-
-        # Write the text to the child's stdin, then close it.
-        self.child.tochild.write(text)
-        self.child.tochild.close()
-
-        # Catch errors.
-        err = self.child.childerr.readlines()
-
-        # Close all pipes.
-        self.child.fromchild.close()
-        self.child.childerr.close()
-
-        # The file could not be copied.
-        if len(err):
-            raise RelaxError, "The command `%s` could not be executed." % cmd
-
-
-    def post_locked_code(self):
-        """Code to run after locking the job."""
-
-        # Create a run in the parent to temporarily store the data prior to copying into the main run.
-        self.relax.generic.runs.create(run=self.thread_run, run_type=relax_data_store.run_types[relax_data_store.run_names.index(self.parent_run)])
-
-        # Read the data into the run.
-        self.relax.generic.results.read(run=self.thread_run, file_data=self.results, print_flag=0)
-
-        # Copy the results from the thread run to the parent run.
-        self.relax.generic.results.copy(run1=self.thread_run, run2=self.parent_run, sim=self.job_number)
-
-        # Delete the thread run.
-        self.relax.generic.runs.delete(self.thread_run)
-
-        # Print out.
-        print "Simulation: " + `self.job_number`

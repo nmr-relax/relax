@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from test_suite.unit_tests.state_testing_base import State_base_class
 from prompt.state import State
-from relax_errors import RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxStrFileError
+from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxStrFileError
 
 # Unit test imports.
 from data_types import DATA_TYPES
@@ -101,12 +101,12 @@ class Test_state(State_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the bin arguments, and skip them.
-            if data[0] == 'bin':
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxBinError, self.state.save_state, state='a', force=data[1])
+            self.assertRaises(RelaxBoolError, self.state.save_state, state='a', force=data[1])
 
 
     def test_save_argfail_compress_type(self):
