@@ -25,6 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.n_state_model import N_state_model
+from relax_errors import RelaxStrError
 from test_suite.unit_tests.n_state_model_testing_base import N_state_model_base_class
 
 # Unit test imports.
@@ -38,5 +39,30 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
     # Instantiate the user function class.
     n_state_model_fns = N_state_model(fake_relax.fake_instance())
 
+
+    def test_set_domain_argfail_tensor(self):
+        """Failure of the tensor arg of the n_state_model.set_domain() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.n_state_model_fns.set_domain, tensor=data[1])
+
+
+    def test_set_domain_argfail_domain(self):
+        """Failure of the domain arg of the n_state_model.set_domain() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.n_state_model_fns.set_domain, domain=data[1])
 
 
