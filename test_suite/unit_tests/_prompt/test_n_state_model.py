@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.n_state_model import N_state_model
-from relax_errors import RelaxStrError
+from relax_errors import RelaxBoolError, RelaxStrError
 from test_suite.unit_tests.n_state_model_testing_base import N_state_model_base_class
 
 # Unit test imports.
@@ -64,5 +64,31 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
 
             # The argument test.
             self.assertRaises(RelaxStrError, self.n_state_model_fns.set_domain, domain=data[1])
+
+
+    def test_set_type_argfail_tensor(self):
+        """Failure of the tensor arg of the n_state_model.set_type() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.n_state_model_fns.set_type, tensor=data[1])
+
+
+    def test_set_type_argfail_red(self):
+        """Failure of the red arg of the n_state_model.set_type() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the bool argument, and skip it.
+            if data[0] == 'bool':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxBoolError, self.n_state_model_fns.set_type, red=data[1])
 
 
