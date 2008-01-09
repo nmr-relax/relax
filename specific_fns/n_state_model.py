@@ -156,3 +156,28 @@ class N_state_model(Common_functions):
         # CSA.
         if search('^[Cc][Ss][Aa]$', name):
             return 'csa'
+
+
+    def set_domain(self, tensor=None, domain=None):
+        """Set the domain label for the given tensor.
+
+        @param tensor:  The alignment tensor label.
+        @type tensor:   str
+        @param domain:  The domain label.
+        @type domain:   str
+        """
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Loop over the tensors.
+        match = False
+        for tensor_cont in cdp.align_tensor:
+            # Find the matching tensor and then store the domain label.
+            if tensor_cont.name == tensor:
+                tensor_cont.domain = domain
+                match = True
+
+        # The tensor label doesn't exist.
+        if not match:
+            raise RelaxNoTensorError, ('diffusion', tensor)
