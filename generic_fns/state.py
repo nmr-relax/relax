@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007 Edward d'Auvergne                             #
+# Copyright (C) 2003-2004, 2007-2008 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,11 +28,17 @@ from data import Data as relax_data_store
 from relax_io import open_read_file, open_write_file
 
 
-def load_state(state=None, dir_name=None, compress_type=1):
-    """Function for loading a saved program state."""
+def load_state(state=None, dir_name=None):
+    """Function for loading a saved program state.
+
+    @param state:       The saved state file.
+    @type state:        str
+    @param dir_name:    The path of the state file.
+    @type dir_name:     str
+    """
 
     # Open the file for reading.
-    file = open_read_file(file_name=state, dir=dir_name, compress_type=compress_type)
+    file = open_read_file(file_name=state, dir=dir_name)
 
     # Unpickle the data class.
     state = load(file)
@@ -67,8 +73,20 @@ def load_state(state=None, dir_name=None, compress_type=1):
     del state
 
 
-def save_state(state=None, dir_name=None, force=0, compress_type=1):
-    """Function for saving the program state."""
+def save_state(state=None, dir_name=None, force=False, compress_type=1):
+    """Function for saving the program state.
+
+    @param state:           The saved state file.
+    @type state:            str
+    @param dir_name:        The path of the state file.
+    @type dir_name:         str
+    @param force:           Boolean argument which if True causes the file to be overwritten if it
+                            already exists.
+    @type force:            bool
+    @param compress_type:   The compression type.  The integer values correspond to the compression
+                            type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
+    @type compress_type:    int
+    """
 
     # Open the file for writing.
     file = open_write_file(file_name=state, dir=dir_name, force=force, compress_type=compress_type)

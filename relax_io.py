@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -34,9 +34,9 @@ from gzip import GzipFile
 # Devnull.
 try:
     from os import devnull
-    devnull_import = 1
+    devnull_import = True
 except ImportError, message:
-    devnull_import = 0
+    devnull_import = False
     devnull_import_message = message.args[0]
 
 # Python module imports.
@@ -58,13 +58,66 @@ compression), reading and writing of files, processing of the contents of files,
 """
 
 
-def extract_data(file_name=None, dir=None, file_data=None, sep=None, compress_type=0):
-    """Open the file 'file' and return all the data."""
+def determine_compression(file_path):
+    """Function for determining the compression type, and for also testing if the file exists.
+
+    @param file_path:   The full file path of the file.
+    @type file_path:    str
+    @return:            A tuple of the compression type and full path of the file (including its
+                        extension).  A value of 0 corresponds to no compression.  Bzip2 compression
+                        corresponds to a value of 1.  Gzip compression corresponds to a value of 2.
+    @type return:       (int, str)
+    """
+
+    # The file has been supplied without its compression extension.
+    if access(file_path, F_OK):
+        compress_type = 0
+        if search('.bz2$', file_path):
+            compress_type = 1
+        elif search('.gz$', file_path):
+            compress_type = 2
+
+    # The file has been supplied with the '.bz2' extension.
+    elif access(file_path + '.bz2', F_OK):
+        file_path = file_path + '.bz2'
+        compress_type = 1
+
+    # The file has been supplied with the '.gz' extension.
+    elif access(file_path + '.gz', F_OK):
+        file_path = file_path + '.gz'
+        compress_type = 2
+
+    # The file doesn't exist.
+    else:
+        raise RelaxFileError, file_path
+
+    # Return the compression type.
+    return compress_type, file_path
+
+
+def extract_data(file_name=None, dir=None, file_data=None, sep=None):
+    """Open the file 'file' and return all the data.
+
+    @param file_name:       The name of the file to extract the data from.
+    @type file_name:        str
+    @param dir:             The path where the file is located.  If None, then the current
+                            directory is assumed.
+    @type dir:              str
+    @param file_data:       If the file data has already been extracted from the file, it can be
+                            passed into this function using this argument.  If data is supplied
+                            here, then the file_name and dir args are ignored.
+    @type file_data:        list of str
+    @param sep:             The character separating the columns in the file data.  If None, then
+                            whitespace is assumed.
+    @type sep:              str
+    @return:                The file data.
+    @type return:           list of lists of str
+    """
 
     # Data not already extracted from the file.
     if not file_data:
         # Open the file.
-        file = open_read_file(file_name=file_name, dir=dir, compress_type=compress_type)
+        file = open_read_file(file_name=file_name, dir=dir)
 
         # Read lines.
         file_data = file.readlines()
@@ -85,8 +138,17 @@ def extract_data(file_name=None, dir=None, file_data=None, sep=None, compress_ty
 
 
 def get_file_path(file_name=None, dir=None):
-    """Generate and expand the full file path."""
+    """Generate and expand the full file path.
 
+    @param file_name:   The name of the file to extract the data from.
+    @type file_name:    str
+    @param dir:         The path where the file is located.  If None, then the current directory is
+                        assumed.
+    @type dir:          str
+    @return:            The full file path.
+    @type return:       str
+    """
+ 
     # File name.
     file_path = file_name
 
@@ -101,14 +163,23 @@ def get_file_path(file_name=None, dir=None):
     return file_path
 
 
-def log(file_name=None, dir=None, compress_type=0, print_flag=1):
-    """Function for turning logging on."""
+def log(file_name=None, dir=None, verbosity=1):
+    """Function for turning logging on.
+
+    @param file_name:   The name of the file to extract the data from.
+    @type file_name:    str
+    @param dir:         The path where the file is located.  If None, then the current directory is
+                        assumed.
+    @type dir:          str
+    @param verbosity:   The verbosity level.
+    @type verbosity:    int
+    """
 
     # Log file.
-    log_file, file_path = open_write_file(file_name=file_name, dir=dir, force=1, compress_type=compress_type, print_flag=print_flag, return_path=1)
+    log_file, file_path = open_write_file(file_name=file_name, dir=dir, force=True, verbosity=verbosity, return_path=True)
 
     # Print out.
-    if print_flag:
+    if verbosity:
         print "Redirecting the sys.stdin IO stream to the python stdin IO stream."
         print "Redirecting the sys.stdout IO stream to the log file '%s'." % file_path
         print "Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path
@@ -123,8 +194,14 @@ def log(file_name=None, dir=None, compress_type=0, print_flag=1):
     sys.stderr = log_stderr
 
 
-def mkdir_nofail(dir=None, print_flag=1):
-    """Create the given directory, or exit if the directory exists."""
+def mkdir_nofail(dir=None, verbosity=1):
+    """Create the given directory, or exit without raising an error if the directory exists.
+
+    @param dir:         The directory to create.
+    @type dir:          str
+    @param verbosity:   The verbosity level.
+    @type verbosity:    int
+    """
 
     # No directory given.
     if dir == None:
@@ -134,12 +211,23 @@ def mkdir_nofail(dir=None, print_flag=1):
     try:
         makedirs(dir)
     except OSError:
-        if print_flag:
+        if verbosity:
             print "Directory ./" + dir + " already exists.\n"
 
 
-def open_read_file(file_name=None, dir=None, compress_type=0, print_flag=1):
-    """Open the file 'file' and return all the data."""
+def open_read_file(file_name=None, dir=None, verbosity=1):
+    """Open the file 'file' and return all the data.
+
+    @param file_name:   The name of the file to extract the data from.
+    @type file_name:    str
+    @param dir:         The path where the file is located.  If None, then the current directory is
+                        assumed.
+    @type dir:          str
+    @param verbosity:   The verbosity level.
+    @type verbosity:    int
+    @return:            The open file object.
+    @type return:       file object
+    """
 
     # A file descriptor object.
     if type(file_name) == file:
@@ -150,24 +238,11 @@ def open_read_file(file_name=None, dir=None, compress_type=0, print_flag=1):
     file_path = get_file_path(file_name, dir)
 
     # Test if the file exists and determine the compression type.
-    if access(file_path, F_OK):
-        compress_type = 0
-        if search('.bz2$', file_path):
-            compress_type = 1
-        elif search('.gz$', file_path):
-            compress_type = 2
-    elif access(file_path + '.bz2', F_OK):
-        file_path = file_path + '.bz2'
-        compress_type = 1
-    elif access(file_path + '.gz', F_OK):
-        file_path = file_path + '.gz'
-        compress_type = 2
-    else:
-        raise RelaxFileError, file_path
+    compress_type, file_path = determine_compression(file_path)
 
     # Open the file for reading.
     try:
-        if print_flag:
+        if verbosity:
             print "Opening the file " + `file_path` + " for reading."
         if compress_type == 0:
             file_obj = open(file_path, 'r')
@@ -185,8 +260,30 @@ def open_read_file(file_name=None, dir=None, compress_type=0, print_flag=1):
     return file_obj
 
 
-def open_write_file(file_name=None, dir=None, force=0, compress_type=0, print_flag=1, return_path=0):
-    """Function for opening a file for writing and creating directories if necessary."""
+def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verbosity=1, return_path=False):
+    """Function for opening a file for writing and creating directories if necessary.
+
+    @param file_name:       The name of the file to extract the data from.
+    @type file_name:        str
+    @param dir:             The path where the file is located.  If None, then the current directory
+                            is assumed.
+    @type dir:              str
+    @param force:           Boolean argument which if True causes the file to be overwritten if it
+                            already exists.
+    @type force:            bool
+    @param compress_type:   The compression type.  The integer values correspond to the compression
+                            type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
+    @type compress_type:    int
+    @param verbosity:       The verbosity level.
+    @type verbosity:        int
+    @param return_path:     If True, the function will return a tuple of the file object and the
+                            full file path.
+    @type return_path:      bool
+    @return:                The open, writable file object and, if the return_path is True, then the
+                            full file path is returned as well.
+    @rtype:                 writable file object (if return_path, then a tuple of the writable file
+                            and the full file path)
+    """
 
     # A file descriptor object.
     if type(file_name) == file:
@@ -200,7 +297,7 @@ def open_write_file(file_name=None, dir=None, force=0, compress_type=0, print_fl
             raise RelaxError, devnull_import_message + ".  To use devnull, please upgrade to Python >= 2.4."
 
         # Print out.
-        if print_flag:
+        if verbosity:
             print "Opening the null device file for writing."
 
         # Open the null device.
@@ -213,7 +310,7 @@ def open_write_file(file_name=None, dir=None, force=0, compress_type=0, print_fl
             return file_obj
 
     # Create the directories.
-    mkdir_nofail(dir, print_flag=0)
+    mkdir_nofail(dir, verbosity=0)
 
     # File path.
     file_path = get_file_path(file_name, dir)
@@ -226,7 +323,7 @@ def open_write_file(file_name=None, dir=None, force=0, compress_type=0, print_fl
 
         # Switch to gzip compression.
         else:
-            print "Cannot use bz2 compression, using gzip compression instead.  " + bz2_module_message + "."
+            warn(RelaxWarning("Cannot use Bzip2 compression, using gzip compression instead.  " + bz2_module_message + "."))
             compress_type = 2
 
     # Gzip compression.
@@ -239,7 +336,7 @@ def open_write_file(file_name=None, dir=None, force=0, compress_type=0, print_fl
 
     # Open the file for writing.
     try:
-        if print_flag:
+        if verbosity:
             print "Opening the file " + `file_path` + " for writing."
         if compress_type == 0:
             file_obj = open(file_path, 'w')
@@ -258,7 +355,13 @@ def open_write_file(file_name=None, dir=None, force=0, compress_type=0, print_fl
 
 
 def strip(data):
-    """Function to remove all comment and empty lines from the file data structure."""
+    """Function to remove all comment and empty lines from the file data structure.
+
+    @param data:    The file data.
+    @type data:     list of lists of str
+    @return:        The file data with comment and empty lines removed.
+    @rtype:         list of lists of str
+    """
 
     # Initialise the new data array.
     new = []

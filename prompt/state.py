@@ -25,7 +25,7 @@ import sys
 
 # relax module imports.
 import help
-from relax_errors import RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxStrError, RelaxStrFileError
+from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxStrError, RelaxStrFileError
 from generic_fns.state import load_state, save_state
 
 
@@ -100,7 +100,7 @@ class State:
         load_state(state=state, dir_name=dir_name)
 
 
-    def save(self, state=None, dir_name=None, force=0, compress_type=1):
+    def save(self, state=None, dir_name=None, force=False, compress_type=1):
         """Function for saving the program state.
 
         Keyword Arguments
@@ -111,7 +111,7 @@ class State:
 
         dir_name:  The name of the directory in which to place the file.
 
-        force:  A flag which if set to 1 will cause the file to be overwritten.
+        force:  A boolean flag which if set to True will cause the file to be overwritten.
 
 
         Description
@@ -148,8 +148,8 @@ class State:
         If the file 'save' already exists, the following commands will save the current program
         state by overwriting the file.
 
-        relax> state.save('save', 1)
-        relax> state.save(state='save', force=1)
+        relax> state.save('save', True)
+        relax> state.save(state='save', force=True)
         """
 
         # Function intro text.
@@ -170,8 +170,8 @@ class State:
             raise RelaxNoneStrError, ('directory', dir_name)
 
         # The force flag.
-        if type(force) != int or (force != 0 and force != 1):
-            raise RelaxBinError, ('force flag', force)
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
 
         # Compression type.
         if type(compress_type) != int:
