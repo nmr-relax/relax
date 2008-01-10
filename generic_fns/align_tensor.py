@@ -104,7 +104,10 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
     index_to = get_tensor_index(tensor_to, pipe_to)
 
     # Copy the data.
-    relax_data_store[pipe_to].align_tensor[index_to] = deepcopy(relax_data_store[pipe_from].align_tensor[index_from])
+    if index_to == None:
+        relax_data_store[pipe_to].align_tensor.append(deepcopy(relax_data_store[pipe_from].align_tensor[index_from]))
+    else:
+        relax_data_store[pipe_to].align_tensor[index_to] = deepcopy(relax_data_store[pipe_from].align_tensor[index_from])
 
 
 def data_names():
