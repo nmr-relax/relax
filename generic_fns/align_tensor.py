@@ -99,6 +99,9 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
     if not hasattr(relax_data_store[pipe_to], 'align_tensor'):
         relax_data_store[pipe_to].align_tensor = AlignTensorList()
 
+    # Find the tensor index.
+    index = get_tensor_index(tensor)
+
     # Copy the data.
     relax_data_store[pipe_to].align_tensor[tensor_to] = deepcopy(relax_data_store[pipe_from].align_tensor[tensor_from])
 
@@ -320,17 +323,23 @@ def fold_angles(sim_index=None):
             cdp.align_tensor.beta_sim[sim_index] = cdp.align_tensor.beta_sim[sim_index] + pi
 
 
-def get_tensor_index(tensor):
+def get_tensor_index(tensor, pipe=None):
     """Function for returning the index corresponding to the 'tensor' argument.
 
     @param tensor:  The alignment tensor identification string.
     @type tensor:   str
+    @param pipe:    The data pipe to search for data in.
+    @type pipe:     str
     @return:        The index corresponding to the 'tensor' arg.
     @rtype:         int
     """
 
+    # The data pipe to check.
+    if pipe == None:
+        pipe = relax_data_store.current_pipe
+
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = relax_data_store[pipe]
 
     # Init.
     index = None
@@ -344,17 +353,23 @@ def get_tensor_index(tensor):
     return index
 
 
-def get_tensor_object(tensor):
+def get_tensor_object(tensor, pipe=None):
     """Function for returning the AlignTensorData instance corresponding to the 'tensor' argument.
 
     @param tensor:  The alignment tensor identification string.
     @type tensor:   str
+    @param pipe:    The data pipe to search for data in.
+    @type pipe:     str
     @return:        The alignment tensor object corresponding to the 'tensor' arg.
     @rtype:         AlignTensorData instance
     """
 
+    # The data pipe to check.
+    if pipe == None:
+        pipe = relax_data_store.current_pipe
+
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = relax_data_store[pipe]
 
     # Init.
     data = None
