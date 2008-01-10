@@ -551,6 +551,12 @@ class AlignTensorList(ListType):
 class AlignTensorData(Element):
     """An empty data container for the alignment tensor elements."""
 
+    def __init__(self, name):
+        """Function for placing the tensor name in the class namespace."""
+
+        self.name = name
+
+
     def __setattr__(self, name, value):
         """Function for calculating the parameters, unit vectors, and tensors on the fly.
 
