@@ -80,11 +80,6 @@ class Align_tensor_base_class:
         self.assertEqual(relax_data_store['test'].align_tensor[0].Sxy, 7.65639)
         self.assertEqual(relax_data_store['test'].align_tensor[0].Sxz, -1.89157)
         self.assertEqual(relax_data_store['test'].align_tensor[0].Syz, 19.2561)
-        self.assertEqual(relax_data_store['test'].align_tensor[1].Sxx, -16.6278)
-        self.assertEqual(relax_data_store['test'].align_tensor[1].Syy, 6.13037)
-        self.assertEqual(relax_data_store['test'].align_tensor[1].Sxy, 7.65639)
-        self.assertEqual(relax_data_store['test'].align_tensor[1].Sxz, -1.89157)
-        self.assertEqual(relax_data_store['test'].align_tensor[1].Syz, 19.2561)
 
 
     def test_copy_push(self):
@@ -106,11 +101,6 @@ class Align_tensor_base_class:
         self.assertEqual(relax_data_store['test'].align_tensor[0].Sxy, 7.65639)
         self.assertEqual(relax_data_store['test'].align_tensor[0].Sxz, -1.89157)
         self.assertEqual(relax_data_store['test'].align_tensor[0].Syz, 19.2561)
-        self.assertEqual(relax_data_store['test'].align_tensor[1].Sxx, -16.6278)
-        self.assertEqual(relax_data_store['test'].align_tensor[1].Syy, 6.13037)
-        self.assertEqual(relax_data_store['test'].align_tensor[1].Sxy, 7.65639)
-        self.assertEqual(relax_data_store['test'].align_tensor[1].Sxz, -1.89157)
-        self.assertEqual(relax_data_store['test'].align_tensor[1].Syz, 19.2561)
 
 
     def test_copy_fail(self):
