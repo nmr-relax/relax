@@ -191,56 +191,62 @@ def display(tensor):
     # Alias the current data pipe.
     cdp = relax_data_store[relax_data_store.current_pipe]
 
+    # Pull out the tensor.
+    data = None
+    for i in xrange(len(cdp.align_tensor)):
+        if cdp.align_tensor[i].name == tensor:
+            data = cdp.align_tensor[i]
+
     # Header.
     print "Tensor: " + tensor + "\n"
 
     # The parameter set {Sxx, Syy, Sxy, Sxz, Syz}.
     print "Parameters {Sxx, Syy, Sxy, Sxz, Syz}."
-    print "%-15s%15.8f" % ("Sxx:  ", cdp.align_tensor[tensor].Sxx)
-    print "%-15s%15.8f" % ("Syy:  ", cdp.align_tensor[tensor].Syy)
-    print "%-15s%15.8f" % ("Sxy:  ", cdp.align_tensor[tensor].Sxy)
-    print "%-15s%15.8f" % ("Sxz:  ", cdp.align_tensor[tensor].Sxz)
-    print "%-15s%15.8f" % ("Syz:  ", cdp.align_tensor[tensor].Syz)
+    print "%-15s%15.8f" % ("Sxx:  ", data.Sxx)
+    print "%-15s%15.8f" % ("Syy:  ", data.Syy)
+    print "%-15s%15.8f" % ("Sxy:  ", data.Sxy)
+    print "%-15s%15.8f" % ("Sxz:  ", data.Sxz)
+    print "%-15s%15.8f" % ("Syz:  ", data.Syz)
 
     # The parameter set {Szz, Sxx-yy, Sxy, Sxz, Syz}.
     print "\nParameters {Szz, Sxx-yy, Sxy, Sxz, Syz} (the Pales default format)."
-    print "%-15s%15.8f" % ("Szz:  ", cdp.align_tensor[tensor].Szz)
-    print "%-15s%15.8f" % ("Sxx-yy:  ", cdp.align_tensor[tensor].Sxxyy)
-    print "%-15s%15.8f" % ("Sxy:  ", cdp.align_tensor[tensor].Sxy)
-    print "%-15s%15.8f" % ("Sxz:  ", cdp.align_tensor[tensor].Sxz)
-    print "%-15s%15.8f" % ("Syz:  ", cdp.align_tensor[tensor].Syz)
+    print "%-15s%15.8f" % ("Szz:  ", data.Szz)
+    print "%-15s%15.8f" % ("Sxx-yy:  ", data.Sxxyy)
+    print "%-15s%15.8f" % ("Sxy:  ", data.Sxy)
+    print "%-15s%15.8f" % ("Sxz:  ", data.Sxz)
+    print "%-15s%15.8f" % ("Syz:  ", data.Syz)
 
     # The parameter set {Axx, Ayy, Axy, Axz, Ayz}.
     print "Parameters {Axx, Ayy, Axy, Axz, Ayz}."
-    print "%-15s%15.8f" % ("Axx:  ", cdp.align_tensor[tensor].Axx)
-    print "%-15s%15.8f" % ("Ayy:  ", cdp.align_tensor[tensor].Ayy)
-    print "%-15s%15.8f" % ("Axy:  ", cdp.align_tensor[tensor].Axy)
-    print "%-15s%15.8f" % ("Axz:  ", cdp.align_tensor[tensor].Axz)
-    print "%-15s%15.8f" % ("Ayz:  ", cdp.align_tensor[tensor].Ayz)
+    print "%-15s%15.8f" % ("Axx:  ", data.Axx)
+    print "%-15s%15.8f" % ("Ayy:  ", data.Ayy)
+    print "%-15s%15.8f" % ("Axy:  ", data.Axy)
+    print "%-15s%15.8f" % ("Axz:  ", data.Axz)
+    print "%-15s%15.8f" % ("Ayz:  ", data.Ayz)
 
     # The parameter set {Azz, Axx-yy, Axy, Axz, Ayz}.
     print "\nParameters {Azz, Axx-yy, Axy, Axz, Ayz}."
-    print "%-15s%15.8f" % ("Azz:  ", cdp.align_tensor[tensor].Azz)
-    print "%-15s%15.8f" % ("Axx-yy:  ", cdp.align_tensor[tensor].Axxyy)
-    print "%-15s%15.8f" % ("Axy:  ", cdp.align_tensor[tensor].Axy)
-    print "%-15s%15.8f" % ("Axz:  ", cdp.align_tensor[tensor].Axz)
-    print "%-15s%15.8f" % ("Ayz:  ", cdp.align_tensor[tensor].Ayz)
+    print "%-15s%15.8f" % ("Azz:  ", data.Azz)
+    print "%-15s%15.8f" % ("Axx-yy:  ", data.Axxyy)
+    print "%-15s%15.8f" % ("Axy:  ", data.Axy)
+    print "%-15s%15.8f" % ("Axz:  ", data.Axz)
+    print "%-15s%15.8f" % ("Ayz:  ", data.Ayz)
 
     # The parameter set {Pxx, Pyy, Pxy, Pxz, Pyz}.
     print "Parameters {Pxx, Pyy, Pxy, Pxz, Pyz}."
-    print "%-15s%15.8f" % ("Pxx:  ", cdp.align_tensor[tensor].Pxx)
-    print "%-15s%15.8f" % ("Pyy:  ", cdp.align_tensor[tensor].Pyy)
-    print "%-15s%15.8f" % ("Pxy:  ", cdp.align_tensor[tensor].Pxy)
-    print "%-15s%15.8f" % ("Pxz:  ", cdp.align_tensor[tensor].Pxz)
-    print "%-15s%15.8f" % ("Pyz:  ", cdp.align_tensor[tensor].Pyz)
+    print "%-15s%15.8f" % ("Pxx:  ", data.Pxx)
+    print "%-15s%15.8f" % ("Pyy:  ", data.Pyy)
+    print "%-15s%15.8f" % ("Pxy:  ", data.Pxy)
+    print "%-15s%15.8f" % ("Pxz:  ", data.Pxz)
+    print "%-15s%15.8f" % ("Pyz:  ", data.Pyz)
 
     # The parameter set {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.
     print "\nParameters {Pzz, Pxx-yy, Pxy, Pxz, Pyz}."
-    print "%-15s%15.8f" % ("Pzz:  ", cdp.align_tensor[tensor].Pzz)
-    print "%-15s%15.8f" % ("Pxx-yy:  ", cdp.align_tensor[tensor].Pxxyy)
-    print "%-15s%15.8f" % ("Pxy:  ", cdp.align_tensor[tensor].Pxy)
-    print "%-15s%15.8f" % ("Pxz:  ", cdp.align_tensor[tensor].Pxz)
-    print "%-15s%15.8f" % ("Pyz:  ", cdp.align_tensor[tensor].Pyz)
+    print "%-15s%15.8f" % ("Pzz:  ", data.Pzz)
+    print "%-15s%15.8f" % ("Pxx-yy:  ", data.Pxxyy)
+    print "%-15s%15.8f" % ("Pxy:  ", data.Pxy)
+    print "%-15s%15.8f" % ("Pxz:  ", data.Pxz)
+    print "%-15s%15.8f" % ("Pyz:  ", data.Pyz)
 
 
 
