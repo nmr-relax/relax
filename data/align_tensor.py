@@ -586,7 +586,8 @@ class AlignTensorData(Element):
                     'Syz',
                     'alpha',
                     'beta',
-                    'gamma']
+                    'gamma',
+                    'domain']
 
         # Test if the attribute that is trying to be set is modifiable.
         if not param_name in mod_attr:
