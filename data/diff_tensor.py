@@ -551,11 +551,10 @@ def dependency_generator(diff_type):
 #################################
 
 class DiffTensorData(Element):
-    def __init__(self):
-        """An empty data container for the diffusion tensor elements."""
+    """An empty data container for the diffusion tensor elements."""
 
-        # Set the initial diffusion type to None.
-        self.type = None
+    # Set the initial diffusion type to None.
+    type = None
 
 
     def __setattr__(self, name, value):

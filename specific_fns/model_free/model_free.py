@@ -406,12 +406,12 @@ class Model_free_main:
         return value
 
 
-    def calculate(self, run=None, res_num=None, print_flag=1, sim_index=None):
+    def calculate(self, run=None, res_num=None, verbosity=1, sim_index=None):
         """Calculation of the model-free chi-squared value."""
 
         # Arguments.
         self.run = run
-        self.print_flag = print_flag
+        self.verbosity = verbosity
 
         # Test if the sequence data for self.run is loaded.
         if not relax_data_store.res.has_key(self.run):
@@ -1520,7 +1520,7 @@ class Model_free_main:
         return self.param_vector
 
 
-    def grid_search(self, run, lower, upper, inc, constraints, print_flag, sim_index=None):
+    def grid_search(self, run, lower, upper, inc, constraints, verbosity, sim_index=None):
         """The grid search function."""
 
         # Arguments.
@@ -1529,7 +1529,7 @@ class Model_free_main:
         self.inc = inc
 
         # Minimisation.
-        self.minimise(run=run, min_algor='grid', constraints=constraints, print_flag=print_flag, sim_index=sim_index)
+        self.minimise(run=run, min_algor='grid', constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
     def grid_search_setup(self, index=None):
@@ -2016,7 +2016,7 @@ class Model_free_main:
             return [-100 * 1e-6, -300 * 1e-6]
 
 
-    def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, scaling=1, print_flag=0, sim_index=None):
+    def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, scaling=1, verbosity=0, sim_index=None):
         """Model-free minimisation.
 
         Three types of parameter sets exist for which minimisation is different.  These are:
@@ -2027,7 +2027,7 @@ class Model_free_main:
 
         # Arguments.
         self.run = run
-        self.print_flag = print_flag
+        self.verbosity = verbosity
 
         # Test if the sequence data for self.run is loaded.
         if not relax_data_store.res.has_key(self.run):
@@ -2083,7 +2083,7 @@ class Model_free_main:
                     raise RelaxNoValueError, unset_param
 
         # Print out.
-        if self.print_flag >= 1:
+        if self.verbosity >= 1:
             if self.param_set == 'mf':
                 print "Only the model-free parameters for single residues will be used."
             elif self.param_set == 'local_mf':
@@ -2181,10 +2181,10 @@ class Model_free_main:
                 A, b = self.linear_constraints(index=index)
 
             # Print out.
-            if self.print_flag >= 1:
+            if self.verbosity >= 1:
                 # Individual residue stuff.
                 if self.param_set == 'mf' or self.param_set == 'local_tm':
-                    if self.print_flag >= 2:
+                    if self.verbosity >= 2:
                         print "\n\n"
                     string = "Fitting to residue: " + `relax_data_store.res[self.run][index].num` + " " + relax_data_store.res[self.run][index].name
                     print "\n\n" + string
@@ -2385,9 +2385,9 @@ class Model_free_main:
             ###############
 
             if constraints:
-                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
+                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=verbosity)
             else:
-                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
+                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
             if results == None:
                 return
             self.param_vector, self.func, iter, fc, gc, hc, self.warning = results
@@ -3276,7 +3276,7 @@ class Model_free_main:
                 relax_data_store.res[self.run][i].fixed = res_fixed
 
 
-    def read_columnar_pdb(self, print_flag=1):
+    def read_columnar_pdb(self, verbosity=1):
         """Function for reading the PDB file."""
 
         # File name.
@@ -3287,7 +3287,7 @@ class Model_free_main:
 
         # Read the PDB file (if it exists).
         if not pdb == 'None':
-            self.relax.generic.structure.read_pdb(run=self.run, file=pdb, model=pdb_model, fail=0, print_flag=print_flag)
+            self.relax.generic.structure.read_pdb(run=self.run, file=pdb, model=pdb_model, fail=0, verbosity=verbosity)
             return 1
         else:
             return 0
@@ -3333,7 +3333,7 @@ class Model_free_main:
         self.relax.specific.relax_data.add_residue(run=self.run, res_index=self.res_index, ri_labels=self.ri_labels, remap_table=self.remap_table, frq_labels=self.frq_labels, frq=self.frq, values=values, errors=errors, sim=sim)
 
 
-    def read_columnar_results(self, run, file_data, print_flag=1):
+    def read_columnar_results(self, run, file_data, verbosity=1):
         """Function for reading the results file."""
 
         # Arguments.
@@ -3438,7 +3438,7 @@ class Model_free_main:
 
             # PDB.
             if not pdb:
-                if self.read_columnar_pdb(print_flag):
+                if self.read_columnar_pdb(verbosity):
                     pdb = 1
 
             # XH vector, heteronucleus, and proton.

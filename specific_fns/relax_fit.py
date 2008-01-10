@@ -351,7 +351,7 @@ class Relax_fit(Common_functions):
                 data.iinf = self.param_vector[2]
 
 
-    def grid_search(self, run, lower, upper, inc, constraints, print_flag, sim_index=None):
+    def grid_search(self, run, lower, upper, inc, constraints, verbosity, sim_index=None):
         """The grid search function."""
 
         # Arguments.
@@ -360,7 +360,7 @@ class Relax_fit(Common_functions):
         self.inc = inc
 
         # Minimisation.
-        self.minimise(run=run, min_algor='grid', constraints=constraints, print_flag=print_flag, sim_index=sim_index)
+        self.minimise(run=run, min_algor='grid', constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
     def grid_search_setup(self, index=None):
@@ -512,7 +512,7 @@ class Relax_fit(Common_functions):
         return A, b
 
 
-    def mean_and_error(self, run=None, print_flag=0):
+    def mean_and_error(self, run=None, verbosity=0):
         """Function for calculating the average intensity and standard deviation of all spectra."""
 
         # Arguments.
@@ -534,7 +534,7 @@ class Relax_fit(Common_functions):
             # Print out.
             print "\nTime point:  " + `relax_data_store.relax_times[self.run][time_index]` + " s"
             print "Number of spectra:  " + `relax_data_store.num_spectra[self.run][time_index]`
-            if print_flag:
+            if verbosity:
                 print "%-5s%-6s%-20s%-20s" % ("Num", "Name", "Average", "SD")
 
             # Append zero to the global standard deviation structure.
@@ -590,7 +590,7 @@ class Relax_fit(Common_functions):
                 data.sd.append(sd)
 
                 # Print out.
-                if print_flag:
+                if verbosity:
                     print "%-5i%-6s%-20s%-20s" % (data.num, data.name, `data.ave_intensities[time_index]`, `data.sd[time_index]`)
 
                 # Sum of standard deviations (for average).
@@ -633,12 +633,12 @@ class Relax_fit(Common_functions):
             print "\nStandard deviation (averaged over all spectra):  " + `sd`
 
 
-    def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, scaling=1, print_flag=0, sim_index=None):
+    def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, scaling=1, verbosity=0, sim_index=None):
         """Relaxation curve fitting function."""
 
         # Arguments.
         self.run = run
-        self.print_flag = print_flag
+        self.verbosity = verbosity
 
         # Test if the sequence data for self.run is loaded.
         if not relax_data_store.res.has_key(self.run):
@@ -673,9 +673,9 @@ class Relax_fit(Common_functions):
                 A, b = self.linear_constraints(index=i)
 
             # Print out.
-            if self.print_flag >= 1:
+            if self.verbosity >= 1:
                 # Individual residue print out.
-                if self.print_flag >= 2:
+                if self.verbosity >= 2:
                     print "\n\n"
                 string = "Fitting to residue: " + `data.num` + " " + data.name
                 print "\n\n" + string
@@ -724,9 +724,9 @@ class Relax_fit(Common_functions):
             ###############
 
             if constraints:
-                results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
+                results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=verbosity)
             else:
-                results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
+                results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
             if results == None:
                 return
             self.param_vector, self.func, self.iter_count, self.f_count, self.g_count, self.h_count, self.warning = results
