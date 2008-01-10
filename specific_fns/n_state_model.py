@@ -181,3 +181,28 @@ class N_state_model(Common_functions):
         # The tensor label doesn't exist.
         if not match:
             raise RelaxNoTensorError, ('diffusion', tensor)
+
+
+    def set_type(self, tensor=None, red=None):
+        """Set the whether the given tensor is the full or reduced tensor.
+
+        @param tensor:  The alignment tensor label.
+        @type tensor:   str
+        @param red:     The flag specifying whether the given tensor is the full or reduced tensor.
+        @type red:      bool
+        """
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Loop over the tensors.
+        match = False
+        for tensor_cont in cdp.align_tensor:
+            # Find the matching tensor and then store the tensor type.
+            if tensor_cont.name == tensor:
+                tensor_cont.red = red
+                match = True
+
+        # The tensor label doesn't exist.
+        if not match:
+            raise RelaxNoTensorError, ('alignment', tensor)
