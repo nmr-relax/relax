@@ -180,7 +180,7 @@ class N_state_model(Common_functions):
 
         # The tensor label doesn't exist.
         if not match:
-            raise RelaxNoTensorError, ('diffusion', tensor)
+            raise RelaxNoTensorError, ('alignment', tensor)
 
 
     def set_type(self, tensor=None, red=None):
