@@ -525,9 +525,7 @@ def dependency_generator():
 #################################
 
 class AlignTensorData(Element):
-    def __init__(self):
-        """An empty data container for the alignment tensor elements."""
-
+    """An empty data container for the alignment tensor elements."""
 
     def __setattr__(self, name, value):
         """Function for calculating the parameters, unit vectors, and tensors on the fly.
