@@ -31,7 +31,6 @@ import sys
 from angles import wrap_angles
 from data import Data as relax_data_store
 from data.align_tensor import AlignTensorList
-from data.data_classes import SpecificData
 from physical_constants import g13C, g1H, g15N, g17O, g31P, h_bar, mu0
 import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
@@ -98,7 +97,7 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
 
     # Create the align_tensor dictionary if it doesn't yet exist.
     if not hasattr(relax_data_store[pipe_to], 'align_tensor'):
-        relax_data_store[pipe_to].align_tensor = SpecificData()
+        relax_data_store[pipe_to].align_tensor = AlignTensorList()
 
     # Copy the data.
     relax_data_store[pipe_to].align_tensor[tensor_to] = deepcopy(relax_data_store[pipe_from].align_tensor[tensor_from])
