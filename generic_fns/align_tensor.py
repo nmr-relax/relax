@@ -100,10 +100,11 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
         relax_data_store[pipe_to].align_tensor = AlignTensorList()
 
     # Find the tensor index.
-    index = get_tensor_index(tensor)
+    index_from = get_tensor_index(tensor_from, pipe_from)
+    index_to = get_tensor_index(tensor_to, pipe_to)
 
     # Copy the data.
-    relax_data_store[pipe_to].align_tensor[tensor_to] = deepcopy(relax_data_store[pipe_from].align_tensor[tensor_from])
+    relax_data_store[pipe_to].align_tensor[index_to] = deepcopy(relax_data_store[pipe_from].align_tensor[index_from])
 
 
 def data_names():
