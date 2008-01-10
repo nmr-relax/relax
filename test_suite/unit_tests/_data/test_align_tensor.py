@@ -53,7 +53,7 @@ class Test_align_tensor(TestCase):
     def setUp(self):
         """Set 'self.align_data' to an empty instance of the AlignTensorData class."""
 
-        self.align_data = AlignTensorData()
+        self.align_data = AlignTensorData('test')
 
 
     def test_append_sim(self):
