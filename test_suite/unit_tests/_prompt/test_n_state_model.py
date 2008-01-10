@@ -89,6 +89,6 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxBoolError, self.n_state_model_fns.set_type, red=data[1])
+            self.assertRaises(RelaxBoolError, self.n_state_model_fns.set_type, tensor='test', red=data[1])
 
 
