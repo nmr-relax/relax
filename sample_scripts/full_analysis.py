@@ -557,7 +557,7 @@ class Main:
                 relax_data.read(name, data[0], data[1], data[2], data[3])
 
             # Unselect unresolved residues.
-            if not UNRES:
+            if UNRES:
                 unselect.read(name, file=UNRES)
 
             # Copy the diffusion tensor from the run 'opt' and prevent it from being minimised.
