@@ -163,15 +163,18 @@ def delete(tensor):
     if not align_data_exists(tensor):
         raise RelaxNoTensorError, 'alignment'
 
-    # Alias the tensor dictionary.
-    align_tensor = relax_data_store[relax_data_store.current_pipe].align_tensor
+    # Find the tensor index.
+    index = get_tensor_index(tensor)
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Delete the alignment data.
-    align_tensor.pop(tensor)
+    cdp.align_tensor.pop(index)
 
-    # Delete the dictionary if empty.
-    if not len(align_tensor):
-        del(relax_data_store[relax_data_store.current_pipe].align_tensor)
+    # Delete the alignment tensor list if empty.
+    if not len(cdp.align_tensor):
+        del(cdp.align_tensor)
 
 
 def display(tensor):
@@ -316,6 +319,30 @@ def fold_angles(sim_index=None):
         elif cdp.align_tensor.beta_sim[sim_index] <= cdp.align_tensor.beta - pi/2.0:
             cdp.align_tensor.alpha_sim[sim_index] = pi - cdp.align_tensor.alpha_sim[sim_index]
             cdp.align_tensor.beta_sim[sim_index] = cdp.align_tensor.beta_sim[sim_index] + pi
+
+
+def get_tensor_index(tensor):
+    """Function for returning the index corresponding to the 'tensor' argument.
+
+    @param tensor:  The alignment tensor identification string.
+    @type tensor:   str
+    @return:        The index corresponding to the 'tensor' arg.
+    @rtype:         int
+    """
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Init.
+    index = None
+
+    # Loop over the tensors.
+    for i in xrange(len(cdp.align_tensor)):
+        if cdp.align_tensor[i].name == tensor:
+            index = i
+
+    # Return the index.
+    return index
 
 
 def get_tensor_object(tensor):
