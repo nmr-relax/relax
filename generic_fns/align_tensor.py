@@ -188,14 +188,8 @@ def display(tensor):
     if not align_data_exists(tensor):
         raise RelaxNoTensorError, 'alignment'
 
-    # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
-
     # Pull out the tensor.
-    data = None
-    for i in xrange(len(cdp.align_tensor)):
-        if cdp.align_tensor[i].name == tensor:
-            data = cdp.align_tensor[i]
+    data = get_tensor_object(tensor)
 
     # Header.
     print "Tensor: " + tensor + "\n"
@@ -322,6 +316,30 @@ def fold_angles(sim_index=None):
         elif cdp.align_tensor.beta_sim[sim_index] <= cdp.align_tensor.beta - pi/2.0:
             cdp.align_tensor.alpha_sim[sim_index] = pi - cdp.align_tensor.alpha_sim[sim_index]
             cdp.align_tensor.beta_sim[sim_index] = cdp.align_tensor.beta_sim[sim_index] + pi
+
+
+def get_tensor_object(tensor):
+    """Function for returning the AlignTensorData instance corresponding to the 'tensor' argument.
+
+    @param tensor:  The alignment tensor identification string.
+    @type tensor:   str
+    @return:        The alignment tensor object corresponding to the 'tensor' arg.
+    @rtype:         AlignTensorData instance
+    """
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Init.
+    data = None
+
+    # Loop over the tensors.
+    for i in xrange(len(cdp.align_tensor)):
+        if cdp.align_tensor[i].name == tensor:
+            data = cdp.align_tensor[i]
+
+    # Return the object.
+    return data
 
 
 def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, errors=0):
