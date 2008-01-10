@@ -664,24 +664,24 @@ def matrix_angles(basis_set=0):
 
     # Loop over the tensors.
     i = 0
-    for key in cdp.align_tensor.keys():
+    for tensor in cdp.align_tensor:
         # Unitary basis set.
         if basis_set == 0:
             # Pack the elements.
-            matrix[i,0] = cdp.align_tensor[key].Sxx
-            matrix[i,1] = cdp.align_tensor[key].Syy
-            matrix[i,2] = cdp.align_tensor[key].Sxy
-            matrix[i,3] = cdp.align_tensor[key].Sxz
-            matrix[i,4] = cdp.align_tensor[key].Syz
+            matrix[i,0] = tensor.Sxx
+            matrix[i,1] = tensor.Syy
+            matrix[i,2] = tensor.Sxy
+            matrix[i,3] = tensor.Sxz
+            matrix[i,4] = tensor.Syz
 
         # Geometric basis set.
         elif basis_set == 1:
             # Pack the elements.
-            matrix[i,0] = cdp.align_tensor[key].Szz
-            matrix[i,1] = cdp.align_tensor[key].Sxxyy
-            matrix[i,2] = cdp.align_tensor[key].Sxy
-            matrix[i,3] = cdp.align_tensor[key].Sxz
-            matrix[i,4] = cdp.align_tensor[key].Syz
+            matrix[i,0] = tensor.Szz
+            matrix[i,1] = tensor.Sxxyy
+            matrix[i,2] = tensor.Sxy
+            matrix[i,3] = tensor.Sxz
+            matrix[i,4] = tensor.Syz
 
         # Normalisation.
         norm = linalg.norm(matrix[i])
@@ -1292,22 +1292,22 @@ def svd(basis_set=0):
 
     # Pack the elements.
     i = 0
-    for key in cdp.align_tensor.keys():
+    for tensor in cdp.align_tensor:
         # Unitary basis set.
         if basis_set == 0:
-            matrix[i,0] = cdp.align_tensor[key].Sxx
-            matrix[i,1] = cdp.align_tensor[key].Syy
-            matrix[i,2] = cdp.align_tensor[key].Sxy
-            matrix[i,3] = cdp.align_tensor[key].Sxz
-            matrix[i,4] = cdp.align_tensor[key].Syz
+            matrix[i,0] = tensor.Sxx
+            matrix[i,1] = tensor.Syy
+            matrix[i,2] = tensor.Sxy
+            matrix[i,3] = tensor.Sxz
+            matrix[i,4] = tensor.Syz
 
         # Geometric basis set.
         elif basis_set == 1:
-            matrix[i,0] = cdp.align_tensor[key].Szz
-            matrix[i,1] = cdp.align_tensor[key].Sxxyy
-            matrix[i,2] = cdp.align_tensor[key].Sxy
-            matrix[i,3] = cdp.align_tensor[key].Sxz
-            matrix[i,4] = cdp.align_tensor[key].Syz
+            matrix[i,0] = tensor.Szz
+            matrix[i,1] = tensor.Sxxyy
+            matrix[i,2] = tensor.Sxy
+            matrix[i,3] = tensor.Sxz
+            matrix[i,4] = tensor.Syz
 
         # Increment the index.
         i = i + 1
