@@ -52,9 +52,11 @@ def align_data_exists(tensor, pipe=None):
     if pipe == None:
         pipe = relax_data_store.current_pipe
 
-    # Test if Axy exists.
-    if hasattr(relax_data_store[pipe], 'align_tensor') and relax_data_store[pipe].align_tensor.has_key(tensor):
-        return True
+    # Test if an alignment tensor corresponding to the arg 'tensor' exists.
+    if hasattr(relax_data_store[pipe], 'align_tensor'):
+        for data in relax_data_store[pipe].align_tensor:
+            if data.name == tensor:
+                return True
     else:
         return False
 
