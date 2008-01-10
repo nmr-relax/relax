@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2007 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2006-2008 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,9 +30,7 @@ from types import DictType, ListType
 #######################
 
 class Element:
-    def __init__(self):
-        """Empty data container."""
-
+    """Empty data container."""
 
     def __repr__(self):
         # Header.
@@ -52,9 +50,7 @@ class Element:
 ######################
 
 class SpecificData(DictType):
-    def __init__(self):
-        """Dictionary type class for specific data."""
-
+    """Dictionary type class for specific data."""
 
     def __repr__(self):
         text = "Data:\n"
@@ -89,8 +85,7 @@ class SpecificData(DictType):
 ########################
 
 class Residue(DictType):
-    def __init__(self):
-        """Class containing all the residue specific data."""
+    """Class containing all the residue specific data."""
 
 
     def __repr__(self):
@@ -117,9 +112,7 @@ class Residue(DictType):
 
 
 class ResidueList(ListType):
-    def __init__(self):
-        """Empty data container for residue specific data."""
-
+    """Empty data container for residue specific data."""
 
     def __repr__(self):
         text = "Sequence data.\n\n"
