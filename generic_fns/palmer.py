@@ -574,8 +574,13 @@ class Palmer:
                     data_rex_err = None
 
             # Get the chi-squared data.
-            row = split(self.mfout_lines[self.mfout_chi2_pos + pos])
-            data.chi2 = float(row[1])
+            if not sims:
+                row = split(self.mfout_lines[self.mfout_chi2_pos + pos])
+                data.chi2 = float(row[1])
+            else:
+                # The mfout chi2 position (with no sims) plus 2 (for the extra XML) plus the residue position times 22 (because of the simulated SSE rows).
+                row = split(self.mfout_lines[self.mfout_chi2_pos + 2 + 22*pos])
+                data.chi2 = float(row[1])
 
             # Increment the residue position.
             pos = pos + 1
