@@ -524,6 +524,30 @@ def dependency_generator():
 # Alignment tensor specific data.
 #################################
 
+class AlignTensorList(ListType):
+    """List type data container for holding all the alignment tensors.
+
+    The elements of the list should be AlignTensorData instances.
+    """
+
+    def __repr__(self):
+        """Replacement function for displaying an instance of this class."""
+
+        text = "Alignment tensors.\n\n"
+        text = text + "%-8s%-20s\n" % ("Index", "Name")
+        for i in xrange(len(self)):
+            text = text + "%-8i%-20s\n" % (i, self[i].name)
+        text = text + "\nThese can be accessed by typing 'relax_data_store.align_tensor[index]'.\n"
+        return text
+
+
+    def add_item(self, name):
+        """Function for appending a new AlignTensorData instance to the list."""
+
+        self.append(AlignTensorData(name))
+
+
+
 class AlignTensorData(Element):
     """An empty data container for the alignment tensor elements."""
 
