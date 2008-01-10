@@ -30,7 +30,7 @@ import sys
 # relax module imports.
 from angles import wrap_angles
 from data import Data as relax_data_store
-from data.align_tensor import AlignTensorData
+from data.align_tensor import AlignTensorList
 from data.data_classes import SpecificData
 from physical_constants import g13C, g1H, g15N, g17O, g31P, h_bar, mu0
 import pipes
@@ -352,8 +352,8 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
 
     # Add the align_tensor object to the data pipe.
     if not hasattr(cdp, 'align_tensor'):
-        cdp.align_tensor = SpecificData()
-    cdp.align_tensor[tensor] = AlignTensorData()
+        cdp.align_tensor = AlignTensorList()
+    cdp.align_tensor.add_item(tensor)
 
     # {Sxx, Syy, Sxy, Sxz, Syz}.
     if param_types == 0:
