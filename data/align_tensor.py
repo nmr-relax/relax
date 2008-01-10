@@ -578,7 +578,8 @@ class AlignTensorData(Element):
             param_name = name
 
         # List of modifiable attributes.
-        mod_attr = ['Sxx',
+        mod_attr = ['name',
+                    'Sxx',
                     'Syy',
                     'Sxy',
                     'Sxz',
