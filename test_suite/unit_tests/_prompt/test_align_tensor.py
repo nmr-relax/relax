@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from generic_fns import align_tensor
 from prompt.align_tensor import Align_tensor
-from relax_errors import RelaxError, RelaxBinError, RelaxFloatError, RelaxIntError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
+from relax_errors import RelaxError, RelaxBinError, RelaxFloatError, RelaxIntError, RelaxListStrError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
 from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_class
 
 # Unit test imports.
@@ -227,6 +227,22 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
             self.assertRaises(RelaxIntError, self.align_tensor_fns.matrix_angles, basis_set=data[1])
 
 
+    def test_matrix_angles_argfail_basis_tensors(self):
+        """The tensors arg unit test of the align_tensor.matrix_angles() user function."""
+
+        # Add an alignment tensor.
+        align_tensor.init('a', (0.0, 0.0, 0.0, 0.0, 0.0))
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str list arguments, and skip them.
+            if data[0] == 'str list':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxListStrError, self.align_tensor_fns.matrix_angles, tensors=data[1])
+
+
     def test_svd_argfail_basis_set(self):
         """The proper failure of the align_tensor.svd() user function for the basis_set argument."""
 
@@ -242,5 +258,20 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
             # The argument test.
             self.assertRaises(RelaxIntError, self.align_tensor_fns.svd, basis_set=data[1])
 
+
+    def test_svd_argfail_basis_tensors(self):
+        """The tensors arg unit test of the align_tensor.svd() user function."""
+
+        # Add an alignment tensor.
+        align_tensor.init('a', (0.0, 0.0, 0.0, 0.0, 0.0))
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str list arguments, and skip them.
+            if data[0] == 'str list':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxListStrError, self.align_tensor_fns.svd, tensors=data[1])
 
 
