@@ -77,7 +77,7 @@ class N_state_model(Common_functions):
         self.minimise(min_algor='grid', constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
-    def linear_constraints(self):
+    def linear_constraints(self, param_vector):
         """Function for setting up the linear constraint matrices A and b.
 
         Standard notation
@@ -111,14 +111,16 @@ class N_state_model(Common_functions):
         This example is for a 3-state model.
 
 
-        @return:    The matrices A and b.
-        @rtype:     tuple of len 2 of a numpy matrix and numpy array
+        @param param_vector:    The array of parameter names.
+        @type param_vector:     array of str
+        @return:                The matrices A and b.
+        @rtype:                 tuple of len 2 of a numpy matrix and numpy array
         """
 
         # Initialisation (0..j..m).
         A = []
         b = []
-        n = len(self.param_vector)
+        n = len(param_vector)
         zero_array = zeros(n, float64)
         i = 0
         j = 0
@@ -187,7 +189,7 @@ class N_state_model(Common_functions):
 
         # Linear constraints.
         if constraints:
-            A, b = self.linear_constraints()
+            A, b = self.linear_constraints(param_vector)
 
         # Set up the class instance containing the target function.
         model = N_state_opt()
