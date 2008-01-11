@@ -187,7 +187,7 @@ class N_state_model(Common_functions):
 
         # Linear constraints.
         if constraints:
-            A, b = self.linear_constraints(index=i)
+            A, b = self.linear_constraints()
 
         # Set up the class instance containing the target function.
         model = N_state_opt()
