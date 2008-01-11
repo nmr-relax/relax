@@ -1362,8 +1362,14 @@ def svd(basis_set=0, tensors=None):
     if not hasattr(cdp, 'align_tensor') or len(cdp.align_tensor) == 0:
         raise RelaxNoTensorError, 'alignment'
 
+    # Count the number of tensors used in the SVD.
+    tensor_num = 0
+    for tensor in cdp.align_tensor:
+        if tensors and tensor.name in tensors:
+            tensor_num = tensor_num + 1
+
     # Create the matrix to apply SVD on.
-    matrix = zeros((len(cdp.align_tensor), 5), float64)
+    matrix = zeros((tensor_num, 5), float64)
 
     # Pack the elements.
     i = 0
