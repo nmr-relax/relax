@@ -81,17 +81,14 @@ class Consistency_tests(Common_functions):
 
         # Consistency testing.
         for spin in spin_loop(spin_id):
-            # Reassign data structure.
-            data = cdp
-
             # Skip unselected spins.
             if not spin.select:
                 continue
 
             # Residue specific frequency index.
             frq_index = None
-            for j in xrange(data.num_frq):
-                if data.frq[j] == cdp.ct_frq:
+            for j in xrange(spina.num_frq):
+                if spin.frq[j] == cdp.ct_frq:
                     frq_index = j
             if frq_index == None:
                 continue
@@ -102,57 +99,57 @@ class Consistency_tests(Common_functions):
             noe = None
 
             # Get the R1, R2, and NOE values corresponding to the set frequency.
-            for j in xrange(data.num_ri):
+            for j in xrange(spin.num_ri):
                 # R1.
-                if data.remap_table[j] == frq_index and data.ri_labels[j] == 'R1':
+                if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'R1':
                     if sim_index == None:
-                        r1 = data.relax_data[j]
+                        r1 = spin.relax_spin[j]
                     else:
-                        r1 = data.relax_sim_data[sim_index][j]
+                        r1 = spin.relax_sim_spin[sim_index][j]
 
                 # R2.
-                if data.remap_table[j] == frq_index and data.ri_labels[j] == 'R2':
+                if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'R2':
                     if sim_index == None:
-                        r2 = data.relax_data[j]
+                        r2 = spin.relax_spin[j]
                     else:
-                        r2 = data.relax_sim_data[sim_index][j]
+                        r2 = spin.relax_sim_spin[sim_index][j]
 
                 # NOE.
-                if data.remap_table[j] == frq_index and data.ri_labels[j] == 'NOE':
+                if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'NOE':
                     if sim_index == None:
-                        noe = data.relax_data[j]
+                        noe = spin.relax_spin[j]
                     else:
-                        noe = data.relax_sim_data[sim_index][j]
+                        noe = spin.relax_sim_spin[sim_index][j]
 
             # Skip the residue if not all of the three value exist.
             if r1 == None or r2 == None or noe == None:
                 continue
 
             # Initialise the function to calculate.
-            self.ct = Consistency(frq=cdp.ct_frq, gx=relax_data_store.gx, gh=relax_data_store.gh, mu0=relax_data_store.mu0, h_bar=relax_data_store.h_bar)
+            self.ct = Consistency(frq=cdp.ct_frq, gx=spin.gx, gh=spin.gh)
 
             # Calculate the consistency tests values.
-            j0, f_eta, f_r2 = self.ct.func(orientation=data.orientation, tc=data.tc, r=data.r, csa=data.csa, r1=r1, r2=r2, noe=noe)
+            j0, f_eta, f_r2 = self.ct.func(orientation=spin.orientation, tc=spin.tc, r=spin.r, csa=spin.csa, r1=r1, r2=r2, noe=noe)
 
             # Consistency tests values.
             if sim_index == None:
-                data.j0 = j0
-                data.f_eta = f_eta
-                data.f_r2 = f_r2
+                spin.j0 = j0
+                spin.f_eta = f_eta
+                spin.f_r2 = f_r2
 
             # Monte Carlo simulated consistency tests values.
             else:
                 # Initialise the simulation data structures.
-                self.data_init(data, sim=1)
-                if data.j0_sim == None:
-                    data.j0_sim = []
-                    data.f_eta_sim = []
-                    data.f_r2_sim = []
+                self.spin_init(spin, sim=1)
+                if spin.j0_sim == None:
+                    spin.j0_sim = []
+                    spin.f_eta_sim = []
+                    spin.f_r2_sim = []
 
                 # Consistency tests values.
-                data.j0_sim.append(j0)
-                data.f_eta_sim.append(f_eta)
-                data.f_r2_sim.append(f_r2)
+                spin.j0_sim.append(j0)
+                spin.f_eta_sim.append(f_eta)
+                spin.f_r2_sim.append(f_r2)
 
 
     def data_init(self, data, sim=0):
