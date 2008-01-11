@@ -188,7 +188,7 @@ class N_state_model(Common_functions):
 
         # Test if the N-state model has been set up.
         if not hasattr(cdp, 'params'):
-            raise RelaxNoModelError
+            raise RelaxNoModelError, 'N-state'
 
         # Create the initial parameter vector.
         param_vector = self.assemble_param_vector(sim_index=sim_index)
