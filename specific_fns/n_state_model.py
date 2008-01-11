@@ -28,6 +28,7 @@ from re import search
 from data import Data as relax_data_store
 from maths_fns.n_state_model import N_state_opt
 from minimise.generic import generic_minimise
+from relax_errors import RelaxNoModelError
 from specific_fns.base_class import Common_functions
 
 
@@ -181,6 +182,13 @@ class N_state_model(Common_functions):
                                 normal optimisation is desired.
         @type sim_index:        None or int
         """
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Test if the N-state model has been set up.
+        if not hasattr(cdp, 'params'):
+            raise RelaxNoModelError
 
         # Create the initial parameter vector.
         param_vector = self.assemble_param_vector(sim_index=sim_index)
