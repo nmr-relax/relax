@@ -68,12 +68,12 @@ n_state_model.set_type(tensor='chi4 N-dom', red=True)
 n_state_model.set_type(tensor='chi5 N-dom', red=True)
 
 # Calculate the singular values.
-align_tensor.svd(basis_set=0, domain='N', tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
-align_tensor.svd(basis_set=1, domain='N', tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
+align_tensor.svd(basis_set=0, tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
+align_tensor.svd(basis_set=1, tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
 
 # Calculate the angles between the matrices.
-align_tensor.matrix_angles(basis_set=0, domain='N', tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
-align_tensor.matrix_angles(basis_set=1, domain='N', tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
+align_tensor.matrix_angles(basis_set=0, tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
+align_tensor.matrix_angles(basis_set=1, tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
 
 
 # Grid search.
