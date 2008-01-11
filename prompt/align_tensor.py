@@ -318,7 +318,7 @@ class Align_tensor:
             raise RelaxIntError, ('basis set', basis_set)
 
         # Tensors argument.
-        if tensors != None or type(tensors) != list:
+        if tensors != None and type(tensors) != list:
             raise RelaxNoneListstrError, ('tensors', tensors)
         if type(tensors) == list:
             # Empty list.
@@ -393,7 +393,7 @@ class Align_tensor:
             raise RelaxIntError, ('basis set', basis_set)
 
         # Tensors argument.
-        if tensors != None or type(tensors) != list:
+        if tensors != None and type(tensors) != list:
             raise RelaxNoneListstrError, ('tensors', tensors)
         if type(tensors) == list:
             # Empty list.
