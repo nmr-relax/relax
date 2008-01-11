@@ -110,7 +110,9 @@ class N_state_model(Common_functions):
             | 0  0 -1 |                   |   -1    |
 
         This example is for a 4-state model, the last probability pn is not included as this
-        parameter does not exist (because the sum of pi is equal to 1).
+        parameter does not exist (because the sum of pi is equal to 1).  The Euler angle parameters
+        have been excluded here but will be included in the returned A and b objects.  These
+        parameters simply add columns of zero to the A matrix and have no effect on b.
 
 
         @return:                The matrices A and b.
