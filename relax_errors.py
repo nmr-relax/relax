@@ -369,6 +369,13 @@ class RelaxNoneListError(BaseError):
         if Debug:
             self.save_state()
 
+# None or list of strings.
+class RelaxNoneListstrError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + `value` + " must either be an array of strings or None."
+        if Debug:
+            self.save_state()
+
 # None or number.
 class RelaxNoneNumError(BaseError):
     def __init__(self, name, value):

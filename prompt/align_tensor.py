@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,7 +26,7 @@ import sys
 # relax module imports.
 import help
 from generic_fns import align_tensor
-from relax_errors import RelaxError, RelaxBinError, RelaxFloatError, RelaxIntError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
+from relax_errors import RelaxError, RelaxBinError, RelaxFloatError, RelaxIntError, RelaxNoneListstrError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
 
 
 class Align_tensor:
@@ -285,13 +285,15 @@ class Align_tensor:
         align_tensor.init(tensor=tensor, params=params, scale=scale, angle_units=angle_units, param_types=param_types, errors=errors)
 
 
-    def matrix_angles(self, basis_set=0):
+    def matrix_angles(self, basis_set=0, tensors=None):
         """Function for calculating the 5D angles between all alignment tensors.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         basis_set:  The basis set to operate with.
+
+        tensors:  A list of the tensors to apply the calculation to.  If None, all tensors are used.
 
 
         Description
@@ -307,24 +309,40 @@ class Align_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.matrix_angles("
-            text = text + "basis_set=" + `basis_set` + ")"
+            text = text + "basis_set=" + `basis_set`
+            text = text + ", tensors=" + `tensors` + ")"
             print text
 
         # Basis set argument.
         if type(basis_set) != int:
             raise RelaxIntError, ('basis set', basis_set)
 
+        # Tensors argument.
+        if tensors != None or type(tensors) != list:
+            raise RelaxNoneListstrError, ('tensors', tensors)
+        if type(tensors) == list:
+            # Empty list.
+            if tensors == []:
+                raise RelaxNoneListstrError, ('tensors', tensors)
+
+            # Check for strings.
+            for i in xrange(len(tensors)):
+                if type(tensors[i]) != str:
+                    raise RelaxNoneListstrError, ('tensors', tensors)
+
         # Execute the functional code.
-        align_tensor.matrix_angles(basis_set)
+        align_tensor.matrix_angles(basis_set, tensors)
 
 
-    def svd(self, basis_set=0):
+    def svd(self, basis_set=0, tensors=None):
         """Function for calculating the singular values for all tensors and the condition number.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         basis_set:  The basis set to operate with.
+
+        tensors:  A list of the tensors to apply the calculation to.  If None, all tensors are used.
 
 
         Description
@@ -366,12 +384,26 @@ class Align_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.svd("
-            text = text + "basis_set=" + `basis_set` + ")"
+            text = text + "basis_set=" + `basis_set`
+            text = text + ", tensors=" + `tensors` + ")"
             print text
 
         # Basis set argument.
         if type(basis_set) != int:
             raise RelaxIntError, ('basis set', basis_set)
 
+        # Tensors argument.
+        if tensors != None or type(tensors) != list:
+            raise RelaxNoneListstrError, ('tensors', tensors)
+        if type(tensors) == list:
+            # Empty list.
+            if tensors == []:
+                raise RelaxNoneListstrError, ('tensors', tensors)
+
+            # Check for strings.
+            for i in xrange(len(tensors)):
+                if type(tensors[i]) != str:
+                    raise RelaxNoneListstrError, ('tensors', tensors)
+
         # Execute the functional code.
-        align_tensor.svd(basis_set)
+        align_tensor.svd(basis_set, tensors)
