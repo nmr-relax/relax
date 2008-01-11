@@ -109,7 +109,8 @@ class N_state_model(Common_functions):
             |         |                   |         |
             | 0  0 -1 |                   |   -1    |
 
-        This example is for a 3-state model.
+        This example is for a 4-state model, the last probability pn is not included as this
+        parameter does not exist (because the sum of pi is equal to 1).
 
 
         @return:                The matrices A and b.
