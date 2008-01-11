@@ -49,7 +49,7 @@ class Consistency_tests(Common_functions):
             raise RelaxError, "The frequency has not been set up."
 
         # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
+        if not cdp.res.has_key:
             raise RelaxNoSequenceError, self.run
 
         # Test if the CSA, bond length, angle Theta and correlation time values have been set.
@@ -76,8 +76,8 @@ class Consistency_tests(Common_functions):
                 raise RelaxNoValueError, "correlation time"
 
         # Frequency index.
-        if relax_data_store.ct_frq[self.run] not in relax_data_store.frq[self.run]:
-            raise RelaxError, "No relaxation data corresponding to the frequency " + `relax_data_store.ct_frq[self.run]` + " has been loaded."
+        if cdp.ct_frq not in cdp.frq:
+            raise RelaxError, "No relaxation data corresponding to the frequency " + `cdp.ct_frq` + " has been loaded."
 
         # Consistency testing.
         for spin in spin_loop(spin_id):
@@ -91,7 +91,7 @@ class Consistency_tests(Common_functions):
             # Residue specific frequency index.
             frq_index = None
             for j in xrange(data.num_frq):
-                if data.frq[j] == relax_data_store.ct_frq[self.run]:
+                if data.frq[j] == cdp.ct_frq:
                     frq_index = j
             if frq_index == None:
                 continue
@@ -129,7 +129,7 @@ class Consistency_tests(Common_functions):
                 continue
 
             # Initialise the function to calculate.
-            self.ct = Consistency(frq=relax_data_store.ct_frq[self.run], gx=relax_data_store.gx, gh=relax_data_store.gh, mu0=relax_data_store.mu0, h_bar=relax_data_store.h_bar)
+            self.ct = Consistency(frq=cdp.ct_frq, gx=relax_data_store.gx, gh=relax_data_store.gh, mu0=relax_data_store.mu0, h_bar=relax_data_store.h_bar)
 
             # Calculate the consistency tests values.
             j0, f_eta, f_r2 = self.ct.func(orientation=data.orientation, tc=data.tc, r=data.r, csa=data.csa, r1=r1, r2=r2, noe=noe)
@@ -270,11 +270,11 @@ class Consistency_tests(Common_functions):
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Test if sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
+        if not cdp.res.has_key:
             return 0
 
         # Return the number of residues.
-        return len(relax_data_store.res[self.run])
+        return len(cdp.res)
 
 
     def overfit_deselect(self):
@@ -445,28 +445,28 @@ class Consistency_tests(Common_functions):
     def set_frq(self, frq=None):
         """Function for selecting which relaxation data to use in the consistency tests."""
 
-        # Run argument.
-        self.run = run
-
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+	
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
             raise RelaxNoPipeError, self.run
 
         # Test if the run type is set to 'ct'.
-        function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
+        function_type = relax_data_store.run_types[cdp.run_names.index]
         if function_type != 'ct':
             raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 
         # Test if the frequency has been set.
-        if hasattr(relax_data_store, 'ct_frq') and relax_data_store.ct_frq.has_key(self.run):
-            raise RelaxError, "The frequency for the run " + `self.run` + " has already been set."
+        if hasattr(cdp, 'ct_frq'):
+            raise RelaxError, "The frequency for the run has already been set."
 
         # Create the data structure if it doesn't exist.
-        if not hasattr(relax_data_store, 'ct_frq'):
-            relax_data_store.ct_frq = {}
+        if not hasattr(cdp, 'ct_frq'):
+            cdp.ct_frq = {}
 
         # Set the frequency.
-        relax_data_store.ct_frq[self.run] = frq
+        cdp.ct_frq = frq
 
 
     def set_error(self, instance, spin, error):
@@ -477,15 +477,15 @@ class Consistency_tests(Common_functions):
 
         # Return J(0) sim data.
         if index == 0:
-            relax_data_store.res[self.run][instance].j0_err = error
+            cdp.res[instance].j0_err = error
 
         # Return F_eta sim data.
         if index == 1:
-            relax_data_store.res[self.run][instance].f_eta_err = error
+            cdp.res[instance].f_eta_err = error
 
         # Return F_R2 sim data.
         if index == 2:
-            relax_data_store.res[self.run][instance].f_r2_err = error
+            cdp.res[instance].f_r2_err = error
 
 
     def sim_return_param(self, instance, spin):
@@ -495,20 +495,20 @@ class Consistency_tests(Common_functions):
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Skip unselected residues.
-        if not relax_data_store.res[self.run][instance].select:
+        if not cdp.res[instance].select:
                 return
 
         # Return J(0) sim data.
         if index == 0:
-            return relax_data_store.res[self.run][instance].j0_sim
+            return cdp.res[instance].j0_sim
 
         # Return F_eta sim data.
         if index == 1:
-            return relax_data_store.res[self.run][instance].f_eta_sim
+            return cdp.res[instance].f_eta_sim
 
         # Return F_R2 sim data.
         if index == 2:
-            return relax_data_store.res[self.run][instance].f_r2_sim
+            return cdp.res[instance].f_r2_sim
 
 
     def sim_return_selected(self, instance):
@@ -518,7 +518,7 @@ class Consistency_tests(Common_functions):
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Multiple instances.
-        return relax_data_store.res[self.run][instance].select_sim
+        return cdp.res[instance].select_sim
 
 
     def set_selected_sim(self, instance, select_sim):
@@ -528,7 +528,7 @@ class Consistency_tests(Common_functions):
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Multiple instances.
-        relax_data_store.res[self.run][instance].select_sim = select_sim
+        cdp.res[instance].select_sim = select_sim
 
 
     def sim_pack_data(self, spin, sim_data):
@@ -604,7 +604,7 @@ class Consistency_tests(Common_functions):
             raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
+        if not cdp.res.has_key:
             raise RelaxNoSequenceError, self.run
 
 
@@ -615,9 +615,9 @@ class Consistency_tests(Common_functions):
         ri = []
         ri_error = []
         if hasattr(relax_data_store, 'num_ri'):
-            for i in xrange(relax_data_store.num_ri[self.run]):
-                ri.append('Ri_(' + relax_data_store.ri_labels[self.run][i] + "_" + relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][i]] + ")")
-                ri_error.append('Ri_error_(' + relax_data_store.ri_labels[self.run][i] + "_" + relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][i]] + ")")
+            for i in xrange(cdp.num_ri):
+                ri.append('Ri_(' + cdp.ri_labels[i] + "_" + cdp.frq_labels[cdp.remap_table[i]] + ")")
+                ri_error.append('Ri_error_(' + cdp.ri_labels[i] + "_" + cdp.frq_labels[cdp.remap_table[i]] + ")")
 
         # Write the header line.
         self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', wH='Proton_frq_(MHz)', j0='J(0)', f_eta='F_eta', f_r2='F_R2', r='Bond_length_(A)', csa='CSA_(ppm)', orientation='Angle_Theta_(degrees)', tc='Correlation_time_(ns)', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
@@ -630,14 +630,14 @@ class Consistency_tests(Common_functions):
         nucleus = self.relax.generic.nuclei.find_nucleus()
 
         # The proton frequency in MHz.
-        wH = relax_data_store.ct_frq[self.run] / 1e6
+        wH = cdp.ct_frq / 1e6
 
         # Relaxation data setup.
         try:
-            ri_labels = replace(`relax_data_store.ri_labels[self.run]`, ' ', '')
-            remap_table = replace(`relax_data_store.remap_table[self.run]`, ' ', '')
-            frq_labels = replace(`relax_data_store.frq_labels[self.run]`, ' ', '')
-            frq = replace(`relax_data_store.frq[self.run]`, ' ', '')
+            ri_labels = replace(`cdp.ri_labels`, ' ', '')
+            remap_table = replace(`cdp.remap_table`, ' ', '')
+            frq_labels = replace(`cdp.frq_labels`, ' ', '')
+            frq = replace(`cdp.frq`, ' ', '')
         except AttributeError:
             ri_labels = `None`
             remap_table = `None`
@@ -645,9 +645,9 @@ class Consistency_tests(Common_functions):
             frq = `None`
 
         # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[self.run])):
+        for i in xrange(len(cdp.res)):
             # Reassign data structure.
-            data = relax_data_store.res[self.run][i]
+            data = cdp.res[i]
 
             # J(0).
             j0 = None
@@ -677,13 +677,13 @@ class Consistency_tests(Common_functions):
             # Relaxation data and errors.
             ri = []
             ri_error = []
-            if hasattr(relax_data_store, 'num_ri'):
-                for i in xrange(relax_data_store.num_ri[self.run]):
+            if hasattr(cdp, 'num_ri'):
+                for i in xrange(cdp.num_ri):
                     try:
                         # Find the residue specific data corresponding to i.
                         index = None
                         for j in xrange(data.num_ri):
-                            if data.ri_labels[j] == relax_data_store.ri_labels[self.run][i] and data.frq_labels[data.remap_table[j]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][i]]:
+                            if data.ri_labels[j] == cdp.ri_labels[i] and data.frq_labels[data.remap_table[j]] == cdp.frq_labels[cdp.remap_table[i]]:
                                 index = j
 
                         # Data exists for this data type.
@@ -703,15 +703,15 @@ class Consistency_tests(Common_functions):
         #########
 
         # Skip this section and the next if no simulations have been setup.
-        if not hasattr(relax_data_store, 'sim_state'):
+        if not hasattr(cdp, 'sim_state'):
             return
-        elif relax_data_store.sim_state[self.run] == 0:
+        elif cdp.sim_state == 0:
             return
 
         # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[self.run])):
+        for i in xrange(len(cdp.res)):
             # Reassign data structure.
-            data = relax_data_store.res[self.run][i]
+            data = cdp.res[i]
 
             # J(0).
             j0 = None
@@ -751,7 +751,7 @@ class Consistency_tests(Common_functions):
             # Relaxation data and errors.
             ri = []
             ri_error = []
-            for i in xrange(relax_data_store.num_ri[self.run]):
+            for i in xrange(cdp.num_ri):
                 ri.append(None)
                 ri_error.append(None)
 
@@ -763,11 +763,11 @@ class Consistency_tests(Common_functions):
         ####################
 
         # Loop over the simulations.
-        for i in xrange(relax_data_store.sim_number[self.run]):
+        for i in xrange(cdp.sim_number):
             # Loop over the sequence.
-            for j in xrange(len(relax_data_store.res[self.run])):
+            for j in xrange(len(cdp.res)):
                 # Reassign data structure.
-                data = relax_data_store.res[self.run][j]
+                data = cdp.res[j]
 
                 # J(0).
                 j0 = None
@@ -807,13 +807,13 @@ class Consistency_tests(Common_functions):
                 # Relaxation data and errors.
                 ri = []
                 ri_error = []
-                if hasattr(relax_data_store, 'num_ri'):
-                    for k in xrange(relax_data_store.num_ri[self.run]):
+                if hasattr(cdp, 'num_ri'):
+                    for k in xrange(cdp.num_ri):
                         try:
                             # Find the residue specific data corresponding to k.
                             index = None
                             for l in xrange(data.num_ri):
-                                if data.ri_labels[l] == relax_data_store.ri_labels[self.run][k] and data.frq_labels[data.remap_table[l]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][k]]:
+                                if data.ri_labels[l] == cdp.ri_labels[k] and data.frq_labels[data.remap_table[l]] == cdp.frq_labels[cdp.remap_table[k]]:
                                     index = l
 
                             # Data exists for this data type.
