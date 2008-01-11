@@ -707,7 +707,7 @@ def map_labels(index, params, bounds, swap, inc):
     return labels, tick_locations, tick_values
 
 
-def matrix_angles(basis_set=0):
+def matrix_angles(basis_set=0, tensors=None):
     """Function for calculating the 5D angles between the alignment tensors.
 
     The basis set used for the 5D vector construction changes the angles calculated.
@@ -716,6 +716,8 @@ def matrix_angles(basis_set=0):
                         basis set is {Sxx, Syy, Sxy, Sxz, Syz}.  If 1, then the basis set is {Szz,
                         Sxxyy, Sxy, Sxz, Syz}.
     @type basis_set:    int
+    @param tensors:     An array of tensors to apply SVD to.  If None, all tensors will be used.
+    @type tensors:      None or array of str
     """
 
     # Alias the current data pipe.
@@ -725,8 +727,11 @@ def matrix_angles(basis_set=0):
     if not hasattr(cdp, 'align_tensor') or len(cdp.align_tensor) == 0:
         raise RelaxNoTensorError, 'alignment'
 
-    # The number of tensors.
-    tensor_num = len(cdp.align_tensor)
+    # Count the number of tensors.
+    tensor_num = 0
+    for tensor in cdp.align_tensor:
+        if tensors and tensor.name in tensors:
+            tensor_num = tensor_num + 1
 
     # Create the matrix which contains the 5D vectors.
     matrix = zeros((tensor_num, 5), float64)
@@ -734,6 +739,10 @@ def matrix_angles(basis_set=0):
     # Loop over the tensors.
     i = 0
     for tensor in cdp.align_tensor:
+        # Skip tensors.
+        if tensors and tensor.name not in tensors:
+            continue
+
         # Unitary basis set.
         if basis_set == 0:
             # Pack the elements.
