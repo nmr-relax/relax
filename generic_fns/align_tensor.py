@@ -1316,7 +1316,7 @@ def set(tensor=None, value=None, param=None):
         fold_angles()
 
 
-def svd(basis_set=0):
+def svd(basis_set=0, tensors=None):
     """Function for calculating the singular values of all the loaded tensors.
 
     The matrix on which SVD will be performed is:
@@ -1347,6 +1347,12 @@ def svd(basis_set=0):
         Sxxyy = Sxx - Syy,
 
     The SVD values and condition number are dependendent upon the basis set chosen.
+
+
+    @param basis_set:   The basis set to create the 5 by n matrix on which to perform SVD.
+    @type basis_set:    int
+    @param tensors:     An array of tensors to apply SVD to.  If None, all tensors will be used.
+    @type tensors:      None or array of str
     """
 
     # Alias the current data pipe.
@@ -1362,6 +1368,10 @@ def svd(basis_set=0):
     # Pack the elements.
     i = 0
     for tensor in cdp.align_tensor:
+        # Skip tensors.
+        if tensors and tensor.name not in tensors:
+            continue
+
         # Unitary basis set.
         if basis_set == 0:
             matrix[i,0] = tensor.Sxx
