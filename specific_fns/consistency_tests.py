@@ -266,8 +266,8 @@ class Consistency_tests(Common_functions):
     def num_instances(self):
         """Function for returning the number of instances."""
 
-        # Arguments.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Test if sequence data is loaded.
         if not relax_data_store.res.has_key(self.run):
@@ -472,8 +472,8 @@ class Consistency_tests(Common_functions):
     def set_error(self, instance, spin, error):
         """Function for setting parameter errors."""
 
-        # Arguments.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Return J(0) sim data.
         if index == 0:
@@ -491,8 +491,8 @@ class Consistency_tests(Common_functions):
     def sim_return_param(self, instance, spin):
         """Function for returning the array of simulation parameter values."""
 
-        # Arguments.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Skip unselected residues.
         if not relax_data_store.res[self.run][instance].select:
@@ -514,8 +514,8 @@ class Consistency_tests(Common_functions):
     def sim_return_selected(self, instance):
         """Function for returning the array of selected simulation flags."""
 
-        # Arguments.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Multiple instances.
         return relax_data_store.res[self.run][instance].select_sim
@@ -524,8 +524,8 @@ class Consistency_tests(Common_functions):
     def set_selected_sim(self, instance, select_sim):
         """Function for returning the array of selected simulation flags."""
 
-        # Arguments.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Multiple instances.
         relax_data_store.res[self.run][instance].select_sim = select_sim
@@ -596,8 +596,8 @@ class Consistency_tests(Common_functions):
     def write_columnar_results(self, file):
         """Function for printing the results into a file."""
 
-        # Arguments.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
