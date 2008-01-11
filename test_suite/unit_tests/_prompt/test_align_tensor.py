@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from generic_fns import align_tensor
 from prompt.align_tensor import Align_tensor
-from relax_errors import RelaxError, RelaxBinError, RelaxFloatError, RelaxIntError, RelaxListStrError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
+from relax_errors import RelaxError, RelaxBinError, RelaxFloatError, RelaxIntError, RelaxNoneListstrError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
 from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_class
 
 # Unit test imports.
@@ -235,12 +235,12 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the str list arguments, and skip them.
-            if data[0] == 'str list':
+            # Catch the None and str list arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str list':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxListStrError, self.align_tensor_fns.matrix_angles, tensors=data[1])
+            self.assertRaises(RelaxNoneListstrError, self.align_tensor_fns.matrix_angles, tensors=data[1])
 
 
     def test_svd_argfail_basis_set(self):
@@ -267,11 +267,11 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the str list arguments, and skip them.
-            if data[0] == 'str list':
+            # Catch the None and str list arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str list':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxListStrError, self.align_tensor_fns.svd, tensors=data[1])
+            self.assertRaises(RelaxNoneListstrError, self.align_tensor_fns.svd, tensors=data[1])
 
 
