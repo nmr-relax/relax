@@ -38,19 +38,15 @@ class Consistency_tests(Common_functions):
         """Class containing functions specific to consistency testing."""
 
 
-    def calculate(self, verbosity=1, sim_spin=None):
+    def calculate(self, verbosity=1, sim_index=None):
         """Calculation of the consistency functions."""
 
         # Alias the current data pipe.
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Test if the frequency has been set.
-        if not hasattr(cdp, 'ct_frq') or not relax_data_store.ct_frq.has_key(self.run) or type(relax_data_store.ct_frq[self.run]) != float:
-            raise RelaxError, "The frequency for the run " + `self.run` + " has not been set up."
-
-        # Test if the nucleus type has been set.
-        if not hasattr(cdp, 'gx'):
-            raise RelaxNucleusError
+        if not hasattr(cdp, 'ct_frq') or type(cdp.ct_frq) != float:
+            raise RelaxError, "The frequency has not been set up."
 
         # Test if the sequence data is loaded.
         if not relax_data_store.res.has_key(self.run):
@@ -58,24 +54,25 @@ class Consistency_tests(Common_functions):
 
         # Test if the CSA, bond length, angle Theta and correlation time values have been set.
         for spin in spin_loop(spin_id):
+
             # Skip unselected spins.
             if not spin.select:
                 continue
 
             # CSA value.
-            if not hasattr(relax_data_store.res[self.run][i], 'csa') or relax_data_store.res[self.run][i].csa == None:
+            if not hasattr(spin, 'csa') or spin.csa == None:
                 raise RelaxNoValueError, "CSA"
 
             # Bond length value.
-            if not hasattr(cdp, 'r') or relax_data_store.res[self.run][i].r == None:
+            if not hasattr(spin, 'r') or spin.r == None:
                 raise RelaxNoValueError, "bond length"
 
             # Angle Theta
-            if not hasattr(cdp, 'orientation') or relax_data_store.res[self.run][i].orientation == None:
+            if not hasattr(spin, 'orientation') or spin.orientation == None:
                 raise RelaxNoValueError, "angle Theta"
 
             # Correlation time
-            if not hasattr(cdp, 'tc') or relax_data_store.res[self.run][i].tc == None:
+            if not hasattr(spin, 'tc') or spin.tc == None:
                 raise RelaxNoValueError, "correlation time"
 
         # Frequency index.
@@ -83,7 +80,7 @@ class Consistency_tests(Common_functions):
             raise RelaxError, "No relaxation data corresponding to the frequency " + `relax_data_store.ct_frq[self.run]` + " has been loaded."
 
         # Consistency testing.
-        for i in xrange(len(cdp)):
+        for spin in spin_loop(spin_id):
             # Reassign data structure.
             data = cdp
 
@@ -134,16 +131,16 @@ class Consistency_tests(Common_functions):
             # Initialise the function to calculate.
             self.ct = Consistency(frq=relax_data_store.ct_frq[self.run], gx=relax_data_store.gx, gh=relax_data_store.gh, mu0=relax_data_store.mu0, h_bar=relax_data_store.h_bar)
 
-            # Calculate the spectral density values.
+            # Calculate the consistency tests values.
             j0, f_eta, f_r2 = self.ct.func(orientation=data.orientation, tc=data.tc, r=data.r, csa=data.csa, r1=r1, r2=r2, noe=noe)
 
-            # Reduced spectral density values.
+            # Consistency tests values.
             if sim_index == None:
                 data.j0 = j0
                 data.f_eta = f_eta
                 data.f_r2 = f_r2
 
-            # Monte Carlo simulated reduced spectral density values.
+            # Monte Carlo simulated consistency tests values.
             else:
                 # Initialise the simulation data structures.
                 self.data_init(data, sim=1)
@@ -152,7 +149,7 @@ class Consistency_tests(Common_functions):
                     data.f_eta_sim = []
                     data.f_r2_sim = []
 
-                # Reduced spectral density values.
+                # Consistency tests values.
                 data.j0_sim.append(j0)
                 data.f_eta_sim.append(f_eta)
                 data.f_r2_sim.append(f_r2)
@@ -212,7 +209,7 @@ class Consistency_tests(Common_functions):
         names.append('orientation')
         names.append('tc')
 
-        # Spectral density values.
+        # Consistency tests values.
         names.append('j0')
         names.append('f_eta')
         names.append('f_r2')
