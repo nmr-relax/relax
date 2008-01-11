@@ -730,8 +730,9 @@ def matrix_angles(basis_set=0, tensors=None):
     # Count the number of tensors.
     tensor_num = 0
     for tensor in cdp.align_tensor:
-        if tensors and tensor.name in tensors:
-            tensor_num = tensor_num + 1
+        if tensors and tensor.name not in tensors:
+            continue
+        tensor_num = tensor_num + 1
 
     # Create the matrix which contains the 5D vectors.
     matrix = zeros((tensor_num, 5), float64)
@@ -1374,8 +1375,9 @@ def svd(basis_set=0, tensors=None):
     # Count the number of tensors used in the SVD.
     tensor_num = 0
     for tensor in cdp.align_tensor:
-        if tensors and tensor.name in tensors:
-            tensor_num = tensor_num + 1
+        if tensors and tensor.name not in tensors:
+            continue
+        tensor_num = tensor_num + 1
 
     # Create the matrix to apply SVD on.
     matrix = zeros((tensor_num, 5), float64)
