@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64
+from numpy import array, float64, zeros
 from re import search
 
 # relax module imports.
