@@ -120,7 +120,7 @@ RELAX_DATA = [['R1', '600', 599.719 * 1e6, 'r1.600.out'],
               ['NOE', '500', 500.208 * 1e6, 'noe.500.out']
 ]
 
-# The file containing the list of unresolved residues to exclude from the analysis.
+# The file containing the list of unresolved residues to exclude from the analysis (set this to None if no residue is to be excluded).
 UNRES = 'unresolved'
 
 # The bond length and CSA values.
@@ -563,7 +563,8 @@ class Main:
                 relax_data.read(name, data[0], data[1], data[2], data[3])
 
             # Unselect unresolved residues.
-            unselect.read(name, file=UNRES)
+            if UNRES:
+                unselect.read(name, file=UNRES)
 
             # Copy the diffusion tensor from the run 'opt' and prevent it from being minimised.
             if not local_tm:
