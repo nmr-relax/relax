@@ -104,7 +104,7 @@ LOCAL_TM_MODELS = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8'
 # The type of heteronucleus.
 HETNUC = 'N'
 
-# The PDB file.
+# The PDB file (set this to None if no structure is available).
 PDB_FILE = '1f3y.pdb'
 
 # The file containing the sequence.
@@ -192,9 +192,15 @@ class Main:
                     # Remove the tm parameter.
                     model_free.remove_tm(run=name)
 
+<<<<<<< .working
                     # Load the PDB file and calculate the unit vectors parallel to the XH bond.
                     structure.read_pdb(name, PDB_FILE)
                     structure.vectors(name, heteronuc='N', proton='H')
+=======
+                    # Load the PDB file.
+                    if PDB_FILE:
+                        pdb(name, PDB_FILE)
+>>>>>>> .merge-right.r4617
 
                     # Add an arbitrary diffusion tensor which will be optimised.
                     if DIFF_MODEL == 'sphere':
@@ -553,7 +559,7 @@ class Main:
             sequence.read(name, SEQUENCE)
 
             # Load the PDB file and calculate the unit vectors parallel to the XH bond.
-            if not local_tm:
+            if not local_tm and PDB_FILE:
                 structure.read_pdb(name, PDB_FILE)
                 structure.vectors(name, heteronuc='N', proton='H')
 
