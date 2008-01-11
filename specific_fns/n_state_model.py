@@ -77,6 +77,79 @@ class N_state_model(Common_functions):
         self.minimise(min_algor='grid', constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
+    def linear_constraints(self):
+        """Function for setting up the linear constraint matrices A and b.
+
+        Standard notation
+        =================
+
+        The N-state model constraints are:
+
+            0 <= pc <= 1,
+
+        where p is the probability and c corresponds to state c.
+
+
+        Matrix notation
+        ===============
+
+        In the notation A.x >= b, where A is an matrix of coefficients, x is an array of parameter
+        values, and b is a vector of scalars, these inequality constraints are:
+
+            | 1  0  0 |                   |    0    |
+            |         |                   |         |
+            |-1  0  0 |                   |   -1    |
+            |         |     |  p0  |      |         |
+            | 0  1  0 |  .  |      |      |    0    |
+            |         |     |  p1  |  >=  |         |
+            | 0 -1  0 |     |      |      |   -1    |
+            |         |     |  p2  |      |         |
+            | 0  0  1 |                   |    0    |
+            |         |                   |         |
+            | 0  0 -1 |                   |   -1    |
+
+        This example is for a 3-state model.
+
+
+        @return:    The matrices A and b.
+        @rtype:     tuple of len 2 of a numpy matrix and numpy array
+        """
+
+        # Initialisation (0..j..m).
+        A = []
+        b = []
+        n = len(self.param_vector)
+        zero_array = zeros(n, float64)
+        i = 0
+        j = 0
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Loop over the parameters.
+        for k in xrange(len(cdp.params)):
+            # Probabilities.
+            if data.params[k] == 'pc':
+                # 0 <= pc <= 1.
+                A.append(zero_array * 0.0)
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                A[j+1][i] = -1.0
+                b.append(0.0)
+                b.append(-1.0)
+                j = j + 2
+
+            # Increment i.
+            i = i + 1
+
+        # Convert to numpy data structures.
+        A = array(A, float64)
+        b = array(b, float64)
+
+        # Return the contraint objects.
+        return A, b
+
+
     def overfit_deselect(self):
         """Dummy function nornally for deselecting spins with insufficient data for minimisation."""
 
@@ -111,6 +184,10 @@ class N_state_model(Common_functions):
 
         # Create the initial parameter vector.
         param_vector = self.assemble_param_vector(sim_index=sim_index)
+
+        # Linear constraints.
+        if constraints:
+            A, b = self.linear_constraints(index=i)
 
         # Set up the class instance containing the target function.
         model = N_state_opt()
