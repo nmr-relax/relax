@@ -26,6 +26,7 @@ import sys
 # relax module imports.
 import help
 from relax_errors import RelaxIntError, RelaxListError, RelaxListStrError, RelaxNoneStrError, RelaxStrError
+from specific_fns import model_free_obj
 
 
 class Model_free:
@@ -155,7 +156,7 @@ class Model_free:
             raise RelaxNoneStrError, ('spin identification string', spin_id)
 
         # Execute the functional code.
-        model_free.create_model(model=model, equation=equation, params=params, spin_id=spin_id)
+        model_free_obj.create_model(model=model, equation=equation, params=params, spin_id=spin_id)
 
 
     def delete(self):
@@ -175,7 +176,7 @@ class Model_free:
             print text
 
         # Execute the functional code.
-        model_free.delete()
+        model_free_obj.delete()
 
 
     def remove_tm(self, spin_id=None):
@@ -215,7 +216,7 @@ class Model_free:
             raise RelaxNoneStrError, ('spin identification string', spin_id)
 
         # Execute the functional code.
-        model_free.remove_tm(spin_id=spin_id)
+        model_free_obj.remove_tm(spin_id=spin_id)
 
 
     def select_model(self, model=None, spin_id=None):
@@ -368,4 +369,4 @@ class Model_free:
             raise RelaxNoneStrError, ('spin identification string', spin_id)
 
         # Execute the functional code.
-        model_free.select_model(model=model, spin_id=spin_id)
+        model_free_obj.select_model(model=model, spin_id=spin_id)
