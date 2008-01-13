@@ -3715,24 +3715,27 @@ class Model_free_main:
             return 'ppm'
 
 
-    def select_model(self, run=None, model=None, res_num=None):
-        """Function for the selection of a preset model-free model."""
+    def select_model(self, model=None, spin_id=None):
+        """Function for the selection of a preset model-free model.
 
-        # Arguments.
-        self.run = run
+        @param model:   The name of the model.
+        @type model:    str
+        @param spin_id: The spin identification string.
+        @type spin_id:  str
+        """
 
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current data pipe exists.
+        if not relax_data_store.current_pipe:
+            raise RelaxNoPipeError
 
-        # Test if the run type is set to 'mf'.
-        function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
+        # Test if the pipe type is 'mf'.
+        function_type = relax_data_store[relax_data_store.current_pipe].pipe_type
         if function_type != 'mf':
-            raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
+            raise RelaxFuncSetupError, specific_fns.get_string(function_type)
 
         # Test if sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
 
         # Preset models.
@@ -4003,7 +4006,7 @@ class Model_free_main:
             raise RelaxError, "The model '" + model + "' is invalid."
 
         # Set up the model.
-        self.model_setup(self.run, model, equation, params, res_num)
+        self.model_setup(model, equation, params, spin_id)
 
 
     def set_doc(self):
