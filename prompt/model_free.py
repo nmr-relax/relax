@@ -354,7 +354,7 @@ class Model_free:
             print text
 
         # Model argument.
-        elif type(model) != str:
+        if type(model) != str:
             raise RelaxStrError, ('model', model)
 
         # Spin identification string.
