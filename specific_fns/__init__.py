@@ -46,7 +46,7 @@ __all__ = [ 'base_class',
             'relax_fit']
 
 # Instantiate all classes.
-consistency_tests = Consistency_tests()
+consistency_tests_obj = Consistency_tests()
 hybrid_obj = Hybrid()
 jw_mapping_obj = Jw_mapping()
 model_free_obj = Model_free()
@@ -236,7 +236,7 @@ def get_instance(function_type):
 
     # Consistency testing.
     if function_type == 'ct':
-        return consistency_tests
+        return consistency_tests_obj
 
     # Reduced spectral density mapping.
     if function_type == 'jw':
