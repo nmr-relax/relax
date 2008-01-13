@@ -145,8 +145,8 @@ class Model_free:
                 raise RelaxListStrError, ('parameter types', params)
 
         # Spin identification string.
-        if spin_id != None and type(spin_id) != int:
-            raise RelaxNoneIntError, ('spin identification string', spin_id)
+        if spin_id != None and type(spin_id) != str:
+            raise RelaxNoneStrError, ('spin identification string', spin_id)
 
         # Execute the functional code.
         model_free.create_model(model=model, equation=equation, params=params, spin_id=spin_id)
