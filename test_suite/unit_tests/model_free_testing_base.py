@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2008 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,11 +21,12 @@
 ###############################################################################
 
 # relax module imports.
-from model_free import Model_free_main
-from mf_minimise import Mf_minimise
-from molmol import Molmol
-from specific_fns.base_class import Common_functions
+from data import Data as relax_data_store
 
 
-class Model_free(Common_functions, Model_free_main, Mf_minimise, Molmol):
-    """Parent class containing all the model-free specific functions."""
+
+class Model_free_base_class:
+    """Base class for tests of both the 'prompt.model_free' and 'specific_fns.model_free' modules.
+
+    This base class also contains many shared unit tests.
+    """

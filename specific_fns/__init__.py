@@ -45,13 +45,13 @@ __all__ = [ 'base_class',
             'relax_data',
             'relax_fit']
 
-# Set up all the classes.
+# Instantiate all classes.
 consistency_tests = Consistency_tests()
-hybrid = Hybrid()
-jw_mapping = Jw_mapping()
-model_free = Model_free()
-noe = Noe()
-relax_fit = Relax_fit()
+hybrid_obj = Hybrid()
+jw_mapping_obj = Jw_mapping()
+model_free_obj = Model_free()
+noe_obj = Noe()
+relax_fit_obj = Relax_fit()
 
 
 # The function for returning the requested specific function.
@@ -228,11 +228,11 @@ def get_instance(function_type):
 
     # NOE calculation.
     if function_type == 'noe':
-        return noe
+        return noe_obj
 
     # Relaxation curve fitting.
     if function_type == 'relax_fit':
-        return relax_fit
+        return relax_fit_obj
 
     # Consistency testing.
     if function_type == 'ct':
@@ -240,15 +240,15 @@ def get_instance(function_type):
 
     # Reduced spectral density mapping.
     if function_type == 'jw':
-        return jw_mapping
+        return jw_mapping_obj
 
     # Model-free analysis.
     if function_type == 'mf':
-        return model_free
+        return model_free_obj
 
     # Hybrid models.
     if function_type == 'hybrid':
-        return hybrid
+        return hybrid_obj
 
     # Unknown analysis.
     raise RelaxError, "The function_type " + `function_type` + " is unknown."
