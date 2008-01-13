@@ -150,167 +150,161 @@ class Model_free_main:
                 param_names = param_names + spin.params
 
 
-    def assemble_param_vector(self, index=None, sim_index=None, param_set=None):
-        """Function for assembling various pieces of data into a Numeric parameter array."""
+    def assemble_param_vector(self, model_type, spin_id=None, sim_index=None):
+        """Assemble the model-free parameter vector (as numpy array).
+
+        @param model_type:  The model-free model type.  This must be one of 'mf', 'local_tm',
+                            'diff', or 'all'.
+        @type model_type:   str
+        @param spin_id:     The spin identification string.
+        @type spin_id:      str
+        @return:            An array of the parameter values of the model-free model.
+        @rtype:             numpy array
+        """
 
         # Initialise.
         param_vector = []
-        if param_set == None:
-            param_set = self.param_set
 
-        # Monte Carlo diffusion tensor parameters.
-        if sim_index != None and (param_set == 'diff' or param_set == 'all'):
-            # Spherical diffusion.
-            if relax_data_store.diff[self.run].type == 'sphere':
-                param_vector.append(relax_data_store.diff[self.run].tm_sim[sim_index])
-
-            # Spheroidal diffusion.
-            elif relax_data_store.diff[self.run].type == 'spheroid':
-                param_vector.append(relax_data_store.diff[self.run].tm_sim[sim_index])
-                param_vector.append(relax_data_store.diff[self.run].Da_sim[sim_index])
-                param_vector.append(relax_data_store.diff[self.run].theta_sim[sim_index])
-                param_vector.append(relax_data_store.diff[self.run].phi_sim[sim_index])
-
-            # Ellipsoidal diffusion.
-            elif relax_data_store.diff[self.run].type == 'ellipsoid':
-                param_vector.append(relax_data_store.diff[self.run].tm_sim[sim_index])
-                param_vector.append(relax_data_store.diff[self.run].Da_sim[sim_index])
-                param_vector.append(relax_data_store.diff[self.run].Dr_sim[sim_index])
-                param_vector.append(relax_data_store.diff[self.run].alpha_sim[sim_index])
-                param_vector.append(relax_data_store.diff[self.run].beta_sim[sim_index])
-                param_vector.append(relax_data_store.diff[self.run].gamma_sim[sim_index])
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Diffusion tensor parameters.
-        elif param_set == 'diff' or param_set == 'all':
-            # Spherical diffusion.
-            if relax_data_store.diff[self.run].type == 'sphere':
-                param_vector.append(relax_data_store.diff[self.run].tm)
+        if model_type == 'diff' or model_type == 'all':
+            # Normal parameters.
+            if sim_index == None:
+                # Spherical diffusion.
+                if cdp.diff.type == 'sphere':
+                    param_vector.append(cdp.diff.tm)
 
-            # Spheroidal diffusion.
-            elif relax_data_store.diff[self.run].type == 'spheroid':
-                param_vector.append(relax_data_store.diff[self.run].tm)
-                param_vector.append(relax_data_store.diff[self.run].Da)
-                param_vector.append(relax_data_store.diff[self.run].theta)
-                param_vector.append(relax_data_store.diff[self.run].phi)
+                # Spheroidal diffusion.
+                elif cdp.diff.type == 'spheroid':
+                    param_vector.append(cdp.diff.tm)
+                    param_vector.append(cdp.diff.Da)
+                    param_vector.append(cdp.diff.theta)
+                    param_vector.append(cdp.diff.phi)
 
-            # Ellipsoidal diffusion.
-            elif relax_data_store.diff[self.run].type == 'ellipsoid':
-                param_vector.append(relax_data_store.diff[self.run].tm)
-                param_vector.append(relax_data_store.diff[self.run].Da)
-                param_vector.append(relax_data_store.diff[self.run].Dr)
-                param_vector.append(relax_data_store.diff[self.run].alpha)
-                param_vector.append(relax_data_store.diff[self.run].beta)
-                param_vector.append(relax_data_store.diff[self.run].gamma)
+                # Ellipsoidal diffusion.
+                elif cdp.diff.type == 'ellipsoid':
+                    param_vector.append(cdp.diff.tm)
+                    param_vector.append(cdp.diff.Da)
+                    param_vector.append(cdp.diff.Dr)
+                    param_vector.append(cdp.diff.alpha)
+                    param_vector.append(cdp.diff.beta)
+                    param_vector.append(cdp.diff.gamma)
+
+            # Monte Carlo diffusion tensor parameters.
+            else:
+                # Spherical diffusion.
+                if cdp.diff.type == 'sphere':
+                    param_vector.append(cdp.diff.tm_sim[sim_index])
+
+                # Spheroidal diffusion.
+                elif cdp.diff.type == 'spheroid':
+                    param_vector.append(cdp.diff.tm_sim[sim_index])
+                    param_vector.append(cdp.diff.Da_sim[sim_index])
+                    param_vector.append(cdp.diff.theta_sim[sim_index])
+                    param_vector.append(cdp.diff.phi_sim[sim_index])
+
+                # Ellipsoidal diffusion.
+                elif cdp.diff.type == 'ellipsoid':
+                    param_vector.append(cdp.diff.tm_sim[sim_index])
+                    param_vector.append(cdp.diff.Da_sim[sim_index])
+                    param_vector.append(cdp.diff.Dr_sim[sim_index])
+                    param_vector.append(cdp.diff.alpha_sim[sim_index])
+                    param_vector.append(cdp.diff.beta_sim[sim_index])
+                    param_vector.append(cdp.diff.gamma_sim[sim_index])
 
         # Model-free parameters (residue specific parameters).
-        if param_set != 'diff':
-            for i in xrange(len(relax_data_store.res[self.run])):
+        if model_type != 'diff':
+            # Loop over the spins.
+            for spin in spin_loop(spin_id):
                 # Skip unselected residues.
-                if not relax_data_store.res[self.run][i].select:
-                    continue
-
-                # Only add parameters for a single residue if index has a value.
-                if (param_set == 'mf' or param_set == 'local_tm') and index != None and i != index:
+                if not spin.select:
                     continue
 
                 # Loop over the model-free parameters.
-                for j in xrange(len(relax_data_store.res[self.run][i].params)):
+                for i in xrange(len(spin.params)):
                     # local tm.
-                    if relax_data_store.res[self.run][i].params[j] == 'local_tm':
-                        if relax_data_store.res[self.run][i].local_tm == None:
-                            param_vector.append(0.0)
-                        elif sim_index != None:
-                            param_vector.append(relax_data_store.res[self.run][i].local_tm_sim[sim_index])
+                    if spin.params[i] == 'local_tm':
+                        if sim_index == None:
+                            param_vector.append(spin.local_tm)
                         else:
-                            param_vector.append(relax_data_store.res[self.run][i].local_tm)
+                            param_vector.append(spin.local_tm_sim[sim_index])
 
                     # S2.
-                    elif relax_data_store.res[self.run][i].params[j] == 'S2':
-                        if relax_data_store.res[self.run][i].s2 == None:
-                            param_vector.append(0.0)
-                        elif sim_index != None:
-                            param_vector.append(relax_data_store.res[self.run][i].s2_sim[sim_index])
+                    elif spin.params[i] == 'S2':
+                        if sim_index == None:
+                            param_vector.append(spin.s2)
                         else:
-                            param_vector.append(relax_data_store.res[self.run][i].s2)
+                            param_vector.append(spin.s2_sim[sim_index])
 
                     # S2f.
-                    elif relax_data_store.res[self.run][i].params[j] == 'S2f':
-                        if relax_data_store.res[self.run][i].s2f == None:
-                            param_vector.append(0.0)
-                        elif sim_index != None:
-                            param_vector.append(relax_data_store.res[self.run][i].s2f_sim[sim_index])
+                    elif spin.params[i] == 'S2f':
+                        if sim_index == None:
+                            param_vector.append(spin.s2f)
                         else:
-                            param_vector.append(relax_data_store.res[self.run][i].s2f)
+                            param_vector.append(spin.s2f_sim[sim_index])
 
                     # S2s.
-                    elif relax_data_store.res[self.run][i].params[j] == 'S2s':
-                        if relax_data_store.res[self.run][i].s2s == None:
-                            param_vector.append(0.0)
-                        elif sim_index != None:
-                            param_vector.append(relax_data_store.res[self.run][i].s2s_sim[sim_index])
+                    elif spin.params[i] == 'S2s':
+                        if sim_index == None:
+                            param_vector.append(spin.s2s)
                         else:
-                            param_vector.append(relax_data_store.res[self.run][i].s2s)
+                            param_vector.append(spin.s2s_sim[sim_index])
 
                     # te.
-                    elif relax_data_store.res[self.run][i].params[j] == 'te':
-                        if relax_data_store.res[self.run][i].te == None:
-                            param_vector.append(0.0)
-                        elif sim_index != None:
-                            param_vector.append(relax_data_store.res[self.run][i].te_sim[sim_index])
+                    elif spin.params[i] == 'te':
+                        if sim_index == None:
+                            param_vector.append(spin.te)
                         else:
-                            param_vector.append(relax_data_store.res[self.run][i].te)
+                            param_vector.append(spin.te_sim[sim_index])
 
                     # tf.
-                    elif relax_data_store.res[self.run][i].params[j] == 'tf':
-                        if relax_data_store.res[self.run][i].tf == None:
-                            param_vector.append(0.0)
-                        elif sim_index != None:
-                            param_vector.append(relax_data_store.res[self.run][i].tf_sim[sim_index])
+                    elif spin.params[i] == 'tf':
+                        if sim_index == None:
+                            param_vector.append(spin.tf)
                         else:
-                            param_vector.append(relax_data_store.res[self.run][i].tf)
+                            param_vector.append(spin.tf_sim[sim_index])
 
                     # ts.
-                    elif relax_data_store.res[self.run][i].params[j] == 'ts':
-                        if relax_data_store.res[self.run][i].ts == None:
-                            param_vector.append(0.0)
-                        elif sim_index != None:
-                            param_vector.append(relax_data_store.res[self.run][i].ts_sim[sim_index])
+                    elif spin.params[i] == 'ts':
+                        if sim_index == None:
+                            param_vector.append(spin.ts)
                         else:
-                            param_vector.append(relax_data_store.res[self.run][i].ts)
+                            param_vector.append(spin.ts_sim[sim_index])
 
                     # Rex.
-                    elif relax_data_store.res[self.run][i].params[j] == 'Rex':
-                        if relax_data_store.res[self.run][i].rex == None:
-                            param_vector.append(0.0)
-                        elif sim_index != None:
-                            param_vector.append(relax_data_store.res[self.run][i].rex_sim[sim_index])
+                    elif spin.params[i] == 'Rex':
+                        if sim_index == None:
+                            param_vector.append(spin.rex)
                         else:
-                            param_vector.append(relax_data_store.res[self.run][i].rex)
+                            param_vector.append(spin.rex_sim[sim_index])
 
                     # r.
-                    elif relax_data_store.res[self.run][i].params[j] == 'r':
-                        if relax_data_store.res[self.run][i].r == None:
-                            param_vector.append(0.0)
-                        elif sim_index != None:
-                            param_vector.append(relax_data_store.res[self.run][i].r_sim[sim_index])
+                    elif spin.params[i] == 'r':
+                        if sim_index == None:
+                            param_vector.append(spin.r)
                         else:
-                            param_vector.append(relax_data_store.res[self.run][i].r)
+                            param_vector.append(spin.r_sim[sim_index])
 
                     # CSA.
-                    elif relax_data_store.res[self.run][i].params[j] == 'CSA':
-                        if relax_data_store.res[self.run][i].csa == None:
-                            param_vector.append(0.0)
-                        elif sim_index != None:
-                            param_vector.append(relax_data_store.res[self.run][i].csa_sim[sim_index])
+                    elif spin.params[i] == 'CSA':
+                        if sim_index == None:
+                            param_vector.append(spin.csa)
                         else:
-                            param_vector.append(relax_data_store.res[self.run][i].csa)
+                            param_vector.append(spin.csa_sim[sim_index])
 
                     # Unknown parameter.
                     else:
                         raise RelaxError, "Unknown parameter."
 
-        # Return a Numeric array.
-        return array(param_vector, Float64)
+        # Replace all instances of None with 0.0 to allow the list to be converted to a numpy array.
+        for i in xrange(len(param_vector)):
+            if param_vector[i] == None:
+                param_vector[i] = 0.0
+
+        # Return a numpy array.
+        return array(param_vector, float64)
 
 
     def assemble_scaling_matrix(self, index=None, scaling=1):
