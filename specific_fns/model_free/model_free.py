@@ -33,10 +33,12 @@ import sys
 # relax module imports.
 from data import Data as relax_data_store
 from float import isNaN,isInf
+from generic_fns.selection import exists_mol_res_spin_data
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxTensorError
+import specific_fns
 
 
 
@@ -579,24 +581,37 @@ class Model_free_main:
         return data
 
 
-    def create_model(self, run=None, model=None, equation=None, params=None, res_num=None):
-        """Function to create a model-free model."""
+    def create_model(self, model=None, equation=None, params=None, spin_id=None):
+        """Function for creating a custom model-free model.
 
-        # Run argument.
-        self.run = run
+        @param model:       The name of the model.
+        @type model:        str
+        @param equation:    The equation type to use.  The 3 allowed types are:  'mf_orig' for the
+                            original model-free equations with parameters {S2, te}; 'mf_ext' for the
+                            extended model-free equations with parameters {S2f, tf, S2, ts}; and
+                            'mf_ext2' for the extended model-free equations with parameters {S2f,
+                            tf, S2s, ts}.
+        @type equation:     str
+        @param params:      A list of the parameters to include in the model.  The allowed parameter
+                            names includes those for the equation type as well as chemical exchange
+                            'Rex', the bond length 'r', and the chemical shift anisotropy 'CSA'.
+        @type params:       list of str
+        @param spin_id:     The spin identification string.
+        @type spin_id:      str
+        """
 
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current data pipe exists.
+        if not relax_data_store.current_pipe:
+            raise RelaxNoPipeError
 
-        # Test if the run type is set to 'mf'.
-        function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
+        # Test if the pipe type is 'mf'.
+        function_type = relax_data_store[relax_data_store.current_pipe].pipe_type
         if function_type != 'mf':
-            raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
+            raise RelaxFuncSetupError, specific_fns.get_string(function_type)
 
         # Test if sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Check the validity of the model-free equation type.
         valid_types = ['mf_orig', 'mf_ext', 'mf_ext2']
@@ -710,7 +725,7 @@ class Model_free_main:
                 raise RelaxError, "The parameter array " + `params` + " contains an invalid combination of parameters."
 
         # Set up the model.
-        self.model_setup(run, model, equation, params, res_num)
+        self.model_setup(model, equation, params, spin_id)
 
 
     def data_init(self, data):
