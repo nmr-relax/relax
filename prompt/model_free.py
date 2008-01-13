@@ -139,10 +139,16 @@ class Model_free:
 
         # Parameter types.
         if type(params) != list:
-            raise RelaxListError, ('parameter types', params)
-        for i in xrange(len(params)):
-            if type(params[i]) != str:
-                raise RelaxListStrError, ('parameter types', params)
+            raise RelaxListStrError, ('parameters', params)
+        else:
+            # Empty list.
+            if params == []:
+                raise RelaxListStrError, ('parameters', params)
+
+            # Check the values.
+            for i in xrange(len(params)):
+                if type(params[i]) != str:
+                    raise RelaxListStrError, ('parameters', params)
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:
