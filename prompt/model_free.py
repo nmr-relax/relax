@@ -41,13 +41,11 @@ class Model_free:
         self.__relax__ = relax
 
 
-    def create_model(self, run=None, model=None, equation=None, params=None, res_num=None):
+    def create_model(self, model=None, equation=None, params=None, res_num=None):
         """Function to create a model-free model.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The run to assign the values to.
 
         model:  The name of the model-free model.
 
@@ -108,33 +106,28 @@ class Model_free:
         The following commands will create the model-free model 'm1' which is based on the original
         model-free equation and contains the single parameter 'S2'.
 
-        relax> model_free.create_model('m1', 'm1', 'mf_orig', ['S2'])
-        relax> model_free.create_model(run='m1', model='m1', params=['S2'], equation='mf_orig')
+        relax> model_free.create_model('m1', 'mf_orig', ['S2'])
+        relax> model_free.create_model(model='m1', params=['S2'], equation='mf_orig')
 
 
         The following commands will create the model-free model 'large_model' which is based on the
         extended model-free equation and contains the seven parameters 'S2f', 'tf', 'S2', 'ts',
         'Rex', 'CSA', 'r'.
 
-        relax> model_free.create_model('test', 'large_model', 'mf_ext', ['S2f', 'tf', 'S2', 'ts',
-                                       'Rex', 'CSA', 'r'])
-        relax> model_free.create_model(run='test', model='large_model', params=['S2f', 'tf', 'S2',
-                                       'ts', 'Rex', 'CSA', 'r'], equation='mf_ext')
+        relax> model_free.create_model('large_model', 'mf_ext', ['S2f', 'tf', 'S2', 'ts', 'Rex',
+                                       'CSA', 'r'])
+        relax> model_free.create_model(model='large_model', params=['S2f', 'tf', 'S2', 'ts', 'Rex',
+                                       'CSA', 'r'], equation='mf_ext')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "model_free.create_model("
-            text = text + "run=" + `run`
-            text = text + ", model=" + `model`
+            text = text + "model=" + `model`
             text = text + ", equation=" + `equation`
             text = text + ", params=" + `params`
             text = text + ", res_num=" + `res_num` + ")"
             print text
-
-        # Run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # Model argument.
         if type(model) != str:
@@ -156,47 +149,34 @@ class Model_free:
             raise RelaxNoneIntError, ('residue number', res_num)
 
         # Execute the functional code.
-        model_free.create_model(run=run, model=model, equation=equation, params=params, res_num=res_num)
+        model_free.create_model(model=model, equation=equation, params=params, res_num=res_num)
 
 
-    def delete(self, run=None):
-        """Function for deleting all model-free data corresponding to the run.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
-
+    def delete(self):
+        """Function for deleting all model-free data from the current data pipe.
 
         Examples
         ~~~~~~~~
 
-        To delete all model-free data corresponding to the run 'm2', type:
+        To delete all model-free data corresponding to the current data pipe 'm2', type:
 
-        relax> model_free.delete('m2')
+        relax> model_free.delete()
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "model_free.delete("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "model_free.delete()"
             print text
 
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
         # Execute the functional code.
-        model_free.delete(run=run)
+        model_free.delete()
 
 
-    def remove_tm(self, run=None, res_num=None):
+    def remove_tm(self, res_num=None):
         """Function for removing the local tm parameter from a model.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The run to assign the values to.
 
         res_num:  The residue number.
 
@@ -204,9 +184,8 @@ class Model_free:
         Description
         ~~~~~~~~~~~
 
-        This function will remove the local tm parameter from the model-free parameters of the given
-        run.  Model-free parameters must already exist within the run yet, if there is no local tm,
-        nothing will happen.
+        This function will remove the local tm parameter from the model-free parameter set.  If
+        there is no local tm parameter within the set nothing will happen.
 
         If no residue number is given, then the function will apply to all residues.
 
@@ -214,38 +193,30 @@ class Model_free:
         Examples
         ~~~~~~~~
 
-        The following commands will remove the parameter 'tm' from the run 'local_tm':
+        The following command will remove the parameter 'tm':
 
-        relax> model_free.remove_tm('local_tm')
-        relax> model_free.remove_tm(run='local_tm')
+        relax> model_free.remove_tm()
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "model_free.remove_tm("
-            text = text + "run=" + `run`
-            text = text + ", res_num=" + `res_num` + ")"
+            text = text + "res_num=" + `res_num` + ")"
             print text
-
-        # Run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # Residue number.
         if res_num != None and type(res_num) != int:
             raise RelaxNoneIntError, ('residue number', res_num)
 
         # Execute the functional code.
-        model_free.remove_tm(run=run, res_num=res_num)
+        model_free.remove_tm(res_num=res_num)
 
 
-    def select_model(self, run=None, model=None, res_num=None):
+    def select_model(self, model=None, res_num=None):
         """Function for the selection of a preset model-free model.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The run to assign the values to.
 
         model:  The name of the preset model.
 
@@ -369,23 +340,18 @@ class Model_free:
         Examples
         ~~~~~~~~
 
-        To pick model 'm1' for all selected residues and assign it to the run 'mixed', type:
+        To pick model 'm1' for all selected residues, type:
 
-        relax> model_free.select_model('mixed', 'm1')
-        relax> model_free.select_model(run='mixed', model='m1')
+        relax> model_free.select_model('m1')
+        relax> model_free.select_model(model='m1')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "model_free.select_model("
-            text = text + "run=" + `run`
-            text = text + ", model=" + `model`
+            text = text + "model=" + `model`
             text = text + ", res_num=" + `res_num` + ")"
             print text
-
-        # Run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # Model argument.
         elif type(model) != str:
@@ -396,4 +362,4 @@ class Model_free:
             raise RelaxNoneIntError, ('residue number', res_num)
 
         # Execute the functional code.
-        model_free.select_model(run=run, model=model, res_num=res_num)
+        model_free.select_model(model=model, res_num=res_num)
