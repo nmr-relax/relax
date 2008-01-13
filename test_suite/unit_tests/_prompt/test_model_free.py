@@ -77,7 +77,7 @@ class Test_model_free(Model_free_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxListStrError, self.model_free_fns.create_model, params=data[1])
+            self.assertRaises(RelaxListStrError, self.model_free_fns.create_model, model='test', equation='test', params=data[1])
 
 
     def test_create_model_argfail_spin_id(self):
@@ -90,7 +90,7 @@ class Test_model_free(Model_free_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.model_free_fns.create_model, spin_id=data[1])
+            self.assertRaises(RelaxNoneStrError, self.model_free_fns.create_model, model='test', equation='test', params=['test'], spin_id=data[1])
 
 
     def test_remove_tm_argfail_spin_id(self):
@@ -129,7 +129,7 @@ class Test_model_free(Model_free_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.model_free_fns.select_model, spin_id=data[1])
+            self.assertRaises(RelaxNoneStrError, self.model_free_fns.select_model, model='test', spin_id=data[1])
 
 
 
