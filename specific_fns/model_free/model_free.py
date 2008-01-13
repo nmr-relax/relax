@@ -41,12 +41,7 @@ from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxIn
 
 
 class Model_free_main:
-    def __init__(self):
-        """Class containing functions specific to model-free analysis."""
-
-        # Class containing the Molmol specific functions.
-        self.molmol = Molmol()
-
+    """Class containing functions specific to model-free analysis."""
 
     def are_mf_params_set(self, index=None):
         """Function for testing if the model-free parameter values are set."""
