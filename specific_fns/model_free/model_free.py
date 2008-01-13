@@ -2590,34 +2590,31 @@ class Model_free_main:
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Is structural data required?
+        need_vect = 0
+        if hasattr(cdp, 'diff') and (cdp.diff.type == 'spheroid' or cdp.diff.type == 'ellipsoid'):
+            need_vect = 1
+
         # Loop over the sequence.
         for spin in spin_loop():
-            # Skip unselected data:
-            if not spin.select:
-                continue
-
-            # Check for data structure.
+            # Relaxation data must exist!
             if not hasattr(spin, 'relax_data'):
                 spin.select = 0
-                continue
 
-            # Require 3 or more data points
-            if len(spin.relax_data) < 3:
+            # Require 3 or more relaxation data points.
+            elif len(spin.relax_data) < 3:
                 spin.select = 0
-                continue
 
-            # Require at least as many data points as params to prevent over-fitting
-            if hasattr(spin, 'params'):
-                if len(spin.params) > len(spin.relax_data):
-                    spin.select = 0
-                    continue
+            # Require at least as many data points as params to prevent over-fitting.
+            elif hasattr(spin, 'params') and len(spin.params) > len(spin.relax_data):
+                spin.select = 0
 
-            # Test for structural data if required
-            if hasattr(relax_data_store, 'diff') and relax_data_store.diff.has_key(run):
-                if relax_data_store.diff[run].type == 'spheroid' or relax_data_store.diff[run].type == 'ellipsoid':
-                    if not hasattr(spin, 'xh_vect'):
-                        spin.select = 0
-                        continue
+            # Test for structural data if required.
+            elif not hasattr(spin, 'xh_vect'):
+                spin.select = 0
 
 
     def read_columnar_col_numbers(self, header):
