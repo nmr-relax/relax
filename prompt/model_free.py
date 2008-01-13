@@ -25,7 +25,7 @@ import sys
 
 # relax module imports.
 import help
-from relax_errors import RelaxIntError, RelaxListError, RelaxListStrError, RelaxNoneIntError, RelaxStrError
+from relax_errors import RelaxIntError, RelaxListError, RelaxListStrError, RelaxNoneStrError, RelaxStrError
 
 
 class Model_free:
@@ -358,8 +358,8 @@ class Model_free:
             raise RelaxStrError, ('model', model)
 
         # Spin identification string.
-        if spin_id != None and type(spin_id) != int:
-            raise RelaxNoneIntError, ('spin identification string', spin_id)
+        if spin_id != None and type(spin_id) != str:
+            raise RelaxNoneStrError, ('spin identification string', spin_id)
 
         # Execute the functional code.
         model_free.select_model(model=model, spin_id=spin_id)
