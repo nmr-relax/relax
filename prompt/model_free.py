@@ -41,7 +41,7 @@ class Model_free:
         self.__relax__ = relax
 
 
-    def create_model(self, model=None, equation=None, params=None, res_num=None):
+    def create_model(self, model=None, equation=None, params=None, spin_id=None):
         """Function to create a model-free model.
 
         Keyword Arguments
@@ -53,7 +53,7 @@ class Model_free:
 
         params:  The array of parameter names of the model.
 
-        res_num:  The residue number.
+        spin_id:  The spin identification string.
 
 
         Model-free equation
@@ -93,11 +93,11 @@ class Model_free:
             'CSA':  The chemical shift anisotropy.
 
 
-        Residue number
-        ~~~~~~~~~~~~~~
+        Spin identification string
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        If 'res_num' is supplied as an integer then the model will only be created for that residue,
-        otherwise the model will be created for all residues.
+        If 'spin_id' is supplied then the model will only be created for the corresponding spins.
+        Otherwise the model will be created for all spins.
 
 
         Examples
@@ -126,7 +126,7 @@ class Model_free:
             text = text + "model=" + `model`
             text = text + ", equation=" + `equation`
             text = text + ", params=" + `params`
-            text = text + ", res_num=" + `res_num` + ")"
+            text = text + ", spin_id=" + `spin_id` + ")"
             print text
 
         # Model argument.
@@ -144,12 +144,12 @@ class Model_free:
             if type(params[i]) != str:
                 raise RelaxListStrError, ('parameter types', params)
 
-        # Residue number.
-        if res_num != None and type(res_num) != int:
-            raise RelaxNoneIntError, ('residue number', res_num)
+        # Spin identification string.
+        if spin_id != None and type(spin_id) != int:
+            raise RelaxNoneIntError, ('spin identification string', spin_id)
 
         # Execute the functional code.
-        model_free.create_model(model=model, equation=equation, params=params, res_num=res_num)
+        model_free.create_model(model=model, equation=equation, params=params, spin_id=spin_id)
 
 
     def delete(self):
@@ -158,7 +158,7 @@ class Model_free:
         Examples
         ~~~~~~~~
 
-        To delete all model-free data corresponding to the current data pipe 'm2', type:
+        To delete all model-free data, type:
 
         relax> model_free.delete()
         """
@@ -172,13 +172,13 @@ class Model_free:
         model_free.delete()
 
 
-    def remove_tm(self, res_num=None):
+    def remove_tm(self, spin_id=None):
         """Function for removing the local tm parameter from a model.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        res_num:  The residue number.
+        spin_id:  The spin identification string.
 
 
         Description
@@ -187,7 +187,7 @@ class Model_free:
         This function will remove the local tm parameter from the model-free parameter set.  If
         there is no local tm parameter within the set nothing will happen.
 
-        If no residue number is given, then the function will apply to all residues.
+        If no spin identification string is given, then the function will apply to all spins.
 
 
         Examples
@@ -201,18 +201,18 @@ class Model_free:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "model_free.remove_tm("
-            text = text + "res_num=" + `res_num` + ")"
+            text = text + "spin_id=" + `spin_id` + ")"
             print text
 
-        # Residue number.
-        if res_num != None and type(res_num) != int:
-            raise RelaxNoneIntError, ('residue number', res_num)
+        # Spin identification string.
+        if spin_id != None and type(spin_id) != int:
+            raise RelaxNoneIntError, ('spin identification string', spin_id)
 
         # Execute the functional code.
-        model_free.remove_tm(res_num=res_num)
+        model_free.remove_tm(spin_id=spin_id)
 
 
-    def select_model(self, model=None, res_num=None):
+    def select_model(self, model=None, spin_id=None):
         """Function for the selection of a preset model-free model.
 
         Keyword Arguments
@@ -329,18 +329,18 @@ class Model_free:
 
 
 
-        Residue number
-        ~~~~~~~~~~~~~~
+        Spin identification string
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        If 'res_num' is supplied as an integer then the model will only be selected for that
-        residue, otherwise the model will be selected for all residues.
+        If 'spin_id' is supplied then the model will only be selected for the corresponding spins.
+        Otherwise the model will be selected for all spins.
 
 
 
         Examples
         ~~~~~~~~
 
-        To pick model 'm1' for all selected residues, type:
+        To pick model 'm1' for all selected spins, type:
 
         relax> model_free.select_model('m1')
         relax> model_free.select_model(model='m1')
@@ -350,16 +350,16 @@ class Model_free:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "model_free.select_model("
             text = text + "model=" + `model`
-            text = text + ", res_num=" + `res_num` + ")"
+            text = text + ", spin_id=" + `spin_id` + ")"
             print text
 
         # Model argument.
         elif type(model) != str:
             raise RelaxStrError, ('model', model)
 
-        # Residue number.
-        if res_num != None and type(res_num) != int:
-            raise RelaxNoneIntError, ('residue number', res_num)
+        # Spin identification string.
+        if spin_id != None and type(spin_id) != int:
+            raise RelaxNoneIntError, ('spin identification string', spin_id)
 
         # Execute the functional code.
-        model_free.select_model(model=model, res_num=res_num)
+        model_free.select_model(model=model, spin_id=spin_id)
