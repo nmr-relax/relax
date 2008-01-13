@@ -26,6 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Data as relax_data_store
 from prompt.model_free import Model_free
+from relax_errors import RelaxListStrError, RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.model_free_testing_base import Model_free_base_class
 
 # Unit test imports.
@@ -38,5 +39,97 @@ class Test_model_free(Model_free_base_class, TestCase):
 
     # Instantiate the user function class.
     model_free_fns = Model_free(fake_relax.fake_instance())
+
+
+    def test_create_model_argfail_model(self):
+        """The model arg test of the model_free.create_model() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.model_free_fns.create_model, model=data[1])
+
+
+    def test_create_model_argfail_equation(self):
+        """The equation arg test of the model_free.create_model() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.model_free_fns.create_model, equation=data[1])
+
+
+    def test_create_model_argfail_params(self):
+        """The params arg test of the model_free.create_model() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str list argument, and skip it.
+            if data[0] == 'str list':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxListStrError, self.model_free_fns.create_model, params=data[1])
+
+
+    def test_create_model_argfail_spin_id(self):
+        """The spin_id arg test of the model_free.create_model() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.model_free_fns.create_model, spin_id=data[1])
+
+
+    def test_remove_tm_argfail_spin_id(self):
+        """The spin_id arg test of the model_free.remove_tm() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.model_free_fns.remove_tm, spin_id=data[1])
+
+
+    def test_select_model_argfail_model(self):
+        """The model arg test of the model_free.select_model() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.model_free_fns.select_model, model=data[1])
+
+
+    def test_select_model_argfail_spin_id(self):
+        """The spin_id arg test of the model_free.select_model() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.model_free_fns.select_model, spin_id=data[1])
+
 
 
