@@ -98,48 +98,56 @@ class Model_free_main:
                 return data.params[j]
 
 
-    def assemble_param_names(self, index=None):
-        """Function for assembling various pieces of data into a Numeric parameter array."""
+    def assemble_param_names(self, model_type, spin_id=None):
+        """Function for assembling a list of all the model parameter names.
+
+        @param model_type:  The model-free model type.  This must be one of 'mf', 'local_tm',
+                            'diff', or 'all'.
+        @type model_type:   str
+        @param spin_id:     The spin identification string.
+        @type spin_id:      str
+        @return:            A list containing all the parameters of the model-free model.
+        @rtype:             list of str
+        """
 
         # Initialise.
-        self.param_names = []
+        param_names = []
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Diffusion tensor parameters.
-        if self.param_set == 'diff' or self.param_set == 'all':
+        if model_type == 'diff' or model_type == 'all':
             # Spherical diffusion.
-            if relax_data_store.diff[self.run].type == 'sphere':
-                self.param_names.append('tm')
+            if cdp.diff.type == 'sphere':
+                param_names.append('tm')
 
             # Spheroidal diffusion.
-            elif relax_data_store.diff[self.run].type == 'spheroid':
-                self.param_names.append('tm')
-                self.param_names.append('Da')
-                self.param_names.append('theta')
-                self.param_names.append('phi')
+            elif cdp.diff.type == 'spheroid':
+                param_names.append('tm')
+                param_names.append('Da')
+                param_names.append('theta')
+                param_names.append('phi')
 
             # Ellipsoidal diffusion.
-            elif relax_data_store.diff[self.run].type == 'ellipsoid':
-                self.param_names.append('tm')
-                self.param_names.append('Da')
-                self.param_names.append('Dr')
-                self.param_names.append('alpha')
-                self.param_names.append('beta')
-                self.param_names.append('gamma')
+            elif cdp.diff.type == 'ellipsoid':
+                param_names.append('tm')
+                param_names.append('Da')
+                param_names.append('Dr')
+                param_names.append('alpha')
+                param_names.append('beta')
+                param_names.append('gamma')
 
-        # Model-free parameters (residue specific parameters).
-        if self.param_set != 'diff':
-            for i in xrange(len(relax_data_store.res[self.run])):
-                # Only add parameters for a single residue if index has a value.
-                if index != None and i != index:
-                    continue
-
+        # Model-free parameters (spin specific parameters).
+        if model_type != 'diff':
+            # Loop over the spins.
+            for spin in spin_loop(spin_id):
                 # Skip unselected residues.
-                if not relax_data_store.res[self.run][i].select:
+                if not spin.select:
                     continue
 
-                # Loop over the model-free parameters and add the names.
-                for j in xrange(len(relax_data_store.res[self.run][i].params)):
-                    self.param_names.append(relax_data_store.res[self.run][i].params[j])
+                # Add the spin specific model-free parameters.
+                param_names = param_names + spin.params
 
 
     def assemble_param_vector(self, index=None, sim_index=None, param_set=None):
