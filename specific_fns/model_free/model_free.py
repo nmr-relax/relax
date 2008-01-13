@@ -2583,40 +2583,40 @@ class Model_free_main:
             raise RelaxFault
 
 
-    def overfit_deselect(self, run):
+    def overfit_deselect(self):
         """Function for deselecting residues without sufficient data to support minimisation"""
 
         # Test sequence data exists.
-        if not relax_data_store.res.has_key(run):
-            raise RelaxNoSequenceError, run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
-        # Loop over residue data:
-        for residue in relax_data_store.res[run]:
+        # Loop over the sequence.
+        for spin in spin_loop():
             # Skip unselected data:
-            if not residue.select:
+            if not spin.select:
                 continue
 
             # Check for data structure.
-            if not hasattr(residue, 'relax_data'):
-                residue.select = 0
+            if not hasattr(spin, 'relax_data'):
+                spin.select = 0
                 continue
 
             # Require 3 or more data points
-            if len(residue.relax_data) < 3:
-                residue.select = 0
+            if len(spin.relax_data) < 3:
+                spin.select = 0
                 continue
 
             # Require at least as many data points as params to prevent over-fitting
-            if hasattr(residue, 'params'):
-                if len(residue.params) > len(residue.relax_data):
-                    residue.select = 0
+            if hasattr(spin, 'params'):
+                if len(spin.params) > len(spin.relax_data):
+                    spin.select = 0
                     continue
 
             # Test for structural data if required
             if hasattr(relax_data_store, 'diff') and relax_data_store.diff.has_key(run):
                 if relax_data_store.diff[run].type == 'spheroid' or relax_data_store.diff[run].type == 'ellipsoid':
-                    if not hasattr(residue, 'xh_vect'):
-                        residue.select = 0
+                    if not hasattr(spin, 'xh_vect'):
+                        spin.select = 0
                         continue
 
 
