@@ -2440,31 +2440,27 @@ class Model_free_main:
                     relax_data_store.warning[self.run] = self.warning
 
 
-    def model_setup(self, run=None, model=None, equation=None, params=None, res_num=None):
+    def model_setup(self, model=None, equation=None, params=None, spin_id=None):
         """Function for updating various data structures depending on the model selected."""
 
-        # Test that no diffusion tensor exists for the run if local tm is a parameter in the model.
+        # Test that no diffusion tensor exists if local tm is a parameter in the model.
         if params:
             for param in params:
-                if param == 'local_tm' and relax_data_store.diff.has_key(run):
-                    raise RelaxTensorError, run
+                if param == 'local_tm' and hasattr(relax_data_store, 'diff'):
+                    raise RelaxTensorError, 'diffusion'
 
         # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[run])):
-            # If res_num is set, then skip all other residues.
-            if res_num != None and res_num != relax_data_store.res[run][i].num:
-                continue
-
+        for spin in spin_loop(spin_id):
             # Initialise the data structures (if needed).
-            self.data_init(relax_data_store.res[run][i])
+            self.data_init(spin)
 
             # Model-free model, equation, and parameter types.
             if model:
-                relax_data_store.res[run][i].model = model
+                spin.model = model
             if equation:
-                relax_data_store.res[run][i].equation = equation
+                spin.equation = equation
             if params:
-                relax_data_store.res[run][i].params = params
+                spin.params = params
 
 
     def model_statistics(self, run=None, instance=None, global_stats=None):
