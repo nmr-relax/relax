@@ -728,8 +728,12 @@ class Model_free_main:
         self.model_setup(model, equation, params, spin_id)
 
 
-    def data_init(self, data):
-        """Function for initialising the data structures."""
+    def data_init(self, spin):
+        """Function for initialising the spin specific data structures.
+
+        @param spin:    The spin data container.
+        @type spin:     SpinContainer instance
+        """
 
         # Get the data names.
         data_names = self.data_names()
@@ -764,9 +768,9 @@ class Model_free_main:
             if name in none_data:
                 init_data = None
 
-            # If the name is not in 'data', add it.
-            if not hasattr(data, name):
-                setattr(data, name, init_data)
+            # If the name is not in 'spin', add it.
+            if not hasattr(spin, name):
+                setattr(spin, name, init_data)
 
 
     def data_names(self, set='all'):
