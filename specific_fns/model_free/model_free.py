@@ -1468,66 +1468,84 @@ class Model_free_main:
         return self.param_vector
 
 
-    def grid_search(self, run, lower, upper, inc, constraints, verbosity, sim_index=None):
-        """The grid search function."""
+    def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
+        """The model-free grid search function.
 
-        # Arguments.
-        self.lower = lower
-        self.upper = upper
-        self.inc = inc
+        @param lower:       The lower bounds of the grid search which must be equal to the number of
+                            parameters in the model.
+        @type lower:        array of numbers
+        @param upper:       The upper bounds of the grid search which must be equal to the number of
+                            parameters in the model.
+        @type upper:        array of numbers
+        @param inc:         The increments for each dimension of the space for the grid search.  The
+                            number of elements in the array must equal to the number of parameters
+                            in the model.
+        @type inc:          array of int
+        @param constraints: If True, constraints are applied during the grid search (elinating parts
+                            of the grid).  If False, no constraints are used.
+        @type constraints:  bool
+        @param verbosity:   A flag specifying the amount of information to print.  The higher the
+                            value, the greater the verbosity.
+        @type verbosity:    int
+        @param sim_index:   The index of the simulation to apply the grid search to.  If None, the
+                            normal model is optimised.
+        @type sim_index:    int
+        """
 
-        # Minimisation.
-        self.minimise(run=run, min_algor='grid', constraints=constraints, verbosity=verbosity, sim_index=sim_index)
-
-
-    def grid_search_setup(self, index=None):
-        """The grid search setup function."""
+        # Create the initial parameter vector.
+        param_vector = self.assemble_param_vector()
 
         # The length of the parameter array.
-        n = len(self.param_vector)
+        n = len(param_vector)
 
         # Make sure that the length of the parameter array is > 0.
         if n == 0:
             print "Cannot run a grid search on a model with zero parameters, skipping the grid search."
 
         # Lower bounds.
-        if self.lower != None:
-            if len(self.lower) != n:
+        if lower != None:
+            if len(lower) != n:
                 raise RelaxLenError, ('lower bounds', n)
 
         # Upper bounds.
-        if self.upper != None:
-            if len(self.upper) != n:
+        if upper != None:
+            if len(upper) != n:
                 raise RelaxLenError, ('upper bounds', n)
 
         # Increment.
-        if type(self.inc) == list:
-            if len(self.inc) != n:
+        if type(inc) == list:
+            if len(inc) != n:
                 raise RelaxLenError, ('increment', n)
-            inc = self.inc
-        elif type(self.inc) == int:
+            inc = inc
+        elif type(inc) == int:
             temp = []
             for j in xrange(n):
-                temp.append(self.inc)
+                temp.append(inc)
             inc = temp
 
         # Minimisation options initialisation.
         min_options = []
         m = 0
 
+        # Determine the parameter set type.
+        param_set = self.determine_param_set_type()
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
         # Minimisation options for diffusion tensor parameters.
-        if self.param_set == 'diff' or self.param_set == 'all':
+        if param_set == 'diff' or param_set == 'all':
             # Spherical diffusion {tm}.
-            if relax_data_store.diff[self.run].type == 'sphere':
+            if cdp.diff.type == 'sphere':
                 min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
                 m = m + 1
 
             # Spheroidal diffusion {tm, Da, theta, phi}.
-            if relax_data_store.diff[self.run].type == 'spheroid':
+            if cdp.diff.type == 'spheroid':
                 min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
-                if relax_data_store.diff[self.run].spheroid_type == 'prolate':
+                if cdp.diff.spheroid_type == 'prolate':
                     min_options.append([inc[1], 0.0, 1e7])
-                elif relax_data_store.diff[self.run].spheroid_type == 'oblate':
+                elif cdp.diff.spheroid_type == 'oblate':
                     min_options.append([inc[1], -1e7, 0.0])
                 else:
                     min_options.append([inc[1], -1e7, 1e7])
@@ -1536,7 +1554,7 @@ class Model_free_main:
                 m = m + 4
 
             # Ellipsoidal diffusion {tm, Da, Dr, alpha, beta, gamma}.
-            elif relax_data_store.diff[self.run].type == 'ellipsoid':
+            elif cdp.diff.type == 'ellipsoid':
                 min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
                 min_options.append([inc[1], 0.0, 1e7])
                 min_options.append([inc[2], 0.0, 1.0])
@@ -1546,10 +1564,11 @@ class Model_free_main:
                 m = m + 6
 
         # Model-free parameters (residue specific parameters).
-        if self.param_set != 'diff':
-            for i in xrange(len(relax_data_store.res[self.run])):
+        if param_set != 'diff':
+            # Spin loop.
+            for spin in spin_loop():
                 # Skip unselected residues.
-                if not relax_data_store.res[self.run][i].select:
+                if not spin.select:
                     continue
 
                 # Only add parameters for a single residue if index has a value.
@@ -1557,29 +1576,29 @@ class Model_free_main:
                     continue
 
                 # Loop over the model-free parameters.
-                for j in xrange(len(relax_data_store.res[self.run][i].params)):
+                for j in xrange(len(spin.params)):
                     # Local tm.
-                    if relax_data_store.res[self.run][i].params[j] == 'local_tm':
+                    if spin.params[j] == 'local_tm':
                         min_options.append([inc[m], 1.0 * 1e-9, 12.0 * 1e-9])
 
                     # {S2, S2f, S2s}.
-                    elif match('S2', relax_data_store.res[self.run][i].params[j]):
+                    elif match('S2', spin.params[j]):
                         min_options.append([inc[m], 0.0, 1.0])
 
                     # {te, tf, ts}.
-                    elif match('t', relax_data_store.res[self.run][i].params[j]):
+                    elif match('t', spin.params[j]):
                         min_options.append([inc[m], 0.0, 500.0 * 1e-12])
 
                     # Rex.
-                    elif relax_data_store.res[self.run][i].params[j] == 'Rex':
-                        min_options.append([inc[m], 0.0, 5.0 / (2.0 * pi * relax_data_store.res[self.run][i].frq[0])**2])
+                    elif spin.params[j] == 'Rex':
+                        min_options.append([inc[m], 0.0, 5.0 / (2.0 * pi * spin.frq[0])**2])
 
                     # Bond length.
-                    elif relax_data_store.res[self.run][i].params[j] == 'r':
+                    elif spin.params[j] == 'r':
                         min_options.append([inc[m], 1.0 * 1e-10, 1.05 * 1e-10])
 
                     # CSA.
-                    elif relax_data_store.res[self.run][i].params[j] == 'CSA':
+                    elif spin.params[j] == 'CSA':
                         min_options.append([inc[m], -120 * 1e-6, -200 * 1e-6])
 
                     # Unknown option.
@@ -1590,28 +1609,30 @@ class Model_free_main:
                     m = m + 1
 
         # Set the lower and upper bounds if these are supplied.
-        if self.lower != None:
+        if lower != None:
             for j in xrange(n):
-                if self.lower[j] != None:
-                    min_options[j][1] = self.lower[j]
-        if self.upper != None:
+                if lower[j] != None:
+                    min_options[j][1] = lower[j]
+        if upper != None:
             for j in xrange(n):
-                if self.upper[j] != None:
-                    min_options[j][2] = self.upper[j]
+                if upper[j] != None:
+                    min_options[j][2] = upper[j]
 
         # Test if the grid is too large.
-        self.grid_size = 1
+        grid_size = 1
         for i in xrange(len(min_options)):
-            self.grid_size = self.grid_size * min_options[i][0]
-        if type(self.grid_size) == long:
-            raise RelaxError, "A grid search of size " + `self.grid_size` + " is too large."
+            grid_size = grid_size * min_options[i][0]
+        if type(grid_size) == long:
+            raise RelaxError, "A grid search of size " + `grid_size` + " is too large."
 
         # Diagonal scaling of minimisation options.
         for j in xrange(len(min_options)):
-            min_options[j][1] = min_options[j][1] / self.scaling_matrix[j, j]
-            min_options[j][2] = min_options[j][2] / self.scaling_matrix[j, j]
+            min_options[j][1] = min_options[j][1] / scaling_matrix[j, j]
+            min_options[j][2] = min_options[j][2] / scaling_matrix[j, j]
 
-        return min_options
+        # Minimisation.
+        self.minimise(min_algor='grid', min_options=min_options, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+
 
 
     def linear_constraints(self, index=None):
