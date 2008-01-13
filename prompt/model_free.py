@@ -20,8 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
 
+# relax module imports.
 import help
 from relax_errors import RelaxIntError, RelaxListError, RelaxListStrError, RelaxNoneIntError, RelaxStrError
 
@@ -90,7 +92,7 @@ class Model_free:
             raise RelaxIntError, ('sim', sim)
 
         # Execute the functional code.
-        self.__relax__.specific.model_free.copy(run1=run1, run2=run2, sim=sim)
+        model_free.copy(run1=run1, run2=run2, sim=sim)
 
 
     def create_model(self, run=None, model=None, equation=None, params=None, res_num=None):
@@ -208,7 +210,7 @@ class Model_free:
             raise RelaxNoneIntError, ('residue number', res_num)
 
         # Execute the functional code.
-        self.__relax__.specific.model_free.create_model(run=run, model=model, equation=equation, params=params, res_num=res_num)
+        model_free.create_model(run=run, model=model, equation=equation, params=params, res_num=res_num)
 
 
     def delete(self, run=None):
@@ -239,7 +241,7 @@ class Model_free:
             raise RelaxStrError, ('run', run)
 
         # Execute the functional code.
-        self.__relax__.specific.model_free.delete(run=run)
+        model_free.delete(run=run)
 
 
     def remove_tm(self, run=None, res_num=None):
@@ -288,7 +290,7 @@ class Model_free:
             raise RelaxNoneIntError, ('residue number', res_num)
 
         # Execute the functional code.
-        self.__relax__.specific.model_free.remove_tm(run=run, res_num=res_num)
+        model_free.remove_tm(run=run, res_num=res_num)
 
 
     def select_model(self, run=None, model=None, res_num=None):
@@ -448,4 +450,4 @@ class Model_free:
             raise RelaxNoneIntError, ('residue number', res_num)
 
         # Execute the functional code.
-        self.__relax__.specific.model_free.select_model(run=run, model=model, res_num=res_num)
+        model_free.select_model(run=run, model=model, res_num=res_num)
