@@ -2445,7 +2445,23 @@ class Model_free_main:
 
 
     def model_setup(self, model=None, equation=None, params=None, spin_id=None):
-        """Function for updating various data structures depending on the model selected."""
+        """Function for updating various data structures depending on the model selected.
+
+        @param model:       The name of the model.
+        @type model:        str
+        @param equation:    The equation type to use.  The 3 allowed types are:  'mf_orig' for the
+                            original model-free equations with parameters {S2, te}; 'mf_ext' for the
+                            extended model-free equations with parameters {S2f, tf, S2, ts}; and
+                            'mf_ext2' for the extended model-free equations with parameters {S2f,
+                            tf, S2s, ts}.
+        @type equation:     str
+        @param params:      A list of the parameters to include in the model.  The allowed parameter
+                            names includes those for the equation type as well as chemical exchange
+                            'Rex', the bond length 'r', and the chemical shift anisotropy 'CSA'.
+        @type params:       list of str
+        @param spin_id:     The spin identification string.
+        @type spin_id:      str
+        """
 
         # Test that no diffusion tensor exists if local tm is a parameter in the model.
         if params:
