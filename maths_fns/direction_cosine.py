@@ -20,6 +20,7 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from Numeric import dot
 from math import cos, sin
 
