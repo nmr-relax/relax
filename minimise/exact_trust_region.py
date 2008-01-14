@@ -20,12 +20,11 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
+
 from LinearAlgebra import cholesky_decomposition, eigenvectors, inverse, solve_linear_equations
 from Numeric import diagonal, dot, identity, matrixmultiply, outerproduct, sort, sqrt, transpose
 from re import match
 
-# relax module imports.
 from bfgs import Bfgs
 from newton import Newton
 from base_classes import Hessian_mods, Min, Trust_region

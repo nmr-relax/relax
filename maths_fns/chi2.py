@@ -21,7 +21,6 @@
 ###############################################################################
 
 
-# Python module imports.
 from Numeric import Float64, sum, transpose, zeros
 
 

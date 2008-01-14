@@ -20,7 +20,6 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
 from code import InteractiveConsole, softspace
 from os import F_OK, access
 import readline

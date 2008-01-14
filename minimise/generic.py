@@ -20,27 +20,25 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from re import match
 
-# relax module imports.
-from bfgs import bfgs
-from cauchy_point import cauchy_point
+from re import match
+from grid import grid
 from coordinate_descent import coordinate_descent
+from steepest_descent import steepest_descent
+from bfgs import bfgs
+from newton import newton
+from ncg import ncg
+from cauchy_point import cauchy_point
 from dogleg import dogleg
+from steihaug_cg import steihaug
 from exact_trust_region import exact_trust_region
 from fletcher_reeves_cg import fletcher_reeves
-from grid import grid
-from hestenes_stiefel_cg import hestenes_stiefel
-from levenberg_marquardt import levenberg_marquardt
-from method_of_multipliers import method_of_multipliers
-from ncg import ncg
-from newton import newton
 from polak_ribiere_cg import polak_ribiere
 from polak_ribiere_plus_cg import polak_ribiere_plus
+from hestenes_stiefel_cg import hestenes_stiefel
 from simplex import simplex
-from steepest_descent import steepest_descent
-from steihaug_cg import steihaug
+from levenberg_marquardt import levenberg_marquardt
+from method_of_multipliers import method_of_multipliers
 
 
 def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, min_options=None, func_tol=1e-25, grad_tol=None, maxiter=1e6, A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, full_output=0, print_flag=0, print_prefix=""):

@@ -22,7 +22,7 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
+
 from test_functions import *
 
 for i in xrange(1000):

@@ -20,10 +20,9 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
+
 from Numeric import dot
 
-# relax module imports.
 from base_classes import Conjugate_gradient, Line_search, Min
 
 

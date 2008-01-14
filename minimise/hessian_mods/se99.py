@@ -20,7 +20,6 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
 from LinearAlgebra import LinAlgError, cholesky_decomposition, eigenvalues, solve_linear_equations
 from MLab import tril
 from Numeric import Float64, array, dot, identity, sort, sqrt, take, transpose, zeros

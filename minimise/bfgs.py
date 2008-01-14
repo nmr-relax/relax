@@ -20,10 +20,9 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
+
 from Numeric import Float64, dot, identity, matrixmultiply, outerproduct
 
-# relax module imports.
 from base_classes import Line_search, Min
 
 

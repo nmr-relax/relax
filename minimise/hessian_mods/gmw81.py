@@ -20,7 +20,7 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
+
 from LinearAlgebra import LinAlgError, cholesky_decomposition, eigenvalues, inverse, solve_linear_equations
 from math import sqrt
 from Numeric import Float64, array, dot, identity, matrixmultiply, transpose

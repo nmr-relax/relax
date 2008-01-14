@@ -22,10 +22,9 @@
 
 # relax module imports.
 from model_free import Model_free_main
-from mf_minimise import Mf_minimise
 from molmol import Molmol
 from specific_fns.base_class import Common_functions
 
 
-class Model_free(Common_functions, Model_free_main, Mf_minimise, Molmol):
+class Model_free(Common_functions, Model_free_main, Molmol):
     """Parent class containing all the model-free specific functions."""

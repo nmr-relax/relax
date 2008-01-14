@@ -20,11 +20,10 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
 import sys
 
-# relax module imports.
 from relax_errors import RelaxFunctionError, RelaxListStrError, RelaxNoneStrListError, RelaxNoneTupleError
+
 from specific_fns.model_free import Model_free
 
 

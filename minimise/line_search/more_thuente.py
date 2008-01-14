@@ -20,12 +20,11 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
+
 import sys
 from math import sqrt
 from Numeric import copy, dot
 
-# relax module imports.
 from interpolate import cubic_int, cubic_ext, quadratic_fafbga, quadratic_gagb
 
 cubic = cubic_int

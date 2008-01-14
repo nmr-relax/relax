@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,13 +20,10 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
 import sys
 
-# relax module imports.
 import help
-from relax_errors import RelaxIntError, RelaxListError, RelaxListStrError, RelaxNoneStrError, RelaxStrError
-from specific_fns import model_free_obj
+from relax_errors import RelaxIntError, RelaxListError, RelaxListStrError, RelaxNoneIntError, RelaxStrError
 
 
 class Model_free:
@@ -42,11 +39,67 @@ class Model_free:
         self.__relax__ = relax
 
 
-    def create_model(self, model=None, equation=None, params=None, spin_id=None):
+    def copy(self, run1=None, run2=None, sim=None):
+        """Function for copying model-free data from run1 to run2.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run1:  The name of the run to copy the sequence from.
+
+        run2:  The name of the run to copy the sequence to.
+
+        sim:  The simulation number.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function will copy all model-free data from 'run1' to 'run2'.  Any model-free data in
+        'run2' will be overwritten.  If the argument 'sim' is an integer, then only data from that
+        simulation will be copied.
+
+
+        Examples
+        ~~~~~~~~
+
+        To copy all model-free data from the run 'm1' to the run 'm2', type:
+
+        relax> model_free.copy('m1', 'm2')
+        relax> model_free.copy(run1='m1', run2='m2')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "model_free.copy("
+            text = text + "run1=" + `run1`
+            text = text + ", run2=" + `run2`
+            text = text + ", sim=" + `sim` + ")"
+            print text
+
+        # The run1 argument.
+        if type(run1) != str:
+            raise RelaxStrError, ('run1', run1)
+
+        # The run2 argument.
+        if type(run2) != str:
+            raise RelaxStrError, ('run2', run2)
+
+        # The sim argument.
+        if sim != None and type(sim) != int:
+            raise RelaxIntError, ('sim', sim)
+
+        # Execute the functional code.
+        self.__relax__.specific.model_free.copy(run1=run1, run2=run2, sim=sim)
+
+
+    def create_model(self, run=None, model=None, equation=None, params=None, res_num=None):
         """Function to create a model-free model.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
+
+        run:  The run to assign the values to.
 
         model:  The name of the model-free model.
 
@@ -54,7 +107,7 @@ class Model_free:
 
         params:  The array of parameter names of the model.
 
-        spin_id:  The spin identification string.
+        res_num:  The residue number.
 
 
         Model-free equation
@@ -94,11 +147,11 @@ class Model_free:
             'CSA':  The chemical shift anisotropy.
 
 
-        Spin identification string
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Residue number
+        ~~~~~~~~~~~~~~
 
-        If 'spin_id' is supplied then the model will only be created for the corresponding spins.
-        Otherwise the model will be created for all spins.
+        If 'res_num' is supplied as an integer then the model will only be created for that residue,
+        otherwise the model will be created for all residues.
 
 
         Examples
@@ -107,28 +160,33 @@ class Model_free:
         The following commands will create the model-free model 'm1' which is based on the original
         model-free equation and contains the single parameter 'S2'.
 
-        relax> model_free.create_model('m1', 'mf_orig', ['S2'])
-        relax> model_free.create_model(model='m1', params=['S2'], equation='mf_orig')
+        relax> model_free.create_model('m1', 'm1', 'mf_orig', ['S2'])
+        relax> model_free.create_model(run='m1', model='m1', params=['S2'], equation='mf_orig')
 
 
         The following commands will create the model-free model 'large_model' which is based on the
         extended model-free equation and contains the seven parameters 'S2f', 'tf', 'S2', 'ts',
         'Rex', 'CSA', 'r'.
 
-        relax> model_free.create_model('large_model', 'mf_ext', ['S2f', 'tf', 'S2', 'ts', 'Rex',
-                                       'CSA', 'r'])
-        relax> model_free.create_model(model='large_model', params=['S2f', 'tf', 'S2', 'ts', 'Rex',
-                                       'CSA', 'r'], equation='mf_ext')
+        relax> model_free.create_model('test', 'large_model', 'mf_ext', ['S2f', 'tf', 'S2', 'ts',
+                                       'Rex', 'CSA', 'r'])
+        relax> model_free.create_model(run='test', model='large_model', params=['S2f', 'tf', 'S2',
+                                       'ts', 'Rex', 'CSA', 'r'], equation='mf_ext')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "model_free.create_model("
-            text = text + "model=" + `model`
+            text = text + "run=" + `run`
+            text = text + ", model=" + `model`
             text = text + ", equation=" + `equation`
             text = text + ", params=" + `params`
-            text = text + ", spin_id=" + `spin_id` + ")"
+            text = text + ", res_num=" + `res_num` + ")"
             print text
+
+        # Run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
 
         # Model argument.
         if type(model) != str:
@@ -140,90 +198,106 @@ class Model_free:
 
         # Parameter types.
         if type(params) != list:
-            raise RelaxListStrError, ('parameters', params)
-        else:
-            # Empty list.
-            if params == []:
-                raise RelaxListStrError, ('parameters', params)
+            raise RelaxListError, ('parameter types', params)
+        for i in xrange(len(params)):
+            if type(params[i]) != str:
+                raise RelaxListStrError, ('parameter types', params)
 
-            # Check the values.
-            for i in xrange(len(params)):
-                if type(params[i]) != str:
-                    raise RelaxListStrError, ('parameters', params)
-
-        # Spin identification string.
-        if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identification string', spin_id)
+        # Residue number.
+        if res_num != None and type(res_num) != int:
+            raise RelaxNoneIntError, ('residue number', res_num)
 
         # Execute the functional code.
-        model_free_obj.create_model(model=model, equation=equation, params=params, spin_id=spin_id)
+        self.__relax__.specific.model_free.create_model(run=run, model=model, equation=equation, params=params, res_num=res_num)
 
 
-    def delete(self):
-        """Function for deleting all model-free data from the current data pipe.
+    def delete(self, run=None):
+        """Function for deleting all model-free data corresponding to the run.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        run:  The name of the run.
+
 
         Examples
         ~~~~~~~~
 
-        To delete all model-free data, type:
+        To delete all model-free data corresponding to the run 'm2', type:
 
-        relax> model_free.delete()
+        relax> model_free.delete('m2')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "model_free.delete()"
+            text = sys.ps3 + "model_free.delete("
+            text = text + "run=" + `run` + ")"
             print text
 
+        # The run name.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
         # Execute the functional code.
-        model_free_obj.delete()
+        self.__relax__.specific.model_free.delete(run=run)
 
 
-    def remove_tm(self, spin_id=None):
+    def remove_tm(self, run=None, res_num=None):
         """Function for removing the local tm parameter from a model.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        spin_id:  The spin identification string.
+        run:  The run to assign the values to.
+
+        res_num:  The residue number.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function will remove the local tm parameter from the model-free parameter set.  If
-        there is no local tm parameter within the set nothing will happen.
+        This function will remove the local tm parameter from the model-free parameters of the given
+        run.  Model-free parameters must already exist within the run yet, if there is no local tm,
+        nothing will happen.
 
-        If no spin identification string is given, then the function will apply to all spins.
+        If no residue number is given, then the function will apply to all residues.
 
 
         Examples
         ~~~~~~~~
 
-        The following command will remove the parameter 'tm':
+        The following commands will remove the parameter 'tm' from the run 'local_tm':
 
-        relax> model_free.remove_tm()
+        relax> model_free.remove_tm('local_tm')
+        relax> model_free.remove_tm(run='local_tm')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "model_free.remove_tm("
-            text = text + "spin_id=" + `spin_id` + ")"
+            text = text + "run=" + `run`
+            text = text + ", res_num=" + `res_num` + ")"
             print text
 
-        # Spin identification string.
-        if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identification string', spin_id)
+        # Run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
+        # Residue number.
+        if res_num != None and type(res_num) != int:
+            raise RelaxNoneIntError, ('residue number', res_num)
 
         # Execute the functional code.
-        model_free_obj.remove_tm(spin_id=spin_id)
+        self.__relax__.specific.model_free.remove_tm(run=run, res_num=res_num)
 
 
-    def select_model(self, model=None, spin_id=None):
+    def select_model(self, run=None, model=None, res_num=None):
         """Function for the selection of a preset model-free model.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
+
+        run:  The run to assign the values to.
 
         model:  The name of the preset model.
 
@@ -336,37 +410,42 @@ class Model_free:
 
 
 
-        Spin identification string
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Residue number
+        ~~~~~~~~~~~~~~
 
-        If 'spin_id' is supplied then the model will only be selected for the corresponding spins.
-        Otherwise the model will be selected for all spins.
+        If 'res_num' is supplied as an integer then the model will only be selected for that
+        residue, otherwise the model will be selected for all residues.
 
 
 
         Examples
         ~~~~~~~~
 
-        To pick model 'm1' for all selected spins, type:
+        To pick model 'm1' for all selected residues and assign it to the run 'mixed', type:
 
-        relax> model_free.select_model('m1')
-        relax> model_free.select_model(model='m1')
+        relax> model_free.select_model('mixed', 'm1')
+        relax> model_free.select_model(run='mixed', model='m1')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "model_free.select_model("
-            text = text + "model=" + `model`
-            text = text + ", spin_id=" + `spin_id` + ")"
+            text = text + "run=" + `run`
+            text = text + ", model=" + `model`
+            text = text + ", res_num=" + `res_num` + ")"
             print text
 
+        # Run argument.
+        if type(run) != str:
+            raise RelaxStrError, ('run', run)
+
         # Model argument.
-        if type(model) != str:
+        elif type(model) != str:
             raise RelaxStrError, ('model', model)
 
-        # Spin identification string.
-        if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identification string', spin_id)
+        # Residue number.
+        if res_num != None and type(res_num) != int:
+            raise RelaxNoneIntError, ('residue number', res_num)
 
         # Execute the functional code.
-        model_free_obj.select_model(model=model, spin_id=spin_id)
+        self.__relax__.specific.model_free.select_model(run=run, model=model, res_num=res_num)

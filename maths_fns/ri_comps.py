@@ -246,7 +246,6 @@
 #            rex_sigma_noe_hess      =  0
 #
 
-# Python module imports.
 from math import pi
 from Numeric import Float64, zeros
 

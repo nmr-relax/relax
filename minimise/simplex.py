@@ -20,10 +20,9 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
+
 from Numeric import Float64, add, argsort, average, sum, take, zeros
 
-# relax module imports.
 from base_classes import Min
 
 

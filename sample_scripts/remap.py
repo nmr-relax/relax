@@ -1,6 +1,5 @@
 # Script for mapping the model-free space.
 
-# Python module imports.
 from Numeric import Float64, array
 
 

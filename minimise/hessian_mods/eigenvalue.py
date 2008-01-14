@@ -20,7 +20,7 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
+
 from LinearAlgebra import eigenvectors, inverse
 from Numeric import matrixmultiply, sort
 

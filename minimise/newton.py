@@ -20,13 +20,12 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
+
 from LinearAlgebra import cholesky_decomposition, eigenvectors, inverse, solve_linear_equations
 from math import acos
 from Numeric import Float64, array, dot, identity, matrixmultiply, sort, sqrt, trace, transpose, zeros
 from re import match
 
-# relax module imports.
 from base_classes import Hessian_mods, Line_search, Min
 
 
