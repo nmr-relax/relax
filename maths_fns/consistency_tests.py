@@ -21,9 +21,11 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 from Numeric import Float64, zeros
 from math import pi
 
+# relax module imports.
 from ri_comps import calc_fixed_csa, calc_fixed_dip, comp_csa_const_func, comp_dip_const_func
 
 
