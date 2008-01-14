@@ -67,7 +67,7 @@ class Modsel(TestCase):
             self.relax.interpreter._Relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
 
             # Set the diffusion tensors.
-            self.relax.interpreter._Diffusion_tensor.init('sphere', tensors[i], fixed=0)
+            self.relax.interpreter._Diffusion_tensor.init(tensors[i], fixed=0)
 
         # Set some global stats.
         relax_data_store['sphere'].chi2 = 200

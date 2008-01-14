@@ -23,7 +23,13 @@
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError
-from specific_fns.relax_fit import C_module_exp_fn
+
+# Relaxation curve fitting modules compilation test.
+C_module_exp_fn = 1
+try:
+    from maths_fns.relax_fit import func
+except ImportError:
+    C_module_exp_fn = 0
 
 
 # The relax data storage object.
