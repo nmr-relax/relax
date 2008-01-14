@@ -20,8 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
 import sys
 
+# relax module imports.
 from relax_errors import RelaxError, RelaxNoneListError, RelaxStrError
 
 

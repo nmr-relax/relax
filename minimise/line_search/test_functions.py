@@ -22,10 +22,11 @@
 #                                                                             #
 ###############################################################################
 
-
+# Python module imports.
 from math import cos, pi, sin, sqrt
 from Numeric import Float64, array, dot
 
+# relax module imports.
 from more_thuente import more_thuente
 
 

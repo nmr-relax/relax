@@ -33,20 +33,17 @@ import sys
 # relax module imports.
 from data import Data as relax_data_store
 from float import isNaN,isInf
+from generic_fns.selection import exists_mol_res_spin_data, spin_loop
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxTensorError
+import specific_fns
 
 
 
 class Model_free_main:
-    def __init__(self):
-        """Class containing functions specific to model-free analysis."""
-
-        # Class containing the Molmol specific functions.
-        self.molmol = Molmol()
-
+    """Class containing functions specific to model-free analysis."""
 
     def are_mf_params_set(self, index=None):
         """Function for testing if the model-free parameter values are set."""
@@ -101,211 +98,213 @@ class Model_free_main:
                 return data.params[j]
 
 
-    def assemble_param_names(self, index=None):
-        """Function for assembling various pieces of data into a Numeric parameter array."""
+    def assemble_param_names(self, model_type, spin_id=None):
+        """Function for assembling a list of all the model parameter names.
+
+        @param model_type:  The model-free model type.  This must be one of 'mf', 'local_tm',
+                            'diff', or 'all'.
+        @type model_type:   str
+        @param spin_id:     The spin identification string.
+        @type spin_id:      str
+        @return:            A list containing all the parameters of the model-free model.
+        @rtype:             list of str
+        """
 
         # Initialise.
-        self.param_names = []
+        param_names = []
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Diffusion tensor parameters.
-        if self.param_set == 'diff' or self.param_set == 'all':
+        if model_type == 'diff' or model_type == 'all':
             # Spherical diffusion.
-            if relax_data_store.diff[self.run].type == 'sphere':
-                self.param_names.append('tm')
+            if cdp.diff.type == 'sphere':
+                param_names.append('tm')
 
             # Spheroidal diffusion.
-            elif relax_data_store.diff[self.run].type == 'spheroid':
-                self.param_names.append('tm')
-                self.param_names.append('Da')
-                self.param_names.append('theta')
-                self.param_names.append('phi')
+            elif cdp.diff.type == 'spheroid':
+                param_names.append('tm')
+                param_names.append('Da')
+                param_names.append('theta')
+                param_names.append('phi')
 
             # Ellipsoidal diffusion.
-            elif relax_data_store.diff[self.run].type == 'ellipsoid':
-                self.param_names.append('tm')
-                self.param_names.append('Da')
-                self.param_names.append('Dr')
-                self.param_names.append('alpha')
-                self.param_names.append('beta')
-                self.param_names.append('gamma')
+            elif cdp.diff.type == 'ellipsoid':
+                param_names.append('tm')
+                param_names.append('Da')
+                param_names.append('Dr')
+                param_names.append('alpha')
+                param_names.append('beta')
+                param_names.append('gamma')
 
-        # Model-free parameters (residue specific parameters).
-        if self.param_set != 'diff':
-            for i in xrange(len(relax_data_store.res[self.run])):
-                # Only add parameters for a single residue if index has a value.
-                if index != None and i != index:
-                    continue
-
+        # Model-free parameters (spin specific parameters).
+        if model_type != 'diff':
+            # Loop over the spins.
+            for spin in spin_loop(spin_id):
                 # Skip unselected residues.
-                if not relax_data_store.res[self.run][i].select:
+                if not spin.select:
                     continue
 
-                # Loop over the model-free parameters and add the names.
-                for j in xrange(len(relax_data_store.res[self.run][i].params)):
-                    self.param_names.append(relax_data_store.res[self.run][i].params[j])
+                # Add the spin specific model-free parameters.
+                param_names = param_names + spin.params
 
 
-    def assemble_param_vector(self, index=None, sim_index=None, param_set=None):
-        """Function for assembling various pieces of data into a Numeric parameter array."""
+    def assemble_param_vector(self, model_type, spin_id=None, sim_index=None):
+        """Assemble the model-free parameter vector (as numpy array).
+
+        @param model_type:  The model-free model type.  This must be one of 'mf', 'local_tm',
+                            'diff', or 'all'.
+        @type model_type:   str
+        @param spin_id:     The spin identification string.
+        @type spin_id:      str
+        @return:            An array of the parameter values of the model-free model.
+        @rtype:             numpy array
+        """
 
         # Initialise.
         param_vector = []
-        if param_set == None:
-            param_set = self.param_set
 
-        # Monte Carlo diffusion tensor parameters.
-        if sim_index != None and (param_set == 'diff' or param_set == 'all'):
-            # Spherical diffusion.
-            if relax_data_store.diff[self.run].type == 'sphere':
-                param_vector.append(relax_data_store.diff[self.run].tm_sim[sim_index])
-
-            # Spheroidal diffusion.
-            elif relax_data_store.diff[self.run].type == 'spheroid':
-                param_vector.append(relax_data_store.diff[self.run].tm_sim[sim_index])
-                param_vector.append(relax_data_store.diff[self.run].Da_sim[sim_index])
-                param_vector.append(relax_data_store.diff[self.run].theta_sim[sim_index])
-                param_vector.append(relax_data_store.diff[self.run].phi_sim[sim_index])
-
-            # Ellipsoidal diffusion.
-            elif relax_data_store.diff[self.run].type == 'ellipsoid':
-                param_vector.append(relax_data_store.diff[self.run].tm_sim[sim_index])
-                param_vector.append(relax_data_store.diff[self.run].Da_sim[sim_index])
-                param_vector.append(relax_data_store.diff[self.run].Dr_sim[sim_index])
-                param_vector.append(relax_data_store.diff[self.run].alpha_sim[sim_index])
-                param_vector.append(relax_data_store.diff[self.run].beta_sim[sim_index])
-                param_vector.append(relax_data_store.diff[self.run].gamma_sim[sim_index])
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Diffusion tensor parameters.
-        elif param_set == 'diff' or param_set == 'all':
-            # Spherical diffusion.
-            if relax_data_store.diff[self.run].type == 'sphere':
-                param_vector.append(relax_data_store.diff[self.run].tm)
+        if model_type == 'diff' or model_type == 'all':
+            # Normal parameters.
+            if sim_index == None:
+                # Spherical diffusion.
+                if cdp.diff.type == 'sphere':
+                    param_vector.append(cdp.diff.tm)
 
-            # Spheroidal diffusion.
-            elif relax_data_store.diff[self.run].type == 'spheroid':
-                param_vector.append(relax_data_store.diff[self.run].tm)
-                param_vector.append(relax_data_store.diff[self.run].Da)
-                param_vector.append(relax_data_store.diff[self.run].theta)
-                param_vector.append(relax_data_store.diff[self.run].phi)
+                # Spheroidal diffusion.
+                elif cdp.diff.type == 'spheroid':
+                    param_vector.append(cdp.diff.tm)
+                    param_vector.append(cdp.diff.Da)
+                    param_vector.append(cdp.diff.theta)
+                    param_vector.append(cdp.diff.phi)
 
-            # Ellipsoidal diffusion.
-            elif relax_data_store.diff[self.run].type == 'ellipsoid':
-                param_vector.append(relax_data_store.diff[self.run].tm)
-                param_vector.append(relax_data_store.diff[self.run].Da)
-                param_vector.append(relax_data_store.diff[self.run].Dr)
-                param_vector.append(relax_data_store.diff[self.run].alpha)
-                param_vector.append(relax_data_store.diff[self.run].beta)
-                param_vector.append(relax_data_store.diff[self.run].gamma)
+                # Ellipsoidal diffusion.
+                elif cdp.diff.type == 'ellipsoid':
+                    param_vector.append(cdp.diff.tm)
+                    param_vector.append(cdp.diff.Da)
+                    param_vector.append(cdp.diff.Dr)
+                    param_vector.append(cdp.diff.alpha)
+                    param_vector.append(cdp.diff.beta)
+                    param_vector.append(cdp.diff.gamma)
+
+            # Monte Carlo diffusion tensor parameters.
+            else:
+                # Spherical diffusion.
+                if cdp.diff.type == 'sphere':
+                    param_vector.append(cdp.diff.tm_sim[sim_index])
+
+                # Spheroidal diffusion.
+                elif cdp.diff.type == 'spheroid':
+                    param_vector.append(cdp.diff.tm_sim[sim_index])
+                    param_vector.append(cdp.diff.Da_sim[sim_index])
+                    param_vector.append(cdp.diff.theta_sim[sim_index])
+                    param_vector.append(cdp.diff.phi_sim[sim_index])
+
+                # Ellipsoidal diffusion.
+                elif cdp.diff.type == 'ellipsoid':
+                    param_vector.append(cdp.diff.tm_sim[sim_index])
+                    param_vector.append(cdp.diff.Da_sim[sim_index])
+                    param_vector.append(cdp.diff.Dr_sim[sim_index])
+                    param_vector.append(cdp.diff.alpha_sim[sim_index])
+                    param_vector.append(cdp.diff.beta_sim[sim_index])
+                    param_vector.append(cdp.diff.gamma_sim[sim_index])
 
         # Model-free parameters (residue specific parameters).
-        if param_set != 'diff':
-            for i in xrange(len(relax_data_store.res[self.run])):
+        if model_type != 'diff':
+            # Loop over the spins.
+            for spin in spin_loop(spin_id):
                 # Skip unselected residues.
-                if not relax_data_store.res[self.run][i].select:
-                    continue
-
-                # Only add parameters for a single residue if index has a value.
-                if (param_set == 'mf' or param_set == 'local_tm') and index != None and i != index:
+                if not spin.select:
                     continue
 
                 # Loop over the model-free parameters.
-                for j in xrange(len(relax_data_store.res[self.run][i].params)):
+                for i in xrange(len(spin.params)):
                     # local tm.
-                    if relax_data_store.res[self.run][i].params[j] == 'local_tm':
-                        if relax_data_store.res[self.run][i].local_tm == None:
-                            param_vector.append(0.0)
-                        elif sim_index != None:
-                            param_vector.append(relax_data_store.res[self.run][i].local_tm_sim[sim_index])
+                    if spin.params[i] == 'local_tm':
+                        if sim_index == None:
+                            param_vector.append(spin.local_tm)
                         else:
-                            param_vector.append(relax_data_store.res[self.run][i].local_tm)
+                            param_vector.append(spin.local_tm_sim[sim_index])
 
                     # S2.
-                    elif relax_data_store.res[self.run][i].params[j] == 'S2':
-                        if relax_data_store.res[self.run][i].s2 == None:
-                            param_vector.append(0.0)
-                        elif sim_index != None:
-                            param_vector.append(relax_data_store.res[self.run][i].s2_sim[sim_index])
+                    elif spin.params[i] == 'S2':
+                        if sim_index == None:
+                            param_vector.append(spin.s2)
                         else:
-                            param_vector.append(relax_data_store.res[self.run][i].s2)
+                            param_vector.append(spin.s2_sim[sim_index])
 
                     # S2f.
-                    elif relax_data_store.res[self.run][i].params[j] == 'S2f':
-                        if relax_data_store.res[self.run][i].s2f == None:
-                            param_vector.append(0.0)
-                        elif sim_index != None:
-                            param_vector.append(relax_data_store.res[self.run][i].s2f_sim[sim_index])
+                    elif spin.params[i] == 'S2f':
+                        if sim_index == None:
+                            param_vector.append(spin.s2f)
                         else:
-                            param_vector.append(relax_data_store.res[self.run][i].s2f)
+                            param_vector.append(spin.s2f_sim[sim_index])
 
                     # S2s.
-                    elif relax_data_store.res[self.run][i].params[j] == 'S2s':
-                        if relax_data_store.res[self.run][i].s2s == None:
-                            param_vector.append(0.0)
-                        elif sim_index != None:
-                            param_vector.append(relax_data_store.res[self.run][i].s2s_sim[sim_index])
+                    elif spin.params[i] == 'S2s':
+                        if sim_index == None:
+                            param_vector.append(spin.s2s)
                         else:
-                            param_vector.append(relax_data_store.res[self.run][i].s2s)
+                            param_vector.append(spin.s2s_sim[sim_index])
 
                     # te.
-                    elif relax_data_store.res[self.run][i].params[j] == 'te':
-                        if relax_data_store.res[self.run][i].te == None:
-                            param_vector.append(0.0)
-                        elif sim_index != None:
-                            param_vector.append(relax_data_store.res[self.run][i].te_sim[sim_index])
+                    elif spin.params[i] == 'te':
+                        if sim_index == None:
+                            param_vector.append(spin.te)
                         else:
-                            param_vector.append(relax_data_store.res[self.run][i].te)
+                            param_vector.append(spin.te_sim[sim_index])
 
                     # tf.
-                    elif relax_data_store.res[self.run][i].params[j] == 'tf':
-                        if relax_data_store.res[self.run][i].tf == None:
-                            param_vector.append(0.0)
-                        elif sim_index != None:
-                            param_vector.append(relax_data_store.res[self.run][i].tf_sim[sim_index])
+                    elif spin.params[i] == 'tf':
+                        if sim_index == None:
+                            param_vector.append(spin.tf)
                         else:
-                            param_vector.append(relax_data_store.res[self.run][i].tf)
+                            param_vector.append(spin.tf_sim[sim_index])
 
                     # ts.
-                    elif relax_data_store.res[self.run][i].params[j] == 'ts':
-                        if relax_data_store.res[self.run][i].ts == None:
-                            param_vector.append(0.0)
-                        elif sim_index != None:
-                            param_vector.append(relax_data_store.res[self.run][i].ts_sim[sim_index])
+                    elif spin.params[i] == 'ts':
+                        if sim_index == None:
+                            param_vector.append(spin.ts)
                         else:
-                            param_vector.append(relax_data_store.res[self.run][i].ts)
+                            param_vector.append(spin.ts_sim[sim_index])
 
                     # Rex.
-                    elif relax_data_store.res[self.run][i].params[j] == 'Rex':
-                        if relax_data_store.res[self.run][i].rex == None:
-                            param_vector.append(0.0)
-                        elif sim_index != None:
-                            param_vector.append(relax_data_store.res[self.run][i].rex_sim[sim_index])
+                    elif spin.params[i] == 'Rex':
+                        if sim_index == None:
+                            param_vector.append(spin.rex)
                         else:
-                            param_vector.append(relax_data_store.res[self.run][i].rex)
+                            param_vector.append(spin.rex_sim[sim_index])
 
                     # r.
-                    elif relax_data_store.res[self.run][i].params[j] == 'r':
-                        if relax_data_store.res[self.run][i].r == None:
-                            param_vector.append(0.0)
-                        elif sim_index != None:
-                            param_vector.append(relax_data_store.res[self.run][i].r_sim[sim_index])
+                    elif spin.params[i] == 'r':
+                        if sim_index == None:
+                            param_vector.append(spin.r)
                         else:
-                            param_vector.append(relax_data_store.res[self.run][i].r)
+                            param_vector.append(spin.r_sim[sim_index])
 
                     # CSA.
-                    elif relax_data_store.res[self.run][i].params[j] == 'CSA':
-                        if relax_data_store.res[self.run][i].csa == None:
-                            param_vector.append(0.0)
-                        elif sim_index != None:
-                            param_vector.append(relax_data_store.res[self.run][i].csa_sim[sim_index])
+                    elif spin.params[i] == 'CSA':
+                        if sim_index == None:
+                            param_vector.append(spin.csa)
                         else:
-                            param_vector.append(relax_data_store.res[self.run][i].csa)
+                            param_vector.append(spin.csa_sim[sim_index])
 
                     # Unknown parameter.
                     else:
                         raise RelaxError, "Unknown parameter."
 
-        # Return a Numeric array.
-        return array(param_vector, Float64)
+        # Replace all instances of None with 0.0 to allow the list to be converted to a numpy array.
+        for i in xrange(len(param_vector)):
+            if param_vector[i] == None:
+                param_vector[i] = 0.0
+
+        # Return a numpy array.
+        return array(param_vector, float64)
 
 
     def assemble_scaling_matrix(self, index=None, scaling=1):
@@ -393,238 +392,6 @@ class Model_free_main:
                     i = i + 1
 
 
-    def back_calc(self, run=None, index=None, ri_label=None, frq_label=None, frq=None):
-        """Back-calculation of relaxation data from the model-free parameter values."""
-
-        # Run argument.
-        self.run = run
-
-        # Get the relaxation value from the minimise function.
-        value = self.minimise(run=self.run, min_algor='back_calc', min_options=(index, ri_label, frq_label, frq))
-
-        # Return the relaxation value.
-        return value
-
-
-    def calculate(self, run=None, res_num=None, verbosity=1, sim_index=None):
-        """Calculation of the model-free chi-squared value."""
-
-        # Arguments.
-        self.run = run
-        self.verbosity = verbosity
-
-        # Test if the sequence data for self.run is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
-
-        # The residue index.
-        index = None
-        if res_num != None:
-            # Loop over the sequence.
-            for i in xrange(len(relax_data_store.res[self.run])):
-                # Found the residue.
-                if relax_data_store.res[self.run][i].num == res_num:
-                    index = i
-                    break
-
-            # Can't find the residue.
-            if index == None:
-                raise RelaxNoResError, res_num
-
-        # Determine the parameter set type.
-        self.param_set = self.determine_param_set_type()
-
-        # Test if diffusion tensor data for the run exists.
-        if self.param_set != 'local_tm' and not relax_data_store.diff.has_key(self.run):
-            raise RelaxNoTensorError, self.run
-
-        # Test if the PDB file has been loaded.
-        if self.param_set != 'local_tm' and relax_data_store.diff[self.run].type != 'sphere' and not relax_data_store.pdb.has_key(self.run):
-            raise RelaxNoPdbError, self.run
-
-        # Test if the nucleus type has been set.
-        if not hasattr(relax_data_store, 'gx'):
-            raise RelaxNucleusError
-
-        # Loop over the residues.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Alias the data structure.
-            data = relax_data_store.res[self.run][i]
-
-            # Skip unselected residues.
-            if not data.select:
-                continue
-
-            # Single residue.
-            if index != None and index != i:
-                continue
-
-            # Test if the model-free model has been setup.
-            if not data.model:
-                raise RelaxNoModelError, self.run
-
-            # Test if unit vectors exist.
-            if self.param_set != 'local_tm' and relax_data_store.diff[self.run].type != 'sphere' and not hasattr(data, 'xh_vect'):
-                raise RelaxNoVectorsError, self.run
-
-            # Test if the model-free parameter values exist.
-            unset_param = self.are_mf_params_set(i)
-            if unset_param != None:
-                raise RelaxNoValueError, unset_param
-
-            # Test if the CSA value has been set.
-            if not hasattr(data, 'csa') or data.csa == None:
-                raise RelaxNoValueError, "CSA"
-
-            # Test if the bond length value has been set.
-            if not hasattr(data, 'r') or data.r == None:
-                raise RelaxNoValueError, "bond length"
-
-            # Skip residues where there is no data or errors.
-            if not hasattr(data, 'relax_data') or not hasattr(data, 'relax_error'):
-                continue
-
-            # Make sure that the errors are strictly positive numbers.
-            for j in xrange(len(data.relax_error)):
-                if data.relax_error[j] == 0.0:
-                    raise RelaxError, "Zero error for residue '" + `data.num` + " " + data.name + "', calculation not possible."
-                elif data.relax_error[j] < 0.0:
-                    raise RelaxError, "Negative error for residue '" + `data.num` + " " + data.name + "', calculation not possible."
-
-            # Create the initial parameter vector.
-            self.param_vector = self.assemble_param_vector(index=i, sim_index=sim_index)
-
-            # Repackage the data.
-            if sim_index == None:
-                relax_data = [data.relax_data]
-                r = [data.r]
-                csa = [data.csa]
-            else:
-                relax_data = [data.relax_sim_data[sim_index]]
-                r = [data.r_sim[sim_index]]
-                csa = [data.csa_sim[sim_index]]
-
-            # Vectors.
-            if self.param_set != 'local_tm' and relax_data_store.diff[self.run].type != 'sphere':
-                xh_unit_vectors = [data.xh_vect]
-            else:
-                xh_unit_vectors = [None]
-
-            # Count the number of model-free parameters for the residue index.
-            num_params = [len(data.params)]
-
-            # Repackage the parameter values for minimising just the diffusion tensor parameters.
-            param_values = [self.assemble_param_vector(param_set='mf')]
-
-            # Convert to Numeric arrays.
-            relax_data = [array(data.relax_data, Float64)]
-            relax_error = [array(data.relax_error, Float64)]
-
-            # Package the diffusion tensor parameters.
-            if self.param_set == 'local_tm':
-                diff_params = [relax_data_store.res[self.run][i].local_tm]
-                diff_type = 'sphere'
-            else:
-                # Alias.
-                diff_data = relax_data_store.diff[self.run]
-
-                # Diff type.
-                diff_type = diff_data.type
-
-                # Spherical diffusion.
-                if diff_type == 'sphere':
-                    diff_params = [diff_data.tm]
-
-                # Spheroidal diffusion.
-                elif diff_type == 'spheroid':
-                    diff_params = [diff_data.tm, diff_data.Da, diff_data.theta, diff_data.phi]
-
-                # Ellipsoidal diffusion.
-                elif diff_type == 'ellipsoid':
-                    diff_params = [diff_data.tm, diff_data.Da, diff_data.Dr, diff_data.alpha, diff_data.beta, diff_data.gamma]
-
-            # Initialise the model-free function.
-            self.mf = Mf(init_params=self.param_vector, param_set='mf', diff_type=diff_type, diff_params=diff_params, num_res=1, equations=[data.equation], param_types=[data.params], param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=[data.num_frq], frq=[data.frq], num_ri=[data.num_ri], remap_table=[data.remap_table], noe_r1_table=[data.noe_r1_table], ri_labels=[data.ri_labels], gx=relax_data_store.gx, gh=relax_data_store.gh, g_ratio=relax_data_store.g_ratio, h_bar=relax_data_store.h_bar, mu0=relax_data_store.mu0, num_params=num_params, vectors=xh_unit_vectors)
-
-            # Chi-squared calculation.
-            try:
-                chi2 = self.mf.func(self.param_vector)
-            except OverflowError:
-                chi2 = 1e200
-
-            # Global chi-squared value.
-            if self.param_set == 'all' or self.param_set == 'diff':
-                relax_data_store.chi2[self.run] = relax_data_store.chi2[self.run] + chi2
-            else:
-                relax_data_store.res[self.run][i].chi2 = chi2
-
-
-    def copy(self, run1=None, run2=None, sim=None):
-        """Function for copying all model-free data from run1 to run2."""
-
-        # Test if run1 exists.
-        if not run1 in relax_data_store.run_names:
-            raise RelaxNoPipeError, run1
-
-        # Test if run2 exists.
-        if not run2 in relax_data_store.run_names:
-            raise RelaxNoPipeError, run2
-
-        # Test if the run type of run1 is set to 'mf'.
-        function_type = relax_data_store.run_types[relax_data_store.run_names.index(run1)]
-        if function_type != 'mf':
-            raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
-
-        # Test if the run type of run2 is set to 'mf'.
-        function_type = relax_data_store.run_types[relax_data_store.run_names.index(run2)]
-        if function_type != 'mf':
-            raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
-
-        # Test if the sequence data for run1 is loaded.
-        if not relax_data_store.res.has_key(run1):
-            raise RelaxNoSequenceError, run1
-
-        # Test if the sequence data for run2 is loaded.
-        if not relax_data_store.res.has_key(run2):
-            raise RelaxNoSequenceError, run2
-
-        # Get all data structure names.
-        names = self.data_names()
-
-        # Copy the data.
-        for i in xrange(len(relax_data_store.res[run1])):
-            # Remap the data structure 'relax_data_store.res[run1][i]'.
-            data1 = relax_data_store.res[run1][i]
-            data2 = relax_data_store.res[run2][i]
-
-            # Loop through the data structure names.
-            for name in names:
-                # All data.
-                if not sim:
-                    # Skip the data structure if it does not exist.
-                    if not hasattr(data1, name):
-                        continue
-
-                    # Copy the data structure.
-                    setattr(data2, name, deepcopy(getattr(data1, name)))
-
-                # Copy just the simulation data for the simulation 'sim'.
-                else:
-                    # Sim data name
-                    name = name + '_sim'
-
-                    # Skip the data structure if it does not exist in both runs.
-                    if not hasattr(data1, name) or not hasattr(data2, name):
-                        continue
-
-                    # Get the objects.
-                    object1 = getattr(data1, name)
-                    object2 = getattr(data2, name)
-
-                    # Copy the data.
-                    object2[sim] = object1[sim]
-
-
     def create_mc_data(self, run, i):
         """Function for creating the Monte Carlo Ri data."""
 
@@ -650,24 +417,37 @@ class Model_free_main:
         return data
 
 
-    def create_model(self, run=None, model=None, equation=None, params=None, res_num=None):
-        """Function to create a model-free model."""
+    def create_model(self, model=None, equation=None, params=None, spin_id=None):
+        """Function for creating a custom model-free model.
 
-        # Run argument.
-        self.run = run
+        @param model:       The name of the model.
+        @type model:        str
+        @param equation:    The equation type to use.  The 3 allowed types are:  'mf_orig' for the
+                            original model-free equations with parameters {S2, te}; 'mf_ext' for the
+                            extended model-free equations with parameters {S2f, tf, S2, ts}; and
+                            'mf_ext2' for the extended model-free equations with parameters {S2f,
+                            tf, S2s, ts}.
+        @type equation:     str
+        @param params:      A list of the parameters to include in the model.  The allowed parameter
+                            names includes those for the equation type as well as chemical exchange
+                            'Rex', the bond length 'r', and the chemical shift anisotropy 'CSA'.
+        @type params:       list of str
+        @param spin_id:     The spin identification string.
+        @type spin_id:      str
+        """
 
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current data pipe exists.
+        if not relax_data_store.current_pipe:
+            raise RelaxNoPipeError
 
-        # Test if the run type is set to 'mf'.
-        function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
+        # Test if the pipe type is 'mf'.
+        function_type = relax_data_store[relax_data_store.current_pipe].pipe_type
         if function_type != 'mf':
-            raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
+            raise RelaxFuncSetupError, specific_fns.get_string(function_type)
 
         # Test if sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Check the validity of the model-free equation type.
         valid_types = ['mf_orig', 'mf_ext', 'mf_ext2']
@@ -781,11 +561,15 @@ class Model_free_main:
                 raise RelaxError, "The parameter array " + `params` + " contains an invalid combination of parameters."
 
         # Set up the model.
-        self.model_setup(run, model, equation, params, res_num)
+        self.model_setup(model, equation, params, spin_id)
 
 
-    def data_init(self, data):
-        """Function for initialising the data structures."""
+    def data_init(self, spin):
+        """Function for initialising the spin specific data structures.
+
+        @param spin:    The spin data container.
+        @type spin:     SpinContainer instance
+        """
 
         # Get the data names.
         data_names = self.data_names()
@@ -820,9 +604,9 @@ class Model_free_main:
             if name in none_data:
                 init_data = None
 
-            # If the name is not in 'data', add it.
-            if not hasattr(data, name):
-                setattr(data, name, init_data)
+            # If the name is not in 'spin', add it.
+            if not hasattr(spin, name):
+                setattr(spin, name, init_data)
 
 
     def data_names(self, set='all'):
@@ -1520,152 +1304,6 @@ class Model_free_main:
         return self.param_vector
 
 
-    def grid_search(self, run, lower, upper, inc, constraints, verbosity, sim_index=None):
-        """The grid search function."""
-
-        # Arguments.
-        self.lower = lower
-        self.upper = upper
-        self.inc = inc
-
-        # Minimisation.
-        self.minimise(run=run, min_algor='grid', constraints=constraints, verbosity=verbosity, sim_index=sim_index)
-
-
-    def grid_search_setup(self, index=None):
-        """The grid search setup function."""
-
-        # The length of the parameter array.
-        n = len(self.param_vector)
-
-        # Make sure that the length of the parameter array is > 0.
-        if n == 0:
-            print "Cannot run a grid search on a model with zero parameters, skipping the grid search."
-
-        # Lower bounds.
-        if self.lower != None:
-            if len(self.lower) != n:
-                raise RelaxLenError, ('lower bounds', n)
-
-        # Upper bounds.
-        if self.upper != None:
-            if len(self.upper) != n:
-                raise RelaxLenError, ('upper bounds', n)
-
-        # Increment.
-        if type(self.inc) == list:
-            if len(self.inc) != n:
-                raise RelaxLenError, ('increment', n)
-            inc = self.inc
-        elif type(self.inc) == int:
-            temp = []
-            for j in xrange(n):
-                temp.append(self.inc)
-            inc = temp
-
-        # Minimisation options initialisation.
-        min_options = []
-        m = 0
-
-        # Minimisation options for diffusion tensor parameters.
-        if self.param_set == 'diff' or self.param_set == 'all':
-            # Spherical diffusion {tm}.
-            if relax_data_store.diff[self.run].type == 'sphere':
-                min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
-                m = m + 1
-
-            # Spheroidal diffusion {tm, Da, theta, phi}.
-            if relax_data_store.diff[self.run].type == 'spheroid':
-                min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
-                if relax_data_store.diff[self.run].spheroid_type == 'prolate':
-                    min_options.append([inc[1], 0.0, 1e7])
-                elif relax_data_store.diff[self.run].spheroid_type == 'oblate':
-                    min_options.append([inc[1], -1e7, 0.0])
-                else:
-                    min_options.append([inc[1], -1e7, 1e7])
-                min_options.append([inc[2], 0.0, pi])
-                min_options.append([inc[3], 0.0, pi])
-                m = m + 4
-
-            # Ellipsoidal diffusion {tm, Da, Dr, alpha, beta, gamma}.
-            elif relax_data_store.diff[self.run].type == 'ellipsoid':
-                min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
-                min_options.append([inc[1], 0.0, 1e7])
-                min_options.append([inc[2], 0.0, 1.0])
-                min_options.append([inc[3], 0.0, pi])
-                min_options.append([inc[4], 0.0, pi])
-                min_options.append([inc[5], 0.0, pi])
-                m = m + 6
-
-        # Model-free parameters (residue specific parameters).
-        if self.param_set != 'diff':
-            for i in xrange(len(relax_data_store.res[self.run])):
-                # Skip unselected residues.
-                if not relax_data_store.res[self.run][i].select:
-                    continue
-
-                # Only add parameters for a single residue if index has a value.
-                if index != None and i != index:
-                    continue
-
-                # Loop over the model-free parameters.
-                for j in xrange(len(relax_data_store.res[self.run][i].params)):
-                    # Local tm.
-                    if relax_data_store.res[self.run][i].params[j] == 'local_tm':
-                        min_options.append([inc[m], 1.0 * 1e-9, 12.0 * 1e-9])
-
-                    # {S2, S2f, S2s}.
-                    elif match('S2', relax_data_store.res[self.run][i].params[j]):
-                        min_options.append([inc[m], 0.0, 1.0])
-
-                    # {te, tf, ts}.
-                    elif match('t', relax_data_store.res[self.run][i].params[j]):
-                        min_options.append([inc[m], 0.0, 500.0 * 1e-12])
-
-                    # Rex.
-                    elif relax_data_store.res[self.run][i].params[j] == 'Rex':
-                        min_options.append([inc[m], 0.0, 5.0 / (2.0 * pi * relax_data_store.res[self.run][i].frq[0])**2])
-
-                    # Bond length.
-                    elif relax_data_store.res[self.run][i].params[j] == 'r':
-                        min_options.append([inc[m], 1.0 * 1e-10, 1.05 * 1e-10])
-
-                    # CSA.
-                    elif relax_data_store.res[self.run][i].params[j] == 'CSA':
-                        min_options.append([inc[m], -120 * 1e-6, -200 * 1e-6])
-
-                    # Unknown option.
-                    else:
-                        raise RelaxError, "Unknown model-free parameter."
-
-                    # Increment m.
-                    m = m + 1
-
-        # Set the lower and upper bounds if these are supplied.
-        if self.lower != None:
-            for j in xrange(n):
-                if self.lower[j] != None:
-                    min_options[j][1] = self.lower[j]
-        if self.upper != None:
-            for j in xrange(n):
-                if self.upper[j] != None:
-                    min_options[j][2] = self.upper[j]
-
-        # Test if the grid is too large.
-        self.grid_size = 1
-        for i in xrange(len(min_options)):
-            self.grid_size = self.grid_size * min_options[i][0]
-        if type(self.grid_size) == long:
-            raise RelaxError, "A grid search of size " + `self.grid_size` + " is too large."
-
-        # Diagonal scaling of minimisation options.
-        for j in xrange(len(min_options)):
-            min_options[j][1] = min_options[j][1] / self.scaling_matrix[j, j]
-            min_options[j][2] = min_options[j][2] / self.scaling_matrix[j, j]
-
-        return min_options
-
-
     def linear_constraints(self, index=None):
         """Function for setting up the model-free linear constraint matrices A and b.
 
@@ -2016,511 +1654,43 @@ class Model_free_main:
             return [-100 * 1e-6, -300 * 1e-6]
 
 
-    def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, scaling=1, verbosity=0, sim_index=None):
-        """Model-free minimisation.
+    def model_setup(self, model=None, equation=None, params=None, spin_id=None):
+        """Function for updating various data structures depending on the model selected.
 
-        Three types of parameter sets exist for which minimisation is different.  These are:
-            'mf' - Model-free parameters for single residues.
-            'diff' - Diffusion tensor parameters.
-            'all' - All model-free and all diffusion tensor parameters.
+        @param model:       The name of the model.
+        @type model:        str
+        @param equation:    The equation type to use.  The 3 allowed types are:  'mf_orig' for the
+                            original model-free equations with parameters {S2, te}; 'mf_ext' for the
+                            extended model-free equations with parameters {S2f, tf, S2, ts}; and
+                            'mf_ext2' for the extended model-free equations with parameters {S2f,
+                            tf, S2s, ts}.
+        @type equation:     str
+        @param params:      A list of the parameters to include in the model.  The allowed parameter
+                            names includes those for the equation type as well as chemical exchange
+                            'Rex', the bond length 'r', and the chemical shift anisotropy 'CSA'.
+        @type params:       list of str
+        @param spin_id:     The spin identification string.
+        @type spin_id:      str
         """
 
-        # Arguments.
-        self.run = run
-        self.verbosity = verbosity
-
-        # Test if the sequence data for self.run is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
-
-        # Test if the model-free model has been setup.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Skip unselected residues.
-            if not relax_data_store.res[self.run][i].select:
-                continue
-
-            # Not setup.
-            if not relax_data_store.res[self.run][i].model:
-                raise RelaxNoModelError, self.run
-
-        # Determine the parameter set type.
-        self.param_set = self.determine_param_set_type()
-
-        # Parameter set for the back-calculate function.
-        if min_algor == 'back_calc' and self.param_set != 'local_tm':
-            self.param_set = 'mf'
-
-        # Test if diffusion tensor data for the run exists.
-        if self.param_set != 'local_tm' and not relax_data_store.diff.has_key(self.run):
-            raise RelaxNoTensorError, self.run
-
-        # Tests for the PDB file and unit vectors.
-        if self.param_set != 'local_tm' and relax_data_store.diff[self.run].type != 'sphere':
-            # Test if the PDB file has been loaded.
-            if not relax_data_store.pdb.has_key(self.run):
-                raise RelaxNoPdbError, self.run
-
-            # Test if unit vectors exist.
-            for i in xrange(len(relax_data_store.res[self.run])):
-                # Skip unselected residues.
-                if not relax_data_store.res[self.run][i].select:
-                    continue
-
-                # Unit vector.
-                if not hasattr(relax_data_store.res[self.run][i], 'xh_vect'):
-                    raise RelaxNoVectorsError, self.run
-
-        # Test if the nucleus type has been set.
-        if not hasattr(relax_data_store, 'gx'):
-            raise RelaxNucleusError
-
-        # Test if the model-free parameter values are set for minimising diffusion tensor parameters by themselves.
-        if self.param_set == 'diff':
-            # Loop over the sequence.
-            for i in xrange(len(relax_data_store.res[self.run])):
-                unset_param = self.are_mf_params_set(i)
-                if unset_param != None:
-                    raise RelaxNoValueError, unset_param
-
-        # Print out.
-        if self.verbosity >= 1:
-            if self.param_set == 'mf':
-                print "Only the model-free parameters for single residues will be used."
-            elif self.param_set == 'local_mf':
-                print "Only a local tm value together with the model-free parameters for single residues will be used."
-            elif self.param_set == 'diff':
-                print "Only diffusion tensor parameters will be used."
-            elif self.param_set == 'all':
-                print "The diffusion tensor parameters together with the model-free parameters for all residues will be used."
-
-        # Count the total number of residues and test if the CSA and bond length values have been set.
-        num_res = 0
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Skip unselected residues.
-            if not relax_data_store.res[self.run][i].select:
-                continue
-
-            # CSA value.
-            if not hasattr(relax_data_store.res[self.run][i], 'csa') or relax_data_store.res[self.run][i].csa == None:
-                raise RelaxNoValueError, "CSA"
-
-            # Bond length value.
-            if not hasattr(relax_data_store.res[self.run][i], 'r') or relax_data_store.res[self.run][i].r == None:
-                raise RelaxNoValueError, "bond length"
-
-            # Increment the number of residues.
-            num_res = num_res + 1
-
-        # Number of residues, minimisation instances, and data sets for each parameter set type.
-        if self.param_set == 'mf' or self.param_set == 'local_tm':
-            num_instances = len(relax_data_store.res[self.run])
-            num_data_sets = 1
-            num_res = 1
-        elif self.param_set == 'diff' or self.param_set == 'all':
-            num_instances = 1
-            num_data_sets = len(relax_data_store.res[self.run])
-
-        # Number of residues, minimisation instances, and data sets for the back-calculate function.
-        if min_algor == 'back_calc':
-            num_instances = 1
-            num_data_sets = 0
-            num_res = 1
-
-
-        # Loop over the minimisation instances.
-        #######################################
-
-        for i in xrange(num_instances):
-            # Set the residue index.
-            if min_algor == 'back_calc':
-                index = min_options[0]
-            else:
-                index = i
-
-            # The residue index for the global models.
-            if self.param_set == 'diff' or self.param_set == 'all':
-                index = None
-
-            # Individual residue stuff.
-            if (self.param_set == 'mf' or self.param_set == 'local_tm') and not min_algor == 'back_calc':
-                # Skip unselected residues.
-                if not relax_data_store.res[self.run][i].select:
-                    continue
-
-                # Skip residues where there is no data or errors.
-                if not hasattr(relax_data_store.res[self.run][i], 'relax_data') or not hasattr(relax_data_store.res[self.run][i], 'relax_error'):
-                    continue
-
-            # Parameter vector and diagonal scaling.
-            if min_algor == 'back_calc':
-                # Create the initial parameter vector.
-                self.param_vector = self.assemble_param_vector(index=index)
-
-                # Diagonal scaling.
-                self.scaling_matrix = None
-
-            else:
-                # Create the initial parameter vector.
-                self.param_vector = self.assemble_param_vector(index=index, sim_index=sim_index)
-
-                # Diagonal scaling.
-                self.assemble_scaling_matrix(index=index, scaling=scaling)
-                if self.scaling_matrix:
-                    self.param_vector = matrixmultiply(inverse(self.scaling_matrix), self.param_vector)
-
-            # Get the grid search minimisation options.
-            if match('^[Gg]rid', min_algor):
-                min_options = self.grid_search_setup(index=index)
-
-            # Scaling of values for the set function.
-            if match('^[Ss]et', min_algor):
-                min_options = matrixmultiply(inverse(self.scaling_matrix), min_options)
-
-            # Linear constraints.
-            if constraints:
-                A, b = self.linear_constraints(index=index)
-
-            # Print out.
-            if self.verbosity >= 1:
-                # Individual residue stuff.
-                if self.param_set == 'mf' or self.param_set == 'local_tm':
-                    if self.verbosity >= 2:
-                        print "\n\n"
-                    string = "Fitting to residue: " + `relax_data_store.res[self.run][index].num` + " " + relax_data_store.res[self.run][index].name
-                    print "\n\n" + string
-                    print len(string) * '~'
-                if match('^[Gg]rid', min_algor):
-                    print "Unconstrained grid search size: " + `self.grid_size` + " (constraints may decrease this size).\n"
-
-            # Initialise the iteration counter and function, gradient, and Hessian call counters.
-            self.iter_count = 0
-            self.f_count = 0
-            self.g_count = 0
-            self.h_count = 0
-
-            # Initialise the data structures for the model-free function.
-            relax_data = []
-            relax_error = []
-            equations = []
-            param_types = []
-            param_values = None
-            r = []
-            csa = []
-            num_frq = []
-            frq = []
-            num_ri = []
-            remap_table = []
-            noe_r1_table = []
-            ri_labels = []
-            num_params = []
-            xh_unit_vectors = []
-            if self.param_set == 'local_tm':
-                mf_params = []
-            elif self.param_set == 'diff':
-                param_values = []
-
-            # Set up the data for the back_calc function.
-            if min_algor == 'back_calc':
-                # The data.
-                relax_data = [0.0]
-                relax_error = [0.000001]
-                equations = [relax_data_store.res[self.run][index].equation]
-                param_types = [relax_data_store.res[self.run][index].params]
-                r = [relax_data_store.res[self.run][index].r]
-                csa = [relax_data_store.res[self.run][index].csa]
-                num_frq = [1]
-                frq = [[min_options[3]]]
-                num_ri = [1]
-                remap_table = [[0]]
-                noe_r1_table = [[None]]
-                ri_labels = [[min_options[1]]]
-                if self.param_set != 'local_tm' and relax_data_store.diff[self.run].type != 'sphere':
-                    xh_unit_vectors = [relax_data_store.res[self.run][index].xh_vect]
-                else:
-                    xh_unit_vectors = [None]
-
-                # Count the number of model-free parameters for the residue index.
-                num_params = [len(relax_data_store.res[self.run][index].params)]
-
-            # Loop over the number of data sets.
-            for j in xrange(num_data_sets):
-                # Set the sequence index.
-                if self.param_set == 'mf' or self.param_set == 'local_tm':
-                    seq_index = i
-                else:
-                    seq_index = j
-
-                # Alias the data structure.
-                data = relax_data_store.res[self.run][seq_index]
-
-                # Skip unselected residues.
-                if not data.select:
-                    continue
-
-                # Skip residues where there is no data or errors.
-                if not hasattr(data, 'relax_data') or not hasattr(data, 'relax_error'):
-                    continue
-
-                # Make sure that the errors are strictly positive numbers.
-                for k in xrange(len(data.relax_error)):
-                    if data.relax_error[k] == 0.0:
-                        raise RelaxError, "Zero error for residue '" + `data.num` + " " + data.name + "', minimisation not possible."
-                    elif data.relax_error[k] < 0.0:
-                        raise RelaxError, "Negative error for residue '" + `data.num` + " " + data.name + "', minimisation not possible."
-
-                # Repackage the data.
-                if sim_index == None:
-                    relax_data.append(data.relax_data)
-                else:
-                    relax_data.append(data.relax_sim_data[sim_index])
-                relax_error.append(data.relax_error)
-                equations.append(data.equation)
-                param_types.append(data.params)
-                num_frq.append(data.num_frq)
-                frq.append(data.frq)
-                num_ri.append(data.num_ri)
-                remap_table.append(data.remap_table)
-                noe_r1_table.append(data.noe_r1_table)
-                ri_labels.append(data.ri_labels)
-                if sim_index == None or self.param_set == 'diff':
-                    r.append(data.r)
-                    csa.append(data.csa)
-                else:
-                    r.append(data.r_sim[sim_index])
-                    csa.append(data.csa_sim[sim_index])
-
-                # Model-free parameter values.
-                if self.param_set == 'local_tm':
-                    pass
-
-                # Vectors.
-                if self.param_set != 'local_tm' and relax_data_store.diff[self.run].type != 'sphere':
-                    xh_unit_vectors.append(data.xh_vect)
-                else:
-                    xh_unit_vectors.append(None)
-
-                # Count the number of model-free parameters for the residue index.
-                num_params.append(len(data.params))
-
-                # Repackage the parameter values for minimising just the diffusion tensor parameters.
-                if self.param_set == 'diff':
-                    param_values.append(self.assemble_param_vector(param_set='mf'))
-
-            # Convert to Numeric arrays.
-            for k in xrange(len(relax_data)):
-                relax_data[k] = array(relax_data[k], Float64)
-                relax_error[k] = array(relax_error[k], Float64)
-
-            # Diffusion tensor type.
-            if self.param_set == 'local_tm':
-                diff_type = 'sphere'
-            else:
-                diff_type = relax_data_store.diff[self.run].type
-
-            # Package the diffusion tensor parameters.
-            diff_params = None
-            if self.param_set == 'mf':
-                # Alias.
-                data = relax_data_store.diff[self.run]
-
-                # Spherical diffusion.
-                if diff_type == 'sphere':
-                    diff_params = [data.tm]
-
-                # Spheroidal diffusion.
-                elif diff_type == 'spheroid':
-                    diff_params = [data.tm, data.Da, data.theta, data.phi]
-
-                # Ellipsoidal diffusion.
-                elif diff_type == 'ellipsoid':
-                    diff_params = [data.tm, data.Da, data.Dr, data.alpha, data.beta, data.gamma]
-            elif min_algor == 'back_calc' and self.param_set == 'local_tm':
-                # Spherical diffusion.
-                diff_params = [relax_data_store.res[self.run][index].local_tm]
-
-
-
-            # Initialise the function to minimise.
-            ######################################
-
-            self.mf = Mf(init_params=self.param_vector, param_set=self.param_set, diff_type=diff_type, diff_params=diff_params, scaling_matrix=self.scaling_matrix, num_res=num_res, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=relax_data_store.gx, gh=relax_data_store.gh, g_ratio=relax_data_store.g_ratio, h_bar=relax_data_store.h_bar, mu0=relax_data_store.mu0, num_params=num_params, vectors=xh_unit_vectors)
-
-
-            # Setup the minimisation algorithm when constraints are present.
-            ################################################################
-
-            if constraints and not match('^[Gg]rid', min_algor):
-                algor = min_options[0]
-            else:
-                algor = min_algor
-
-
-            # Levenberg-Marquardt minimisation.
-            ###################################
-
-            if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
-                # Total number of ri.
-                number_ri = 0
-                for k in xrange(len(relax_error)):
-                    number_ri = number_ri + len(relax_error[k])
-
-                # Reconstruct the error data structure.
-                lm_error = zeros(number_ri, Float64)
-                index = 0
-                for k in xrange(len(relax_error)):
-                    lm_error[index:index+len(relax_error[k])] = relax_error[k]
-                    index = index + len(relax_error[k])
-
-                min_options = min_options + (self.mf.lm_dri, lm_error)
-
-
-            # Back-calculation.
-            ###################
-
-            if min_algor == 'back_calc':
-                return self.mf.calc_ri()
-
-
-            # Minimisation.
-            ###############
-
-            if constraints:
-                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=verbosity)
-            else:
-                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
-            if results == None:
-                return
-            self.param_vector, self.func, iter, fc, gc, hc, self.warning = results
-            self.iter_count = self.iter_count + iter
-            self.f_count = self.f_count + fc
-            self.g_count = self.g_count + gc
-            self.h_count = self.h_count + hc
-
-            # Catch infinite chi-squared values.
-            if isInf(self.func):
-                raise RelaxInfError, 'chi-squared'
-
-            # Catch chi-squared values of NaN.
-            if isNaN(self.func):
-                raise RelaxNaNError, 'chi-squared'
-
-            # Scaling.
-            if scaling:
-                self.param_vector = matrixmultiply(self.scaling_matrix, self.param_vector)
-
-            # Disassemble the parameter vector.
-            self.disassemble_param_vector(index=index, sim_index=sim_index)
-
-            # Monte Carlo minimisation statistics.
-            if sim_index != None:
-                # Sequence specific minimisation statistics.
-                if self.param_set == 'mf' or self.param_set == 'local_tm':
-                    # Chi-squared statistic.
-                    relax_data_store.res[self.run][i].chi2_sim[sim_index] = self.func
-
-                    # Iterations.
-                    relax_data_store.res[self.run][i].iter_sim[sim_index] = self.iter_count
-
-                    # Function evaluations.
-                    relax_data_store.res[self.run][i].f_count_sim[sim_index] = self.f_count
-
-                    # Gradient evaluations.
-                    relax_data_store.res[self.run][i].g_count_sim[sim_index] = self.g_count
-
-                    # Hessian evaluations.
-                    relax_data_store.res[self.run][i].h_count_sim[sim_index] = self.h_count
-
-                    # Warning.
-                    relax_data_store.res[self.run][i].warning_sim[sim_index] = self.warning
-
-                # Global minimisation statistics.
-                elif self.param_set == 'diff' or self.param_set == 'all':
-                    # Chi-squared statistic.
-                    relax_data_store.chi2_sim[self.run][sim_index] = self.func
-
-                    # Iterations.
-                    relax_data_store.iter_sim[self.run][sim_index] = self.iter_count
-
-                    # Function evaluations.
-                    relax_data_store.f_count_sim[self.run][sim_index] = self.f_count
-
-                    # Gradient evaluations.
-                    relax_data_store.g_count_sim[self.run][sim_index] = self.g_count
-
-                    # Hessian evaluations.
-                    relax_data_store.h_count_sim[self.run][sim_index] = self.h_count
-
-                    # Warning.
-                    relax_data_store.warning_sim[self.run][sim_index] = self.warning
-
-            # Normal statistics.
-            else:
-                # Sequence specific minimisation statistics.
-                if self.param_set == 'mf' or self.param_set == 'local_tm':
-                    # Chi-squared statistic.
-                    relax_data_store.res[self.run][i].chi2 = self.func
-
-                    # Iterations.
-                    relax_data_store.res[self.run][i].iter = self.iter_count
-
-                    # Function evaluations.
-                    relax_data_store.res[self.run][i].f_count = self.f_count
-
-                    # Gradient evaluations.
-                    relax_data_store.res[self.run][i].g_count = self.g_count
-
-                    # Hessian evaluations.
-                    relax_data_store.res[self.run][i].h_count = self.h_count
-
-                    # Warning.
-                    relax_data_store.res[self.run][i].warning = self.warning
-
-                # Global minimisation statistics.
-                elif self.param_set == 'diff' or self.param_set == 'all':
-                    # Chi-squared statistic.
-                    relax_data_store.chi2[self.run] = self.func
-
-                    # Iterations.
-                    relax_data_store.iter[self.run] = self.iter_count
-
-                    # Function evaluations.
-                    relax_data_store.f_count[self.run] = self.f_count
-
-                    # Gradient evaluations.
-                    relax_data_store.g_count[self.run] = self.g_count
-
-                    # Hessian evaluations.
-                    relax_data_store.h_count[self.run] = self.h_count
-
-                    # Warning.
-                    relax_data_store.warning[self.run] = self.warning
-
-
-    def model_setup(self, run=None, model=None, equation=None, params=None, res_num=None):
-        """Function for updating various data structures depending on the model selected."""
-
-        # Test that no diffusion tensor exists for the run if local tm is a parameter in the model.
+        # Test that no diffusion tensor exists if local tm is a parameter in the model.
         if params:
             for param in params:
-                if param == 'local_tm' and relax_data_store.diff.has_key(run):
-                    raise RelaxTensorError, run
+                if param == 'local_tm' and hasattr(relax_data_store, 'diff'):
+                    raise RelaxTensorError, 'diffusion'
 
         # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[run])):
-            # If res_num is set, then skip all other residues.
-            if res_num != None and res_num != relax_data_store.res[run][i].num:
-                continue
-
+        for spin in spin_loop(spin_id):
             # Initialise the data structures (if needed).
-            self.data_init(relax_data_store.res[run][i])
+            self.data_init(spin)
 
             # Model-free model, equation, and parameter types.
             if model:
-                relax_data_store.res[run][i].model = model
+                spin.model = model
             if equation:
-                relax_data_store.res[run][i].equation = equation
+                spin.equation = equation
             if params:
-                relax_data_store.res[run][i].params = params
+                spin.params = params
 
 
     def model_statistics(self, run=None, instance=None, global_stats=None):
@@ -2623,41 +1793,38 @@ class Model_free_main:
             raise RelaxFault
 
 
-    def overfit_deselect(self, run):
+    def overfit_deselect(self):
         """Function for deselecting residues without sufficient data to support minimisation"""
 
         # Test sequence data exists.
-        if not relax_data_store.res.has_key(run):
-            raise RelaxNoSequenceError, run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
-        # Loop over residue data:
-        for residue in relax_data_store.res[run]:
-            # Skip unselected data:
-            if not residue.select:
-                continue
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
-            # Check for data structure.
-            if not hasattr(residue, 'relax_data'):
-                residue.select = 0
-                continue
+        # Is structural data required?
+        need_vect = 0
+        if hasattr(cdp, 'diff') and (cdp.diff.type == 'spheroid' or cdp.diff.type == 'ellipsoid'):
+            need_vect = 1
 
-            # Require 3 or more data points
-            if len(residue.relax_data) < 3:
-                residue.select = 0
-                continue
+        # Loop over the sequence.
+        for spin in spin_loop():
+            # Relaxation data must exist!
+            if not hasattr(spin, 'relax_data'):
+                spin.select = 0
 
-            # Require at least as many data points as params to prevent over-fitting
-            if hasattr(residue, 'params'):
-                if len(residue.params) > len(residue.relax_data):
-                    residue.select = 0
-                    continue
+            # Require 3 or more relaxation data points.
+            elif len(spin.relax_data) < 3:
+                spin.select = 0
 
-            # Test for structural data if required
-            if hasattr(relax_data_store, 'diff') and relax_data_store.diff.has_key(run):
-                if relax_data_store.diff[run].type == 'spheroid' or relax_data_store.diff[run].type == 'ellipsoid':
-                    if not hasattr(residue, 'xh_vect'):
-                        residue.select = 0
-                        continue
+            # Require at least as many data points as params to prevent over-fitting.
+            elif hasattr(spin, 'params') and len(spin.params) > len(spin.relax_data):
+                spin.select = 0
+
+            # Test for structural data if required.
+            elif not hasattr(spin, 'xh_vect'):
+                spin.select = 0
 
 
     def read_columnar_col_numbers(self, header):
@@ -3755,24 +2922,27 @@ class Model_free_main:
             return 'ppm'
 
 
-    def select_model(self, run=None, model=None, res_num=None):
-        """Function for the selection of a preset model-free model."""
+    def select_model(self, model=None, spin_id=None):
+        """Function for the selection of a preset model-free model.
 
-        # Arguments.
-        self.run = run
+        @param model:   The name of the model.
+        @type model:    str
+        @param spin_id: The spin identification string.
+        @type spin_id:  str
+        """
 
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current data pipe exists.
+        if not relax_data_store.current_pipe:
+            raise RelaxNoPipeError
 
-        # Test if the run type is set to 'mf'.
-        function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
+        # Test if the pipe type is 'mf'.
+        function_type = relax_data_store[relax_data_store.current_pipe].pipe_type
         if function_type != 'mf':
-            raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
+            raise RelaxFuncSetupError, specific_fns.get_string(function_type)
 
         # Test if sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
 
         # Preset models.
@@ -4043,7 +3213,7 @@ class Model_free_main:
             raise RelaxError, "The model '" + model + "' is invalid."
 
         # Set up the model.
-        self.model_setup(self.run, model, equation, params, res_num)
+        self.model_setup(model, equation, params, spin_id)
 
 
     def set_doc(self):

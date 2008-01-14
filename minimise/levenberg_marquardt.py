@@ -20,10 +20,11 @@
 #                                                                             #
 ###############################################################################
 
-
+# Python module imports.
 from LinearAlgebra import solve_linear_equations
 from Numeric import Float64, zeros
 
+# relax module imports.
 from base_classes import Min
 
 

@@ -20,7 +20,7 @@
 #                                                                             #
 ###############################################################################
 
-
+# Python module imports.
 from LinearAlgebra import cholesky_decomposition, solve_linear_equations
 from Numeric import dot, sqrt, trace, transpose
 

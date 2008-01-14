@@ -20,10 +20,11 @@
 #                                                                             #
 ###############################################################################
 
-
+# Python module imports.
 from LinearAlgebra import inverse
 from Numeric import Float64, dot, matrixmultiply, sqrt, zeros
 
+# relax module imports.
 from base_classes import Line_search, Min
 
 

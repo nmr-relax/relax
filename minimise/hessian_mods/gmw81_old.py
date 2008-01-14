@@ -20,7 +20,7 @@
 #                                                                             #
 ###############################################################################
 
-
+# Python module imports.
 from LinearAlgebra import eigenvectors, inverse
 from Numeric import Float64, array, dot, matrixmultiply, sort, sqrt, transpose
 
