@@ -124,8 +124,6 @@ class N_state_model(Common_functions):
             if upper:
                 grid_ops[i][1] = upper[i]
 
-        print `grid_ops`
-
         # Minimisation.
         self.minimise(min_algor='grid', min_options=grid_ops, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
