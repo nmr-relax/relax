@@ -230,6 +230,20 @@ class N_state_model(Common_functions):
         cdp.N = N
         
 
+    def param_num(self):
+        """Function for determining the number of parameters in the model.
+
+        @return:    The number of model parameters.
+        @rtype:     int
+        """
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Return the param number.
+        return (cdp.N - 1) + cdp.N*3
+
+
     def return_data_name(self, name):
         """
         N-state model data type string matching patterns
