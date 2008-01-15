@@ -68,16 +68,28 @@ class Common_functions:
         return False
 
 
-    def return_data(self, run, i):
-        """Function for returning the Ri data structure."""
+    def return_data(self, spin):
+        """Function for returning the Ri data structure for the given spin.
 
-        return relax_data_store.res[run][i].relax_data
+        @param spin:    The SpinContainer object.
+        @type spin:     SpinContainer instance
+        @return:        The array of relaxation data values.
+        @rtype:         list of float
+        """
+
+        return spin.relax_data
 
 
-    def return_error(self, run, i):
-        """Function for returning the Ri error structure."""
+    def return_error(self, spin):
+        """Function for returning the Ri error structure for the given spin.
 
-        return relax_data_store.res[run][i].relax_error
+        @param spin:    The SpinContainer object.
+        @type spin:     SpinContainer instance
+        @return:        The array of relaxation data error values.
+        @rtype:         list of float
+        """
+
+        return spin.relax_error
 
 
     def return_value(self, spin, param, sim=None):
