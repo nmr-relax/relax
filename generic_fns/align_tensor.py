@@ -52,8 +52,8 @@ def align_data_exists(tensor, pipe=None):
         pipe = relax_data_store.current_pipe
 
     # Test if an alignment tensor corresponding to the arg 'tensor' exists.
-    if hasattr(relax_data_store[pipe], 'align_tensor'):
-        for data in relax_data_store[pipe].align_tensor:
+    if hasattr(relax_data_store[pipe], 'align_tensors'):
+        for data in relax_data_store[pipe].align_tensors:
             if data.name == tensor:
                 return True
     else:
@@ -95,9 +95,9 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
     if align_data_exists(tensor_to, pipe_to):
         raise RelaxTensorError, 'alignment'
 
-    # Create the align_tensor dictionary if it doesn't yet exist.
-    if not hasattr(relax_data_store[pipe_to], 'align_tensor'):
-        relax_data_store[pipe_to].align_tensor = AlignTensorList()
+    # Create the align_tensors dictionary if it doesn't yet exist.
+    if not hasattr(relax_data_store[pipe_to], 'align_tensors'):
+        relax_data_store[pipe_to].align_tensors = AlignTensorList()
 
     # Find the tensor index.
     index_from = get_tensor_index(tensor_from, pipe_from)
@@ -105,9 +105,9 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
 
     # Copy the data.
     if index_to == None:
-        relax_data_store[pipe_to].align_tensor.append(deepcopy(relax_data_store[pipe_from].align_tensor[index_from]))
+        relax_data_store[pipe_to].align_tensors.append(deepcopy(relax_data_store[pipe_from].align_tensors[index_from]))
     else:
-        relax_data_store[pipe_to].align_tensor[index_to] = deepcopy(relax_data_store[pipe_from].align_tensor[index_from])
+        relax_data_store[pipe_to].align_tensors[index_to] = deepcopy(relax_data_store[pipe_from].align_tensors[index_from])
 
 
 def data_names():
@@ -176,11 +176,11 @@ def delete(tensor):
     cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Delete the alignment data.
-    cdp.align_tensor.pop(index)
+    cdp.align_tensors.pop(index)
 
     # Delete the alignment tensor list if empty.
-    if not len(cdp.align_tensor):
-        del(cdp.align_tensor)
+    if not len(cdp.align_tensors):
+        del(cdp.align_tensors)
 
 
 def display(tensor):
@@ -283,27 +283,27 @@ def fold_angles(sim_index=None):
     ##################
 
     # Get the current angles.
-    alpha = cdp.align_tensor.alpha
-    beta  = cdp.align_tensor.beta
-    gamma = cdp.align_tensor.gamma
+    alpha = cdp.align_tensors.alpha
+    beta  = cdp.align_tensors.beta
+    gamma = cdp.align_tensors.gamma
 
     # Simulated values.
     if sim_index != None:
-        alpha_sim = cdp.align_tensor.alpha_sim[sim_index]
-        beta_sim  = cdp.align_tensor.beta_sim[sim_index]
-        gamma_sim = cdp.align_tensor.gamma_sim[sim_index]
+        alpha_sim = cdp.align_tensors.alpha_sim[sim_index]
+        beta_sim  = cdp.align_tensors.beta_sim[sim_index]
+        gamma_sim = cdp.align_tensors.gamma_sim[sim_index]
 
     # Normal value.
     if sim_index == None:
-        cdp.align_tensor.alpha = wrap_angles(alpha, 0.0, 2.0*pi)
-        cdp.align_tensor.beta  = wrap_angles(beta, 0.0, 2.0*pi)
-        cdp.align_tensor.gamma = wrap_angles(gamma, 0.0, 2.0*pi)
+        cdp.align_tensors.alpha = wrap_angles(alpha, 0.0, 2.0*pi)
+        cdp.align_tensors.beta  = wrap_angles(beta, 0.0, 2.0*pi)
+        cdp.align_tensors.gamma = wrap_angles(gamma, 0.0, 2.0*pi)
 
     # Simulation values.
     else:
-        cdp.align_tensor.alpha_sim[sim_index] = wrap_angles(alpha_sim, alpha - pi, alpha + pi)
-        cdp.align_tensor.beta_sim[sim_index]  = wrap_angles(beta_sim, beta - pi, beta + pi)
-        cdp.align_tensor.gamma_sim[sim_index] = wrap_angles(gamma_sim, gamma - pi, gamma + pi)
+        cdp.align_tensors.alpha_sim[sim_index] = wrap_angles(alpha_sim, alpha - pi, alpha + pi)
+        cdp.align_tensors.beta_sim[sim_index]  = wrap_angles(beta_sim, beta - pi, beta + pi)
+        cdp.align_tensors.gamma_sim[sim_index] = wrap_angles(gamma_sim, gamma - pi, gamma + pi)
 
 
     # Remove the glide reflection and translational symmetries.
@@ -312,19 +312,19 @@ def fold_angles(sim_index=None):
     # Normal value.
     if sim_index == None:
         # Fold beta inside 0 and pi.
-        if cdp.align_tensor.beta >= pi:
-            cdp.align_tensor.alpha = pi - cdp.align_tensor.alpha
-            cdp.align_tensor.beta = cdp.align_tensor.beta - pi
+        if cdp.align_tensors.beta >= pi:
+            cdp.align_tensors.alpha = pi - cdp.align_tensors.alpha
+            cdp.align_tensors.beta = cdp.align_tensors.beta - pi
 
     # Simulation values.
     else:
         # Fold beta_sim inside beta-pi/2 and beta+pi/2.
-        if cdp.align_tensor.beta_sim[sim_index] >= cdp.align_tensor.beta + pi/2.0:
-            cdp.align_tensor.alpha_sim[sim_index] = pi - cdp.align_tensor.alpha_sim[sim_index]
-            cdp.align_tensor.beta_sim[sim_index] = cdp.align_tensor.beta_sim[sim_index] - pi
-        elif cdp.align_tensor.beta_sim[sim_index] <= cdp.align_tensor.beta - pi/2.0:
-            cdp.align_tensor.alpha_sim[sim_index] = pi - cdp.align_tensor.alpha_sim[sim_index]
-            cdp.align_tensor.beta_sim[sim_index] = cdp.align_tensor.beta_sim[sim_index] + pi
+        if cdp.align_tensors.beta_sim[sim_index] >= cdp.align_tensors.beta + pi/2.0:
+            cdp.align_tensors.alpha_sim[sim_index] = pi - cdp.align_tensors.alpha_sim[sim_index]
+            cdp.align_tensors.beta_sim[sim_index] = cdp.align_tensors.beta_sim[sim_index] - pi
+        elif cdp.align_tensors.beta_sim[sim_index] <= cdp.align_tensors.beta - pi/2.0:
+            cdp.align_tensors.alpha_sim[sim_index] = pi - cdp.align_tensors.alpha_sim[sim_index]
+            cdp.align_tensors.beta_sim[sim_index] = cdp.align_tensors.beta_sim[sim_index] + pi
 
 
 def get_tensor_index(tensor, pipe=None):
@@ -349,8 +349,8 @@ def get_tensor_index(tensor, pipe=None):
     index = None
 
     # Loop over the tensors.
-    for i in xrange(len(cdp.align_tensor)):
-        if cdp.align_tensor[i].name == tensor:
+    for i in xrange(len(cdp.align_tensors)):
+        if cdp.align_tensors[i].name == tensor:
             index = i
 
     # Return the index.
@@ -379,9 +379,9 @@ def get_tensor_object(tensor, pipe=None):
     data = None
 
     # Loop over the tensors.
-    for i in xrange(len(cdp.align_tensor)):
-        if cdp.align_tensor[i].name == tensor:
-            data = cdp.align_tensor[i]
+    for i in xrange(len(cdp.align_tensors)):
+        if cdp.align_tensors[i].name == tensor:
+            data = cdp.align_tensors[i]
 
     # Return the object.
     return data
@@ -421,10 +421,10 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
     if not angle_units in valid_types:
         raise RelaxError, "The alignment tensor 'angle_units' argument " + `angle_units` + " should be either 'deg' or 'rad'."
 
-    # Add the align_tensor object to the data pipe.
-    if not hasattr(cdp, 'align_tensor'):
-        cdp.align_tensor = AlignTensorList()
-    cdp.align_tensor.add_item(tensor)
+    # Add the align_tensors object to the data pipe.
+    if not hasattr(cdp, 'align_tensors'):
+        cdp.align_tensors = AlignTensorList()
+    cdp.align_tensors.add_item(tensor)
 
     # {Sxx, Syy, Sxy, Sxz, Syz}.
     if param_types == 0:
@@ -439,7 +439,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Syz = Syz * scale
 
         # Set the parameters.
-        set(tensor=cdp.align_tensor[-1], value=[Sxx, Syy, Sxy, Sxz, Syz], param=['Sxx', 'Syy', 'Sxy', 'Sxz', 'Syz'])
+        set(tensor=cdp.align_tensors[-1], value=[Sxx, Syy, Sxy, Sxz, Syz], param=['Sxx', 'Syy', 'Sxy', 'Sxz', 'Syz'])
 
     # {Szz, Sxx-yy, Sxy, Sxz, Syz}.
     elif param_types == 1:
@@ -454,7 +454,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Syz = Syz * scale
 
         # Set the parameters.
-        set(tensor=cdp.align_tensor[-1], value=[Szz, Sxxyy, Sxy, Sxz, Syz], param=['Szz', 'Sxxyy', 'Sxy', 'Sxz', 'Syz'])
+        set(tensor=cdp.align_tensors[-1], value=[Szz, Sxxyy, Sxy, Sxz, Syz], param=['Szz', 'Sxxyy', 'Sxy', 'Sxz', 'Syz'])
 
     # {Axx, Ayy, Axy, Axz, Ayz}.
     elif param_types == 2:
@@ -469,7 +469,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Ayz = Ayz * scale
 
         # Set the parameters.
-        set(tensor=cdp.align_tensor[-1], value=[Axx, Ayy, Axy, Axz, Ayz], param=['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'])
+        set(tensor=cdp.align_tensors[-1], value=[Axx, Ayy, Axy, Axz, Ayz], param=['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'])
 
     # {Azz, Axx-yy, Axy, Axz, Ayz}.
     elif param_types == 3:
@@ -484,7 +484,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Ayz = Ayz * scale
 
         # Set the parameters.
-        set(tensor=cdp.align_tensor[-1], value=[Azz, Axxyy, Axy, Axz, Ayz], param=['Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz'])
+        set(tensor=cdp.align_tensors[-1], value=[Azz, Axxyy, Axy, Axz, Ayz], param=['Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz'])
 
     # {Axx, Ayy, Axy, Axz, Ayz}.
     elif param_types == 4:
@@ -511,7 +511,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Ayz = Ayz * scale
 
         # Set the parameters.
-        set(tensor=cdp.align_tensor[-1], value=[Axx, Ayy, Axy, Axz, Ayz], param=['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'])
+        set(tensor=cdp.align_tensors[-1], value=[Axx, Ayy, Axy, Axz, Ayz], param=['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'])
 
     # {Azz, Axx-yy, Axy, Axz, Ayz}.
     elif param_types == 5:
@@ -538,7 +538,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Ayz = Ayz * scale
 
         # Set the parameters.
-        set(tensor=cdp.align_tensor[-1], value=[Azz, Axxyy, Axy, Axz, Ayz], param=['Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz'])
+        set(tensor=cdp.align_tensors[-1], value=[Azz, Axxyy, Axy, Axz, Ayz], param=['Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz'])
 
     # {Pxx, Pyy, Pxy, Pxz, Pyz}.
     elif param_types == 6:
@@ -553,7 +553,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Pyz = Pyz * scale
 
         # Set the parameters.
-        set(tensor=cdp.align_tensor[-1], value=[Pxx, Pyy, Pxy, Pxz, Pyz], param=['Pxx', 'Pyy', 'Pxy', 'Pxz', 'Pyz'])
+        set(tensor=cdp.align_tensors[-1], value=[Pxx, Pyy, Pxy, Pxz, Pyz], param=['Pxx', 'Pyy', 'Pxy', 'Pxz', 'Pyz'])
 
     # {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.
     elif param_types == 7:
@@ -568,7 +568,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Pyz = Pyz * scale
 
         # Set the parameters.
-        set(tensor=cdp.align_tensor[-1], value=[Pzz, Pxxyy, Pxy, Pxz, Pyz], param=['Pzz', 'Pxxyy', 'Pxy', 'Pxz', 'Pyz'])
+        set(tensor=cdp.align_tensors[-1], value=[Pzz, Pxxyy, Pxy, Pxz, Pyz], param=['Pzz', 'Pxxyy', 'Pxy', 'Pxz', 'Pyz'])
 
     # Unknown parameter combination.
     else:
@@ -724,12 +724,12 @@ def matrix_angles(basis_set=0, tensors=None):
     cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Test that alignment tensor data exists.
-    if not hasattr(cdp, 'align_tensor') or len(cdp.align_tensor) == 0:
+    if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0:
         raise RelaxNoTensorError, 'alignment'
 
     # Count the number of tensors.
     tensor_num = 0
-    for tensor in cdp.align_tensor:
+    for tensor in cdp.align_tensors:
         if tensors and tensor.name not in tensors:
             continue
         tensor_num = tensor_num + 1
@@ -739,7 +739,7 @@ def matrix_angles(basis_set=0, tensors=None):
 
     # Loop over the tensors.
     i = 0
-    for tensor in cdp.align_tensor:
+    for tensor in cdp.align_tensors:
         # Skip tensors.
         if tensors and tensor.name not in tensors:
             continue
@@ -770,7 +770,7 @@ def matrix_angles(basis_set=0, tensors=None):
         i = i + 1
 
     # Initialise the matrix of angles.
-    cdp.align_tensor.angles = zeros((tensor_num, tensor_num), float64)
+    cdp.align_tensors.angles = zeros((tensor_num, tensor_num), float64)
 
     # Header print out.
     sys.stdout.write("\nData pipe: " + `relax_data_store.current_pipe` + "\n")
@@ -795,10 +795,10 @@ def matrix_angles(basis_set=0, tensors=None):
             # Skip the diagonal and arccos problems.
             if i != j:
                 # The angle (in rad).
-                cdp.align_tensor.angles[i, j] = arccos(dot(matrix[i], matrix[j]))
+                cdp.align_tensors.angles[i, j] = arccos(dot(matrix[i], matrix[j]))
 
             # Print out the angles in degrees.
-            sys.stdout.write("%8.1f" % (cdp.align_tensor.angles[i, j]*180.0/pi))
+            sys.stdout.write("%8.1f" % (cdp.align_tensors.angles[i, j]*180.0/pi))
 
         # Print out.
         sys.stdout.write("\n")
@@ -1369,12 +1369,12 @@ def svd(basis_set=0, tensors=None):
     cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Test that alignment tensor data exists.
-    if not hasattr(cdp, 'align_tensor') or len(cdp.align_tensor) == 0:
+    if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0:
         raise RelaxNoTensorError, 'alignment'
 
     # Count the number of tensors used in the SVD.
     tensor_num = 0
-    for tensor in cdp.align_tensor:
+    for tensor in cdp.align_tensors:
         if tensors and tensor.name not in tensors:
             continue
         tensor_num = tensor_num + 1
@@ -1384,7 +1384,7 @@ def svd(basis_set=0, tensors=None):
 
     # Pack the elements.
     i = 0
-    for tensor in cdp.align_tensor:
+    for tensor in cdp.align_tensors:
         # Skip tensors.
         if tensors and tensor.name not in tensors:
             continue
@@ -1412,14 +1412,14 @@ def svd(basis_set=0, tensors=None):
     u, s, vh = linalg.svd(matrix)
 
     # Store the singular values.
-    cdp.align_tensor.singular_vals = s
+    cdp.align_tensors.singular_vals = s
 
     # Calculate and store the condition number.
-    cdp.align_tensor.cond_num = s[0] / s[-1]
+    cdp.align_tensors.cond_num = s[0] / s[-1]
 
     # Print out.
     print "\nData pipe: " + `relax_data_store.current_pipe`
     print "\nSingular values:"
     for val in s:
         print "\t" + `val`
-    print "\nCondition number: " + `cdp.align_tensor.cond_num`
+    print "\nCondition number: " + `cdp.align_tensors.cond_num`
