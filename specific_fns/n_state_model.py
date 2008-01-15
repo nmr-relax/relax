@@ -96,6 +96,28 @@ class N_state_model(Common_functions):
         parameter.  The second dimension has the elements: 0, the number of increments in that
         dimension; 1, the lower limit of the grid; 2, the upper limit of the grid."""
 
+        # Set the grid search options.
+        for i in xrange(n):
+            # Probabilities (default values).
+            if cdp.params[i] == 'pc':
+                grid_ops.append([inc[m], 0.0, 1.0])
+
+            # Angles (default values).
+            if cdp.params[i] == 'alpha' or cdp.params[i] == 'gamma':
+                grid_ops.append([inc[m], 0.0, 2*pi])
+            elif cdp.params[i] == 'beta':
+                grid_ops.append([inc[m], 0.0, pi])
+
+            # Lower bound (if supplied).
+            if lower:
+                grid_ops[i][1] = lower[i]
+
+            # Upper bound (if supplied).
+            if upper:
+                grid_ops[i][1] = upper[i]
+
+        print `grid_ops`
+
         # Minimisation.
         self.minimise(min_algor='grid', min_options=grid_ops, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
