@@ -213,10 +213,6 @@ class N_state_model(Common_functions):
         param_vector, func, iter_count, f_count, g_count, h_count, warning = results
 
 
-    def overfit_deselect(self):
-        """Dummy function nornally for deselecting spins with insufficient data for minimisation."""
-
-
     def return_data_name(self, name):
         """
         N-state model data type string matching patterns
