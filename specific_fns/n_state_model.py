@@ -225,12 +225,6 @@ class N_state_model(Common_functions):
         # Set up the class instance containing the target function.
         model = N_state_opt(init_params=param_vector, red_data=red_tensor_elem, red_errors=red_tensor_err)
 
-        # Setup the minimisation algorithm when constraints are present.
-        if constraints and not search('^[Gg]rid', min_algor):
-            algor = min_options[0]
-        else:
-            algor = min_algor
-
         # Minimisation.
         if constraints:
             results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=verbosity)
