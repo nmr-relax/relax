@@ -388,7 +388,7 @@ class Palmer:
         file.write('%-14s' % "constants")
         file.write('%-6i' % relax_data_store.res[self.run][i].num)
         file.write('%-7s' % self.nucleus)
-        file.write('%-8.3f' % (relax_data_store.gx / 1e7))
+        file.write('%-8.4f' % (relax_data_store.gx / 1e7))
         file.write('%-8.3f' % (relax_data_store.res[self.run][i].r * 1e10))
         file.write('%-8.3f\n' % (relax_data_store.res[self.run][i].csa * 1e6))
 
