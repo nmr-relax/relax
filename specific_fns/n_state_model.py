@@ -191,8 +191,13 @@ class N_state_model(Common_functions):
         if constraints:
             A, b = self.linear_constraints()
 
+        # The aligment tensor errors, if they exist.
+        tensor_err = None
+        if hasattr(cdp, 'align_tensor_errors'):
+            tensor_err = cdp.align_tensor_errors
+
         # Set up the class instance containing the target function.
-        model = N_state_opt(init_params=param_vector, data=cdp.align_tensor, errors=cdp.align_tensor_errors)
+        model = N_state_opt(init_params=param_vector, data=cdp.align_tensor, errors=tensor_err)
 
         # Setup the minimisation algorithm when constraints are present.
         if constraints and not search('^[Gg]rid', min_algor):
