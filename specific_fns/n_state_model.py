@@ -192,7 +192,6 @@ class N_state_model(Common_functions):
             A, b = self.linear_constraints()
 
         # Set up the class instance containing the target function.
-        print cdp
         model = N_state_opt(init_params=param_vector, data=cdp.align_tensor, errors=cdp.align_tensor_errors)
 
         # Setup the minimisation algorithm when constraints are present.
