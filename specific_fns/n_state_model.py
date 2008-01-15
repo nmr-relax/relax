@@ -123,8 +123,7 @@ class N_state_model(Common_functions):
         # Initialisation (0..j..m).
         A = []
         b = []
-        n = len(cdp.params)
-        zero_array = zeros(n, float64)
+        zero_array = zeros(self.param_num(), float64)
         i = 0
         j = 0
 
