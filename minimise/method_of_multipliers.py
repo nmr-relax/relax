@@ -20,10 +20,11 @@
 #                                                                             #
 ###############################################################################
 
-
+# Python module imports.
 from Numeric import Float64, dot, outerproduct, sqrt, zeros
 from re import match
 
+# relax module imports.
 #from bound_constraint import Bound_constraint
 from constraint_linear import Constraint_linear
 from base_classes import Min

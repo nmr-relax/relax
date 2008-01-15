@@ -20,9 +20,10 @@
 #                                                                             #
 ###############################################################################
 
-
+# Python module imports.
 from Numeric import Float64, ones, zeros
 
+# relax module imports.
 from constraint_linear import Constraint_linear
 
 

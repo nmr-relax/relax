@@ -239,22 +239,11 @@ class Mf_minimise:
         if n == 0:
             print "Cannot run a grid search on a model with zero parameters, skipping the grid search."
 
-        # Lower bounds.
-        if lower != None:
-            if len(lower) != n:
-                raise RelaxLenError, ('lower bounds', n)
+        # Test the grid search options.
+        self.test_grid_ops(lower=lower, upper=upper, inc=inc, n=n)
 
-        # Upper bounds.
-        if upper != None:
-            if len(upper) != n:
-                raise RelaxLenError, ('upper bounds', n)
-
-        # Increment.
-        if type(inc) == list:
-            if len(inc) != n:
-                raise RelaxLenError, ('increment', n)
-            inc = inc
-        elif type(inc) == int:
+        # If inc is a single int, convert it into an array of that value.
+        if type(inc) == int:
             temp = []
             for j in xrange(n):
                 temp.append(inc)

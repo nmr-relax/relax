@@ -20,9 +20,10 @@
 #                                                                             #
 ###############################################################################
 
-
+# Python module imports.
 from Numeric import copy, dot, sqrt
 
+# relax module imports.
 from interpolate import cubic_ext, quadratic_fafbga
 quadratic = quadratic_fafbga
 

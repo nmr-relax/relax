@@ -20,11 +20,12 @@
 #                                                                             #
 ###############################################################################
 
-
+# Python module imports.
 from LinearAlgebra import eigenvectors, inverse
 from Numeric import Float64, dot, identity, matrixmultiply, outerproduct, sort, sqrt
 from re import match
 
+# relax module imports.
 from bfgs import Bfgs
 from newton import Newton
 from base_classes import Hessian_mods, Trust_region, Min

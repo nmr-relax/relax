@@ -20,9 +20,10 @@
 #                                                                             #
 ###############################################################################
 
-
+# Python module imports.
 import os
 
+# relax module imports.
 from relax_errors import RelaxStrError
 
 

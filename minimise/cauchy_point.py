@@ -20,9 +20,10 @@
 #                                                                             #
 ###############################################################################
 
-
+# Python module imports.
 from Numeric import dot, sqrt
 
+# relax module imports.
 from base_classes import Trust_region, Min
 
 
