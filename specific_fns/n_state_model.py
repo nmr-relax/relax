@@ -191,6 +191,23 @@ class N_state_model(Common_functions):
         if constraints:
             A, b = self.linear_constraints()
 
+        # Create a list of all the reduced alignment tensor elements (for the chi-squared function).
+        red_tensor_elem = []
+        for tensor in cdp.align_tensor:
+            # Ignore the full tensors.
+            if not tensor.red:
+                continue
+
+            # Append the 5 unique elements.
+            red_tensor_elem.append(tensor.Sxx)
+            red_tensor_elem.append(tensor.Syy)
+            red_tensor_elem.append(tensor.Sxy)
+            red_tensor_elem.append(tensor.Sxz)
+            red_tensor_elem.append(tensor.Syz)
+
+        # Convert the reduced alignment tensor element list to a numpy array (for the chi-squared function maths).
+        red_tensor_elem = array(red_tensor_elem, float64)
+
         # The aligment tensor errors, if they exist.
         tensor_err = None
         if hasattr(cdp, 'align_tensor_errors'):
