@@ -127,18 +127,16 @@ class N_state_model(Common_functions):
         i = 0
         j = 0
 
-        # Loop over the parameters.
-        for k in xrange(len(cdp.params)):
-            # Probabilities.
-            if data.params[k] == 'pc':
-                # 0 <= pc <= 1.
-                A.append(zero_array * 0.0)
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                A[j+1][i] = -1.0
-                b.append(0.0)
-                b.append(-1.0)
-                j = j + 2
+        # Loop over the prob parameters (N - 1, because the sum of pc is 1).
+        for k in xrange(cdp.N - 1):
+            # 0 <= pc <= 1.
+            A.append(zero_array * 0.0)
+            A.append(zero_array * 0.0)
+            A[j][i] = 1.0
+            A[j+1][i] = -1.0
+            b.append(0.0)
+            b.append(-1.0)
+            j = j + 2
 
             # Increment i.
             i = i + 1
