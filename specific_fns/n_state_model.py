@@ -184,7 +184,7 @@ class N_state_model(Common_functions):
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Test if the N-state model has been set up.
-        if not hasattr(cdp, 'params'):
+        if not hasattr(cdp, 'N'):
             raise RelaxNoModelError, 'N-state'
 
         # Create the initial parameter vector.
