@@ -42,6 +42,44 @@ class N_state_model:
         self.__relax__ = relax
 
 
+    def model(self, N=None):
+        """Set up the N-state model by specifying the number of states N.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        N:  The number of states.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        Prior to optimisation, the N-state model must be set up.  This simply involves the setting
+        of the number of states N.
+
+
+        Examples
+        ~~~~~~~~
+
+        To set up a 5-state model, type:
+
+        relax> n_state_model.model(N=5)
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "n_state_model.model("
+            text = text + "N=" + `N` + ")"
+            print text
+
+        # Number of states argument.
+        if type(N) != int:
+            raise RelaxIntError, ('the number of states N', N)
+
+        # Execute the functional code.
+        n_state_model.model_setyp(N=N)
+
+
     def set_domain(self, tensor=None, domain=None):
         """Set the domain label for the alignment tensor.
 
