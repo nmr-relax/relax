@@ -223,7 +223,7 @@ class N_state_model(Common_functions):
         red_tensor_err = array(red_tensor_err, float64)
 
         # Set up the class instance containing the target function.
-        model = N_state_opt(init_params=param_vector, data=cdp.align_tensor, errors=tensor_err)
+        model = N_state_opt(init_params=param_vector, data=red_tensor_elem, errors=red_tensor_err)
 
         # Setup the minimisation algorithm when constraints are present.
         if constraints and not search('^[Gg]rid', min_algor):
