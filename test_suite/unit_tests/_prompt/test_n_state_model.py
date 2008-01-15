@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.n_state_model import N_state_model
-from relax_errors import RelaxBoolError, RelaxStrError
+from relax_errors import RelaxBoolError, RelaxIntError, RelaxStrError
 from test_suite.unit_tests.n_state_model_testing_base import N_state_model_base_class
 
 # Unit test imports.
@@ -38,6 +38,19 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
 
     # Instantiate the user function class.
     n_state_model_fns = N_state_model(fake_relax.fake_instance())
+
+
+    def test_model_argfail_N(self):
+        """Failure of the N arg of the n_state_model.model() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the bin and int arguments, and skip them.
+            if data[0] == 'bin' or data[0] == 'int':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxIntError, self.n_state_model_fns.model, N=data[1])
 
 
     def test_set_domain_argfail_tensor(self):
