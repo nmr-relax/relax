@@ -82,13 +82,20 @@ class N_state_model(Common_functions):
         # The number of parameters.
         n = self.param_num()
 
-        # Test the grid search options.
-        self.test_grid_ops(lower=lower, upper=upper, inc=inc, n=n)
-
         # Make sure that the length of the parameter array is > 0.
         if n == 0:
             print "Cannot run a grid search on a model with zero parameters, skipping the grid search."
             return
+
+        # Test the grid search options.
+        self.test_grid_ops(lower=lower, upper=upper, inc=inc, n=n)
+
+        # If inc is a single int, convert it into an array of that value.
+        if type(inc) == int:
+            temp = []
+            for j in xrange(n):
+                temp.append(inc)
+            inc = temp
 
         # Initialise the grid_ops structure.
         grid_ops = []
