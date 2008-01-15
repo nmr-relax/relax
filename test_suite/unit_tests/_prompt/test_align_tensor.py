@@ -159,26 +159,6 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
                 self.assertRaises(RelaxNumTupleError, self.align_tensor_fns.init, tensor='Pf1', params=data[1])
 
 
-    def test_init_argfail_errors(self):
-        """Failure of the errors arg of the align_tensor.init() user function."""
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the tuple arguments.
-            if data[0] == 'tuple' or data[0] == 'float tuple' or data[0] == 'str tuple':
-                # Incorrect tuple length.
-                if len(data[1]) != 5:
-                    self.assertRaises(RelaxError, self.align_tensor_fns.init, tensor='Pf1', errors=data[1])
-
-                # Must be a number.
-                elif data[0] != 'float tuple':
-                    self.assertRaises(RelaxNumTupleError, self.align_tensor_fns.init, errors=data[1])
-
-            # The argument test.
-            else:
-                self.assertRaises(RelaxNumTupleError, self.align_tensor_fns.init, tensor='Pf1', errors=data[1])
-
-
     def test_init_argfail_scale(self):
         """The scale arg test of the align_tensor.init() user function."""
 
