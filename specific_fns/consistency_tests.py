@@ -88,7 +88,7 @@ class Consistency_tests(Common_functions):
 
             # Residue specific frequency index.
             frq_index = None
-            for j in xrange(spina.num_frq):
+            for j in xrange(spin.num_frq):
                 if spin.frq[j] == cdp.ct_frq:
                     frq_index = j
             if frq_index == None:
