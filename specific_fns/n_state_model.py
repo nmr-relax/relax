@@ -222,12 +222,6 @@ class N_state_model(Common_functions):
         red_tensor_elem = array(red_tensor_elem, float64)
         red_tensor_err = array(red_tensor_err, float64)
 
-        # Create a list of all the reduced alignment tensor element errors (for the chi-squared function).
-        for tensor in cdp.align_tensors:
-            # Ignore the full tensors.
-            if not tensor.red:
-                continue
-
         # Set up the class instance containing the target function.
         model = N_state_opt(init_params=param_vector, data=cdp.align_tensor, errors=tensor_err)
 
