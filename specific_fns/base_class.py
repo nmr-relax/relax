@@ -412,7 +412,7 @@ class Common_functions:
         return spin.select_sim
 
 
-    def test_grid_ops(self, lower=None, upper=None, inc=None, n=n):
+    def test_grid_ops(self, lower=None, upper=None, inc=None, n=None):
         """Function for testing that the grid search options are reasonable.
 
         @param lower:       The lower bounds of the grid search which must be equal to the number of
