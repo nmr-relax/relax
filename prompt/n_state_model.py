@@ -77,7 +77,7 @@ class N_state_model:
             raise RelaxIntError, ('the number of states N', N)
 
         # Execute the functional code.
-        n_state_model.model_setyp(N=N)
+        n_state_model.model_setup(N=N)
 
 
     def set_domain(self, tensor=None, domain=None):
