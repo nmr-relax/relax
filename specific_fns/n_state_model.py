@@ -193,7 +193,7 @@ class N_state_model(Common_functions):
 
         # Create a list of all the reduced alignment tensor elements (for the chi-squared function).
         red_tensor_elem = []
-        for tensor in cdp.align_tensor:
+        for tensor in cdp.align_tensors:
             # Ignore the full tensors.
             if not tensor.red:
                 continue
@@ -305,7 +305,7 @@ class N_state_model(Common_functions):
 
         # Loop over the tensors.
         match = False
-        for tensor_cont in cdp.align_tensor:
+        for tensor_cont in cdp.align_tensors:
             # Find the matching tensor and then store the domain label.
             if tensor_cont.name == tensor:
                 tensor_cont.domain = domain
@@ -330,7 +330,7 @@ class N_state_model(Common_functions):
 
         # Loop over the tensors.
         match = False
-        for tensor_cont in cdp.align_tensor:
+        for tensor_cont in cdp.align_tensors:
             # Find the matching tensor and then store the tensor type.
             if tensor_cont.name == tensor:
                 tensor_cont.red = red
