@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+from math import pi
 from numpy import array, float64, zeros
 from re import search
 
