@@ -25,6 +25,7 @@ from copy import deepcopy
 
 # relax module imports.
 from data import Data as relax_data_store
+from generic_fns.selection import spin_loop
 from relax_errors import RelaxError, RelaxParamSetError
 
 
@@ -33,34 +34,38 @@ class Common_functions:
     """Base class containing simple methods used by some a number of the specific analysis types."""
 
     def has_errors(self):
-        """Function for testing if errors exist for the run."""
+        """Function for testing if errors exist for the run.
+
+        @return:    The answer to the question of whether errors exist.
+        @rtype:     bool
+        """
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Diffusion tensor errors.
-        if relax_data_store.diff.has_key(self.run):
-            for object_name in dir(relax_data_store.diff[self.run]):
+        if hasattr(cdp, 'diff'):
+            for object_name in dir(cdp.diff):
                 # The object error name.
                 object_error = object_name + '_err'
 
                 # Error exists.
-                if hasattr(relax_data_store.diff[self.run], object_error):
-                    return 1
+                if hasattr(cdp.diff, object_error):
+                    return True
 
         # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Reassign data structure.
-            data = relax_data_store.res[self.run][i]
-
+        for spin in spin_loop():
             # Parameter errors.
-            for object_name in dir(data):
+            for object_name in dir(spin):
                 # The object error name.
                 object_error = object_name + '_err'
 
                 # Error exists.
-                if hasattr(data, object_error):
-                    return 1
+                if hasattr(spin, object_error):
+                    return True
 
         # No errors found.
-        return 0
+        return False
 
 
     def return_data(self, run, i):
