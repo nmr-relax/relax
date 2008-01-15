@@ -26,7 +26,7 @@ import sys
 # relax module imports.
 import help
 from specific_fns import n_state_model
-from relax_errors import RelaxBoolError, RelaxStrError
+from relax_errors import RelaxBoolError, RelaxIntError, RelaxStrError
 
 
 class N_state_model:
