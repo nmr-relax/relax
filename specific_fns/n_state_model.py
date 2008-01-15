@@ -154,10 +154,6 @@ class N_state_model(Common_functions):
         return A, b
 
 
-    def overfit_deselect(self):
-        """Dummy function nornally for deselecting spins with insufficient data for minimisation."""
-
-
     def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None):
         """Minimisation function.
 
@@ -217,6 +213,10 @@ class N_state_model(Common_functions):
         if results == None:
             return
         param_vector, func, iter_count, f_count, g_count, h_count, warning = results
+
+
+    def overfit_deselect(self):
+        """Dummy function nornally for deselecting spins with insufficient data for minimisation."""
 
 
     def return_data_name(self, name):
