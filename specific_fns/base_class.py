@@ -28,8 +28,6 @@ from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxParamSetError
 
 
-# The relax data storage object.
-
 
 class Common_functions:
     """Base class containing simple methods used by some a number of the specific analysis types."""
