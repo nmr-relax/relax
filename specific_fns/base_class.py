@@ -32,9 +32,7 @@ from relax_errors import RelaxError, RelaxParamSetError
 
 
 class Common_functions:
-    def __init__(self):
-        """Base class containing functions common to the specific functions."""
-
+    """Base class containing simple methods used by some a number of the specific analysis types."""
 
     def has_errors(self):
         """Function for testing if errors exist for the run."""
