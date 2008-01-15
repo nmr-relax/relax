@@ -298,6 +298,19 @@ class N_state_model(Common_functions):
         # Set the value of N.
         cdp.N = N
 
+        # Initialise the list of model parameters.
+        cdp.params = []
+
+        # Add the probability parameters.
+        for i in xrange(N-1):
+            cdp.params.append('p' + `i`)
+
+        # Add the Euler angle parameters.
+        for i in xrange(N):
+            cdp.params.append('alpha' + `i`)
+            cdp.params.append('beta' + `i`)
+            cdp.params.append('gamma' + `i`)
+
 
     def param_num(self):
         """Function for determining the number of parameters in the model.
