@@ -33,9 +33,7 @@ from specific_fns.base_class import Common_functions
 
 
 class N_state_model(Common_functions):
-    def __init__(self):
-        """Class containing functions for the N-state model."""
-
+    """Class containing functions for the N-state model."""
 
     def assemble_param_vector(self, sim_index):
         """Assemble all the parameters of the model into a single array."""
