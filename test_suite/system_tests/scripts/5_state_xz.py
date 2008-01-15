@@ -79,7 +79,7 @@ align_tensor.matrix_angles(basis_set=1, tensors=['chi1 N-dom', 'chi2 N-dom', 'ch
 n_state_model.model(N=5)
 
 # Grid search.
-grid_search(inc=11)
+grid_search(inc=3)
 
 # Minimise.
 minimise('simplex')
