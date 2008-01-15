@@ -213,6 +213,32 @@ class N_state_model(Common_functions):
         param_vector, func, iter_count, f_count, g_count, h_count, warning = results
 
 
+    def model_setup(self, N=None):
+        """Function for setting up the N-state model.
+
+        @param N:   The number of states.
+        @type N:    int
+        """
+
+        # Test if the current data pipe exists.
+        if not relax_data_store.current_pipe:
+            raise RelaxNoPipeError
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Test if the pipe type is 'N-state'.
+        function_type = cdp.pipe_type
+        if function_type != 'N-state':
+            raise RelaxFuncSetupError, specific_fns.get_string(function_type)
+
+        # Initialise the data structures (if needed).
+        self.data_init()
+
+        # Set the value of N.
+        cdp.N = N
+        
+
     def return_data_name(self, name):
         """
         N-state model data type string matching patterns
