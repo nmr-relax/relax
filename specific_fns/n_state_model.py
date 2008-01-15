@@ -191,8 +191,9 @@ class N_state_model(Common_functions):
         if constraints:
             A, b = self.linear_constraints()
 
-        # Create a list of all the reduced alignment tensor elements (for the chi-squared function).
+        # Create a list of all the reduced alignment tensor elements and their errors (for the chi-squared function).
         red_tensor_elem = []
+        red_tensor_err = []
         for tensor in cdp.align_tensors:
             # Ignore the full tensors.
             if not tensor.red:
@@ -205,13 +206,27 @@ class N_state_model(Common_functions):
             red_tensor_elem.append(tensor.Sxz)
             red_tensor_elem.append(tensor.Syz)
 
-        # Convert the reduced alignment tensor element list to a numpy array (for the chi-squared function maths).
-        red_tensor_elem = array(red_tensor_elem, float64)
+            # Append the 5 unique error elements (if they exist).
+            if hasattr(tensor, 'Sxx_err'):
+                red_tensor_err.append(tensor.Sxx_err)
+                red_tensor_err.append(tensor.Syy_err)
+                red_tensor_err.append(tensor.Sxy_err)
+                red_tensor_err.append(tensor.Sxz_err)
+                red_tensor_err.append(tensor.Syz_err)
 
-        # The aligment tensor errors, if they exist.
-        tensor_err = None
-        if hasattr(cdp, 'align_tensor_errors'):
-            tensor_err = cdp.align_tensor_errors
+            # Otherwise append errors of 1.0 to convert the chi-squared equation to the SSE equation (for the tensors without errors).
+            else:
+                red_tensor_err = red_tensor_err + [1.0, 1.0, 1.0, 1.0, 1.0]
+
+        # Convert the reduced alignment tensor element lists into numpy arrays (for the chi-squared function maths).
+        red_tensor_elem = array(red_tensor_elem, float64)
+        red_tensor_err = array(red_tensor_err, float64)
+
+        # Create a list of all the reduced alignment tensor element errors (for the chi-squared function).
+        for tensor in cdp.align_tensors:
+            # Ignore the full tensors.
+            if not tensor.red:
+                continue
 
         # Set up the class instance containing the target function.
         model = N_state_opt(init_params=param_vector, data=cdp.align_tensor, errors=tensor_err)
