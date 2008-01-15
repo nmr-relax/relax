@@ -90,8 +90,14 @@ class N_state_model(Common_functions):
             print "Cannot run a grid search on a model with zero parameters, skipping the grid search."
             return
 
+        # Initialise the grid_ops structure.
+        grid_ops = []
+        """This structure is a list of lists.  The first dimension corresponds to the model
+        parameter.  The second dimension has the elements: 0, the number of increments in that
+        dimension; 1, the lower limit of the grid; 2, the upper limit of the grid."""
+
         # Minimisation.
-        self.minimise(min_algor='grid', constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+        self.minimise(min_algor='grid', min_ops=grid_ops, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
     def linear_constraints(self):
