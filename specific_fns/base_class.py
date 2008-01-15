@@ -68,6 +68,10 @@ class Common_functions:
         return False
 
 
+    def overfit_deselect(self):
+        """Dummy function, nornally for deselecting spins with insufficient data for minimisation."""
+
+
     def return_data(self, spin):
         """Function for returning the Ri data structure for the given spin.
 
