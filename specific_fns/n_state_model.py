@@ -99,14 +99,14 @@ class N_state_model(Common_functions):
         # Set the grid search options.
         for i in xrange(n):
             # Probabilities (default values).
-            if cdp.params[i] == 'pc':
-                grid_ops.append([inc[m], 0.0, 1.0])
+            if search('^p', cdp.params[i]):
+                grid_ops.append([inc[i], 0.0, 1.0])
 
             # Angles (default values).
-            if cdp.params[i] == 'alpha' or cdp.params[i] == 'gamma':
-                grid_ops.append([inc[m], 0.0, 2*pi])
-            elif cdp.params[i] == 'beta':
-                grid_ops.append([inc[m], 0.0, pi])
+            if search('^alpha', cdp.params[i]) or search('^gamma', cdp.params[i]):
+                grid_ops.append([inc[i], 0.0, 2*pi])
+            elif search('^beta', cdp.params[i]):
+                grid_ops.append([inc[i], 0.0, pi])
 
             # Lower bound (if supplied).
             if lower:
