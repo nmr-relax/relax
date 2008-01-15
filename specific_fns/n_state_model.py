@@ -72,6 +72,24 @@ class N_state_model(Common_functions):
         @type verbosity:    int
         """
 
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Test if the N-state model has been set up.
+        if not hasattr(cdp, 'N'):
+            raise RelaxNoModelError, 'N-state'
+
+        # The number of parameters.
+        n = self.param_num()
+
+        # Test the grid search options.
+        self.test_grid_ops(lower=lower, upper=upper, inc=inc, n=n)
+
+        # Make sure that the length of the parameter array is > 0.
+        if n == 0:
+            print "Cannot run a grid search on a model with zero parameters, skipping the grid search."
+            return
+
         # Minimisation.
         self.minimise(min_algor='grid', constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
