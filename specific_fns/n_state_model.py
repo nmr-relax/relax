@@ -228,7 +228,7 @@ class N_state_model(Common_functions):
 
         # Set the value of N.
         cdp.N = N
-        
+
 
     def param_num(self):
         """Function for determining the number of parameters in the model.
