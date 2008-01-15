@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# relax module imports.
+from chi2 import chi2
+
 
 class N_state_opt:
     """Class containing the target function of the optimisation of the N-state model."""
@@ -63,3 +66,6 @@ class N_state_opt:
         @return:        The chi-squared or SSE value.
         @type return:   float
         """
+
+        # Return the chi-squared value.
+        return chi2(self.red_data, red_bc_data, self.red_errors)
