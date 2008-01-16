@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003, 2004, 2008 Edward d'Auvergne                            #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,9 +20,8 @@
 #                                                                             #
 ###############################################################################
 
-
 # Python module imports.
-from Numeric import Float64, sum, transpose, zeros
+from numpy import sum
 
 
 # Chi-squared value.
