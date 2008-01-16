@@ -50,8 +50,8 @@ class Consistency_tests(Common_functions):
             raise RelaxError, "The frequency has not been set up."
 
         # Test if the sequence data is loaded.
-        if not cdp.res.has_key:
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Test if the CSA, bond length, angle Theta and correlation time values have been set.
         for spin in spin_loop(spin_id):
@@ -268,7 +268,7 @@ class Consistency_tests(Common_functions):
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Test if sequence data is loaded.
-        if not cdp.res.has_key:
+        if not exists_mol_res_spin_data():
             return 0
 
         # Return the number of residues.
@@ -602,8 +602,8 @@ class Consistency_tests(Common_functions):
             raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
-        if not cdp.res.has_key:
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
 
         # Header.
