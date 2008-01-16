@@ -422,6 +422,12 @@ class N_state_model(Common_functions):
             cdp.params.append('beta' + `i`)
             cdp.params.append('gamma' + `i`)
 
+        # Initialise the probability and Euler angle arrays.
+        cdp.probs = [None] * cdp.N
+        cdp.alpha = [None] * cdp.N
+        cdp.beta = [None] * cdp.N
+        cdp.gamma = [None] * cdp.N
+
 
     def param_num(self):
         """Function for determining the number of parameters in the model.
