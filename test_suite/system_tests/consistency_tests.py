@@ -34,6 +34,7 @@ from physical_constants import N15_CSA, NH_BOND_LENGTH
 class Ct(TestCase):
     """Class for testing various aspects specific to consistency testing."""
 
+
     def setUp(self):
         """Set up for all the functional tests."""
 
