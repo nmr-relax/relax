@@ -28,7 +28,7 @@ from re import search
 # relax module imports.
 from data import Data as relax_data_store
 from maths_fns.n_state_model import N_state_opt
-from minimise.generic import generic_minimise
+from minfx.generic import generic_minimise
 from relax_errors import RelaxNoModelError
 from specific_fns.base_class import Common_functions
 
