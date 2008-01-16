@@ -110,5 +110,13 @@ class N_state_opt:
             for i in xrange(self.num_tensors):
                 self.red_bc[i] = self.red_bc[i]  +  pc * self.RT[c] * self.full_tensors[i] * self.R[c]
 
+        # 5D vectorise the back-calculated tensors (create red_bc_vector from red_bc).
+        for i in xrange(self.num_tensors):
+            self.red_bc_vector[5*i]   = self.red_bc[i,0,0]    # Sxx.
+            self.red_bc_vector[5*i+1] = self.red_bc[i,1,1]    # Syy.
+            self.red_bc_vector[5*i+2] = self.red_bc[i,0,1]    # Sxy.
+            self.red_bc_vector[5*i+3] = self.red_bc[i,0,2]    # Sxz.
+            self.red_bc_vector[5*i+4] = self.red_bc[i,1,2]    # Syz.
+
         # Return the chi-squared value.
         return chi2(self.red_data, self.red_bc_vector, self.red_errors)
