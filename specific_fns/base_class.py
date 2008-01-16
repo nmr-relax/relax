@@ -72,6 +72,12 @@ class Common_functions:
         """Dummy function, nornally for deselecting spins with insufficient data for minimisation."""
 
 
+    def return_conversion_factor(self, stat_type):
+        """Dummy function for returning 1.0."""
+
+        return 1.0
+
+
     def return_data(self, spin):
         """Function for returning the Ri data structure for the given spin.
 

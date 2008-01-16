@@ -272,12 +272,6 @@ class Jw_mapping(Common_functions):
                 continue
 
 
-    def return_conversion_factor(self, stat_type):
-        """Dummy function for returning 1.0."""
-
-        return 1.0
-
-
     def return_data_name(self, name):
         """
         Reduced spectral density mapping data type string matching patterns

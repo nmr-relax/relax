@@ -39,6 +39,7 @@ from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxNaNError
 class Mf_minimise:
     """Class containing functions specific to model-free optimisation."""
 
+
     def back_calc(self, run=None, index=None, ri_label=None, frq_label=None, frq=None):
         """Back-calculation of relaxation data from the model-free parameter values."""
 
