@@ -27,6 +27,7 @@ from re import search
 
 # relax module imports.
 from data import Data as relax_data_store
+from float import isNaN, isInf
 from maths_fns.n_state_model import N_state_opt
 from minfx.generic import generic_minimise
 from relax_errors import RelaxNoModelError
@@ -295,6 +296,57 @@ class N_state_model(Common_functions):
         if results == None:
             return
         param_vector, func, iter_count, f_count, g_count, h_count, warning = results
+
+        # Catch infinite chi-squared values.
+        if isInf(func):
+            raise RelaxInfError, 'chi-squared'
+
+        # Catch chi-squared values of NaN.
+        if isNaN(func):
+            raise RelaxNaNError, 'chi-squared'
+
+        # Disassemble the parameter vector.
+        self.disassemble_param_vector(param_vector=param_vector, sim_index=sim_index)
+
+        # Monte Carlo minimisation statistics.
+        if sim_index != None:
+            # Chi-squared statistic.
+            cdp.chi2_sim[sim_index] = func
+
+            # Iterations.
+            cdp.iter_sim[sim_index] = iter_count
+
+            # Function evaluations.
+            cdp.f_count_sim[sim_index] = f_count
+
+            # Gradient evaluations.
+            cdp.g_count_sim[sim_index] = g_count
+
+            # Hessian evaluations.
+            cdp.h_count_sim[sim_index] = h_count
+
+            # Warning.
+            cdp.warning_sim[sim_index] = warning
+
+        # Normal statistics.
+        else:
+            # Chi-squared statistic.
+            cdp.chi2 = func
+
+            # Iterations.
+            cdp.iter = iter_count
+
+            # Function evaluations.
+            cdp.f_count = f_count
+
+            # Gradient evaluations.
+            cdp.g_count = g_count
+
+            # Hessian evaluations.
+            cdp.h_count = h_count
+
+            # Warning.
+            cdp.warning = warning
 
 
     def model_setup(self, N=None):
