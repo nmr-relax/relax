@@ -27,6 +27,7 @@ import sys
 # relax module imports.
 import help
 from relax_errors import RelaxStrError
+from specific_fns import consistency_tests_obj
 
 
 class Consistency_tests:
@@ -77,4 +78,4 @@ class Consistency_tests:
             raise RelaxStrError, ('frq', frq)
 
         # Execute the functional code.
-        self.__relax__.specific.consistency_tests.set_frq(frq=frq)
+        consistency_tests_obj.set_frq(frq=frq)
