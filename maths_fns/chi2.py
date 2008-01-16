@@ -32,19 +32,29 @@ def chi2(data, back_calc_vals, errors):
     """Function to calculate the chi-squared value.
 
     The chi-sqared equation
-    ~~~~~~~~~~~~~~~~~~~~~~~
-            _n_
-            \    (yi - yi()) ** 2
-    Chi2  =  >   ----------------
-            /__    sigma_i ** 2
-            i=1
+    =======================
+
+                    _n_
+                    \    (yi - yi(theta)) ** 2
+    chi^2(theta)  =  >   ---------------------
+                    /__      sigma_i ** 2
+                    i=1
 
     where:
+        theta is the parameter vector.
         yi are the values of the measured data set.
-        yi() are the values of the back calculated data set.
+        yi(theta) are the values of the back calculated data set.
         sigma_i are the values of the error set.
 
-    The chi-squared value is returned.
+
+    @param data:            The vector of yi values.
+    @type data:             numpy array
+    @param back_calc_vals:  The vector of yi(theta) values.
+    @type back_calc_vals:   numpy array
+    @param errors:          The vector of sigma_i values.
+    @type errors:           numpy array
+    @return:                The chi-squared value.
+    @rtype:                 float
     """
 
     # Calculate the chi-squared statistic.
@@ -59,19 +69,31 @@ def dchi2(data, back_calc_vals, back_calc_grad, errors):
     """Function to create the chi-squared gradient.
 
     The chi-sqared gradient
-    ~~~~~~~~~~~~~~~~~~~~~~~
-                   _n_
-     dChi2         \   /  yi - yi()      dyi()  \ 
-    -------  =  -2  >  | ----------  .  ------- |
-    dthetaj        /__ \ sigma_i**2     dthetaj /
-                   i=1
+    =======================
+
+                         _n_
+    dchi^2(theta)        \   / yi - yi(theta)     dyi(theta) \ 
+    -------------  =  -2  >  | --------------  .  ---------- |
+       dthetaj           /__ \   sigma_i**2        dthetaj   /
+                         i=1
 
     where:
+        theta is the parameter vector.
         yi are the values of the measured data set.
-        yi() are the values of the back calculated data set.
+        yi(theta) are the values of the back calculated data set.
+        dyi(theta)/dthetaj are the values of the back calculated gradient.
         sigma_i are the values of the error set.
 
-    The chi-squared gradient vector is returned.
+    @param data:            The vector of yi values.
+    @type data:             numpy array
+    @param back_calc_vals:  The vector of yi(theta) values.
+    @type back_calc_vals:   numpy array
+    @param back_calc_grad:  The matrix of dyi(theta)/dthetaj values.
+    @type back_calc_grad:   numpy matrix
+    @param errors:          The vector of sigma_i values.
+    @type errors:           numpy array
+    @return:                The chi-squared gradient.
+    @rtype:                 numpy array
     """
 
     # Calculate the chi-squared gradient.
@@ -86,17 +108,37 @@ def d2chi2(data, back_calc_vals, back_calc_grad_j, back_calc_grad_k, back_calc_h
     """Function to create the chi-squared Hessian.
 
     The chi-squared Hessian
-    ~~~~~~~~~~~~~~~~~~~~~~~
+    =======================
+
                           _n_
-         d2chi2           \       1      /  dyi()     dyi()                         d2yi()     \ 
-    ---------------  =  2  >  ---------- | ------- . -------  -  (yi - yi()) . --------------- |
-    dthetaj.dthetak       /__ sigma_i**2 \ dthetaj   dthetak                   dthetaj.dthetak /
+    d2chi^2(theta)        \       1      / dyi(theta)   dyi(theta)                        d2yi(theta)   \ 
+    ---------------  =  2  >  ---------- | ---------- . ----------  -  (yi-yi(theta)) . --------------- |
+    dthetaj.dthetak       /__ sigma_i**2 \  dthetaj      dthetak                        dthetaj.dthetak /
                           i=1
 
     where:
+        theta is the parameter vector.
         yi are the values of the measured relaxation data set.
-        yi() are the values of the back calculated relaxation data set.
+        yi(theta) are the values of the back calculated relaxation data set.
+        dyi(theta)/dthetaj are the values of the back calculated gradient.
+        d2yi(theta)/dthetaj.dthetak are the values of the back calculated Hessian.
         sigma_i are the values of the error set.
+
+
+    @param data:                The vector of yi values.
+    @type data:                 numpy array
+    @param back_calc_vals:      The vector of yi(theta) values.
+    @type back_calc_vals:       numpy array
+    @param back_calc_grad_j:    The matrix of dyi(theta)/dthetaj values.
+    @type back_calc_grad_j:     numpy matrix
+    @param back_calc_grad_k:    The matrix of dyi(theta)/dthetak values.
+    @type back_calc_grad_k:     numpy matrix
+    @param back_calc_hess:      The 3rd rank tensor of d2yi(theta)/dthetaj.dthetak values.
+    @type back_calc_hess:       numpy matrix
+    @param errors:              The vector of sigma_i values.
+    @type errors:               numpy array
+    @return:                    The chi-squared Hessian.
+    @rtype:                     numpy 3rd rank tensor
     """
 
     # Calculate the chi-squared Hessian.
