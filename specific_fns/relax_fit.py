@@ -883,12 +883,6 @@ class Relax_fit(Common_functions):
         self.relax.generic.intensity.read(run=run, file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self.assign_function)
 
 
-    def return_conversion_factor(self, stat_type):
-        """Dummy function for returning 1.0."""
-
-        return 1.0
-
-
     def return_data(self, run, i):
         """Function for returning the peak intensity data structure."""
 
