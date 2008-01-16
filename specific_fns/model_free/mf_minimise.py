@@ -31,13 +31,14 @@ from data import Data as relax_data_store
 from float import isNaN, isInf
 from generic_fns.selection import spin_loop
 from maths_fns.mf import Mf
-from minimise.generic import generic_minimise
+from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError
 
 
 
 class Mf_minimise:
     """Class containing functions specific to model-free optimisation."""
+
 
     def back_calc(self, run=None, index=None, ri_label=None, frq_label=None, frq=None):
         """Back-calculation of relaxation data from the model-free parameter values."""

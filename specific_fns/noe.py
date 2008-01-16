@@ -231,12 +231,6 @@ class Noe:
                 data.noe_err = None
 
 
-    def return_conversion_factor(self, stat_type):
-        """Dummy function for returning 1.0."""
-
-        return 1.0
-
-
     def return_data_name(self, name):
         """
         NOE calculation data type string matching patterns
