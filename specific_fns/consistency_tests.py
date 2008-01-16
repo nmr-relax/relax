@@ -104,21 +104,21 @@ class Consistency_tests(Common_functions):
                 # R1.
                 if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'R1':
                     if sim_index == None:
-                        r1 = spin.relax_spin[j]
+                        r1 = spin.relax_data[j]
                     else:
                         r1 = spin.relax_sim_data[sim_index][j]
 
                 # R2.
                 if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'R2':
                     if sim_index == None:
-                        r2 = spin.relax_spin[j]
+                        r2 = spin.relax_data[j]
                     else:
                         r2 = spin.relax_sim_data[sim_index][j]
 
                 # NOE.
                 if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'NOE':
                     if sim_index == None:
-                        noe = spin.relax_spin[j]
+                        noe = spin.relax_data[j]
                     else:
                         noe = spin.relax_sim_data[sim_index][j]
 
