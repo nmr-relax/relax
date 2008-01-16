@@ -42,12 +42,12 @@ class Test_align_tensor(TestCase):
         Sxxyy = Sxx - Syy
 
         # Matrices.
-        tensor_diag = array([[ Sxx,  0.0,  0.0],
-                             [  0.0, Syy,  0.0],
-                             [  0.0,  0.0, Szz]])
+        tensor = array([[ Sxx, Sxy, Sxz],
+                        [ Sxy, Syy, Syz],
+                        [ Sxz, Syz, Szz]])
 
         # Return the objects.
-        return Szz, Sxxyy, tensor_diag
+        return Szz, Sxxyy, tensor
 
 
     def setUp(self):
@@ -96,14 +96,14 @@ class Test_align_tensor(TestCase):
         self.assertEqual(self.align_data.Syz_sim[0], Syz)
 
         # Calculate the diffusion tensor objects.
-        Szz, Sxxyy, tensor_diag = self.calc_objects(Sxx, Syy, Sxy, Sxz, Syz)
+        Szz, Sxxyy, tensor = self.calc_objects(Sxx, Syy, Sxy, Sxz, Syz)
 
         # Test the automatically created values.
         self.assertEqual(self.align_data.Szz_sim[0], Szz)
         self.assertEqual(self.align_data.Sxxyy_sim[0], Sxxyy)
 
         # Test the matrices.
-        self.assertEqual(self.align_data.tensor_diag_sim[0].tostring(), tensor_diag.tostring())
+        self.assertEqual(self.align_data.tensor_sim[0].tostring(), tensor.tostring())
 
 
     def test_set_Szz(self):
@@ -149,14 +149,14 @@ class Test_align_tensor(TestCase):
         self.assertEqual(self.align_data.Syz_err, Syz)
 
         # Calculate the diffusion tensor objects.
-        Szz, Sxxyy, tensor_diag = self.calc_objects(Sxx, Syy, Sxy, Sxz, Syz)
+        Szz, Sxxyy, tensor = self.calc_objects(Sxx, Syy, Sxy, Sxz, Syz)
 
         # Test the automatically created values.
         self.assertEqual(self.align_data.Szz_err, Szz)
         self.assertEqual(self.align_data.Sxxyy_err, Sxxyy)
 
         # Test the matrices.
-        self.assertEqual(self.align_data.tensor_diag_err.tostring(), tensor_diag.tostring())
+        self.assertEqual(self.align_data.tensor_err.tostring(), tensor.tostring())
 
 
     def test_set_params(self):
@@ -192,14 +192,14 @@ class Test_align_tensor(TestCase):
         self.assertEqual(self.align_data.Syz, Syz)
 
         # Calculate the diffusion tensor objects.
-        Szz, Sxxyy, tensor_diag = self.calc_objects(Sxx, Syy, Sxy, Sxz, Syz)
+        Szz, Sxxyy, tensor = self.calc_objects(Sxx, Syy, Sxy, Sxz, Syz)
 
         # Test the automatically created values.
         self.assertEqual(self.align_data.Szz, Szz)
         self.assertEqual(self.align_data.Sxxyy, Sxxyy)
 
         # Test the matrices.
-        self.assertEqual(self.align_data.tensor_diag.tostring(), tensor_diag.tostring())
+        self.assertEqual(self.align_data.tensor.tostring(), tensor.tostring())
 
 
     def test_set_sim(self):
@@ -257,14 +257,14 @@ class Test_align_tensor(TestCase):
         self.assertEqual(self.align_data.Syz_sim[0], Syz)
 
         # Calculate the diffusion tensor objects.
-        Szz, Sxxyy, tensor_diag = self.calc_objects(Sxx, Syy, Sxy, Sxz, Syz)
+        Szz, Sxxyy, tensor = self.calc_objects(Sxx, Syy, Sxy, Sxz, Syz)
 
         # Test the automatically created values.
         self.assertEqual(self.align_data.Szz_sim[0], Szz)
         self.assertEqual(self.align_data.Sxxyy_sim[0], Sxxyy)
 
         # Test the matrices.
-        self.assertEqual(self.align_data.tensor_diag_sim[0].tostring(), tensor_diag.tostring())
+        self.assertEqual(self.align_data.tensor_sim[0].tostring(), tensor.tostring())
 
 
     def test_set_Sxx(self):
