@@ -31,7 +31,7 @@ from data import Data as relax_data_store
 from float import isNaN, isInf
 from generic_fns.selection import spin_loop
 from maths_fns.mf import Mf
-from minimise.generic import generic_minimise
+from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError
 
 
