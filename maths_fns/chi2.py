@@ -20,6 +20,8 @@
 #                                                                             #
 ###############################################################################
 
+"""Module containing functions for calculating the chi-squared value, gradient, and Hessian."""
+
 # Python module imports.
 from numpy import sum
 
