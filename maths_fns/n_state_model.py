@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import float64, zeros
+from numpy import array, float64, zeros
 
 # relax module imports.
 from chi2 import chi2
@@ -57,16 +57,13 @@ class N_state_opt:
         self.N = N
         self.params = 1.0 * init_params    # Force a copy of the data to be stored.
         self.total_num_params = len(init_params)
-        self.full_tensors = full_tensors
+        self.full_tensors = array(full_tensors, float64)
         self.red_data = red_data
         self.red_errors = red_errors
 
-        # Initialise some empty matrices for storage of the transient rotation matricies and their transposes.
-        self.R = []
-        self.RT = []
-        for i in xrange(N):
-            self.R.append(zeros((3,3), float64))
-            self.RT.append(zeros((3,3), float64))
+        # Initialise some empty numpy objects for storage of the transient rotation matricies and their transposes.
+        self.R = zeros((N,3,3), float64)
+        self.RT = zeros((N,3,3), float64)
 
 
     def func(self, params):
