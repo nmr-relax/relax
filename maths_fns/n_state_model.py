@@ -25,6 +25,7 @@ from numpy import float64, zeros
 
 # relax module imports.
 from chi2 import chi2
+from rotation_matrix import rotation_matrix_zyz
 
 
 class N_state_opt:
@@ -83,5 +84,9 @@ class N_state_opt:
         @type return:   float
         """
 
+        # Update the rotation matricies.
+        for i in xrange(self.N):
+            self.R[i] = rotation_matrix_zyz(self.R[i], params[5+3*i], params[5+3*i+1], params[5+3*i+2])
+        
         # Return the chi-squared value.
         return chi2(self.red_data, red_bc_data, self.red_errors)
