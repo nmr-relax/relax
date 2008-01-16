@@ -28,7 +28,7 @@ from string import replace
 # relax module imports.
 from data import Data as relax_data_store
 from base_class import Common_functions
-from generic_fns.selection import exists_mol_res_spin_data, spin_loop
+from generic_fns.selection import count_spins, exists_mol_res_spin_data, spin_loop
 from maths_fns.consistency_tests import Consistency
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError
 from physical_constants import N15_CSA, NH_BOND_LENGTH
@@ -264,15 +264,8 @@ class Consistency_tests(Common_functions):
     def num_instances(self):
         """Function for returning the number of instances."""
 
-        # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
-
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            return 0
-
         # Return the number of residues.
-        return len(cdp.res)
+        return count_spins()
 
 
     def overfit_deselect(self):
