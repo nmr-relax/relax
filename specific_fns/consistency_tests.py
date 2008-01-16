@@ -296,12 +296,6 @@ class Consistency_tests(Common_functions):
                 continue
 
 
-    def return_conversion_factor(self, stat_type):
-        """Dummy function for returning 1.0. This function is essential when writing grace files."""
-
-        return 1.0
-
-
     def return_data_name(self, name):
         """
         Consistency testing data type string matching patterns
