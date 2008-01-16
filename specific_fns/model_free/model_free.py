@@ -23,9 +23,8 @@
 # Python module imports.
 from copy import deepcopy
 from data.diff_tensor import DiffTensorSimList
-from LinearAlgebra import inverse
 from math import pi
-from Numeric import Float64, array, identity, matrixmultiply, ones, transpose, zeros
+from numpy import float64, array, identity, transpose, zeros
 from re import match, search
 from string import replace, split
 import sys
@@ -312,9 +311,9 @@ class Model_free_main:
 
         # Initialise.
         if len(self.param_vector) == 0:
-            self.scaling_matrix = zeros((0, 0), Float64)
+            self.scaling_matrix = zeros((0, 0), float64)
         else:
-            self.scaling_matrix = identity(len(self.param_vector), Float64)
+            self.scaling_matrix = identity(len(self.param_vector), float64)
         i = 0
 
         # No diagonal scaling.
@@ -1183,7 +1182,7 @@ class Model_free_main:
         A = []
         b = []
         n = len(self.param_vector)
-        zero_array = zeros(n, Float64)
+        zero_array = zeros(n, float64)
         i = 0
         j = 0
 
@@ -1393,8 +1392,8 @@ class Model_free_main:
                     i = i + 1
 
         # Convert to Numeric data structures.
-        A = array(A, Float64)
-        b = array(b, Float64)
+        A = array(A, float64)
+        b = array(b, float64)
 
         return A, b
 
@@ -2424,7 +2423,7 @@ class Model_free_main:
         if xh_vect:
             # Numeric array format.
             try:
-                xh_vect = array(xh_vect, Float64)
+                xh_vect = array(xh_vect, float64)
             except:
                 raise RelaxError, "The XH unit vector " + self.file_line[self.col['xh_vect']] + " is invalid."
 

@@ -21,9 +21,9 @@
 ###############################################################################
 
 # Python module imports.
-from LinearAlgebra import inverse
 from math import pi
-from Numeric import Float64, array, matrixmultiply, zeros
+from numpy import float64, array, dot, zeros
+from numpy.linalg import inv
 from re import match
 
 # relax module imports.
@@ -164,8 +164,8 @@ class Mf_minimise:
             param_values = [self.assemble_param_vector(param_set='mf')]
 
             # Convert to Numeric arrays.
-            relax_data = [array(data.relax_data, Float64)]
-            relax_error = [array(data.relax_error, Float64)]
+            relax_data = [array(data.relax_data, float64)]
+            relax_error = [array(data.relax_error, float64)]
 
             # Package the diffusion tensor parameters.
             if self.param_set == 'local_tm':
@@ -739,7 +739,7 @@ class Mf_minimise:
                 # Diagonal scaling.
                 self.assemble_scaling_matrix(index=index, scaling=scaling)
                 if self.scaling_matrix:
-                    self.param_vector = matrixmultiply(inverse(self.scaling_matrix), self.param_vector)
+                    self.param_vector = dot(inv(self.scaling_matrix), self.param_vector)
 
             # Get the grid search minimisation options.
             if match('^[Gg]rid', min_algor):
@@ -747,7 +747,7 @@ class Mf_minimise:
 
             # Scaling of values for the set function.
             if match('^[Ss]et', min_algor):
-                min_options = matrixmultiply(inverse(self.scaling_matrix), min_options)
+                min_options = dot(inv(self.scaling_matrix), min_options)
 
             # Linear constraints.
             if constraints:
@@ -881,8 +881,8 @@ class Mf_minimise:
 
             # Convert to Numeric arrays.
             for k in xrange(len(relax_data)):
-                relax_data[k] = array(relax_data[k], Float64)
-                relax_error[k] = array(relax_error[k], Float64)
+                relax_data[k] = array(relax_data[k], float64)
+                relax_error[k] = array(relax_error[k], float64)
 
             # Diffusion tensor type.
             if self.param_set == 'local_tm':
@@ -938,7 +938,7 @@ class Mf_minimise:
                     number_ri = number_ri + len(relax_error[k])
 
                 # Reconstruct the error data structure.
-                lm_error = zeros(number_ri, Float64)
+                lm_error = zeros(number_ri, float64)
                 index = 0
                 for k in xrange(len(relax_error)):
                     lm_error[index:index+len(relax_error[k])] = relax_error[k]
@@ -979,7 +979,7 @@ class Mf_minimise:
 
             # Scaling.
             if scaling:
-                self.param_vector = matrixmultiply(self.scaling_matrix, self.param_vector)
+                self.param_vector = dot(self.scaling_matrix, self.param_vector)
 
             # Disassemble the parameter vector.
             self.disassemble_param_vector(index=index, sim_index=sim_index)
