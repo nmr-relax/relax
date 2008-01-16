@@ -76,7 +76,7 @@ align_tensor.matrix_angles(basis_set=0, tensors=['chi1 N-dom', 'chi2 N-dom', 'ch
 align_tensor.matrix_angles(basis_set=1, tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
 
 # Set up the 5-state model.
-n_state_model.model(N=5)
+n_state_model.model(N=3)
 
 # Grid search.
 grid_search(inc=2)

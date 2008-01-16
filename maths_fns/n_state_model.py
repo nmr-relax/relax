@@ -58,6 +58,7 @@ class N_state_opt:
         self.params = 1.0 * init_params    # Force a copy of the data to be stored.
         self.total_num_params = len(init_params)
         self.full_tensors = array(full_tensors, float64)
+        self.num_tensors = len(self.full_tensors)
         self.red_data = red_data
         self.red_errors = red_errors
 
@@ -66,10 +67,10 @@ class N_state_opt:
         # RT:  the transposes of the rotation matricies.
         # red_bc:  the back-calculated reduced alignment tensors.
         # red_bc_vector:  the back-calculated reduced alignment tensors in vector form {Sxx, Syy, Sxy, Sxz, Syz}.
-        self.R = zeros((N,3,3), float64)
-        self.RT = zeros((N,3,3), float64)
-        self.red_bc = zeros((N,3,3), float64)
-        self.red_bc_vector = zeros(N*5, float64)
+        self.R = zeros((self.N,3,3), float64)
+        self.RT = zeros((self.N,3,3), float64)
+        self.red_bc = zeros((self.num_tensors,3,3), float64)
+        self.red_bc_vector = zeros(self.num_tensors*5, float64)
 
 
     def func(self, params):
@@ -88,12 +89,26 @@ class N_state_opt:
         """
 
         # Update the rotation matricies.
-        for i in xrange(self.N):
+        for c in xrange(self.N):
             # The matrix itself.
-            rotation_matrix_zyz(self.R[i], params[self.N-1+3*i], params[self.N-1+3*i+1], params[self.N-1+3*i+2])
+            rotation_matrix_zyz(self.R[c], params[self.N-1+3*c], params[self.N-1+3*c+1], params[self.N-1+3*c+2])
 
             # Its rotation.
-            self.RT[i] = transpose(self.R[i])
+            self.RT[c] = transpose(self.R[c])
+
+            # The probability of state c.
+            if c < self.N:
+                pc = params[c]
+
+            # The probability of state N (1 minus the pc of all other states).
+            else:
+                pc = 1.0
+                for c2 in xrange(self.N-1):
+                    pc = pc - params[c2]
+
+            # Back-calculate the reduced tensors for sum element c and add these to red_bc.
+            for i in xrange(self.num_tensors):
+                self.red_bc[i] = self.red_bc[i]  +  pc * self.RT[c] * self.full_tensors[i] * self.R[c]
 
         # Return the chi-squared value.
         return chi2(self.red_data, self.red_bc_vector, self.red_errors)
