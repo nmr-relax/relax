@@ -96,4 +96,4 @@ class N_state_opt:
             self.RT[i] = transpose(self.R[i])
 
         # Return the chi-squared value.
-        return chi2(self.red_data, red_bc_data, self.red_errors)
+        return chi2(self.red_data, self.red_bc_vector, self.red_errors)
