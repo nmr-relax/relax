@@ -106,21 +106,21 @@ class Consistency_tests(Common_functions):
                     if sim_index == None:
                         r1 = spin.relax_spin[j]
                     else:
-                        r1 = spin.relax_sim_spin[sim_index][j]
+                        r1 = spin.relax_sim_data[sim_index][j]
 
                 # R2.
                 if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'R2':
                     if sim_index == None:
                         r2 = spin.relax_spin[j]
                     else:
-                        r2 = spin.relax_sim_spin[sim_index][j]
+                        r2 = spin.relax_sim_data[sim_index][j]
 
                 # NOE.
                 if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'NOE':
                     if sim_index == None:
                         noe = spin.relax_spin[j]
                     else:
-                        noe = spin.relax_sim_spin[sim_index][j]
+                        noe = spin.relax_sim_data[sim_index][j]
 
             # Skip the residue if not all of the three value exist.
             if r1 == None or r2 == None or noe == None:
