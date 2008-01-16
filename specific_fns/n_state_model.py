@@ -243,6 +243,16 @@ class N_state_model(Common_functions):
         if constraints:
             A, b = self.linear_constraints()
 
+        # Create a list of matricies consisting of all the full alignment tensors.
+        full_tensors = []
+        for tensor in cdp.align_tensors:
+            # Ignore the reduced tensors.
+            if tensor.red:
+                continue
+
+            # Append the tensor (in matrix form).
+            full_tensors.append(tensor.tensor)
+
         # Create a list of all the reduced alignment tensor elements and their errors (for the chi-squared function).
         red_tensor_elem = []
         red_tensor_err = []
@@ -275,7 +285,7 @@ class N_state_model(Common_functions):
         red_tensor_err = array(red_tensor_err, float64)
 
         # Set up the class instance containing the target function.
-        model = N_state_opt(N=cdp.N, init_params=param_vector, red_data=red_tensor_elem, red_errors=red_tensor_err)
+        model = N_state_opt(N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err)
 
         # Minimisation.
         if constraints:
