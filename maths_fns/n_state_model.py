@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, zeros
+from numpy import array, float64, transpose, zeros
 
 # relax module imports.
 from chi2 import chi2
@@ -83,7 +83,11 @@ class N_state_opt:
 
         # Update the rotation matricies.
         for i in xrange(self.N):
+            # The matrix itself.
             rotation_matrix_zyz(self.R[i], params[self.N-1+3*i], params[self.N-1+3*i+1], params[self.N-1+3*i+2])
+
+            # Its rotation.
+            self.RT[i] = transpose(self.R[i])
 
         # Return the chi-squared value.
         return chi2(self.red_data, red_bc_data, self.red_errors)
