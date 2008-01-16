@@ -27,15 +27,19 @@ from chi2 import chi2
 class N_state_opt:
     """Class containing the target function of the optimisation of the N-state model."""
 
-    def __init__(self, init_params=None, red_data=None, red_errors=None):
+    def __init__(self, N=None, init_params=None, full_tensors=None, red_data=None, red_errors=None):
         """Set up the class instance for optimisation.
 
         All constant data required for the N-state model are initialised here.
 
 
+        @param N:               The number of states.
+        @type N:                int
         @param init_params:     The initial parameter values.  Optimisation must start at some
                                 point!
         @type init_params:      numpy float64 array
+        @param full_tensors:    A list of the full alignment tensors in matrix form.
+        @type full_tensors:     list of 3x3 numpy matricies
         @param red_data:        An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all reduced
                                 tensors.  The format is [Sxx1, Syy1, Sxy1, Sxz1, Syz1, Sxx2, Syy2,
                                 Sxy2, Sxz2, Syz2, ..., Sxxn, Syyn, Sxyn, Sxzn, Syzn]
@@ -45,11 +49,20 @@ class N_state_opt:
         @type red_errors:       numpy float64 array
         """
 
-        # Place the data into the class instance namespace.
+        # Store the data inside the class instance namespace.
+        self.N = N
         self.params = 1.0 * init_params    # Force a copy of the data to be stored.
         self.total_num_params = len(init_params)
+        self.full_tensors = full_tensors
         self.red_data = red_data
         self.red_errors = red_errors
+
+        # Initialise some empty matrices for storage of the transient rotation matricies and their transposes.
+        self.R = []
+        self.RT = []
+        for i in xrange(N):
+            self.R.append(zeros((3,3), float64))
+            self.RT.append(zeros((3,3), float64))
 
 
     def func(self, params):
