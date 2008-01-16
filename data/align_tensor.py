@@ -435,43 +435,23 @@ def calc_rotation(Sxx_unit, Syy_unit, Szz_unit):
     return rotation
 
 
-def calc_tensor(rotation, tensor_diag):
+def calc_tensor(Sxx, Syy, Szz, Sxy, Sxz, Syz):
     """Function for calculating the alignment tensor (in the structural frame).
 
-    The alignment tensor is calculated using the diagonalised tensor and the rotation matrix
-    through the equation
-
-        R . tensor_diag . R^T.
-
-    @param rotation:        The rotation matrix.
-    @type rotation:         Numeric array ((3, 3), Float64)
-    @param tensor_diag:     The diagonalised alignment tensor.
-    @type tensor_diag:      Numeric array ((3, 3), Float64)
-    @return:                The alignment tensor (within the structural frame).
-    @rtype:                 Numeric array ((3, 3), Float64)
-    """
-
-    # Rotation (R . tensor_diag . R^T).
-    return dot(rotation, dot(tensor_diag, transpose(rotation)))
-
-
-def calc_tensor_diag(Sxx, Syy, Szz):
-    """Function for calculating the diagonalised alignment tensor.
-
-    The diagonalised alignment tensor is defined as
-
-                   | Sxx   0    0  |
-        tensor  =  |  0   Syy   0  |.
-                   |  0    0   Szz |
-
-    @param Sxx:     The Sxx parameter of the ellipsoid.
+    @param Sxx:     The Sxx tensor element.
     @type Sxx:      float
-    @param Syy:     The Syy parameter of the ellipsoid.
+    @param Syy:     The Syy tensor element.
     @type Syy:      float
-    @param Szz:     The Szz parameter of the ellipsoid.
+    @param Szz:     The Szz tensor element.
     @type Szz:      float
-    @return:        The diagonalised alignment tensor.
-    @rtype:         Numeric array ((3, 3), Float64)
+    @param Sxy:     The Sxy tensor element.
+    @type Sxy:      float
+    @param Sxz:     The Sxz tensor element.
+    @type Sxz:      float
+    @param Syz:     The Syz tensor element.
+    @type Syz:      float
+    @return:        The alignment tensor (within the structural frame).
+    @rtype:         3x3 numpy float64 array
     """
 
     # Initialise the tensor.
@@ -482,8 +462,39 @@ def calc_tensor_diag(Sxx, Syy, Szz):
     tensor[1, 1] = Syy
     tensor[2, 2] = Szz
 
+    # Populate the off diagonal elements.
+    tensor[0, 1] = tensor[1, 0] = Sxy
+    tensor[0, 2] = tensor[2, 0] = Sxz
+    tensor[1, 2] = tensor[2, 1] = Syz
+
     # Return the tensor.
     return tensor
+
+
+def calc_tensor_diag(rotation, tensor):
+    """Function for calculating the diagonalised alignment tensor.
+
+    The diagonalised alignment tensor is defined as
+
+                   | Sxx'  0    0  |
+        tensor  =  |  0   Syy'  0  |.
+                   |  0    0   Szz'|
+
+    The diagonalised alignment tensor is calculated using the tensor and the rotation matrix
+    through the equation
+
+        R^T . tensor_diag . R.
+
+    @param rotation:    The rotation matrix.
+    @type rotation:     Numeric array ((3, 3), Float64)
+    @param tensor:      The full alignment tensor.
+    @type tensor:       Numeric array ((3, 3), Float64)
+    @return:        The diagonalised alignment tensor.
+    @rtype:         Numeric array ((3, 3), Float64)
+    """
+
+    # Rotation (R^T . tensor_diag . R).
+    return dot(transpose(rotation), dot(tensor_diag, rotation))
 
 
 def dependency_generator():
@@ -515,9 +526,9 @@ def dependency_generator():
     yield ('Sxx_unit',      ['alpha', 'beta', 'gamma'],                     ['alpha', 'beta', 'gamma'])
     yield ('Syy_unit',      ['alpha', 'beta', 'gamma'],                     ['alpha', 'beta', 'gamma'])
     yield ('Szz_unit',      ['alpha', 'beta'],                              ['alpha', 'beta'])
-    yield ('tensor_diag',   ['Sxx', 'Syy', 'Szz'],                          ['Sxx', 'Syy', 'Szz'])
+    yield ('tensor_diag',   ['Sxx', 'Syy', 'Sxy', 'Sxz', 'Syz'],            ['tensor', 'rotation'])
     yield ('rotation',      ['alpha', 'beta', 'gamma'],                     ['Sxx_unit', 'Syy_unit', 'Szz_unit'])
-    yield ('tensor',        ['Sxx', 'Syy', 'Szz', 'alpha', 'beta', 'gamma'],   ['rotation', 'tensor_diag'])
+    yield ('tensor',        ['Sxx', 'Syy', 'Sxy', 'Sxz', 'Syz'],            ['Sxx', 'Syy', 'Szz', 'Sxy', 'Sxz', 'Syz'])
 
 
 
@@ -587,6 +598,9 @@ class AlignTensorData(Element):
                     'alpha',
                     'beta',
                     'gamma',
+                    'tensor',
+                    'tensor_diag',
+                    'rotation',
                     'domain',
                     'red']
 
