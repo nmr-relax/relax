@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
+from numpy import float64, zeros
+
 # relax module imports.
 from chi2 import chi2
 
