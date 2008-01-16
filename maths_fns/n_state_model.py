@@ -61,9 +61,15 @@ class N_state_opt:
         self.red_data = red_data
         self.red_errors = red_errors
 
-        # Initialise some empty numpy objects for storage of the transient rotation matricies and their transposes.
+        # Initialise some empty numpy objects for storage of:
+        # R:  the transient rotation matricies.
+        # RT:  the transposes of the rotation matricies.
+        # red_bc:  the back-calculated reduced alignment tensors.
+        # red_bc_vector:  the back-calculated reduced alignment tensors in vector form {Sxx, Syy, Sxy, Sxz, Syz}.
         self.R = zeros((N,3,3), float64)
         self.RT = zeros((N,3,3), float64)
+        self.red_bc = zeros((N,3,3), float64)
+        self.red_bc_vector = zeros(N*5, float64)
 
 
     def func(self, params):
