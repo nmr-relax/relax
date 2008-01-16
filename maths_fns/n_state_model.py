@@ -83,7 +83,7 @@ class N_state_opt:
 
         # Update the rotation matricies.
         for i in xrange(self.N):
-            rotation_matrix_zyz(self.R[i], params[4+3*i], params[4+3*i+1], params[4+3*i+2])
+            rotation_matrix_zyz(self.R[i], params[self.N-1+3*i], params[self.N-1+3*i+1], params[self.N-1+3*i+2])
 
         # Return the chi-squared value.
         return chi2(self.red_data, red_bc_data, self.red_errors)
