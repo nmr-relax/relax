@@ -22,7 +22,7 @@
 ###############################################################################
 
 # Python module imports.
-from Numeric import Float64, zeros
+from numpy import float64, zeros
 from math import pi
 
 # relax module imports.
@@ -65,14 +65,14 @@ class Consistency:
         self.data.dip_const_fixed = 0.0
         self.data.csa_const_fixed = [0.0]
         self.data.dip_const_func = 0.0
-        self.data.csa_const_func = zeros(1, Float64)
+        self.data.csa_const_func = zeros(1, float64)
 
         # Nuclear frequencies.
         frq = frq * 2 * pi
         frqX = frq * self.data.gx / self.data.gh
 
         # Calculate the five frequencies which cause R1, R2, and NOE relaxation.
-        self.data.frq_list = zeros((1, 5), Float64)
+        self.data.frq_list = zeros((1, 5), float64)
         self.data.frq_list[0, 1] = frqX
         self.data.frq_list[0, 2] = frq - frqX
         self.data.frq_list[0, 3] = frq
