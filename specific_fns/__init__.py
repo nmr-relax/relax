@@ -50,7 +50,7 @@ hybrid_obj = Hybrid()
 jw_mapping_obj = Jw_mapping()
 model_free_obj = Model_free()
 noe_obj = Noe()
-n_state_model = N_state_model()
+n_state_model_obj = N_state_model()
 relax_fit_obj = Relax_fit()
 
 
@@ -232,7 +232,7 @@ def get_instance(function_type):
 
     # The N-state model.
     if function_type == 'N-state':
-        return n_state_model
+        return n_state_model_obj
 
     # Relaxation curve fitting.
     if function_type == 'relax_fit':
