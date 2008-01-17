@@ -27,5 +27,5 @@ from molmol import Molmol
 from specific_fns.base_class import Common_functions
 
 
-class Model_free(Common_functions, Model_free_main, Mf_minimise, Molmol):
+class Model_free(Model_free_main, Mf_minimise, Molmol, Common_functions):
     """Parent class containing all the model-free specific functions."""
