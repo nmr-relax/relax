@@ -148,7 +148,7 @@ def get_file_path(file_name=None, dir=None):
     @return:            The full file path.
     @type return:       str
     """
- 
+
     # File name.
     file_path = file_name
 

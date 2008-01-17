@@ -21,8 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from Numeric import Float64, zeros
-
+from numpy import float64, zeros
 
 
 ############################

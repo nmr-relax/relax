@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2007 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2006-2008 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,7 +23,7 @@
 # Python module imports.
 from re import search
 from math import cos, sin
-from Numeric import Float64, dot, identity, transpose, zeros
+from numpy import float64, dot, identity, transpose, zeros
 from types import ListType
 
 # relax module imports.
@@ -82,11 +82,11 @@ def calc_Dpar_unit(theta, phi):
     @keyword phi:   The polar angle in radians.
     @type phi:      float
     @return:        The Dpar unit vector.
-    @rtype:         Numeric array (Float64)
+    @rtype:         numpy array
     """
 
     # Initilise the vector.
-    Dpar_unit = zeros(3, Float64)
+    Dpar_unit = zeros(3, float64)
 
     # Calculate the x, y, and z components.
     Dpar_unit[0] = sin(theta) * cos(phi)
@@ -172,11 +172,11 @@ def calc_Dx_unit(alpha, beta, gamma):
     @keyword gamma: The Euler angle gamma in radians using the z-y-z convention.
     @type gamma:    float
     @return:        The Dx unit vector.
-    @rtype:         Numeric array (Float64)
+    @rtype:         numpy array
     """
 
     # Initilise the vector.
-    Dx_unit = zeros(3, Float64)
+    Dx_unit = zeros(3, float64)
 
     # Calculate the x, y, and z components.
     Dx_unit[0] = -sin(alpha) * sin(gamma)  +  cos(alpha) * cos(beta) * cos(gamma)
@@ -224,11 +224,11 @@ def calc_Dy_unit(alpha, beta, gamma):
     @keyword gamma: The Euler angle gamma in radians using the z-y-z convention.
     @type gamma:    float
     @return:        The Dy unit vector.
-    @rtype:         Numeric array (Float64)
+    @rtype:         numpy array
     """
 
     # Initilise the vector.
-    Dy_unit = zeros(3, Float64)
+    Dy_unit = zeros(3, float64)
 
     # Calculate the x, y, and z components.
     Dy_unit[0] = cos(alpha) * sin(gamma)  +  sin(alpha) * cos(beta) * cos(gamma)
@@ -272,11 +272,11 @@ def calc_Dz_unit(beta, gamma):
     @keyword gamma: The Euler angle gamma in radians using the z-y-z convention.
     @type gamma:    float
     @return:        The Dz unit vector.
-    @rtype:         Numeric array (Float64)
+    @rtype:         numpy array
     """
 
     # Initilise the vector.
-    Dz_unit = zeros(3, Float64)
+    Dz_unit = zeros(3, float64)
 
     # Calculate the x, y, and z components.
     Dz_unit[0] = -sin(beta) * cos(gamma)
@@ -331,20 +331,20 @@ def calc_rotation(diff_type, *args):
     @param phi:         The polar angle in radians.
     @type phi:          float
     @param Dpar_unit:   The Dpar unit vector.
-    @type Dpar_unit:    Numeric array (Float64)
+    @type Dpar_unit:    numpy array
     @param Dx_unit:     The Dx unit vector.
-    @type Dx_unit:      Numeric array (Float64)
+    @type Dx_unit:      numpy array
     @param Dy_unit:     The Dy unit vector.
-    @type Dy_unit:      Numeric array (Float64)
+    @type Dy_unit:      numpy array
     @param Dz_unit:     The Dz unit vector.
-    @type Dz_unit:      Numeric array (Float64)
+    @type Dz_unit:      numpy array
     @return:            The rotation matrix.
-    @rtype:             Numeric array ((3, 3), Float64)
+    @rtype:             numpy 3x3 array
     """
 
     # The rotation matrix for the sphere.
     if diff_type == 'sphere':
-        return identity(3, Float64)
+        return identity(3, float64)
 
     # The rotation matrix for the spheroid.
     elif diff_type == 'spheroid':
@@ -352,7 +352,7 @@ def calc_rotation(diff_type, *args):
         theta, phi, Dpar_unit = args
 
         # Initialise the rotation matrix.
-        rotation = identity(3, Float64)
+        rotation = identity(3, float64)
 
         # First row of the rotation matrix.
         rotation[0, 0] = cos(theta) * cos(phi)
@@ -375,7 +375,7 @@ def calc_rotation(diff_type, *args):
         Dx_unit, Dy_unit, Dz_unit = args
 
         # Initialise the rotation matrix.
-        rotation = identity(3, Float64)
+        rotation = identity(3, float64)
 
         # First column of the rotation matrix.
         rotation[:, 0] = Dx_unit
@@ -403,11 +403,11 @@ def calc_tensor(rotation, tensor_diag):
         R . tensor_diag . R^T.
 
     @keyword rotation:      The rotation matrix.
-    @type rotation:         Numeric array ((3, 3), Float64)
+    @type rotation:         numpy 3x3 array
     @keyword tensor_diag:   The diagonalised diffusion tensor.
-    @type tensor_diag:      Numeric array ((3, 3), Float64)
+    @type tensor_diag:      numpy 3x3 array
     @return:                The diffusion tensor (within the structural frame).
-    @rtype:                 Numeric array ((3, 3), Float64)
+    @rtype:                 numpy 3x3 array
     """
 
     # Rotation (R . tensor_diag . R^T).
@@ -450,7 +450,7 @@ def calc_tensor_diag(diff_type, *args):
     @param Dz:      The Dz parameter of the ellipsoid.
     @type Dz:       float
     @return:        The diagonalised diffusion tensor.
-    @rtype:         Numeric array ((3, 3), Float64)
+    @rtype:         numpy 3x3 array
     """
 
     # Spherical diffusion tensor.
@@ -459,7 +459,7 @@ def calc_tensor_diag(diff_type, *args):
         Diso, = args
 
         # Initialise the tensor.
-        tensor = zeros((3, 3), Float64)
+        tensor = zeros((3, 3), float64)
 
         # Populate the diagonal elements.
         tensor[0, 0] = Diso
@@ -475,7 +475,7 @@ def calc_tensor_diag(diff_type, *args):
         Dpar, Dper = args
 
         # Initialise the tensor.
-        tensor = zeros((3, 3), Float64)
+        tensor = zeros((3, 3), float64)
 
         # Populate the diagonal elements.
         tensor[0, 0] = Dper
@@ -491,7 +491,7 @@ def calc_tensor_diag(diff_type, *args):
         Dx, Dy, Dz = args
 
         # Initialise the tensor.
-        tensor = zeros((3, 3), Float64)
+        tensor = zeros((3, 3), float64)
 
         # Populate the diagonal elements.
         tensor[0, 0] = Dx

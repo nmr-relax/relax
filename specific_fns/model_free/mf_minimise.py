@@ -21,9 +21,9 @@
 ###############################################################################
 
 # Python module imports.
-from LinearAlgebra import inverse
 from math import pi
-from Numeric import Float64, array, matrixmultiply, zeros
+from numpy import float64, array, dot, zeros
+from numpy.linalg import inv
 from re import match
 
 # relax module imports.
@@ -164,8 +164,8 @@ class Mf_minimise:
             param_values = [self.assemble_param_vector(param_set='mf')]
 
             # Convert to Numeric arrays.
-            relax_data = [array(data.relax_data, Float64)]
-            relax_error = [array(data.relax_error, Float64)]
+            relax_data = [array(data.relax_data, float64)]
+            relax_error = [array(data.relax_error, float64)]
 
             # Package the diffusion tensor parameters.
             if self.param_set == 'local_tm':
@@ -204,6 +204,234 @@ class Mf_minimise:
                 relax_data_store.chi2[self.run] = relax_data_store.chi2[self.run] + chi2
             else:
                 relax_data_store.res[self.run][i].chi2 = chi2
+
+
+    def disassemble_param_vector(self, index=None, sim_index=None):
+        """Function for disassembling the parameter vector."""
+
+        # Initialise.
+        param_index = 0
+
+        # Diffusion tensor parameters of the Monte Carlo simulations.
+        if sim_index != None and (self.param_set == 'diff' or self.param_set == 'all'):
+            # Spherical diffusion.
+            if relax_data_store.diff[self.run].type == 'sphere':
+                # Sim values.
+                relax_data_store.diff[self.run].tm_sim[sim_index] = self.param_vector[0]
+
+                # Parameter index.
+                param_index = param_index + 1
+
+            # Spheroidal diffusion.
+            elif relax_data_store.diff[self.run].type == 'spheroid':
+                # Sim values.
+                relax_data_store.diff[self.run].tm_sim[sim_index] = self.param_vector[0]
+                relax_data_store.diff[self.run].Da_sim[sim_index] = self.param_vector[1]
+                relax_data_store.diff[self.run].theta_sim[sim_index] = self.param_vector[2]
+                relax_data_store.diff[self.run].phi_sim[sim_index] = self.param_vector[3]
+                self.relax.generic.diffusion_tensor.fold_angles(run=self.run, sim_index=sim_index)
+
+                # Parameter index.
+                param_index = param_index + 4
+
+            # Ellipsoidal diffusion.
+            elif relax_data_store.diff[self.run].type == 'ellipsoid':
+                # Sim values.
+                relax_data_store.diff[self.run].tm_sim[sim_index] = self.param_vector[0]
+                relax_data_store.diff[self.run].Da_sim[sim_index] = self.param_vector[1]
+                relax_data_store.diff[self.run].Dr_sim[sim_index] = self.param_vector[2]
+                relax_data_store.diff[self.run].alpha_sim[sim_index] = self.param_vector[3]
+                relax_data_store.diff[self.run].beta_sim[sim_index] = self.param_vector[4]
+                relax_data_store.diff[self.run].gamma_sim[sim_index] = self.param_vector[5]
+                self.relax.generic.diffusion_tensor.fold_angles(run=self.run, sim_index=sim_index)
+
+                # Parameter index.
+                param_index = param_index + 6
+
+        # Diffusion tensor parameters.
+        elif self.param_set == 'diff' or self.param_set == 'all':
+            # Spherical diffusion.
+            if relax_data_store.diff[self.run].type == 'sphere':
+                # Values.
+                relax_data_store.diff[self.run].tm = self.param_vector[0]
+
+                # Parameter index.
+                param_index = param_index + 1
+
+            # Spheroidal diffusion.
+            elif relax_data_store.diff[self.run].type == 'spheroid':
+                # Values.
+                relax_data_store.diff[self.run].tm = self.param_vector[0]
+                relax_data_store.diff[self.run].Da = self.param_vector[1]
+                relax_data_store.diff[self.run].theta = self.param_vector[2]
+                relax_data_store.diff[self.run].phi = self.param_vector[3]
+                self.relax.generic.diffusion_tensor.fold_angles(run=self.run)
+
+                # Parameter index.
+                param_index = param_index + 4
+
+            # Ellipsoidal diffusion.
+            elif relax_data_store.diff[self.run].type == 'ellipsoid':
+                # Values.
+                relax_data_store.diff[self.run].tm = self.param_vector[0]
+                relax_data_store.diff[self.run].Da = self.param_vector[1]
+                relax_data_store.diff[self.run].Dr = self.param_vector[2]
+                relax_data_store.diff[self.run].alpha = self.param_vector[3]
+                relax_data_store.diff[self.run].beta = self.param_vector[4]
+                relax_data_store.diff[self.run].gamma = self.param_vector[5]
+                self.relax.generic.diffusion_tensor.fold_angles(run=self.run)
+
+                # Parameter index.
+                param_index = param_index + 6
+
+        # Model-free parameters.
+        if self.param_set != 'diff':
+            # Loop over all residues.
+            for i in xrange(len(relax_data_store.res[self.run])):
+                # Remap the residue data structure.
+                data = relax_data_store.res[self.run][i]
+
+                # Skip unselected residues.
+                if not data.select:
+                    continue
+
+                # Only add parameters for a single residue if index has a value.
+                if index != None and i != index:
+                    continue
+
+                # Loop over the model-free parameters.
+                for j in xrange(len(data.params)):
+                    # Local tm.
+                    if data.params[j] == 'local_tm':
+                        if sim_index == None:
+                            data.local_tm = self.param_vector[param_index]
+                        else:
+                            data.local_tm_sim[sim_index] = self.param_vector[param_index]
+
+                    # S2.
+                    elif data.params[j] == 'S2':
+                        if sim_index == None:
+                            data.s2 = self.param_vector[param_index]
+                        else:
+                            data.s2_sim[sim_index] = self.param_vector[param_index]
+
+                    # S2f.
+                    elif data.params[j] == 'S2f':
+                        if sim_index == None:
+                            data.s2f = self.param_vector[param_index]
+                        else:
+                            data.s2f_sim[sim_index] = self.param_vector[param_index]
+
+                    # S2s.
+                    elif data.params[j] == 'S2s':
+                        if sim_index == None:
+                            data.s2s = self.param_vector[param_index]
+                        else:
+                            data.s2s_sim[sim_index] = self.param_vector[param_index]
+
+                    # te.
+                    elif data.params[j] == 'te':
+                        if sim_index == None:
+                            data.te = self.param_vector[param_index]
+                        else:
+                            data.te_sim[sim_index] = self.param_vector[param_index]
+
+                    # tf.
+                    elif data.params[j] == 'tf':
+                        if sim_index == None:
+                            data.tf = self.param_vector[param_index]
+                        else:
+                            data.tf_sim[sim_index] = self.param_vector[param_index]
+
+                    # ts.
+                    elif data.params[j] == 'ts':
+                        if sim_index == None:
+                            data.ts = self.param_vector[param_index]
+                        else:
+                            data.ts_sim[sim_index] = self.param_vector[param_index]
+
+                    # Rex.
+                    elif data.params[j] == 'Rex':
+                        if sim_index == None:
+                            data.rex = self.param_vector[param_index]
+                        else:
+                            data.rex_sim[sim_index] = self.param_vector[param_index]
+
+                    # r.
+                    elif data.params[j] == 'r':
+                        if sim_index == None:
+                            data.r = self.param_vector[param_index]
+                        else:
+                            data.r_sim[sim_index] = self.param_vector[param_index]
+
+                    # CSA.
+                    elif data.params[j] == 'CSA':
+                        if sim_index == None:
+                            data.csa = self.param_vector[param_index]
+                        else:
+                            data.csa_sim[sim_index] = self.param_vector[param_index]
+
+                    # Unknown parameter.
+                    else:
+                        raise RelaxError, "Unknown parameter."
+
+                    # Increment the parameter index.
+                    param_index = param_index + 1
+
+        # Calculate all order parameters after unpacking the vector.
+        if self.param_set != 'diff':
+            # Loop over all residues.
+            for i in xrange(len(relax_data_store.res[self.run])):
+                # Remap the residue data structure.
+                data = relax_data_store.res[self.run][i]
+
+                # Skip unselected residues.
+                if not data.select:
+                    continue
+
+                # Only add parameters for a single residue if index has a value.
+                if index != None and i != index:
+                    continue
+
+                # Normal values.
+                if sim_index == None:
+                    # S2.
+                    if 'S2' not in data.params and 'S2f' in data.params and 'S2s' in data.params:
+                        data.s2 = data.s2f * data.s2s
+
+                    # S2f.
+                    if 'S2f' not in data.params and 'S2' in data.params and 'S2s' in data.params:
+                        if data.s2s == 0.0:
+                            data.s2f = 1e99
+                        else:
+                            data.s2f = data.s2 / data.s2s
+
+                    # S2s.
+                    if 'S2s' not in data.params and 'S2' in data.params and 'S2f' in data.params:
+                        if data.s2f == 0.0:
+                            data.s2s = 1e99
+                        else:
+                            data.s2s = data.s2 / data.s2f
+
+                # Simulation values.
+                else:
+                    # S2.
+                    if 'S2' not in data.params and 'S2f' in data.params and 'S2s' in data.params:
+                        data.s2_sim[sim_index] = data.s2f_sim[sim_index] * data.s2s_sim[sim_index]
+
+                    # S2f.
+                    if 'S2f' not in data.params and 'S2' in data.params and 'S2s' in data.params:
+                        if data.s2s_sim[sim_index] == 0.0:
+                            data.s2f_sim[sim_index] = 1e99
+                        else:
+                            data.s2f_sim[sim_index] = data.s2_sim[sim_index] / data.s2s_sim[sim_index]
+
+                    # S2s.
+                    if 'S2s' not in data.params and 'S2' in data.params and 'S2f' in data.params:
+                        if data.s2f_sim[sim_index] == 0.0:
+                            data.s2s_sim[sim_index] = 1e99
+                        else:
+                            data.s2s_sim[sim_index] = data.s2_sim[sim_index] / data.s2f_sim[sim_index]
 
 
     def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
@@ -511,7 +739,7 @@ class Mf_minimise:
                 # Diagonal scaling.
                 self.assemble_scaling_matrix(index=index, scaling=scaling)
                 if self.scaling_matrix:
-                    self.param_vector = matrixmultiply(inverse(self.scaling_matrix), self.param_vector)
+                    self.param_vector = dot(inv(self.scaling_matrix), self.param_vector)
 
             # Get the grid search minimisation options.
             if match('^[Gg]rid', min_algor):
@@ -519,7 +747,7 @@ class Mf_minimise:
 
             # Scaling of values for the set function.
             if match('^[Ss]et', min_algor):
-                min_options = matrixmultiply(inverse(self.scaling_matrix), min_options)
+                min_options = dot(inv(self.scaling_matrix), min_options)
 
             # Linear constraints.
             if constraints:
@@ -653,8 +881,8 @@ class Mf_minimise:
 
             # Convert to Numeric arrays.
             for k in xrange(len(relax_data)):
-                relax_data[k] = array(relax_data[k], Float64)
-                relax_error[k] = array(relax_error[k], Float64)
+                relax_data[k] = array(relax_data[k], float64)
+                relax_error[k] = array(relax_error[k], float64)
 
             # Diffusion tensor type.
             if self.param_set == 'local_tm':
@@ -710,7 +938,7 @@ class Mf_minimise:
                     number_ri = number_ri + len(relax_error[k])
 
                 # Reconstruct the error data structure.
-                lm_error = zeros(number_ri, Float64)
+                lm_error = zeros(number_ri, float64)
                 index = 0
                 for k in xrange(len(relax_error)):
                     lm_error[index:index+len(relax_error[k])] = relax_error[k]
@@ -751,7 +979,7 @@ class Mf_minimise:
 
             # Scaling.
             if scaling:
-                self.param_vector = matrixmultiply(self.scaling_matrix, self.param_vector)
+                self.param_vector = dot(self.scaling_matrix, self.param_vector)
 
             # Disassemble the parameter vector.
             self.disassemble_param_vector(index=index, sim_index=sim_index)

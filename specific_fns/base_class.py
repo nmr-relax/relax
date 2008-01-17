@@ -25,8 +25,8 @@ from copy import deepcopy
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns.selection import spin_loop
-from relax_errors import RelaxError, RelaxParamSetError
+from generic_fns.selection import count_spins, exists_mol_res_spin_data, spin_loop
+from relax_errors import RelaxError
 
 
 
@@ -66,6 +66,23 @@ class Common_functions:
 
         # No errors found.
         return False
+
+
+    def num_instances(self):
+        """Function for returning the number of instances.
+
+        The default in this base class is to return the number of spins.
+
+        @return:    The number of instances (equal to the number of spins).
+        @rtype:     int
+        """
+
+        # Test if sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
+
+        # Return the number of spins.
+        return count_spins()
 
 
     def overfit_deselect(self):
@@ -165,114 +182,6 @@ class Common_functions:
         return value, error
 
 
-    def set(self, value=None, error=None, param=None, scaling=1.0, spin=None):
-        """Common function for setting parameter values.
-
-        @param value:   The value to change the parameter to.
-        @type value:    float or str
-        @param error:   The error value associated with the parameter, also to be set.
-        @type error:    float or str
-        @param param:   The name of the parameter to change.
-        @type param:    str
-        @param scaling: The scaling factor for the value or error parameters.
-        @type scaling:  float
-        @param spin:    The SpinContainer object.
-        @type spin:     SpinContainer
-        """
-
-        # Setting the model parameters prior to minimisation.
-        #####################################################
-
-        if param == None:
-            # The values are supplied by the user:
-            if value:
-                # Test if the length of the value array is equal to the length of the parameter array.
-                if len(value) != len(spin.params):
-                    raise RelaxError, "The length of " + `len(value)` + " of the value array must be equal to the length of the parameter array, " + `spin.params` + ", for residue " + `spin.num` + " " + spin.name + "."
-
-            # Default values.
-            else:
-                # Set 'value' to an empty array.
-                value = []
-
-                # Loop over the parameters.
-                for i in xrange(len(spin.params)):
-                    value.append(self.default_value(spin.params[i]))
-
-            # Loop over the parameters.
-            for i in xrange(len(spin.params)):
-                # Get the object.
-                object_name = self.return_data_name(spin.params[i])
-                if not object_name:
-                    raise RelaxError, "The data type " + `spin.params[i]` + " does not exist."
-
-                # Initialise all data if it doesn't exist.
-                if not hasattr(spin, object_name):
-                    self.data_init(spin)
-
-                # Set the value.
-                if value[i] == None:
-                    setattr(spin, object_name, None)
-                else:
-                    # Catch parameters with string values.
-                    try:
-                        value[i] = float(value[i]) * scaling
-                    except ValueError:
-                        pass
-
-                    # Set the attribute.
-                    setattr(spin, object_name, value[i])
-
-
-        # Individual data type.
-        #######################
-
-        else:
-            # Get the object.
-            object_name = self.return_data_name(param)
-            if not object_name:
-                raise RelaxError, "The data type " + `param` + " does not exist."
-
-            # Initialise all data if it doesn't exist.
-            if not hasattr(spin, object_name):
-                self.data_init(spin)
-
-            # Default value.
-            if value == None:
-                value = self.default_value(object_name)
-
-            # No default value, hence the parameter cannot be set.
-            if value == None:
-                raise RelaxParamSetError, param
-
-            # Set the value.
-            if value == None:
-                setattr(spin, object_name, None)
-            else:
-                # Catch parameters with string values.
-                try:
-                    value = float(value) * scaling
-                except ValueError:
-                    pass
-
-                # Set the attribute.
-                setattr(spin, object_name, value)
-
-            # Set the error.
-            if error != None:
-                # Catch parameters with string values.
-                try:
-                    error = float(error) * scaling
-                except ValueError:
-                    pass
-
-                # Set the attribute.
-                setattr(spin, object_name+'_err', error)
-
-            # Update the other parameters if necessary.
-            self.set_update(param=param, spin=spin)
-
-
     def set_error(self, run, instance, index, error):
         """Function for setting parameter errors."""
 
@@ -294,6 +203,20 @@ class Common_functions:
 
             # Increment.
             inc = inc + 1
+
+
+    def set_non_spin_params(self, value=None, param=None):
+        """Base class method which complains loudly if anything is supplied to it.
+
+        @param value:   The parameter values.
+        @type value:    None, number, or list of numbers
+        @param param:   The parameter names.
+        @type param:    None, str, or list of str
+        """
+
+        # Throw a RelaxError.
+        if value or param:
+            raise RelaxError, "Do not know how to handle the non-spin specific parameters " + `param` + " with the values " + `value`
 
 
     def set_update(self, param, spin):

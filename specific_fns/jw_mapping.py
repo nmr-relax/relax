@@ -237,20 +237,6 @@ class Jw_mapping(Common_functions):
             return 'N'
 
 
-    def num_instances(self, run=None):
-        """Function for returning the number of instances."""
-
-        # Arguments.
-        self.run = run
-
-        # Test if sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            return 0
-
-        # Return the number of residues.
-        return len(relax_data_store.res[self.run])
-
-
     def overfit_deselect(self, run):
         """Function for deselecting residues without sufficient data to support calculation"""
 
