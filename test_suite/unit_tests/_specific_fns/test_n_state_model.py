@@ -61,3 +61,28 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
         for i in xrange(len(param_vector)):
             self.assertEqual(param_vector[i], vector_true[i])
 
+
+    def test_disassemble_param_vector(self):
+        """Test the operation of the specific_fns.n_state_model.disassemble_param_vector() method."""
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set up the initial N, probabilities and Euler angles.
+        cdp.N = 3
+        cdp.probs = [None]*3
+        cdp.alpha = [None]*3
+        cdp.beta = [None]*3
+        cdp.gamma = [None]*3
+
+        # The parameter vector.
+        param_vector = [0.1, 0.3, 0.0, pi/2, 1.0, pi/2, pi, 3*pi/2, pi, 3*pi/2, 2*pi]
+
+        # Disassemble the parameter vector.
+        self.n_state_model_fns.disassemble_param_vector(param_vector)
+
+        # Check the probabilities.
+        self.assertEqual(cdp.probs, [0.1, 0.3, 0.6])
+        self.assertEqual(cdp.alpha, [0.0, pi/2, pi])
+        self.assertEqual(cdp.beta, [pi/2, pi, 3*pi/2])
+        self.assertEqual(cdp.gamma, [1.0, 3*pi/2, 2*pi])
