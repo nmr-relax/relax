@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from Numeric import array
+from numpy import array
 from os import system
 from re import match
 

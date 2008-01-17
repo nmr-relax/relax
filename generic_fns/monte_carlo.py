@@ -23,7 +23,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import sqrt
-from Numeric import ones
+from numpy import ones
 from random import gauss
 
 # relax module imports.
@@ -331,7 +331,7 @@ class Monte_carlo:
 
         # Create the selected simulation array with all simulations selected.
         if all_select_sim == None:
-            select_sim = ones(number)
+            select_sim = ones(number, int)
 
         # Loop over the instances.
         for instance in xrange(num_instances):
@@ -353,7 +353,7 @@ class Monte_carlo:
         @params all_select_sim: The selection status of the Monte Carlo simulations.  The first
             dimension of this matrix corresponds to the simulation and the second corresponds to the
             instance.
-        @type all_select_sim:   Numeric matrix (int)
+        @type all_select_sim:   numpy matrix (int)
         """
 
         # Arguments.
