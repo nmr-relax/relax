@@ -34,105 +34,86 @@ from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, Relax
 from specific_fns import get_specific_fn
 
 
-def partition_params(val, param, return_data_name):
+def partition_params(val, param):
     """Function for sorting and partitioning the parameters and their values.
 
     The two major partitions are the tensor parameters and the spin specific parameters.
 
-    @return:        A tuple, of length 4, of arrays.
-    @return type:   tuple of arrays
+    @param val:     The parameter values.
+    @type val:      None, number, or list of numbers
+    @param param:   The parameter names.
+    @type param:    None, str, or list of str
+    @return:        A tuple, of length 4, of lists.  The first and second elements are the lists of
+                    spin specific parameters and values respectively.  The third and forth elements
+                    are the lists of all other parameters and their values.
+    @return type:   tuple of 4 lists
     """
 
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Specific functions.
+    return_data_name = get_specific_fn('return_data_name', cdp.pipe_type)
+
     # Initialise.
-    tensor_params = []
-    tensor_values = []
     spin_params = []
     spin_values = []
+    other_params = []
+    other_values = []
 
-    # Separate the residue specific parameters from the diffusion tensor parameters.
+    # The parameter has been specified.
     if param:
         # Single parameter.
         if type(param) == str:
-            # Get the diffusion tensor parameter name.
-            tensor_name = diffusion_tensor.return_data_name(param)
+            # Spin specific parameter.
+            if return_data_name(param):
+                params = spin_params
+                values = spin_values
 
-            # The parameter is a diffusion parameter.
-            if tensor_name:
-                # List of values.
-                if type(val) == list or type(val) == ArrayType:
-                    # Parameter name.
-                    for i in xrange(len(val)):
-                        tensor_params.append(tensor_name)
-
-                    # Parameter value.
-                    tensor_values = val
-
-                # Single value.
-                else:
-                    # Parameter name.
-                    tensor_params.append(param)
-
-                    # Parameter value.
-                    tensor_values.append(val)
-
-            # The parameter is not a diffusion parameter.
-            elif return_data_name(param):
-                # List of values.
-                if type(val) == list or type(val) == ArrayType:
-                    # Parameter name.
-                    for i in xrange(len(val)):
-                        spin_params.append(param)
-
-                    # Parameter value.
-                    spin_values = val
-
-                # Single value.
-                else:
-                    # Parameter name.
-                    spin_params.append(param)
-
-                    # Parameter value.
-                    spin_values.append(val)
-
-            # Unknown parameter
+            # Other parameters.
             else:
-                raise RelaxUnknownParamError, param
+                params = other_params
+                values = other_values
+
+            # List of values.
+            if type(val) == list or type(val) == ArrayType:
+                # Parameter name.
+                for i in xrange(len(val)):
+                    params.append(param)
+
+                # Parameter value.
+                values = val
+
+            # Single value.
+            else:
+                # Parameter name.
+                params.append(param)
+
+                # Parameter value.
+                values.append(val)
 
         # Multiple parameters.
         elif type(param) == list:
             # Loop over all parameters.
             for i in xrange(len(param)):
-                # Get the diffusion tensor parameter name.
-                try:
-                    tensor_name = diffusion_tensor.return_data_name(param[i])
-                except RelaxUnknownParamError:
-                    tensor_name = None
+                # Spin specific parameter.
+                if return_data_name(param[i]):
+                    params = spin_params
+                    values = spin_values
 
-                # The parameter is a diffusion parameter.
-                if tensor_name:
-                    # Parameter name.
-                    tensor_params.append(tensor_name)
-
-                    # Parameter value.
-                    if type(val) == list or type(val) == ArrayType:
-                        tensor_values.append(val[i])
-                    else:
-                        tensor_values.append(val)
-
-                # The parameter is not a diffusion parameter.
-                elif return_data_name(param[i]):
-                    # Parameter name.
-                    spin_params.append(param[i])
-
-                    # Parameter value.
-                    if type(val) == list or type(val) == ArrayType:
-                        spin_values.append(val[i])
-                    else:
-                        spin_values.append(val)
-
-                # Unknown parameter
+                # Other parameters.
                 else:
-                    raise RelaxUnknownParamError, param[i]
+                    params = other_params
+                    values = other_values
+
+                # Parameter name.
+                params.append(param[i])
+
+                # Parameter value.
+                if type(val) == list or type(val) == ArrayType:
+                    values.append(val[i])
+                else:
+                    values.append(val)
 
 
     # All other parameters.
@@ -170,15 +151,15 @@ def partition_params(val, param, return_data_name):
                     spin_values.append(val)
 
     # Debugging.
-    if len(tensor_params) != len(tensor_values) or len(spin_params) != len(spin_values):
-        print "Diff params: " + `tensor_params`
-        print "Diff values: " + `tensor_values`
-        print "Res params: " + `spin_params`
-        print "Res values: " + `spin_values`
+    if len(other_params) != len(other_values) or len(spin_params) != len(spin_values):
+        print "Spin params: " + `spin_params`
+        print "Spin values: " + `spin_values`
+        print "Other params: " + `other_params`
+        print "Other values: " + `other_values`
         raise RelaxError, "Bug in the code."
 
     # Return the partitioned parameters and values.
-    return tensor_params, tensor_values, spin_params, spin_values
+    return spin_params, spin_values, other_params, other_values
 
 
 def set(val=None, param=None, spin_id=None, force=False):
@@ -187,7 +168,7 @@ def set(val=None, param=None, spin_id=None, force=False):
     @param val:     The parameter values.
     @type val:      None, number, or list of numbers
     @param param:   The parameter names.
-    @type val:      None, str, or list of str
+    @type param:    None, str, or list of str
     @param spin_id: The spin identification string.
     @type spin_id:  str
     @param force:   A flag forcing the overwriting of current values.
@@ -202,24 +183,15 @@ def set(val=None, param=None, spin_id=None, force=False):
     cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Specific functions.
-    return_data_name = get_specific_fn('return_data_name', cdp.pipe_type)
     return_value = get_specific_fn('return_value', cdp.pipe_type)
     set = get_specific_fn('set', cdp.pipe_type)
 
-    # Sort the parameters and their values.
-    tensor_params, tensor_values, spin_params, spin_values = partition_params(val, param, return_data_name)
+    # Partition the parameters into those which are spin specific and those which are not.
+    spin_params, spin_values, other_params, other_values = partition_params(val, param)
 
 
-    # Diffusion tensor parameters.
-    ##############################
-
-    if tensor_params:
-        # Set the diffusion parameters.
-        diffusion_tensor.set(value=tensor_values, param=tensor_params)
-
-
-    # Residue specific parameters.
-    ##############################
+    # Spin specific parameters.
+    ###########################
 
     if spin_params:
         # Test if the sequence data is loaded.
@@ -252,6 +224,15 @@ def set(val=None, param=None, spin_id=None, force=False):
             # Go to the specific code.
             for j in xrange(len(spin_params)):
                 set(value=spin_values[j], error=None, spin=spin, param=spin_params[j])
+
+
+    # All other parameters.
+    #######################
+
+    if other_params:
+        # Set the diffusion parameters.
+        diffusion_tensor.set(value=other_values, param=other_params)
+
 
     # Reset all minimisation statistics.
     reset_min_stats()
