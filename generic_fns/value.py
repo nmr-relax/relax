@@ -118,37 +118,22 @@ def partition_params(val, param):
 
     # All other parameters.
     else:
-        # No parameter or a single parameter.
-        if param == None or type(param) == str:
-            # List of values.
-            if type(val) == list or type(val) == ArrayType:
-                # Parameter name.
-                for i in xrange(len(val)):
-                    spin_params.append(param)
-
-                # Parameter value.
-                spin_values = val
-
-            # Single value.
-            else:
-                # Parameter name.
+        # List of values.
+        if type(val) == list or type(val) == ArrayType:
+            # Parameter name.
+            for i in xrange(len(val)):
                 spin_params.append(param)
 
-                # Parameter value.
-                spin_values.append(val)
+            # Parameter value.
+            spin_values = val
 
-        # Multiple parameters.
-        elif type(param) == list:
-            # Loop over all parameters.
-            for i in xrange(len(param)):
-                # Parameter name.
-                spin_params.append(param[i])
+        # Single value.
+        else:
+            # Parameter name.
+            spin_params.append(param)
 
-                # Parameter value.
-                if type(val) == list or type(val) == ArrayType:
-                    spin_values.append(val[i])
-                else:
-                    spin_values.append(val)
+            # Parameter value.
+            spin_values.append(val)
 
     # Debugging.
     if len(other_params) != len(other_values) or len(spin_params) != len(spin_values):
