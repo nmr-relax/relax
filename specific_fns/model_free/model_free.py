@@ -32,6 +32,7 @@ import sys
 # relax module imports.
 from data import Data as relax_data_store
 from float import isNaN,isInf
+from generic_fns import diffusion_tensor
 from generic_fns.selection import exists_mol_res_spin_data, spin_loop
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
@@ -3107,6 +3108,19 @@ class Model_free_main:
 
                 # Increment.
                 inc = inc + 1
+
+
+    def set_non_spin_params(self, value=None, param=None):
+        """Set the non-spin specific model-free params (this is solely the diffusion params).
+
+        @param value:   The parameter values.
+        @type value:    None, number, or list of numbers
+        @param param:   The parameter names.
+        @type param:    None, str, or list of str
+        """
+
+        # Call the diffusion tensor parameter setting function.
+        diffusion_tensor.set(value=value, param=param)
 
 
     def set_selected_sim(self, run, instance, select_sim):
