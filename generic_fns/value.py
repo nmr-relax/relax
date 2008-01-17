@@ -135,14 +135,6 @@ def partition_params(val, param):
             # Parameter value.
             spin_values.append(val)
 
-    # Debugging.
-    if len(other_params) != len(other_values) or len(spin_params) != len(spin_values):
-        print "Spin params: " + `spin_params`
-        print "Spin values: " + `spin_values`
-        print "Other params: " + `other_params`
-        print "Other values: " + `other_values`
-        raise RelaxError, "Bug in the code."
-
     # Return the partitioned parameters and values.
     return spin_params, spin_values, other_params, other_values
 
