@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,8 +32,6 @@ from relax_errors import AllRelaxErrors, RelaxBinError, RelaxError, RelaxNoneErr
 
 # Python modules accessible on the command prompt.
 from math import pi
-import Numeric
-import Scientific
 
 # Auxiliary modules.
 from help import _Helper, _Helper_python
@@ -116,8 +114,6 @@ class Interpreter:
 
         # Python modules.
         self._pi = pi
-        self._Numeric = Numeric
-        self._Scientific = Scientific
 
         # Place the user functions into the namespace of the interpreter class.
         self._Angles = Angles(relax)
@@ -174,8 +170,6 @@ class Interpreter:
 
         # Python modules.
         pi = self._pi
-        Numeric = self._Numeric
-        Scientific = self._Scientific
 
         # Import the functions emulating system commands.
         lh = Lh()

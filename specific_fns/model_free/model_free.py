@@ -23,9 +23,8 @@
 # Python module imports.
 from copy import deepcopy
 from data.diff_tensor import DiffTensorSimList
-from LinearAlgebra import inverse
 from math import pi
-from Numeric import Float64, array, identity, matrixmultiply, ones, transpose, zeros
+from numpy import float64, array, identity, transpose, zeros
 from re import match, search
 from string import replace, split
 import sys
@@ -33,6 +32,7 @@ import sys
 # relax module imports.
 from data import Data as relax_data_store
 from float import isNaN,isInf
+from generic_fns import diffusion_tensor
 from generic_fns.selection import exists_mol_res_spin_data, spin_loop
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
@@ -312,9 +312,9 @@ class Model_free_main:
 
         # Initialise.
         if len(self.param_vector) == 0:
-            self.scaling_matrix = zeros((0, 0), Float64)
+            self.scaling_matrix = zeros((0, 0), float64)
         else:
-            self.scaling_matrix = identity(len(self.param_vector), Float64)
+            self.scaling_matrix = identity(len(self.param_vector), float64)
         i = 0
 
         # No diagonal scaling.
@@ -1183,7 +1183,7 @@ class Model_free_main:
         A = []
         b = []
         n = len(self.param_vector)
-        zero_array = zeros(n, Float64)
+        zero_array = zeros(n, float64)
         i = 0
         j = 0
 
@@ -1393,8 +1393,8 @@ class Model_free_main:
                     i = i + 1
 
         # Convert to Numeric data structures.
-        A = array(A, Float64)
-        b = array(b, Float64)
+        A = array(A, float64)
+        b = array(b, float64)
 
         return A, b
 
@@ -2424,7 +2424,7 @@ class Model_free_main:
         if xh_vect:
             # Numeric array format.
             try:
-                xh_vect = array(xh_vect, Float64)
+                xh_vect = array(xh_vect, float64)
             except:
                 raise RelaxError, "The XH unit vector " + self.file_line[self.col['xh_vect']] + " is invalid."
 
@@ -3108,6 +3108,19 @@ class Model_free_main:
 
                 # Increment.
                 inc = inc + 1
+
+
+    def set_non_spin_params(self, value=None, param=None):
+        """Set the non-spin specific model-free params (this is solely the diffusion params).
+
+        @param value:   The parameter values.
+        @type value:    None, number, or list of numbers
+        @param param:   The parameter names.
+        @type param:    None, str, or list of str
+        """
+
+        # Call the diffusion tensor parameter setting function.
+        diffusion_tensor.set(value=value, param=param)
 
 
     def set_selected_sim(self, run, instance, select_sim):

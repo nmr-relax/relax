@@ -22,7 +22,7 @@
 
 # Python module imports.
 from math import sqrt
-from Numeric import outerproduct
+from numpy import outer
 
 
 ##########
@@ -135,7 +135,7 @@ def calc_spheroid_d2ci(data, diff_data):
     """
 
     # Outer product.
-    op = outerproduct(data.ddz_dO, data.ddz_dO)
+    op = outer(data.ddz_dO, data.ddz_dO)
 
     # Hessian.
     data.d2ci[2:, 2:, 0] = 3.0 * ((9.0 * data.dz**2 - 1.0) * op  +  data.dz * data.three_dz2_one * data.d2dz_dO2)
@@ -758,18 +758,18 @@ def calc_ellipsoid_d2ci(data, diff_data):
     ###############################
 
     # Outer products.
-    op_xx = outerproduct(data.ddx_dO, data.ddx_dO)
-    op_yy = outerproduct(data.ddy_dO, data.ddy_dO)
-    op_zz = outerproduct(data.ddz_dO, data.ddz_dO)
+    op_xx = outer(data.ddx_dO, data.ddx_dO)
+    op_yy = outer(data.ddy_dO, data.ddy_dO)
+    op_zz = outer(data.ddz_dO, data.ddz_dO)
 
-    op_xy = outerproduct(data.ddx_dO, data.ddy_dO)
-    op_yx = outerproduct(data.ddy_dO, data.ddx_dO)
+    op_xy = outer(data.ddx_dO, data.ddy_dO)
+    op_yx = outer(data.ddy_dO, data.ddx_dO)
 
-    op_xz = outerproduct(data.ddx_dO, data.ddz_dO)
-    op_zx = outerproduct(data.ddz_dO, data.ddx_dO)
+    op_xz = outer(data.ddx_dO, data.ddz_dO)
+    op_zx = outer(data.ddz_dO, data.ddx_dO)
 
-    op_yz = outerproduct(data.ddy_dO, data.ddz_dO)
-    op_zy = outerproduct(data.ddz_dO, data.ddy_dO)
+    op_yz = outer(data.ddy_dO, data.ddz_dO)
+    op_zy = outer(data.ddz_dO, data.ddy_dO)
 
     # Components.
     x_comp = data.dx * data.d2dx_dO2 + op_xx

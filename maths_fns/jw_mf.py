@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from Numeric import sum
+from numpy import sum
 
 
 ############################
