@@ -23,7 +23,7 @@
 
 
 # Python module imports.
-from Numeric import Float64, array, identity, sqrt, zeros
+from numpy import float64, array, identity, sqrt, zeros
 
 # relax module imports.
 from data import Data as relax_data_store
@@ -46,10 +46,10 @@ def back_calc(name):
             continue
 
         # The parameter vector.
-        param_vector = array([spin.rx, spin.i0], Float64)
+        param_vector = array([spin.rx, spin.i0], float64)
 
         # Initialise the relaxation fit functions.
-        setup(num_params=len(spin.params), num_times=len(relax_data_store.relax_times[name]), values=spin.ave_intensities, sd=relax_data_store.sd[name], relax_times=relax_data_store.relax_times[name], scaling_matrix=identity(2, Float64))
+        setup(num_params=len(spin.params), num_times=len(relax_data_store.relax_times[name]), values=spin.ave_intensities, sd=relax_data_store.sd[name], relax_times=relax_data_store.relax_times[name], scaling_matrix=identity(2, float64))
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the C module.
         func(param_vector)
@@ -72,8 +72,8 @@ def calc_ave_sd():
     """
 
     # Diff array, std deviation array, and number of spins.
-    diff_array = zeros(sum(relax_data_store.num_spectra[name]), Float64)
-    sd_array = zeros(sum(relax_data_store.num_spectra[name]), Float64)
+    diff_array = zeros(sum(relax_data_store.num_spectra[name]), float64)
+    sd_array = zeros(sum(relax_data_store.num_spectra[name]), float64)
     num_spins = 0
 
 

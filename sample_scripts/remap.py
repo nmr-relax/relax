@@ -1,7 +1,7 @@
 # Script for mapping the model-free space.
 
 # Python module imports.
-from Numeric import Float64, array
+from numpy import float64, array
 
 
 def remap(values):
@@ -19,7 +19,7 @@ def remap(values):
     # ts.
     ts = values[2]
 
-    return array([s2f, s2s, ts], Float64)
+    return array([s2f, s2s, ts], float64)
 
 
 # Set the run name (also the name of a preset model-free model).
