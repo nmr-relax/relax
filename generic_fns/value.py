@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from Numeric import ArrayType, zeros
+from numpy import ndarray, zeros
 from re import compile, match
 import sys
 
@@ -73,7 +73,7 @@ def partition_params(val, param):
                 values = other_values
 
             # List of values.
-            if type(val) == list or type(val) == ArrayType:
+            if type(val) == list or isinstance(val, ndarray):
                 # Parameter name.
                 for i in xrange(len(val)):
                     params.append(param)
@@ -107,7 +107,7 @@ def partition_params(val, param):
                 params.append(param[i])
 
                 # Parameter value.
-                if type(val) == list or type(val) == ArrayType:
+                if type(val) == list or isinstance(val, ndarray):
                     values.append(val[i])
                 else:
                     values.append(val)
@@ -116,7 +116,7 @@ def partition_params(val, param):
     # All other parameters.
     else:
         # List of values.
-        if type(val) == list or type(val) == ArrayType:
+        if type(val) == list or isinstance(val, ndarray):
             # Parameter name.
             for i in xrange(len(val)):
                 spin_params.append(param)
