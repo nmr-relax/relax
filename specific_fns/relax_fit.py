@@ -23,7 +23,7 @@
 # Python module imports.
 from LinearAlgebra import inverse
 from math import sqrt
-from Numeric import Float64, array, average, identity, matrixmultiply, zeros
+from numpy import array, average, dot, float64, identity, zeros
 from re import match, search
 import sys
 
@@ -50,7 +50,7 @@ class Relax_fit(Common_functions):
 
 
     def assemble_param_vector(self, index=None, sim_index=None):
-        """Function for assembling various pieces of data into a Numeric parameter array."""
+        """Function for assembling various pieces of data into a numpy parameter array."""
 
         # Initialise.
         param_vector = []
@@ -87,15 +87,15 @@ class Relax_fit(Common_functions):
                 else:
                     param_vector.append(data.iinf)
 
-        # Return a Numeric array.
-        return array(param_vector, Float64)
+        # Return a numpy array.
+        return array(param_vector, float64)
 
 
     def assemble_scaling_matrix(self, index=None, scaling=1):
         """Function for creating the scaling matrix."""
 
         # Initialise.
-        self.scaling_matrix = identity(len(self.param_vector), Float64)
+        self.scaling_matrix = identity(len(self.param_vector), float64)
         i = 0
 
         # No diagonal scaling.
@@ -477,7 +477,7 @@ class Relax_fit(Common_functions):
         A = []
         b = []
         n = len(self.param_vector)
-        zero_array = zeros(n, Float64)
+        zero_array = zeros(n, float64)
         i = 0
         j = 0
 
@@ -505,9 +505,9 @@ class Relax_fit(Common_functions):
             # Increment i.
             i = i + 1
 
-        # Convert to Numeric data structures.
-        A = array(A, Float64)
-        b = array(b, Float64)
+        # Convert to numpy data structures.
+        A = array(A, float64)
+        b = array(b, float64)
 
         return A, b
 
@@ -662,7 +662,7 @@ class Relax_fit(Common_functions):
 
             # Diagonal scaling.
             self.assemble_scaling_matrix(index=i, scaling=scaling)
-            self.param_vector = matrixmultiply(inverse(self.scaling_matrix), self.param_vector)
+            self.param_vector = dot(inverse(self.scaling_matrix), self.param_vector)
 
             # Get the grid search minimisation options.
             if match('^[Gg]rid', min_algor):
@@ -711,7 +711,7 @@ class Relax_fit(Common_functions):
 
             if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
                 # Reconstruct the error data structure.
-                lm_error = zeros(len(data.relax_times), Float64)
+                lm_error = zeros(len(data.relax_times), float64)
                 index = 0
                 for k in xrange(len(data.relax_times)):
                     lm_error[index:index+len(relax_error[k])] = relax_error[k]
@@ -733,7 +733,7 @@ class Relax_fit(Common_functions):
 
             # Scaling.
             if scaling:
-                self.param_vector = matrixmultiply(self.scaling_matrix, self.param_vector)
+                self.param_vector = dot(self.scaling_matrix, self.param_vector)
 
             # Disassemble the parameter vector.
             self.disassemble_param_vector(index=i, sim_index=sim_index)
