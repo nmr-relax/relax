@@ -34,7 +34,7 @@ from numpy import sum
 
     Data structure:  data.jw
     Dimension:  2D, (number of NMR frequencies, 5 spectral density frequencies)
-    Type:  Numeric matrix, Float64
+    Type:  numpy matrix, float64
     Dependencies:  None
     Required by:  data.ri, data.dri, data.d2ri
 
@@ -254,7 +254,7 @@ def calc_S2f_tf_S2s_ts_jw(data, params):
     Data structure:  data.djw
     Dimension:  3D, (number of NMR frequencies, 5 spectral density frequencies,
         model-free parameters)
-    Type:  Numeric 3D matrix, Float64
+    Type:  numpy 3D matrix, float64
     Dependencies:  None
     Required by:  data.dri, data.d2ri
 
@@ -1208,7 +1208,7 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
     Data structure:  data.d2jw
     Dimension:  4D, (number of NMR frequencies, 5 spectral density frequencies, model-free
         parameters, model-free parameters)
-    Type:  Numeric 4D matrix, Float64
+    Type:  numpy 4D matrix, float64
     Dependencies:  None
     Required by:  data.d2ri
 
