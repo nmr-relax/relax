@@ -30,7 +30,7 @@ from data import Data as relax_data_store
 from float import isNaN, isInf
 from maths_fns.n_state_model import N_state_opt
 from minfx.generic import generic_minimise
-from relax_errors import RelaxNoModelError
+from relax_errors import RelaxInfError, RelaxNaNError, RelaxNoModelError
 from specific_fns.base_class import Common_functions
 
 
