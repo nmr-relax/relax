@@ -111,7 +111,7 @@ class N_state_model(Common_functions):
             probs[i] = param_vector[i]
 
         # The probability for state N.
-        probs[-1] = 1 - sum(probs[0:-2])
+        probs[-1] = 1 - sum(probs[0:-1])
 
         # The Euler angles.
         for i in xrange(cdp.N):
