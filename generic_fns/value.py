@@ -155,6 +155,7 @@ def set(val=None, param=None, spin_id=None, force=False):
 
     # Specific functions.
     return_value = get_specific_fn('return_value', relax_data_store[relax_data_store.current_pipe].pipe_type)
+    set_nonspin_params = get_specific_fn('set_nonspin_params', relax_data_store[relax_data_store.current_pipe].pipe_type)
 
     # Partition the parameters into those which are spin specific and those which are not.
     spin_params, spin_values, other_params, other_values = partition_params(val, param)
@@ -200,8 +201,7 @@ def set(val=None, param=None, spin_id=None, force=False):
     #######################
 
     if other_params:
-        # Set the diffusion parameters.
-        diffusion_tensor.set(value=other_values, param=other_params)
+        set_nonspin_params(value=other_values, param=other_params)
 
 
     # Reset all minimisation statistics.
