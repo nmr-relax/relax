@@ -53,6 +53,11 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
         # Get the parameter vector.
         param_vector = self.n_state_model_fns.assemble_param_vector()
 
+        # The correct result.
+        vector_true = [0.1, 0.3, 0.0, pi/2, 1.0, pi/2, pi, 3*pi/2, pi, 3*pi/2, 2*pi]
+
         # Check the vector.
-        self.assertEqual(param_vector, [0.1, 0.3, 0.0, pi/2, 1.0, pi/2, pi, 3*pi/2, pi, 3*pi/2, 2*pi])
+        self.assertEqual(len(param_vector), len(vector_true))
+        for i in xrange(len(param_vector)):
+            self.assertEqual(param_vector[i], vector_true[i])
 
