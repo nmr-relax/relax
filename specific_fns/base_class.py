@@ -25,7 +25,7 @@ from copy import deepcopy
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns.selection import spin_loop
+from generic_fns.selection import count_spins, exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxError, RelaxParamSetError
 
 
@@ -66,6 +66,23 @@ class Common_functions:
 
         # No errors found.
         return False
+
+
+    def num_instances(self):
+        """Function for returning the number of instances.
+
+        The default in this base class is to return the number of spins.
+
+        @return:    The number of instances (equal to the number of spins).
+        @rtype:     int
+        """
+
+        # Test if sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
+
+        # Return the number of spins.
+        return count_spins()
 
 
     def overfit_deselect(self):
