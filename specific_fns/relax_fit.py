@@ -662,7 +662,7 @@ class Relax_fit(Common_functions):
 
             # Diagonal scaling.
             self.assemble_scaling_matrix(index=i, scaling=scaling)
-            self.param_vector = matrixmultiply(inverse(self.scaling_matrix), self.param_vector)
+            self.param_vector = dot(inverse(self.scaling_matrix), self.param_vector)
 
             # Get the grid search minimisation options.
             if match('^[Gg]rid', min_algor):
@@ -733,7 +733,7 @@ class Relax_fit(Common_functions):
 
             # Scaling.
             if scaling:
-                self.param_vector = matrixmultiply(self.scaling_matrix, self.param_vector)
+                self.param_vector = dot(self.scaling_matrix, self.param_vector)
 
             # Disassemble the parameter vector.
             self.disassemble_param_vector(index=i, sim_index=sim_index)
