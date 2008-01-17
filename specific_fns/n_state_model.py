@@ -65,7 +65,7 @@ class N_state_model(Common_functions):
             gamma = cdp.gamma
 
         # The probabilities (exclude that of state N).
-        param_vector = probs[0:-2]
+        param_vector = probs[0:-1]
 
         # The Euler angles.
         for i in xrange(cdp.N):
