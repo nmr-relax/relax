@@ -37,7 +37,7 @@ from specific_fns.base_class import Common_functions
 class N_state_model(Common_functions):
     """Class containing functions for the N-state model."""
 
-    def assemble_param_vector(self, sim_index):
+    def assemble_param_vector(self, sim_index=None):
         """Assemble all the parameters of the model into a single array.
 
         @param sim_index:       The index of the simulation to optimise.  This should be None if
