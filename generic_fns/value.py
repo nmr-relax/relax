@@ -57,6 +57,7 @@ def partition_params(val, param):
     spin_values = []
     other_params = []
     other_values = []
+    model_values = []
 
     # The parameter has been specified.
     if param:
