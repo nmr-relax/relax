@@ -117,7 +117,20 @@ def partition_params(val, param):
     else:
         # List of values.
         if type(val) == list or isinstance(val, ndarray):
+            # Parameter name.
+            for i in xrange(len(val)):
+                spin_params.append(param)
+
+            # Parameter value.
             spin_values = val
+
+        # Single value.
+        else:
+            # Parameter name.
+            spin_params.append(param)
+
+            # Parameter value.
+            spin_values.append(val)
 
     # Return the partitioned parameters and values.
     return spin_params, spin_values, other_params, other_values
@@ -154,7 +167,6 @@ def set(val=None, param=None, spin_id=None, force=False):
     if spin_params:
         # Test if the sequence data is loaded.
         if not exists_mol_res_spin_data():
-            raise RelaxError, `partition_params(val, param)`
             raise RelaxNoSequenceError
 
         # First test if parameter value already exists, prior to setting any params.
