@@ -113,27 +113,18 @@ def partition_params(val, param):
                     values.append(val)
 
 
-    # All other parameters.
+    # No parameter name supplied, so these must be the model parameter values.
     else:
         # List of values.
         if type(val) == list or isinstance(val, ndarray):
-            # Parameter name.
-            for i in xrange(len(val)):
-                spin_params.append(param)
-
-            # Parameter value.
-            spin_values = val
+            model_values = val
 
         # Single value.
-        else:
-            # Parameter name.
-            spin_params.append(param)
-
-            # Parameter value.
-            spin_values.append(val)
+        elif val:
+            model_values = [val]
 
     # Return the partitioned parameters and values.
-    return spin_params, spin_values, other_params, other_values
+    return spin_params, spin_values, other_params, other_values, model_values
 
 
 def set(val=None, param=None, spin_id=None, force=False):
@@ -158,7 +149,7 @@ def set(val=None, param=None, spin_id=None, force=False):
     set_non_spin_params = get_specific_fn('set_non_spin_params', relax_data_store[relax_data_store.current_pipe].pipe_type)
 
     # Partition the parameters into those which are spin specific and those which are not.
-    spin_params, spin_values, other_params, other_values = partition_params(val, param)
+    spin_params, spin_values, other_params, other_values, model_values = partition_params(val, param)
 
 
     # Spin specific parameters.
