@@ -205,6 +205,20 @@ class Common_functions:
             inc = inc + 1
 
 
+    def set_non_spin_params(self, value=None, param=None):
+        """Base class method which complains loudly if anything is supplied to it.
+
+        @param value:   The parameter values.
+        @type value:    None, number, or list of numbers
+        @param param:   The parameter names.
+        @type param:    None, str, or list of str
+        """
+
+        # Throw a RelaxError.
+        if value or param:
+            raise RelaxError, "Do not know how to handle the non-spin specific parameters " + `param` + " with the values " + `value`
+
+
     def set_update(self, param, spin):
         """Dummy function to do nothing!
 

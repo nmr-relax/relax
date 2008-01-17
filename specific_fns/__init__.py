@@ -191,6 +191,10 @@ def get_specific_fn(eqi, function_type, raise_error=1):
         if eqi == 'set_error':
             function = inst.set_error
 
+        # Set non-spin specific parameters function.
+        if eqi == 'set_non_spin_params':
+            function = inst.set_non_spin_params
+
         # Set the selected simulations array.
         if eqi == 'set_selected_sim':
             function = inst.set_selected_sim
