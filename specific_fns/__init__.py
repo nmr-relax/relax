@@ -79,6 +79,14 @@ def get_specific_fn(eqi, function_type, raise_error=1):
         if eqi == 'create_mc_data':
             function = inst.create_mc_data
 
+        # Data structure initialisation function.
+        if eqi == 'data_init':
+            function = inst.data_init
+
+        # Default parameter value returning function.
+        if eqi == 'default_value':
+            function = inst.default_value
+
         # Duplicate data function.
         if eqi == 'duplicate_data':
             function = inst.duplicate_data
@@ -186,6 +194,10 @@ def get_specific_fn(eqi, function_type, raise_error=1):
         # Set the selected simulations array.
         if eqi == 'set_selected_sim':
             function = inst.set_selected_sim
+
+        # Set update function.
+        if eqi == 'set_update':
+            function = inst.set_update
 
         # Skip function.
         if eqi == 'skip_function':
