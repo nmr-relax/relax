@@ -25,7 +25,7 @@ import sys
 
 # relax module imports.
 import help
-from specific_fns import n_state_model
+from specific_fns import n_state_model_obj
 from relax_errors import RelaxBoolError, RelaxIntError, RelaxStrError
 
 
@@ -77,7 +77,7 @@ class N_state_model:
             raise RelaxIntError, ('the number of states N', N)
 
         # Execute the functional code.
-        n_state_model.model_setup(N=N)
+        n_state_model_obj.model_setup(N=N)
 
 
     def set_domain(self, tensor=None, domain=None):
@@ -122,7 +122,7 @@ class N_state_model:
             raise RelaxStrError, ('domain', domain)
 
         # Execute the functional code.
-        n_state_model.set_domain(tensor=tensor, domain=domain)
+        n_state_model_obj.set_domain(tensor=tensor, domain=domain)
 
 
     def set_type(self, tensor=None, red=False):
@@ -168,4 +168,4 @@ class N_state_model:
             raise RelaxBoolError, ('red', red)
 
         # Execute the functional code.
-        n_state_model.set_type(tensor=tensor, red=red)
+        n_state_model_obj.set_type(tensor=tensor, red=red)
