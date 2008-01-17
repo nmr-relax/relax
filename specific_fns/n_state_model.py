@@ -38,16 +38,40 @@ class N_state_model(Common_functions):
     """Class containing functions for the N-state model."""
 
     def assemble_param_vector(self, sim_index):
-        """Assemble all the parameters of the model into a single array."""
+        """Assemble all the parameters of the model into a single array.
 
-        # Initialise.
-        param_vector = []
+        @param sim_index:       The index of the simulation to optimise.  This should be None if
+                                normal optimisation is desired.
+        @type sim_index:        None or int
+        @return:                The parameter vector used for optimisation.
+        @rtype:                 numpy array
+        """
 
         # Alias the current data pipe.
         cdp = relax_data_store[relax_data_store.current_pipe]
 
-        # The probabilities.
-        #for i in xrange(len(cdp.align
+        # Monte Carlo simulation data structures.
+        if sim_index != None:
+            probs = cdp.probs_sim[sim_index]
+            alpha = cdp.alpha_sim[sim_index]
+            beta = cdp.beta_sim[sim_index]
+            gamma = cdp.gamma_sim[sim_index]
+
+        # Normal data structures.
+        else:
+            probs = cdp.probs
+            alpha = cdp.alpha
+            beta = cdp.beta
+            gamma = cdp.gamma
+
+        # The probabilities (exclude that of state N).
+        param_vector = probs[0:-2]
+
+        # The Euler angles.
+        for i in xrange(cdp.N):
+            param_vector.append(alpha[i])
+            param_vector.append(beta[i])
+            param_vector.append(gamma[i])
 
         # Return a numpy arrary.
         return array(param_vector, float64)
