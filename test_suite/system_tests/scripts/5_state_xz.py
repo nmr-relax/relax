@@ -78,11 +78,12 @@ align_tensor.matrix_angles(basis_set=1, tensors=['chi1 N-dom', 'chi2 N-dom', 'ch
 # Set up the 5-state model.
 n_state_model.model(N=3)
 
-# Grid search.
-grid_search(inc=2)
+# Set the initial parameter values to the defaults (the grid search is too expensive).
+value.set()
 
 # Minimise.
-minimise('simplex')
+minimise('simplex', constraints=False, max_iter=200)
 
+raise RelaxError, "It worked!!!"
 # Finish.
 #results.write(file='devnull', force=1)
