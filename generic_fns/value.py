@@ -49,11 +49,8 @@ def partition_params(val, param):
     @return type:   tuple of 4 lists
     """
 
-    # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
-
     # Specific functions.
-    return_data_name = get_specific_fn('return_data_name', cdp.pipe_type)
+    return_data_name = get_specific_fn('return_data_name', relax_data_store[relax_data_store.current_pipe].pipe_type)
 
     # Initialise.
     spin_params = []
@@ -156,11 +153,8 @@ def set(val=None, param=None, spin_id=None, force=False):
     if not relax_data_store.current_pipe:
         raise RelaxNoPipeError
 
-    # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
-
     # Specific functions.
-    return_value = get_specific_fn('return_value', cdp.pipe_type)
+    return_value = get_specific_fn('return_value', relax_data_store[relax_data_store.current_pipe].pipe_type)
 
     # Partition the parameters into those which are spin specific and those which are not.
     spin_params, spin_values, other_params, other_values = partition_params(val, param)
@@ -229,14 +223,11 @@ def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
     @type spin:     SpinContainer
     """
 
-    # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
-
     # Specific functions.
-    data_init = get_specific_fn('data_init', cdp.pipe_type)
-    default_value = get_specific_fn('default_value', cdp.pipe_type)
-    return_data_name = get_specific_fn('return_data_name', cdp.pipe_type)
-    set_update = get_specific_fn('set_update', cdp.pipe_type)
+    data_init = get_specific_fn('data_init', relax_data_store[relax_data_store.current_pipe].pipe_type)
+    default_value = get_specific_fn('default_value', relax_data_store[relax_data_store.current_pipe].pipe_type)
+    return_data_name = get_specific_fn('return_data_name', relax_data_store[relax_data_store.current_pipe].pipe_type)
+    set_update = get_specific_fn('set_update', relax_data_store[relax_data_store.current_pipe].pipe_type)
 
 
     # Setting the model parameters prior to minimisation.
