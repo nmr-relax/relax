@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,6 @@ from unittest import TestCase
 
 # relax module imports.
 from generic_fns import value
-import specific_fns
 from test_suite.unit_tests.value_testing_base import Value_base_class
 
 
@@ -45,13 +44,13 @@ class Test_value(Value_base_class, TestCase):
         val = [0.8]
 
         # Partition.
-        tensor_params, tensor_values, spin_params, spin_values = value.partition_params(val, param, specific_fns.model_free_obj.return_data_name)
+        spin_params, spin_values, other_params, other_values = value.partition_params(val, param)
 
         # Tests.
-        self.assertEqual(tensor_params, [])
-        self.assertEqual(tensor_values, [])
         self.assertEqual(spin_params, ['S2'])
         self.assertEqual(spin_values, [0.8])
+        self.assertEqual(other_params, [])
+        self.assertEqual(other_values, [])
 
 
     def test_partition_params2(self):
@@ -62,13 +61,13 @@ class Test_value(Value_base_class, TestCase):
         val = [1e7]
 
         # Partition.
-        tensor_params, tensor_values, spin_params, spin_values = value.partition_params(val, param, specific_fns.model_free_obj.return_data_name)
+        spin_params, spin_values, other_params, other_values = value.partition_params(val, param)
 
         # Tests.
-        self.assertEqual(tensor_params, ['Dx'])
-        self.assertEqual(tensor_values, [1e7])
         self.assertEqual(spin_params, [])
         self.assertEqual(spin_values, [])
+        self.assertEqual(other_params, ['Dx'])
+        self.assertEqual(other_values, [1e7])
 
 
     def test_partition_params3(self):
@@ -79,13 +78,13 @@ class Test_value(Value_base_class, TestCase):
         val = [1e7, 0.8]
 
         # Partition.
-        tensor_params, tensor_values, spin_params, spin_values = value.partition_params(val, param, specific_fns.model_free_obj.return_data_name)
+        spin_params, spin_values, other_params, other_values = value.partition_params(val, param)
 
         # Tests.
-        self.assertEqual(tensor_params, ['Dx'])
-        self.assertEqual(tensor_values, [1e7])
         self.assertEqual(spin_params, ['S2'])
         self.assertEqual(spin_values, [0.8])
+        self.assertEqual(other_params, ['Dx'])
+        self.assertEqual(other_values, [1e7])
 
 
     def test_partition_params4(self):
@@ -96,13 +95,13 @@ class Test_value(Value_base_class, TestCase):
         val = [1e7, 0.8, -160e-6]
 
         # Partition.
-        tensor_params, tensor_values, spin_params, spin_values = value.partition_params(val, param, specific_fns.model_free_obj.return_data_name)
+        spin_params, spin_values, other_params, other_values = value.partition_params(val, param)
 
         # Tests.
-        self.assertEqual(tensor_params, ['Dx'])
-        self.assertEqual(tensor_values, [1e7])
         self.assertEqual(spin_params, ['S2', 'CSA'])
         self.assertEqual(spin_values, [0.8, -160e-6])
+        self.assertEqual(other_params, ['Dx'])
+        self.assertEqual(other_values, [1e7])
 
 
     def test_partition_params5(self):
@@ -113,13 +112,13 @@ class Test_value(Value_base_class, TestCase):
         val = [1e7, 0.8, 2e7, -160e-6, 0.13]
 
         # Partition.
-        tensor_params, tensor_values, spin_params, spin_values = value.partition_params(val, param, specific_fns.model_free_obj.return_data_name)
+        spin_params, spin_values, other_params, other_values = value.partition_params(val, param)
 
         # Tests.
-        self.assertEqual(tensor_params, ['Dpar', 'Dper', 'theta'])
-        self.assertEqual(tensor_values, [1e7, 2e7, 0.13])
         self.assertEqual(spin_params, ['S2', 'CSA'])
         self.assertEqual(spin_values, [0.8, -160e-6])
+        self.assertEqual(other_params, ['Dpar', 'Dper', 'theta'])
+        self.assertEqual(other_values, [1e7, 2e7, 0.13])
 
 
     def test_partition_params6(self):
@@ -130,10 +129,10 @@ class Test_value(Value_base_class, TestCase):
         val = []
 
         # Partition.
-        tensor_params, tensor_values, spin_params, spin_values = value.partition_params(val, param, specific_fns.model_free_obj.return_data_name)
+        spin_params, spin_values, other_params, other_values = value.partition_params(val, param)
 
         # Tests.
-        self.assertEqual(tensor_params, [])
-        self.assertEqual(tensor_values, [])
         self.assertEqual(spin_params, [])
         self.assertEqual(spin_values, [])
+        self.assertEqual(other_params, [])
+        self.assertEqual(other_values, [])
