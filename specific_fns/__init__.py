@@ -179,10 +179,6 @@ def get_specific_fn(eqi, function_type, raise_error=1):
         if eqi == 'return_value':
             function = inst.return_value
 
-        # Set function.
-        if eqi == 'set':
-            function = inst.set
-
         # Set error function.
         if eqi == 'set_error':
             function = inst.set_error

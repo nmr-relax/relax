@@ -161,7 +161,6 @@ def set(val=None, param=None, spin_id=None, force=False):
 
     # Specific functions.
     return_value = get_specific_fn('return_value', cdp.pipe_type)
-    set = get_specific_fn('set', cdp.pipe_type)
 
     # Partition the parameters into those which are spin specific and those which are not.
     spin_params, spin_values, other_params, other_values = partition_params(val, param)
@@ -200,7 +199,7 @@ def set(val=None, param=None, spin_id=None, force=False):
 
             # Go to the specific code.
             for j in xrange(len(spin_params)):
-                set(value=spin_values[j], error=None, spin=spin, param=spin_params[j])
+                set_spin_params(value=spin_values[j], error=None, spin=spin, param=spin_params[j])
 
 
     # All other parameters.
@@ -213,6 +212,125 @@ def set(val=None, param=None, spin_id=None, force=False):
 
     # Reset all minimisation statistics.
     reset_min_stats()
+
+
+def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
+    """Function for setting spin specific parameter values.
+
+    @param value:   The value to change the parameter to.
+    @type value:    float or str
+    @param error:   The error value associated with the parameter, also to be set.
+    @type error:    float or str
+    @param param:   The name of the parameter to change.
+    @type param:    str
+    @param scaling: The scaling factor for the value or error parameters.
+    @type scaling:  float
+    @param spin:    The SpinContainer object.
+    @type spin:     SpinContainer
+    """
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Specific functions.
+    data_init = get_specific_fn('data_init', cdp.pipe_type)
+    default_value = get_specific_fn('default_value', cdp.pipe_type)
+    return_data_name = get_specific_fn('return_data_name', cdp.pipe_type)
+    set_update = get_specific_fn('set_update', cdp.pipe_type)
+
+
+    # Setting the model parameters prior to minimisation.
+    #####################################################
+
+    if param == None:
+        # The values are supplied by the user:
+        if value:
+            # Test if the length of the value array is equal to the length of the parameter array.
+            if len(value) != len(spin.params):
+                raise RelaxError, "The length of " + `len(value)` + " of the value array must be equal to the length of the parameter array, " + `spin.params` + ", for residue " + `spin.num` + " " + spin.name + "."
+
+        # Default values.
+        else:
+            # Set 'value' to an empty array.
+            value = []
+
+            # Loop over the parameters.
+            for i in xrange(len(spin.params)):
+                value.append(default_value(spin.params[i]))
+
+        # Loop over the parameters.
+        for i in xrange(len(spin.params)):
+            # Get the object.
+            object_name = return_data_name(spin.params[i])
+            if not object_name:
+                raise RelaxError, "The data type " + `spin.params[i]` + " does not exist."
+
+            # Initialise all data if it doesn't exist.
+            if not hasattr(spin, object_name):
+                data_init(spin)
+
+            # Set the value.
+            if value[i] == None:
+                setattr(spin, object_name, None)
+            else:
+                # Catch parameters with string values.
+                try:
+                    value[i] = float(value[i]) * scaling
+                except ValueError:
+                    pass
+
+                # Set the attribute.
+                setattr(spin, object_name, value[i])
+
+
+    # Individual data type.
+    #######################
+
+    else:
+        # Get the object.
+        object_name = return_data_name(param)
+        if not object_name:
+            raise RelaxError, "The data type " + `param` + " does not exist."
+
+        # Initialise all data if it doesn't exist.
+        if not hasattr(spin, object_name):
+            data_init(spin)
+
+        # Default value.
+        if value == None:
+            value = default_value(object_name)
+
+        # No default value, hence the parameter cannot be set.
+        if value == None:
+            raise RelaxParamSetError, param
+
+        # Set the value.
+        if value == None:
+            setattr(spin, object_name, None)
+        else:
+            # Catch parameters with string values.
+            try:
+                value = float(value) * scaling
+            except ValueError:
+                pass
+
+            # Set the attribute.
+            setattr(spin, object_name, value)
+
+        # Set the error.
+        if error != None:
+            # Catch parameters with string values.
+            try:
+                error = float(error) * scaling
+            except ValueError:
+                pass
+
+            # Set the attribute.
+            setattr(spin, object_name+'_err', error)
+
+        # Update the other parameters if necessary.
+        set_update(param=param, spin=spin)
+
 
 
 
