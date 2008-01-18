@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from Numeric import Float64, array, zeros
+from numpy import float64, array, zeros
 from time import asctime, localtime
 
 # relax module imports.
@@ -299,13 +299,13 @@ class Base_Map:
 
         # Points.
         if point != None:
-            self.point = array(point, Float64)
+            self.point = array(point, float64)
             self.num_points = 1
         else:
             self.num_points = 0
 
         # Get the default map bounds.
-        self.bounds = zeros((self.n, 2), Float64)
+        self.bounds = zeros((self.n, 2), float64)
         for i in xrange(self.n):
             # Get the bounds for the parameter i.
             bounds = self.map_bounds[i](self.run, self.param_names[i])
@@ -319,14 +319,14 @@ class Base_Map:
 
         # Lower bounds.
         if lower != None:
-            self.bounds[:, 0] = array(lower, Float64)
+            self.bounds[:, 0] = array(lower, float64)
 
         # Upper bounds.
         if upper != None:
-            self.bounds[:, 1] = array(upper, Float64)
+            self.bounds[:, 1] = array(upper, float64)
 
         # Setup the step sizes.
-        self.step_size = zeros(self.n, Float64)
+        self.step_size = zeros(self.n, float64)
         self.step_size = (self.bounds[:, 1] - self.bounds[:, 0]) / self.inc
 
 

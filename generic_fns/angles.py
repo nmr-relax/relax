@@ -22,7 +22,7 @@
 
 # Python module imports.
 from math import acos, sin
-from Numeric import dot
+from numpy import dot
 
 # relax module imports.
 from data import Data as relax_data_store

@@ -22,8 +22,8 @@
 
 
 # Python module imports.
-from Numeric import Float64, matrixmultiply, ones, sum, transpose, zeros
 from math import pi
+from numpy import dot, float64, ones, sum, transpose, zeros
 import sys
 
 # relax module imports.
@@ -82,7 +82,7 @@ class Mf:
 
         Data structure:  data.ri
         Dimension:  1D, (relaxation data)
-        Type:  Numeric array, Float64
+        Type:  numpy, float64
         Dependencies:  data.ri_prime
         Required by:  data.chi2, data.dchi2, data.d2chi2
 
@@ -103,7 +103,7 @@ class Mf:
 
         Data structure:  data.dri
         Dimension:  2D, (parameters, relaxation data)
-        Type:  Numeric array, Float64
+        Type:  numpy array, float64
         Dependencies:  data.ri_prime, data.dri_prime
         Required by:  data.dchi2, data.d2chi2
 
@@ -129,7 +129,7 @@ class Mf:
 
         Data structure:  data.d2ri
         Dimension:  3D, (parameters, parameters, relaxation data)
-        Type:  Numeric array, Float64
+        Type:  numpy array, float64
         Dependencies:  data.ri_prime, data.dri_prime, data.d2ri_prime
         Required by:  data.d2chi2
 
@@ -204,9 +204,9 @@ class Mf:
         self.params = 1.0 * init_params
 
         # Data structures for tests set to some random array (in this case all pi).
-        self.func_test = pi * ones(self.total_num_params, Float64)
-        self.grad_test = pi * ones(self.total_num_params, Float64)
-        self.hess_test = pi * ones(self.total_num_params, Float64)
+        self.func_test = pi * ones(self.total_num_params, float64)
+        self.grad_test = pi * ones(self.total_num_params, float64)
+        self.hess_test = pi * ones(self.total_num_params, float64)
 
         # Initialise the data class for storing diffusion tensor data.
         self.diff_data = Data()
@@ -243,9 +243,9 @@ class Mf:
             self.data[i].num_indecies = self.diff_data.num_indecies
 
             # Calculate the five frequencies per field strength which cause R1, R2, and NOE relaxation.
-            self.data[i].frq_list = zeros((num_frq[i], 5), Float64)
-            self.data[i].frq_list_ext = zeros((num_frq[i], 5, self.diff_data.num_indecies), Float64)
-            self.data[i].frq_sqrd_list_ext = zeros((num_frq[i], 5, self.diff_data.num_indecies), Float64)
+            self.data[i].frq_list = zeros((num_frq[i], 5), float64)
+            self.data[i].frq_list_ext = zeros((num_frq[i], 5, self.diff_data.num_indecies), float64)
+            self.data[i].frq_sqrd_list_ext = zeros((num_frq[i], 5, self.diff_data.num_indecies), float64)
             for j in xrange(num_frq[i]):
                 frqH = 2.0 * pi * frq[i][j]
                 frqX = frqH / g_ratio
@@ -334,11 +334,11 @@ class Mf:
 
         # Initialise the total chi2 value, gradient, and Hessian data structures.
         self.total_chi2 = 0.0
-        self.total_dchi2 = zeros((self.total_num_params), Float64)
-        self.total_d2chi2 = zeros((self.total_num_params, self.total_num_params), Float64)
+        self.total_dchi2 = zeros((self.total_num_params), float64)
+        self.total_d2chi2 = zeros((self.total_num_params, self.total_num_params), float64)
 
         # Initialise the total ri gradient data structure (for Levenberg-Marquardt minimisation).
-        self.total_dri = zeros((self.total_num_params, self.total_num_ri), Float64)
+        self.total_dri = zeros((self.total_num_params, self.total_num_ri), float64)
 
         # Set the functions self.func, self.dfunc, and self.d2func.
         ###########################################################
@@ -382,7 +382,7 @@ class Mf:
 
         # Scaling.
         if self.scaling_flag:
-            params = matrixmultiply(params, self.scaling_matrix)
+            params = dot(params, self.scaling_matrix)
 
         # Direction cosine calculations.
         if self.diff_data.calc_di:
@@ -433,7 +433,7 @@ class Mf:
 
         # Scaling.
         if self.scaling_flag:
-            params = matrixmultiply(params, self.scaling_matrix)
+            params = dot(params, self.scaling_matrix)
 
         # Diffusion tensor parameters.
         self.diff_data.params = params[0:1]
@@ -485,7 +485,7 @@ class Mf:
 
         # Scaling.
         if self.scaling_flag:
-            params = matrixmultiply(params, self.scaling_matrix)
+            params = dot(params, self.scaling_matrix)
 
         # Diffusion tensor parameters.
         self.diff_data.params = params[0:self.diff_end_index]
@@ -552,7 +552,7 @@ class Mf:
 
         # Scaling.
         if self.scaling_flag:
-            params = matrixmultiply(params, self.scaling_matrix)
+            params = dot(params, self.scaling_matrix)
 
         # Diffusion tensor parameters.
         self.diff_data.params = params[0:self.diff_end_index]
@@ -625,7 +625,7 @@ class Mf:
 
         # Scaling.
         if self.scaling_flag:
-            params = matrixmultiply(params, self.scaling_matrix)
+            params = dot(params, self.scaling_matrix)
 
         # Calculate the spectral density gradient components.
         if data.calc_djw_comps:
@@ -656,7 +656,7 @@ class Mf:
 
         # Diagonal scaling.
         if self.scaling_flag:
-            data.dchi2 = matrixmultiply(data.dchi2, self.scaling_matrix)
+            data.dchi2 = dot(data.dchi2, self.scaling_matrix)
 
         # Return a copy of the gradient.
         return data.dchi2 * 1.0
@@ -680,7 +680,7 @@ class Mf:
 
         # Scaling.
         if self.scaling_flag:
-            params = matrixmultiply(params, self.scaling_matrix)
+            params = dot(params, self.scaling_matrix)
 
         # Diffusion tensor parameters.
         self.diff_data.params = params[0:1]
@@ -717,7 +717,7 @@ class Mf:
 
         # Diagonal scaling.
         if self.scaling_flag:
-            data.dchi2 = matrixmultiply(data.dchi2, self.scaling_matrix)
+            data.dchi2 = dot(data.dchi2, self.scaling_matrix)
 
         # Return a copy of the gradient.
         return data.dchi2 * 1.0
@@ -739,7 +739,7 @@ class Mf:
 
         # Scaling.
         if self.scaling_flag:
-            params = matrixmultiply(params, self.scaling_matrix)
+            params = dot(params, self.scaling_matrix)
 
         # Diffusion tensor parameters.
         self.diff_data.params = params[0:self.diff_end_index]
@@ -799,7 +799,7 @@ class Mf:
 
         # Diagonal scaling.
         if self.scaling_flag:
-            self.total_dchi2 = matrixmultiply(self.total_dchi2, self.scaling_matrix)
+            self.total_dchi2 = dot(self.total_dchi2, self.scaling_matrix)
 
         # Return a copy of the gradient.
         return self.total_dchi2 * 1.0
@@ -821,7 +821,7 @@ class Mf:
 
         # Scaling.
         if self.scaling_flag:
-            params = matrixmultiply(params, self.scaling_matrix)
+            params = dot(params, self.scaling_matrix)
 
         # Diffusion tensor parameters.
         self.diff_data.params = params[0:self.diff_end_index]
@@ -883,7 +883,7 @@ class Mf:
 
         # Diagonal scaling.
         if self.scaling_flag:
-            self.total_dchi2 = matrixmultiply(self.total_dchi2, self.scaling_matrix)
+            self.total_dchi2 = dot(self.total_dchi2, self.scaling_matrix)
 
         # Return a copy of the gradient.
         return self.total_dchi2 * 1.0
@@ -904,7 +904,7 @@ class Mf:
 
         # Scaling.
         if self.scaling_flag:
-            params = matrixmultiply(params, self.scaling_matrix)
+            params = dot(params, self.scaling_matrix)
 
         # Loop over the lower triangle of the Hessian.
         for j in xrange(data.total_num_params):
@@ -933,7 +933,7 @@ class Mf:
 
         # Diagonal scaling.
         if self.scaling_flag:
-            data.d2chi2 = matrixmultiply(self.scaling_matrix, matrixmultiply(data.d2chi2, self.scaling_matrix))
+            data.d2chi2 = dot(self.scaling_matrix, dot(data.d2chi2, self.scaling_matrix))
 
         # Return a copy of the Hessian.
         return data.d2chi2 * 1.0
@@ -954,7 +954,7 @@ class Mf:
 
         # Scaling.
         if self.scaling_flag:
-            params = matrixmultiply(params, self.scaling_matrix)
+            params = dot(params, self.scaling_matrix)
 
         # Diffusion tensor parameters.
         self.diff_data.params = params[0:1]
@@ -986,7 +986,7 @@ class Mf:
 
         # Diagonal scaling.
         if self.scaling_flag:
-            data.d2chi2 = matrixmultiply(self.scaling_matrix, matrixmultiply(data.d2chi2, self.scaling_matrix))
+            data.d2chi2 = dot(self.scaling_matrix, dot(data.d2chi2, self.scaling_matrix))
 
         # Return a copy of the Hessian.
         return data.d2chi2 * 1.0
@@ -1005,7 +1005,7 @@ class Mf:
 
         # Scaling.
         if self.scaling_flag:
-            params = matrixmultiply(params, self.scaling_matrix)
+            params = dot(params, self.scaling_matrix)
 
         # Diffusion tensor parameters.
         self.diff_data.params = params[0:self.diff_end_index]
@@ -1060,7 +1060,7 @@ class Mf:
 
         # Diagonal scaling.
         if self.scaling_flag:
-            self.total_d2chi2 = matrixmultiply(self.scaling_matrix, matrixmultiply(self.total_d2chi2, self.scaling_matrix))
+            self.total_d2chi2 = dot(self.scaling_matrix, dot(self.total_d2chi2, self.scaling_matrix))
 
         # Return a copy of the Hessian.
         return self.total_d2chi2 * 1.0
@@ -1079,7 +1079,7 @@ class Mf:
 
         # Scaling.
         if self.scaling_flag:
-            params = matrixmultiply(params, self.scaling_matrix)
+            params = dot(params, self.scaling_matrix)
 
         # Diffusion tensor parameters.
         self.diff_data.params = params[0:self.diff_end_index]
@@ -1144,7 +1144,7 @@ class Mf:
 
         # Diagonal scaling.
         if self.scaling_flag:
-            self.total_d2chi2 = matrixmultiply(self.scaling_matrix, matrixmultiply(self.total_d2chi2, self.scaling_matrix))
+            self.total_d2chi2 = dot(self.scaling_matrix, dot(self.total_d2chi2, self.scaling_matrix))
 
         # Return a copy of the Hessian.
         return self.total_d2chi2 * 1.0
@@ -1211,16 +1211,16 @@ class Mf:
             diff_data.calc_d2ti = calc_spheroid_d2ti
 
             # Unit vectors.
-            diff_data.dpar = zeros(3, Float64)
+            diff_data.dpar = zeros(3, float64)
 
             # Unit vector gradients.
-            diff_data.dpar_dtheta = zeros(3, Float64)
-            diff_data.dpar_dphi = zeros(3, Float64)
+            diff_data.dpar_dtheta = zeros(3, float64)
+            diff_data.dpar_dphi = zeros(3, float64)
 
             # Unit vector Hessians.
-            diff_data.dpar_dtheta2 = zeros(3, Float64)
-            diff_data.dpar_dthetadphi = zeros(3, Float64)
-            diff_data.dpar_dphi2 = zeros(3, Float64)
+            diff_data.dpar_dtheta2 = zeros(3, float64)
+            diff_data.dpar_dthetadphi = zeros(3, float64)
+            diff_data.dpar_dphi2 = zeros(3, float64)
 
         # Diffusion as an ellipsoid.
         elif diff_data.type == 'ellipsoid':
@@ -1246,94 +1246,94 @@ class Mf:
             diff_data.calc_d2ti = calc_ellipsoid_d2ti
 
             # Unit vectors.
-            diff_data.dx = zeros(3, Float64)
-            diff_data.dy = zeros(3, Float64)
-            diff_data.dz = zeros(3, Float64)
+            diff_data.dx = zeros(3, float64)
+            diff_data.dy = zeros(3, float64)
+            diff_data.dz = zeros(3, float64)
 
             # Unit vector gradients.
-            diff_data.ddx_dalpha = zeros(3, Float64)
-            diff_data.ddx_dbeta = zeros(3, Float64)
-            diff_data.ddx_dgamma = zeros(3, Float64)
+            diff_data.ddx_dalpha = zeros(3, float64)
+            diff_data.ddx_dbeta = zeros(3, float64)
+            diff_data.ddx_dgamma = zeros(3, float64)
 
-            diff_data.ddy_dalpha = zeros(3, Float64)
-            diff_data.ddy_dbeta = zeros(3, Float64)
-            diff_data.ddy_dgamma = zeros(3, Float64)
+            diff_data.ddy_dalpha = zeros(3, float64)
+            diff_data.ddy_dbeta = zeros(3, float64)
+            diff_data.ddy_dgamma = zeros(3, float64)
 
-            diff_data.ddz_dalpha = zeros(3, Float64)
-            diff_data.ddz_dbeta = zeros(3, Float64)
-            diff_data.ddz_dgamma = zeros(3, Float64)
+            diff_data.ddz_dalpha = zeros(3, float64)
+            diff_data.ddz_dbeta = zeros(3, float64)
+            diff_data.ddz_dgamma = zeros(3, float64)
 
             # Unit vector Hessians.
-            diff_data.d2dx_dalpha2 = zeros(3, Float64)
-            diff_data.d2dx_dalpha_dbeta = zeros(3, Float64)
-            diff_data.d2dx_dalpha_dgamma = zeros(3, Float64)
-            diff_data.d2dx_dbeta2 = zeros(3, Float64)
-            diff_data.d2dx_dbeta_dgamma = zeros(3, Float64)
-            diff_data.d2dx_dgamma2 = zeros(3, Float64)
+            diff_data.d2dx_dalpha2 = zeros(3, float64)
+            diff_data.d2dx_dalpha_dbeta = zeros(3, float64)
+            diff_data.d2dx_dalpha_dgamma = zeros(3, float64)
+            diff_data.d2dx_dbeta2 = zeros(3, float64)
+            diff_data.d2dx_dbeta_dgamma = zeros(3, float64)
+            diff_data.d2dx_dgamma2 = zeros(3, float64)
 
-            diff_data.d2dy_dalpha2 = zeros(3, Float64)
-            diff_data.d2dy_dalpha_dbeta = zeros(3, Float64)
-            diff_data.d2dy_dalpha_dgamma = zeros(3, Float64)
-            diff_data.d2dy_dbeta2 = zeros(3, Float64)
-            diff_data.d2dy_dbeta_dgamma = zeros(3, Float64)
-            diff_data.d2dy_dgamma2 = zeros(3, Float64)
+            diff_data.d2dy_dalpha2 = zeros(3, float64)
+            diff_data.d2dy_dalpha_dbeta = zeros(3, float64)
+            diff_data.d2dy_dalpha_dgamma = zeros(3, float64)
+            diff_data.d2dy_dbeta2 = zeros(3, float64)
+            diff_data.d2dy_dbeta_dgamma = zeros(3, float64)
+            diff_data.d2dy_dgamma2 = zeros(3, float64)
 
-            diff_data.d2dz_dalpha2 = zeros(3, Float64)
-            diff_data.d2dz_dalpha_dbeta = zeros(3, Float64)
-            diff_data.d2dz_dalpha_dgamma = zeros(3, Float64)
-            diff_data.d2dz_dbeta2 = zeros(3, Float64)
-            diff_data.d2dz_dbeta_dgamma = zeros(3, Float64)
-            diff_data.d2dz_dgamma2 = zeros(3, Float64)
+            diff_data.d2dz_dalpha2 = zeros(3, float64)
+            diff_data.d2dz_dalpha_dbeta = zeros(3, float64)
+            diff_data.d2dz_dalpha_dgamma = zeros(3, float64)
+            diff_data.d2dz_dbeta2 = zeros(3, float64)
+            diff_data.d2dz_dbeta_dgamma = zeros(3, float64)
+            diff_data.d2dz_dgamma2 = zeros(3, float64)
 
 
     def init_res_data(self, data, diff_data):
         """Function for the initialisation of the residue specific data."""
 
         # Correlation times.
-        data.ci = zeros(diff_data.num_indecies, Float64)
-        data.ci_comps = zeros(diff_data.num_indecies, Float64)
+        data.ci = zeros(diff_data.num_indecies, float64)
+        data.ci_comps = zeros(diff_data.num_indecies, float64)
 
         # Weights.
-        data.ti = zeros(diff_data.num_indecies, Float64)
-        data.tau_comps = zeros(diff_data.num_indecies, Float64)
-        data.tau_comps_sqrd = zeros(diff_data.num_indecies, Float64)
-        data.tau_comps_cubed = zeros(diff_data.num_indecies, Float64)
-        data.tau_scale = zeros(diff_data.num_indecies, Float64)
+        data.ti = zeros(diff_data.num_indecies, float64)
+        data.tau_comps = zeros(diff_data.num_indecies, float64)
+        data.tau_comps_sqrd = zeros(diff_data.num_indecies, float64)
+        data.tau_comps_cubed = zeros(diff_data.num_indecies, float64)
+        data.tau_scale = zeros(diff_data.num_indecies, float64)
 
         # Diffusion as a sphere.
         if self.diff_data.type == 'sphere':
             # Global correlation time gradient and Hessian.
-            data.dti = zeros((1, diff_data.num_indecies), Float64)
-            data.d2ti = zeros((1, 1, diff_data.num_indecies), Float64)
+            data.dti = zeros((1, diff_data.num_indecies), float64)
+            data.d2ti = zeros((1, 1, diff_data.num_indecies), float64)
 
         # Diffusion as a spheroid.
         elif self.diff_data.type == 'spheroid':
             # Weight gradient and Hessian.
-            data.dci = zeros((4, diff_data.num_indecies), Float64)
-            data.d2ci = zeros((4, 4, diff_data.num_indecies), Float64)
+            data.dci = zeros((4, diff_data.num_indecies), float64)
+            data.d2ci = zeros((4, 4, diff_data.num_indecies), float64)
 
             # Global correlation time gradient and Hessian.
-            data.dti = zeros((2, diff_data.num_indecies), Float64)
-            data.d2ti = zeros((2, 2, diff_data.num_indecies), Float64)
+            data.dti = zeros((2, diff_data.num_indecies), float64)
+            data.d2ti = zeros((2, 2, diff_data.num_indecies), float64)
 
             # Dot product.
             data.dz = 0
 
             # Dot product gradient.
-            data.ddz_dO = zeros(2, Float64)
+            data.ddz_dO = zeros(2, float64)
 
             # Dot product Hessian.
-            data.d2dz_dO2 = zeros((2, 2), Float64)
+            data.d2dz_dO2 = zeros((2, 2), float64)
 
         # Diffusion as an ellipsoid.
         elif self.diff_data.type == 'ellipsoid':
             # Weight gradient and Hessian.
-            data.dci = zeros((6, diff_data.num_indecies), Float64)
-            data.d2ci = zeros((6, 6, diff_data.num_indecies), Float64)
+            data.dci = zeros((6, diff_data.num_indecies), float64)
+            data.d2ci = zeros((6, 6, diff_data.num_indecies), float64)
 
             # Global correlation time gradient and Hessian.
-            data.dti = zeros((3, diff_data.num_indecies), Float64)
-            data.d2ti = zeros((3, 3, diff_data.num_indecies), Float64)
+            data.dti = zeros((3, diff_data.num_indecies), float64)
+            data.d2ti = zeros((3, 3, diff_data.num_indecies), float64)
 
             # Dot products.
             data.dx = 0.0
@@ -1341,32 +1341,32 @@ class Mf:
             data.dz = 0.0
 
             # Dot product gradients.
-            data.ddx_dO = zeros(3, Float64)
-            data.ddy_dO = zeros(3, Float64)
-            data.ddz_dO = zeros(3, Float64)
+            data.ddx_dO = zeros(3, float64)
+            data.ddy_dO = zeros(3, float64)
+            data.ddz_dO = zeros(3, float64)
 
             # Dot product Hessians.
-            data.d2dx_dO2 = zeros((3, 3), Float64)
-            data.d2dy_dO2 = zeros((3, 3), Float64)
-            data.d2dz_dO2 = zeros((3, 3), Float64)
+            data.d2dx_dO2 = zeros((3, 3), float64)
+            data.d2dy_dO2 = zeros((3, 3), float64)
+            data.d2dz_dO2 = zeros((3, 3), float64)
 
         # Empty spectral density components.
-        data.w_ti_sqrd = zeros((data.num_frq, 5, diff_data.num_indecies), Float64)
-        data.fact_ti = zeros((data.num_frq, 5, diff_data.num_indecies), Float64)
-        data.w_te_ti_sqrd = zeros((data.num_frq, 5, diff_data.num_indecies), Float64)
-        data.w_tf_ti_sqrd = zeros((data.num_frq, 5, diff_data.num_indecies), Float64)
-        data.w_ts_ti_sqrd = zeros((data.num_frq, 5, diff_data.num_indecies), Float64)
-        data.inv_te_denom = zeros((data.num_frq, 5, diff_data.num_indecies), Float64)
-        data.inv_tf_denom = zeros((data.num_frq, 5, diff_data.num_indecies), Float64)
-        data.inv_ts_denom = zeros((data.num_frq, 5, diff_data.num_indecies), Float64)
+        data.w_ti_sqrd = zeros((data.num_frq, 5, diff_data.num_indecies), float64)
+        data.fact_ti = zeros((data.num_frq, 5, diff_data.num_indecies), float64)
+        data.w_te_ti_sqrd = zeros((data.num_frq, 5, diff_data.num_indecies), float64)
+        data.w_tf_ti_sqrd = zeros((data.num_frq, 5, diff_data.num_indecies), float64)
+        data.w_ts_ti_sqrd = zeros((data.num_frq, 5, diff_data.num_indecies), float64)
+        data.inv_te_denom = zeros((data.num_frq, 5, diff_data.num_indecies), float64)
+        data.inv_tf_denom = zeros((data.num_frq, 5, diff_data.num_indecies), float64)
+        data.inv_ts_denom = zeros((data.num_frq, 5, diff_data.num_indecies), float64)
 
         # Empty spectral density values, gradients, and Hessians.
-        data.jw = zeros((data.num_frq, 5), Float64)
-        data.djw = zeros((data.num_frq, 5), Float64)
-        data.d2jw = zeros((data.num_frq, 5), Float64)
+        data.jw = zeros((data.num_frq, 5), float64)
+        data.djw = zeros((data.num_frq, 5), float64)
+        data.d2jw = zeros((data.num_frq, 5), float64)
 
         # Calculate the fixed components of the dipolar and CSA constants.
-        data.csa_const_fixed = zeros(data.num_frq, Float64)
+        data.csa_const_fixed = zeros(data.num_frq, float64)
         data.dip_const_fixed = None
         calc_fixed_csa(data)
         calc_fixed_dip(data)
@@ -1375,50 +1375,50 @@ class Mf:
         data.dip_const_func = 0.0
         data.dip_const_grad = 0.0
         data.dip_const_hess = 0.0
-        data.csa_const_func = zeros(data.num_frq, Float64)
-        data.csa_const_grad = zeros(data.num_frq, Float64)
-        data.csa_const_hess = zeros(data.num_frq, Float64)
+        data.csa_const_func = zeros(data.num_frq, float64)
+        data.csa_const_grad = zeros(data.num_frq, float64)
+        data.csa_const_hess = zeros(data.num_frq, float64)
 
         # Components of the transformed relaxation equations.
-        data.dip_comps_func = zeros(data.num_ri, Float64)
-        data.csa_comps_func = zeros(data.num_ri, Float64)
-        data.rex_comps_func = zeros(data.num_ri, Float64)
-        data.dip_jw_comps_func = zeros(data.num_ri, Float64)
-        data.csa_jw_comps_func = zeros(data.num_ri, Float64)
+        data.dip_comps_func = zeros(data.num_ri, float64)
+        data.csa_comps_func = zeros(data.num_ri, float64)
+        data.rex_comps_func = zeros(data.num_ri, float64)
+        data.dip_jw_comps_func = zeros(data.num_ri, float64)
+        data.csa_jw_comps_func = zeros(data.num_ri, float64)
 
         # First partial derivative components of the transformed relaxation equations.
-        data.dip_comps_grad = zeros(data.num_ri, Float64)
-        data.csa_comps_grad = zeros(data.num_ri, Float64)
-        data.rex_comps_grad = zeros(data.num_ri, Float64)
-        data.dip_jw_comps_grad = zeros(data.num_ri, Float64)
-        data.csa_jw_comps_grad = zeros(data.num_ri, Float64)
+        data.dip_comps_grad = zeros(data.num_ri, float64)
+        data.csa_comps_grad = zeros(data.num_ri, float64)
+        data.rex_comps_grad = zeros(data.num_ri, float64)
+        data.dip_jw_comps_grad = zeros(data.num_ri, float64)
+        data.csa_jw_comps_grad = zeros(data.num_ri, float64)
 
         # First partial derivative components of the transformed relaxation equations.
-        data.dip_comps_hess = zeros(data.num_ri, Float64)
-        data.csa_comps_hess = zeros(data.num_ri, Float64)
-        data.rex_comps_hess = zeros(data.num_ri, Float64)
-        data.dip_jw_comps_hess = zeros(data.num_ri, Float64)
-        data.csa_jw_comps_hess = zeros(data.num_ri, Float64)
+        data.dip_comps_hess = zeros(data.num_ri, float64)
+        data.csa_comps_hess = zeros(data.num_ri, float64)
+        data.rex_comps_hess = zeros(data.num_ri, float64)
+        data.dip_jw_comps_hess = zeros(data.num_ri, float64)
+        data.csa_jw_comps_hess = zeros(data.num_ri, float64)
 
         # Transformed relaxation values, gradients, and Hessians.
-        data.ri_prime = zeros((data.num_ri), Float64)
-        data.dri_prime = zeros((data.total_num_params, data.num_ri), Float64)
-        data.d2ri_prime = zeros((data.total_num_params, data.total_num_params, data.num_ri), Float64)
+        data.ri_prime = zeros((data.num_ri), float64)
+        data.dri_prime = zeros((data.total_num_params, data.num_ri), float64)
+        data.d2ri_prime = zeros((data.total_num_params, data.total_num_params, data.num_ri), float64)
 
         # Data structures containing the Ri values.
-        data.ri = zeros(data.num_ri, Float64)
-        data.dri = zeros((data.total_num_params, data.num_ri), Float64)
-        data.d2ri = zeros((data.total_num_params, data.total_num_params, data.num_ri), Float64)
+        data.ri = zeros(data.num_ri, float64)
+        data.dri = zeros((data.total_num_params, data.num_ri), float64)
+        data.d2ri = zeros((data.total_num_params, data.total_num_params, data.num_ri), float64)
 
         # Data structures containing the R1 values at the position of and corresponding to the NOE.
-        data.r1 = zeros(data.num_ri, Float64)
-        data.dr1 = zeros((data.total_num_params, data.num_ri), Float64)
-        data.d2r1 = zeros((data.total_num_params, data.total_num_params, data.num_ri), Float64)
+        data.r1 = zeros(data.num_ri, float64)
+        data.dr1 = zeros((data.total_num_params, data.num_ri), float64)
+        data.d2r1 = zeros((data.total_num_params, data.total_num_params, data.num_ri), float64)
 
         # Data structures containing the chi-squared values.
         data.chi2 = 0.0
-        data.dchi2 = zeros((data.total_num_params), Float64)
-        data.d2chi2 = zeros((data.total_num_params, data.total_num_params), Float64)
+        data.dchi2 = zeros((data.total_num_params), float64)
+        data.d2chi2 = zeros((data.total_num_params, data.total_num_params), float64)
 
 
     def init_res_r1_data(self, data):
@@ -1437,29 +1437,29 @@ class Mf:
         r1_data.csa_const_fixed = data.csa_const_fixed
 
         # Components of the transformed relaxation equations.
-        r1_data.dip_comps_func = zeros(data.num_ri, Float64)
-        r1_data.csa_comps_func = zeros(data.num_ri, Float64)
-        r1_data.dip_jw_comps_func = zeros(data.num_ri, Float64)
-        r1_data.csa_jw_comps_func = zeros(data.num_ri, Float64)
+        r1_data.dip_comps_func = zeros(data.num_ri, float64)
+        r1_data.csa_comps_func = zeros(data.num_ri, float64)
+        r1_data.dip_jw_comps_func = zeros(data.num_ri, float64)
+        r1_data.csa_jw_comps_func = zeros(data.num_ri, float64)
 
         # Initialise the first partial derivative components of the transformed relaxation equations.
-        r1_data.dip_comps_grad = zeros(data.num_ri, Float64)
-        r1_data.csa_comps_grad = zeros(data.num_ri, Float64)
-        r1_data.rex_comps_grad = zeros(data.num_ri, Float64)
-        r1_data.dip_jw_comps_grad = zeros(data.num_ri, Float64)
-        r1_data.csa_jw_comps_grad = zeros(data.num_ri, Float64)
+        r1_data.dip_comps_grad = zeros(data.num_ri, float64)
+        r1_data.csa_comps_grad = zeros(data.num_ri, float64)
+        r1_data.rex_comps_grad = zeros(data.num_ri, float64)
+        r1_data.dip_jw_comps_grad = zeros(data.num_ri, float64)
+        r1_data.csa_jw_comps_grad = zeros(data.num_ri, float64)
 
         # Initialise the first partial derivative components of the transformed relaxation equations.
-        r1_data.dip_comps_hess = zeros(data.num_ri, Float64)
-        r1_data.csa_comps_hess = zeros(data.num_ri, Float64)
-        r1_data.rex_comps_hess = zeros(data.num_ri, Float64)
-        r1_data.dip_jw_comps_hess = zeros(data.num_ri, Float64)
-        r1_data.csa_jw_comps_hess = zeros(data.num_ri, Float64)
+        r1_data.dip_comps_hess = zeros(data.num_ri, float64)
+        r1_data.csa_comps_hess = zeros(data.num_ri, float64)
+        r1_data.rex_comps_hess = zeros(data.num_ri, float64)
+        r1_data.dip_jw_comps_hess = zeros(data.num_ri, float64)
+        r1_data.csa_jw_comps_hess = zeros(data.num_ri, float64)
 
         # Initialise the transformed relaxation values, gradients, and Hessians.
-        r1_data.ri_prime = zeros(data.num_ri, Float64)
-        r1_data.dri_prime = zeros((data.num_ri, data.total_num_params), Float64)
-        r1_data.d2ri_prime = zeros((data.num_ri, data.total_num_params, data.total_num_params), Float64)
+        r1_data.ri_prime = zeros(data.num_ri, float64)
+        r1_data.dri_prime = zeros((data.num_ri, data.total_num_params), float64)
+        r1_data.d2ri_prime = zeros((data.num_ri, data.total_num_params, data.total_num_params), float64)
 
         # Place a few function arrays in the data class for the calculation of the R1 value when an NOE data set exists but the R1 set does not.
         r1_data.create_dri_prime = data.create_dri_prime
@@ -1538,7 +1538,7 @@ class Mf:
 
         # Diagonal scaling.
         if self.scaling_flag:
-            dri = matrixmultiply(dri, self.scaling_matrix)
+            dri = dot(dri, self.scaling_matrix)
 
         # Return dri.
         return dri

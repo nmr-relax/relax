@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from Numeric import Float64, zeros
+from numpy import float64, zeros
 
 # relax module imports.
 from data import Data as relax_data_store
@@ -73,7 +73,7 @@ class Iso3D(Base_Map):
         """Function for creating the text of a 3D map."""
 
         # Initialise.
-        values = zeros(3, Float64)
+        values = zeros(3, float64)
         percent = 0.0
         percent_inc = 100.0 / (self.inc + 1.0)**(self.n - 1.0)
         print "%-10s%8.3f%-1s" % ("Progress:", percent, "%")

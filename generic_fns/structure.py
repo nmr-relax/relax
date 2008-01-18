@@ -22,7 +22,7 @@
 
 # Python module imports.
 from math import sqrt, cos, pi, sin
-from Numeric import Float64, arccos, dot, zeros
+from numpy import arccos, dot, float64, zeros
 from os import F_OK, access
 from re import compile, match
 import Scientific.IO.PDB
@@ -201,7 +201,7 @@ class Structure:
         print "Calculating the centre of mass."
 
         # Initialise the centre of mass.
-        R = zeros(3, Float64)
+        R = zeros(3, float64)
 
         # Initialise the total mass.
         M = 0.0
@@ -635,7 +635,7 @@ class Structure:
         @param res_num:     The residue number.
         @type res_num:      int
         @param R:           The centre of mass.
-        @type R:            Numeric array (Float64)
+        @type R:            numpy array (float64)
         @param i:           The Monte Carlo simulation index.
         @type i:            int
         @return:            None
@@ -725,7 +725,7 @@ class Structure:
         @param res_num:     The residue number.
         @type res_num:      int
         @param R:           The centre of mass.
-        @type R:            Numeric array (Float64)
+        @type R:            numpy array (float64)
         @param i:           The Monte Carlo simulation index.
         @type i:            int
         @return:            None
@@ -1075,13 +1075,13 @@ class Structure:
             raise RelaxError, "The increment value of " + `inc` + " must be an even number."
 
         # Generate the increment values of u.
-        u = zeros(inc, Float64)
+        u = zeros(inc, float64)
         val = 1.0 / float(inc)
         for i in xrange(inc):
             u[i] = float(i) * val
 
         # Generate the increment values of v.
-        v = zeros(inc/2+2, Float64)
+        v = zeros(inc/2+2, float64)
         val = 1.0 / float(inc/2)
         for i in xrange(1, inc/2+1):
             v[i] = float(i-1) * val + val/2.0
@@ -1584,7 +1584,7 @@ class Structure:
 
         # Initialise.
         vector_array = []
-        ave_vector = zeros(3, Float64)
+        ave_vector = zeros(3, float64)
 
         # Number of structures.
         num_str = len(relax_data_store.pdb[self.run].structures)

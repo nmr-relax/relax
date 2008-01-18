@@ -1538,7 +1538,7 @@ def unit_axes():
     # Spheroid.
     if cdp.diff_tensor.type == 'spheroid':
         # Initialise.
-        Dpar = zeros(3, Float64)
+        Dpar = zeros(3, float64)
 
         # Trig.
         sin_theta = sin(cdp.diff_tensor.theta)
@@ -1557,9 +1557,9 @@ def unit_axes():
     # Ellipsoid.
     if cdp.diff_tensor.type == 'ellipsoid':
         # Initialise.
-        Dx = zeros(3, Float64)
-        Dy = zeros(3, Float64)
-        Dz = zeros(3, Float64)
+        Dx = zeros(3, float64)
+        Dy = zeros(3, float64)
+        Dz = zeros(3, float64)
 
         # Trig.
         sin_alpha = sin(cdp.diff_tensor.alpha)

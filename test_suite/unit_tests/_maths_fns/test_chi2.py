@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from Numeric import Float64, array
+from numpy import float64, array
 from unittest import TestCase
 
 # relax module imports.
@@ -35,24 +35,24 @@ class Test_chi2(TestCase):
         """Create a number of objects for the calculation and testing of the chi-squared equations."""
 
         # Some test data.
-        self.data = array([1.0, 1.5, 2.0, 2.5, 3.0], Float64)
+        self.data = array([1.0, 1.5, 2.0, 2.5, 3.0], float64)
 
         # Some 'back calculated' data.
-        self.back_calc = array([0.9, 1.45, 2.0, 2.55, 3.1], Float64)
+        self.back_calc = array([0.9, 1.45, 2.0, 2.55, 3.1], float64)
 
         # A 'back calculated' gradient.
         self.back_calc_grad = array([[ 0.1,  0.2, 0.3, 0.2, 0.1],
-                                     [-0.2, -0.1, 0.0, 0.1, 0.2]], Float64)
+                                     [-0.2, -0.1, 0.0, 0.1, 0.2]], float64)
 
         # A 'back calculated' Hessian.
         self.back_calc_hess = array([[[0.01, 0.005, 0.0, 0.005, 0.01],
                                       [0.05, 0.01,  0.0, 0.01,  0.05]],
                                      [[0.001, 0.0005, 0.0, 0.0005, 0.001],
                                       [0.005, 0.001,  0.0, 0.001,  0.005]]],
-                                      Float64)
+                                      float64)
 
         # Some errors.
-        self.errors = array([0.1, 0.1, 0.1, 0.1, 0.1], Float64)
+        self.errors = array([0.1, 0.1, 0.1, 0.1, 0.1], float64)
 
 
     def tearDown(self):
