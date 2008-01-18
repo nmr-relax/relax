@@ -73,6 +73,11 @@ class N_state_model(Common_functions):
             param_vector.append(beta[i])
             param_vector.append(gamma[i])
 
+        # Convert all None values to zero (to avoid conversion to NaN).
+        for i in xrange(len(param_vector)):
+            if param_vector[i] == None:
+                param_vector[i] = 0.0
+
         # Return a numpy arrary.
         return array(param_vector, float64)
 
