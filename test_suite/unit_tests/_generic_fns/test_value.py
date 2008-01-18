@@ -48,7 +48,7 @@ class Test_value(Value_base_class, TestCase):
         val = [0.8]
 
         # Partition.
-        spin_params, spin_values, other_params, other_values, model_values = value.partition_params(val, param)
+        spin_params, spin_values, other_params, other_values = value.partition_params(val, param)
 
         # Tests.
         self.assertEqual(spin_params, ['S2'])
@@ -68,7 +68,7 @@ class Test_value(Value_base_class, TestCase):
         val = [1e7]
 
         # Partition.
-        spin_params, spin_values, other_params, other_values, model_values = value.partition_params(val, param)
+        spin_params, spin_values, other_params, other_values = value.partition_params(val, param)
 
         # Tests.
         self.assertEqual(spin_params, [])
@@ -88,7 +88,7 @@ class Test_value(Value_base_class, TestCase):
         val = [1e7, 0.8]
 
         # Partition.
-        spin_params, spin_values, other_params, other_values, model_values = value.partition_params(val, param)
+        spin_params, spin_values, other_params, other_values = value.partition_params(val, param)
 
         # Tests.
         self.assertEqual(spin_params, ['S2'])
@@ -108,7 +108,7 @@ class Test_value(Value_base_class, TestCase):
         val = [1e7, 0.8, -160e-6]
 
         # Partition.
-        spin_params, spin_values, other_params, other_values, model_values = value.partition_params(val, param)
+        spin_params, spin_values, other_params, other_values = value.partition_params(val, param)
 
         # Tests.
         self.assertEqual(spin_params, ['S2', 'CSA'])
@@ -128,7 +128,7 @@ class Test_value(Value_base_class, TestCase):
         val = [1e7, 0.8, 2e7, -160e-6, 0.13]
 
         # Partition.
-        spin_params, spin_values, other_params, other_values, model_values = value.partition_params(val, param)
+        spin_params, spin_values, other_params, other_values = value.partition_params(val, param)
 
         # Tests.
         self.assertEqual(spin_params, ['S2', 'CSA'])
@@ -148,7 +148,7 @@ class Test_value(Value_base_class, TestCase):
         val = []
 
         # Partition.
-        spin_params, spin_values, other_params, other_values, model_values = value.partition_params(val, param)
+        spin_params, spin_values, other_params, other_values = value.partition_params(val, param)
 
         # Tests.
         self.assertEqual(spin_params, [])
