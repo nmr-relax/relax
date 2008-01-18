@@ -182,9 +182,24 @@ def set(val=None, param=None, spin_id=None, force=False):
 
     # All model parameters (i.e. no parameters have been supplied).
     else:
-        # Let the specific code deal with this pain!
-        set_model_params(val, param, spin_id, force)
+        # Convert val to a list if necessary.
+        if type(val) != list or not isinstance(val, ndarray):
+            val = [val]
 
+        # Spin specific models.
+        if exists_mol_res_spin_data():
+            # Loop over the spins.
+            for spin in spin_loop(spin_id):
+                # Skip unselected spins.
+                if not spin.select:
+                    continue
+
+                # Set the individual parameter values.
+                for j in xrange(len(val)):
+                    set_spin_params(value=val[j], error=None, spin=spin, param=None)
+
+        # Set the non-spin specific parameters.
+        set_non_spin_params(value=val, param=param)
 
     # Reset all minimisation statistics.
     reset_min_stats()
