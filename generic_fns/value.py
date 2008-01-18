@@ -57,14 +57,42 @@ def partition_params(val, param):
     spin_values = []
     other_params = []
     other_values = []
-    model_values = []
 
-    # The parameter has been specified.
-    if param:
-        # Single parameter.
-        if type(param) == str:
+    # Single parameter.
+    if type(param) == str:
+        # Spin specific parameter.
+        if return_data_name(param):
+            params = spin_params
+            values = spin_values
+
+        # Other parameters.
+        else:
+            params = other_params
+            values = other_values
+
+        # List of values.
+        if type(val) == list or isinstance(val, ndarray):
+            # Parameter name.
+            for i in xrange(len(val)):
+                params.append(param)
+
+            # Parameter value.
+            values = val
+
+        # Single value.
+        else:
+            # Parameter name.
+            params.append(param)
+
+            # Parameter value.
+            values.append(val)
+
+    # Multiple parameters.
+    elif type(param) == list:
+        # Loop over all parameters.
+        for i in xrange(len(param)):
             # Spin specific parameter.
-            if return_data_name(param):
+            if return_data_name(param[i]):
                 params = spin_params
                 values = spin_values
 
@@ -73,59 +101,18 @@ def partition_params(val, param):
                 params = other_params
                 values = other_values
 
-            # List of values.
+            # Parameter name.
+            params.append(param[i])
+
+            # Parameter value.
             if type(val) == list or isinstance(val, ndarray):
-                # Parameter name.
-                for i in xrange(len(val)):
-                    params.append(param)
-
-                # Parameter value.
-                values = val
-
-            # Single value.
+                values.append(val[i])
             else:
-                # Parameter name.
-                params.append(param)
-
-                # Parameter value.
                 values.append(val)
 
-        # Multiple parameters.
-        elif type(param) == list:
-            # Loop over all parameters.
-            for i in xrange(len(param)):
-                # Spin specific parameter.
-                if return_data_name(param[i]):
-                    params = spin_params
-                    values = spin_values
-
-                # Other parameters.
-                else:
-                    params = other_params
-                    values = other_values
-
-                # Parameter name.
-                params.append(param[i])
-
-                # Parameter value.
-                if type(val) == list or isinstance(val, ndarray):
-                    values.append(val[i])
-                else:
-                    values.append(val)
-
-
-    # No parameter name supplied, so these must be the model parameter values.
-    else:
-        # List of values.
-        if type(val) == list or isinstance(val, ndarray):
-            model_values = val
-
-        # Single value.
-        elif val:
-            model_values = [val]
 
     # Return the partitioned parameters and values.
-    return spin_params, spin_values, other_params, other_values, model_values
+    return spin_params, spin_values, other_params, other_values
 
 
 def set(val=None, param=None, spin_id=None, force=False):
@@ -149,51 +136,54 @@ def set(val=None, param=None, spin_id=None, force=False):
     return_value = get_specific_fn('return_value', relax_data_store[relax_data_store.current_pipe].pipe_type)
     set_non_spin_params = get_specific_fn('set_non_spin_params', relax_data_store[relax_data_store.current_pipe].pipe_type)
 
-    # Partition the parameters into those which are spin specific and those which are not.
-    spin_params, spin_values, other_params, other_values, model_values = partition_params(val, param)
+    # The parameters have been specified.
+    if param:
+        # Partition the parameters into those which are spin specific and those which are not.
+        spin_params, spin_values, other_params, other_values = partition_params(val, param)
 
+        # Spin specific parameters.
+        if spin_params:
+            # Test if the sequence data is loaded.
+            if not exists_mol_res_spin_data():
+                raise RelaxNoSequenceError
 
-    # Spin specific parameters.
-    ###########################
+            # First test if parameter value already exists, prior to setting any params.
+            if not force:
+                # Loop over the spins.
+                for spin in spin_loop(spin_id):
+                    # Skip unselected spins.
+                    if not spin.select:
+                        continue
 
-    if spin_params:
-        # Test if the sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
+                    # Loop over the parameters.
+                    for param in spin_params:
+                        # Get the value and error.
+                        temp_value, temp_error = return_value(spin, param)
 
-        # First test if parameter value already exists, prior to setting any params.
-        if not force:
+                        # Data exists.
+                        if temp_value != None or temp_error != None:
+                            raise RelaxValueError, (param)
+
             # Loop over the spins.
             for spin in spin_loop(spin_id):
-                # Skip unselected spins.
+                # Skip unselected residues.
                 if not spin.select:
                     continue
 
-                # Loop over the parameters.
-                for param in spin_params:
-                    # Get the value and error.
-                    temp_value, temp_error = return_value(spin, param)
-
-                    # Data exists.
-                    if temp_value != None or temp_error != None:
-                        raise RelaxValueError, (param)
-
-        # Loop over the spins.
-        for spin in spin_loop(spin_id):
-            # Skip unselected residues.
-            if not spin.select:
-                continue
-
-            # Go to the specific code.
-            for j in xrange(len(spin_params)):
-                set_spin_params(value=spin_values[j], error=None, spin=spin, param=spin_params[j])
+                # Set the individual parameter values.
+                for j in xrange(len(spin_params)):
+                    set_spin_params(value=spin_values[j], error=None, spin=spin, param=spin_params[j])
 
 
-    # All other parameters.
-    #######################
+        # All other parameters.
+        if other_params:
+            set_non_spin_params(value=other_values, param=other_params)
 
-    if other_params:
-        set_non_spin_params(value=other_values, param=other_params)
+
+    # All model parameters (i.e. no parameters have been supplied).
+    else:
+        # Let the specific code deal with this pain!
+        set_model_params(val, param, spin_id, force)
 
 
     # Reset all minimisation statistics.
