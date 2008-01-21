@@ -524,6 +524,23 @@ class N_state_model(Common_functions):
             raise RelaxNoTensorError, ('alignment', tensor)
 
 
+    def set_non_spin_params(self, value=None, param=None):
+        """Function for setting all the N-state model parameter values.
+
+        @param value:   The parameter values.
+        @type value:    None, number, or list of numbers
+        @param param:   The parameter names.
+        @type param:    None, str, or list of str
+        """
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Test if the N-state model has been set up.
+        if not hasattr(cdp, 'N'):
+            raise RelaxNoModelError, 'N-state'
+
+
     def set_type(self, tensor=None, red=None):
         """Set the whether the given tensor is the full or reduced tensor.
 
