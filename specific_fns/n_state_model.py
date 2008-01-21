@@ -94,15 +94,19 @@ class N_state_model(Common_functions):
         |                             |                             |                        |
         | Probabilities               | 'p0', 'p1', 'p2', ..., 'pN' | 1/N                    |
         |                             |                             |                        |
-        | Euler angle alpha           | 'alpha0', 'alpha1', ...     | c * pi / (N+1)         |
+        | Euler angle alpha           | 'alpha0', 'alpha1', ...     | (c+1) * pi / (N+1)     |
         |                             |                             |                        |
-        | Euler angle beta            | 'beta0', 'beta1', ...       | c * pi / (N+1)         |
+        | Euler angle beta            | 'beta0', 'beta1', ...       | (c+1) * pi / (N+1)     |
         |                             |                             |                        |
-        | Euler angle gamma           | 'gamma0', 'gamma1', ...     | c * pi / (N+1)         |
+        | Euler angle gamma           | 'gamma0', 'gamma1', ...     | (c+1) * pi / (N+1)     |
         |_____________________________|_____________________________|________________________|
 
         In this table, N is the total number of states and c is the index of a given state ranging
-        from 0 to N-1.
+        from 0 to N-1.  The default probabilities are all set to be equal whereas the angles are
+        given a range of values so that no 2 states are equal at the start of optimisation.
+
+        Note that setting the probability for state N will do nothing as it is equal to one minus
+        all the other probabilities.
         """
         __docformat__ = "plaintext"
 
@@ -113,12 +117,12 @@ class N_state_model(Common_functions):
         N = float(relax_data_store[relax_data_store.current_pipe].N)
 
         # Probability.
-        if name == 'p':
+        if name == 'probs':
             return 1.0 / N
 
         # Euler angles.
         elif name == 'alpha' or name == 'beta' or name == 'gamma':
-            return float(index) * pi / (N+1.0)
+            return (float(index)+1) * pi / (N+1.0)
 
 
     def disassemble_param_vector(self, param_vector=None, sim_index=None):
