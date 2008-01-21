@@ -82,6 +82,45 @@ class N_state_model(Common_functions):
         return array(param_vector, float64)
 
 
+    def default_value(self, param):
+        """
+        N-state model default values
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        ______________________________________________________________________________________
+        |                             |                             |                        |
+        | Data type                   | Object name                 | Value                  |
+        |_____________________________|_____________________________|________________________|
+        |                             |                             |                        |
+        | Probabilities               | 'p0', 'p1', 'p2', ..., 'pN' | 1/N                    |
+        |                             |                             |                        |
+        | Euler angle alpha           | 'alpha0', 'alpha1', ...     | c * pi / (N+1)         |
+        |                             |                             |                        |
+        | Euler angle beta            | 'beta0', 'beta1', ...       | c * pi / (N+1)         |
+        |                             |                             |                        |
+        | Euler angle gamma           | 'gamma0', 'gamma1', ...     | c * pi / (N+1)         |
+        |_____________________________|_____________________________|________________________|
+
+        In this table, N is the total number of states and c is the index of a given state ranging
+        from 0 to N-1.
+        """
+        __docformat__ = "plaintext"
+
+        # Split the parameter into its base name and index.
+        name, index = self.return_data_name(param, index=True)
+
+        # The number of states as a float.
+        N = float(relax_data_store[relax_data_store.current_pipe].N)
+
+        # Probability.
+        if name == 'p':
+            return 1.0 / N
+
+        # Euler angles.
+        elif name == 'alpha' or name == 'beta' or name == 'gamma':
+            return float(index) * pi / (N+1.0)
+
+
     def disassemble_param_vector(self, param_vector=None, sim_index=None):
         """Function for disassembling the parameter vector used in the minimisation.
 
