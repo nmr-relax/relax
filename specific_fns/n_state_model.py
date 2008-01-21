@@ -30,7 +30,7 @@ from data import Data as relax_data_store
 from float import isNaN, isInf
 from maths_fns.n_state_model import N_state_opt
 from minfx.generic import generic_minimise
-from relax_errors import RelaxInfError, RelaxNaNError, RelaxNoModelError
+from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError
 from specific_fns.base_class import Common_functions
 
 
@@ -527,8 +527,8 @@ class N_state_model(Common_functions):
     def set_non_spin_params(self, value=None, param=None):
         """Function for setting all the N-state model parameter values.
 
-        @param value:   The parameter values.
-        @type value:    None, number, or list of numbers
+        @param value:   The parameter values (for defaults supply [None]).
+        @type value:    list of numbers or [None]
         @param param:   The parameter names.
         @type param:    None, str, or list of str
         """
@@ -539,6 +539,37 @@ class N_state_model(Common_functions):
         # Test if the N-state model has been set up.
         if not hasattr(cdp, 'N'):
             raise RelaxNoModelError, 'N-state'
+
+        # Get the model parameters if param is None.
+        if param == None:
+            param = cdp.params
+
+        # Test that the parameter and value lists are the same size.
+        if type(param) == list and value[0] != None and len(param) != len(value):
+            raise RelaxError, "The length of " + `len(value)` + " of the value array must be equal to the length of the parameter array, " + `param` + "."
+
+        # Convert param to a list (if it is a string).
+        if type(param) == str:
+            param = [param]
+
+        # If no value is supplied (i.e. value == [None]), then get the default values.
+        if value == [None]:
+            value = []
+            for i in xrange(len(param)):
+                value.append(self.default_value(param[i]))
+
+        # Set the parameter values.
+        for i in xrange(len(param)):
+            # Get the object name and the parameter index.
+            object_name, index = self.return_data_name(param[i], index=True)
+            if not object_name:
+                raise RelaxError, "The data type " + `param[i]` + " does not exist."
+
+            # Get the object.
+            object = getattr(cdp, object_name)
+
+            # Set the parameter value.
+            object[index] = value[i]
 
 
     def set_type(self, tensor=None, red=None):
