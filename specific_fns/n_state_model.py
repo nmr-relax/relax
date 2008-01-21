@@ -123,7 +123,7 @@ class N_state_model(Common_functions):
             alpha[i] = param_vector[cdp.N-1 + 3*i]
             beta[i] = param_vector[cdp.N-1 + 3*i + 1]
             gamma[i] = param_vector[cdp.N-1 + 3*i + 2]
-        
+
 
     def grid_search(self, lower, upper, inc, constraints=False, verbosity=0, sim_index=None):
         """The grid search function.
@@ -522,6 +522,23 @@ class N_state_model(Common_functions):
         # The tensor label doesn't exist.
         if not match:
             raise RelaxNoTensorError, ('alignment', tensor)
+
+
+     def set_non_spin_params(self, value=None, param=None):
+         """Function for setting all the N-state model parameter values.
+
+         @param value:   The parameter values.
+         @type value:    None, number, or list of numbers
+         @param param:   The parameter names.
+         @type param:    None, str, or list of str
+         """
+
+         # Alias the current data pipe.
+         cdp = relax_data_store[relax_data_store.current_pipe]
+
+         # Test if the N-state model has been set up.
+         if not hasattr(cdp, 'N'):
+             raise RelaxNoModelError, 'N-state'
 
 
     def set_type(self, tensor=None, red=None):
