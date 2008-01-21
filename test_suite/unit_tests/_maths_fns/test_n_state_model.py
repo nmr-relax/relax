@@ -119,4 +119,33 @@ class Test_n_state_model(TestCase):
             self.assertAlmostEqual(chi2, 0.0)
 
 
+    def test_func4(self):
+        """Unit test 4 of the func() method.
+
+        The number of states is 2 and the number of tensors is 3.  All states are equi-probable with
+        Euler rotations of {90, 0, 0} for only the first.  The target function is designed to be
+        zero.
+        """
+
+        # Init vals.
+        N = 2
+        init_params = array([0.5, pi/2.0, 0.0, 0.0, 0.0, 0.0, 0.0], float64)
+        full_tensors = array([[[1.0, 0.0, 0.0], [0.0, 0.5, 0.0], [0.0, 0.0, -1.5]],
+                              [[1.0, 1.0, 0.0], [1.0, 0.5, 0.0], [0.0, 0.0, -1.5]],
+                              [[1.0, 0.0, 1.0], [0.0, 0.5, 0.0], [1.0, 0.0, -1.5]]], float64)
+        red_data = array([0.75, 0.75, 0.0, 0.0, 0.0, 0.75, 0.75, 0.0, 0.0, 0.0, 0.75, 0.75, 0.0, 0.5, 0.5], float64)
+        err = ones(3*5, float64)
+
+        # Set up the class.
+        model = N_state_opt(N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err)
+
+        # Call the target function 3 times.
+        for i in xrange(3):
+            # Target function.
+            chi2 = model.func(init_params)
+
+            # Test that the chi2 value is zero each time!
+            self.assertAlmostEqual(chi2, 0.0)
+
+
 
