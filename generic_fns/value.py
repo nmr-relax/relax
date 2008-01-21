@@ -198,6 +198,9 @@ def set(val=None, param=None, spin_id=None, force=False):
                 for j in xrange(len(val)):
                     set_spin_params(value=val[j], error=None, spin=spin, param=None)
 
+        # Set param to a list of None the length of val.
+        param = [None] * len(val)
+
         # Set the non-spin specific parameters.
         set_non_spin_params(value=val, param=param)
 
