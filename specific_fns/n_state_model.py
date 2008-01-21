@@ -565,7 +565,7 @@ class N_state_model(Common_functions):
         if search('^beta', name):
             # Get the state index, otherwise return with nothing if there is an error (parameter unknown).
             try:
-                i = int(name[5:])
+                i = int(name[4:])
             except ValueError:
                 return
 
