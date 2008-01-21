@@ -100,7 +100,7 @@ class N_state_opt:
             self.RT[c] = transpose(self.R[c])
 
             # The probability of state c.
-            if c <= self.N-1:
+            if c < self.N-1:
                 pc = params[c]
 
             # The probability of state N (1 minus the pc of all other states).
