@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+from math import pi
 from numpy import array, float64, ones
 from unittest import TestCase
 
@@ -87,3 +88,35 @@ class Test_n_state_model(TestCase):
 
             # Test that the chi2 value is zero each time!
             self.assertEqual(chi2, 1.0)
+
+
+    def test_func3(self):
+        """Unit test 3 of the func() method.
+
+        The number of states is 2 and the number of tensors is 3.  The first state has a prob of 1.0
+        with Euler rotations of {90, 0, 0}, hence the reduced tensors should be the same size as the full
+        tensors but rotated by 90 degrees.  The target function is designed to be zero.
+        """
+
+        # Init vals.
+        N = 2
+        init_params = array([1.0, pi/2.0, 0.0, 0.0, 0.0, 0.0, 0.0], float64)
+        full_tensors = array([[[1.0, 0.0, 0.0], [0.0, 0.5, 0.0], [0.0, 0.0, -1.5]],
+                              [[1.0, 1.0, 0.0], [1.0, 0.5, 0.0], [0.0, 0.0, -1.5]],
+                              [[1.0, 0.0, 1.0], [0.0, 0.5, 0.0], [1.0, 0.0, -1.5]]], float64)
+        red_data = array([0.5, 1.0, 0.0, 0.0, 0.0, 0.5, 1.0, -1.0, 0.0, 0.0, 0.5, 1.0, 0.0, 0.0, 1.0], float64)
+        err = ones(3*5, float64)
+
+        # Set up the class.
+        model = N_state_opt(N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err)
+
+        # Call the target function 3 times.
+        for i in xrange(3):
+            # Target function.
+            chi2 = model.func(init_params)
+
+            # Test that the chi2 value is zero each time!
+            self.assertAlmostEqual(chi2, 0.0)
+
+
+
