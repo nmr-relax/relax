@@ -32,7 +32,12 @@ class Test_n_state_model(TestCase):
     """Unit tests for the maths_fns.n_state_model relax module."""
 
     def test_func1(self):
-        """Unit test 1 of the func() method."""
+        """Unit test 1 of the func() method.
+
+        The number of states is 2 and the number of tensors is 3.  All states are equi-probable with
+        Euler rotations of {0, 0, 0}, hence the reduced tensors should be the same size as the full
+        tensors.  The target function is designed to be zero.
+        """
 
         # Init vals.
         N = 2
