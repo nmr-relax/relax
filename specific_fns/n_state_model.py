@@ -538,6 +538,20 @@ class N_state_model(Common_functions):
             return 'csa'
 
 
+    def set_doc(self):
+        """
+        N-state model set details
+        ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        Setting parameters for the N-state model is a little different from the other type of
+        analyses as each state has a set of parameters with the same names as the other states.
+        To set the parameters for a specific state c (ranging from 0 for the first to N-1 for the
+        last, the number c should be added to the end of the parameter name.  So the Euler angle
+        gamma of the third state is specified using the string 'gamma2'.
+        """
+        __docformat__ = "plaintext"
+
+
     def set_domain(self, tensor=None, domain=None):
         """Set the domain label for the given tensor.
 
