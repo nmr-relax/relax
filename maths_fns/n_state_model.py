@@ -88,6 +88,9 @@ class N_state_opt:
         @type return:   float
         """
 
+        # Reset the back-calculated the reduced tensor structure.
+        self.red_bc = self.red_bc * 0.0
+
         # Update the rotation matricies.
         for c in xrange(self.N):
             # The matrix itself.
