@@ -511,31 +511,83 @@ class N_state_model(Common_functions):
         return (cdp.N - 1) + cdp.N*3
 
 
-    def return_data_name(self, name):
+    def return_data_name(self, name, index=False):
         """
         N-state model data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         ____________________________________________________________________________________________
-        |                        |              |                                                  |
-        | Data type              | Object name  | Patterns                                         |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Bond length            | 'r'          | '^r$' or '[Bb]ond[ -_][Ll]ength'                 |
-        |                        |              |                                                  |
-        | CSA                    | 'csa'        | '^[Cc][Ss][Aa]$'                                 |
-        |________________________|______________|__________________________________________________|
+        |                        |                             |                                   |
+        | Data type              | Object name                 | Patterns                          |
+        |________________________|_____________________________|___________________________________|
+        |                        |                             |                                   |
+        | Probabilities          | 'p0', 'p1', 'p2', ..., 'pN' | 'p0', 'p1', 'p2', ..., 'pN'       |
+        |                        |                             |                                   |
+        | Euler angle alpha      | 'alpha0', 'alpha1', ...     | 'alpha0', 'alpha1', ...           |
+        |                        |                             |                                   |
+        | Euler angle beta       | 'beta0', 'beta1', ...       | 'beta0', 'beta1', ...             |
+        |                        |                             |                                   |
+        | Euler angle gamma      | 'gamma0', 'gamma1', ...     | 'gamma0', 'gamma1', ...           |
+        |________________________|_____________________________|___________________________________|
 
         """
         __docformat__ = "plaintext"
 
-        # Bond length.
-        if search('^r$', name) or search('[Bb]ond[ -_][Ll]ength', name):
-            return 'r'
+        # Probability.
+        if search('^p', name):
+            # Get the state index, otherwise return with nothing if there is an error (parameter unknown).
+            try:
+                i = int(name[1:])
+            except ValueError:
+                return
 
-        # CSA.
-        if search('^[Cc][Ss][Aa]$', name):
-            return 'csa'
+            # Return the name (and maybe index).
+            if index:
+                return 'p', i
+            else:
+                return 'p'
+
+        # Alpha Euler angle.
+        if search('^alpha', name):
+            # Get the state index, otherwise return with nothing if there is an error (parameter unknown).
+            try:
+                i = int(name[5:])
+            except ValueError:
+                return
+
+            # Return the name (and maybe index).
+            if index:
+                return 'alpha', i
+            else:
+                return 'alpha'
+
+        # Beta Euler angle.
+        if search('^beta', name):
+            # Get the state index, otherwise return with nothing if there is an error (parameter unknown).
+            try:
+                i = int(name[5:])
+            except ValueError:
+                return
+
+            # Return the name (and maybe index).
+            if index:
+                return 'beta', i
+            else:
+                return 'beta'
+
+        # Gamma Euler angle.
+        if search('^gamma', name):
+            # Get the state index, otherwise return with nothing if there is an error (parameter unknown).
+            try:
+                i = int(name[5:])
+            except ValueError:
+                return
+
+            # Return the name (and maybe index).
+            if index:
+                return 'gamma', i
+            else:
+                return 'gamma'
 
 
     def set_doc(self):
