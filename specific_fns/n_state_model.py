@@ -521,15 +521,17 @@ class N_state_model(Common_functions):
         | Data type              | Object name                 | Patterns                          |
         |________________________|_____________________________|___________________________________|
         |                        |                             |                                   |
-        | Probabilities          | 'p0', 'p1', 'p2', ..., 'pN' | 'p0', 'p1', 'p2', ..., 'pN'       |
+        | Probabilities          | 'probs'                     | 'p0', 'p1', 'p2', ..., 'pN'       |
         |                        |                             |                                   |
-        | Euler angle alpha      | 'alpha0', 'alpha1', ...     | 'alpha0', 'alpha1', ...           |
+        | Euler angle alpha      | 'alpha'                     | 'alpha0', 'alpha1', ...           |
         |                        |                             |                                   |
-        | Euler angle beta       | 'beta0', 'beta1', ...       | 'beta0', 'beta1', ...             |
+        | Euler angle beta       | 'beta'                      | 'beta0', 'beta1', ...             |
         |                        |                             |                                   |
-        | Euler angle gamma      | 'gamma0', 'gamma1', ...     | 'gamma0', 'gamma1', ...           |
+        | Euler angle gamma      | 'gamma'                     | 'gamma0', 'gamma1', ...           |
         |________________________|_____________________________|___________________________________|
 
+        The objects corresponding to the object names are lists (or arrays) with each element
+        corrsponding to each state.
         """
         __docformat__ = "plaintext"
 
@@ -543,9 +545,9 @@ class N_state_model(Common_functions):
 
             # Return the name (and maybe index).
             if index:
-                return 'p', i
+                return 'probs', i
             else:
-                return 'p'
+                return 'probs'
 
         # Alpha Euler angle.
         if search('^alpha', name):
