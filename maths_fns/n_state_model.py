@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, transpose, zeros
+from numpy import array, dot, float64, transpose, zeros
 
 # relax module imports.
 from chi2 import chi2
@@ -111,7 +111,7 @@ class N_state_opt:
 
             # Back-calculate the reduced tensors for sum element c and add these to red_bc.
             for i in xrange(self.num_tensors):
-                self.red_bc[i] = self.red_bc[i]  +  pc * self.RT[c] * self.full_tensors[i] * self.R[c]
+                self.red_bc[i] = self.red_bc[i]  +  pc * dot(self.RT[c], dot(self.full_tensors[i], self.R[c]))
 
         # 5D vectorise the back-calculated tensors (create red_bc_vector from red_bc).
         for i in xrange(self.num_tensors):
