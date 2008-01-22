@@ -9,7 +9,7 @@ The 5 states correspond to the Euler angles (z-y-z notation):
 """
 
 # Python module imports.
-from math import sqrt
+from math import cos, pi, sqrt
 
 
 # Create the data pipe.
@@ -47,11 +47,11 @@ align_tensor.matrix_angles(basis_set=1, tensors=['chi1 C-dom', 'chi2 C-dom', 'ch
 
 
 # Load the N-terminal alignment tensors.
-align_tensor.init(tensor='chi1 N-dom', params=(1/4.,   -1/2.,   0.,              3/4.,   0.))
-align_tensor.init(tensor='chi2 N-dom', params=(7/16.,  -7/8.,   0.,              9/16.,  0.))
-align_tensor.init(tensor='chi3 N-dom', params=(-1/32.,  1/16., -15/(16*sqrt(2)), 3/32., -15/(16*sqrt(2))))
-align_tensor.init(tensor='chi4 N-dom', params=(1.,     -7/8.,   0.,              0.,     0.))
-align_tensor.init(tensor='chi5 N-dom', params=(1/4.,   -1/2.,   3/(8*sqrt(2)),   3/4.,  -3/(8*sqrt(2))))
+align_tensor.init(tensor='chi1 N-dom', params=(1/20.*(2-3*sqrt(2)),   -1/2.,   0.,              0.,   0.))
+align_tensor.init(tensor='chi2 N-dom', params=(1/80.*(26-9*sqrt(2)),  -7/8.,   0.,              0.,  0.))
+align_tensor.init(tensor='chi3 N-dom', params=(-1/160.*(8+3*sqrt(2)),  1/16.,  0.,    0., -3/16*(1+sqrt(2)+2*cos(pi/8.))))
+align_tensor.init(tensor='chi4 N-dom', params=(7/16.,                 -7/8.,   0.,    9/80.*(1+sqrt(2)),     0.))
+align_tensor.init(tensor='chi5 N-dom', params=(1/20.*(2-3*sqrt(2)),   -1/2.,   3/40.*(1+sqrt(2)+2*cos(pi/8.)),   0., 0.))
 
 # Set the domain the tensors correspond to.
 n_state_model.set_domain(tensor='chi1 N-dom', domain='N')
@@ -76,13 +76,13 @@ align_tensor.matrix_angles(basis_set=0, tensors=['chi1 N-dom', 'chi2 N-dom', 'ch
 align_tensor.matrix_angles(basis_set=1, tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
 
 # Set up the 5-state model.
-n_state_model.model(N=3)
+n_state_model.model(N=5)
 
 # Set the initial parameter values to the defaults (the grid search is too expensive).
-value.set()
+#value.set()
 
 # Minimise.
-minimise('simplex', constraints=False, max_iter=200)
+minimise('simplex', constraints=False)
 
 raise RelaxError, "It worked!!!"
 # Finish.
