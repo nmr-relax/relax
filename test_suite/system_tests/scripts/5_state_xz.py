@@ -86,7 +86,7 @@ for i in xrange(5):
     value.set(0.0, 'gamma'+`i`)
 
 # Minimise.
-minimise('simplex', constraints=False)
+minimise('simplex', constraints=False, max_iter=0)
 
 raise RelaxError, "It worked!!!"
 # Finish.
