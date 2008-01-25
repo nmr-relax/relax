@@ -244,6 +244,22 @@ class N_state_model(Common_functions):
         self.minimise(min_algor='grid', min_options=grid_ops, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
+    def is_spin_param(self, name):
+        """Determine whether the given parameter is spin specific.
+
+        This method always returns false as there are no spin specific parameters in this type of
+        analysis.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        False
+        @rtype:         bool
+        """
+
+        # Return false.
+        return False
+
+
     def linear_constraints(self):
         """Function for setting up the linear constraint matrices A and b.
 
