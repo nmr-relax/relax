@@ -78,8 +78,12 @@ align_tensor.matrix_angles(basis_set=1, tensors=['chi1 N-dom', 'chi2 N-dom', 'ch
 # Set up the 5-state model.
 n_state_model.model(N=5)
 
-# Set the initial parameter values to the defaults (the grid search is too expensive).
-#value.set()
+# Set the initial parameter values to the actual values (the grid search is too expensive).
+for i in xrange(5):
+    value.set(0.2, 'p'+`i`)
+    value.set(0.0, 'alpha'+`i`)
+    value.set(pi/4-pi/8*i, 'alpha'+`i`)
+    value.set(0.0, 'gamma'+`i`)
 
 # Minimise.
 minimise('simplex', constraints=False)
