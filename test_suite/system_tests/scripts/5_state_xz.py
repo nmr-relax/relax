@@ -82,7 +82,7 @@ n_state_model.model(N=5)
 for i in xrange(5):
     value.set(0.2, 'p'+`i`)
     value.set(0.0, 'alpha'+`i`)
-    value.set(pi/4-pi/8*i, 'alpha'+`i`)
+    value.set(pi/4-pi/8*i, 'beta'+`i`)
     value.set(0.0, 'gamma'+`i`)
 
 # Minimise.
