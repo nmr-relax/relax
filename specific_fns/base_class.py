@@ -68,6 +68,22 @@ class Common_functions:
         return False
 
 
+    def is_spin_param(self, name):
+        """Determine whether the given parameter is spin specific.
+
+        This base class method always returns true, hence all parameters will be considered
+        residents of a SpinContainer object unless this method is overwritten.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        True
+        @rtype:         bool
+        """
+
+        # Return the default of True.
+        return True
+
+
     def num_instances(self):
         """Function for returning the number of instances.
 
