@@ -50,7 +50,7 @@ def partition_params(val, param):
     """
 
     # Specific functions.
-    return_data_name = get_specific_fn('return_data_name', relax_data_store[relax_data_store.current_pipe].pipe_type)
+    is_spin_param = get_specific_fn('is_spin_param', relax_data_store[relax_data_store.current_pipe].pipe_type)
 
     # Initialise.
     spin_params = []
@@ -61,7 +61,7 @@ def partition_params(val, param):
     # Single parameter.
     if type(param) == str:
         # Spin specific parameter.
-        if return_data_name(param):
+        if is_spin_param(param):
             params = spin_params
             values = spin_values
 
@@ -92,7 +92,7 @@ def partition_params(val, param):
         # Loop over all parameters.
         for i in xrange(len(param)):
             # Spin specific parameter.
-            if return_data_name(param[i]):
+            if is_spin_param(param[i]):
                 params = spin_params
                 values = spin_values
 
