@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from math import sqrt
+from math import pi, sqrt
 from unittest import TestCase
 
 # relax module imports.
@@ -51,3 +51,34 @@ class N_state_model(TestCase):
 
         # Execute the script.
         self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/5_state_xz.py')
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Test the optimised probabilities.
+        self.assertAlmostEqual(cdp.probs[0], 0.2)
+        self.assertAlmostEqual(cdp.probs[1], 0.2)
+        self.assertAlmostEqual(cdp.probs[2], 0.2)
+        self.assertAlmostEqual(cdp.probs[3], 0.2)
+        self.assertAlmostEqual(cdp.probs[4], 0.2)
+
+        # Test the optimised alpha Euler angles.
+        self.assertAlmostEqual(cdp.alpha[0], 0.0)
+        self.assertAlmostEqual(cdp.alpha[1], 0.0)
+        self.assertAlmostEqual(cdp.alpha[2], 0.0)
+        self.assertAlmostEqual(cdp.alpha[3], 0.0)
+        self.assertAlmostEqual(cdp.alpha[4], 0.0)
+
+        # Test the optimised beta Euler angles.
+        self.assertAlmostEqual(cdp.beta[0], pi/4)
+        self.assertAlmostEqual(cdp.beta[1], pi/8)
+        self.assertAlmostEqual(cdp.beta[2], 0.0)
+        self.assertAlmostEqual(cdp.beta[3], -pi/8)
+        self.assertAlmostEqual(cdp.beta[4], -pi/4)
+
+        # Test the optimised gamma Euler angles.
+        self.assertAlmostEqual(cdp.gamma[0], 0.0)
+        self.assertAlmostEqual(cdp.gamma[1], 0.0)
+        self.assertAlmostEqual(cdp.gamma[2], 0.0)
+        self.assertAlmostEqual(cdp.gamma[3], 0.0)
+        self.assertAlmostEqual(cdp.gamma[4], 0.0)
