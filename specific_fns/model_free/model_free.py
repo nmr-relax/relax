@@ -1076,6 +1076,27 @@ class Model_free_main:
         return self.param_vector
 
 
+    def is_spin_param(self, name):
+        """Determine whether the given parameter is spin specific.
+
+        Unless a diffusion parameter is encountered, this method will return true.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        If the parameter is a diffusion parameter, False I returned.  Otherwise True
+                        is returned.
+        @rtype:         bool
+        """
+
+        # Catch a diffusion parameter.
+        if diffusion_tensor.return_data_name(name):
+            return False
+
+        # All the rest:
+        else:
+            return True
+
+
     def linear_constraints(self, index=None):
         """Function for setting up the model-free linear constraint matrices A and b.
 

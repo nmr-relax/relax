@@ -106,6 +106,10 @@ def get_specific_fn(eqi, function_type, raise_error=1):
         if eqi == 'init_sim_values':
             function = inst.sim_init_values
 
+        # Spin specific parameter determining function.
+        if eqi == 'is_spin_param':
+            function = inst.is_spin_param
+
         # Map bounds function.
         if eqi == 'map_bounds':
             function = inst.map_bounds
