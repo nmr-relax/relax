@@ -49,7 +49,7 @@ align_tensor.matrix_angles(basis_set=1, tensors=['chi1 C-dom', 'chi2 C-dom', 'ch
 # Load the N-terminal alignment tensors.
 align_tensor.init(tensor='chi1 N-dom', params=(1/20.*(2-3*sqrt(2)),   -1/2.,   0.,              0.,   0.))
 align_tensor.init(tensor='chi2 N-dom', params=(1/80.*(26-9*sqrt(2)),  -7/8.,   0.,              0.,  0.))
-align_tensor.init(tensor='chi3 N-dom', params=(-1/160.*(8+3*sqrt(2)),  1/16.,  0.,    0., -3/16*(1+sqrt(2)+2*cos(pi/8.))))
+align_tensor.init(tensor='chi3 N-dom', params=(-1/160.*(8+3*sqrt(2)),  1/16.,  0.,    0., -3/16.*(1+sqrt(2)+2*cos(pi/8.))))
 align_tensor.init(tensor='chi4 N-dom', params=(7/16.,                 -7/8.,   0.,    9/80.*(1+sqrt(2)),     0.))
 align_tensor.init(tensor='chi5 N-dom', params=(1/20.*(2-3*sqrt(2)),   -1/2.,   3/40.*(1+sqrt(2)+2*cos(pi/8.)),   0., 0.))
 
