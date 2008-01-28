@@ -84,10 +84,7 @@ for i in xrange(5):
     value.set(0.0, 'alpha'+`i`)
     value.set(pi/4-pi/8*i, 'beta'+`i`)
     value.set(0.0, 'gamma'+`i`)
+#value.set()
 
 # Minimise.
-minimise('simplex', constraints=False, max_iter=0)
-
-raise RelaxError, "It worked!!!"
-# Finish.
-#results.write(file='devnull', force=1)
+minimise('simplex', constraints=False)
