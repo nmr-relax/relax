@@ -196,7 +196,7 @@ def centre_of_mass(return_mass=False):
     M = 0.0
 
     # Loop over the structures.
-    for struct in relax_data_store.pdb[run].structures:
+    for struct in cdp.structure.structures:
         # Protein.
         if struct.peptide_chains:
             chains = struct.peptide_chains
@@ -806,26 +806,34 @@ def get_chemical_name(hetID):
     raise RelaxError, "The residue ID (hetID) " + `hetID` + " is not recognised."
 
 
-def load_structures():
-    """Function for loading the structures from the PDB file."""
+def load_structures(file_path, model, verbosity=False):
+    """Function for loading the structures from the PDB file.
+
+    @param file_path:   The full path of the file.
+    @type file_path:    str
+    @param model:       The PDB model to use.
+    @type model:        int
+    @param verbosity:   A flag which if True will cause messages to be printed.
+    @type verbosity:    bool
+    """
 
     # Use pointers (references) if the PDB data exists in another run.
-    for run in relax_data_store.run_names:
-        if relax_data_store.pdb.has_key(run) and hasattr(relax_data_store.pdb[run], 'structures') and relax_data_store.pdb[run].file_name == file and relax_data_store.pdb[run].model == model:
+    for data_pipe in relax_data_store:
+        if hasattr(data_pipe, 'structure') and hasattr(cdp.structure, 'structures') and data_pipe.structure.file_name == file_path and data_pipe.structure.model == model:
             # Make a pointer to the data.
-            relax_data_store.pdb[run].structures = relax_data_store.pdb[run].structures
+            cdp.structure.structures = data_pipe.structure.structures
 
             # Print out.
             if verbosity:
-                print "Using the structures from the run " + `run` + "."
-                for i in xrange(len(relax_data_store.pdb[run].structures)):
-                    print relax_data_store.pdb[run].structures[i]
+                print "Using the structures from the data pipe " + `data_pipe.pipe_name` + "."
+                for i in xrange(len(cdp.structure.structures)):
+                    print cdp.structure.structures[i]
 
             # Exit this function.
             return
 
     # Initialisation.
-    relax_data_store.pdb[run].structures = []
+    cdp.structure.structures = []
 
     # Load the structure i from the PDB file.
     if type(model) == int:
@@ -844,8 +852,8 @@ def load_structures():
         if verbosity:
             print str
 
-        # Place the structure in 'relax_data_store.pdb[run]'.
-        relax_data_store.pdb[run].structures.append(str)
+        # Place the structure in 'cdp.structure'.
+        cdp.structure.structures.append(str)
 
 
     # Load all structures.
@@ -877,8 +885,8 @@ def load_structures():
             if verbosity:
                 print str
 
-            # Place the structure in 'relax_data_store.pdb[run]'.
-            relax_data_store.pdb[run].structures.append(str)
+            # Place the structure in 'cdp.structure'.
+            cdp.structure.structures.append(str)
 
             # Increment i.
             i = i + 1
@@ -930,7 +938,7 @@ def read_pdb(run=None, file=None, dir=None, model=None, load_seq=1, fail=1, verb
     # Load the structures.
     ######################
 
-    load_structures()
+    load_structures(file_path, model, verbosity)
 
 
     # Finish.
@@ -981,7 +989,7 @@ def vectors(run=None, heteronuc=None, proton=None, res_num=None, res_name=None):
         raise RelaxError, "The proton and heteronucleus are set to the same atom."
 
     # Number of structures.
-    num_str = len(relax_data_store.pdb[run].structures)
+    num_str = len(cdp.structure.structures)
 
     # Print out.
     if verbosity:
@@ -1567,7 +1575,7 @@ def xh_vector(data, structure=None, unit=1):
     ave_vector = zeros(3, float64)
 
     # Number of structures.
-    num_str = len(relax_data_store.pdb[run].structures)
+    num_str = len(cdp.structure.structures)
 
     # Loop over the structures.
     for i in xrange(num_str):
@@ -1576,10 +1584,10 @@ def xh_vector(data, structure=None, unit=1):
             continue
 
         # Reassign the first peptide or nucleotide chain of the first structure.
-        if relax_data_store.pdb[run].structures[i].peptide_chains:
-            pdb_residues = relax_data_store.pdb[run].structures[i].peptide_chains[0].residues
-        elif relax_data_store.pdb[run].structures[i].nucleotide_chains:
-            pdb_residues = relax_data_store.pdb[run].structures[i].nucleotide_chains[0].residues
+        if cdp.structure.structures[i].peptide_chains:
+            pdb_residues = cdp.structure.structures[i].peptide_chains[0].residues
+        elif cdp.structure.structures[i].nucleotide_chains:
+            pdb_residues = cdp.structure.structures[i].nucleotide_chains[0].residues
         else:
             raise RelaxNoPdbChainError
 
