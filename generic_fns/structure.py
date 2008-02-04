@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,7 +32,9 @@ from warnings import warn
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbChainError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError, RelaxPdbError, RelaxPdbLoadError, RelaxRegExpError
+from relax_io import get_file_path
 from relax_warnings import RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxWarning, RelaxZeroVectorWarning
+from selection import count_spins
 
 
 
@@ -888,20 +890,23 @@ def read_pdb(run=None, file=None, dir=None, model=None, load_seq=1, fail=1, verb
     # Tests.
     ########
 
-    # Test if the run exists.
-    if not run in relax_data_store.run_names:
-        raise RelaxNoPipeError, run
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Test if PDB data corresponding to the run already exists.
-    if relax_data_store.pdb.has_key(run):
-        raise RelaxPdbError, run
+    if hasattr(cdp, 'struct'):
+        raise RelaxPdbError
 
     # Test if sequence data is loaded.
-    if not load_seq and not len(relax_data_store.res[run]):
-        raise RelaxNoSequenceError, run
+    if not load_seq and not count_spins():
+        raise RelaxNoSequenceError
 
     # The file path.
-    file_path = relax.IO.file_path(file, dir)
+    file_path = get_file_path(file, dir)
 
     # Test if the file exists.
     if not access(file_path, F_OK):
