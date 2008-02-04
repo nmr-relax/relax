@@ -920,9 +920,6 @@ def read_pdb(run=None, file=None, dir=None, model=None, load_seq=1, fail=1, verb
     # Data creation.
     ################
 
-    # Add the run to the PDB data structure.
-    relax_data_store.pdb.add_item(run)
-
     # File name.
     relax_data_store.pdb[run].file_name = file_path
 
