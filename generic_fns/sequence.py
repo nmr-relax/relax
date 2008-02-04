@@ -22,9 +22,9 @@
 
 # relax module imports.
 from data import Data as relax_data_store
+from generic_fns.selection import count_spins, parse_token, spin_loop, tokenise
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError
 from relax_io import extract_data, open_write_file, strip
-from generic_fns.selection import count_spins, spin_loop
 import sys
 
 
@@ -57,44 +57,118 @@ def display(mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col
     write_body(file=sys.stdout, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep)
 
 
-def load_PDB_sequence():
+def load_PDB_sequence(spin_id=None):
     """Function for loading the sequence out of a PDB file.
 
-    This needs to be modified to handle multiple peptide chains.
+    @param spin_id: The molecule, residue, and spin identifier string.
+    @type spin_id:  str
     """
 
     # Print out.
     print "\nLoading the sequence from the PDB file.\n"
 
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
     # Reassign the sequence of the first structure.
-    if relax_data_store.pdb[run].structures[0].peptide_chains:
-        res = relax_data_store.pdb[run].structures[0].peptide_chains[0].residues
+    if cdp.structure.structures[0].peptide_chains:
+        chains = cdp.structure.structures[0].peptide_chains
         molecule = 'protein'
-    elif relax_data_store.pdb[run].structures[0].nucleotide_chains:
-        res = relax_data_store.pdb[run].structures[0].nucleotide_chains[0].residues
+    elif cdp.structure.structures[0].nucleotide_chains:
+        chains = cdp.structure.structures[0].nucleotide_chains
         molecule = 'nucleic acid'
     else:
         raise RelaxNoPdbChainError
 
-    # Add the run to 'relax_data_store.res'.
-    relax_data_store.res.add_list(run)
+    # Split up the selection string.
+    mol_token, res_token, spin_token = tokenise(spin_id)
 
-    # Loop over the sequence.
-    for i in xrange(len(res)):
-        # Append a data container.
-        relax_data_store.res[run].add_item()
+    # Parse the tokens.
+    molecules = parse_token(mol_token)
+    residues = parse_token(res_token)
+    spins = parse_token(spin_token)
 
-        # Residue number.
-        relax_data_store.res[run][i].num = res[i].number
+    # Init some indecies.
+    mol_index = 0
+    res_index = 0
+    spin_index = 0
 
-        # Residue name.
-        if molecule == 'nucleic acid':
-            relax_data_store.res[run][i].name = res[i].name[-1]
+    # Loop over the molecules.
+    for chain in chains:
+        # The name of the molecule.
+        if chain.chain_id:
+            mol_name = chain.chain_id
+        elif chain.segment_id:
+            mol_name = chain.segment_id
         else:
-            relax_data_store.res[run][i].name = res[i].name
+            mol_name = None
 
-        # Select the residue.
-        relax_data_store.res[run][i].select = 1
+        # Skip non-matching molecules.
+        if mol_token and mol_name not in molecules:
+            continue
+
+        # Add the molecule if there is a molecule name (otherwise everything goes into the default first MolecularContainer).
+        if mol_name:
+            # Replace the first empty molecule.
+            if mol_index == 0 and cdp.mol[0].name == None:
+                cdp.mol[0].name = chain.name
+
+            # Create a new molecule.
+            else:
+                # Add the molecule.
+                cdp.mol.add_item(mol_name=chain.name)
+
+        # Loop over the residues.
+        for res in chain.residues:
+            # The residue name and number.
+            if molecule == 'nucleic acid':
+                res_name = res.name[-1]
+            else:
+                res_name = res.name
+            res_num = res.number
+
+            # Skip non-matching residues.
+            if res_token and not (res_name in residues or res_num in residues):
+                continue
+
+            # Replace the first empty residue.
+            if res_index == 0 and cdp.mol[mol_index].res[0].name == None:
+                cdp.mol[mol_index].res[0].name = res_name
+                cdp.mol[mol_index].res[0].num = res_num
+
+            # Create a new residue.
+            else:
+                # Add the residue.
+                cdp.mol[mol_index].res.add_item(res_name=res_name, res_num=res_num)
+
+            # Loop over the spins.
+            for atom in res.atom_list:
+                # The spin name and number.
+                spin_name = atom.name
+                spin_num = atom.properties['serial_number']
+
+                # Skip non-matching spins.
+                if spin_token and not (spin_name in spins or spin_num in spins):
+                    continue
+
+                # Replace the first empty residue.
+                if spin_index == 0 and cdp.mol[mol_index].res[res_index].spin[0].name == None:
+                    cdp.mol[mol_index].res[res_index].spin[0].name = spin_name
+                    cdp.mol[mol_index].res[res_index].spin[0].num = spin_num
+
+                # Create a new residue.
+                else:
+                    # Add the residue.
+                    cdp.mol[mol_index].res[res_index].spin.add_item(spin_name=spin_name, spin_num=spin_num)
+
+                # Increment the residue index.
+                spin_index = spin_index + 1
+
+            # Increment the residue index.
+            res_index = res_index + 1
+
+        # Increment the molecule index.
+        mol_index = mol_index + 1
 
 
 def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, sep=None):
