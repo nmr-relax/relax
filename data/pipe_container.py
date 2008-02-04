@@ -24,7 +24,7 @@
 from re import match
 
 # relax module imports.
-from data_classes import SpecificData
+from data_classes import Element
 from diff_tensor import DiffTensorData
 from mol_res_spin import MoleculeList
 from prototype import Prototype
@@ -38,7 +38,7 @@ class PipeContainer(Prototype):
         """Set up all the PipeContainer data structures."""
 
         # Molecular structure data.
-        self.structure = SpecificData()
+        self.structure = Element()
 
         # The molecule-residue-spin object.
         self.mol = MoleculeList()
