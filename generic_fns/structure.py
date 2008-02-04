@@ -37,9 +37,9 @@ from relax_warnings import RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxWarni
 
 
 def atom_add(atom_id=None, record_name='', atom_name='', res_name='', chain_id='', res_num=None, pos=[None, None, None], segment_id='', element=''):
-    """Function for adding an atom to the self.atomic_data structure.
+    """Function for adding an atom to the atomic_data structure.
 
-    The self.atomic_data data structure is a dictionary of arrays.  The keys correspond to the
+    The atomic_data data structure is a dictionary of arrays.  The keys correspond to the
     'atom_id' strings.  The elements of the array are:
 
         0:  Atom number.
@@ -80,26 +80,26 @@ def atom_add(atom_id=None, record_name='', atom_name='', res_name='', chain_id='
     """
 
     # Initialise the key-value pair.
-    self.atomic_data[atom_id] = []
+    atomic_data[atom_id] = []
 
     # Fill the positions.
-    self.atomic_data[atom_id].append(len(self.atomic_data))
-    self.atomic_data[atom_id].append(record_name)
-    self.atomic_data[atom_id].append(atom_name)
-    self.atomic_data[atom_id].append(res_name)
-    self.atomic_data[atom_id].append(chain_id)
-    self.atomic_data[atom_id].append(res_num)
-    self.atomic_data[atom_id].append(pos[0])
-    self.atomic_data[atom_id].append(pos[1])
-    self.atomic_data[atom_id].append(pos[2])
-    self.atomic_data[atom_id].append(segment_id)
-    self.atomic_data[atom_id].append(element)
+    atomic_data[atom_id].append(len(atomic_data))
+    atomic_data[atom_id].append(record_name)
+    atomic_data[atom_id].append(atom_name)
+    atomic_data[atom_id].append(res_name)
+    atomic_data[atom_id].append(chain_id)
+    atomic_data[atom_id].append(res_num)
+    atomic_data[atom_id].append(pos[0])
+    atomic_data[atom_id].append(pos[1])
+    atomic_data[atom_id].append(pos[2])
+    atomic_data[atom_id].append(segment_id)
+    atomic_data[atom_id].append(element)
 
 
 def atom_connect(atom_id=None, bonded_id=None):
-    """Function for connecting two atoms within the self.atomic_data data structure.
+    """Function for connecting two atoms within the atomic_data data structure.
 
-    The self.atomic_data data structure is a dictionary of arrays.  The keys correspond to the
+    The atomic_data data structure is a dictionary of arrays.  The keys correspond to the
     'atom_id' strings.  The elements of the array are:
 
         0:  Atom number.
@@ -122,22 +122,22 @@ def atom_connect(atom_id=None, bonded_id=None):
     """
 
     # Find the atom number corresponding to atom_id.
-    if self.atomic_data.has_key(atom_id):
-        atom_num = self.atomic_data[atom_id][0]
+    if atomic_data.has_key(atom_id):
+        atom_num = atomic_data[atom_id][0]
     else:
         raise RelaxError, "The atom corresponding to the atom_id " + `atom_id` + " doesn't exist."
 
     # Find the atom number corresponding to bonded_id.
-    if self.atomic_data.has_key(bonded_id):
-        bonded_num = self.atomic_data[bonded_id][0]
+    if atomic_data.has_key(bonded_id):
+        bonded_num = atomic_data[bonded_id][0]
     else:
         raise RelaxError, "The atom corresponding to the bonded_id " + `bonded_id` + " doesn't exist."
 
     # Add the bonded_id to the atom_id array.
-    self.atomic_data[atom_id].append(bonded_num)
+    atomic_data[atom_id].append(bonded_num)
 
     # Add the atom_id to the bonded_id array.
-    self.atomic_data[bonded_id].append(atom_num)
+    atomic_data[bonded_id].append(atom_num)
 
 
 def atomic_mass(element=None):
@@ -168,12 +168,12 @@ def atomic_mass(element=None):
         raise RelaxError, "The mass of the element " + `element` + " has not yet been programmed into relax."
 
 
-def autoscale_tensor(self,method=None):
+def autoscale_tensor(method=None):
     """Automatically determine an appropriate scaling factor for display
     of the diffusion tensor"""
 
     if method == 'mass':
-        com, mass = self.centre_of_mass(return_mass=True)
+        com, mass = centre_of_mass(return_mass=True)
         scale = mass * 6.8e-11
         return scale
 
@@ -194,7 +194,7 @@ def centre_of_mass(return_mass=False):
     M = 0.0
 
     # Loop over the structures.
-    for struct in relax_data_store.pdb[self.run].structures:
+    for struct in relax_data_store.pdb[run].structures:
         # Protein.
         if struct.peptide_chains:
             chains = struct.peptide_chains
@@ -207,7 +207,7 @@ def centre_of_mass(return_mass=False):
         for res in chains[0].residues:
             # Find the corresponding residue in 'relax_data_store'.
             found = 0
-            for res_data in relax_data_store.res[self.run]:
+            for res_data in relax_data_store.res[run]:
                 if res.number == res_data.num:
                     found = 1
                     break
@@ -223,7 +223,7 @@ def centre_of_mass(return_mass=False):
             # Loop over the atoms of the residue.
             for atom in res:
                 # Atomic mass.
-                mass = self.atomic_mass(atom.properties['element'])
+                mass = atomic_mass(atom.properties['element'])
 
                 # Total mass.
                 M = M + mass
@@ -249,14 +249,14 @@ def create_diff_tensor_pdb(run=None, scale=1.8e-6, file=None, dir=None, force=0)
     """Create the PDB representation of the diffusion tensor."""
 
     # Arguments.
-    self.scale = scale
-    self.file = file
-    self.dir = dir
-    self.force = force
+    scale = scale
+    file = file
+    dir = dir
+    force = force
     if scale == 'mass':
-        self.scale = self.autoscale_tensor(scale)
+        scale = autoscale_tensor(scale)
     else:
-        self.scale = scale
+        scale = scale
 
     # Test if the run exists.
     if not run in relax_data_store.run_names:
@@ -269,28 +269,28 @@ def create_diff_tensor_pdb(run=None, scale=1.8e-6, file=None, dir=None, force=0)
         runs = [run]
 
     # Initialise the atom and atomic connections data structures.
-    self.atomic_data = {}
+    atomic_data = {}
 
     # Loop over the runs.
     for run_index in xrange(len(runs)):
         # Place the run into 'self'.
-        self.run = runs[run_index]
+        run = runs[run_index]
 
 
         # Tests.
         ########
 
         # Test if the diffusion tensor data is loaded.
-        if not relax_data_store.diff.has_key(self.run):
+        if not relax_data_store.diff.has_key(run):
             raise RelaxNoTensorError, 'diffusion'
 
         # Test if the PDB file of the macromolecule has been loaded.
-        if not relax_data_store.pdb.has_key(self.run):
-            raise RelaxNoPdbError, self.run
+        if not relax_data_store.pdb.has_key(run):
+            raise RelaxNoPdbError, run
 
         # Test if sequence data is loaded.
-        if not len(relax_data_store.res[self.run]):
-            raise RelaxNoSequenceError, self.run
+        if not len(relax_data_store.res[run]):
+            raise RelaxNoSequenceError, run
 
 
         # Initialise.
@@ -313,10 +313,10 @@ def create_diff_tensor_pdb(run=None, scale=1.8e-6, file=None, dir=None, force=0)
         #################
 
         # Calculate the centre of mass.
-        R = self.centre_of_mass()
+        R = centre_of_mass()
 
         # Add the central atom.
-        self.atom_add(atom_id='R'+atom_id_ext, record_name='HETATM', atom_name='R', res_name='COM', chain_id=chain_id, res_num=res_num, pos=R, element='C')
+        atom_add(atom_id='R'+atom_id_ext, record_name='HETATM', atom_name='R', res_name='COM', chain_id=chain_id, res_num=res_num, pos=R, element='C')
 
         # Increment the residue number.
         res_num = res_num + 1
@@ -334,7 +334,7 @@ def create_diff_tensor_pdb(run=None, scale=1.8e-6, file=None, dir=None, force=0)
 
         # Get the uniform vector distribution.
         print "    Creating the uniform vector distribution."
-        vectors = self.uniform_vect_dist_spherical_angles(inc=20)
+        vectors = uniform_vect_dist_spherical_angles(inc=20)
 
         # Loop over the radial array of vectors (change in longitude).
         for i in range(inc):
@@ -347,34 +347,34 @@ def create_diff_tensor_pdb(run=None, scale=1.8e-6, file=None, dir=None, force=0)
                 atom_id = 'T' + `i` + 'P' + `j` + atom_id_ext
 
                 # Rotate the vector into the diffusion frame.
-                vector = dot(relax_data_store.diff[self.run].rotation, vectors[index])
+                vector = dot(relax_data_store.diff[run].rotation, vectors[index])
 
                 # Set the length of the vector to its diffusion rate within the diffusion tensor geometric object.
-                vector = dot(relax_data_store.diff[self.run].tensor, vector)
+                vector = dot(relax_data_store.diff[run].tensor, vector)
 
                 # Scale the vector.
-                vector = vector * self.scale
+                vector = vector * scale
 
                 # Position relative to the centre of mass.
                 pos = R + vector
 
                 # Add the vector as a H atom of the TNS residue.
-                self.atom_add(atom_id=atom_id, record_name='HETATM', atom_name='H'+`atom_num`, res_name='TNS', chain_id=chain_id, res_num=res_num, pos=pos, element='H')
+                atom_add(atom_id=atom_id, record_name='HETATM', atom_name='H'+`atom_num`, res_name='TNS', chain_id=chain_id, res_num=res_num, pos=pos, element='H')
 
                 # Connect to the previous atom (to generate the longitudinal lines).
                 if j != 0:
                     prev_id = 'T' + `i` + 'P' + `j-1` + atom_id_ext
-                    self.atom_connect(atom_id=atom_id, bonded_id=prev_id)
+                    atom_connect(atom_id=atom_id, bonded_id=prev_id)
 
                 # Connect across the radial arrays (to generate the latitudinal lines).
                 if i != 0:
                     neighbour_id = 'T' + `i-1` + 'P' + `j` + atom_id_ext
-                    self.atom_connect(atom_id=atom_id, bonded_id=neighbour_id)
+                    atom_connect(atom_id=atom_id, bonded_id=neighbour_id)
 
                 # Connect the last radial array to the first (to zip up the geometric object and close the latitudinal lines).
                 if i == inc-1:
                     neighbour_id = 'T' + `0` + 'P' + `j` + atom_id_ext
-                    self.atom_connect(atom_id=atom_id, bonded_id=neighbour_id)
+                    atom_connect(atom_id=atom_id, bonded_id=neighbour_id)
 
                 # Increment the atom number.
                 atom_num = atom_num + 1
@@ -387,55 +387,55 @@ def create_diff_tensor_pdb(run=None, scale=1.8e-6, file=None, dir=None, force=0)
         #####################
 
         # Create the unique axis of the spheroid.
-        if relax_data_store.diff[self.run].type == 'spheroid':
+        if relax_data_store.diff[run].type == 'spheroid':
             # Print out.
             print "\nGenerating the unique axis of the diffusion tensor."
-            print "    Scaling factor:                      " + `self.scale`
+            print "    Scaling factor:                      " + `scale`
 
             # Create the axis.
-            self.generate_spheroid_axes(chain_id=chain_id, res_num=res_num, R=R)
+            generate_spheroid_axes(chain_id=chain_id, res_num=res_num, R=R)
 
             # Simulations.
-            if hasattr(relax_data_store.diff[self.run], 'tm_sim'):
+            if hasattr(relax_data_store.diff[run], 'tm_sim'):
                 # Print out.
                 print "    Creating the MC simulation axes."
 
                 # Create each MC simulation axis as a new residue.
-                for i in xrange(len(relax_data_store.diff[self.run].tm_sim)):
+                for i in xrange(len(relax_data_store.diff[run].tm_sim)):
                     res_num = res_num + 1
-                    self.generate_spheroid_axes(chain_id=chain_id, res_num=res_num, R=R, i=i)
+                    generate_spheroid_axes(chain_id=chain_id, res_num=res_num, R=R, i=i)
 
 
         # Create the three axes of the ellipsoid.
-        if relax_data_store.diff[self.run].type == 'ellipsoid':
+        if relax_data_store.diff[run].type == 'ellipsoid':
             # Print out.
             print "Generating the three axes of the ellipsoid."
-            print "    Scaling factor:                      " + `self.scale`
+            print "    Scaling factor:                      " + `scale`
 
             # Create the axes.
-            self.generate_ellipsoid_axes(chain_id=chain_id, res_num=res_num, R=R)
+            generate_ellipsoid_axes(chain_id=chain_id, res_num=res_num, R=R)
 
             # Simulations.
-            if hasattr(relax_data_store.diff[self.run], 'tm_sim'):
+            if hasattr(relax_data_store.diff[run], 'tm_sim'):
                 # Print out.
                 print "    Creating the MC simulation axes."
 
                 # Create each MC simulation axis as a new residue.
-                for i in xrange(len(relax_data_store.diff[self.run].tm_sim)):
+                for i in xrange(len(relax_data_store.diff[run].tm_sim)):
                     res_num = res_num + 1
-                    self.generate_ellipsoid_axes(chain_id=chain_id, res_num=res_num, R=R, i=i)
+                    generate_ellipsoid_axes(chain_id=chain_id, res_num=res_num, R=R, i=i)
 
 
         # Terminate the chain (the TER record).
         #######################################
 
         # The name of the last residue.
-        atomic_arrays = self.atomic_data.values()
+        atomic_arrays = atomic_data.values()
         atomic_arrays.sort()
         last_res = atomic_arrays[-1][3]
 
         # Add the TER 'atom'.
-        self.atom_add(atom_id='TER' + atom_id_ext, record_name='TER', res_name=last_res, res_num=res_num)
+        atom_add(atom_id='TER' + atom_id_ext, record_name='TER', res_name=last_res, res_num=res_num)
 
 
     # Create the PDB file.
@@ -445,10 +445,10 @@ def create_diff_tensor_pdb(run=None, scale=1.8e-6, file=None, dir=None, force=0)
     print "\nGenerating the PDB file."
 
     # Open the PDB file for writing.
-    tensor_pdb_file = self.relax.IO.open_write_file(self.file, self.dir, force=self.force)
+    tensor_pdb_file = relax.IO.open_write_file(file, dir, force=force)
 
     # Write the data.
-    self.write_pdb_file(tensor_pdb_file)
+    write_pdb_file(tensor_pdb_file)
 
     # Close the file.
     tensor_pdb_file.close()
@@ -473,35 +473,35 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     """
 
     # Arguments.
-    self.run = run
+    run = run
 
     # Test if the run exists.
     if not run in relax_data_store.run_names:
         raise RelaxNoPipeError, run
 
     # Test if the PDB file of the macromolecule has been loaded.
-    if not relax_data_store.pdb.has_key(self.run):
-        raise RelaxNoPdbError, self.run
+    if not relax_data_store.pdb.has_key(run):
+        raise RelaxNoPdbError, run
 
     # Test if sequence data is loaded.
-    if not len(relax_data_store.res[self.run]):
-        raise RelaxNoSequenceError, self.run
+    if not len(relax_data_store.res[run]):
+        raise RelaxNoSequenceError, run
 
     # Test if unit vectors exist.
     vectors = 0
-    for i in xrange(len(relax_data_store.res[self.run])):
-        if hasattr(relax_data_store.res[self.run][i], 'xh_vect'):
+    for i in xrange(len(relax_data_store.res[run])):
+        if hasattr(relax_data_store.res[run][i], 'xh_vect'):
             vectors = 1
             break
     if not vectors:
-        raise RelaxNoVectorsError, self.run
+        raise RelaxNoVectorsError, run
 
 
     # Initialise.
     #############
 
     # Initialise the atom and atomic connections data structures.
-    self.atomic_data = {}
+    atomic_data = {}
 
     # Initialise the residue number.
     res_num = 1
@@ -511,7 +511,7 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     #################
 
     # Calculate the centre of mass.
-    R = self.centre_of_mass()
+    R = centre_of_mass()
 
     # Increment the residue number.
     res_num = res_num + 1
@@ -521,9 +521,9 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     #################
 
     # Loop over the spin systems.
-    for i in xrange(len(relax_data_store.res[self.run])):
+    for i in xrange(len(relax_data_store.res[run])):
         # Alias the spin system data.
-        data = relax_data_store.res[self.run][i]
+        data = relax_data_store.res[run][i]
 
         # Skip unselected spin systems.
         if not data.select:
@@ -542,27 +542,27 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
         H_id = data.proton + end
 
         # Add the central X atom.
-        self.atom_add(atom_id=X_id, record_name='ATOM', atom_name=data.heteronuc, res_name=data.name, chain_id='A', res_num=data.num, pos=R, element=data.heteronuc)
+        atom_add(atom_id=X_id, record_name='ATOM', atom_name=data.heteronuc, res_name=data.name, chain_id='A', res_num=data.num, pos=R, element=data.heteronuc)
 
         # Add the H atom.
-        self.atom_add(atom_id=H_id, record_name='ATOM', atom_name=data.proton, res_name=data.name, chain_id='A', res_num=data.num, pos=R+vector, element=data.proton)
+        atom_add(atom_id=H_id, record_name='ATOM', atom_name=data.proton, res_name=data.name, chain_id='A', res_num=data.num, pos=R+vector, element=data.proton)
 
         # Connect the two atoms.
-        self.atom_connect(atom_id=X_id, bonded_id=H_id)
+        atom_connect(atom_id=X_id, bonded_id=H_id)
 
         # Store the terminate residue number for the TER record.
         last_res = data.num
         last_name = data.name
 
     # The TER record.
-    self.atom_add(atom_id='TER' + '_A', record_name='TER', res_name=last_name, chain_id='A', res_num=last_res)
+    atom_add(atom_id='TER' + '_A', record_name='TER', res_name=last_name, chain_id='A', res_num=last_res)
 
     # Symmetry chain.
     if symmetry:
         # Loop over the spin systems.
-        for i in xrange(len(relax_data_store.res[self.run])):
+        for i in xrange(len(relax_data_store.res[run])):
             # Alias the spin system data.
-            data = relax_data_store.res[self.run][i]
+            data = relax_data_store.res[run][i]
 
             # Skip unselected spin systems.
             if not data.select:
@@ -581,20 +581,20 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
             H_id = data.proton + end
 
             # Add the central X atom.
-            self.atom_add(atom_id=X_id + '_B', record_name='ATOM', atom_name=data.heteronuc, res_name=data.name, chain_id='B', res_num=data.num, pos=R, element=data.heteronuc)
+            atom_add(atom_id=X_id + '_B', record_name='ATOM', atom_name=data.heteronuc, res_name=data.name, chain_id='B', res_num=data.num, pos=R, element=data.heteronuc)
 
             # Add the H atom.
-            self.atom_add(atom_id=H_id + '_B', record_name='ATOM', atom_name=data.proton, res_name=data.name, chain_id='B', res_num=data.num, pos=R-vector, element=data.proton)
+            atom_add(atom_id=H_id + '_B', record_name='ATOM', atom_name=data.proton, res_name=data.name, chain_id='B', res_num=data.num, pos=R-vector, element=data.proton)
 
             # Connect the two atoms.
-            self.atom_connect(atom_id=X_id + '_B', bonded_id=H_id + '_B')
+            atom_connect(atom_id=X_id + '_B', bonded_id=H_id + '_B')
 
             # Store the terminate residue number for the TER record.
             last_res = data.num
             last_name = data.name
 
         # The TER record.
-        self.atom_add(atom_id='TER' + '_B', record_name='TER', res_name=last_name, chain_id='B', res_num=last_res)
+        atom_add(atom_id='TER' + '_B', record_name='TER', res_name=last_name, chain_id='B', res_num=last_res)
 
 
 
@@ -605,10 +605,10 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     print "\nGenerating the PDB file."
 
     # Open the PDB file for writing.
-    tensor_pdb_file = self.relax.IO.open_write_file(file, dir, force=force)
+    tensor_pdb_file = relax.IO.open_write_file(file, dir, force=force)
 
     # Write the data.
-    self.write_pdb_file(tensor_pdb_file)
+    write_pdb_file(tensor_pdb_file)
 
     # Close the file.
     tensor_pdb_file.close()
@@ -629,23 +629,23 @@ def generate_ellipsoid_axes(chain_id=None, res_num=None, R=None, i=None):
     """
 
     # Alias the relevant data.
-    scale = self.scale
+    scale = scale
     if i == None:
-        Dx = relax_data_store.diff[self.run].Dx
-        Dy = relax_data_store.diff[self.run].Dy
-        Dz = relax_data_store.diff[self.run].Dz
-        Dx_unit = relax_data_store.diff[self.run].Dx_unit
-        Dy_unit = relax_data_store.diff[self.run].Dy_unit
-        Dz_unit = relax_data_store.diff[self.run].Dz_unit
+        Dx = relax_data_store.diff[run].Dx
+        Dy = relax_data_store.diff[run].Dy
+        Dz = relax_data_store.diff[run].Dz
+        Dx_unit = relax_data_store.diff[run].Dx_unit
+        Dy_unit = relax_data_store.diff[run].Dy_unit
+        Dz_unit = relax_data_store.diff[run].Dz_unit
         res_name = 'AXS'
         atom_id_ext = '_' + chain_id
     else:
-        Dx = relax_data_store.diff[self.run].Dx_sim[i]
-        Dy = relax_data_store.diff[self.run].Dy_sim[i]
-        Dz = relax_data_store.diff[self.run].Dz_sim[i]
-        Dx_unit = relax_data_store.diff[self.run].Dx_unit_sim[i]
-        Dy_unit = relax_data_store.diff[self.run].Dy_unit_sim[i]
-        Dz_unit = relax_data_store.diff[self.run].Dz_unit_sim[i]
+        Dx = relax_data_store.diff[run].Dx_sim[i]
+        Dy = relax_data_store.diff[run].Dy_sim[i]
+        Dz = relax_data_store.diff[run].Dz_sim[i]
+        Dx_unit = relax_data_store.diff[run].Dx_unit_sim[i]
+        Dy_unit = relax_data_store.diff[run].Dy_unit_sim[i]
+        Dz_unit = relax_data_store.diff[run].Dz_unit_sim[i]
         res_name = 'SIM'
         atom_id_ext = '_' + chain_id + '_sim' + `i`
 
@@ -668,19 +668,19 @@ def generate_ellipsoid_axes(chain_id=None, res_num=None, R=None, i=None):
     Dz_vect_neg = R + Dz_vect_neg
 
     # Create the 'AXS' residue.
-    self.atom_add(atom_id='R_axes'+atom_id_ext, record_name='HETATM', atom_name='R', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R, element='C')
-    self.atom_add(atom_id='Dx'+atom_id_ext, record_name='HETATM', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dx_vect, element='C')
-    self.atom_add(atom_id='Dy'+atom_id_ext, record_name='HETATM', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dy_vect, element='C')
-    self.atom_add(atom_id='Dz'+atom_id_ext, record_name='HETATM', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dz_vect, element='C')
-    self.atom_add(atom_id='Dx_neg'+atom_id_ext, record_name='HETATM', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dx_vect_neg, element='C')
-    self.atom_add(atom_id='Dy_neg'+atom_id_ext, record_name='HETATM', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dy_vect_neg, element='C')
-    self.atom_add(atom_id='Dz_neg'+atom_id_ext, record_name='HETATM', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dz_vect_neg, element='C')
-    self.atom_connect(atom_id='Dx'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
-    self.atom_connect(atom_id='Dy'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
-    self.atom_connect(atom_id='Dz'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
-    self.atom_connect(atom_id='Dx_neg'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
-    self.atom_connect(atom_id='Dy_neg'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
-    self.atom_connect(atom_id='Dz_neg'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
+    atom_add(atom_id='R_axes'+atom_id_ext, record_name='HETATM', atom_name='R', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R, element='C')
+    atom_add(atom_id='Dx'+atom_id_ext, record_name='HETATM', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dx_vect, element='C')
+    atom_add(atom_id='Dy'+atom_id_ext, record_name='HETATM', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dy_vect, element='C')
+    atom_add(atom_id='Dz'+atom_id_ext, record_name='HETATM', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dz_vect, element='C')
+    atom_add(atom_id='Dx_neg'+atom_id_ext, record_name='HETATM', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dx_vect_neg, element='C')
+    atom_add(atom_id='Dy_neg'+atom_id_ext, record_name='HETATM', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dy_vect_neg, element='C')
+    atom_add(atom_id='Dz_neg'+atom_id_ext, record_name='HETATM', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dz_vect_neg, element='C')
+    atom_connect(atom_id='Dx'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
+    atom_connect(atom_id='Dy'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
+    atom_connect(atom_id='Dz'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
+    atom_connect(atom_id='Dx_neg'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
+    atom_connect(atom_id='Dy_neg'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
+    atom_connect(atom_id='Dz_neg'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
 
     # Add six more atoms to allow the axis labels to be shifted just outside of the geometric object.
     if i == None:
@@ -690,12 +690,12 @@ def generate_ellipsoid_axes(chain_id=None, res_num=None, R=None, i=None):
         Dz_vect = Dz_unit * (Dz * scale + 3.0)
 
         # Add the atoms.
-        self.atom_add(atom_id='Dx label'+atom_id_ext, record_name='HETATM', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+Dx_vect, element='N')
-        self.atom_add(atom_id='Dx neg label'+atom_id_ext, record_name='HETATM', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-Dx_vect, element='N')
-        self.atom_add(atom_id='Dy label'+atom_id_ext, record_name='HETATM', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+Dy_vect, element='N')
-        self.atom_add(atom_id='Dy neg label'+atom_id_ext, record_name='HETATM', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-Dy_vect, element='N')
-        self.atom_add(atom_id='Dz label'+atom_id_ext, record_name='HETATM', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+Dz_vect, element='N')
-        self.atom_add(atom_id='Dz neg label'+atom_id_ext, record_name='HETATM', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-Dz_vect, element='N')
+        atom_add(atom_id='Dx label'+atom_id_ext, record_name='HETATM', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+Dx_vect, element='N')
+        atom_add(atom_id='Dx neg label'+atom_id_ext, record_name='HETATM', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-Dx_vect, element='N')
+        atom_add(atom_id='Dy label'+atom_id_ext, record_name='HETATM', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+Dy_vect, element='N')
+        atom_add(atom_id='Dy neg label'+atom_id_ext, record_name='HETATM', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-Dy_vect, element='N')
+        atom_add(atom_id='Dz label'+atom_id_ext, record_name='HETATM', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+Dz_vect, element='N')
+        atom_add(atom_id='Dz neg label'+atom_id_ext, record_name='HETATM', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-Dz_vect, element='N')
 
     # Print out.
     if i == None:
@@ -719,15 +719,15 @@ def generate_spheroid_axes(chain_id=None, res_num=None, R=None, i=None):
     """
 
     # Alias the relevant data.
-    scale = self.scale
+    scale = scale
     if i == None:
-        Dpar = relax_data_store.diff[self.run].Dpar
-        Dpar_unit = relax_data_store.diff[self.run].Dpar_unit
+        Dpar = relax_data_store.diff[run].Dpar
+        Dpar_unit = relax_data_store.diff[run].Dpar_unit
         res_name = 'AXS'
         atom_id_ext = '_' + chain_id
     else:
-        Dpar = relax_data_store.diff[self.run].Dpar_sim[i]
-        Dpar_unit = relax_data_store.diff[self.run].Dpar_unit_sim[i]
+        Dpar = relax_data_store.diff[run].Dpar_sim[i]
+        Dpar_unit = relax_data_store.diff[run].Dpar_unit_sim[i]
         res_name = 'SIM'
         atom_id_ext = '_' + chain_id + '_sim' + `i`
 
@@ -742,11 +742,11 @@ def generate_spheroid_axes(chain_id=None, res_num=None, R=None, i=None):
     Dpar_vect_neg = R + Dpar_vect_neg
 
     # Create the 'AXS' residue.
-    self.atom_add(atom_id='R_axes'+atom_id_ext, record_name='HETATM', atom_name='R', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R, element='C')
-    self.atom_add(atom_id='Dpar'+atom_id_ext, record_name='HETATM', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dpar_vect, element='C')
-    self.atom_add(atom_id='Dpar_neg'+atom_id_ext, record_name='HETATM', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dpar_vect_neg, element='C')
-    self.atom_connect(atom_id='Dpar'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
-    self.atom_connect(atom_id='Dpar_neg'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
+    atom_add(atom_id='R_axes'+atom_id_ext, record_name='HETATM', atom_name='R', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R, element='C')
+    atom_add(atom_id='Dpar'+atom_id_ext, record_name='HETATM', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dpar_vect, element='C')
+    atom_add(atom_id='Dpar_neg'+atom_id_ext, record_name='HETATM', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dpar_vect_neg, element='C')
+    atom_connect(atom_id='Dpar'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
+    atom_connect(atom_id='Dpar_neg'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
 
     # Add two more atoms to allow the axis labels to be shifted just outside of the geometric object.
     if i == None:
@@ -754,8 +754,8 @@ def generate_spheroid_axes(chain_id=None, res_num=None, R=None, i=None):
         vect = Dpar_unit * (Dpar * scale + 3.0)
 
         # Add the atoms.
-        self.atom_add(atom_id='Dpar label'+atom_id_ext, record_name='HETATM', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+vect, element='N')
-        self.atom_add(atom_id='Dpar neg label'+atom_id_ext, record_name='HETATM', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-vect, element='N')
+        atom_add(atom_id='Dpar label'+atom_id_ext, record_name='HETATM', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+vect, element='N')
+        atom_add(atom_id='Dpar neg label'+atom_id_ext, record_name='HETATM', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-vect, element='N')
 
     # Print out.
     if i == None:
@@ -804,52 +804,52 @@ def get_chemical_name(hetID):
     raise RelaxError, "The residue ID (hetID) " + `hetID` + " is not recognised."
 
 
-def load_structures(self):
+def load_structures():
     """Function for loading the structures from the PDB file."""
 
     # Use pointers (references) if the PDB data exists in another run.
     for run in relax_data_store.run_names:
-        if relax_data_store.pdb.has_key(run) and hasattr(relax_data_store.pdb[run], 'structures') and relax_data_store.pdb[run].file_name == self.file and relax_data_store.pdb[run].model == self.model:
+        if relax_data_store.pdb.has_key(run) and hasattr(relax_data_store.pdb[run], 'structures') and relax_data_store.pdb[run].file_name == file and relax_data_store.pdb[run].model == model:
             # Make a pointer to the data.
-            relax_data_store.pdb[self.run].structures = relax_data_store.pdb[run].structures
+            relax_data_store.pdb[run].structures = relax_data_store.pdb[run].structures
 
             # Print out.
-            if self.verbosity:
+            if verbosity:
                 print "Using the structures from the run " + `run` + "."
-                for i in xrange(len(relax_data_store.pdb[self.run].structures)):
-                    print relax_data_store.pdb[self.run].structures[i]
+                for i in xrange(len(relax_data_store.pdb[run].structures)):
+                    print relax_data_store.pdb[run].structures[i]
 
             # Exit this function.
             return
 
     # Initialisation.
-    relax_data_store.pdb[self.run].structures = []
+    relax_data_store.pdb[run].structures = []
 
     # Load the structure i from the PDB file.
-    if type(self.model) == int:
+    if type(model) == int:
         # Print out.
-        if self.verbosity:
-            print "Loading structure " + `self.model` + " from the PDB file."
+        if verbosity:
+            print "Loading structure " + `model` + " from the PDB file."
 
         # Load the structure into 'str'.
-        str = Scientific.IO.PDB.Structure(self.file_path, self.model)
+        str = Scientific.IO.PDB.Structure(file_path, model)
 
         # Test the structure.
         if len(str) == 0:
-            raise RelaxPdbLoadError, self.file_path
+            raise RelaxPdbLoadError, file_path
 
         # Print the PDB info.
-        if self.verbosity:
+        if verbosity:
             print str
 
-        # Place the structure in 'relax_data_store.pdb[self.run]'.
-        relax_data_store.pdb[self.run].structures.append(str)
+        # Place the structure in 'relax_data_store.pdb[run]'.
+        relax_data_store.pdb[run].structures.append(str)
 
 
     # Load all structures.
     else:
         # Print out.
-        if self.verbosity:
+        if verbosity:
             print "Loading all structures from the PDB file."
 
         # First model.
@@ -858,13 +858,13 @@ def load_structures(self):
         # Loop over all the other structures.
         while 1:
             # Load the pdb files.
-            str = Scientific.IO.PDB.Structure(self.file_path, i)
+            str = Scientific.IO.PDB.Structure(file_path, i)
 
             # No model 1.
             if len(str) == 0 and i == 1:
-                str = Scientific.IO.PDB.Structure(self.file_path)
+                str = Scientific.IO.PDB.Structure(file_path)
                 if len(str) == 0:
-                    raise RelaxPdbLoadError, self.file_path
+                    raise RelaxPdbLoadError, file_path
 
             # Test if the last structure has been reached.
             if len(str) == 0:
@@ -872,11 +872,11 @@ def load_structures(self):
                 break
 
             # Print the PDB info.
-            if self.verbosity:
+            if verbosity:
                 print str
 
-            # Place the structure in 'relax_data_store.pdb[self.run]'.
-            relax_data_store.pdb[self.run].structures.append(str)
+            # Place the structure in 'relax_data_store.pdb[run]'.
+            relax_data_store.pdb[run].structures.append(str)
 
             # Increment i.
             i = i + 1
@@ -893,22 +893,22 @@ def read_pdb(run=None, file=None, dir=None, model=None, load_seq=1, fail=1, verb
         raise RelaxNoPipeError, run
 
     # Test if PDB data corresponding to the run already exists.
-    if relax_data_store.pdb.has_key(self.run):
-        raise RelaxPdbError, self.run
+    if relax_data_store.pdb.has_key(run):
+        raise RelaxPdbError, run
 
     # Test if sequence data is loaded.
-    if not self.load_seq and not len(relax_data_store.res[self.run]):
-        raise RelaxNoSequenceError, self.run
+    if not load_seq and not len(relax_data_store.res[run]):
+        raise RelaxNoSequenceError, run
 
     # The file path.
-    self.file_path = self.relax.IO.file_path(self.file, self.dir)
+    file_path = relax.IO.file_path(file, dir)
 
     # Test if the file exists.
-    if not access(self.file_path, F_OK):
+    if not access(file_path, F_OK):
         if fail:
-            raise RelaxFileError, ('PDB', self.file_path)
+            raise RelaxFileError, ('PDB', file_path)
         else:
-            warn(RelaxNoPDBFileWarning(self.file_path))
+            warn(RelaxNoPDBFileWarning(file_path))
             return
 
 
@@ -916,30 +916,30 @@ def read_pdb(run=None, file=None, dir=None, model=None, load_seq=1, fail=1, verb
     ################
 
     # Add the run to the PDB data structure.
-    relax_data_store.pdb.add_item(self.run)
+    relax_data_store.pdb.add_item(run)
 
     # File name.
-    relax_data_store.pdb[self.run].file_name = self.file_path
+    relax_data_store.pdb[run].file_name = file_path
 
     # Model.
-    relax_data_store.pdb[self.run].model = model
+    relax_data_store.pdb[run].model = model
 
 
     # Load the structures.
     ######################
 
-    self.load_structures()
+    load_structures()
 
 
     # Finish.
     #########
 
     # Sequence loading.
-    if self.load_seq and not relax_data_store.res.has_key(self.run):
-        self.relax.generic.sequence.load_PDB_sequence(self.run)
+    if load_seq and not relax_data_store.res.has_key(run):
+        relax.generic.sequence.load_PDB_sequence(run)
 
     # Load into Molmol (if running).
-    self.relax.generic.molmol.open_pdb(self.run)
+    relax.generic.molmol.open_pdb(run)
 
 
 def set_vector(run=None, res=None, xh_vect=None):
@@ -979,19 +979,19 @@ def vectors(run=None, heteronuc=None, proton=None, res_num=None, res_name=None):
         raise RelaxError, "The proton and heteronucleus are set to the same atom."
 
     # Number of structures.
-    num_str = len(relax_data_store.pdb[self.run].structures)
+    num_str = len(relax_data_store.pdb[run].structures)
 
     # Print out.
-    if self.verbosity:
+    if verbosity:
         if num_str > 1:
             print "\nCalculating and averaging the unit XH vectors from all structures."
         else:
             print "\nCalculating the unit XH vectors from the structure."
 
     # Loop over the sequence.
-    for i in xrange(len(relax_data_store.res[self.run])):
-        # Remap the data structure 'relax_data_store.res[self.run][j]'.
-        data = relax_data_store.res[self.run][i]
+    for i in xrange(len(relax_data_store.res[run])):
+        # Remap the data structure 'relax_data_store.res[run][j]'.
+        data = relax_data_store.res[run][i]
 
         # Skip unselected residues.
         if not data.select:
@@ -1015,7 +1015,7 @@ def vectors(run=None, heteronuc=None, proton=None, res_num=None, res_name=None):
         data.heteronuc = heteronuc
 
         # Calculate the vector.
-        vector = self.xh_vector(data)
+        vector = xh_vector(data)
 
         # Set the vector.
         if vector:
@@ -1333,8 +1333,8 @@ def write_pdb_file(file):
     # Sort the atoms.
     #################
 
-    # Convert the self.atomic_data structure from a dictionary of arrays to an array of arrays and sort it by atom number.
-    atomic_arrays = self.atomic_data.values()
+    # Convert the atomic_data structure from a dictionary of arrays to an array of arrays and sort it by atom number.
+    atomic_arrays = atomic_data.values()
     atomic_arrays.sort()
 
 
@@ -1408,7 +1408,7 @@ def write_pdb_file(file):
             residues.append(het[1])
 
         # Get the chemical name.
-        chemical_name = self.get_chemical_name(het[1])
+        chemical_name = get_chemical_name(het[1])
 
         # Write the HETNAM records.
         file.write("%-6s  %2s %3s %-55s\n" % ('HETNAM', '', het[1], chemical_name))
@@ -1532,7 +1532,7 @@ def write_pdb_file(file):
     print "Creating the MASTER record."
 
     # Write the MASTER record.
-    file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data), 0, 0, 0, 0, 0, len(self.atomic_data), 1, connect_count, 0))
+    file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data), 0, 0, 0, 0, 0, len(atomic_data), 1, connect_count, 0))
 
 
     # END.
@@ -1565,7 +1565,7 @@ def xh_vector(data, structure=None, unit=1):
     ave_vector = zeros(3, float64)
 
     # Number of structures.
-    num_str = len(relax_data_store.pdb[self.run].structures)
+    num_str = len(relax_data_store.pdb[run].structures)
 
     # Loop over the structures.
     for i in xrange(num_str):
@@ -1574,10 +1574,10 @@ def xh_vector(data, structure=None, unit=1):
             continue
 
         # Reassign the first peptide or nucleotide chain of the first structure.
-        if relax_data_store.pdb[self.run].structures[i].peptide_chains:
-            pdb_residues = relax_data_store.pdb[self.run].structures[i].peptide_chains[0].residues
-        elif relax_data_store.pdb[self.run].structures[i].nucleotide_chains:
-            pdb_residues = relax_data_store.pdb[self.run].structures[i].nucleotide_chains[0].residues
+        if relax_data_store.pdb[run].structures[i].peptide_chains:
+            pdb_residues = relax_data_store.pdb[run].structures[i].peptide_chains[0].residues
+        elif relax_data_store.pdb[run].structures[i].nucleotide_chains:
+            pdb_residues = relax_data_store.pdb[run].structures[i].nucleotide_chains[0].residues
         else:
             raise RelaxNoPdbChainError
 
