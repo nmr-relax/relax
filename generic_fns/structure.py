@@ -885,15 +885,6 @@ def load_structures(self):
 def read_pdb(run=None, file=None, dir=None, model=None, load_seq=1, fail=1, verbosity=1):
     """The pdb loading function."""
 
-    # Arguments.
-    self.run = run
-    self.file = file
-    self.dir = dir
-    self.model = model
-    self.load_seq = load_seq
-    self.fail = fail
-    self.verbosity = verbosity
-
     # Tests.
     ########
 
