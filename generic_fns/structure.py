@@ -31,6 +31,8 @@ from warnings import warn
 
 # relax module imports.
 from data import Data as relax_data_store
+from generic_fns import molmol
+from generic_fns.sequence import load_PDB_sequence
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbChainError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError, RelaxPdbError, RelaxPdbLoadError, RelaxRegExpError
 from relax_io import get_file_path
 from relax_warnings import RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxWarning, RelaxZeroVectorWarning
@@ -817,6 +819,9 @@ def load_structures(file_path, model, verbosity=False):
     @type verbosity:    bool
     """
 
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
     # Use pointers (references) if the PDB data exists in another run.
     for data_pipe in relax_data_store:
         if hasattr(data_pipe, 'structure') and hasattr(cdp.structure, 'structures') and data_pipe.structure.file_name == file_path and data_pipe.structure.model == model:
@@ -945,11 +950,11 @@ def read_pdb(run=None, file=None, dir=None, model=None, load_seq=1, fail=1, verb
     #########
 
     # Sequence loading.
-    if load_seq and not relax_data_store.res.has_key(run):
-        relax.generic.sequence.load_PDB_sequence(run)
+    if load_seq and not count_spins():
+        load_PDB_sequence()
 
     # Load into Molmol (if running).
-    relax.generic.molmol.open_pdb(run)
+    molmol.open_pdb()
 
 
 def set_vector(run=None, res=None, xh_vect=None):
