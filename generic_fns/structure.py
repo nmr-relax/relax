@@ -921,10 +921,10 @@ def read_pdb(run=None, file=None, dir=None, model=None, load_seq=1, fail=1, verb
     ################
 
     # File name.
-    relax_data_store.pdb[run].file_name = file_path
+    cdp.structure.file_name = file_path
 
     # Model.
-    relax_data_store.pdb[run].model = model
+    cdp.structure.model = model
 
 
     # Load the structures.
