@@ -35,9 +35,6 @@ from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbChainError, Relax
 from relax_warnings import RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxWarning, RelaxZeroVectorWarning
 
 
-# The relax data storage object.
-
-
 
 class Structure:
     def __init__(self, relax):
