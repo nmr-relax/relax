@@ -39,15 +39,12 @@ def clear_history():
     command_history = ""
 
 
-def command(run, command):
-    """Function for sending Molmol commands to the program pipe."""
+def command(command):
+    """Function for sending Molmol commands to the program pipe.
 
-    # Arguments.
-    run = run
-
-    # Test if the run exists.
-    if not run in relax_data_store.run_names:
-        raise RelaxNoPipeError, run
+    @param command: The Molmol command to send into Molmol.
+    @type command:  str
+    """
 
     # Pass the command to Molmol.
     pipe_write(command)
