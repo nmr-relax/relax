@@ -110,12 +110,8 @@ def macro_exec(data_type=None, style="classic", colour_start=None, colour_end=No
         pipe_write(command)
 
 
-def open_pdb(run=None):
+def open_pdb():
     """Function for opening the PDB file in Molmol."""
-
-    # Argument.
-    if run:
-        run = run
 
     # Test if the pipe is open.
     if not pipe_open_test():
@@ -125,7 +121,7 @@ def open_pdb(run=None):
     pipe_write("InitAll yes")
 
     # Open the PDB.
-    pipe_write("ReadPdb " + relax_data_store.pdb[run].file_name)
+    pipe_write("ReadPdb " + relax_data_store[relax_data_store.current_pipe].structure.file_name)
 
 
 def pipe_open():
