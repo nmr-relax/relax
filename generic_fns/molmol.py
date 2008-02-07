@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006-2007 Edward d'Auvergne                             #
+# Copyright (C) 2004, 2006-2008 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,262 +26,279 @@ from string import split
 
 # relax module imports.
 from data import Data as relax_data_store
+from generic_fns.selection import exists_mol_res_spin_data
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
+from relax_io import open_write_file, test_binary
+from specific_fns import get_specific_fn
 
 
+command_history = ""
+"""Variable for storing the Molmol command history."""
 
 
+def clear_history():
+    """Function for clearing the Molmol command history."""
 
-class Molmol:
-    def __init__(self, relax):
-        """Class containing the functions for viewing molecules."""
+    command_history = ""
 
-        self.relax = relax
 
-        # Initialise the command history (for reopening Molmol pipes).
-        self.clear_history()
+def command(command):
+    """Function for sending Molmol commands to the program pipe.
 
+    @param command: The Molmol command to send into Molmol.
+    @type command:  str
+    """
 
-    def clear_history(self):
-        """Function for clearing the Molmol command history."""
+    # Pass the command to Molmol.
+    pipe_write(command)
 
-        self.command_history = ""
 
+def create_macro(data_type=None, style=None, colour_start=None, colour_end=None, colour_list=None):
+    """Function for creating an array of Molmol commands.
 
-    def command(self, run, command):
-        """Function for sending Molmol commands to the program pipe."""
+    @param data_type:       The data type or parameter name of which to map its values onto the
+                            structure.
+    @type data_type:        str
+    @param style:           The style for the Molmol macro.
+    @type style:            str
+    @param colour_start:    The starting colour.
+    @type colour_start:     str or list of 3 floats
+    @param colour_end:      The terminating colour.
+    @type colour_end:       str or list of 3 floats
+    @param colour_list:     The type of colour being specified (either 'molmol' or 'x11').
+    @type colour_list:      str
+    @return:                The Molmol macro consisting of a set of Molmol commands.
+    @rtype:                 str
+    """
 
-        # Arguments.
-        self.run = run
+    # Specific Molmol macro creation function.
+    molmol_macro = get_specific_fn('molmol_macro', relax_data_store[relax_data_store.current_pipe].pipe_type)
 
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
+    # Get the macro.
+    commands = molmol_macro(data_type, style, colour_start, colour_end, colour_list)
 
-        # Pass the command to Molmol.
-        self.pipe_write(command)
+    # Return the Molmol commands.
+    return commands
 
 
-    def create_macro(self):
-        """Function for creating an array of Molmol commands."""
+def macro_exec(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
+    """Function for executing a Molmol macro.
 
-        # Function type.
-        self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
+    @param data_type:       The data type or parameter name of which to map its values onto the
+                            structure.
+    @type data_type:        str
+    @param style:           The style for the Molmol macro.
+    @type style:            str
+    @param colour_start:    The starting colour.
+    @type colour_start:     str or list of 3 floats
+    @param colour_end:      The terminating colour.
+    @type colour_end:       str or list of 3 floats
+    @param colour_list:     The type of colour being specified (either 'molmol' or 'x11').
+    @type colour_list:      str
+    @return:                The Molmol macro consisting of a set of Molmol commands.
+    @rtype:                 str
+    """
 
-        # Specific Molmol macro creation function.
-        molmol_macro = self.relax.specific_setup.setup('molmol_macro', self.function_type)
+    # Test if the sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
-        # Get the macro.
-        self.commands = molmol_macro(self.run, self.data_type, self.style, self.colour_start, self.colour_end, self.colour_list)
+    # Create the macro.
+    commands = create_macro(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
 
+    # Loop over the commands and execute them.
+    for command in commands:
+        pipe_write(command)
 
-    def macro_exec(self, run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
-        """Function for executing a Molmol macro."""
 
-        # Arguments.
-        self.run = run
-        self.data_type = data_type
-        self.style = style
-        self.colour_start = colour_start
-        self.colour_end = colour_end
-        self.colour_list = colour_list
+def open_pdb():
+    """Function for opening the PDB file in Molmol."""
 
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
+    # Test if the pipe is open.
+    if not pipe_open_test():
+        return
 
-        # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+    # Run InitAll to remove everything from molmol.
+    pipe_write("InitAll yes")
 
-        # Create the macro.
-        self.create_macro()
+    # Open the PDB.
+    pipe_write("ReadPdb " + relax_data_store[relax_data_store.current_pipe].structure.file_name)
 
-        # Loop over the commands and execute them.
-        for command in self.commands:
-            self.pipe_write(command)
 
+def pipe_open():
+    """Function for opening a Molmol pipe."""
 
-    def open_pdb(self, run=None):
-        """Function for opening the PDB file in Molmol."""
+    # Test that the Molmol binary exists.
+    test_binary('molmol')
 
-        # Argument.
-        if run:
-            self.run = run
+    # Alias the data pipe container.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
-        # Test if the pipe is open.
-        if not self.pipe_open_test():
-            return
+    # Open and store the Molmol pipe.
+    cdp.molmol = popen("molmol -f -", 'w', 0)
 
-        # Run InitAll to remove everything from molmol.
-        self.pipe_write("InitAll yes")
+    # Execute the command history.
+    if len(command_history) > 0:
+        pipe_write(command_history, store_command=0)
+        return
 
-        # Open the PDB.
-        self.pipe_write("ReadPdb " + relax_data_store.pdb[self.run].file_name)
+    # Test if the PDB file has been loaded.
+    if hasattr(cdp, 'structure'):
+        open_pdb()
 
+    # Run InitAll to remove everything from molmol.
+    else:
+        pipe_write("InitAll yes")
 
-    def pipe_open(self):
-        """Function for opening a Molmol pipe."""
 
-        # Test that the Molmol binary exists.
-        self.relax.IO.test_binary('molmol')
+def pipe_open_test():
+    """Function for testing if the Molmol pipe is open.
 
-        # Open the Molmol pipe.
-        relax_data_store.molmol = popen("molmol -f -", 'w', 0)
+    @return:    Whether the Molmol pipe is open or not.
+    @rtype:     bool
+    """
 
-        # Execute the command history.
-        if len(self.command_history) > 0:
-            self.pipe_write(self.command_history, store_command=0)
-            return
+    # Alias the data pipe container.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
-        # Test if the PDB file has been loaded.
-        if hasattr(relax_data_store, 'pdb') and relax_data_store.pdb.has_key(self.run):
-            self.open_pdb()
+    # Test if a pipe has been opened.
+    if not hasattr(cdp, 'molmol'):
+        return False
 
-        # Run InitAll to remove everything from molmol.
-        else:
-            self.pipe_write("InitAll yes")
+    # Test if the pipe has been broken.
+    try:
+        cdp.molmol.write('\n')
+    except IOError:
+        return False
 
+    # The pipe is open.
+    return True
 
-    def pipe_open_test(self):
-        """Function for testing if the Molmol pipe is open."""
 
-        # Test if a pipe has been opened.
-        if not hasattr(relax_data_store, 'molmol'):
-            return 0
+def pipe_write(command=None, store_command=True):
+    """Function for writing to the Molmol pipe.
 
-        # Test if the pipe has been broken.
-        try:
-            relax_data_store.molmol.write('\n')
-        except IOError:
-            return 0
+    This function is also used to execute a user supplied Molmol command.
 
-        # The pipe is open.
-        return 1
 
+    @param command: The Molmol command to send into Molmol.
+    @type command:  str
+    @param store_command:   A flag specifying if the command should be stored in the history
+                            variable.
+    @type store_command:    bool
+    """
 
-    def pipe_write(self, command=None, store_command=1):
-        """Function for writing to the Molmol pipe.
+    # Reopen the pipe if needed.
+    if not pipe_open_test():
+        pipe_open()
 
-        This function is also used to execute a user supplied Molmol command.
-        """
+    # Write the command to the pipe.
+    relax_data_store[relax_data_store.current_pipe].molmol.write(command + '\n')
 
-        # Reopen the pipe if needed.
-        if not self.pipe_open_test():
-            self.pipe_open()
+    # Place the command in the command history.
+    if store_command:
+        command_history = command_history + command + "\n"
 
-        # Write the command to the pipe.
-        relax_data_store.molmol.write(command + '\n')
 
-        # Place the command in the command history.
-        if store_command:
-            self.command_history = self.command_history + command + "\n"
+def ribbon():
+    """Apply the Molmol ribbon style."""
 
+    # Calculate the protons.
+    pipe_write("CalcAtom 'H'")
+    pipe_write("CalcAtom 'HN'")
 
-    def ribbon(self, run=None):
-        """Apply the Molmol ribbon style."""
+    # Calculate the secondary structure.
+    pipe_write("CalcSecondary")
 
-        # Arguments.
-        self.run = run
+    # Execute the ribbon macro.
+    pipe_write("XMacStand ribbon.mac")
 
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
 
-        # Calculate the protons.
-        self.pipe_write("CalcAtom 'H'")
-        self.pipe_write("CalcAtom 'HN'")
+def tensor_pdb(file=None):
+    """Display the diffusion tensor geometric structure.
 
-        # Calculate the secondary structure.
-        self.pipe_write("CalcSecondary")
+    @param file:    The name of the PDB file containing the tensor geometric object.
+    @type file:     str
+    """
 
-        # Execute the ribbon macro.
-        self.pipe_write("XMacStand ribbon.mac")
+    # To overlay the structure with the diffusion tensor, select all and reorient to the PDB frame.
+    pipe_write("SelectAtom ''")
+    pipe_write("SelectBond ''")
+    pipe_write("SelectAngle ''")
+    pipe_write("SelectDist ''")
+    pipe_write("SelectPrim ''")
+    pipe_write("RotateInit")
+    pipe_write("MoveInit")
 
+    # Read in the tensor PDB file and force Molmol to recognise the CONECT records (not that it will show the bonds)!
+    pipe_write("ReadPdb " + file)
+    file_parts = split(file, '.')
+    pipe_write("SelectMol '@" + file_parts[0] + "'")
+    pipe_write("CalcBond 1 1 1")
 
-    def tensor_pdb(self, run=None, file=None):
-        """Display the diffusion tensor geometric structure."""
+    # Apply the 'ball/stick' style to the tensor.
+    pipe_write("SelectAtom '0'")
+    pipe_write("SelectBond '0'")
+    pipe_write("SelectAtom ':TNS'")
+    pipe_write("SelectBond ':TNS'")
+    pipe_write("XMacStand ball_stick.mac")
 
-        # Arguments.
-        self.run = run
+    # Touch up.
+    pipe_write("RadiusAtom 1")
+    pipe_write("SelectAtom ':TNS@C*'")
+    pipe_write("RadiusAtom 1.5")
 
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
 
-        # To overlay the structure with the diffusion tensor, select all and reorient to the PDB frame.
-        self.pipe_write("SelectAtom ''")
-        self.pipe_write("SelectBond ''")
-        self.pipe_write("SelectAngle ''")
-        self.pipe_write("SelectDist ''")
-        self.pipe_write("SelectPrim ''")
-        self.pipe_write("RotateInit")
-        self.pipe_write("MoveInit")
+def view():
+    """Function for running Molmol."""
 
-        # Read in the tensor PDB file and force Molmol to recognise the CONECT records (not that it will show the bonds)!
-        self.pipe_write("ReadPdb " + file)
-        file_parts = split(file, '.')
-        self.pipe_write("SelectMol '@" + file_parts[0] + "'")
-        self.pipe_write("CalcBond 1 1 1")
+    # Open a Molmol pipe.
+    if pipe_open_test():
+        raise RelaxError, "The Molmol pipe already exists."
+    else:
+        pipe_open()
 
-        # Apply the 'ball/stick' style to the tensor.
-        self.pipe_write("SelectAtom '0'")
-        self.pipe_write("SelectBond '0'")
-        self.pipe_write("SelectAtom ':TNS'")
-        self.pipe_write("SelectBond ':TNS'")
-        self.pipe_write("XMacStand ball_stick.mac")
 
-        # Touch up.
-        self.pipe_write("RadiusAtom 1")
-        self.pipe_write("SelectAtom ':TNS@C*'")
-        self.pipe_write("RadiusAtom 1.5")
+def write(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir=None, force=False):
+    """Function for creating a Molmol macro.
 
+    @param data_type:       The data type or parameter name of which to map its values onto the
+                            structure.
+    @type data_type:        str
+    @param style:           The style for the Molmol macro.
+    @type style:            str
+    @param colour_start:    The starting colour.
+    @type colour_start:     str or list of 3 floats
+    @param colour_end:      The terminating colour.
+    @type colour_end:       str or list of 3 floats
+    @param colour_list:     The type of colour being specified (either 'molmol' or 'x11').
+    @type colour_list:      str
+    @param file:            The name of the Molmol macro file to be created.
+    @type file:             str
+    @param dir:             The dirctory for placing the file into.
+    @type dir:              str
+    @param force:           A flag which, if True, will cause the file to be overwritten if it
+                            already exists.
+    @type force:            bool
+    """
 
-    def view(self, run=None):
-        """Function for running Molmol."""
+    # Test if the sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
-        # Arguments.
-        self.run = run
+    # File name.
+    if file == None:
+        file = data_type + '.mac'
 
-        # Open a Molmol pipe.
-        if self.pipe_open_test():
-            raise RelaxError, "The Molmol pipe already exists."
-        else:
-            self.pipe_open()
+    # Open the file for writing.
+    file = open_write_file(file, dir, force)
 
+    # Create the macro.
+    commands = create_macro(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
 
-    def write(self, run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir=None, force=0):
-        """Function for creating a Molmol macro."""
+    # Loop over the commands and write them.
+    for command in commands:
+        file.write(command + "\n")
 
-        # Arguments.
-        self.run = run
-        self.data_type = data_type
-        self.style = style
-        self.colour_start = colour_start
-        self.colour_end = colour_end
-        self.colour_list = colour_list
-
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
-
-        # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
-
-        # Create the macro.
-        self.create_macro()
-
-        # File name.
-        if file == None:
-            file = data_type + '.mac'
-
-        # Open the file for writing.
-        file = self.relax.IO.open_write_file(file, dir, force)
-
-        # Loop over the commands and write them.
-        for command in self.commands:
-            file.write(command + "\n")
-
-        # Close the file.
-        file.close()
+    # Close the file.
+    file.close()

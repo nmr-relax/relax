@@ -130,8 +130,11 @@ class RelaxProgFailError(BaseError):
 
 # PDB data corresponding to the data pipe already exists.
 class RelaxPdbError(BaseError):
-    def __init__(self, pipe):
-        self.text = "PDB data corresponding to the data pipe " + `pipe` + " already exists."
+    def __init__(self, pipe=None):
+        if pipe != None:
+            self.text = "PDB data corresponding to the data pipe " + `pipe` + " already exists."
+        else:
+            self.text = "PDB data already exists."
         if Debug:
             self.save_state()
 

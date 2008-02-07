@@ -27,7 +27,7 @@ from numpy import float64, dot, identity, transpose, zeros
 from types import ListType
 
 # relax module imports.
-from data_classes import Element, SpecificData
+from data_classes import Element
 from relax_errors import RelaxError
 
 
