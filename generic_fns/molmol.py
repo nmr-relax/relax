@@ -29,6 +29,8 @@ from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
 
 
+command_history = ""
+"""Variable for storing the Molmol command history."""
 
 
 
@@ -38,14 +40,11 @@ class Molmol:
 
         self.relax = relax
 
-        # Initialise the command history (for reopening Molmol pipes).
-        self.clear_history()
-
 
     def clear_history(self):
         """Function for clearing the Molmol command history."""
 
-        self.command_history = ""
+        command_history = ""
 
 
     def command(self, run, command):
@@ -130,8 +129,8 @@ class Molmol:
         relax_data_store.molmol = popen("molmol -f -", 'w', 0)
 
         # Execute the command history.
-        if len(self.command_history) > 0:
-            self.pipe_write(self.command_history, store_command=0)
+        if len(command_history) > 0:
+            self.pipe_write(command_history, store_command=0)
             return
 
         # Test if the PDB file has been loaded.
@@ -175,7 +174,7 @@ class Molmol:
 
         # Place the command in the command history.
         if store_command:
-            self.command_history = self.command_history + command + "\n"
+            command_history = command_history + command + "\n"
 
 
     def ribbon(self, run=None):
