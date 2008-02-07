@@ -1016,7 +1016,7 @@ def vectors(heteronuc=None, proton=None, spin_id=None, verbosity=1):
         vector = xh_vector(spin)
 
         # Set the vector.
-        if vector:
+        if vector != None:
             spin.xh_vect = vector
 
 
