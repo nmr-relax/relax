@@ -964,7 +964,7 @@ def set_vector(run=None, res=None, xh_vect=None):
     relax_data_store.res[run][res].xh_vect = xh_vect
 
 
-def vectors(heteronuc=None, proton=None, spin_id=None):
+def vectors(heteronuc=None, proton=None, spin_id=None, verbosity=1):
     """Function for calculating/extracting the XH unit vector from the loaded structure.
 
     @param heteronuc:   The name of the heteronucleus.
@@ -973,6 +973,8 @@ def vectors(heteronuc=None, proton=None, spin_id=None):
     @type proton:       str
     @param spin_id:     The molecule, residue, and spin identifier string.
     @type spin_id:      str
+    @param verbosity:   The higher the value, the more information is printed to screen.
+    @type verbosity:    int
     """
 
     # Alias the current data pipe.
