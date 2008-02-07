@@ -21,7 +21,6 @@
 ###############################################################################
 
 # Python module imports.
-import sys
 from unittest import TestCase
 
 # relax module imports.
@@ -47,14 +46,5 @@ class Angles(TestCase):
     def test_angles(self):
         """The user function angles()."""
 
-        # Read a PDB file.
-        self.relax.interpreter._Structure.read_pdb(file='test.pdb', dir=sys.path[-1] + '/test_suite/system_tests/data', model=1)
-
-        # Set the NH vector.
-        self.relax.interpreter._Structure.vectors(heteronuc='N', proton='H')
-
-        # Initialise a diffusion tensor.
-        self.relax.interpreter._Diffusion_tensor.init((1.698e7, 1.417e7, 67.174, -83.718), param_types=3)
-
-        # Calculate the angles.
-        self.relax.interpreter._Angles.angles()
+        # Execute the script.
+        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/angles.py')
