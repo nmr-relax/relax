@@ -200,15 +200,8 @@ def pipe_write(command=None, store_command=True):
         command_history = command_history + command + "\n"
 
 
-def ribbon(run=None):
+def ribbon():
     """Apply the Molmol ribbon style."""
-
-    # Arguments.
-    run = run
-
-    # Test if the run exists.
-    if not run in relax_data_store.run_names:
-        raise RelaxNoPipeError, run
 
     # Calculate the protons.
     pipe_write("CalcAtom 'H'")
