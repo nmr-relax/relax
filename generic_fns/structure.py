@@ -37,7 +37,6 @@ from generic_fns.selection import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbChainError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError, RelaxPdbError, RelaxPdbLoadError, RelaxRegExpError
 from relax_io import get_file_path
 from relax_warnings import RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxWarning, RelaxZeroVectorWarning
-from selection import count_spins
 
 
 
@@ -916,7 +915,7 @@ def read_pdb(run=None, file=None, dir=None, model=None, load_seq=1, fail=1, verb
         raise RelaxPdbError
 
     # Test if sequence data is loaded.
-    if not load_seq and not count_spins():
+    if not load_seq and not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
     # The file path.
@@ -951,7 +950,7 @@ def read_pdb(run=None, file=None, dir=None, model=None, load_seq=1, fail=1, verb
     #########
 
     # Sequence loading.
-    if load_seq and not count_spins():
+    if load_seq and not exists_mol_res_spin_data():
         load_PDB_sequence()
 
     # Load into Molmol (if running).
