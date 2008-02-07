@@ -104,7 +104,7 @@ def macro_exec(data_type=None, style="classic", colour_start=None, colour_end=No
         raise RelaxNoSequenceError
 
     # Create the macro.
-    commands = create_macro()
+    commands = create_macro(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
 
     # Loop over the commands and execute them.
     for command in commands:
@@ -286,15 +286,15 @@ def write(data_type=None, style="classic", colour_start=None, colour_end=None, c
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Create the macro.
-    commands = create_macro()
-
     # File name.
     if file == None:
         file = data_type + '.mac'
 
     # Open the file for writing.
     file = open_write_file(file, dir, force)
+
+    # Create the macro.
+    commands = create_macro(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
 
     # Loop over the commands and write them.
     for command in commands:
