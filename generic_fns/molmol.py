@@ -175,10 +175,17 @@ def pipe_open_test():
     return True
 
 
-def pipe_write(command=None, store_command=1):
+def pipe_write(command=None, store_command=True):
     """Function for writing to the Molmol pipe.
 
     This function is also used to execute a user supplied Molmol command.
+
+
+    @param command: The Molmol command to send into Molmol.
+    @type command:  str
+    @param store_command:   A flag specifying if the command should be stored in the history
+                            variable.
+    @type store_command:    bool
     """
 
     # Reopen the pipe if needed.
@@ -186,7 +193,7 @@ def pipe_write(command=None, store_command=1):
         pipe_open()
 
     # Write the command to the pipe.
-    relax_data_store.molmol.write(command + '\n')
+    relax_data_store[relax_data_store.current_pipe].molmol.write(command + '\n')
 
     # Place the command in the command history.
     if store_command:
