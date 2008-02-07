@@ -26,6 +26,7 @@ from string import split
 
 # relax module imports.
 from data import Data as relax_data_store
+from generic_fns.selection import exists_mol_res_spin_data
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
 from specific_fns import get_specific_fn
 
@@ -79,24 +80,27 @@ def create_macro(data_type=None, style=None, colour_start=None, colour_end=None,
     return commands
 
 
-def macro_exec(run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
-    """Function for executing a Molmol macro."""
+def macro_exec(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
+    """Function for executing a Molmol macro.
 
-    # Arguments.
-    run = run
-    data_type = data_type
-    style = style
-    colour_start = colour_start
-    colour_end = colour_end
-    colour_list = colour_list
-
-    # Test if the run exists.
-    if not run in relax_data_store.run_names:
-        raise RelaxNoPipeError, run
+    @param data_type:       The data type or parameter name of which to map its values onto the
+                            structure.
+    @type data_type:        str
+    @param style:           The style for the Molmol macro.
+    @type style:            str
+    @param colour_start:    The starting colour.
+    @type colour_start:     str or list of 3 floats
+    @param colour_end:      The terminating colour.
+    @type colour_end:       str or list of 3 floats
+    @param colour_list:     The type of colour being specified (either 'molmol' or 'x11').
+    @type colour_list:      str
+    @return:                The Molmol macro consisting of a set of Molmol commands.
+    @rtype:                 str
+    """
 
     # Test if the sequence data is loaded.
-    if not relax_data_store.res.has_key(run):
-        raise RelaxNoSequenceError, run
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
     # Create the macro.
     commands = create_macro()
