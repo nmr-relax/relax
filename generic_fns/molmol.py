@@ -131,8 +131,11 @@ def pipe_open():
     # Test that the Molmol binary exists.
     test_binary('molmol')
 
-    # Open the Molmol pipe.
-    relax_data_store.molmol = popen("molmol -f -", 'w', 0)
+    # Alias the data pipe container.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Open and store the Molmol pipe.
+    cdp.molmol = popen("molmol -f -", 'w', 0)
 
     # Execute the command history.
     if len(command_history) > 0:
@@ -140,7 +143,7 @@ def pipe_open():
         return
 
     # Test if the PDB file has been loaded.
-    if hasattr(relax_data_store, 'pdb') and relax_data_store.pdb.has_key(run):
+    if hasattr(cdp, 'structure'):
         open_pdb()
 
     # Run InitAll to remove everything from molmol.
