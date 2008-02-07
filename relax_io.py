@@ -384,6 +384,46 @@ def strip(data):
     return new
 
 
+def test_binary(binary):
+    """Function for testing that the binary string corresponds to a valid executable file.
+
+    @param binary:  The name or path of the binary executable file.
+    @type binary:   str
+    """
+
+    # Path separator RE string.
+    if altsep:
+        path_sep = '[' + sep + altsep + ']'
+    else:
+        path_sep = sep
+
+    # The full path of the program has been given (if a directory separatory has been supplied).
+    if search(path_sep, binary):
+        # Test that the binary exists.
+        if not access(binary, F_OK):
+            raise RelaxMissingBinaryError, binary
+
+        # Test that if the binary is executable.
+        if not access(binary, X_OK):
+            raise RelaxNonExecError, binary
+
+    # The path to the binary has not been given.
+    else:
+        # Get the PATH environmental variable.
+        path = getenv('PATH')
+
+        # Split PATH by the path separator.
+        path_list = split(path, pathsep)
+
+        # Test that the binary exists within the system path (and exit this function instantly once it has been found).
+        for path in path_list:
+            if access(path + sep + binary, F_OK):
+                return
+
+        # The binary is not located in the system path!
+        raise RelaxNoInPathError, binary
+
+
 
 
 
@@ -493,42 +533,6 @@ class IO:
         sys.stdin  = self.tee_stdin
         sys.stdout = self.tee_stdout
         sys.stderr = self.tee_stderr
-
-
-    def test_binary(self, binary):
-        """Function for testing that the binary string corresponds to a valid executable file."""
-
-        # Path separator RE string.
-        if altsep:
-            path_sep = '[' + sep + altsep + ']'
-        else:
-            path_sep = sep
-
-        # The full path of the program has been given (if a directory separatory has been supplied).
-        if search(path_sep, binary):
-            # Test that the binary exists.
-            if not access(binary, F_OK):
-                raise RelaxMissingBinaryError, binary
-
-            # Test that if the binary is executable.
-            if not access(binary, X_OK):
-                raise RelaxNonExecError, binary
-
-        # The path to the binary has not been given.
-        else:
-            # Get the PATH environmental variable.
-            path = getenv('PATH')
-
-            # Split PATH by the path separator.
-            path_list = split(path, pathsep)
-
-            # Test that the binary exists within the system path (and exit this function instantly once it has been found).
-            for path in path_list:
-                if access(path + sep + binary, F_OK):
-                    return
-
-            # The binary is not located in the system path!
-            raise RelaxNoInPathError, binary
 
 
 class SplitIO:
