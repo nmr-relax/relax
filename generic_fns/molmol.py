@@ -152,20 +152,27 @@ def pipe_open():
 
 
 def pipe_open_test():
-    """Function for testing if the Molmol pipe is open."""
+    """Function for testing if the Molmol pipe is open.
+
+    @return:    Whether the Molmol pipe is open or not.
+    @rtype:     bool
+    """
+
+    # Alias the data pipe container.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Test if a pipe has been opened.
-    if not hasattr(relax_data_store, 'molmol'):
-        return 0
+    if not hasattr(cdp, 'molmol'):
+        return False
 
     # Test if the pipe has been broken.
     try:
-        relax_data_store.molmol.write('\n')
+        cdp.molmol.write('\n')
     except IOError:
-        return 0
+        return False
 
     # The pipe is open.
-    return 1
+    return True
 
 
 def pipe_write(command=None, store_command=1):
