@@ -33,6 +33,7 @@ from warnings import warn
 from data import Data as relax_data_store
 from generic_fns import molmol
 from generic_fns.sequence import load_PDB_sequence
+from generic_fns.selection import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbChainError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError, RelaxPdbError, RelaxPdbLoadError, RelaxRegExpError
 from relax_io import get_file_path
 from relax_warnings import RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxWarning, RelaxZeroVectorWarning
@@ -964,16 +965,27 @@ def set_vector(run=None, res=None, xh_vect=None):
     relax_data_store.res[run][res].xh_vect = xh_vect
 
 
-def vectors(run=None, heteronuc=None, proton=None, res_num=None, res_name=None):
-    """Function for calculating/extracting the XH unit vector from the loaded structure."""
+def vectors(heteronuc=None, proton=None, spin_id=None):
+    """Function for calculating/extracting the XH unit vector from the loaded structure.
+
+    @param heteronuc:   The name of the heteronucleus.
+    @type heteronuc:    str
+    @param proton:      The name of the proton.
+    @type proton:       str
+    @param spin_id:     The molecule, residue, and spin identifier string.
+    @type spin_id:      str
+    """
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Test if the PDB file has been loaded.
-    if not relax_data_store.pdb.has_key(run):
-        raise RelaxPdbError, run
+    if hasattr(cdp, 'structure'):
+        raise RelaxPdbError
 
     # Test if sequence data is loaded.
-    if not relax_data_store.res.has_key(run):
-        raise RelaxNoSequenceError, run
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
     # Test if the residue number is a valid regular expression.
     if type(res_num) == str:
@@ -1004,37 +1016,21 @@ def vectors(run=None, heteronuc=None, proton=None, res_num=None, res_name=None):
             print "\nCalculating the unit XH vectors from the structure."
 
     # Loop over the sequence.
-    for i in xrange(len(relax_data_store.res[run])):
-        # Remap the data structure 'relax_data_store.res[run][j]'.
-        data = relax_data_store.res[run][i]
-
+    for spin in spin_loop(spin_id):
         # Skip unselected residues.
-        if not data.select:
+        if not spin.select:
             continue
 
-        # Skip the residue if there is no match to 'num'.
-        if type(res_num) == int:
-            if not data.num == res_num:
-                continue
-        elif type(res_num) == str:
-            if not match(res_num, `data.num`):
-                continue
-
-        # Skip the residue if there is no match to 'name'.
-        if res_name != None:
-            if not match(res_name, data.name):
-                continue
-
         # Set the proton and heteronucleus names.
-        data.proton = proton
-        data.heteronuc = heteronuc
+        spin.proton = proton
+        spin.heteronuc = heteronuc
 
         # Calculate the vector.
-        vector = xh_vector(data)
+        vector = xh_vector(spin)
 
         # Set the vector.
         if vector:
-            data.xh_vect = vector
+            spin.xh_vect = vector
 
 
 def uniform_vect_dist_spherical_angles(inc=20):
