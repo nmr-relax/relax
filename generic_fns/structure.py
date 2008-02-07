@@ -986,20 +986,6 @@ def vectors(heteronuc=None, proton=None, spin_id=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Test if the residue number is a valid regular expression.
-    if type(res_num) == str:
-        try:
-            compile(res_num)
-        except:
-            raise RelaxRegExpError, ('residue number', res_num)
-
-    # Test if the residue name is a valid regular expression.
-    if res_name:
-        try:
-            compile(res_name)
-        except:
-            raise RelaxRegExpError, ('residue name', res_name)
-
     # Test that the nuclei have been correctly set.
     if heteronuc == proton:
         raise RelaxError, "The proton and heteronucleus are set to the same atom."
