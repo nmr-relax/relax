@@ -1562,6 +1562,9 @@ def xh_vector(data, structure=None, unit=1):
     vector_array = []
     ave_vector = zeros(3, float64)
 
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
     # Number of structures.
     num_str = len(cdp.structure.structures)
 
