@@ -27,6 +27,7 @@ from string import split
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
+from specific_fns import get_specific_fn
 
 
 command_history = ""
@@ -50,17 +51,32 @@ def command(command):
     pipe_write(command)
 
 
-def create_macro():
-    """Function for creating an array of Molmol commands."""
+def create_macro(data_type=None, style=None, colour_start=None, colour_end=None, colour_list=None):
+    """Function for creating an array of Molmol commands.
 
-    # Function type.
-    function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
+    @param data_type:       The data type or parameter name of which to map its values onto the
+                            structure.
+    @type data_type:        str
+    @param style:           The style for the Molmol macro.
+    @type style:            str
+    @param colour_start:    The starting colour.
+    @type colour_start:     str or list of 3 floats
+    @param colour_end:      The terminating colour.
+    @type colour_end:       str or list of 3 floats
+    @param colour_list:     The type of colour being specified (either 'molmol' or 'x11').
+    @type colour_list:      str
+    @return:                The Molmol macro consisting of a set of Molmol commands.
+    @rtype:                 str
+    """
 
     # Specific Molmol macro creation function.
-    molmol_macro = relax.specific_setup.setup('molmol_macro', function_type)
+    molmol_macro = get_specific_fn('molmol_macro', relax_data_store[relax_data_store.current_pipe].pipe_type)
 
     # Get the macro.
-    commands = molmol_macro(run, data_type, style, colour_start, colour_end, colour_list)
+    commands = molmol_macro(data_type, style, colour_start, colour_end, colour_list)
+
+    # Return the Molmol commands.
+    return commands
 
 
 def macro_exec(run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
@@ -83,7 +99,7 @@ def macro_exec(run=None, data_type=None, style="classic", colour_start=None, col
         raise RelaxNoSequenceError, run
 
     # Create the macro.
-    create_macro()
+    commands = create_macro()
 
     # Loop over the commands and execute them.
     for command in commands:
@@ -258,7 +274,7 @@ def write(run=None, data_type=None, style="classic", colour_start=None, colour_e
         raise RelaxNoSequenceError, run
 
     # Create the macro.
-    create_macro()
+    commands = create_macro()
 
     # File name.
     if file == None:
