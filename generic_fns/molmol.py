@@ -28,6 +28,7 @@ from string import split
 from data import Data as relax_data_store
 from generic_fns.selection import exists_mol_res_spin_data
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
+from relax_io import open_write_file, test_binary
 from specific_fns import get_specific_fn
 
 
@@ -128,7 +129,7 @@ def pipe_open():
     """Function for opening a Molmol pipe."""
 
     # Test that the Molmol binary exists.
-    relax.IO.test_binary('molmol')
+    test_binary('molmol')
 
     # Open the Molmol pipe.
     relax_data_store.molmol = popen("molmol -f -", 'w', 0)
@@ -281,7 +282,7 @@ def write(run=None, data_type=None, style="classic", colour_start=None, colour_e
         file = data_type + '.mac'
 
     # Open the file for writing.
-    file = relax.IO.open_write_file(file, dir, force)
+    file = open_write_file(file, dir, force)
 
     # Loop over the commands and write them.
     for command in commands:
