@@ -214,15 +214,12 @@ def ribbon():
     pipe_write("XMacStand ribbon.mac")
 
 
-def tensor_pdb(run=None, file=None):
-    """Display the diffusion tensor geometric structure."""
+def tensor_pdb(file=None):
+    """Display the diffusion tensor geometric structure.
 
-    # Arguments.
-    run = run
-
-    # Test if the run exists.
-    if not run in relax_data_store.run_names:
-        raise RelaxNoPipeError, run
+    @param file:    The name of the PDB file containing the tensor geometric object.
+    @type file:     str
+    """
 
     # To overlay the structure with the diffusion tensor, select all and reorient to the PDB frame.
     pipe_write("SelectAtom ''")
