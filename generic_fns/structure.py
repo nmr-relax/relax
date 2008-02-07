@@ -979,7 +979,7 @@ def vectors(heteronuc=None, proton=None, spin_id=None):
     cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Test if the PDB file has been loaded.
-    if hasattr(cdp, 'structure'):
+    if not hasattr(cdp, 'structure'):
         raise RelaxPdbError
 
     # Test if sequence data is loaded.
