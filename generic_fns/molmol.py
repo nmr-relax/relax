@@ -249,11 +249,8 @@ def tensor_pdb(file=None):
     pipe_write("RadiusAtom 1.5")
 
 
-def view(run=None):
+def view():
     """Function for running Molmol."""
-
-    # Arguments.
-    run = run
 
     # Open a Molmol pipe.
     if pipe_open_test():
