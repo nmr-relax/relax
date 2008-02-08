@@ -367,24 +367,24 @@ class Diffusion_tensor:
         To select axially symmetric diffusion with a tm value of 8.5 ns, Dratio of 1.1, theta value
         of 20 degrees, and phi value of 20 degrees, and assign it to the run 'm8', type:
 
-        relax> diffusion_tensor('m8', (8.5e-9, 1.1, 20.0, 20.0), param_types=1)
+        relax> diffusion_tensor('m8', (8.5e-9, 1.1, 20.0, 20.0), param_types=2)
 
 
         To select a spheroid diffusion tensor with a Dpar value of 1.698e7, Dper value of 1.417e7,
         theta value of 67.174 degrees, and phi value of -83.718 degrees, and assign it to the run
         'spheroid', type one of:
 
-        relax> diffusion_tensor('spheroid', (1.698e7, 1.417e7, 67.174, -83.718), param_types=1)
+        relax> diffusion_tensor('spheroid', (1.698e7, 1.417e7, 67.174, -83.718), param_types=3)
         relax> diffusion_tensor(run='spheroid', params=(1.698e7, 1.417e7, 67.174, -83.718),
-                                param_types=1)
-        relax> diffusion_tensor('spheroid', (1.698e-1, 1.417e-1, 67.174, -83.718), param_types=1,
+                                param_types=3)
+        relax> diffusion_tensor('spheroid', (1.698e-1, 1.417e-1, 67.174, -83.718), param_types=3,
                                 d_scale=1e8)
         relax> diffusion_tensor(run='spheroid', params=(1.698e-1, 1.417e-1, 67.174, -83.718),
-                                param_types=1, d_scale=1e8)
-        relax> diffusion_tensor('spheroid', (1.698e-1, 1.417e-1, 1.1724, -1.4612), param_types=1,
+                                param_types=3, d_scale=1e8)
+        relax> diffusion_tensor('spheroid', (1.698e-1, 1.417e-1, 1.1724, -1.4612), param_types=3,
                                 d_scale=1e8, angle_units='rad')
         relax> diffusion_tensor(run='spheroid', params=(1.698e-1, 1.417e-1, 1.1724, -1.4612),
-                                param_types=1, d_scale=1e8, angle_units='rad', fixed=1)
+                                param_types=3, d_scale=1e8, angle_units='rad', fixed=1)
 
 
         To select ellipsoidal diffusion, type:
