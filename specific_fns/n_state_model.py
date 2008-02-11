@@ -480,11 +480,13 @@ class N_state_model(Common_functions):
             cdp.warning = warning
 
 
-    def model_setup(self, N=None):
+    def model_setup(self, N=None, ref=None):
         """Function for setting up the N-state model.
 
         @param N:   The number of states.
         @type N:    int
+        @param ref: The reference domain.
+        @type ref:  str
         """
 
         # Test if the current data pipe exists.
@@ -494,8 +496,17 @@ class N_state_model(Common_functions):
         # Alias the current data pipe.
         cdp = relax_data_store[relax_data_store.current_pipe]
 
-        # Set the value of N.
+        # Test if the reference domain exists.
+        exists = 0
+        for tensor_cont in cdp.align_tensors:
+            if tensor_cont.domain == ref:
+                exists = 1
+        if not exists:
+            raise RelaxError, "The reference domain cannot be found within any of the loaded tensors."
+            
+        # Set the value of N and reference domain.
         cdp.N = N
+        cdp.ref_domain = ref
 
         # Initialise the list of model parameters.
         cdp.params = []
