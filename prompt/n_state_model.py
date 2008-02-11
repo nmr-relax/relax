@@ -42,42 +42,51 @@ class N_state_model:
         self.__relax__ = relax
 
 
-    def model(self, N=None):
-        """Set up the N-state model by specifying the number of states N.
+    def model(self, N=None, ref=None):
+        """Set up the N-state model by specifying the number of states N and the reference domain.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         N:  The number of states.
 
+        ref:  The domain which will act as the frame of reference.
+
 
         Description
         ~~~~~~~~~~~
 
         Prior to optimisation, the N-state model must be set up.  This simply involves the setting
-        of the number of states N.
+        of the number of states N and which of the two domains will act as the frame of reference.
+        The N-states will be rotations of the other domain.  To switch the frame of reference to the
+        other domain, transpose the rotation matrices.
 
 
         Examples
         ~~~~~~~~
 
-        To set up a 5-state model, type:
+        To set up a 5-state model with 'C' domain being the frame of reference, type:
 
-        relax> n_state_model.model(N=5)
+        relax> n_state_model.model(N=5, ref='C')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "n_state_model.model("
-            text = text + "N=" + `N` + ")"
+            text = text + "N=" + `N`
+            text = text + "ref=" + `ref` + ")"
             print text
 
         # Number of states argument.
         if type(N) != int:
             raise RelaxIntError, ('the number of states N', N)
 
+        # Ref frame argument.
+        if type(ref) != str:
+            raise RelaxStrError, ('reference frame', ref)
+
         # Execute the functional code.
-        n_state_model_obj.model_setup(N=N)
+        n_state_model_obj.model_setup(N=N, ref=ref)
 
 
     def set_domain(self, tensor=None, domain=None):
