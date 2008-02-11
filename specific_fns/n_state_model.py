@@ -365,7 +365,7 @@ class N_state_model(Common_functions):
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Test if the N-state model has been set up.
-        if not hasattr(cdp, 'N') or not hasattr(cdp, 'ref'):
+        if not hasattr(cdp, 'N') or not hasattr(cdp, 'ref_domain'):
             raise RelaxNoModelError, 'N-state'
 
         # Create the initial parameter vector.
@@ -384,7 +384,7 @@ class N_state_model(Common_functions):
         # Loop over all tensors.
         for tensor in cdp.align_tensors:
             # The full tensor corresponds to the frame of reference.
-            if cdp.ref == tensor.domain:
+            if cdp.ref_domain == tensor.domain:
                 full_in_ref_frame.append(1)
             else:
                 full_in_ref_frame.append(0)
