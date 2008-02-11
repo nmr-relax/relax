@@ -53,6 +53,19 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
             self.assertRaises(RelaxIntError, self.n_state_model_fns.model, N=data[1])
 
 
+    def test_model_argfail_ref(self):
+        """Failure of the ref arg of the n_state_model.model() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str arguments, and skip them.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.n_state_model_fns.model, ref=data[1])
+
+
     def test_set_domain_argfail_tensor(self):
         """Failure of the tensor arg of the n_state_model.set_domain() user function."""
 
