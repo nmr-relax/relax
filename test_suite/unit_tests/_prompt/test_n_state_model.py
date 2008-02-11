@@ -63,7 +63,7 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.n_state_model_fns.model, ref=data[1])
+            self.assertRaises(RelaxStrError, self.n_state_model_fns.model, N=5, ref=data[1])
 
 
     def test_set_domain_argfail_tensor(self):
