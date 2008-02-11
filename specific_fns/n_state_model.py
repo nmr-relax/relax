@@ -365,7 +365,7 @@ class N_state_model(Common_functions):
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Test if the N-state model has been set up.
-        if not hasattr(cdp, 'N'):
+        if not hasattr(cdp, 'N') or not hasattr(cdp, 'ref'):
             raise RelaxNoModelError, 'N-state'
 
         # Create the initial parameter vector.
@@ -375,49 +375,53 @@ class N_state_model(Common_functions):
         if constraints:
             A, b = self.linear_constraints()
 
-        # Create a list of matricies consisting of all the full alignment tensors.
+        # Initialise.
         full_tensors = []
-        for tensor in cdp.align_tensors:
-            # Ignore the reduced tensors.
-            if tensor.red:
-                continue
-
-            # Append the tensor (in matrix form).
-            full_tensors.append(tensor.tensor)
-
-        # Create a list of all the reduced alignment tensor elements and their errors (for the chi-squared function).
         red_tensor_elem = []
         red_tensor_err = []
+        full_in_ref_frame = []
+
+        # Loop over all tensors.
         for tensor in cdp.align_tensors:
-            # Ignore the full tensors.
-            if not tensor.red:
-                continue
-
-            # Append the 5 unique elements.
-            red_tensor_elem.append(tensor.Sxx)
-            red_tensor_elem.append(tensor.Syy)
-            red_tensor_elem.append(tensor.Sxy)
-            red_tensor_elem.append(tensor.Sxz)
-            red_tensor_elem.append(tensor.Syz)
-
-            # Append the 5 unique error elements (if they exist).
-            if hasattr(tensor, 'Sxx_err'):
-                red_tensor_err.append(tensor.Sxx_err)
-                red_tensor_err.append(tensor.Syy_err)
-                red_tensor_err.append(tensor.Sxy_err)
-                red_tensor_err.append(tensor.Sxz_err)
-                red_tensor_err.append(tensor.Syz_err)
-
-            # Otherwise append errors of 1.0 to convert the chi-squared equation to the SSE equation (for the tensors without errors).
+            # The full tensor corresponds to the frame of reference.
+            if cdp.ref == tensor.domain:
+                full_in_ref_frame.append(1)
             else:
-                red_tensor_err = red_tensor_err + [1.0, 1.0, 1.0, 1.0, 1.0]
+                full_in_ref_frame.append(0)
+
+            # Create a list of matricies consisting of all the full alignment tensors.
+            if not tensor.red:
+                # Append the tensor (in matrix form).
+                full_tensors.append(tensor.tensor)
+
+            # Create a list of all the reduced alignment tensor elements and their errors (for the chi-squared function).
+            elif tensor.red:
+                # Append the 5 unique elements.
+                red_tensor_elem.append(tensor.Sxx)
+                red_tensor_elem.append(tensor.Syy)
+                red_tensor_elem.append(tensor.Sxy)
+                red_tensor_elem.append(tensor.Sxz)
+                red_tensor_elem.append(tensor.Syz)
+
+                # Append the 5 unique error elements (if they exist).
+                if hasattr(tensor, 'Sxx_err'):
+                    red_tensor_err.append(tensor.Sxx_err)
+                    red_tensor_err.append(tensor.Syy_err)
+                    red_tensor_err.append(tensor.Sxy_err)
+                    red_tensor_err.append(tensor.Sxz_err)
+                    red_tensor_err.append(tensor.Syz_err)
+
+                # Otherwise append errors of 1.0 to convert the chi-squared equation to the SSE equation (for the tensors without errors).
+                else:
+                    red_tensor_err = red_tensor_err + [1.0, 1.0, 1.0, 1.0, 1.0]
 
         # Convert the reduced alignment tensor element lists into numpy arrays (for the chi-squared function maths).
         red_tensor_elem = array(red_tensor_elem, float64)
         red_tensor_err = array(red_tensor_err, float64)
+        full_in_ref_frame = array(full_in_ref_frame, float64)
 
         # Set up the class instance containing the target function.
-        model = N_state_opt(N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err)
+        model = N_state_opt(N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
 
         # Minimisation.
         if constraints:
