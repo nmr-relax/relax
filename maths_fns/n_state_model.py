@@ -31,7 +31,7 @@ from rotation_matrix import rotation_matrix_zyz
 class N_state_opt:
     """Class containing the target function of the optimisation of the N-state model."""
 
-    def __init__(self, N=None, init_params=None, full_tensors=None, red_data=None, red_errors=None):
+    def __init__(self, N=None, init_params=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None):
         """Set up the class instance for optimisation.
 
         All constant data required for the N-state model are initialised here.
@@ -61,6 +61,7 @@ class N_state_opt:
         self.num_tensors = len(self.full_tensors)
         self.red_data = red_data
         self.red_errors = red_errors
+        self.full_in_ref_frame = full_in_ref_frame
 
         # Initialise some empty numpy objects for storage of:
         # R:  the transient rotation matricies.
@@ -111,7 +112,13 @@ class N_state_opt:
 
             # Back-calculate the reduced tensors for sum element c and add these to red_bc.
             for i in xrange(self.num_tensors):
-                self.red_bc[i] = self.red_bc[i]  +  pc * dot(self.RT[c], dot(self.full_tensors[i], self.R[c]))
+                # Normal RT.X.R rotation.
+                if self.full_in_ref_frame[i]:
+                    self.red_bc[i] = self.red_bc[i]  +  pc * dot(self.RT[c], dot(self.full_tensors[i], self.R[c]))
+
+                # Inverse R.X.RT rotation.
+                else:
+                    self.red_bc[i] = self.red_bc[i]  +  pc * dot(self.R[c], dot(self.full_tensors[i], self.RT[c]))
 
         # 5D vectorise the back-calculated tensors (create red_bc_vector from red_bc).
         for i in xrange(self.num_tensors):
