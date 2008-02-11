@@ -383,15 +383,15 @@ class N_state_model(Common_functions):
 
         # Loop over all tensors.
         for tensor in cdp.align_tensors:
-            # The full tensor corresponds to the frame of reference.
-            if cdp.ref_domain == tensor.domain:
-                full_in_ref_frame.append(1)
-            else:
-                full_in_ref_frame.append(0)
-
-            # Create a list of matricies consisting of all the full alignment tensors.
+            # The full tensor.
             if not tensor.red:
-                # Append the tensor (in matrix form).
+                # The full tensor corresponds to the frame of reference.
+                if cdp.ref_domain == tensor.domain:
+                    full_in_ref_frame.append(1)
+                else:
+                    full_in_ref_frame.append(0)
+
+                # Create a list of matricies consisting of all the full alignment tensors.
                 full_tensors.append(tensor.tensor)
 
             # Create a list of all the reduced alignment tensor elements and their errors (for the chi-squared function).
