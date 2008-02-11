@@ -74,7 +74,7 @@ class N_state_model:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "n_state_model.model("
             text = text + "N=" + `N`
-            text = text + "ref=" + `ref` + ")"
+            text = text + ", ref=" + `ref` + ")"
             print text
 
         # Number of states argument.
