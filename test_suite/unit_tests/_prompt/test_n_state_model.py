@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.n_state_model import N_state_model
-from relax_errors import RelaxBoolError, RelaxIntError, RelaxStrError
+from relax_errors import RelaxBoolError, RelaxIntError, RelaxListError, RelaxStrError
 from test_suite.unit_tests.n_state_model_testing_base import N_state_model_base_class
 
 # Unit test imports.
@@ -64,6 +64,30 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
 
             # The argument test.
             self.assertRaises(RelaxStrError, self.n_state_model_fns.model, N=5, ref=data[1])
+
+
+    def test_pivot_point_argfail_pivot(self):
+        """The pivot arg test of the pivot_point() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None arguments, and skip them.
+            if data[0] == 'None':
+                continue
+
+            # Catch the list arguments.
+            if type(data[1]) == list:
+                # Catch the int, float, and number list arguments, and skip them.
+                if data[0] == 'int list' or data[0] == 'float list' or data[0] == 'number list':
+                    self.assertRaises(RelaxLenError, self.n_state_model_fns.pivot_point, pivot=data[1])
+
+                # The argument test.
+                else:
+                    self.assertRaises(RelaxListNumError, self.n_state_model_fns.pivot_point, pivot=data[1])
+
+            # All other arguments.
+            else:
+                self.assertRaises(RelaxListError, self.n_state_model_fns.pivot_point, pivot=data[1])
 
 
     def test_set_domain_argfail_tensor(self):
