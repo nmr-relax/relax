@@ -112,8 +112,9 @@ class N_state_model:
         To set the pivot point to the origin in the PDB file (because the real pivot has been
         shifted to this position), type one of:
 
-        relax> n_state_model.set_domain()
-        relax> n_state_model.set_domain(pivot=[0.0, 0.0, 0.0])
+        relax> n_state_model.pivot_point()
+        relax> n_state_model.pivot_point([0.0, 0.0, 0.0])
+        relax> n_state_model.pivot_point(pivot=[0.0, 0.0, 0.0])
         """
 
         # Function intro text.
