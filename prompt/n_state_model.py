@@ -89,6 +89,52 @@ class N_state_model:
         n_state_model_obj.model_setup(N=N, ref=ref)
 
 
+    def pivot_point(self, pivot=[0.0, 0.0, 0.0]):
+        """Set the pivot point for the domain motions.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        pivot:  The pivot point of the motions between the two domains.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        Prior to the calculation of the pivot to centre of mass (pivot-CoM) order parameter and
+        subsequent cone of motions, both the pivot point and centre of mass must be specified.  The
+        supplied pivot point must be a vector of floating point numbers of length 3.
+
+
+        Examples
+        ~~~~~~~~
+
+        To set the pivot point to the origin in the PDB file (because the real pivot has been
+        shifted to this position), type one of:
+
+        relax> n_state_model.set_domain()
+        relax> n_state_model.set_domain(pivot=[0.0, 0.0, 0.0])
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "n_state_model.pivot_point("
+            text = text + "pivot=" + `pivot` + ")"
+            print text
+
+        # Pivot argument.
+        if type(pivot) != list:
+            raise RelaxListError, ('pivot', pivot)
+        if len(pivot) != 3:
+            raise RelaxLenError, ("pivot point", 3)
+        for i in xrange(len(lower)):
+            if type(lower[i]) != int and type(lower[i]) != float:
+                raise RelaxListNumError, ('lower bounds', lower)
+
+        # Execute the functional code.
+        n_state_model_obj.pivot_point(pivot=pivot)
+
+
     def set_domain(self, tensor=None, domain=None):
         """Set the domain label for the alignment tensor.
 
