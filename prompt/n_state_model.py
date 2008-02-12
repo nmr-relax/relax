@@ -127,9 +127,9 @@ class N_state_model:
             raise RelaxListError, ('pivot', pivot)
         if len(pivot) != 3:
             raise RelaxLenError, ("pivot point", 3)
-        for i in xrange(len(lower)):
-            if type(lower[i]) != int and type(lower[i]) != float:
-                raise RelaxListNumError, ('lower bounds', lower)
+        for i in xrange(len(pivot)):
+            if type(pivot[i]) != int and type(pivot[i]) != float:
+                raise RelaxListNumError, ('pivot point', pivot)
 
         # Execute the functional code.
         n_state_model_obj.pivot_point(pivot=pivot)
