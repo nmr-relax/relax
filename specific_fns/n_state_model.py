@@ -546,6 +546,24 @@ class N_state_model(Common_functions):
         return (cdp.N - 1) + cdp.N*3
 
 
+    def pivot_point(self, pivot=None):
+        """Function for setting the pivot point of the domain motions.
+
+        @param pivot:   The pivot point in the structural file(s).
+        @type pivot:    list of float of length 3
+        """
+
+        # Test if the current data pipe exists.
+        if not relax_data_store.current_pipe:
+            raise RelaxNoPipeError
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the value.
+        cdp.pivot_point = pivot
+
+
     def return_data_name(self, name, index=False):
         """
         N-state model data type string matching patterns
