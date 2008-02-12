@@ -48,9 +48,10 @@ class Test_n_state_model(TestCase):
                               [[1.0, 0.0, 1.0], [0.0, 0.5, 0.0], [1.0, 0.0, -1.5]]], float64)
         red_data = array([1.0, 0.5, 0.0, 0.0, 0.0, 1.0, 0.5, 1.0, 0.0, 0.0, 1.0, 0.5, 0.0, 1.0, 0.0], float64)
         err = ones(3*5, float64)
+        full_in_ref_frame = [1, 1, 1]
 
         # Set up the class.
-        model = N_state_opt(N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err)
+        model = N_state_opt(N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err, full_in_ref_frame=full_in_ref_frame)
 
         # Call the target function 3 times.
         for i in xrange(3):
@@ -77,9 +78,10 @@ class Test_n_state_model(TestCase):
                               [[1.0, 0.0, 1.0], [0.0, 0.0, 0.0], [1.0, 0.0, -1.0]]], float64)
         red_data = array([1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0], float64)
         err = ones(3*5, float64)
+        full_in_ref_frame = [1, 1, 1]
 
         # Set up the class.
-        model = N_state_opt(N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err)
+        model = N_state_opt(N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err, full_in_ref_frame=full_in_ref_frame)
 
         # Call the target function 3 times.
         for i in xrange(3):
@@ -106,9 +108,10 @@ class Test_n_state_model(TestCase):
                               [[1.0, 0.0, 1.0], [0.0, 0.5, 0.0], [1.0, 0.0, -1.5]]], float64)
         red_data = array([0.5, 1.0, 0.0, 0.0, 0.0, 0.5, 1.0, -1.0, 0.0, 0.0, 0.5, 1.0, 0.0, 0.0, 1.0], float64)
         err = ones(3*5, float64)
+        full_in_ref_frame = [1, 1, 1]
 
         # Set up the class.
-        model = N_state_opt(N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err)
+        model = N_state_opt(N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err, full_in_ref_frame=full_in_ref_frame)
 
         # Call the target function 3 times.
         for i in xrange(3):
@@ -135,9 +138,10 @@ class Test_n_state_model(TestCase):
                               [[1.0, 0.0, 1.0], [0.0, 0.5, 0.0], [1.0, 0.0, -1.5]]], float64)
         red_data = array([0.75, 0.75, 0.0, 0.0, 0.0, 0.75, 0.75, 0.0, 0.0, 0.0, 0.75, 0.75, 0.0, 0.5, 0.5], float64)
         err = ones(3*5, float64)
+        full_in_ref_frame = [1, 1, 1]
 
         # Set up the class.
-        model = N_state_opt(N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err)
+        model = N_state_opt(N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err, full_in_ref_frame=full_in_ref_frame)
 
         # Call the target function 3 times.
         for i in xrange(3):
