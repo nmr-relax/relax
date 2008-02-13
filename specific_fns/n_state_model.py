@@ -28,6 +28,7 @@ from re import search
 # relax module imports.
 from data import Data as relax_data_store
 from float import isNaN, isInf
+from generic_fns.structure import centre_of_mass
 from maths_fns.n_state_model import N_state_opt
 from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
@@ -80,6 +81,35 @@ class N_state_model(Common_functions):
 
         # Return a numpy arrary.
         return array(param_vector, float64)
+
+
+    def CoM(self, centre=None):
+        """Set the initial centre of mass (prior to rotation) of the moving domain.
+
+        If centre is None, then the centre of mass will be calculated for the selected structure.
+        Otherwise it will be set to the centre arg.
+
+        @param centre:  The optional centre of mass vector.
+        @type centre:   list of float of length 3
+        """
+
+        # Test if the current data pipe exists.
+        if not relax_data_store.current_pipe:
+            raise RelaxNoPipeError
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # The centre has been supplied.
+        if centre:
+            cdp.CoM = centre
+
+        # Calculate from the PDB file.
+        else:
+            cdp.CoM = centre_of_mass()
+
+        # Print out.
+        print "The initial centre of mass (prior to rotation) for the moving domain is: " + `cdp.CoM`
 
 
     def default_value(self, param):
