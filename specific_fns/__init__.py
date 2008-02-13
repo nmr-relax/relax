@@ -29,6 +29,7 @@ __all__ = [ 'base_class',
             'hybrid',
             'jw_mapping',
             'model_free',
+            'n_state_model',
             'noe',
             'relax_data',
             'relax_fit']
