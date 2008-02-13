@@ -42,59 +42,77 @@ class N_state_model:
         self.__relax__ = relax
 
 
-    def CoM(self, centre=None):
-        """Set the centre of mass (CoM) for the initial position of the moving domain.
+    def CoM(self, pivot_point=[0.0, 0.0, 0.0], centre=None):
+        """Centre of mass (CoM) analysis.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        centre:  The optional argument for manually specifying the CoM.
+        pivot_point:  The pivot point of the motions between the two domains.
+
+        centre:  The optional argument for manually specifying the CoM of the initial position prior
+                 to the N rotations to the positions of the N states.
 
 
         Description
         ~~~~~~~~~~~
 
-        Prior to the calculation of the pivot to centre of mass (pivot-CoM) order parameter and
-        subsequent cone of motions, both the pivot point and centre of mass must be specified.  This
-        function is used to calculate the centre of mass from the selected parts of the structure
-        previously loaded.  That is unless the centre keyword argument has been supplied, in which
-        case this vector floating point numbers (of length 3) will be used as the CoM.  This CoM is
-        the initial position prior to its N rotations to the positions of the N states.
+        This function is used for analysing the domain motion information content of the N states
+        from the N-state model.  The states do not correspond to physical states, hence nothing can
+        be extracted from the individual states.  This analysis involves the calculation of the
+        pivot to centre of mass (pivot-CoM) order parameter and subsequent cone of motions.
+
+        For the analysis, both the pivot point and centre of mass must be specified.  The supplied
+        pivot point must be a vector of floating point numbers of length 3.  If the centre keyword
+        argument is supplied, it must also be a vector of floating point numbers (of length 3).  If
+        the centre argument is not supplied, then the CoM will be calulcated from the selected parts
+        of a previously loaded structure.
 
 
         Examples
         ~~~~~~~~
 
-        To set the CoM to the N-terminal domain of a previously loaded PDB file (the C-terminal
-        domain has been deselected), type:
+        To perform an analysis where the pivot is at the origin and the CoM is set to the N-terminal
+        domain of a previously loaded PDB file (the C-terminal domain has been deselected), type:
 
         relax> n_state_model.CoM()
 
 
-        To set the CoM to the position [0, 0, 1], type one of:
+        To perform an analysis where the pivot is at the origin (because the real pivot has been
+        shifted to this position) and the CoM is at the position [0, 0, 1], type one of:
 
-        relax> n_state_model.CoM([0, 0, 1])
-        relax> n_state_model.CoM([0.0, 0.0, 1.0])
+        relax> n_state_model.CoM(centre=[0, 0, 1])
         relax> n_state_model.CoM(centre=[0.0, 0.0, 1.0])
+        relax> n_state_model.CoM(pivot_point=[0.0, 0.0, 0.0], centre=[0.0, 0.0, 1.0])
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "n_state_model.CoM("
-            text = text + "centre=" + `centre` + ")"
+            text = text + "pivot_point=" + `pivot_point`
+            text = text + ", centre=" + `centre` + ")"
             print text
+
+        # Pivot point argument.
+        if type(pivot_point) != list:
+            raise RelaxListError, ('pivot point', pivot_point)
+        if len(pivot_point) != 3:
+            raise RelaxLenError, ('pivot point', 3)
+        for i in xrange(len(pivot_point)):
+            if type(pivot_point[i]) != int and type(pivot_point[i]) != float:
+                raise RelaxListNumError, ('pivot point', pivot_point)
 
         # CoM argument.
         if type(centre) != list:
-            raise RelaxListError, ('centre', centre)
+            raise RelaxListError, ('centre of mass', centre)
         if len(centre) != 3:
-            raise RelaxLenError, ("centre of mass", 3)
+            raise RelaxLenError, ('centre of mass', 3)
         for i in xrange(len(centre)):
             if type(centre[i]) != int and type(centre[i]) != float:
                 raise RelaxListNumError, ('centre of mass', centre)
 
         # Execute the functional code.
-        n_state_model_obj.CoM(centre=centre)
+        n_state_model_obj.CoM(pivot_point=pivot_point, centre=centre)
 
 
     def model(self, N=None, ref=None):
@@ -142,53 +160,6 @@ class N_state_model:
 
         # Execute the functional code.
         n_state_model_obj.model_setup(N=N, ref=ref)
-
-
-    def pivot_point(self, pivot=[0.0, 0.0, 0.0]):
-        """Set the pivot point for the domain motions.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        pivot:  The pivot point of the motions between the two domains.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        Prior to the calculation of the pivot to centre of mass (pivot-CoM) order parameter and
-        subsequent cone of motions, both the pivot point and centre of mass must be specified.  The
-        supplied pivot point must be a vector of floating point numbers of length 3.
-
-
-        Examples
-        ~~~~~~~~
-
-        To set the pivot point to the origin in the PDB file (because the real pivot has been
-        shifted to this position), type one of:
-
-        relax> n_state_model.pivot_point()
-        relax> n_state_model.pivot_point([0.0, 0.0, 0.0])
-        relax> n_state_model.pivot_point(pivot=[0.0, 0.0, 0.0])
-        """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "n_state_model.pivot_point("
-            text = text + "pivot=" + `pivot` + ")"
-            print text
-
-        # Pivot argument.
-        if type(pivot) != list:
-            raise RelaxListError, ('pivot', pivot)
-        if len(pivot) != 3:
-            raise RelaxLenError, ("pivot point", 3)
-        for i in xrange(len(pivot)):
-            if type(pivot[i]) != int and type(pivot[i]) != float:
-                raise RelaxListNumError, ('pivot point', pivot)
-
-        # Execute the functional code.
-        n_state_model_obj.pivot_point(pivot=pivot)
 
 
     def set_domain(self, tensor=None, domain=None):
