@@ -143,8 +143,8 @@ class N_state_model(Common_functions):
             vectors[c] = vectors[c] * cdp.probs[c]
 
         # Total weighted vector.
-        vect = sum(vectors)
-        print "The reduced CoM vector is:\n" + `vect` + "\n"
+        cdp.red_CoM = sum(vectors)
+        print "The reduced CoM vector is:\n" + `cdp.red_CoM` + "\n"
 
         raise NameError, "hello"
 
