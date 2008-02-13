@@ -83,14 +83,19 @@ class N_state_model(Common_functions):
         return array(param_vector, float64)
 
 
-    def CoM(self, centre=None):
-        """Set the initial centre of mass (prior to rotation) of the moving domain.
+    def CoM(self, pivot_point=None, centre=None):
+        """Centre of mass analysis.
 
-        If centre is None, then the centre of mass will be calculated for the selected structure.
-        Otherwise it will be set to the centre arg.
+        This function does an analysis of the centre of mass (CoM) of the N states.  This includes
+        calculating the order parameter associated with the pivot-CoM vector, and the associated
+        cone of motions.  The pivot_point argument must be supplied.  If centre is None, then the
+        CoM will be calculated from the selected parts of the loaded structure.  Otherwise it will
+        be set to the centre arg.
 
-        @param centre:  The optional centre of mass vector.
-        @type centre:   list of float of length 3
+        @param pivot_point: The pivot point in the structural file(s).
+        @type pivot_point:  list of float of length 3
+        @param centre:      The optional centre of mass vector.
+        @type centre:       list of float of length 3
         """
 
         # Test if the current data pipe exists.
@@ -100,16 +105,22 @@ class N_state_model(Common_functions):
         # Alias the current data pipe.
         cdp = relax_data_store[relax_data_store.current_pipe]
 
+        # Set the pivot point.
+        cdp.pivot_point = pivot_point
+
+        # Print out.
+        print "\nThe pivot point of the domain motions is:\n" + `cdp.pivot_point` + "\n"
+
         # The centre has been supplied.
         if centre:
             cdp.CoM = centre
 
-        # Calculate from the PDB file.
+        # Calculate from the structure file.
         else:
             cdp.CoM = generic_fns.structure.centre_of_mass()
 
         # Print out.
-        print "The initial centre of mass (prior to rotation) for the moving domain is: " + `cdp.CoM`
+        print "The initial centre of mass (prior to rotation) for the moving domain is:\n" + `cdp.CoM` + "\n"
 
 
     def default_value(self, param):
@@ -574,27 +585,6 @@ class N_state_model(Common_functions):
 
         # Return the param number.
         return (cdp.N - 1) + cdp.N*3
-
-
-    def pivot_point(self, pivot=None):
-        """Function for setting the pivot point of the domain motions.
-
-        @param pivot:   The pivot point in the structural file(s).
-        @type pivot:    list of float of length 3
-        """
-
-        # Test if the current data pipe exists.
-        if not relax_data_store.current_pipe:
-            raise RelaxNoPipeError
-
-        # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
-
-        # Set the value.
-        cdp.pivot_point = pivot
-
-        # Print out.
-        print "The pivot point of the domain motions is set to: " + `pivot`
 
 
     def return_data_name(self, name, index=False):
