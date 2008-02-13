@@ -22,7 +22,7 @@
 
 # Python module imports.
 from math import pi
-from numpy import array, float64, zeros
+from numpy import array, dot, float64, zeros
 from numpy.linalg import norm
 from re import search
 
@@ -127,10 +127,24 @@ class N_state_model(Common_functions):
         unit_vect = unit_vect / norm(unit_vect)
         print "The unit vector between the pivot and CoM is:\n" + `unit_vect` + "\n"
 
-        # Generate the rotation matrices.
-        self.R = zeros((cdp.N,3,3), float64)
+        # Initilise some data structures.
+        R = zeros((3,3), float64)
+        vectors = zeros((cdp.N,3), float64)
+
+        # Loop over the N states.
         for c in xrange(cdp.N):
-            rotation_matrix_zyz(self.R[c], cdp.alpha[c], cdp.beta[c], cdp.gamma[c])
+            # Generate the rotation matrix.
+            rotation_matrix_zyz(R, cdp.alpha[c], cdp.beta[c], cdp.gamma[c])
+
+            # Rotate the unit vector.
+            vectors[c] = dot(R, unit_vect)
+
+            # Multiply by the probability.
+            vectors[c] = vectors[c] * cdp.probs[c]
+
+        # Total weighted vector.
+        vect = sum(vectors)
+        print "The reduced CoM vector is:\n" + `vect` + "\n"
 
         raise NameError, "hello"
 
