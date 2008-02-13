@@ -95,7 +95,7 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
 
 
     def test_pivot_point_argfail_pivot(self):
-        """The pivot arg test of the pivot_point() user function."""
+        """The pivot arg test of the n_state_model.pivot_point() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
