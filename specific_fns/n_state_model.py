@@ -146,6 +146,10 @@ class N_state_model(Common_functions):
         cdp.red_CoM = sum(vectors)
         print "The reduced CoM vector is:\n" + `cdp.red_CoM` + "\n"
 
+        # The full length rotated CoM vector.
+        cdp.rot_CoM = norm(cdp.CoM) * cdp.red_CoM / norm(cdp.red_CoM)
+        print "The full length rotated CoM vector is:\n" + `cdp.rot_CoM` + "\n"
+
         raise NameError, "hello"
 
 
