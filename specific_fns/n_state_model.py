@@ -28,7 +28,7 @@ from re import search
 # relax module imports.
 from data import Data as relax_data_store
 from float import isNaN, isInf
-from generic_fns.structure import centre_of_mass
+import generic_fns
 from maths_fns.n_state_model import N_state_opt
 from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
@@ -106,7 +106,7 @@ class N_state_model(Common_functions):
 
         # Calculate from the PDB file.
         else:
-            cdp.CoM = centre_of_mass()
+            cdp.CoM = generic_fns.structure.centre_of_mass()
 
         # Print out.
         print "The initial centre of mass (prior to rotation) for the moving domain is: " + `cdp.CoM`
