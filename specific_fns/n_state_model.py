@@ -563,6 +563,9 @@ class N_state_model(Common_functions):
         # Set the value.
         cdp.pivot_point = pivot
 
+        # Print out.
+        print "The pivot point of the domain motions is set to: " + `pivot`
+
 
     def return_data_name(self, name, index=False):
         """
