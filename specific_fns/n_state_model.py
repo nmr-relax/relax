@@ -140,8 +140,11 @@ class N_state_model(Common_functions):
         # Total weighted vector.
         cdp.red_CoM = sum(vectors)
 
+        # The length reduction.
+        len_red = norm(cdp.red_CoM)
+
         # The full length rotated CoM vector.
-        cdp.rot_CoM = norm(cdp.CoM) * cdp.red_CoM / norm(cdp.red_CoM)
+        cdp.rot_CoM = norm(cdp.CoM) * cdp.red_CoM / len_red
 
         # Print out.
         print "\nThe pivot point of the domain motions is:\n" + `cdp.pivot_point` + "\n"
@@ -149,6 +152,7 @@ class N_state_model(Common_functions):
         print "The unit vector between the pivot and CoM is:\n" + `unit_vect` + "\n"
         print "The reduced CoM vector is:\n" + `cdp.red_CoM` + "\n"
         print "The full length rotated CoM vector is:\n" + `cdp.rot_CoM` + "\n"
+        print "The length reduction is:\n" + `len_red` + "\n"
 
         raise NameError, "hello"
 
