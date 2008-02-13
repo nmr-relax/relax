@@ -97,7 +97,7 @@ class N_state_opt:
             # The matrix itself.
             rotation_matrix_zyz(self.R[c], params[self.N-1+3*c], params[self.N-1+3*c+1], params[self.N-1+3*c+2])
 
-            # Its rotation.
+            # Its transpose.
             self.RT[c] = transpose(self.R[c])
 
             # The probability of state c.
