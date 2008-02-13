@@ -23,6 +23,7 @@
 # Python module imports.
 from math import pi
 from numpy import array, float64, zeros
+from numpy.linalg import norm
 from re import search
 
 # relax module imports.
@@ -107,8 +108,6 @@ class N_state_model(Common_functions):
 
         # Set the pivot point.
         cdp.pivot_point = pivot_point
-
-        # Print out.
         print "\nThe pivot point of the domain motions is:\n" + `cdp.pivot_point` + "\n"
 
         # The centre has been supplied.
@@ -121,6 +120,12 @@ class N_state_model(Common_functions):
 
         # Print out.
         print "The initial centre of mass (prior to rotation) for the moving domain is:\n" + `cdp.CoM` + "\n"
+
+        # Calculate the unit vector between the pivot and CoM points.
+        unit_vect = array(cdp.CoM, float64) - array(cdp.pivot_point, float64)
+        unit_vect = unit_vect / norm(unit_vect)
+        print "The unit vector between the pivot and CoM is:\n" + `unit_vect` + "\n"
+        raise NameError, `unit_vect`
 
 
     def default_value(self, param):
