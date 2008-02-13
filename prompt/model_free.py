@@ -26,7 +26,7 @@ import sys
 # relax module imports.
 import help
 from relax_errors import RelaxIntError, RelaxListError, RelaxListStrError, RelaxNoneStrError, RelaxStrError
-from specific_fns import model_free_obj
+from specific_fns.setup import model_free_obj
 
 
 class Model_free:
