@@ -43,7 +43,7 @@ class N_state_model:
 
 
     def CoM(self, centre=None):
-        """Set the centre of mass (CoM) for the moving domain.
+        """Set the centre of mass (CoM) for the initial position of the moving domain.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -58,7 +58,8 @@ class N_state_model:
         subsequent cone of motions, both the pivot point and centre of mass must be specified.  This
         function is used to calculate the centre of mass from the selected parts of the structure
         previously loaded.  That is unless the centre keyword argument has been supplied, in which
-        case this vector floating point numbers (of length 3) will be used as the CoM.
+        case this vector floating point numbers (of length 3) will be used as the CoM.  This CoM is
+        the initial position prior to its N rotations to the positions of the N states.
 
 
         Examples
