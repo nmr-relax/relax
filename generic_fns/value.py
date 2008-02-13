@@ -31,7 +31,7 @@ from generic_fns import diffusion_tensor
 from generic_fns.minimise import reset_min_stats
 from generic_fns.selection import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxParamSetError, RelaxRegExpError, RelaxUnknownParamError, RelaxValueError
-from specific_fns import get_specific_fn
+from specific_fns.setup import get_specific_fn
 
 
 def partition_params(val, param):
