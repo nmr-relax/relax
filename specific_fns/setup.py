@@ -232,7 +232,7 @@ def get_instance(function_type):
         return noe_obj
 
     # The N-state model.
-    if function_type == 'n_state_model':
+    if function_type == 'N-state':
         return n_state_model_obj
 
     # Relaxation curve fitting.
