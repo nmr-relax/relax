@@ -89,6 +89,5 @@ for i in xrange(5):
 # Minimise.
 minimise('simplex', constraints=False)
 
-# Set the pivot point and CoM.
-n_state_model.pivot_point([0.0, 0.0, 0.0])
-n_state_model.CoM([0.0, 0.0, 1.0])
+# Centre of mass analysis.
+n_state_model.CoM(pivot_point=[0.0, 0.0, 0.0], centre=[0.0, 0.0, 1.0])
