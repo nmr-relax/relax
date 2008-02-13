@@ -42,6 +42,60 @@ class N_state_model:
         self.__relax__ = relax
 
 
+    def CoM(self, centre=None):
+        """Set the centre of mass (CoM) for the moving domain.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        centre:  The optional argument for manually specifying the CoM.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        Prior to the calculation of the pivot to centre of mass (pivot-CoM) order parameter and
+        subsequent cone of motions, both the pivot point and centre of mass must be specified.  This
+        function is used to calculate the centre of mass from the selected parts of the structure
+        previously loaded.  That is unless the centre keyword argument has been supplied, in which
+        case this vector floating point numbers (of length 3) will be used as the CoM.
+
+
+        Examples
+        ~~~~~~~~
+
+        To set the CoM to the N-terminal domain of a previously loaded PDB file (the C-terminal
+        domain has been deselected), type:
+
+        relax> n_state_model.CoM()
+
+
+        To set the CoM to the position [0, 0, 1], type one of:
+
+        relax> n_state_model.CoM([0, 0, 1])
+        relax> n_state_model.CoM([0.0, 0.0, 1.0])
+        relax> n_state_model.CoM(centre=[0.0, 0.0, 1.0])
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "n_state_model.CoM("
+            text = text + "centre=" + `centre` + ")"
+            print text
+
+        # CoM argument.
+        if type(centre) != list:
+            raise RelaxListError, ('centre', centre)
+        if len(centre) != 3:
+            raise RelaxLenError, ("centre of mass", 3)
+        for i in xrange(len(centre)):
+            if type(centre[i]) != int and type(centre[i]) != float:
+                raise RelaxListNumError, ('centre of mass', centre)
+
+        # Execute the functional code.
+        n_state_model_obj.CoM(centre=centre)
+
+
     def model(self, N=None, ref=None):
         """Set up the N-state model by specifying the number of states N and the reference domain.
 
