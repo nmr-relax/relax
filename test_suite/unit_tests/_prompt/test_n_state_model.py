@@ -40,6 +40,34 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
     n_state_model_fns = N_state_model(fake_relax.fake_instance())
 
 
+    def test_CoM_argfail_centre(self):
+        """The centre arg test of the n_state_model.CoM() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None arguments, and skip them.
+            if data[0] == 'None':
+                continue
+
+            # Catch the list arguments.
+            if type(data[1]) == list:
+                # The wrong length.
+                if len(data[1]) != 3:
+                    self.assertRaises(RelaxLenError, self.n_state_model_fns.CoM, centre=data[1])
+
+                # Catch the int, float, and number list arguments, and skip them.
+                elif data[0] == 'int list' or data[0] == 'float list' or data[0] == 'number list':
+                    continue
+
+                # The argument test.
+                else:
+                    self.assertRaises(RelaxListNumError, self.n_state_model_fns.CoM, centre=data[1])
+
+            # All other arguments.
+            else:
+                self.assertRaises(RelaxListError, self.n_state_model_fns.CoM, centre=data[1])
+
+
     def test_model_argfail_N(self):
         """Failure of the N arg of the n_state_model.model() user function."""
 
