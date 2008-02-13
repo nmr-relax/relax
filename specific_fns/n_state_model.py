@@ -31,6 +31,7 @@ from data import Data as relax_data_store
 from float import isNaN, isInf
 import generic_fns
 from maths_fns.n_state_model import N_state_opt
+from maths_fns.rotation_matrix import rotation_matrix_zyz
 from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
 from specific_fns.base_class import Common_functions
@@ -125,7 +126,13 @@ class N_state_model(Common_functions):
         unit_vect = array(cdp.CoM, float64) - array(cdp.pivot_point, float64)
         unit_vect = unit_vect / norm(unit_vect)
         print "The unit vector between the pivot and CoM is:\n" + `unit_vect` + "\n"
-        raise NameError, `unit_vect`
+
+        # Generate the rotation matrices.
+        self.R = zeros((cdp.N,3,3), float64)
+        for c in xrange(cdp.N):
+            rotation_matrix_zyz(self.R[c], cdp.alpha[c], cdp.beta[c], cdp.gamma[c])
+
+        raise NameError, "hello"
 
 
     def default_value(self, param):
