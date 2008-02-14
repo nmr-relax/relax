@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from math import acos, pi
+from math import acos, cos, pi
 from numpy import array, dot, float64, zeros
 from numpy.linalg import norm
 from re import search
@@ -149,8 +149,9 @@ class N_state_model(Common_functions):
         # The cone angle for diffusion on an axially symmetric cone.
         cdp.diff_on_cone_theta = acos(len_red)
 
-        # The cone angle for diffusion in an axially symmetric cone.
+        # The cone angle and order parameter for diffusion in an axially symmetric cone.
         cdp.diff_in_cone_theta = acos(2.*len_red - 1.)
+        cdp.S_diff_in_cone = cos(cdp.diff_in_cone_theta) * (1 + cos(cdp.diff_in_cone_theta)) / 2.0
 
         # Print out.
         print "\nThe pivot point of the domain motions is:\n" + `cdp.pivot_point` + "\n"
@@ -161,6 +162,7 @@ class N_state_model(Common_functions):
         print "The length reduction is:\n" + `len_red` + "\n"
         print "The cone angle for diffusion on an axially symmetric cone is:\n%.5f rad (%.5f deg)\n" % (cdp.diff_on_cone_theta, cdp.diff_on_cone_theta / (2*pi) *360.)
         print "The cone angle for diffusion in an axially symmetric cone is:\n%.5f rad (%.5f deg)\n" % (cdp.diff_in_cone_theta, cdp.diff_in_cone_theta / (2*pi) *360.)
+        print "The order parameter (S_cone) for diffusion in an axially symmetric cone is:\nS_cone = %.5f\nS^2 = %.5f\n" % (cdp.S_diff_in_cone, cdp.S_diff_in_cone**2)
 
 
     def default_value(self, param):
