@@ -162,8 +162,6 @@ class N_state_model(Common_functions):
         print "The cone angle for diffusion on an axially symmetric cone is:\n%.5f rad (%.5f deg)\n" % (cdp.diff_on_cone_theta, cdp.diff_on_cone_theta / (2*pi) *360.)
         print "The cone angle for diffusion in an axially symmetric cone is:\n%.5f rad (%.5f deg)\n" % (cdp.diff_in_cone_theta, cdp.diff_in_cone_theta / (2*pi) *360.)
 
-        raise NameError, "hello"
-
 
     def default_value(self, param):
         """
