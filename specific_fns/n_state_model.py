@@ -149,6 +149,9 @@ class N_state_model(Common_functions):
         # The cone angle for diffusion on an axially symmetric cone.
         cdp.diff_on_cone_theta = acos(len_red)
 
+        # The cone angle for diffusion in an axially symmetric cone.
+        cdp.diff_in_cone_theta = acos(2.*len_red - 1.)
+
         # Print out.
         print "\nThe pivot point of the domain motions is:\n" + `cdp.pivot_point` + "\n"
         print "The initial centre of mass (prior to rotation) for the moving domain is:\n" + `cdp.CoM` + "\n"
@@ -157,6 +160,7 @@ class N_state_model(Common_functions):
         print "The full length rotated CoM vector is:\n" + `cdp.rot_CoM` + "\n"
         print "The length reduction is:\n" + `len_red` + "\n"
         print "The cone angle for diffusion on an axially symmetric cone is:\n%.5f rad (%.5f deg)\n" % (cdp.diff_on_cone_theta, cdp.diff_on_cone_theta / (2*pi) *360.)
+        print "The cone angle for diffusion in an axially symmetric cone is:\n%.5f rad (%.5f deg)\n" % (cdp.diff_in_cone_theta, cdp.diff_in_cone_theta / (2*pi) *360.)
 
         raise NameError, "hello"
 
