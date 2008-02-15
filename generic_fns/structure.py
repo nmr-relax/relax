@@ -188,6 +188,13 @@ def autoscale_tensor(method=None):
 def centre_of_mass(return_mass=False):
     """Calculate and return the centre of mass of the structure."""
 
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Test if a structure has been loaded.
+    if not hasattr(cdp.structure, 'structures'):
+        raise RelaxNoPdbError
+
     # Print out.
     print "Calculating the centre of mass."
 
