@@ -117,12 +117,13 @@ class SpinList(list):
 class ResidueContainer(Prototype):
     """Class containing all the residue specific data."""
 
-    def __init__(self, res_name=None, res_num=None):
+    def __init__(self, res_name=None, res_num=None, select=1):
         """Set up the default objects of the residue data container."""
 
         # The residue name and number.
         self.name = res_name
         self.num = res_num
+        self.select = select
 
         # The empty spin system list.
         self.spin = SpinList()
@@ -177,18 +178,18 @@ class ResidueList(list):
         text = "Residues.\n\n"
 
         # Residue data.
-        text = text + "%-8s%-8s%-8s" % ("Index", "Number", "Name") + "\n"
+        text = text + "%-8s%-8s%-8s%-10s" % ("Index", "Number", "Name", "Selected") + "\n"
         for i in xrange(len(self)):
-            text = text + "%-8i%-8s%-8s" % (i, `self[i].num`, self[i].name) + "\n"
+            text = text + "%-8i%-8s%-8s%-10i" % (i, `self[i].num`, self[i].name, self[i].select) + "\n"
         text = text + "\nThese can be accessed by typing 'D.mol[i].res[j]', where D is the relax data storage object.\n"
 
         return text
 
 
-    def add_item(self, res_name=None, res_num=None):
+    def add_item(self, res_name=None, res_num=None, select=1):
         """Function for appending an empty container to the list."""
 
-        self.append(ResidueContainer(res_name, res_num))
+        self.append(ResidueContainer(res_name, res_num, select))
 
 
 
@@ -198,11 +199,12 @@ class ResidueList(list):
 class MoleculeContainer(Prototype):
     """Class containing all the molecule specific data."""
 
-    def __init__(self, mol_name=None):
+    def __init__(self, mol_name=None, select=1):
         """Set up the default objects of the molecule data container."""
 
         # The name of the molecule, corresponding to that of the structure file if specified.
         self.name = mol_name
+        self.select = select
 
         # The empty residue list.
         self.res = ResidueList()
@@ -248,14 +250,14 @@ class MoleculeList(list):
 
     def __repr__(self):
         text = "Molecules.\n\n"
-        text = text + "%-8s%-8s" % ("Index", "Name") + "\n"
+        text = text + "%-8s%-8s%-10s" % ("Index", "Name", "Selected") + "\n"
         for i in xrange(len(self)):
-            text = text + "%-8i%-8s" % (i, self[i].name) + "\n"
+            text = text + "%-8i%-8s%-10i" % (i, self[i].name, self[i].select) + "\n"
         text = text + "\nThese can be accessed by typing 'D.mol[i]', where D is the relax data storage object.\n"
         return text
 
 
-    def add_item(self, mol_name=None):
+    def add_item(self, mol_name=None, select=1):
         """Function for appending an empty container to the list."""
 
-        self.append(MoleculeContainer(mol_name))
+        self.append(MoleculeContainer(mol_name, select))
