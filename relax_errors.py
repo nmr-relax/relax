@@ -140,8 +140,11 @@ class RelaxPdbError(BaseError):
 
 # No PDB loaded.
 class RelaxNoPdbError(BaseError):
-    def __init__(self, pipe):
-        self.text = "No PDB file has been loaded for the data pipe " + `pipe` + "."
+    def __init__(self, pipe=None):
+        if pipe != None:
+            self.text = "No PDB file has been loaded for the data pipe " + `pipe` + "."
+        else:
+            self.text = "No PDB file has been loaded."
         if Debug:
             self.save_state()
 
