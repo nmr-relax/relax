@@ -103,13 +103,14 @@ class N_state_model:
                 raise RelaxListNumError, ('pivot point', pivot_point)
 
         # CoM argument.
-        if type(centre) != list:
-            raise RelaxListError, ('centre of mass', centre)
-        if len(centre) != 3:
-            raise RelaxLenError, ('centre of mass', 3)
-        for i in xrange(len(centre)):
-            if type(centre[i]) != int and type(centre[i]) != float:
-                raise RelaxListNumError, ('centre of mass', centre)
+        if centre != None:
+            if type(centre) != list:
+                raise RelaxListError, ('centre of mass', centre)
+            if len(centre) != 3:
+                raise RelaxLenError, ('centre of mass', 3)
+            for i in xrange(len(centre)):
+                if type(centre[i]) != int and type(centre[i]) != float:
+                    raise RelaxListNumError, ('centre of mass', centre)
 
         # Execute the functional code.
         n_state_model_obj.CoM(pivot_point=pivot_point, centre=centre)
