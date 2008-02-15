@@ -45,10 +45,6 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the None arguments, and skip them.
-            if data[0] == 'None':
-                continue
-
             # Catch the list arguments.
             if type(data[1]) == list:
                 # The wrong length.
