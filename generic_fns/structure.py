@@ -186,7 +186,15 @@ def autoscale_tensor(method=None):
 
 
 def centre_of_mass(return_mass=False):
-    """Calculate and return the centre of mass of the structure."""
+    """Calculate and return the centre of mass of the structure.
+
+    @param return_mass: A flag which if False will cause only the centre of mass to be returned, but
+                        if True will cause the centre of mass and the mass itself to be returned as
+                        a tuple.
+    @type return_mass:  bool
+    @return:            The centre of mass vector, and additionally the mass.
+    @rtype:             list of 3 floats (or tuple of a list of 3 floats and one float)
+    """
 
     # Alias the current data pipe.
     cdp = relax_data_store[relax_data_store.current_pipe]
@@ -206,6 +214,16 @@ def centre_of_mass(return_mass=False):
 
     # Loop over the structures.
     for struct in cdp.structure.structures:
+        # Get the corresponding molecule container.
+        if cdp.mol[0].name == None:
+            mol_cont = cdp.mol[0]
+        else:
+            mol_cont = return_molecule(struct.name)
+
+        # Deselected molecule.
+        if not mol_cont.select:
+            continue
+
         # Protein.
         if struct.peptide_chains:
             chains = struct.peptide_chains
@@ -216,23 +234,28 @@ def centre_of_mass(return_mass=False):
 
         # Loop over the residues of the protein in the PDB file.
         for res in chains[0].residues:
-            # Find the corresponding residue in 'relax_data_store'.
-            found = 0
-            for res_data in relax_data_store.res[run]:
-                if res.number == res_data.num:
-                    found = 1
-                    break
+            # Get the corresponding residue container.
+            if mol_cont.res[0].name == None and mol_cont.res[0].num == None:
+                res_cont = mol_cont.res[0]
+            else:
+                res_cont = return_residue(res.number)
 
-            # Doesn't exist.
-            if not found:
-                continue
-
-            # Skip unselected residues.
-            if not res_data.select:
+            # Deselected residue.
+            if not res_cont.select:
                 continue
 
             # Loop over the atoms of the residue.
             for atom in res:
+                # Get the corresponding spin container.
+                if res_cont.spin[0].name == None and res_cont.spin[0].num == None:
+                    spin_cont = res_cont.spin[0]
+                else:
+                    spin_cont = return_spin(atom.properties['number'])
+
+                # Deselected spin.
+                if not spin_cont.select:
+                    continue
+
                 # Atomic mass.
                 mass = atomic_mass(atom.properties['element'])
 
