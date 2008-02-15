@@ -198,7 +198,7 @@ def centre_of_mass(return_mass=False):
     M = 0.0
 
     # Loop over the structures.
-    for struct in cdp.structure.structures:
+    for struct in relax_data_store[relax_data_store.current_pipe].structure.structures:
         # Protein.
         if struct.peptide_chains:
             chains = struct.peptide_chains
