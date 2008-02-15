@@ -148,6 +148,7 @@ class N_state_model(Common_functions):
 
         # The cone angle for diffusion on an axially symmetric cone.
         cdp.theta_diff_on_cone = acos(len_red)
+        cdp.S_diff_on_cone = (3.0*cos(cdp.theta_diff_on_cone)**2 - 1.0) / 2.0
 
         # The cone angle and order parameter for diffusion in an axially symmetric cone.
         cdp.theta_diff_in_cone = acos(2.*len_red - 1.)
@@ -161,8 +162,10 @@ class N_state_model(Common_functions):
         print "The full length rotated CoM vector is:\n" + `cdp.rot_CoM` + "\n"
         print "The length reduction is:\n" + `len_red` + "\n"
         print "The cone angle for diffusion on an axially symmetric cone is:\n%.5f rad (%.5f deg)\n" % (cdp.theta_diff_on_cone, cdp.theta_diff_on_cone / (2*pi) *360.)
+        print "The order parameter (S_cone) for diffusion on an axially symmetric cone is:\nS_cone = %.5f\nS^2 = %.5f\n" % (cdp.S_diff_on_cone, cdp.S_diff_on_cone**2)
         print "The cone angle for diffusion in an axially symmetric cone is:\n%.5f rad (%.5f deg)\n" % (cdp.theta_diff_in_cone, cdp.theta_diff_in_cone / (2*pi) *360.)
         print "The order parameter (S_cone) for diffusion in an axially symmetric cone is:\nS_cone = %.5f\nS^2 = %.5f\n" % (cdp.S_diff_in_cone, cdp.S_diff_in_cone**2)
+        raise NameError, "hello"
 
 
     def default_value(self, param):
