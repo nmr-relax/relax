@@ -147,11 +147,11 @@ class N_state_model(Common_functions):
         cdp.rot_CoM = norm(cdp.CoM) * cdp.red_CoM / len_red
 
         # The cone angle for diffusion on an axially symmetric cone.
-        cdp.diff_on_cone_theta = acos(len_red)
+        cdp.theta_diff_on_cone = acos(len_red)
 
         # The cone angle and order parameter for diffusion in an axially symmetric cone.
-        cdp.diff_in_cone_theta = acos(2.*len_red - 1.)
-        cdp.S_diff_in_cone = cos(cdp.diff_in_cone_theta) * (1 + cos(cdp.diff_in_cone_theta)) / 2.0
+        cdp.theta_diff_in_cone = acos(2.*len_red - 1.)
+        cdp.S_diff_in_cone = cos(cdp.theta_diff_in_cone) * (1 + cos(cdp.theta_diff_in_cone)) / 2.0
 
         # Print out.
         print "\nThe pivot point of the domain motions is:\n" + `cdp.pivot_point` + "\n"
@@ -160,8 +160,8 @@ class N_state_model(Common_functions):
         print "The reduced CoM vector is:\n" + `cdp.red_CoM` + "\n"
         print "The full length rotated CoM vector is:\n" + `cdp.rot_CoM` + "\n"
         print "The length reduction is:\n" + `len_red` + "\n"
-        print "The cone angle for diffusion on an axially symmetric cone is:\n%.5f rad (%.5f deg)\n" % (cdp.diff_on_cone_theta, cdp.diff_on_cone_theta / (2*pi) *360.)
-        print "The cone angle for diffusion in an axially symmetric cone is:\n%.5f rad (%.5f deg)\n" % (cdp.diff_in_cone_theta, cdp.diff_in_cone_theta / (2*pi) *360.)
+        print "The cone angle for diffusion on an axially symmetric cone is:\n%.5f rad (%.5f deg)\n" % (cdp.theta_diff_on_cone, cdp.theta_diff_on_cone / (2*pi) *360.)
+        print "The cone angle for diffusion in an axially symmetric cone is:\n%.5f rad (%.5f deg)\n" % (cdp.theta_diff_in_cone, cdp.theta_diff_in_cone / (2*pi) *360.)
         print "The order parameter (S_cone) for diffusion in an axially symmetric cone is:\nS_cone = %.5f\nS^2 = %.5f\n" % (cdp.S_diff_in_cone, cdp.S_diff_in_cone**2)
 
 
