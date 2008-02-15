@@ -155,16 +155,17 @@ class N_state_model(Common_functions):
         cdp.S_diff_in_cone = cos(cdp.theta_diff_in_cone) * (1 + cos(cdp.theta_diff_in_cone)) / 2.0
 
         # Print out.
-        print "\nThe pivot point of the domain motions is:\n" + `cdp.pivot_point` + "\n"
-        print "The initial centre of mass (prior to rotation) for the moving domain is:\n" + `cdp.CoM` + "\n"
-        print "The unit vector between the pivot and CoM is:\n" + `unit_vect` + "\n"
-        print "The reduced CoM vector is:\n" + `cdp.red_CoM` + "\n"
-        print "The full length rotated CoM vector is:\n" + `cdp.rot_CoM` + "\n"
-        print "The length reduction is:\n" + `len_red` + "\n"
-        print "The cone angle for diffusion on an axially symmetric cone is:\n%.5f rad (%.5f deg)\n" % (cdp.theta_diff_on_cone, cdp.theta_diff_on_cone / (2*pi) *360.)
-        print "The order parameter (S_cone) for diffusion on an axially symmetric cone is:\nS_cone = %.5f (S^2 = %.5f)\n" % (cdp.S_diff_on_cone, cdp.S_diff_on_cone**2)
-        print "The cone angle for diffusion in an axially symmetric cone is:\n%.5f rad (%.5f deg)\n" % (cdp.theta_diff_in_cone, cdp.theta_diff_in_cone / (2*pi) *360.)
-        print "The order parameter (S_cone) for diffusion in an axially symmetric cone is:\nS_cone = %.5f (S^2 = %.5f)\n" % (cdp.S_diff_in_cone, cdp.S_diff_in_cone**2)
+        print "\n%-40s %-20s" % ("Pivot point:", `cdp.pivot_point`)
+        print "%-40s %-20s" % ("Moving domain CoM (prior to rotation):", `cdp.CoM`)
+        print "%-40s %-20s" % ("Pivot-CoM unit vector:", `unit_vect`)
+        print "%-40s %-20s" % ("Reduced CoM vector:", `cdp.red_CoM`)
+        print "%-40s %-20s" % ("Full length rotated CoM vector:", `cdp.rot_CoM`)
+        print "%-40s %-20s" % ("Length reduction from unity:", `len_red`)
+        print "%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion on a cone)", cdp.theta_diff_on_cone, cdp.theta_diff_on_cone / (2*pi) *360.)
+        print "%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion on a cone)", cdp.S_diff_on_cone, cdp.S_diff_on_cone**2)
+        print "%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion in a cone)", cdp.theta_diff_in_cone, cdp.theta_diff_in_cone / (2*pi) *360.)
+        print "%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion in a cone)", cdp.S_diff_in_cone, cdp.S_diff_in_cone**2)
+        print "\n\n"
 
 
     def default_value(self, param):
