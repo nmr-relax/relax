@@ -218,7 +218,7 @@ def centre_of_mass(return_mass=False):
         if cdp.mol[0].name == None:
             mol_cont = cdp.mol[0]
         else:
-            mol_cont = return_molecule(struct.name)
+            mol_cont = return_molecule('#' + struct.name)
 
         # Deselected molecule.
         if not mol_cont.select:
@@ -238,7 +238,7 @@ def centre_of_mass(return_mass=False):
             if mol_cont.res[0].name == None and mol_cont.res[0].num == None:
                 res_cont = mol_cont.res[0]
             else:
-                res_cont = return_residue(res.number)
+                res_cont = return_residue(':' + `res.number`)
 
             # Deselected residue.
             if not res_cont.select:
@@ -250,7 +250,7 @@ def centre_of_mass(return_mass=False):
                 if res_cont.spin[0].name == None and res_cont.spin[0].num == None:
                     spin_cont = res_cont.spin[0]
                 else:
-                    spin_cont = return_spin(atom.properties['number'])
+                    spin_cont = return_spin('@' + `atom.properties['serial_number']`)
 
                 # Deselected spin.
                 if not spin_cont.select:
