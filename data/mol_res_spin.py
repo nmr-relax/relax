@@ -38,7 +38,7 @@ from prototype import Prototype
 class SpinContainer(Prototype):
     """Class containing all the spin system specific data."""
 
-    def __init__(self, spin_name=None, spin_num=None, select=1):
+    def __init__(self, spin_name=None, spin_num=None, select=True):
         """Set up the default objects of the spin system data container."""
 
         # The spin system name and number.
@@ -98,13 +98,13 @@ class SpinList(list):
         # Residue data.
         text = text + "%-8s%-8s%-8s%-10s" % ("Index", "Number", "Name", "Selected") + "\n"
         for i in xrange(len(self)):
-            text = text + "%-8i%-8s%-8s%-10i" % (i, `self[i].num`, self[i].name, self[i].select) + "\n"
+            text = text + "%-8i%-8s%-8s%-10s" % (i, `self[i].num`, self[i].name, self[i].select) + "\n"
         text = text + "\nThese can be accessed by typing 'D.mol[i].res[j].spin[k]', where D is the relax data storage object.\n"
 
         return text
 
 
-    def add_item(self, spin_name=None, spin_num=None, select=1):
+    def add_item(self, spin_name=None, spin_num=None, select=True):
         """Function for appending an empty container to the list."""
 
         self.append(SpinContainer(spin_name, spin_num, select))
@@ -117,7 +117,7 @@ class SpinList(list):
 class ResidueContainer(Prototype):
     """Class containing all the residue specific data."""
 
-    def __init__(self, res_name=None, res_num=None, select=1):
+    def __init__(self, res_name=None, res_num=None, select=True):
         """Set up the default objects of the residue data container."""
 
         # The residue name and number.
@@ -180,13 +180,13 @@ class ResidueList(list):
         # Residue data.
         text = text + "%-8s%-8s%-8s%-10s" % ("Index", "Number", "Name", "Selected") + "\n"
         for i in xrange(len(self)):
-            text = text + "%-8i%-8s%-8s%-10i" % (i, `self[i].num`, self[i].name, self[i].select) + "\n"
+            text = text + "%-8i%-8s%-8s%-10s" % (i, `self[i].num`, self[i].name, self[i].select) + "\n"
         text = text + "\nThese can be accessed by typing 'D.mol[i].res[j]', where D is the relax data storage object.\n"
 
         return text
 
 
-    def add_item(self, res_name=None, res_num=None, select=1):
+    def add_item(self, res_name=None, res_num=None, select=True):
         """Function for appending an empty container to the list."""
 
         self.append(ResidueContainer(res_name, res_num, select))
@@ -199,7 +199,7 @@ class ResidueList(list):
 class MoleculeContainer(Prototype):
     """Class containing all the molecule specific data."""
 
-    def __init__(self, mol_name=None, select=1):
+    def __init__(self, mol_name=None, select=True):
         """Set up the default objects of the molecule data container."""
 
         # The name of the molecule, corresponding to that of the structure file if specified.
@@ -252,12 +252,12 @@ class MoleculeList(list):
         text = "Molecules.\n\n"
         text = text + "%-8s%-8s%-10s" % ("Index", "Name", "Selected") + "\n"
         for i in xrange(len(self)):
-            text = text + "%-8i%-8s%-10i" % (i, self[i].name, self[i].select) + "\n"
+            text = text + "%-8i%-8s%-10s" % (i, self[i].name, self[i].select) + "\n"
         text = text + "\nThese can be accessed by typing 'D.mol[i]', where D is the relax data storage object.\n"
         return text
 
 
-    def add_item(self, mol_name=None, select=1):
+    def add_item(self, mol_name=None, select=True):
         """Function for appending an empty container to the list."""
 
         self.append(MoleculeContainer(mol_name, select))
