@@ -116,7 +116,7 @@ class N_state_model:
         n_state_model_obj.CoM(pivot_point=pivot_point, centre=centre)
 
 
-    def cone_pdb(self, scale=1.8e-6, cone_type=None, file='cone.pdb', dir=None, force=False):
+    def cone_pdb(self, cone_type=None, scale=1.0, file='cone.pdb', dir=None, force=False):
         """Create a PDB file to represent the diffusion tensor.
 
         Keyword Arguments
@@ -214,11 +214,16 @@ class N_state_model:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "n_state_model.cone_pdb("
-            text = text + "scale=" + `scale`
+            text = text + "cone_type=" + `cone_type`
+            text = text + ", scale=" + `scale`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force` + ")"
             print text
+
+        # Cone type.
+        if type(cone_type) != str:
+            raise RelaxStrError, ('cone type', cone_type)
 
         # Scaling.
         if type(scale) != float and type(scale) != int:
@@ -237,7 +242,7 @@ class N_state_model:
             raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
-        n_state_model.cone_pdb(scale=scale, file=file, dir=dir, force=force)
+        n_state_model.cone_pdb(cone_type=cone_type, scale=scale, file=file, dir=dir, force=force)
 
 
     def model(self, N=None, ref=None):
