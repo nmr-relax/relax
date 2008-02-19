@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.n_state_model import N_state_model
-from relax_errors import RelaxBoolError, RelaxIntError, RelaxLenError, RelaxListError, RelaxListNumError, RelaxStrError
+from relax_errors import RelaxBoolError, RelaxIntError, RelaxLenError, RelaxListError, RelaxListNumError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 from test_suite.unit_tests.n_state_model_testing_base import N_state_model_base_class
 
 # Unit test imports.
@@ -90,6 +90,58 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
             # All other arguments.
             else:
                 self.assertRaises(RelaxListError, self.n_state_model_fns.CoM, centre=data[1])
+
+
+    def test_cone_pdb_argfail_scale(self):
+        """The scale arg test of the n_state_model.cone_pdb() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the float, bin, and int arguments, and skip them.
+            if data[0] == 'float' or data[0] == 'bin' or data[0] == 'int':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNumError, self.n_state_model_fns.cone_pdb, scale=data[1])
+
+
+    def test_cone_pdb_argfail_file(self):
+        """The file arg test of the n_state_model.cone_pdb() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str arguments, and skip them.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.n_state_model_fns.cone_pdb, file=data[1])
+
+
+    def test_cone_pdb_argfail_dir(self):
+        """The dir arg test of the n_state_model.cone_pdb() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.n_state_model_fns.cone_pdb, dir=data[1])
+
+
+    def test_cone_pdb_argfail_force(self):
+        """The force arg test of the n_state_model.cone_pdb() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxBoolError, self.n_state_model_fns.cone_pdb, force=data[1])
 
 
     def test_model_argfail_N(self):
