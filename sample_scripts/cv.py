@@ -97,7 +97,7 @@ print "\n"
 # Switch to the 'cv' data pipe.
 pipe.switch('cv')
 
-# Delete the relaxation data copied over to the run 'cv' and then load all the data.
+# Delete the relaxation data copied over to the 'cv' data pipe and then load all the data.
 delete(data_type='relax_data')
 for i in xrange(len(ri_labels)):
     relax_data.read(ri_labels[i], frq_labels[i], frqs[i], file_names[i])
