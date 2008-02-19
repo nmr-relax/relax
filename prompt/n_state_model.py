@@ -233,8 +233,8 @@ class N_state_model:
             raise RelaxNoneStrError, ('directory name', dir)
 
         # The force flag.
-        if type(force) != int or (force != 0 and force != 1):
-            raise RelaxBinError, ('force flag', force)
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
         n_state_model.cone_pdb(scale=scale, file=file, dir=dir, force=force)
