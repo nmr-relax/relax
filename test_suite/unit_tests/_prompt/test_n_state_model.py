@@ -92,6 +92,19 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
                 self.assertRaises(RelaxListError, self.n_state_model_fns.CoM, centre=data[1])
 
 
+    def test_cone_pdb_argfail_cone_type(self):
+        """The cone_type arg test of the n_state_model.cone_pdb() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str arguments, and skip them.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.n_state_model_fns.cone_pdb, cone_type=data[1])
+
+
     def test_cone_pdb_argfail_scale(self):
         """The scale arg test of the n_state_model.cone_pdb() user function."""
 
