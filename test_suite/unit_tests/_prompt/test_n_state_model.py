@@ -115,7 +115,7 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNumError, self.n_state_model_fns.cone_pdb, scale=data[1])
+            self.assertRaises(RelaxNumError, self.n_state_model_fns.cone_pdb, cone_type='', scale=data[1])
 
 
     def test_cone_pdb_argfail_file(self):
@@ -128,7 +128,7 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.n_state_model_fns.cone_pdb, file=data[1])
+            self.assertRaises(RelaxStrError, self.n_state_model_fns.cone_pdb, cone_type='', file=data[1])
 
 
     def test_cone_pdb_argfail_dir(self):
@@ -141,7 +141,7 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.n_state_model_fns.cone_pdb, dir=data[1])
+            self.assertRaises(RelaxNoneStrError, self.n_state_model_fns.cone_pdb, cone_type='', dir=data[1])
 
 
     def test_cone_pdb_argfail_force(self):
@@ -154,7 +154,7 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxBoolError, self.n_state_model_fns.cone_pdb, force=data[1])
+            self.assertRaises(RelaxBoolError, self.n_state_model_fns.cone_pdb, cone_type='', force=data[1])
 
 
     def test_model_argfail_N(self):
