@@ -117,98 +117,53 @@ class N_state_model:
 
 
     def cone_pdb(self, cone_type=None, scale=1.0, file='cone.pdb', dir=None, force=False):
-        """Create a PDB file to represent the diffusion tensor.
+        """Create a PDB file representing the cone models from the centre of mass (CoM) analysis.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        scale:  Value for scaling the diffusion rates.
+        cone_type:  The type of cone model to represent.
+
+        scale:  Value for scaling the pivot-CoM distance which the size of the cone defaults to.
 
         file:  The name of the PDB file.
 
         dir:  The directory where the file is located.
 
-        force:  A flag which, if set to 1, will overwrite the any pre-existing file.
+        force:  A flag which, if set to True, will overwrite the any pre-existing file.
 
 
         Description
         ~~~~~~~~~~~
 
         This function creates a PDB file containing an artificial geometric structure to represent
-        the diffusion tensor.  A structure must have previously been read into relax.  The diffusion
-        tensor is represented by an ellipsoidal, spheroidal, or spherical geometric object with its
-        origin located at the centre of mass (of the selected residues).  This diffusion tensor PDB
-        file can subsequently read into any molecular viewer.
+        the various cone models.  These models include:
 
-        There are four different types of residue within the PDB.  The centre of mass of the
-        selected residues is represented as a single carbon atom of the residue 'COM'.  The
-        ellipsoidal geometric shape consists of numerous H atoms of the residue 'TNS'.  The axes
-        of the tensor, when defined, are presented as the residue 'AXS' and consist of carbon atoms:
-        one at the centre of mass and one at the end of each eigenvector.  Finally, if Monte Carlo
-        simulations were run and the diffusion tensor parameters were allowed to vary then there
-        will be multiple 'SIM' residues, one for each simulation.  These are essentially the same as
-        the 'AXS' residue, representing the axes of the simulated tensors, and they will appear as a
-        distribution.
+            'diff in cone'
+            'diff on cone'
 
-        As the Brownian rotational diffusion tensor is a measure of the rate of rotation about
-        different axes - the larger the geometric object, the faster the diffusion of a molecule.
-        For example the diffusion tensor of a water molecule is much larger than that of a
-        macromolecule.
+        The model can be selected by setting the cone_type argument to one of these strings.  The
+        cone is represented as an isotropic cone with its axis parallel to the average pivot-CoM
+        vector, the vertex placed at the pivot point of the domain motions, and the length of the
+        edge of the cone equal to the pivot-CoM distance multipled by the scaling argument.  The
+        resultant PDB file can subsequently read into any molecular viewer.
 
-        The effective global correlation time experienced by an XH bond vector, not to be confused
-        with the Lipari and Szabo parameter tau_e, will be approximately proportional to the
-        component of the diffusion tensor parallel to it.  The approximation is not exact due to the
-        multiexponential form of the correlation function of Brownian rotational diffusion.  If an
-        XH bond vector is parallel to the longest axis of the tensor, it will be unaffected by
-        rotations about that axis, which are the fastest rotations of the molecule, and therefore
-        its effective global correlation time will be maximal.
+        There are four different types of residue within the PDB.  The pivot point is represented as
+        as a single carbon atom of the residue 'PIV'.  The cone consists of numerous H atoms of the
+        residue 'CON'.  The average pivot-CoM vector is presented as the residue 'AVE' with one
+        carbon atom positioned at the pivot and the other at the head of the vector (after scaling
+        by the scale argument).  Finally, if Monte Carlo have been performed, there will be multiple
+        'MCC' residues representing the cone for each simulation, and multiple 'MCA' residues
+        representing the varying average pivot-CoM vector for each simulation.
 
-        To set the size of the diffusion tensor within the PDB frame the unit vectors used to
-        generate the geometric object are first multiplied by the diffusion tensor (which has the
-        units of inverse seconds) then by the scaling factor (which has the units of second
-        Angstroms and has the default value of 1.8e-6 s.Angstrom).  Therefore the rotational
-        diffusion rate per Angstrom is equal the inverse of the scale value (which defaults to
-        5.56e5 s^-1.Angstrom^-1).  Using the default scaling value for spherical diffusion, the
-        correspondence between global correlation time, Diso diffusion rate, and the radius of the
-        sphere for a number of discrete cases will be:
-
-        _________________________________________________
-        |           |               |                   |
-        | tm (ns)   | Diso (s^-1)   | Radius (Angstrom) |
-        |___________|_______________|___________________|
-        |           |               |                   |
-        | 1         | 1.67e8        | 300               |
-        |           |               |                   |
-        | 3         | 5.56e7        | 100               |
-        |           |               |                   |
-        | 10        | 1.67e7        | 30                |
-        |           |               |                   |
-        | 30        | 5.56e6        | 10                |
-        |___________|_______________|___________________|
-
-
-        The scaling value has been fixed to facilitate comparisons within or between publications,
-        but can be changed to vary the size of the tensor geometric object if necessary.  Reporting
-        the rotational diffusion rate per Angstrom within figure legends would be useful.
-
-        To create the tensor PDB representation, a number of algorithms are utilised.  Firstly the
-        centre of mass is calculated for the selected residues and is represented in the PDB by a C
-        atom.  Then the axes of the diffusion are calculated, as unit vectors scaled to the
-        appropriate length (multiplied by the eigenvalue Dx, Dy, Dz, Dpar, Dper, or Diso as well as
-        the scale value), and a C atom placed at the position of this vector plus the centre of
-        mass.  Finally a uniform distribution of vectors on a sphere is generated using spherical
-        coordinates.  By incrementing the polar angle using an arccos distribution, a radial array
-        of vectors representing latitude are created while incrementing the azimuthal angle evenly
-        creates the longitudinal vectors.  These unit vectors, which are distributed within the PDB
-        frame and are of 1 Angstrom in length, are first rotated into the diffusion frame using a
-        rotation matrix (the spherical diffusion tensor is not rotated).  Then they are multiplied
-        by the diffusion tensor matrix to extend the vector out to the correct length, and finally
-        multiplied by the scale value so that the vectors reasonably superimpose onto the
-        macromolecular structure.  The last set of algorithms place all this information into a PDB
-        file.  The distribution of vectors are represented by H atoms and are all connected using
-        PDB CONECT records.  Each H atom is connected to its two neighbours on the both the
-        longitude and latitude.  This creates a geometric PDB object with longitudinal and
-        latitudinal lines.
+        To create the diffusion in a cone PDB representation, a uniform distribution of vectors on a
+        sphere is generated using spherical coordinates with the polar angle defined from the
+        average pivot-CoM vector.  By incrementing the polar angle using an arccos distribution, a
+        radial array of vectors representing latitude are created while incrementing the azimuthal
+        angle evenly creates the longitudinal vectors.  These are all placed into the PDB file as H
+        atoms and are all connected using PDB CONECT records.  Each H atom is connected to its two
+        neighbours on the both the longitude and latitude.  This creates a geometric PDB object with
+        longitudinal and latitudinal lines representing the filled cone.
         """
 
         # Function intro text.
