@@ -197,7 +197,7 @@ class N_state_model:
             raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
-        n_state_model.cone_pdb(cone_type=cone_type, scale=scale, file=file, dir=dir, force=force)
+        n_state_model_obj.cone_pdb(cone_type=cone_type, scale=scale, file=file, dir=dir, force=force)
 
 
     def model(self, N=None, ref=None):
