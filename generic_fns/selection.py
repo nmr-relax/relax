@@ -1128,6 +1128,53 @@ def sel_res(self, run=None, num=None, name=None, boolean='OR', change_all=0):
         print "No residues match."
 
 
+def spin_index_loop(selection=None, pipe=None):
+    """Generator function for looping over all selected spins, returning the mol-res-spin indecies.
+
+    @param selection:   The spin system selection identifier.
+    @type selection:    str
+    @param pipe:        The data pipe containing the spin.  Defaults to the current data pipe.
+    @type pipe:         str
+    @return:            The molecule, residue, and spin index.
+    @rtype:             tuple of 3 int
+    """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = relax_data_store.current_pipe
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Test for the presence of data, and end the execution of this function if there is none.
+    if not exists_mol_res_spin_data():
+        return
+
+    # Parse the selection string.
+    select_obj = Selection(selection)
+
+    # Loop over the molecules.
+    for mol_index in xrange(len(relax_data_store[pipe].mol)):
+        # Skip the molecule if there is no match to the selection.
+        if relax_data_store[pipe].mol[mol_index] not in select_obj:
+            continue
+
+        # Loop over the residues.
+        for res_index in xrange(len(relax_data_store[pipe].mol[mol_index].res)):
+            # Skip the residue if there is no match to the selection.
+            if relax_data_store[pipe].mol[mol_index].res[res_index] not in select_obj:
+                continue
+
+            # Loop over the spins.
+            for spin_index in xrange(len(relax_data_store[pipe].mol[mol_index].res[res_index].spin)):
+                # Skip the spin if there is no match to the selection.
+                if relax_data_store[pipe].mol[mol_index].res[res_index].spin[spin_index] not in select_obj:
+                    continue
+
+                # Yield the spin system specific indecies.
+                yield mol_index, res_index, spin_index
+
+
 def spin_loop(selection=None, pipe=None, full_info=False):
     """Generator function for looping over all the spin systems of the given selection.
 
