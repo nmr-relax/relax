@@ -189,15 +189,22 @@ def atomic_mass(element=None):
         raise RelaxError, "The mass of the element " + `element` + " has not yet been programmed into relax."
 
 
-def autoscale_tensor(method=None):
-    """Automatically determine an appropriate scaling factor for display
-    of the diffusion tensor"""
+def autoscale_tensor(method='mass'):
+    """Automatically determine an appropriate scaling factor for display of the diffusion tensor.
 
+    @param method:  The method used to determine the scaling of the diffusion tensor object.
+    @type method:   str
+    @return:        The scaling factor.
+    @rtype:         float
+    """
+
+    # Centre of mass method.
     if method == 'mass':
         com, mass = centre_of_mass(return_mass=True)
         scale = mass * 6.8e-11
         return scale
 
+    # Autoscaling method.
     warn(RelaxWarning("Autoscale method %s not implimented. Reverting to scale=1.8e-6 A.s" % method))
     return 1.8e-6
 
