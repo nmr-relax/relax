@@ -156,7 +156,13 @@ def atom_connect(atomic_data=None, atom_id=None, bonded_id=None):
 
 
 def atomic_mass(element=None):
-    """Return the atomic mass of the given element."""
+    """Return the atomic mass of the given element.
+
+    @param element: The name of the element to return the atomic mass of.
+    @type element:  str
+    @return:        The relative atomic mass.
+    @rtype:         float
+    """
 
     # Proton.
     if element == 'H' or element == 'Q':
