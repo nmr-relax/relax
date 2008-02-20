@@ -739,7 +739,7 @@ def generate_vector_residues(atomic_data=None, vector=None, atom_name=None, res_
         atom_add(atomic_data=atomic_data, atom_id='vect neg label'+atom_id_ext, record_name='HETATM', atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, element='N')
 
     # Print out.
-    print "    " + atom_name + " vector (scaled + shifted to origin): " + `pdb_vect`
+    print "    " + atom_name + " vector (scaled + shifted to origin): " + `origin+vector*scale`
     print "    Creating the MC simulation vectors."
 
     # Monte Carlo simulations.
