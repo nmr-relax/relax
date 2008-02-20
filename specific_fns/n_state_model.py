@@ -210,7 +210,7 @@ class N_state_model(Common_functions):
         sim_vectors = None
         if hasattr(cdp, 'red_CoM_sim'):
             sim_vectors = cdp.red_CoM_sim
-        res_num = generic_fns.structure.generate_vector_residues(atomic_data=atomic_data, vector=cdp.red_CoM, atom_name='Cone', res_name_vect='CON', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
+        res_num = generic_fns.structure.generate_vector_residues(atomic_data=atomic_data, vector=cdp.red_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
 
         print `atomic_data`
 
