@@ -168,6 +168,44 @@ class N_state_model(Common_functions):
         print "\n\n"
 
 
+    def cone_pdb(self, cone_type=None, scale=1.0, file=None, dir=None, force=False):
+        """Create a PDB file containing a geometric object representing the various cone models.
+
+        Currently the only cone types supported are 'diff_in_cone' and 'diff_on_cone'.
+
+
+        @param cone_type:   The type of cone model to represent.
+        @type cone_type:    str
+        @param scale:       The size of the geometric object is eqaul to the average pivot-CoM
+                            vector length multiplied by this scaling factor.
+        @type scale:        float
+        @param file:        The name of the PDB file to create.
+        @type file:         str
+        @param dir:         The name of the directory to place the PDB file into.
+        @type dir:          str
+        @param force:       Flag which if set to True will cause any pre-existing file to be
+                            overwritten.
+        @type force:        int
+        """
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Test if the cone models have been determined.
+        if cone_type == 'diff_in_cone' and not hasattr(cdp, 'S_diff_in_cone'):
+            raise RelaxError, "The diffusion in a cone model has not yet been determined."
+        elif cone_type == 'diff_on_cone' and not hasattr(cdp, 'S_diff_on_cone'):
+            raise RelaxError, "The diffusion on a cone model has not yet been determined."
+
+        # Initialise the atom and atomic connections data structures.
+        atomic_data = {}
+
+        # Add the pivot point.
+        generic_fns.structure.atom_add(atomic_data=atomic_data, atom_id='R', record_name='HETATM', atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot_point, element='C')
+
+        print `atomic_data`
+
+
     def default_value(self, param):
         """
         N-state model default values
