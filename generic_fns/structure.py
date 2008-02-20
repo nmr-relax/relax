@@ -374,7 +374,7 @@ def create_diff_tensor_pdb(run=None, scale=1.8e-6, file=None, dir=None, force=0)
         R = centre_of_mass()
 
         # Add the central atom.
-        atom_add(atom_id='R'+atom_id_ext, record_name='HETATM', atom_name='R', res_name='COM', chain_id=chain_id, res_num=res_num, pos=R, element='C')
+        atom_add(atomic_data=atomic_data, atom_id='R'+atom_id_ext, record_name='HETATM', atom_name='R', res_name='COM', chain_id=chain_id, res_num=res_num, pos=R, element='C')
 
         # Increment the residue number.
         res_num = res_num + 1
@@ -417,7 +417,7 @@ def create_diff_tensor_pdb(run=None, scale=1.8e-6, file=None, dir=None, force=0)
                 pos = R + vector
 
                 # Add the vector as a H atom of the TNS residue.
-                atom_add(atom_id=atom_id, record_name='HETATM', atom_name='H'+`atom_num`, res_name='TNS', chain_id=chain_id, res_num=res_num, pos=pos, element='H')
+                atom_add(atomic_data=atomic_data, atom_id=atom_id, record_name='HETATM', atom_name='H'+`atom_num`, res_name='TNS', chain_id=chain_id, res_num=res_num, pos=pos, element='H')
 
                 # Connect to the previous atom (to generate the longitudinal lines).
                 if j != 0:
@@ -493,7 +493,7 @@ def create_diff_tensor_pdb(run=None, scale=1.8e-6, file=None, dir=None, force=0)
         last_res = atomic_arrays[-1][3]
 
         # Add the TER 'atom'.
-        atom_add(atom_id='TER' + atom_id_ext, record_name='TER', res_name=last_res, res_num=res_num)
+        atom_add(atomic_data=atomic_data, atom_id='TER' + atom_id_ext, record_name='TER', res_name=last_res, res_num=res_num)
 
 
     # Create the PDB file.
@@ -600,10 +600,10 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
         H_id = data.proton + end
 
         # Add the central X atom.
-        atom_add(atom_id=X_id, record_name='ATOM', atom_name=data.heteronuc, res_name=data.name, chain_id='A', res_num=data.num, pos=R, element=data.heteronuc)
+        atom_add(atomic_data=atomic_data, atom_id=X_id, record_name='ATOM', atom_name=data.heteronuc, res_name=data.name, chain_id='A', res_num=data.num, pos=R, element=data.heteronuc)
 
         # Add the H atom.
-        atom_add(atom_id=H_id, record_name='ATOM', atom_name=data.proton, res_name=data.name, chain_id='A', res_num=data.num, pos=R+vector, element=data.proton)
+        atom_add(atomic_data=atomic_data, atom_id=H_id, record_name='ATOM', atom_name=data.proton, res_name=data.name, chain_id='A', res_num=data.num, pos=R+vector, element=data.proton)
 
         # Connect the two atoms.
         atom_connect(atom_id=X_id, bonded_id=H_id)
@@ -613,7 +613,7 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
         last_name = data.name
 
     # The TER record.
-    atom_add(atom_id='TER' + '_A', record_name='TER', res_name=last_name, chain_id='A', res_num=last_res)
+    atom_add(atomic_data=atomic_data, atom_id='TER' + '_A', record_name='TER', res_name=last_name, chain_id='A', res_num=last_res)
 
     # Symmetry chain.
     if symmetry:
@@ -639,10 +639,10 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
             H_id = data.proton + end
 
             # Add the central X atom.
-            atom_add(atom_id=X_id + '_B', record_name='ATOM', atom_name=data.heteronuc, res_name=data.name, chain_id='B', res_num=data.num, pos=R, element=data.heteronuc)
+            atom_add(atomic_data=atomic_data, atom_id=X_id + '_B', record_name='ATOM', atom_name=data.heteronuc, res_name=data.name, chain_id='B', res_num=data.num, pos=R, element=data.heteronuc)
 
             # Add the H atom.
-            atom_add(atom_id=H_id + '_B', record_name='ATOM', atom_name=data.proton, res_name=data.name, chain_id='B', res_num=data.num, pos=R-vector, element=data.proton)
+            atom_add(atomic_data=atomic_data, atom_id=H_id + '_B', record_name='ATOM', atom_name=data.proton, res_name=data.name, chain_id='B', res_num=data.num, pos=R-vector, element=data.proton)
 
             # Connect the two atoms.
             atom_connect(atom_id=X_id + '_B', bonded_id=H_id + '_B')
@@ -652,7 +652,7 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
             last_name = data.name
 
         # The TER record.
-        atom_add(atom_id='TER' + '_B', record_name='TER', res_name=last_name, chain_id='B', res_num=last_res)
+        atom_add(atomic_data=atomic_data, atom_id='TER' + '_B', record_name='TER', res_name=last_name, chain_id='B', res_num=last_res)
 
 
 
@@ -726,13 +726,13 @@ def generate_ellipsoid_axes(chain_id=None, res_num=None, R=None, i=None):
     Dz_vect_neg = R + Dz_vect_neg
 
     # Create the 'AXS' residue.
-    atom_add(atom_id='R_axes'+atom_id_ext, record_name='HETATM', atom_name='R', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R, element='C')
-    atom_add(atom_id='Dx'+atom_id_ext, record_name='HETATM', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dx_vect, element='C')
-    atom_add(atom_id='Dy'+atom_id_ext, record_name='HETATM', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dy_vect, element='C')
-    atom_add(atom_id='Dz'+atom_id_ext, record_name='HETATM', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dz_vect, element='C')
-    atom_add(atom_id='Dx_neg'+atom_id_ext, record_name='HETATM', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dx_vect_neg, element='C')
-    atom_add(atom_id='Dy_neg'+atom_id_ext, record_name='HETATM', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dy_vect_neg, element='C')
-    atom_add(atom_id='Dz_neg'+atom_id_ext, record_name='HETATM', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dz_vect_neg, element='C')
+    atom_add(atomic_data=atomic_data, atom_id='R_axes'+atom_id_ext, record_name='HETATM', atom_name='R', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R, element='C')
+    atom_add(atomic_data=atomic_data, atom_id='Dx'+atom_id_ext, record_name='HETATM', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dx_vect, element='C')
+    atom_add(atomic_data=atomic_data, atom_id='Dy'+atom_id_ext, record_name='HETATM', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dy_vect, element='C')
+    atom_add(atomic_data=atomic_data, atom_id='Dz'+atom_id_ext, record_name='HETATM', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dz_vect, element='C')
+    atom_add(atomic_data=atomic_data, atom_id='Dx_neg'+atom_id_ext, record_name='HETATM', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dx_vect_neg, element='C')
+    atom_add(atomic_data=atomic_data, atom_id='Dy_neg'+atom_id_ext, record_name='HETATM', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dy_vect_neg, element='C')
+    atom_add(atomic_data=atomic_data, atom_id='Dz_neg'+atom_id_ext, record_name='HETATM', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dz_vect_neg, element='C')
     atom_connect(atom_id='Dx'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
     atom_connect(atom_id='Dy'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
     atom_connect(atom_id='Dz'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
@@ -748,12 +748,12 @@ def generate_ellipsoid_axes(chain_id=None, res_num=None, R=None, i=None):
         Dz_vect = Dz_unit * (Dz * scale + 3.0)
 
         # Add the atoms.
-        atom_add(atom_id='Dx label'+atom_id_ext, record_name='HETATM', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+Dx_vect, element='N')
-        atom_add(atom_id='Dx neg label'+atom_id_ext, record_name='HETATM', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-Dx_vect, element='N')
-        atom_add(atom_id='Dy label'+atom_id_ext, record_name='HETATM', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+Dy_vect, element='N')
-        atom_add(atom_id='Dy neg label'+atom_id_ext, record_name='HETATM', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-Dy_vect, element='N')
-        atom_add(atom_id='Dz label'+atom_id_ext, record_name='HETATM', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+Dz_vect, element='N')
-        atom_add(atom_id='Dz neg label'+atom_id_ext, record_name='HETATM', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-Dz_vect, element='N')
+        atom_add(atomic_data=atomic_data, atom_id='Dx label'+atom_id_ext, record_name='HETATM', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+Dx_vect, element='N')
+        atom_add(atomic_data=atomic_data, atom_id='Dx neg label'+atom_id_ext, record_name='HETATM', atom_name='Dx', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-Dx_vect, element='N')
+        atom_add(atomic_data=atomic_data, atom_id='Dy label'+atom_id_ext, record_name='HETATM', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+Dy_vect, element='N')
+        atom_add(atomic_data=atomic_data, atom_id='Dy neg label'+atom_id_ext, record_name='HETATM', atom_name='Dy', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-Dy_vect, element='N')
+        atom_add(atomic_data=atomic_data, atom_id='Dz label'+atom_id_ext, record_name='HETATM', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+Dz_vect, element='N')
+        atom_add(atomic_data=atomic_data, atom_id='Dz neg label'+atom_id_ext, record_name='HETATM', atom_name='Dz', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-Dz_vect, element='N')
 
     # Print out.
     if i == None:
@@ -800,9 +800,9 @@ def generate_spheroid_axes(chain_id=None, res_num=None, R=None, i=None):
     Dpar_vect_neg = R + Dpar_vect_neg
 
     # Create the 'AXS' residue.
-    atom_add(atom_id='R_axes'+atom_id_ext, record_name='HETATM', atom_name='R', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R, element='C')
-    atom_add(atom_id='Dpar'+atom_id_ext, record_name='HETATM', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dpar_vect, element='C')
-    atom_add(atom_id='Dpar_neg'+atom_id_ext, record_name='HETATM', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dpar_vect_neg, element='C')
+    atom_add(atomic_data=atomic_data, atom_id='R_axes'+atom_id_ext, record_name='HETATM', atom_name='R', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R, element='C')
+    atom_add(atomic_data=atomic_data, atom_id='Dpar'+atom_id_ext, record_name='HETATM', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dpar_vect, element='C')
+    atom_add(atomic_data=atomic_data, atom_id='Dpar_neg'+atom_id_ext, record_name='HETATM', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=Dpar_vect_neg, element='C')
     atom_connect(atom_id='Dpar'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
     atom_connect(atom_id='Dpar_neg'+atom_id_ext, bonded_id='R_axes'+atom_id_ext)
 
@@ -812,8 +812,8 @@ def generate_spheroid_axes(chain_id=None, res_num=None, R=None, i=None):
         vect = Dpar_unit * (Dpar * scale + 3.0)
 
         # Add the atoms.
-        atom_add(atom_id='Dpar label'+atom_id_ext, record_name='HETATM', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+vect, element='N')
-        atom_add(atom_id='Dpar neg label'+atom_id_ext, record_name='HETATM', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-vect, element='N')
+        atom_add(atomic_data=atomic_data, atom_id='Dpar label'+atom_id_ext, record_name='HETATM', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R+vect, element='N')
+        atom_add(atomic_data=atomic_data, atom_id='Dpar neg label'+atom_id_ext, record_name='HETATM', atom_name='Dpar', res_name=res_name, chain_id=chain_id, res_num=res_num, pos=R-vect, element='N')
 
     # Print out.
     if i == None:
@@ -867,19 +867,19 @@ def generate_vector_residues(atomic_data=None, vector=None, atom_name=None, res_
         atom_id_ext = ''
 
     # The origin atom.
-    atom_add(atom_id='R_vect'+atom_id_ext, record_name='HETATM', atom_name='R', res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin, element='C')
+    atom_add(atomic_data=atomic_data, atom_id='R_vect'+atom_id_ext, record_name='HETATM', atom_name='R', res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin, element='C')
 
     # Create the PDB residue representing the vector.
-    atom_add(atom_id=atom_name+atom_id_ext, record_name='HETATM', atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+vector*scale, element='C')
+    atom_add(atomic_data=atomic_data, atom_id=atom_name+atom_id_ext, record_name='HETATM', atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+vector*scale, element='C')
     atom_connect(atom_id=atom_name+atom_id_ext, bonded_id='R_vect'+atom_id_ext)
     if neg:
-        atom_add(atom_id=atom_name+'_neg'+atom_id_ext, record_name='HETATM', atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-vector*scale, element='C')
+        atom_add(atomic_data=atomic_data, atom_id=atom_name+'_neg'+atom_id_ext, record_name='HETATM', atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-vector*scale, element='C')
         atom_connect(atom_id=atom_name+'_neg'+atom_id_ext, bonded_id='R_vect'+atom_id_ext)
 
     # Add another atom to allow the axis labels to be shifted just outside of the vector itself.
-    atom_add(atom_id='vect label'+atom_id_ext, record_name='HETATM', atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+label_placement*vector*scale, element='N')
+    atom_add(atomic_data=atomic_data, atom_id='vect label'+atom_id_ext, record_name='HETATM', atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+label_placement*vector*scale, element='N')
     if neg:
-        atom_add(atom_id='vect neg label'+atom_id_ext, record_name='HETATM', atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, element='N')
+        atom_add(atomic_data=atomic_data, atom_id='vect neg label'+atom_id_ext, record_name='HETATM', atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, element='N')
 
     # Print out.
     print "    Vector (scaled + shifted to origin): " + `pdb_vect`
@@ -894,10 +894,10 @@ def generate_vector_residues(atomic_data=None, vector=None, atom_name=None, res_
             atom_id_ext_sim = atom_id_ext + '_sim' + `i`
 
             # Create the PDB residue representing the vector.
-            atom_add(atom_id=atom_name+atom_id_ext_sim, record_name='HETATM', atom_name=atom_name, res_name=res_name_sim, chain_id=chain_id, res_num=res_num, pos=origin+sim_vectors[i]*scale, element='C')
+            atom_add(atomic_data=atomic_data, atom_id=atom_name+atom_id_ext_sim, record_name='HETATM', atom_name=atom_name, res_name=res_name_sim, chain_id=chain_id, res_num=res_num, pos=origin+sim_vectors[i]*scale, element='C')
             atom_connect(atom_id=atom_name+atom_id_ext_sim, bonded_id='R_vect'+atom_id_ext_sim)
             if neg:
-                atom_add(atom_id=atom_name+'_neg'+atom_id_ext_sim, record_name='HETATM', atom_name=atom_name, res_name=res_name_sim, chain_id=chain_id, res_num=res_num, pos=origin-sim_vectors[i]*scale, element='C')
+                atom_add(atomic_data=atomic_data, atom_id=atom_name+'_neg'+atom_id_ext_sim, record_name='HETATM', atom_name=atom_name, res_name=res_name_sim, chain_id=chain_id, res_num=res_num, pos=origin-sim_vectors[i]*scale, element='C')
                 atom_connect(atom_id=atom_name+'_neg'+atom_id_ext_sim, bonded_id='R_vect'+atom_id_ext_sim)
 
     # Return the new residue number.
