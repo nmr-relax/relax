@@ -102,7 +102,7 @@ def atom_add(atomic_data=None, atom_id=None, record_name='', atom_name='', res_n
     atomic_data[atom_id].append(element)
 
 
-def atom_connect(atom_id=None, bonded_id=None):
+def atom_connect(atomic_data=None, atom_id=None, bonded_id=None):
     """Function for connecting two atoms within the atomic_data data structure.
 
     The atomic_data data structure is a dictionary of arrays.  The keys correspond to the
@@ -125,6 +125,14 @@ def atom_connect(atom_id=None, bonded_id=None):
     The bonded_id atom number will then be appended to the atom_id array.  Because the
     connections work both ways in the PDB file, the atom_id atom number will be appended to the
     bonded_id atom array as well.
+
+
+    @param atomic_data: The dictionary to place the atomic data into.
+    @type atomic_data:  dict
+    @param atom_id:     The atom identifier.  This is used as the key within the dictionary.
+    @type atom_id:      str
+    @param bonded_id:   The second atom identifier.  This is used as the key within the dictionary.
+    @type bonded_id:    str
     """
 
     # Find the atom number corresponding to atom_id.
