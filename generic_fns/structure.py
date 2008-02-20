@@ -457,18 +457,14 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
             print "\nGenerating the unique axis of the diffusion tensor."
             print "    Scaling factor:                      " + `scale`
 
-            # Create the axis.
-            generate_spheroid_axes(chain_id=chain_id, res_num=res_num, R=R)
-
             # Simulations.
             if hasattr(pipe.diff, 'tm_sim'):
-                # Print out.
-                print "    Creating the MC simulation axes."
-
-                # Create each MC simulation axis as a new residue.
-                for i in xrange(len(pipe.diff.tm_sim)):
-                    res_num = res_num + 1
-                    generate_spheroid_axes(chain_id=chain_id, res_num=res_num, R=R, i=i)
+                sim_vectors = pipe.diff.Dpar_sim * pipe.diff.Dpar_unit_sim
+            else:
+                sim_vectors = None
+                
+            # Generate the axes representation.
+            res_num = generate_vector_residues(atomic_data=atomic_data, vector=pipe.diff.Dpar*pipe.diff.Dpar_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
 
 
         # Create the three axes of the ellipsoid.
@@ -477,18 +473,20 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
             print "Generating the three axes of the ellipsoid."
             print "    Scaling factor:                      " + `scale`
 
-            # Create the axes.
-            generate_ellipsoid_axes(chain_id=chain_id, res_num=res_num, R=R)
-
             # Simulations.
             if hasattr(pipe.diff, 'tm_sim'):
-                # Print out.
-                print "    Creating the MC simulation axes."
-
-                # Create each MC simulation axis as a new residue.
-                for i in xrange(len(pipe.diff.tm_sim)):
-                    res_num = res_num + 1
-                    generate_ellipsoid_axes(chain_id=chain_id, res_num=res_num, R=R, i=i)
+                sim_Dx_vectors = pipe.diff.Dx_sim * pipe.diff.Dx_unit_sim
+                sim_Dy_vectors = pipe.diff.Dy_sim * pipe.diff.Dy_unit_sim
+                sim_Dz_vectors = pipe.diff.Dz_sim * pipe.diff.Dz_unit_sim
+            else:
+                sim_Dx_vectors = None
+                sim_Dy_vectors = None
+                sim_Dz_vectors = None
+                
+            # Generate the axes representation.
+            res_num = generate_vector_residues(atomic_data=atomic_data, vector=pipe.diff.Dx*pipe.diff.Dx_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dx_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
+            res_num = generate_vector_residues(atomic_data=atomic_data, vector=pipe.diff.Dy*pipe.diff.Dy_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dy_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
+            res_num = generate_vector_residues(atomic_data=atomic_data, vector=pipe.diff.Dz*pipe.diff.Dz_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dz_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
 
 
         # Terminate the chain (the TER record).
@@ -889,7 +887,8 @@ def generate_vector_residues(atomic_data=None, vector=None, atom_name=None, res_
         atom_add(atomic_data=atomic_data, atom_id='vect neg label'+atom_id_ext, record_name='HETATM', atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, element='N')
 
     # Print out.
-    print "    Vector (scaled + shifted to origin): " + `pdb_vect`
+    print "    " + atom_name + " vector (scaled + shifted to origin): " + `pdb_vect`
+    print "    Creating the MC simulation vectors."
 
     # Monte Carlo simulations.
     if sim_vectors:
