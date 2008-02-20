@@ -34,6 +34,7 @@ from data import Data as relax_data_store
 from generic_fns import molmol
 from generic_fns.sequence import load_PDB_sequence
 from generic_fns.selection import exists_mol_res_spin_data, return_molecule, return_residue, return_spin, spin_loop
+from physical_constants import ArH, ArC, ArN, ArO, ArS
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbChainError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError, RelaxPdbError, RelaxPdbLoadError, RelaxRegExpError
 from relax_io import get_file_path
 from relax_warnings import RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxWarning, RelaxZeroVectorWarning
@@ -159,23 +160,23 @@ def atomic_mass(element=None):
 
     # Proton.
     if element == 'H' or element == 'Q':
-        return 1.00794
+        return ArH
 
     # Carbon.
     elif element == 'C':
-        return 12.0107
+        return ArC
 
     # Nitrogen.
     elif element == 'N':
-        return 14.0067
+        return ArN
 
     # Oxygen.
     elif element == 'O':
-        return 15.9994
+        return ArO
 
     # Sulphur.
     elif element == 'S':
-        return 32.065
+        return ArS
 
     # Unknown.
     else:

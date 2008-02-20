@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,6 +24,9 @@
 from math import pi
 
 
+# Misc. constants.
+##################
+
 # Planck's constant.
 h = 6.62606876 * 1e-34
 
@@ -33,12 +36,19 @@ h_bar = h / (2.0 * pi)
 # The magnetic constant or the permeability of vacuum.
 mu0 = 4.0 * pi * 1e-7
 
+
+# CSA and bond lengths.
+#######################
+
 # The 15N CSA in the NH bond (default value).
 N15_CSA = -172 * 1e-6
 
 # The length of the NH bond (default value).
 NH_BOND_LENGTH = 1.02 * 1e-10
 
+
+# Gyromagnetic ratios.
+######################
 
 # The 13C gyromagnetic ratio.
 g13C = 6.728 * 1e7
@@ -54,3 +64,22 @@ g17O = -3.628 * 1e7
 
 # The 31P gyromagnetic ratio.
 g31P = 10.841 * 1e7
+
+
+# Relative atomic masses.
+#########################
+
+# Proton.
+ArH = 1.00794
+
+# Carbon.
+ArC = 12.0107
+
+# Nitrogen.
+ArN = 14.0067
+
+# Oxygen.
+ArO = 15.9994
+
+# Sulphur.
+ArS = 32.065
