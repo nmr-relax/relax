@@ -820,6 +820,90 @@ def generate_spheroid_axes(chain_id=None, res_num=None, R=None, i=None):
         print "    Dpar vector (scaled + shifted to R): " + `Dpar_vect`
 
 
+def generate_vector_residues(atomic_data=None, vector=None, atom_name=None, res_name_vect='AXS', sim_vectors=None, res_name_sim='SIM', chain_id=None, res_num=None, origin=None, scale=1.0, label_placement=1.1, neg=False):
+    """Generate residue representations for the vector and the MC simulationed vectors.
+
+    This is used to create a PDB representation of any vector, including its Monte Carlo
+    simulations.
+
+    @param atomic_data:     The dictionary to place the atomic data into.
+    @type atomic_data:      dict
+    @param vector:          The vector to be represented in the PDB.
+    @type vector:           numpy array, len 3
+    @param atom_name:       The atom name used to label the atom representing the head of the vector
+                            and also used as the first part of the atom identifier key in the
+                            atomic_data dictionary.
+    @type atom_name:        str
+    @param res_name_vect:   The 3 letter PDB residue code used to represent the vector.
+    @type res_name_vect:    str
+    @param sim_vectors:     The optional Monte Carlo simulation vectors to be represented in the
+                            PDB.
+    @type sim_vectors:      list of numpy array, each len 3
+    @param res_name_sim:    The 3 letter PDB residue code used to represent the Monte Carlo
+                            simulation vectors.
+    @type res_name_sim:     str
+    @param chain_id:        The chain identification code.
+    @type chain_id:         str
+    @param res_num:         The residue number.
+    @type res_num:          int
+    @param origin:          The origin for the axis.
+    @type origin:           numpy array, len 3
+    @param scale:           The scaling factor to stretch the vectors by.
+    @type scale:            float
+    @param label_placement: A scaling factor to multiply the pre-scaled vector by.  This is used to
+                            place the vector labels a little further out from the vector itself.
+    @type label_placement:  float
+    @param neg:             If True, then the negative vector positioned at the origin will also be
+                            included.
+    @type neg:              bool
+    @return:                The new residue number.
+    @rtype:                 int
+    """
+
+    # The atom ID extension.
+    if chain_id:
+        atom_id_ext = '_' + chain_id
+    else:
+        atom_id_ext = ''
+
+    # The origin atom.
+    atom_add(atom_id='R_vect'+atom_id_ext, record_name='HETATM', atom_name='R', res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin, element='C')
+
+    # Create the PDB residue representing the vector.
+    atom_add(atom_id=atom_name+atom_id_ext, record_name='HETATM', atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+vector*scale, element='C')
+    atom_connect(atom_id=atom_name+atom_id_ext, bonded_id='R_vect'+atom_id_ext)
+    if neg:
+        atom_add(atom_id=atom_name+'_neg'+atom_id_ext, record_name='HETATM', atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-vector*scale, element='C')
+        atom_connect(atom_id=atom_name+'_neg'+atom_id_ext, bonded_id='R_vect'+atom_id_ext)
+
+    # Add another atom to allow the axis labels to be shifted just outside of the vector itself.
+    atom_add(atom_id='vect label'+atom_id_ext, record_name='HETATM', atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+label_placement*vector*scale, element='N')
+    if neg:
+        atom_add(atom_id='vect neg label'+atom_id_ext, record_name='HETATM', atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, element='N')
+
+    # Print out.
+    print "    Vector (scaled + shifted to origin): " + `pdb_vect`
+
+    # Monte Carlo simulations.
+    if sim_vectors:
+        for i in xrange(sim_vectors):
+            # Increment the residue number, so each simulation is a new residue.
+            res_num = res_num + 1
+
+            # Modify the atom_id for each simulation.
+            atom_id_ext_sim = atom_id_ext + '_sim' + `i`
+
+            # Create the PDB residue representing the vector.
+            atom_add(atom_id=atom_name+atom_id_ext_sim, record_name='HETATM', atom_name=atom_name, res_name=res_name_sim, chain_id=chain_id, res_num=res_num, pos=origin+sim_vectors[i]*scale, element='C')
+            atom_connect(atom_id=atom_name+atom_id_ext_sim, bonded_id='R_vect'+atom_id_ext_sim)
+            if neg:
+                atom_add(atom_id=atom_name+'_neg'+atom_id_ext_sim, record_name='HETATM', atom_name=atom_name, res_name=res_name_sim, chain_id=chain_id, res_num=res_num, pos=origin-sim_vectors[i]*scale, element='C')
+                atom_connect(atom_id=atom_name+'_neg'+atom_id_ext_sim, bonded_id='R_vect'+atom_id_ext_sim)
+
+    # Return the new residue number.
+    return res_num
+
+
 def get_chemical_name(hetID):
     """Function for returning the chemical name corresponding to the given residue ID.
 
