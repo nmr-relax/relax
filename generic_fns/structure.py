@@ -34,13 +34,14 @@ from data import Data as relax_data_store
 from generic_fns import molmol
 from generic_fns.sequence import load_PDB_sequence
 from generic_fns.selection import exists_mol_res_spin_data, return_molecule, return_residue, return_spin, spin_loop
+from physical_constants import ArH, ArC, ArN, ArO, ArS
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbChainError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError, RelaxPdbError, RelaxPdbLoadError, RelaxRegExpError
 from relax_io import get_file_path
 from relax_warnings import RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxWarning, RelaxZeroVectorWarning
 
 
 
-def atom_add(atom_id=None, record_name='', atom_name='', res_name='', chain_id='', res_num=None, pos=[None, None, None], segment_id='', element=''):
+def atom_add(atomic_data=None, atom_id=None, record_name='', atom_name='', res_name='', chain_id='', res_num=None, pos=[None, None, None], segment_id='', element=''):
     """Function for adding an atom to the atomic_data structure.
 
     The atomic_data data structure is a dictionary of arrays.  The keys correspond to the
@@ -62,6 +63,8 @@ def atom_add(atom_id=None, record_name='', atom_name='', res_name='', chain_id='
     This function will create the key-value pair for the given atom.
 
 
+    @param atomic_data: The dictionary to place the atomic data into.
+    @type atomic_data:  dict
     @param atom_id:     The atom identifier.  This is used as the key within the dictionary.
     @type atom_id:      str
     @param record_name: The record name, e.g. 'ATOM', 'HETATM', or 'TER'.
@@ -100,7 +103,7 @@ def atom_add(atom_id=None, record_name='', atom_name='', res_name='', chain_id='
     atomic_data[atom_id].append(element)
 
 
-def atom_connect(atom_id=None, bonded_id=None):
+def atom_connect(atomic_data=None, atom_id=None, bonded_id=None):
     """Function for connecting two atoms within the atomic_data data structure.
 
     The atomic_data data structure is a dictionary of arrays.  The keys correspond to the
@@ -123,6 +126,14 @@ def atom_connect(atom_id=None, bonded_id=None):
     The bonded_id atom number will then be appended to the atom_id array.  Because the
     connections work both ways in the PDB file, the atom_id atom number will be appended to the
     bonded_id atom array as well.
+
+
+    @param atomic_data: The dictionary to place the atomic data into.
+    @type atomic_data:  dict
+    @param atom_id:     The atom identifier.  This is used as the key within the dictionary.
+    @type atom_id:      str
+    @param bonded_id:   The second atom identifier.  This is used as the key within the dictionary.
+    @type bonded_id:    str
     """
 
     # Find the atom number corresponding to atom_id.
@@ -145,42 +156,55 @@ def atom_connect(atom_id=None, bonded_id=None):
 
 
 def atomic_mass(element=None):
-    """Return the atomic mass of the given element."""
+    """Return the atomic mass of the given element.
+
+    @param element: The name of the element to return the atomic mass of.
+    @type element:  str
+    @return:        The relative atomic mass.
+    @rtype:         float
+    """
 
     # Proton.
     if element == 'H' or element == 'Q':
-        return 1.00794
+        return ArH
 
     # Carbon.
     elif element == 'C':
-        return 12.0107
+        return ArC
 
     # Nitrogen.
     elif element == 'N':
-        return 14.0067
+        return ArN
 
     # Oxygen.
     elif element == 'O':
-        return 15.9994
+        return ArO
 
     # Sulphur.
     elif element == 'S':
-        return 32.065
+        return ArS
 
     # Unknown.
     else:
         raise RelaxError, "The mass of the element " + `element` + " has not yet been programmed into relax."
 
 
-def autoscale_tensor(method=None):
-    """Automatically determine an appropriate scaling factor for display
-    of the diffusion tensor"""
+def autoscale_tensor(method='mass'):
+    """Automatically determine an appropriate scaling factor for display of the diffusion tensor.
 
+    @param method:  The method used to determine the scaling of the diffusion tensor object.
+    @type method:   str
+    @return:        The scaling factor.
+    @rtype:         float
+    """
+
+    # Centre of mass method.
     if method == 'mass':
         com, mass = centre_of_mass(return_mass=True)
         scale = mass * 6.8e-11
         return scale
 
+    # Autoscaling method.
     warn(RelaxWarning("Autoscale method %s not implimented. Reverting to scale=1.8e-6 A.s" % method))
     return 1.8e-6
 
