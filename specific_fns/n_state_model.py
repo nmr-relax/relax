@@ -171,7 +171,7 @@ class N_state_model(Common_functions):
     def cone_pdb(self, cone_type=None, scale=1.0, file=None, dir=None, force=False):
         """Create a PDB file containing a geometric object representing the various cone models.
 
-        Currently the only cone types supported are 'diff_in_cone' and 'diff_on_cone'.
+        Currently the only cone types supported are 'diff in cone' and 'diff on cone'.
 
 
         @param cone_type:   The type of cone model to represent.
@@ -192,10 +192,14 @@ class N_state_model(Common_functions):
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Test if the cone models have been determined.
-        if cone_type == 'diff_in_cone' and not hasattr(cdp, 'S_diff_in_cone'):
-            raise RelaxError, "The diffusion in a cone model has not yet been determined."
-        elif cone_type == 'diff_on_cone' and not hasattr(cdp, 'S_diff_on_cone'):
-            raise RelaxError, "The diffusion on a cone model has not yet been determined."
+        if cone_type == 'diff in cone':
+            if not hasattr(cdp, 'S_diff_in_cone'):
+                raise RelaxError, "The diffusion in a cone model has not yet been determined."
+        elif cone_type == 'diff on cone':
+            if not hasattr(cdp, 'S_diff_on_cone'):
+                raise RelaxError, "The diffusion on a cone model has not yet been determined."
+        else:
+            raise RelaxError, "The cone type " + `cone_type` + " is unknown."
 
         # Initialise the atom and atomic connections data structures.
         atomic_data = {}
@@ -212,7 +216,15 @@ class N_state_model(Common_functions):
             sim_vectors = cdp.red_CoM_sim
         res_num = generic_fns.structure.generate_vector_residues(atomic_data=atomic_data, vector=cdp.red_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
 
-        print `atomic_data`
+        # Generate the cone outer edge.
+        if cone_type == 'diff in cone':
+            angle = cdp.theta_diff_in_cone
+        elif cone_type == 'diff on cone':
+            angle = cdp.theta_diff_on_cone
+        generic_fns.structure.cone_edge(atomic_data=atomic_data, axis=cdp.rot_CoM/norm(cdp.rot_CoM), angle=angle)
+
+        for key in atomic_data.keys():
+            print "\n\n" + `key` + ": \n" + `atomic_data[key]`
 
 
     def default_value(self, param):
