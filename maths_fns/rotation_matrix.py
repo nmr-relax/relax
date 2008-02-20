@@ -25,7 +25,7 @@ from numpy import dot
 from math import cos, sin
 
 
-def rotation_matrix_zyz(matrix, alpha, beta, gamma):
+def R_euler_zyz(matrix, alpha, beta, gamma):
     """Function for calculating the z-y-z Euler angle convention rotation matrix.
 
     Unit vectors
