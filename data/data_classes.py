@@ -46,40 +46,6 @@ class Element:
         return text
 
 
-# Specific data class.
-######################
-
-class SpecificData(DictType):
-    """Dictionary type class for specific data."""
-
-    def __repr__(self):
-        text = "Data:\n"
-        if len(self) == 0:
-            text = text + "  {}\n"
-        else:
-            i = 0
-            for key in self.keys():
-                if i == 0:
-                    text = text + "  { "
-                else:
-                    text = text + "  , "
-                text = text + "Key " + `key` + ":\n"
-                for name in dir(self[key]):
-                    if match("^_", name):
-                        continue
-                    text = text + "    " + name + ", " + `type(getattr(self[key], name))` + "\n"
-                i = i + 1
-            text = text + "  }\n"
-
-        return text
-
-
-    def add_item(self, key):
-        """Function for adding an empty container to the dictionary."""
-
-        self[key] = Element()
-
-
 
 # Residue specific data.
 ########################

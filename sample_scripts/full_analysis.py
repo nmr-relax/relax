@@ -7,6 +7,7 @@ from string import lower
 
 # relax module imports.
 from data import Data as relax_data_store
+from generic.selection import spin_index_loop, spin_loop
 from relax_errors import RelaxError
 
 """Script for black-box model-free analysis.
@@ -158,11 +159,11 @@ class Main:
             # Sequential optimisation of all model-free models (function must be modified to suit).
             self.multi_model(local_tm=1)
 
-            # Model selection run.
-            run.create('aic', 'mf')
+            # Model selection data pipe.
+            pipe.create('aic', 'mf')
 
             # Model selection.
-            self.model_selection(run='aic', dir=self.base_dir + 'aic')
+            self.model_selection(pipe='aic', dir=self.base_dir + 'aic')
 
 
         # Diffusion models MII to MV.
@@ -183,41 +184,41 @@ class Main:
                     # Run name.
                     name = DIFF_MODEL
 
-                    # Create the run.
-                    run.create(name, 'mf')
+                    # Create the data pipe.
+                    pipe.create(name, 'mf')
 
                     # Load the local tm diffusion model MI results.
-                    results.read(run=name, file='results', dir='local_tm/aic')
+                    results.read(file='results', dir='local_tm/aic')
 
                     # Remove the tm parameter.
-                    model_free.remove_tm(run=name)
+                    model_free.remove_tm()
 
                     # Load the PDB file and calculate the unit vectors parallel to the XH bond.
                     if PDB_FILE:
-                        structure.read_pdb(name, PDB_FILE)
-                        structure.vectors(name, heteronuc='N', proton='H')
+                        structure.read_pdb(PDB_FILE)
+                        structure.vectors(heteronuc='N', proton='H')
 
                     # Add an arbitrary diffusion tensor which will be optimised.
                     if DIFF_MODEL == 'sphere':
-                        diffusion_tensor.init(name, 10e-9, fixed=0)
+                        diffusion_tensor.init(10e-9, fixed=0)
                         inc = 11
                     elif DIFF_MODEL == 'prolate':
-                        diffusion_tensor.init(name, (10e-9, 0, 0, 0), spheroid_type='prolate', fixed=0)
+                        diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='prolate', fixed=0)
                         inc = 11
                     elif DIFF_MODEL == 'oblate':
-                        diffusion_tensor.init(name, (10e-9, 0, 0, 0), spheroid_type='oblate', fixed=0)
+                        diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='oblate', fixed=0)
                         inc = 11
                     elif DIFF_MODEL == 'ellipsoid':
-                        diffusion_tensor.init(name, (10e-09, 0, 0, 0, 0, 0), fixed=0)
+                        diffusion_tensor.init((10e-09, 0, 0, 0, 0, 0), fixed=0)
                         inc = 6
 
                     # Minimise just the diffusion tensor.
-                    fix(name, 'all_res')
-                    grid_search(name, inc=inc)
-                    minimise(MIN_ALGOR, run=name)
+                    fix('all_res')
+                    grid_search(inc=inc)
+                    minimise(MIN_ALGOR)
 
                     # Write the results.
-                    results.write(run=name, file='results', dir=self.base_dir, force=1)
+                    results.write(file='results', dir=self.base_dir, force=1)
 
 
                 # Normal round of optimisation for diffusion models MII to MV.
@@ -231,27 +232,27 @@ class Main:
                     # Sequential optimisation of all model-free models (function must be modified to suit).
                     self.multi_model()
 
-                    # Create the final run (for model selection and final optimisation).
+                    # Create the final data pipe (for model selection and final optimisation).
                     name = 'final'
                     if relax_data_store.has_key(name):
-                        run.delete(name)
-                    run.create(name, 'mf')
+                        pipe.delete(name)
+                    pipe.create(name, 'mf')
 
                     # Model selection.
-                    self.model_selection(run=name, dir=self.base_dir + 'aic')
+                    self.model_selection(dir=self.base_dir + 'aic')
 
                     # Final optimisation of all diffusion and model-free parameters.
-                    fix(name, 'all', fixed=0)
+                    fix('all', fixed=0)
 
                     # Minimise all parameters.
-                    minimise(MIN_ALGOR, run=name)
+                    minimise(MIN_ALGOR)
 
                     # Write the results.
                     dir = self.base_dir + 'opt'
-                    results.write(run=name, file='results', dir=dir, force=1)
+                    results.write(file='results', dir=dir, force=1)
 
                     # Test for convergence.
-                    converged = self.convergence(run=name)
+                    converged = self.convergence()
 
                     # Break out of the infinite while loop if automatic looping is not activated or if convergence has occurred.
                     if converged or not CONV_LOOP:
@@ -266,13 +267,13 @@ class Main:
             ############################
 
             # All the global diffusion models to be used in the model selection.
-            self.runs = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid']
+            self.pipes = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid']
 
-            # Create the local_tm run.
-            run.create('local_tm', 'mf')
+            # Create the local_tm data pipe.
+            pipe.create('local_tm', 'mf')
 
             # Load the local tm diffusion model MI results.
-            results.read(run='local_tm', file='results', dir='local_tm/aic')
+            results.read(file='results', dir='local_tm/aic')
 
             # Loop over models MII to MV.
             for model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
@@ -289,17 +290,17 @@ class Main:
                     # Throw an error to prevent misuse of the script.
                     raise RelaxError, "Multiple rounds of optimisation of the " + name + " (between 8 to 15) are required for the proper execution of this script."
 
-                # Create the run.
-                run.create(model, 'mf')
+                # Create the data pipe.
+                pipe.create(model, 'mf')
 
                 # Load the diffusion model results.
-                results.read(run=model, file='results', dir=model + '/round_' + `self.round` + '/opt')
+                results.read(file='results', dir=model + '/round_' + `self.round` + '/opt')
 
-            # Create the run for model selection (which will be a copy of the selected diffusion model or run).
-            run.create('final', 'mf')
+            # Create the data pipe for model selection (which will be a copy of the selected diffusion model or data pipe).
+            pipe.create('final', 'mf')
 
             # Model selection between MI to MV.
-            self.model_selection(run='final', write_flag=0)
+            self.model_selection(pipe='final', write_flag=0)
 
 
             # Monte Carlo simulations.
@@ -307,21 +308,21 @@ class Main:
 
             # Fix the diffusion tensor (if it exists!).
             if relax_data_store.diff.has_key('final'):
-                fix('final', 'diff')
+                fix('diff')
 
             # Simulations.
-            monte_carlo.setup('final', number=MC_NUM)
-            monte_carlo.create_data('final')
-            monte_carlo.initial_values('final')
-            minimise(MIN_ALGOR, run='final')
-            eliminate('final')
-            monte_carlo.error_analysis('final')
+            monte_carlo.setup(number=MC_NUM)
+            monte_carlo.create_data()
+            monte_carlo.initial_values()
+            minimise(MIN_ALGOR)
+            eliminate()
+            monte_carlo.error_analysis()
 
 
             # Write the final results.
             ##########################
 
-            results.write(run='final', file='results', dir='final', force=1)
+            results.write(file='results', dir='final', force=1)
 
 
         # Unknown script behaviour.
@@ -331,8 +332,12 @@ class Main:
             raise RelaxError, "Unknown diffusion model, change the value of 'DIFF_MODEL'"
 
 
-    def convergence(self, run=None):
+    def convergence(self):
         """Test for the convergence of the global model."""
+
+        # Alias the data pipes.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+        prev_pipe = relax_data_store['previous']
 
         # Print out.
         print "\n\n\n"
@@ -341,22 +346,22 @@ class Main:
         print "#####################\n\n"
 
         # Convergence flags.
-        chi2_converged = 1
-        models_converged = 1
-        params_converged = 1
+        chi2_converged = True
+        models_converged = True
+        params_converged = True
 
 
         # Chi-squared test.
         ###################
 
         print "Chi-squared test:"
-        print "    chi2 (k-1): " + `relax_data_store.chi2['previous']`
-        print "    chi2 (k):   " + `relax_data_store.chi2[run]`
-        if relax_data_store.chi2['previous'] == relax_data_store.chi2[run]:
+        print "    chi2 (k-1): " + `prev_pipe.chi2`
+        print "    chi2 (k):   " + `cdp.chi2`
+        if prev_pipe.chi2 == cdp.chi2:
             print "    The chi-squared value has converged.\n"
         else:
             print "    The chi-squared value has not converged.\n"
-            chi2_converged = 0
+            chi2_converged = False
 
 
         # Identical model-free model test.
@@ -364,26 +369,26 @@ class Main:
 
         print "Identical model-free models test:"
 
-        # Create a string representation of the model-free models of the previous run.
+        # Create a string representation of the model-free models of the previous data pipe.
         prev_models = ''
-        for i in xrange(len(relax_data_store.res['previous'])):
-            if hasattr(relax_data_store.res['previous'][i], 'model'):
-                if not relax_data_store.res['previous'][i].model == 'None':
-                    prev_models = prev_models + relax_data_store.res['previous'][i].model
+        for spin in spin_loop(pipe='previous')
+            if hasattr(spin, 'model'):
+                if not spin.model == 'None':
+                    prev_models = prev_models + spin.model
 
-        # Create a string representation of the model-free models of the current run.
+        # Create a string representation of the model-free models of the current data pipe.
         curr_models = ''
-        for i in xrange(len(relax_data_store.res[run])):
-            if hasattr(relax_data_store.res[run][i], 'model'):
-                if not relax_data_store.res[run][i].model == 'None':
-                    curr_models = curr_models + relax_data_store.res[run][i].model
+        for spin in spin_loop()
+            if hasattr(spin, 'model'):
+                if not spin.model == 'None':
+                    curr_models = curr_models + spin.model
 
         # The test.
         if prev_models == curr_models:
             print "    The model-free models have converged.\n"
         else:
             print "    The model-free models have not converged.\n"
-            models_converged = 0
+            models_converged = False
 
 
         # Identical parameter value test.
@@ -404,8 +409,8 @@ class Main:
             # Tests.
             for param in params:
                 # Get the parameter values.
-                prev_val = getattr(relax_data_store.diff['previous'], param)
-                curr_val = getattr(relax_data_store.diff[run], param)
+                prev_val = getattr(prev_pipe.diff, param)
+                curr_val = getattr(cdp.diff, param)
 
                 # Test if not identical.
                 if prev_val != curr_val:
@@ -413,40 +418,44 @@ class Main:
                     print "    Value (k-1): " + `prev_val`
                     print "    Value (k):   " + `curr_val`
                     print "    The diffusion parameters have not converged.\n"
-                    params_converged = 0
+                    params_converged = False
 
             # Skip the rest if the diffusion tensor parameters have not converged.
             if params_converged:
-                # Loop over the spin systems.
-                for i in xrange(len(relax_data_store.res[run])):
+                # Loop over the spins.
+                for mol_index, res_index, spin_index in spin_index_loop():
+                    # Alias the spin containers.
+                    prev_spin = prev_pipe.mol[mol_index].res[res_index].spin[spin_index]
+                    curr_spin = cdp.mol[mol_index].res[res_index].spin[spin_index]
+
                     # Skip if the parameters have not converged.
                     if not params_converged:
                         break
 
                     # Skip spin systems with no 'params' object.
-                    if not hasattr(relax_data_store.res['previous'][i], 'params') or not hasattr(relax_data_store.res[run][i], 'params'):
+                    if not hasattr(prev_spin, 'params') or not hasattr(curr_spin, 'params'):
                         continue
 
                     # Loop over the parameters.
-                    for j in xrange(len(relax_data_store.res[run][i].params)):
+                    for j in xrange(len(curr_spin.params)):
                         # Get the parameter values.
-                        prev_val = getattr(relax_data_store.res['previous'][i], lower(relax_data_store.res['previous'][i].params[j]))
-                        curr_val = getattr(relax_data_store.res[run][i], lower(relax_data_store.res[run][i].params[j]))
+                        prev_val = getattr(prev_spin, lower(prev_spin.params[j]))
+                        curr_val = getattr(curr_spin, lower(curr_spin.params[j]))
 
                         # Test if not identical.
                         if prev_val != curr_val:
-                            print "    Spin system: " + `relax_data_store.res[run][i].num` + ' ' + relax_data_store.res[run][i].name
-                            print "    Parameter:   " + relax_data_store.res[run][i].params[j]
+                            print "    Spin system: " + `curr_spin.num` + ' ' + curr_spin.name
+                            print "    Parameter:   " + curr_spin.params[j]
                             print "    Value (k-1): " + `prev_val`
                             print "    Value (k):   " + `curr_val`
                             print "    The model-free parameters have not converged.\n"
-                            params_converged = 0
+                            params_converged = False
                             break
 
         # The model-free models haven't converged hence the parameter values haven't converged.
         else:
             print "    The model-free models haven't converged hence the parameters haven't converged.\n"
-            params_converged = 0
+            params_converged = False
 
         # Print out.
         if params_converged:
@@ -459,10 +468,10 @@ class Main:
         print "\nConvergence:"
         if chi2_converged and models_converged and params_converged:
             print "    [ Yes ]"
-            return 1
+            return True
         else:
             print "    [ No ]"
-            return 0
+            return False
 
 
     def determine_rnd(self, model=None):
@@ -504,87 +513,87 @@ class Main:
     def load_tensor(self):
         """Function for loading the optimised diffusion tensor."""
 
-        # Create the run for the previous data (deleting the old run first if necessary).
+        # Create the data pipe for the previous data (deleting the old data pipe first if necessary).
         if relax_data_store.has_key('previous'):
-            run.delete('previous')
-        run.create('previous', 'mf')
+            pipe.delete('previous')
+        pipe.create('previous', 'mf')
 
         # Load the optimised diffusion tensor from the initial round.
         if self.round == 1:
-            results.read('previous', 'results', DIFF_MODEL + '/init')
+            results.read('results', DIFF_MODEL + '/init')
 
         # Load the optimised diffusion tensor from the previous round.
         else:
-            results.read('previous', 'results', DIFF_MODEL + '/round_' + `self.round - 1` + '/opt')
+            results.read('results', DIFF_MODEL + '/round_' + `self.round - 1` + '/opt')
 
 
-    def model_selection(self, run=None, dir=None, write_flag=1):
+    def model_selection(self, dir=None, write_flag=1):
         """Model selection function."""
 
         # Model elimination.
         eliminate()
 
         # Model selection.
-        model_selection('AIC', run, runs=self.runs)
+        model_selection('AIC', pipes=self.pipes)
 
         # Write the results.
         if write_flag:
-            results.write(run=run, file='results', dir=dir, force=1)
+            results.write(file='results', dir=dir, force=1)
 
 
     def multi_model(self, local_tm=0):
         """Function for optimisation of all model-free models."""
 
-        # Set the run names (also the names of preset model-free models).
+        # Set the data pipe names (also the names of preset model-free models).
         if local_tm:
-            self.runs = LOCAL_TM_MODELS
+            self.pipes = LOCAL_TM_MODELS
         else:
-            self.runs = MF_MODELS
+            self.pipes = MF_MODELS
 
         # Nuclei type
         nuclei(HETNUC)
 
-        for name in self.runs:
-            # Create the run.
+        for name in self.pipes:
+            # Create the data pipe.
             if relax_data_store.has_key(name):
-                run.delete(name)
-            run.create(name, 'mf')
+                pipe.delete(name)
+            pipe.create(name, 'mf')
 
             # Load the sequence.
-            sequence.read(name, SEQUENCE)
+            sequence.read(SEQUENCE)
 
             # Load the PDB file and calculate the unit vectors parallel to the XH bond.
             if not local_tm and PDB_FILE:
-                structure.read_pdb(name, PDB_FILE)
-                structure.vectors(name, heteronuc='N', proton='H')
+                structure.read_pdb(PDB_FILE)
+                structure.vectors(heteronuc='N', proton='H')
 
             # Load the relaxation data.
             for data in RELAX_DATA:
-                relax_data.read(name, data[0], data[1], data[2], data[3])
+                relax_data.read(data[0], data[1], data[2], data[3])
 
             # Unselect unresolved residues.
             if UNRES:
-                unselect.read(name, file=UNRES)
+                unselect.read(file=UNRES)
 
-            # Copy the diffusion tensor from the run 'opt' and prevent it from being minimised.
+            # Copy the diffusion tensor from the 'opt' data pipe and prevent it from being minimised.
             if not local_tm:
-                diffusion_tensor.copy('previous', name)
-                fix(name, 'diff')
+                diffusion_tensor.copy('previous')
+                fix('diff')
 
             # Set the bond length and CSA values.
-            value.set(name, BOND_LENGTH, 'bond_length')
-            value.set(name, CSA, 'csa')
+            value.set(BOND_LENGTH, 'bond_length')
+            value.set(CSA, 'csa')
 
             # Select the model-free model.
-            model_free.select_model(run=name, model=name)
+            model_free.select_model(model=name)
 
             # Minimise.
-            grid_search(name, inc=GRID_INC)
-            minimise(MIN_ALGOR, run=name)
+            grid_search(inc=GRID_INC)
+            minimise(MIN_ALGOR)
 
             # Write the results.
             dir = self.base_dir + name
-            results.write(run=name, file='results', dir=dir, force=1)
+            results.write(file='results', dir=dir, force=1)
 
 
 # The main class.

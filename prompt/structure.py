@@ -303,7 +303,7 @@ class Structure:
         structure.read_pdb(file=file, dir=dir, model=model, load_seq=load_seq)
 
 
-    def vectors(self, heteronuc='N', proton='H', spin_id=None):
+    def vectors(self, heteronuc='N', proton='H', spin_id=None, verbosity=1):
         """Function for calculating/extracting XH vectors from the structure.
 
         Keyword arguments
@@ -314,6 +314,9 @@ class Structure:
         proton:  The name of the proton as specified in the PDB file.
 
         spin_id:  The spin identification string.
+
+        verbosity:  The amount of information to print to screen.  Zero corresponds to minimal
+        output while higher values increase the amount of output.  The default value is 1.
 
 
         Description
@@ -354,7 +357,8 @@ class Structure:
             text = sys.ps3 + "structure.vectors("
             text = text + "heteronuc=" + `heteronuc`
             text = text + ", proton=" + `proton`
-            text = text + ", spin_id=" + `spin_id` + ")"
+            text = text + ", spin_id=" + `spin_id`
+            text = text + ", verbosity=" + `verbosity` + ")"
             print text
 
         # The heteronucleus argument.
@@ -369,5 +373,9 @@ class Structure:
         if spin_id != None and type(spin_id) != str:
             raise RelaxNoneStrError, ('Spin identification string', spin_id)
 
+        # The verbosity level.
+        if type(verbosity) != int:
+            raise RelaxIntError, ('verbosity level', verbosity)
+
         # Execute the functional code.
-        structure.vectors(heteronuc=heteronuc, proton=proton, spin_id=spin_id)
+        structure.vectors(heteronuc=heteronuc, proton=proton, spin_id=spin_id, verbosity=verbosity)

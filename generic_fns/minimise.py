@@ -27,7 +27,7 @@ from re import search
 from data import Data as relax_data_store
 from selection import spin_loop
 from relax_errors import RelaxError
-from specific_fns import get_specific_fn
+from specific_fns.setup import get_specific_fn
 
 
 def reset_min_stats(data_pipe=None, spin=None):

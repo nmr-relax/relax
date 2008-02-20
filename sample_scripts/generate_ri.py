@@ -1,87 +1,85 @@
 # Script for generating synthetic relaxation data.
 
+# relax module imports.
+from generic.selection import spin_loop
 
 # The relax data storage object.
 from data import Data as relax_data_store
 
 
-def back_calc(name):
+def back_calc():
     """Function for back calculating the relaxation data."""
 
-    relax_data.back_calc(name, ri_label='NOE', frq_label='600', frq=600e6)
-    relax_data.back_calc(name, ri_label='R1', frq_label='600', frq=600e6)
-    relax_data.back_calc(name, ri_label='R2', frq_label='600', frq=600e6)
-    relax_data.back_calc(name, ri_label='NOE', frq_label='500', frq=500e6)
-    relax_data.back_calc(name, ri_label='R1', frq_label='500', frq=500e6)
-    relax_data.back_calc(name, ri_label='R2', frq_label='500', frq=500e6)
+    relax_data.back_calc(ri_label='NOE', frq_label='600', frq=600e6)
+    relax_data.back_calc(ri_label='R1', frq_label='600', frq=600e6)
+    relax_data.back_calc(ri_label='R2', frq_label='600', frq=600e6)
+    relax_data.back_calc(ri_label='NOE', frq_label='500', frq=500e6)
+    relax_data.back_calc(ri_label='R1', frq_label='500', frq=500e6)
+    relax_data.back_calc(ri_label='R2', frq_label='500', frq=500e6)
 
 
-def errors(name):
+def errors():
     """Function for generating relaxation data errors."""
 
     # Loop over the sequence.
-    for i in xrange(len(relax_data_store.res[name])):
+    for spin in spin_loop():
         # Loop over the relaxation data.
-        for j in xrange(len(relax_data_store.res[name][i].relax_data)):
-            # Alias.
-            data = relax_data_store.res[name][i]
-
+        for j in xrange(len(spin.relax_data)):
             # 600 MHz NOE.
-            if data.ri_labels[j] == 'NOE' and data.frq_labels[data.remap_table[j]] == '600':
-                data.relax_error[j] = 0.04
+            if spin.ri_labels[j] == 'NOE' and spin.frq_labels[spin.remap_table[j]] == '600':
+                spin.relax_error[j] = 0.04
 
             # 500 MHz NOE.
-            elif data.ri_labels[j] == 'NOE' and data.frq_labels[data.remap_table[j]] == '500':
-                data.relax_error[j] = 0.05
+            elif spin.ri_labels[j] == 'NOE' and spin.frq_labels[spin.remap_table[j]] == '500':
+                spin.relax_error[j] = 0.05
 
             # All other data.
             else:
-                data.relax_error[j] = data.relax_data[j] * 0.02
+                spin.relax_error[j] = spin.relax_data[j] * 0.02
 
 
-def write(name):
+def write():
     """Function for writing the relaxation data to file."""
 
-    relax_data.write(name, ri_label='NOE', frq_label='600', file='noe.600.out', force=1)
-    relax_data.write(name, ri_label='R1', frq_label='600', file='r1.600.out', force=1)
-    relax_data.write(name, ri_label='R2', frq_label='600', file='r2.600.out', force=1)
-    relax_data.write(name, ri_label='NOE', frq_label='500', file='noe.500.out', force=1)
-    relax_data.write(name, ri_label='R1', frq_label='500', file='r1.500.out', force=1)
-    relax_data.write(name, ri_label='R2', frq_label='500', file='r2.500.out', force=1)
+    relax_data.write(ri_label='NOE', frq_label='600', file='noe.600.out', force=1)
+    relax_data.write(ri_label='R1', frq_label='600', file='r1.600.out', force=1)
+    relax_data.write(ri_label='R2', frq_label='600', file='r2.600.out', force=1)
+    relax_data.write(ri_label='NOE', frq_label='500', file='noe.500.out', force=1)
+    relax_data.write(ri_label='R1', frq_label='500', file='r1.500.out', force=1)
+    relax_data.write(ri_label='R2', frq_label='500', file='r2.500.out', force=1)
 
 
 # Create the run
-name = 'test'
-run.create(name, 'mf')
+run.create('test', 'mf')
 
 # Set the nucleus type to nitrogen.
 nuclei('N')
 
 # Set the diffusion tensor to isotropic with tm set to 10 ns.
-diffusion_tensor.init(name, 10e-9)
+diffusion_tensor.init(10e-9)
 
 # Add a residue.
-sequence.add(name, 1, 'ALA')
+sequence.add(1, 'ALA')
 
 # Set the CSA and bond lengths.
-value.set(name, value=-172e-6, param='CSA')
-value.set(name, value=1.02e-10, param='r')
+value.set(value=-172e-6, param='CSA')
+value.set(value=1.02e-10, param='r')
 
 # Set the model-free parameters.
-value.set(name, value=0.8, param='S2')
-value.set(name, value=20e-12, param='te')
+value.set(value=0.8, param='S2')
+value.set(value=20e-12, param='te')
 
 # Select model-free model m2.
-model_free.select_model(name, model='m2')
+model_free.select_model(model='m2')
 
 # Back calculate the relaxation data.
-back_calc(name)
+back_calc()
 
 # Generate the errors.
-errors(name)
+errors()
 
 # Write the data.
-write(name)
+write()
 
 # Write the relaxation data to file.
-results.write(name)
+results.write()
