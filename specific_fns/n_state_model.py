@@ -203,6 +203,15 @@ class N_state_model(Common_functions):
         # Add the pivot point.
         generic_fns.structure.atom_add(atomic_data=atomic_data, atom_id='R', record_name='HETATM', atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot_point, element='C')
 
+        # The number of increments for the filling of the cone objects.
+        inc = 20
+
+        # Generate the average pivot-CoM vectors.
+        sim_vectors = None
+        if hasattr(cdp, 'red_CoM_sim'):
+            sim_vectors = cdp.red_CoM_sim
+        res_num = generic_fns.structure.generate_vector_residues(atomic_data=atomic_data, vector=cdp.red_CoM, atom_name='Cone', res_name_vect='CON', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
+
         print `atomic_data`
 
 
