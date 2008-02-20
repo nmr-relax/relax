@@ -36,7 +36,7 @@ from generic_fns.sequence import load_PDB_sequence
 from generic_fns.selection import exists_mol_res_spin_data, return_molecule, return_residue, return_spin, spin_loop
 from physical_constants import ArH, ArC, ArN, ArO, ArS
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbChainError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError, RelaxPdbError, RelaxPdbLoadError, RelaxRegExpError
-from relax_io import get_file_path
+from relax_io import get_file_path, open_write_file
 from relax_warnings import RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxWarning, RelaxZeroVectorWarning
 
 
@@ -303,52 +303,59 @@ def centre_of_mass(return_mass=False):
         return R
 
 
-def create_diff_tensor_pdb(run=None, scale=1.8e-6, file=None, dir=None, force=0):
-    """Create the PDB representation of the diffusion tensor."""
+def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
+    """Create the PDB representation of the diffusion tensor.
+
+    @param scale:   The scaling factor for the diffusion tensor.
+    @type scale:    float
+    @param file:    The name of the PDB file to create.
+    @type file:     str
+    @param dir:     The name of the directory to place the PDB file into.
+    @type dir:      str
+    @param force:   Flag which if set to True will overwrite any pre-existing file.
+    @type force:    bool
+    """
 
     # Arguments.
-    scale = scale
-    file = file
-    dir = dir
-    force = force
     if scale == 'mass':
         scale = autoscale_tensor(scale)
-    else:
-        scale = scale
 
-    # Test if the run exists.
-    if not run in relax_data_store.run_names:
-        raise RelaxNoPipeError, run
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
 
-    # Create an array of runs to loop over (hybrid support).
-    if relax_data_store.run_types[relax_data_store.run_names.index(run)] == 'hybrid':
-        runs = relax_data_store.hybrid_runs[run]
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Create an array of data pipes to loop over (hybrid support).
+    if cdp.pipe_type == 'hybrid':
+        pipes = cdp.hybrid_pipes
     else:
-        runs = [run]
+        pipes = [relax_data_store.current_pipe]
 
     # Initialise the atom and atomic connections data structures.
     atomic_data = {}
 
-    # Loop over the runs.
-    for run_index in xrange(len(runs)):
-        # Place the run into 'self'.
-        run = runs[run_index]
+    # Loop over the pipes.
+    for pipe_index in xrange(len(pipes)):
+        # Alias the pipe container.
+        pipe = relax_data_store[pipes[pipe_index]]
 
 
         # Tests.
         ########
 
         # Test if the diffusion tensor data is loaded.
-        if not relax_data_store.diff.has_key(run):
+        if not hasattr(pipe, 'diff'):
             raise RelaxNoTensorError, 'diffusion'
 
-        # Test if the PDB file of the macromolecule has been loaded.
-        if not relax_data_store.pdb.has_key(run):
-            raise RelaxNoPdbError, run
+        # Test if a structure has been loaded.
+        if not hasattr(cdp.structure, 'structures'):
+            raise RelaxNoPdbError
 
         # Test if sequence data is loaded.
-        if not len(relax_data_store.res[run]):
-            raise RelaxNoSequenceError, run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
 
         # Initialise.
@@ -358,7 +365,7 @@ def create_diff_tensor_pdb(run=None, scale=1.8e-6, file=None, dir=None, force=0)
         res_num = 1
 
         # The chain identifier.
-        chain_id = ascii_uppercase[run_index]
+        chain_id = ascii_uppercase[pipe_index]
 
         # Atom ID extension (allow for multiple chains for hybrid runs).
         atom_id_ext = '_' + chain_id
@@ -405,10 +412,10 @@ def create_diff_tensor_pdb(run=None, scale=1.8e-6, file=None, dir=None, force=0)
                 atom_id = 'T' + `i` + 'P' + `j` + atom_id_ext
 
                 # Rotate the vector into the diffusion frame.
-                vector = dot(relax_data_store.diff[run].rotation, vectors[index])
+                vector = dot(pipe.diff.rotation, vectors[index])
 
                 # Set the length of the vector to its diffusion rate within the diffusion tensor geometric object.
-                vector = dot(relax_data_store.diff[run].tensor, vector)
+                vector = dot(pipe.diff.tensor, vector)
 
                 # Scale the vector.
                 vector = vector * scale
@@ -445,7 +452,7 @@ def create_diff_tensor_pdb(run=None, scale=1.8e-6, file=None, dir=None, force=0)
         #####################
 
         # Create the unique axis of the spheroid.
-        if relax_data_store.diff[run].type == 'spheroid':
+        if pipe.diff.type == 'spheroid':
             # Print out.
             print "\nGenerating the unique axis of the diffusion tensor."
             print "    Scaling factor:                      " + `scale`
@@ -454,18 +461,18 @@ def create_diff_tensor_pdb(run=None, scale=1.8e-6, file=None, dir=None, force=0)
             generate_spheroid_axes(chain_id=chain_id, res_num=res_num, R=R)
 
             # Simulations.
-            if hasattr(relax_data_store.diff[run], 'tm_sim'):
+            if hasattr(pipe.diff, 'tm_sim'):
                 # Print out.
                 print "    Creating the MC simulation axes."
 
                 # Create each MC simulation axis as a new residue.
-                for i in xrange(len(relax_data_store.diff[run].tm_sim)):
+                for i in xrange(len(pipe.diff.tm_sim)):
                     res_num = res_num + 1
                     generate_spheroid_axes(chain_id=chain_id, res_num=res_num, R=R, i=i)
 
 
         # Create the three axes of the ellipsoid.
-        if relax_data_store.diff[run].type == 'ellipsoid':
+        if pipe.diff.type == 'ellipsoid':
             # Print out.
             print "Generating the three axes of the ellipsoid."
             print "    Scaling factor:                      " + `scale`
@@ -474,12 +481,12 @@ def create_diff_tensor_pdb(run=None, scale=1.8e-6, file=None, dir=None, force=0)
             generate_ellipsoid_axes(chain_id=chain_id, res_num=res_num, R=R)
 
             # Simulations.
-            if hasattr(relax_data_store.diff[run], 'tm_sim'):
+            if hasattr(pipe.diff, 'tm_sim'):
                 # Print out.
                 print "    Creating the MC simulation axes."
 
                 # Create each MC simulation axis as a new residue.
-                for i in xrange(len(relax_data_store.diff[run].tm_sim)):
+                for i in xrange(len(pipe.diff.tm_sim)):
                     res_num = res_num + 1
                     generate_ellipsoid_axes(chain_id=chain_id, res_num=res_num, R=R, i=i)
 
@@ -503,7 +510,7 @@ def create_diff_tensor_pdb(run=None, scale=1.8e-6, file=None, dir=None, force=0)
     print "\nGenerating the PDB file."
 
     # Open the PDB file for writing.
-    tensor_pdb_file = relax.IO.open_write_file(file, dir, force=force)
+    tensor_pdb_file = open_write_file(file, dir, force=force)
 
     # Write the data.
     write_pdb_file(tensor_pdb_file)
