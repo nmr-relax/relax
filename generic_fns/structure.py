@@ -40,7 +40,7 @@ from relax_warnings import RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxWarni
 
 
 
-def atom_add(atom_id=None, record_name='', atom_name='', res_name='', chain_id='', res_num=None, pos=[None, None, None], segment_id='', element=''):
+def atom_add(atomic_data=None, atom_id=None, record_name='', atom_name='', res_name='', chain_id='', res_num=None, pos=[None, None, None], segment_id='', element=''):
     """Function for adding an atom to the atomic_data structure.
 
     The atomic_data data structure is a dictionary of arrays.  The keys correspond to the
@@ -62,6 +62,8 @@ def atom_add(atom_id=None, record_name='', atom_name='', res_name='', chain_id='
     This function will create the key-value pair for the given atom.
 
 
+    @param atomic_data: The dictionary to place the atomic data into.
+    @type atomic_data:  dict
     @param atom_id:     The atom identifier.  This is used as the key within the dictionary.
     @type atom_id:      str
     @param record_name: The record name, e.g. 'ATOM', 'HETATM', or 'TER'.
