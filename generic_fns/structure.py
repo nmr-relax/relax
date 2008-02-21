@@ -752,10 +752,29 @@ def generate_vector_dist(atomic_data=None, atom_id_ext='', res_name=None, res_nu
     print "    Creating the uniform vector distribution."
     vectors = uniform_vect_dist_spherical_angles(inc=inc)
 
+    # Generate the increment values of v.
+    v = zeros(inc/2+2, float64)
+    val = 1.0 / float(inc/2)
+    for i in xrange(1, inc/2+1):
+        v[i] = float(i-1) * val + val/2.0
+    v[-1] = 1.0
+
+    # Generate the distribution of spherical angles phi.
+    phi = arccos(2.0 * v - 1.0)
+
+    # Loop over the angles and find the minimum latitudinal index.
+    for j_min in xrange(len(phi)):
+        if phi[j_min] < max_angle:
+            break
+
     # Loop over the radial array of vectors (change in longitude).
     for i in range(inc):
         # Loop over the vectors of the radial array (change in latitude).
         for j in range(inc/2+2):
+            # Skip the vector if the polar angle is greater than max_angle.
+            if j < j_min:
+                continue
+
             # Index.
             index = i + j*inc
 
@@ -778,7 +797,7 @@ def generate_vector_dist(atomic_data=None, atom_id_ext='', res_name=None, res_nu
             atom_add(atomic_data=atomic_data, atom_id=atom_id, record_name='HETATM', atom_name='H'+`atom_num`, res_name=res_name, chain_id=chain_id, res_num=res_num, pos=pos, element='H')
 
             # Connect to the previous atom (to generate the longitudinal lines).
-            if j != 0:
+            if j > j_min:
                 prev_id = 'T' + `i` + 'P' + `j-1` + atom_id_ext
                 atom_connect(atomic_data=atomic_data, atom_id=atom_id, bonded_id=prev_id)
 
