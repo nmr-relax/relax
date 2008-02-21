@@ -235,18 +235,9 @@ class N_state_model(Common_functions):
         generic_fns.structure.terminate(atomic_data=atomic_data, res_num=res_num)
 
         # Create the PDB file.
-        ######################
-
-        # Print out.
         print "\nGenerating the PDB file."
-
-        # Open the PDB file for writing.
         pdb_file = open_write_file(file, dir, force=force)
-
-        # Write the data.
         generic_fns.structure.write_pdb_file(atomic_data, pdb_file)
-
-        # Close the file.
         pdb_file.close()
 
 
