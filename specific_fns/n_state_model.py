@@ -240,7 +240,7 @@ class N_state_model(Common_functions):
         # Generate the cone cap.
         if cone_type == 'diff in cone':
             print "\nGenerating the cone cap."
-            generic_fns.structure.generate_vector_dist(atomic_data=atomic_data, res_num=4, centre=cdp.pivot_point, R=R, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=inc)
+            generic_fns.structure.generate_vector_dist(atomic_data=atomic_data, res_name='CON', res_num=4, centre=cdp.pivot_point, R=R, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=inc)
 
         # Terminate the chain.
         generic_fns.structure.terminate(atomic_data=atomic_data, res_num=res_num)
