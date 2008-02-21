@@ -303,6 +303,53 @@ def centre_of_mass(return_mass=False):
         return R
 
 
+def cone_edge(atomic_data=None, apex=None, axis=None, angle=None, length=None, inc=None):
+    """Add a residue to the atomic data representing a cone of the given angle.
+
+    A series of vectors totalling the number of increments and starting at the origin are equally
+    spaced around the cone axis.  The atoms representing neighbouring vectors will be directly
+    bonded together.  This will generate an object representing the outer edge of a cone.
+
+
+    @param atomic_data:     The dictionary to place the atomic data into.
+    @type atomic_data:      dict
+    @param apex:            The apex of the cone.
+    @type apex:             numpy array, len 3
+    @param axis:            The central axis of the cone.
+    @type axis:             numpy array, len 3
+    @param angle:           The cone angle in radians.
+    @type angle:            float
+    @param length:          The cone length in meters.
+    @type length:           float
+    @param inc:             The number of increments or number of vectors used to generate the outer
+                            edge of the cone.
+    @type inc:              int
+    """
+
+    # Initialise the rotation matrix.
+    R = zeros((3,3), float64)
+
+    # Get the rotation matrix.
+    R_2vect(R, array([0,0,1], float64), axis)
+
+    # Loop over each vector.
+    for i in xrange(inc):
+        # The azimuthal angle theta.
+        theta = 2.0 * pi * float(i) / float(inc)
+
+        # X coordinate.
+        x = cos(theta) * sin(angle)
+
+        # Y coordinate.
+        y = sin(theta)* sin(angle)
+
+        # Z coordinate.
+        z = cos(angle)
+
+        # The vector in the unrotated frame.
+        vector = array([x, y, z], float64)
+
+
 def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     """Create the PDB representation of the diffusion tensor.
 
