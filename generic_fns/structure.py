@@ -466,10 +466,10 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         #################
 
         # Calculate the centre of mass.
-        R = centre_of_mass()
+        CoM = centre_of_mass()
 
         # Add the central atom.
-        atom_add(atomic_data=atomic_data, atom_id='R'+atom_id_ext, record_name='HETATM', atom_name='R', res_name='COM', chain_id=chain_id, res_num=res_num, pos=R, element='C')
+        atom_add(atomic_data=atomic_data, atom_id='R'+atom_id_ext, record_name='HETATM', atom_name='R', res_name='COM', chain_id=chain_id, res_num=res_num, pos=CoM, element='C')
 
         # Increment the residue number.
         res_num = res_num + 1
@@ -481,56 +481,8 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         # Print out.
         print "\nGenerating the geometric object."
 
-        # Increment value and initial atom number.
-        inc = 20
-        atom_num = 1
-
-        # Get the uniform vector distribution.
-        print "    Creating the uniform vector distribution."
-        vectors = uniform_vect_dist_spherical_angles(inc=20)
-
-        # Loop over the radial array of vectors (change in longitude).
-        for i in range(inc):
-            # Loop over the vectors of the radial array (change in latitude).
-            for j in range(inc/2+2):
-                # Index.
-                index = i + j*inc
-
-                # Atom id.
-                atom_id = 'T' + `i` + 'P' + `j` + atom_id_ext
-
-                # Rotate the vector into the diffusion frame.
-                vector = dot(pipe.diff.rotation, vectors[index])
-
-                # Set the length of the vector to its diffusion rate within the diffusion tensor geometric object.
-                vector = dot(pipe.diff.tensor, vector)
-
-                # Scale the vector.
-                vector = vector * scale
-
-                # Position relative to the centre of mass.
-                pos = R + vector
-
-                # Add the vector as a H atom of the TNS residue.
-                atom_add(atomic_data=atomic_data, atom_id=atom_id, record_name='HETATM', atom_name='H'+`atom_num`, res_name='TNS', chain_id=chain_id, res_num=res_num, pos=pos, element='H')
-
-                # Connect to the previous atom (to generate the longitudinal lines).
-                if j != 0:
-                    prev_id = 'T' + `i` + 'P' + `j-1` + atom_id_ext
-                    atom_connect(atomic_data=atomic_data, atom_id=atom_id, bonded_id=prev_id)
-
-                # Connect across the radial arrays (to generate the latitudinal lines).
-                if i != 0:
-                    neighbour_id = 'T' + `i-1` + 'P' + `j` + atom_id_ext
-                    atom_connect(atomic_data=atomic_data, atom_id=atom_id, bonded_id=neighbour_id)
-
-                # Connect the last radial array to the first (to zip up the geometric object and close the latitudinal lines).
-                if i == inc-1:
-                    neighbour_id = 'T' + `0` + 'P' + `j` + atom_id_ext
-                    atom_connect(atomic_data=atomic_data, atom_id=atom_id, bonded_id=neighbour_id)
-
-                # Increment the atom number.
-                atom_num = atom_num + 1
+        # The distribution.
+        generate_vector_dist(atomic_data=atomic_data, res_name='TNS', res_num=res_num, centre=CoM, R=pipe.diff.rotation, warp=pipe.diff.tensor, scale=scale, inc=20)
 
         # Increment the residue number.
         res_num = res_num + 1
@@ -757,6 +709,87 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
 
     # Close the file.
     tensor_pdb_file.close()
+
+
+def generate_vector_dist(atomic_data=None, res_name=None, res_num=None, centre=zero(3, float64), R=eye(3), warp=eye(3), max_angle=None, scale=1.0, inc=20):
+    """Generate a uniformly distributed distribution of atoms on a warped sphere.
+
+    The vectors from the function uniform_vect_dist_spherical_angles() are used to generate the
+    distribution.  These vectors are rotated to the desired frame using the rotation matrix 'R',
+    then each compressed or stretched by the dot product with the 'warp' matrix.  Each vector is
+    centred and at the head of the vector, a proton is placed.
+
+
+    @param atomic_data:     The dictionary to place the atomic data into.
+    @type atomic_data:      dict
+    @param res_name:        The residue name.
+    @type res_name:         str
+    @param res_num:         The residue number.
+    @type res_num:          int
+    @param centre:          The centre of the distribution.
+    @type centre:           numpy array, len 3
+    @param R:               The optional 3x3 rotation matrix.
+    @type R:                3x3 numpy array
+    @param warp:            The optional 3x3 warping matrix.
+    @type warp:             3x3 numpy array
+    @param max_angle:       The maximal polar angle, in rad, after which all vectors are skipped.
+    @type max_angle:        float
+    @param scale:           The scaling factor to all rotated and warped vectors by.
+    @type scale:            float
+    @param inc:             The number of increments or number of vectors used to generate the outer
+                            edge of the cone.
+    @type inc:              int
+    """
+
+    # Initial atom number.
+    atom_num = 1
+
+    # Get the uniform vector distribution.
+    print "    Creating the uniform vector distribution."
+    vectors = uniform_vect_dist_spherical_angles(inc=inc)
+
+    # Loop over the radial array of vectors (change in longitude).
+    for i in range(inc):
+        # Loop over the vectors of the radial array (change in latitude).
+        for j in range(inc/2+2):
+            # Index.
+            index = i + j*inc
+
+            # Atom id.
+            atom_id = 'T' + `i` + 'P' + `j` + atom_id_ext
+
+            # Rotate the vector into the diffusion frame.
+            vector = dot(R, vectors[index])
+
+            # Set the length of the vector to its diffusion rate within the diffusion tensor geometric object.
+            vector = dot(warp, vector)
+
+            # Scale the vector.
+            vector = vector * scale
+
+            # Position relative to the centre of mass.
+            pos = R + vector
+
+            # Add the vector as a H atom of the TNS residue.
+            atom_add(atomic_data=atomic_data, atom_id=atom_id, record_name='HETATM', atom_name='H'+`atom_num`, res_name=res_name, chain_id=chain_id, res_num=res_num, pos=pos, element='H')
+
+            # Connect to the previous atom (to generate the longitudinal lines).
+            if j != 0:
+                prev_id = 'T' + `i` + 'P' + `j-1` + atom_id_ext
+                atom_connect(atomic_data=atomic_data, atom_id=atom_id, bonded_id=prev_id)
+
+            # Connect across the radial arrays (to generate the latitudinal lines).
+            if i != 0:
+                neighbour_id = 'T' + `i-1` + 'P' + `j` + atom_id_ext
+                atom_connect(atomic_data=atomic_data, atom_id=atom_id, bonded_id=neighbour_id)
+
+            # Connect the last radial array to the first (to zip up the geometric object and close the latitudinal lines).
+            if i == inc-1:
+                neighbour_id = 'T' + `0` + 'P' + `j` + atom_id_ext
+                atom_connect(atomic_data=atomic_data, atom_id=atom_id, bonded_id=neighbour_id)
+
+            # Increment the atom number.
+            atom_num = atom_num + 1
 
 
 def generate_vector_residues(atomic_data=None, vector=None, atom_name=None, res_name_vect='AXS', sim_vectors=None, res_name_sim='SIM', chain_id='', res_num=None, origin=None, scale=1.0, label_placement=1.1, neg=False):
