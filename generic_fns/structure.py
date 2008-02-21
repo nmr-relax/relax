@@ -1110,6 +1110,52 @@ def set_vector(run=None, res=None, xh_vect=None):
     relax_data_store.res[run][res].xh_vect = xh_vect
 
 
+def stitch_cap_to_cone(atomic_data=None, atom_id_ext='', max_angle=None, inc=None):
+    """Function for stitching the cap of a cone to the cone edge, in the PDB representations.
+
+    @param atomic_data:     The dictionary containing the atomic data.
+    @type atomic_data:      dict
+    @param atom_id_ext:     The atom identifier extension.
+    @type atom_id_ext:      str
+    @param max_angle:       The maximal polar angle, in rad, after which all vectors are skipped.
+    @type max_angle:        float
+    @param inc:             The number of increments or number of vectors used to generate the outer
+                            edge of the cone.
+    @type inc:              int
+    """
+
+    # Generate the increment values of v.
+    v = zeros(inc/2+2, float64)
+    val = 1.0 / float(inc/2)
+    for i in xrange(1, inc/2+1):
+        v[i] = float(i-1) * val + val/2.0
+    v[-1] = 1.0
+
+    # Generate the distribution of spherical angles phi.
+    phi = arccos(2.0 * v - 1.0)
+
+    # Loop over the angles and find the minimum latitudinal index.
+    for j_min in xrange(len(phi)):
+        if phi[j_min] < max_angle:
+            break
+
+    print j_min
+
+    # Loop over the radial array of vectors (change in longitude).
+    for i in range(inc):
+        # Cap atom id.
+        cap_atom_id = 'T' + `i` + 'P' + `j_min` + atom_id_ext
+
+        # Cone edge atom id.
+        edge_atom_id = 'T' + `i` + atom_id_ext
+
+        # Connect the two atoms (to stitch up the 2 objects).
+        print "Connecting: " + `cap_atom_id` + " to " + `edge_atom_id`
+        atom_connect(atomic_data=atomic_data, atom_id=edge_atom_id, bonded_id=cap_atom_id)
+
+
+
+
 def terminate(atomic_data=None, atom_id_ext='', res_num=None):
     """Function for terminating the chain by adding a TER record to the atomic_data object.
 
