@@ -365,9 +365,14 @@ def cone_edge(atomic_data=None, res_num=None, apex=None, axis=None, angle=None, 
         # Add the vector as a H atom of the CON residue.
         atom_add(atomic_data=atomic_data, atom_id=atom_id, record_name='HETATM', atom_name='H'+`atom_num`, res_name='CON', res_num=res_num, pos=pos, element='H')
 
-        # Connect across the radial arrays (to generate the latitudinal lines).
+        # Connect across the radial array (to generate the circular cone edge).
         if i != 0:
             neighbour_id = 'T' + `i-1`
+            atom_connect(atomic_data=atomic_data, atom_id=atom_id, bonded_id=neighbour_id)
+
+        # Connect the last radial array to the first (to zip up the circle).
+        if i == inc-1:
+            neighbour_id = 'T' + `0`
             atom_connect(atomic_data=atomic_data, atom_id=atom_id, bonded_id=neighbour_id)
 
         # Increment the atom number.
