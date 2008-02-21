@@ -22,7 +22,7 @@
 
 # Python module imports.
 from math import sqrt, cos, pi, sin
-from numpy import arccos, array, dot, float64, zeros
+from numpy import arccos, array, dot, eye, float64, zeros
 from os import F_OK, access
 from re import compile, match
 import Scientific.IO.PDB
@@ -482,7 +482,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         print "\nGenerating the geometric object."
 
         # The distribution.
-        generate_vector_dist(atomic_data=atomic_data, res_name='TNS', res_num=res_num, centre=CoM, R=pipe.diff.rotation, warp=pipe.diff.tensor, scale=scale, inc=20)
+        generate_vector_dist(atomic_data=atomic_data, atom_id_ext=atom_id_ext, res_name='TNS', res_num=res_num, chain_id=chain_id, centre=CoM, R=pipe.diff.rotation, warp=pipe.diff.tensor, scale=scale, inc=20)
 
         # Increment the residue number.
         res_num = res_num + 1
@@ -711,7 +711,7 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     tensor_pdb_file.close()
 
 
-def generate_vector_dist(atomic_data=None, res_name=None, res_num=None, centre=zero(3, float64), R=eye(3), warp=eye(3), max_angle=None, scale=1.0, inc=20):
+def generate_vector_dist(atomic_data=None, atom_id_ext='', res_name=None, res_num=None, chain_id='', centre=zeros(3, float64), R=eye(3), warp=eye(3), max_angle=None, scale=1.0, inc=20):
     """Generate a uniformly distributed distribution of atoms on a warped sphere.
 
     The vectors from the function uniform_vect_dist_spherical_angles() are used to generate the
@@ -722,10 +722,14 @@ def generate_vector_dist(atomic_data=None, res_name=None, res_num=None, centre=z
 
     @param atomic_data:     The dictionary to place the atomic data into.
     @type atomic_data:      dict
+    @param atom_id_ext:     The atom identifier extension.
+    @type atom_id_ext:      str
     @param res_name:        The residue name.
     @type res_name:         str
     @param res_num:         The residue number.
     @type res_num:          int
+    @param chain_id:        The chain identifier.
+    @type chain_id:         str
     @param centre:          The centre of the distribution.
     @type centre:           numpy array, len 3
     @param R:               The optional 3x3 rotation matrix.
