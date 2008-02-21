@@ -738,7 +738,7 @@ def generate_vector_dist(atomic_data=None, atom_id_ext='', res_name=None, res_nu
     @type warp:             3x3 numpy array
     @param max_angle:       The maximal polar angle, in rad, after which all vectors are skipped.
     @type max_angle:        float
-    @param scale:           The scaling factor to all rotated and warped vectors by.
+    @param scale:           The scaling factor to stretch all rotated and warped vectors by.
     @type scale:            float
     @param inc:             The number of increments or number of vectors used to generate the outer
                             edge of the cone.
