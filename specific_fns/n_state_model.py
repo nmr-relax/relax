@@ -222,7 +222,7 @@ class N_state_model(Common_functions):
             angle = cdp.theta_diff_in_cone
         elif cone_type == 'diff on cone':
             angle = cdp.theta_diff_on_cone
-        generic_fns.structure.cone_edge(atomic_data=atomic_data, res_num=res_num, apex=cdp.pivot_point, axis=cdp.rot_CoM/norm(cdp.rot_CoM), angle=angle, length=norm(cdp.red_CoM), inc=20)
+        generic_fns.structure.cone_edge(atomic_data=atomic_data, res_num=res_num, apex=cdp.pivot_point, axis=cdp.rot_CoM/norm(cdp.rot_CoM), angle=angle, length=norm(cdp.rot_CoM), inc=20)
 
         # Terminate the chain.
         generic_fns.structure.terminate(atomic_data=atomic_data, res_num=res_num)
