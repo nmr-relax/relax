@@ -304,7 +304,7 @@ def centre_of_mass(return_mass=False):
         return R
 
 
-def cone_edge(atomic_data=None, res_num=None, apex=None, axis=None, R=None, angle=None, length=None, inc=None):
+def cone_edge(atomic_data=None, res_name='CON', res_num=None, apex=None, axis=None, R=None, angle=None, length=None, inc=None):
     """Add a residue to the atomic data representing a cone of the given angle.
 
     A series of vectors totalling the number of increments and starting at the origin are equally
@@ -314,6 +314,8 @@ def cone_edge(atomic_data=None, res_num=None, apex=None, axis=None, R=None, angl
 
     @param atomic_data:     The dictionary to place the atomic data into.
     @type atomic_data:      dict
+    @param res_name:        The residue name.
+    @type res_name:         str
     @param res_num:         The residue number.
     @type res_num:          int
     @param apex:            The apex of the cone.
@@ -334,7 +336,7 @@ def cone_edge(atomic_data=None, res_num=None, apex=None, axis=None, R=None, angl
     """
 
     # Add an atom for the cone apex.
-    atom_add(atomic_data=atomic_data, atom_id='Apex', record_name='HETATM', atom_name='APX', res_name='CON', res_num=res_num, pos=apex, element='H')
+    atom_add(atomic_data=atomic_data, atom_id='Apex', record_name='HETATM', atom_name='APX', res_name=res_name, res_num=res_num, pos=apex, element='H')
 
     # Initialise the rotation matrix, atom number, etc.
     if R == None:
@@ -371,8 +373,8 @@ def cone_edge(atomic_data=None, res_num=None, apex=None, axis=None, R=None, angl
         # The atom position.
         pos = apex+vector*length
 
-        # Add the vector as a H atom of the CON residue.
-        atom_add(atomic_data=atomic_data, atom_id=atom_id, record_name='HETATM', atom_name='H'+`atom_num`, res_name='CON', res_num=res_num, pos=pos, element='H')
+        # Add the vector as a H atom of the cone residue.
+        atom_add(atomic_data=atomic_data, atom_id=atom_id, record_name='HETATM', atom_name='H'+`atom_num`, res_name=res_name, res_num=res_num, pos=pos, element='H')
 
         # Connect across the radial array (to generate the circular cone edge).
         if i != 0:
