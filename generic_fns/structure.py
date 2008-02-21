@@ -1139,8 +1139,6 @@ def stitch_cap_to_cone(atomic_data=None, atom_id_ext='', max_angle=None, inc=Non
         if phi[j_min] < max_angle:
             break
 
-    print j_min
-
     # Loop over the radial array of vectors (change in longitude).
     for i in range(inc):
         # Cap atom id.
@@ -1150,10 +1148,7 @@ def stitch_cap_to_cone(atomic_data=None, atom_id_ext='', max_angle=None, inc=Non
         edge_atom_id = 'T' + `i` + atom_id_ext
 
         # Connect the two atoms (to stitch up the 2 objects).
-        print "Connecting: " + `cap_atom_id` + " to " + `edge_atom_id`
         atom_connect(atomic_data=atomic_data, atom_id=edge_atom_id, bonded_id=cap_atom_id)
-
-
 
 
 def terminate(atomic_data=None, atom_id_ext='', res_num=None):
