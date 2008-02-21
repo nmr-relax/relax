@@ -772,7 +772,7 @@ def generate_vector_dist(atomic_data=None, atom_id_ext='', res_name=None, res_nu
             vector = vector * scale
 
             # Position relative to the centre of mass.
-            pos = R + vector
+            pos = centre + vector
 
             # Add the vector as a H atom of the TNS residue.
             atom_add(atomic_data=atomic_data, atom_id=atom_id, record_name='HETATM', atom_name='H'+`atom_num`, res_name=res_name, chain_id=chain_id, res_num=res_num, pos=pos, element='H')
