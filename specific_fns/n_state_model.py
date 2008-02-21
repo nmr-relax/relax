@@ -123,7 +123,7 @@ class N_state_model(Common_functions):
         cdp.pivot_CoM = array(cdp.CoM, float64) - array(cdp.pivot_point, float64)
 
         # Calculate the unit vector between the pivot and CoM points.
-        unit_vect = cdp.pivot_CoM / norm(unit_vect)
+        unit_vect = cdp.pivot_CoM / norm(cdp.pivot_CoM)
 
         # Initilise some data structures.
         R = zeros((3,3), float64)
