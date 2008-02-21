@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import cross, dot
+from numpy import cross, dot, norm
 from math import acos, cos, sin
 
 
