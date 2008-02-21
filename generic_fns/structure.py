@@ -329,6 +329,9 @@ def cone_edge(atomic_data=None, res_num=None, apex=None, axis=None, angle=None, 
     @type inc:              int
     """
 
+    # Add an atom for the cone apex.
+    atom_add(atomic_data=atomic_data, atom_id='Apex', record_name='HETATM', atom_name='APX', res_name='CON', res_num=res_num, pos=apex, element='H')
+
     # Initialise the rotation matrix, atom number, etc.
     R = zeros((3,3), float64)
     atom_num = 1
@@ -374,6 +377,9 @@ def cone_edge(atomic_data=None, res_num=None, apex=None, axis=None, angle=None, 
         if i == inc-1:
             neighbour_id = 'T' + `0`
             atom_connect(atomic_data=atomic_data, atom_id=atom_id, bonded_id=neighbour_id)
+
+        # Join the atom to the cone apex.
+        atom_connect(atomic_data=atomic_data, atom_id=atom_id, bonded_id='Apex')
 
         # Increment the atom number.
         atom_num = atom_num + 1
