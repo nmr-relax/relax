@@ -243,7 +243,7 @@ class N_state_model(Common_functions):
         pdb_file.close()
 
         for key in atomic_data.keys():
-            print "\n\n" + `key` + ": \n" + `atomic_data[key]`
+            print `key` + ":\t" + `atomic_data[key]`
 
 
     def default_value(self, param):
