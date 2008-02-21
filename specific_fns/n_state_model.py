@@ -34,6 +34,7 @@ from maths_fns.n_state_model import N_state_opt
 from maths_fns.rotation_matrix import R_euler_zyz
 from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
+from relax_io import open_write_file
 from specific_fns.base_class import Common_functions
 
 
@@ -222,6 +223,24 @@ class N_state_model(Common_functions):
         elif cone_type == 'diff on cone':
             angle = cdp.theta_diff_on_cone
         generic_fns.structure.cone_edge(atomic_data=atomic_data, res_num=res_num, apex=cdp.pivot_point, axis=cdp.rot_CoM/norm(cdp.rot_CoM), angle=angle, length=norm(cdp.red_CoM), inc=20)
+
+        # Terminate the chain.
+        generic_fns.structure.terminate(atomic_data=atomic_data, res_num=res_num)
+
+        # Create the PDB file.
+        ######################
+
+        # Print out.
+        print "\nGenerating the PDB file."
+
+        # Open the PDB file for writing.
+        pdb_file = open_write_file(file, dir, force=force)
+
+        # Write the data.
+        generic_fns.structure.write_pdb_file(atomic_data, pdb_file)
+
+        # Close the file.
+        pdb_file.close()
 
         for key in atomic_data.keys():
             print "\n\n" + `key` + ": \n" + `atomic_data[key]`
