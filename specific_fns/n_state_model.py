@@ -140,21 +140,21 @@ class N_state_model(Common_functions):
             # Multiply by the probability.
             vectors[c] = vectors[c] * cdp.probs[c]
 
-        # Total weighted vector.
-        cdp.red_CoM = sum(vectors)
+        # Average of the unit vectors.
+        cdp.ave_unit_pivot_CoM = sum(vectors)
 
         # The length reduction.
-        len_red = norm(cdp.red_CoM)
+        cdp.ave_pivot_CoM_red = norm(cdp.ave_unit_pivot_CoM)
 
-        # The full length rotated CoM vector.
-        cdp.rot_CoM = norm(cdp.CoM) * cdp.red_CoM / len_red
+        # The aveage pivot-CoM vector.
+        cdp.ave_pivot_CoM = norm(cdp.pivot_CoM) * cdp.ave_unit_pivot_CoM / cdp.ave_pivot_CoM_red
 
         # The cone angle for diffusion on an axially symmetric cone.
-        cdp.theta_diff_on_cone = acos(len_red)
+        cdp.theta_diff_on_cone = acos(cdp.ave_pivot_CoM_red)
         cdp.S_diff_on_cone = (3.0*cos(cdp.theta_diff_on_cone)**2 - 1.0) / 2.0
 
         # The cone angle and order parameter for diffusion in an axially symmetric cone.
-        cdp.theta_diff_in_cone = acos(2.*len_red - 1.)
+        cdp.theta_diff_in_cone = acos(2.*cdp.ave_pivot_CoM_red - 1.)
         cdp.S_diff_in_cone = cos(cdp.theta_diff_in_cone) * (1 + cos(cdp.theta_diff_in_cone)) / 2.0
 
         # Print out.
@@ -162,9 +162,9 @@ class N_state_model(Common_functions):
         print "%-40s %-20s" % ("Moving domain CoM (prior to rotation):", `cdp.CoM`)
         print "%-40s %-20s" % ("Pivot-CoM vector", `cdp.pivot_CoM`)
         print "%-40s %-20s" % ("Pivot-CoM unit vector:", `unit_vect`)
-        print "%-40s %-20s" % ("Reduced CoM vector:", `cdp.red_CoM`)
-        print "%-40s %-20s" % ("Full length rotated CoM vector:", `cdp.rot_CoM`)
-        print "%-40s %-20s" % ("Length reduction from unity:", `len_red`)
+        print "%-40s %-20s" % ("Average of the unit pivot-CoM vectors:", `cdp.ave_unit_pivot_CoM`)
+        print "%-40s %-20s" % ("Average of the pivot-CoM vector:", `cdp.ave_pivot_CoM`)
+        print "%-40s %-20s" % ("Length reduction from unity:", `cdp.ave_pivot_CoM_red`)
         print "%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion on a cone)", cdp.theta_diff_on_cone, cdp.theta_diff_on_cone / (2*pi) *360.)
         print "%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion on a cone)", cdp.S_diff_on_cone, cdp.S_diff_on_cone**2)
         print "%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion in a cone)", cdp.theta_diff_in_cone, cdp.theta_diff_in_cone / (2*pi) *360.)
@@ -216,16 +216,16 @@ class N_state_model(Common_functions):
 
         # Generate the average pivot-CoM vectors.
         sim_vectors = None
-        if hasattr(cdp, 'rot_CoM_sim'):
-            sim_vectors = cdp.rot_CoM_sim
-        res_num = generic_fns.structure.generate_vector_residues(atomic_data=atomic_data, vector=cdp.rot_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
+        if hasattr(cdp, 'ave_pivot_CoM_sim'):
+            sim_vectors = cdp.ave_pivot_CoM_sim
+        res_num = generic_fns.structure.generate_vector_residues(atomic_data=atomic_data, vector=cdp.ave_pivot_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
 
         # Generate the cone outer edge.
         if cone_type == 'diff in cone':
             angle = cdp.theta_diff_in_cone
         elif cone_type == 'diff on cone':
             angle = cdp.theta_diff_on_cone
-        generic_fns.structure.cone_edge(atomic_data=atomic_data, res_num=res_num, apex=cdp.pivot_point, axis=cdp.rot_CoM/norm(cdp.rot_CoM), angle=angle, length=norm(cdp.pivot_CoM), inc=20)
+        generic_fns.structure.cone_edge(atomic_data=atomic_data, res_num=res_num, apex=cdp.pivot_point, axis=cdp.ave_pivot_CoM/norm(cdp.ave_pivot_CoM), angle=angle, length=norm(cdp.pivot_CoM), inc=20)
 
         # Terminate the chain.
         generic_fns.structure.terminate(atomic_data=atomic_data, res_num=res_num)
