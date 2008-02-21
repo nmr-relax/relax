@@ -49,6 +49,7 @@ from minimisation import Minimisation
 from model_selection import Modsel
 
 # User classes.
+from align_tensor import Align_tensor
 from dasha import Dasha
 from diffusion_tensor import Diffusion_tensor
 from grace import Grace
@@ -57,6 +58,7 @@ from model_free import Model_free
 from molmol import Molmol
 from molecule import Molecule
 from monte_carlo import Monte_carlo
+from n_state_model import N_state_model
 from noe import Noe
 from palmer import Palmer
 from residue import Residue
@@ -125,6 +127,7 @@ class Interpreter:
         self._system = system
 
         # Place the user classes into the interpreter class namespace.
+        self._Align_tensor = Align_tensor(relax)
         self._Dasha = Dasha(relax)
         self._Diffusion_tensor = Diffusion_tensor(relax)
         self._OpenDX = OpenDX(relax)
@@ -134,6 +137,7 @@ class Interpreter:
         self._Molmol = Molmol(relax)
         self._Molecule = Molecule(relax)
         self._Monte_carlo = Monte_carlo(relax)
+        self._N_state_model = N_state_model(relax)
         self._Noe = Noe(relax)
         self._Palmer = Palmer(relax)
         self._Residue = Residue(relax)
@@ -187,6 +191,7 @@ class Interpreter:
         model_selection = self._Modsel.model_selection
 
         # Place the user classes in the local namespace.
+        align_tensor = self._Align_tensor
         dasha = self._Dasha
         diffusion_tensor = self._Diffusion_tensor
         dx = self._OpenDX
@@ -196,6 +201,7 @@ class Interpreter:
         molmol = self._Molmol
         molecule = self._Molecule
         monte_carlo = self._Monte_carlo
+        n_state_model = self._N_state_model
         noe = self._Noe
         palmer = self._Palmer
         structure = self._Structure

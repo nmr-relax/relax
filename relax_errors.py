@@ -375,6 +375,13 @@ class RelaxNoneListError(BaseError):
         if Debug:
             self.save_state()
 
+# None or list of strings.
+class RelaxNoneListstrError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + `value` + " must either be an array of strings or None."
+        if Debug:
+            self.save_state()
+
 # None or number.
 class RelaxNoneNumError(BaseError):
     def __init__(self, name, value):
@@ -621,8 +628,11 @@ class RelaxFuncSetupError(BaseError):
 
 # The model has not been setup.
 class RelaxNoModelError(BaseError):
-    def __init__(self, pipe):
-        self.text = "The models corresponding to the data pipe " + `pipe` + " have not been setup."
+    def __init__(self, name=None):
+        if name != None:
+            self.text = "The " + name + " model has not been setup."
+        else:
+            self.text = "The model has not been setup."
         if Debug:
             self.save_state()
 

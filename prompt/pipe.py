@@ -112,6 +112,7 @@ class Pipe:
 
             'jw':  Reduced spectral density mapping,
             'mf':  Model-free analysis,
+            'N-state':  N-state model of domain motions,
             'noe':  Steady state NOE calculation,
             'relax_fit':  Relaxation curve fitting,
             'srls':  SRLS analysis.
