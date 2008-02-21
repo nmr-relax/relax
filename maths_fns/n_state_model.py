@@ -25,7 +25,7 @@ from numpy import array, dot, float64, transpose, zeros
 
 # relax module imports.
 from chi2 import chi2
-from rotation_matrix import rotation_matrix_zyz
+from rotation_matrix import R_euler_zyz
 
 
 class N_state_opt:
@@ -95,7 +95,7 @@ class N_state_opt:
         # Update the rotation matricies.
         for c in xrange(self.N):
             # The matrix itself.
-            rotation_matrix_zyz(self.R[c], params[self.N-1+3*c], params[self.N-1+3*c+1], params[self.N-1+3*c+2])
+            R_euler_zyz(self.R[c], params[self.N-1+3*c], params[self.N-1+3*c+1], params[self.N-1+3*c+2])
 
             # Its transpose.
             self.RT[c] = transpose(self.R[c])

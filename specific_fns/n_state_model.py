@@ -31,7 +31,7 @@ from data import Data as relax_data_store
 from float import isNaN, isInf
 import generic_fns
 from maths_fns.n_state_model import N_state_opt
-from maths_fns.rotation_matrix import rotation_matrix_zyz
+from maths_fns.rotation_matrix import R_euler_zyz
 from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
 from specific_fns.base_class import Common_functions
@@ -129,7 +129,7 @@ class N_state_model(Common_functions):
         # Loop over the N states.
         for c in xrange(cdp.N):
             # Generate the rotation matrix.
-            rotation_matrix_zyz(R, cdp.alpha[c], cdp.beta[c], cdp.gamma[c])
+            R_euler_zyz(R, cdp.alpha[c], cdp.beta[c], cdp.gamma[c])
 
             # Rotate the unit vector.
             vectors[c] = dot(R, unit_vect)
