@@ -34,6 +34,7 @@ from data import Data as relax_data_store
 from generic_fns import molmol
 from generic_fns.sequence import load_PDB_sequence
 from generic_fns.selection import exists_mol_res_spin_data, return_molecule, return_residue, return_spin, spin_loop
+from maths_fns.rotation_matrix import R_2vect
 from physical_constants import ArH, ArC, ArN, ArO, ArS
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbChainError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError, RelaxPdbError, RelaxPdbLoadError, RelaxRegExpError
 from relax_io import get_file_path, open_write_file
@@ -303,7 +304,7 @@ def centre_of_mass(return_mass=False):
         return R
 
 
-def cone_edge(atomic_data=None, apex=None, axis=None, angle=None, length=None, inc=None):
+def cone_edge(atomic_data=None, res_num=None, apex=None, axis=None, angle=None, length=None, inc=None):
     """Add a residue to the atomic data representing a cone of the given angle.
 
     A series of vectors totalling the number of increments and starting at the origin are equally
@@ -313,6 +314,8 @@ def cone_edge(atomic_data=None, apex=None, axis=None, angle=None, length=None, i
 
     @param atomic_data:     The dictionary to place the atomic data into.
     @type atomic_data:      dict
+    @param res_num:         The residue number.
+    @type res_num:          int
     @param apex:            The apex of the cone.
     @type apex:             numpy array, len 3
     @param axis:            The central axis of the cone.
@@ -348,6 +351,12 @@ def cone_edge(atomic_data=None, apex=None, axis=None, angle=None, length=None, i
 
         # The vector in the unrotated frame.
         vector = array([x, y, z], float64)
+
+        # Rotate the vector.
+        vector = dot(R, vector)
+
+        # Add the vector as a H atom of the CON residue.
+        atom_add(atomic_data=atomic_data, atom_id=atom_id, record_name='HETATM', atom_name='H'+`atom_num`, res_name='CON', res_num=res_num, pos=pos, element='H')
 
 
 def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
