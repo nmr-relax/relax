@@ -1173,7 +1173,7 @@ def uniform_vect_dist_spherical_angles(inc=20):
     return vectors
 
 
-def write_pdb_file(file):
+def write_pdb_file(atomic_data, file):
     """Function for creating a PDB file from the given data.
 
     Introduction
@@ -1403,10 +1403,10 @@ def write_pdb_file(file):
 
 
 
-
-    @param file:    The PDB file object.  This object must be writable.
-    @type file:     file object
-    @return:        None
+    @param atomic_data: The dictionary containing the atomic data.
+    @type atomic_data:  dict
+    @param file:        The PDB file object.  This object must be writable.
+    @type file:         file object
     """
 
     # Sort the atoms.
