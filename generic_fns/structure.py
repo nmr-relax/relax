@@ -742,7 +742,7 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     tensor_pdb_file.close()
 
 
-def generate_vector_residues(atomic_data=None, vector=None, atom_name=None, res_name_vect='AXS', sim_vectors=None, res_name_sim='SIM', chain_id=None, res_num=None, origin=None, scale=1.0, label_placement=1.1, neg=False):
+def generate_vector_residues(atomic_data=None, vector=None, atom_name=None, res_name_vect='AXS', sim_vectors=None, res_name_sim='SIM', chain_id='', res_num=None, origin=None, scale=1.0, label_placement=1.1, neg=False):
     """Generate residue representations for the vector and the MC simulationed vectors.
 
     This is used to create a PDB representation of any vector, including its Monte Carlo
