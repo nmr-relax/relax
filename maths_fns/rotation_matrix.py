@@ -21,7 +21,8 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import cross, dot, norm
+from numpy import cross, dot
+from numpy.linalg import norm
 from math import acos, cos, sin
 
 
