@@ -31,7 +31,7 @@ from data import Data as relax_data_store
 from float import isNaN, isInf
 import generic_fns
 from maths_fns.n_state_model import N_state_opt
-from maths_fns.rotation_matrix import R_euler_zyz
+from maths_fns.rotation_matrix import R_2vect, R_euler_zyz
 from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
 from relax_io import open_write_file
@@ -212,11 +212,15 @@ class N_state_model(Common_functions):
         # Initialise the atom and atomic connections data structures.
         atomic_data = {}
 
-        # Add the pivot point.
-        generic_fns.structure.atom_add(atomic_data=atomic_data, atom_id='R', record_name='HETATM', atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot_point, element='C')
-
         # The number of increments for the filling of the cone objects.
         inc = 20
+
+        # The rotation matrix.
+        R = zeros((3,3), float64)
+        R_2vect(R, array([0,0,1], float64), cdp.ave_pivot_CoM/norm(cdp.ave_pivot_CoM))
+
+        # Add the pivot point.
+        generic_fns.structure.atom_add(atomic_data=atomic_data, atom_id='R', record_name='HETATM', atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot_point, element='C')
 
         # Generate the average pivot-CoM vectors.
         print "\nGenerating the average pivot-CoM vectors."
@@ -231,12 +235,12 @@ class N_state_model(Common_functions):
             angle = cdp.theta_diff_in_cone
         elif cone_type == 'diff on cone':
             angle = cdp.theta_diff_on_cone
-        generic_fns.structure.cone_edge(atomic_data=atomic_data, res_num=3, apex=cdp.pivot_point, axis=cdp.ave_pivot_CoM/norm(cdp.ave_pivot_CoM), angle=angle, length=norm(cdp.pivot_CoM), inc=20)
+        generic_fns.structure.cone_edge(atomic_data=atomic_data, res_num=3, apex=cdp.pivot_point, rotation=R, angle=angle, length=norm(cdp.pivot_CoM), inc=20)
 
         # Generate the cone cap.
         if cone_type == 'diff in cone':
             print "\nGenerating the cone cap."
-            generic_fns.structure.generate_vector_dist(atomic_data=atomic_data, res_num=4, centre=cdp.pivot_point, rotation=None, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=20)
+            generic_fns.structure.generate_vector_dist(atomic_data=atomic_data, res_num=4, centre=cdp.pivot_point, rotation=R, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=20)
 
         # Terminate the chain.
         generic_fns.structure.terminate(atomic_data=atomic_data, res_num=res_num)
