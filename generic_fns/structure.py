@@ -359,6 +359,9 @@ def cone_edge(atomic_data=None, res_num=None, apex=None, axis=None, angle=None, 
         # The atom id.
         atom_id = 'T' + `i`
 
+        # The atom position.
+        pos = apex+vector*length
+
         # Add the vector as a H atom of the CON residue.
         atom_add(atomic_data=atomic_data, atom_id=atom_id, record_name='HETATM', atom_name='H'+`atom_num`, res_name='CON', res_num=res_num, pos=pos, element='H')
 
