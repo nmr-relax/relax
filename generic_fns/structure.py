@@ -304,7 +304,7 @@ def centre_of_mass(return_mass=False):
         return R
 
 
-def cone_edge(atomic_data=None, res_num=None, apex=None, axis=None, angle=None, length=None, inc=None):
+def cone_edge(atomic_data=None, res_num=None, apex=None, axis=None, R=None, angle=None, length=None, inc=None):
     """Add a residue to the atomic data representing a cone of the given angle.
 
     A series of vectors totalling the number of increments and starting at the origin are equally
@@ -318,8 +318,12 @@ def cone_edge(atomic_data=None, res_num=None, apex=None, axis=None, angle=None, 
     @type res_num:          int
     @param apex:            The apex of the cone.
     @type apex:             numpy array, len 3
-    @param axis:            The central axis of the cone.
+    @param axis:            The central axis of the cone.  If supplied, then this arg will be used
+                            to construct the rotation matrix.
     @type axis:             numpy array, len 3
+    @param R:               A 3x3 rotation matrix.  If the axis arg supplied, then this matrix will
+                            be ignored.
+    @type R:                3x3 numpy array
     @param angle:           The cone angle in radians.
     @type angle:            float
     @param length:          The cone length in meters.
@@ -333,11 +337,13 @@ def cone_edge(atomic_data=None, res_num=None, apex=None, axis=None, angle=None, 
     atom_add(atomic_data=atomic_data, atom_id='Apex', record_name='HETATM', atom_name='APX', res_name='CON', res_num=res_num, pos=apex, element='H')
 
     # Initialise the rotation matrix, atom number, etc.
-    R = zeros((3,3), float64)
+    if R == None:
+        R = eye(3)
     atom_num = 1
 
     # Get the rotation matrix.
-    R_2vect(R, array([0,0,1], float64), axis)
+    if axis != None:
+        R_2vect(R, array([0,0,1], float64), axis)
 
     # Loop over each vector.
     for i in xrange(inc):
