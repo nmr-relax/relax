@@ -563,13 +563,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         # Terminate the chain (the TER record).
         #######################################
 
-        # The name of the last residue.
-        atomic_arrays = atomic_data.values()
-        atomic_arrays.sort()
-        last_res = atomic_arrays[-1][3]
-
-        # Add the TER 'atom'.
-        atom_add(atomic_data=atomic_data, atom_id='TER' + atom_id_ext, record_name='TER', res_name=last_res, res_num=res_num)
+        terminate(atomic_data=atomic_data, atom_id_ext=atom_id_ext, res_num=res_num)
 
 
     # Create the PDB file.
@@ -1029,6 +1023,26 @@ def set_vector(run=None, res=None, xh_vect=None):
 
     # Place the XH unit vector in 'relax_data_store.res'.
     relax_data_store.res[run][res].xh_vect = xh_vect
+
+
+def terminate(atomic_data=None, atom_id_ext='', res_num=None):
+    """Function for terminating the chain by adding a TER record to the atomic_data object.
+
+    @param atomic_data:     The dictionary to place the atomic data into.
+    @type atomic_data:      dict
+    @param atom_id_ext:     The atom identifier extension.
+    @type atom_id_ext:      str
+    @param res_num:         The residue number.
+    @type res_num:          int
+    """
+
+    # The name of the last residue.
+    atomic_arrays = atomic_data.values()
+    atomic_arrays.sort()
+    last_res = atomic_arrays[-1][3]
+
+    # Add the TER 'atom'.
+    atom_add(atomic_data=atomic_data, atom_id='TER' + atom_id_ext, record_name='TER', res_name=last_res, res_num=res_num)
 
 
 def vectors(heteronuc=None, proton=None, spin_id=None, verbosity=1):
