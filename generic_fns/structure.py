@@ -22,7 +22,7 @@
 
 # Python module imports.
 from math import sqrt, cos, pi, sin
-from numpy import arccos, dot, float64, zeros
+from numpy import arccos, array, dot, float64, zeros
 from os import F_OK, access
 from re import compile, match
 import Scientific.IO.PDB
@@ -329,8 +329,9 @@ def cone_edge(atomic_data=None, res_num=None, apex=None, axis=None, angle=None, 
     @type inc:              int
     """
 
-    # Initialise the rotation matrix.
+    # Initialise the rotation matrix, atom number, etc.
     R = zeros((3,3), float64)
+    atom_num = 1
 
     # Get the rotation matrix.
     R_2vect(R, array([0,0,1], float64), axis)
@@ -355,8 +356,19 @@ def cone_edge(atomic_data=None, res_num=None, apex=None, axis=None, angle=None, 
         # Rotate the vector.
         vector = dot(R, vector)
 
+        # The atom id.
+        atom_id = 'T' + `i`
+
         # Add the vector as a H atom of the CON residue.
         atom_add(atomic_data=atomic_data, atom_id=atom_id, record_name='HETATM', atom_name='H'+`atom_num`, res_name='CON', res_num=res_num, pos=pos, element='H')
+
+        # Connect across the radial arrays (to generate the latitudinal lines).
+        if i != 0:
+            neighbour_id = 'T' + `i-1`
+            atom_connect(atomic_data=atomic_data, atom_id=atom_id, bonded_id=neighbour_id)
+
+        # Increment the atom number.
+        atom_num = atom_num + 1
 
 
 def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
