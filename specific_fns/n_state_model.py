@@ -119,9 +119,11 @@ class N_state_model(Common_functions):
         else:
             cdp.CoM = generic_fns.structure.centre_of_mass()
 
+        # Calculate the vector between the pivot and CoM points.
+        cdp.pivot_CoM = array(cdp.CoM, float64) - array(cdp.pivot_point, float64)
+
         # Calculate the unit vector between the pivot and CoM points.
-        unit_vect = array(cdp.CoM, float64) - array(cdp.pivot_point, float64)
-        unit_vect = unit_vect / norm(unit_vect)
+        unit_vect = cdp.pivot_CoM / norm(unit_vect)
 
         # Initilise some data structures.
         R = zeros((3,3), float64)
@@ -158,6 +160,7 @@ class N_state_model(Common_functions):
         # Print out.
         print "\n%-40s %-20s" % ("Pivot point:", `cdp.pivot_point`)
         print "%-40s %-20s" % ("Moving domain CoM (prior to rotation):", `cdp.CoM`)
+        print "%-40s %-20s" % ("Pivot-CoM vector", `cdp.pivot_CoM`)
         print "%-40s %-20s" % ("Pivot-CoM unit vector:", `unit_vect`)
         print "%-40s %-20s" % ("Reduced CoM vector:", `cdp.red_CoM`)
         print "%-40s %-20s" % ("Full length rotated CoM vector:", `cdp.rot_CoM`)
