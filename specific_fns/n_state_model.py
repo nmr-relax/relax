@@ -213,9 +213,9 @@ class N_state_model(Common_functions):
 
         # Generate the average pivot-CoM vectors.
         sim_vectors = None
-        if hasattr(cdp, 'red_CoM_sim'):
-            sim_vectors = cdp.red_CoM_sim
-        res_num = generic_fns.structure.generate_vector_residues(atomic_data=atomic_data, vector=cdp.red_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
+        if hasattr(cdp, 'rot_CoM_sim'):
+            sim_vectors = cdp.rot_CoM_sim
+        res_num = generic_fns.structure.generate_vector_residues(atomic_data=atomic_data, vector=cdp.rot_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
 
         # Generate the cone outer edge.
         if cone_type == 'diff in cone':
