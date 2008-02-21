@@ -865,6 +865,18 @@ def get_chemical_name(hetID):
     if hetID == 'SIM':
         return 'Monte Carlo simulation tensor axes'
 
+    # Pivot point.
+    if hetID == 'PIV':
+        return 'Pivot point'
+
+    # Cone object.
+    if hetID == 'CON':
+        return 'Cone'
+
+    # Average vector.
+    if hetID == 'AVE':
+        return 'Average vector'
+
     # Unknown hetID.
     raise RelaxError, "The residue ID (hetID) " + `hetID` + " is not recognised."
 
