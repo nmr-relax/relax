@@ -147,7 +147,10 @@ class N_state_model(Common_functions):
         cdp.ave_pivot_CoM_red = norm(cdp.ave_unit_pivot_CoM)
 
         # The aveage pivot-CoM vector.
-        cdp.ave_pivot_CoM = norm(cdp.pivot_CoM) * cdp.ave_unit_pivot_CoM / cdp.ave_pivot_CoM_red
+        cdp.ave_pivot_CoM = norm(cdp.pivot_CoM) * cdp.ave_unit_pivot_CoM
+
+        # The full length rotated pivot-CoM vector.
+        cdp.full_ave_pivot_CoM = cdp.ave_pivot_CoM / cdp.ave_pivot_CoM_red
 
         # The cone angle for diffusion on an axially symmetric cone.
         cdp.theta_diff_on_cone = acos(cdp.ave_pivot_CoM_red)
@@ -164,6 +167,7 @@ class N_state_model(Common_functions):
         print "%-40s %-20s" % ("Pivot-CoM unit vector:", `unit_vect`)
         print "%-40s %-20s" % ("Average of the unit pivot-CoM vectors:", `cdp.ave_unit_pivot_CoM`)
         print "%-40s %-20s" % ("Average of the pivot-CoM vector:", `cdp.ave_pivot_CoM`)
+        print "%-40s %-20s" % ("Full length rotated pivot-CoM vector:", `cdp.full_ave_pivot_CoM`)
         print "%-40s %-20s" % ("Length reduction from unity:", `cdp.ave_pivot_CoM_red`)
         print "%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion on a cone)", cdp.theta_diff_on_cone, cdp.theta_diff_on_cone / (2*pi) *360.)
         print "%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion on a cone)", cdp.S_diff_on_cone, cdp.S_diff_on_cone**2)
