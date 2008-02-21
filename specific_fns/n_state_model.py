@@ -219,17 +219,24 @@ class N_state_model(Common_functions):
         inc = 20
 
         # Generate the average pivot-CoM vectors.
+        print "\nGenerating the average pivot-CoM vectors."
         sim_vectors = None
         if hasattr(cdp, 'ave_pivot_CoM_sim'):
             sim_vectors = cdp.ave_pivot_CoM_sim
         res_num = generic_fns.structure.generate_vector_residues(atomic_data=atomic_data, vector=cdp.ave_pivot_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
 
         # Generate the cone outer edge.
+        print "\nGenerating the cone outer edge."
         if cone_type == 'diff in cone':
             angle = cdp.theta_diff_in_cone
         elif cone_type == 'diff on cone':
             angle = cdp.theta_diff_on_cone
-        generic_fns.structure.cone_edge(atomic_data=atomic_data, res_num=res_num, apex=cdp.pivot_point, axis=cdp.ave_pivot_CoM/norm(cdp.ave_pivot_CoM), angle=angle, length=norm(cdp.pivot_CoM), inc=20)
+        generic_fns.structure.cone_edge(atomic_data=atomic_data, res_num=res_num+1, apex=cdp.pivot_point, axis=cdp.ave_pivot_CoM/norm(cdp.ave_pivot_CoM), angle=angle, length=norm(cdp.pivot_CoM), inc=20)
+
+        # Generate the cone cap.
+        if cone_type == 'diff in cone':
+            print "\nGenerating the cone cap."
+            generic_fns.structure.generate_vector_dist(atomic_data=atomic_data, res_num=res_num+2, centre=cdp.pivot_point, rotation=None, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=20)
 
         # Terminate the chain.
         generic_fns.structure.terminate(atomic_data=atomic_data, res_num=res_num)
