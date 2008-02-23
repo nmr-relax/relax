@@ -25,6 +25,7 @@ from specific_fns.consistency_tests import Consistency_tests
 from specific_fns.hybrid import Hybrid
 from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.model_free import Model_free
+from specific_fns.n_state_model import N_state_model
 from specific_fns.noe import Noe
 from specific_fns.relax_fit import Relax_fit
 from relax_errors import RelaxError, RelaxFuncSetupError
@@ -35,6 +36,7 @@ consistency_tests_obj = Consistency_tests()
 hybrid_obj = Hybrid()
 jw_mapping_obj = Jw_mapping()
 model_free_obj = Model_free()
+n_state_model_obj = N_state_model()
 noe_obj = Noe()
 relax_fit_obj = Relax_fit()
 
@@ -235,6 +237,10 @@ def get_instance(function_type):
     if function_type == 'noe':
         return noe_obj
 
+    # The N-state model.
+    if function_type == 'N-state':
+        return n_state_model_obj
+
     # Relaxation curve fitting.
     if function_type == 'relax_fit':
         return relax_fit_obj
@@ -265,6 +271,10 @@ def get_string(function_type):
     # NOE calculation.
     if function_type == 'noe':
         return "NOE calculations"
+
+    # The N-state model.
+    if function_type == 'N-state':
+        return "the N-state model"
 
     # Relaxation curve fitting.
     if function_type == 'relax_fit':

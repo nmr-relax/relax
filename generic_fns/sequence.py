@@ -111,12 +111,12 @@ def load_PDB_sequence(spin_id=None):
         if mol_name:
             # Replace the first empty molecule.
             if mol_index == 0 and cdp.mol[0].name == None:
-                cdp.mol[0].name = chain.name
+                cdp.mol[0].name = mol_name
 
             # Create a new molecule.
             else:
                 # Add the molecule.
-                cdp.mol.add_item(mol_name=chain.name)
+                cdp.mol.add_item(mol_name=mol_name)
 
         # Loop over the residues.
         for res in chain.residues:

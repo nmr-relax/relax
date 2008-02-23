@@ -34,6 +34,7 @@ from generic import Generic
 from jw_mapping import Jw
 from model_free import Mf
 from model_selection import Modsel
+from n_state_model import N_state_model
 from pipe_create import Pipe_create
 from relax_fit import Relax_fit
 from sequence import Sequence
@@ -81,6 +82,7 @@ class System_test_runner:
         suite_array.append(TestLoader().loadTestsFromTestCase(Relax_fit))
         suite_array.append(TestLoader().loadTestsFromTestCase(Sequence))
         suite_array.append(TestLoader().loadTestsFromTestCase(Pipe_create))
+        suite_array.append(TestLoader().loadTestsFromTestCase(N_state_model))
 
         # Add the relax namespace to each TestCase object.
         for i in xrange(len(suite_array)):

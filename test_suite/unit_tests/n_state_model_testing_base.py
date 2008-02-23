@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006-2008 Edward d'Auvergne                             #
+# Copyright (C) 2008 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,17 +20,26 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""This package consists of modules which are specific to the type of the data pipe."""
+# relax module imports.
+from data import Data as relax_data_store
 
 
-# The available modules.
-__all__ = [ 'base_class',
-            'consistency_tests',
-            'hybrid',
-            'jw_mapping',
-            'model_free',
-            'n_state_model',
-            'noe',
-            'relax_data',
-            'relax_fit']
+class N_state_model_base_class:
+    """Base class for the tests of the N-state model modules.
+
+    This includes both the 'prompt.n_state_model' and 'specific_fns.n_state_model' modules.  This
+    base class also contains many shared unit tests.
+    """
+
+
+    def setUp(self):
+        """Set up for all the N-state model unit tests."""
+
+        # Add a data pipe to the data store.
+        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+
+
+    def tearDown(self):
+        """Reset the relax data storage object."""
+
+        relax_data_store.__reset__()

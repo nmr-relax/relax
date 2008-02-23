@@ -60,7 +60,7 @@ def chi2(data, back_calc_vals, errors):
     """
 
     # Calculate the chi-squared statistic.
-    return sum((1.0 / errors * (data - back_calc_vals))**2)
+    return sum((1.0 / errors * (data - back_calc_vals))**2, axis=0)
 
 
 # Chi-squared gradient.
@@ -99,7 +99,7 @@ def dchi2(data, back_calc_vals, back_calc_grad, errors):
     """
 
     # Calculate the chi-squared gradient.
-    return -2.0 * sum(1.0 / (errors**2) * (data - back_calc_vals) * back_calc_grad)
+    return -2.0 * sum(1.0 / (errors**2) * (data - back_calc_vals) * back_calc_grad, axis=0)
 
 
 # Chi-squared Hessian.
@@ -144,8 +144,8 @@ def d2chi2(data, back_calc_vals, back_calc_grad_j, back_calc_grad_k, back_calc_h
     """
 
     # Calculate the chi-squared Hessian.
-    #return 2.0 * sum(1.0 / (errors**2) * (back_calc_grad_j * back_calc_grad_k - (data - back_calc_vals) * back_calc_hess))
-    #return 2.0 * sum((back_calc_grad_j * back_calc_grad_k - (data - back_calc_vals) * back_calc_hess) / errors**2)
+    #return 2.0 * sum(1.0 / (errors**2) * (back_calc_grad_j * back_calc_grad_k - (data - back_calc_vals) * back_calc_hess), axis=0)
+    #return 2.0 * sum((back_calc_grad_j * back_calc_grad_k - (data - back_calc_vals) * back_calc_hess) / errors**2, axis=0)
 
     # Calculate the chi-squared Hessian.
     # This is faster than the above sums, and having the errors term first appears to minimise roundoff errors.
