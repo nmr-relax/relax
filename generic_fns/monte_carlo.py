@@ -226,7 +226,10 @@ class Monte_carlo:
                         Xsum = Xsum + param_array[i]
 
                     # Calculate the mean parameter value for all simulations.
-                    Xav = Xsum / float(n)
+                    if n == 0:
+                        Xav = 0
+                    else:
+                        Xav = Xsum / float(n)
 
                     # Calculate the sum part of the standard deviation.
                     sd = 0.0
