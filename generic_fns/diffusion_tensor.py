@@ -353,24 +353,24 @@ def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, para
 def fold_angles(sim_index=None):
     """Wrap the Euler or spherical angles and remove the glide reflection and translational symmetries.
 
-    Wrap the angles such that
+    Wrap the angles such that::
 
         0 <= theta <= pi,
         0 <= phi <= 2pi,
 
-    and
+    and::
 
         0 <= alpha <= 2pi,
         0 <= beta <= pi,
         0 <= gamma <= 2pi.
 
 
-    For the simulated values, the angles are wrapped as
+    For the simulated values, the angles are wrapped as::
 
         theta - pi/2 <= theta_sim <= theta + pi/2
         phi - pi <= phi_sim <= phi + pi
 
-    and
+    and::
 
         alpha - pi <= alpha_sim <= alpha + pi
         beta - pi/2 <= beta_sim <= beta + pi/2
