@@ -1328,7 +1328,7 @@ def set(tensor=None, value=None, param=None):
 def svd(basis_set=0, tensors=None):
     """Function for calculating the singular values of all the loaded tensors.
 
-    The matrix on which SVD will be performed is:
+    The matrix on which SVD will be performed is::
 
         | Sxx1 Syy1 Sxy1 Sxz1 Syz1 |
         | Sxx2 Syy2 Sxy2 Sxz2 Syz2 |
@@ -1340,7 +1340,7 @@ def svd(basis_set=0, tensors=None):
 
     This is the default unitary basis set (selected when basis_set is 0).  Alternatively a geometric
     basis set consisting of the stretching and skewing parameters Szz and Sxx-yy respectively
-    replacing Sxx and Syy can be chosen by setting basis_set to 1.  The matrix in this case is:
+    replacing Sxx and Syy can be chosen by setting basis_set to 1.  The matrix in this case is::
 
         | Szz1 Sxxyy1 Sxy1 Sxz1 Syz1 |
         | Szz2 Sxxyy2 Sxy2 Sxz2 Syz2 |
@@ -1350,7 +1350,7 @@ def svd(basis_set=0, tensors=None):
         |  .     .     .    .    .   |
         | SzzN SxxyyN SxyN SxzN SyzN |
 
-    The relationships between the geometric and unitary basis sets are:
+    The relationships between the geometric and unitary basis sets are::
 
         Szz = - Sxx - Syy,
         Sxxyy = Sxx - Syy,
