@@ -66,7 +66,7 @@ def determine_compression(file_path):
     @return:            A tuple of the compression type and full path of the file (including its
                         extension).  A value of 0 corresponds to no compression.  Bzip2 compression
                         corresponds to a value of 1.  Gzip compression corresponds to a value of 2.
-    @type return:       (int, str)
+    @rtype:             (int, str)
     """
 
     # The file has been supplied without its compression extension.
@@ -111,7 +111,7 @@ def extract_data(file_name=None, dir=None, file_data=None, sep=None):
                             whitespace is assumed.
     @type sep:              str
     @return:                The file data.
-    @type return:           list of lists of str
+    @rtype:                 list of lists of str
     """
 
     # Data not already extracted from the file.
@@ -146,7 +146,7 @@ def get_file_path(file_name=None, dir=None):
                         assumed.
     @type dir:          str
     @return:            The full file path.
-    @type return:       str
+    @rtype:             str
     """
 
     # File name.
@@ -226,7 +226,7 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
     @param verbosity:   The verbosity level.
     @type verbosity:    int
     @return:            The open file object.
-    @type return:       file object
+    @rtype:             file object
     """
 
     # A file descriptor object.

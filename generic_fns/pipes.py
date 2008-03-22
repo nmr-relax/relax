@@ -99,7 +99,7 @@ def current():
     """Return the name of the current data pipe.
     
     @return:        The name of the current data pipe.
-    @type return:   str
+    @rtype:         str
     """
 
     return relax_data_store.current_pipe

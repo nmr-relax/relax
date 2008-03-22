@@ -86,7 +86,7 @@ class N_state_opt:
         @param params:  The vector of parameter values.
         @type params:   list of float
         @return:        The chi-squared or SSE value.
-        @type return:   float
+        @rtype:         float
         """
 
         # Reset the back-calculated the reduced tensor structure.

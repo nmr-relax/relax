@@ -161,7 +161,7 @@ def diff_data_exists(pipe=None):
     @param pipe:    The data pipe to search for data in.
     @type pipe:     str
     @return:        The answer to the question.
-    @type return:   bool
+    @rtype:         bool
     """
 
     # The data pipe to check.

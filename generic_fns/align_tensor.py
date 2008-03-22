@@ -44,7 +44,7 @@ def align_data_exists(tensor, pipe=None):
     @param pipe:    The data pipe to search for data in.
     @type pipe:     str
     @return:        The answer to the question.
-    @type return:   bool
+    @rtype:         bool
     """
 
     # The data pipe to check.
@@ -810,7 +810,7 @@ def return_conversion_factor(param):
     @param param:   The parameter name.
     @type param:    str
     @return:        The conversion factor.
-    @type return:   float
+    @rtype:         float
     """
 
     # Get the object name.
@@ -999,7 +999,7 @@ def return_units(param):
     @param param:   The parameter name.
     @type param:    str
     @return:        The string representation of the units.
-    @type return:   str
+    @rtype:         str
     """
 
     # Get the object name.

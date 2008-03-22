@@ -498,7 +498,7 @@ def generate_spin_id(data=None, mol_name_col=None, res_num_col=0, res_name_col=1
     @param spin_num_col:    The column containing the spin number information.
     @type spin_num_col:     int or None
     @return:                The spin identification string.
-    @type return:           str
+    @rtype:                 str
     """
 
     # Init.

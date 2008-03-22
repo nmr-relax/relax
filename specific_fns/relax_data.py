@@ -491,7 +491,7 @@ class Rx_data:
         @type frq_label:    str
         @return:            The index corresponding to the relaxation data.  If there is no
                             relaxation data corresponding to the labels, None is returned.
-        @type return:       None or int
+        @rtype:             None or int
         """
 
         # No data.num_ri data structure.
@@ -673,7 +673,7 @@ class Rx_data:
 
         @return:        The answer to the question of whether relaxation data exists corresponding to
                         the given labels.
-        @type return:   bool
+        @rtype:         bool
         """
 
         # Loop over the spins.
