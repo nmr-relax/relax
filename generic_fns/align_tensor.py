@@ -256,14 +256,13 @@ def display(tensor):
 def fold_angles(sim_index=None):
     """Wrap the Euler angles and remove the glide reflection and translational symmetries.
 
-    Wrap the angles such that
+    Wrap the angles such that::
 
         0 <= alpha <= 2pi,
         0 <= beta <= pi,
         0 <= gamma <= 2pi.
 
-
-    For the simulated values, the angles are wrapped as
+    For the simulated values, the angles are wrapped as::
 
         alpha - pi <= alpha_sim <= alpha + pi
         beta - pi/2 <= beta_sim <= beta + pi/2
