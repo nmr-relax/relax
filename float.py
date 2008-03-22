@@ -391,8 +391,8 @@ def copySign(fromNumber,toDouble):
     @type fromNumber:   float
     @param toDouble:    The python float to copy the sign bit to.
     @type toDouble:     float
-    @raises:            Throws a TypeError if toDouble isn't a python float or if fromNumber can't
-                        be converted to a float.
+    @raise TypeError:   If toDouble isn't a python float or if fromNumber can't be converted to a
+                        float.
     '''
 
     #convert first number to a float so as to use facilities
@@ -668,14 +668,14 @@ def isNegInf(obj):
 def bitpatternToFloat(string, endian='big'):
     """Convert a 64 bit IEEE-754 ascii bit pattern into a 64 bit Python float.
 
-    @param string:  The ascii bit pattern repesenting the IEEE-754 float.
-    @type string:   str
-    @param endian:  The endianness of the bit pattern (can be 'big' or 'little').
-    @type endian:   str
-    @return:        The 64 bit float corresponding to the IEEE-754 bit pattern.
-    @returntype:    float
-    @raise:         TypeError if 'string' is not a string, the length of the 'string' is not 64, or
-        if 'string' does not consist solely of the characters '0' and '1'.
+    @param string:      The ascii bit pattern repesenting the IEEE-754 float.
+    @type string:       str
+    @param endian:      The endianness of the bit pattern (can be 'big' or 'little').
+    @type endian:       str
+    @return:            The 64 bit float corresponding to the IEEE-754 bit pattern.
+    @returntype:        float
+    @raise TypeError:   If 'string' is not a string, the length of the 'string' is not 64, or if
+                        'string' does not consist solely of the characters '0' and '1'.
     """
 
     # Test that the bit pattern is a string.
