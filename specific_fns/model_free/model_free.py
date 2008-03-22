@@ -858,7 +858,7 @@ class Model_free_main:
             return 'local_tm'
 
         # Test if the diffusion tensor data is loaded.
-        if not diff_data_exists():
+        if not diffusion_tensor.diff_data_exists():
             raise RelaxNoTensorError, 'diffusion'
 
         # 'diff' parameter set.
