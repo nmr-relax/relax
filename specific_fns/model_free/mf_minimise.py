@@ -30,7 +30,7 @@ from re import match
 from data import Data as relax_data_store
 from float import isNaN, isInf
 from generic_fns import diffusion_tensor
-from generic_fns.selection import count_spins, exists_mol_res_spin_data, spin_loop
+from generic_fns.selection import count_spins, exists_mol_res_spin_data, return_spin, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError
