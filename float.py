@@ -2,6 +2,7 @@
 #                                                                             #
 # Copyright (C) 2006  Gary S Thompson (see https://gna.org/users for contact  #
 #                                      details)                               #
+# Copyright (C) 2008 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -381,17 +382,17 @@ def isFinite(obj):
 
 
 def copySign(fromNumber,toDouble):
-    ''' copy the sign bit from one python float  to another
+    '''Copy the sign bit from one python float to another.
 
-        this function is class agnostic the sign bit can be copied freely between
-        ordinarys floats nans and +/-inf
+    This function is class agnostic the sign bit can be copied freely between
+    ordinarys floats nans and +/-inf.
 
-        fromDouble --  the python float to copy the sign bit from
-        toDouble --  the python float to copy the sign bit to
-
-        throws -- throws a TypeError if toDouble isn't a python float or if
-                    fromNumber can't be converted to a float
-
+    @param fromDouble:  The python float to copy the sign bit from.
+    @type fromDouble:   float
+    @param toDouble:    The python float to copy the sign bit to.
+    @type toDouble:     float
+    @raises:            Throws a TypeError if toDouble isn't a python float or if fromNumber can't
+                        be converted to a float.
     '''
 
     #convert first number to a float so as to use facilities
