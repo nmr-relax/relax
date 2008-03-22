@@ -609,7 +609,7 @@ def kappa(nuc1='N', nuc2='H'):
     @param nuc2:    The first nucleus type.
     @type nuc2:     str
     @return:        The kappa constant value.
-    @return type:   float
+    @rtype:         float
     """
 
     # Gyromagnetic ratio of the first nucleus.

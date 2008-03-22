@@ -149,7 +149,7 @@ class Common_functions:
         @param sim:     The Monte Carlo simulation index.
         @type sim:      None or int
         @return:        The value and error corresponding to 
-        @return type:   tuple of length 2 of floats or None
+        @rtype:         tuple of length 2 of floats or None
         """
 
         # Get the object name.

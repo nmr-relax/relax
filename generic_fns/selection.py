@@ -206,7 +206,7 @@ def count_spins(selection=None):
     @param selection:   The selection string.
     @type selection:    str
     @return:            The number of non-empty spins.
-    @return type:       int
+    @rtype:             int
     """
 
     # No data, hence no spins.

@@ -46,7 +46,7 @@ def partition_params(val, param):
     @return:        A tuple, of length 4, of lists.  The first and second elements are the lists of
                     spin specific parameters and values respectively.  The third and forth elements
                     are the lists of all other parameters and their values.
-    @return type:   tuple of 4 lists
+    @rtype:         tuple of 4 lists
     """
 
     # Specific functions.
