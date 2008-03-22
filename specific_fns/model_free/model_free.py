@@ -150,12 +150,9 @@ class Model_free_main:
                 param_names = param_names + spin.params
 
 
-    def assemble_param_vector(self, model_type, spin_id=None, sim_index=None):
+    def assemble_param_vector(self, spin_id=None, sim_index=None):
         """Assemble the model-free parameter vector (as numpy array).
 
-        @param model_type:  The model-free model type.  This must be one of 'mf', 'local_tm',
-                            'diff', or 'all'.
-        @type model_type:   str
         @param spin_id:     The spin identification string.
         @type spin_id:      str
         @return:            An array of the parameter values of the model-free model.
@@ -164,6 +161,9 @@ class Model_free_main:
 
         # Initialise.
         param_vector = []
+
+        # Determine the model type.
+        model_type = self.determine_param_set_type()
 
         # Alias the current data pipe.
         cdp = relax_data_store[relax_data_store.current_pipe]
