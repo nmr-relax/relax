@@ -24,76 +24,68 @@
 
 '''ieeefloat a set of functions for dealing with IEEE-754 float objects.
 
-    On most platforms Python uses IEEE-754 double objects of length 64 bits to
-    represent floats (some architectures such as older crays and vaxes don't).
-    Thus an IEEE-754 double is the implementation of a python float object on
-    most platforms.
+On most platforms Python uses IEEE-754 double objects of length 64 bits to represent floats (some
+architectures such as older Crays and Vaxes don't).  Thus an IEEE-754 double is the implementation
+of a python float object on most platforms.
 
-    IEEE-74 uses special bit patterns to represent the following states or classes
-    of IEEE floating point numbers (IEEE-class)
-        +-NaN  - not a number (e.g. 0.0/0.0)
-        inf    - positive or negative infinity (1.0/0.0)
-        +-zero - zero maybe positive or negative under IEEE-754
+IEEE-74 uses special bit patterns to represent the following states or classes of IEEE floating
+point numbers (IEEE-class):
+    +/- NaN:    Not a number (e.g. 0.0/0.0).
+    inf:        Positive or negative infinity (1.0/0.0).
+    +/- zero:   Zero maybe positive or negative under IEEE-754.
 
-    this module provides functions for working with python floats and their
-    special values, if they contain IEEE-754 formatted values. Specifically
-        - pack and unpack a list of bytes representing an IEEE-754 double to a python
-        float (takes care of little endian/big endian issues)
-        - get the sign bit of a python float
-        - check the ordering of python floats allowing for NaNs (NaNs cannot normally
-        be compared)
-        - check if a value is finite (as opposed to NaN or inf)
-        - copy the sign of one float to another irrespective of if it's IEEE-class
-        - check if a float is denormalised (and might be about to underflow)
-        - check the IEEE-class of a python float (NaN, pos-inf, neg-inf,pos-zero,
-        neg-zero,...)
-        - check that the current python float implmentations uses IEEE-754 doubles
+This module provides functions for working with python floats and their special values, if they
+contain IEEE-754 formatted values.  Specifically:
+    - Pack and unpack a list of bytes representing an IEEE-754 double to a python float (takes care
+      of little endian/big endian issues).
+    - Get the sign bit of a python float.
+    - Check the ordering of python floats allowing for NaNs (NaNs cannot normally be compared).
+    - Check if a value is finite (as opposed to NaN or inf).
+    - Copy the sign of one float to another irrespective of if it's IEEE-class.
+    - Check if a float is denormalised (and might be about to underflow).
+    - Check the IEEE-class of a python float (NaN, pos-inf, neg-inf, pos-zero, neg-zero, ...).
+    - Check that the current python float implementations uses IEEE-754 doubles.
 
-    It also provides constants containg specific bit patterns for NaN and +-inf as
-    these values cannot be generated from strings via the constructor float(x)
-    with some compiler implementations (typically older microsoft windows compilers)
+It also provides constants containg specific bit patterns for NaN and +-inf as these values cannot
+be generated from strings via the constructor float(x) with some compiler implementations (typically
+older Microsoft Windows compilers).
 
-    As a convenience the names of functions and constants conform to those defined
-    in the draft python PEP 754 'IEEE 754 Floating Point Special Values'
+As a convenience the names of functions and constants conform to those defined in the draft python
+PEP 754 'IEEE 754 Floating Point Special Values'.
 
-    notes:
-        1. binary data is docuemented as binary strings e.g. 0xF0 = 0b11110000
-        2. the module doesn't support all the functions recommened by IEEE-754,
-            the following features are missing
-            a. control of exception and rounding modes
-            b. scalb (y, N)
-            c. logb (x)
-            d. nextafter(x,y)
-            e. next towards
-        3. division by zero currently (python 2.5) raises excaption and the
-            resulting inf/NaN cannot be propogated
-        4. a second module ieeefloatcapabilities (currently incomplete)
-            provides tests of the capabilites of a floating point implementation
-            on a specific python platform
-        5. development and conventions on byte order come from a little endian
-            (intel) platform
-        6. to reduce overheads all functions that take python float arguments do
-            _no type_ conversion thus if other numeric types are passed the functions
-            will raise exceptions, (I am not sure this is the best behaviour however,
-            as python functions should be polymorphic...)
-        7. in most cases conversion to c code for performance reasons would be trivial
+Notes:
+    1.  Binary data is documented as binary strings e.g. 0xF0 = 0b11110000.
+    2.  The module doesn't support all the functions recommended by IEEE-754, the following features
+        are missing:
+            a. Control of exception and rounding modes.
+            b. scalb(y, N).
+            c. logb(x).
+            d. nextafter(x,y).
+            e. Next towards.
+    3.  Division by zero currently (python 2.5) raises exception and the resulting inf/NaN cannot be
+        propogated.
+    4.  A second module ieeefloatcapabilities (currently incomplete) provides tests of the
+        capabilities of a floating point implementation on a specific python platform.
+    5.  Development and conventions on byte order come from a little endian (Intel) platform.
+    6.  To reduce overheads all functions that take python float arguments do _no type_ conversion
+        thus if other numeric types are passed the functions will raise exceptions, (I am not sure
+        this is the best behaviour however, as python functions should be polymorphic...).
+    7.  In most cases conversion to C code for performance reasons would be trivial.
 
-    IEEE-754 double format:
-        63 sign bit
-        62-52 exponent (offset by 1023 value - field-1023
-        51-0 mantissa each bit n counts as 1/2^n, running from 1/2 which is the
-                most significant bit to 1/2^51, The 1/0 bit is defined by the
-                exponent field if it has any bits set if it has bits set then
-                precede the mantissa with a 1 (normalised otherwise procede it by
-                a 0 (denormalised)
+IEEE-754 double format:
+    - 63 sign bit.
+    - 62-52 exponent (offset by 1023 value - field-1023).
+    - 51-0 mantissa each bit n counts as 1/2^n, running from 1/2 which is the most significant bit
+      to 1/2^51, The 1/0 bit is defined by the exponent field if it has any bits set if it has bits
+      set then precede the mantissa with a 1 (normalised otherwise precede it by a 0 (denormalised).
 
 
-    todo:
-        unit test suite
-        test under windows
-        test under a solaris sparc box (big endian)
-        add example IEEE double
-        check byte/nibble atributions
+Todo:
+    Unit test suite.
+    Test under Windows.
+    Test under a Solaris Sparc box (big endian).
+    Add example IEEE double.
+    Check byte/nibble attributions.
 '''
 from struct import pack,unpack
 import sys
