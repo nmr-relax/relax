@@ -1620,7 +1620,7 @@ class Model_free_main:
                 spin.select = False
 
             # Test for structural data if required.
-            elif not hasattr(spin, 'xh_vect'):
+            elif need_vect and not hasattr(spin, 'xh_vect'):
                 spin.select = False
 
 
