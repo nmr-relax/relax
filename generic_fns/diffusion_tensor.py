@@ -1503,9 +1503,9 @@ def unit_axes():
     """Function for calculating the unit axes of the diffusion tensor.
 
     Spheroid
-    ~~~~~~~~
+    ========
 
-    The unit Dpar vector is
+    The unit Dpar vector is::
 
                  | sin(theta) * cos(phi) |
         Dpar  =  | sin(theta) * sin(phi) |
@@ -1513,21 +1513,21 @@ def unit_axes():
 
 
     Ellipsoid
-    ~~~~~~~~~
+    =========
 
-    The unit Dx vector is
+    The unit Dx vector is::
 
                | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
         Dx  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |
                |                    cos(alpha) * sin(beta)                      |
 
-    The unit Dy vector is
+    The unit Dy vector is::
 
                | cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
         Dy  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |
                |                   sin(alpha) * sin(beta)                      |
 
-    The unit Dz vector is
+    The unit Dz vector is::
 
                | -sin(beta) * cos(gamma) |
         Dz  =  |  sin(beta) * sin(gamma) |
