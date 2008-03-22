@@ -845,6 +845,36 @@ def return_spin(selection=None, pipe=None):
     return spin_container
 
 
+def return_spin_from_index(global_index=None, pipe=None):
+    """Function for returning the spin data container corresponding to the global index.
+
+    @param global_index:    The global spin index, spanning the molecule and residue containers.
+    @type global_index:     int
+    @param pipe:            The data pipe containing the spin.  Defaults to the current data pipe.
+    @type pipe:             str
+    @return:                The spin specific data container.
+    @rtype:                 instance of the SpinContainer class.
+    """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = relax_data_store.current_pipe
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Loop over the spins.
+    spin_num = 0
+    for spin in spin_loop():
+        # Match to the global index.
+        if spin_num == global_index:
+            # Return the spin.
+            return spin
+
+        # Increment the spin number.
+        spin_num = spin_num + 1
+
+
 def return_single_molecule_info(molecule_token):
     """Return the single molecule name corresponding to the molecule token.
 
