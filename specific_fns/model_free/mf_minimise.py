@@ -30,7 +30,7 @@ from re import match
 from data import Data as relax_data_store
 from float import isNaN, isInf
 from generic_fns import diffusion_tensor
-from generic_fns.selection import count_spins, exists_mol_res_spin_data, return_spin, spin_loop
+from generic_fns.selection import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError
@@ -740,10 +740,10 @@ class Mf_minimise:
                 spin = None
             elif min_algor == 'back_calc':
                 spin_index = min_options[0]
-                spin = return_spin(index=spin_index)
+                spin = return_spin_from_index(global_index=spin_index)
             else:
                 spin_index = i
-                spin = return_spin(index=spin_index)
+                spin = return_spin_from_index(global_index=spin_index)
 
             # Individual spin stuff.
             if spin and (param_set == 'mf' or param_set == 'local_tm') and not min_algor == 'back_calc':
@@ -851,7 +851,7 @@ class Mf_minimise:
                 # Set the spin index and get the spin, if not already set.
                 if param_set == 'diff' or param_set == 'all':
                     spin_index = j
-                    spin = return_spin(index=spin_index)
+                    spin = return_spin_from_index(global_index=spin_index)
 
                 # Skip unselected spins.
                 if not spin.select:
