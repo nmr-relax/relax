@@ -171,6 +171,35 @@ class Selection(object):
         self._union = (select_obj0, select_obj1)
 
 
+def count_selected_spins(selection=None):
+    """Function for counting the number of spins for which there is data and which are selected.
+
+    @param selection:   The selection string.
+    @type selection:    str
+    @return:            The number of non-empty selected spins.
+    @rtype:             int
+    """
+
+    # No data, hence no spins.
+    if not exists_mol_res_spin_data():
+        return 0
+
+    # Init.
+    spin_num = 0
+
+    # Spin loop.
+    for spin in spin_loop(selection):
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
+        # Increment the spin number.
+        spin_num = spin_num + 1
+
+    # Return the number of spins.
+    return spin_num
+
+
 def count_spins(selection=None):
     """Function for counting the number of spins for which there is data.
 
