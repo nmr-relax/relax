@@ -99,7 +99,7 @@ class Mf_minimise:
             # Alias the data structure.
             data = relax_data_store.res[self.run][i]
 
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not data.select:
                 continue
 
@@ -292,7 +292,7 @@ class Mf_minimise:
                 # Remap the residue data structure.
                 data = relax_data_store.res[self.run][i]
 
-                # Skip unselected residues.
+                # Skip deselected residues.
                 if not data.select:
                     continue
 
@@ -386,7 +386,7 @@ class Mf_minimise:
                 # Remap the residue data structure.
                 data = relax_data_store.res[self.run][i]
 
-                # Skip unselected residues.
+                # Skip deselected residues.
                 if not data.select:
                     continue
 
@@ -523,7 +523,7 @@ class Mf_minimise:
         if param_set != 'diff':
             # Spin loop.
             for spin in spin_loop():
-                # Skip unselected residues.
+                # Skip deselected residues.
                 if not spin.select:
                     continue
 
@@ -641,7 +641,7 @@ class Mf_minimise:
 
         # Test if the model-free model has been setup.
         for spin in spin_loop():
-            # Skip unselected spins.
+            # Skip deselected spins.
             if not spin.select:
                 continue
 
@@ -668,7 +668,7 @@ class Mf_minimise:
 
             # Test if unit vectors exist.
             for spin in spin_loop():
-                # Skip unselected spins.
+                # Skip deselected spins.
                 if not spin.select:
                     continue
 
@@ -701,7 +701,7 @@ class Mf_minimise:
 
         # Test if the CSA and bond length values have been set.
         for spin in spin_loop():
-            # Skip unselected spins.
+            # Skip deselected spins.
             if not spin.select:
                 continue
 
@@ -747,7 +747,7 @@ class Mf_minimise:
 
             # Individual spin stuff.
             if spin and (param_set == 'mf' or param_set == 'local_tm') and not min_algor == 'back_calc':
-                # Skip unselected spins.
+                # Skip deselected spins.
                 if not spin.select:
                     continue
 
@@ -853,7 +853,7 @@ class Mf_minimise:
                     spin_index = j
                     spin = return_spin_from_index(global_index=spin_index)
 
-                # Skip unselected spins.
+                # Skip deselected spins.
                 if not spin.select:
                     continue
 
