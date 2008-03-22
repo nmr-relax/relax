@@ -57,11 +57,11 @@ Notes:
     1.  Binary data is documented as binary strings e.g. 0xF0 = 0b11110000.
     2.  The module doesn't support all the functions recommended by IEEE-754, the following features
         are missing:
-            a. Control of exception and rounding modes.
-            b. scalb(y, N).
-            c. logb(x).
-            d. nextafter(x,y).
-            e. Next towards.
+            - Control of exception and rounding modes.
+            - scalb(y, N).
+            - logb(x).
+            - nextafter(x,y).
+            - Next towards.
     3.  Division by zero currently (python 2.5) raises exception and the resulting inf/NaN cannot be
         propogated.
     4.  A second module ieeefloatcapabilities (currently incomplete) provides tests of the
@@ -139,7 +139,7 @@ def getFloatClass(float):
 
     @param float:       Python float object.
     @type float:        float
-    @result:            An IEEE class value.
+    @return:            An IEEE class value.
     @rtype:             int
     @raise TypeError:   If float is not a python float object.
     '''
