@@ -648,7 +648,7 @@ def map_labels(index, params, bounds, swap, inc):
     @param params:  The list of parameter names.
     @type params:   list of str
     @param bounds:  The bounds of the map.
-    @type params:   list of lists (of a float and bin)
+    @type bounds:   list of lists (of a float and bin)
     @param swap:    An array for switching axes around.
     @type swap:     list of int
     @param inc:     The number of increments of one dimension in the map.
