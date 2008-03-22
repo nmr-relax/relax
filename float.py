@@ -387,8 +387,8 @@ def copySign(fromNumber,toDouble):
     This function is class agnostic the sign bit can be copied freely between
     ordinarys floats nans and +/-inf.
 
-    @param fromDouble:  The python float to copy the sign bit from.
-    @type fromDouble:   float
+    @param fromNumber:  The python float to copy the sign bit from.
+    @type fromNumber:   float
     @param toDouble:    The python float to copy the sign bit to.
     @type toDouble:     float
     @raises:            Throws a TypeError if toDouble isn't a python float or if fromNumber can't
