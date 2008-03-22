@@ -864,13 +864,13 @@ class Model_free_main:
         # 'diff' parameter set.
         if mf_all_fixed:
             # All parameters fixed!
-            if cdp.diff.fixed:
+            if cdp.diff_tensor.fixed:
                 raise RelaxError, "All parameters are fixed."
 
             return 'diff'
 
         # 'mf' parameter set.
-        if cdp.diff.fixed:
+        if cdp.diff_tensor.fixed:
             return 'mf'
 
         # 'all' parameter set.
