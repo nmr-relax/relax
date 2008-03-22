@@ -597,7 +597,7 @@ def map_bounds(param):
 def kappa(nuc1='N', nuc2='H'):
     """Function for calculating the kappa constant.
 
-    The kappa constant is
+    The kappa constant is::
 
         kappa = -3/(8pi^2).gI.gS.mu0.h_bar,
 
