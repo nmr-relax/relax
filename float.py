@@ -652,14 +652,13 @@ def isPosInf(obj):
 
 
 def isNegInf(obj):
-    ''' check to see if a python float is negative infinity
+    '''Check to see if a python float is negative infinity.
 
-
-        obj -- float object to check for negative infinity
-
-        returns -- True if object is a negative infinity
-
-        throws -- throws a TypeError if obj isn't a python float
+    @param obj:         Float object to check for negative infinity.
+    @type obj:          float
+    @returns:           True if object is a negative infinity.
+    @rtype:             bool
+    @raise TypeError:   If obj isn't a python float.
     '''
 
     return isInf(obj) and not isPositive(obj)
