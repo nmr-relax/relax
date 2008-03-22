@@ -1601,27 +1601,27 @@ class Model_free_main:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Is structural data required?
-        need_vect = 0
+        need_vect = False
         if hasattr(cdp, 'diff') and (cdp.diff.type == 'spheroid' or cdp.diff.type == 'ellipsoid'):
-            need_vect = 1
+            need_vect = True
 
         # Loop over the sequence.
         for spin in spin_loop():
             # Relaxation data must exist!
             if not hasattr(spin, 'relax_data'):
-                spin.select = 0
+                spin.select = False
 
             # Require 3 or more relaxation data points.
             elif len(spin.relax_data) < 3:
-                spin.select = 0
+                spin.select = False
 
             # Require at least as many data points as params to prevent over-fitting.
             elif hasattr(spin, 'params') and len(spin.params) > len(spin.relax_data):
-                spin.select = 0
+                spin.select = False
 
             # Test for structural data if required.
             elif not hasattr(spin, 'xh_vect'):
-                spin.select = 0
+                spin.select = False
 
 
     def read_columnar_col_numbers(self, header):
