@@ -156,8 +156,8 @@ class Mf(TestCase):
         spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, 0)
-        self.assertEqual(spin.select, 1)
+        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(spin.select, True)
         self.assertAlmostEqual(spin.s2, 0.970)
         self.assertAlmostEqual(spin.te, 2048 * 1e-12)
         self.assertAlmostEqual(spin.rex, 0.149 / (2.0 * pi * spin.frq[0])**2)
@@ -196,8 +196,8 @@ class Mf(TestCase):
         spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, 0)
-        self.assertEqual(spin.select, 1)
+        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(spin.select, True)
         self.assertAlmostEqual(spin.s2, 0.970)
         self.assertAlmostEqual(spin.te, 2048 * 1e-12)
         self.assertAlmostEqual(spin.rex, 0.149 / (2.0 * pi * spin.frq[0])**2)
@@ -236,8 +236,8 @@ class Mf(TestCase):
         spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, 0)
-        self.assertEqual(spin.select, 1)
+        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(spin.select, True)
         self.assertAlmostEqual(spin.s2, 0.9097900390625)
         self.assertAlmostEqual(spin.te, 2.5000000000000001e-11)
         self.assertAlmostEqual(spin.rex, 1.24017333984375 / (2.0 * pi * spin.frq[0])**2)
@@ -276,8 +276,8 @@ class Mf(TestCase):
         spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, 0)
-        self.assertEqual(spin.select, 1)
+        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(spin.select, True)
         self.assertAlmostEqual(spin.s2, 1.0)
         self.assertAlmostEqual(spin.te, 0.0)
         self.assertAlmostEqual(spin.rex, 0.0)
@@ -317,8 +317,8 @@ class Mf(TestCase):
         spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, 0)
-        self.assertEqual(spin.select, 1)
+        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(spin.select, True)
         self.assertAlmostEqual(spin.s2, 0.970)
         self.assertAlmostEqual(spin.te, 2048 * 1e-12)
         self.assertAlmostEqual(spin.rex, 0.149 / (2.0 * pi * spin.frq[0])**2)
@@ -358,8 +358,8 @@ class Mf(TestCase):
         spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, 0)
-        self.assertEqual(spin.select, 1)
+        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(spin.select, True)
         self.assertAlmostEqual(spin.s2, 0.970)
         self.assertAlmostEqual(spin.te, 2048 * 1e-12)
         self.assertAlmostEqual(spin.rex, 0.149 / (2.0 * pi * spin.frq[0])**2)
@@ -398,8 +398,8 @@ class Mf(TestCase):
         spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, 0)
-        self.assertEqual(spin.select, 1)
+        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(spin.select, True)
         self.assertAlmostEqual(spin.s2, 0.91579220834688024)
         self.assertAlmostEqual(spin.te, 3.056865872253173e-13)
         self.assertAlmostEqual(spin.rex, 0.34008409798366124 / (2.0 * pi * spin.frq[0])**2)
@@ -438,8 +438,8 @@ class Mf(TestCase):
         spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, 0)
-        self.assertEqual(spin.select, 1)
+        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(spin.select, True)
         self.assertAlmostEqual(spin.s2, 0.91619994957822126)
         self.assertAlmostEqual(spin.te, 1.2319687570987945e-13)
         self.assertAlmostEqual(spin.rex, 0.16249110942961512 / (2.0 * pi * spin.frq[0])**2)
@@ -473,8 +473,8 @@ class Mf(TestCase):
         spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, 0)
-        self.assertEqual(spin.select, 1)
+        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(spin.select, True)
         self.assertAlmostEqual(spin.s2, 1.0)
         self.assertAlmostEqual(spin.te, 0.0)
         self.assertAlmostEqual(spin.rex, 0.0)
