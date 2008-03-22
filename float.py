@@ -31,7 +31,7 @@
 
     IEEE-74 uses special bit patterns to represent the following states or classes
     of IEEE floating point numbers (IEEE-class)
-        +-nan  - not a number (e.g. 0.0/0.0)
+        +-NaN  - not a number (e.g. 0.0/0.0)
         inf    - positive or negative infinity (1.0/0.0)
         +-zero - zero maybe positive or negative under IEEE-754
 
@@ -40,16 +40,16 @@
         - pack and unpack a list of bytes representing an IEEE-754 double to a python
         float (takes care of little endian/big endian issues)
         - get the sign bit of a python float
-        - check the ordering of python floats allowing for nans (nans cannot normally
+        - check the ordering of python floats allowing for NaNs (NaNs cannot normally
         be compared)
-        - check if a value is finite (as opposed to nan or inf)
+        - check if a value is finite (as opposed to NaN or inf)
         - copy the sign of one float to another irrespective of if it's IEEE-class
         - check if a float is denormalised (and might be about to underflow)
-        - check the IEEE-class of a python float (nan, pos-inf, neg-inf,pos-zero,
+        - check the IEEE-class of a python float (NaN, pos-inf, neg-inf,pos-zero,
         neg-zero,...)
         - check that the current python float implmentations uses IEEE-754 doubles
 
-    It also provides constants containg specific bit patterns for nan and +-inf as
+    It also provides constants containg specific bit patterns for NaN and +-inf as
     these values cannot be generated from strings via the constructor float(x)
     with some compiler implementations (typically older microsoft windows compilers)
 
@@ -66,7 +66,7 @@
             d. nextafter(x,y)
             e. next towards
         3. division by zero currently (python 2.5) raises excaption and the
-            resulting inf/nan cannot be propogated
+            resulting inf/NaN cannot be propogated
         4. a second module ieeefloatcapabilities (currently incomplete)
             provides tests of the capabilites of a floating point implementation
             on a specific python platform
@@ -143,7 +143,7 @@ def isZero(float):
 
 
 def getFloatClass(float):
-    '''Get the IEEE-class (nan, inf etc) of a python float.
+    '''Get the IEEE-class (NaN, inf etc) of a python float.
 
     @param float:       Python float object.
     @type float:        float
@@ -175,8 +175,8 @@ def getFloatClass(float):
                 result = CLASS_NEG_NORMAL
     else:
         if isNaN(float):
-            # we don't currently test the type of nan signalling vs quiet
-            # so we always assume a quiet nan
+            # we don't currently test the type of NaN signalling vs quiet
+            # so we always assume a quiet NaN
             result  = CLASS_QUIET_NAN
         elif isPosInf(float):
             result  = CLASS_POS_INF
@@ -210,7 +210,7 @@ def packBytesAsPyFloat(bytes):
 
 
 NAN_BYTES = [0x00,0x00,0x00,0x00,0x00,0x00,0xF8,0x7F]
-'''Bytes for an arbitary IEEE-754 not a number (nan) in little endian format
+'''Bytes for an arbitary IEEE-754 not a number (NaN) in little endian format
 0b00000000 00000000 00000000 00000000 00000000 00000000 00011111 11111110.'''
 
 
@@ -221,7 +221,7 @@ INF_BYTES = [0x00,0x00,0x00,0x00,0x00,0x00,0xF0,0x7F]
 
 nan = packBytesAsPyFloat(NAN_BYTES)
 '''One of a number of possible bit patterns used to represent an IEEE-754 double as a python float.
-Do not use this value for comparisons of the form x==nan as it will fail on some platforms use
+Do not use this value for comparisons of the form x==NaN as it will fail on some platforms use
 function isNaN instead.'''
 
 
@@ -342,11 +342,11 @@ def areUnordered(obj1,obj2):
     @raise TypeError:   If the input objects aren't python floats.
     '''
 
-    # check to see if objects are nans
+    # check to see if objects are NaNs
     nanTest1 = isNaN(obj1)
     nanTest2 = isNaN(obj2)
 
-    # if either object is a nan we are unordered
+    # if either object is a NaN we are unordered
     if nanTest1 or nanTest2:
         return True
     else:
@@ -356,7 +356,7 @@ def areUnordered(obj1,obj2):
 def isFinite(obj):
     '''Test to see if a python float is finite.
 
-    To be finite a number mustn't be a nan or +/- inf.  A result of True guarantees that the number
+    To be finite a number mustn't be a NaN or +/- inf.  A result of True guarantees that the number
     is bounded by +/- inf, -inf < x < inf.
 
     @param obj:         A python float object.
@@ -379,7 +379,7 @@ def isFinite(obj):
 def copySign(fromNumber,toDouble):
     '''Copy the sign bit from one python float to another.
 
-    This function is class agnostic the sign bit can be copied freely between ordinary floats, nans
+    This function is class agnostic the sign bit can be copied freely between ordinary floats, NaNs
     and +/- inf.
 
     @param fromNumber:  The python float to copy the sign bit from.
@@ -561,7 +561,7 @@ def isExpAllOnes(obj):
 
 
 def isNaN(obj):
-    '''Check to see if a python float is an IEEE-754 double not a number (nan).
+    '''Check to see if a python float is an IEEE-754 double not a number (NaN).
 
     @param obj:         Float object to check for not a number.
     @type obj:          float
