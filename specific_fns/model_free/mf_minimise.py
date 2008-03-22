@@ -29,6 +29,7 @@ from re import match
 # relax module imports.
 from data import Data as relax_data_store
 from float import isNaN, isInf
+from generic_fns import diffusion_tensor
 from generic_fns.selection import count_spins, exists_mol_res_spin_data, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
@@ -656,7 +657,7 @@ class Mf_minimise:
             param_set = 'mf'
 
         # Test if diffusion tensor data exists.
-        if param_set != 'local_tm' and not diff_data_exists():
+        if param_set != 'local_tm' and not diffusion_tensor.diff_data_exists():
             raise RelaxNoTensorError, 'diffusion'
 
         # Tests for the PDB file, unit vectors, and nuclues type.
