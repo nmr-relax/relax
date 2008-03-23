@@ -559,6 +559,9 @@ class Mf_minimise:
         # Complete the grid search configuration.
         self.grid_search_config_fin(min_options, lower, upper, scaling_matrix)
 
+        # Return the minimisation options.
+        return min_options
+
 
     def grid_search_config_diff(self, min_options, inc, m):
         """Set up of the grid search for the diffusion tensor.
