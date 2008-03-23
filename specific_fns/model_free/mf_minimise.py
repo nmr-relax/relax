@@ -33,6 +33,7 @@ from generic_fns import diffusion_tensor
 from generic_fns.selection import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
+from physical_constants import return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError
 
 
@@ -1130,8 +1131,8 @@ class Mf_minimise:
             remap_table = [[0]]
             noe_r1_table = [[None]]
             ri_labels = [[min_options[1]]]
-            gx = []
-            gh = []
+            gx = [return_gyromagnetic_ratio(spin.heteronuc_type)]
+            gh = [return_gyromagnetic_ratio(spin.proton_type)]
             if param_set != 'local_tm' and cdp.diff_tensor.type != 'sphere':
                 xh_unit_vectors = [spin.xh_vect]
             else:
@@ -1176,6 +1177,8 @@ class Mf_minimise:
             remap_table.append(spin.remap_table)
             noe_r1_table.append(spin.noe_r1_table)
             ri_labels.append(spin.ri_labels)
+            gx.append(return_gyromagnetic_ratio(spin.heteronuc_type))
+            gh.append(return_gyromagnetic_ratio(spin.proton_type))
             if sim_index == None or param_set == 'diff':
                 r.append(spin.r)
                 csa.append(spin.csa)
@@ -1230,7 +1233,7 @@ class Mf_minimise:
             diff_params = [spin.local_tm]
 
         # Return all the data.
-        return relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, num_params, xh_unit_vectors, diff_type, diff_params
+        return relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params
 
 
     def test_grid_size(self, min_options, verbosity=1):
