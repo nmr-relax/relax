@@ -463,27 +463,28 @@ class Mf_minimise:
         self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
-    def grid_search_config(self, index=None):
+    def grid_search_config(self, num_params, spin=None, spin_id=None):
         """Configure the grid search.
+
+        @param num_params:      The number of parameters in the model.
+        @type num_params:       int
+        @keyword spin:          The spin data container.
+        @type spin:             SpinContainer instance
+        @keyword spin_id:       The spin identification string.
+        @type spin_id:          str
         """
 
-        # Create the initial parameter vector.
-        param_vector = self.assemble_param_vector()
-
-        # The length of the parameter array.
-        n = len(param_vector)
-
         # Make sure that the length of the parameter array is > 0.
-        if n == 0:
+        if num_params == 0:
             print "Cannot run a grid search on a model with zero parameters, skipping the grid search."
 
         # Test the grid search options.
-        self.test_grid_ops(lower=lower, upper=upper, inc=inc, n=n)
+        self.test_grid_ops(lower=lower, upper=upper, inc=inc, n=num_params)
 
         # If inc is a single int, convert it into an array of that value.
         if type(inc) == int:
             temp = []
-            for j in xrange(n):
+            for i in xrange(num_params):
                 temp.append(inc)
             inc = temp
 
@@ -504,14 +505,16 @@ class Mf_minimise:
 
         # Model-free parameters (residue specific parameters).
         if param_set != 'diff':
-            # Spin loop.
-            for spin in spin_loop():
+            # The loop.
+            if spin:
+                loop = [spin]
+            else:
+                loop = spin_loop(spin_id)
+
+            # Loop over the spins.
+            for spin in loop:
                 # Skip deselected residues.
                 if not spin.select:
-                    continue
-
-                # Only add parameters for a single residue if index has a value.
-                if index != None and i != index:
                     continue
 
                 # Get the spin specific configuration.
@@ -855,14 +858,17 @@ class Mf_minimise:
                 # Create the initial parameter vector.
                 param_vector = self.assemble_param_vector(spin=spin, sim_index=sim_index)
 
+                # The number of parameters.
+                num_params = len(param_vector)
+
                 # Diagonal scaling.
-                scaling_matrix = self.assemble_scaling_matrix(len(param_vector), param_set=param_set, spin=spin, scaling=scaling)
+                scaling_matrix = self.assemble_scaling_matrix(num_params, param_set=param_set, spin=spin, scaling=scaling)
                 if len(scaling_matrix):
                     param_vector = dot(inv(scaling_matrix), param_vector)
 
             # Configure the grid search.
             if match('^[Gg]rid', min_algor):
-                min_options = self.grid_search_config(index=index)
+                min_options = self.grid_search_config(num_params, spin=spin)
 
             # Scaling of values for the set function.
             if match('^[Ss]et', min_algor):
