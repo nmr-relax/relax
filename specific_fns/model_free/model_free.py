@@ -317,13 +317,15 @@ class Model_free_main:
         return array(param_vector, float64)
 
 
-    def assemble_scaling_matrix(self, num_params, spin=None, spin_id=None, scaling=True):
+    def assemble_scaling_matrix(self, num_params, param_set=None, spin=None, spin_id=None, scaling=True):
         """Create and return the scaling matrix.
 
         If the spin argument is supplied, then the spin_id argument will be ignored.
 
         @param num_params:      The number of parameters in the model.
         @type num_params:       int
+        @keyword param_set:     The parameter set, one of 'all', 'diff', 'mf', or 'local_tm'.
+        @type param_set:        str
         @keyword spin:          The spin data container.
         @type spin:             SpinContainer instance
         @keyword spin_id:       The spin identification string.
@@ -347,7 +349,7 @@ class Model_free_main:
         ti_scaling = 1e-12
 
         # Diffusion tensor parameters.
-        if self.param_set == 'diff' or self.param_set == 'all':
+        if param_set == 'diff' or param_set == 'all':
             # Spherical diffusion.
             if cdp.diff_tensor.type == 'sphere':
                 # tm.
@@ -381,7 +383,7 @@ class Model_free_main:
                 i = i + 6
 
         # Model-free parameters.
-        if self.param_set != 'diff':
+        if param_set != 'diff':
             # The loop.
             if spin:
                 loop = [spin]

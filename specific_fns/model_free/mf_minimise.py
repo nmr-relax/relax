@@ -856,7 +856,7 @@ class Mf_minimise:
                 param_vector = self.assemble_param_vector(spin=spin, sim_index=sim_index)
 
                 # Diagonal scaling.
-                scaling_matrix = self.assemble_scaling_matrix(len(param_vector), spin=spin, scaling=scaling)
+                scaling_matrix = self.assemble_scaling_matrix(len(param_vector), param_set=param_set, spin=spin, scaling=scaling)
                 if scaling_matrix:
                     param_vector = dot(inv(scaling_matrix), param_vector)
 
