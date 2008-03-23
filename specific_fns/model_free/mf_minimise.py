@@ -494,34 +494,6 @@ class Mf_minimise:
             # Get the diffusion tensor specific configuration.
             m = self.grid_search_config_diff(min_options, inc, m)
 
-            # Spherical diffusion {tm}.
-            if cdp.diff.type == 'sphere':
-                min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
-                m = m + 1
-
-            # Spheroidal diffusion {tm, Da, theta, phi}.
-            if cdp.diff.type == 'spheroid':
-                min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
-                if cdp.diff.spheroid_type == 'prolate':
-                    min_options.append([inc[1], 0.0, 1e7])
-                elif cdp.diff.spheroid_type == 'oblate':
-                    min_options.append([inc[1], -1e7, 0.0])
-                else:
-                    min_options.append([inc[1], -1e7, 1e7])
-                min_options.append([inc[2], 0.0, pi])
-                min_options.append([inc[3], 0.0, pi])
-                m = m + 4
-
-            # Ellipsoidal diffusion {tm, Da, Dr, alpha, beta, gamma}.
-            elif cdp.diff.type == 'ellipsoid':
-                min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
-                min_options.append([inc[1], 0.0, 1e7])
-                min_options.append([inc[2], 0.0, 1.0])
-                min_options.append([inc[3], 0.0, pi])
-                min_options.append([inc[4], 0.0, pi])
-                min_options.append([inc[5], 0.0, pi])
-                m = m + 6
-
         # Model-free parameters (residue specific parameters).
         if param_set != 'diff':
             # Spin loop.
