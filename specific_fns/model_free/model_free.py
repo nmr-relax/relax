@@ -317,19 +317,31 @@ class Model_free_main:
         return array(param_vector, float64)
 
 
-    def assemble_scaling_matrix(self, index=None, scaling=1):
-        """Function for creating the scaling matrix."""
+    def assemble_scaling_matrix(self, num_params=None, spin=None, spin_id=None, scaling=True):
+        """Create and return the scaling matrix.
+
+        If the spin argument is supplied, then the spin_id argument will be ignored.
+
+        @keyword num_params:    The number of parameters in the model.
+        @type num_params:       int
+        @keyword spin:          The spin data container.
+        @type spin:             SpinContainer instance
+        @keyword spin_id:       The spin identification string.
+        @type spin_id:          str
+        @return:                An array of the parameter values of the model-free model.
+        @rtype:                 numpy diagonal matrix
+        """
 
         # Initialise.
-        if len(self.param_vector) == 0:
-            self.scaling_matrix = zeros((0, 0), float64)
+        if num_params == 0:
+            scaling_matrix = zeros((0, 0), float64)
         else:
-            self.scaling_matrix = identity(len(self.param_vector), float64)
+            scaling_matrix = identity(num_params, float64)
         i = 0
 
-        # No diagonal scaling.
+        # No diagonal scaling, so return the identity matrix.
         if not scaling:
-            return
+            return scaling_matrix
 
         # tm, te, tf, and ts (must all be the same for diagonal scaling!).
         ti_scaling = 1e-12
@@ -337,69 +349,74 @@ class Model_free_main:
         # Diffusion tensor parameters.
         if self.param_set == 'diff' or self.param_set == 'all':
             # Spherical diffusion.
-            if relax_data_store.diff[self.run].type == 'sphere':
+            if cdp.diff_tensor.type == 'sphere':
                 # tm.
-                self.scaling_matrix[i, i] = ti_scaling
+                scaling_matrix[i, i] = ti_scaling
 
                 # Increment i.
                 i = i + 1
 
             # Spheroidal diffusion.
-            elif relax_data_store.diff[self.run].type == 'spheroid':
+            elif cdp.diff_tensor.type == 'spheroid':
                 # tm, Da, theta, phi
-                self.scaling_matrix[i, i] = ti_scaling
-                self.scaling_matrix[i+1, i+1] = 1e7
-                self.scaling_matrix[i+2, i+2] = 1.0
-                self.scaling_matrix[i+3, i+3] = 1.0
+                scaling_matrix[i, i] = ti_scaling
+                scaling_matrix[i+1, i+1] = 1e7
+                scaling_matrix[i+2, i+2] = 1.0
+                scaling_matrix[i+3, i+3] = 1.0
 
                 # Increment i.
                 i = i + 4
 
             # Ellipsoidal diffusion.
-            elif relax_data_store.diff[self.run].type == 'ellipsoid':
+            elif cdp.diff_tensor.type == 'ellipsoid':
                 # tm, Da, Dr, alpha, beta, gamma.
-                self.scaling_matrix[i, i] = ti_scaling
-                self.scaling_matrix[i+1, i+1] = 1e7
-                self.scaling_matrix[i+2, i+2] = 1.0
-                self.scaling_matrix[i+3, i+3] = 1.0
-                self.scaling_matrix[i+4, i+4] = 1.0
-                self.scaling_matrix[i+5, i+5] = 1.0
+                scaling_matrix[i, i] = ti_scaling
+                scaling_matrix[i+1, i+1] = 1e7
+                scaling_matrix[i+2, i+2] = 1.0
+                scaling_matrix[i+3, i+3] = 1.0
+                scaling_matrix[i+4, i+4] = 1.0
+                scaling_matrix[i+5, i+5] = 1.0
 
                 # Increment i.
                 i = i + 6
 
         # Model-free parameters.
         if self.param_set != 'diff':
-            # Loop over all residues.
-            for j in xrange(len(relax_data_store.res[self.run])):
-                # Skip unselected residues.
-                if not relax_data_store.res[self.run][j].select:
-                    continue
+            # The loop.
+            if spin:
+                loop = [spin]
+            else:
+                loop = spin_loop(spin_id)
 
-                # Only add parameters for a single residue if index has a value.
-                if index != None and j != index:
+            # Loop over the spins.
+            for spin in loop:
+                # Skip unselected spins.
+                if not spin.select:
                     continue
 
                 # Loop over the model-free parameters.
-                for k in xrange(len(relax_data_store.res[self.run][j].params)):
+                for k in xrange(len(spin.params)):
                     # Local tm, te, tf, and ts (must all be the same for diagonal scaling!).
-                    if relax_data_store.res[self.run][j].params[k] == 'local_tm' or search('^t', relax_data_store.res[self.run][j].params[k]):
-                        self.scaling_matrix[i, i] = ti_scaling
+                    if spin.params[k] == 'local_tm' or search('^t', spin.params[k]):
+                        scaling_matrix[i, i] = ti_scaling
 
                     # Rex.
-                    elif relax_data_store.res[self.run][j].params[k] == 'Rex':
-                        self.scaling_matrix[i, i] = 1.0 / (2.0 * pi * relax_data_store.res[self.run][j].frq[0]) ** 2
+                    elif spin.params[k] == 'Rex':
+                        scaling_matrix[i, i] = 1.0 / (2.0 * pi * spin.frq[0]) ** 2
 
                     # Bond length.
-                    elif relax_data_store.res[self.run][j].params[k] == 'r':
-                        self.scaling_matrix[i, i] = 1e-10
+                    elif spin.params[k] == 'r':
+                        scaling_matrix[i, i] = 1e-10
 
                     # CSA.
-                    elif relax_data_store.res[self.run][j].params[k] == 'CSA':
-                        self.scaling_matrix[i, i] = 1e-4
+                    elif spin.params[k] == 'CSA':
+                        scaling_matrix[i, i] = 1e-4
 
                     # Increment i.
                     i = i + 1
+
+        # Return the scaling matrix.
+        return scaling_matrix
 
 
     def create_mc_data(self, run, i):
