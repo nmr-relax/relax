@@ -438,25 +438,25 @@ class Mf_minimise:
     def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
         """The model-free grid search function.
 
-        @param lower:       The lower bounds of the grid search which must be equal to the number of
-                            parameters in the model.
-        @type lower:        array of numbers
-        @param upper:       The upper bounds of the grid search which must be equal to the number of
-                            parameters in the model.
-        @type upper:        array of numbers
-        @param inc:         The increments for each dimension of the space for the grid search.  The
-                            number of elements in the array must equal to the number of parameters
-                            in the model.
-        @type inc:          array of int
-        @param constraints: If True, constraints are applied during the grid search (elinating parts
-                            of the grid).  If False, no constraints are used.
-        @type constraints:  bool
-        @param verbosity:   A flag specifying the amount of information to print.  The higher the
-                            value, the greater the verbosity.
-        @type verbosity:    int
-        @param sim_index:   The index of the simulation to apply the grid search to.  If None, the
-                            normal model is optimised.
-        @type sim_index:    int
+        @keyword lower:         The lower bounds of the grid search which must be equal to the
+                                number of parameters in the model.
+        @type lower:            array of numbers
+        @keyword upper:         The upper bounds of the grid search which must be equal to the
+                                number of parameters in the model.
+        @type upper:            array of numbers
+        @keyword inc:           The increments for each dimension of the space for the grid search.
+                                The number of elements in the array must equal to the number of
+                                parameters in the model.
+        @type inc:              array of int
+        @keyword constraints:   If True, constraints are applied during the grid search (eliminating
+                                parts of the grid).  If False, no constraints are used.
+        @type constraints:      bool
+        @keyword verbosity:     A flag specifying the amount of information to print.  The higher
+                                the value, the greater the verbosity.
+        @type verbosity:        int
+        @keyword sim_index:     The index of the simulation to apply the grid search to.  If None,
+                                the normal model is optimised.
+        @type sim_index:        int
         """
 
         # Minimisation.
@@ -682,42 +682,42 @@ class Mf_minimise:
         diffusion tensor parameters.
 
 
-        @param min_algor:       The minimisation algorithm to use.
-        @type min_algor:        str
-        @param min_options:     An array of options to be used by the minimisation algorithm.
-        @type min_options:      array of str
-        @param func_tol:        The function tolerence which, when reached, terminates optimisation.
-                                Setting this to None turns of the check.
-        @type func_tol:         None or float
-        @param grad_tol:        The gradient tolerence which, when reached, terminates optimisation.
-                                Setting this to None turns of the check.
-        @type grad_tol:         None or float
-        @param max_iterations:  The maximum number of iterations for the algorithm.
-        @type max_iterations:   int
-        @param constraints:     If True, constraints are used during optimisation.
-        @type constraints:      bool
-        @param scaling:         If True, diagonal scaling is enabled during optimisation to allow
-                                the problem to be better conditioned.
-        @type scaling:          bool
-        @param verbosity:       The amount of information to print.  The higher the value, the
-                                greater the verbosity.
-        @type verbosity:        int
-        @param sim_index:       The index of the simulation to optimise.  This should be None if
-                                normal optimisation is desired.
-        @type sim_index:        None or int
-        @param lower:           The lower bounds of the grid search which must be equal to the
-                                number of parameters in the model.  This optional argument is only
-                                used when doing a grid search.
-        @type lower:            array of numbers
-        @param upper:           The upper bounds of the grid search which must be equal to the
-                                number of parameters in the model.  This optional argument is only
-                                used when doing a grid search.
-        @type upper:            array of numbers
-        @param inc:             The increments for each dimension of the space for the grid search.
-                                The number of elements in the array must equal to the number of
-                                parameters in the model.  This argument is only used when doing a
-                                grid search.
-        @type inc:              array of int
+        @keyword min_algor:         The minimisation algorithm to use.
+        @type min_algor:            str
+        @keyword min_options:       An array of options to be used by the minimisation algorithm.
+        @type min_options:          array of str
+        @keyword func_tol:          The function tolerence which, when reached, terminates optimisation.
+                                    Setting this to None turns of the check.
+        @type func_tol:             None or float
+        @keyword grad_tol:          The gradient tolerence which, when reached, terminates optimisation.
+                                    Setting this to None turns of the check.
+        @type grad_tol:             None or float
+        @keyword max_iterations:    The maximum number of iterations for the algorithm.
+        @type max_iterations:       int
+        @keyword constraints:       If True, constraints are used during optimisation.
+        @type constraints:          bool
+        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow
+                                    the problem to be better conditioned.
+        @type scaling:              bool
+        @keyword verbosity:         The amount of information to print.  The higher the value, the
+                                    greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The index of the simulation to optimise.  This should be None if
+                                    normal optimisation is desired.
+        @type sim_index:            None or int
+        @keyword lower:             The lower bounds of the grid search which must be equal to the
+                                    number of parameters in the model.  This optional argument is only
+                                    used when doing a grid search.
+        @type lower:                array of numbers
+        @keyword upper:             The upper bounds of the grid search which must be equal to the
+                                    number of parameters in the model.  This optional argument is only
+                                    used when doing a grid search.
+        @type upper:                array of numbers
+        @keyword inc:               The increments for each dimension of the space for the grid search.
+                                    The number of elements in the array must equal to the number of
+                                    parameters in the model.  This argument is only used when doing a
+                                    grid search.
+        @type inc:                  array of int
         """
 
         # Alias the current data pipe.
