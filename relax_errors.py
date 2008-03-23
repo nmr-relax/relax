@@ -20,6 +20,11 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing all of the RelaxError objects."""
+
+
+# Python module imports.
 from re import match
 import time
 from types import ClassType
