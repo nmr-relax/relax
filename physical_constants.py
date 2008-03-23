@@ -27,59 +27,59 @@ from math import pi
 # Misc. constants.
 ##################
 
-"""Planck's constant."""
 h = 6.62606876 * 1e-34
+"""Planck's constant."""
 
-"""Dirac's constant."""
 h_bar = h / (2.0 * pi)
+"""Dirac's constant."""
 
-"""The magnetic constant or the permeability of vacuum."""
 mu0 = 4.0 * pi * 1e-7
+"""The magnetic constant or the permeability of vacuum."""
 
 
 # CSA and bond lengths.
 #######################
 
-"""The 15N CSA in the NH bond (default value)."""
 N15_CSA = -172 * 1e-6
+"""The 15N CSA in the NH bond (default value)."""
 
-"""The length of the NH bond (default value)."""
 NH_BOND_LENGTH = 1.02 * 1e-10
+"""The length of the NH bond (default value)."""
 
 
 # Gyromagnetic ratios.
 ######################
 
-"""The 13C gyromagnetic ratio."""
 g13C = 6.728 * 1e7
+"""The 13C gyromagnetic ratio."""
 
-"""The 1H gyromagnetic ratio."""
 g1H = 26.7522212 * 1e7
+"""The 1H gyromagnetic ratio."""
 
-"""The 15N gyromagnetic ratio."""
 g15N = -2.7126 * 1e7
+"""The 15N gyromagnetic ratio."""
 
-"""The 17O gyromagnetic ratio."""
 g17O = -3.628 * 1e7
+"""The 17O gyromagnetic ratio."""
 
-"""The 31P gyromagnetic ratio."""
 g31P = 10.841 * 1e7
+"""The 31P gyromagnetic ratio."""
 
 
 # Relative atomic masses.
 #########################
 
-"""Proton atomic mass."""
 ArH = 1.00794
+"""Proton atomic mass."""
 
-"""Carbon atomic mass."""
 ArC = 12.0107
+"""Carbon atomic mass."""
 
-"""Nitrogen atomic mass."""
 ArN = 14.0067
+"""Nitrogen atomic mass."""
 
-"""Oxygen atomic mass."""
 ArO = 15.9994
+"""Oxygen atomic mass."""
 
-"""Sulphur atomic mass."""
 ArS = 32.065
+"""Sulphur atomic mass."""
