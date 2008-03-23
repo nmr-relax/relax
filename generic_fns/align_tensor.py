@@ -31,7 +31,7 @@ import sys
 from angles import wrap_angles
 from data import Data as relax_data_store
 from data.align_tensor import AlignTensorList
-from physical_constants import g13C, g1H, g15N, g17O, g31P, h_bar, mu0
+from physical_constants import return_gyromagnetic_ratio
 import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
@@ -594,7 +594,7 @@ def map_bounds(param):
         return [0, 2*pi]
 
 
-def kappa(nuc1='N', nuc2='H'):
+def kappa(nuc1='15N', nuc2='1H'):
     """Function for calculating the kappa constant.
 
     The kappa constant is::
@@ -612,29 +612,9 @@ def kappa(nuc1='N', nuc2='H'):
     @rtype:         float
     """
 
-    # Gyromagnetic ratio of the first nucleus.
-    if nuc1 == 'C':
-        gI = g13C
-    elif nuc1 == 'H':
-        gI = g1H
-    elif nuc1 == 'N':
-        gI = g15N
-    elif nuc1 == 'O':
-        gI = g17O
-    elif nuc1 == 'P':
-        gI = g31P
-
-    # Gyromagnetic ratio of the second nucleus.
-    if nuc2 == 'C':
-        gS = g13C
-    elif nuc2 == 'H':
-        gS = g1H
-    elif nuc2 == 'N':
-        gS = g15N
-    elif nuc2 == 'O':
-        gS = g17O
-    elif nuc2 == 'P':
-        gS = g31P
+    # Gyromagnetic ratios.
+    gI = return_gyromagnetic_ratio(nuc1)
+    gS = return_gyromagnetic_ratio(nuc2)
 
     # Kappa.
     return -3.0/(8.0*pi**2) * gI * gS * mu0 * h_bar
