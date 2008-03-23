@@ -840,13 +840,13 @@ class Mf_minimise:
             # Get the spin container if required.
             if param_set == 'diff' or param_set == 'all':
                 spin_index = None
-                spin = None
+                spin, spin_id = None, None
             elif min_algor == 'back_calc':
                 spin_index = min_options[0]
-                spin = return_spin_from_index(global_index=spin_index)
+                spin, spin_id = return_spin_from_index(global_index=spin_index, return_spin_id=True)
             else:
                 spin_index = i
-                spin = return_spin_from_index(global_index=spin_index)
+                spin, spin_id = return_spin_from_index(global_index=spin_index, return_spin_id=True)
 
             # Individual spin stuff.
             if spin and (param_set == 'mf' or param_set == 'local_tm') and not min_algor == 'back_calc':
@@ -896,7 +896,7 @@ class Mf_minimise:
                 if param_set == 'mf' or param_set == 'local_tm':
                     if verbosity >= 2:
                         print "\n\n"
-                    string = "Fitting to spin: " + `spin.num` + " " + spin.name
+                    string = "Fitting to spin " + `spin_id`
                     print "\n\n" + string
                     print len(string) * '~'
                 if match('^[Gg]rid', min_algor):
