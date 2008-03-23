@@ -748,7 +748,9 @@ class Model_free_main:
         |                                       |                    |                        |
         | CSA                                   | 'csa'              | -172 * 1e-6            |
         |                                       |                    |                        |
-        | Heteronucleus type                    | 'nucleus'          | 'N'                    |
+        | Heteronucleus type                    | 'heteronuc_type'   | '15N'                  |
+        |                                       |                    |                        |
+        | Proton type                           | 'proton_type'      | '1H'                   |
         |_______________________________________|____________________|________________________|
 
         """
@@ -787,8 +789,12 @@ class Model_free_main:
             return N15_CSA
 
         # Heteronucleus type.
-        elif param == 'nucleus':
-            return 'N'
+        elif param == 'heteronuc_type':
+            return '15N'
+
+        # Proton type.
+        elif param == 'proton_type':
+            return '1H'
 
 
     def delete(self, run):
@@ -2611,32 +2617,34 @@ class Model_free_main:
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         ____________________________________________________________________________________________
-        |                        |              |                                                  |
-        | Data type              | Object name  | Patterns                                         |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Local tm               | 'local_tm'   | '[Ll]ocal[ -_]tm'                                |
-        |                        |              |                                                  |
-        | Order parameter S2     | 's2'         | '^[Ss]2$'                                        |
-        |                        |              |                                                  |
-        | Order parameter S2f    | 's2f'        | '^[Ss]2f$'                                       |
-        |                        |              |                                                  |
-        | Order parameter S2s    | 's2s'        | '^[Ss]2s$'                                       |
-        |                        |              |                                                  |
-        | Correlation time te    | 'te'         | '^te$'                                           |
-        |                        |              |                                                  |
-        | Correlation time tf    | 'tf'         | '^tf$'                                           |
-        |                        |              |                                                  |
-        | Correlation time ts    | 'ts'         | '^ts$'                                           |
-        |                        |              |                                                  |
-        | Chemical exchange      | 'rex'        | '^[Rr]ex$' or '[Cc]emical[ -_][Ee]xchange'       |
-        |                        |              |                                                  |
-        | Bond length            | 'r'          | '^r$' or '[Bb]ond[ -_][Ll]ength'                 |
-        |                        |              |                                                  |
-        | CSA                    | 'csa'        | '^[Cc][Ss][Aa]$'                                 |
-        |                        |              |                                                  |
-        | Heteronucleus type     | 'nucleus'    | '^[Nn]ucleus$'                                   |
-        |________________________|______________|__________________________________________________|
+        |                        |                  |                                              |
+        | Data type              | Object name      | Patterns                                     |
+        |________________________|__________________|______________________________________________|
+        |                        |                  |                                              |
+        | Local tm               | 'local_tm'       | '[Ll]ocal[ -_]tm'                            |
+        |                        |                  |                                              |
+        | Order parameter S2     | 's2'             | '^[Ss]2$'                                    |
+        |                        |                  |                                              |
+        | Order parameter S2f    | 's2f'            | '^[Ss]2f$'                                   |
+        |                        |                  |                                              |
+        | Order parameter S2s    | 's2s'            | '^[Ss]2s$'                                   |
+        |                        |                  |                                              |
+        | Correlation time te    | 'te'             | '^te$'                                       |
+        |                        |                  |                                              |
+        | Correlation time tf    | 'tf'             | '^tf$'                                       |
+        |                        |                  |                                              |
+        | Correlation time ts    | 'ts'             | '^ts$'                                       |
+        |                        |                  |                                              |
+        | Chemical exchange      | 'rex'            | '^[Rr]ex$' or '[Cc]emical[ -_][Ee]xchange'   |
+        |                        |                  |                                              |
+        | Bond length            | 'r'              | '^r$' or '[Bb]ond[ -_][Ll]ength'             |
+        |                        |                  |                                              |
+        | CSA                    | 'csa'            | '^[Cc][Ss][Aa]$'                             |
+        |                        |                  |                                              |
+        | Heteronucleus type     | 'heteronuc_type' | '^[Hh]eteronucleus$'                         |
+        |                        |                  |                                              |
+        | Proton type            | 'proton_type'    | '^[Pp]roton$'                                |
+        |________________________|__________________|______________________________________________|
 
         """
         __docformat__ = "plaintext"
@@ -2682,8 +2690,12 @@ class Model_free_main:
             return 'csa'
 
         # Heteronucleus type.
-        if search('^[Nn]ucleus$', name):
-            return 'nucleus'
+        if search('^[Hh]heteronucleus$', name):
+            return 'heteronuc_type'
+
+        # Proton type.
+        if search('^[Pp]roton$', name):
+            return 'proton_type'
 
 
     def return_grace_string(self, param):
