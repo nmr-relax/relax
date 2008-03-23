@@ -463,7 +463,7 @@ class Mf_minimise:
         self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
-    def grid_search_config(self, num_params, spin=None, spin_id=None, lower=None, upper=None, inc=None, scaling_matrix=None):
+    def grid_search_config(self, num_params, spin=None, spin_id=None, lower=None, upper=None, inc=None, scaling_matrix=None, verbosity=1):
         """Configure the grid search.
 
         @param num_params:          The number of parameters in the model.
@@ -478,12 +478,15 @@ class Mf_minimise:
         @keyword upper:             The upper bounds of the grid search which must be equal to the
                                     number of parameters in the model.
         @type upper:                array of numbers
-        @keyword inc:               The increments for each dimension of the space for the grid search.
-                                    The number of elements in the array must equal to the number of
-                                    parameters in the model.
+        @keyword inc:               The increments for each dimension of the space for the grid
+                                    search.  The number of elements in the array must equal to the
+                                    number of parameters in the model.
         @type inc:                  array of int
         @keyword scaling_matrix:    The diagonal, square scaling matrix.
         @type scaling_matrix:       numpy diagonal matrix
+        @keyword verbosity:         A flag specifying the amount of information to print.  The
+                                    higher the value, the greater the verbosity.
+        @type verbosity:            int
         """
 
         # Make sure that the length of the parameter array is > 0.
@@ -513,7 +516,7 @@ class Mf_minimise:
         # Minimisation options for diffusion tensor parameters.
         if param_set == 'diff' or param_set == 'all':
             # Get the diffusion tensor specific configuration.
-            m = self.grid_search_config_diff(min_options, inc, m)
+            m = self.grid_search_config_diff(min_options, inc, m, verbosity=verbosity)
 
         # Model-free parameters (residue specific parameters).
         if param_set != 'diff':
@@ -533,7 +536,7 @@ class Mf_minimise:
                 m = self.grid_search_config_spin(min_options, spin, inc, m)
 
         # Test if the grid is too large.
-        self.test_grid_size(min_options)
+        self.test_grid_size(min_options, verbosity=verbosity)
 
         # Complete the grid search configuration.
         self.grid_search_config_fin(min_options, lower, upper, scaling_matrix)
@@ -858,6 +861,16 @@ class Mf_minimise:
                 if not hasattr(spin, 'relax_data') or not hasattr(spin, 'relax_error'):
                     continue
 
+            # Print out.
+            if verbosity >= 1:
+                # Individual spin stuff.
+                if param_set == 'mf' or param_set == 'local_tm':
+                    if verbosity >= 2:
+                        print "\n\n"
+                    string = "Fitting to spin " + `spin_id`
+                    print "\n\n" + string
+                    print len(string) * '~'
+
             # Parameter vector and diagonal scaling.
             if min_algor == 'back_calc':
                 # Create the initial parameter vector.
@@ -889,18 +902,6 @@ class Mf_minimise:
             # Linear constraints.
             if constraints:
                 A, b = self.linear_constraints(num_params, param_set=param_set, spin=spin, scaling_matrix=scaling_matrix)
-
-            # Print out.
-            if verbosity >= 1:
-                # Individual spin stuff.
-                if param_set == 'mf' or param_set == 'local_tm':
-                    if verbosity >= 2:
-                        print "\n\n"
-                    string = "Fitting to spin " + `spin_id`
-                    print "\n\n" + string
-                    print len(string) * '~'
-                if match('^[Gg]rid', min_algor):
-                    print "Unconstrained grid search size: " + `grid_size` + " (constraints may decrease this size).\n"
 
             # Initialise the iteration counter and function, gradient, and Hessian call counters.
             iter_count = 0
@@ -1212,16 +1213,26 @@ class Mf_minimise:
         return relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, num_params, xh_unit_vectors, diff_type, diff_params
 
 
-    def test_grid_size(self, min_options):
+    def test_grid_size(self, min_options, verbosity=1):
         """Test the size of the grid search.
 
         @param min_options: The grid search configuration.
         @type min_options:  list
+        @keyword verbosity: A flag specifying the amount of information to print.  The higher the
+                            value, the greater the verbosity.
+        @type verbosity:    int
         @raises RelaxError: If the grid size corresponds to a long int.
         """
 
+        # Determine the grid size.
         grid_size = 1
         for i in xrange(len(min_options)):
             grid_size = grid_size * min_options[i][0]
+
+        # Print out.
+        if verbosity >= 1:
+            print "Unconstrained grid search size: " + `grid_size` + " (constraints may decrease this size).\n"
+
+        # Too big.
         if type(grid_size) == long:
             raise RelaxError, "A grid search of size " + `grid_size` + " is too large."
