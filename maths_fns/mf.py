@@ -330,7 +330,7 @@ class Mf:
                 self.init_res_r1_data(self.data[i])
 
         # Scaling initialisation.
-        if self.scaling_matrix:
+        if self.scaling_matrix != None:
             self.scaling_flag = 1
         else:
             self.scaling_flag = 0
