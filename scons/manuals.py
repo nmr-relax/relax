@@ -105,6 +105,8 @@ def compile_api_manual_html(target, source, env):
                'prompt/*.py',
                'specific_fns/*.py',
                'test_suite/*.py',
+               'test_suite/*/*.py',
+               'test_suite/unit_tests/_*/*.py',
                'sconstruct',
                'scons/*.py']
 
