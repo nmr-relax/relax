@@ -33,7 +33,7 @@ from generic_fns import diffusion_tensor
 from generic_fns.selection import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
-from physical_constants import return_gyromagnetic_ratio
+from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError
 
 
@@ -917,7 +917,7 @@ class Mf_minimise:
             # Initialise the function to minimise.
             ######################################
 
-            self.mf = Mf(init_params=param_vector, param_set=param_set, diff_type=diff_type, diff_params=diff_params, scaling_matrix=scaling_matrix, num_spins=num_spins, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=relax_data_store.gx, gh=relax_data_store.gh, g_ratio=relax_data_store.g_ratio, h_bar=relax_data_store.h_bar, mu0=relax_data_store.mu0, num_params=num_params, vectors=xh_unit_vectors)
+            self.mf = Mf(init_params=param_vector, param_set=param_set, diff_type=diff_type, diff_params=diff_params, scaling_matrix=scaling_matrix, num_spins=num_spins, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
 
 
             # Setup the minimisation algorithm when constraints are present.
