@@ -2537,11 +2537,11 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='nucleus', val='C')
+        self.value_fns.set(param='heteronucleus', val='13C')
 
         # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].nucleus, 'C')
-        self.assertEqual(cdp.mol[0].res[1].spin[0].nucleus, 'C')
+        self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '13C')
+        self.assertEqual(cdp.mol[0].res[1].spin[0].heteronuc_type, '13C')
 
 
     def test_set_jw_all_spins_diff_j0_jwx_jwh(self):
@@ -2693,11 +2693,11 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='nucleus')
+        self.value_fns.set(param='heteronucleus')
 
         # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].nucleus, 'N')
-        self.assertEqual(cdp.mol[0].res[1].spin[0].nucleus, 'N')
+        self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '15N')
+        self.assertEqual(cdp.mol[0].res[1].spin[0].heteronuc_type, '15N')
 
 
     def test_set_jw_defaults_j0_jwx_jwh(self):
@@ -2829,11 +2829,11 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='nucleus', val='C', spin_id='@112')
+        self.value_fns.set(param='heteronucleus', val='13C', spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'nucleus'))
-        self.assertEqual(cdp.mol[0].res[1].spin[0].nucleus, 'C')
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'heteronuc_type'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].heteronuc_type, '13C')
 
 
     def test_set_jw_single_spin_diff_j0_jwx_jwh(self):
@@ -3103,11 +3103,11 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='nucleus', val='C')
+        self.value_fns.set(param='heteronucleus', val='13C')
 
         # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].nucleus, 'C')
-        self.assertEqual(cdp.mol[0].res[1].spin[0].nucleus, 'C')
+        self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '13C')
+        self.assertEqual(cdp.mol[0].res[1].spin[0].heteronuc_type, '13C')
 
 
     def test_set_mf_all_spins_diff_s2f_s2s(self):
@@ -3367,11 +3367,11 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='nucleus')
+        self.value_fns.set(param='heteronucleus')
 
         # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].nucleus, 'N')
-        self.assertEqual(cdp.mol[0].res[1].spin[0].nucleus, 'N')
+        self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '15N')
+        self.assertEqual(cdp.mol[0].res[1].spin[0].heteronuc_type, '15N')
 
 
     def test_set_mf_defaults_s2f_s2s(self):
@@ -3609,11 +3609,11 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='nucleus', val='C', spin_id='@112')
+        self.value_fns.set(param='heteronucleus', val='13C', spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'nucleus'))
-        self.assertEqual(cdp.mol[0].res[1].spin[0].nucleus, 'C')
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'heteronuc_type'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].heteronuc_type, '13C')
 
 
     def test_set_mf_single_spin_diff_s2f_s2s(self):
