@@ -159,6 +159,8 @@ class Model_free_main:
         @type spin:         SpinContainer instance
         @keyword spin_id:   The spin identification string.
         @type spin_id:      str
+        @keyword sim_index: The optional MC simulation index.
+        @type sim_index:    int
         @return:            An array of the parameter values of the model-free model.
         @rtype:             numpy array
         """
