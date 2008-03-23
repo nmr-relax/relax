@@ -482,7 +482,7 @@ class Mf_minimise:
                                     The number of elements in the array must equal to the number of
                                     parameters in the model.
         @type inc:                  array of int
-        @keyword scaling_matrix:    The diagonal scaling matrix.
+        @keyword scaling_matrix:    The diagonal, square scaling matrix.
         @type scaling_matrix:       numpy diagonal matrix
         """
 
@@ -888,7 +888,7 @@ class Mf_minimise:
 
             # Linear constraints.
             if constraints:
-                A, b = self.linear_constraints(index=index)
+                A, b = self.linear_constraints(num_params, param_set=param_set, spin=spin, scaling_matrix=scaling_matrix)
 
             # Print out.
             if verbosity >= 1:

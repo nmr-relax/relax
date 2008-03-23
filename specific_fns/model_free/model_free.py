@@ -1130,25 +1130,25 @@ class Model_free_main:
             return True
 
 
-    def linear_constraints(self, index=None):
-        """Function for setting up the model-free linear constraint matrices A and b.
+    def linear_constraints(self, num_params, param_set=None, spin=None, spin_id=None, scaling_matrix=None):
+        """Set up the model-free linear constraint matrices A and b.
 
         Standard notation
-        ~~~~~~~~~~~~~~~~~
+        =================
 
-        The order parameter constraints are:
+        The order parameter constraints are::
 
             0 <= S2 <= 1
             0 <= S2f <= 1
             0 <= S2s <= 1
 
         By substituting the formula S2 = S2f.S2s into the above inequalities, the additional two
-        inequalities can be derived:
+        inequalities can be derived::
 
             S2 <= S2f
             S2 <= S2s
 
-        Correlation time constraints are:
+        Correlation time constraints are::
 
             te >= 0
             tf >= 0
@@ -1158,7 +1158,7 @@ class Model_free_main:
 
             te, tf, ts <= 2 * tm
 
-        Additional constraints used include:
+        Additional constraints used include::
 
             Rex >= 0
             0.9e-10 <= r <= 2e-10
@@ -1166,8 +1166,9 @@ class Model_free_main:
 
 
         Rearranged notation
-        ~~~~~~~~~~~~~~~~~~~
-        The above ineqality constraints can be rearranged into:
+        ===================
+
+        The above inequality constraints can be rearranged into::
 
             S2 >= 0
             -S2 >= -1
@@ -1189,10 +1190,10 @@ class Model_free_main:
 
 
         Matrix notation
-        ~~~~~~~~~~~~~~~
+        ===============
 
         In the notation A.x >= b, where A is an matrix of coefficients, x is an array of parameter
-        values, and b is a vector of scalars, these inequality constraints are:
+        values, and b is a vector of scalars, these inequality constraints are::
 
             | 1  0  0  0  0  0  0  0  0 |                  |    0    |
             |                           |                  |         |
@@ -1228,7 +1229,22 @@ class Model_free_main:
             |                           |                  |         |
             | 0  0  0  0  0  0  0  0 -1 |                  |    0    |
 
+
+        @param num_params:          The number of parameters in the model.
+        @type num_params:           int
+        @keyword param_set:         The parameter set, one of 'all', 'diff', 'mf', or 'local_tm'.
+        @type param_set:            str
+        @keyword spin:              The spin data container.  If this argument is supplied, then the
+                                    spin_id argument will be ignored.
+        @type spin:                 SpinContainer instance
+        @keyword spin_id:           The spin identification string.
+        @type spin_id:              str
+        @keyword scaling_matrix:    The diagonal, square scaling matrix.
+        @type scaling_matrix:       numpy diagonal matrix
         """
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Upper limit flag for correlation times.
         upper_time_limit = 1
@@ -1236,42 +1252,41 @@ class Model_free_main:
         # Initialisation (0..j..m).
         A = []
         b = []
-        n = len(self.param_vector)
-        zero_array = zeros(n, float64)
+        zero_array = zeros(num_params, float64)
         i = 0
         j = 0
 
         # Diffusion tensor parameters.
-        if self.param_set != 'mf' and relax_data_store.diff.has_key(self.run):
+        if param_set != 'mf' and diffusion_tensor.diff_data_exists():
             # Spherical diffusion.
-            if relax_data_store.diff[self.run].type == 'sphere':
+            if cdp.diff_tensor.type == 'sphere':
                 # 0 <= tm <= 200 ns.
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 A[j+1][i] = -1.0
-                b.append(0.0 / self.scaling_matrix[i, i])
-                b.append(-200.0 * 1e-9 / self.scaling_matrix[i, i])
+                b.append(0.0 / scaling_matrix[i, i])
+                b.append(-200.0 * 1e-9 / scaling_matrix[i, i])
                 i = i + 1
                 j = j + 2
 
             # Spheroidal diffusion.
-            elif relax_data_store.diff[self.run].type == 'spheroid':
+            elif cdp.diff_tensor.type == 'spheroid':
                 # 0 <= tm <= 200 ns.
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 A[j+1][i] = -1.0
-                b.append(0.0 / self.scaling_matrix[i, i])
-                b.append(-200.0 * 1e-9 / self.scaling_matrix[i, i])
+                b.append(0.0 / scaling_matrix[i, i])
+                b.append(-200.0 * 1e-9 / scaling_matrix[i, i])
                 i = i + 1
                 j = j + 2
 
                 # Prolate diffusion, Da >= 0.
-                if relax_data_store.diff[self.run].spheroid_type == 'prolate':
+                if cdp.diff_tensor.spheroid_type == 'prolate':
                     A.append(zero_array * 0.0)
                     A[j][i] = 1.0
-                    b.append(0.0 / self.scaling_matrix[i, i])
+                    b.append(0.0 / scaling_matrix[i, i])
                     i = i + 1
                     j = j + 1
 
@@ -1279,10 +1294,10 @@ class Model_free_main:
                     i = i + 2
 
                 # Oblate diffusion, Da <= 0.
-                elif relax_data_store.diff[self.run].spheroid_type == 'oblate':
+                elif cdp.diff_tensor.spheroid_type == 'oblate':
                     A.append(zero_array * 0.0)
                     A[j][i] = -1.0
-                    b.append(0.0 / self.scaling_matrix[i, i])
+                    b.append(0.0 / scaling_matrix[i, i])
                     i = i + 1
                     j = j + 1
 
@@ -1294,21 +1309,21 @@ class Model_free_main:
                     i = i + 3
 
             # Ellipsoidal diffusion.
-            elif relax_data_store.diff[self.run].type == 'ellipsoid':
+            elif cdp.diff_tensor.type == 'ellipsoid':
                 # 0 <= tm <= 200 ns.
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 A[j+1][i] = -1.0
-                b.append(0.0 / self.scaling_matrix[i, i])
-                b.append(-200.0 * 1e-9 / self.scaling_matrix[i, i])
+                b.append(0.0 / scaling_matrix[i, i])
+                b.append(-200.0 * 1e-9 / scaling_matrix[i, i])
                 i = i + 1
                 j = j + 2
 
                 # Da >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
-                b.append(0.0 / self.scaling_matrix[i, i])
+                b.append(0.0 / scaling_matrix[i, i])
                 i = i + 1
                 j = j + 1
 
@@ -1317,8 +1332,8 @@ class Model_free_main:
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 A[j+1][i] = -1.0
-                b.append(0.0 / self.scaling_matrix[i, i])
-                b.append(-1.0 / self.scaling_matrix[i, i])
+                b.append(0.0 / scaling_matrix[i, i])
+                b.append(-1.0 / scaling_matrix[i, i])
                 i = i + 1
                 j = j + 2
 
@@ -1326,55 +1341,57 @@ class Model_free_main:
                 i = i + 3
 
         # Model-free parameters.
-        if self.param_set != 'diff':
-            # Loop over all residues.
-            for k in xrange(len(relax_data_store.res[self.run])):
-                # Skip unselected residues.
-                if not relax_data_store.res[self.run][k].select:
-                    continue
+        if param_set != 'diff':
+            # The loop.
+            if spin:
+                loop = [spin]
+            else:
+                loop = spin_loop(spin_id)
 
-                # Only add parameters for a single residue if index has a value.
-                if index != None and k != index:
+            # Loop over the spins.
+            for spin in loop:
+                # Skip unselected spins.
+                if not spin.select:
                     continue
 
                 # Save current value of i.
                 old_i = i
 
                 # Loop over the model-free parameters.
-                for l in xrange(len(relax_data_store.res[self.run][k].params)):
+                for l in xrange(len(spin.params)):
                     # Local tm.
-                    if relax_data_store.res[self.run][k].params[l] == 'local_tm':
+                    if spin.params[l] == 'local_tm':
                         if upper_time_limit:
                             # 0 <= tm <= 200 ns.
                             A.append(zero_array * 0.0)
                             A.append(zero_array * 0.0)
                             A[j][i] = 1.0
                             A[j+1][i] = -1.0
-                            b.append(0.0 / self.scaling_matrix[i, i])
-                            b.append(-200.0 * 1e-9 / self.scaling_matrix[i, i])
+                            b.append(0.0 / scaling_matrix[i, i])
+                            b.append(-200.0 * 1e-9 / scaling_matrix[i, i])
                             j = j + 2
                         else:
                             # 0 <= tm.
                             A.append(zero_array * 0.0)
                             A[j][i] = 1.0
-                            b.append(0.0 / self.scaling_matrix[i, i])
+                            b.append(0.0 / scaling_matrix[i, i])
                             j = j + 1
 
                     # Order parameters {S2, S2f, S2s}.
-                    elif match('S2', relax_data_store.res[self.run][k].params[l]):
+                    elif match('S2', spin.params[l]):
                         # 0 <= S2 <= 1.
                         A.append(zero_array * 0.0)
                         A.append(zero_array * 0.0)
                         A[j][i] = 1.0
                         A[j+1][i] = -1.0
-                        b.append(0.0 / self.scaling_matrix[i, i])
-                        b.append(-1.0 / self.scaling_matrix[i, i])
+                        b.append(0.0 / scaling_matrix[i, i])
+                        b.append(-1.0 / scaling_matrix[i, i])
                         j = j + 2
 
                         # S2 <= S2f and S2 <= S2s.
-                        if relax_data_store.res[self.run][k].params[l] == 'S2':
-                            for m in xrange(len(relax_data_store.res[self.run][k].params)):
-                                if relax_data_store.res[self.run][k].params[m] == 'S2f' or relax_data_store.res[self.run][k].params[m] == 'S2s':
+                        if spin.params[l] == 'S2':
+                            for m in xrange(len(spin.params)):
+                                if spin.params[m] == 'S2f' or spin.params[m] == 'S2s':
                                     A.append(zero_array * 0.0)
                                     A[j][i] = -1.0
                                     A[j][old_i+m] = 1.0
@@ -1382,17 +1399,17 @@ class Model_free_main:
                                     j = j + 1
 
                     # Correlation times {te, tf, ts}.
-                    elif match('t[efs]', relax_data_store.res[self.run][k].params[l]):
+                    elif match('t[efs]', spin.params[l]):
                         # te, tf, ts >= 0.
                         A.append(zero_array * 0.0)
                         A[j][i] = 1.0
-                        b.append(0.0 / self.scaling_matrix[i, i])
+                        b.append(0.0 / scaling_matrix[i, i])
                         j = j + 1
 
                         # tf <= ts.
-                        if relax_data_store.res[self.run][k].params[l] == 'ts':
-                            for m in xrange(len(relax_data_store.res[self.run][k].params)):
-                                if relax_data_store.res[self.run][k].params[m] == 'tf':
+                        if spin.params[l] == 'ts':
+                            for m in xrange(len(spin.params)):
+                                if spin.params[m] == 'tf':
                                     A.append(zero_array * 0.0)
                                     A[j][i] = 1.0
                                     A[j][old_i+m] = -1.0
@@ -1401,11 +1418,11 @@ class Model_free_main:
 
                         # te, tf, ts <= 2 * tm.  (tf not needed because tf <= ts).
                         if upper_time_limit:
-                            if not relax_data_store.res[self.run][k].params[l] == 'tf':
-                                if self.param_set == 'mf':
+                            if not spin.params[l] == 'tf':
+                                if param_set == 'mf':
                                     A.append(zero_array * 0.0)
                                     A[j][i] = -1.0
-                                    b.append(-2.0 * relax_data_store.diff[self.run].tm / self.scaling_matrix[i, i])
+                                    b.append(-2.0 * cdp.diff_tensor.tm / scaling_matrix[i, i])
                                 else:
                                     A.append(zero_array * 0.0)
                                     A[j][0] = 2.0
@@ -1415,38 +1432,38 @@ class Model_free_main:
                                 j = j + 1
 
                     # Rex.
-                    elif relax_data_store.res[self.run][k].params[l] == 'Rex':
+                    elif spin.params[l] == 'Rex':
                         A.append(zero_array * 0.0)
                         A[j][i] = 1.0
-                        b.append(0.0 / self.scaling_matrix[i, i])
+                        b.append(0.0 / scaling_matrix[i, i])
                         j = j + 1
 
                     # Bond length.
-                    elif relax_data_store.res[self.run][k].params[l] == 'r':
+                    elif spin.params[l] == 'r':
                         # 0.9e-10 <= r <= 2e-10.
                         A.append(zero_array * 0.0)
                         A.append(zero_array * 0.0)
                         A[j][i] = 1.0
                         A[j+1][i] = -1.0
-                        b.append(0.9e-10 / self.scaling_matrix[i, i])
-                        b.append(-2e-10 / self.scaling_matrix[i, i])
+                        b.append(0.9e-10 / scaling_matrix[i, i])
+                        b.append(-2e-10 / scaling_matrix[i, i])
                         j = j + 2
 
                     # CSA.
-                    elif relax_data_store.res[self.run][k].params[l] == 'CSA':
+                    elif spin.params[l] == 'CSA':
                         # -300e-6 <= CSA <= 0.
                         A.append(zero_array * 0.0)
                         A.append(zero_array * 0.0)
                         A[j][i] = 1.0
                         A[j+1][i] = -1.0
-                        b.append(-300e-6 / self.scaling_matrix[i, i])
-                        b.append(0.0 / self.scaling_matrix[i, i])
+                        b.append(-300e-6 / scaling_matrix[i, i])
+                        b.append(0.0 / scaling_matrix[i, i])
                         j = j + 2
 
                     # Increment i.
                     i = i + 1
 
-        # Convert to Numeric data structures.
+        # Convert to numpy data structures.
         A = array(A, float64)
         b = array(b, float64)
 
