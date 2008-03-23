@@ -1210,7 +1210,7 @@ class Mf_minimise:
         return relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, num_params, xh_unit_vectors, diff_type, diff_params
 
 
-    def test_grid_size(min_options):
+    def test_grid_size(self, min_options):
         """Test the size of the grid search.
 
         @param min_options: The grid search configuration.
