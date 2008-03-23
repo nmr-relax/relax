@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2006, 2008 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -19,6 +19,10 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
 #                                                                             #
 ###############################################################################
+
+# Package docstring.
+"""The relax system/functional tests."""
+
 
 # Python module imports.
 from unittest import TestLoader, TestSuite
@@ -43,12 +47,11 @@ __all__ = ['angles',
            'diffusion_tensor',
            'generic',
            'jw_mapping',
-           'main',
            'model_free',
            'model_selection',
-           'test_pipe_create',
+           'n_state_model',
+           'pipe_create',
            'relax_fit',
-           'run_create',
            'sequence']
 
 
