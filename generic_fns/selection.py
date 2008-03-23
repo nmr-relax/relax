@@ -845,15 +845,21 @@ def return_spin(selection=None, pipe=None):
     return spin_container
 
 
-def return_spin_from_index(global_index=None, pipe=None):
+def return_spin_from_index(global_index=None, pipe=None, return_spin_id=False):
     """Function for returning the spin data container corresponding to the global index.
 
-    @param global_index:    The global spin index, spanning the molecule and residue containers.
-    @type global_index:     int
-    @param pipe:            The data pipe containing the spin.  Defaults to the current data pipe.
-    @type pipe:             str
-    @return:                The spin specific data container.
-    @rtype:                 instance of the SpinContainer class.
+    @param global_index:        The global spin index, spanning the molecule and residue containers.
+    @type global_index:         int
+    @param pipe:                The data pipe containing the spin.  Defaults to the current data
+                                pipe.
+    @type pipe:                 str
+    @keyword return_spin_id:    A flag which if True will cause both the spin container and spin
+                                identification string to be returned.
+    @type return_spin_id:       bool
+    @return:                    The spin specific data container (additionally the spin
+                                identification string if return_spin_id is set).
+    @rtype:                     instance of the SpinContainer class (or tuple of SpinContainer and
+                                str)
     """
 
     # The data pipe.
@@ -865,11 +871,20 @@ def return_spin_from_index(global_index=None, pipe=None):
 
     # Loop over the spins.
     spin_num = 0
-    for spin in spin_loop():
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # Match to the global index.
         if spin_num == global_index:
-            # Return the spin.
-            return spin
+            # Return the spin and the spin_id string.
+            if return_spin_id:
+                # The spin identification string.
+                spin_id = generate_spin_id([mol_name, res_num, res_name, spin.num, spin.name], mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4)
+
+                # Return both objects.
+                return spin, spin_id
+
+            # Return the spin by itself.
+            else:
+                return spin
 
         # Increment the spin number.
         spin_num = spin_num + 1
