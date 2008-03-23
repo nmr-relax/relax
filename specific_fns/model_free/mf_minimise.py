@@ -537,7 +537,7 @@ class Mf_minimise:
         self.grid_search_config_fin(min_options, lower, upper, scaling_matrix)
 
 
-    def grid_search_config_diff(min_options, inc, m):
+    def grid_search_config_diff(self, min_options, inc, m):
         """Set up of the grid search for the diffusion tensor.
 
         This method appends the grid search configuration details to min_options list.  These
@@ -588,7 +588,7 @@ class Mf_minimise:
         return m
 
 
-    def grid_search_config_fin(min_options, lower, upper, scaling_matrix):
+    def grid_search_config_fin(self, min_options, lower, upper, scaling_matrix):
         """Complete the grid search configuration.
 
         @param min_options:     The grid search configuration details.
@@ -619,7 +619,7 @@ class Mf_minimise:
             min_options[i][2] = min_options[i][2] / scaling_matrix[i, i]
 
 
-    def grid_search_config_spin(min_options, spin, inc, m):
+    def grid_search_config_spin(self, min_options, spin, inc, m):
         """Set up of the grid search for a single spin.
 
         This method appends the grid search configuration details to min_options list.  These
