@@ -40,7 +40,7 @@ from chi2 import *
 
 
 class Mf:
-    def __init__(self, init_params=None, param_set=None, diff_type=None, diff_params=None, scaling_matrix=None, num_spins=None, equations=None, param_types=None, param_values=None, relax_data=None, errors=None, bond_length=None, csa=None, num_frq=0, frq=None, num_ri=None, remap_table=None, noe_r1_table=None, ri_labels=None, gx=0, gh=0, g_ratio=0, h_bar=0, mu0=0, num_params=None, vectors=None):
+    def __init__(self, init_params=None, param_set=None, diff_type=None, diff_params=None, scaling_matrix=None, num_spins=None, equations=None, param_types=None, param_values=None, relax_data=None, errors=None, bond_length=None, csa=None, num_frq=0, frq=None, num_ri=None, remap_table=None, noe_r1_table=None, ri_labels=None, gx=0, gh=0, h_bar=0, mu0=0, num_params=None, vectors=None):
         """The model-free minimisation class.
 
         This class should be initialised before every calculation.
@@ -236,6 +236,9 @@ class Mf:
             # Total number of ri.
             self.total_num_ri = self.total_num_ri + num_ri[i]
 
+            # The ratio of gyromagnetic ratios.
+            g_ratio = gh[i] / gx[i]
+
             # Append the class instance Data to the data array.
             self.data.append(Data())
 
@@ -259,8 +262,8 @@ class Mf:
                 self.data[i].frq_sqrd_list_ext[:, :, j] = self.data[i].frq_sqrd_list
 
             # Store supplied data in self.data
-            self.data[i].gh = gh
-            self.data[i].gx = gx
+            self.data[i].gh = gh[i]
+            self.data[i].gx = gx[i]
             self.data[i].g_ratio = g_ratio
             self.data[i].h_bar = h_bar
             self.data[i].mu0 = mu0
