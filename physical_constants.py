@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing all physical constants used in relax, as well as all associated functions."""
+
+
 # Python module imports.
 from math import pi
 
