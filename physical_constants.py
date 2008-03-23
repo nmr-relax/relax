@@ -65,6 +65,31 @@ g17O = -3.628 * 1e7
 g31P = 10.841 * 1e7
 """The 31P gyromagnetic ratio."""
 
+# Function for returning the desired gyromagnetic ratio.
+def return_gyromagnetic_ratio(nucleus=None):
+    """Return the gyromagnetic ratio for the given nucleus type.
+ 
+    @keyword nucleus:   The nucleus type.
+    @type nucleus:      str
+    @raises RelaxError: If the nucleus type is unknown.           
+    @returns:           The desired gyromagnetic ratio.
+    @rtype:             float
+    """
+
+    # Matching loop.
+    if nucleus == '13C':
+        return g13C
+    elif nucleus == '1H':
+        return g1H
+    elif nucleus == '15N':
+        return g15N
+    elif nucleus == '17O':
+        return g17O
+    elif nucleus == '31P':
+        return g31P
+    else:
+        raise RelaxError, "The nucleus type " + `nucleus` + " is unknown."
+
 
 # Relative atomic masses.
 #########################
