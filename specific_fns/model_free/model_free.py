@@ -2690,7 +2690,7 @@ class Model_free_main:
             return 'csa'
 
         # Heteronucleus type.
-        if search('^[Hh]heteronucleus$', name):
+        if search('^[Hh]eteronucleus$', name):
             return 'heteronuc_type'
 
         # Proton type.
