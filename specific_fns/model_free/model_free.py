@@ -150,10 +150,14 @@ class Model_free_main:
                 param_names = param_names + spin.params
 
 
-    def assemble_param_vector(self, spin_id=None, sim_index=None):
+    def assemble_param_vector(self, spin=None, spin_id=None, sim_index=None):
         """Assemble the model-free parameter vector (as numpy array).
 
-        @param spin_id:     The spin identification string.
+        If the spin argument is supplied, then the spin_id argument will be ignored.
+
+        @keyword spin:      The spin data container.
+        @type spin:         SpinContainer instance
+        @keyword spin_id:   The spin identification string.
         @type spin_id:      str
         @return:            An array of the parameter values of the model-free model.
         @rtype:             numpy array
@@ -216,8 +220,14 @@ class Model_free_main:
 
         # Model-free parameters (residue specific parameters).
         if model_type != 'diff':
+            # The loop.
+            if spin:
+                loop = [spin]
+            else:
+                loop = spin_loop(spin_id)
+
             # Loop over the spins.
-            for spin in spin_loop(spin_id):
+            for spin in loop:
                 # Skip unselected residues.
                 if not spin.select:
                     continue
