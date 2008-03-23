@@ -509,27 +509,11 @@ class Mf_minimise:
                 # Get the spin specific configuration.
                 m = self.grid_search_config_spin(min_options, spin, inc, m)
 
-        # Set the lower and upper bounds if these are supplied.
-        if lower != None:
-            for j in xrange(n):
-                if lower[j] != None:
-                    min_options[j][1] = lower[j]
-        if upper != None:
-            for j in xrange(n):
-                if upper[j] != None:
-                    min_options[j][2] = upper[j]
-
         # Test if the grid is too large.
-        grid_size = 1
-        for i in xrange(len(min_options)):
-            grid_size = grid_size * min_options[i][0]
-        if type(grid_size) == long:
-            raise RelaxError, "A grid search of size " + `grid_size` + " is too large."
+        self.test_grid_size(min_options)
 
-        # Diagonal scaling of minimisation options.
-        for j in xrange(len(min_options)):
-            min_options[j][1] = min_options[j][1] / scaling_matrix[j, j]
-            min_options[j][2] = min_options[j][2] / scaling_matrix[j, j]
+        # Complete the grid search configuration.
+        self.grid_search_config_fin(min_options, lower, upper, scaling_matrix)
 
         # Minimisation.
         self.minimise(min_algor='grid', min_options=min_options, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
@@ -584,6 +568,37 @@ class Mf_minimise:
 
         # Return the parameter index.
         return m
+
+
+    def grid_search_config_fin(min_options, lower, upper, scaling_matrix):
+        """Complete the grid search configuration.
+
+        @param min_options:     The grid search configuration details.
+        @type min_options:      list of lists (n, 3)
+        @param lower:           The lower bounds of the grid search which must be equal to the
+                                number of parameters in the model.
+        @type lower:            array of numbers
+        @param upper:           The upper bounds of the grid search which must be equal to the
+                                number of parameters in the model.
+        @type upper:            array of numbers
+        @param scaling_matrix:  The scaling matrix.
+        @type scaling_matrix:   numpy matrix
+        """
+
+        # Set the lower and upper bounds if these are supplied.
+        if lower != None:
+            for i in xrange(n):
+                if lower[i] != None:
+                    min_options[i][1] = lower[i]
+        if upper != None:
+            for i in xrange(n):
+                if upper[i] != None:
+                    min_options[i][2] = upper[i]
+
+        # Diagonal scaling of minimisation options.
+        for i in xrange(len(min_options)):
+            min_options[i][1] = min_options[i][1] / scaling_matrix[i, i]
+            min_options[i][2] = min_options[i][2] / scaling_matrix[i, i]
 
 
     def grid_search_config_spin(min_options, spin, inc, m):
@@ -1146,3 +1161,18 @@ class Mf_minimise:
 
                     # Warning.
                     cdp.warning = warning
+
+
+    def test_grid_size(min_options):
+        """Test the size of the grid search.
+
+        @param min_options: The grid search configuration.
+        @type min_options:  list
+        @raises RelaxError: If the grid size corresponds to a long int.
+        """
+
+        grid_size = 1
+        for i in xrange(len(min_options)):
+            grid_size = grid_size * min_options[i][0]
+        if type(grid_size) == long:
+            raise RelaxError, "A grid search of size " + `grid_size` + " is too large."
