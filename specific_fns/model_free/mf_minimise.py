@@ -910,7 +910,7 @@ class Mf_minimise:
             h_count = 0
 
             # Get the data for minimisation.
-            relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, num_params, xh_unit_vectors, diff_type, diff_params = self.minimise_data_setup()
+            relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, num_params, xh_unit_vectors, diff_type, diff_params = self.minimise_data_setup(param_set, min_algor, num_data_sets, spin=spin, sim_index=sim_index)
 
 
             # Initialise the function to minimise.
@@ -1069,15 +1069,28 @@ class Mf_minimise:
                     cdp.warning = warning
 
 
-    def minimise_data_setup(self):
+    def minimise_data_setup(self, param_set, min_algor, num_data_sets, spin=None, sim_index=None):
         """Set up all the data required for minimisation.
 
-        @return:        An insane tuple.  The full tuple is (relax_data, relax_error, equations,
-                        param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table,
-                        noe_r1_table, ri_labels, num_params, xh_unit_vectors, diff_type,
-                        diff_params)
-        @rtype:         tuple
+        @param param_set:       The parameter set, one of 'all', 'diff', 'mf', or 'local_tm'.
+        @type param_set:        str
+        @param min_algor:       The minimisation algorithm to use.
+        @type min_algor:        str
+        @param num_data_sets:   The number of data sets.
+        @type num_data_sets:    int
+        @keyword spin:          The spin data container.
+        @type spin:             SpinContainer instance
+        @keyword sim_index:     The optional MC simulation index.
+        @type sim_index:        int
+        @return:                An insane tuple.  The full tuple is (relax_data, relax_error,
+                                equations, param_types, param_values, r, csa, num_frq, frq, num_ri,
+                                remap_table, noe_r1_table, ri_labels, num_params, xh_unit_vectors,
+                                diff_type, diff_params)
+        @rtype:                 tuple
         """
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Initialise the data structures for the model-free function.
         relax_data = []
