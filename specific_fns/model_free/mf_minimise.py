@@ -909,6 +909,9 @@ class Mf_minimise:
             g_count = 0
             h_count = 0
 
+            # Get the data for minimisation.
+            relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, num_params, xh_unit_vectors, diff_type, diff_params = self.minimise_data_setup()
+
 
             # Initialise the function to minimise.
             ######################################
@@ -1066,7 +1069,7 @@ class Mf_minimise:
                     cdp.warning = warning
 
 
-    def minimise_data_setup():
+    def minimise_data_setup(self):
         """Set up all the data required for minimisation.
 
         @return:        An insane tuple.  The full tuple is (relax_data, relax_error, equations,
