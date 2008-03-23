@@ -910,7 +910,7 @@ class Mf_minimise:
             h_count = 0
 
             # Get the data for minimisation.
-            relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, num_params, xh_unit_vectors, diff_type, diff_params = self.minimise_data_setup(param_set, min_algor, num_data_sets, spin=spin, sim_index=sim_index)
+            relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params = self.minimise_data_setup(param_set, min_algor, num_data_sets, spin=spin, sim_index=sim_index)
 
 
             # Initialise the function to minimise.
@@ -1106,6 +1106,8 @@ class Mf_minimise:
         remap_table = []
         noe_r1_table = []
         ri_labels = []
+        gx = []
+        gh = []
         num_params = []
         xh_unit_vectors = []
         if param_set == 'local_tm':
@@ -1128,6 +1130,8 @@ class Mf_minimise:
             remap_table = [[0]]
             noe_r1_table = [[None]]
             ri_labels = [[min_options[1]]]
+            gx = []
+            gh = []
             if param_set != 'local_tm' and cdp.diff_tensor.type != 'sphere':
                 xh_unit_vectors = [spin.xh_vect]
             else:
