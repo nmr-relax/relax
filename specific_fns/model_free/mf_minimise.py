@@ -491,6 +491,9 @@ class Mf_minimise:
 
         # Minimisation options for diffusion tensor parameters.
         if param_set == 'diff' or param_set == 'all':
+            # Get the diffusion tensor specific configuration.
+            m = self.grid_search_config_diff(min_options, inc, m)
+
             # Spherical diffusion {tm}.
             if cdp.diff.type == 'sphere':
                 min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
@@ -558,6 +561,57 @@ class Mf_minimise:
 
         # Minimisation.
         self.minimise(min_algor='grid', min_options=min_options, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+
+
+    def grid_search_config_diff(min_options, inc, m):
+        """Set up of the grid search for the diffusion tensor.
+
+        This method appends the grid search configuration details to min_options list.  These
+        details are in the form of a list consisting of the number of increments, lower bound, and
+        upper bound for the corresponding residue.
+
+        @param min_options: An array to append the grid search configuration details to.
+        @type min_options:  list
+        @param inc:         The increments for each dimension of the space for the grid search.  The
+                            number of elements in the array must equal to the number of parameters
+                            in the model.
+        @type inc:          array of int
+        @param m:           The parameter index for the complete model.
+        @type m:            int
+        @return:            The index of the last parameter encountered (m).
+        @rtype:             int
+        """
+
+        # Spherical diffusion {tm}.
+        if cdp.diff.type == 'sphere':
+            min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
+            m = m + 1
+
+        # Spheroidal diffusion {tm, Da, theta, phi}.
+        if cdp.diff.type == 'spheroid':
+            min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
+            if cdp.diff.spheroid_type == 'prolate':
+                min_options.append([inc[1], 0.0, 1e7])
+            elif cdp.diff.spheroid_type == 'oblate':
+                min_options.append([inc[1], -1e7, 0.0])
+            else:
+                min_options.append([inc[1], -1e7, 1e7])
+            min_options.append([inc[2], 0.0, pi])
+            min_options.append([inc[3], 0.0, pi])
+            m = m + 4
+
+        # Ellipsoidal diffusion {tm, Da, Dr, alpha, beta, gamma}.
+        elif cdp.diff.type == 'ellipsoid':
+            min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
+            min_options.append([inc[1], 0.0, 1e7])
+            min_options.append([inc[2], 0.0, 1.0])
+            min_options.append([inc[3], 0.0, pi])
+            min_options.append([inc[4], 0.0, pi])
+            min_options.append([inc[5], 0.0, pi])
+            m = m + 6
+
+        # Return the parameter index.
+        return m
 
 
     def grid_search_config_spin(min_options, spin, inc, m):
