@@ -463,7 +463,7 @@ class Mf_minimise:
         self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
-    def grid_search_config(self, num_params, spin=None, spin_id=None):
+    def grid_search_config(self, num_params, spin=None, spin_id=None, lower=None, upper=None, inc=None):
         """Configure the grid search.
 
         @param num_params:      The number of parameters in the model.
@@ -472,6 +472,16 @@ class Mf_minimise:
         @type spin:             SpinContainer instance
         @keyword spin_id:       The spin identification string.
         @type spin_id:          str
+        @keyword lower:         The lower bounds of the grid search which must be equal to the
+                                number of parameters in the model.
+        @type lower:            array of numbers
+        @keyword upper:         The upper bounds of the grid search which must be equal to the
+                                number of parameters in the model.
+        @type upper:            array of numbers
+        @keyword inc:           The increments for each dimension of the space for the grid search.
+                                The number of elements in the array must equal to the number of
+                                parameters in the model.
+        @type inc:              array of int
         """
 
         # Make sure that the length of the parameter array is > 0.
@@ -868,7 +878,7 @@ class Mf_minimise:
 
             # Configure the grid search.
             if match('^[Gg]rid', min_algor):
-                min_options = self.grid_search_config(num_params, spin=spin)
+                min_options = self.grid_search_config(num_params, spin=spin, lower=lower, upper=upper, inc=inc)
 
             # Scaling of values for the set function.
             if match('^[Ss]et', min_algor):
