@@ -460,7 +460,7 @@ class Mf_minimise:
         """
 
         # Minimisation.
-        self.minimise(min_algor='grid', min_options=min_options, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+        self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
     def grid_search_config(self, index=None):
@@ -665,7 +665,7 @@ class Mf_minimise:
         return m
 
 
-    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, scaling=1, verbosity=0, sim_index=None):
+    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, scaling=1, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
         """Model-free minimisation function.
 
         Three categories of parameter sets exist for which the approach to minimisation is
@@ -705,6 +705,19 @@ class Mf_minimise:
         @param sim_index:       The index of the simulation to optimise.  This should be None if
                                 normal optimisation is desired.
         @type sim_index:        None or int
+        @param lower:           The lower bounds of the grid search which must be equal to the
+                                number of parameters in the model.  This optional argument is only
+                                used when doing a grid search.
+        @type lower:            array of numbers
+        @param upper:           The upper bounds of the grid search which must be equal to the
+                                number of parameters in the model.  This optional argument is only
+                                used when doing a grid search.
+        @type upper:            array of numbers
+        @param inc:             The increments for each dimension of the space for the grid search.
+                                The number of elements in the array must equal to the number of
+                                parameters in the model.  This argument is only used when doing a
+                                grid search.
+        @type inc:              array of int
         """
 
         # Alias the current data pipe.
