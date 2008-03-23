@@ -857,7 +857,7 @@ class Mf_minimise:
 
                 # Diagonal scaling.
                 scaling_matrix = self.assemble_scaling_matrix(len(param_vector), param_set=param_set, spin=spin, scaling=scaling)
-                if scaling_matrix:
+                if len(scaling_matrix):
                     param_vector = dot(inv(scaling_matrix), param_vector)
 
             # Configure the grid search.
