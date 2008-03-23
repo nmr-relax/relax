@@ -459,6 +459,14 @@ class Mf_minimise:
         @type sim_index:    int
         """
 
+        # Minimisation.
+        self.minimise(min_algor='grid', min_options=min_options, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+
+
+    def grid_search_config(self, index=None):
+        """Configure the grid search.
+        """
+
         # Create the initial parameter vector.
         param_vector = self.assemble_param_vector()
 
@@ -514,9 +522,6 @@ class Mf_minimise:
 
         # Complete the grid search configuration.
         self.grid_search_config_fin(min_options, lower, upper, scaling_matrix)
-
-        # Minimisation.
-        self.minimise(min_algor='grid', min_options=min_options, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
     def grid_search_config_diff(min_options, inc, m):
@@ -842,9 +847,9 @@ class Mf_minimise:
                 if scaling_matrix:
                     param_vector = dot(inv(scaling_matrix), param_vector)
 
-            # Get the grid search minimisation options.
+            # Configure the grid search.
             if match('^[Gg]rid', min_algor):
-                min_options = self.grid_search_setup(index=index)
+                min_options = self.grid_search_config(index=index)
 
             # Scaling of values for the set function.
             if match('^[Ss]et', min_algor):
