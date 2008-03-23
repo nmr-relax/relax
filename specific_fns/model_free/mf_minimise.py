@@ -872,140 +872,6 @@ class Mf_minimise:
             g_count = 0
             h_count = 0
 
-            # Initialise the data structures for the model-free function.
-            relax_data = []
-            relax_error = []
-            equations = []
-            param_types = []
-            param_values = None
-            r = []
-            csa = []
-            num_frq = []
-            frq = []
-            num_ri = []
-            remap_table = []
-            noe_r1_table = []
-            ri_labels = []
-            num_params = []
-            xh_unit_vectors = []
-            if param_set == 'local_tm':
-                mf_params = []
-            elif param_set == 'diff':
-                param_values = []
-
-            # Set up the data for the back_calc function.
-            if min_algor == 'back_calc':
-                # The data.
-                relax_data = [0.0]
-                relax_error = [0.000001]
-                equations = [spin.equation]
-                param_types = [spin.params]
-                r = [spin.r]
-                csa = [spin.csa]
-                num_frq = [1]
-                frq = [[min_options[3]]]
-                num_ri = [1]
-                remap_table = [[0]]
-                noe_r1_table = [[None]]
-                ri_labels = [[min_options[1]]]
-                if param_set != 'local_tm' and cdp.diff_tensor.type != 'sphere':
-                    xh_unit_vectors = [spin.xh_vect]
-                else:
-                    xh_unit_vectors = [None]
-
-                # Count the number of model-free parameters for the spin index.
-                num_params = [len(spin.params)]
-
-            # Loop over the number of data sets.
-            for j in xrange(num_data_sets):
-                # Set the spin index and get the spin, if not already set.
-                if param_set == 'diff' or param_set == 'all':
-                    spin_index = j
-                    spin = return_spin_from_index(global_index=spin_index)
-
-                # Skip deselected spins.
-                if not spin.select:
-                    continue
-
-                # Skip spins where there is no data or errors.
-                if not hasattr(spin, 'relax_data') or not hasattr(spin, 'relax_error'):
-                    continue
-
-                # Make sure that the errors are strictly positive numbers.
-                for k in xrange(len(spin.relax_error)):
-                    if spin.relax_error[k] == 0.0:
-                        raise RelaxError, "Zero error for spin '" + `spin.num` + " " + spin.name + "', minimisation not possible."
-                    elif spin.relax_error[k] < 0.0:
-                        raise RelaxError, "Negative error for spin '" + `spin.num` + " " + spin.name + "', minimisation not possible."
-
-                # Repackage the data.
-                if sim_index == None:
-                    relax_data.append(spin.relax_data)
-                else:
-                    relax_data.append(spin.relax_sim_data[sim_index])
-                relax_error.append(spin.relax_error)
-                equations.append(spin.equation)
-                param_types.append(spin.params)
-                num_frq.append(spin.num_frq)
-                frq.append(spin.frq)
-                num_ri.append(spin.num_ri)
-                remap_table.append(spin.remap_table)
-                noe_r1_table.append(spin.noe_r1_table)
-                ri_labels.append(spin.ri_labels)
-                if sim_index == None or param_set == 'diff':
-                    r.append(spin.r)
-                    csa.append(spin.csa)
-                else:
-                    r.append(spin.r_sim[sim_index])
-                    csa.append(spin.csa_sim[sim_index])
-
-                # Model-free parameter values.
-                if param_set == 'local_tm':
-                    pass
-
-                # Vectors.
-                if param_set != 'local_tm' and cdp.diff_tensor.type != 'sphere':
-                    xh_unit_vectors.append(spin.xh_vect)
-                else:
-                    xh_unit_vectors.append(None)
-
-                # Count the number of model-free parameters for the spin index.
-                num_params.append(len(spin.params))
-
-                # Repackage the parameter values for minimising just the diffusion tensor parameters.
-                if param_set == 'diff':
-                    param_values.append(self.assemble_param_vector(param_set='mf'))
-
-            # Convert to numpy arrays.
-            for k in xrange(len(relax_data)):
-                relax_data[k] = array(relax_data[k], float64)
-                relax_error[k] = array(relax_error[k], float64)
-
-            # Diffusion tensor type.
-            if param_set == 'local_tm':
-                diff_type = 'sphere'
-            else:
-                diff_type = cdp.diff_tensor.type
-
-            # Package the diffusion tensor parameters.
-            diff_params = None
-            if param_set == 'mf':
-                # Spherical diffusion.
-                if diff_type == 'sphere':
-                    diff_params = [cdp.diff_tensor.tm]
-
-                # Spheroidal diffusion.
-                elif diff_type == 'spheroid':
-                    diff_params = [cdp.diff_tensor.tm, cdp.diff_tensor.Da, cdp.diff_tensor.theta, cdp.diff_tensor.phi]
-
-                # Ellipsoidal diffusion.
-                elif diff_type == 'ellipsoid':
-                    diff_params = [cdp.diff_tensor.tm, cdp.diff_tensor.Da, cdp.diff_tensor.Dr, cdp.diff_tensor.alpha, cdp.diff_tensor.beta, cdp.diff_tensor.gamma]
-            elif min_algor == 'back_calc' and param_set == 'local_tm':
-                # Spherical diffusion.
-                diff_params = [spin.local_tm]
-
-
 
             # Initialise the function to minimise.
             ######################################
@@ -1161,6 +1027,153 @@ class Mf_minimise:
 
                     # Warning.
                     cdp.warning = warning
+
+
+    def minimise_data_setup():
+        """Set up all the data required for minimisation.
+
+        @return:        An insane tuple.  The full tuple is (relax_data, relax_error, equations,
+                        param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table,
+                        noe_r1_table, ri_labels, num_params, xh_unit_vectors, diff_type,
+                        diff_params)
+        @rtype:         tuple
+        """
+
+        # Initialise the data structures for the model-free function.
+        relax_data = []
+        relax_error = []
+        equations = []
+        param_types = []
+        param_values = None
+        r = []
+        csa = []
+        num_frq = []
+        frq = []
+        num_ri = []
+        remap_table = []
+        noe_r1_table = []
+        ri_labels = []
+        num_params = []
+        xh_unit_vectors = []
+        if param_set == 'local_tm':
+            mf_params = []
+        elif param_set == 'diff':
+            param_values = []
+
+        # Set up the data for the back_calc function.
+        if min_algor == 'back_calc':
+            # The data.
+            relax_data = [0.0]
+            relax_error = [0.000001]
+            equations = [spin.equation]
+            param_types = [spin.params]
+            r = [spin.r]
+            csa = [spin.csa]
+            num_frq = [1]
+            frq = [[min_options[3]]]
+            num_ri = [1]
+            remap_table = [[0]]
+            noe_r1_table = [[None]]
+            ri_labels = [[min_options[1]]]
+            if param_set != 'local_tm' and cdp.diff_tensor.type != 'sphere':
+                xh_unit_vectors = [spin.xh_vect]
+            else:
+                xh_unit_vectors = [None]
+
+            # Count the number of model-free parameters for the spin index.
+            num_params = [len(spin.params)]
+
+        # Loop over the number of data sets.
+        for j in xrange(num_data_sets):
+            # Set the spin index and get the spin, if not already set.
+            if param_set == 'diff' or param_set == 'all':
+                spin_index = j
+                spin = return_spin_from_index(global_index=spin_index)
+
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Skip spins where there is no data or errors.
+            if not hasattr(spin, 'relax_data') or not hasattr(spin, 'relax_error'):
+                continue
+
+            # Make sure that the errors are strictly positive numbers.
+            for k in xrange(len(spin.relax_error)):
+                if spin.relax_error[k] == 0.0:
+                    raise RelaxError, "Zero error for spin '" + `spin.num` + " " + spin.name + "', minimisation not possible."
+                elif spin.relax_error[k] < 0.0:
+                    raise RelaxError, "Negative error for spin '" + `spin.num` + " " + spin.name + "', minimisation not possible."
+
+            # Repackage the data.
+            if sim_index == None:
+                relax_data.append(spin.relax_data)
+            else:
+                relax_data.append(spin.relax_sim_data[sim_index])
+            relax_error.append(spin.relax_error)
+            equations.append(spin.equation)
+            param_types.append(spin.params)
+            num_frq.append(spin.num_frq)
+            frq.append(spin.frq)
+            num_ri.append(spin.num_ri)
+            remap_table.append(spin.remap_table)
+            noe_r1_table.append(spin.noe_r1_table)
+            ri_labels.append(spin.ri_labels)
+            if sim_index == None or param_set == 'diff':
+                r.append(spin.r)
+                csa.append(spin.csa)
+            else:
+                r.append(spin.r_sim[sim_index])
+                csa.append(spin.csa_sim[sim_index])
+
+            # Model-free parameter values.
+            if param_set == 'local_tm':
+                pass
+
+            # Vectors.
+            if param_set != 'local_tm' and cdp.diff_tensor.type != 'sphere':
+                xh_unit_vectors.append(spin.xh_vect)
+            else:
+                xh_unit_vectors.append(None)
+
+            # Count the number of model-free parameters for the spin index.
+            num_params.append(len(spin.params))
+
+            # Repackage the parameter values for minimising just the diffusion tensor parameters.
+            if param_set == 'diff':
+                param_values.append(self.assemble_param_vector(param_set='mf'))
+
+        # Convert to numpy arrays.
+        for k in xrange(len(relax_data)):
+            relax_data[k] = array(relax_data[k], float64)
+            relax_error[k] = array(relax_error[k], float64)
+
+        # Diffusion tensor type.
+        if param_set == 'local_tm':
+            diff_type = 'sphere'
+        else:
+            diff_type = cdp.diff_tensor.type
+
+        # Package the diffusion tensor parameters.
+        diff_params = None
+        if param_set == 'mf':
+            # Spherical diffusion.
+            if diff_type == 'sphere':
+                diff_params = [cdp.diff_tensor.tm]
+
+            # Spheroidal diffusion.
+            elif diff_type == 'spheroid':
+                diff_params = [cdp.diff_tensor.tm, cdp.diff_tensor.Da, cdp.diff_tensor.theta, cdp.diff_tensor.phi]
+
+            # Ellipsoidal diffusion.
+            elif diff_type == 'ellipsoid':
+                diff_params = [cdp.diff_tensor.tm, cdp.diff_tensor.Da, cdp.diff_tensor.Dr, cdp.diff_tensor.alpha, cdp.diff_tensor.beta, cdp.diff_tensor.gamma]
+        elif min_algor == 'back_calc' and param_set == 'local_tm':
+            # Spherical diffusion.
+            diff_params = [spin.local_tm]
+
+        # Return all the data.
+        return relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, num_params, xh_unit_vectors, diff_type, diff_params
 
 
     def test_grid_size(min_options):
