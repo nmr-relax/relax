@@ -531,38 +531,8 @@ class Mf_minimise:
                 if index != None and i != index:
                     continue
 
-                # Loop over the model-free parameters.
-                for j in xrange(len(spin.params)):
-                    # Local tm.
-                    if spin.params[j] == 'local_tm':
-                        min_options.append([inc[m], 1.0 * 1e-9, 12.0 * 1e-9])
-
-                    # {S2, S2f, S2s}.
-                    elif match('S2', spin.params[j]):
-                        min_options.append([inc[m], 0.0, 1.0])
-
-                    # {te, tf, ts}.
-                    elif match('t', spin.params[j]):
-                        min_options.append([inc[m], 0.0, 500.0 * 1e-12])
-
-                    # Rex.
-                    elif spin.params[j] == 'Rex':
-                        min_options.append([inc[m], 0.0, 5.0 / (2.0 * pi * spin.frq[0])**2])
-
-                    # Bond length.
-                    elif spin.params[j] == 'r':
-                        min_options.append([inc[m], 1.0 * 1e-10, 1.05 * 1e-10])
-
-                    # CSA.
-                    elif spin.params[j] == 'CSA':
-                        min_options.append([inc[m], -120 * 1e-6, -200 * 1e-6])
-
-                    # Unknown option.
-                    else:
-                        raise RelaxError, "Unknown model-free parameter."
-
-                    # Increment m.
-                    m = m + 1
+                # Get the spin specific configuration.
+                m = self.grid_search_config_spin(min_options, spin, inc, m)
 
         # Set the lower and upper bounds if these are supplied.
         if lower != None:
@@ -588,6 +558,65 @@ class Mf_minimise:
 
         # Minimisation.
         self.minimise(min_algor='grid', min_options=min_options, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+
+
+    def grid_search_config_spin(min_options, spin, inc, m):
+        """Set up of the grid search for a single spin.
+
+        This method appends the grid search configuration details to min_options list.  These
+        details are in the form of a list consisting of the number of increments, lower bound, and
+        upper bound for the corresponding residue.  The ordering of the lists in min_options matches
+        that of the params list in the spin container.
+
+        @param min_options: An array to append the grid search configuration details to.
+        @type min_options:  list
+        @param spin:        A SpinContainer object.
+        @type spin:         class instance
+        @param inc:         The increments for each dimension of the space for the grid search.  The
+                            number of elements in the array must equal to the number of parameters
+                            in the model.
+        @type inc:          array of int
+        @param m:           The parameter index for the complete model.
+        @type m:            int
+        @return:            The index of the last parameter encountered (m).
+        @rtype:             int
+        """
+
+        # Loop over the model-free parameters.
+        for i in xrange(len(spin.params)):
+            # Local tm.
+            if spin.params[i] == 'local_tm':
+                min_options.append([inc[m], 1.0 * 1e-9, 12.0 * 1e-9])
+
+            # {S2, S2f, S2s}.
+            elif match('S2', spin.params[i]):
+                min_options.append([inc[m], 0.0, 1.0])
+
+            # {te, tf, ts}.
+            elif match('t', spin.params[i]):
+                min_options.append([inc[m], 0.0, 500.0 * 1e-12])
+
+            # Rex.
+            elif spin.params[i] == 'Rex':
+                min_options.append([inc[m], 0.0, 5.0 / (2.0 * pi * spin.frq[0])**2])
+
+            # Bond length.
+            elif spin.params[i] == 'r':
+                min_options.append([inc[m], 1.0 * 1e-10, 1.05 * 1e-10])
+
+            # CSA.
+            elif spin.params[i] == 'CSA':
+                min_options.append([inc[m], -120 * 1e-6, -200 * 1e-6])
+
+            # Unknown option.
+            else:
+                raise RelaxError, "Unknown model-free parameter."
+
+            # Increment m.
+            m = m + 1
+
+        # Return the parameter index.
+        return m
 
 
     def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, scaling=1, verbosity=0, sim_index=None):
