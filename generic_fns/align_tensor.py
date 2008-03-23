@@ -31,7 +31,7 @@ import sys
 from angles import wrap_angles
 from data import Data as relax_data_store
 from data.align_tensor import AlignTensorList
-from physical_constants import return_gyromagnetic_ratio
+from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
 import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
