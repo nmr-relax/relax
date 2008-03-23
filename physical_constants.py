@@ -108,3 +108,57 @@ ArO = 15.9994
 
 ArS = 32.065
 """Sulphur atomic mass."""
+
+
+# Function for returning the desired atomic mass.
+def return_atomic_mass(nucleus=None):
+    """Return the atomic mass for the given nucleus type.
+ 
+    @keyword nucleus:   The nucleus type.
+    @type nucleus:      str
+    @raises RelaxError: If the nucleus type is unknown.           
+    @returns:           The desired atomic mass.
+    @rtype:             float
+    """
+
+    # Protons, deuterons.
+    if nucleus == 'H':
+        return ArH
+    if nucleus == '1H':
+        return 1.0
+    if nucleus == '2H':
+        return 2.0
+
+    # Carbons.
+    if nucleus == 'C':
+        return ArC
+    if nucleus == '12C':
+        return 12.0
+    if nucleus == '13C':
+        return 13.0
+
+    # Nitrogens.
+    if nucleus == 'N':
+        return ArN
+    if nucleus == '14N':
+        return 14.0
+    if nucleus == '15N':
+        return 15.0
+
+    # Oxygens.
+    if nucleus == 'O':
+        return ArO
+    if nucleus == '16O':
+        return 16.0
+    if nucleus == '17O':
+        return 17.0
+
+    # Sulphurs.
+    if nucleus == 'S':
+        return ArS
+
+    # Unknown mass.
+    raise RelaxError, "The nucleus type " + `nucleus` + " is unknown."
+
+
+
