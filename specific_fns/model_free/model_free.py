@@ -330,7 +330,7 @@ class Model_free_main:
         @type spin:             SpinContainer instance
         @keyword spin_id:       The spin identification string.
         @type spin_id:          str
-        @return:                An array of the parameter values of the model-free model.
+        @return:                The diagonal and square scaling matrix.
         @rtype:                 numpy diagonal matrix
         """
 
