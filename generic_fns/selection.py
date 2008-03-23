@@ -505,23 +505,23 @@ def generate_spin_id(data=None, mol_name_col=None, res_num_col=0, res_name_col=1
     id = ""
 
     # Molecule data.
-    if mol_name_col != None:
+    if mol_name_col != None and data[mol_name_col]:
         id = id + "#" + data[mol_name_col]
 
     # Residue data.
-    if res_num_col != None:
-        id = id + ":" + data[res_num_col]
-    if  res_num_col != None and res_name_col != None:
+    if res_num_col != None and data[res_num_col] != None:
+        id = id + ":" + str(data[res_num_col])
+    if (res_num_col != None and data[res_num_col] != None) and (res_name_col != None and data[res_name_col]):
         id = id + "&:" + data[res_name_col]
-    elif res_name_col != None:
+    elif res_name_col != None and data[res_name_col]:
         id = id + ":" + data[res_name_col]
 
     # Spin data.
-    if spin_num_col != None:
-        id = id + "@" + data[spin_num_col]
-    if  spin_num_col != None and spin_name_col != None:
+    if spin_num_col != None and data[spin_num_col] != None:
+        id = id + "@" + str(data[spin_num_col])
+    if (spin_num_col != None and data[spin_num_col] != None) and (spin_name_col != None and data[spin_name_col]):
         id = id + "&@" + data[spin_name_col]
-    elif spin_name_col != None:
+    elif spin_name_col != None and data[spin_name_col]:
         id = id + "@" + data[spin_name_col]
 
     # Return the spin id string.
