@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,6 +20,11 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing all of the RelaxWarning objects."""
+
+
+# Python module imports.
 import warnings
 import inspect
 

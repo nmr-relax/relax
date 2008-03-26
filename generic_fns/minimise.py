@@ -242,7 +242,7 @@ def return_conversion_factor(stat_type):
     @param stat_type:   The name of the statistic.  This is unused!
     @type stat_type:    str
     @return:            A conversion factor of 1.0.
-    @type return:       float
+    @rtype:             float
     """
 
     return 1.0
@@ -299,7 +299,7 @@ def return_grace_string(stat_type):
     @param stat_type:   The name of the statistic to return the Grace string for.
     @type stat_type:    str
     @return:            The Grace string.
-    @type return:       str
+    @rtype:             str
     """
 
     # Get the object name.
@@ -335,7 +335,7 @@ def return_units(stat_type):
     @param stat_type:   The name of the statistic.  This is unused!
     @type stat_type:    str
     @return:            Nothing.
-    @type return:       None
+    @rtype:             None
     """
 
     return None

@@ -161,7 +161,7 @@ def diff_data_exists(pipe=None):
     @param pipe:    The data pipe to search for data in.
     @type pipe:     str
     @return:        The answer to the question.
-    @type return:   bool
+    @rtype:         bool
     """
 
     # The data pipe to check.
@@ -353,24 +353,24 @@ def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, para
 def fold_angles(sim_index=None):
     """Wrap the Euler or spherical angles and remove the glide reflection and translational symmetries.
 
-    Wrap the angles such that
+    Wrap the angles such that::
 
         0 <= theta <= pi,
         0 <= phi <= 2pi,
 
-    and
+    and::
 
         0 <= alpha <= 2pi,
         0 <= beta <= pi,
         0 <= gamma <= 2pi.
 
 
-    For the simulated values, the angles are wrapped as
+    For the simulated values, the angles are wrapped as::
 
         theta - pi/2 <= theta_sim <= theta + pi/2
         phi - pi <= phi_sim <= phi + pi
 
-    and
+    and::
 
         alpha - pi <= alpha_sim <= alpha + pi
         beta - pi/2 <= beta_sim <= beta + pi/2
@@ -1503,9 +1503,9 @@ def unit_axes():
     """Function for calculating the unit axes of the diffusion tensor.
 
     Spheroid
-    ~~~~~~~~
+    ========
 
-    The unit Dpar vector is
+    The unit Dpar vector is::
 
                  | sin(theta) * cos(phi) |
         Dpar  =  | sin(theta) * sin(phi) |
@@ -1513,21 +1513,21 @@ def unit_axes():
 
 
     Ellipsoid
-    ~~~~~~~~~
+    =========
 
-    The unit Dx vector is
+    The unit Dx vector is::
 
                | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
         Dx  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |
                |                    cos(alpha) * sin(beta)                      |
 
-    The unit Dy vector is
+    The unit Dy vector is::
 
                | cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
         Dy  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |
                |                   sin(alpha) * sin(beta)                      |
 
-    The unit Dz vector is
+    The unit Dz vector is::
 
                | -sin(beta) * cos(gamma) |
         Dz  =  |  sin(beta) * sin(gamma) |

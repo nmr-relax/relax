@@ -86,15 +86,15 @@ class N_state_opt:
         @param params:  The vector of parameter values.
         @type params:   list of float
         @return:        The chi-squared or SSE value.
-        @type return:   float
+        @rtype:         float
         """
 
         # Reset the back-calculated the reduced tensor structure.
         self.red_bc = self.red_bc * 0.0
 
-        # Update the rotation matricies.
+        # Loop over the N states.
         for c in xrange(self.N):
-            # The matrix itself.
+            # The rotation matrix.
             R_euler_zyz(self.R[c], params[self.N-1+3*c], params[self.N-1+3*c+1], params[self.N-1+3*c+2])
 
             # Its transpose.

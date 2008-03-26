@@ -150,20 +150,26 @@ class Model_free_main:
                 param_names = param_names + spin.params
 
 
-    def assemble_param_vector(self, model_type, spin_id=None, sim_index=None):
+    def assemble_param_vector(self, spin=None, spin_id=None, sim_index=None):
         """Assemble the model-free parameter vector (as numpy array).
 
-        @param model_type:  The model-free model type.  This must be one of 'mf', 'local_tm',
-                            'diff', or 'all'.
-        @type model_type:   str
-        @param spin_id:     The spin identification string.
+        If the spin argument is supplied, then the spin_id argument will be ignored.
+
+        @keyword spin:      The spin data container.
+        @type spin:         SpinContainer instance
+        @keyword spin_id:   The spin identification string.
         @type spin_id:      str
+        @keyword sim_index: The optional MC simulation index.
+        @type sim_index:    int
         @return:            An array of the parameter values of the model-free model.
         @rtype:             numpy array
         """
 
         # Initialise.
         param_vector = []
+
+        # Determine the model type.
+        model_type = self.determine_param_set_type()
 
         # Alias the current data pipe.
         cdp = relax_data_store[relax_data_store.current_pipe]
@@ -216,8 +222,14 @@ class Model_free_main:
 
         # Model-free parameters (residue specific parameters).
         if model_type != 'diff':
+            # The loop.
+            if spin:
+                loop = [spin]
+            else:
+                loop = spin_loop(spin_id)
+
             # Loop over the spins.
-            for spin in spin_loop(spin_id):
+            for spin in loop:
                 # Skip unselected residues.
                 if not spin.select:
                     continue
@@ -307,89 +319,108 @@ class Model_free_main:
         return array(param_vector, float64)
 
 
-    def assemble_scaling_matrix(self, index=None, scaling=1):
-        """Function for creating the scaling matrix."""
+    def assemble_scaling_matrix(self, num_params, param_set=None, spin=None, spin_id=None, scaling=True):
+        """Create and return the scaling matrix.
+
+        If the spin argument is supplied, then the spin_id argument will be ignored.
+
+        @param num_params:      The number of parameters in the model.
+        @type num_params:       int
+        @keyword param_set:     The parameter set, one of 'all', 'diff', 'mf', or 'local_tm'.
+        @type param_set:        str
+        @keyword spin:          The spin data container.
+        @type spin:             SpinContainer instance
+        @keyword spin_id:       The spin identification string.
+        @type spin_id:          str
+        @return:                The diagonal and square scaling matrix.
+        @rtype:                 numpy diagonal matrix
+        """
 
         # Initialise.
-        if len(self.param_vector) == 0:
-            self.scaling_matrix = zeros((0, 0), float64)
+        if num_params == 0:
+            scaling_matrix = zeros((0, 0), float64)
         else:
-            self.scaling_matrix = identity(len(self.param_vector), float64)
+            scaling_matrix = identity(num_params, float64)
         i = 0
 
-        # No diagonal scaling.
+        # No diagonal scaling, so return the identity matrix.
         if not scaling:
-            return
+            return scaling_matrix
 
         # tm, te, tf, and ts (must all be the same for diagonal scaling!).
         ti_scaling = 1e-12
 
         # Diffusion tensor parameters.
-        if self.param_set == 'diff' or self.param_set == 'all':
+        if param_set == 'diff' or param_set == 'all':
             # Spherical diffusion.
-            if relax_data_store.diff[self.run].type == 'sphere':
+            if cdp.diff_tensor.type == 'sphere':
                 # tm.
-                self.scaling_matrix[i, i] = ti_scaling
+                scaling_matrix[i, i] = ti_scaling
 
                 # Increment i.
                 i = i + 1
 
             # Spheroidal diffusion.
-            elif relax_data_store.diff[self.run].type == 'spheroid':
+            elif cdp.diff_tensor.type == 'spheroid':
                 # tm, Da, theta, phi
-                self.scaling_matrix[i, i] = ti_scaling
-                self.scaling_matrix[i+1, i+1] = 1e7
-                self.scaling_matrix[i+2, i+2] = 1.0
-                self.scaling_matrix[i+3, i+3] = 1.0
+                scaling_matrix[i, i] = ti_scaling
+                scaling_matrix[i+1, i+1] = 1e7
+                scaling_matrix[i+2, i+2] = 1.0
+                scaling_matrix[i+3, i+3] = 1.0
 
                 # Increment i.
                 i = i + 4
 
             # Ellipsoidal diffusion.
-            elif relax_data_store.diff[self.run].type == 'ellipsoid':
+            elif cdp.diff_tensor.type == 'ellipsoid':
                 # tm, Da, Dr, alpha, beta, gamma.
-                self.scaling_matrix[i, i] = ti_scaling
-                self.scaling_matrix[i+1, i+1] = 1e7
-                self.scaling_matrix[i+2, i+2] = 1.0
-                self.scaling_matrix[i+3, i+3] = 1.0
-                self.scaling_matrix[i+4, i+4] = 1.0
-                self.scaling_matrix[i+5, i+5] = 1.0
+                scaling_matrix[i, i] = ti_scaling
+                scaling_matrix[i+1, i+1] = 1e7
+                scaling_matrix[i+2, i+2] = 1.0
+                scaling_matrix[i+3, i+3] = 1.0
+                scaling_matrix[i+4, i+4] = 1.0
+                scaling_matrix[i+5, i+5] = 1.0
 
                 # Increment i.
                 i = i + 6
 
         # Model-free parameters.
-        if self.param_set != 'diff':
-            # Loop over all residues.
-            for j in xrange(len(relax_data_store.res[self.run])):
-                # Skip unselected residues.
-                if not relax_data_store.res[self.run][j].select:
-                    continue
+        if param_set != 'diff':
+            # The loop.
+            if spin:
+                loop = [spin]
+            else:
+                loop = spin_loop(spin_id)
 
-                # Only add parameters for a single residue if index has a value.
-                if index != None and j != index:
+            # Loop over the spins.
+            for spin in loop:
+                # Skip unselected spins.
+                if not spin.select:
                     continue
 
                 # Loop over the model-free parameters.
-                for k in xrange(len(relax_data_store.res[self.run][j].params)):
+                for k in xrange(len(spin.params)):
                     # Local tm, te, tf, and ts (must all be the same for diagonal scaling!).
-                    if relax_data_store.res[self.run][j].params[k] == 'local_tm' or search('^t', relax_data_store.res[self.run][j].params[k]):
-                        self.scaling_matrix[i, i] = ti_scaling
+                    if spin.params[k] == 'local_tm' or search('^t', spin.params[k]):
+                        scaling_matrix[i, i] = ti_scaling
 
                     # Rex.
-                    elif relax_data_store.res[self.run][j].params[k] == 'Rex':
-                        self.scaling_matrix[i, i] = 1.0 / (2.0 * pi * relax_data_store.res[self.run][j].frq[0]) ** 2
+                    elif spin.params[k] == 'Rex':
+                        scaling_matrix[i, i] = 1.0 / (2.0 * pi * spin.frq[0]) ** 2
 
                     # Bond length.
-                    elif relax_data_store.res[self.run][j].params[k] == 'r':
-                        self.scaling_matrix[i, i] = 1e-10
+                    elif spin.params[k] == 'r':
+                        scaling_matrix[i, i] = 1e-10
 
                     # CSA.
-                    elif relax_data_store.res[self.run][j].params[k] == 'CSA':
-                        self.scaling_matrix[i, i] = 1e-4
+                    elif spin.params[k] == 'CSA':
+                        scaling_matrix[i, i] = 1e-4
 
                     # Increment i.
                     i = i + 1
+
+        # Return the scaling matrix.
+        return scaling_matrix
 
 
     def create_mc_data(self, run, i):
@@ -719,7 +750,9 @@ class Model_free_main:
         |                                       |                    |                        |
         | CSA                                   | 'csa'              | -172 * 1e-6            |
         |                                       |                    |                        |
-        | Heteronucleus type                    | 'nucleus'          | 'N'                    |
+        | Heteronucleus type                    | 'heteronuc_type'   | '15N'                  |
+        |                                       |                    |                        |
+        | Proton type                           | 'proton_type'      | '1H'                   |
         |_______________________________________|____________________|________________________|
 
         """
@@ -758,8 +791,12 @@ class Model_free_main:
             return N15_CSA
 
         # Heteronucleus type.
-        elif param == 'nucleus':
-            return 'N'
+        elif param == 'heteronuc_type':
+            return '15N'
+
+        # Proton type.
+        elif param == 'proton_type':
+            return '1H'
 
 
     def delete(self, run):
@@ -802,50 +839,54 @@ class Model_free_main:
         self.relax.generic.runs.eliminate_unused_runs()
 
 
-    def determine_param_set_type(self, run=None):
-        """Determine the type of parameter set."""
+    def determine_param_set_type(self):
+        """Determine the type of parameter set.
 
-        # Run name.
-        if run:
-            self.run = run
+        @return:    The name of the parameter set, which is one of 'all', 'diff', 'mf', or
+                    'local_tm'.
+        @rtype:     str
+        """
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Test if sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # If there is a local tm, fail if not all residues have a local tm parameter.
         local_tm = 0
-        for i in xrange(len(relax_data_store.res[self.run])):
+        for spin in spin_loop():
             # Skip unselected residues.
             # This code causes a bug after model elimination if the model has been eliminated (select = 0).
-            #if not relax_data_store.res[self.run][i].select:
+            #if not spin.select:
             #    continue
 
             # No params.
-            if not hasattr(relax_data_store.res[self.run][i], 'params') or not relax_data_store.res[self.run][i].params:
+            if not hasattr(spin, 'params') or not spin.params:
                 continue
 
             # Local tm.
-            if local_tm == 0 and 'local_tm' in relax_data_store.res[self.run][i].params:
+            if local_tm == 0 and 'local_tm' in spin.params:
                 local_tm = 1
 
             # Inconsistencies.
-            elif local_tm == 1 and not 'local_tm' in relax_data_store.res[self.run][i].params:
+            elif local_tm == 1 and not 'local_tm' in spin.params:
                 raise RelaxError, "All residues must either have a local tm parameter or not."
 
         # Check if any model-free parameters are allowed to vary.
         mf_all_fixed = 1
-        for i in xrange(len(relax_data_store.res[self.run])):
+        for spin in spin_loop():
             # Skip unselected residues.
             # This code causes a bug after model elimination if the model has been eliminated (select = 0).
-            #if not relax_data_store.res[self.run][i].select:
+            #if not spin.select:
             #    continue
 
             # Test the fixed flag.
-            if not hasattr(relax_data_store.res[self.run][i], 'fixed'):
+            if not hasattr(spin, 'fixed'):
                 mf_all_fixed = 0
                 break
-            if not relax_data_store.res[self.run][i].fixed:
+            if not spin.fixed:
                 mf_all_fixed = 0
                 break
 
@@ -854,19 +895,19 @@ class Model_free_main:
             return 'local_tm'
 
         # Test if the diffusion tensor data is loaded.
-        if not relax_data_store.diff.has_key(self.run):
-            raise RelaxNoTensorError, self.run
+        if not diffusion_tensor.diff_data_exists():
+            raise RelaxNoTensorError, 'diffusion'
 
         # 'diff' parameter set.
         if mf_all_fixed:
-            # All parameters fixed.
-            if relax_data_store.diff[self.run].fixed:
+            # All parameters fixed!
+            if cdp.diff_tensor.fixed:
                 raise RelaxError, "All parameters are fixed."
 
             return 'diff'
 
         # 'mf' parameter set.
-        if relax_data_store.diff[self.run].fixed:
+        if cdp.diff_tensor.fixed:
             return 'mf'
 
         # 'all' parameter set.
@@ -1097,25 +1138,25 @@ class Model_free_main:
             return True
 
 
-    def linear_constraints(self, index=None):
-        """Function for setting up the model-free linear constraint matrices A and b.
+    def linear_constraints(self, num_params, param_set=None, spin=None, spin_id=None, scaling_matrix=None):
+        """Set up the model-free linear constraint matrices A and b.
 
         Standard notation
-        ~~~~~~~~~~~~~~~~~
+        =================
 
-        The order parameter constraints are:
+        The order parameter constraints are::
 
             0 <= S2 <= 1
             0 <= S2f <= 1
             0 <= S2s <= 1
 
         By substituting the formula S2 = S2f.S2s into the above inequalities, the additional two
-        inequalities can be derived:
+        inequalities can be derived::
 
             S2 <= S2f
             S2 <= S2s
 
-        Correlation time constraints are:
+        Correlation time constraints are::
 
             te >= 0
             tf >= 0
@@ -1125,7 +1166,7 @@ class Model_free_main:
 
             te, tf, ts <= 2 * tm
 
-        Additional constraints used include:
+        Additional constraints used include::
 
             Rex >= 0
             0.9e-10 <= r <= 2e-10
@@ -1133,8 +1174,9 @@ class Model_free_main:
 
 
         Rearranged notation
-        ~~~~~~~~~~~~~~~~~~~
-        The above ineqality constraints can be rearranged into:
+        ===================
+
+        The above inequality constraints can be rearranged into::
 
             S2 >= 0
             -S2 >= -1
@@ -1156,10 +1198,10 @@ class Model_free_main:
 
 
         Matrix notation
-        ~~~~~~~~~~~~~~~
+        ===============
 
         In the notation A.x >= b, where A is an matrix of coefficients, x is an array of parameter
-        values, and b is a vector of scalars, these inequality constraints are:
+        values, and b is a vector of scalars, these inequality constraints are::
 
             | 1  0  0  0  0  0  0  0  0 |                  |    0    |
             |                           |                  |         |
@@ -1195,7 +1237,22 @@ class Model_free_main:
             |                           |                  |         |
             | 0  0  0  0  0  0  0  0 -1 |                  |    0    |
 
+
+        @param num_params:          The number of parameters in the model.
+        @type num_params:           int
+        @keyword param_set:         The parameter set, one of 'all', 'diff', 'mf', or 'local_tm'.
+        @type param_set:            str
+        @keyword spin:              The spin data container.  If this argument is supplied, then the
+                                    spin_id argument will be ignored.
+        @type spin:                 SpinContainer instance
+        @keyword spin_id:           The spin identification string.
+        @type spin_id:              str
+        @keyword scaling_matrix:    The diagonal, square scaling matrix.
+        @type scaling_matrix:       numpy diagonal matrix
         """
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Upper limit flag for correlation times.
         upper_time_limit = 1
@@ -1203,42 +1260,41 @@ class Model_free_main:
         # Initialisation (0..j..m).
         A = []
         b = []
-        n = len(self.param_vector)
-        zero_array = zeros(n, float64)
+        zero_array = zeros(num_params, float64)
         i = 0
         j = 0
 
         # Diffusion tensor parameters.
-        if self.param_set != 'mf' and relax_data_store.diff.has_key(self.run):
+        if param_set != 'mf' and diffusion_tensor.diff_data_exists():
             # Spherical diffusion.
-            if relax_data_store.diff[self.run].type == 'sphere':
+            if cdp.diff_tensor.type == 'sphere':
                 # 0 <= tm <= 200 ns.
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 A[j+1][i] = -1.0
-                b.append(0.0 / self.scaling_matrix[i, i])
-                b.append(-200.0 * 1e-9 / self.scaling_matrix[i, i])
+                b.append(0.0 / scaling_matrix[i, i])
+                b.append(-200.0 * 1e-9 / scaling_matrix[i, i])
                 i = i + 1
                 j = j + 2
 
             # Spheroidal diffusion.
-            elif relax_data_store.diff[self.run].type == 'spheroid':
+            elif cdp.diff_tensor.type == 'spheroid':
                 # 0 <= tm <= 200 ns.
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 A[j+1][i] = -1.0
-                b.append(0.0 / self.scaling_matrix[i, i])
-                b.append(-200.0 * 1e-9 / self.scaling_matrix[i, i])
+                b.append(0.0 / scaling_matrix[i, i])
+                b.append(-200.0 * 1e-9 / scaling_matrix[i, i])
                 i = i + 1
                 j = j + 2
 
                 # Prolate diffusion, Da >= 0.
-                if relax_data_store.diff[self.run].spheroid_type == 'prolate':
+                if cdp.diff_tensor.spheroid_type == 'prolate':
                     A.append(zero_array * 0.0)
                     A[j][i] = 1.0
-                    b.append(0.0 / self.scaling_matrix[i, i])
+                    b.append(0.0 / scaling_matrix[i, i])
                     i = i + 1
                     j = j + 1
 
@@ -1246,10 +1302,10 @@ class Model_free_main:
                     i = i + 2
 
                 # Oblate diffusion, Da <= 0.
-                elif relax_data_store.diff[self.run].spheroid_type == 'oblate':
+                elif cdp.diff_tensor.spheroid_type == 'oblate':
                     A.append(zero_array * 0.0)
                     A[j][i] = -1.0
-                    b.append(0.0 / self.scaling_matrix[i, i])
+                    b.append(0.0 / scaling_matrix[i, i])
                     i = i + 1
                     j = j + 1
 
@@ -1261,21 +1317,21 @@ class Model_free_main:
                     i = i + 3
 
             # Ellipsoidal diffusion.
-            elif relax_data_store.diff[self.run].type == 'ellipsoid':
+            elif cdp.diff_tensor.type == 'ellipsoid':
                 # 0 <= tm <= 200 ns.
                 A.append(zero_array * 0.0)
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 A[j+1][i] = -1.0
-                b.append(0.0 / self.scaling_matrix[i, i])
-                b.append(-200.0 * 1e-9 / self.scaling_matrix[i, i])
+                b.append(0.0 / scaling_matrix[i, i])
+                b.append(-200.0 * 1e-9 / scaling_matrix[i, i])
                 i = i + 1
                 j = j + 2
 
                 # Da >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
-                b.append(0.0 / self.scaling_matrix[i, i])
+                b.append(0.0 / scaling_matrix[i, i])
                 i = i + 1
                 j = j + 1
 
@@ -1284,8 +1340,8 @@ class Model_free_main:
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
                 A[j+1][i] = -1.0
-                b.append(0.0 / self.scaling_matrix[i, i])
-                b.append(-1.0 / self.scaling_matrix[i, i])
+                b.append(0.0 / scaling_matrix[i, i])
+                b.append(-1.0 / scaling_matrix[i, i])
                 i = i + 1
                 j = j + 2
 
@@ -1293,55 +1349,57 @@ class Model_free_main:
                 i = i + 3
 
         # Model-free parameters.
-        if self.param_set != 'diff':
-            # Loop over all residues.
-            for k in xrange(len(relax_data_store.res[self.run])):
-                # Skip unselected residues.
-                if not relax_data_store.res[self.run][k].select:
-                    continue
+        if param_set != 'diff':
+            # The loop.
+            if spin:
+                loop = [spin]
+            else:
+                loop = spin_loop(spin_id)
 
-                # Only add parameters for a single residue if index has a value.
-                if index != None and k != index:
+            # Loop over the spins.
+            for spin in loop:
+                # Skip unselected spins.
+                if not spin.select:
                     continue
 
                 # Save current value of i.
                 old_i = i
 
                 # Loop over the model-free parameters.
-                for l in xrange(len(relax_data_store.res[self.run][k].params)):
+                for l in xrange(len(spin.params)):
                     # Local tm.
-                    if relax_data_store.res[self.run][k].params[l] == 'local_tm':
+                    if spin.params[l] == 'local_tm':
                         if upper_time_limit:
                             # 0 <= tm <= 200 ns.
                             A.append(zero_array * 0.0)
                             A.append(zero_array * 0.0)
                             A[j][i] = 1.0
                             A[j+1][i] = -1.0
-                            b.append(0.0 / self.scaling_matrix[i, i])
-                            b.append(-200.0 * 1e-9 / self.scaling_matrix[i, i])
+                            b.append(0.0 / scaling_matrix[i, i])
+                            b.append(-200.0 * 1e-9 / scaling_matrix[i, i])
                             j = j + 2
                         else:
                             # 0 <= tm.
                             A.append(zero_array * 0.0)
                             A[j][i] = 1.0
-                            b.append(0.0 / self.scaling_matrix[i, i])
+                            b.append(0.0 / scaling_matrix[i, i])
                             j = j + 1
 
                     # Order parameters {S2, S2f, S2s}.
-                    elif match('S2', relax_data_store.res[self.run][k].params[l]):
+                    elif match('S2', spin.params[l]):
                         # 0 <= S2 <= 1.
                         A.append(zero_array * 0.0)
                         A.append(zero_array * 0.0)
                         A[j][i] = 1.0
                         A[j+1][i] = -1.0
-                        b.append(0.0 / self.scaling_matrix[i, i])
-                        b.append(-1.0 / self.scaling_matrix[i, i])
+                        b.append(0.0 / scaling_matrix[i, i])
+                        b.append(-1.0 / scaling_matrix[i, i])
                         j = j + 2
 
                         # S2 <= S2f and S2 <= S2s.
-                        if relax_data_store.res[self.run][k].params[l] == 'S2':
-                            for m in xrange(len(relax_data_store.res[self.run][k].params)):
-                                if relax_data_store.res[self.run][k].params[m] == 'S2f' or relax_data_store.res[self.run][k].params[m] == 'S2s':
+                        if spin.params[l] == 'S2':
+                            for m in xrange(len(spin.params)):
+                                if spin.params[m] == 'S2f' or spin.params[m] == 'S2s':
                                     A.append(zero_array * 0.0)
                                     A[j][i] = -1.0
                                     A[j][old_i+m] = 1.0
@@ -1349,17 +1407,17 @@ class Model_free_main:
                                     j = j + 1
 
                     # Correlation times {te, tf, ts}.
-                    elif match('t[efs]', relax_data_store.res[self.run][k].params[l]):
+                    elif match('t[efs]', spin.params[l]):
                         # te, tf, ts >= 0.
                         A.append(zero_array * 0.0)
                         A[j][i] = 1.0
-                        b.append(0.0 / self.scaling_matrix[i, i])
+                        b.append(0.0 / scaling_matrix[i, i])
                         j = j + 1
 
                         # tf <= ts.
-                        if relax_data_store.res[self.run][k].params[l] == 'ts':
-                            for m in xrange(len(relax_data_store.res[self.run][k].params)):
-                                if relax_data_store.res[self.run][k].params[m] == 'tf':
+                        if spin.params[l] == 'ts':
+                            for m in xrange(len(spin.params)):
+                                if spin.params[m] == 'tf':
                                     A.append(zero_array * 0.0)
                                     A[j][i] = 1.0
                                     A[j][old_i+m] = -1.0
@@ -1368,11 +1426,11 @@ class Model_free_main:
 
                         # te, tf, ts <= 2 * tm.  (tf not needed because tf <= ts).
                         if upper_time_limit:
-                            if not relax_data_store.res[self.run][k].params[l] == 'tf':
-                                if self.param_set == 'mf':
+                            if not spin.params[l] == 'tf':
+                                if param_set == 'mf':
                                     A.append(zero_array * 0.0)
                                     A[j][i] = -1.0
-                                    b.append(-2.0 * relax_data_store.diff[self.run].tm / self.scaling_matrix[i, i])
+                                    b.append(-2.0 * cdp.diff_tensor.tm / scaling_matrix[i, i])
                                 else:
                                     A.append(zero_array * 0.0)
                                     A[j][0] = 2.0
@@ -1382,38 +1440,38 @@ class Model_free_main:
                                 j = j + 1
 
                     # Rex.
-                    elif relax_data_store.res[self.run][k].params[l] == 'Rex':
+                    elif spin.params[l] == 'Rex':
                         A.append(zero_array * 0.0)
                         A[j][i] = 1.0
-                        b.append(0.0 / self.scaling_matrix[i, i])
+                        b.append(0.0 / scaling_matrix[i, i])
                         j = j + 1
 
                     # Bond length.
-                    elif relax_data_store.res[self.run][k].params[l] == 'r':
+                    elif spin.params[l] == 'r':
                         # 0.9e-10 <= r <= 2e-10.
                         A.append(zero_array * 0.0)
                         A.append(zero_array * 0.0)
                         A[j][i] = 1.0
                         A[j+1][i] = -1.0
-                        b.append(0.9e-10 / self.scaling_matrix[i, i])
-                        b.append(-2e-10 / self.scaling_matrix[i, i])
+                        b.append(0.9e-10 / scaling_matrix[i, i])
+                        b.append(-2e-10 / scaling_matrix[i, i])
                         j = j + 2
 
                     # CSA.
-                    elif relax_data_store.res[self.run][k].params[l] == 'CSA':
+                    elif spin.params[l] == 'CSA':
                         # -300e-6 <= CSA <= 0.
                         A.append(zero_array * 0.0)
                         A.append(zero_array * 0.0)
                         A[j][i] = 1.0
                         A[j+1][i] = -1.0
-                        b.append(-300e-6 / self.scaling_matrix[i, i])
-                        b.append(0.0 / self.scaling_matrix[i, i])
+                        b.append(-300e-6 / scaling_matrix[i, i])
+                        b.append(0.0 / scaling_matrix[i, i])
                         j = j + 2
 
                     # Increment i.
                     i = i + 1
 
-        # Convert to Numeric data structures.
+        # Convert to numpy data structures.
         A = array(A, float64)
         b = array(b, float64)
 
@@ -1597,27 +1655,27 @@ class Model_free_main:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Is structural data required?
-        need_vect = 0
+        need_vect = False
         if hasattr(cdp, 'diff') and (cdp.diff.type == 'spheroid' or cdp.diff.type == 'ellipsoid'):
-            need_vect = 1
+            need_vect = True
 
         # Loop over the sequence.
         for spin in spin_loop():
             # Relaxation data must exist!
             if not hasattr(spin, 'relax_data'):
-                spin.select = 0
+                spin.select = False
 
             # Require 3 or more relaxation data points.
             elif len(spin.relax_data) < 3:
-                spin.select = 0
+                spin.select = False
 
             # Require at least as many data points as params to prevent over-fitting.
             elif hasattr(spin, 'params') and len(spin.params) > len(spin.relax_data):
-                spin.select = 0
+                spin.select = False
 
             # Test for structural data if required.
-            elif not hasattr(spin, 'xh_vect'):
-                spin.select = 0
+            elif need_vect and not hasattr(spin, 'xh_vect'):
+                spin.select = False
 
 
     def read_columnar_col_numbers(self, header):
@@ -2561,32 +2619,34 @@ class Model_free_main:
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         ____________________________________________________________________________________________
-        |                        |              |                                                  |
-        | Data type              | Object name  | Patterns                                         |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | Local tm               | 'local_tm'   | '[Ll]ocal[ -_]tm'                                |
-        |                        |              |                                                  |
-        | Order parameter S2     | 's2'         | '^[Ss]2$'                                        |
-        |                        |              |                                                  |
-        | Order parameter S2f    | 's2f'        | '^[Ss]2f$'                                       |
-        |                        |              |                                                  |
-        | Order parameter S2s    | 's2s'        | '^[Ss]2s$'                                       |
-        |                        |              |                                                  |
-        | Correlation time te    | 'te'         | '^te$'                                           |
-        |                        |              |                                                  |
-        | Correlation time tf    | 'tf'         | '^tf$'                                           |
-        |                        |              |                                                  |
-        | Correlation time ts    | 'ts'         | '^ts$'                                           |
-        |                        |              |                                                  |
-        | Chemical exchange      | 'rex'        | '^[Rr]ex$' or '[Cc]emical[ -_][Ee]xchange'       |
-        |                        |              |                                                  |
-        | Bond length            | 'r'          | '^r$' or '[Bb]ond[ -_][Ll]ength'                 |
-        |                        |              |                                                  |
-        | CSA                    | 'csa'        | '^[Cc][Ss][Aa]$'                                 |
-        |                        |              |                                                  |
-        | Heteronucleus type     | 'nucleus'    | '^[Nn]ucleus$'                                   |
-        |________________________|______________|__________________________________________________|
+        |                        |                  |                                              |
+        | Data type              | Object name      | Patterns                                     |
+        |________________________|__________________|______________________________________________|
+        |                        |                  |                                              |
+        | Local tm               | 'local_tm'       | '[Ll]ocal[ -_]tm'                            |
+        |                        |                  |                                              |
+        | Order parameter S2     | 's2'             | '^[Ss]2$'                                    |
+        |                        |                  |                                              |
+        | Order parameter S2f    | 's2f'            | '^[Ss]2f$'                                   |
+        |                        |                  |                                              |
+        | Order parameter S2s    | 's2s'            | '^[Ss]2s$'                                   |
+        |                        |                  |                                              |
+        | Correlation time te    | 'te'             | '^te$'                                       |
+        |                        |                  |                                              |
+        | Correlation time tf    | 'tf'             | '^tf$'                                       |
+        |                        |                  |                                              |
+        | Correlation time ts    | 'ts'             | '^ts$'                                       |
+        |                        |                  |                                              |
+        | Chemical exchange      | 'rex'            | '^[Rr]ex$' or '[Cc]emical[ -_][Ee]xchange'   |
+        |                        |                  |                                              |
+        | Bond length            | 'r'              | '^r$' or '[Bb]ond[ -_][Ll]ength'             |
+        |                        |                  |                                              |
+        | CSA                    | 'csa'            | '^[Cc][Ss][Aa]$'                             |
+        |                        |                  |                                              |
+        | Heteronucleus type     | 'heteronuc_type' | '^[Hh]eteronucleus$'                         |
+        |                        |                  |                                              |
+        | Proton type            | 'proton_type'    | '^[Pp]roton$'                                |
+        |________________________|__________________|______________________________________________|
 
         """
         __docformat__ = "plaintext"
@@ -2632,8 +2692,12 @@ class Model_free_main:
             return 'csa'
 
         # Heteronucleus type.
-        if search('^[Nn]ucleus$', name):
-            return 'nucleus'
+        if search('^[Hh]eteronucleus$', name):
+            return 'heteronuc_type'
+
+        # Proton type.
+        if search('^[Pp]roton$', name):
+            return 'proton_type'
 
 
     def return_grace_string(self, param):

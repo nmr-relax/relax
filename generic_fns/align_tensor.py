@@ -31,7 +31,7 @@ import sys
 from angles import wrap_angles
 from data import Data as relax_data_store
 from data.align_tensor import AlignTensorList
-from physical_constants import g13C, g1H, g15N, g17O, g31P, h_bar, mu0
+from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
 import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
@@ -44,7 +44,7 @@ def align_data_exists(tensor, pipe=None):
     @param pipe:    The data pipe to search for data in.
     @type pipe:     str
     @return:        The answer to the question.
-    @type return:   bool
+    @rtype:         bool
     """
 
     # The data pipe to check.
@@ -256,14 +256,13 @@ def display(tensor):
 def fold_angles(sim_index=None):
     """Wrap the Euler angles and remove the glide reflection and translational symmetries.
 
-    Wrap the angles such that
+    Wrap the angles such that::
 
         0 <= alpha <= 2pi,
         0 <= beta <= pi,
         0 <= gamma <= 2pi.
 
-
-    For the simulated values, the angles are wrapped as
+    For the simulated values, the angles are wrapped as::
 
         alpha - pi <= alpha_sim <= alpha + pi
         beta - pi/2 <= beta_sim <= beta + pi/2
@@ -595,10 +594,10 @@ def map_bounds(param):
         return [0, 2*pi]
 
 
-def kappa(nuc1='N', nuc2='H'):
+def kappa(nuc1='15N', nuc2='1H'):
     """Function for calculating the kappa constant.
 
-    The kappa constant is
+    The kappa constant is::
 
         kappa = -3/(8pi^2).gI.gS.mu0.h_bar,
 
@@ -610,32 +609,12 @@ def kappa(nuc1='N', nuc2='H'):
     @param nuc2:    The first nucleus type.
     @type nuc2:     str
     @return:        The kappa constant value.
-    @return type:   float
+    @rtype:         float
     """
 
-    # Gyromagnetic ratio of the first nucleus.
-    if nuc1 == 'C':
-        gI = g13C
-    elif nuc1 == 'H':
-        gI = g1H
-    elif nuc1 == 'N':
-        gI = g15N
-    elif nuc1 == 'O':
-        gI = g17O
-    elif nuc1 == 'P':
-        gI = g31P
-
-    # Gyromagnetic ratio of the second nucleus.
-    if nuc2 == 'C':
-        gS = g13C
-    elif nuc2 == 'H':
-        gS = g1H
-    elif nuc2 == 'N':
-        gS = g15N
-    elif nuc2 == 'O':
-        gS = g17O
-    elif nuc2 == 'P':
-        gS = g31P
+    # Gyromagnetic ratios.
+    gI = return_gyromagnetic_ratio(nuc1)
+    gS = return_gyromagnetic_ratio(nuc2)
 
     # Kappa.
     return -3.0/(8.0*pi**2) * gI * gS * mu0 * h_bar
@@ -649,7 +628,7 @@ def map_labels(index, params, bounds, swap, inc):
     @param params:  The list of parameter names.
     @type params:   list of str
     @param bounds:  The bounds of the map.
-    @type params:   list of lists (of a float and bin)
+    @type bounds:   list of lists (of a float and bin)
     @param swap:    An array for switching axes around.
     @type swap:     list of int
     @param inc:     The number of increments of one dimension in the map.
@@ -810,7 +789,7 @@ def return_conversion_factor(param):
     @param param:   The parameter name.
     @type param:    str
     @return:        The conversion factor.
-    @type return:   float
+    @rtype:         float
     """
 
     # Get the object name.
@@ -999,7 +978,7 @@ def return_units(param):
     @param param:   The parameter name.
     @type param:    str
     @return:        The string representation of the units.
-    @type return:   str
+    @rtype:         str
     """
 
     # Get the object name.
@@ -1329,7 +1308,7 @@ def set(tensor=None, value=None, param=None):
 def svd(basis_set=0, tensors=None):
     """Function for calculating the singular values of all the loaded tensors.
 
-    The matrix on which SVD will be performed is:
+    The matrix on which SVD will be performed is::
 
         | Sxx1 Syy1 Sxy1 Sxz1 Syz1 |
         | Sxx2 Syy2 Sxy2 Sxz2 Syz2 |
@@ -1341,7 +1320,7 @@ def svd(basis_set=0, tensors=None):
 
     This is the default unitary basis set (selected when basis_set is 0).  Alternatively a geometric
     basis set consisting of the stretching and skewing parameters Szz and Sxx-yy respectively
-    replacing Sxx and Syy can be chosen by setting basis_set to 1.  The matrix in this case is:
+    replacing Sxx and Syy can be chosen by setting basis_set to 1.  The matrix in this case is::
 
         | Szz1 Sxxyy1 Sxy1 Sxz1 Syz1 |
         | Szz2 Sxxyy2 Sxy2 Sxz2 Syz2 |
@@ -1351,7 +1330,7 @@ def svd(basis_set=0, tensors=None):
         |  .     .     .    .    .   |
         | SzzN SxxyyN SxyN SxzN SyzN |
 
-    The relationships between the geometric and unitary basis sets are:
+    The relationships between the geometric and unitary basis sets are::
 
         Szz = - Sxx - Syy,
         Sxxyy = Sxx - Syy,

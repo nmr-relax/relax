@@ -210,16 +210,18 @@ class Jw_mapping(Common_functions):
         These default values are found in the file 'physical_constants.py'.
 
         _______________________________________________________________________________________
-        |                                       |              |                              |
-        | Data type                             | Object name  | Value                        |
-        |_______________________________________|______________|______________________________|
-        |                                       |              |                              |
-        | Bond length                           | 'r'          | 1.02 * 1e-10                 |
-        |                                       |              |                              |
-        | CSA                                   | 'csa'        | -172 * 1e-6                  |
-        |                                       |              |                              |
-        | Heteronucleus type                    | 'nucleus'    | 'N'                          |
-        |_______________________________________|______________|______________________________|
+        |                                       |                    |                        |
+        | Data type                             | Object name        | Value                  |
+        |_______________________________________|____________________|________________________|
+        |                                       |                    |                        |
+        | Bond length                           | 'r'                | 1.02 * 1e-10           |
+        |                                       |                    |                        |
+        | CSA                                   | 'csa'              | -172 * 1e-6            |
+        |                                       |                    |                        |
+        | Heteronucleus type                    | 'heteronuc_type'   | '15N'                  |
+        |                                       |                    |                        |
+        | Proton type                           | 'proton_type'      | '1H'                   |
+        |_______________________________________|____________________|________________________|
 
         """
         __docformat__ = "plaintext"
@@ -233,8 +235,12 @@ class Jw_mapping(Common_functions):
             return N15_CSA
 
         # Heteronucleus type.
-        elif param == 'nucleus':
-            return 'N'
+        elif param == 'heteronuc_type':
+            return '15N'
+
+        # Proton type.
+        elif param == 'proton_type':
+            return '1H'
 
 
     def overfit_deselect(self, run):
@@ -264,22 +270,24 @@ class Jw_mapping(Common_functions):
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         ____________________________________________________________________________________________
-        |                        |              |                                                  |
-        | Data type              | Object name  | Patterns                                         |
-        |________________________|______________|__________________________________________________|
-        |                        |              |                                                  |
-        | J(0)                   | 'j0'         | '^[Jj]0$' or '[Jj]\(0\)'                         |
-        |                        |              |                                                  |
-        | J(wX)                  | 'jwx'        | '^[Jj]w[Xx]$' or '[Jj]\(w[Xx]\)'                 |
-        |                        |              |                                                  |
-        | J(wH)                  | 'jwh'        | '^[Jj]w[Hh]$' or '[Jj]\(w[Hh]\)'                 |
-        |                        |              |                                                  |
-        | Bond length            | 'r'          | '^r$' or '[Bb]ond[ -_][Ll]ength'                 |
-        |                        |              |                                                  |
-        | CSA                    | 'csa'        | '^[Cc][Ss][Aa]$'                                 |
-        |                        |              |                                                  |
-        | Heteronucleus type     | 'nucleus'    | '^[Nn]ucleus$'                                   |
-        |________________________|______________|__________________________________________________|
+        |                        |                  |                                              |
+        | Data type              | Object name      | Patterns                                     |
+        |________________________|__________________|______________________________________________|
+        |                        |                  |                                              |
+        | J(0)                   | 'j0'             | '^[Jj]0$' or '[Jj]\(0\)'                     |
+        |                        |                  |                                              |
+        | J(wX)                  | 'jwx'            | '^[Jj]w[Xx]$' or '[Jj]\(w[Xx]\)'             |
+        |                        |                  |                                              |
+        | J(wH)                  | 'jwh'            | '^[Jj]w[Hh]$' or '[Jj]\(w[Hh]\)'             |
+        |                        |                  |                                              |
+        | Bond length            | 'r'              | '^r$' or '[Bb]ond[ -_][Ll]ength'             |
+        |                        |                  |                                              |
+        | CSA                    | 'csa'            | '^[Cc][Ss][Aa]$'                             |
+        |                        |                  |                                              |
+        | Heteronucleus type     | 'heteronuc_type' | '^[Hh]eteronucleus$'                         |
+        |                        |                  |                                              |
+        | Proton type            | 'proton_type'    | '^[Pp]roton$'                                |
+        |________________________|__________________|______________________________________________|
 
         """
         __docformat__ = "plaintext"
@@ -305,8 +313,12 @@ class Jw_mapping(Common_functions):
             return 'csa'
 
         # Heteronucleus type.
-        if search('^[Nn]ucleus$', name):
-            return 'nucleus'
+        if search('^[Hh]eteronucleus$', name):
+            return 'heteronuc_type'
+
+        # Proton type.
+        if search('^[Pp]roton$', name):
+            return 'proton_type'
 
 
     def return_grace_string(self, data_type):

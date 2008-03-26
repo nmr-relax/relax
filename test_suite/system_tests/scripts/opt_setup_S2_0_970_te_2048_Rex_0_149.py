@@ -28,7 +28,8 @@ relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
 diffusion_tensor.init(10e-9, fixed=1)
 value.set(1.02 * 1e-10, 'bond_length')
 value.set(-160 * 1e-6, 'csa')
-value.set('N', 'nucleus')
+value.set('15N', 'heteronucleus')
+value.set('1H', 'proton')
 
 # Select the model-free model.
 model_free.select_model(model='m4')

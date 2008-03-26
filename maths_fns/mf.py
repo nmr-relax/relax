@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -40,7 +40,7 @@ from chi2 import *
 
 
 class Mf:
-    def __init__(self, init_params=None, param_set=None, diff_type=None, diff_params=None, scaling_matrix=None, num_res=None, equations=None, param_types=None, param_values=None, relax_data=None, errors=None, bond_length=None, csa=None, num_frq=0, frq=None, num_ri=None, remap_table=None, noe_r1_table=None, ri_labels=None, gx=0, gh=0, g_ratio=0, h_bar=0, mu0=0, num_params=None, vectors=None):
+    def __init__(self, init_params=None, param_set=None, diff_type=None, diff_params=None, scaling_matrix=None, num_spins=None, equations=None, param_types=None, param_values=None, relax_data=None, errors=None, bond_length=None, csa=None, num_frq=0, frq=None, num_ri=None, remap_table=None, noe_r1_table=None, ri_labels=None, gx=0, gh=0, h_bar=0, mu0=0, num_params=None, vectors=None):
         """The model-free minimisation class.
 
         This class should be initialised before every calculation.
@@ -200,7 +200,7 @@ class Mf:
         self.param_set = param_set
         self.total_num_params = len(init_params)
         self.scaling_matrix = scaling_matrix
-        self.num_res = num_res
+        self.num_spins = num_spins
         self.params = 1.0 * init_params
 
         # Data structures for tests set to some random array (in this case all pi).
@@ -232,9 +232,12 @@ class Mf:
 
         # Create the data array used to store data.
         self.data = []
-        for i in xrange(self.num_res):
+        for i in xrange(self.num_spins):
             # Total number of ri.
             self.total_num_ri = self.total_num_ri + num_ri[i]
+
+            # The ratio of gyromagnetic ratios.
+            g_ratio = gh[i] / gx[i]
 
             # Append the class instance Data to the data array.
             self.data.append(Data())
@@ -259,8 +262,8 @@ class Mf:
                 self.data[i].frq_sqrd_list_ext[:, :, j] = self.data[i].frq_sqrd_list
 
             # Store supplied data in self.data
-            self.data[i].gh = gh
-            self.data[i].gx = gx
+            self.data[i].gh = gh[i]
+            self.data[i].gx = gx[i]
             self.data[i].g_ratio = g_ratio
             self.data[i].h_bar = h_bar
             self.data[i].mu0 = mu0
@@ -327,7 +330,7 @@ class Mf:
                 self.init_res_r1_data(self.data[i])
 
         # Scaling initialisation.
-        if self.scaling_matrix:
+        if self.scaling_matrix != None:
             self.scaling_flag = 1
         else:
             self.scaling_flag = 0
@@ -494,7 +497,7 @@ class Mf:
         self.total_chi2 = 0.0
 
         # Loop over the residues.
-        for i in xrange(self.num_res):
+        for i in xrange(self.num_spins):
             # Set self.data[i] to data.
             data = self.data[i]
 
@@ -561,7 +564,7 @@ class Mf:
         self.total_chi2 = 0.0
 
         # Loop over the residues.
-        for i in xrange(self.num_res):
+        for i in xrange(self.num_spins):
             # Set self.data[i] to data.
             data = self.data[i]
 
@@ -748,7 +751,7 @@ class Mf:
         self.total_dchi2 = self.total_dchi2 * 0.0
 
         # Loop over the residues.
-        for i in xrange(self.num_res):
+        for i in xrange(self.num_spins):
 
             # Set self.data[i] to data.
             data = self.data[i]
@@ -830,7 +833,7 @@ class Mf:
         self.total_dchi2 = self.total_dchi2 * 0.0
 
         # Loop over the residues.
-        for i in xrange(self.num_res):
+        for i in xrange(self.num_spins):
             # Set self.data[i] to data.
             data = self.data[i]
 
@@ -1014,7 +1017,7 @@ class Mf:
         self.total_d2chi2 = self.total_d2chi2 * 0.0
 
         # Loop over the residues.
-        for i in xrange(self.num_res):
+        for i in xrange(self.num_spins):
             # Set self.data[i] to data.
             data = self.data[i]
 
@@ -1088,7 +1091,7 @@ class Mf:
         self.total_d2chi2 = self.total_d2chi2 * 0.0
 
         # Loop over the residues.
-        for i in xrange(self.num_res):
+        for i in xrange(self.num_spins):
             # Set self.data[i] to data.
             data = self.data[i]
 
@@ -1489,7 +1492,7 @@ class Mf:
             ri_end_index = 0
 
             # Loop over the residues.
-            for i in xrange(self.num_res):
+            for i in xrange(self.num_spins):
                 # Set self.data[i] to data.
                 data = self.data[i]
 
@@ -1514,7 +1517,7 @@ class Mf:
             ri_end_index = 0
 
             # Loop over the residues.
-            for i in xrange(self.num_res):
+            for i in xrange(self.num_spins):
                 # Set self.data[i] to data.
                 data = self.data[i]
 

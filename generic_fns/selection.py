@@ -171,13 +171,42 @@ class Selection(object):
         self._union = (select_obj0, select_obj1)
 
 
+def count_selected_spins(selection=None):
+    """Function for counting the number of spins for which there is data and which are selected.
+
+    @param selection:   The selection string.
+    @type selection:    str
+    @return:            The number of non-empty selected spins.
+    @rtype:             int
+    """
+
+    # No data, hence no spins.
+    if not exists_mol_res_spin_data():
+        return 0
+
+    # Init.
+    spin_num = 0
+
+    # Spin loop.
+    for spin in spin_loop(selection):
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
+        # Increment the spin number.
+        spin_num = spin_num + 1
+
+    # Return the number of spins.
+    return spin_num
+
+
 def count_spins(selection=None):
     """Function for counting the number of spins for which there is data.
 
     @param selection:   The selection string.
     @type selection:    str
     @return:            The number of non-empty spins.
-    @return type:       int
+    @rtype:             int
     """
 
     # No data, hence no spins.
@@ -469,30 +498,30 @@ def generate_spin_id(data=None, mol_name_col=None, res_num_col=0, res_name_col=1
     @param spin_num_col:    The column containing the spin number information.
     @type spin_num_col:     int or None
     @return:                The spin identification string.
-    @type return:           str
+    @rtype:                 str
     """
 
     # Init.
     id = ""
 
     # Molecule data.
-    if mol_name_col != None:
+    if mol_name_col != None and data[mol_name_col]:
         id = id + "#" + data[mol_name_col]
 
     # Residue data.
-    if res_num_col != None:
-        id = id + ":" + data[res_num_col]
-    if  res_num_col != None and res_name_col != None:
+    if res_num_col != None and data[res_num_col] != None:
+        id = id + ":" + str(data[res_num_col])
+    if (res_num_col != None and data[res_num_col] != None) and (res_name_col != None and data[res_name_col]):
         id = id + "&:" + data[res_name_col]
-    elif res_name_col != None:
+    elif res_name_col != None and data[res_name_col]:
         id = id + ":" + data[res_name_col]
 
     # Spin data.
-    if spin_num_col != None:
-        id = id + "@" + data[spin_num_col]
-    if  spin_num_col != None and spin_name_col != None:
+    if spin_num_col != None and data[spin_num_col] != None:
+        id = id + "@" + str(data[spin_num_col])
+    if (spin_num_col != None and data[spin_num_col] != None) and (spin_name_col != None and data[spin_name_col]):
         id = id + "&@" + data[spin_name_col]
-    elif spin_name_col != None:
+    elif spin_name_col != None and data[spin_name_col]:
         id = id + "@" + data[spin_name_col]
 
     # Return the spin id string.
@@ -814,6 +843,51 @@ def return_spin(selection=None, pipe=None):
 
     # Return the spin container.
     return spin_container
+
+
+def return_spin_from_index(global_index=None, pipe=None, return_spin_id=False):
+    """Function for returning the spin data container corresponding to the global index.
+
+    @param global_index:        The global spin index, spanning the molecule and residue containers.
+    @type global_index:         int
+    @param pipe:                The data pipe containing the spin.  Defaults to the current data
+                                pipe.
+    @type pipe:                 str
+    @keyword return_spin_id:    A flag which if True will cause both the spin container and spin
+                                identification string to be returned.
+    @type return_spin_id:       bool
+    @return:                    The spin specific data container (additionally the spin
+                                identification string if return_spin_id is set).
+    @rtype:                     instance of the SpinContainer class (or tuple of SpinContainer and
+                                str)
+    """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = relax_data_store.current_pipe
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Loop over the spins.
+    spin_num = 0
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+        # Match to the global index.
+        if spin_num == global_index:
+            # Return the spin and the spin_id string.
+            if return_spin_id:
+                # The spin identification string.
+                spin_id = generate_spin_id([mol_name, res_num, res_name, spin.num, spin.name], mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4)
+
+                # Return both objects.
+                return spin, spin_id
+
+            # Return the spin by itself.
+            else:
+                return spin
+
+        # Increment the spin number.
+        spin_num = spin_num + 1
 
 
 def return_single_molecule_info(molecule_token):

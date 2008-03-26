@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2006, 2008 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,8 +20,12 @@
 #                                                                             #
 ###############################################################################
 
+# Package docstring.
+"""The relax test-suite."""
 
-__all__ = ['runner',
+
+__all__ = ['formatting',
+           'relax_test_runner',
            'system_tests',
+           'test_suite_runner',
            'unit_tests']
-

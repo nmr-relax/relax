@@ -476,44 +476,42 @@ class Unit_test_runner(object):
                   search_for_unit_test_path=True, verbose = False):
         '''Initialise the unit test runner.
 
-          @type  root_path: a string containing a directory name
-          @param root_path: root path to start searching for modules to unit test
-                 from. Two special cases arise: if the string contains '.'
-                 the search starts from the current working directory, if the value is
-                 the special value TEST_SUITE_ROOT defined in this class the root of the
-                 test suite is sought from the current working directory using
-                 find_unit_test_directory_path() and used instead. Default current
-                 working directory.
+        @type  root_path: a string containing a directory name
+        @param root_path: root path to start searching for modules to unit test
+               from. Two special cases arise: if the string contains '.'
+               the search starts from the current working directory, if the value is
+               the special value TEST_SUITE_ROOT defined in this class the root of the
+               test suite is sought from the current working directory using
+               find_unit_test_directory_path() and used instead. Default current
+               working directory.
 
-          @type  test_module: string
-          @param test_module: the name of a module to unit test. If the variable
-                 is None a search for all unit tests using <test-pattern> will start
-                 from <root_path>, if the variable is '.' a search for all unit tests will
-                 commence from the current working directory, otherwise it will be used as
-                 a module path from the
-                 current root_path or CHECKME: ****module_directory_path****. The module name can be in the directory path format
-                 used by the current operating system or a unix style path with /'s including
-                 a final .py extension or a dotted moudle name
+        @type  test_module: string
+        @param test_module: the name of a module to unit test. If the variable
+               is None a search for all unit tests using <test-pattern> will start
+               from <root_path>, if the variable is '.' a search for all unit tests will
+               commence from the current working directory, otherwise it will be used as
+               a module path from the
+               current root_path or CHECKME: ****module_directory_path****. The module name can be in the directory path format
+               used by the current operating system or a unix style path with /'s including
+               a final .py extension or a dotted moudle name
 
-          @type  search_for_root_path: boolean
-          @param search_for_root_path: whether to carry out a search from the root_directory
-                                       using self.system_path_pattern to find the directory self.system_directory
-                                       if no search is carried out self.system_directory is set to None and it is
-                                       the responsibility of code creating the class to set it before self.run
-                                       is called
+        @type  search_for_root_path: boolean
+        @param search_for_root_path: whether to carry out a search from the root_directory
+                                     using self.system_path_pattern to find the directory self.system_directory
+                                     if no search is carried out self.system_directory is set to None and it is
+                                     the responsibility of code creating the class to set it before self.run
+                                     is called
 
-          @type  search_for_unit_test_path: boolean
-          @param search_for_unit_test_path: whether to carry out a search from the root_directory
-                                           using self.unit_test_path_patter to find the directory self.unit_test_directory
-                                           if no search is carried out self.unit_test_directory is set to None and it is
-                                           the responsibility of code creating the class to set it before self.run
-                                           is called
+        @type  search_for_unit_test_path: boolean
+        @param search_for_unit_test_path: whether to carry out a search from the root_directory
+                                          using self.unit_test_path_patter to find the directory self.unit_test_directory
+                                          if no search is carried out self.unit_test_directory is set to None and it is
+                                          the responsibility of code creating the class to set it before self.run
+                                          is called
 
-
-
-         @type  verbose: Boolean
-         @param verbose: produce verbose output during testing e.g. directories
-                 searched root directories etc
+        @type  verbose: Boolean
+        @param verbose: produce verbose output during testing e.g. directories
+               searched root directories etc
         '''
 
         # setup root path

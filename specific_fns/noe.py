@@ -47,7 +47,7 @@ class Noe:
     def calculate(self, run=None, verbosity=1):
         """Function for calculating the NOE and its error.
 
-        The error for each peak is calculated using the formula:
+        The error for each peak is calculated using the formula::
                           ___________________________________________
                        \/ {sd(sat)*I(unsat)}^2 + {sd(unsat)*I(sat)}^2
             sd(NOE) = -----------------------------------------------
