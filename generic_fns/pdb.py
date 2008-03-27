@@ -287,9 +287,10 @@ class PDB:
 
         # Average the vectors and convert xh_vect from an array of vectors to a vector.
         for i in xrange(len(self.relax.data.res[self.run])):
-            # No vectors.
+            # No vectors - deselect the residue.
             if self.relax.data.res[self.run][i].xh_vect[0] == None:
-                del self.relax.data.res[self.run][i].xh_vect
+                self.relax.data.res[self.run][i].xh_vect = None
+                self.relax.data.res[self.run][i].select = 0
                 continue
 
             # Average vectors.
