@@ -497,7 +497,7 @@ class Rx_data:
             raise RelaxNoRiError, (self.ri_label, self.frq_label)
 
         # Print the data.
-        self.relax.generic.value.write_data(self.run, (self.ri_label, self.frq_label), sys.stdout, return_value=self.return_value)
+        self.relax.generic.value.write_data(run=self.run, param=(self.ri_label, self.frq_label), file=sys.stdout, return_value=self.return_value)
 
 
     def find_index(self, data):
