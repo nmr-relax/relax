@@ -221,21 +221,23 @@ class Consistency_tests(Common_functions):
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         These default values are found in the file 'physical_constants.py'.
 
-        ________________________________________________________________________________________
-        |                                       |               |                              |
-        | Data type                             | Object name   | Value                        |
-        |_______________________________________|_______________|______________________________|
-        |                                       |               |                              |
-        | Bond length                           | 'r'           | 1.02 * 1e-10                 |
-        |                                       |               |                              |
-        | CSA                                   | 'csa'         | -172 * 1e-6                  |
-        |                                       |               |                              |
-        | Heteronucleus type                    | 'nucleus'     | 'N'                          |
-        |                                       |               |                              |
-        | Angle Theta                           | 'orientation' | 15.7                         |
-        |                                       |               |                              |
-        | Correlation time                      | 'tc'          | 13 * 1e-9                    |
-        |_______________________________________|_______________|______________________________|
+         ______________________________________________________________________________________ 
+        |                                       |                    |                         |
+        | Data type                             | Object name        | Value                   |
+        |_______________________________________|____________________|_________________________|
+        |                                       |                    |                         |
+        | Bond length                           | 'r'                | 1.02 * 1e-10            |
+        |                                       |                    |                         |
+        | CSA                                   | 'csa'              | -172 * 1e-6             |
+        |                                       |                    |                         |
+        | Heteronucleus type                    | 'heteronuc_type'   | '15N'                   |
+        |                                       |                    |                         |
+        | Proton type                           | 'proton_type'      | '1H'                    |
+        |                                       |                    |                         |
+        | Angle Theta                           | 'orientation'      | 15.7                    |
+        |                                       |                    |                         |
+        | Correlation time                      | 'tc'               | 13 * 1e-9               |
+        |_______________________________________|____________________|_________________________|
 
         """
         __docformat__ = "plaintext"
@@ -249,8 +251,12 @@ class Consistency_tests(Common_functions):
             return N15_CSA
 
         # Heteronucleus type.
-        elif param == 'nucleus':
-            return 'N'
+        elif param == 'heteronuc_type':
+            return '15N'
+
+        # Proton type.
+        elif param == 'proton_type':
+            return '1H'
 
         # Angle Theta (default value)
         elif param == 'orientation':
@@ -287,27 +293,29 @@ class Consistency_tests(Common_functions):
         Consistency testing data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        ____________________________________________________________________________________________
-        |                       |               |                                                  |
-        | Data type             | Object name   | Patterns                                         |
-        |_______________________|_______________|__________________________________________________|
-        |                       |               |                                                  |
-        | J(0)                  | 'j0'          | '^[Jj]0$' or '[Jj]\(0\)'                         |
-        |                       |               |                                                  |
-        | F_eta                 | 'f_eta'       | '^[Ff]_[Ee][Tt][Aa]$'                            |
-        |                       |               |                                                  |
-        | F_R2                  | 'f_r2'        | '^[Ff]_[Rr]2$'                                   |
-        |                       |               |                                                  |
-        | Bond length           | 'r'           | '^r$' or '[Bb]ond[ -_][Ll]ength'                 |
-        |                       |               |                                                  |
-        | CSA                   | 'csa'         | '^[Cc][Ss][Aa]$'                                 |
-        |                       |               |                                                  |
-        | Heteronucleus type    | 'nucleus'     | '^[Nn]ucleus$'                                   |
-        |                       |               |                                                  |
-        | Angle Theta           | 'orientation' | '^[Oo][Rr][Ii][Ee][Nn][Tt][Aa][Tt][Ii][Oo][Nn]$' |
-        |                       |               |                                                  |
-        | Correlation time      | 'tc'          | '^[Tt]c$'                                        |
-        |_______________________|_______________|__________________________________________________|
+         __________________________________________________________________________________________
+        |                       |                  |                                               |
+        | Data type             | Object name      | Patterns                                      |
+        |_______________________|__________________|_______________________________________________|
+        |                       |                  |                                               |
+        | J(0)                  | 'j0'             | '^[Jj]0$' or '[Jj]\(0\)'                      |
+        |                       |                  |                                               |
+        | F_eta                 | 'f_eta'          | '^[Ff]_[Ee][Tt][Aa]$'                         |
+        |                       |                  |                                               |
+        | F_R2                  | 'f_r2'           | '^[Ff]_[Rr]2$'                                |
+        |                       |                  |                                               |
+        | Bond length           | 'r'              | '^r$' or '[Bb]ond[ -_][Ll]ength'              |
+        |                       |                  |                                               |
+        | CSA                   | 'csa'            | '^[Cc][Ss][Aa]$'                              |
+        |                       |                  |                                               |
+        | Heteronucleus type    | 'heteronuc_type' | '^[Hh]eteronucleus$'                          |
+        |                       |                  |                                               |
+        | Proton type           | 'proton_type'    | '^[Pp]roton$'                                 |
+        |                       |                  |                                               |
+        | Angle Theta           | 'orientation'    | '^[Oo]rientation$'                            |
+        |                       |                  |                                               |
+        | Correlation time      | 'tc'             | '^[Tt]c$'                                     |
+        |_______________________|__________________|_______________________________________________|
         """
         __docformat__ = "plaintext"
 
@@ -332,11 +340,15 @@ class Consistency_tests(Common_functions):
             return 'csa'
 
         # Heteronucleus type.
-        if search('^[Nn]ucleus$', name):
-            return 'nucleus'
+        if search('^[Hh]eteronucleus$', name):
+            return 'heteronuc_type'
+
+        # Proton type.
+        if search('^[Pp]roton$', name):
+            return 'proton_type'
 
         # Angle Theta
-        if search('^[Oo][Rr][Ii][Ee][Nn][Tt][Aa][Tt][Ii][Oo][Nn]$', name):
+        if search('^[Oo]rientation]$', name):
             return 'orientation'
 
         # Correlation time
