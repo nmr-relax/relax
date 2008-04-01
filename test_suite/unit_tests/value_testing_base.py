@@ -215,7 +215,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='heteronucleus', val='13C')
+        self.value_fns.set(param='heteronuc_type', val='13C')
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '13C')
@@ -411,7 +411,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='heteronucleus')
+        self.value_fns.set(param='heteronuc_type')
 
         # Test the parameter.
         self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '15N')
@@ -587,7 +587,7 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='heteronucleus', val='13C', spin_id='@112')
+        self.value_fns.set(param='heteronuc_type', val='13C', spin_id='@112')
 
         # Test the parameter.
         self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'heteronuc_type'))

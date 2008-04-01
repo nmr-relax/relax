@@ -182,7 +182,7 @@ class Consistency_tests(Common_functions):
 
         csa:  CSA value.
 
-        nucleus:  The heteronucleus type.
+        heteronuc_type:  The heteronucleus type.
 
         orientation:  Angle between the 15N-1H vector and the principal axis of the 15N chemical
                       shift tensor.
@@ -203,7 +203,7 @@ class Consistency_tests(Common_functions):
         # Values.
         names.append('r')
         names.append('csa')
-        names.append('nucleus')
+        names.append('heteronuc_type')
         names.append('orientation')
         names.append('tc')
 
@@ -340,7 +340,7 @@ class Consistency_tests(Common_functions):
             return 'csa'
 
         # Heteronucleus type.
-        if search('^[Hh]eteronucleus$', name):
+        if search('^[Hh]eteronuc_type$', name):
             return 'heteronuc_type'
 
         # Proton type.
@@ -532,7 +532,7 @@ class Consistency_tests(Common_functions):
         relax_data_store.res[run][i].relax_sim_data = sim_data
 
 
-    def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, nucleus=None, wH=None, j0=None, f_eta=None, f_r2=None, r=None, csa=None, orientation=None, tc=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
+    def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, heteronuc_type=None, wH=None, j0=None, f_eta=None, f_r2=None, r=None, csa=None, orientation=None, tc=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
         """Function for printing a single line of the columnar formatted results."""
 
         # Residue number and name.
@@ -542,7 +542,7 @@ class Consistency_tests(Common_functions):
         file.write("%-9s %-9s " % (select, data_set))
 
         # Nucleus.
-        file.write("%-7s " % nucleus)
+        file.write("%-7s " % heteronuc_type)
 
         # Proton frequency.
         file.write("%-25s " % wH)
@@ -610,14 +610,14 @@ class Consistency_tests(Common_functions):
                 ri_error.append('Ri_error_(' + cdp.ri_labels[i] + "_" + cdp.frq_labels[cdp.remap_table[i]] + ")")
 
         # Write the header line.
-        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', wH='Proton_frq_(MHz)', j0='J(0)', f_eta='F_eta', f_r2='F_R2', r='Bond_length_(A)', csa='CSA_(ppm)', orientation='Angle_Theta_(degrees)', tc='Correlation_time_(ns)', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
+        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', heteronuc_type='Nucleus', wH='Proton_frq_(MHz)', j0='J(0)', f_eta='F_eta', f_r2='F_R2', r='Bond_length_(A)', csa='CSA_(ppm)', orientation='Angle_Theta_(degrees)', tc='Correlation_time_(ns)', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
 
 
         # Values.
         #########
 
         # Nucleus.
-        nucleus = self.relax.generic.nuclei.find_nucleus()
+        heteronuc_type = self.relax.generic.nuclei.find_heteronuc_type()
 
         # The proton frequency in MHz.
         wH = cdp.ct_frq / 1e6
@@ -686,7 +686,7 @@ class Consistency_tests(Common_functions):
                         ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='value', nucleus=nucleus, wH=`wH`, j0=`j0`, f_eta=`f_eta`, f_r2=`f_r2`, r=`r`, csa=`csa`, orientation=`orientation`, tc=`tc`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='value', heteronuc_type=heteronuc_type, wH=`wH`, j0=`j0`, f_eta=`f_eta`, f_r2=`f_r2`, r=`r`, csa=`csa`, orientation=`orientation`, tc=`tc`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Errors.
@@ -746,7 +746,7 @@ class Consistency_tests(Common_functions):
                 ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, wH=`wH`, j0=`j0`, f_eta=`f_eta`, f_r2=`f_r2`, r=`r`, csa=`csa`, orientation=`orientation`, tc=`tc`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', heteronuc_type=heteronuc_type, wH=`wH`, j0=`j0`, f_eta=`f_eta`, f_r2=`f_r2`, r=`r`, csa=`csa`, orientation=`orientation`, tc=`tc`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Simulation values.
@@ -816,4 +816,4 @@ class Consistency_tests(Common_functions):
                             ri_error.append(None)
 
                 # Write the line.
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='sim_'+`i`, nucleus=nucleus, wH=`wH`, j0=`j0`, f_eta=`f_eta`, f_r2=`f_r2`, r=`r`, csa=`csa`, orientation=`orientation`, tc=`tc`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='sim_'+`i`, heteronuc_type=heteronuc_type, wH=`wH`, j0=`j0`, f_eta=`f_eta`, f_r2=`f_r2`, r=`r`, csa=`csa`, orientation=`orientation`, tc=`tc`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
