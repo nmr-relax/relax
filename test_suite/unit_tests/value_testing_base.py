@@ -215,11 +215,11 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='nucleus', val='C')
+        self.value_fns.set(param='heteronucleus', val='13C')
 
         # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].nucleus, 'C')
-        self.assertEqual(cdp.mol[0].res[1].spin[0].nucleus, 'C')
+        self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '13C')
+        self.assertEqual(cdp.mol[0].res[1].spin[0].heteronuc_type, '13C')
 
 
     def test_set_ct_all_spins_orientation(self):
@@ -411,11 +411,11 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='nucleus')
+        self.value_fns.set(param='heteronucleus')
 
         # Test the parameter.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].nucleus, 'N')
-        self.assertEqual(cdp.mol[0].res[1].spin[0].nucleus, 'N')
+        self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '15N')
+        self.assertEqual(cdp.mol[0].res[1].spin[0].heteronuc_type, '15N')
 
 
     def test_set_ct_defaults_orientation(self):
@@ -575,7 +575,7 @@ class Value_base_class:
 
 
     def test_set_ct_single_spin_nucleus(self):
-        """Set the consistency tests heteronucleus type for a single spin.
+        """Set the consistency testing heteronucleus type for a single spin.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
         """
@@ -587,11 +587,11 @@ class Value_base_class:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Set the parameter.
-        self.value_fns.set(param='nucleus', val='C', spin_id='@112')
+        self.value_fns.set(param='heteronucleus', val='13C', spin_id='@112')
 
         # Test the parameter.
-        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'nucleus'))
-        self.assertEqual(cdp.mol[0].res[1].spin[0].nucleus, 'C')
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'heteronuc_type'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].heteronuc_type, '13C')
 
 
     def test_set_ct_single_spin_orientation(self):
