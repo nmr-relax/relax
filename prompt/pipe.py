@@ -57,8 +57,8 @@ class Pipe:
         ~~~~~~~~~~~
 
         This user function allows the contents of a data pipe to be copied.  If the 'pipe_from'
-        keyword argument is set to None the current run is assumed.  The data pipe corresponding to
-        'pipe_to' must not yet exist.
+        keyword argument is set to None the current data pipe is assumed.  The data pipe
+        corresponding to 'pipe_to' must not yet exist.
 
 
         Examples
