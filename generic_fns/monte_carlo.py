@@ -218,7 +218,7 @@ class Monte_carlo:
 
                     # Calculate the mean parameter value for all simulations.
                     if n == 0:
-                        Xav = 0
+                        Xav = 0.0
                     else:
                         Xav = Xsum / float(n)
 
@@ -237,7 +237,10 @@ class Monte_carlo:
                         sd = sd + (param_array[i] - Xav)**2
 
                     # Calculate the standard deviation.
-                    sd = sqrt(sd / (float(n) - 1.0))
+                    if n <= 1:
+                        sd = 0.0
+                    else:
+                        sd = sqrt(sd / (float(n) - 1.0))
 
                 # Simulation parameters with the value None.
                 else:
