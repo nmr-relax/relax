@@ -101,13 +101,11 @@ class Grace:
         self.__relax__.generic.grace.view(file=file, dir=dir, grace_exe=grace_exe)
 
 
-    def write(self, run=None, x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot_data='value', norm=0, file=None, dir='grace', force=0):
+    def write(self, x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot_data='value', norm=0, file=None, dir='grace', force=0):
         """Function for creating a grace '.agr' file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         x_data_type:  The data type for the X-axis (no regular expression is allowed).
 
@@ -165,27 +163,27 @@ class Grace:
         Examples
         ~~~~~~~~
 
-        To write the NOE values for all residues from the run 'noe' to the Grace file 'noe.agr',
+        To write the NOE values for all residues to the Grace file 'noe.agr',
         type:
 
-        relax> grace.write('noe', 'res', 'noe', file='noe.agr')
-        relax> grace.write('noe', y_data_type='noe', file='noe.agr')
-        relax> grace.write('noe', x_data_type='res', y_data_type='noe', file='noe.agr')
-        relax> grace.write(run='noe', y_data_type='noe', file='noe.agr', force=1)
+        relax> grace.write('res', 'noe', file='noe.agr')
+        relax> grace.write(y_data_type='noe', file='noe.agr')
+        relax> grace.write(x_data_type='res', y_data_type='noe', file='noe.agr')
+        relax> grace.write(y_data_type='noe', file='noe.agr', force=1)
 
 
         To create a Grace file of 'S2' vs. 'te' for all residues, type:
 
-        relax> grace.write('m2', 'S2', 'te', file='s2_te.agr')
-        relax> grace.write('m2', x_data_type='S2', y_data_type='te', file='s2_te.agr')
-        relax> grace.write(run='m2', x_data_type='S2', y_data_type='te', file='s2_te.agr', force=1)
+        relax> grace.write('S2', 'te', file='s2_te.agr')
+        relax> grace.write(x_data_type='S2', y_data_type='te', file='s2_te.agr')
+        relax> grace.write(x_data_type='S2', y_data_type='te', file='s2_te.agr', force=1)
 
 
         To create a Grace file of the Monte Carlo simulation values of 'Rex' vs. 'te' for residue
         123, type:
 
-        relax> grace.write('m4', 'Rex', 'te', res_num=123, plot_data='sims', file='s2_te.agr')
-        relax> grace.write(run='m4', x_data_type='Rex', y_data_type='te', res_num=123,
+        relax> grace.write('Rex', 'te', res_num=123, plot_data='sims', file='s2_te.agr')
+        relax> grace.write(x_data_type='Rex', y_data_type='te', res_num=123,
                            plot_data='sims', file='s2_te.agr')
 
 
@@ -203,8 +201,7 @@ class Grace:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "grace.write("
-            text = text + "run=" + `run`
-            text = text + ", x_data_type=" + `x_data_type`
+            text = text + "x_data_type=" + `x_data_type`
             text = text + ", y_data_type=" + `y_data_type`
             text = text + ", res_num=" + `res_num`
             text = text + ", res_name=" + `res_name`
@@ -214,10 +211,6 @@ class Grace:
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force` + ")"
             print text
-
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # Data type for x-axis.
         if type(x_data_type) != str:
@@ -252,7 +245,7 @@ class Grace:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        self.__relax__.generic.grace.write(run=run, x_data_type=x_data_type, y_data_type=y_data_type, res_num=res_num, res_name=res_name, plot_data=plot_data, norm=norm, file=file, dir=dir, force=force)
+        grace_obj.write(x_data_type=x_data_type, y_data_type=y_data_type, res_num=res_num, res_name=res_name, plot_data=plot_data, norm=norm, file=file, dir=dir, force=force)
 
 
 
