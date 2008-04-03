@@ -41,15 +41,13 @@ class Palmer:
         self.__relax__ = relax
 
 
-    def create(self, run=None, dir=None, force=0, binary='modelfree4', diff_search='none', sims=0, sim_type='pred', trim=0, steps=20, constraints=1, nucleus='15N', atom1='N', atom2='H'):
+    def create(self, dir=None, force=0, binary='modelfree4', diff_search='none', sims=0, sim_type='pred', trim=0, steps=20, constraints=1, nucleus='15N', atom1='N', atom2='H'):
         """Function for creating the Modelfree4 input files.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
-
-        dir:  The directory to place the files.  The default is the value of 'run'.
+        dir:  The directory to place the files.
 
         force:  A flag which if set to 1 will cause the results file to be overwritten if it already
         exists.
@@ -87,7 +85,7 @@ class Palmer:
             'dir/mfmodel',
             'dir/run.sh'.
 
-        The file 'run/run.sh' contains the single command,
+        The file 'dir/run.sh' contains the single command,
 
         'modelfree4 -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out',
 
@@ -101,8 +99,7 @@ class Palmer:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "palmer.create("
-            text = text + "run=" + `run`
-            text = text + ", dir=" + `dir`
+            text = text + "dir=" + `dir`
             text = text + ", force=" + `force`
             text = text + ", binary=" + `binary`
             text = text + ", diff_search=" + `diff_search`
@@ -115,10 +112,6 @@ class Palmer:
             text = text + ", atom1=" + `atom1`
             text = text + ", atom2=" + `atom2` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # Directory.
         if dir != None:
@@ -170,18 +163,16 @@ class Palmer:
             raise RelaxStrError, ('atom2', atom2)
 
         # Execute the functional code.
-        self.__relax__.generic.palmer.create(run=run, dir=dir, force=force, binary=binary, diff_search=diff_search, sims=sims, sim_type=sim_type, trim=trim, steps=steps, constraints=constraints, nucleus=nucleus, atom1=atom1, atom2=atom2)
+        palmer_obj.create(dir=dir, force=force, binary=binary, diff_search=diff_search, sims=sims, sim_type=sim_type, trim=trim, steps=steps, constraints=constraints, nucleus=nucleus, atom1=atom1, atom2=atom2)
 
 
-    def execute(self, run=None, dir=None, force=0, binary='modelfree4'):
+    def execute(self, dir=None, force=0, binary='modelfree4'):
         """Function for executing Modelfree4.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
-
-        dir:  The directory to place the files.  The default is the value of 'run'.
+        dir:  The directory to place the files.
 
         force:  A flag which if set to 1 will cause the results file to be overwritten if it already
         exists.
@@ -208,15 +199,10 @@ class Palmer:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "palmer.execute("
-            text = text + "run=" + `run`
-            text = text + ", dir=" + `dir`
+            text = text + "dir=" + `dir`
             text = text + ", force=" + `force`
             text = text + ", binary=" + `binary` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # Directory.
         if dir != None:
@@ -232,30 +218,23 @@ class Palmer:
             raise RelaxStrError, ('Modelfree binary', binary)
 
         # Execute the functional code.
-        self.__relax__.generic.palmer.execute(run=run, dir=dir, force=force, binary=binary)
+        palmer_obj.execute(dir=dir, force=force, binary=binary)
 
 
-    def extract(self, run=None, dir=None):
+    def extract(self, dir=None):
         """Function for extracting data from the Modelfree4 'mfout' star formatted file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
-
-        dir:  The directory where the file 'mfout' is found.  The default is the value of 'run'.
+        dir:  The directory where the file 'mfout' is found.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "palmer.extract("
-            text = text + "run=" + `run`
-            text = text + ", dir=" + `dir` + ")"
+            text = text + "dir=" + `dir` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # Directory.
         if dir != None:
@@ -263,4 +242,4 @@ class Palmer:
                 raise RelaxNoneStrError, ('directory name', dir)
 
         # Execute the functional code.
-        self.__relax__.generic.palmer.extract(run=run, dir=dir)
+        palmer_obj.extract(dir=dir)
