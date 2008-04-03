@@ -71,6 +71,7 @@ def create(pipe_name=None, pipe_type=None):
     @param pipe_name:   The name of the new data pipe.
     @type pipe_name:    str
     @param pipe_type:   The new data pipe type which can be one of the following:
+        'ct':  Consistency testing,
         'jw':  Reduced spectral density mapping,
         'mf':  Model-free analysis,
         'N-state':  N-state model of domain dynamics,
@@ -81,7 +82,7 @@ def create(pipe_name=None, pipe_type=None):
     """
 
     # List of valid data pipe types.
-    valid = ['jw', 'mf', 'N-state', 'noe', 'relax_fit', 'srls']
+    valid = ['ct', 'jw', 'mf', 'N-state', 'noe', 'relax_fit', 'srls']
 
     # Test if pipe_type is valid.
     if not pipe_type in valid:

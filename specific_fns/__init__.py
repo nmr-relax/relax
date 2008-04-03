@@ -26,6 +26,7 @@
 
 # The available modules.
 __all__ = [ 'base_class',
+            'consistency_tests',
             'hybrid',
             'jw_mapping',
             'model_free',

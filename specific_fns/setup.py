@@ -21,6 +21,7 @@
 ###############################################################################
 
 # relax module imports.
+from specific_fns.consistency_tests import Consistency_tests
 from specific_fns.hybrid import Hybrid
 from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.model_free import Model_free
@@ -31,6 +32,7 @@ from relax_errors import RelaxError, RelaxFuncSetupError
 
 
 # Instantiate all classes.
+consistency_tests_obj = Consistency_tests()
 hybrid_obj = Hybrid()
 jw_mapping_obj = Jw_mapping()
 model_free_obj = Model_free()
@@ -227,6 +229,10 @@ def get_specific_fn(eqi, function_type, raise_error=1):
 def get_instance(function_type):
     """Function for returning the class instance corresponding to the function type."""
 
+    # Consistency testing.
+    if function_type == 'ct':
+        return consistency_tests_obj
+
     # NOE calculation.
     if function_type == 'noe':
         return noe_obj
@@ -257,6 +263,10 @@ def get_instance(function_type):
 
 def get_string(function_type):
     """Function for returning a string corresponding to the function type."""
+
+    # Consistency testing.
+    if function_type == 'ct':
+        return "consistency testing"
 
     # NOE calculation.
     if function_type == 'noe':

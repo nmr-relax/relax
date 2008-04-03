@@ -32,6 +32,7 @@ from test_suite.relax_test_runner import RelaxTestRunner
 
 # relax system/functional test module imports.
 from angles import Angles
+from consistency_tests import Ct
 from diffusion_tensor import Diffusion_tensor
 from generic import Generic
 from jw_mapping import Jw
@@ -44,6 +45,7 @@ from sequence import Sequence
 
 
 __all__ = ['angles',
+           'consistency_tests',
            'diffusion_tensor',
            'generic',
            'jw_mapping',
@@ -74,6 +76,7 @@ class System_test_runner:
         # Create an array of test suites (add your new TestCase classes here).
         suite_array = []
         suite_array.append(TestLoader().loadTestsFromTestCase(Angles))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Ct))
         suite_array.append(TestLoader().loadTestsFromTestCase(Diffusion_tensor))
         suite_array.append(TestLoader().loadTestsFromTestCase(Generic))
         suite_array.append(TestLoader().loadTestsFromTestCase(Jw))

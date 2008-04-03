@@ -50,6 +50,7 @@ from model_selection import Modsel
 
 # User classes.
 from align_tensor import Align_tensor
+from consistency_tests import Consistency_tests
 from dasha import Dasha
 from diffusion_tensor import Diffusion_tensor
 from grace import Grace
@@ -128,6 +129,7 @@ class Interpreter:
 
         # Place the user classes into the interpreter class namespace.
         self._Align_tensor = Align_tensor(relax)
+        self._Consistency_tests = Consistency_tests(relax)
         self._Dasha = Dasha(relax)
         self._Diffusion_tensor = Diffusion_tensor(relax)
         self._OpenDX = OpenDX(relax)
@@ -192,6 +194,7 @@ class Interpreter:
 
         # Place the user classes in the local namespace.
         align_tensor = self._Align_tensor
+        consistency_tests = self._Consistency_tests
         dasha = self._Dasha
         diffusion_tensor = self._Diffusion_tensor
         dx = self._OpenDX

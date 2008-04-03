@@ -43,6 +43,9 @@ class Value_base_class:
         # Reset the relax data storage object.
         relax_data_store.__reset__()
 
+        # Add a consistency tests data pipe to the data store for testing consistency tests parameters.
+        relax_data_store.add(pipe_name='ct', pipe_type='ct')
+
         # Add a model-free data pipe to the data store for testing model-free and diffusion parameters.
         relax_data_store.add(pipe_name='mf', pipe_type='mf')
 
@@ -56,6 +59,7 @@ class Value_base_class:
         relax_data_store.add(pipe_name='relax_fit', pipe_type='relax_fit')
 
         # Set up some spins.
+        self.set_up_spins(pipe_name='ct')
         self.set_up_spins(pipe_name='mf')
         self.set_up_spins(pipe_name='jw')
         self.set_up_spins(pipe_name='relax_fit')
@@ -89,6 +93,594 @@ class Value_base_class:
         pipe.mol[0].res.add_item('Trp', 2)
         pipe.mol[0].res[1].spin[0].num = 112
         pipe.mol[0].res[1].spin[0].name = 'NH'
+
+
+
+
+    ##################################
+    # Consistency testing parameters #
+    ##################################
+
+
+    def test_set_ct_all_spins_j0(self):
+        """Set the consistency testing parameter J(0) for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='j0', val=4.5e-9)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].j0, 4.5e-9)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 4.5e-9)
+
+
+    def test_set_ct_all_spins_f_eta(self):
+        """Set the consistency testing parameter F_eta for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='f_eta', val=2.3e-10)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].f_eta, 2.3e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].f_eta, 2.3e-10)
+
+
+    def test_set_ct_all_spins_f_r2(self):
+        """Set the consistency testing parameter F_R2 for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='f_r2', val=1.7e-12)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].f_r2, 1.7e-12)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].f_r2, 1.7e-12)
+
+
+    def test_set_ct_all_spins_r(self):
+        """Set the consistency testing bond length parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='Bond_length', val=1.04e-10)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].r, 1.04e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].r, 1.04e-10)
+
+
+    def test_set_ct_all_spins_csa(self):
+        """Set the consistency testing CSA parameter for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='csa', val=-160e-6)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].csa, -160e-6)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -160e-6)
+
+
+    def test_set_ct_all_spins_heteronucleus(self):
+        """Set the consistency testing heteronucleus type for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='heteronuc_type', val='13C')
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '13C')
+        self.assertEqual(cdp.mol[0].res[1].spin[0].heteronuc_type, '13C')
+
+
+    def test_set_ct_all_spins_orientation(self):
+        """Set the consistency testing theta angle for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='orientation', val=17)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].orientation, 17)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].orientation, 17)
+
+
+    def test_set_ct_all_spins_tc(self):
+        """Set the consistency testing approximate correlation time for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='tc', val=10)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].tc, 10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].tc, 10)
+
+
+    def test_set_ct_all_spins_diff_j0_f_eta_f_r2(self):
+        """Set different consistency tests parameters J(0), F_eta, F_R2 for all spins.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param=['j0', 'f_eta', 'f_r2'], val=[6.4e-9, 3.5e-10, 2.3e-12])
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].j0, 6.4e-9)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].f_eta, 3.5e-10)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].f_r2, 2.3e-12)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 6.4e-9)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].f_eta, 3.5e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].f_r2, 2.3e-12)
+
+
+    def test_set_ct_all_spins_same_j0_f_eta_f_r2(self):
+        """Set consistency tests parameters J(0), F_eta, F_R2 for all spins to the same value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param=['j0', 'f_eta', 'f_r2'], val=1.9e-10)
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].j0, 1.9e-10)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].f_eta, 1.9e-10)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].f_r2, 1.9e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 1.9e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].f_eta, 1.9e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].f_r2, 1.9e-10)
+
+
+    def test_set_ct_defaults_j0(self):
+        """Set the consistency testing parameter J(0) to the default value (there is none!).
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.assertRaises(RelaxParamSetError, self.value_fns.set, param='j0')
+
+
+    def test_set_ct_defaults_f_eta(self):
+        """Set the consistency tests parameter F_eta to the default value (there is none!).
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.assertRaises(RelaxParamSetError, self.value_fns.set, param='f_eta')
+
+
+    def test_set_ct_defaults_f_r2(self):
+        """Set the consistency tests parameter F_R2 to the default value (there is none!).
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.assertRaises(RelaxParamSetError, self.value_fns.set, param='f_r2')
+
+
+    def test_set_ct_defaults_r(self):
+        """Set the consistency testing bond length parameter to the default value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='bond-Length')
+
+        # Test the parameter.
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r, 1.02e-10)
+        self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].r, 1.02e-10)
+
+
+    def test_set_ct_defaults_csa(self):
+        """Set the consistency testing CSA parameter to the default value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='csa')
+
+        # Test the parameter.
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].csa, -172e-6)
+        self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].csa, -172e-6)
+
+
+    def test_set_ct_defaults_heteronucleus(self):
+        """Set the consistency testing heteronucleus type to the default value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='heteronuc_type')
+
+        # Test the parameter.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].heteronuc_type, '15N')
+        self.assertEqual(cdp.mol[0].res[1].spin[0].heteronuc_type, '15N')
+
+
+    def test_set_ct_defaults_orientation(self):
+        """Set the consistency testing theta angle parameter to the default value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='orientation')
+
+        # Test the parameter.
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].orientation, 15.7)
+        self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].orientation, 15.7)
+
+
+    def test_set_ct_defaults_tc(self):
+        """Set the consistency testing approximate correlation time parameter to the default value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='tc')
+
+        # Test the parameter.
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].tc, 13 * 1e-9)
+        self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].tc, 13 * 1e-9)
+
+
+    def test_set_ct_defaults_j0_f_eta_f_r2(self):
+        """Set different consistency testing parameters J(0), F_eta, F_R2 to the default values (there are none!).
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.assertRaises(RelaxParamSetError, self.value_fns.set, param=['j0', 'f_eta', 'f_r2'])
+
+
+    def test_set_ct_single_spin_j0(self):
+        """Set the consistency tests parameter J(0) for a single spin.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='j0', val=4.5e-9, spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 4.5e-9)
+
+
+    def test_set_ct_single_spin_f_eta(self):
+        """Set the consistency tests parameter F_eta for a single spin.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='f_eta', val=2.3e-10, spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'f_eta'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].f_eta, 2.3e-10)
+
+
+    def test_set_ct_single_spin_f_r2(self):
+        """Set the consistency tests parameter F_R2 for a single spin.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='f_r2', val=1.7e-12, spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'f_r2'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].f_r2, 1.7e-12)
+
+
+    def test_set_ct_single_spin_r(self):
+        """Set the consistency tests bond length parameter for a single spin.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='Bond_length', val=1.04e-10, spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'r'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].r, 1.04e-10)
+
+
+    def test_set_ct_single_spin_csa(self):
+        """Set the consistency tests CSA parameter for a single spin.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='csa', val=-160e-6, spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'csa'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -160e-6)
+
+
+    def test_set_ct_single_spin_heteronucleus(self):
+        """Set the consistency testing heteronucleus type for a single spin.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='heteronuc_type', val='13C', spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'heteronuc_type'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].heteronuc_type, '13C')
+
+
+    def test_set_ct_single_spin_orientation(self):
+        """Set the consistency tests theta angle parameter for a single spin.
+        
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+        
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='orientation', val=17, spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'orientation'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].orientation, 17)
+
+
+    def test_set_ct_single_spin_tc(self):
+        """Set the consistency tests approximate correlation time parameter for a single spin.
+        
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+        
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param='tc', val=10, spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'tc'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].tc, 10)
+
+
+    def test_set_ct_single_spin_diff_j0_f_eta_f_r2(self):
+        """Set different consistency tests parameters J(0), F_eta, F_R2 for a single spin.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param=['j0', 'f_eta', 'f_r2'], val=[6.4e-9, 3.5e-10, 2.3e-12], spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'f_eta'))
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'f_r2'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 6.4e-9)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].f_eta, 3.5e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].f_r2, 2.3e-12)
+
+
+    def test_set_ct_single_spin_same_j0_f_eta_f_r2(self):
+        """Set consistency tests parameters J(0), F_eta, F_R2 for a single spin to the same value.
+
+        The functions tested are both generic_fns.value.set() and prompt.value.set().
+        """
+
+        # Set the current data pipe to 'ct'.
+        relax_data_store.current_pipe = 'ct'
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Set the parameter.
+        self.value_fns.set(param=['j0', 'f_eta', 'f_r2'], val=1.9e-10, spin_id='@112')
+
+        # Test the parameter.
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'j0'))
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'f_eta'))
+        self.assert_(not hasattr(cdp.mol[0].res[0].spin[0], 'f_r2'))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].j0, 1.9e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].f_eta, 1.9e-10)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].f_r2, 1.9e-10)
+
 
 
 
