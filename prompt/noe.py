@@ -41,13 +41,11 @@ class Noe:
         self.__relax__ = relax
 
 
-    def error(self, run=None, error=0.0, spectrum_type=None, res_num=None, res_name=None):
+    def error(self, error=0.0, spectrum_type=None, res_num=None, res_name=None):
         """Function for setting the errors in the reference or saturated NOE spectra.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         error:  The error.
 
@@ -75,16 +73,11 @@ class Noe:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "noe.error("
-            text = text + "run=" + `run`
-            text = text + ", error=" + `error`
+            text = text + "error=" + `error`
             text = text + ", spectrum_type=" + `spectrum_type`
             text = text + ", res_num=" + `res_num`
             text = text + ", res_name=" + `res_name` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The error.
         if type(error) != float and type(error) != int:
@@ -103,16 +96,14 @@ class Noe:
             raise RelaxNoneStrError, ('residue name', res_name)
 
         # Execute the functional code.
-        self.__relax__.specific.noe.set_error(run=run, error=error, spectrum_type=spectrum_type, res_num=res_num, res_name=res_name)
+        noe_obj.set_error(error=error, spectrum_type=spectrum_type, res_num=res_num, res_name=res_name)
 
 
-    def read(self, run=None, file=None, dir=None, spectrum_type=None, format='sparky', heteronuc='N', proton='HN', int_col=None):
+    def read(self, file=None, dir=None, spectrum_type=None, format='sparky', heteronuc='N', proton='HN', int_col=None):
         """Function for reading peak intensities from a file for NOE calculations.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         file:  The name of the file containing the sequence data.
 
@@ -168,23 +159,22 @@ class Noe:
         ~~~~~~~~
 
         To read the reference and saturated spectra peak heights from the Sparky formatted files
-        'ref.list' and 'sat.list' to the run 'noe', type:
+        'ref.list' and 'sat.list', type:
 
-        relax> noe.read('noe', file='ref.list', spectrum_type='ref')
-        relax> noe.read('noe', file='sat.list', spectrum_type='sat')
+        relax> noe.read(file='ref.list', spectrum_type='ref')
+        relax> noe.read(file='sat.list', spectrum_type='sat')
 
         To read the reference and saturated spectra peak heights from the XEasy formatted files
-        'ref.text' and 'sat.text' to the run 'noe', type:
+        'ref.text' and 'sat.text', type:
 
-        relax> noe.read('noe', file='ref.text', spectrum_type='ref', format='xeasy')
-        relax> noe.read('noe', file='sat.text', spectrum_type='sat', format='xeasy')
+        relax> noe.read(file='ref.text', spectrum_type='ref', format='xeasy')
+        relax> noe.read(file='sat.text', spectrum_type='sat', format='xeasy')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "noe.read("
-            text = text + "run=" + `run`
-            text = text + ", file=" + `file`
+            text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", spectrum_type=" + `spectrum_type`
             text = text + ", format=" + `format`
@@ -192,10 +182,6 @@ class Noe:
             text = text + ", proton=" + `proton`
             text = text + ", int_col=" + `int_col` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The file name.
         if type(file) != str:
@@ -226,4 +212,4 @@ class Noe:
             raise RelaxNoneIntError, ('intensity column', int_col)
 
         # Execute the functional code.
-        self.__relax__.specific.noe.read(run=run, file=file, dir=dir, spectrum_type=spectrum_type, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col)
+        noe_obj.read(file=file, dir=dir, spectrum_type=spectrum_type, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col)
