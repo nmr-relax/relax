@@ -41,31 +41,19 @@ class Vmd:
         self.__relax__ = relax
 
 
-    def view(self, run=None):
+    def view(self):
         """Function for viewing the collection of molecules extracted from the PDB file.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run which the PDB belongs to.
-
 
         Example
         ~~~~~~~
 
-        relax> vmd.view('m1')
-        relax> vmd.view(run='pdb')
+        relax> vmd.view()
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "vmd.view("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "vmd.view()"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
         # Execute the functional code.
-        self.__relax__.generic.vmd.view(run=run)
+        vmd_obj.view()
