@@ -102,29 +102,29 @@ class Grace:
 	cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Loop over the residues.
-        for i in xrange(len(cdp.res)):
+        for spin in spin_loop(spin_id):
             # Remap the data structure 'cdp.res[i]'.
-            data = cdp.res[i]
+            spin = cdp.res[i]
 
             # Skip the residue if there is no match to 'self.res_num' (unless it is None).
             if type(self.res_num) == int:
-                if not data.num == self.res_num:
+                if not spin.num == self.res_num:
                     continue
             elif type(self.res_num) == str:
-                if not match(self.res_num, `data.num`):
+                if not match(self.res_num, `spin.num`):
                     continue
 
             # Skip the residue if there is no match to 'self.res_name' (unless it is None).
             if self.res_name != None:
-                if not match(self.res_name, data.name):
+                if not match(self.res_name, spin.name):
                     continue
 
             # Skip deselected residues.
-            if not data.select:
+            if not spin.select:
                 continue
 
             # Number of data points per residue.
-            if self.plot_data == 'sim':
+            if self.plot_spin == 'sim':
                 points = cdp.sim_number
             else:
                 points = 1
@@ -132,43 +132,43 @@ class Grace:
             # Loop over the data points.
             for j in xrange(points):
                 # Initialise an empty array for the individual residue data.
-                res_data = [data.num, data.name, None, None, None, None]
+                res_spin = [spin.num, spin.name, None, None, None, None]
 
                 # Residue number on the x-axis.
-                if self.x_data_type == 'res':
-                    res_data[2] = data.num
+                if self.x_spin_type == 'res':
+                    res_spin[2] = spin.num
 
                 # Parameter value for the x-axis.
                 else:
                     # Get the x-axis values and errors.
-                    if self.plot_data == 'sim':
-                        res_data[2], res_data[3] = self.x_return_value(self.run, i, self.x_data_type, sim=j)
+                    if self.plot_spin == 'sim':
+                        res_spin[2], res_spin[3] = self.x_return_value(self.run, i, self.x_spin_type, sim=j)
                     else:
-                        res_data[2], res_data[3] = self.x_return_value(self.run, i, self.x_data_type)
+                        res_spin[2], res_spin[3] = self.x_return_value(self.run, i, self.x_spin_type)
 
                 # Get the y-axis values and errors.
-                if self.plot_data == 'sim':
-                    res_data[4], res_data[5] = self.y_return_value(self.run, i, self.y_data_type, sim=j)
+                if self.plot_spin == 'sim':
+                    res_spin[4], res_spin[5] = self.y_return_value(self.run, i, self.y_spin_type, sim=j)
                 else:
-                    res_data[4], res_data[5] = self.y_return_value(self.run, i, self.y_data_type)
+                    res_spin[4], res_spin[5] = self.y_return_value(self.run, i, self.y_spin_type)
 
                 # Go to the next residue if there is missing data.
-                if res_data[2] == None or res_data[4] == None:
+                if res_spin[2] == None or res_spin[4] == None:
                     continue
 
                 # X-axis conversion factors.
-                if self.x_data_type != 'res':
-                    res_data[2] = array(res_data[2]) / self.x_return_conversion_factor(self.x_data_type)
-                    if res_data[3]:
-                        res_data[3] = array(res_data[3]) / self.x_return_conversion_factor(self.x_data_type)
+                if self.x_spin_type != 'res':
+                    res_spin[2] = array(res_spin[2]) / self.x_return_conversion_factor(self.x_spin_type)
+                    if res_spin[3]:
+                        res_spin[3] = array(res_spin[3]) / self.x_return_conversion_factor(self.x_spin_type)
 
                 # Y-axis conversion factors.
-                res_data[4] = array(res_data[4]) / self.y_return_conversion_factor(self.y_data_type)
-                if res_data[5]:
-                    res_data[5] = array(res_data[5]) / self.y_return_conversion_factor(self.y_data_type)
+                res_spin[4] = array(res_spin[4]) / self.y_return_conversion_factor(self.y_spin_type)
+                if res_spin[5]:
+                    res_spin[5] = array(res_spin[5]) / self.y_return_conversion_factor(self.y_spin_type)
 
                 # Append the array to the full data structure.
-                self.data.append(res_data)
+                self.spin.append(res_spin)
 
 
     def view(self, file=None, dir=None, grace_exe='xmgrace'):
