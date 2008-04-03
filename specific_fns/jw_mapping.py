@@ -575,34 +575,35 @@ class Jw_mapping(Common_functions):
             frq = `None`
 
         # Loop over the sequence.
-        for i in xrange(len(cdp.res)):
+        for spin in spin_loop(spin_id):
+
             # Reassign data structure.
             data = cdp.res[i]
 
             # J(0).
             j0 = None
-            if hasattr(data, 'j0'):
-                j0 = data.j0
+            if hasattr(spin, 'j0'):
+                j0 = spin.j0
 
             # J(wX).
             jwx = None
-            if hasattr(data, 'jwx'):
-                jwx = data.jwx
+            if hasattr(spin, 'jwx'):
+                jwx = spin.jwx
 
             # J(wH).
             jwh = None
-            if hasattr(data, 'jwh'):
-                jwh = data.jwh
+            if hasattr(spin, 'jwh'):
+                jwh = spin.jwh
 
             # Bond length.
             r = None
-            if hasattr(data, 'r') and data.r != None:
-                r = data.r / 1e-10
+            if hasattr(spin, 'r') and spin.r != None:
+                r = spin.r / 1e-10
 
             # CSA.
             csa = None
-            if hasattr(data, 'csa') and data.csa != None:
-                csa = data.csa / 1e-6
+            if hasattr(spin, 'csa') and spin.csa != None:
+                csa = spin.csa / 1e-6
 
             # Relaxation data and errors.
             ri = []
@@ -612,13 +613,13 @@ class Jw_mapping(Common_functions):
                     try:
                         # Find the residue specific data corresponding to i.
                         index = None
-                        for j in xrange(data.num_ri):
-                            if data.ri_labels[j] == cdp.ri_labels[i] and data.frq_labels[data.remap_table[j]] == cdp.frq_labels[cdp.remap_table[i]]:
+                        for j in xrange(spin.num_ri):
+                            if spin.ri_labels[j] == cdp.ri_labels[i] and spin.frq_labels[spin.remap_table[j]] == cdp.frq_labels[cdp.remap_table[i]]:
                                 index = j
 
                         # Data exists for this data type.
-                        ri.append(spin)
-                        ri_error.append(spin)
+                        ri.append(spin.relax_data[index])
+                        ri_error.append(spin.relax_error[index])
 
                     # No data exists for this data type.
                     except:
@@ -626,7 +627,7 @@ class Jw_mapping(Common_functions):
                         ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='value', nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=spin.num, name=spin.name, select=spin.select, spin_set='value', nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Errors.
@@ -639,34 +640,32 @@ class Jw_mapping(Common_functions):
             return
 
         # Loop over the sequence.
-        for i in xrange(len(cdp.res)):
-            # Reassign data structure.
-            data = cdp.res[i]
+        for spin in spin_loop(spin_id):
 
             # J(0).
             j0 = None
-            if hasattr(data, 'j0_err'):
-                j0 = data.j0_err
+            if hasattr(spin, 'j0_err'):
+                j0 = spin.j0_err
 
             # J(wX).
             jwx = None
-            if hasattr(data, 'jwx_err'):
-                jwx = data.jwx_err
+            if hasattr(spin, 'jwx_err'):
+                jwx = spin.jwx_err
 
             # J(wH).
             jwh = None
-            if hasattr(data, 'jwh_err'):
-                jwh = data.jwh_err
+            if hasattr(spin, 'jwh_err'):
+                jwh = spin.jwh_err
 
             # Bond length.
             r = None
-            if hasattr(data, 'r_err') and data.r_err != None:
-                r = data.r_err / 1e-10
+            if hasattr(spin, 'r_err') and spin.r_err != None:
+                r = spin.r_err / 1e-10
 
             # CSA.
             csa = None
-            if hasattr(data, 'csa_err') and data.csa_err != None:
-                csa = data.csa_err / 1e-6
+            if hasattr(spin, 'csa_err') and spin.csa_err != None:
+                csa = spin.csa_err / 1e-6
 
             # Relaxation data and errors.
             ri = []
@@ -676,7 +675,7 @@ class Jw_mapping(Common_functions):
                 ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=spin.num, name=spin.name, select=spin.select, spin_set='error', nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Simulation values.
@@ -685,34 +684,32 @@ class Jw_mapping(Common_functions):
         # Loop over the simulations.
         for i in xrange(cdp.sim_number):
             # Loop over the sequence.
-            for j in xrange(len(cdp.res)):
-                # Reassign data structure.
-                data = cdp.res[j]
+            for spin in spin_loop(spin_id):
 
                 # J(0).
                 j0 = None
-                if hasattr(data, 'j0_sim'):
-                    j0 = data.j0_sim[i]
+                if hasattr(spin, 'j0_sim'):
+                    j0 = spin.j0_sim[i]
 
                 # J(wX).
                 jwx = None
-                if hasattr(data, 'jwx_sim'):
-                    jwx = data.jwx_sim[i]
+                if hasattr(spin, 'jwx_sim'):
+                    jwx = spin.jwx_sim[i]
 
                 # J(wH).
                 jwh = None
-                if hasattr(data, 'jwh_sim'):
-                    jwh = data.jwh_sim[i]
+                if hasattr(spin, 'jwh_sim'):
+                    jwh = spin.jwh_sim[i]
 
                 # Bond length.
                 r = None
-                if hasattr(data, 'r_sim') and data.r_sim != None and data.r_sim[i] != None:
-                    r = data.r_sim[i] / 1e-10
+                if hasattr(spin, 'r_sim') and spin.r_sim != None and spin.r_sim[i] != None:
+                    r = spin.r_sim[i] / 1e-10
 
                 # CSA.
                 csa = None
-                if hasattr(data, 'csa_sim') and data.csa_sim != None and data.csa_sim[i] != None:
-                    csa = data.csa_sim[i] / 1e-6
+                if hasattr(spin, 'csa_sim') and spin.csa_sim != None and spin.csa_sim[i] != None:
+                    csa = spin.csa_sim[i] / 1e-6
 
                 # Relaxation data and errors.
                 ri = []
@@ -722,13 +719,13 @@ class Jw_mapping(Common_functions):
                         try:
                             # Find the residue specific data corresponding to k.
                             index = None
-                            for l in xrange(data.num_ri):
-                                if data.ri_labels[l] == cdp.ri_labels[k] and data.frq_labels[data.remap_table[l]] == cdp.frq_labels[cdp.remap_table[k]]:
+                            for l in xrange(spin.num_ri):
+                                if spin.ri_labels[l] == cdp.ri_labels[k] and spin.frq_labels[spin.remap_table[l]] == cdp.frq_labels[cdp.remap_table[k]]:
                                     index = l
 
                             # Data exists for this data type.
-                            ri.append(spin)
-                            ri_error.append(spin)
+                            ri.append(`spin.relax_sim_data[i][index]`)
+                            ri_error.append(`spin.relax_error[index]`)
 
                         # No data exists for this data type.
                         except:
@@ -736,4 +733,4 @@ class Jw_mapping(Common_functions):
                             ri_error.append(None)
 
                 # Write the line.
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='sim_'+`i`, nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                self.write_columnar_line(file=file, num=spin.num, name=spin.name, select=spin.select, spin_set='sim_'+`i`, nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
