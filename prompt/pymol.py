@@ -42,13 +42,8 @@ class Pymol:
         self.__relax__ = relax
 
 
-    def cartoon(self, run=None):
+    def cartoon(self):
         """Apply the PyMOL cartoon style and colour by secondary structure.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
 
         Description
@@ -68,23 +63,18 @@ class Pymol:
         Example
         ~~~~~~~
 
-        To apply this user function to the run 'final', type:
+        To apply this user function, type:
 
-        relax> pymol.cartoon("final")
+        relax> pymol.cartoon()
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pymol.cartoon("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "pymol.cartoon()"
             print text
 
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
         # Execute the functional code.
-        self.__relax__.generic.pymol.cartoon(run=run)
+        pymol_obj.cartoon()
 
 
     def clear_history(self):
@@ -99,13 +89,11 @@ class Pymol:
         self.__relax__.generic.pymol.clear_history()
 
 
-    def command(self, run=None, command=None):
+    def command(self, command=None):
         """Function for executing a user supplied PyMOL command.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         command:  The PyMOL command to execute.
 
@@ -120,37 +108,30 @@ class Pymol:
         Example
         ~~~~~~~
 
-        To reinitialise the PyMOL instance for the run 'aic', type:
+        To reinitialise the PyMOL instance, type:
 
-        relax> pymol.command("aic", "reinitialise")
+        relax> pymol.command("reinitialise")
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pymol.command("
-            text = text + "run=" + `run`
-            text = text + ", command=" + `command` + ")"
+            text = text + "command=" + `command` + ")"
             print text
-
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The command argument.
         if type(command) != str:
             raise RelaxStrError, ('command', command)
 
         # Execute the functional code.
-        self.__relax__.generic.pymol.command(run=run, command=command)
+        pymol_obj.command(command=command)
 
 
-    def macro_exec(self, run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
+    def macro_exec(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
         """Function for executing PyMOL macros.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         data_type:  The data type to map to the structure.
 
@@ -192,28 +173,22 @@ class Pymol:
         Examples
         ~~~~~~~~
 
-        To map the order parameter values, S2, of the run 'final' onto the structure using the
-        classic style, type:
+        To map the order parameter values, S2, onto the structure using the classic style, type:
 
-        relax> pymol.macro_exec('final', 'S2')
-        relax> pymol.macro_exec('final', data_type='S2')
-        relax> pymol.macro_exec('final', data_type='S2', style="classic")
+        relax> pymol.macro_exec('S2')
+        relax> pymol.macro_exec(data_type='S2')
+        relax> pymol.macro_exec(data_type='S2', style="classic")
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pymol.macro_exec("
-            text = text + "run=" + `run`
-            text = text + ", data_type=" + `data_type`
+            text = text + "data_type=" + `data_type`
             text = text + ", style=" + `style`
             text = text + ", colour_start=" + `colour_start`
             text = text + ", colour_end=" + `colour_end`
             text = text + ", colour_list=" + `colour_list` + ")"
             print text
-
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # Data type for mapping to the structure.
         if type(data_type) != str:
@@ -240,16 +215,14 @@ class Pymol:
                     raise RelaxListNumError, ('ending colour of the linear gradient', colour_end)
 
         # Execute the functional code.
-        self.__relax__.generic.pymol.macro_exec(run=run, data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
+        pymol_obj.macro_exec(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
 
 
-    def tensor_pdb(self, run=None, file=None):
+    def tensor_pdb(self, file=None):
         """Function displaying the diffusion tensor PDB geometric object over the loaded PDB.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         file:  The name of the PDB file containing the tensor geometric object.
 
@@ -257,11 +230,11 @@ class Pymol:
         Description
         ~~~~~~~~~~~
 
-        In executing this user function, a PDB file must have previously been loaded into this run,
-        a geometric object or polygon representing the Brownian rotational diffusion tensor will be
-        overlain with the loaded PDB file and displayed within PyMOL.  The PDB file containing the
-        geometric object must be created using the complementary 'pdb.create_diff_tensor_pdb()' user
-        function.
+        In executing this user function, a PDB file must have previously been loaded into this data
+        pipe a geometric object or polygon representing the Brownian rotational diffusion tensor
+        will be overlain with the loaded PDB file and displayed within PyMOL.  The PDB file
+        containing the geometric object must be created using the complementary
+        'pdb.create_diff_tensor_pdb()' user function.
 
         The tensor PDB file is read in using the command:
 
@@ -290,29 +263,22 @@ class Pymol:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pymol.tensor_pdb("
-            text = text + "run=" + `run`
-            text = text + ", file=" + `file` + ")"
+            text = text + "file=" + `file` + ")"
             print text
-
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The file name.
         if type(file) != str:
             raise RelaxStrError, ('file name', file)
 
         # Execute the functional code.
-        self.__relax__.generic.pymol.tensor_pdb(run=run, file=file)
+        pymol_obj.tensor_pdb(file=file)
 
 
-    def vector_dist(self, run=None, file='XH_dist.pdb'):
+    def vector_dist(self, file='XH_dist.pdb'):
         """Function displaying the PDB file representation of the XH vector distribution.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         file:  The name of the PDB file containing the vector distribution.
 
@@ -334,59 +300,41 @@ class Pymol:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pymol.vector_dist("
-            text = text + "run=" + `run`
-            text = text + ", file=" + `file` + ")"
+            text = text + "file=" + `file` + ")"
             print text
-
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The file name.
         if type(file) != str:
             raise RelaxStrError, ('file name', file)
 
         # Execute the functional code.
-        self.__relax__.generic.pymol.vector_dist(run=run, file=file)
+        pymol_obj.vector_dist(file=file)
 
 
-    def view(self, run=None):
+    def view(self):
         """Function for viewing the collection of molecules extracted from the PDB file.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run which the PDB belongs to.
 
 
         Example
         ~~~~~~~
 
-        relax> pymol.view('m1')
-        relax> pymol.view(run='pdb')
+        relax> pymol.view()
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pymol.view("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "pymol.view()"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
         # Execute the functional code.
-        self.__relax__.generic.pymol.view(run=run)
+        pymol_obj.view()
 
 
-    def write(self, run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir='pymol', force=0):
+    def write(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir='pymol', force=0):
         """Function for creating PyMOL macros.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         data_type:  The data type to map to the structure.
 
@@ -436,19 +384,18 @@ class Pymol:
         Examples
         ~~~~~~~~
 
-        To create a PyMOL macro mapping the order parameter values, S2, of the run 'final' onto the
-        structure using the classic style, type:
+        To create a PyMOL macro mapping the order parameter values, S2, onto the structure using
+        the classic style, type:
 
-        relax> pymol.write('final', 'S2')
-        relax> pymol.write('final', data_type='S2')
-        relax> pymol.write('final', data_type='S2', style="classic", file='s2.mac', dir='pymol')
+        relax> pymol.write('S2')
+        relax> pymol.write(data_type='S2')
+        relax> pymol.write(data_type='S2', style="classic", file='s2.mac', dir='pymol')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pymol.write("
-            text = text + "run=" + `run`
-            text = text + ", data_type=" + `data_type`
+            text = text + "data_type=" + `data_type`
             text = text + ", style=" + `style`
             text = text + ", colour_start=" + `colour_start`
             text = text + ", colour_end=" + `colour_end`
@@ -457,10 +404,6 @@ class Pymol:
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force` + ")"
             print text
-
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # Data type for mapping to the structure.
         if type(data_type) != str:
@@ -499,7 +442,7 @@ class Pymol:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        self.__relax__.generic.pymol.write(run=run, data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)
+        pymol_obj.write(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)
 
 
 
