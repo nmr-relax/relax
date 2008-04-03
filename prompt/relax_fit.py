@@ -41,13 +41,8 @@ class Relax_fit:
         self.__relax__ = relax
 
 
-    def mean_and_error(self, run=None):
+    def mean_and_error(self):
         """Function for calculating the average intensity and standard deviation of all spectra.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
 
         Errors of individual residues at a single time point
@@ -93,25 +88,18 @@ class Relax_fit:
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_fit.mean_and_error("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "relax_fit.mean_and_error()"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
         # Execute the functional code.
-        self.__relax__.specific.relax_fit.mean_and_error(run=run)
+        relax_fit_obj.mean_and_error()
 
 
-    def read(self, run=None, file=None, dir=None, relax_time=0.0, format='sparky', heteronuc='N', proton='HN', int_col=None):
+    def read(self, file=None, dir=None, relax_time=0.0, format='sparky', heteronuc='N', proton='HN', int_col=None):
         """Function for reading peak intensities from a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         file:  The name of the file containing the sequence data.
 
@@ -163,8 +151,7 @@ class Relax_fit:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "relax_fit.read("
-            text = text + "run=" + `run`
-            text = text + ", file=" + `file`
+            text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", relax_time=" + `relax_time`
             text = text + ", format=" + `format`
@@ -172,10 +159,6 @@ class Relax_fit:
             text = text + ", proton=" + `proton`
             text = text + ", int_col=" + `int_col` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The file name.
         if type(file) != str:
@@ -206,16 +189,14 @@ class Relax_fit:
             raise RelaxNoneIntError, ('intensity column', int_col)
 
         # Execute the functional code.
-        self.__relax__.specific.relax_fit.read(run=run, file=file, dir=dir, relax_time=relax_time, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col)
+        relax_fit_obj.read(file=file, dir=dir, relax_time=relax_time, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col)
 
 
-    def select_model(self, run=None, model='exp'):
+    def select_model(self, model='exp'):
         """Function for the selection of the relaxation curve type.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         model:  The type of relaxation curve to fit.
 
@@ -236,17 +217,12 @@ class Relax_fit:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "relax_fit.select_model("
-            text = text + "run=" + `run`
-            text = text + ", model=" + `model` + ")"
+            text = text + "model=" + `model` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The model argument.
         if type(model) != str:
             raise RelaxStrError, ('model', model)
 
         # Execute the functional code.
-        self.__relax__.specific.relax_fit.select_model(run=run, model=model)
+        relax_fit_obj.select_model(model=model)
