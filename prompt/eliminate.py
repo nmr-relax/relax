@@ -35,14 +35,11 @@ class Eliminate:
         self.relax = relax
 
 
-    def eliminate(self, run=None, function=None, args=None):
+    def eliminate(self, function=None, args=None):
         """Function for model elimination.
 
         Keyword arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run(s).  By supplying a single string, array of strings, or None, a
-        single run, multiple runs, or all runs will be selected respectively.
 
         function:  A user supplied function for model elimination.
 
@@ -58,7 +55,7 @@ class Eliminate:
 
         Empirical rules are used for model rejection and are listed below.  However these can be
         overridden by supplying a function.  The function should accept five arguments, a string
-        defining a certain parameter, the value of the parameter, the run name, the minimisation
+        defining a certain parameter, the value of the parameter, the minimisation
         instance (ie the residue index if the model is residue specific), and the function
         arguments.  If the model is rejected, the function should return 1, otherwise it should
         return 0.  The function will be executed multiple times, once for each parameter of the
@@ -75,18 +72,9 @@ class Eliminate:
         # Function intro text.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "eliminate("
-            text = text + "run=" + `run`
-            text = text + ", function=" + `function`
+            text = text + "function=" + `function`
             text = text + ", args=" + `args` + ")"
             print text
-
-        # The run argument.
-        if run != None and type(run) != str and type(run) != list:
-            raise RelaxNoneStrListError, ('run', run)
-        if type(run) == list:
-            for i in xrange(len(run)):
-                if type(run[i]) != str:
-                    raise RelaxListStrError, ('run', run)
 
         # User supplied function.
         if function != None and type(function) != FunctionType:
@@ -97,7 +85,7 @@ class Eliminate:
             raise RelaxNoneTupleError, ('args', args)
 
         # Execute the functional code.
-        self.relax.generic.eliminate.eliminate(run=run, function=function, args=args)
+        eliminate_obj.eliminate(function=function, args=args)
 
 
     # Docstring modification.
