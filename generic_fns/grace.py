@@ -100,28 +100,29 @@ class Grace:
         """Function for getting all the xy data."""
 
         # Alias the current data pipe.
-	cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Loop over the residues.
-        for i in xrange(len(cdp.res)):
+        for spin in spin_loop(spin_id):
+
             # Remap the data structure 'cdp.res[i]'.
-            data = cdp.res[i]
+            spin = cdp.res[i]
 
             # Skip the residue if there is no match to 'self.res_num' (unless it is None).
             if type(self.res_num) == int:
-                if not data.num == self.res_num:
+                if not spin.num == self.res_num:
                     continue
             elif type(self.res_num) == str:
-                if not match(self.res_num, `data.num`):
+                if not match(self.res_num, `spin.num`):
                     continue
 
             # Skip the residue if there is no match to 'self.res_name' (unless it is None).
             if self.res_name != None:
-                if not match(self.res_name, data.name):
+                if not match(self.res_name, spin.name):
                     continue
 
             # Skip deselected residues.
-            if not data.select:
+            if not spin.select:
                 continue
 
             # Number of data points per residue.
@@ -133,11 +134,11 @@ class Grace:
             # Loop over the data points.
             for j in xrange(points):
                 # Initialise an empty array for the individual residue data.
-                res_data = [data.num, data.name, None, None, None, None]
+                res_data = [spin.num, spin.name, None, None, None, None]
 
                 # Residue number on the x-axis.
                 if self.x_data_type == 'res':
-                    res_data[2] = data.num
+                    res_data[2] = spin.num
 
                 # Parameter value for the x-axis.
                 else:
@@ -169,7 +170,7 @@ class Grace:
                     res_data[5] = array(res_data[5]) / self.y_return_conversion_factor(self.y_data_type)
 
                 # Append the array to the full data structure.
-                self.data.append(res_data)
+                self.spin.append(res_data)
 
 
     def view(self, file=None, dir=None, grace_exe='xmgrace'):
@@ -262,7 +263,7 @@ class Grace:
         # Test for multiple data sets.
         self.multi = 1
         try:
-            len(self.data[0][2])
+            len(self.spin[0][2])
         except TypeError:
             self.multi = 0
 
@@ -294,36 +295,36 @@ class Grace:
         self.file.write("@type " + self.graph_type + "\n")
 
         # Loop over the data.
-        for i in xrange(len(self.data)):
+        for i in xrange(len(self.spin)):
             # Graph type xy.
             if self.graph_type == 'xy':
                 # Write the data.
-                self.file.write("%-30s%-30s\n" % (self.data[i][2], self.data[i][4]))
+                self.file.write("%-30s%-30s\n" % (self.spin[i][2], self.spin[i][4]))
 
             # Graph type xydy.
             elif self.graph_type == 'xydy':
                 # Catch y-axis errors of None.
-                y_error = self.data[i][5]
+                y_error = self.spin[i][5]
                 if y_error == None:
                     y_error = 0.0
 
                 # Write the data.
-                self.file.write("%-30s%-30s%-30s\n" % (self.data[i][2], self.data[i][4], y_error))
+                self.file.write("%-30s%-30s%-30s\n" % (self.spin[i][2], self.spin[i][4], y_error))
 
             # Graph type xydxdy.
             elif self.graph_type == 'xydxdy':
                 # Catch x-axis errors of None.
-                x_error = self.data[i][3]
+                x_error = self.spin[i][3]
                 if x_error == None:
                     x_error = 0.0
 
                 # Catch y-axis errors of None.
-                y_error = self.data[i][5]
+                y_error = self.spin[i][5]
                 if y_error == None:
                     y_error = 0.0
 
                 # Write the data.
-                self.file.write("%-30s%-30s%-30s%-30s\n" % (self.data[i][2], self.data[i][4], x_error, y_error))
+                self.file.write("%-30s%-30s%-30s%-30s\n" % (self.spin[i][2], self.spin[i][4], x_error, y_error))
 
         # End of graph and data set.
         self.file.write("&\n")
@@ -396,7 +397,7 @@ class Grace:
         """Write the data into the grace file."""
 
         # Loop over the data.
-        for i in xrange(len(self.data)):
+        for i in xrange(len(self.spin)):
             # Multi data set (graph 0, set i).
             self.file.write("@target G0.S" + `i` + "\n")
             self.file.write("@type " + self.graph_type + "\n")
@@ -404,39 +405,39 @@ class Grace:
             # Normalisation.
             norm_fact = 1.0
             if self.norm:
-                norm_fact = self.data[i][4][0]
+                norm_fact = self.spin[i][4][0]
 
             # Loop over the data of the set.
-            for j in xrange(len(self.data[i][2])):
+            for j in xrange(len(self.spin[i][2])):
                 # Graph type xy.
                 if self.graph_type == 'xy':
                     # Write the data.
-                    self.file.write("%-30s%-30s\n" % (self.data[i][2][j], self.data[i][4][j]/norm_fact))
+                    self.file.write("%-30s%-30s\n" % (self.spin[i][2][j], self.spin[i][4][j]/norm_fact))
 
                 # Graph type xydy.
                 elif self.graph_type == 'xydy':
                     # Catch y-axis errors of None.
-                    y_error = self.data[i][5][j]
+                    y_error = self.spin[i][5][j]
                     if y_error == None:
                         y_error = 0.0
 
                     # Write the data.
-                    self.file.write("%-30s%-30s%-30s\n" % (self.data[i][2][j], self.data[i][4][j]/norm_fact, y_error/norm_fact))
+                    self.file.write("%-30s%-30s%-30s\n" % (self.spin[i][2][j], self.spin[i][4][j]/norm_fact, y_error/norm_fact))
 
                 # Graph type xydxdy.
                 elif self.graph_type == 'xydxdy':
                     # Catch x-axis errors of None.
-                    x_error = self.data[i][3][j]
+                    x_error = self.spin[i][3][j]
                     if x_error == None:
                         x_error = 0.0
 
                     # Catch y-axis errors of None.
-                    y_error = self.data[i][5][j]
+                    y_error = self.spin[i][5][j]
                     if y_error == None:
                         y_error = 0.0
 
                     # Write the data.
-                    self.file.write("%-30s%-30s%-30s%-30s\n" % (self.data[i][2][j], self.data[i][4][j]/norm_fact, x_error, y_error/norm_fact))
+                    self.file.write("%-30s%-30s%-30s%-30s\n" % (self.spin[i][2][j], self.spin[i][4][j]/norm_fact, x_error, y_error/norm_fact))
 
             # End of the data set i.
             self.file.write("&\n")
@@ -498,11 +499,11 @@ class Grace:
         self.file.write("@    frame linewidth 0.5\n")
 
         # Loop over the data sets.
-        for i in xrange(len(self.data)):
+        for i in xrange(len(self.spin)):
             # Error bars.
             self.file.write("@    s%i errorbar size 0.5\n" % i)
             self.file.write("@    s%i errorbar linewidth 0.5\n" % i)
             self.file.write("@    s%i errorbar riser linewidth 0.5\n" % i)
 
             # Legend.
-            self.file.write("@    s%i legend \"Residue %s\"\n" % (i, self.data[i][1] + " " + `self.data[i][0]`))
+            self.file.write("@    s%i legend \"Residue %s\"\n" % (i, self.spin[i][1] + " " + `self.spin[i][0]`))
