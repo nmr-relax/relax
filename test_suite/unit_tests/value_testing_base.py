@@ -202,7 +202,7 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -160e-6)
 
 
-    def test_set_ct_all_spins_nucleus(self):
+    def test_set_ct_all_spins_heteronucleus(self):
         """Set the consistency testing heteronucleus type for all spins.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -398,7 +398,7 @@ class Value_base_class:
         self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].csa, -172e-6)
 
 
-    def test_set_ct_defaults_nucleus(self):
+    def test_set_ct_defaults_heteronucleus(self):
         """Set the consistency testing heteronucleus type to the default value.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -574,7 +574,7 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -160e-6)
 
 
-    def test_set_ct_single_spin_nucleus(self):
+    def test_set_ct_single_spin_heteronucleus(self):
         """Set the consistency testing heteronucleus type for a single spin.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
