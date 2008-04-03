@@ -37,55 +37,50 @@ class Jw_mapping(Common_functions):
         """Class containing functions specific to reduced spectral density mapping."""
 
 
-    def calculate(self, run=None, verbosity=1, sim_index=None):
+    def calculate(self, verbosity=1, sim_index=None):
         """Calculation of the spectral density values."""
 
-        # Run argument.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Test if the frequency has been set.
-        if not hasattr(relax_data_store, 'jw_frq') or not relax_data_store.jw_frq.has_key(self.run) or type(relax_data_store.jw_frq[self.run]) != float:
-            raise RelaxError, "The frequency for the run " + `self.run` + " has not been set up."
-
-        # Test if the nucleus type has been set.
-        if not hasattr(relax_data_store, 'gx'):
-            raise RelaxNucleusError
+        if not hasattr(cdp, 'jw_frq') or type(cdp.jw_frq) != float:
+            raise RelaxError, "The frequency has not been set up."
 
         # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Test if the CSA and bond length values have been set.
-        for i in xrange(len(relax_data_store.res[self.run])):
+        for spin in spin_loop(spin_id):
+
             # Skip unselected residues.
-            if not relax_data_store.res[self.run][i].select:
+            if not spin.select:
                 continue
 
             # CSA value.
-            if not hasattr(relax_data_store.res[self.run][i], 'csa') or relax_data_store.res[self.run][i].csa == None:
+            if not hasattr(spin, 'csa') or spin.csa == None:
                 raise RelaxNoValueError, "CSA"
 
             # Bond length value.
-            if not hasattr(relax_data_store.res[self.run][i], 'r') or relax_data_store.res[self.run][i].r == None:
+            if not hasattr(spin, 'r') or spin.r == None:
                 raise RelaxNoValueError, "bond length"
 
         # Frequency index.
-        if relax_data_store.jw_frq[self.run] not in relax_data_store.frq[self.run]:
-            raise RelaxError, "No relaxation data corresponding to the frequency " + `relax_data_store.jw_frq[self.run]` + " has been loaded."
+        if cdp.jw_frq not in cdp.frq:
+            raise RelaxError, "No relaxation data corresponding to the frequency " + `cdp.jw_frq` + " has been loaded."
 
         # Reduced spectral density mapping.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Reassign data structure.
-            data = relax_data_store.res[self.run][i]
+        for spin in spin_loop(spin_id):
 
             # Skip unselected residues.
-            if not data.select:
+            if not spin.select:
                 continue
 
             # Residue specific frequency index.
             frq_index = None
-            for j in xrange(data.num_frq):
-                if data.frq[j] == relax_data_store.jw_frq[self.run]:
+            for j in xrange(spin.num_frq):
+                if spin.frq[j] == cdp.jw_frq:
                     frq_index = j
             if frq_index == None:
                 continue
@@ -96,57 +91,57 @@ class Jw_mapping(Common_functions):
             noe = None
 
             # Get the R1, R2, and NOE values corresponding to the set frequency.
-            for j in xrange(data.num_ri):
+            for j in xrange(spin.num_ri):
                 # R1.
-                if data.remap_table[j] == frq_index and data.ri_labels[j] == 'R1':
+                if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'R1':
                     if sim_index == None:
-                        r1 = data.relax_data[j]
+                        r1 = spin.relax_data[j]
                     else:
-                        r1 = data.relax_sim_data[sim_index][j]
+                        r1 = spin.relax_sim_data[sim_index][j]
 
                 # R2.
-                if data.remap_table[j] == frq_index and data.ri_labels[j] == 'R2':
+                if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'R2':
                     if sim_index == None:
-                        r2 = data.relax_data[j]
+                        r2 = spin.relax_data[j]
                     else:
-                        r2 = data.relax_sim_data[sim_index][j]
+                        r2 = spin.relax_sim_data[sim_index][j]
 
                 # NOE.
-                if data.remap_table[j] == frq_index and data.ri_labels[j] == 'NOE':
+                if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'NOE':
                     if sim_index == None:
-                        noe = data.relax_data[j]
+                        noe = spin.relax_data[j]
                     else:
-                        noe = data.relax_sim_data[sim_index][j]
+                        noe = spin.relax_sim_data[sim_index][j]
 
             # Skip the residue if not all of the three value exist.
             if r1 == None or r2 == None or noe == None:
                 continue
 
             # Initialise the function to calculate.
-            self.jw = Mapping(frq=relax_data_store.jw_frq[self.run], gx=relax_data_store.gx, gh=relax_data_store.gh, mu0=relax_data_store.mu0, h_bar=relax_data_store.h_bar)
+            self.jw = Mapping(frq=cdp.jw_frq, gx=spin.gx, gh=spin.gh, mu0=spin.mu0, h_bar=spin.h_bar)
 
             # Calculate the spectral density values.
-            j0, jwx, jwh = self.jw.func(r=data.r, csa=data.csa, r1=r1, r2=r2, noe=noe)
+            j0, jwx, jwh = self.jw.func(r=spin.r, csa=spin.csa, r1=r1, r2=r2, noe=noe)
 
             # Reduced spectral density values.
             if sim_index == None:
-                data.j0 = j0
-                data.jwx = jwx
-                data.jwh = jwh
+                spin.j0 = j0
+                spin.jwx = jwx
+                spin.jwh = jwh
 
             # Monte Carlo simulated reduced spectral density values.
             else:
                 # Initialise the simulation data structures.
-                self.data_init(data, sim=1)
-                if data.j0_sim == None:
-                    data.j0_sim = []
-                    data.jwx_sim = []
-                    data.jwh_sim = []
+                self.spin_init(spin, sim=1)
+                if spin.j0_sim == None:
+                    spin.j0_sim = []
+                    spin.jwx_sim = []
+                    spin.jwh_sim = []
 
                 # Reduced spectral density values.
-                data.j0_sim.append(j0)
-                data.jwx_sim.append(jwx)
-                data.jwh_sim.append(jwh)
+                spin.j0_sim.append(j0)
+                spin.jwx_sim.append(jwx)
+                spin.jwh_sim.append(jwh)
 
 
     def data_init(self, data, sim=0):
@@ -243,12 +238,12 @@ class Jw_mapping(Common_functions):
             return '1H'
 
 
-    def overfit_deselect(self, run):
+    def overfit_deselect(self):
         """Function for deselecting residues without sufficient data to support calculation"""
 
         # Test the sequence data exists:
-        if not relax_data_store.res.has_key(run):
-            raise RelaxNoSequenceError, run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Loop over residue data:
         for residue in relax_data_store.res[run]:
@@ -379,96 +374,96 @@ class Jw_mapping(Common_functions):
         __docformat__ = "plaintext"
 
 
-    def set_frq(self, run=None, frq=None):
+    def set_frq(self, frq=None):
         """Function for selecting which relaxation data to use in the J(w) mapping."""
 
-        # Run argument.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
             raise RelaxNoPipeError, self.run
 
         # Test if the run type is set to 'jw'.
-        function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
+        function_type = relax_data_store.run_types[cdp.run_names.index]
         if function_type != 'jw':
             raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 
         # Test if the frequency has been set.
-        if hasattr(relax_data_store, 'jw_frq') and relax_data_store.jw_frq.has_key(self.run):
-            raise RelaxError, "The frequency for the run " + `self.run` + " has already been set."
+        if hasattr(cdp, 'jw_frq'):
+            raise RelaxError, "The frequency for the run has already been set."
 
         # Create the data structure if it doesn't exist.
-        if not hasattr(relax_data_store, 'jw_frq'):
-            relax_data_store.jw_frq = {}
+        if not hasattr(cdp, 'jw_frq'):
+           cdp.jw_frq = {}
 
         # Set the frequency.
-        relax_data_store.jw_frq[self.run] = frq
+        cdp.jw_frq = frq
 
 
-    def set_error(self, run, instance, index, error):
+    def set_error(self, instance, spin, error):
         """Function for setting parameter errors."""
 
-        # Arguments.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Return J(0) sim data.
         if index == 0:
-            relax_data_store.res[self.run][instance].j0_err = error
+            cdp.res[instance].j0_err = error
 
         # Return J(wX) sim data.
         if index == 1:
-            relax_data_store.res[self.run][instance].jwx_err = error
+            cdp.res[instance].jwx_err = error
 
         # Return J(wH) sim data.
         if index == 2:
-            relax_data_store.res[self.run][instance].jwh_err = error
+            cdp.res[instance].jwh_err = error
 
 
-    def sim_return_param(self, run, instance, index):
+    def sim_return_param(self, instance, index):
         """Function for returning the array of simulation parameter values."""
 
-        # Arguments.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Skip unselected residues.
-        if not relax_data_store.res[self.run][instance].select:
+        if not cdp.res[instance].select:
                 return
 
         # Return J(0) sim data.
         if index == 0:
-            return relax_data_store.res[self.run][instance].j0_sim
+            return cdp.res[instance].j0_sim
 
         # Return J(wX) sim data.
         if index == 1:
-            return relax_data_store.res[self.run][instance].jwx_sim
+            return cdp.res[instance].jwx_sim
 
         # Return J(wH) sim data.
         if index == 2:
-            return relax_data_store.res[self.run][instance].jwh_sim
+            return cdp.res[instance].jwh_sim
 
 
-    def sim_return_selected(self, run, instance):
+    def sim_return_selected(self, instance):
         """Function for returning the array of selected simulation flags."""
 
-        # Arguments.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Multiple instances.
-        return relax_data_store.res[self.run][instance].select_sim
+        return cdp.res[instance].select_sim
 
 
-    def set_selected_sim(self, run, instance, select_sim):
+    def set_selected_sim(self, instance, select_sim):
         """Function for returning the array of selected simulation flags."""
 
-        # Arguments.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Multiple instances.
-        relax_data_store.res[self.run][instance].select_sim = select_sim
+        cdp.res[instance].select_sim = select_sim
 
 
-    def sim_pack_data(self, run, i, sim_data):
+    def sim_pack_data(self, spin, sim_data):
         """Function for packing Monte Carlo simulation data."""
 
         # Test if the simulation data already exists.
@@ -528,19 +523,19 @@ class Jw_mapping(Common_functions):
         file.write("\n")
 
 
-    def write_columnar_results(self, file, run):
+    def write_columnar_results(self, file):
         """Function for printing the results into a file."""
 
-        # Arguments.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
             raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
 
         # Header.
@@ -550,9 +545,9 @@ class Jw_mapping(Common_functions):
         ri = []
         ri_error = []
         if hasattr(relax_data_store, 'num_ri'):
-            for i in xrange(relax_data_store.num_ri[self.run]):
-                ri.append('Ri_(' + relax_data_store.ri_labels[self.run][i] + "_" + relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][i]] + ")")
-                ri_error.append('Ri_error_(' + relax_data_store.ri_labels[self.run][i] + "_" + relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][i]] + ")")
+            for i in xrange(cdp.num_ri):
+                ri.append('Ri_(' + cdp.ri_labels[i] + "_" + cdp.frq_labels[cdp.remap_table[i]] + ")")
+                ri_error.append('Ri_error_(' + cdp.ri_labels[i] + "_" + cdp.frq_labels[cdp.remap_table[i]] + ")")
 
         # Write the header line.
         self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', wH='Proton_frq_(MHz)', j0='J(0)', jwx='J(wX)', jwh='J(wH)', r='Bond_length_(A)', csa='CSA_(ppm)', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
@@ -565,14 +560,14 @@ class Jw_mapping(Common_functions):
         nucleus = self.relax.generic.nuclei.find_nucleus()
 
         # The proton frequency in MHz.
-        wH = relax_data_store.jw_frq[self.run] / 1e6
+        wH = cdp.jw_frq / 1e6
 
         # Relaxation data setup.
         try:
-            ri_labels = replace(`relax_data_store.ri_labels[self.run]`, ' ', '')
-            remap_table = replace(`relax_data_store.remap_table[self.run]`, ' ', '')
-            frq_labels = replace(`relax_data_store.frq_labels[self.run]`, ' ', '')
-            frq = replace(`relax_data_store.frq[self.run]`, ' ', '')
+            ri_labels = replace(`cdp.ri_labels`, ' ', '')
+            remap_table = replace(`cdp.remap_table`, ' ', '')
+            frq_labels = replace(`cdp.frq_labels`, ' ', '')
+            frq = replace(`cdp.frq`, ' ', '')
         except AttributeError:
             ri_labels = `None`
             remap_table = `None`
@@ -580,9 +575,9 @@ class Jw_mapping(Common_functions):
             frq = `None`
 
         # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[self.run])):
+        for i in xrange(len(cdp.res)):
             # Reassign data structure.
-            data = relax_data_store.res[self.run][i]
+            data = cdp.res[i]
 
             # J(0).
             j0 = None
@@ -612,18 +607,18 @@ class Jw_mapping(Common_functions):
             # Relaxation data and errors.
             ri = []
             ri_error = []
-            if hasattr(relax_data_store, 'num_ri'):
-                for i in xrange(relax_data_store.num_ri[self.run]):
+            if hasattr(cdp, 'num_ri'):
+                for i in xrange(cdp.num_ri):
                     try:
                         # Find the residue specific data corresponding to i.
                         index = None
                         for j in xrange(data.num_ri):
-                            if data.ri_labels[j] == relax_data_store.ri_labels[self.run][i] and data.frq_labels[data.remap_table[j]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][i]]:
+                            if data.ri_labels[j] == cdp.ri_labels[i] and data.frq_labels[data.remap_table[j]] == cdp.frq_labels[cdp.remap_table[i]]:
                                 index = j
 
                         # Data exists for this data type.
-                        ri.append(`data.relax_data[index]`)
-                        ri_error.append(`data.relax_error[index]`)
+                        ri.append(spin)
+                        ri_error.append(spin)
 
                     # No data exists for this data type.
                     except:
@@ -638,15 +633,15 @@ class Jw_mapping(Common_functions):
         #########
 
         # Skip this section and the next if no simulations have been setup.
-        if not hasattr(relax_data_store, 'sim_state'):
+        if not hasattr(cdp, 'sim_state'):
             return
-        elif relax_data_store.sim_state[self.run] == 0:
+        elif cdp.sim_state == 0:
             return
 
         # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[self.run])):
+        for i in xrange(len(cdp.res)):
             # Reassign data structure.
-            data = relax_data_store.res[self.run][i]
+            data = cdp.res[i]
 
             # J(0).
             j0 = None
@@ -676,7 +671,7 @@ class Jw_mapping(Common_functions):
             # Relaxation data and errors.
             ri = []
             ri_error = []
-            for i in xrange(relax_data_store.num_ri[self.run]):
+            for i in xrange(cdp.num_ri):
                 ri.append(None)
                 ri_error.append(None)
 
@@ -688,11 +683,11 @@ class Jw_mapping(Common_functions):
         ####################
 
         # Loop over the simulations.
-        for i in xrange(relax_data_store.sim_number[self.run]):
+        for i in xrange(cdp.sim_number):
             # Loop over the sequence.
-            for j in xrange(len(relax_data_store.res[self.run])):
+            for j in xrange(len(cdp.res)):
                 # Reassign data structure.
-                data = relax_data_store.res[self.run][j]
+                data = cdp.res[j]
 
                 # J(0).
                 j0 = None
@@ -722,18 +717,18 @@ class Jw_mapping(Common_functions):
                 # Relaxation data and errors.
                 ri = []
                 ri_error = []
-                if hasattr(self.relax.data, 'num_ri'):
-                    for k in xrange(relax_data_store.num_ri[self.run]):
+                if hasattr(cdp, 'num_ri'):
+                    for k in xrange(cdp.num.ri):
                         try:
                             # Find the residue specific data corresponding to k.
                             index = None
                             for l in xrange(data.num_ri):
-                                if data.ri_labels[l] == relax_data_store.ri_labels[self.run][k] and data.frq_labels[data.remap_table[l]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][k]]:
+                                if data.ri_labels[l] == cdp.ri_labels[k] and data.frq_labels[data.remap_table[l]] == cdp.frq_labels[cdp.remap_table[k]]:
                                     index = l
 
                             # Data exists for this data type.
-                            ri.append(`data.relax_sim_data[i][index]`)
-                            ri_error.append(`data.relax_error[index]`)
+                            ri.append(spin)
+                            ri_error.append(spin)
 
                         # No data exists for this data type.
                         except:

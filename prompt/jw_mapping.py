@@ -41,13 +41,11 @@ class Jw_mapping:
         self.__relax__ = relax
 
 
-    def set_frq(self, run=None, frq=None):
+    def set_frq(self, frq=None):
         """Function for selecting which relaxation data to use in the J(w) mapping.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         frq:  The spectrometer frequency in Hz.
 
@@ -62,24 +60,19 @@ class Jw_mapping:
         Examples
         ~~~~~~~~
 
-        relax> jw_mapping.set_frq('jw', 600.0 * 1e6)
-        relax> jw_mapping.set_frq(run='jw', frq=600.0 * 1e6)
+        relax> jw_mapping.set_frq(600.0 * 1e6)
+        relax> jw_mapping.set_frq(frq=600.0 * 1e6)
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "jw_mapping.set_frq("
-            text = text + "run=" + `run`
-            text = text + ", frq=" + `frq` + ")"
+            text = text + "frq=" + `frq` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The frq argument.
         if type(frq) != float:
             raise RelaxStrError, ('frq', frq)
 
         # Execute the functional code.
-        self.__relax__.specific.jw_mapping.set_frq(run=run, frq=frq)
+        jw_mapping_obj.set_frq(frq=frq)
