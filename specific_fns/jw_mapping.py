@@ -238,12 +238,12 @@ class Jw_mapping(Common_functions):
             return '1H'
 
 
-    def overfit_deselect(self, run):
+    def overfit_deselect(self):
         """Function for deselecting residues without sufficient data to support calculation"""
 
         # Test the sequence data exists:
-        if not relax_data_store.res.has_key(run):
-            raise RelaxNoSequenceError, run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Loop over residue data:
         for residue in relax_data_store.res[run]:
@@ -374,83 +374,83 @@ class Jw_mapping(Common_functions):
         __docformat__ = "plaintext"
 
 
-    def set_frq(self, run=None, frq=None):
+    def set_frq(self, frq=None):
         """Function for selecting which relaxation data to use in the J(w) mapping."""
 
-        # Run argument.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
             raise RelaxNoPipeError, self.run
 
         # Test if the run type is set to 'jw'.
-        function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
+        function_type = relax_data_store.run_types[cdp.run_names.index]
         if function_type != 'jw':
             raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 
         # Test if the frequency has been set.
-        if hasattr(relax_data_store, 'jw_frq') and relax_data_store.jw_frq.has_key(self.run):
-            raise RelaxError, "The frequency for the run " + `self.run` + " has already been set."
+        if hasattr(cdp, 'jw_frq'):
+            raise RelaxError, "The frequency for the run has already been set."
 
         # Create the data structure if it doesn't exist.
-        if not hasattr(relax_data_store, 'jw_frq'):
-            relax_data_store.jw_frq = {}
+        if not hasattr(cdp, 'jw_frq'):
+           cdp.jw_frq = {}
 
         # Set the frequency.
-        relax_data_store.jw_frq[self.run] = frq
+        cdp.jw_frq = frq
 
 
-    def set_error(self, run, instance, index, error):
+    def set_error(self, instance, spin, error):
         """Function for setting parameter errors."""
 
-        # Arguments.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Return J(0) sim data.
         if index == 0:
-            relax_data_store.res[self.run][instance].j0_err = error
+            cdp.res[instance].j0_err = error
 
         # Return J(wX) sim data.
         if index == 1:
-            relax_data_store.res[self.run][instance].jwx_err = error
+            cdp.res[instance].jwx_err = error
 
         # Return J(wH) sim data.
         if index == 2:
-            relax_data_store.res[self.run][instance].jwh_err = error
+            cdp.res[instance].jwh_err = error
 
 
-    def sim_return_param(self, run, instance, index):
+    def sim_return_param(self, instance, index):
         """Function for returning the array of simulation parameter values."""
 
-        # Arguments.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Skip unselected residues.
-        if not relax_data_store.res[self.run][instance].select:
+        if not cdp.res[instance].select:
                 return
 
         # Return J(0) sim data.
         if index == 0:
-            return relax_data_store.res[self.run][instance].j0_sim
+            return cdp.res[instance].j0_sim
 
         # Return J(wX) sim data.
         if index == 1:
-            return relax_data_store.res[self.run][instance].jwx_sim
+            return cdp.res[instance].jwx_sim
 
         # Return J(wH) sim data.
         if index == 2:
-            return relax_data_store.res[self.run][instance].jwh_sim
+            return cdp.res[instance].jwh_sim
 
 
     def sim_return_selected(self, run, instance):
         """Function for returning the array of selected simulation flags."""
 
-        # Arguments.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Multiple instances.
-        return relax_data_store.res[self.run][instance].select_sim
+        return cdp.res[instance].select_sim
 
 
     def set_selected_sim(self, run, instance, select_sim):
