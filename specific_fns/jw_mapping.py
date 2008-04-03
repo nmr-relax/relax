@@ -37,55 +37,50 @@ class Jw_mapping(Common_functions):
         """Class containing functions specific to reduced spectral density mapping."""
 
 
-    def calculate(self, run=None, verbosity=1, sim_index=None):
+    def calculate(self, verbosity=1, sim_index=None):
         """Calculation of the spectral density values."""
 
-        # Run argument.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Test if the frequency has been set.
-        if not hasattr(relax_data_store, 'jw_frq') or not relax_data_store.jw_frq.has_key(self.run) or type(relax_data_store.jw_frq[self.run]) != float:
-            raise RelaxError, "The frequency for the run " + `self.run` + " has not been set up."
-
-        # Test if the nucleus type has been set.
-        if not hasattr(relax_data_store, 'gx'):
-            raise RelaxNucleusError
+        if not hasattr(cdp, 'jw_frq') or type(cdp.jw_frq) != float:
+            raise RelaxError, "The frequency has not been set up."
 
         # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Test if the CSA and bond length values have been set.
-        for i in xrange(len(relax_data_store.res[self.run])):
+        for spin in spin_loop(spin_id):
+
             # Skip unselected residues.
-            if not relax_data_store.res[self.run][i].select:
+            if not spin.select:
                 continue
 
             # CSA value.
-            if not hasattr(relax_data_store.res[self.run][i], 'csa') or relax_data_store.res[self.run][i].csa == None:
+            if not hasattr(spin, 'csa') or spin.csa == None:
                 raise RelaxNoValueError, "CSA"
 
             # Bond length value.
-            if not hasattr(relax_data_store.res[self.run][i], 'r') or relax_data_store.res[self.run][i].r == None:
+            if not hasattr(spin, 'r') or spin.r == None:
                 raise RelaxNoValueError, "bond length"
 
         # Frequency index.
-        if relax_data_store.jw_frq[self.run] not in relax_data_store.frq[self.run]:
-            raise RelaxError, "No relaxation data corresponding to the frequency " + `relax_data_store.jw_frq[self.run]` + " has been loaded."
+        if cdp.jw_frq not in cdp.frq:
+            raise RelaxError, "No relaxation data corresponding to the frequency " + `cdp.jw_frq` + " has been loaded."
 
         # Reduced spectral density mapping.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Reassign data structure.
-            data = relax_data_store.res[self.run][i]
+        for spin in spin_loop(spin_id):
 
             # Skip unselected residues.
-            if not data.select:
+            if not spin.select:
                 continue
 
             # Residue specific frequency index.
             frq_index = None
-            for j in xrange(data.num_frq):
-                if data.frq[j] == relax_data_store.jw_frq[self.run]:
+            for j in xrange(spin.num_frq):
+                if spin.frq[j] == cdp.jw_frq:
                     frq_index = j
             if frq_index == None:
                 continue
@@ -96,57 +91,57 @@ class Jw_mapping(Common_functions):
             noe = None
 
             # Get the R1, R2, and NOE values corresponding to the set frequency.
-            for j in xrange(data.num_ri):
+            for j in xrange(spin.num_ri):
                 # R1.
-                if data.remap_table[j] == frq_index and data.ri_labels[j] == 'R1':
+                if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'R1':
                     if sim_index == None:
-                        r1 = data.relax_data[j]
+                        r1 = spin.relax_data[j]
                     else:
-                        r1 = data.relax_sim_data[sim_index][j]
+                        r1 = spin.relax_sim_data[sim_index][j]
 
                 # R2.
-                if data.remap_table[j] == frq_index and data.ri_labels[j] == 'R2':
+                if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'R2':
                     if sim_index == None:
-                        r2 = data.relax_data[j]
+                        r2 = spin.relax_data[j]
                     else:
-                        r2 = data.relax_sim_data[sim_index][j]
+                        r2 = spin.relax_sim_data[sim_index][j]
 
                 # NOE.
-                if data.remap_table[j] == frq_index and data.ri_labels[j] == 'NOE':
+                if spin.remap_table[j] == frq_index and spin.ri_labels[j] == 'NOE':
                     if sim_index == None:
-                        noe = data.relax_data[j]
+                        noe = spin.relax_data[j]
                     else:
-                        noe = data.relax_sim_data[sim_index][j]
+                        noe = spin.relax_sim_data[sim_index][j]
 
             # Skip the residue if not all of the three value exist.
             if r1 == None or r2 == None or noe == None:
                 continue
 
             # Initialise the function to calculate.
-            self.jw = Mapping(frq=relax_data_store.jw_frq[self.run], gx=relax_data_store.gx, gh=relax_data_store.gh, mu0=relax_data_store.mu0, h_bar=relax_data_store.h_bar)
+            self.jw = Mapping(frq=cdp.jw_frq, gx=spin.gx, gh=spin.gh, mu0=spin.mu0, h_bar=spin.h_bar)
 
             # Calculate the spectral density values.
-            j0, jwx, jwh = self.jw.func(r=data.r, csa=data.csa, r1=r1, r2=r2, noe=noe)
+            j0, jwx, jwh = self.jw.func(r=spin.r, csa=spin.csa, r1=r1, r2=r2, noe=noe)
 
             # Reduced spectral density values.
             if sim_index == None:
-                data.j0 = j0
-                data.jwx = jwx
-                data.jwh = jwh
+                spin.j0 = j0
+                spin.jwx = jwx
+                spin.jwh = jwh
 
             # Monte Carlo simulated reduced spectral density values.
             else:
                 # Initialise the simulation data structures.
-                self.data_init(data, sim=1)
-                if data.j0_sim == None:
-                    data.j0_sim = []
-                    data.jwx_sim = []
-                    data.jwh_sim = []
+                self.spin_init(spin, sim=1)
+                if spin.j0_sim == None:
+                    spin.j0_sim = []
+                    spin.jwx_sim = []
+                    spin.jwh_sim = []
 
                 # Reduced spectral density values.
-                data.j0_sim.append(j0)
-                data.jwx_sim.append(jwx)
-                data.jwh_sim.append(jwh)
+                spin.j0_sim.append(j0)
+                spin.jwx_sim.append(jwx)
+                spin.jwh_sim.append(jwh)
 
 
     def data_init(self, data, sim=0):
