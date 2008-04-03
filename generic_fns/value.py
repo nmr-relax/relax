@@ -583,13 +583,13 @@ class Value:
         file.close()
 
 
-    def write_data(self, file, return_value=None):
+    def write_data(self, run=None, param=None, file=None, return_value=None):
         """Function for writing data."""
 
         # Get the value and error returning function if required.
         if not return_value:
             # Function type.
-            self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
+            self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
 
             # Specific value and error returning function.
             return_value = self.relax.specific_setup.setup('return_value', self.function_type)
@@ -598,12 +598,12 @@ class Value:
         file.write("%-5s%-6s%-30s%-30s\n" % ('Num', 'Name', 'Value', 'Error'))
 
         # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Remap the data structure 'relax_data_store.res[self.run][i]'.
-            data = relax_data_store.res[self.run][i]
+        for i in xrange(len(relax_data_store.res[run])):
+            # Remap the data structure 'relax_data_store.res[run][i]'.
+            data = relax_data_store.res[run][i]
 
             # Get the value and error.
-            value, error = return_value(self.run, i, self.param)
+            value, error = return_value(run, i, param)
 
             # Write the data.
             file.write("%-5i%-6s%-30s%-30s\n" % (data.num, data.name, `value`, `error`))

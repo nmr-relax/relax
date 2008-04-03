@@ -3116,7 +3116,7 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -160e-6)
 
 
-    def test_set_jw_all_spins_nucleus(self):
+    def test_set_jw_all_spins_heteronucleus(self):
         """Set the RSDM heteronucleus type for all spins.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -3272,7 +3272,7 @@ class Value_base_class:
         self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].csa, -172e-6)
 
 
-    def test_set_jw_defaults_nucleus(self):
+    def test_set_jw_defaults_heteronucleus(self):
         """Set the RSDM heteronucleus type to the default value.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -3408,7 +3408,7 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -160e-6)
 
 
-    def test_set_jw_single_spin_nucleus(self):
+    def test_set_jw_single_spin_heteronucleus(self):
         """Set the RSDM heteronucleus type for a single spin.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -3682,7 +3682,7 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -172e-6)
 
 
-    def test_set_mf_all_spins_nucleus(self):
+    def test_set_mf_all_spins_heteronucleus(self):
         """Set the model-free heteronucleus type for all spins.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -3946,7 +3946,7 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -172 * 1e-6)
 
 
-    def test_set_mf_defaults_nucleus(self):
+    def test_set_mf_defaults_heteronucleus(self):
         """Set the model-free heteronucleus type to the default value.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().
@@ -4188,7 +4188,7 @@ class Value_base_class:
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, -172e-6)
 
 
-    def test_set_mf_single_spin_nucleus(self):
+    def test_set_mf_single_spin_heteronucleus(self):
         """Set the model-free heteronucleus type for a single spin.
 
         The functions tested are both generic_fns.value.set() and prompt.value.set().

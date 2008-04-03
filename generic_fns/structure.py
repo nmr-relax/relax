@@ -1224,9 +1224,11 @@ def vectors(heteronuc=None, proton=None, spin_id=None, verbosity=1):
         # Calculate the vector.
         vector = xh_vector(spin)
 
-        # Set the vector.
+        # Set the vector and deselect the spin if the vector doesn't exist.
         if vector != None:
-            spin.xh_vect = vector
+            spin.xh_vect = vector    
+        else:
+            spin.select = False
 
 
 def uniform_vect_dist_spherical_angles(inc=20):
