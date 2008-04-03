@@ -41,13 +41,11 @@ class Results:
         self.__relax__ = relax
 
 
-    def display(self, run=None, format='columnar'):
-        """Function for displaying the results of the run.
+    def display(self, format='columnar'):
+        """Function for displaying the results.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         format:  The format of the output.
         """
@@ -55,25 +53,18 @@ class Results:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "results.display("
-            text = text + "run=" + `run`
-            text = text + ", format=" + `format` + ")"
+            text = text + "format=" + `format` + ")"
             print text
 
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
         # Execute the functional code.
-        self.__relax__.generic.results.display(run=run)
+        results_obj.display()
 
 
-    def read(self, run=None, file='results', dir='run', format='columnar'):
+    def read(self, file='results', dir='dir', format='columnar'):
         """Function for reading results from a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         file:  The name of the file to read results from.
 
@@ -83,9 +74,7 @@ class Results:
         Description
         ~~~~~~~~~~~
 
-        If no directory name is given, the results file will be searched for in a directory named
-        after the run name.  To search for the results file in the current working directory, set
-        dir to None.
+        To search for the results file in the current working directory, set dir to None.
 
         This function is able to handle uncompressed, bzip2 compressed files, or gzip compressed
         files automatically.  The full file name including extension can be supplied, however, if
@@ -96,18 +85,10 @@ class Results:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "results.read("
-            text = text + "run=" + `run`
-            text = text + ", file=" + `file`
-            if dir == 'run':
-                text = text + ", dir=" + `run`
-            else:
-                text = text + ", dir=" + `dir`
+            text = text + "file=" + `file`
+            text = text + ", dir=" + `dir`
             text = text + ", format=" + `format` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # File.
         if type(file) != str:
@@ -122,16 +103,14 @@ class Results:
             raise RelaxStrError, ('format', format)
 
         # Execute the functional code.
-        self.__relax__.generic.results.read(run=run, file=file, directory=dir, format=format)
+        results_obj.read(file=file, directory=dir, format=format)
 
 
-    def write(self, run=None, file='results', dir='run', force=0, format='columnar', compress_type=1):
-        """Function for writing results of the run to a file.
+    def write(self, file='results', dir='dir', force=0, format='columnar', compress_type=1):
+        """Function for writing results to a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         file:  The name of the file to output results to.  The default is 'results'.
 
@@ -147,8 +126,7 @@ class Results:
         Description
         ~~~~~~~~~~~
 
-        If no directory name is given, the results file will be placed in a directory named after
-        the run name.  To place the results file in the current working directory, set dir to None.
+        To place the results file in the current working directory, set dir to None.
 
         The default behaviour of this function is to compress the file using bzip2 compression.  If
         the extension '.bz2' is not included in the file name, it will be added.  The compression
@@ -165,20 +143,12 @@ class Results:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "results.write("
-            text = text + "run=" + `run`
-            text = text + ", file=" + `file`
-            if dir == 'run':
-                text = text + ", dir=" + `run`
-            else:
-                text = text + ", dir=" + `dir`
+            text = text + "file=" + `file`
+            text = text + ", dir=" + `dir`
             text = text + ", force=" + `force`
             text = text + ", format=" + `format`
             text = text + ", compress_type=" + `compress_type` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # File.
         if type(file) != str:
@@ -201,4 +171,4 @@ class Results:
             raise RelaxIntError, ('compression type', compress_type)
 
         # Execute the functional code.
-        self.__relax__.generic.results.write(run=run, file=file, directory=dir, force=force, format=format, compress_type=compress_type)
+        results_obj.write(file=file, directory=dir, force=force, format=format, compress_type=compress_type)
