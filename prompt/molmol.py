@@ -55,13 +55,11 @@ class Molmol:
         self.__relax__.generic.molmol.clear_history()
 
 
-    def command(self, run=None, command=None):
+    def command(self, command=None):
         """Function for executing a user supplied Molmol command.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         command:  The Molmol command to execute.
 
@@ -76,37 +74,30 @@ class Molmol:
         Example
         ~~~~~~~
 
-        To reinitialise the Molmol instance for the run 'aic', type:
+        To reinitialise the Molmol instance:
 
-        relax> molmol.command("aic", "InitAll yes")
+        relax> molmol.command("InitAll yes")
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molmol.command("
-            text = text + "run=" + `run`
-            text = text + ", command=" + `command` + ")"
+            text = text + "command=" + `command` + ")"
             print text
-
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The command argument.
         if type(command) != str:
             raise RelaxStrError, ('command', command)
 
         # Execute the functional code.
-        self.__relax__.generic.molmol.command(run=run, command=command)
+        molmol_obj.command(command=command)
 
 
-    def macro_exec(self, run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
+    def macro_exec(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
         """Function for executing Molmol macros.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         data_type:  The data type to map to the structure.
 
@@ -148,28 +139,23 @@ class Molmol:
         Examples
         ~~~~~~~~
 
-        To map the order parameter values, S2, of the run 'final' onto the structure using the
+        To map the order parameter values, S2, onto the structure using the
         classic style, type:
 
-        relax> molmol.macro_exec('final', 'S2')
-        relax> molmol.macro_exec('final', data_type='S2')
-        relax> molmol.macro_exec('final', data_type='S2', style="classic")
+        relax> molmol.macro_exec('S2')
+        relax> molmol.macro_exec(data_type='S2')
+        relax> molmol.macro_exec(data_type='S2', style="classic")
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molmol.macro_exec("
-            text = text + "run=" + `run`
-            text = text + ", data_type=" + `data_type`
+            text = text + "data_type=" + `data_type`
             text = text + ", style=" + `style`
             text = text + ", colour_start=" + `colour_start`
             text = text + ", colour_end=" + `colour_end`
             text = text + ", colour_list=" + `colour_list` + ")"
             print text
-
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # Data type for mapping to the structure.
         if type(data_type) != str:
@@ -196,16 +182,11 @@ class Molmol:
                     raise RelaxListNumError, ('ending colour of the linear gradient', colour_end)
 
         # Execute the functional code.
-        self.__relax__.generic.molmol.macro_exec(run=run, data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
+        molmol_obj.macro_exec(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
 
 
-    def ribbon(self, run=None):
+    def ribbon(self):
         """Apply the Molmol ribbon style.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
 
         Description
@@ -223,32 +204,25 @@ class Molmol:
         Example
         ~~~~~~~
 
-        To apply the ribbon style to the PDB file loaded for the run 'final', type:
+        To apply the ribbon style to the PDB file loaded, type:
 
-        relax> molmol.ribbon("final")
+        relax> molmol.ribbon()
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "molmol.ribbon("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "molmol.ribbon()"
             print text
 
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
         # Execute the functional code.
-        self.__relax__.generic.molmol.ribbon(run=run)
+        molmol_obj.ribbon()
 
 
-    def tensor_pdb(self, run=None, file=None):
+    def tensor_pdb(self, file=None):
         """Function displaying the diffusion tensor PDB geometric object over the loaded PDB.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         file:  The name of the PDB file containing the tensor geometric object.
 
@@ -256,11 +230,10 @@ class Molmol:
         Description
         ~~~~~~~~~~~
 
-        In executing this user function, a PDB file must have previously been loaded into this run,
-        a geometric object or polygon representing the Brownian rotational diffusion tensor will be
-        overlain with the loaded PDB file and displayed within Molmol.  The PDB file containing the
-        geometric object must be created using the complementary 'pdb.create_diff_tensor_pdb()' user
-        function.
+        In executing this user function, a PDB file must have previously been loaded , a geometric
+        object or polygon representing the Brownian rotational diffusion tensor will be overlain
+        with the loaded PDB file and displayed within Molmol.  The PDB file containing the geometric
+        object must be created using the complementary 'pdb.create_diff_tensor_pdb()' user function.
 
         To display the diffusion tensor, the multiple commands will be executed.  To overlay the
         structure with the diffusion tensor, everything will be selected and reoriented and moved to
@@ -300,59 +273,41 @@ class Molmol:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molmol.tensor_pdb("
-            text = text + "run=" + `run`
-            text = text + ", file=" + `file` + ")"
+            text = text + "file=" + `file` + ")"
             print text
-
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The file name.
         if type(file) != str:
             raise RelaxStrError, ('file name', file)
 
         # Execute the functional code.
-        self.__relax__.generic.molmol.tensor_pdb(run=run, file=file)
+        molmol_obj.tensor_pdb(file=file)
 
 
-    def view(self, run=None):
+    def view(self):
         """Function for viewing the collection of molecules extracted from the PDB file.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run which the PDB belongs to.
-
 
         Example
         ~~~~~~~
 
-        relax> molmol.view('m1')
-        relax> molmol.view(run='pdb')
+        relax> molmol.view()
+        relax> molmol.view()
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "molmol.view("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "molmol.view()"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
         # Execute the functional code.
-        self.__relax__.generic.molmol.view(run=run)
+        molmol_obj.view()
 
 
-    def write(self, run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir='molmol', force=0):
+    def write(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir='molmol', force=0):
         """Function for creating Molmol macros.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         data_type:  The data type to map to the structure.
 
@@ -402,19 +357,18 @@ class Molmol:
         Examples
         ~~~~~~~~
 
-        To create a Molmol macro mapping the order parameter values, S2, of the run 'final' onto the
-        structure using the classic style, type:
+        To create a Molmol macro mapping the order parameter values, S2, onto the structure using
+        the classic style, type:
 
-        relax> molmol.write('final', 'S2')
-        relax> molmol.write('final', data_type='S2')
-        relax> molmol.write('final', data_type='S2', style="classic", file='s2.mac', dir='molmol')
+        relax> molmol.write('S2')
+        relax> molmol.write(data_type='S2')
+        relax> molmol.write(data_type='S2', style="classic", file='s2.mac', dir='molmol')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molmol.write("
-            text = text + "run=" + `run`
-            text = text + ", data_type=" + `data_type`
+            text = text + "data_type=" + `data_type`
             text = text + ", style=" + `style`
             text = text + ", colour_start=" + `colour_start`
             text = text + ", colour_end=" + `colour_end`
@@ -423,10 +377,6 @@ class Molmol:
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force` + ")"
             print text
-
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # Data type for mapping to the structure.
         if type(data_type) != str:
@@ -465,7 +415,7 @@ class Molmol:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        self.__relax__.generic.molmol.write(run=run, data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)
+        molmol_obj.write(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)
 
 
 

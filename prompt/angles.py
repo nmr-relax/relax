@@ -34,19 +34,13 @@ class Angles:
         self.relax = relax
 
 
-    def angles(self, run=None):
+    def angles(self):
         """Function for calculating the angles between the XH bond vector and the diffusion tensor.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
-
 
         Description
         ~~~~~~~~~~~
 
-        If the diffusion tensor is isotropic for the run, then nothing will be done.
+        If the diffusion tensor is isotropic, then nothing will be done.
 
         If the diffusion tensor is axially symmetric, then the angle alpha will be calculated for
         each XH bond vector.
@@ -56,13 +50,8 @@ class Angles:
 
         # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.ps3 + "angles("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "angles()"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
         # Execute the functional code.
-        self.relax.generic.angles.angles(run=run)
+        angles_obj.angles()

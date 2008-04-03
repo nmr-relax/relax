@@ -41,13 +41,11 @@ class Monte_carlo:
         self.__relax__ = relax
 
 
-    def create_data(self, run=None, method='back_calc'):
+    def create_data(self, method='back_calc'):
         """Function for creating simulation data.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         method:  The simulation method.
 
@@ -56,15 +54,14 @@ class Monte_carlo:
         ~~~~~~~~~~~
 
         The method argument can either be set to 'back_calc' or 'direct', the choice of which
-        determines the simulation type.  If the values or parameters of a run are calculated rather
-        than minimised, this option will have no effect, hence, 'back_calc' and 'direct' are
-        identical.
+        determines the simulation type.  If the values or parameters are calculated rather than
+        minimised, this option will have no effect, hence, 'back_calc' and 'direct' are identical.
 
         For error analysis, the method argument should be set to 'back_calc' which will result in
         proper Monte Carlo simulations.  The data used for each simulation is back calculated from
         the minimised model parameters and is randomised using Gaussian noise where the standard
         deviation is from the original error set.  When the method is set to 'back_calc', this
-        function should only be called after the model or run is fully minimised.
+        function should only be called after the model is fully minimised.
 
         The simulation type can be changed by setting the method argument to 'direct'.  This will
         result in simulations which cannot be used in error analysis and which are no longer Monte
@@ -78,29 +75,22 @@ class Monte_carlo:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "monte_carlo.create_data("
-            text = text + "run=" + `run`
-            text = text + ", method=" + `method` + ")"
+            text = text + "method=" + `method` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The method argument.
         if type(method) != str:
             raise RelaxStrError, ('method', method)
 
         # Execute the functional code.
-        self.__relax__.generic.monte_carlo.create_data(run=run, method=method)
+        monte_carlo_obj.create_data(method=method)
 
 
-    def error_analysis(self, run=None, prune=0.0):
+    def error_analysis(self, prune=0.0):
         """Function for calculating parameter errors from the Monte Carlo simulations.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         prune:  Legacy argument corresponding to 'trim' in Art Palmer's Modelfree program.
 
@@ -120,51 +110,40 @@ class Monte_carlo:
         failed simulations but only if severe parameter limits have been imposed.  Most failed
         models will pass through the pruning process and hence cause a catastrophic increase in the
         parameter errors.  If the argument must be used, the following must be taken into account.
-        If the values or parameters of a run are calculated rather than minimised, the prune
-        argument must be set to zero.  The value of this argument is proportional to the number of
-        simulations removed prior to error calculation.  If prune is set to 0.0, all simulations are
-        used for calculating errors, whereas a value of 1.0 excludes all data.  In almost all cases
-        prune must be set to zero, any value greater than zero will result in an underestimation of
-        the error values.  If a value is supplied, the lower and upper tails of the distribution of
+        If the values or parameters are calculated rather than minimised, the prune argument must be
+        set to zero.  The value of this argument is proportional to the number of simulations
+        removed prior to error calculation.  If prune is set to 0.0, all simulations are used for
+        calculating errors, whereas a value of 1.0 excludes all data.  In almost all cases prune
+        must be set to zero, any value greater than zero will result in an underestimation of the
+        error values.  If a value is supplied, the lower and upper tails of the distribution of
         chi-squared values will be excluded from the error calculation.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "monte_carlo.error_analysis("
-            text = text + "run=" + `run`
-            text = text + ", prune=" + `prune` + ")"
+            text = text + "prune=" + `prune` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The prune argument.
         if type(prune) != int and type(prune) != float:
             raise RelaxNumError, ('prune', prune)
 
         # Execute the functional code.
-        self.__relax__.generic.monte_carlo.error_analysis(run=run, prune=prune)
+        monte_carlo_obj.error_analysis(prune=prune)
 
 
-    def initial_values(self, run=None):
+    def initial_values(self):
         """Function for setting the initial simulation parameter values.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
-
 
         Description
         ~~~~~~~~~~~
 
-        This function only effects runs where minimisation occurs and can therefore be skipped if
-        the values or parameters of a run are calculated rather than minimised.  However, if
-        accidentally run in this case, the results will be unaffected.  It should only be called
-        after the model or run is fully minimised.  Once called, the functions 'grid_search' and
-        'minimise' will only effect the simulations and not the model parameters.
+        This function only effects where minimisation occurs and can therefore be skipped if the
+        values or parameters are calculated rather than minimised.  However, if accidentally run in
+        this case, the results will be unaffected.  It should only be called after the model or run
+        is fully minimised.  Once called, the functions 'grid_search' and 'minimise' will only
+        effect the simulations and not the model parameters.
 
         The initial values of the parameters for each simulation is set to the minimised parameters
         of the model.  A grid search can be undertaken for each simulation instead, although this
@@ -174,71 +153,42 @@ class Monte_carlo:
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "monte_carlo.initial_values("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "monte_carlo.initial_values()"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
         # Execute the functional code.
-        self.__relax__.generic.monte_carlo.initial_values(run=run)
+        monte_carlo_obj.initial_values()
 
 
-    def off(self, run=None):
-        """Function for turning simulations off.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
-        """
+    def off(self):
+        """Function for turning simulations off."""
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "monte_carlo.off("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "monte_carlo.off()"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
         # Execute the functional code.
-        self.__relax__.generic.monte_carlo.off(run=run)
+        monte_carlo_obj.off()
 
 
-    def on(self, run=None):
-        """Function for turning simulations on.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
-        """
+    def on(self):
+        """Function for turning simulations on."""
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "monte_carlo.on("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "monte_carlo.on()"
             print text
 
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
-
         # Execute the functional code.
-        self.__relax__.generic.monte_carlo.on(run=run)
+        monte_carlo_obj.on()
 
 
-    def setup(self, run=None, number=500):
+    def setup(self, number=500):
         """Function for setting up Monte Carlo simulations.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         number:  The number of Monte Carlo simulations.
 
@@ -247,27 +197,21 @@ class Monte_carlo:
         ~~~~~~~~~~~
 
         This function must be called prior to any of the other Monte Carlo functions.  The effect is
-        that the number of simulations for the given run will be set and that simulations will be
-        turned on.
+        that the number of simulations will be set and that simulations will be turned on.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "monte_carlo.setup("
-            text = text + "run=" + `run`
-            text = text + ", number=" + `number` + ")"
+            text = text + "number=" + `number` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The number of simulations.
         if type(number) != int:
             raise RelaxIntError, ('number', number)
 
         # Execute the functional code.
-        self.__relax__.generic.monte_carlo.setup(run=run, number=number)
+        monte_carlo_obj.setup(number=number)
 
 
 
@@ -325,22 +269,22 @@ class Monte_carlo:
         An example, for model-free analysis, which includes only the functions required for
         implementing the above steps is:
 
-        relax> grid_search('m1', inc=11)                                 # Step 2.
-        relax> minimise('newton', run='m1')                              # Step 2.
-        relax> monte_carlo.setup('m1', number=500)                       # Step 3.
-        relax> monte_carlo.create_data('m1', method='back_calc')         # Step 4.
-        relax> monte_carlo.initial_values('m1')                          # Step 5.
-        relax> minimise('newton', run='m1')                              # Step 6.
-        relax> eliminate('m1')                                           # Step 7.
-        relax> monte_carlo.error_analysis('m1')                          # Step 8.
+        relax> grid_search(inc=11)                                       # Step 2.
+        relax> minimise('newton')                                        # Step 2.
+        relax> monte_carlo.setup(number=500)                             # Step 3.
+        relax> monte_carlo.create_data(method='back_calc')               # Step 4.
+        relax> monte_carlo.initial_values()                              # Step 5.
+        relax> minimise('newton')                                        # Step 6.
+        relax> eliminate()                                               # Step 7.
+        relax> monte_carlo.error_analysis()                              # Step 8.
 
         An example for reduced spectral density mapping is:
 
-        relax> calc('600MHz')                                            # Step 2.
-        relax> monte_carlo.setup('600MHz', number=500)                   # Step 3.
-        relax> monte_carlo.create_data('600MHz', method='back_calc')     # Step 4.
-        relax> calc('600MHz')                                            # Step 6.
-        relax> monte_carlo.error_analysis('600MHz')                      # Step 8.
+        relax> calc()                                                    # Step 2.
+        relax> monte_carlo.setup(number=500)                             # Step 3.
+        relax> monte_carlo.create_data(method='back_calc')               # Step 4.
+        relax> calc()                                                    # Step 6.
+        relax> monte_carlo.error_analysis()                              # Step 8.
     """
 
     create_data.__doc__ = create_data.__doc__ + "\n\n" + __description__
