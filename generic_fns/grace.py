@@ -98,13 +98,13 @@ class Grace:
     def get_data(self):
         """Function for getting all the xy data."""
 
-        # Initialise.
-        self.data = []
+        # Alias the current data pipe.
+	cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Loop over the residues.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Remap the data structure 'relax_data_store.res[self.run][i]'.
-            data = relax_data_store.res[self.run][i]
+        for i in xrange(len(cdp.res)):
+            # Remap the data structure 'cdp.res[i]'.
+            data = cdp.res[i]
 
             # Skip the residue if there is no match to 'self.res_num' (unless it is None).
             if type(self.res_num) == int:
@@ -125,7 +125,7 @@ class Grace:
 
             # Number of data points per residue.
             if self.plot_data == 'sim':
-                points = relax_data_store.sim_number[self.run]
+                points = cdp.sim_number
             else:
                 points = 1
 
@@ -201,8 +201,8 @@ class Grace:
             raise RelaxNoPipeError, self.run
 
         # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Test if the residue number is a valid regular expression.
         if type(self.res_num) == str:
@@ -336,8 +336,8 @@ class Grace:
 
         # X axis start and end.
         if self.x_data_type == 'res':
-            self.file.write("@    world xmin " + `relax_data_store.res[self.run][0].num - 1` + "\n")
-            self.file.write("@    world xmax " + `relax_data_store.res[self.run][-1].num + 1` + "\n")
+            self.file.write("@    world xmin " + `cdp.res[0].num - 1` + "\n")
+            self.file.write("@    world xmax " + `cdp.res[-1].num + 1` + "\n")
 
         # X-axis label.
         if self.x_data_type == 'res':
@@ -449,8 +449,8 @@ class Grace:
 
         # X axis start and end.
         if self.x_data_type == 'res':
-            self.file.write("@    world xmin " + `relax_data_store.res[self.run][0].num - 1` + "\n")
-            self.file.write("@    world xmax " + `relax_data_store.res[self.run][-1].num + 1` + "\n")
+            self.file.write("@    world xmin " + `cdp.res[0].num - 1` + "\n")
+            self.file.write("@    world xmax " + `cdp.res[-1].num + 1` + "\n")
 
         # X-axis label.
         if self.x_data_type == 'res':
