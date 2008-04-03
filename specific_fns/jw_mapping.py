@@ -443,7 +443,7 @@ class Jw_mapping(Common_functions):
             return cdp.res[instance].jwh_sim
 
 
-    def sim_return_selected(self, run, instance):
+    def sim_return_selected(self, instance):
         """Function for returning the array of selected simulation flags."""
 
         # Alias the current data pipe.
@@ -453,17 +453,17 @@ class Jw_mapping(Common_functions):
         return cdp.res[instance].select_sim
 
 
-    def set_selected_sim(self, run, instance, select_sim):
+    def set_selected_sim(self, instance, select_sim):
         """Function for returning the array of selected simulation flags."""
 
-        # Arguments.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Multiple instances.
-        relax_data_store.res[self.run][instance].select_sim = select_sim
+        cdp.res[instance].select_sim = select_sim
 
 
-    def sim_pack_data(self, run, i, sim_data):
+    def sim_pack_data(self, spin, sim_data):
         """Function for packing Monte Carlo simulation data."""
 
         # Test if the simulation data already exists.
@@ -523,19 +523,19 @@ class Jw_mapping(Common_functions):
         file.write("\n")
 
 
-    def write_columnar_results(self, file, run):
+    def write_columnar_results(self, file):
         """Function for printing the results into a file."""
 
-        # Arguments.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Test if the run exists.
         if not self.run in relax_data_store.run_names:
             raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
 
         # Header.
@@ -545,9 +545,9 @@ class Jw_mapping(Common_functions):
         ri = []
         ri_error = []
         if hasattr(relax_data_store, 'num_ri'):
-            for i in xrange(relax_data_store.num_ri[self.run]):
-                ri.append('Ri_(' + relax_data_store.ri_labels[self.run][i] + "_" + relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][i]] + ")")
-                ri_error.append('Ri_error_(' + relax_data_store.ri_labels[self.run][i] + "_" + relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][i]] + ")")
+            for i in xrange(cdp.num_ri):
+                ri.append('Ri_(' + cdp.ri_labels[i] + "_" + cdp.frq_labels[cdp.remap_table[i]] + ")")
+                ri_error.append('Ri_error_(' + cdp.ri_labels[i] + "_" + cdp.frq_labels[cdp.remap_table[i]] + ")")
 
         # Write the header line.
         self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', wH='Proton_frq_(MHz)', j0='J(0)', jwx='J(wX)', jwh='J(wH)', r='Bond_length_(A)', csa='CSA_(ppm)', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
@@ -560,14 +560,14 @@ class Jw_mapping(Common_functions):
         nucleus = self.relax.generic.nuclei.find_nucleus()
 
         # The proton frequency in MHz.
-        wH = relax_data_store.jw_frq[self.run] / 1e6
+        wH = cdp.jw_frq / 1e6
 
         # Relaxation data setup.
         try:
-            ri_labels = replace(`relax_data_store.ri_labels[self.run]`, ' ', '')
-            remap_table = replace(`relax_data_store.remap_table[self.run]`, ' ', '')
-            frq_labels = replace(`relax_data_store.frq_labels[self.run]`, ' ', '')
-            frq = replace(`relax_data_store.frq[self.run]`, ' ', '')
+            ri_labels = replace(`cdp.ri_labels`, ' ', '')
+            remap_table = replace(`cdp.remap_table`, ' ', '')
+            frq_labels = replace(`cdp.frq_labels`, ' ', '')
+            frq = replace(`cdp.frq`, ' ', '')
         except AttributeError:
             ri_labels = `None`
             remap_table = `None`
@@ -575,9 +575,9 @@ class Jw_mapping(Common_functions):
             frq = `None`
 
         # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[self.run])):
+        for i in xrange(len(cdp.res)):
             # Reassign data structure.
-            data = relax_data_store.res[self.run][i]
+            data = cdp.res[i]
 
             # J(0).
             j0 = None
@@ -607,18 +607,18 @@ class Jw_mapping(Common_functions):
             # Relaxation data and errors.
             ri = []
             ri_error = []
-            if hasattr(relax_data_store, 'num_ri'):
-                for i in xrange(relax_data_store.num_ri[self.run]):
+            if hasattr(cdp, 'num_ri'):
+                for i in xrange(cdp.num_ri):
                     try:
                         # Find the residue specific data corresponding to i.
                         index = None
                         for j in xrange(data.num_ri):
-                            if data.ri_labels[j] == relax_data_store.ri_labels[self.run][i] and data.frq_labels[data.remap_table[j]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][i]]:
+                            if data.ri_labels[j] == cdp.ri_labels[i] and data.frq_labels[data.remap_table[j]] == cdp.frq_labels[cdp.remap_table[i]]:
                                 index = j
 
                         # Data exists for this data type.
-                        ri.append(`data.relax_data[index]`)
-                        ri_error.append(`data.relax_error[index]`)
+                        ri.append(spin)
+                        ri_error.append(spin)
 
                     # No data exists for this data type.
                     except:
@@ -633,15 +633,15 @@ class Jw_mapping(Common_functions):
         #########
 
         # Skip this section and the next if no simulations have been setup.
-        if not hasattr(relax_data_store, 'sim_state'):
+        if not hasattr(cdp, 'sim_state'):
             return
-        elif relax_data_store.sim_state[self.run] == 0:
+        elif cdp.sim_state == 0:
             return
 
         # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[self.run])):
+        for i in xrange(len(cdp.res)):
             # Reassign data structure.
-            data = relax_data_store.res[self.run][i]
+            data = cdp.res[i]
 
             # J(0).
             j0 = None
@@ -671,7 +671,7 @@ class Jw_mapping(Common_functions):
             # Relaxation data and errors.
             ri = []
             ri_error = []
-            for i in xrange(relax_data_store.num_ri[self.run]):
+            for i in xrange(cdp.num_ri):
                 ri.append(None)
                 ri_error.append(None)
 
@@ -683,11 +683,11 @@ class Jw_mapping(Common_functions):
         ####################
 
         # Loop over the simulations.
-        for i in xrange(relax_data_store.sim_number[self.run]):
+        for i in xrange(cdp.sim_number):
             # Loop over the sequence.
-            for j in xrange(len(relax_data_store.res[self.run])):
+            for j in xrange(len(cdp.res)):
                 # Reassign data structure.
-                data = relax_data_store.res[self.run][j]
+                data = cdp.res[j]
 
                 # J(0).
                 j0 = None
@@ -717,18 +717,18 @@ class Jw_mapping(Common_functions):
                 # Relaxation data and errors.
                 ri = []
                 ri_error = []
-                if hasattr(self.relax.data, 'num_ri'):
-                    for k in xrange(relax_data_store.num_ri[self.run]):
+                if hasattr(cdp, 'num_ri'):
+                    for k in xrange(cdp.num.ri):
                         try:
                             # Find the residue specific data corresponding to k.
                             index = None
                             for l in xrange(data.num_ri):
-                                if data.ri_labels[l] == relax_data_store.ri_labels[self.run][k] and data.frq_labels[data.remap_table[l]] == relax_data_store.frq_labels[self.run][relax_data_store.remap_table[self.run][k]]:
+                                if data.ri_labels[l] == cdp.ri_labels[k] and data.frq_labels[data.remap_table[l]] == cdp.frq_labels[cdp.remap_table[k]]:
                                     index = l
 
                             # Data exists for this data type.
-                            ri.append(`data.relax_sim_data[i][index]`)
-                            ri_error.append(`data.relax_error[index]`)
+                            ri.append(spin)
+                            ri_error.append(spin)
 
                         # No data exists for this data type.
                         except:
