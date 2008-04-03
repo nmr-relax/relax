@@ -34,13 +34,11 @@ class Fix:
         self.relax = relax
 
 
-    def fix(self, run=None, element=None, fixed=1):
+    def fix(self, element=None, fixed=1):
         """Function for either fixing or allowing parameter values to change.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         element:  Which element to fix.
 
@@ -68,20 +66,15 @@ class Fix:
         to vary.
 
 
-        Only parameters corresponding to the given run will be affected.
+        Only current parameters will be affected.
         """
 
         # Function intro text.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "fix("
-            text = text + "run=" + `run`
-            text = text + ", element=" + `element`
+            text = text + "element=" + `element`
             text = text + ", fixed=" + `fixed` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The element argument.
         if type(element) != str and type(element) != int:
@@ -92,4 +85,4 @@ class Fix:
             raise RelaxBinError, ('fixed', fixed)
 
         # Execute the functional code.
-        self.relax.generic.fix.fix(run=run, element=element, fixed=fixed)
+        fix_obj.fix(element=element, fixed=fixed)
