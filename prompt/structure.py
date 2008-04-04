@@ -24,7 +24,7 @@
 import sys
 
 # relax module imports.
-from generic_fns import structure
+import structure
 import help
 from relax_errors import RelaxBinError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 
@@ -163,7 +163,7 @@ class Structure:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        structure.create_diff_tensor_pdb(scale=scale, file=file, dir=dir, force=force)
+        structure.geometric.create_diff_tensor_pdb(scale=scale, file=file, dir=dir, force=force)
 
 
     def create_vector_dist(self, length=2e-9, symmetry=1, file='XH_dist.pdb', dir=None, force=0):
@@ -229,7 +229,7 @@ class Structure:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        structure.create_vector_dist(length=length, symmetry=symmetry, file=file, dir=dir, force=force)
+        structure.geometric.create_vector_dist(length=length, symmetry=symmetry, file=file, dir=dir, force=force)
 
 
     def read_pdb(self, file=None, dir=None, model=None, parser='scientific', load_seq=True, spin_id='@N'):
