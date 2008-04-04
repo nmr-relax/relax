@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the Scientific Python PDB specific structural object class."""
+
+
 # Python module imports.
 from math import sqrt
 from numpy import dot, float64, zeros
