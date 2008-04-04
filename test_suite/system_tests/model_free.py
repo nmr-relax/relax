@@ -92,7 +92,7 @@ class Mf(TestCase):
         self.relax.interpreter._Diffusion_tensor.init((1.601 * 1e7, 1.34, 72.4, 90-77.9), param_types=4)
         self.relax.interpreter._Value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
         self.relax.interpreter._Value.set([0.8, 50 * 1e-12, 0.0], ['S2', 'te', 'Rex'])
-        self.relax.interpreter._Value.set('N', 'nucleus')
+        self.relax.interpreter._Value.set('15N', 'heteronucleus')
 
         # Select the model.
         self.relax.interpreter._Model_free.select_model(model='m4')
@@ -120,7 +120,7 @@ class Mf(TestCase):
 
         # Setup other values.
         self.relax.interpreter._Value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
-        self.relax.interpreter._Value.set('N', 'nucleus')
+        self.relax.interpreter._Value.set('15N', 'heteronucleus')
 
         # Select the model.
         self.relax.interpreter._Model_free.select_model(model='tm2')
