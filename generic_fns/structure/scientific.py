@@ -46,6 +46,10 @@ from relax_warnings import RelaxNoAtomWarning, RelaxZeroVectorWarning
 class Scientific_data(Str_object):
     """The Scientific Python specific data object."""
 
+    # Identification string.
+    id = 'scientific'
+
+
     def load_structures(self, file_path, model, verbosity=False):
         """Function for loading the structures from the PDB file.
 
