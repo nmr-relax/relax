@@ -31,4 +31,4 @@ class Str_object:
     """The structural object base class."""
 
     # The parser specific data object.
-    data = None
+    structural_data = []
