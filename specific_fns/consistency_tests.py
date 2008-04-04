@@ -39,7 +39,7 @@ class Consistency_tests(Common_functions):
         """Class containing functions specific to consistency testing."""
 
 
-    def calculate(self, verbosity=1, sim_index=None):
+    def calculate(self, verbosity=1, sim_index=None, spin_id=None):
         """Calculation of the consistency functions."""
 
         # Alias the current data pipe.
