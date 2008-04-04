@@ -156,40 +156,6 @@ def atom_connect(atomic_data=None, atom_id=None, bonded_id=None):
     atomic_data[bonded_id].append(atom_num)
 
 
-def atomic_mass(element=None):
-    """Return the atomic mass of the given element.
-
-    @param element: The name of the element to return the atomic mass of.
-    @type element:  str
-    @return:        The relative atomic mass.
-    @rtype:         float
-    """
-
-    # Proton.
-    if element == 'H' or element == 'Q':
-        return ArH
-
-    # Carbon.
-    elif element == 'C':
-        return ArC
-
-    # Nitrogen.
-    elif element == 'N':
-        return ArN
-
-    # Oxygen.
-    elif element == 'O':
-        return ArO
-
-    # Sulphur.
-    elif element == 'S':
-        return ArS
-
-    # Unknown.
-    else:
-        raise RelaxError, "The mass of the element " + `element` + " has not yet been programmed into relax."
-
-
 def autoscale_tensor(method='mass'):
     """Automatically determine an appropriate scaling factor for display of the diffusion tensor.
 
