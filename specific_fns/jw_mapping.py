@@ -388,7 +388,7 @@ class Jw_mapping(Common_functions):
         # Test if the pipe type is set to 'jw'.
         function_type = relax_data_store[relax_data_store.current_pipe].pipe_type
         if function_type != 'jw':
-            raise RelaxFuncSetupError, specific_fns.get_string(function_type)
+            raise RelaxFuncSetupError, specific_fns.setup.get_string(function_type)
 
         # Test if the frequency has been set.
         if hasattr(cdp, 'jw_frq'):
