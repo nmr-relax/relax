@@ -438,9 +438,9 @@ class Consistency_tests(Common_functions):
         # Alias the current data pipe.
         cdp = relax_data_store[relax_data_store.current_pipe]
 
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current pipe exists.
+        if not relax_data_store.current_pipe:
+            raise RelaxNoPipeError
 
         # Test if the run type is set to 'ct'.
         function_type = relax_data_store.run_types[cdp.run_names.index]
