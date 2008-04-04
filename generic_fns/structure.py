@@ -1105,11 +1105,17 @@ def read_pdb(run=None, file=None, dir=None, model=None, load_seq=1, fail=1, verb
     molmol.open_pdb()
 
 
-def set_vector(run=None, res=None, xh_vect=None):
-    """Function for setting the XH unit vectors."""
+def set_vector(spin=None, xh_vect=None):
+    """Place the XH unit vector into the spin container object.
 
-    # Place the XH unit vector in 'relax_data_store.res'.
-    relax_data_store.res[run][res].xh_vect = xh_vect
+    @keyword spin:      The spin container object.
+    @type spin:         SpinContainer instance
+    @keyword xh_vect:   The unit vector parallel to the XH bond.
+    @type xh_vect:      array of len 3
+    """
+
+    # Place the XH unit vector into the container.
+    spin.xh_vect = xh_vect
 
 
 def stitch_cap_to_cone(atomic_data=None, atom_id_ext='', max_angle=None, inc=None):
