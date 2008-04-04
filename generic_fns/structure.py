@@ -282,7 +282,7 @@ def centre_of_mass(return_mass=False):
                     continue
 
                 # Atomic mass.
-                mass = atomic_mass(atom.properties['element'])
+                mass = return_atomic_mass(atom.properties['element'])
 
                 # Total mass.
                 M = M + mass
