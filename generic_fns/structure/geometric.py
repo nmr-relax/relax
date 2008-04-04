@@ -21,24 +21,18 @@
 ###############################################################################
 
 # Python module imports.
-from math import sqrt, cos, pi, sin
+from math import cos, pi, sin
 from numpy import arccos, array, dot, eye, float64, zeros
-from os import F_OK, access
-from re import compile, match
-import Scientific.IO.PDB
 from string import ascii_uppercase
 from warnings import warn
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns import molmol
-from generic_fns.sequence import load_PDB_sequence
-from generic_fns.selection import exists_mol_res_spin_data, return_molecule, return_residue, return_spin, spin_loop
+from generic_fns.selection import exists_mol_res_spin_data
 from maths_fns.rotation_matrix import R_2vect
-from physical_constants import ArH, ArC, ArN, ArO, ArS
-from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbChainError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError, RelaxPdbError, RelaxPdbLoadError, RelaxRegExpError
-from relax_io import get_file_path, open_write_file
-from relax_warnings import RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxWarning, RelaxZeroVectorWarning
+from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
+from relax_io import open_write_file
+from relax_warnings import RelaxWarning
 
 
 
@@ -462,7 +456,7 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     print "\nGenerating the PDB file."
 
     # Open the PDB file for writing.
-    tensor_pdb_file = relax.IO.open_write_file(file, dir, force=force)
+    tensor_pdb_file = open_write_file(file, dir, force=force)
 
     # Write the data.
     write_pdb_file(tensor_pdb_file)
