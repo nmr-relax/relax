@@ -115,54 +115,51 @@ ArS = 32.065
 
 
 # Function for returning the desired atomic mass.
-def return_atomic_mass(nucleus=None):
-    """Return the atomic mass for the given nucleus type.
- 
-    @keyword nucleus:   The nucleus type.
-    @type nucleus:      str
-    @raises RelaxError: If the nucleus type is unknown.           
+def return_atomic_mass(element=None):
+    """Return the atomic mass for the given element type.
+
+    @keyword element:   The element type.
+    @type element:      str
+    @raises RelaxError: If the element type is unknown.           
     @returns:           The desired atomic mass.
     @rtype:             float
     """
 
     # Protons, deuterons.
-    if nucleus == 'H':
+    if element == 'H':
         return ArH
-    if nucleus == '1H':
+    if element == '1H':
         return 1.0
-    if nucleus == '2H':
+    if element == '2H':
         return 2.0
 
     # Carbons.
-    if nucleus == 'C':
+    if element == 'C':
         return ArC
-    if nucleus == '12C':
+    if element == '12C':
         return 12.0
-    if nucleus == '13C':
+    if element == '13C':
         return 13.0
 
     # Nitrogens.
-    if nucleus == 'N':
+    if element == 'N':
         return ArN
-    if nucleus == '14N':
+    if element == '14N':
         return 14.0
-    if nucleus == '15N':
+    if element == '15N':
         return 15.0
 
     # Oxygens.
-    if nucleus == 'O':
+    if element == 'O':
         return ArO
-    if nucleus == '16O':
+    if element == '16O':
         return 16.0
-    if nucleus == '17O':
+    if element == '17O':
         return 17.0
 
     # Sulphurs.
-    if nucleus == 'S':
+    if element == 'S':
         return ArS
 
     # Unknown mass.
-    raise RelaxError, "The nucleus type " + `nucleus` + " is unknown."
-
-
-
+    raise RelaxError, "The mass of the element " + `element` + " has not yet been programmed into relax."
