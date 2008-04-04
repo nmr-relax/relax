@@ -38,7 +38,7 @@ class Jw_mapping(Common_functions):
         """Class containing functions specific to reduced spectral density mapping."""
 
 
-    def calculate(self, verbosity=1, sim_index=None):
+    def calculate(self, verbosity=1, sim_index=None, spin_id=None):
         """Calculation of the spectral density values."""
 
         # Alias the current data pipe.
@@ -247,16 +247,16 @@ class Jw_mapping(Common_functions):
             raise RelaxNoSequenceError
 
         # Loop over residue data:
-        for residue in relax_data_store.res[run]:
+        for spin in spin_loop():
 
             # Check for sufficient data
-            if not hasattr(residue, 'relax_data'):
-                residue.select = 0
+            if not hasattr(spin, 'relax_data'):
+                spin.select = 0
                 continue
 
             # Require 3 or more data points
-            if len(residue.relax_data) < 3:
-                residue.select = 0
+            if len(spin.relax_data) < 3:
+                spin.select = 0
                 continue
 
 
@@ -385,10 +385,10 @@ class Jw_mapping(Common_functions):
         if not relax_data_store.current_pipe:
             raise RelaxNoPipeError
 
-        # Test if the run type is set to 'jw'.
-        function_type = relax_data_store.run_types[cdp.run_names.index]
+        # Test if the pipe type is set to 'jw'.
+        function_type = relax_data_store[relax_data_store.current_pipe].pipe_type
         if function_type != 'jw':
-            raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
+            raise RelaxFuncSetupError, specific_fns.get_string(function_type)
 
         # Test if the frequency has been set.
         if hasattr(cdp, 'jw_frq'):
