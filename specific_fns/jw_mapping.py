@@ -381,6 +381,10 @@ class Jw_mapping(Common_functions):
         # Alias the current data pipe.
         cdp = relax_data_store[relax_data_store.current_pipe]
 
+        # Test if the current pipe exists.
+        if not relax_data_store.current_pipe:
+            raise RelaxNoPipeError
+
         # Test if the run type is set to 'jw'.
         function_type = relax_data_store.run_types[cdp.run_names.index]
         if function_type != 'jw':
@@ -388,7 +392,7 @@ class Jw_mapping(Common_functions):
 
         # Test if the frequency has been set.
         if hasattr(cdp, 'jw_frq'):
-            raise RelaxError, "The frequency for the run has already been set."
+            raise RelaxError, "The frequency has already been set."
 
         # Create the data structure if it doesn't exist.
         if not hasattr(cdp, 'jw_frq'):
