@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Data as relax_data_store
 from prompt.structure import Structure
-from relax_errors import RelaxBinError, RelaxFloatError, RelaxNoneIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
+from relax_errors import RelaxBinError, RelaxBoolError, RelaxFloatError, RelaxNoneIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 from test_suite.unit_tests.structure_testing_base import Structure_base_class
 
 # Unit test imports.
@@ -202,12 +202,12 @@ class Test_structure(Structure_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the bin arguments, and skip them.
-            if data[0] == 'bin':
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxBinError, self.structure_fns.read_pdb, file='test.pdb', load_seq=data[1])
+            self.assertRaises(RelaxBoolError, self.structure_fns.read_pdb, file='test.pdb', load_seq=data[1])
 
 
     def test_vectors_argfail_heteronuc(self):
