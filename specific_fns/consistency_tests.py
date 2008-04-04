@@ -348,7 +348,7 @@ class Consistency_tests(Common_functions):
             return 'proton_type'
 
         # Angle Theta
-        if search('^[Oo]rientation]$', name):
+        if search('^[Oo]rientation$', name):
             return 'orientation'
 
         # Correlation time
