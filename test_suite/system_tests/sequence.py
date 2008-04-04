@@ -48,7 +48,7 @@ class Sequence(TestCase):
         """Load the sequence from a PDB file."""
 
         # Read the sequence.
-        self.relax.interpreter._Structure.read_pdb(file='test.pdb', dir=sys.path[-1] + '/test_suite/system_tests/data', model=1, load_seq=1)
+        self.relax.interpreter._Structure.read_pdb(file='test.pdb', dir=sys.path[-1] + '/test_suite/system_tests/data', model=1, load_seq=True)
 
 
     def test_read(self):
