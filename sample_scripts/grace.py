@@ -2,7 +2,7 @@
 
 # Create the run.
 name = 'm4'
-run.create(name, 'mf')
+pipe.create(name, 'mf')
 
 # Load the data.
 results.read(name)

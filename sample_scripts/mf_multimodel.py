@@ -10,7 +10,7 @@ nuclei('N')
 # Loop over the runs.
 for name in runs:
     # Create the run.
-    run.create(name, 'mf')
+    pipe.create(name, 'mf')
 
     # Load the sequence.
     sequence.read(name, 'noe.500.out')

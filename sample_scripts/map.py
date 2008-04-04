@@ -2,7 +2,7 @@
 
 # Set the run name (also the name of a preset model-free model).
 name = 'm4'
-run.create(name, 'mf')
+pipe.create(name, 'mf')
 
 # Nuclei type
 nuclei('N')

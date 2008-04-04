@@ -25,7 +25,7 @@ class Latex:
 
         # Create the run.
         self.run = 'final'
-        run.create(self.run, 'mf')
+        pipe.create(self.run, 'mf')
 
         # Load the model-free results.
         results.read(self.run, dir=None)

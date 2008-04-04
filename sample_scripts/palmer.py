@@ -24,7 +24,7 @@ def exec_stage_1(runs):
     for name in runs:
         # Create the run.
         print "\n\n# " + name + " #"
-        run.create(name, 'mf')
+        pipe.create(name, 'mf')
 
         # Load the sequence.
         sequence.read(name, 'noe.500.out')
@@ -79,7 +79,7 @@ def exec_stage_2(runs):
 
     # Create the model selection run.
     name = 'aic'
-    run.create(name, 'mf')
+    pipe.create(name, 'mf')
 
     # Model selection.
     model_selection(method='AIC', modsel_run=name)

@@ -2,7 +2,7 @@
 
 # Create the run.
 name = 'rx'
-run.create(name, 'relax_fit')
+pipe.create(name, 'relax_fit')
 
 # Load the sequence from a PDB file.
 structure.read_pdb(name, 'Ap4Aase_new_3.pdb', load_seq=1)

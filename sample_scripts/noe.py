@@ -2,7 +2,7 @@
 
 # Create the run
 name = 'noe'
-run.create(name, 'noe')
+pipe.create(name, 'noe')
 
 # Load the sequence from a PDB file.
 structure.read_pdb(name, 'Ap4Aase_new_3.pdb', load_seq=1)

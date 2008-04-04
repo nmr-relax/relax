@@ -11,7 +11,7 @@ for name in runs:
     print "\n\n# " + name + " #"
 
     # Create the run.
-    run.create(name, 'mf')
+    pipe.create(name, 'mf')
 
     # Reload precalculated results from the file 'm1/results', etc.
     results.read(run=name, file='results', dir=name)
@@ -20,7 +20,7 @@ for name in runs:
 eliminate()
 
 # Model selection.
-run.create('aic', 'mf')
+pipe.create('aic', 'mf')
 model_selection('AIC', 'aic')
 
 # Write the results.

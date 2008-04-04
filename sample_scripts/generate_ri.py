@@ -50,7 +50,7 @@ def write():
 
 
 # Create the run
-run.create('test', 'mf')
+pipe.create('test', 'mf')
 
 # Set the nucleus type to nitrogen.
 nuclei('N')

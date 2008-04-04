@@ -2,7 +2,7 @@
 
 # Create the run.
 name = 'jw'
-run.create(name, 'jw')
+pipe.create(name, 'jw')
 
 # Nuclei type
 nuclei('N')
