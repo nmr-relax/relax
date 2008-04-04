@@ -81,6 +81,12 @@ class Ct(TestCase):
         self.relax.interpreter._Value.set(N15_CSA, 'csa')
         self.relax.interpreter._Value.set('15N', 'heteronucleus')
 
+        # Set the angle between the 15N-1H vector and the principal axis of the 15N chemical shift tensor
+        self.relax.interpreter._Value.set(15.7, 'orientation')
+
+        # Set the approximate correlation time.
+        self.relax.interpreter._Value.set(13 * 1e-9, 'tc')
+
         # Select the frequency.
         self.relax.interpreter._Consistency_tests.set_frq(frq=600.0 * 1e6)
 
