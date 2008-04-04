@@ -240,13 +240,13 @@ class Jw_mapping(Common_functions):
 
 
     def overfit_deselect(self):
-        """Function for deselecting residues without sufficient data to support calculation"""
+        """Function for deselecting spins without sufficient data to support calculation"""
 
         # Test the sequence data exists:
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # Loop over residue data:
+        # Loop over spin data:
         for spin in spin_loop():
 
             # Check for sufficient data
