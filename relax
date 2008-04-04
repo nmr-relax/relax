@@ -50,13 +50,6 @@ except ImportError:
     sys.stderr.write("The dependency 'Numeric' has not been installed.\n")
     sys.exit()
 
-# Scientific.
-try:
-    import Scientific
-except ImportError:
-    sys.stderr.write("The dependency 'Scientific' has not been installed.\n")
-    sys.exit()
-
 # Command line option parser.
 try:
     from optparse import Option, OptionParser

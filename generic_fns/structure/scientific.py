@@ -23,8 +23,14 @@
 # Python module imports.
 from math import sqrt
 from numpy import dot, float64, zeros
-import Scientific.IO.PDB
 from warnings import warn
+
+# Scientific Python import.
+module_avail = True
+try:
+    import Scientific.IO.PDB
+except ImportError:
+    module_avail = False
 
 # relax module imports.
 from data import Data as relax_data_store

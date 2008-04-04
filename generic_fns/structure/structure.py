@@ -25,7 +25,6 @@ from math import sqrt, cos, pi, sin
 from numpy import arccos, array, dot, eye, float64, zeros
 from os import F_OK, access
 from re import compile, match
-import Scientific.IO.PDB
 from string import ascii_uppercase
 from warnings import warn
 
