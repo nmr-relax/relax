@@ -268,23 +268,23 @@ class Consistency_tests(Common_functions):
 
 
     def overfit_deselect(self):
-        """Function for deselecting residues without sufficient data to support calculation"""
+        """Function for deselecting spins without sufficient data to support calculation"""
 
         # Test if the sequence data is loaded.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # Loop over residue data:
-        for residue in relax_data_store.res[run]:
+        # Loop over spin data:
+        for spin in spin_loop():
 
             # Check for sufficient data
-            if not hasattr(residue, 'relax_data'):
-                residue.select = 0
+            if not hasattr(spin, 'relax_data'):
+                spin.select = 0
                 continue
 
             # Require 3 or more data points
-            if len(residue.relax_data) < 3:
-                residue.select = 0
+            if len(spin.relax_data) < 3:
+                spin.select = 0
                 continue
 
 
