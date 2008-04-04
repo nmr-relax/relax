@@ -36,5 +36,8 @@ This package will eventually have a well defined API for accessing structural da
 the structure parser used.
 """
 
-__all__ = [ 'geometric',
+__all__ = [ 'api_base',
+            'geometric',
+            'internal_pdb',
+            'scientific',
             'structure' ]
