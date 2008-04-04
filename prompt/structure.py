@@ -24,7 +24,8 @@
 import sys
 
 # relax module imports.
-import structure
+import generic_fns.structure.geometric
+import generic_fns.structure.structure
 import help
 from relax_errors import RelaxBinError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 
@@ -163,7 +164,7 @@ class Structure:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        structure.geometric.create_diff_tensor_pdb(scale=scale, file=file, dir=dir, force=force)
+        generic_fns.structure.geometric.create_diff_tensor_pdb(scale=scale, file=file, dir=dir, force=force)
 
 
     def create_vector_dist(self, length=2e-9, symmetry=1, file='XH_dist.pdb', dir=None, force=0):
@@ -229,7 +230,7 @@ class Structure:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        structure.geometric.create_vector_dist(length=length, symmetry=symmetry, file=file, dir=dir, force=force)
+        generic_fns.structure.geometric.create_vector_dist(length=length, symmetry=symmetry, file=file, dir=dir, force=force)
 
 
     def read_pdb(self, file=None, dir=None, model=None, parser='scientific', load_seq=True, spin_id='@N'):
@@ -320,7 +321,7 @@ class Structure:
             raise RelaxNoneStrError, ('spin identifier', spin_id)
 
         # Execute the functional code.
-        structure.read_pdb(file=file, dir=dir, model=model, parser=parser, load_seq=load_seq, spin_id=spin_id)
+        generic_fns.structure.structure.read_pdb(file=file, dir=dir, model=model, parser=parser, load_seq=load_seq, spin_id=spin_id)
 
 
     def vectors(self, heteronuc='N', proton='H', spin_id=None, verbosity=1):
@@ -398,4 +399,4 @@ class Structure:
             raise RelaxIntError, ('verbosity level', verbosity)
 
         # Execute the functional code.
-        structure.vectors(heteronuc=heteronuc, proton=proton, spin_id=spin_id, verbosity=verbosity)
+        generic_fns.structure.structure.vectors(heteronuc=heteronuc, proton=proton, spin_id=spin_id, verbosity=verbosity)
