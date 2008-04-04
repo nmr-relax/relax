@@ -53,30 +53,24 @@ class Scientific_data(Str_object):
         @type file_path:    str
         @param model:       The PDB model to use.
         @type model:        int
-        @param verbosity:   A flag which if True will cause messages to be printed.
+        @keyword verbosity: A flag which if True will cause messages to be printed.
         @type verbosity:    bool
         """
 
-        # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
-
         # Use pointers (references) if the PDB data exists in another run.
         for data_pipe in relax_data_store:
-            if hasattr(data_pipe, 'structure') and hasattr(cdp.structure, 'structures') and data_pipe.structure.file_name == file_path and data_pipe.structure.model == model:
+            if hasattr(data_pipe, 'structure') and data_pipe.structure.file_name == file_path and data_pipe.structure.model == model:
                 # Make a pointer to the data.
-                cdp.structure.structures = data_pipe.structure.structures
+                self.structural_data = data_pipe.structure.structural_data
 
                 # Print out.
                 if verbosity:
                     print "Using the structures from the data pipe " + `data_pipe.pipe_name` + "."
-                    for i in xrange(len(cdp.structure.structures)):
-                        print cdp.structure.structures[i]
+                    for i in xrange(len(self.structural_data)):
+                        print self.structural_data[i]
 
                 # Exit this function.
                 return
-
-        # Initialisation.
-        cdp.structure.structures = []
 
         # Load the structure i from the PDB file.
         if type(model) == int:
@@ -95,8 +89,8 @@ class Scientific_data(Str_object):
             if verbosity:
                 print str
 
-            # Place the structure in 'cdp.structure'.
-            cdp.structure.structures.append(str)
+            # Place the structure in 'self.structural_data'.
+            self.structural_data.append(str)
 
 
         # Load all structures.
@@ -128,24 +122,25 @@ class Scientific_data(Str_object):
                 if verbosity:
                     print str
 
-                # Place the structure in 'cdp.structure'.
-                cdp.structure.structures.append(str)
+                # Place the structure in 'self.structural_data'.
+                self.structural_data.append(str)
 
                 # Increment i.
                 i = i + 1
 
 
-    def xh_vector(self, data, structure=None, unit=1):
+    def xh_vector(self, spin, structure=None, unit=True):
         """Function for calculating/extracting the XH vector from the loaded structure.
 
-        @param data:        The spin system data container.
-        @type data:         Residue instance
-        @param structure:   The structure number to get the XH vector from.  If set to None and
-            multiple structures exist, then the XH vector will be averaged across all structures.
+        @param spin:        The spin system data container.
+        @type spin:         SpinContainer instance
+        @keyword structure: The structure number to get the XH vector from.  If set to None and
+                            multiple structures exist, then the XH vector will be averaged across
+                            all structures.
         @type structure:    int
-        @param unit:        A flag which if set will cause the function to return the unit XH vector
-            rather than the full vector.
-        @type unit:         int
+        @keyword unit:      A flag which if set will cause the function to return the unit XH vector
+                            rather than the full vector.
+        @type unit:         bool
         @return:            The XH vector (or unit vector if the unit flag is set).
         @rtype:             list or None
         """
@@ -154,11 +149,8 @@ class Scientific_data(Str_object):
         vector_array = []
         ave_vector = zeros(3, float64)
 
-        # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
-
         # Number of structures.
-        num_str = len(cdp.structure.structures)
+        num_str = len(self.structural_data)
 
         # Loop over the structures.
         for i in xrange(num_str):
@@ -167,37 +159,37 @@ class Scientific_data(Str_object):
                 continue
 
             # Reassign the first peptide or nucleotide chain of the first structure.
-            if cdp.structure.structures[i].peptide_chains:
-                pdb_residues = cdp.structure.structures[i].peptide_chains[0].residues
-            elif cdp.structure.structures[i].nucleotide_chains:
-                pdb_residues = cdp.structure.structures[i].nucleotide_chains[0].residues
+            if self.structural_data[i].peptide_chains:
+                pdb_residues = self.structural_data[i].peptide_chains[0].residues
+            elif self.structural_data[i].nucleotide_chains:
+                pdb_residues = self.structural_data[i].nucleotide_chains[0].residues
             else:
                 raise RelaxNoPdbChainError
 
             # Find the corresponding residue in the PDB.
             pdb_res = None
             for k in xrange(len(pdb_residues)):
-                if data.num == pdb_residues[k].number:
+                if spin.num == pdb_residues[k].number:
                     pdb_res = pdb_residues[k]
                     break
             if pdb_res == None:
-                raise RelaxNoResError, data.num
+                raise RelaxNoResError, spin.num
 
             # Test if the proton atom exists for residue i.
-            if not pdb_res.atoms.has_key(data.proton):
-                warn(RelaxNoAtomWarning(data.proton, data.num))
+            if not pdb_res.atoms.has_key(spin.proton):
+                warn(RelaxNoAtomWarning(spin.proton, spin.num))
 
             # Test if the heteronucleus atom exists for residue i.
-            elif not pdb_res.atoms.has_key(data.heteronuc):
-                warn(RelaxNoAtomWarning(data.heteronuc, data.num))
+            elif not pdb_res.atoms.has_key(spin.heteronuc):
+                warn(RelaxNoAtomWarning(spin.heteronuc, spin.num))
 
             # Calculate the vector.
             else:
                 # Get the proton position.
-                posH = pdb_res.atoms[data.proton].position.array
+                posH = pdb_res.atoms[spin.proton].position.array
 
                 # Get the heteronucleus position.
-                posX = pdb_res.atoms[data.heteronuc].position.array
+                posX = pdb_res.atoms[spin.heteronuc].position.array
 
                 # Calculate the XH bond vector.
                 vector = posH - posX
@@ -209,7 +201,7 @@ class Scientific_data(Str_object):
 
                     # Test for zero length.
                     if norm_factor == 0.0:
-                        warn(RelaxZeroVectorWarning(data.num))
+                        warn(RelaxZeroVectorWarning(spin.num))
 
                     # Calculate the normalised vector.
                     else:
