@@ -174,7 +174,7 @@ class Jw_mapping(Common_functions):
 
         csa:  CSA value.
 
-        nucleus:  The heteronucleus type.
+        heteronuc_type:  The heteronucleus type.
 
         j0:  Spectral density value at 0 MHz.
 
@@ -189,7 +189,7 @@ class Jw_mapping(Common_functions):
         # Values.
         names.append('r')
         names.append('csa')
-        names.append('nucleus')
+        names.append('heteronuc_type')
 
         # Spectral density values.
         names.append('j0')
@@ -381,10 +381,6 @@ class Jw_mapping(Common_functions):
         # Alias the current data pipe.
         cdp = relax_data_store[relax_data_store.current_pipe]
 
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
-
         # Test if the run type is set to 'jw'.
         function_type = relax_data_store.run_types[cdp.run_names.index]
         if function_type != 'jw':
@@ -475,7 +471,7 @@ class Jw_mapping(Common_functions):
         relax_data_store.res[run][i].relax_sim_data = sim_data
 
 
-    def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, nucleus=None, wH=None, j0=None, jwx=None, jwh=None, r=None, csa=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
+    def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, heteronuc_type=None, wH=None, j0=None, jwx=None, jwh=None, r=None, csa=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
         """Function for printing a single line of the columnar formatted results."""
 
         # Residue number and name.
@@ -485,7 +481,7 @@ class Jw_mapping(Common_functions):
         file.write("%-9s %-9s " % (select, data_set))
 
         # Nucleus.
-        file.write("%-7s " % nucleus)
+        file.write("%-7s " % heteronuc_type)
 
         # Proton frequency.
         file.write("%-25s " % wH)
@@ -551,14 +547,14 @@ class Jw_mapping(Common_functions):
                 ri_error.append('Ri_error_(' + cdp.ri_labels[i] + "_" + cdp.frq_labels[cdp.remap_table[i]] + ")")
 
         # Write the header line.
-        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', wH='Proton_frq_(MHz)', j0='J(0)', jwx='J(wX)', jwh='J(wH)', r='Bond_length_(A)', csa='CSA_(ppm)', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
+        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', heteronuc_type='Nucleus', wH='Proton_frq_(MHz)', j0='J(0)', jwx='J(wX)', jwh='J(wH)', r='Bond_length_(A)', csa='CSA_(ppm)', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
 
 
         # Values.
         #########
 
         # Nucleus.
-        nucleus = self.relax.generic.nuclei.find_nucleus()
+        heteronuc_type = self.relax.generic.nuclei.find_heteronuc_type()
 
         # The proton frequency in MHz.
         wH = cdp.jw_frq / 1e6
@@ -628,7 +624,7 @@ class Jw_mapping(Common_functions):
                         ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=spin.num, name=spin.name, select=spin.select, spin_set='value', nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=spin.num, name=spin.name, select=spin.select, spin_set='value', heteronuc_type=heteronuc_type, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Errors.
@@ -676,7 +672,7 @@ class Jw_mapping(Common_functions):
                 ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=spin.num, name=spin.name, select=spin.select, spin_set='error', nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=spin.num, name=spin.name, select=spin.select, spin_set='error', heteronuc_type=heteronuc_type, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Simulation values.
@@ -734,4 +730,4 @@ class Jw_mapping(Common_functions):
                             ri_error.append(None)
 
                 # Write the line.
-                self.write_columnar_line(file=file, num=spin.num, name=spin.name, select=spin.select, spin_set='sim_'+`i`, nucleus=nucleus, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                self.write_columnar_line(file=file, num=spin.num, name=spin.name, select=spin.select, spin_set='sim_'+`i`, heteronuc_type=heteronuc_type, wH=`wH`, j0=`j0`, jwx=`jwx`, jwh=`jwh`, r=`r`, csa=`csa`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)

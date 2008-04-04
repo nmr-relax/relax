@@ -70,29 +70,29 @@ g31P = 10.841 * 1e7
 """The 31P gyromagnetic ratio."""
 
 # Function for returning the desired gyromagnetic ratio.
-def return_gyromagnetic_ratio(nucleus=None):
-    """Return the gyromagnetic ratio for the given nucleus type.
+def return_gyromagnetic_ratio(heteronuc_type=None):
+    """Return the gyromagnetic ratio for the given heteronucleus type.
  
-    @keyword nucleus:   The nucleus type.
-    @type nucleus:      str
-    @raises RelaxError: If the nucleus type is unknown.           
-    @returns:           The desired gyromagnetic ratio.
-    @rtype:             float
+    @keyword heteronuc_type:   The heteronucleus type.
+    @type heteronucleus:       str
+    @raises RelaxError:        If the nucleus type is unknown.           
+    @returns:                  The desired gyromagnetic ratio.
+    @rtype:                    float
     """
 
     # Matching loop.
-    if nucleus == '13C':
+    if heteronuc_type == '13C':
         return g13C
-    elif nucleus == '1H':
+    elif heteronuc_type == '1H':
         return g1H
-    elif nucleus == '15N':
+    elif heteronuc_type == '15N':
         return g15N
-    elif nucleus == '17O':
+    elif heteronuc_type == '17O':
         return g17O
-    elif nucleus == '31P':
+    elif heteronuc_type == '31P':
         return g31P
     else:
-        raise RelaxError, "The nucleus type " + `nucleus` + " is unknown."
+        raise RelaxError, "The heteronucleus type " + `heteronuc_type` + " is unknown."
 
 
 # Relative atomic masses.

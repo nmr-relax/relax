@@ -26,6 +26,7 @@ import sys
 # relax module imports.
 import help
 from relax_errors import RelaxStrError
+from specific_fns.setup import jw_mapping_obj
 
 
 class Jw_mapping:
