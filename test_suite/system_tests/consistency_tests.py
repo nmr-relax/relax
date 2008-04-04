@@ -79,7 +79,7 @@ class Ct(TestCase):
         # Set r, csa, and the nucleus type.
         self.relax.interpreter._Value.set(NH_BOND_LENGTH, 'bond_length')
         self.relax.interpreter._Value.set(N15_CSA, 'csa')
-        self.relax.interpreter._Value.set('N', 'nucleus')
+        self.relax.interpreter._Value.set('15N', 'heteronucleus')
 
         # Select the frequency.
         self.relax.interpreter._Consistency_tests.set_frq(frq=600.0 * 1e6)

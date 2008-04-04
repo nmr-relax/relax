@@ -340,7 +340,7 @@ class Consistency_tests(Common_functions):
             return 'csa'
 
         # Heteronucleus type.
-        if search('^[Hh]eteronuc_type$', name):
+        if search('^[Hh]eteronucleus$', name):
             return 'heteronuc_type'
 
         # Proton type.
