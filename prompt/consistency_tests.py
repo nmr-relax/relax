@@ -27,6 +27,7 @@ import sys
 # relax module imports.
 import help
 from relax_errors import RelaxStrError
+from specific_fns.setup import consistency_tests_obj
 
 
 class Consistency_tests:
