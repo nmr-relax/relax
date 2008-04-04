@@ -26,9 +26,31 @@
 The API is set up as a series of methods attached to the structural object defined in this module.
 """
 
+# relax module import.
+from relax_errors import RelaxImplementError
+
 
 class Str_object:
     """The structural object base class."""
 
     # The parser specific data object.
     structural_data = []
+
+
+    def load_structures(self, file_path, model, verbosity=False):
+        """Prototype method for loading structures from a file.
+
+        This inherited prototype method is a stub which, if the functionality is desired, should be
+        overwritten by the derived class.
+
+
+        @param file_path:   The full path of the file.
+        @type file_path:    str
+        @param model:       The structural model to use.
+        @type model:        int
+        @keyword verbosity: A flag which if True will cause messages to be printed.
+        @type verbosity:    bool
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
