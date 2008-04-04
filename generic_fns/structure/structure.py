@@ -21,11 +21,8 @@
 ###############################################################################
 
 # Python module imports.
-from math import sqrt, cos, pi, sin
-from numpy import arccos, array, dot, eye, float64, zeros
+from numpy import float64, zeros
 from os import F_OK, access
-from re import compile, match
-from string import ascii_uppercase
 from warnings import warn
 
 # relax module imports.
@@ -33,11 +30,9 @@ from data import Data as relax_data_store
 from generic_fns import molmol
 from generic_fns.sequence import load_PDB_sequence
 from generic_fns.selection import exists_mol_res_spin_data, return_molecule, return_residue, return_spin, spin_loop
-from maths_fns.rotation_matrix import R_2vect
-from physical_constants import ArH, ArC, ArN, ArO, ArS
-from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbChainError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError, RelaxPdbError, RelaxPdbLoadError, RelaxRegExpError
-from relax_io import get_file_path, open_write_file
-from relax_warnings import RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxWarning, RelaxZeroVectorWarning
+from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxPdbError
+from relax_io import get_file_path
+from relax_warnings import RelaxNoPDBFileWarning
 
 
 
