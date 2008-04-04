@@ -27,7 +27,7 @@ import sys
 import generic_fns.structure.geometric
 import generic_fns.structure.structure
 import help
-from relax_errors import RelaxBinError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
+from relax_errors import RelaxBinError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 
 
 class Structure:
