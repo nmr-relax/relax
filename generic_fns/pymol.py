@@ -37,6 +37,13 @@ class Pymol:
     """Variable for storing the pymol command history."""
 
 
+    def clear_history():
+        """Method for clearing the PyMOL command history."""
+
+        self.command_history = ""
+
+
+
 # Initialise the Pymol data container.
 pymol_data = Pymol()
 """Pymol data container instance."""
@@ -62,12 +69,6 @@ def cartoon():
 
     # Colour by secondary structure.
     self.pipe_write("util.cbss(" + `id` + ", 'red', 'yellow', 'green')")
-
-
-def clear_history():
-    """Function for clearing the PyMOL command history."""
-
-    pymol_data.command_history = ""
 
 
 def command(run, command):
