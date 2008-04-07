@@ -73,7 +73,6 @@ class Internal_PDB(Str_object):
         @type segment_id:   str
         @param element:     The element symbol.
         @type element:      str
-        @return:            None
         """
 
         # Initialise the key-value pair.
