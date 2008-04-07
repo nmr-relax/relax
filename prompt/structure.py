@@ -25,7 +25,7 @@ import sys
 
 # relax module imports.
 import generic_fns.structure.geometric
-import generic_fns.structure.structure
+import generic_fns.structure.main
 import help
 from relax_errors import RelaxBinError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 
@@ -321,7 +321,7 @@ class Structure:
             raise RelaxNoneStrError, ('spin identifier', spin_id)
 
         # Execute the functional code.
-        generic_fns.structure.structure.read_pdb(file=file, dir=dir, model=model, parser=parser, load_seq=load_seq, spin_id=spin_id)
+        generic_fns.structure.main.read_pdb(file=file, dir=dir, model=model, parser=parser, load_seq=load_seq, spin_id=spin_id)
 
 
     def vectors(self, heteronuc='N', proton='H', spin_id=None, verbosity=1):
@@ -399,4 +399,4 @@ class Structure:
             raise RelaxIntError, ('verbosity level', verbosity)
 
         # Execute the functional code.
-        generic_fns.structure.structure.vectors(heteronuc=heteronuc, proton=proton, spin_id=spin_id, verbosity=verbosity)
+        generic_fns.structure.main.vectors(heteronuc=heteronuc, proton=proton, spin_id=spin_id, verbosity=verbosity)
