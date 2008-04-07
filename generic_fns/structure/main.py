@@ -35,8 +35,42 @@ from relax_warnings import RelaxNoPDBFileWarning
 
 
 
-def read_pdb(run=None, file=None, dir=None, model=None, load_seq=1, fail=1, verbosity=1):
-    """The pdb loading function."""
+def read_pdb(file=None, dir=None, model=None, parser='scientific', spin_id=None, load_seq=True, fail=True, verbosity=1):
+    """The PDB loading function.
+
+    Parsers
+    =======
+
+    Currently only the Scientific Python parser is available for reading PDB files.  This parser is
+    selected only if the parser keyword argument is set to 'scientific'.
+
+
+    @keyword file:          The name of the PDB file to read.
+    @type file:             str
+    @keyword dir:           The directory where the PDB file is located.  If set to None, then the
+                            file will be searched for in the current directory.
+    @type dir:              str or None
+    @keyword model:         The PDB model to extract from the file.  If set to None, then all models
+                            will be loaded.
+    @type model:            int or None
+    @keyword parser:        The parser to be used to read the PDB file.
+    @type parser:           str
+    @keyword spid_id:       The spin identification string.
+    @type spid_id:          str
+    @keyword load_seq:      A flag which, if True, will cause the sequence to be loaded from the
+                            structural data object into the relax data store.
+    @type load_seq:         bool
+    @keyword fail:          A flag which, if True, will cause a RelaxError to be raised if the PDB
+                            file does not exist.  If False, then a RelaxWarning will be trown
+                            instead.
+    @type fail:             bool
+    @keyword verbosity:     The amount of information to print to screen.  Zero corresponds to
+                            minimal output while higher values increase the amount of output.  The
+                            default value is 1.
+    @type verbosity:        int
+    @raise RelaxFileError:  If the fail flag is set, then a RelaxError is raised if the PDB file
+                            does not exist.
+    """
 
     # Tests.
     ########
@@ -48,7 +82,7 @@ def read_pdb(run=None, file=None, dir=None, model=None, load_seq=1, fail=1, verb
     # Alias the current data pipe.
     cdp = relax_data_store[relax_data_store.current_pipe]
 
-    # Test if PDB data corresponding to the run already exists.
+    # Test if structural data already exists.
     if hasattr(cdp, 'struct'):
         raise RelaxPdbError
 
