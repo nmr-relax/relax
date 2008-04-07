@@ -61,6 +61,12 @@ class Scientific_data(Str_object):
         @type verbosity:    bool
         """
 
+        # Store the file name (with full path).
+        self.file_name = file_path
+
+        # Store the model number.
+        self.model = model
+
         # Use pointers (references) if the PDB data exists in another run.
         for data_pipe in relax_data_store:
             if hasattr(data_pipe, 'structure') and data_pipe.structure.file_name == file_path and data_pipe.structure.model == model:
