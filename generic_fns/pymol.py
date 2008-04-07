@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,324 +29,310 @@ from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxImplementError, RelaxNoPipeError, RelaxNoSequenceError
 
 
-# The relax data storage object.
+def cartoon(run=None):
+    """Apply the PyMOL cartoon style and colour by secondary structure."""
+
+    # Arguments.
+    self.run = run
+
+    # Test if the run exists.
+    if not self.run in relax_data_store.run_names:
+        raise RelaxNoPipeError, self.run
+
+    # Identifier.
+    pdb_file = relax_data_store.pdb[self.run].file_name
+    id = self.relax.IO.file_root(pdb_file)
+
+    # Hide everything.
+    self.pipe_write("cmd.hide('everything'," + `id` + ")")
+
+    # Show the cartoon style.
+    self.pipe_write("cmd.show('cartoon'," + `id` + ")")
+
+    # Colour by secondary structure.
+    self.pipe_write("util.cbss(" + `id` + ", 'red', 'yellow', 'green')")
 
 
+def clear_history():
+    """Function for clearing the PyMOL command history."""
 
-class Pymol:
-    def __init__(self, relax):
-        """Class containing the functions for viewing molecules using PyMOL."""
-
-        self.relax = relax
-
-        # Initialise the command history (for reopening PyMOL pipes).
-        self.clear_history()
+    self.command_history = ""
 
 
-    def cartoon(self, run=None):
-        """Apply the PyMOL cartoon style and colour by secondary structure."""
+def command(run, command):
+    """Function for sending PyMOL commands to the program pipe."""
 
-        # Arguments.
-        self.run = run
+    # Arguments.
+    self.run = run
 
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
+    # Test if the run exists.
+    if not self.run in relax_data_store.run_names:
+        raise RelaxNoPipeError, self.run
 
-        # Identifier.
-        pdb_file = relax_data_store.pdb[self.run].file_name
-        id = self.relax.IO.file_root(pdb_file)
-
-        # Hide everything.
-        self.pipe_write("cmd.hide('everything'," + `id` + ")")
-
-        # Show the cartoon style.
-        self.pipe_write("cmd.show('cartoon'," + `id` + ")")
-
-        # Colour by secondary structure.
-        self.pipe_write("util.cbss(" + `id` + ", 'red', 'yellow', 'green')")
+    # Pass the command to PyMOL.
+    self.pipe_write(command)
 
 
-    def clear_history(self):
-        """Function for clearing the PyMOL command history."""
+def create_macro():
+    """Function for creating an array of PyMOL commands."""
 
-        self.command_history = ""
+    # Function type.
+    self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
+
+    # Specific PyMOL macro creation function.
+    pymol_macro = self.relax.specific_setup.setup('pymol_macro', self.function_type)
+
+    # Get the macro.
+    self.commands = pymol_macro(self.run, self.data_type, self.style, self.colour_start, self.colour_end, self.colour_list)
 
 
-    def command(self, run, command):
-        """Function for sending PyMOL commands to the program pipe."""
+def macro_exec(run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
+    """Function for executing a PyMOL macro."""
 
-        # Arguments.
-        self.run = run
+    # Arguments.
+    self.run = run
+    self.data_type = data_type
+    self.style = style
+    self.colour_start = colour_start
+    self.colour_end = colour_end
+    self.colour_list = colour_list
 
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
+    # No coded yet.
+    raise RelaxImplementError
 
-        # Pass the command to PyMOL.
+    # Test if the run exists.
+    if not self.run in relax_data_store.run_names:
+        raise RelaxNoPipeError, self.run
+
+    # Test if the sequence data is loaded.
+    if not relax_data_store.res.has_key(self.run):
+        raise RelaxNoSequenceError, self.run
+
+    # Create the macro.
+    self.create_macro()
+
+    # Loop over the commands and execute them.
+    for command in self.commands:
         self.pipe_write(command)
 
 
-    def create_macro(self):
-        """Function for creating an array of PyMOL commands."""
+def open_pdb(run=None):
+    """Function for opening the PDB file in PyMOL."""
 
-        # Function type.
-        self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
-
-        # Specific PyMOL macro creation function.
-        pymol_macro = self.relax.specific_setup.setup('pymol_macro', self.function_type)
-
-        # Get the macro.
-        self.commands = pymol_macro(self.run, self.data_type, self.style, self.colour_start, self.colour_end, self.colour_list)
-
-
-    def macro_exec(self, run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
-        """Function for executing a PyMOL macro."""
-
-        # Arguments.
-        self.run = run
-        self.data_type = data_type
-        self.style = style
-        self.colour_start = colour_start
-        self.colour_end = colour_end
-        self.colour_list = colour_list
-
-        # No coded yet.
-        raise RelaxImplementError
-
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
-
-        # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
-
-        # Create the macro.
-        self.create_macro()
-
-        # Loop over the commands and execute them.
-        for command in self.commands:
-            self.pipe_write(command)
-
-
-    def open_pdb(self, run=None):
-        """Function for opening the PDB file in PyMOL."""
-
-        # Argument.
-        if run:
-            self.run = run
-
-        # Test if the pipe is open.
-        if not self.pipe_open_test():
-            return
-
-        # Reinitialise PyMOL.
-        self.pipe_write("reinitialize")
-
-        # Open the PDB file.
-        self.pipe_write("load " + relax_data_store.pdb[self.run].file_name)
-
-
-    def pipe_open(self):
-        """Function for opening a PyMOL pipe."""
-
-        # Test that the PyMOL binary exists.
-        self.relax.IO.test_binary('pymol')
-
-        # Open the PyMOL pipe.
-        relax_data_store.pymol = popen("pymol -qpK", 'w', 0)
-
-        # Execute the command history.
-        if len(self.command_history) > 0:
-            self.pipe_write(self.command_history, store_command=0)
-            return
-
-        # Test if the PDB file has been loaded.
-        if hasattr(relax_data_store, 'pdb') and relax_data_store.pdb.has_key(self.run):
-            self.open_pdb()
-
-
-    def pipe_open_test(self):
-        """Function for testing if the PyMOL pipe is open."""
-
-        # Test if a pipe has been opened.
-        if not hasattr(relax_data_store, 'pymol'):
-            return 0
-
-        # Test if the pipe has been broken.
-        try:
-            relax_data_store.pymol.write('\n')
-        except IOError:
-            return 0
-
-        # The pipe is open.
-        return 1
-
-
-    def pipe_write(self, command=None, store_command=1):
-        """Function for writing to the PyMOL pipe.
-
-        This function is also used to execute a user supplied PyMOL command.
-        """
-
-        # Reopen the pipe if needed.
-        if not self.pipe_open_test():
-            self.pipe_open()
-
-        # Write the command to the pipe.
-        relax_data_store.pymol.write(command + '\n')
-
-        # Place the command in the command history.
-        if store_command:
-            self.command_history = self.command_history + command + "\n"
-
-
-    def tensor_pdb(self, run=None, file=None):
-        """Display the diffusion tensor geometric structure."""
-
-        # Arguments.
+    # Argument.
+    if run:
         self.run = run
 
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
+    # Test if the pipe is open.
+    if not self.pipe_open_test():
+        return
 
-        # Read in the tensor PDB file.
-        self.pipe_write("load " + file)
+    # Reinitialise PyMOL.
+    self.pipe_write("reinitialize")
 
-
-        # Centre of mass.
-        #################
-
-        # Select the COM residue.
-        self.pipe_write("select resn COM")
-
-        # Show the centre of mass as the dots representation.
-        self.pipe_write("show dots, 'sele'")
-
-        # Colour it blue.
-        self.pipe_write("color blue, 'sele'")
+    # Open the PDB file.
+    self.pipe_write("load " + relax_data_store.pdb[self.run].file_name)
 
 
-        # The diffusion tensor axes.
-        ############################
+def pipe_open():
+    """Function for opening a PyMOL pipe."""
 
-        # Select the AXS residue.
-        self.pipe_write("select resn AXS")
+    # Test that the PyMOL binary exists.
+    self.relax.IO.test_binary('pymol')
 
-        # Hide everything.
-        self.pipe_write("hide ('sele')")
+    # Open the PyMOL pipe.
+    relax_data_store.pymol = popen("pymol -qpK", 'w', 0)
 
-        # Show as 'sticks'.
-        self.pipe_write("show sticks, 'sele'")
+    # Execute the command history.
+    if len(self.command_history) > 0:
+        self.pipe_write(self.command_history, store_command=0)
+        return
 
-        # Colour it cyan.
-        self.pipe_write("color cyan, 'sele'")
-
-        # Select the N atoms of the AXS residue (used to display the axis labels).
-        self.pipe_write("select (resn AXS and elem N)")
-
-        # Label the atoms.
-        self.pipe_write("label 'sele', name")
+    # Test if the PDB file has been loaded.
+    if hasattr(relax_data_store, 'pdb') and relax_data_store.pdb.has_key(self.run):
+        self.open_pdb()
 
 
+def pipe_open_test():
+    """Function for testing if the PyMOL pipe is open."""
 
-        # Monte Carlo simulations.
-        ##########################
+    # Test if a pipe has been opened.
+    if not hasattr(relax_data_store, 'pymol'):
+        return 0
 
-        # Select the SIM residue.
-        self.pipe_write("select resn SIM")
+    # Test if the pipe has been broken.
+    try:
+        relax_data_store.pymol.write('\n')
+    except IOError:
+        return 0
 
-        # Colour it.
-        self.pipe_write("colour cyan, 'sele'")
-
-
-        # Clean up.
-        ###########
-
-        # Remove the selection.
-        self.pipe_write("cmd.delete('sele')")
-
-
-    def vector_dist(self, run=None, file=None):
-        """Display the XH bond vector distribution.
-
-        @param run:     The run
-        @type run:      str
-        @param file:    The vector distribution PDB file.
-        @type file:     str
-        """
-
-        # Arguments.
-        self.run = run
-
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
-
-        # The file root.
-        file_root = self.relax.IO.file_root(file)
-
-        # Read in the vector distribution PDB file.
-        self.pipe_write("load " + file)
+    # The pipe is open.
+    return 1
 
 
-        # Create a surface.
-        ###################
+def pipe_write(command=None, store_command=1):
+    """Function for writing to the PyMOL pipe.
 
-        # Select the vector distribution.
-        self.pipe_write("cmd.show('surface', " + `file_root` + ")")
+    This function is also used to execute a user supplied PyMOL command.
+    """
 
+    # Reopen the pipe if needed.
+    if not self.pipe_open_test():
+        self.pipe_open()
 
-    def view(self, run=None):
-        """Function for running PyMOL."""
+    # Write the command to the pipe.
+    relax_data_store.pymol.write(command + '\n')
 
-        # Arguments.
-        self.run = run
-
-        # Open a PyMOL pipe.
-        if self.pipe_open_test():
-            raise RelaxError, "The PyMOL pipe already exists."
-        else:
-            self.pipe_open()
+    # Place the command in the command history.
+    if store_command:
+        self.command_history = self.command_history + command + "\n"
 
 
-    def write(self, run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir=None, force=0):
-        """Function for creating a PyMOL macro."""
+def tensor_pdb(run=None, file=None):
+    """Display the diffusion tensor geometric structure."""
 
-        # Arguments.
-        self.run = run
-        self.data_type = data_type
-        self.style = style
-        self.colour_start = colour_start
-        self.colour_end = colour_end
-        self.colour_list = colour_list
+    # Arguments.
+    self.run = run
 
-        # No coded yet.
-        raise RelaxImplementError
+    # Test if the run exists.
+    if not self.run in relax_data_store.run_names:
+        raise RelaxNoPipeError, self.run
 
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
+    # Read in the tensor PDB file.
+    self.pipe_write("load " + file)
 
-        # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
 
-        # Create the macro.
-        self.create_macro()
+    # Centre of mass.
+    #################
 
-        # File name.
-        if file == None:
-            file = data_type + '.mac'
+    # Select the COM residue.
+    self.pipe_write("select resn COM")
 
-        # Open the file for writing.
-        file = self.relax.IO.open_write_file(file, dir, force)
+    # Show the centre of mass as the dots representation.
+    self.pipe_write("show dots, 'sele'")
 
-        # Loop over the commands and write them.
-        for command in self.commands:
-            file.write(command + "\n")
+    # Colour it blue.
+    self.pipe_write("color blue, 'sele'")
 
-        # Close the file.
-        file.close()
+
+    # The diffusion tensor axes.
+    ############################
+
+    # Select the AXS residue.
+    self.pipe_write("select resn AXS")
+
+    # Hide everything.
+    self.pipe_write("hide ('sele')")
+
+    # Show as 'sticks'.
+    self.pipe_write("show sticks, 'sele'")
+
+    # Colour it cyan.
+    self.pipe_write("color cyan, 'sele'")
+
+    # Select the N atoms of the AXS residue (used to display the axis labels).
+    self.pipe_write("select (resn AXS and elem N)")
+
+    # Label the atoms.
+    self.pipe_write("label 'sele', name")
+
+
+
+    # Monte Carlo simulations.
+    ##########################
+
+    # Select the SIM residue.
+    self.pipe_write("select resn SIM")
+
+    # Colour it.
+    self.pipe_write("colour cyan, 'sele'")
+
+
+    # Clean up.
+    ###########
+
+    # Remove the selection.
+    self.pipe_write("cmd.delete('sele')")
+
+
+def vector_dist(run=None, file=None):
+    """Display the XH bond vector distribution.
+
+    @param run:     The run
+    @type run:      str
+    @param file:    The vector distribution PDB file.
+    @type file:     str
+    """
+
+    # Arguments.
+    self.run = run
+
+    # Test if the run exists.
+    if not self.run in relax_data_store.run_names:
+        raise RelaxNoPipeError, self.run
+
+    # The file root.
+    file_root = self.relax.IO.file_root(file)
+
+    # Read in the vector distribution PDB file.
+    self.pipe_write("load " + file)
+
+
+    # Create a surface.
+    ###################
+
+    # Select the vector distribution.
+    self.pipe_write("cmd.show('surface', " + `file_root` + ")")
+
+
+def view(run=None):
+    """Function for running PyMOL."""
+
+    # Arguments.
+    self.run = run
+
+    # Open a PyMOL pipe.
+    if self.pipe_open_test():
+        raise RelaxError, "The PyMOL pipe already exists."
+    else:
+        self.pipe_open()
+
+
+def write(run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir=None, force=0):
+    """Function for creating a PyMOL macro."""
+
+    # Arguments.
+    self.run = run
+    self.data_type = data_type
+    self.style = style
+    self.colour_start = colour_start
+    self.colour_end = colour_end
+    self.colour_list = colour_list
+
+    # No coded yet.
+    raise RelaxImplementError
+
+    # Test if the run exists.
+    if not self.run in relax_data_store.run_names:
+        raise RelaxNoPipeError, self.run
+
+    # Test if the sequence data is loaded.
+    if not relax_data_store.res.has_key(self.run):
+        raise RelaxNoSequenceError, self.run
+
+    # Create the macro.
+    self.create_macro()
+
+    # File name.
+    if file == None:
+        file = data_type + '.mac'
+
+    # Open the file for writing.
+    file = self.relax.IO.open_write_file(file, dir, force)
+
+    # Loop over the commands and write them.
+    for command in self.commands:
+        file.write(command + "\n")
+
+    # Close the file.
+    file.close()
