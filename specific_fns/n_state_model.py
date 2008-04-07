@@ -31,6 +31,7 @@ from data import Data as relax_data_store
 from float import isNaN, isInf
 import generic_fns
 import generic_fns.structure.mass
+from generic_fns.structure.internal_pdb import Internal_PDB
 from maths_fns.n_state_model import N_state_opt
 from maths_fns.rotation_matrix import R_2vect, R_euler_zyz
 from minfx.generic import generic_minimise
@@ -220,8 +221,11 @@ class N_state_model(Common_functions):
         R = zeros((3,3), float64)
         R_2vect(R, array([0,0,1], float64), cdp.ave_pivot_CoM/norm(cdp.ave_pivot_CoM))
 
+        # Create the structural object.
+        structure = Internal_PDB()
+
         # Add the pivot point.
-        generic_fns.structure.atom_add(atomic_data=atomic_data, atom_id='R', record_name='HETATM', atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot_point, element='C')
+        structure.atom_add(atom_id='R', record_name='HETATM', atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot_point, element='C')
 
         # Generate the average pivot-CoM vectors.
         print "\nGenerating the average pivot-CoM vectors."
@@ -245,12 +249,12 @@ class N_state_model(Common_functions):
             generic_fns.structure.stitch_cap_to_cone(atomic_data=atomic_data, max_angle=angle, inc=inc)
 
         # Terminate the chain.
-        generic_fns.structure.terminate(atomic_data=atomic_data, res_num=res_num)
+        structure.terminate(res_num=res_num)
 
         # Create the PDB file.
         print "\nGenerating the PDB file."
         pdb_file = open_write_file(file, dir, force=force)
-        generic_fns.structure.write_pdb_file(atomic_data, pdb_file)
+        structure.write_pdb_file(pdb_file)
         pdb_file.close()
 
 
