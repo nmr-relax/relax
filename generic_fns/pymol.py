@@ -27,7 +27,7 @@ from string import split
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxImplementError, RelaxNoPipeError, RelaxNoSequenceError
-from relax_io import file_root
+from relax_io import file_root, test_binary
 
 
 class Pymol:
@@ -54,7 +54,7 @@ class Pymol:
         """Function for opening a PyMOL pipe."""
 
         # Test that the PyMOL binary exists.
-        self.relax.IO.test_binary('pymol')
+        test_binary('pymol')
 
         # Open the PyMOL pipe.
         self.pymol = popen("pymol -qpK", 'w', 0)
@@ -65,7 +65,7 @@ class Pymol:
             return
 
         # Test if the PDB file has been loaded.
-        if hasattr(relax_data_store, 'pdb') and relax_data_store.pdb.has_key(self.run):
+        if hasattr(relax_data_store, 'structure'):
             self.open_pdb()
 
 
