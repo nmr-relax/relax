@@ -56,7 +56,7 @@ def autoscale_tensor(method='mass'):
     return 1.8e-6
 
 
-def cone_edge(atomic_data=None, res_name='CON', res_num=None, apex=None, axis=None, R=None, angle=None, length=None, inc=None):
+def cone_edge(structure=None, res_name='CON', res_num=None, apex=None, axis=None, R=None, angle=None, length=None, inc=None):
     """Add a residue to the atomic data representing a cone of the given angle.
 
     A series of vectors totalling the number of increments and starting at the origin are equally
@@ -64,8 +64,8 @@ def cone_edge(atomic_data=None, res_name='CON', res_num=None, apex=None, axis=No
     bonded together.  This will generate an object representing the outer edge of a cone.
 
 
-    @param atomic_data:     The dictionary to place the atomic data into.
-    @type atomic_data:      dict
+    @param structure:       The structural data object.
+    @type structure:        instance of class derived from Str_object
     @param res_name:        The residue name.
     @type res_name:         str
     @param res_num:         The residue number.
@@ -465,7 +465,7 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     tensor_pdb_file.close()
 
 
-def generate_vector_dist(atomic_data=None, atom_id_ext='', res_name=None, res_num=None, chain_id='', centre=zeros(3, float64), R=eye(3), warp=eye(3), max_angle=None, scale=1.0, inc=20):
+def generate_vector_dist(structure=None, atom_id_ext='', res_name=None, res_num=None, chain_id='', centre=zeros(3, float64), R=eye(3), warp=eye(3), max_angle=None, scale=1.0, inc=20):
     """Generate a uniformly distributed distribution of atoms on a warped sphere.
 
     The vectors from the function uniform_vect_dist_spherical_angles() are used to generate the
@@ -474,8 +474,8 @@ def generate_vector_dist(atomic_data=None, atom_id_ext='', res_name=None, res_nu
     centred and at the head of the vector, a proton is placed.
 
 
-    @param atomic_data:     The dictionary to place the atomic data into.
-    @type atomic_data:      dict
+    @param structure:       The structural data object.
+    @type structure:        instance of class derived from Str_object
     @param atom_id_ext:     The atom identifier extension.
     @type atom_id_ext:      str
     @param res_name:        The residue name.
@@ -569,14 +569,14 @@ def generate_vector_dist(atomic_data=None, atom_id_ext='', res_name=None, res_nu
             atom_num = atom_num + 1
 
 
-def generate_vector_residues(atomic_data=None, vector=None, atom_name=None, res_name_vect='AXS', sim_vectors=None, res_name_sim='SIM', chain_id='', res_num=None, origin=None, scale=1.0, label_placement=1.1, neg=False):
+def generate_vector_residues(structure=None, vector=None, atom_name=None, res_name_vect='AXS', sim_vectors=None, res_name_sim='SIM', chain_id='', res_num=None, origin=None, scale=1.0, label_placement=1.1, neg=False):
     """Generate residue representations for the vector and the MC simulationed vectors.
 
     This is used to create a PDB representation of any vector, including its Monte Carlo
     simulations.
 
-    @param atomic_data:     The dictionary to place the atomic data into.
-    @type atomic_data:      dict
+    @param structure:       The structural data object.
+    @type structure:        instance of class derived from Str_object
     @param vector:          The vector to be represented in the PDB.
     @type vector:           numpy array, len 3
     @param atom_name:       The atom name used to label the atom representing the head of the vector
@@ -654,11 +654,11 @@ def generate_vector_residues(atomic_data=None, vector=None, atom_name=None, res_
     return res_num
 
 
-def stitch_cap_to_cone(atomic_data=None, atom_id_ext='', max_angle=None, inc=None):
+def stitch_cap_to_cone(structure=None, atom_id_ext='', max_angle=None, inc=None):
     """Function for stitching the cap of a cone to the cone edge, in the PDB representations.
 
-    @param atomic_data:     The dictionary containing the atomic data.
-    @type atomic_data:      dict
+    @param structure:       The structural data object.
+    @type structure:        instance of class derived from Str_object
     @param atom_id_ext:     The atom identifier extension.
     @type atom_id_ext:      str
     @param max_angle:       The maximal polar angle, in rad, after which all vectors are skipped.
