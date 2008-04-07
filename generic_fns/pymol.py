@@ -43,6 +43,60 @@ class Pymol:
         self.command_history = ""
 
 
+    def pipe_open(self):
+        """Function for opening a PyMOL pipe."""
+
+        # Test that the PyMOL binary exists.
+        self.relax.IO.test_binary('pymol')
+
+        # Open the PyMOL pipe.
+        relax_data_store.pymol = popen("pymol -qpK", 'w', 0)
+
+        # Execute the command history.
+        if len(pymol_data.command_history) > 0:
+            self.pipe_write(pymol_data.command_history, store_command=0)
+            return
+
+        # Test if the PDB file has been loaded.
+        if hasattr(relax_data_store, 'pdb') and relax_data_store.pdb.has_key(self.run):
+            self.open_pdb()
+
+
+    def pipe_open_test(self):
+        """Function for testing if the PyMOL pipe is open."""
+
+        # Test if a pipe has been opened.
+        if not hasattr(relax_data_store, 'pymol'):
+            return 0
+
+        # Test if the pipe has been broken.
+        try:
+            relax_data_store.pymol.write('\n')
+        except IOError:
+            return 0
+
+        # The pipe is open.
+        return 1
+
+
+    def pipe_write(self, command=None, store_command=1):
+        """Function for writing to the PyMOL pipe.
+
+        This function is also used to execute a user supplied PyMOL command.
+        """
+
+        # Reopen the pipe if needed.
+        if not self.pipe_open_test():
+            self.pipe_open()
+
+        # Write the command to the pipe.
+        relax_data_store.pymol.write(command + '\n')
+
+        # Place the command in the command history.
+        if store_command:
+            pymol_data.command_history = pymol_data.command_history + command + "\n"
+
+
 
 # Initialise the Pymol data container.
 pymol_data = Pymol()
@@ -144,60 +198,6 @@ def open_pdb(run=None):
 
     # Open the PDB file.
     self.pipe_write("load " + relax_data_store.pdb[self.run].file_name)
-
-
-def pipe_open():
-    """Function for opening a PyMOL pipe."""
-
-    # Test that the PyMOL binary exists.
-    self.relax.IO.test_binary('pymol')
-
-    # Open the PyMOL pipe.
-    relax_data_store.pymol = popen("pymol -qpK", 'w', 0)
-
-    # Execute the command history.
-    if len(pymol_data.command_history) > 0:
-        self.pipe_write(pymol_data.command_history, store_command=0)
-        return
-
-    # Test if the PDB file has been loaded.
-    if hasattr(relax_data_store, 'pdb') and relax_data_store.pdb.has_key(self.run):
-        self.open_pdb()
-
-
-def pipe_open_test():
-    """Function for testing if the PyMOL pipe is open."""
-
-    # Test if a pipe has been opened.
-    if not hasattr(relax_data_store, 'pymol'):
-        return 0
-
-    # Test if the pipe has been broken.
-    try:
-        relax_data_store.pymol.write('\n')
-    except IOError:
-        return 0
-
-    # The pipe is open.
-    return 1
-
-
-def pipe_write(command=None, store_command=1):
-    """Function for writing to the PyMOL pipe.
-
-    This function is also used to execute a user supplied PyMOL command.
-    """
-
-    # Reopen the pipe if needed.
-    if not self.pipe_open_test():
-        self.pipe_open()
-
-    # Write the command to the pipe.
-    relax_data_store.pymol.write(command + '\n')
-
-    # Place the command in the command history.
-    if store_command:
-        pymol_data.command_history = pymol_data.command_history + command + "\n"
 
 
 def tensor_pdb(run=None, file=None):
