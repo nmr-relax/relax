@@ -37,7 +37,7 @@ class Pymol:
     """Variable for storing the pymol command history."""
 
 
-    def clear_history():
+    def clear_history(self):
         """Method for clearing the PyMOL command history."""
 
         self.command_history = ""
