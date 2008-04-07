@@ -230,7 +230,7 @@ class N_state_model(Common_functions):
         sim_vectors = None
         if hasattr(cdp, 'ave_pivot_CoM_sim'):
             sim_vectors = cdp.ave_pivot_CoM_sim
-        res_num = generic_fns.structure.geometric.generate_vector_residues(atomic_data=atomic_data, vector=cdp.ave_pivot_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
+        res_num = generic_fns.structure.geometric.generate_vector_residues(structure=structure, vector=cdp.ave_pivot_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
 
         # Generate the cone outer edge.
         print "\nGenerating the cone outer edge."
@@ -238,13 +238,13 @@ class N_state_model(Common_functions):
             angle = cdp.theta_diff_in_cone
         elif cone_type == 'diff on cone':
             angle = cdp.theta_diff_on_cone
-        generic_fns.structure.geometric.cone_edge(atomic_data=atomic_data, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, angle=angle, length=norm(cdp.pivot_CoM), inc=inc)
+        generic_fns.structure.geometric.cone_edge(structure=structure, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, angle=angle, length=norm(cdp.pivot_CoM), inc=inc)
 
         # Generate the cone cap, and stitch it to the cone edge.
         if cone_type == 'diff in cone':
             print "\nGenerating the cone cap."
-            generic_fns.structure.geometric.generate_vector_dist(atomic_data=atomic_data, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=inc)
-            generic_fns.structure.geometric.stitch_cap_to_cone(atomic_data=atomic_data, max_angle=angle, inc=inc)
+            generic_fns.structure.geometric.generate_vector_dist(structure=structure, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=inc)
+            generic_fns.structure.geometric.stitch_cap_to_cone(structure=structure, max_angle=angle, inc=inc)
 
         # Terminate the chain.
         structure.terminate(res_num=res_num)
