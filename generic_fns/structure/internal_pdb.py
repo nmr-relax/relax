@@ -25,6 +25,7 @@
 
 
 # relax module imports.
+from api_base import Str_object
 from relax_errors import RelaxError
 
 
