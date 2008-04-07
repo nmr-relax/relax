@@ -21,19 +21,19 @@
 ###############################################################################
 
 # Package docstring.
-"""This package consists of modules used reading, writing, creating, etc. structural information.
+"""This package consists of modules used reading, writing, creating, structural information.
 
-This package will eventually contain numerous structure related operations including:
+In the future, numerous structure related operations will be present including:
 
-Numerous PDB parsers,
-A PDB writer,
-CIF parsers,
-Other structural data file parsers,
-Functions for creating geometric objects in structural format,
-Mass and inertia related functions.
+    - Numerous PDB parsers.
+    - A PDB writer.
+    - CIF parsers.
+    - Other structural data file parsers.
+    - Functions for creating geometric objects in structural format.
+    - Mass and inertia related functions.
 
-This package will eventually have a well defined API for accessing structural data independent of
-the structure parser used.
+This package has well defined API implemented as class methods for accessing structural data
+independent of parser, writer, etc.
 """
 
 __all__ = [ 'api_base',
