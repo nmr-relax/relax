@@ -84,10 +84,6 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', spin_id=None,
     if hasattr(cdp, 'struct'):
         raise RelaxPdbError
 
-    # Test if sequence data is loaded.
-    if not load_seq and not exists_mol_res_spin_data():
-        raise RelaxNoSequenceError
-
     # The file path.
     file_path = get_file_path(file, dir)
 
