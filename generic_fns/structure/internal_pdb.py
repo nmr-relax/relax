@@ -53,6 +53,9 @@ class Internal_PDB(Str_object):
     # Identification string.
     id = 'internal pdb'
 
+    # Change the data object to an empty dictionary.
+    structural_data = {}
+
 
     def __get_chemical_name(self, hetID):
         """Method for returning the chemical name corresponding to the given residue ID.
