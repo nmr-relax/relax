@@ -50,12 +50,8 @@ class Pymol:
         self.command_history = ""
 
 
-    def open_pdb(run=None):
+    def open_pdb(self):
         """Function for opening the PDB file in PyMOL."""
-
-        # Argument.
-        if run:
-            self.run = run
 
         # Test if the pipe is open.
         if not self.pipe_open_test():
@@ -65,7 +61,7 @@ class Pymol:
         self.pipe_write("reinitialize")
 
         # Open the PDB file.
-        self.pipe_write("load " + relax_data_store.pdb[self.run].file_name)
+        self.pipe_write("load " + relax_data_store[relax_data_store.current_pipe].structure.file_name)
 
 
     def pipe_open(self):
