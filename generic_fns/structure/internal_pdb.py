@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing a relax specific PDB structural object."""
+
+
 # relax module imports.
 from relax_errors import RelaxError
 
