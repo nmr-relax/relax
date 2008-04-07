@@ -139,6 +139,19 @@ def extract_data(file_name=None, dir=None, file_data=None, sep=None):
         file.close()
 
 
+def file_root(file_path):
+    """Return the root file name, striped of path and extension details.
+
+    @param file_path:   The full path to the file.
+    @type file_path:    str
+    @return:            The file root (with all directories and the extension stripped away).
+    @rtype:             str
+    """
+
+    root,ext = splitext(file_path)
+    return basename(root)
+
+
 def get_file_path(file_name=None, dir=None):
     """Generate and expand the full file path.
 
@@ -491,13 +504,6 @@ class IO:
 
         # Remove the file.
         remove(file_path)
-
-
-    def file_root(self, file_path):
-        """Return the root file name, striped of path and extension details"""
-
-        root,ext = splitext(file_path)
-        return basename(root)
 
 
     def logging_off(self, file_name=None, dir=None, verbosity=1):
