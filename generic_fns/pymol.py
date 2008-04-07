@@ -284,7 +284,7 @@ def vector_dist(run=None, file=None):
         raise RelaxNoPipeError, self.run
 
     # The file root.
-    file_root = self.relax.IO.file_root(file)
+    id = file_root(file)
 
     # Read in the vector distribution PDB file.
     self.pipe_write("load " + file)
@@ -294,7 +294,7 @@ def vector_dist(run=None, file=None):
     ###################
 
     # Select the vector distribution.
-    self.pipe_write("cmd.show('surface', " + `file_root` + ")")
+    self.pipe_write("cmd.show('surface', " + `id` + ")")
 
 
 def view(run=None):
