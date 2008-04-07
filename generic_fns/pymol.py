@@ -29,6 +29,19 @@ from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxImplementError, RelaxNoPipeError, RelaxNoSequenceError
 
 
+class Pymol:
+    """Data container for storing information such as the pymol command history."""
+
+    command_history = ""
+    """Variable for storing the pymol command history."""
+
+
+# Initialise the Pymol data container.
+pymol_data = Pymol()
+"""Pymol data container instance."""
+
+
+
 def cartoon(run=None):
     """Apply the PyMOL cartoon style and colour by secondary structure."""
 
@@ -56,7 +69,7 @@ def cartoon(run=None):
 def clear_history():
     """Function for clearing the PyMOL command history."""
 
-    self.command_history = ""
+    pymol_data.command_history = ""
 
 
 def command(run, command):
@@ -144,8 +157,8 @@ def pipe_open():
     relax_data_store.pymol = popen("pymol -qpK", 'w', 0)
 
     # Execute the command history.
-    if len(self.command_history) > 0:
-        self.pipe_write(self.command_history, store_command=0)
+    if len(pymol_data.command_history) > 0:
+        self.pipe_write(pymol_data.command_history, store_command=0)
         return
 
     # Test if the PDB file has been loaded.
@@ -185,7 +198,7 @@ def pipe_write(command=None, store_command=1):
 
     # Place the command in the command history.
     if store_command:
-        self.command_history = self.command_history + command + "\n"
+        pymol_data.command_history = pymol_data.command_history + command + "\n"
 
 
 def tensor_pdb(run=None, file=None):
