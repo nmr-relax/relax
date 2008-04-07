@@ -33,12 +33,12 @@ from relax_errors import RelaxNoPdbError
 def centre_of_mass(return_mass=False):
     """Calculate and return the centre of mass of the structure.
 
-    @param return_mass: A flag which if False will cause only the centre of mass to be returned, but
-                        if True will cause the centre of mass and the mass itself to be returned as
-                        a tuple.
-    @type return_mass:  bool
-    @return:            The centre of mass vector, and additionally the mass.
-    @rtype:             list of 3 floats (or tuple of a list of 3 floats and one float)
+    @keyword return_mass:   A flag which if False will cause only the centre of mass to be returned,
+                            but if True will cause the centre of mass and the mass itself to be
+                            returned as a tuple.
+    @type return_mass:      bool
+    @return:                The centre of mass vector, and additionally the mass.
+    @rtype:                 list of 3 floats (or tuple of a list of 3 floats and one float)
     """
 
     # Alias the current data pipe.
