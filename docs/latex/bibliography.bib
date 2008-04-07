@@ -1109,12 +1109,13 @@
   year           = 1998
 }
 
-@Article{PaperII,
-  Author         = {d'Auvergne, E. J. and Gooley, P. R.},
-  Title          = {Optimisation of {NMR} dynamic models. ({II}). {S}et
-                   theory formulation of the model-free problem and
-                   {K}ay's model-free paradigm.},
-  Journal        = jbnmr,
+@PhdThesis{dAuvergne06,
+  Author         = {d'Auvergne, E. J.},
+  Title          = {Protein dynamics: a study of the model-free analysis
+                   of {NMR} relaxation data.},
+  School         = {Biochemistry and Molecular Biology, University of
+                   Melbourne. http://eprints.infodiv.unimelb.edu.au/archive/00002799/},
+  url            = {http://eprints.infodiv.unimelb.edu.au/archive/00002799/},
   year           = 2006
 }
 
@@ -1192,41 +1193,234 @@
   year           = 2003
 }
 
-@Article{PaperI,
-  Author         = {d'Auvergne, Edward J. and Gooley, Paul R.},
-  Title          = {Optimisation of {NMR} dynamic models. ({I}).
-                   {M}inimisation algorithms and their performance within
-                   the model-free space},
+@Article{dAuvergneGooley06,
+  Author         = {d'Auvergne, E. J. and Gooley, P. R.},
+  Title          = {Model-free model elimination: {A} new step in the
+                   model-free dynamic analysis of {NMR} relaxation data.},
   Journal        = jbnmr,
+  Volume         = {35},
+  Number         = {2},
+  Pages          = {117-135},
+  abstract       = {Model-free analysis is a technique commonly used
+                   within the field of NMR spectroscopy to extract atomic
+                   resolution, interpretable dynamic information on
+                   multiple timescales from the R (1), R (2), and steady
+                   state NOE. Model-free approaches employ two disparate
+                   areas of data analysis, the discipline of mathematical
+                   optimisation, specifically the minimisation of a chi(2)
+                   function, and the statistical field of model selection.
+                   By searching through a large number of model-free
+                   minimisations, which were setup using synthetic
+                   relaxation data whereby the true underlying dynamics is
+                   known, certain model-free models have been identified
+                   to, at times, fail. This has been characterised as
+                   either the internal correlation times, tau( e ), tau( f
+                   ), or tau( s ), or the global correlation time
+                   parameter, local tau( m ), heading towards infinity,
+                   the result being that the final parameter values are
+                   far from the true values. In a number of cases the
+                   minimised chi(2) value of the failed model is
+                   significantly lower than that of all other models and,
+                   hence, will be the model which is chosen by model
+                   selection techniques. If these models are not removed
+                   prior to model selection the final model-free results
+                   could be far from the truth. By implementing a series
+                   of empirical rules involving inequalities these models
+                   can be specifically isolated and removed. Model-free
+                   analysis should therefore consist of three distinct
+                   steps: model-free minimisation, model-free model
+                   elimination, and finally model-free model selection.
+                   Failure has also been identified to affect the
+                   individual Monte Carlo simulations used within error
+                   analysis. Each simulation involves an independent
+                   randomised relaxation data set and model-free
+                   minimisation, thus simulations suffer from exactly the
+                   same types of failure as model-free models. Therefore,
+                   to prevent these outliers from causing a significant
+                   overestimation of the errors the failed Monte Carlo
+                   simulations need to be culled prior to calculating the
+                   parameter standard deviations.},
+  authoraddress  = {Department of Biochemistry and Molecular Biology,
+                   Bio21 Institute of Biotechnology and Molecular Science,
+                   University of Melbourne, Parkville, Victoria, 3010,
+                   Australia, edward@nmr-relax.com.},
+  language       = {eng},
+  medline-aid    = {10.1007/s10858-006-9007-z [doi]},
+  medline-da     = {20060704},
+  medline-dep    = {20060622},
+  medline-edat   = {2006/06/23 09:00},
+  medline-fau    = {d'Auvergne, Edward J ; Gooley, Paul R},
+  medline-is     = {0925-2738 (Print)},
+  medline-jid    = {9110829},
+  medline-jt     = {Journal of biomolecular NMR.},
+  medline-mhda   = {2006/06/23 09:00},
+  medline-own    = {NLM},
+  medline-phst   = {2005/09/15 [received] ; 2006/03/21 [accepted] ;
+                   2006/06/22 [aheadofprint]},
+  medline-pl     = {Netherlands},
+  medline-pmid   = {16791734},
+  medline-pst    = {ppublish},
+  medline-pt     = {Journal Article},
+  medline-pubm   = {Print-Electronic},
+  medline-sb     = {IM},
+  medline-so     = {J Biomol NMR. 2006 Jun;35(2):117-35. Epub 2006 Jun 22.},
+  medline-stat   = {In-Data-Review},
+  url            = {http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?cmd=prlinks\&dbfrom=pubmed\&retmode=ref\&id=16791734},
   year           = 2006
 }
 
-@Article{dAuvergneGooley06a,
-  Author         = {d'Auvergne, Edward J. and Gooley, Paul R.},
-  Title          = {Model-free model elimination: A new step in the
-                   model-free dynamic analysis of {NMR} relaxation data},
-  Journal        = jbnmr,
-  Volume         = {in press},
-  year           = 2006
+@Article{dAuvergneGooley07,
+  Author         = {d'Auvergne, E. J. and Gooley, P. R.},
+  Title          = {Set theory formulation of the model-free problem and
+                   the diffusion seeded model-free paradigm.},
+  Journal        = mb,
+  Volume         = {3},
+  Number         = {7},
+  Pages          = {483-494},
+  abstract       = {Model-free analysis of NMR relaxation data, which
+                   describes the motion of individual atoms, is a problem
+                   intricately linked to the Brownian rotational diffusion
+                   of the macromolecule. The diffusion tensor parameters
+                   strongly influence the optimisation of the various
+                   model-free models and the subsequent model selection
+                   between them. Finding the optimal model of the dynamics
+                   of the system among the numerous diffusion and
+                   model-free models is hence quite complex. Using set
+                   theory, the entirety of this global problem has been
+                   encapsulated by the universal set Ll, and its
+                   resolution mathematically formulated as the universal
+                   solution Ll. Ever since the original Lipari and Szabo
+                   papers the model-free dynamics of a molecule has most
+                   often been solved by initially estimating the diffusion
+                   tensor. The model-free models which depend on the
+                   diffusion parameter values are then optimised and the
+                   best model is chosen to represent the dynamics of the
+                   residue. Finally, the global model of all diffusion and
+                   model-free parameters is optimised. These steps are
+                   repeated until convergence. For simplicity this
+                   approach to Ll will be labelled the diffusion seeded
+                   model-free paradigm. Although this technique suffers
+                   from a number of problems many have been solved. All
+                   aspects of the diffusion seeded paradigm and its
+                   consequences, together with a few alternatives to the
+                   paradigm, will be reviewed through the use of set
+                   notation.},
+  authoraddress  = {Department of Biochemistry and Molecular Biology,
+                   Bio21 Institute of Biotechnology and Molecular Science,
+                   University of Melbourne, Parkville, Melbourne, Victoria
+                   3010, Australia.},
+  keywords       = {Magnetic Resonance Spectroscopy/*methods ; *Models,
+                   Theoretical ; Proteins/chemistry ; Thermodynamics},
+  language       = {eng},
+  medline-aid    = {10.1039/b702202f [doi]},
+  medline-da     = {20070620},
+  medline-dcom   = {20070823},
+  medline-dep    = {20070517},
+  medline-edat   = {2007/06/21 09:00},
+  medline-fau    = {d'Auvergne, Edward J ; Gooley, Paul R},
+  medline-is     = {1742-206X (Print)},
+  medline-jid    = {101251620},
+  medline-jt     = {Molecular bioSystems},
+  medline-mhda   = {2007/08/24 09:00},
+  medline-own    = {NLM},
+  medline-phst   = {2007/05/17 [aheadofprint] ; 2007/06/20 [epublish]},
+  medline-pl     = {England},
+  medline-pmid   = {17579774},
+  medline-pst    = {ppublish},
+  medline-pt     = {Journal Article},
+  medline-pubm   = {Print-Electronic},
+  medline-rn     = {0 (Proteins)},
+  medline-sb     = {IM},
+  medline-so     = {Mol Biosyst. 2007 Jul;3(7):483-94. Epub 2007 May 17.},
+  medline-stat   = {MEDLINE},
+  url            = {http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?cmd=prlinks\&dbfrom=pubmed\&retmode=ref\&id=17579774},
+  year           = 2007
 }
 
-@Article{PaperIV,
-  Author         = {d'Auvergne, Edward J. and Gooley, Paul R.},
-  Title          = {Optimisation of {NMR} dynamic models. ({IV}). {T}he
-                   program relax},
-  Journal        = jbnmr,
-  year           = 2006
+@article{dAuvergneGooley2008a,
+  Author         = {d'Auvergne, E. J. and Gooley, P. R.},
+title = "{Optimisation of NMR dynamic models I. Minimisation algorithms and their
+performance within the model-free and Brownian rotational diffusion
+spaces}",
+journal = jbnmr,
+volume = "40",
+number = "2",
+pages = "107-109",
+year = "2008",
+pmid = "18085410",
+abstract = "{
+The key to obtaining the model-free description of the dynamics of a
+macromolecule is the optimisation of the model-free and Brownian
+rotational diffusion parameters using the collected R (1), R (2) and
+steady-state NOE relaxation data. The problem of optimising the
+chi-squared value is often assumed to be trivial, however, the long chain
+of dependencies required for its calculation complicates the model-free
+chi-squared space. Convolutions are induced by the Lorentzian form of the
+spectral density functions, the linear recombinations of certain spectral
+density values to obtain the relaxation rates, the calculation of the NOE
+using the ratio of two of these rates, and finally the quadratic form of
+the chi-squared equation itself. Two major topological features of the
+model-free space complicate optimisation. The first is a long, shallow
+valley which commences at infinite correlation times and gradually
+approaches the minimum. The most severe convolution occurs for motions on
+two timescales in which the minimum is often located at the end of a long,
+deep, curved tunnel or multidimensional valley through the space. A large
+number of optimisation algorithms will be investigated and their
+performance compared to determine which techniques are suitable for use in
+model-free analysis. Local optimisation algorithms will be shown to be
+sufficient for minimisation not only within the model-free space but also
+for the minimisation of the Brownian rotational diffusion tensor. In
+addition the performance of the programs Modelfree and Dasha are
+investigated. A number of model-free optimisation failures were
+identified: the inability to slide along the limits, the singular matrix
+failure of the Levenberg-Marquardt minimisation algorithm, the low
+precision of both programs, and a bug in Modelfree. Significantly, the
+singular matrix failure of the Levenberg-Marquardt algorithm occurs when
+internal correlation times are undefined and is greatly amplified in
+model-free analysis by both the grid search and constraint algorithms. The
+program relax ( http://www.nmr-relax.com ) is also presented as a new
+software package designed for the analysis of macromolecular dynamics
+through the use of NMR relaxation data and which alleviates all of the
+problems inherent within model-free analysis.}",
 }
 
-@Article{PaperIII,
-  Author         = {d'Auvergne, Edward J. and Gooley, Paul R.},
-  Title          = {Optimisation of {NMR} dynamic models. ({III}).
-                   {D}erivation of the brownian diffusion correlation
-                   functions and a new methodology for the dual
-                   optimisation of the model-free parameters together with
-                   the diffusion tensor},
-  Journal        = jbnmr,
-  year           = 2006
+@article{dAuvergneGooley2008b,
+  Author         = {d'Auvergne, E. J. and Gooley, P. R.},
+  Title = {Optimisation of NMR dynamic models II. A new methodology for the dual
+optimisation of the model-free parameters and the Brownian rotational
+diffusion tensor},
+journal = jbnmr,
+volume = "40",
+number = "2",
+pages = "121-123",
+year = "2008",
+pmid = "18085411",
+abstract = "{
+Finding the dynamics of an entire macromolecule is a complex problem as
+the model-free parameter values are intricately linked to the Brownian
+rotational diffusion of the molecule, mathematically through the
+autocorrelation function of the motion and statistically through model
+selection. The solution to this problem was formulated using set theory as
+an element of the universal set [Formula: see text]-the union of all
+model-free spaces (d'Auvergne EJ and Gooley PR (2007) Mol BioSyst 3(7),
+483-494). The current procedure commonly used to find the universal
+solution is to initially estimate the diffusion tensor parameters, to
+optimise the model-free parameters of numerous models, and then to choose
+the best model via model selection. The global model is then optimised and
+the procedure repeated until convergence. In this paper a new methodology
+is presented which takes a different approach to this diffusion seeded
+model-free paradigm. Rather than starting with the diffusion tensor this
+iterative protocol begins by optimising the model-free parameters in the
+absence of any global model parameters, selecting between all the
+model-free models, and finally optimising the diffusion tensor. The new
+model-free optimisation protocol will be validated using synthetic data
+from Schurr JM et al. (1994) J Magn Reson B 105(3), 211-224 and the
+relaxation data of the bacteriorhodopsin (1-36)BR fragment from Orekhov VY
+(1999) J Biomol NMR 14(4), 345-356. To demonstrate the importance of this
+new procedure the NMR relaxation data of the Olfactory Marker Protein
+(OMP) of Gitti R et al. (2005) Biochem 44(28), 9673-9679 is reanalysed.
+The result is that the dynamics for certain secondary structural elements
+is very different from those originally reported.}",
 }
 
 @Article{DellwoWand89,
