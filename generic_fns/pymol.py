@@ -27,6 +27,7 @@ from string import split
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxImplementError, RelaxNoPipeError, RelaxNoSequenceError
+from relax_io import file_root
 
 
 class Pymol:
@@ -42,19 +43,16 @@ pymol_data = Pymol()
 
 
 
-def cartoon(run=None):
+def cartoon():
     """Apply the PyMOL cartoon style and colour by secondary structure."""
 
-    # Arguments.
-    self.run = run
-
-    # Test if the run exists.
-    if not self.run in relax_data_store.run_names:
-        raise RelaxNoPipeError, self.run
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
 
     # Identifier.
-    pdb_file = relax_data_store.pdb[self.run].file_name
-    id = self.relax.IO.file_root(pdb_file)
+    pdb_file = relax_data_store[relax_data_store.current_pipe].structure.file_name()
+    id = file_root(pdb_file)
 
     # Hide everything.
     self.pipe_write("cmd.hide('everything'," + `id` + ")")
