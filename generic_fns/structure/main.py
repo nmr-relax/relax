@@ -73,9 +73,6 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', spin_id=None,
                             does not exist.
     """
 
-    # Tests.
-    ########
-
     # Test if the current data pipe exists.
     if not relax_data_store.current_pipe:
         raise RelaxNoPipeError
@@ -102,20 +99,12 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', spin_id=None,
             warn(RelaxNoPDBFileWarning(file_path))
             return
 
-
-    # Data creation.
-    ################
-
     # Place the Scientific Python structural object into the relax data store.
     if parser == 'scientific':
         cdp.structure = Scientific_data()
 
     # Load the structures.
     cdp.structure.load_structures(file_path, model, verbosity)
-
-
-    # Finish.
-    #########
 
     # Sequence loading.
     if load_seq and not exists_mol_res_spin_data():
