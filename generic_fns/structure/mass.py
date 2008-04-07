@@ -93,13 +93,13 @@ def centre_of_mass(return_mass=False):
             continue
 
         # Atomic mass.
-        mass = return_atomic_mass(atom.properties['element'])
+        mass = return_atomic_mass(atom_name)
 
         # Total mass.
         M = M + mass
 
         # Sum of mass * position.
-        R = R + mass * atom.position.array
+        R = R + mass * pos
 
     # Normalise.
     R = R / M
