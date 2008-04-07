@@ -67,6 +67,22 @@ class Str_object:
         raise RelaxImplementError
 
 
+    def atom_connect(self, atom_id=None, bonded_id=None):
+        """Prototype method stub for connecting two atoms within the data structure object.
+
+        This method will connect the atoms corresponding to atom_id and bonded_id.
+
+
+        @param atom_id:     The atom identifier.
+        @type atom_id:      str
+        @param bonded_id:   The second atom identifier.
+        @type bonded_id:    str
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
+
+
     def load_structures(self, file_path, model, verbosity=False):
         """Prototype method for loading structures from a file.
 
