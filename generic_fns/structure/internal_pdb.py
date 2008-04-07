@@ -53,6 +53,60 @@ class Internal_PDB(Str_object):
     id = 'internal pdb'
 
 
+    def __get_chemical_name(self, hetID):
+        """Method for returning the chemical name corresponding to the given residue ID.
+
+        The following names are currently returned:
+        ________________________________________________
+        |        |                                     |
+        | hetID  | Chemical name                       |
+        |________|_____________________________________|
+        |        |                                     |
+        | TNS    | Tensor                              |
+        | COM    | Centre of mass                      |
+        | AXS    | Tensor axes                         |
+        | SIM    | Monte Carlo simulation tensor axes  |
+        |________|_____________________________________|
+
+
+        @param res: The residue ID.
+        @type res:  str
+        @return:    The chemical name.
+        @rtype:     str
+        """
+
+        # Tensor.
+        if hetID == 'TNS':
+            return 'Tensor'
+
+        # Centre of mass.
+        if hetID == 'COM':
+            return 'Centre of mass'
+
+        # Tensor axes.
+        if hetID == 'AXS':
+            return 'Tensor axes'
+
+        # Monte Carlo simulation tensor axes.
+        if hetID == 'SIM':
+            return 'Monte Carlo simulation tensor axes'
+
+        # Pivot point.
+        if hetID == 'PIV':
+            return 'Pivot point'
+
+        # Cone object.
+        if hetID == 'CON':
+            return 'Cone'
+
+        # Average vector.
+        if hetID == 'AVE':
+            return 'Average vector'
+
+        # Unknown hetID.
+        raise RelaxError, "The residue ID (hetID) " + `hetID` + " is not recognised."
+
+
     def atom_add(self, atom_id=None, record_name='', atom_name='', res_name='', chain_id='', res_num=None, pos=[None, None, None], segment_id='', element=''):
         """Method for adding an atom to the structural data object.
 
@@ -129,60 +183,6 @@ class Internal_PDB(Str_object):
 
         # Add the atom_id to the bonded_id array.
         self.structural_data[bonded_id].append(atom_num)
-
-
-    def get_chemical_name(self, hetID):
-        """Method for returning the chemical name corresponding to the given residue ID.
-
-        The following names are currently returned:
-        ________________________________________________
-        |        |                                     |
-        | hetID  | Chemical name                       |
-        |________|_____________________________________|
-        |        |                                     |
-        | TNS    | Tensor                              |
-        | COM    | Centre of mass                      |
-        | AXS    | Tensor axes                         |
-        | SIM    | Monte Carlo simulation tensor axes  |
-        |________|_____________________________________|
-
-
-        @param res: The residue ID.
-        @type res:  str
-        @return:    The chemical name.
-        @rtype:     str
-        """
-
-        # Tensor.
-        if hetID == 'TNS':
-            return 'Tensor'
-
-        # Centre of mass.
-        if hetID == 'COM':
-            return 'Centre of mass'
-
-        # Tensor axes.
-        if hetID == 'AXS':
-            return 'Tensor axes'
-
-        # Monte Carlo simulation tensor axes.
-        if hetID == 'SIM':
-            return 'Monte Carlo simulation tensor axes'
-
-        # Pivot point.
-        if hetID == 'PIV':
-            return 'Pivot point'
-
-        # Cone object.
-        if hetID == 'CON':
-            return 'Cone'
-
-        # Average vector.
-        if hetID == 'AVE':
-            return 'Average vector'
-
-        # Unknown hetID.
-        raise RelaxError, "The residue ID (hetID) " + `hetID` + " is not recognised."
 
 
     def terminate(self, atom_id_ext='', res_num=None):
@@ -301,7 +301,7 @@ class Internal_PDB(Str_object):
                 residues.append(het[1])
 
             # Get the chemical name.
-            chemical_name = get_chemical_name(het[1])
+            chemical_name = self.__get_chemical_name(het[1])
 
             # Write the HETNAM records.
             file.write("%-6s  %2s %3s %-55s\n" % ('HETNAM', '', het[1], chemical_name))
