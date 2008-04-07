@@ -26,36 +26,35 @@ from relax_errors import RelaxError
 
 
 class Internal_PDB(Str_object):
-    """The internal relax PDB data object."""
+    """The internal relax PDB data object.
+
+    The structural data object for this class is a dictionary of arrays.  The keys correspond to the
+    'atom_id' strings.  The elements of the array are:
+
+        0:  Atom number.
+        1:  The record name (one of ATOM, HETATM, or TER).
+        2:  Atom name.
+        3:  Residue name.
+        4:  Chain ID.
+        5:  Residue number.
+        6:  The x coordinate of the atom.
+        7:  The y coordinate of the atom.
+        8:  The z coordinate of the atom.
+        9:  Segment ID.
+        10:  Element symbol.
+        11+:  The bonded atom numbers.
+    """
 
     # Identification string.
     id = 'internal pdb'
 
 
-    def atom_add(self, atomic_data=None, atom_id=None, record_name='', atom_name='', res_name='', chain_id='', res_num=None, pos=[None, None, None], segment_id='', element=''):
-        """Function for adding an atom to the atomic_data structure.
-
-        The atomic_data data structure is a dictionary of arrays.  The keys correspond to the
-        'atom_id' strings.  The elements of the array are:
-
-            0:  Atom number.
-            1:  The record name (one of ATOM, HETATM, or TER).
-            2:  Atom name.
-            3:  Residue name.
-            4:  Chain ID.
-            5:  Residue number.
-            6:  The x coordinate of the atom.
-            7:  The y coordinate of the atom.
-            8:  The z coordinate of the atom.
-            9:  Segment ID.
-            10:  Element symbol.
-            11+:  The bonded atom numbers.
+    def atom_add(self, atom_id=None, record_name='', atom_name='', res_name='', chain_id='', res_num=None, pos=[None, None, None], segment_id='', element=''):
+        """Function for adding an atom to the structural data object.
 
         This function will create the key-value pair for the given atom.
 
 
-        @param atomic_data: The dictionary to place the atomic data into.
-        @type atomic_data:  dict
         @param atom_id:     The atom identifier.  This is used as the key within the dictionary.
         @type atom_id:      str
         @param record_name: The record name, e.g. 'ATOM', 'HETATM', or 'TER'.
@@ -78,40 +77,24 @@ class Internal_PDB(Str_object):
         """
 
         # Initialise the key-value pair.
-        atomic_data[atom_id] = []
+        self.structural_data[atom_id] = []
 
         # Fill the positions.
-        atomic_data[atom_id].append(len(atomic_data))
-        atomic_data[atom_id].append(record_name)
-        atomic_data[atom_id].append(atom_name)
-        atomic_data[atom_id].append(res_name)
-        atomic_data[atom_id].append(chain_id)
-        atomic_data[atom_id].append(res_num)
-        atomic_data[atom_id].append(pos[0])
-        atomic_data[atom_id].append(pos[1])
-        atomic_data[atom_id].append(pos[2])
-        atomic_data[atom_id].append(segment_id)
-        atomic_data[atom_id].append(element)
+        self.structural_data[atom_id].append(len(self.structural_data))
+        self.structural_data[atom_id].append(record_name)
+        self.structural_data[atom_id].append(atom_name)
+        self.structural_data[atom_id].append(res_name)
+        self.structural_data[atom_id].append(chain_id)
+        self.structural_data[atom_id].append(res_num)
+        self.structural_data[atom_id].append(pos[0])
+        self.structural_data[atom_id].append(pos[1])
+        self.structural_data[atom_id].append(pos[2])
+        self.structural_data[atom_id].append(segment_id)
+        self.structural_data[atom_id].append(element)
 
 
-    def atom_connect(self, atomic_data=None, atom_id=None, bonded_id=None):
-        """Function for connecting two atoms within the atomic_data data structure.
-
-        The atomic_data data structure is a dictionary of arrays.  The keys correspond to the
-        'atom_id' strings.  The elements of the array are:
-
-            0:  Atom number.
-            1:  The record name (one of ATOM, HETATM, or TER).
-            2:  Atom name.
-            3:  Residue name.
-            4:  Chain ID.
-            5:  Residue number.
-            6:  The x coordinate of the atom.
-            7:  The y coordinate of the atom.
-            8:  The z coordinate of the atom.
-            9:  Segment ID.
-            10:  Element symbol.
-            11+:  The bonded atom numbers.
+    def atom_connect(self, atom_id=None, bonded_id=None):
+        """Function for connecting two atoms within the data structure object.
 
         This function will find the atom number corresponding to both the atom_id and bonded_id.
         The bonded_id atom number will then be appended to the atom_id array.  Because the
@@ -119,8 +102,6 @@ class Internal_PDB(Str_object):
         bonded_id atom array as well.
 
 
-        @param atomic_data: The dictionary to place the atomic data into.
-        @type atomic_data:  dict
         @param atom_id:     The atom identifier.  This is used as the key within the dictionary.
         @type atom_id:      str
         @param bonded_id:   The second atom identifier.  This is used as the key within the
@@ -129,22 +110,22 @@ class Internal_PDB(Str_object):
         """
 
         # Find the atom number corresponding to atom_id.
-        if atomic_data.has_key(atom_id):
-            atom_num = atomic_data[atom_id][0]
+        if self.structural_data.has_key(atom_id):
+            atom_num = self.structural_data[atom_id][0]
         else:
             raise RelaxError, "The atom corresponding to the atom_id " + `atom_id` + " doesn't exist."
 
         # Find the atom number corresponding to bonded_id.
-        if atomic_data.has_key(bonded_id):
-            bonded_num = atomic_data[bonded_id][0]
+        if self.structural_data.has_key(bonded_id):
+            bonded_num = self.structural_data[bonded_id][0]
         else:
             raise RelaxError, "The atom corresponding to the bonded_id " + `bonded_id` + " doesn't exist."
 
         # Add the bonded_id to the atom_id array.
-        atomic_data[atom_id].append(bonded_num)
+        self.structural_data[atom_id].append(bonded_num)
 
         # Add the atom_id to the bonded_id array.
-        atomic_data[bonded_id].append(atom_num)
+        self.structural_data[bonded_id].append(atom_num)
 
 
     def get_chemical_name(self, hetID):
@@ -201,11 +182,9 @@ class Internal_PDB(Str_object):
         raise RelaxError, "The residue ID (hetID) " + `hetID` + " is not recognised."
 
 
-    def terminate(self, atomic_data=None, atom_id_ext='', res_num=None):
-        """Function for terminating the chain by adding a TER record to the atomic_data object.
+    def terminate(self, atom_id_ext='', res_num=None):
+        """Function for terminating the chain by adding a TER record to the structral data object.
 
-        @param atomic_data:     The dictionary to place the atomic data into.
-        @type atomic_data:      dict
         @param atom_id_ext:     The atom identifier extension.
         @type atom_id_ext:      str
         @param res_num:         The residue number.
@@ -213,15 +192,15 @@ class Internal_PDB(Str_object):
         """
 
         # The name of the last residue.
-        atomic_arrays = atomic_data.values()
+        atomic_arrays = self.structural_data.values()
         atomic_arrays.sort()
         last_res = atomic_arrays[-1][3]
 
         # Add the TER 'atom'.
-        atom_add(atomic_data=atomic_data, atom_id='TER' + atom_id_ext, record_name='TER', res_name=last_res, res_num=res_num)
+        atom_add(atom_id='TER' + atom_id_ext, record_name='TER', res_name=last_res, res_num=res_num)
 
 
-    def write_pdb_file(self, atomic_data, file):
+    def write_pdb_file(self, file):
         """Function for creating a PDB file from the given data.
 
         Introduction
@@ -451,8 +430,6 @@ class Internal_PDB(Str_object):
 
 
 
-        @param atomic_data: The dictionary containing the atomic data.
-        @type atomic_data:  dict
         @param file:        The PDB file object.  This object must be writable.
         @type file:         file object
         """
@@ -460,8 +437,8 @@ class Internal_PDB(Str_object):
         # Sort the atoms.
         #################
 
-        # Convert the atomic_data structure from a dictionary of arrays to an array of arrays and sort it by atom number.
-        atomic_arrays = atomic_data.values()
+        # Convert the self.structural_data structure from a dictionary of arrays to an array of arrays and sort it by atom number.
+        atomic_arrays = self.structural_data.values()
         atomic_arrays.sort()
 
 
@@ -659,7 +636,7 @@ class Internal_PDB(Str_object):
         print "Creating the MASTER record."
 
         # Write the MASTER record.
-        file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data), 0, 0, 0, 0, 0, len(atomic_data), 1, connect_count, 0))
+        file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data), 0, 0, 0, 0, 0, len(self.structural_data), 1, connect_count, 0))
 
 
         # END.
