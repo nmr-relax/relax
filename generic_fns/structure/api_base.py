@@ -37,6 +37,36 @@ class Str_object:
     structural_data = []
 
 
+    def atom_add(self, atom_id=None, record_name='', atom_name='', res_name='', chain_id='', res_num=None, pos=[None, None, None], segment_id='', element=''):
+        """Prototype method stub for adding an atom to the structural data object.
+
+        This method will create the key-value pair for the given atom.
+
+
+        @param atom_id:     The atom identifier.  This is used as the key within the dictionary.
+        @type atom_id:      str
+        @param record_name: The record name, e.g. 'ATOM', 'HETATM', or 'TER'.
+        @type record_name:  str
+        @param atom_name:   The atom name, e.g. 'H1'.
+        @type atom_name:    str
+        @param res_name:    The residue name.
+        @type res_name:     str
+        @param chain_id:    The chain identifier.
+        @type chain_id:     str
+        @param res_num:     The residue number.
+        @type res_num:      int
+        @param pos:         The position vector of coordinates.
+        @type pos:          list (length = 3)
+        @param segment_id:  The segment identifier.
+        @type segment_id:   str
+        @param element:     The element symbol.
+        @type element:      str
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
+
+
     def load_structures(self, file_path, model, verbosity=False):
         """Prototype method for loading structures from a file.
 
