@@ -119,7 +119,7 @@ def cartoon():
         raise RelaxNoPipeError
 
     # Identifier.
-    pdb_file = relax_data_store[relax_data_store.current_pipe].structure.file_name()
+    pdb_file = relax_data_store[relax_data_store.current_pipe].structure.file_name
     id = file_root(pdb_file)
 
     # Hide everything.
