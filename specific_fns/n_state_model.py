@@ -30,6 +30,7 @@ from re import search
 from data import Data as relax_data_store
 from float import isNaN, isInf
 import generic_fns
+import generic_fns.structure.geometric
 import generic_fns.structure.mass
 from generic_fns.structure.internal_pdb import Internal_PDB
 from maths_fns.n_state_model import N_state_opt
@@ -229,7 +230,7 @@ class N_state_model(Common_functions):
         sim_vectors = None
         if hasattr(cdp, 'ave_pivot_CoM_sim'):
             sim_vectors = cdp.ave_pivot_CoM_sim
-        res_num = generic_fns.structure.generate_vector_residues(atomic_data=atomic_data, vector=cdp.ave_pivot_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
+        res_num = generic_fns.structure.geometric.generate_vector_residues(atomic_data=atomic_data, vector=cdp.ave_pivot_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
 
         # Generate the cone outer edge.
         print "\nGenerating the cone outer edge."
@@ -237,13 +238,13 @@ class N_state_model(Common_functions):
             angle = cdp.theta_diff_in_cone
         elif cone_type == 'diff on cone':
             angle = cdp.theta_diff_on_cone
-        generic_fns.structure.cone_edge(atomic_data=atomic_data, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, angle=angle, length=norm(cdp.pivot_CoM), inc=inc)
+        generic_fns.structure.geometric.cone_edge(atomic_data=atomic_data, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, angle=angle, length=norm(cdp.pivot_CoM), inc=inc)
 
         # Generate the cone cap, and stitch it to the cone edge.
         if cone_type == 'diff in cone':
             print "\nGenerating the cone cap."
-            generic_fns.structure.generate_vector_dist(atomic_data=atomic_data, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=inc)
-            generic_fns.structure.stitch_cap_to_cone(atomic_data=atomic_data, max_angle=angle, inc=inc)
+            generic_fns.structure.geometric.generate_vector_dist(atomic_data=atomic_data, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=inc)
+            generic_fns.structure.geometric.stitch_cap_to_cone(atomic_data=atomic_data, max_angle=angle, inc=inc)
 
         # Terminate the chain.
         structure.terminate(res_num=res_num)
