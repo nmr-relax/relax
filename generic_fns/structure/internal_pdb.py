@@ -200,7 +200,7 @@ class Internal_PDB(Str_object):
         last_res = atomic_arrays[-1][3]
 
         # Add the TER 'atom'.
-        atom_add(atom_id='TER' + atom_id_ext, record_name='TER', res_name=last_res, res_num=res_num)
+        self.atom_add(atom_id='TER' + atom_id_ext, record_name='TER', res_name=last_res, res_num=res_num)
 
 
     def write_pdb_file(self, file):
