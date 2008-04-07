@@ -39,5 +39,6 @@ independent of parser, writer, etc.
 __all__ = [ 'api_base',
             'geometric',
             'internal_pdb',
-            'scientific',
-            'structure' ]
+            'main',
+            'mass',
+            'scientific' ]
