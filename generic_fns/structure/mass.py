@@ -45,7 +45,7 @@ def centre_of_mass(return_mass=False):
     cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Test if a structure has been loaded.
-    if not hasattr(cdp.structure, 'structures'):
+    if not hasattr(cdp, 'structure'):
         raise RelaxNoPdbError
 
     # Print out.
