@@ -31,10 +31,17 @@ from relax_io import file_root
 
 
 class Pymol:
-    """Data container for storing information such as the pymol command history."""
+    """Data container for storing PyMOL related data.
+
+    This includes information such as the PyMOL command history.  Also stored is the file handle to
+    the PyMOL child process pipe.
+    """
 
     command_history = ""
     """Variable for storing the pymol command history."""
+
+    pipe = None
+    """Writable pipe (file handle) to the PyMOL child process."""
 
 
     def clear_history(self):
@@ -50,7 +57,7 @@ class Pymol:
         self.relax.IO.test_binary('pymol')
 
         # Open the PyMOL pipe.
-        relax_data_store.pymol = popen("pymol -qpK", 'w', 0)
+        self.pymol = popen("pymol -qpK", 'w', 0)
 
         # Execute the command history.
         if len(pymol_data.command_history) > 0:
@@ -66,12 +73,12 @@ class Pymol:
         """Function for testing if the PyMOL pipe is open."""
 
         # Test if a pipe has been opened.
-        if not hasattr(relax_data_store, 'pymol'):
+        if not hasattr(self, 'pymol'):
             return 0
 
         # Test if the pipe has been broken.
         try:
-            relax_data_store.pymol.write('\n')
+            self.pymol.write('\n')
         except IOError:
             return 0
 
@@ -90,7 +97,7 @@ class Pymol:
             self.pipe_open()
 
         # Write the command to the pipe.
-        relax_data_store.pymol.write(command + '\n')
+        self.pymol.write(command + '\n')
 
         # Place the command in the command history.
         if store_command:
