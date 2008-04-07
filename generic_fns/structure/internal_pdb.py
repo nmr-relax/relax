@@ -54,9 +54,9 @@ class Internal_PDB(Str_object):
 
 
     def atom_add(self, atom_id=None, record_name='', atom_name='', res_name='', chain_id='', res_num=None, pos=[None, None, None], segment_id='', element=''):
-        """Function for adding an atom to the structural data object.
+        """Method for adding an atom to the structural data object.
 
-        This function will create the key-value pair for the given atom.
+        This method will create the key-value pair for the given atom.
 
 
         @param atom_id:     The atom identifier.  This is used as the key within the dictionary.
@@ -97,9 +97,9 @@ class Internal_PDB(Str_object):
 
 
     def atom_connect(self, atom_id=None, bonded_id=None):
-        """Function for connecting two atoms within the data structure object.
+        """Method for connecting two atoms within the data structure object.
 
-        This function will find the atom number corresponding to both the atom_id and bonded_id.
+        This method will find the atom number corresponding to both the atom_id and bonded_id.
         The bonded_id atom number will then be appended to the atom_id array.  Because the
         connections work both ways in the PDB file, the atom_id atom number will be appended to the
         bonded_id atom array as well.
@@ -132,7 +132,7 @@ class Internal_PDB(Str_object):
 
 
     def get_chemical_name(self, hetID):
-        """Function for returning the chemical name corresponding to the given residue ID.
+        """Method for returning the chemical name corresponding to the given residue ID.
 
         The following names are currently returned:
         ________________________________________________
@@ -186,7 +186,7 @@ class Internal_PDB(Str_object):
 
 
     def terminate(self, atom_id_ext='', res_num=None):
-        """Function for terminating the chain by adding a TER record to the structral data object.
+        """Method for terminating the chain by adding a TER record to the structral data object.
 
         @param atom_id_ext:     The atom identifier extension.
         @type atom_id_ext:      str
