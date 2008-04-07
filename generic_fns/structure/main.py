@@ -110,11 +110,8 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', spin_id=None,
     if parser == 'scientific':
         cdp.structure = Scientific_data()
 
-
     # Load the structures.
-    ######################
-
-    load_structures(file_path, model, verbosity)
+    cdp.structure.load_structures(file_path, model, verbosity)
 
 
     # Finish.
