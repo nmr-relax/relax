@@ -84,7 +84,7 @@ class Scientific_data(Str_object):
                     mol_name = None
 
                 # Loop over the residues of the protein in the PDB file.
-                for res in chains[0].residues:
+                for res in chain.residues:
                     # Residue number and name.
                     res_num = res.number
                     res_name = res.name
