@@ -50,6 +50,59 @@ class Scientific_data(Str_object):
     id = 'scientific'
 
 
+    def atom_loop(self, pos=False):
+        """Generator function for looping over all atoms in the Scientific Python data objects.
+
+        @keyword pos:   A flag which if True will cause the atom position to be yielded along with
+                        all the other information.
+        @type pos:      bool
+        @return:        A tuple consisting of the molecule name, residue number, residue name, atom
+                        number, and atom name.  If pos is True, then the 3D array of the atom
+                        position is also returned.
+        @rtype:         tuple (str, int, str, int, str) and if pos==True, (str, int, str, int, str,
+                        list of len 3)
+        """
+
+        # Loop over the loaded structures.
+        for struct in self.structural_data:
+            # Protein.
+            if struct.peptide_chains:
+                chains = struct.peptide_chains
+
+            # RNA/DNA.
+            elif struct.nucleotide_chains:
+                chains = struct.nucleotide_chains
+
+            # Loop over the chains (each of which will be treated as a new molecule).
+            for chain in chains:
+                # The molecule name.
+                if chain.chain_id:
+                    mol_name = chain.chain_id
+                elif chain.segment_id:
+                    mol_name = chain.segment_id
+                else:
+                    mol_name = None
+
+                # Loop over the residues of the protein in the PDB file.
+                for res in chains[0].residues:
+                    # Residue number and name.
+                    res_num = res.number
+                    res_name = res.name
+
+                    # Loop over the atoms of the residue.
+                    for atom in res:
+                        # Atom number, name, and position.
+                        atom_num = atom.properties['serial_number']
+                        atom_name = atom.properties['element']
+                        pos = atom.position.array
+
+                        # Yield the information.
+                        if pos:
+                            yield mol_name, res_num, res_name, atom_num, atom_name, pos
+                        else:
+                            yield mol_name, res_num, res_name, atom_num, atom_name
+
+
     def load_structures(self, file_path, model, verbosity=False):
         """Function for loading the structures from the PDB file.
 
