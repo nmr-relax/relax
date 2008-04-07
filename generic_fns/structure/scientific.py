@@ -61,6 +61,10 @@ class Scientific_data(Str_object):
         @type verbosity:    bool
         """
 
+        # Initial print out.
+        if verbosity:
+            print "Scientific Python PDB parser.\n"
+
         # Store the file name (with full path).
         self.file_name = file_path
 
