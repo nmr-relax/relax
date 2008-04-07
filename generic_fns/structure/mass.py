@@ -59,7 +59,9 @@ def centre_of_mass(return_mass=False):
     M = 0.0
 
     # Loop over all atoms.
-    for mol_name, res_num, res_name, spin_num, spin_name, pos in cdp.structure.atom_loop(pos=True):
+    for mol_name, res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(pos=True):
+        print `(mol_name, res_num, res_name, atom_num, atom_name, pos)`
+
         # Get the corresponding molecule container.
         if mol_name == None:
             mol_cont = cdp.mol[0]
@@ -67,7 +69,7 @@ def centre_of_mass(return_mass=False):
             mol_cont = return_molecule('#' + mol_name)
 
         # Deselected molecules.
-        if not mol_cont.select:
+        if mol_cont and not mol_cont.select:
             continue
 
         # Get the corresponding residue container.
@@ -77,17 +79,17 @@ def centre_of_mass(return_mass=False):
             res_cont = return_residue(':' + `res_num`)
 
         # Deselected residues.
-        if not res_cont.select:
+        if res_cont and not res_cont.select:
             continue
 
         # Get the corresponding spin container.
-        if spin_name == None and spin_num == None:
+        if atom_name == None and atom_num == None:
             spin_cont = res_cont.spin[0]
         else:
-            spin_cont = return_spin('@' + `spin_num`)
+            spin_cont = return_spin('@' + `atom_num`)
 
         # Deselected spins.
-        if not spin_cont.select:
+        if spin_cont and not spin_cont.select:
             continue
 
         # Atomic mass.
