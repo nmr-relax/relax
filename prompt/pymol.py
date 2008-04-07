@@ -25,6 +25,7 @@ import sys
 
 # relax module imports.
 import colour
+from generic_fns import pymol
 import help
 from relax_errors import RelaxBinError, RelaxListNumError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
 
@@ -74,7 +75,7 @@ class Pymol:
             print text
 
         # Execute the functional code.
-        pymol_obj.cartoon()
+        pymol.cartoon()
 
 
     def clear_history(self):
@@ -124,7 +125,7 @@ class Pymol:
             raise RelaxStrError, ('command', command)
 
         # Execute the functional code.
-        pymol_obj.command(command=command)
+        pymol.command(command=command)
 
 
     def macro_exec(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
@@ -215,7 +216,7 @@ class Pymol:
                     raise RelaxListNumError, ('ending colour of the linear gradient', colour_end)
 
         # Execute the functional code.
-        pymol_obj.macro_exec(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
+        pymol.macro_exec(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
 
 
     def tensor_pdb(self, file=None):
@@ -271,7 +272,7 @@ class Pymol:
             raise RelaxStrError, ('file name', file)
 
         # Execute the functional code.
-        pymol_obj.tensor_pdb(file=file)
+        pymol.tensor_pdb(file=file)
 
 
     def vector_dist(self, file='XH_dist.pdb'):
@@ -308,7 +309,7 @@ class Pymol:
             raise RelaxStrError, ('file name', file)
 
         # Execute the functional code.
-        pymol_obj.vector_dist(file=file)
+        pymol.vector_dist(file=file)
 
 
     def view(self):
@@ -327,7 +328,7 @@ class Pymol:
             print text
 
         # Execute the functional code.
-        pymol_obj.view()
+        pymol.view()
 
 
     def write(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir='pymol', force=0):
@@ -442,7 +443,7 @@ class Pymol:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        pymol_obj.write(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)
+        pymol.write(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)
 
 
 
