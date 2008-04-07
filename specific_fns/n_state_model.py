@@ -211,9 +211,6 @@ class N_state_model(Common_functions):
         else:
             raise RelaxError, "The cone type " + `cone_type` + " is unknown."
 
-        # Initialise the atom and atomic connections data structures.
-        atomic_data = {}
-
         # The number of increments for the filling of the cone objects.
         inc = 20
 
