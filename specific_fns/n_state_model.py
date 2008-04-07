@@ -30,6 +30,7 @@ from re import search
 from data import Data as relax_data_store
 from float import isNaN, isInf
 import generic_fns
+import generic_fns.structure.mass
 from maths_fns.n_state_model import N_state_opt
 from maths_fns.rotation_matrix import R_2vect, R_euler_zyz
 from minfx.generic import generic_minimise
@@ -117,7 +118,7 @@ class N_state_model(Common_functions):
 
         # Calculate from the structure file.
         else:
-            cdp.CoM = generic_fns.structure.centre_of_mass()
+            cdp.CoM = generic_fns.structure.mass.centre_of_mass()
 
         # Calculate the vector between the pivot and CoM points.
         cdp.pivot_CoM = array(cdp.CoM, float64) - array(cdp.pivot_point, float64)
