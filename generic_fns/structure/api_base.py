@@ -102,6 +102,19 @@ class Str_object:
         raise RelaxImplementError
 
 
+    def terminate(self, atom_id_ext='', res_num=None):
+        """Prototype method stub for terminating the structural chain.
+
+        @param atom_id_ext:     The atom identifier extension.
+        @type atom_id_ext:      str
+        @param res_num:         The residue number.
+        @type res_num:          int
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
+
+
     def xh_vector(self, spin, structure=None, unit=True):
         """Prototype method for calculating/extracting the XH vector from the loaded structure.
 
