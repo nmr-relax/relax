@@ -23,7 +23,8 @@
 # Module docstring.
 """The API for accessing, creating, and modifying structural information.
 
-The API is set up as a series of methods attached to the structural object defined in this module.
+The full API is documented within this base class object.  Each available API call is given as a
+prototype method stub with all arguments, raised errors, and return values documented.
 """
 
 # relax module import.
@@ -84,7 +85,7 @@ class Str_object:
 
 
     def load_structures(self, file_path, model, verbosity=False):
-        """Prototype method for loading structures from a file.
+        """Prototype method stub for loading structures from a file.
 
         This inherited prototype method is a stub which, if the functionality is desired, should be
         overwritten by the derived class.
@@ -116,7 +117,7 @@ class Str_object:
 
 
     def xh_vector(self, spin, structure=None, unit=True):
-        """Prototype method for calculating/extracting the XH vector from the loaded structure.
+        """Prototype method stub for calculating/extracting the XH vector from the loaded structure.
 
         @param spin:        The spin system data container.
         @type spin:         SpinContainer instance
@@ -124,7 +125,7 @@ class Str_object:
                             multiple structures exist, then the XH vector will be averaged across
                             all structures.
         @type structure:    int
-        @keyword unit:      A flag which if set will cause the function to return the unit XH vector
+        @keyword unit:      A flag which if set will cause the method to return the unit XH vector
                             rather than the full vector.
         @type unit:         bool
         @return:            The XH vector (or unit vector if the unit flag is set).
