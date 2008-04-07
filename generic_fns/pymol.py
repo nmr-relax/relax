@@ -65,7 +65,7 @@ class Pymol:
             return
 
         # Test if the PDB file has been loaded.
-        if hasattr(relax_data_store, 'structure'):
+        if hasattr(relax_data_store[relax_data_store.current_pipe], 'structure'):
             self.open_pdb()
 
 
