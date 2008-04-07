@@ -60,7 +60,7 @@ class Scientific_data(Str_object):
                         number, and atom name.  If pos is True, then the 3D array of the atom
                         position is also returned.
         @rtype:         tuple (str, int, str, int, str) and if pos==True, (str, int, str, int, str,
-                        list of len 3)
+                        array of len 3)
         """
 
         # Loop over the loaded structures.
