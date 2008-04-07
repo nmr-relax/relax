@@ -101,6 +101,7 @@ def compile_api_manual_html(target, source, env):
                'docs/latex/*.py',
                'dx/*.py',
                'generic_fns/*.py',
+               'generic_fns/structure/*.py',
                'maths_fns/*.py',
                'prompt/*.py',
                'specific_fns/*.py',
