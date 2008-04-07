@@ -106,7 +106,7 @@ class Pymol:
 
 
 # Initialise the Pymol data container.
-pymol_data = Pymol()
+pymol = Pymol()
 """Pymol data container instance."""
 
 
@@ -304,17 +304,14 @@ def vector_dist(run=None, file=None):
     self.pipe_write("cmd.show('surface', " + `id` + ")")
 
 
-def view(run=None):
+def view():
     """Function for running PyMOL."""
 
-    # Arguments.
-    self.run = run
-
     # Open a PyMOL pipe.
-    if self.pipe_open_test():
+    if pymol.pipe_open_test():
         raise RelaxError, "The PyMOL pipe already exists."
     else:
-        self.pipe_open()
+        pymol.pipe_open()
 
 
 def write(run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir=None, force=0):
