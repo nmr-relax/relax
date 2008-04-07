@@ -50,6 +50,24 @@ class Pymol:
         self.command_history = ""
 
 
+    def open_pdb(run=None):
+        """Function for opening the PDB file in PyMOL."""
+
+        # Argument.
+        if run:
+            self.run = run
+
+        # Test if the pipe is open.
+        if not self.pipe_open_test():
+            return
+
+        # Reinitialise PyMOL.
+        self.pipe_write("reinitialize")
+
+        # Open the PDB file.
+        self.pipe_write("load " + relax_data_store.pdb[self.run].file_name)
+
+
     def pipe_open(self):
         """Function for opening a PyMOL pipe."""
 
@@ -187,24 +205,6 @@ def macro_exec(run=None, data_type=None, style="classic", colour_start=None, col
     # Loop over the commands and execute them.
     for command in self.commands:
         self.pipe_write(command)
-
-
-def open_pdb(run=None):
-    """Function for opening the PDB file in PyMOL."""
-
-    # Argument.
-    if run:
-        self.run = run
-
-    # Test if the pipe is open.
-    if not self.pipe_open_test():
-        return
-
-    # Reinitialise PyMOL.
-    self.pipe_write("reinitialize")
-
-    # Open the PDB file.
-    self.pipe_write("load " + relax_data_store.pdb[self.run].file_name)
 
 
 def tensor_pdb(run=None, file=None):
