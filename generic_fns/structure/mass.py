@@ -58,58 +58,46 @@ def centre_of_mass(return_mass=False):
     # Initialise the total mass.
     M = 0.0
 
-    # Loop over the structures.
-    for struct in cdp.structure.structures:
+    # Loop over all atoms.
+    for mol_name, res_num, res_name, spin_num, spin_name, pos in cdp.structure.atom_loop(pos=True):
         # Get the corresponding molecule container.
-        if cdp.mol[0].name == None:
+        if mol_name == None:
             mol_cont = cdp.mol[0]
         else:
-            mol_cont = return_molecule('#' + struct.name)
+            mol_cont = return_molecule('#' + mol_name)
 
-        # Deselected molecule.
+        # Deselected molecules.
         if not mol_cont.select:
             continue
 
-        # Protein.
-        if struct.peptide_chains:
-            chains = struct.peptide_chains
+        # Get the corresponding residue container.
+        if res_name == None and res_num == None:
+            res_cont = mol_cont.res[0]
+        else:
+            res_cont = return_residue(':' + `res_num`)
 
-        # RNA/DNA.
-        elif struct.nucleotide_chains:
-            chains = struct.nucleotide_chains
+        # Deselected residues.
+        if not res_cont.select:
+            continue
 
-        # Loop over the residues of the protein in the PDB file.
-        for res in chains[0].residues:
-            # Get the corresponding residue container.
-            if mol_cont.res[0].name == None and mol_cont.res[0].num == None:
-                res_cont = mol_cont.res[0]
-            else:
-                res_cont = return_residue(':' + `res.number`)
+        # Get the corresponding spin container.
+        if spin_name == None and spin_num == None:
+            spin_cont = res_cont.spin[0]
+        else:
+            spin_cont = return_spin('@' + `spin_num`)
 
-            # Deselected residue.
-            if not res_cont.select:
-                continue
+        # Deselected spins.
+        if not spin_cont.select:
+            continue
 
-            # Loop over the atoms of the residue.
-            for atom in res:
-                # Get the corresponding spin container.
-                if res_cont.spin[0].name == None and res_cont.spin[0].num == None:
-                    spin_cont = res_cont.spin[0]
-                else:
-                    spin_cont = return_spin('@' + `atom.properties['serial_number']`)
+        # Atomic mass.
+        mass = return_atomic_mass(atom.properties['element'])
 
-                # Deselected spin.
-                if not spin_cont.select:
-                    continue
+        # Total mass.
+        M = M + mass
 
-                # Atomic mass.
-                mass = return_atomic_mass(atom.properties['element'])
-
-                # Total mass.
-                M = M + mass
-
-                # Sum of mass * position.
-                R = R + mass * atom.position.array
+        # Sum of mass * position.
+        R = R + mass * atom.position.array
 
     # Normalise.
     R = R / M
