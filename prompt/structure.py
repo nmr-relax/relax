@@ -335,7 +335,7 @@ class Structure:
             text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", model=" + `model`
-            text = text + ", parser=" + `parser + ")"`
+            text = text + ", parser=" + `parser` + ")"
             print text
 
         # File name.
