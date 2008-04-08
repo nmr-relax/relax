@@ -191,7 +191,7 @@ def cone_pdb(file=None):
     pymol.pipe_write("show stick, 'sele'")
 
     # Colour it blue.
-    pymol.pipe_write("color blue, 'sele'")
+    pymol.pipe_write("color cyan, 'sele'")
 
 
     # The cone object.
