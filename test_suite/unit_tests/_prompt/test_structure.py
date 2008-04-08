@@ -158,6 +158,19 @@ class Test_structure(Structure_base_class, TestCase):
             self.assertRaises(RelaxBinError, self.structure_fns.create_vector_dist, force=data[1])
 
 
+    def test_load_spins_argfail_spin_id(self):
+        """The spin_id arg test of the structure.load_spins() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.structure_fns.load_spins, spin_id=data[1])
+
+
     def test_read_pdb_argfail_file(self):
         """The file arg test of the structure.read_pdb() user function."""
 
@@ -222,19 +235,6 @@ class Test_structure(Structure_base_class, TestCase):
 
             # The argument test.
             self.assertRaises(RelaxBoolError, self.structure_fns.read_pdb, file='test.pdb', load_seq=data[1])
-
-
-    def test_read_pdb_argfail_spin_id(self):
-        """The spin_id arg test of the structure.read_pdb() user function."""
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the None and str arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'str':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.structure_fns.read_pdb, file='test.pdb', spin_id=data[1])
 
 
     def test_vectors_argfail_heteronuc(self):
