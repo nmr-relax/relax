@@ -28,6 +28,7 @@ from string import split
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxImplementError, RelaxNoPipeError, RelaxNoSequenceError
 from relax_io import file_root, test_binary
+from specific_fns.setup import get_specific_fn
 
 
 class Pymol:
@@ -161,17 +162,33 @@ def command(command):
     pymol.pipe_write(command)
 
 
-def create_macro():
-    """Function for creating an array of PyMOL commands."""
+def create_macro(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
+    """Function for creating an array of PyMOL commands.
 
-    # Function type.
-    self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
+    @keyword data_type:     The data type ot map to the structure.
+    @type data_type:        str
+    @keyword style:         The style of the macro.
+    @type style:            str
+    @keyword colour_start:  The starting colour of the linear gradient.
+    @type colour_start:     str or RBG colour array (len 3 with vals from 0 to 1)
+    @keyword colour_end:    The ending colour of the linear gradient.
+    @type colour_end:       str or RBG colour array (len 3 with vals from 0 to 1)
+    @keyword colour_list:   The colour list to search for the colour names.  Can be either 'molmol'
+                            or 'x11'.
+    @type colour_list:      str or None
+    """
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Specific PyMOL macro creation function.
-    pymol_macro = self.relax.specific_setup.setup('pymol_macro', self.function_type)
+    pymol_macro = get_specific_fn('pymol_macro', cdp.pipe_type)
 
     # Get the macro.
-    self.commands = pymol_macro(self.run, self.data_type, self.style, self.colour_start, self.colour_end, self.colour_list)
+    commands = pymol_macro(data_type, style, colour_start, colour_end, colour_list)
+
+    # Return the macro commands.
+    return commands
 
 
 def macro_exec(run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
