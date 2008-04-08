@@ -209,6 +209,9 @@ def cone_pdb(file=None):
     # Colour it white.
     pymol.pipe_write("color white, 'sele'")
 
+    # Shorten the stick width from 0.25 to 0.15.
+    pymol.pipe_write("set stick_radius,0.15000")
+
 
     # Clean up.
     ###########
