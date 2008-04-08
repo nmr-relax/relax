@@ -292,7 +292,7 @@ def tensor_pdb(file=None):
         raise RelaxNoPipeError
 
     # The file root.
-    id = file_root(pdb_file)
+    id = file_root(file)
 
     # Read in the tensor PDB file.
     pymol.pipe_write("load " + id)
