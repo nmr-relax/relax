@@ -36,7 +36,26 @@ from relax_warnings import RelaxNoPDBFileWarning
 
 
 
-def read_pdb(file=None, dir=None, model=None, parser='scientific', spin_id=None, load_seq=True, fail=True, verbosity=1):
+def load_spins(spin_id=None):
+    """Load the spins from the structural object into the relax data store.
+
+    @keyword spin_id:       The spin identification string.
+    @type spin_id:          str
+    """
+
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Sequence loading.
+    if not exists_mol_res_spin_data():
+        load_PDB_sequence()
+
+
+def read_pdb(file=None, dir=None, model=None, parser='scientific', fail=True, verbosity=1):
     """The PDB loading function.
 
     Parsers
@@ -56,11 +75,6 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', spin_id=None,
     @type model:            int or None
     @keyword parser:        The parser to be used to read the PDB file.
     @type parser:           str
-    @keyword spid_id:       The spin identification string.
-    @type spid_id:          str
-    @keyword load_seq:      A flag which, if True, will cause the sequence to be loaded from the
-                            structural data object into the relax data store.
-    @type load_seq:         bool
     @keyword fail:          A flag which, if True, will cause a RelaxError to be raised if the PDB
                             file does not exist.  If False, then a RelaxWarning will be trown
                             instead.
@@ -101,10 +115,6 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', spin_id=None,
 
     # Load the structures.
     cdp.structure.load_structures(file_path, model, verbosity)
-
-    # Sequence loading.
-    if load_seq and not exists_mol_res_spin_data():
-        load_PDB_sequence()
 
     # Load into Molmol (if running).
     molmol.open_pdb()
