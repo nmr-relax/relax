@@ -50,8 +50,8 @@ class Sequence(TestCase):
         # Read the PDB file.
         self.relax.interpreter._Structure.read_pdb(file='test.pdb', dir=sys.path[-1] + '/test_suite/system_tests/data', model=1)
 
-        # Generate the sequence.
-        self.relax.interpreter._Structure.load_spins(spin_id='N')
+        # Generate the sequence (1 molecule, all residues, and only N spins).
+        self.relax.interpreter._Structure.load_spins(spin_id='@N')
 
         # Alias the current data pipe.
         cdp = relax_data_store[relax_data_store.current_pipe]
