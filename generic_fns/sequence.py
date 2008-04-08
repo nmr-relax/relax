@@ -22,7 +22,7 @@
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns.selection import count_spins, exists_mol_res_spin_data, parse_token, spin_loop, tokenise
+from generic_fns.selection import count_spins, exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError
 from relax_io import extract_data, open_write_file, strip
 import sys

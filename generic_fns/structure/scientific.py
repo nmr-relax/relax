@@ -39,6 +39,7 @@ except ImportError:
 # relax module imports.
 from api_base import Str_object
 from data import Data as relax_data_store
+from generic_fns.selection import parse_token, tokenise
 from relax_errors import RelaxNoPdbChainError, RelaxNoResError, RelaxPdbLoadError
 from relax_warnings import RelaxNoAtomWarning, RelaxZeroVectorWarning
 
@@ -63,15 +64,29 @@ class Scientific_data(Str_object):
                         array of len 3)
         """
 
+        # Split up the selection string.
+        mol_token, res_token, atom_token = tokenise(atom_id)
+
+        # Parse the tokens.
+        molecules = parse_token(mol_token)
+        residues = parse_token(res_token)
+        atoms = parse_token(atom_token)
+
         # Loop over the loaded structures.
         for struct in self.structural_data:
             # Protein.
             if struct.peptide_chains:
                 chains = struct.peptide_chains
+                molecule = 'protein'
 
             # RNA/DNA.
             elif struct.nucleotide_chains:
                 chains = struct.nucleotide_chains
+                molecule = 'nucleic acid'
+
+            # We have a problem!
+            else:
+                raise RelaxNoPdbChainError
 
             # Loop over the chains (each of which will be treated as a new molecule).
             for chain in chains:
@@ -83,11 +98,22 @@ class Scientific_data(Str_object):
                 else:
                     mol_name = None
 
+                # Skip non-matching molecules.
+                if mol_token and mol_name not in molecules:
+                    continue
+
                 # Loop over the residues of the protein in the PDB file.
                 for res in chain.residues:
                     # Residue number and name.
+                    if molecule == 'nucleic acid':
+                        res_name = res.name[-1]
+                    else:
+                        res_name = res.name
                     res_num = res.number
-                    res_name = res.name
+
+                    # Skip non-matching residues.
+                    if res_token and not (res_name in residues or res_num in residues):
+                        continue
 
                     # Loop over the atoms of the residue.
                     for atom in res:
@@ -95,6 +121,10 @@ class Scientific_data(Str_object):
                         atom_num = atom.properties['serial_number']
                         atom_name = atom.properties['element']
                         pos = atom.position.array
+
+                        # Skip non-matching atoms.
+                        if atom_token and not (atom_name in atoms or atom_num in atoms):
+                            continue
 
                         # Yield the information.
                         if pos:
