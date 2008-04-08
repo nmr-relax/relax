@@ -53,8 +53,12 @@ class Internal_PDB(Str_object):
     # Identification string.
     id = 'internal pdb'
 
-    # Change the data object to an empty dictionary.
-    structural_data = {}
+
+    def __init__(self):
+        """Initialise the PDB object."""
+
+        # Reinitialise the data object to an empty dictionary.
+        self.structural_data = {}
 
 
     def __get_chemical_name(self, hetID):
