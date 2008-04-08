@@ -54,8 +54,13 @@ def load_spins(spin_id=None):
 
     # Loop over all atoms of the spin_id selection.
     for mol_name, res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(atom_id=spin_id, pos=True):
-        # Get the corresponding molecule container.
-        mol_cont = return_molecule('#' + mol_name)
+        # Get the molecule container corresponding to the molecule name.
+        if mol_name:
+            mol_cont = return_molecule('#' + mol_name)
+
+        # The is only one molecule and it is unnamed.
+        elif cdp.mol[0].name == None and len(cdp.mol) == 1:
+            mol_cont = cdp.mol[0]
 
         # Add the molecule if it doesn't exist.
         if mol_name and mol_cont == None:
