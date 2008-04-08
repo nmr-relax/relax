@@ -128,6 +128,53 @@ class Pymol:
         pymol.command(command=command)
 
 
+    def cone_pdb(self, file=None):
+        """Display, as designed, the cone PDB geometric object from the N-state model.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        file:  The name of the PDB file containing the cone geometric object.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        The PDB file containing the geometric object must be created using the complementary
+        'n_state_model.cone_pdb()' user function.
+
+        The cone PDB file is read in using the command:
+
+            load file
+
+        The average CoM-pivot point vector, the residue 'AVE' is displayed using the commands:
+
+            select resn AVE
+            show sticks, 'sele'
+            color blue, 'sele'
+
+        The cone object, the residue 'CON', is displayed using the commands:
+
+            select resn CON
+            hide ('sele')
+            show sticks, 'sele'
+            color white, 'sele'
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "pymol.cone_pdb("
+            text = text + "file=" + `file` + ")"
+            print text
+
+        # The file name.
+        if type(file) != str:
+            raise RelaxStrError, ('file name', file)
+
+        # Execute the functional code.
+        pymol.cone_pdb(file=file)
+
+
     def macro_exec(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
         """Function for executing PyMOL macros.
 
