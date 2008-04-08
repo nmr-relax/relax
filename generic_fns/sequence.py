@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007 Edward d'Auvergne                             #
+# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,7 +22,7 @@
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns.selection import count_spins, parse_token, spin_loop, tokenise
+from generic_fns.selection import count_spins, exists_mol_res_spin_data, parse_token, spin_loop, tokenise
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError
 from relax_io import extract_data, open_write_file, strip
 import sys
@@ -194,7 +194,7 @@ def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, 
     """
 
     # Test if sequence data already exists.
-    if sequence_exists():
+    if exists_mol_res_spin_data():
         raise RelaxSequenceError
 
     # Extract the data from the file.
