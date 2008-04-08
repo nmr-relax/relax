@@ -116,6 +116,7 @@ class SpinList(list):
         if self[0].num == None and self[0].name == None and len(self) == 1:
             self[0].num = spin_num
             self[0].name = spin_name
+            self[0].select = select
 
         # Append the spin.
         else:
