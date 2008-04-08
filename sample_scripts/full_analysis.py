@@ -36,6 +36,11 @@ from relax_errors import RelaxError
 
 """Script for black-box model-free analysis.
 
+The model-free optimisation methodology herein is that of:
+
+d'Auvergne, E. J. and Gooley, P. R. (2008). Optimisation of NMR dynamic models II. A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor. J. Biomol. NMR, 40(2), 121-133
+
+
 This script is designed for those who appreciate black-boxes or those who appreciate complex code.  Importantly data at multiple magnetic field strengths is essential for this analysis.  The script will need to be heavily tailored to the protein in question by changing the variables just below this documentation.  If you would like to change how model-free analysis is performed, the code in the class Main can be changed as needed.  For a description of object-oriented coding in python using classes, functions/methods, self, etc, see the python tutorial.
 
 The value of the variable DIFF_MODEL will determine the behaviour of this script.  The five diffusion models used in this script are:
