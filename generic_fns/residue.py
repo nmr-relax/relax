@@ -134,19 +134,8 @@ def create(res_num=None, res_name=None, mol_id=None):
     else:
         mol_to_cont = relax_data_store[relax_data_store.current_pipe].mol[0]
 
-    # Test if the residue number already exists.
-    for i in xrange(len(mol_to_cont.res)):
-        if mol_to_cont.res[i].num == res_num:
-            raise RelaxError, "The residue number '" + `res_num` + "' already exists in the sequence."
-
-    # If no residue data exists, replace the empty first residue with this residue.
-    if mol_to_cont.res[0].num == None and mol_to_cont.res[0].name == None and len(mol_to_cont.res) == 1:
-        mol_to_cont.res[0].num = res_num
-        mol_to_cont.res[0].name = res_name
-
-    # Append the residue.
-    else:
-        mol_to_cont.res.add_item(res_num=res_num, res_name=res_name)
+    # Add the residue.
+    mol_to_cont.res.add_item(res_num=res_num, res_name=res_name)
 
 
 def delete(res_id=None):

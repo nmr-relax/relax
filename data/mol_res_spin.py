@@ -187,9 +187,21 @@ class ResidueList(list):
 
 
     def add_item(self, res_name=None, res_num=None, select=True):
-        """Function for appending an empty container to the list."""
+        """Append an empty ResidueContainer to the ResidueList."""
 
-        self.append(ResidueContainer(res_name, res_num, select))
+        # Test if the residue number already exists.
+        for i in xrange(len(self)):
+            if self[i].num == res_num:
+                raise RelaxError, "The residue number '" + `res_num` + "' already exists in the sequence."
+
+        # If no residue data exists, replace the empty first residue with this residue.
+        if self[0].num == None and self[0].name == None and len(self) == 1:
+            self[0].num = res_num
+            self[0].name = res_name
+
+        # Append a new ResidueContainer.
+        else:
+            self.append(ResidueContainer(res_name, res_num, select))
 
 
 
