@@ -223,53 +223,57 @@ def macro_exec(data_type=None, style="classic", colour_start=None, colour_end=No
         pymol.pipe_write(command)
 
 
-def tensor_pdb(run=None, file=None):
-    """Display the diffusion tensor geometric structure."""
+def tensor_pdb(file=None):
+    """Display the diffusion tensor geometric structure.
 
-    # Arguments.
-    self.run = run
+    @keyword file:  The name of the file containing the diffusion tensor geometric object.
+    @type file:     str
+    """
 
-    # Test if the run exists.
-    if not self.run in relax_data_store.run_names:
-        raise RelaxNoPipeError, self.run
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
+
+    # The file root.
+    id = file_root(pdb_file)
 
     # Read in the tensor PDB file.
-    self.pipe_write("load " + file)
+    pymol.pipe_write("load " + id)
 
 
     # Centre of mass.
     #################
 
     # Select the COM residue.
-    self.pipe_write("select resn COM")
+    pymol.pipe_write("select resn COM")
 
     # Show the centre of mass as the dots representation.
-    self.pipe_write("show dots, 'sele'")
+    pymol.pipe_write("show dots, 'sele'")
 
     # Colour it blue.
-    self.pipe_write("color blue, 'sele'")
+    pymol.pipe_write("color blue, 'sele'")
 
 
     # The diffusion tensor axes.
     ############################
 
     # Select the AXS residue.
-    self.pipe_write("select resn AXS")
+    pymol.pipe_write("select resn AXS")
 
     # Hide everything.
-    self.pipe_write("hide ('sele')")
+    pymol.pipe_write("hide ('sele')")
 
     # Show as 'sticks'.
-    self.pipe_write("show sticks, 'sele'")
+    pymol.pipe_write("show sticks, 'sele'")
 
     # Colour it cyan.
-    self.pipe_write("color cyan, 'sele'")
+    pymol.pipe_write("color cyan, 'sele'")
 
     # Select the N atoms of the AXS residue (used to display the axis labels).
-    self.pipe_write("select (resn AXS and elem N)")
+    pymol.pipe_write("select (resn AXS and elem N)")
 
     # Label the atoms.
-    self.pipe_write("label 'sele', name")
+    pymol.pipe_write("label 'sele', name")
 
 
 
@@ -277,17 +281,17 @@ def tensor_pdb(run=None, file=None):
     ##########################
 
     # Select the SIM residue.
-    self.pipe_write("select resn SIM")
+    pymol.pipe_write("select resn SIM")
 
     # Colour it.
-    self.pipe_write("colour cyan, 'sele'")
+    pymol.pipe_write("colour cyan, 'sele'")
 
 
     # Clean up.
     ###########
 
     # Remove the selection.
-    self.pipe_write("cmd.delete('sele')")
+    pymol.pipe_write("cmd.delete('sele')")
 
 
 def vector_dist(run=None, file=None):
