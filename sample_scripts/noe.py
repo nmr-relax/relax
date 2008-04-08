@@ -1,8 +1,7 @@
 # Script for calculating NOEs.
 
 # Create the NOE data pipe.
-name = 'noe'
-pipe.create('noe')
+pipe.create('NOE', 'noe')
 
 # Load the backbone amide 15N spins from a PDB file.
 structure.read_pdb('Ap4Aase_new_3.pdb')
@@ -24,7 +23,7 @@ noe.error(error=8500, spectrum_type='sat', res_num=114)
 unselect.read(file='unresolved')
 
 # Calculate the NOEs.
-calc(name)
+calc()
 
 # Save the NOEs.
 value.write(param='noe', file='noe.out', force=1)
