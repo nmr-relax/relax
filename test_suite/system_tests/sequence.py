@@ -58,9 +58,92 @@ class Sequence(TestCase):
 
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)
+        self.assertEqual(cdp.mol.name, None)
         self.assertEqual(len(cdp.mol[0].res), 12)
-        for i in xrange(165):
-            self.assertEqual(len(cdp.mol[0].res[i].spin), 1)
+
+        # 1st residue.
+        self.assertEqual(cdp.mol[0].res[0].num, 1)
+        self.assertEqual(cdp.mol[0].res[0].name, 'GLY')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
+
+        # 2nd residue.
+        self.assertEqual(cdp.mol[0].res[0].num, 2)
+        self.assertEqual(cdp.mol[0].res[0].name, 'PRO')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, 11)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
+
+        # 3rd residue.
+        self.assertEqual(cdp.mol[0].res[0].num, 3)
+        self.assertEqual(cdp.mol[0].res[0].name, 'LEU')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, 28)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
+
+        # 4th residue.
+        self.assertEqual(cdp.mol[0].res[0].num, 4)
+        self.assertEqual(cdp.mol[0].res[0].name, 'GLY')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, 51)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
+
+        # 5th residue.
+        self.assertEqual(cdp.mol[0].res[0].num, 5)
+        self.assertEqual(cdp.mol[0].res[0].name, 'SER')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, 59)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
+
+        # 6th residue.
+        self.assertEqual(cdp.mol[0].res[0].num, 6)
+        self.assertEqual(cdp.mol[0].res[0].name, 'MET')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, 71)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
+
+        # 7th residue.
+        self.assertEqual(cdp.mol[0].res[0].num, 7)
+        self.assertEqual(cdp.mol[0].res[0].name, 'ASP')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, 91)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
+
+        # 8th residue.
+        self.assertEqual(cdp.mol[0].res[0].num, 8)
+        self.assertEqual(cdp.mol[0].res[0].name, 'SER')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, 104)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
+
+        # 9th residue.
+        self.assertEqual(cdp.mol[0].res[0].num, 9)
+        self.assertEqual(cdp.mol[0].res[0].name, 'PRO')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, 116)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
+
+        # 10th residue.
+        self.assertEqual(cdp.mol[0].res[0].num, 10)
+        self.assertEqual(cdp.mol[0].res[0].name, 'PRO')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, 133)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
+
+        # 11th residue.
+        self.assertEqual(cdp.mol[0].res[0].num, 11)
+        self.assertEqual(cdp.mol[0].res[0].name, 'GLU')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, 150)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
+
+        # 12th residue.
+        self.assertEqual(cdp.mol[0].res[0].num, 12)
+        self.assertEqual(cdp.mol[0].res[0].name, 'GLY')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, 167)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
 
 
     def test_read(self):
