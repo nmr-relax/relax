@@ -223,20 +223,6 @@ class Test_structure(Structure_base_class, TestCase):
             self.assertRaises(RelaxStrError, self.structure_fns.read_pdb, parser=data[1])
 
 
-
-    def test_read_pdb_argfail_load_seq(self):
-        """The load_seq arg test of the structure.read_pdb() user function."""
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the bool arguments, and skip them.
-            if data[0] == 'bool':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxBoolError, self.structure_fns.read_pdb, file='test.pdb', load_seq=data[1])
-
-
     def test_vectors_argfail_heteronuc(self):
         """The heteronuc arg test of the structure.vectors() user function."""
 
