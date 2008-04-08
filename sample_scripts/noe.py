@@ -4,8 +4,9 @@
 name = 'noe'
 pipe.create(name, 'noe')
 
-# Load the sequence from a PDB file.
-structure.read_pdb(name, 'Ap4Aase_new_3.pdb', load_seq=1)
+# Load the backbone amide 15N spins from a PDB file.
+structure.read_pdb('Ap4Aase_new_3.pdb')
+structure.load_spins(spin_id='@N')
 
 # Load the reference spectrum and saturated spectrum peak intensities.
 noe.read(name, file='ref.list', spectrum_type='ref')
