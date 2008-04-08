@@ -146,18 +146,19 @@ def cartoon():
     pymol.pipe_write("util.cbss(" + `id` + ", 'red', 'yellow', 'green')")
 
 
-def command(run, command):
-    """Function for sending PyMOL commands to the program pipe."""
+def command(command):
+    """Function for sending PyMOL commands to the program pipe.
 
-    # Arguments.
-    self.run = run
+    @param command: The command to send to PyMOL.
+    @type command:  str
+    """
 
-    # Test if the run exists.
-    if not self.run in relax_data_store.run_names:
-        raise RelaxNoPipeError, self.run
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
 
     # Pass the command to PyMOL.
-    self.pipe_write(command)
+    pymol.pipe_write(command)
 
 
 def create_macro():
