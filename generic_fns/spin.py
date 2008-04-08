@@ -133,19 +133,8 @@ def create(spin_num=None, spin_name=None, res_id=None):
     else:
         res_to_cont = relax_data_store[relax_data_store.current_pipe].mol[0].res[0]
 
-    # Test if the spin number already exists.
-    for i in xrange(len(res_to_cont.spin)):
-        if res_to_cont.spin[i].num == spin_num:
-            raise RelaxError, "The spin number '" + `spin_num` + "' already exists."
-
-    # If no spin data exists, replace the empty first spin with this spin.
-    if res_to_cont.spin[0].num == None and res_to_cont.spin[0].name == None and len(res_to_cont.spin) == 1:
-        res_to_cont.spin[0].num = spin_num
-        res_to_cont.spin[0].name = spin_name
-
-    # Append the spin.
-    else:
-        res_to_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
+    # Add the spin.
+    res_to_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
 
 
 def delete(spin_id=None):

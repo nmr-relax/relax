@@ -107,7 +107,19 @@ class SpinList(list):
     def add_item(self, spin_name=None, spin_num=None, select=True):
         """Function for appending an empty container to the list."""
 
-        self.append(SpinContainer(spin_name, spin_num, select))
+        # Test if the spin number already exists.
+        for i in xrange(len(self)):
+            if self[i].num == spin_num:
+                raise RelaxError, "The spin number '" + `spin_num` + "' already exists."
+
+        # If no spin data exists, replace the empty first spin with this spin.
+        if self[0].num == None and self[0].name == None and len(self) == 1:
+            self[0].num = spin_num
+            self[0].name = spin_name
+
+        # Append the spin.
+        else:
+            self.append(SpinContainer(spin_name, spin_num, select))
 
 
 
