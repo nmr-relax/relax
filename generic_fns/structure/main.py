@@ -54,9 +54,16 @@ def load_spins(spin_id=None):
 
     # Loop over all atoms of the spin_id selection.
     for mol_name, res_num, res_name, spin_num, spin_name, pos in cdp.structure.atom_loop(atom_id=spin_id, pos=True):
+        # Initialise the identification string.
+        id = ''
+
         # Get the molecule container corresponding to the molecule name.
         if mol_name:
-            mol_cont = return_molecule('#' + mol_name)
+            # Update the ID string.
+            id = id + '#' + mol_name
+
+            # The container.
+            mol_cont = return_molecule(id)
 
         # The is only one molecule and it is unnamed.
         elif cdp.mol[0].name == None and len(cdp.mol) == 1:
@@ -70,8 +77,11 @@ def load_spins(spin_id=None):
             # Get the container.
             mol_cont = cdp.mol[-1]
 
-        # Get the corresponding residue container (residue name is ignored because only the number is unique).
-        res_cont = return_residue(':' + `res_num`)
+        # Add the residue number to the ID string (residue name is ignored because only the number is unique).
+        id = id + ':' + `res_num`
+
+        # Get the corresponding residue container.
+        res_cont = return_residue(id)
 
         # Add the residue if it doesn't exist.
         if res_num and res_name and res_cont == None:
@@ -81,8 +91,11 @@ def load_spins(spin_id=None):
             # Get the container.
             res_cont = mol_cont.res[-1]
 
-        # Get the corresponding spin container (spin name is ignored because only the number is unique).
-        spin_cont = return_spin(':' + `spin_num`)
+        # Add the atom number to the ID string (atom name is ignored because only the number is unique).
+        id = id + '@' + `spin_num`
+
+        # Get the corresponding spin container.
+        spin_cont = return_spin(id)
 
         # Add the spin if it doesn't exist.
         if spin_name and spin_cont == None:
