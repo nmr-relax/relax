@@ -51,17 +51,20 @@ class Scientific_data(Str_object):
     id = 'scientific'
 
 
-    def atom_loop(self, pos=False):
+    def atom_loop(self, atom_id=None, pos=False):
         """Generator function for looping over all atoms in the Scientific Python data objects.
 
-        @keyword pos:   A flag which if True will cause the atom position to be yielded along with
-                        all the other information.
-        @type pos:      bool
-        @return:        A tuple consisting of the molecule name, residue number, residue name, atom
-                        number, and atom name.  If pos is True, then the 3D array of the atom
-                        position is also returned.
-        @rtype:         tuple (str, int, str, int, str) and if pos==True, (str, int, str, int, str,
-                        array of len 3)
+        @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching
+                            this selection will be yielded.
+        @type atom_id:      str
+        @keyword pos:       A flag which if True will cause the atom position to be yielded along
+                            with all the other information.
+        @type pos:          bool
+        @return:            A tuple consisting of the molecule name, residue number, residue name,
+                            atom number, and atom name.  If pos is True, then the 3D array of the
+                            atom position is also returned.
+        @rtype:             tuple (str, int, str, int, str) and if pos==True, (str, int, str, int,
+                            str, array of len 3)
         """
 
         # Split up the selection string.
