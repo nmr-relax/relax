@@ -97,6 +97,7 @@ class Spin_base_class:
         cdp.mol[1].res[0].spin[0].num = 239
         cdp.mol[1].res[0].spin[0].name = 'NH'
         cdp.mol[1].res.add_item('Thr', 6)
+        cdp.mol[1].res[1].spin.add_item(None, 1433)
         cdp.mol[1].res[1].spin.add_item('NH', 3239)
 
 
