@@ -163,6 +163,60 @@ def command(command):
     pymol.pipe_write(command)
 
 
+def cone_pdb(file=None):
+    """Display the N-state model cone geometric object.
+
+    @keyword file:  The name of the file containing the cone geometric object.
+    @type file:     str
+    """
+
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
+
+    # The file root.
+    id = file_root(pdb_file)
+
+    # Read in the cone PDB file.
+    pymol.pipe_write("load " + id)
+
+
+    # Average CoM-pivot point vector.
+    #################################
+
+    # Select the AVE residue.
+    pymol.pipe_write("select resn AVE")
+
+    # Show the vector as a stick.
+    pymol.pipe_write("show stick, 'sele'")
+
+    # Colour it blue.
+    pymol.pipe_write("color blue, 'sele'")
+
+
+    # The cone object.
+    ##################
+
+    # Select the CON residue.
+    pymol.pipe_write("select resn CON")
+
+    # Hide everything.
+    pymol.pipe_write("hide ('sele')")
+
+    # Show as 'sticks'.
+    pymol.pipe_write("show sticks, 'sele'")
+
+    # Colour it white.
+    pymol.pipe_write("color white, 'sele'")
+
+
+    # Clean up.
+    ###########
+
+    # Remove the selection.
+    pymol.pipe_write("cmd.delete('sele')")
+
+
 def create_macro(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
     """Function for creating an array of PyMOL commands.
 
