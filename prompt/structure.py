@@ -287,8 +287,8 @@ class Structure:
         generic_fns.structure.main.load_spins(spin_id=spin_id)
 
 
-    def read_pdb(self, file=None, dir=None, model=None, parser='scientific', load_seq=True, spin_id='@N'):
-        """The pdb loading function.
+    def read_pdb(self, file=None, dir=None, model=None, parser='scientific'):
+        """The PDB loading function.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -301,10 +301,6 @@ class Structure:
 
         parser:  The PDB parser used to read the file.
 
-        load_seq:  A flag specifying whether the sequence should be loaded from the PDB file.
-
-        spin_id:  The spin identification string.
-
 
         Description
         ~~~~~~~~~~~
@@ -315,12 +311,6 @@ class Structure:
 
         Currently only the Scientific Python PDB parser can be used to read structural data.
         Therefore the 'parser' argument should be set to the string 'scientific'.
-
-        To load the molecule, residue, and spin system sequence from the PDB file, set the
-        'load_seq' flag to True.  If the sequence has previously been loaded, then this flag will be
-        ignored.  The 'spin_id' string will be used to determine which molecules, which residues,
-        and which atoms will be loaded for the analysis.  If this argument is set to None, then all
-        molecules, all residues, and all atoms in the PDB file will be loaded.
 
 
         Example
@@ -345,9 +335,7 @@ class Structure:
             text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", model=" + `model`
-            text = text + ", parser=" + `parser`
-            text = text + ", load_seq=" + `load_seq`
-            text = text + ", spin_id=" + `spin_id` + ")"
+            text = text + ", parser=" + `parser + ")"`
             print text
 
         # File name.
@@ -366,16 +354,8 @@ class Structure:
         if type(parser) != str:
             raise RelaxStrError, ('PDB parser', parser)
 
-        # The load sequence argument.
-        if type(load_seq) != bool:
-            raise RelaxBoolError, ('load sequence flag', load_seq)
-
-        # Spin identifier.
-        if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identifier', spin_id)
-
         # Execute the functional code.
-        generic_fns.structure.main.read_pdb(file=file, dir=dir, model=model, parser=parser, load_seq=load_seq, spin_id=spin_id)
+        generic_fns.structure.main.read_pdb(file=file, dir=dir, model=model, parser=parser)
 
 
     def vectors(self, heteronuc='N', proton='H', spin_id=None, verbosity=1):
