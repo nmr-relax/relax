@@ -233,6 +233,60 @@ class Structure:
         generic_fns.structure.geometric.create_vector_dist(length=length, symmetry=symmetry, file=file, dir=dir, force=force)
 
 
+    def load_spins(self, spin_id='@N'):
+        """Load spins from the structure into the relax data store.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        spin_id:  The spin identification string.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function allows a sequence to be generated within the relax data store using the atomic
+        information from the structure already associated with this data pipe.  The spin_id string
+        is used to select which molecules, which residues, and which atoms will be recognised as
+        spin systems within relax.  If the empty string is supplied, then all molcules, residues,
+        and atoms will be placed within the data store.
+
+
+        Example
+        ~~~~~~~
+
+        For a model-free backbone amide nitrogen analysis, to load just the backbone N sequence from
+        the file '1F3Y.pdb' (which is a single protein), type the follow two user functions:
+
+        relax> structure.read_pdb('1F3Y.pdb')
+        relax> structure.load_spins(spin_id='@N')
+
+
+        For an RNA analysis of adenine C8 and C2, guanine C8 and N1, cytidine C5 and C6, and uracil
+        N3, C5, and C6, type the following series of commands (assuming that the PDB file with this
+        atom naming has already been read):
+
+        relax> structure.load_spins(spin_id=':A@C8&@C2')
+        relax> structure.load_spins(spin_id=':G@C8&@N1')
+        relax> structure.load_spins(spin_id=':C@C5&@C6')
+        relax> structure.load_spins(spin_id=':U@N3&@C5&@C6')
+
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "structure.load_spins("
+            text = text + "spin_id=" + `spin_id` + ")"
+            print text
+
+        # Spin identifier.
+        if spin_id != None and type(spin_id) != str:
+            raise RelaxNoneStrError, ('spin identifier', spin_id)
+
+        # Execute the functional code.
+        generic_fns.structure.main.load_spins(spin_id=spin_id)
+
+
     def read_pdb(self, file=None, dir=None, model=None, parser='scientific', load_seq=True, spin_id='@N'):
         """The pdb loading function.
 
