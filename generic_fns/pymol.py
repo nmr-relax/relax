@@ -137,13 +137,13 @@ def cartoon():
     id = file_root(pdb_file)
 
     # Hide everything.
-    self.pipe_write("cmd.hide('everything'," + `id` + ")")
+    pymol.pipe_write("cmd.hide('everything'," + `id` + ")")
 
     # Show the cartoon style.
-    self.pipe_write("cmd.show('cartoon'," + `id` + ")")
+    pymol.pipe_write("cmd.show('cartoon'," + `id` + ")")
 
     # Colour by secondary structure.
-    self.pipe_write("util.cbss(" + `id` + ", 'red', 'yellow', 'green')")
+    pymol.pipe_write("util.cbss(" + `id` + ", 'red', 'yellow', 'green')")
 
 
 def command(run, command):
