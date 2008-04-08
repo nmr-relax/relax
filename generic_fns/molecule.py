@@ -113,13 +113,9 @@ def create(mol_name=None):
         if cdp.mol[i].name == mol_name:
             raise RelaxError, "The molecule '" + `mol_name` + "' already exists in the relax data store."
 
-    # If no molecule data exists, replace the empty first molecule with this molecule (just a renaming).
-    if cdp.mol[0].name == None and len(cdp.mol[0].res) == 1 and len(cdp.mol[0].res[0].spin) == 1:
-        cdp.mol[0].name = mol_name
 
     # Append the molecule.
-    else:
-        cdp.mol.add_item(mol_name=mol_name)
+    cdp.mol.add_item(mol_name=mol_name)
 
 
 def delete(mol_id=None):
