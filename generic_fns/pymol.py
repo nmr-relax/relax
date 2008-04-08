@@ -26,8 +26,9 @@ from string import split
 
 # relax module imports.
 from data import Data as relax_data_store
+from generic_fns.selection import exists_mol_res_spin_data
 from relax_errors import RelaxError, RelaxImplementError, RelaxNoPipeError, RelaxNoSequenceError
-from relax_io import file_root, test_binary
+from relax_io import file_root, open_write_file, test_binary
 from specific_fns.setup import get_specific_fn
 
 
@@ -329,40 +330,49 @@ def view():
         pymol.pipe_open()
 
 
-def write(run=None, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir=None, force=0):
-    """Function for creating a PyMOL macro."""
+def write(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir=None, force=False):
+    """Create a PyMOL macro file.
 
-    # Arguments.
-    self.run = run
-    self.data_type = data_type
-    self.style = style
-    self.colour_start = colour_start
-    self.colour_end = colour_end
-    self.colour_list = colour_list
+    @keyword data_type:     The data type ot map to the structure.
+    @type data_type:        str
+    @keyword style:         The style of the macro.
+    @type style:            str
+    @keyword colour_start:  The starting colour of the linear gradient.
+    @type colour_start:     str or RBG colour array (len 3 with vals from 0 to 1)
+    @keyword colour_end:    The ending colour of the linear gradient.
+    @type colour_end:       str or RBG colour array (len 3 with vals from 0 to 1)
+    @keyword colour_list:   The colour list to search for the colour names.  Can be either 'molmol'
+                            or 'x11'.
+    @type colour_list:      str or None
+    @keyword file:          The name of the macro file to create.
+    @type file:             str
+    @keyword dir:           The name of the directory to place the macro file into.
+    @type dir:              str
+    @keyword force:         Flag which if set to True will cause any pre-existing file to be
+                            overwritten.
+    @type force:            bool
+    """
 
-    # No coded yet.
-    raise RelaxImplementError
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
 
-    # Test if the run exists.
-    if not self.run in relax_data_store.run_names:
-        raise RelaxNoPipeError, self.run
-
-    # Test if the sequence data is loaded.
-    if not relax_data_store.res.has_key(self.run):
-        raise RelaxNoSequenceError, self.run
+    # Test if sequence data exists.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
     # Create the macro.
-    self.create_macro()
+    commands = create_macro(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
 
     # File name.
     if file == None:
         file = data_type + '.mac'
 
     # Open the file for writing.
-    file = self.relax.IO.open_write_file(file, dir, force)
+    file = open_write_file(file, dir, force)
 
     # Loop over the commands and write them.
-    for command in self.commands:
+    for command in commands:
         file.write(command + "\n")
 
     # Close the file.
