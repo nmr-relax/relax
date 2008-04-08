@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,6 +26,7 @@ from re import match
 
 # relax module imports.
 from prototype import Prototype
+from relax_errors import RelaxError
 
 
 """The molecule-residue-spin containers."""
