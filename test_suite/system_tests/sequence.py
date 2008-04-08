@@ -58,7 +58,7 @@ class Sequence(TestCase):
 
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)
-        self.assertEqual(len(cdp.mol[0].res), 165)
+        self.assertEqual(len(cdp.mol[0].res), 12)
         for i in xrange(165):
             self.assertEqual(len(cdp.mol[0].res[i].spin), 1)
 
