@@ -177,6 +177,8 @@ def create_macro(data_type=None, style="classic", colour_start=None, colour_end=
     @keyword colour_list:   The colour list to search for the colour names.  Can be either 'molmol'
                             or 'x11'.
     @type colour_list:      str or None
+    @return:                The list of PyMOL commands.
+    @rtype:                 list of str
     """
 
     # Alias the current data pipe.
