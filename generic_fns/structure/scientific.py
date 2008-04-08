@@ -122,7 +122,7 @@ class Scientific_data(Str_object):
                     for atom in res:
                         # Atom number, name, and position.
                         atom_num = atom.properties['serial_number']
-                        atom_name = atom.properties['element']
+                        atom_name = atom.name
                         pos = atom.position.array
 
                         # Skip non-matching atoms.
