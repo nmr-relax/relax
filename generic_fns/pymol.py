@@ -298,7 +298,7 @@ def tensor_pdb(file=None):
 def vector_dist(file=None):
     """Display the XH bond vector distribution.
 
-    @param file:    The vector distribution PDB file.
+    @keword file:   The vector distribution PDB file.
     @type file:     str
     """
 
