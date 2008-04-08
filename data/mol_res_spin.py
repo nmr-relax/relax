@@ -211,6 +211,7 @@ class ResidueList(list):
         if self[0].num == None and self[0].name == None and len(self) == 1:
             self[0].num = res_num
             self[0].name = res_name
+            self[0].select = select
 
         # Append a new ResidueContainer.
         else:
