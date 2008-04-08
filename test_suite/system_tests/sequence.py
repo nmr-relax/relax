@@ -58,7 +58,7 @@ class Sequence(TestCase):
 
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)
-        self.assertEqual(cdp.mol.name, None)
+        self.assertEqual(cdp.mol[0].name, None)
         self.assertEqual(len(cdp.mol[0].res), 12)
 
         # 1st residue.
