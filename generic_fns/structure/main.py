@@ -105,6 +105,9 @@ def load_spins(spin_id=None):
             # Get the container.
             spin_cont = res_cont.spin[-1]
 
+        # Add the position vector to the spin container.
+        spin_cont.pos = pos
+
 
 def read_pdb(file=None, dir=None, model=None, parser='scientific', fail=True, verbosity=1):
     """The PDB loading function.
