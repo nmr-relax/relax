@@ -43,7 +43,7 @@ class Structure:
         self.__relax__ = relax
 
 
-    def create_diff_tensor_pdb(self, scale=1.8e-6, file='tensor.pdb', dir=None, force=0):
+    def create_diff_tensor_pdb(self, scale=1.8e-6, file='tensor.pdb', dir=None, force=False):
         """Create a PDB file to represent the diffusion tensor.
 
         Keyword Arguments
@@ -55,7 +55,7 @@ class Structure:
 
         dir:  The directory where the file is located.
 
-        force:  A flag which, if set to 1, will overwrite the any pre-existing file.
+        force:  A flag which, if set to True, will overwrite the any pre-existing file.
 
 
         Description
@@ -160,8 +160,8 @@ class Structure:
             raise RelaxNoneStrError, ('directory name', dir)
 
         # The force flag.
-        if type(force) != int or (force != 0 and force != 1):
-            raise RelaxBinError, ('force flag', force)
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
         generic_fns.structure.geometric.create_diff_tensor_pdb(scale=scale, file=file, dir=dir, force=force)
