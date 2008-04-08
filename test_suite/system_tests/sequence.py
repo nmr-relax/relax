@@ -47,8 +47,20 @@ class Sequence(TestCase):
     def test_pdb(self):
         """Load the sequence from a PDB file."""
 
-        # Read the sequence.
-        self.relax.interpreter._Structure.read_pdb(file='test.pdb', dir=sys.path[-1] + '/test_suite/system_tests/data', model=1, load_seq=True)
+        # Read the PDB file.
+        self.relax.interpreter._Structure.read_pdb(file='test.pdb', dir=sys.path[-1] + '/test_suite/system_tests/data', model=1)
+
+        # Generate the sequence.
+        self.relax.interpreter._Structure.load_spins(spin_id='N')
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Test some of the sequence.
+        self.assertEqual(len(cdp.mol), 1)
+        self.assertEqual(len(cdp.mol[0].res), 165)
+        for i in xrange(165):
+            self.assertEqual(len(cdp.mol[0].res[i].spin), 1)
 
 
     def test_read(self):
