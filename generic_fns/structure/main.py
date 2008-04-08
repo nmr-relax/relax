@@ -27,7 +27,6 @@ from warnings import warn
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns import molmol
-from generic_fns.sequence import load_PDB_sequence
 from generic_fns.selection import exists_mol_res_spin_data, spin_loop
 from generic_fns.structure.scientific import Scientific_data
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPipeError, RelaxNoSequenceError, RelaxPdbError
