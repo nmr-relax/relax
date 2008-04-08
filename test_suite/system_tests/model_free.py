@@ -77,7 +77,7 @@ class Mf(TestCase):
         self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
 
         # Read the PDF file and set the vectors.
-        self.relax.interpreter._Structure.read_pdb(file='pdb', dir=path, model=1, load_seq=0)
+        self.relax.interpreter._Structure.read_pdb(file='pdb', dir=path, model=1)
         self.relax.interpreter._Structure.vectors(heteronuc='N', proton='H')
 
         # Read the relaxation data.
