@@ -1,6 +1,6 @@
 # Script for calculating NOEs.
 
-# Create the run
+# Create the NOE data pipe.
 name = 'noe'
 pipe.create('noe')
 
