@@ -193,6 +193,15 @@ def cone_pdb(file=None):
     # Colour it blue.
     pymol.pipe_write("color cyan, 'sele'")
 
+    # Select the atom used for labelling.
+    pymol.pipe_write("select (resn AVE and symbol N)")
+
+    # Hide the atom.
+    pymol.pipe_write("hide ('sele')")
+
+    # Label using the atom name.
+    pymol.pipe_write("cmd.label(\"sele\",\"name\")")
+
 
     # The cone object.
     ##################
