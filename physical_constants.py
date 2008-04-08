@@ -28,7 +28,7 @@
 from math import pi
 
 # relax module imports.
-from relax_error import RelaxError
+from relax_errors import RelaxError
 
 
 # Misc. constants.
