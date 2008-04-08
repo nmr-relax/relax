@@ -34,8 +34,12 @@ from relax_errors import RelaxImplementError
 class Str_object:
     """The structural object base class."""
 
-    # The parser specific data object.
-    structural_data = []
+
+    def __init__(self):
+        """Initialise the PDB object."""
+
+        # The parser specific data object.
+        self.structural_data = []
 
 
     def atom_add(self, atom_id=None, record_name='', atom_name='', res_name='', chain_id='', res_num=None, pos=[None, None, None], segment_id='', element=''):
