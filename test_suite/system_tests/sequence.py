@@ -44,6 +44,53 @@ class Sequence(TestCase):
         relax_data_store.__reset__()
 
 
+    def test_load_protein_asp_atoms_from_pdb(self):
+        """Load all aspartic acid atoms from the single residue in a loaded protein PDB file."""
+
+        # Read the PDB file.
+        self.relax.interpreter._Structure.read_pdb(file='test.pdb', dir=sys.path[-1] + '/test_suite/system_tests/data', model=1)
+
+        # Load all the ASP atoms (1 molecule, 1 ASP residue, and all atoms).
+        self.relax.interpreter._Structure.load_spins(spin_id=':ASP')
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Test some of the sequence.
+        self.assertEqual(len(cdp.mol), 1)
+        self.assertEqual(cdp.mol[0].name, None)
+        self.assertEqual(len(cdp.mol[0].res), 1)
+
+        # 1st residue.
+        self.assertEqual(cdp.mol[0].res[0].num, 7)
+        self.assertEqual(cdp.mol[0].res[0].name, 'ASP')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 12)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, 91)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
+        self.assertEqual(cdp.mol[0].res[0].spin[1].num, 92)
+        self.assertEqual(cdp.mol[0].res[0].spin[1].name, 'H')
+        self.assertEqual(cdp.mol[0].res[0].spin[2].num, 93)
+        self.assertEqual(cdp.mol[0].res[0].spin[2].name, 'CA')
+        self.assertEqual(cdp.mol[0].res[0].spin[3].num, 94)
+        self.assertEqual(cdp.mol[0].res[0].spin[3].name, 'HA')
+        self.assertEqual(cdp.mol[0].res[0].spin[4].num, 95)
+        self.assertEqual(cdp.mol[0].res[0].spin[4].name, 'CB')
+        self.assertEqual(cdp.mol[0].res[0].spin[5].num, 96)
+        self.assertEqual(cdp.mol[0].res[0].spin[5].name, '1HB')
+        self.assertEqual(cdp.mol[0].res[0].spin[6].num, 97)
+        self.assertEqual(cdp.mol[0].res[0].spin[6].name, '2HB')
+        self.assertEqual(cdp.mol[0].res[0].spin[7].num, 99)
+        self.assertEqual(cdp.mol[0].res[0].spin[7].name, 'CG')
+        self.assertEqual(cdp.mol[0].res[0].spin[8].num, 100)
+        self.assertEqual(cdp.mol[0].res[0].spin[8].name, 'OD1')
+        self.assertEqual(cdp.mol[0].res[0].spin[9].num, 101)
+        self.assertEqual(cdp.mol[0].res[0].spin[9].name, 'OD2')
+        self.assertEqual(cdp.mol[0].res[0].spin[10].num, 102)
+        self.assertEqual(cdp.mol[0].res[0].spin[10].name, 'C')
+        self.assertEqual(cdp.mol[0].res[0].spin[11].num, 103)
+        self.assertEqual(cdp.mol[0].res[0].spin[11].name, 'O')
+
+
     def test_load_protein_gly_N_Ca_spins_from_pdb(self):
         """Load the glycine backbone amide N and Ca spins from a loaded protein PDB file."""
 
