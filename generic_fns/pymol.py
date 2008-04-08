@@ -294,34 +294,29 @@ def tensor_pdb(file=None):
     pymol.pipe_write("cmd.delete('sele')")
 
 
-def vector_dist(run=None, file=None):
+def vector_dist(file=None):
     """Display the XH bond vector distribution.
 
-    @param run:     The run
-    @type run:      str
     @param file:    The vector distribution PDB file.
     @type file:     str
     """
 
-    # Arguments.
-    self.run = run
-
-    # Test if the run exists.
-    if not self.run in relax_data_store.run_names:
-        raise RelaxNoPipeError, self.run
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
 
     # The file root.
     id = file_root(file)
 
     # Read in the vector distribution PDB file.
-    self.pipe_write("load " + file)
+    pymol.pipe_write("load " + id)
 
 
     # Create a surface.
     ###################
 
     # Select the vector distribution.
-    self.pipe_write("cmd.show('surface', " + `id` + ")")
+    pymol.pipe_write("cmd.show('surface', " + `id` + ")")
 
 
 def view():
