@@ -178,7 +178,7 @@ def cone_pdb(file=None):
     id = file_root(file)
 
     # Read in the cone PDB file.
-    pymol.pipe_write("load " + id)
+    pymol.pipe_write("load " + file)
 
 
     # Average CoM-pivot point vector.
