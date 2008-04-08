@@ -295,7 +295,7 @@ def tensor_pdb(file=None):
     id = file_root(file)
 
     # Read in the tensor PDB file.
-    pymol.pipe_write("load " + id)
+    pymol.pipe_write("load " + file)
 
 
     # Centre of mass.
