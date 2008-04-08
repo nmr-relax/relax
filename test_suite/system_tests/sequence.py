@@ -44,6 +44,45 @@ class Sequence(TestCase):
         relax_data_store.__reset__()
 
 
+    def test_load_protein_gly_N_spins_from_pdb(self):
+        """Load the glycine backbone amide N spins from a loaded protein PDB file."""
+
+        # Read the PDB file.
+        self.relax.interpreter._Structure.read_pdb(file='test.pdb', dir=sys.path[-1] + '/test_suite/system_tests/data', model=1)
+
+        # Generate the sequence (1 molecule, all GLY residues, and only N spins).
+        self.relax.interpreter._Structure.load_spins(spin_id=':GLY@N')
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Test some of the sequence.
+        self.assertEqual(len(cdp.mol), 1)
+        self.assertEqual(cdp.mol[0].name, None)
+        self.assertEqual(len(cdp.mol[0].res), 3)
+
+        # 1st residue.
+        self.assertEqual(cdp.mol[0].res[0].num, 1)
+        self.assertEqual(cdp.mol[0].res[0].name, 'GLY')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
+
+        # 2nd residue.
+        self.assertEqual(cdp.mol[0].res[1].num, 4)
+        self.assertEqual(cdp.mol[0].res[1].name, 'GLY')
+        self.assertEqual(len(cdp.mol[0].res[1].spin), 1)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].num, 51)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].name, 'N')
+
+        # 3rd residue.
+        self.assertEqual(cdp.mol[0].res[2].num, 12)
+        self.assertEqual(cdp.mol[0].res[2].name, 'GLY')
+        self.assertEqual(len(cdp.mol[0].res[2].spin), 1)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].num, 167)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].name, 'N')
+
+
     def test_load_protein_N_spins_from_pdb(self):
         """Load the protein backbone amide N spins from a loaded PDB file."""
 
