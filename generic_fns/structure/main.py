@@ -50,10 +50,6 @@ def load_spins(spin_id=None):
     # Alias the current data pipe.
     cdp = relax_data_store[relax_data_store.current_pipe]
 
-    # Sequence loading.
-    if not exists_mol_res_spin_data():
-        load_PDB_sequence()
-
 
 def read_pdb(file=None, dir=None, model=None, parser='scientific', fail=True, verbosity=1):
     """The PDB loading function.
