@@ -287,7 +287,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         # Terminate the chain (the TER record).
         #######################################
 
-        terminate(structure=structure, atom_id_ext=atom_id_ext, res_num=res_num)
+        structure.terminate(atom_id_ext=atom_id_ext, res_num=res_num)
 
 
     # Create the PDB file.
