@@ -23,7 +23,7 @@
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxSpinSelectDisallowError
-from selection import exists_spin_data, parse_token, residue_loop, return_residue, return_spin, return_single_spin_info, spin_loop, tokenise
+from selection import parse_token, residue_loop, return_residue, return_spin, return_single_spin_info, spin_loop, tokenise
 
 
 # Module doc.
@@ -67,7 +67,7 @@ def copy(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
     # Test if the spin number already exists.
     if spin_to_token:
         spin_to_cont = return_spin(spin_to, pipe_to)
-        if spin_to_cont and exists_spin_data(spin_to_cont):
+        if spin_to_cont and not spin_to_cont.is_empty():
             raise RelaxError, "The spin " + `spin_to` + " already exists in the " + `pipe_from` + " data pipe."
 
     # No residue to copy data from.

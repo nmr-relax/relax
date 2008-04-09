@@ -23,7 +23,7 @@
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxSpinSelectDisallowError
-from selection import exists_res_data, molecule_loop, parse_token, residue_loop, return_molecule, return_residue, return_single_residue_info, tokenise
+from selection import molecule_loop, parse_token, residue_loop, return_molecule, return_residue, return_single_residue_info, tokenise
 
 
 # Module doc.
@@ -74,7 +74,7 @@ def copy(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
 
     # Test if the residue number already exists.
     res_to_cont = return_residue(res_to, pipe_to)
-    if res_to_cont and exists_res_data(res_to_cont):
+    if res_to_cont and not res_to_cont.is_empty():
         raise RelaxError, "The residue " + `res_to` + " already exists in the " + `pipe_to` + " data pipe."
 
     # Get the single residue data container.
