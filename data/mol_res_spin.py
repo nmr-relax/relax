@@ -62,12 +62,12 @@ class SpinContainer(Prototype):
         text = text + "\n"
         text = text + "Objects:\n"
         for name in dir(self):
-            # Spin systems.
-            if name == 'spin':
-                text = text + "  spin: The list of spin systems of the residues\n"
+            # Skip the SpinContainer methods.
+            if name == 'is_empty':
+                continue
 
-            # Skip certain objects.
-            if match("^_", name) or name == 'spin':
+            # Skip special objects.
+            if match("^__", name):
                 continue
 
             # Add the object's attribute to the text string.
