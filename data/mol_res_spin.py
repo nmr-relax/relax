@@ -211,7 +211,7 @@ class ResidueContainer(Prototype):
                 text = text + "  spin: The list of spin systems of the residues\n"
                 continue
 
-            # Skip the SpinContainer methods.
+            # Skip the ResidueContainer methods.
             if name == 'is_empty':
                 continue
 
