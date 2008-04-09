@@ -717,10 +717,6 @@ def return_molecule(selection=None, pipe=None):
     mol_num = 0
     mol_container = None
     for mol in relax_data_store[pipe].mol:
-        # Skip empty MoleculeContainers.
-        if mol.is_empty():
-            continue
-
         # Skip the molecule if there is no match to the selection.
         if mol not in select_obj:
             continue
@@ -765,20 +761,12 @@ def return_residue(selection=None, pipe=None):
     res_num = 0
     res_container = None
     for mol in relax_data_store[pipe].mol:
-        # Skip empty MoleculeContainers.
-        if mol.is_empty():
-            continue
-
         # Skip the molecule if there is no match to the selection.
         if mol not in select_obj:
             continue
 
         # Loop over the residues.
         for res in mol.res:
-            # Skip empty ResidueContainers.
-            if res.is_empty():
-                continue
-
             # Skip the residue if there is no match to the selection.
             if res not in select_obj:
                 continue
@@ -823,30 +811,18 @@ def return_spin(selection=None, pipe=None):
     spin_num = 0
     spin_container = None
     for mol in relax_data_store[pipe].mol:
-        # Skip empty MoleculeContainers.
-        if mol.is_empty():
-            continue
-
         # Skip the molecule if there is no match to the selection.
         if mol not in select_obj:
             continue
 
         # Loop over the residues.
         for res in mol.res:
-            # Skip empty ResidueContainers.
-            if res.is_empty():
-                continue
-
             # Skip the residue if there is no match to the selection.
             if res not in select_obj:
                 continue
 
             # Loop over the spins.
             for spin in res.spin:
-                # Skip empty SpinContainers.
-                if spin.is_empty():
-                    continue
-
                 # Skip the spin if there is no match to the selection.
                 if spin not in select_obj:
                     continue
