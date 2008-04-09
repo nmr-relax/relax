@@ -152,7 +152,7 @@ class SpinList(list):
             self[0].name = spin_name
             self[0].select = select
 
-        # Append the spin.
+        # Otherwise append a new SpinContainer.
         else:
             self.append(SpinContainer(spin_name, spin_num, select))
 
