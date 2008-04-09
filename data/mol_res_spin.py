@@ -440,13 +440,18 @@ class MoleculeList(list):
 
 
     def add_item(self, mol_name=None, select=True):
-        """Function for appending an empty container to the list."""
+        """Append an empty MoleculeContainer to the MoleculeList."""
+
+        # Test if the molecule name already exists.
+        for i in xrange(len(self)):
+            if self[i].name == mol_name:
+                raise RelaxError, "The molecule '" + `mol_name` + "' already exists in the sequence."
 
         # If no molecule data exists, replace the empty first molecule with this molecule (just a renaming).
         if self[0].name == None and len(self[0].res) == 1 and len(self[0].res[0].spin) == 1:
             self[0].name = mol_name
             self[0].select = select
 
-        # Append the molecule.
+        # Otherwise append an empty MoleculeContainer.
         else:
             self.append(MoleculeContainer(mol_name, select))
