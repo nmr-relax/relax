@@ -26,6 +26,7 @@ import sys
 # relax module imports.
 import help
 from relax_errors import RelaxNoneIntError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxNumError, RelaxStrError
+from specific_fns.setup import noe_obj
 
 
 class Noe:

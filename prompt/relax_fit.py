@@ -26,6 +26,7 @@ import sys
 # relax module imports.
 import help
 from relax_errors import RelaxFloatError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from specific_fns.setup import relax_fit_obj
 
 
 class Relax_fit:
