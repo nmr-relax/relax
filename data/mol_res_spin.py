@@ -377,6 +377,43 @@ class MoleculeContainer(Prototype):
         return text
 
 
+    def is_empty(self):
+        """Method for testing if this MoleculeContainer object is empty.
+
+        @return:    True if this container is empty and the molecule name has not been set, False
+                    otherwise.
+        @rtype:     bool
+        """
+
+        # The molecule name has been set.
+        if self.name != None:
+            return False
+
+        # An object has been added to the container.
+        for name in dir(self):
+            # Skip the objects initialised in __init__().
+            if name == 'name' or name == 'select' or name == 'res':
+                continue
+
+            # Skip the MoleculeContainer methods.
+            if name == 'is_empty':
+                continue
+
+            # Skip special objects.
+            if match("^__", name):
+                continue
+
+            # An object has been added.
+            return False
+
+        # The residue list is not empty.
+        if not self.res.is_empty():
+            return False
+
+        # The MoleculeContainer is unmodified.
+        return True
+
+
 class MoleculeList(list):
     """List type data container for the molecule specific data."""
 
