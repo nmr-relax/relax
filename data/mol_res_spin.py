@@ -147,7 +147,7 @@ class SpinList(list):
                 raise RelaxError, "The spin number '" + `spin_num` + "' already exists."
 
         # If no spin data exists, replace the empty first spin with this spin.
-        if len(self) == 1 and self[0].is_empty():
+        if self.is_empty():
             self[0].num = spin_num
             self[0].name = spin_name
             self[0].select = select
