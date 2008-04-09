@@ -765,12 +765,20 @@ def return_residue(selection=None, pipe=None):
     res_num = 0
     res_container = None
     for mol in relax_data_store[pipe].mol:
+        # Skip empty MoleculeContainers.
+        if mol.is_empty():
+            continue
+
         # Skip the molecule if there is no match to the selection.
         if mol not in select_obj:
             continue
 
         # Loop over the residues.
         for res in mol.res:
+            # Skip empty ResidueContainers.
+            if res.is_empty():
+                continue
+
             # Skip the residue if there is no match to the selection.
             if res not in select_obj:
                 continue
