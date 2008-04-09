@@ -789,8 +789,10 @@ class Test_selection(TestCase):
         self.assertEqual(spin2.num, 63)
         self.assertEqual(spin2.name, 'NH')
 
-        # Test the data of spin 3 (there is none!).
-        self.assertEqual(spin3, None)
+        # Test the data of spin 3.
+        self.assertNotEqual(spin3, None)
+        self.assertEqual(spin3.num, None)
+        self.assertEqual(spin3.name, None)
 
         # Test the data of the RNA res -5, spin N5.
         self.assertNotEqual(spin4, None)
