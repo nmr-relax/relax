@@ -300,7 +300,7 @@ class ResidueList(list):
                 raise RelaxError, "The residue number '" + `res_num` + "' already exists in the sequence."
 
         # If no residue data exists, replace the empty first residue with this residue.
-        if self[0].num == None and self[0].name == None and len(self) == 1:
+        if self.is_empty():
             self[0].num = res_num
             self[0].name = res_name
             self[0].select = select
