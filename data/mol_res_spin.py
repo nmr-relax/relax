@@ -455,3 +455,19 @@ class MoleculeList(list):
         # Otherwise append an empty MoleculeContainer.
         else:
             self.append(MoleculeContainer(mol_name, select))
+
+
+    def is_empty(self):
+        """Method for testing if this MoleculeList object is empty.
+
+        @return:    True if this list only has one MoleculeContainer and the molecule name has not
+                    been set, False otherwise.
+        @rtype:     bool
+        """
+
+        # There is only one MoleculeContainer and it is empty.
+        if len(self) == 1 and self[0].is_empty():
+            return True
+
+        # Otherwise.
+        return False
