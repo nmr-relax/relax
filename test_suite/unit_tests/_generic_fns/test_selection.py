@@ -904,7 +904,7 @@ class Test_selection(TestCase):
 
         # Spin data.
         select = [0, 1, 0, 0, 1, 1, 0]
-        name = ['NH', 'NH', None, None, 'N5', None, 'N5']
+        name = ['NH', 'NH', None, 'C8', 'N5', 'C8', 'N5']
 
         # Loop over the spins.
         i = 0
