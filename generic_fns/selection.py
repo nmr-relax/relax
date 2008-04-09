@@ -721,6 +721,10 @@ def return_molecule(selection=None, pipe=None):
     mol_num = 0
     mol_container = None
     for mol in relax_data_store[pipe].mol:
+        # Skip empty MoleculeContainers.
+        if mol.is_empty():
+            continue
+
         # Skip the molecule if there is no match to the selection.
         if mol not in select_obj:
             continue
