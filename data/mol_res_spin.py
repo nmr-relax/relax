@@ -301,10 +301,18 @@ class ResidueList(list):
     def add_item(self, res_name=None, res_num=None, select=True):
         """Append an empty ResidueContainer to the ResidueList."""
 
-        # Test if the residue number already exists.
+        # Test if the residue number (or name if unnumbered) already exists.
         for i in xrange(len(self)):
-            if self[i].num == res_num:
-                raise RelaxError, "The residue number '" + `res_num` + "' already exists in the sequence."
+            # Residue number has been supplied.
+            if res_num != None:
+                if self[i].num == res_num:
+                    raise RelaxError, "The residue number '" + `res_num` + "' already exists in the sequence."
+
+            # No residue numbers.
+            else:
+                if self[i].name == res_name:
+                    raise RelaxError, "The unnumbered residue name '" + `res_name` + "' already exists."
+
 
         # If no residue data exists, replace the empty first residue with this residue.
         if self.is_empty():
