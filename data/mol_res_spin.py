@@ -193,9 +193,14 @@ class ResidueContainer(Prototype):
             # Spin systems.
             if name == 'spin':
                 text = text + "  spin: The list of spin systems of the residues\n"
+                continue
 
-            # Skip certain objects.
-            if match("^_", name) or name == 'spin':
+            # Skip the SpinContainer methods.
+            if name == 'is_empty':
+                continue
+
+            # Skip special objects.
+            if match("^__", name):
                 continue
 
             # Add the object's attribute to the text string.
