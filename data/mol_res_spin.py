@@ -209,6 +209,43 @@ class ResidueContainer(Prototype):
         return text
 
 
+    def is_empty(self):
+        """Method for testing if this ResidueContainer object is empty.
+
+        @return:    True if this container is empty and the residue number and name have not been
+                    set, False otherwise.
+        @rtype:     bool
+        """
+
+        # The residue number or residue name have been set.
+        if self.num != None or self.name != None:
+            return False
+
+        # An object has been added to the container.
+        for name in dir(self):
+            # Skip the objects initialised in __init__().
+            if name == 'num' or name == 'name' or name == 'select' or name == 'spin':
+                continue
+
+            # Skip the ResidueContainer methods.
+            if name == 'is_empty':
+                continue
+
+            # Skip special objects.
+            if match("^__", name):
+                continue
+
+            # An object has been added.
+            return False
+
+        # The spin list is not empty.
+        if not self.spin.is_empty():
+            return False
+
+        # The ResidueContainer is unmodified.
+        return True
+
+
 class ResidueList(list):
     """List type data container for residue specific data."""
 
