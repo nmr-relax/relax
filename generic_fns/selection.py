@@ -387,16 +387,12 @@ def exists_mol_res_spin_data():
     # Alias the data pipe container.
     cdp = relax_data_store[relax_data_store.current_pipe]
 
-    # More than 1 molecule (hence data exists).
-    if len(cdp.mol) > 1:
-        return True
+    # The molecule, residue, spin object stack is empty.
+    if cdp.mol.is_empty():
+        return False
 
-    # The single molecule contains data.
-    if exists_mol_data(cdp.mol[0]):
-        return True
-
-    # No data!
-    return False
+    # Otherwise.
+    return True
 
 
 def exists_mol_data(mol_container):
