@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,12 +20,13 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the Prototype base class for the molecule-residue-spin containers."""
+
+
 # Python module imports.
 from copy import deepcopy
 from re import search
-
-
-"""The molecule-residue-spin containers."""
 
 
 class Prototype(object):
