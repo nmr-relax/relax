@@ -157,6 +157,22 @@ class SpinList(list):
             self.append(SpinContainer(spin_name, spin_num, select))
 
 
+    def is_empty(self):
+        """Method for testing if this SpinList object is empty.
+
+        @return:    True if this list only has one SpinContainer and the spin number and name have
+                    not been set, False otherwise.
+        @rtype:     bool
+        """
+
+        # There is only one SpinContainer and it is empty.
+        if len(self) == 1 and self[0].is_empty():
+            return True
+
+        # Otherwise.
+        return False
+
+
 
 # The residue data.
 ###################
