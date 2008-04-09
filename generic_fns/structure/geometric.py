@@ -175,8 +175,8 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     else:
         pipes = [relax_data_store.current_pipe]
 
-    # Initialise the atom and atomic connections data structures.
-    atomic_data = {}
+    # Create the structural object.
+    structure = Internal_PDB()
 
     # Loop over the pipes.
     for pipe_index in xrange(len(pipes)):
@@ -351,8 +351,8 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     # Initialise.
     #############
 
-    # Initialise the atom and atomic connections data structures.
-    atomic_data = {}
+    # Create the structural object.
+    structure = Internal_PDB()
 
     # Initialise the residue number.
     res_num = 1
