@@ -236,7 +236,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         print "\nGenerating the geometric object."
 
         # The distribution.
-        generate_vector_dist(atomic_data=atomic_data, atom_id_ext=atom_id_ext, res_name='TNS', res_num=res_num, chain_id=chain_id, centre=CoM, R=pipe.diff.rotation, warp=pipe.diff.tensor, scale=scale, inc=20)
+        generate_vector_dist(structure=structure, atom_id_ext=atom_id_ext, res_name='TNS', res_num=res_num, chain_id=chain_id, centre=CoM, R=pipe.diff.rotation, warp=pipe.diff.tensor, scale=scale, inc=20)
 
         # Increment the residue number.
         res_num = res_num + 1
@@ -258,7 +258,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
                 sim_vectors = None
                 
             # Generate the axes representation.
-            res_num = generate_vector_residues(atomic_data=atomic_data, vector=pipe.diff.Dpar*pipe.diff.Dpar_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
+            res_num = generate_vector_residues(structure=structure, vector=pipe.diff.Dpar*pipe.diff.Dpar_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
 
 
         # Create the three axes of the ellipsoid.
@@ -278,15 +278,15 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
                 sim_Dz_vectors = None
                 
             # Generate the axes representation.
-            res_num = generate_vector_residues(atomic_data=atomic_data, vector=pipe.diff.Dx*pipe.diff.Dx_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dx_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
-            res_num = generate_vector_residues(atomic_data=atomic_data, vector=pipe.diff.Dy*pipe.diff.Dy_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dy_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
-            res_num = generate_vector_residues(atomic_data=atomic_data, vector=pipe.diff.Dz*pipe.diff.Dz_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dz_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
+            res_num = generate_vector_residues(structure=structure, vector=pipe.diff.Dx*pipe.diff.Dx_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dx_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
+            res_num = generate_vector_residues(structure=structure, vector=pipe.diff.Dy*pipe.diff.Dy_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dy_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
+            res_num = generate_vector_residues(structure=structure, vector=pipe.diff.Dz*pipe.diff.Dz_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dz_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
 
 
         # Terminate the chain (the TER record).
         #######################################
 
-        terminate(atomic_data=atomic_data, atom_id_ext=atom_id_ext, res_num=res_num)
+        terminate(structure=structure, atom_id_ext=atom_id_ext, res_num=res_num)
 
 
     # Create the PDB file.
