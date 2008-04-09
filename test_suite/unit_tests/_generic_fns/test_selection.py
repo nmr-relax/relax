@@ -41,11 +41,11 @@ class Test_selection(TestCase):
         # Alias the current data pipe.
         cdp = relax_data_store[relax_data_store.current_pipe]
 
+        # Name the first molecule.
+        cdp.mol[0].name = 'Ap4Aase'
+
         # Add a second molecule to the system.
         cdp.mol.add_item(mol_name='RNA')
-
-        # Rename the first molecule.
-        cdp.mol[0].name = 'Ap4Aase'
 
         # Add two more residues to the first molecule (and set the residue number of the first).
         cdp.mol[0].res[0].num = 1
