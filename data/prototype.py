@@ -43,6 +43,10 @@ class Prototype(object):
             if search('^__', name):
                 continue
 
+            # Skip the 'is_empty' method.
+            if name == 'is_empty':
+                continue
+
             # Get the object.
             value = getattr(self, name)
 
