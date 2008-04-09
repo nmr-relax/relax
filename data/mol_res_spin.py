@@ -425,6 +425,12 @@ class MoleculeList(list):
 
 
     def __repr__(self):
+        """The string representation of the object.
+
+        Rather than using the standard Python conventions (either the string representation of the
+        value or the "<...desc...>" notation), a rich-formatted description of the object is given.
+        """
+
         text = "Molecules.\n\n"
         text = text + "%-8s%-8s%-10s" % ("Index", "Name", "Selected") + "\n"
         for i in xrange(len(self)):
