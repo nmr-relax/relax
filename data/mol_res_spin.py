@@ -361,9 +361,14 @@ class MoleculeContainer(Prototype):
             # Residue list.
             if name == 'res':
                 text = text + "  res: The list of the residues of the molecule\n"
+                continue
 
-            # Skip certain objects.
-            if match("^_", name) or name == 'res':
+            # Skip the MoleculeContainer methods.
+            if name == 'is_empty':
+                continue
+
+            # Skip special objects.
+            if match("^__", name):
                 continue
 
             # Add the object's attribute to the text string.
