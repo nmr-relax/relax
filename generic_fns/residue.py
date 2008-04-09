@@ -75,7 +75,7 @@ def copy(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
     # Test if the residue number already exists.
     res_to_cont = return_residue(res_to, pipe_to)
     if res_to_cont and exists_res_data(res_to_cont):
-        raise RelaxError, "The residue " + `res_to` + " already exists in the " + `pipe_from` + " data pipe."
+        raise RelaxError, "The residue " + `res_to` + " already exists in the " + `pipe_to` + " data pipe."
 
     # Get the single residue data container.
     res_from_cont = return_residue(res_from, pipe_from)
