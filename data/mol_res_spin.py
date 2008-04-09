@@ -310,6 +310,22 @@ class ResidueList(list):
             self.append(ResidueContainer(res_name, res_num, select))
 
 
+    def is_empty(self):
+        """Method for testing if this ResidueList object is empty.
+
+        @return:    True if this list only has one ResidueContainer and the residue number and name
+                    have not been set, False otherwise.
+        @rtype:     bool
+        """
+
+        # There is only one ResidueContainer and it is empty.
+        if len(self) == 1 and self[0].is_empty():
+            return True
+
+        # Otherwise.
+        return False
+
+
 
 # The molecule data.
 ###################
