@@ -76,6 +76,39 @@ class SpinContainer(Prototype):
         return text
 
 
+    def is_empty(self):
+        """Method for testing if this SpinContainer object is empty.
+
+        @return:    True if this container is empty and the spin number and name have not been set,
+                    False otherwise.
+        @rtype:     bool
+        """
+
+        # The spin number or spin name has been set.
+        if self.num != None or self.name != None:
+            return False
+
+        # An object has been added to the container.
+        for name in dir(self):
+            # Skip the objects initialised in __init__().
+            if name == 'num' or name == 'name' or name == 'select':
+                continue
+
+            # Skip the SpinContainer methods.
+            if name == 'is_empty':
+                continue
+
+            # Skip special objects.
+            if match("^__", name):
+                continue
+
+            # An object has been added.
+            return False
+
+        # The SpinContainer is unmodified.
+        return True
+
+
 class SpinList(list):
     """List type data container for spin system specific data."""
 
@@ -114,7 +147,7 @@ class SpinList(list):
                 raise RelaxError, "The spin number '" + `spin_num` + "' already exists."
 
         # If no spin data exists, replace the empty first spin with this spin.
-        if self[0].num == None and self[0].name == None and len(self) == 1:
+        if len(self) == 1 and self[0].is_empty():
             self[0].num = spin_num
             self[0].name = spin_name
             self[0].select = select
