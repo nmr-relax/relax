@@ -313,7 +313,6 @@ class ResidueList(list):
                 if self[i].name == res_name:
                     raise RelaxError, "The unnumbered residue name '" + `res_name` + "' already exists."
 
-
         # If no residue data exists, replace the empty first residue with this residue.
         if self.is_empty():
             self[0].num = res_num
