@@ -579,9 +579,8 @@ def generate_vector_residues(structure=None, vector=None, atom_name=None, res_na
     @type structure:        instance of class derived from Str_object
     @param vector:          The vector to be represented in the PDB.
     @type vector:           numpy array, len 3
-    @param atom_name:       The atom name used to label the atom representing the head of the vector
-                            and also used as the first part of the atom identifier key in the
-                            atomic_data dictionary.
+    @param atom_name:       The atom name used to label the atom representing the head of the
+                            vector.
     @type atom_name:        str
     @param res_name_vect:   The 3 letter PDB residue code used to represent the vector.
     @type res_name_vect:    str
