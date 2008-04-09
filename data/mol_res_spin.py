@@ -448,7 +448,7 @@ class MoleculeList(list):
                 raise RelaxError, "The molecule '" + `mol_name` + "' already exists in the sequence."
 
         # If no molecule data exists, replace the empty first molecule with this molecule (just a renaming).
-        if self[0].name == None and len(self[0].res) == 1 and len(self[0].res[0].spin) == 1:
+        if self.is_empty():
             self[0].name = mol_name
             self[0].select = select
 
