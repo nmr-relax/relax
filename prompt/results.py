@@ -25,6 +25,7 @@ import sys
 
 # relax module imports.
 import help
+from generic_fns import results
 from relax_errors import RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxStrError
 
 
@@ -57,7 +58,7 @@ class Results:
             print text
 
         # Execute the functional code.
-        results_obj.display()
+        results.display()
 
 
     def read(self, file='results', dir='dir', format='columnar'):
@@ -103,7 +104,7 @@ class Results:
             raise RelaxStrError, ('format', format)
 
         # Execute the functional code.
-        results_obj.read(file=file, directory=dir, format=format)
+        results.read(file=file, directory=dir, format=format)
 
 
     def write(self, file='results', dir='dir', force=0, format='columnar', compress_type=1):
@@ -171,4 +172,4 @@ class Results:
             raise RelaxIntError, ('compression type', compress_type)
 
         # Execute the functional code.
-        results_obj.write(file=file, directory=dir, force=force, format=format, compress_type=compress_type)
+        results.write(file=file, directory=dir, force=force, format=format, compress_type=compress_type)

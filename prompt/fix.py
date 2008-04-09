@@ -24,6 +24,7 @@
 import sys
 
 # relax module imports.
+from generic_fns import fix
 from relax_errors import RelaxBinError, RelaxIntStrError, RelaxStrError
 
 
@@ -85,4 +86,4 @@ class Fix:
             raise RelaxBinError, ('fixed', fixed)
 
         # Execute the functional code.
-        fix_obj.fix(element=element, fixed=fixed)
+        fix.fix(element=element, fixed=fixed)

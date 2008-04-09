@@ -25,6 +25,7 @@ import sys
 
 # relax module imports.
 import help
+from generic_fns import vmd
 from relax_errors import RelaxStrError
 
 
@@ -56,4 +57,4 @@ class Vmd:
             print text
 
         # Execute the functional code.
-        vmd_obj.view()
+        vmd.view()

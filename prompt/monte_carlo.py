@@ -25,6 +25,7 @@ import sys
 
 # relax module imports.
 import help
+from generic_fns import monte_carlo
 from relax_errors import RelaxIntError, RelaxNumError, RelaxStrError
 
 
@@ -83,7 +84,7 @@ class Monte_carlo:
             raise RelaxStrError, ('method', method)
 
         # Execute the functional code.
-        monte_carlo_obj.create_data(method=method)
+        monte_carlo.create_data(method=method)
 
 
     def error_analysis(self, prune=0.0):
@@ -130,7 +131,7 @@ class Monte_carlo:
             raise RelaxNumError, ('prune', prune)
 
         # Execute the functional code.
-        monte_carlo_obj.error_analysis(prune=prune)
+        monte_carlo.error_analysis(prune=prune)
 
 
     def initial_values(self):
@@ -157,7 +158,7 @@ class Monte_carlo:
             print text
 
         # Execute the functional code.
-        monte_carlo_obj.initial_values()
+        monte_carlo.initial_values()
 
 
     def off(self):
@@ -169,7 +170,7 @@ class Monte_carlo:
             print text
 
         # Execute the functional code.
-        monte_carlo_obj.off()
+        monte_carlo.off()
 
 
     def on(self):
@@ -181,7 +182,7 @@ class Monte_carlo:
             print text
 
         # Execute the functional code.
-        monte_carlo_obj.on()
+        monte_carlo.on()
 
 
     def setup(self, number=500):
@@ -211,7 +212,7 @@ class Monte_carlo:
             raise RelaxIntError, ('number', number)
 
         # Execute the functional code.
-        monte_carlo_obj.setup(number=number)
+        monte_carlo.setup(number=number)
 
 
 

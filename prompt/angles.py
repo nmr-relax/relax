@@ -24,6 +24,7 @@
 import sys
 
 # relax module imports.
+from generic_fns import angles
 from relax_errors import RelaxStrError
 
 
@@ -54,4 +55,4 @@ class Angles:
             print text
 
         # Execute the functional code.
-        angles_obj.angles()
+        angles.angles()

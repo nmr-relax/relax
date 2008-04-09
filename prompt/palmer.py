@@ -25,6 +25,7 @@ import sys
 
 # relax module imports.
 import help
+from generic_fns import palmer
 from relax_errors import RelaxBinError, RelaxFloatError, RelaxIntError, RelaxNoneStrError, RelaxStrError
 
 
@@ -163,7 +164,7 @@ class Palmer:
             raise RelaxStrError, ('atom2', atom2)
 
         # Execute the functional code.
-        palmer_obj.create(dir=dir, force=force, binary=binary, diff_search=diff_search, sims=sims, sim_type=sim_type, trim=trim, steps=steps, constraints=constraints, nucleus=nucleus, atom1=atom1, atom2=atom2)
+        palmer.create(dir=dir, force=force, binary=binary, diff_search=diff_search, sims=sims, sim_type=sim_type, trim=trim, steps=steps, constraints=constraints, nucleus=nucleus, atom1=atom1, atom2=atom2)
 
 
     def execute(self, dir=None, force=0, binary='modelfree4'):
@@ -218,7 +219,7 @@ class Palmer:
             raise RelaxStrError, ('Modelfree binary', binary)
 
         # Execute the functional code.
-        palmer_obj.execute(dir=dir, force=force, binary=binary)
+        palmer.execute(dir=dir, force=force, binary=binary)
 
 
     def extract(self, dir=None):
@@ -242,4 +243,4 @@ class Palmer:
                 raise RelaxNoneStrError, ('directory name', dir)
 
         # Execute the functional code.
-        palmer_obj.extract(dir=dir)
+        palmer.extract(dir=dir)

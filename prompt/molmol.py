@@ -26,6 +26,7 @@ import sys
 # relax module imports.
 import colour
 import help
+from generic_fns import molmol
 from relax_errors import RelaxBinError, RelaxListNumError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
 from specific_fns.model_free.molmol import Molmol
 
@@ -90,7 +91,7 @@ class Molmol:
             raise RelaxStrError, ('command', command)
 
         # Execute the functional code.
-        molmol_obj.command(command=command)
+        molmol.command(command=command)
 
 
     def macro_exec(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
@@ -182,7 +183,7 @@ class Molmol:
                     raise RelaxListNumError, ('ending colour of the linear gradient', colour_end)
 
         # Execute the functional code.
-        molmol_obj.macro_exec(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
+        molmol.macro_exec(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
 
 
     def ribbon(self):
@@ -215,7 +216,7 @@ class Molmol:
             print text
 
         # Execute the functional code.
-        molmol_obj.ribbon()
+        molmol.ribbon()
 
 
     def tensor_pdb(self, file=None):
@@ -281,7 +282,7 @@ class Molmol:
             raise RelaxStrError, ('file name', file)
 
         # Execute the functional code.
-        molmol_obj.tensor_pdb(file=file)
+        molmol.tensor_pdb(file=file)
 
 
     def view(self):
@@ -300,7 +301,7 @@ class Molmol:
             print text
 
         # Execute the functional code.
-        molmol_obj.view()
+        molmol.view()
 
 
     def write(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir='molmol', force=0):
@@ -415,7 +416,7 @@ class Molmol:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        molmol_obj.write(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)
+        molmol.write(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)
 
 
 

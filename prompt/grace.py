@@ -27,7 +27,7 @@ import sys
 from relax_errors import RelaxBinError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxStrError
 from doc_string import regexp_doc
 import help
-from generic_fns import minimise
+from generic_fns import grace, minimise
 from specific_fns.model_free import Model_free
 from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.noe import Noe
@@ -245,7 +245,7 @@ class Grace:
             raise RelaxBinError, ('force flag', force)
 
         # Execute the functional code.
-        grace_obj.write(x_data_type=x_data_type, y_data_type=y_data_type, res_num=res_num, res_name=res_name, plot_data=plot_data, norm=norm, file=file, dir=dir, force=force)
+        grace.write(x_data_type=x_data_type, y_data_type=y_data_type, res_num=res_num, res_name=res_name, plot_data=plot_data, norm=norm, file=file, dir=dir, force=force)
 
 
 
