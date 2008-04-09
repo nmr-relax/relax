@@ -62,7 +62,9 @@ class Test_selection(TestCase):
         cdp.mol[1].res[0].num = -5
         cdp.mol[1].res.add_item(res_num=-4)
 
-        # Add a second set of spins to the second molecule.
+        # Add a second set of spins to the second molecule (naming the first set first).
+        cdp.mol[1].res[0].spin[0].name = 'C8'
+        cdp.mol[1].res[1].spin[0].name = 'C8'
         cdp.mol[1].res[0].spin.add_item(spin_name='N5')
         cdp.mol[1].res[1].spin.add_item(spin_name='N5')
 
