@@ -88,7 +88,7 @@ class Sequence_base_class:
         cdp.mol[0].res.add_item('SER', 5)
 
         # Try displaying the residue sequence.
-        self.sequence_fns.display(mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None)
+        self.sequence_fns.display(res_num_flag=True, res_name_flag=True)
 
 
     def test_read_protein_noe_data(self):
@@ -129,7 +129,7 @@ class Sequence_base_class:
         cdp.mol[0].res.add_item('SER', 5)
 
         # Write the residue sequence.
-        self.sequence_fns.write(file=self.tmpfile, res_num_col=0, res_name_col=1)
+        self.sequence_fns.write(file=self.tmpfile, res_num_flag=True, res_name_flag=True)
 
         # Open the temp file.
         file = open(self.tmpfile)
