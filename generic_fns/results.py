@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007 Edward d'Auvergne                             #
+# Copyright (C) 2003-2004, 2007-2008 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,151 +28,140 @@ from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPipeError
 
 
-# The relax data storage object.
+def copy(run1=None, run2=None, sim=None):
+    """Function for copying all results from run1 to run2."""
+
+    # Test if run1 exists.
+    if not run1 in relax_data_store.run_names:
+        raise RelaxNoPipeError, run1
+
+    # Test if run2 exists.
+    if not run2 in relax_data_store.run_names:
+        raise RelaxNoPipeError, run2
+
+    # Function type.
+    function_type = relax_data_store.run_types[relax_data_store.run_names.index(run1)]
+
+    # Copy function.
+    copy = self.relax.specific_setup.setup('copy', function_type, raise_error=0)
+
+    # Copy the results.
+    copy(run1=run1, run2=run2, sim=sim)
 
 
+def display(run=None, format='columnar'):
+    """Function for displaying the results."""
 
-class Results:
-    def __init__(self, relax):
-        """Class containing functions for reading and writing data."""
+    # Test if the run exists.
+    if not run in relax_data_store.run_names:
+        raise RelaxNoPipeError, run
 
-        self.relax = relax
+    # Function type.
+    function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
 
+    # Specific results writing function.
+    if format == 'xml':
+        format = 'XML'
+        self.write_function = self.relax.specific_setup.setup('write_xml_results', function_type, raise_error=0)
+    elif format == 'columnar':
+        self.write_function = self.relax.specific_setup.setup('write_columnar_results', function_type, raise_error=0)
+    else:
+        raise RelaxError, "Unknown format " + `format` + "."
 
-    def copy(self, run1=None, run2=None, sim=None):
-        """Function for copying all results from run1 to run2."""
+    # No function.
+    if not self.write_function:
+        raise RelaxError, "The " + format + " format is not currently supported for " + self.relax.specific_setup.get_string(function_type) + "."
 
-        # Test if run1 exists.
-        if not run1 in relax_data_store.run_names:
-            raise RelaxNoPipeError, run1
-
-        # Test if run2 exists.
-        if not run2 in relax_data_store.run_names:
-            raise RelaxNoPipeError, run2
-
-        # Function type.
-        function_type = relax_data_store.run_types[relax_data_store.run_names.index(run1)]
-
-        # Copy function.
-        copy = self.relax.specific_setup.setup('copy', function_type, raise_error=0)
-
-        # Copy the results.
-        copy(run1=run1, run2=run2, sim=sim)
+    # Write the results.
+    self.write_function(sys.stdout, run)
 
 
-    def display(self, run=None, format='columnar'):
-        """Function for displaying the results."""
+def read(run=None, file='results', directory=None, file_data=None, format='columnar', verbosity=1):
+    """Function for reading the data out of a file."""
 
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoPipeError, run
+    # Test if the run exists.
+    if not run in relax_data_store.run_names:
+        raise RelaxNoPipeError, run
 
-        # Function type.
-        function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
+    # Function type.
+    function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
 
-        # Specific results writing function.
-        if format == 'xml':
-            format = 'XML'
-            self.write_function = self.relax.specific_setup.setup('write_xml_results', function_type, raise_error=0)
-        elif format == 'columnar':
-            self.write_function = self.relax.specific_setup.setup('write_columnar_results', function_type, raise_error=0)
-        else:
-            raise RelaxError, "Unknown format " + `format` + "."
+    # Equation type specific function setup.
+    if format == 'xml':
+        format = 'XML'
+        self.read_function = self.relax.specific_setup.setup('read_xml_results', function_type)
+    elif format == 'columnar':
+        self.read_function = self.relax.specific_setup.setup('read_columnar_results', function_type)
+    else:
+        raise RelaxError, "Unknown format " + `format` + "."
 
-        # No function.
-        if not self.write_function:
-            raise RelaxError, "The " + format + " format is not currently supported for " + self.relax.specific_setup.get_string(function_type) + "."
+    # No function.
+    if not self.read_function:
+        raise RelaxError, "The " + format + " format is not currently supported for " + self.relax.specific_setup.get_string(function_type) + "."
 
-        # Write the results.
-        self.write_function(sys.stdout, run)
+    # The directory.
+    if directory == 'run':
+        directory = run
 
+    # Make sure that there are no data structures corresponding to the run.
+    for data_name in dir(relax_data_store):
+        # Get the object.
+        data = getattr(relax_data_store, data_name)
 
-    def read(self, run=None, file='results', directory=None, file_data=None, format='columnar', verbosity=1):
-        """Function for reading the data out of a file."""
+        # Skip the data if it is not a dictionary (or equivalent).
+        if not hasattr(data, 'has_key'):
+            continue
 
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoPipeError, run
+        # Skip the data if it doesn't contain the key 'old_run'.
+        if data.has_key(run):
+            raise RelaxError, "Data corresponding to the run " + `run` + " exists."
 
-        # Function type.
-        function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
+    # Extract the data from the file.
+    file_data = self.relax.IO.extract_data(file_name=file, dir=directory, file_data=file_data)
 
-        # Equation type specific function setup.
-        if format == 'xml':
-            format = 'XML'
-            self.read_function = self.relax.specific_setup.setup('read_xml_results', function_type)
-        elif format == 'columnar':
-            self.read_function = self.relax.specific_setup.setup('read_columnar_results', function_type)
-        else:
-            raise RelaxError, "Unknown format " + `format` + "."
+    # Strip data.
+    file_data = self.relax.IO.strip(file_data)
 
-        # No function.
-        if not self.read_function:
-            raise RelaxError, "The " + format + " format is not currently supported for " + self.relax.specific_setup.get_string(function_type) + "."
+    # Do nothing if the file does not exist.
+    if not file_data:
+        raise RelaxFileEmptyError
 
-        # The directory.
-        if directory == 'run':
-            directory = run
-
-        # Make sure that there are no data structures corresponding to the run.
-        for data_name in dir(relax_data_store):
-            # Get the object.
-            data = getattr(relax_data_store, data_name)
-
-            # Skip the data if it is not a dictionary (or equivalent).
-            if not hasattr(data, 'has_key'):
-                continue
-
-            # Skip the data if it doesn't contain the key 'old_run'.
-            if data.has_key(run):
-                raise RelaxError, "Data corresponding to the run " + `run` + " exists."
-
-        # Extract the data from the file.
-        file_data = self.relax.IO.extract_data(file_name=file, dir=directory, file_data=file_data)
-
-        # Strip data.
-        file_data = self.relax.IO.strip(file_data)
-
-        # Do nothing if the file does not exist.
-        if not file_data:
-            raise RelaxFileEmptyError
-
-        # Read the results.
-        self.read_function(run, file_data, verbosity)
+    # Read the results.
+    self.read_function(run, file_data, verbosity)
 
 
-    def write(self, run=None, file="results", directory=None, force=0, format='columnar', compress_type=1, verbosity=1):
-        """Create the results file."""
+def write(run=None, file="results", directory=None, force=0, format='columnar', compress_type=1, verbosity=1):
+    """Create the results file."""
 
-        # Test if the run exists.
-        if not run in relax_data_store.run_names:
-            raise RelaxNoPipeError, run
+    # Test if the run exists.
+    if not run in relax_data_store.run_names:
+        raise RelaxNoPipeError, run
 
-        # The directory.
-        if directory == 'run':
-            directory = run
+    # The directory.
+    if directory == 'run':
+        directory = run
 
-        # Function type.
-        function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
+    # Function type.
+    function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
 
-        # Specific results writing function.
-        if format == 'xml':
-            format = 'XML'
-            self.write_function = self.relax.specific_setup.setup('write_xml_results', function_type, raise_error=0)
-        elif format == 'columnar':
-            self.write_function = self.relax.specific_setup.setup('write_columnar_results', function_type, raise_error=0)
-        else:
-            raise RelaxError, "Unknown format " + `format` + "."
+    # Specific results writing function.
+    if format == 'xml':
+        format = 'XML'
+        self.write_function = self.relax.specific_setup.setup('write_xml_results', function_type, raise_error=0)
+    elif format == 'columnar':
+        self.write_function = self.relax.specific_setup.setup('write_columnar_results', function_type, raise_error=0)
+    else:
+        raise RelaxError, "Unknown format " + `format` + "."
 
-        # No function.
-        if not self.write_function:
-            raise RelaxError, "The " + format + " format is not currently supported for " + self.relax.specific_setup.get_string(function_type) + "."
+    # No function.
+    if not self.write_function:
+        raise RelaxError, "The " + format + " format is not currently supported for " + self.relax.specific_setup.get_string(function_type) + "."
 
-        # Open the file for writing.
-        results_file = self.relax.IO.open_write_file(file_name=file, dir=directory, force=force, compress_type=compress_type, verbosity=verbosity)
+    # Open the file for writing.
+    results_file = self.relax.IO.open_write_file(file_name=file, dir=directory, force=force, compress_type=compress_type, verbosity=verbosity)
 
-        # Write the results.
-        self.write_function(results_file, run)
+    # Write the results.
+    self.write_function(results_file, run)
 
-        # Close the results file.
-        results_file.close()
+    # Close the results file.
+    results_file.close()
