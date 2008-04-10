@@ -26,6 +26,8 @@ import sys
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPipeError
+from relax_io import open_write_file
+from specific_fns.setup import get_specific_fn, get_string
 
 
 def copy(run1=None, run2=None, sim=None):
@@ -130,38 +132,34 @@ def read(run=None, file='results', directory=None, file_data=None, format='colum
     self.read_function(run, file_data, verbosity)
 
 
-def write(run=None, file="results", directory=None, force=0, format='columnar', compress_type=1, verbosity=1):
+def write(file="results", directory=None, force=False, format='columnar', compress_type=1, verbosity=1):
     """Create the results file."""
 
-    # Test if the run exists.
-    if not run in relax_data_store.run_names:
-        raise RelaxNoPipeError, run
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
 
-    # The directory.
-    if directory == 'run':
-        directory = run
-
-    # Function type.
+    # Specific functions.
     function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
 
     # Specific results writing function.
     if format == 'xml':
         format = 'XML'
-        self.write_function = self.relax.specific_setup.setup('write_xml_results', function_type, raise_error=0)
+        write_function = get_specific_fn('write_xml_results', relax_data_store[relax_data_store.current_pipe].pipe_type, raise_error=False)
     elif format == 'columnar':
-        self.write_function = self.relax.specific_setup.setup('write_columnar_results', function_type, raise_error=0)
+        write_function = get_specific_fn('write_columnar_results', relax_data_store[relax_data_store.current_pipe].pipe_type, raise_error=False)
     else:
         raise RelaxError, "Unknown format " + `format` + "."
 
     # No function.
-    if not self.write_function:
-        raise RelaxError, "The " + format + " format is not currently supported for " + self.relax.specific_setup.get_string(function_type) + "."
+    if not write_function:
+        raise RelaxError, "The " + format + " format is not currently supported for " + get_string(relax_data_store[relax_data_store.current_pipe].pipe_type) + "."
 
     # Open the file for writing.
-    results_file = self.relax.IO.open_write_file(file_name=file, dir=directory, force=force, compress_type=compress_type, verbosity=verbosity)
+    results_file = open_write_file(file_name=file, dir=directory, force=force, compress_type=compress_type, verbosity=verbosity)
 
     # Write the results.
-    self.write_function(results_file, run)
+    write_function(results_file)
 
     # Close the results file.
     results_file.close()
