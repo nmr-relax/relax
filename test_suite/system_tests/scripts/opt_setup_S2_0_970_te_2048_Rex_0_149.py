@@ -25,7 +25,7 @@ relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path)
 relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
 
 # Setup other values.
-diffusion_tensor.init(10e-9, fixed=1)
+diffusion_tensor.init(10e-9, fixed=True)
 value.set(1.02 * 1e-10, 'bond_length')
 value.set(-160 * 1e-6, 'csa')
 value.set('15N', 'heteronucleus')
