@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Data as relax_data_store
 from prompt.sequence import Sequence
-from relax_errors import RelaxBinError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxBinError, RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.sequence_testing_base import Sequence_base_class
 
 # Unit test imports.
@@ -59,12 +59,12 @@ class Test_sequence(Sequence_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the None, int, and bin arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.sequence_fns.display, mol_name_flag=data[1])
+            self.assertRaises(RelaxBoolError, self.sequence_fns.display, mol_name_flag=data[1])
 
 
     def test_display_argfail_res_num_flag(self):
@@ -72,12 +72,12 @@ class Test_sequence(Sequence_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the None, int, and bin arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.sequence_fns.display, res_num_flag=data[1])
+            self.assertRaises(RelaxBoolError, self.sequence_fns.display, res_num_flag=data[1])
 
 
     def test_display_argfail_res_name_flag(self):
@@ -85,12 +85,12 @@ class Test_sequence(Sequence_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the None, int, and bin arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.sequence_fns.display, res_name_flag=data[1])
+            self.assertRaises(RelaxBoolError, self.sequence_fns.display, res_name_flag=data[1])
 
 
     def test_display_argfail_spin_num_flag(self):
@@ -98,12 +98,12 @@ class Test_sequence(Sequence_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the None, int, and bin arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.sequence_fns.display, spin_num_flag=data[1])
+            self.assertRaises(RelaxBoolError, self.sequence_fns.display, spin_num_flag=data[1])
 
 
     def test_display_argfail_spin_name_flag(self):
@@ -111,12 +111,12 @@ class Test_sequence(Sequence_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the None, int, and bin arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.sequence_fns.display, spin_name_flag=data[1])
+            self.assertRaises(RelaxBoolError, self.sequence_fns.display, spin_name_flag=data[1])
 
 
     def test_read_argfail_file(self):
