@@ -88,23 +88,41 @@ class Str_object:
         raise RelaxImplementError
 
 
-    def atom_loop(self, pos=False):
+    def atom_loop(self, mol_name=True, res_num=True, res_name=True, atom_num=True, atom_name=True, element=True, pos=True):
         """Prototype generator method stub for looping over all atoms in the structural data object.
 
         This method should be designed as a generator (http://www.python.org/dev/peps/pep-0255/).
-        It should loop over all atoms of the system yielding the molecule name, residue number and
-        name, and atom number and name.  If the pos argument is True, then the atom position should
-        also be yielded.
+        It should loop over all atoms of the system yielding the following atomic information, if
+        the corresponding flag is True, in tuple form:
+
+            1.  Molecule name.
+            2.  Residue number.
+            3.  Residue name.
+            4.  Atom number.
+            5.  Atom name.
+            6.  The element name (its atomic symbol and optionally the isotope, e.g. 'N', 'Mg',
+                '17O', '13C', etc).
+            7.  The position of the atom in Euclidean space.
 
 
-        @keyword pos:   A flag which if True will cause the atom position to be yielded along with
-                        all the other information.
-        @type pos:      bool
-        @return:        A tuple consisting of the molecule name, residue number, residue name, atom
-                        number, and atom name.  If pos is True, then the 3D array of the atom
-                        position is also returned.
-        @rtype:         tuple (str, int, str, int, str) and if pos==True, (str, int, str, int, str,
-                        array of len 3)
+        @keyword mol_name:  A flag which if True will cause the molecule name to be yielded.
+        @type mol_name:     bool
+        @keyword res_num:   A flag which if True will cause the residue number to be yielded.
+        @type res_num:      bool
+        @keyword res_name:  A flag which if True will cause the residue name to be yielded.
+        @type res_name:     bool
+        @keyword atom_num:  A flag which if True will cause the atom number to be yielded.
+        @type atom_num:     bool
+        @keyword atom_name: A flag which if True will cause the atom name to be yielded.
+        @type atom_name:    bool
+        @keyword element:   A flag which if True will cause the element name to be yielded.
+        @type element:      bool
+        @keyword pos:       A flag which if True will cause the atomic position to be yielded.
+        @type pos:          bool
+        @return:            A tuple of atomic information, as described in the docstring.
+        @rtype:             tuple with molecule name (str), residue number (int), residue name
+                            (str), atom number (int), atom name(str), element name (str), and atomic
+                            position (array of len 3).
         """
 
         # Raise the error.
