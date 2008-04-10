@@ -51,30 +51,32 @@ class Scientific_data(Str_object):
     id = 'scientific'
 
 
-    def atom_loop(self, atom_id=None, mol_name=False, res_num=False, res_name=False, atom_num=False, atom_name=False, element=False, pos=False):
+    def atom_loop(self, atom_id=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False):
         """Generator function for looping over all atoms in the Scientific Python data objects.
 
-        @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching
-                            this selection will be yielded.
-        @type atom_id:      str
-        @keyword mol_name:  A flag which if True will cause the molecule name to be yielded.
-        @type mol_name:     bool
-        @keyword res_num:   A flag which if True will cause the residue number to be yielded.
-        @type res_num:      bool
-        @keyword res_name:  A flag which if True will cause the residue name to be yielded.
-        @type res_name:     bool
-        @keyword atom_num:  A flag which if True will cause the atom number to be yielded.
-        @type atom_num:     bool
-        @keyword atom_name: A flag which if True will cause the atom name to be yielded.
-        @type atom_name:    bool
-        @keyword element:   A flag which if True will cause the element name to be yielded.
-        @type element:      bool
-        @keyword pos:       A flag which if True will cause the atomic position to be yielded.
-        @type pos:          bool
-        @return:            A tuple of atomic information, as described in the API method docstring.
-        @rtype:             tuple with molecule name (str), residue number (int), residue name
-                            (str), atom number (int), atom name(str), element name (str), and atomic
-                            position (array of len 3).
+        @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms
+                                    matching this selection will be yielded.
+        @type atom_id:              str
+        @keyword mol_name_flag:     A flag which if True will cause the molecule name to be yielded.
+        @type mol_name_flag:        bool
+        @keyword res_num_flag:      A flag which if True will cause the residue number to be
+                                    yielded.
+        @type res_num_flag:         bool
+        @keyword res_name_flag:     A flag which if True will cause the residue name to be yielded.
+        @type res_name_flag:        bool
+        @keyword atom_num_flag:     A flag which if True will cause the atom number to be yielded.
+        @type atom_num_flag:        bool
+        @keyword atom_name_flag:    A flag which if True will cause the atom name to be yielded.
+        @type atom_name_flag:       bool
+        @keyword element_flag:      A flag which if True will cause the element name to be yielded.
+        @type element_flag:         bool
+        @keyword pos_flag:          A flag which if True will cause the atomic position to be
+                                    yielded.
+        @type pos_flag:             bool
+        @return:                    A tuple of atomic information, as described in the docstring.
+        @rtype:                     tuple consisting of optional molecule name (str), residue number
+                                    (int), residue name (str), atom number (int), atom name(str),
+                                    element name (str), and atomic position (array of len 3).
         """
 
         # Split up the selection string.
@@ -141,19 +143,19 @@ class Scientific_data(Str_object):
 
                         # Build the tuple to be yielded.
                         atomic_tuple = ()
-                        if mol_name:
+                        if mol_name_flag:
                             atomic_tuple = atomic_tuple + (mol_name,)
-                        if res_num:
+                        if res_num_flag:
                             atomic_tuple = atomic_tuple + (res_num,)
-                        if res_name:
+                        if res_name_flag:
                             atomic_tuple = atomic_tuple + (res_name,)
-                        if atom_num:
+                        if atom_num_flag:
                             atomic_tuple = atomic_tuple + (atom_num,)
-                        if atom_name:
+                        if atom_name_flag:
                             atomic_tuple = atomic_tuple + (atom_name,)
-                        if element:
+                        if element_flag:
                             atomic_tuple = atomic_tuple + (element,)
-                        if pos:
+                        if pos_flag:
                             atomic_tuple = atomic_tuple + (pos,)
 
                         # Yield the information.
