@@ -300,18 +300,8 @@ def write_body(file=None, mol_name_col=None, res_num_col=None, res_name_col=None
     if sep == None:
         sep = ''
 
-    # Write a header.
-    if mol_name_col != None:
-        file.write("%-10s " % ("Mol_name"+sep))
-    if res_num_col != None:
-        file.write("%-10s " % ("Res_num"+sep))
-    if res_name_col != None:
-        file.write("%-10s " % ("Res_name"+sep))
-    if spin_num_col != None:
-        file.write("%-10s " % ("Spin_num"+sep))
-    if spin_name_col != None:
-        file.write("%-10s " % ("Spin_name"+sep))
-    file.write('\n')
+    # Write the header.
+    write_header(file, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag, sep=sep)
 
     # Loop over the spins.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
