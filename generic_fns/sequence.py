@@ -309,17 +309,7 @@ def write_body(file=None, sep=None, mol_name_flag=True, res_num_flag=True, res_n
 
     # Loop over the spins.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
-        if mol_name_flag:
-            file.write("%-10s " % (str(mol_name)+sep))
-        if res_num_flag:
-            file.write("%-10s " % (str(res_num)+sep))
-        if res_name_flag:
-            file.write("%-10s " % (str(res_name)+sep))
-        if spin_num_flag:
-            file.write("%-10s " % (str(spin.num)+sep))
-        if spin_name_flag:
-            file.write("%-10s " % (str(spin.name)+sep))
-        file.write('\n')
+        write_line(file, mol_name, res_num, res_name, spin.num, spin.name, sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag)
 
 
 def write_header(file, sep=None, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True):
