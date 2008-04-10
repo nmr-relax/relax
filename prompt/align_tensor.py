@@ -26,7 +26,7 @@ import sys
 # relax module imports.
 import help
 from generic_fns import align_tensor
-from relax_errors import RelaxError, RelaxBinError, RelaxFloatError, RelaxIntError, RelaxNoneListstrError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
+from relax_errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneListstrError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
 
 
 class Align_tensor:
@@ -176,7 +176,7 @@ class Align_tensor:
         align_tensor.display(tensor=tensor)
 
 
-    def init(self, tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, errors=0):
+    def init(self, tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, errors=False):
         """Function for initialising the alignment tensor.
 
         Keyword Arguments
@@ -278,8 +278,8 @@ class Align_tensor:
             raise RelaxIntError, ('parameter types', param_types)
 
         # The errors flag.
-        if type(errors) != int or (errors != 0 and errors != 1):
-            raise RelaxBinError, ('errors flag', errors)
+        if type(errors) != bool:
+            raise RelaxBoolError, ('errors flag', errors)
 
         # Execute the functional code.
         align_tensor.init(tensor=tensor, params=params, scale=scale, angle_units=angle_units, param_types=param_types, errors=errors)
