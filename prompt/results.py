@@ -26,7 +26,7 @@ import sys
 # relax module imports.
 import help
 from generic_fns import results
-from relax_errors import RelaxBinError, RelaxIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxStrError
 
 
 class Results:
@@ -107,7 +107,7 @@ class Results:
         results.read(file=file, directory=dir, format=format)
 
 
-    def write(self, file='results', dir='dir', force=0, format='columnar', compress_type=1):
+    def write(self, file='results', dir='dir', force=False, format='columnar', compress_type=1):
         """Function for writing results to a file.
 
         Keyword Arguments
@@ -117,7 +117,7 @@ class Results:
 
         dir:  The directory name.
 
-        force:  A flag which, if set to 1, will cause the results file to be overwritten.
+        force:  A flag which if True will cause the results file to be overwritten.
 
         format:  The format of the output.
 
@@ -160,8 +160,8 @@ class Results:
             raise RelaxNoneStrError, ('directory name', dir)
 
         # The force flag.
-        if type(force) != int or (force != 0 and force != 1):
-            raise RelaxBinError, ('force flag', force)
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
 
         # Format.
         if type(format) != str:
