@@ -4,6 +4,9 @@ import sys
 # Read a PDB file.
 structure.read_pdb(file='test.pdb', dir=sys.path[-1] + '/test_suite/system_tests/data', model=1)
 
+# Load the spins.
+structure.load_spins('@N')
+
 # Set the NH vector.
 structure.vectors(heteronuc='N', proton='H')
 
