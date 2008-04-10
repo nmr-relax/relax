@@ -88,7 +88,7 @@ class Str_object:
         raise RelaxImplementError
 
 
-    def atom_loop(self, mol_name=True, res_num=True, res_name=True, atom_num=True, atom_name=True, element=True, pos=True):
+    def atom_loop(self, mol_name=False, res_num=False, res_name=False, atom_num=False, atom_name=False, element=False, pos=False):
         """Prototype generator method stub for looping over all atoms in the structural data object.
 
         This method should be designed as a generator (http://www.python.org/dev/peps/pep-0255/).
