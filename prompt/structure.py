@@ -167,7 +167,7 @@ class Structure:
         generic_fns.structure.geometric.create_diff_tensor_pdb(scale=scale, file=file, dir=dir, force=force)
 
 
-    def create_vector_dist(self, length=2e-9, symmetry=1, file='XH_dist.pdb', dir=None, force=0):
+    def create_vector_dist(self, length=2e-9, file='XH_dist.pdb', dir=None, symmetry=True, force=False):
         """Create a PDB file representation of the distribution of XH bond vectors.
 
         Keyword Arguments
@@ -175,14 +175,14 @@ class Structure:
 
         length:  The length of the vectors in the PDB representation (meters).
 
-        symmetry:  A flag which, if set to 1, will create a second chain with reversed XH bond
-            orientations.
-
         file:  The name of the PDB file.
 
         dir:  The directory to place the file into.
 
-        force:  A flag which, if set to 1, will overwrite the file if it already exists.
+        symmetry:  A flag which if True will create a second chain with reversed XH bond
+            orientations.
+
+        force:  A flag which if True will overwrite the file if it already exists.
 
 
         Description
@@ -203,19 +203,15 @@ class Structure:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "structure.create_vector_dist("
             text = text + "length=" + `length`
-            text = text + ", symmetry=" + `symmetry`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
+            text = text + ", symmetry=" + `symmetry`
             text = text + ", force=" + `force` + ")"
             print text
 
         # Vector length.
         if type(length) != float:
             raise RelaxFloatError, ('vector length', length)
-
-        # The symmetry flag.
-        if type(symmetry) != int or (symmetry != 0 and symmetry != 1):
-            raise RelaxBinError, ('symmetry flag', symmetry)
 
         # File name.
         if type(file) != str:
@@ -225,9 +221,13 @@ class Structure:
         if dir != None and type(dir) != str:
             raise RelaxNoneStrError, ('directory name', dir)
 
+        # The symmetry flag.
+        if type(symmetry) != bool:
+            raise RelaxBoolError, ('symmetry flag', symmetry)
+
         # The force flag.
-        if type(force) != int or (force != 0 and force != 1):
-            raise RelaxBinError, ('force flag', force)
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
         generic_fns.structure.geometric.create_vector_dist(length=length, symmetry=symmetry, file=file, dir=dir, force=force)
