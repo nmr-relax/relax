@@ -216,8 +216,8 @@ class Sequence:
         sequence.read(file=file, dir=dir, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep)
 
 
-    def write(self, file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, sep=None, force=0):
-        """Function for writing sequences of molecules, residues, and/or spins to a file.
+    def write(self, file, dir=None, sep=None, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True, force=False):
+        """Write the molecule, residue, and spin sequence to a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -226,19 +226,19 @@ class Sequence:
 
         dir:  The directory name.
 
-        mol_name_col:  The molecule name column (this defaults to no column).
+        sep:  The column separator (the default of None corresponds to white space).
 
-        res_num_col:  The residue number column (the default is 0, i.e. the first column).
+        mol_name_flag:  A flag whic if True will cause the molecule name column to be shown.
 
-        res_name_col:  The residue name column (the default is 1, i.e. the second column).
+        res_num_flag:  A flag whic if True will cause the residue number column to be shown.
 
-        spin_num_col:  The spin number column (this defaults to no column).
+        res_name_flag:  A flag whic if True will cause the residue name column to be shown.
 
-        spin_name_col:  The spin name column (this defaults to no column).
+        spin_num_flag:  A flag whic if True will cause the spin number column to be shown.
 
-        sep:  The column separator (the default is white space).
+        spin_name_flag:  A flag whic if True will cause the spin name column to be shown.
 
-        force:  A flag which, if set to 1, will cause the file to be overwritten.
+        force:  A flag which if True will cause the file to be overwritten.
 
 
         Description
@@ -252,12 +252,12 @@ class Sequence:
             text = sys.ps3 + "sequence.write("
             text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
-            text = text + ", mol_name_col=" + `mol_name_col`
-            text = text + ", res_num_col=" + `res_num_col`
-            text = text + ", res_name_col=" + `res_name_col`
-            text = text + ", spin_num_col=" + `spin_num_col`
-            text = text + ", spin_name_col=" + `spin_name_col`
             text = text + ", sep=" + `sep`
+            text = text + ", mol_name_flag=" + `mol_name_flag`
+            text = text + ", res_num_flag=" + `res_num_flag`
+            text = text + ", res_name_flag=" + `res_name_flag`
+            text = text + ", spin_num_flag=" + `spin_num_flag`
+            text = text + ", spin_name_flag=" + `spin_name_flag`
             text = text + ", force=" + `force` + ")"
             print text
 
@@ -269,33 +269,33 @@ class Sequence:
         if dir != None and type(dir) != str:
             raise RelaxNoneStrError, ('directory name', dir)
 
-        # Molecule name column.
-        if mol_name_col != None and type(mol_name_col) != int:
-            raise RelaxNoneIntError, ('molecule name column', mol_name_col)
-
-        # Residue number column.
-        if res_name_col != None and type(res_num_col) != int:
-            raise RelaxNoneIntError, ('residue number column', res_num_col)
-
-        # Residue name column.
-        if res_name_col != None and type(res_name_col) != int:
-            raise RelaxNoneIntError, ('residue name column', res_name_col)
-
-        # Spin number column.
-        if spin_num_col != None and type(spin_num_col) != int:
-            raise RelaxNoneIntError, ('spin number column', spin_num_col)
-
-        # Spin name column.
-        if spin_name_col != None and type(spin_name_col) != int:
-            raise RelaxNoneIntError, ('spin name column', spin_name_col)
-
         # Column separator.
         if sep != None and type(sep) != str:
             raise RelaxNoneStrError, ('column separator', sep)
 
+        # Molecule name flag.
+        if type(mol_name_flag) != bool:
+            raise RelaxBoolError, ('molecule name flag', mol_name_flag)
+
+        # Residue number flag.
+        if type(res_num_flag) != bool:
+            raise RelaxBoolError, ('residue number flag', res_num_flag)
+
+        # Residue name flag.
+        if type(res_name_flag) != bool:
+            raise RelaxBoolError, ('residue name flag', res_name_flag)
+
+        # Spin number flag.
+        if type(spin_num_flag) != bool:
+            raise RelaxBoolError, ('spin number flag', spin_num_flag)
+
+        # Spin name flag.
+        if type(spin_name_flag) != bool:
+            raise RelaxBoolError, ('spin name flag', spin_name_flag)
+
         # The force flag.
-        if type(force) != int or (force != 0 and force != 1):
-            raise RelaxBinError, ('force flag', force)
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
-        sequence.write(file=file, dir=dir, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, force=force)
+        sequence.write(file=file, dir=dir, sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag, force=force)
