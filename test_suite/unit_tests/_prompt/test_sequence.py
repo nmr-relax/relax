@@ -328,13 +328,13 @@ class Test_sequence(Sequence_base_class, TestCase):
 
 
     def test_write_argfail_force(self):
-        """Test the proper failure of the sequence.write() user function for the force argument."""
+        """The force arg test of the sequence.write() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the bin arguments, and skip them.
-            if data[0] == 'bin':
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxBinError, self.sequence_fns.write, file='a', force=data[1])
+            self.assertRaises(RelaxBoolError, self.sequence_fns.write, file='a', force=data[1])
