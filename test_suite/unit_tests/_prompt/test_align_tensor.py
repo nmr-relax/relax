@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from generic_fns import align_tensor
 from prompt.align_tensor import Align_tensor
-from relax_errors import RelaxError, RelaxBinError, RelaxFloatError, RelaxIntError, RelaxNoneListstrError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
+from relax_errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneListstrError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
 from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_class
 
 # Unit test imports.
@@ -199,16 +199,16 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
 
 
     def test_init_argfail_errors(self):
-        """The proper failure of the align_tensor.init() user function for the errors argument."""
+        """The errors arg test of the align_tensor.init() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the bin arguments, and skip them.
-            if data[0] == 'bin':
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxBinError, self.align_tensor_fns.init, tensor='Pf1', params=(0.0, 0.0, 0.0, 0.0, 0.0), errors=data[1])
+            self.assertRaises(RelaxBoolError, self.align_tensor_fns.init, tensor='Pf1', params=(0.0, 0.0, 0.0, 0.0, 0.0), errors=data[1])
 
 
     def test_matrix_angles_argfail_basis_set(self):
