@@ -277,21 +277,21 @@ def write(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col
 
 
 
-def write_body(file=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None):
+def write_body(file=None, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True, sep=None):
     """Function for writing to the given file object the molecule, residue, and/or sequence data.
 
     @param file:            The file object to write the data to.
     @type file:             file object
-    @param mol_name_col:    The column to contain the molecule name information.
-    @type mol_name_col:     int or None
-    @param res_name_col:    The column to contain the residue name information.
-    @type res_name_col:     int or None
-    @param res_num_col:     The column to contain the residue number information.
-    @type res_num_col:      int or None
-    @param spin_name_col:   The column to contain the spin name information.
-    @type spin_name_col:    int or None
-    @param spin_num_col:    The column to contain the spin number information.
-    @type spin_num_col:     int or None
+    @param mol_name_flag:   A flag which if True will cause the molecule name column to be written.
+    @type mol_name_flag:    bool
+    @param res_num_flag:    A flag which if True will cause the residue number column to be written.
+    @type res_num_flag:     bool
+    @param res_name_flag:   A flag which if True will cause the residue name column to be written.
+    @type res_name_flag:    bool
+    @param spin_name_flag:  A flag which if True will cause the spin name column to be written.
+    @type spin_name_flag:   bool
+    @param spin_num_flag:   A flag which if True will cause the spin number column to be written.
+    @type spin_num_flag:    bool
     @param sep:             The column seperator which, if None, defaults to whitespace.
     @type sep:              str or None
     """
@@ -305,15 +305,15 @@ def write_body(file=None, mol_name_col=None, res_num_col=None, res_name_col=None
 
     # Loop over the spins.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
-        if mol_name_col != None:
+        if mol_name_flag:
             file.write("%-10s " % (str(mol_name)+sep))
-        if res_num_col != None:
+        if res_num_flag:
             file.write("%-10s " % (str(res_num)+sep))
-        if res_name_col != None:
+        if res_name_flag:
             file.write("%-10s " % (str(res_name)+sep))
-        if spin_num_col != None:
+        if spin_num_flag:
             file.write("%-10s " % (str(spin.num)+sep))
-        if spin_name_col != None:
+        if spin_name_flag:
             file.write("%-10s " % (str(spin.name)+sep))
         file.write('\n')
 
