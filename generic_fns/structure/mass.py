@@ -59,7 +59,7 @@ def centre_of_mass(return_mass=False):
     M = 0.0
 
     # Loop over all atoms.
-    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(mol_name=True, res_num=True, res_name=True, atom_num=True, atom_name=True, element=True, pos=True):
+    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
         # Get the corresponding molecule container.
         if mol_name == None:
             mol_cont = cdp.mol[0]
