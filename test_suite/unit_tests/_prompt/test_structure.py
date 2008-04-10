@@ -90,7 +90,7 @@ class Test_structure(Structure_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxBinError, self.structure_fns.create_diff_tensor_pdb, force=data[1])
+            self.assertRaises(RelaxBoolError, self.structure_fns.create_diff_tensor_pdb, force=data[1])
 
 
     def test_create_vector_dist_argfail_length(self):
