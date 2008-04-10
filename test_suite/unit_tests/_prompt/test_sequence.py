@@ -249,69 +249,69 @@ class Test_sequence(Sequence_base_class, TestCase):
             self.assertRaises(RelaxNoneStrError, self.sequence_fns.write, file='a', dir=data[1])
 
 
-    def test_write_argfail_mol_name_col(self):
-        """The proper failure of the sequence.write() user function for the mol_name_col argument."""
+    def test_write_argfail_mol_name_flag(self):
+        """The proper failure of the sequence.write() user function for the mol_name_flag argument."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the None, int, and bin arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.sequence_fns.write, file='a', mol_name_col=data[1])
+            self.assertRaises(RelaxBoolError, self.sequence_fns.write, file='a', mol_name_flag=data[1])
 
 
-    def test_write_argfail_res_num_col(self):
-        """The proper failure of the sequence.write() user function for the res_num_col argument."""
+    def test_write_argfail_res_num_flag(self):
+        """The proper failure of the sequence.write() user function for the res_num_flag argument."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the None, int, and bin arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.sequence_fns.write, file='a', res_num_col=data[1])
+            self.assertRaises(RelaxBoolError, self.sequence_fns.write, file='a', res_num_flag=data[1])
 
 
-    def test_write_argfail_res_name_col(self):
-        """The proper failure of the sequence.write() user function for the res_name_col argument."""
+    def test_write_argfail_res_name_flag(self):
+        """The proper failure of the sequence.write() user function for the res_name_flag argument."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the None, int, and bin arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.sequence_fns.write, file='a', res_name_col=data[1])
+            self.assertRaises(RelaxBoolError, self.sequence_fns.write, file='a', res_name_flag=data[1])
 
 
-    def test_write_argfail_spin_num_col(self):
-        """The proper failure of the sequence.write() user function for the spin_num_col argument."""
+    def test_write_argfail_spin_num_flag(self):
+        """The proper failure of the sequence.write() user function for the spin_num_flag argument."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the None, int, and bin arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.sequence_fns.write, file='a', spin_num_col=data[1])
+            self.assertRaises(RelaxBoolError, self.sequence_fns.write, file='a', spin_num_flag=data[1])
 
 
-    def test_write_argfail_spin_name_col(self):
-        """The proper failure of the sequence.write() user function for the spin_name_col argument."""
+    def test_write_argfail_spin_name_flag(self):
+        """The proper failure of the sequence.write() user function for the spin_name_flag argument."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the None, int, and bin arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.sequence_fns.write, file='a', spin_name_col=data[1])
+            self.assertRaises(RelaxBoolError, self.sequence_fns.write, file='a', spin_name_flag=data[1])
 
 
     def test_write_argfail_sep(self):
