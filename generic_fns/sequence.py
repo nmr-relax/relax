@@ -280,7 +280,7 @@ def write(file, dir=None, sep=None, mol_name_flag=False, res_num_flag=False, res
 
 
 
-def write_body(file=None, sep=None, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True):
+def write_body(file=None, sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
     """Function for writing to the given file object the molecule, residue, and/or sequence data.
 
     @param file:                The file to write the data to.
@@ -315,7 +315,7 @@ def write_body(file=None, sep=None, mol_name_flag=True, res_num_flag=True, res_n
         write_line(file, mol_name, res_num, res_name, spin.num, spin.name, sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag)
 
 
-def write_header(file, sep=None, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True):
+def write_header(file, sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
     """Function for writing to the given file object the molecule, residue, and/or sequence data.
 
     @param file:                The file to write the data to.
@@ -356,7 +356,7 @@ def write_header(file, sep=None, mol_name_flag=True, res_num_flag=True, res_name
     file.write('\n')
 
 
-def write_line(file, mol_name, res_num, res_name, spin_num, spin_name, sep=None, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True):
+def write_line(file, mol_name, res_num, res_name, spin_num, spin_name, sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
     """Write to the given file object a single line of molecule, residue, and spin data.
 
     @param file:                The file to write the data to.
