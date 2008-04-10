@@ -53,7 +53,7 @@ def load_spins(spin_id=None):
     cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Loop over all atoms of the spin_id selection.
-    for mol_name, res_num, res_name, spin_num, spin_name, pos in cdp.structure.atom_loop(atom_id=spin_id, pos=True):
+    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
         # Initialise the identification string.
         id = ''
 
