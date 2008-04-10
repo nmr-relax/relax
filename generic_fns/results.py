@@ -139,9 +139,6 @@ def write(file="results", directory=None, force=False, format='columnar', compre
     if not relax_data_store.current_pipe:
         raise RelaxNoPipeError
 
-    # Specific functions.
-    function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
-
     # Specific results writing function.
     if format == 'xml':
         format = 'XML'
