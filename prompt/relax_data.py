@@ -387,7 +387,7 @@ class Relax_data:
         relax_data.read(ri_label=ri_label, frq_label=frq_label, frq=frq, file=file, dir=dir, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep)
 
 
-    def write(self, run=None, ri_label=None, frq_label=None, file=None, dir=None, force=0):
+    def write(self, run=None, ri_label=None, frq_label=None, file=None, dir=None, force=False):
         """Function for writing R1, R2, or NOE relaxation data to a file.
 
         Keyword Arguments
@@ -403,7 +403,7 @@ class Relax_data:
 
         dir:  The directory name.
 
-        force:  A flag which, if set to 1, will cause the file to be overwritten.
+        force:  A flag which if True will cause the file to be overwritten.
 
 
         Description
@@ -446,8 +446,8 @@ class Relax_data:
             raise RelaxNoneStrError, ('directory name', dir)
 
         # The force flag.
-        if type(force) != int or (force != 0 and force != 1):
-            raise RelaxBinError, ('force flag', force)
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
         self.__relax__.specific.relax_data.write(run=run, ri_label=ri_label, frq_label=frq_label, file=file, dir=dir, force=force)
