@@ -361,3 +361,54 @@ def write_header(file, sep=None, mol_name_flag=True, res_num_flag=True, res_name
     if spin_name_flag:
         file.write("%-10s " % ("Spin_name"+sep))
     file.write('\n')
+
+
+def write_line(file, mol_name, res_num, res_name, spin_num, spin_name, sep=None, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True):
+    """Write to the given file object a single line of molecule, residue, and spin data.
+
+    @param file:                The file to write the data to.
+    @type file:                 writable file object
+    @param mol_name:            The molecule name.
+    @type mol_name:             anything
+    @param res_num:             The residue number.
+    @type res_num:              anything
+    @param res_name:            The residue name.
+    @type res_name:             anything
+    @param spin_num:            The spin number.
+    @type spin_num:             anything
+    @param spin_name:           The spin name.
+    @type spin_name:            anything
+    @keyword sep:               The column seperator which, if None, defaults to whitespace.
+    @type sep:                  str or None
+    @keyword mol_name_flag:     A flag which if True will cause the molecule name column to be
+                                written.
+    @type mol_name_flag:        bool
+    @keyword res_num_flag:      A flag which if True will cause the residue number column to be
+                                written.
+    @type res_num_flag:         bool
+    @keyword res_name_flag:     A flag which if True will cause the residue name column to be
+                                written.
+    @type res_name_flag:        bool
+    @keyword spin_name_flag:    A flag which if True will cause the spin name column to be written.
+    @type spin_name_flag:       bool
+    @keyword spin_num_flag:     A flag which if True will cause the spin number column to be
+                                written.
+    @type spin_num_flag:        bool
+    """
+
+    # No special seperator character.
+    if sep == None:
+        sep = ''
+
+    # Write the header.
+    if mol_name_flag:
+        file.write("%-10s " % (str(mol_name)+sep))
+    if res_num_flag:
+        file.write("%-10s " % (str(res_num)+sep))
+    if res_name_flag:
+        file.write("%-10s " % (str(res_name)+sep))
+    if spin_num_flag:
+        file.write("%-10s " % (str(spin.num)+sep))
+    if spin_name_flag:
+        file.write("%-10s " % (str(spin.name)+sep))
+    file.write('\n')
