@@ -280,20 +280,24 @@ def write(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col
 def write_body(file=None, sep=None, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True):
     """Function for writing to the given file object the molecule, residue, and/or sequence data.
 
-    @param file:            The file object to write the data to.
-    @type file:             file object
-    @param sep:             The column seperator which, if None, defaults to whitespace.
-    @type sep:              str or None
-    @param mol_name_flag:   A flag which if True will cause the molecule name column to be written.
-    @type mol_name_flag:    bool
-    @param res_num_flag:    A flag which if True will cause the residue number column to be written.
-    @type res_num_flag:     bool
-    @param res_name_flag:   A flag which if True will cause the residue name column to be written.
-    @type res_name_flag:    bool
-    @param spin_name_flag:  A flag which if True will cause the spin name column to be written.
-    @type spin_name_flag:   bool
-    @param spin_num_flag:   A flag which if True will cause the spin number column to be written.
-    @type spin_num_flag:    bool
+    @param file:                The file to write the data to.
+    @type file:                 writable file object
+    @keyword sep:               The column seperator which, if None, defaults to whitespace.
+    @type sep:                  str or None
+    @keyword mol_name_flag:     A flag which if True will cause the molecule name column to be
+                                written.
+    @type mol_name_flag:        bool
+    @keyword res_num_flag:      A flag which if True will cause the residue number column to be
+                                written.
+    @type res_num_flag:         bool
+    @keyword res_name_flag:     A flag which if True will cause the residue name column to be
+                                written.
+    @type res_name_flag:        bool
+    @keyword spin_name_flag:    A flag which if True will cause the spin name column to be written.
+    @type spin_name_flag:       bool
+    @keyword spin_num_flag:     A flag which if True will cause the spin number column to be
+                                written.
+    @type spin_num_flag:        bool
     """
 
     # No special seperator character.
@@ -321,20 +325,24 @@ def write_body(file=None, sep=None, mol_name_flag=True, res_num_flag=True, res_n
 def write_header(file, sep=None, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True):
     """Function for writing to the given file object the molecule, residue, and/or sequence data.
 
-    @param file:            The file to write the data to.
-    @type file:             writable file object
-    @param sep:             The column seperator which, if None, defaults to whitespace.
-    @type sep:              str or None
-    @param mol_name_flag:   A flag which if True will cause the molecule name column to be written.
-    @type mol_name_flag:    bool
-    @param res_num_flag:    A flag which if True will cause the residue number column to be written.
-    @type res_num_flag:     bool
-    @param res_name_flag:   A flag which if True will cause the residue name column to be written.
-    @type res_name_flag:    bool
-    @param spin_name_flag:  A flag which if True will cause the spin name column to be written.
-    @type spin_name_flag:   bool
-    @param spin_num_flag:   A flag which if True will cause the spin number column to be written.
-    @type spin_num_flag:    bool
+    @param file:                The file to write the data to.
+    @type file:                 writable file object
+    @keyword sep:               The column seperator which, if None, defaults to whitespace.
+    @type sep:                  str or None
+    @keyword mol_name_flag:     A flag which if True will cause the molecule name column to be
+                                written.
+    @type mol_name_flag:        bool
+    @keyword res_num_flag:      A flag which if True will cause the residue number column to be
+                                written.
+    @type res_num_flag:         bool
+    @keyword res_name_flag:     A flag which if True will cause the residue name column to be
+                                written.
+    @type res_name_flag:        bool
+    @keyword spin_name_flag:    A flag which if True will cause the spin name column to be written.
+    @type spin_name_flag:       bool
+    @keyword spin_num_flag:     A flag which if True will cause the spin number column to be
+                                written.
+    @type spin_num_flag:        bool
     """
 
     # No special seperator character.
