@@ -354,35 +354,36 @@ class Diffusion_tensor:
 
         To set an isotropic diffusion tensor with a correlation time of 10 ns, type:
 
-        relax> diffusion_tensor(10e-9)
-        relax> diffusion_tensor(params=10e-9)
-        relax> diffusion_tensor(10.0, 1e-9)
-        relax> diffusion_tensor(params=10.0, time_scale=1e-9, fixed=True)
+        relax> diffusion_tensor.init(10e-9)
+        relax> diffusion_tensor.init(params=10e-9)
+        relax> diffusion_tensor.init(10.0, 1e-9)
+        relax> diffusion_tensor.init(params=10.0, time_scale=1e-9, fixed=True)
 
 
         To select axially symmetric diffusion with a tm value of 8.5 ns, Dratio of 1.1, theta value
         of 20 degrees, and phi value of 20 degrees, type:
 
-        relax> diffusion_tensor((8.5e-9, 1.1, 20.0, 20.0), param_types=2)
+        relax> diffusion_tensor.init((8.5e-9, 1.1, 20.0, 20.0), param_types=2)
 
 
         To select a spheroid diffusion tensor with a Dpar value of 1.698e7, Dper value of 1.417e7,
         theta value of 67.174 degrees, and phi value of -83.718 degrees, type one of:
 
-        relax> diffusion_tensor((1.698e7, 1.417e7, 67.174, -83.718), param_types=3)
-        relax> diffusion_tensor(params=(1.698e7, 1.417e7, 67.174, -83.718), param_types=3)
-        relax> diffusion_tensor((1.698e-1, 1.417e-1, 67.174, -83.718), param_types=3, d_scale=1e8)
-        relax> diffusion_tensor(params=(1.698e-1, 1.417e-1, 67.174, -83.718), param_types=3,
-                                d_scale=1e8)
-        relax> diffusion_tensor((1.698e-1, 1.417e-1, 1.1724, -1.4612), param_types=3, d_scale=1e8,
-                                angle_units='rad')
-        relax> diffusion_tensor(params=(1.698e-1, 1.417e-1, 1.1724, -1.4612), param_types=3,
-                                d_scale=1e8, angle_units='rad', fixed=True)
+        relax> diffusion_tensor.init((1.698e7, 1.417e7, 67.174, -83.718), param_types=3)
+        relax> diffusion_tensor.init(params=(1.698e7, 1.417e7, 67.174, -83.718), param_types=3)
+        relax> diffusion_tensor.init((1.698e-1, 1.417e-1, 67.174, -83.718), param_types=3,
+                                     d_scale=1e8)
+        relax> diffusion_tensor.init(params=(1.698e-1, 1.417e-1, 67.174, -83.718), param_types=3,
+                                     d_scale=1e8)
+        relax> diffusion_tensor.init((1.698e-1, 1.417e-1, 1.1724, -1.4612), param_types=3,
+                                     d_scale=1e8, angle_units='rad')
+        relax> diffusion_tensor.init(params=(1.698e-1, 1.417e-1, 1.1724, -1.4612), param_types=3,
+                                     d_scale=1e8, angle_units='rad', fixed=True)
 
 
         To select ellipsoidal diffusion, type:
 
-        relax> diffusion_tensor((1.340e7, 1.516e7, 1.691e7, -82.027, -80.573, 65.568),
+        relax> diffusion_tensor.init((1.340e7, 1.516e7, 1.691e7, -82.027, -80.573, 65.568),
                                 param_types=2)
         """
 
