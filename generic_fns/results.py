@@ -26,7 +26,7 @@ import sys
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPipeError
-from relax_io import open_write_file
+from relax_io import extract_data, open_write_file, strip
 from specific_fns.setup import get_specific_fn, get_string
 
 
@@ -78,58 +78,42 @@ def display(run=None, format='columnar'):
     self.write_function(sys.stdout, run)
 
 
-def read(run=None, file='results', directory=None, file_data=None, format='columnar', verbosity=1):
+def read(file='results', directory=None, file_data=None, format='columnar', verbosity=1):
     """Function for reading the data out of a file."""
 
-    # Test if the run exists.
-    if not run in relax_data_store.run_names:
-        raise RelaxNoPipeError, run
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
 
-    # Function type.
-    function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
-
-    # Equation type specific function setup.
+    # Specific results writing function.
     if format == 'xml':
         format = 'XML'
-        self.read_function = self.relax.specific_setup.setup('read_xml_results', function_type)
+        read_function = get_specific_fn('read_xml_results', relax_data_store[relax_data_store.current_pipe].pipe_type, raise_error=False)
     elif format == 'columnar':
-        self.read_function = self.relax.specific_setup.setup('read_columnar_results', function_type)
+        read_function = get_specific_fn('read_columnar_results', relax_data_store[relax_data_store.current_pipe].pipe_type, raise_error=False)
     else:
         raise RelaxError, "Unknown format " + `format` + "."
 
     # No function.
-    if not self.read_function:
+    if not read_function:
         raise RelaxError, "The " + format + " format is not currently supported for " + self.relax.specific_setup.get_string(function_type) + "."
 
-    # The directory.
-    if directory == 'run':
-        directory = run
-
-    # Make sure that there are no data structures corresponding to the run.
-    for data_name in dir(relax_data_store):
-        # Get the object.
-        data = getattr(relax_data_store, data_name)
-
-        # Skip the data if it is not a dictionary (or equivalent).
-        if not hasattr(data, 'has_key'):
-            continue
-
-        # Skip the data if it doesn't contain the key 'old_run'.
-        if data.has_key(run):
-            raise RelaxError, "Data corresponding to the run " + `run` + " exists."
+    # Make sure that the data pipe is empty.
+    if not relax_data_store[relax_data_store.current_pipe].is_empty():
+        raise RelaxError, "The current data pipe is not empty."
 
     # Extract the data from the file.
-    file_data = self.relax.IO.extract_data(file_name=file, dir=directory, file_data=file_data)
+    file_data = extract_data(file_name=file, dir=directory, file_data=file_data)
 
     # Strip data.
-    file_data = self.relax.IO.strip(file_data)
+    file_data = strip(file_data)
 
     # Do nothing if the file does not exist.
     if not file_data:
         raise RelaxFileEmptyError
 
     # Read the results.
-    self.read_function(run, file_data, verbosity)
+    read_function(file_data, verbosity)
 
 
 def write(file="results", directory=None, force=False, format='columnar', compress_type=1, verbosity=1):
