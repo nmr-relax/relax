@@ -25,6 +25,7 @@ from cPickle import dump, load
 
 # relax module imports.
 from data import Data as relax_data_store
+from relax_errors import RelaxError
 from relax_io import open_read_file, open_write_file
 
 
@@ -41,7 +42,10 @@ def load_state(state=None, dir_name=None):
     file = open_read_file(file_name=state, dir=dir_name)
 
     # Unpickle the data class.
-    state = load(file)
+    try:
+        state = load(file)
+    except:
+        raise RelaxError, "The saved state " + `state` + " is not compatible with this version of relax."
 
     # Close the file.
     file.close()
