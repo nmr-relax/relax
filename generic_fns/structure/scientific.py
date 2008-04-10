@@ -135,6 +135,7 @@ class Scientific_data(Str_object):
                         # Atom number, name, and position.
                         atom_num = atom.properties['serial_number']
                         atom_name = atom.name
+                        element = atom.properties['element']
                         pos = atom.position.array
 
                         # Skip non-matching atoms.
