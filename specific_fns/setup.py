@@ -42,7 +42,7 @@ relax_fit_obj = Relax_fit()
 
 
 # The function for returning the requested specific function.
-def get_specific_fn(eqi, function_type, raise_error=1):
+def get_specific_fn(eqi, function_type, raise_error=True):
     """The function for returning the requested specific function."""
 
     # Initialise.
