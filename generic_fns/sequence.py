@@ -406,7 +406,7 @@ def write_line(file, mol_name, res_num, res_name, spin_num, spin_name, sep=None,
     if res_name_flag:
         file.write("%-10s " % (str(res_name)+sep))
     if spin_num_flag:
-        file.write("%-10s " % (str(spin_num)+sep))
+        file.write("%-10s " % (str(spin.num)+sep))
     if spin_name_flag:
-        file.write("%-10s " % (str(spin_name)+sep))
+        file.write("%-10s " % (str(spin.name)+sep))
     file.write('\n')
