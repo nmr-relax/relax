@@ -235,7 +235,7 @@ def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=No
                 raise RelaxInvalidSeqError, data[i]
 
 
-def write(file, dir=None, sep=None, mol_name_flag=None, res_num_flag=None, res_name_flag=None, spin_num_flag=None, spin_name_flag=None, force=False):
+def write(file, dir=None, sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False, force=False):
     """Function for writing molecule, residue, and/or sequence data.
 
     This calls the write_body() function to do most of the work.
