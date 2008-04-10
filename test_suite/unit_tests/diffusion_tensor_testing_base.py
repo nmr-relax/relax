@@ -64,7 +64,7 @@ class Diffusion_tensor_base_class:
         """
 
         # Initialise the tensor.
-        self.diffusion_tensor_fns.init(params=(13.9, 1.8, 0.7, 10.6, -23.3, 0.34), time_scale=1e-9, d_scale=1e7, angle_units='rad', param_types=0, fixed=1)
+        self.diffusion_tensor_fns.init(params=(13.9, 1.8, 0.7, 10.6, -23.3, 0.34), time_scale=1e-9, d_scale=1e7, angle_units='rad', param_types=0, fixed=True)
 
         # Change the current data pipe.
         relax_data_store.current_pipe = 'test'
@@ -113,7 +113,7 @@ class Diffusion_tensor_base_class:
         """
 
         # Initialise the tensor.
-        self.diffusion_tensor_fns.init(params=(8.6, 1.3, 600, -20), time_scale=1e-9, d_scale=1e7, angle_units='deg', param_types=2, spheroid_type='prolate', fixed=0)
+        self.diffusion_tensor_fns.init(params=(8.6, 1.3, 600, -20), time_scale=1e-9, d_scale=1e7, angle_units='deg', param_types=2, spheroid_type='prolate', fixed=False)
 
         # Change the current data pipe.
         relax_data_store.current_pipe = 'test'
@@ -139,7 +139,7 @@ class Diffusion_tensor_base_class:
         """
 
         # Initialise the tensor.
-        self.diffusion_tensor_fns.init(params=(13.9, 1.8, 0.7, 10.6, -23.3, 0.34), time_scale=1e-9, d_scale=1e7, angle_units='rad', param_types=0, fixed=1)
+        self.diffusion_tensor_fns.init(params=(13.9, 1.8, 0.7, 10.6, -23.3, 0.34), time_scale=1e-9, d_scale=1e7, angle_units='rad', param_types=0, fixed=True)
 
         # Copy the tensor to the test pipe.
         self.diffusion_tensor_fns.copy(pipe_to='test')
@@ -182,7 +182,7 @@ class Diffusion_tensor_base_class:
         """
 
         # Initialise the tensor.
-        self.diffusion_tensor_fns.init(params=(8.6, 1.3, 600, -20), time_scale=1e-9, d_scale=1e7, angle_units='deg', param_types=2, spheroid_type='prolate', fixed=0)
+        self.diffusion_tensor_fns.init(params=(8.6, 1.3, 600, -20), time_scale=1e-9, d_scale=1e7, angle_units='deg', param_types=2, spheroid_type='prolate', fixed=False)
 
         # Copy the tensor to the test pipe.
         self.diffusion_tensor_fns.copy(pipe_from='orig', pipe_to='test')
@@ -205,7 +205,7 @@ class Diffusion_tensor_base_class:
         """
 
         # Initialise the tensor.
-        self.diffusion_tensor_fns.init(params=(8.6, 1.3, 600, -20), time_scale=1e-9, d_scale=1e7, angle_units='deg', param_types=2, spheroid_type='prolate', fixed=0)
+        self.diffusion_tensor_fns.init(params=(8.6, 1.3, 600, -20), time_scale=1e-9, d_scale=1e7, angle_units='deg', param_types=2, spheroid_type='prolate', fixed=False)
 
         # Delete the tensor data.
         self.diffusion_tensor_fns.delete()
@@ -247,7 +247,7 @@ class Diffusion_tensor_base_class:
         """
 
         # Initialise the tensor.
-        self.diffusion_tensor_fns.init(params=(13.9, 1.8, 0.7, 10.6, -23.3, 0.34), time_scale=1e-9, d_scale=1e7, angle_units='rad', param_types=0, fixed=1)
+        self.diffusion_tensor_fns.init(params=(13.9, 1.8, 0.7, 10.6, -23.3, 0.34), time_scale=1e-9, d_scale=1e7, angle_units='rad', param_types=0, fixed=True)
 
         # Display the diffusion tensor.
         self.diffusion_tensor_fns.display()
@@ -300,7 +300,7 @@ class Diffusion_tensor_base_class:
         """
 
         # Initialise the tensor.
-        self.diffusion_tensor_fns.init(params=(8.6, 1.3, 600, -20), time_scale=1e-9, d_scale=1e7, angle_units='deg', param_types=2, spheroid_type='prolate', fixed=0)
+        self.diffusion_tensor_fns.init(params=(8.6, 1.3, 600, -20), time_scale=1e-9, d_scale=1e7, angle_units='deg', param_types=2, spheroid_type='prolate', fixed=False)
 
         # Display the diffusion tensor.
         self.diffusion_tensor_fns.display()
@@ -326,7 +326,7 @@ class Diffusion_tensor_base_class:
         """
 
         # Initialise the tensor.
-        self.diffusion_tensor_fns.init(params=(13.9, 1.8, 0.7, 10.6, -23.3, 0.34), time_scale=1e-9, d_scale=1e7, angle_units='rad', param_types=0, fixed=1)
+        self.diffusion_tensor_fns.init(params=(13.9, 1.8, 0.7, 10.6, -23.3, 0.34), time_scale=1e-9, d_scale=1e7, angle_units='rad', param_types=0, fixed=True)
 
         # Test the diffusion tensor.
         self.assertEqual(relax_data_store['orig'].diff_tensor.type, 'ellipsoid')
@@ -363,7 +363,7 @@ class Diffusion_tensor_base_class:
         """
 
         # Initialise the tensor.
-        self.diffusion_tensor_fns.init(params=(8.6, 1.3, 600, -20), time_scale=1e-9, d_scale=1e7, angle_units='deg', param_types=2, spheroid_type='prolate', fixed=0)
+        self.diffusion_tensor_fns.init(params=(8.6, 1.3, 600, -20), time_scale=1e-9, d_scale=1e7, angle_units='deg', param_types=2, spheroid_type='prolate', fixed=False)
 
         # Test the diffusion tensor.
         self.assertEqual(relax_data_store['orig'].diff_tensor.type, 'spheroid')
