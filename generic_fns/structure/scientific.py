@@ -51,20 +51,30 @@ class Scientific_data(Str_object):
     id = 'scientific'
 
 
-    def atom_loop(self, atom_id=None, pos=False):
+    def atom_loop(self, atom_id=None, mol_name=False, res_num=False, res_name=False, atom_num=False, atom_name=False, element=False, pos=False):
         """Generator function for looping over all atoms in the Scientific Python data objects.
 
         @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching
                             this selection will be yielded.
         @type atom_id:      str
-        @keyword pos:       A flag which if True will cause the atom position to be yielded along
-                            with all the other information.
+        @keyword mol_name:  A flag which if True will cause the molecule name to be yielded.
+        @type mol_name:     bool
+        @keyword res_num:   A flag which if True will cause the residue number to be yielded.
+        @type res_num:      bool
+        @keyword res_name:  A flag which if True will cause the residue name to be yielded.
+        @type res_name:     bool
+        @keyword atom_num:  A flag which if True will cause the atom number to be yielded.
+        @type atom_num:     bool
+        @keyword atom_name: A flag which if True will cause the atom name to be yielded.
+        @type atom_name:    bool
+        @keyword element:   A flag which if True will cause the element name to be yielded.
+        @type element:      bool
+        @keyword pos:       A flag which if True will cause the atomic position to be yielded.
         @type pos:          bool
-        @return:            A tuple consisting of the molecule name, residue number, residue name,
-                            atom number, and atom name.  If pos is True, then the 3D array of the
-                            atom position is also returned.
-        @rtype:             tuple (str, int, str, int, str) and if pos==True, (str, int, str, int,
-                            str, array of len 3)
+        @return:            A tuple of atomic information, as described in the API method docstring.
+        @rtype:             tuple with molecule name (str), residue number (int), residue name
+                            (str), atom number (int), atom name(str), element name (str), and atomic
+                            position (array of len 3).
         """
 
         # Split up the selection string.
@@ -129,11 +139,25 @@ class Scientific_data(Str_object):
                         if atom_token and not (atom_name in atoms or atom_num in atoms):
                             continue
 
-                        # Yield the information.
+                        # Build the tuple to be yielded.
+                        atomic_tuple = ()
+                        if mol_name:
+                            atomic_tuple = atomic_tuple + (mol_name,)
+                        if res_num:
+                            atomic_tuple = atomic_tuple + (res_num,)
+                        if res_name:
+                            atomic_tuple = atomic_tuple + (res_name,)
+                        if atom_num:
+                            atomic_tuple = atomic_tuple + (atom_num,)
+                        if atom_name:
+                            atomic_tuple = atomic_tuple + (atom_name,)
+                        if element:
+                            atomic_tuple = atomic_tuple + (element,)
                         if pos:
-                            yield mol_name, res_num, res_name, atom_num, atom_name, pos
-                        else:
-                            yield mol_name, res_num, res_name, atom_num, atom_name
+                            atomic_tuple = atomic_tuple + (pos,)
+
+                        # Yield the information.
+                        yield atomic_tuple
 
 
     def load_structures(self, file_path, model, verbosity=False):
