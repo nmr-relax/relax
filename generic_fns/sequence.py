@@ -277,11 +277,13 @@ def write(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col
 
 
 
-def write_body(file=None, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True, sep=None):
+def write_body(file=None, sep=None, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True):
     """Function for writing to the given file object the molecule, residue, and/or sequence data.
 
     @param file:            The file object to write the data to.
     @type file:             file object
+    @param sep:             The column seperator which, if None, defaults to whitespace.
+    @type sep:              str or None
     @param mol_name_flag:   A flag which if True will cause the molecule name column to be written.
     @type mol_name_flag:    bool
     @param res_num_flag:    A flag which if True will cause the residue number column to be written.
@@ -292,8 +294,6 @@ def write_body(file=None, mol_name_flag=True, res_num_flag=True, res_name_flag=T
     @type spin_name_flag:   bool
     @param spin_num_flag:   A flag which if True will cause the spin number column to be written.
     @type spin_num_flag:    bool
-    @param sep:             The column seperator which, if None, defaults to whitespace.
-    @type sep:              str or None
     """
 
     # No special seperator character.
@@ -301,7 +301,7 @@ def write_body(file=None, mol_name_flag=True, res_num_flag=True, res_name_flag=T
         sep = ''
 
     # Write the header.
-    write_header(file, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag, sep=sep)
+    write_header(file, sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag)
 
     # Loop over the spins.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
@@ -318,11 +318,13 @@ def write_body(file=None, mol_name_flag=True, res_num_flag=True, res_name_flag=T
         file.write('\n')
 
 
-def write_header(file, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True, sep=None):
+def write_header(file, sep=None, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True):
     """Function for writing to the given file object the molecule, residue, and/or sequence data.
 
     @param file:            The file to write the data to.
     @type file:             writable file object
+    @param sep:             The column seperator which, if None, defaults to whitespace.
+    @type sep:              str or None
     @param mol_name_flag:   A flag which if True will cause the molecule name column to be written.
     @type mol_name_flag:    bool
     @param res_num_flag:    A flag which if True will cause the residue number column to be written.
@@ -333,8 +335,6 @@ def write_header(file, mol_name_flag=True, res_num_flag=True, res_name_flag=True
     @type spin_name_flag:   bool
     @param spin_num_flag:   A flag which if True will cause the spin number column to be written.
     @type spin_num_flag:    bool
-    @param sep:             The column seperator which, if None, defaults to whitespace.
-    @type sep:              str or None
     """
 
     # No special seperator character.
