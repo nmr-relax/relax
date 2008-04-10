@@ -92,15 +92,15 @@ def load_spins(spin_id=None):
             res_cont = mol_cont.res[-1]
 
         # Add the atom number to the ID string (atom name is ignored because only the number is unique).
-        id = id + '@' + `spin_num`
+        id = id + '@' + `atom_num`
 
         # Get the corresponding spin container.
         spin_cont = return_spin(id)
 
         # Add the spin if it doesn't exist.
-        if spin_name and spin_cont == None:
+        if atom_name and spin_cont == None:
             # Add the spin.
-            res_cont.spin.add_item(spin_name=spin_name, spin_num=spin_num)
+            res_cont.spin.add_item(spin_name=atom_name, spin_num=atom_num)
 
             # Get the container.
             spin_cont = res_cont.spin[-1]
