@@ -85,8 +85,8 @@ class Test_structure(Structure_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the bin arguments, and skip them.
-            if data[0] == 'bin':
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
                 continue
 
             # The argument test.
