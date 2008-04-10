@@ -42,7 +42,7 @@ class Sequence:
         self.__relax__ = relax
 
 
-    def display(self, sep=None, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True):
+    def display(self, sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
         """Function for displaying sequences of molecules, residues, and/or spins.
 
         Keyword Arguments
@@ -216,7 +216,7 @@ class Sequence:
         sequence.read(file=file, dir=dir, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep)
 
 
-    def write(self, file, dir=None, sep=None, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True, force=False):
+    def write(self, file, dir=None, sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False, force=False):
         """Write the molecule, residue, and spin sequence to a file.
 
         Keyword Arguments
