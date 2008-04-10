@@ -106,19 +106,6 @@ class Test_structure(Structure_base_class, TestCase):
             self.assertRaises(RelaxFloatError, self.structure_fns.create_vector_dist, length=data[1])
 
 
-    def test_create_vector_dist_argfail_symmetry(self):
-        """The symmetry arg test of the structure.create_vector_dist() user function."""
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the bin arguments, and skip them.
-            if data[0] == 'bin':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxBinError, self.structure_fns.create_vector_dist, symmetry=data[1])
-
-
     def test_create_vector_dist_argfail_file(self):
         """The file arg test of the structure.create_vector_dist() user function."""
 
@@ -145,17 +132,30 @@ class Test_structure(Structure_base_class, TestCase):
             self.assertRaises(RelaxNoneStrError, self.structure_fns.create_vector_dist, dir=data[1])
 
 
+    def test_create_vector_dist_argfail_symmetry(self):
+        """The symmetry arg test of the structure.create_vector_dist() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxBoolError, self.structure_fns.create_vector_dist, symmetry=data[1])
+
+
     def test_create_vector_dist_argfail_force(self):
         """The force arg test of the structure.create_vector_dist() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the bin arguments, and skip them.
-            if data[0] == 'bin':
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxBinError, self.structure_fns.create_vector_dist, force=data[1])
+            self.assertRaises(RelaxBoolError, self.structure_fns.create_vector_dist, force=data[1])
 
 
     def test_load_spins_argfail_spin_id(self):
