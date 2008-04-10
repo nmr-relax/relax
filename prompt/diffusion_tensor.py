@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007 Edward d'Auvergne                             #
+# Copyright (C) 2003-2005, 2007-2008 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,7 +26,7 @@ import sys
 # relax module imports.
 import help
 from generic_fns import diffusion_tensor
-from relax_errors import RelaxBinError, RelaxError, RelaxFloatError, RelaxIntError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
+from relax_errors import RelaxBoolError, RelaxError, RelaxFloatError, RelaxIntError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
 
 
 class Diffusion_tensor:
@@ -135,7 +135,7 @@ class Diffusion_tensor:
         diffusion_tensor.display()
 
 
-    def init(self, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=1):
+    def init(self, params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=True):
         """Function for initialising the diffusion tensor.
 
         Keyword Arguments
@@ -357,7 +357,7 @@ class Diffusion_tensor:
         relax> diffusion_tensor(10e-9)
         relax> diffusion_tensor(params=10e-9)
         relax> diffusion_tensor(10.0, 1e-9)
-        relax> diffusion_tensor(params=10.0, time_scale=1e-9, fixed=1)
+        relax> diffusion_tensor(params=10.0, time_scale=1e-9, fixed=True)
 
 
         To select axially symmetric diffusion with a tm value of 8.5 ns, Dratio of 1.1, theta value
@@ -377,7 +377,7 @@ class Diffusion_tensor:
         relax> diffusion_tensor((1.698e-1, 1.417e-1, 1.1724, -1.4612), param_types=3, d_scale=1e8,
                                 angle_units='rad')
         relax> diffusion_tensor(params=(1.698e-1, 1.417e-1, 1.1724, -1.4612), param_types=3,
-                                d_scale=1e8, angle_units='rad', fixed=1)
+                                d_scale=1e8, angle_units='rad', fixed=True)
 
 
         To select ellipsoidal diffusion, type:
@@ -429,8 +429,8 @@ class Diffusion_tensor:
             raise RelaxNoneStrError, ('spheroid type', spheroid_type)
 
         # The fixed flag.
-        if type(fixed) != int or (fixed != 0 and fixed != 1):
-            raise RelaxBinError, ('fixed flag', fixed)
+        if type(fixed) != bool:
+            raise RelaxBoolError, ('fixed flag', fixed)
 
         # Execute the functional code.
         diffusion_tensor.init(params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, spheroid_type=spheroid_type, fixed=fixed)
