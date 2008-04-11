@@ -109,6 +109,39 @@ class Scientific_data(Str_object):
                     yield mol, key, 'other'
 
 
+    def __residue_loop(self, mol, mol_type, residues):
+        """Generator function for looping over all residues in the Scientific PDB data objects.
+
+        @param mol:         The individual residue Scientific Python PDB data object.
+        @type mol:          Scientific Python PDB object
+        @param residues:    A list of residue names.  If non-empty, only residues found in this list
+                            will be returned.
+        @type residues:     list of str
+        @return:            A tuple of the Scientific Python PDB object representing a single
+                            residue, the residue number, and residue name.
+        @rtype:             (Scientific Python PDB object, str, str)
+        """
+
+        # Proteins, RNA, and DNA.
+        if mol_type != 'other':
+            # Loop over the residues of the protein in the PDB file.
+            for res in mol.residues:
+                # Residue number and name.
+                if mol_type == 'nucleic acid':
+                    res_name = res.name[-1]
+                else:
+                    res_name = res.name
+                res_num = res.number
+
+                # Skip non-matching residues.
+                if residues and not (res_name in residues or res_num in residues):
+                    continue
+
+                # Yield the residue info.
+                yield res, res_num, res_name
+
+
+
     def atom_loop(self, atom_id=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False):
         """Generator function for looping over all atoms in the Scientific Python data objects.
 
@@ -150,18 +183,7 @@ class Scientific_data(Str_object):
             # Loop over each individual molecule.
             for mol, mol_name, mol_type in self.__molecule_loop(struct, molecules):
                 # Loop over the residues of the protein in the PDB file.
-                for res in mol.residues:
-                    # Residue number and name.
-                    if mol_type == 'nucleic acid':
-                        res_name = res.name[-1]
-                    else:
-                        res_name = res.name
-                    res_num = res.number
-
-                    # Skip non-matching residues.
-                    if res_token and not (res_name in residues or res_num in residues):
-                        continue
-
+                for res, res_num, res_name in self.__residue_loop(mol, mol_type, residues):
                     # Loop over the atoms of the residue.
                     for atom in res:
                         # Atom number, name, and position.
