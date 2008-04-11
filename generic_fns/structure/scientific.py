@@ -147,51 +147,12 @@ class Scientific_data(Str_object):
 
         # Loop over the loaded structures.
         for struct in self.structural_data:
-            # Initialise an array of individual structures from each element of self.structural_data.
-            comps = []
-            molecule = []
-
-            # Protein.
-            if struct.peptide_chains:
-                for chain in struct.peptide_chains:
-                    comps.append(chain)
-                    molecule.append('protein')
-
-            # RNA/DNA.
-            elif struct.nucleotide_chains:
-                for chain in struct.nucleotide_chains:
-                    comps.append(chain)
-                    molecule.append('nucleic acid')
-
-            # Other molecules.
-            elif struct.molecules:
-                for key in struct.molecules:
-                    for mol in struct.molecules[key]:
-                        comps.append(mol)
-                        molecule.append(key)
-
-            # We have a problem!
-            else:
-                raise RelaxNoPdbChainError
-
-            # Loop over each individual molecules.
-            for i in xrange(len(comps)):
-                # The molecule name.
-                if hasattr(comps[i], 'chain_id') and comps[i].chain_id:
-                    mol_name = comps[i].chain_id
-                elif hasattr(comps[i], 'segment_id') and comps[i].segment_id:
-                    mol_name = comps[i].segment_id
-                else:
-                    mol_name = None
-
-                # Skip non-matching molecules.
-                if mol_token and mol_name not in molecules:
-                    continue
-
+            # Loop over each individual molecule.
+            for mol, mol_name, mol_type in self.__molecule_loop(struct, molecules):
                 # Loop over the residues of the protein in the PDB file.
-                for res in comps[i].residues:
+                for res in mol.residues:
                     # Residue number and name.
-                    if molecule == 'nucleic acid':
+                    if mol_type == 'nucleic acid':
                         res_name = res.name[-1]
                     else:
                         res_name = res.name
