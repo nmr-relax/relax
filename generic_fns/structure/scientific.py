@@ -106,8 +106,12 @@ class Scientific_data(Str_object):
                     molecule.append('nucleic acid')
 
             # Other molecules.
-            else:
+            elif struct.molecules:
                 pass  # for now.
+
+            # We have a problem!
+            else:
+                raise RelaxNoPdbChainError
 
             # Loop over each individual molecules.
             for mol in comps:
