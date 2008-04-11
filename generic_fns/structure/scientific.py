@@ -200,8 +200,6 @@ class Scientific_data(Str_object):
                         element = atom.properties['element']
                         pos = atom.position.array
 
-                        print mol_name, res_num, res_name, atom_num, atom_name
-
                         # Skip non-matching atoms.
                         if atom_token and not (atom_name in atoms or atom_num in atoms):
                             continue
