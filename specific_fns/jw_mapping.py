@@ -402,23 +402,20 @@ class Jw_mapping(Common_functions):
         cdp.jw_frq = frq
 
 
-    def set_error(self, instance, spin, error):
+    def set_error(self, spin, error):
         """Function for setting parameter errors."""
-
-        # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Return J(0) sim data.
         if index == 0:
-            cdp.res[instance].j0_err = error
+            spin.j0_err = error
 
         # Return J(wX) sim data.
         if index == 1:
-            cdp.res[instance].jwx_err = error
+            spin.jwx_err = error
 
         # Return J(wH) sim data.
         if index == 2:
-            cdp.res[instance].jwh_err = error
+            spin.jwh_err = error
 
 
     def sim_return_param(self, instance, index):
