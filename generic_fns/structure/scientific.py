@@ -51,6 +51,64 @@ class Scientific_data(Str_object):
     id = 'scientific'
 
 
+    def __molecule_loop(self, struct, molecules):
+        """Generator function for looping over all molecules in the Scientific PDB data objects.
+
+        @param struct:      The individual structure object, the highest level Scientific Python PDB
+                            object.
+        @type struct:       Scientific Python PDB object
+        @param molecules:   A list of molecule names.  If non-empty, only molecules found in this
+                            list will be returned.
+        @type molecules:    list of str
+        @return:            A tuple of the Scientific Python PDB object representing a single
+                            molecule, the molecule name, and molecule type.
+        @rtype:             (Scientific Python PDB object, str, str)
+        """
+
+        # Protein.
+        if struct.peptide_chains:
+            for chain in struct.peptide_chains:
+                # The molecule name.
+                if hasattr(chain, 'chain_id') and chain.chain_id:
+                    mol_name = chain.chain_id
+                elif hasattr(chain, 'segment_id') and chain.segment_id:
+                    mol_name = chain.segment_id
+                else:
+                    mol_name = None
+
+                # Skip non-matching molecules.
+                if molecules and mol_name not in molecules:
+                    continue
+
+                # Yield the molecule and its name.
+                yield chain, mol_name, 'protein'
+
+        # RNA/DNA.
+        if struct.nucleotide_chains:
+            for chain in struct.nucleotide_chains:
+                # The molecule name.
+                if hasattr(chain, 'chain_id') and chain.chain_id:
+                    mol_name = chain.chain_id
+                elif hasattr(chain, 'segment_id') and chain.segment_id:
+                    mol_name = chain.segment_id
+                else:
+                    mol_name = None
+
+                # Skip non-matching molecules.
+                if molecules and mol_name not in molecules:
+                    continue
+
+                # Yield the molecule and its name.
+                yield chain, mol_name, 'nucleic acid'
+
+        # Other molecules.
+        if struct.molecules:
+            for key in struct.molecules:
+                for mol in struct.molecules[key]:
+                    # Yield the molecule and its name.
+                    yield mol, key, 'other'
+
+
     def atom_loop(self, atom_id=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False):
         """Generator function for looping over all atoms in the Scientific Python data objects.
 
