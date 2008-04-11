@@ -104,9 +104,8 @@ class Scientific_data(Str_object):
         # Other molecules.
         if struct.molecules:
             for key in struct.molecules:
-                for mol in struct.molecules[key]:
-                    # Yield the molecule and its name.
-                    yield mol, key, 'other'
+                # Yield the molecule and its name.
+                yield struct.molecules[key], key, 'other'
 
 
     def __residue_loop(self, mol, mol_type, residues):
@@ -140,6 +139,15 @@ class Scientific_data(Str_object):
                 # Yield the residue info.
                 yield res, res_num, res_name
 
+        # Other molecules.
+        else:
+            for res in mol:
+                # Skip non-matching residues.
+                if residues and not (res.name in residues or res.number in residues):
+                    continue
+
+                # Yield the residue info.
+                yield res, res.number, res.name
 
 
     def atom_loop(self, atom_id=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False):
@@ -191,6 +199,8 @@ class Scientific_data(Str_object):
                         atom_name = atom.name
                         element = atom.properties['element']
                         pos = atom.position.array
+
+                        print mol_name, res_num, res_name, atom_num, atom_name
 
                         # Skip non-matching atoms.
                         if atom_token and not (atom_name in atoms or atom_num in atoms):
