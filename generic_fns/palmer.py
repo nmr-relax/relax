@@ -532,7 +532,6 @@ class Palmer:
         # Get the section line positions of the mfout file.
         self.line_positions()
 
-
         # Find out if simulations were carried out.
         sims = 0
         for i in xrange(len(self.mfout_lines)):
