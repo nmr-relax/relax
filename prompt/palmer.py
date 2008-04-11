@@ -42,7 +42,7 @@ class Palmer:
         self.__relax__ = relax
 
 
-    def create(self, dir=None, force=0, binary='modelfree4', diff_search='none', sims=0, sim_type='pred', trim=0, steps=20, constraints=1, nucleus='15N', atom1='N', atom2='H'):
+    def create(self, dir=None, force=0, binary='modelfree4', diff_search='none', sims=0, sim_type='pred', trim=0, steps=20, constraints=1, heteronuc_type='15N', atom1='N', atom2='H'):
         """Function for creating the Modelfree4 input files.
 
         Keyword Arguments
@@ -68,9 +68,9 @@ class Palmer:
         constraints:  A flag specifying whether the parameters should be constrained.  The default
         is to turn constraints on (constraints=1).
 
-        nucleus:  A three letter string describing the nucleus type, ie 15N, 13C, etc.
+        heteronuc_type:  A three letter string describing the heteronucleus type, ie 15N, 13C, etc.
 
-        atom1:  The symbol of the X nucleus in the pdb file.
+        atom1:  The symbol of the X heteronucleus in the pdb file.
 
         atom2:  The symbol of the H nucleus in the pdb file.
 
@@ -109,7 +109,7 @@ class Palmer:
             text = text + ", trim=" + `trim`
             text = text + ", steps=" + `steps`
             text = text + ", constraints=" + `constraints`
-            text = text + ", nucleus=" + `nucleus`
+            text = text + ", heteronucleus=" + `heteronuc_type`
             text = text + ", atom1=" + `atom1`
             text = text + ", atom2=" + `atom2` + ")"
             print text
@@ -151,9 +151,9 @@ class Palmer:
         if type(constraints) != int or (constraints != 0 and constraints != 1):
             raise RelaxBinError, ('constraint flag', constraints)
 
-        # The nucleus argument.
-        if type(nucleus) != str:
-            raise RelaxStrError, ('nucleus', nucleus)
+        # The heteronucleus argument.
+        if type(heteronuc_type) != str:
+            raise RelaxStrError, ('heteronucleus', heteronuc_type)
 
         # The atom1 argument.
         if type(atom1) != str:
@@ -164,7 +164,7 @@ class Palmer:
             raise RelaxStrError, ('atom2', atom2)
 
         # Execute the functional code.
-        palmer.create(dir=dir, force=force, binary=binary, diff_search=diff_search, sims=sims, sim_type=sim_type, trim=trim, steps=steps, constraints=constraints, nucleus=nucleus, atom1=atom1, atom2=atom2)
+        palmer.create(dir=dir, force=force, binary=binary, diff_search=diff_search, sims=sims, sim_type=sim_type, trim=trim, steps=steps, constraints=constraints, heteronuc_type=heteronuc_type, atom1=atom1, atom2=atom2)
 
 
     def execute(self, dir=None, force=0, binary='modelfree4'):
