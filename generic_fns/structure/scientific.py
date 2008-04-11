@@ -107,21 +107,22 @@ class Scientific_data(Str_object):
 
             # Other molecules.
             elif struct.molecules:
-                for mol in struct.molecules:
-                    comps.append(mol)
-                    molecule.append('other')
+                for key in struct.molecules:
+                    for mol in struct.molecules[key]:
+                        comps.append(mol)
+                        molecule.append(key)
 
             # We have a problem!
             else:
                 raise RelaxNoPdbChainError
 
             # Loop over each individual molecules.
-            for mol in comps:
+            for i in xrange(len(comps)):
                 # The molecule name.
-                if mol.chain_id:
-                    mol_name = chain.chain_id
-                elif chain.segment_id:
-                    mol_name = chain.segment_id
+                if hasattr(comps[i], 'chain_id') and comps[i].chain_id:
+                    mol_name = comps[i].chain_id
+                elif hasattr(comps[i], 'segment_id') and comps[i].segment_id:
+                    mol_name = comps[i].segment_id
                 else:
                     mol_name = None
 
@@ -130,7 +131,7 @@ class Scientific_data(Str_object):
                     continue
 
                 # Loop over the residues of the protein in the PDB file.
-                for res in chain.residues:
+                for res in comps[i].residues:
                     # Residue number and name.
                     if molecule == 'nucleic acid':
                         res_name = res.name[-1]
