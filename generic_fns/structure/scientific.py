@@ -107,7 +107,9 @@ class Scientific_data(Str_object):
 
             # Other molecules.
             elif struct.molecules:
-                pass  # for now.
+                for mol in struct.molecules:
+                    comps.append(mol)
+                    molecule.append('other')
 
             # We have a problem!
             else:
