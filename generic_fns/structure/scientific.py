@@ -89,24 +89,30 @@ class Scientific_data(Str_object):
 
         # Loop over the loaded structures.
         for struct in self.structural_data:
+            # Initialise an array of individual structures from each element of self.structural_data.
+            comps = []
+            molecule = []
+
             # Protein.
             if struct.peptide_chains:
-                chains = struct.peptide_chains
-                molecule = 'protein'
+                for chain in struct.peptide_chains:
+                    comps.append(chain)
+                    molecule.append('protein')
 
             # RNA/DNA.
             elif struct.nucleotide_chains:
-                chains = struct.nucleotide_chains
-                molecule = 'nucleic acid'
+                for chain in struct.nucleotide_chains:
+                    comps.append(chain)
+                    molecule.append('nucleic acid')
 
-            # We have a problem!
+            # Other molecules.
             else:
-                raise RelaxNoPdbChainError
+                pass  # for now.
 
-            # Loop over the chains (each of which will be treated as a new molecule).
-            for chain in chains:
+            # Loop over each individual molecules.
+            for mol in comps:
                 # The molecule name.
-                if chain.chain_id:
+                if mol.chain_id:
                     mol_name = chain.chain_id
                 elif chain.segment_id:
                     mol_name = chain.segment_id
