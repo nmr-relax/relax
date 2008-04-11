@@ -233,7 +233,7 @@ class Structure:
         generic_fns.structure.geometric.create_vector_dist(length=length, symmetry=symmetry, file=file, dir=dir, force=force)
 
 
-    def load_spins(self, spin_id='@N'):
+    def load_spins(self, spin_id=None):
         """Load spins from the structure into the relax data store.
 
         Keyword Arguments
@@ -248,8 +248,8 @@ class Structure:
         This function allows a sequence to be generated within the relax data store using the atomic
         information from the structure already associated with this data pipe.  The spin_id string
         is used to select which molecules, which residues, and which atoms will be recognised as
-        spin systems within relax.  If the empty string is supplied, then all molcules, residues,
-        and atoms will be placed within the data store.
+        spin systems within relax.  If spin_id is left as None, then all molcules, residues, and
+        atoms will be placed within the data store.
 
 
         Example
