@@ -49,7 +49,7 @@ class Palmer:
         self.relax = relax
 
 
-    def create(self, dir, force, binary, diff_search, sims, sim_type, trim, steps, constraints, nucleus, atom1, atom2, spin_id=None):
+    def create(self, dir, force, binary, diff_search, sims, sim_type, trim, steps, constraints, heteronuc_type, atom1, atom2, spin_id=None):
         """Function for creating the Modelfree4 input files.
 
         The following files are created:
@@ -87,7 +87,7 @@ class Palmer:
         self.trim = trim
         self.steps = steps
         self.constraints = constraints
-        self.nucleus = nucleus
+        self.heteronuc_type = heteronuc_type
         self.atom1 = atom1
         self.atom2 = atom2
 
@@ -389,7 +389,7 @@ class Palmer:
 
         file.write('%-14s' % "constants")
         file.write('%-6i' % cdp.res[i].num)
-        file.write('%-7s' % self.nucleus)
+        file.write('%-7s' % self.heteronuc_type)
         file.write('%-8.4f' % (cdp.gx / 1e7))
         file.write('%-8.3f' % (cdp.res[i].r * 1e10))
         file.write('%-8.3f\n' % (cdp.res[i].csa * 1e6))
