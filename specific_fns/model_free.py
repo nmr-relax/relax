@@ -2373,7 +2373,7 @@ class Model_free(Common_functions):
             else:
                 results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
             if results == None:
-                return
+                continue
             self.param_vector, self.func, iter, fc, gc, hc, self.warning = results
             self.iter_count = self.iter_count + iter
             self.f_count = self.f_count + fc
