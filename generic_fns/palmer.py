@@ -505,7 +505,7 @@ class Palmer:
         chdir(orig_dir)
 
 
-    def extract(self, dir):
+    def extract(self, dir, spin_id=None):
         """Function for extracting the Modelfree4 results out of the 'mfout' file."""
 
         # Alias the current data pipe.
@@ -545,65 +545,63 @@ class Palmer:
 
         # Loop over the sequence.
         pos = 0
-        for i in xrange(len(cdp.res)):
-            # Reassign the data structure.
-            data = cdp.res[i]
+        for spin in spin_loop(spin_id):
 
             # Skip unselected residues.
-            if not data.select:
+            if not spin.select:
                 continue
 
             # Missing data sets.
-            if not hasattr(data, 'model'):
+            if not hasattr(spin, 'model'):
                 continue
 
             # No relaxation data.
-            if not hasattr(data, 'num_frq'):
+            if not hasattr(spin, 'num_frq'):
                 continue
 
             # Get the S2 data.
-            if 'S2' in data.params:
-                data.s2, data.s2_err = self.get_mf_data(self.mfout_S2_pos + pos)
+            if 'S2' in spin.params:
+                spin.s2, spin.s2_err = self.get_mf_data(self.mfout_S2_pos + pos)
 
             # Get the S2f data.
-            if 'S2f' in data.params or 'S2s' in data.params:
-                data.s2f, data.s2f_err = self.get_mf_data(self.mfout_S2f_pos + pos)
+            if 'S2f' in spin.params or 'S2s' in spin.params:
+                spin.s2f, spin.s2f_err = self.get_mf_data(self.mfout_S2f_pos + pos)
 
             # Get the S2s data.
-            if 'S2f' in data.params or 'S2s' in data.params:
-                data.s2s, data.s2s_err = self.get_mf_data(self.mfout_S2s_pos + pos)
+            if 'S2f' in spin.params or 'S2s' in spin.params:
+                spin.s2s, spin.s2s_err = self.get_mf_data(self.mfout_S2s_pos + pos)
 
             # Get the te data.
-            if 'te' in data.params:
-                data.te, data.te_err = self.get_mf_data(self.mfout_te_pos + pos)
-                data.te = data.te / 1e12
-                data.te_err = data.te_err / 1e12
+            if 'te' in spin.params:
+                spin.te, spin.te_err = self.get_mf_data(self.mfout_te_pos + pos)
+                spin.te = spin.te / 1e12
+                spin.te_err = spin.te_err / 1e12
 
             # Get the ts data.
-            if 'ts' in data.params:
-                data.ts, data.ts_err = self.get_mf_data(self.mfout_te_pos + pos)
-                data.ts = data.ts / 1e12
-                data.ts_err = data.ts_err / 1e12
+            if 'ts' in spin.params:
+                spin.ts, spin.ts_err = self.get_mf_data(self.mfout_te_pos + pos)
+                spin.ts = spin.ts / 1e12
+                spin.ts_err = spin.ts_err / 1e12
 
             # Get the Rex data.
-            if 'Rex' in data.params:
-                data.rex, data.rex_err = self.get_mf_data(self.mfout_Rex_pos + pos)
+            if 'Rex' in spin.params:
+                spin.rex, spin.rex_err = self.get_mf_data(self.mfout_Rex_pos + pos)
                 try:
-                    data.rex = data.rex / (2.0 * pi * data.frq[0])**2
-                    data.rex_err = data.rex_err / (2.0 * pi * data.frq[0])**2
+                    spin.rex = spin.rex / (2.0 * pi * spin.frq[0])**2
+                    spin.rex_err = spin.rex_err / (2.0 * pi * spin.frq[0])**2
                 except TypeError:
                     # Bug in Modelfree4's mfout output file (fusion of columns).
-                    data.rex = None
-                    data_rex_err = None
+                    spin.rex = None
+                    spin_rex_err = None
 
             # Get the chi-squared data.
             if not sims:
                 row = split(self.mfout_lines[self.mfout_chi2_pos + pos])
-                data.chi2 = float(row[1])
+                spin.chi2 = float(row[1])
             else:
                 # The mfout chi2 position (with no sims) plus 2 (for the extra XML) plus the residue position times 22 (because of the simulated SSE rows).
                 row = split(self.mfout_lines[self.mfout_chi2_pos + 2 + 22*pos])
-                data.chi2 = float(row[1])
+                spin.chi2 = float(row[1])
 
             # Increment the residue position.
             pos = pos + 1
