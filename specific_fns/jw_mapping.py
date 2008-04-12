@@ -402,7 +402,7 @@ class Jw_mapping(Common_functions):
         cdp.jw_frq = frq
 
 
-    def set_error(self, spin, error):
+    def set_error(self, error, index, spin):
         """Function for setting parameter errors."""
 
         # Return J(0) sim data.
