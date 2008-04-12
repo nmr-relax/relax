@@ -1009,14 +1009,14 @@ class Relax_fit(Common_functions):
         """
 
 
-    def set_selected_sim(self, run, instance, select_sim):
+    def set_selected_sim(self, run, select_sim, spin):
         """Function for returning the array of selected simulation flags."""
 
         # Arguments.
         self.run = run
 
-        # Multiple instances.
-        relax_data_store.res[self.run][instance].select_sim = select_sim
+        # Multiple spins.
+        spin.select_sim = select_sim
 
 
     def sim_pack_data(self, run, i, sim_data):
