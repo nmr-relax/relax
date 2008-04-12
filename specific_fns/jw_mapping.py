@@ -438,14 +438,11 @@ class Jw_mapping(Common_functions):
             return spin.jwh_sim
 
 
-    def sim_return_selected(self, instance):
+    def sim_return_selected(self, spin):
         """Function for returning the array of selected simulation flags."""
 
-        # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
-
-        # Multiple instances.
-        return cdp.res[instance].select_sim
+        # Multiple spins.
+        return spin.select_sim
 
 
     def set_selected_sim(self, instance, select_sim):
