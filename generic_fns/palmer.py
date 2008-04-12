@@ -49,7 +49,7 @@ class Palmer:
         self.relax = relax
 
 
-    def create(self, dir, force, binary, diff_search, sims, sim_type, trim, steps, constraints, heteronuc_type, atom1, atom2, spin_id=None):
+    def create(self, dir, force, binary, diff_search, sims, sim_type, trim, steps, constraints, heteronuc_type, atom1, atom2, spin_id):
         """Function for creating the Modelfree4 input files.
 
         The following files are created:
@@ -60,6 +60,10 @@ class Palmer:
             dir/run.sh
         """
 
+        # Test if the current pipe exists.
+        if not relax_data_store.current_pipe:
+            raise RelaxNoPipeError
+
         # Alias the current data pipe.
         cdp = relax_data_store[relax_data_store.current_pipe]
 
@@ -68,7 +72,7 @@ class Palmer:
             raise RelaxNoSequenceError
 
         # Test if the PDB file is loaded (for the spheroid and ellipsoid).
-        if not cdp.diff.type == 'sphere' and not cdp.pdb.has_key:
+        if hasattr(cdp, 'diff_tensor') and not cdp.diff_tensor.type == 'sphere' and not hasattr(cdp, 'structure'):
             raise RelaxNoPdbError
 
         # Directory creation.
@@ -95,13 +99,13 @@ class Palmer:
         self.num_frq = 0
         self.frq = []
         for spin in spin_loop(spin_id):
-            if hasattr(cdp.res[i], 'num_frq'):
-                if cdp.res[i].num_frq > self.num_frq:
+            if hasattr(spin, 'num_frq'):
+                if spin.num_frq > self.num_frq:
                     # Number of field strengths.
-                    self.num_frq = cdp.res[i].num_frq
+                    self.num_frq = spin.num_frq
 
                     # Field strength values.
-                    for frq in cdp.res[i].frq:
+                    for frq in spin.frq:
                         if frq not in self.frq:
                             self.frq.append(frq)
 
@@ -117,7 +121,7 @@ class Palmer:
 
         # Loop over the sequence.
         for spin in spin_loop(spin_id):
-            if hasattr(cdp.res[i], 'num_frq'):
+            if hasattr(spin, 'num_frq'):
                 # The 'mfdata' file.
                 if not self.create_mfdata(i, mfdata):
                     continue
@@ -134,9 +138,9 @@ class Palmer:
         mfpar.close()
 
         # The 'run.sh' script.
-        pipe = self.open_file('run.sh')
-        self.create_pipe(pipe)
-        pipe.close()
+        run = self.open_file('run.sh')
+        self.create_run(run)
+        run.close()
         chmod(self.dir + '/run.sh', 0755)
 
 
@@ -144,7 +148,7 @@ class Palmer:
         """Create the Modelfree4 input file 'mfmodel'."""
 
         # Spin title.
-        file.write("\nspin     " + cdp.res[i].name + "_" + `cdp.res[i].num` + "\n")
+        file.write("\nspin     " + spin.name + "_" + `spin.num` + "\n")
 
         # Data written flag.
         written = 0
@@ -155,24 +159,24 @@ class Palmer:
             r1, r2, noe = None, None, None
 
             # Loop over the relevant relaxation data.
-            for k in xrange(cdp.res[i].num_ri):
-                if self.frq[j] != cdp.res[i].frq[cdp.res[i].remap_table[k]]:
+            for k in xrange(spin.num_ri):
+                if self.frq[j] != spin.frq[spin.remap_table[k]]:
                     continue
 
                 # Find the corresponding R1.
-                if cdp.res[i].ri_labels[k] == 'R1':
-                    r1 = cdp.res[i].relax_data[k]
-                    r1_err = cdp.res[i].relax_error[k]
+                if spin.ri_labels[k] == 'R1':
+                    r1 = spin.relax_data[k]
+                    r1_err = spin.relax_error[k]
 
                 # Find the corresponding R2.
-                elif cdp.res[i].ri_labels[k] == 'R2':
-                    r2 = cdp.res[i].relax_data[k]
-                    r2_err = cdp.res[i].relax_error[k]
+                elif spin.ri_labels[k] == 'R2':
+                    r2 = spin.relax_data[k]
+                    r2_err = spin.relax_error[k]
 
                 # Find the corresponding NOE.
-                elif cdp.res[i].ri_labels[k] == 'NOE':
-                    noe = cdp.res[i].relax_data[k]
-                    noe_err = cdp.res[i].relax_error[k]
+                elif spin.ri_labels[k] == 'NOE':
+                    noe = spin.relax_data[k]
+                    noe_err = spin.relax_error[k]
 
             # Test if the R1 exists for this frequency, otherwise skip the data.
             if r1:
@@ -201,21 +205,21 @@ class Palmer:
         """Create the Modelfree4 input file 'mfin'."""
 
         # Set the diffusion tensor specific values.
-        if cdp.diff.type == 'sphere':
+        if cdp.diff_tensor.type == 'sphere':
             diff = 'isotropic'
             algorithm = 'brent'
             tm = cdp.diff.tm / 1e-9
             dratio = 1
             theta = 0
             phi = 0
-        elif cdp.diff.type == 'spheroid':
+        elif cdp.diff_tensor.type == 'spheroid':
             diff = 'axial'
             algorithm = 'powell'
             tm = cdp.diff.tm / 1e-9
             dratio = cdp.diff.Dratio
             theta = cdp.diff.theta * 360.0 / (2.0 * pi)
             phi = cdp.diff.phi * 360.0 / (2.0 * pi)
-        elif cdp.diff.type == 'ellipsoid':
+        elif cdp.diff_tensor.type == 'ellipsoid':
             diff = 'anisotropic'
             algorithm = 'powell'
             tm = cdp.diff.tm / 1e-9
@@ -294,11 +298,11 @@ class Palmer:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Spin title.
-        file.write("\nspin     " + cdp.res[i].name + "_" + `cdp.res[i].num` + "\n")
+        file.write("\nspin     " + spin.name + "_" + `spin.num` + "\n")
 
         # tloc.
         file.write('%-3s%-6s%-6.1f' % ('M1', 'tloc', 0))
-        if 'tm' in cdp.res[i].params:
+        if 'tm' in spin.params:
             file.write('%-4i' % 1)
         else:
             file.write('%-4i' % 0)
@@ -323,7 +327,7 @@ class Palmer:
 
         # S2f.
         file.write('%-3s%-6s%-6.1f' % ('M1', 'Sf2', 1))
-        if 'S2f' in cdp.res[i].params:
+        if 'S2f' in spin.params:
             file.write('%-4i' % 1)
         else:
             file.write('%-4i' % 0)
@@ -337,7 +341,7 @@ class Palmer:
 
         # S2s.
         file.write('%-3s%-6s%-6.1f' % ('M1', 'Ss2', 1))
-        if 'S2s' in cdp.res[i].params or 'S2' in cdp.res[i].params:
+        if 'S2s' in spin.params or 'S2' in spin.params:
             file.write('%-4i' % 1)
         else:
             file.write('%-4i' % 0)
@@ -351,7 +355,7 @@ class Palmer:
 
         # te.
         file.write('%-3s%-6s%-6.1f' % ('M1', 'te', 0))
-        if 'te' in cdp.res[i].params or 'ts' in cdp.res[i].params:
+        if 'te' in spin.params or 'ts' in spin.params:
             file.write('%-4i' % 1)
         else:
             file.write('%-4i' % 0)
@@ -365,7 +369,7 @@ class Palmer:
 
         # Rex.
         file.write('%-3s%-6s%-6.1f' % ('M1', 'Rex', 0))
-        if 'Rex' in cdp.res[i].params:
+        if 'Rex' in spin.params:
             file.write('%-4i' % 1)
         else:
             file.write('%-4i' % 0)
@@ -385,14 +389,14 @@ class Palmer:
         cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Spin title.
-        file.write("\nspin     " + cdp.res[i].name + "_" + `cdp.res[i].num` + "\n")
+        file.write("\nspin     " + spin.name + "_" + `spin.num` + "\n")
 
         file.write('%-14s' % "constants")
-        file.write('%-6i' % cdp.res[i].num)
+        file.write('%-6i' % spin.num)
         file.write('%-7s' % self.heteronuc_type)
         file.write('%-8.4f' % (cdp.gx / 1e7))
-        file.write('%-8.3f' % (cdp.res[i].r * 1e10))
-        file.write('%-8.3f\n' % (cdp.res[i].csa * 1e6))
+        file.write('%-8.3f' % (spin.r * 1e10))
+        file.write('%-8.3f\n' % (spin.csa * 1e6))
 
         file.write('%-10s' % "vector")
         file.write('%-4s' % self.atom1)
@@ -407,14 +411,14 @@ class Palmer:
 
         file.write("#! /bin/sh\n")
         file.write(self.binary + " -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
-        if cdp.diff.type != 'sphere':
+        if cdp.diff_tensor.type != 'sphere':
             # Copy the pdb file to the model directory so there are no problems with the existance of *.rotate files.
-            system('cp ' + cdp.pdb.file_name + ' ' + self.dir)
-            file.write(" -s " + cdp.pdb.file_name.split('/')[-1])
+            system('cp ' + cdp.structure.file_name + ' ' + self.dir)
+            file.write(" -s " + cdp.structure.file_name.split('/')[-1])
         file.write("\n")
 
 
-    def execute(self,pipe,  dir, force, binary):
+    def execute(self, dir, force, binary):
         """Function for executing Modelfree4.
 
         BUG:  Control-C during execution causes the cwd to stay as dir.
@@ -460,8 +464,8 @@ class Palmer:
                 raise RelaxFileError, ('mfpar input', 'mfpar')
 
             # Test if the 'PDB' input file exists.
-            if cdp.diff.type != 'sphere':
-                pdb = cdp.pdb.file_name.split('/')[-1]
+            if cdp.diff_tensor.type != 'sphere':
+                pdb = cdp.structure.file_name.split('/')[-1]
                 if not access(pdb, F_OK):
                     raise RelaxFileError, ('PDB', pdb)
             else:
@@ -501,7 +505,7 @@ class Palmer:
         chdir(orig_dir)
 
 
-    def extract(self, pipe, dir):
+    def extract(self, dir):
         """Function for extracting the Modelfree4 results out of the 'mfout' file."""
 
         # Alias the current data pipe.
