@@ -393,8 +393,8 @@ class Palmer:
 
         file.write('%-14s' % "constants")
         file.write('%-6i' % spin.num)
-        file.write('%-7s' % self.heteronuc_type)
-        file.write('%-8.4f' % (cdp.gx / 1e7))
+        file.write('%-7s' % spin.heteronuc_type)
+        file.write('%-8.4f' % ([return_gyromagnetic_ratio(spin.heteronuc_type)] / 1e7))
         file.write('%-8.3f' % (spin.r * 1e10))
         file.write('%-8.3f\n' % (spin.csa * 1e6))
 
