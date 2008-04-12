@@ -418,7 +418,7 @@ class Jw_mapping(Common_functions):
             spin.jwh_err = error
 
 
-    def sim_return_param(self, index, spin):
+    def sim_return_param(self, spin, index):
         """Function for returning the array of simulation parameter values."""
 
         # Skip unselected residues.
