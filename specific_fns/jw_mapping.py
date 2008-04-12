@@ -418,27 +418,24 @@ class Jw_mapping(Common_functions):
             spin.jwh_err = error
 
 
-    def sim_return_param(self, instance, index):
+    def sim_return_param(self, index, spin):
         """Function for returning the array of simulation parameter values."""
 
-        # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
-
         # Skip unselected residues.
-        if not cdp.res[instance].select:
+        if not spin.select:
                 return
 
         # Return J(0) sim data.
         if index == 0:
-            return cdp.res[instance].j0_sim
+            return spin.j0_sim
 
         # Return J(wX) sim data.
         if index == 1:
-            return cdp.res[instance].jwx_sim
+            return spin.jwx_sim
 
         # Return J(wH) sim data.
         if index == 2:
-            return cdp.res[instance].jwh_sim
+            return spin.jwh_sim
 
 
     def sim_return_selected(self, instance):
