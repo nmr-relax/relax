@@ -983,7 +983,7 @@ class Mf_minimise:
             else:
                 results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
             if results == None:
-                return
+                continue
             param_vector, func, iter, fc, gc, hc, warning = results
             iter_count = iter_count + iter
             f_count = f_count + fc
