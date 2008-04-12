@@ -459,23 +459,20 @@ class Consistency_tests(Common_functions):
         cdp.ct_frq = frq
 
 
-    def set_error(self, instance, spin, error):
+    def set_error(self, error, index, spin):
         """Function for setting parameter errors."""
-
-        # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Return J(0) sim data.
         if index == 0:
-            cdp.res[instance].j0_err = error
+            spin.j0_err = error
 
         # Return F_eta sim data.
         if index == 1:
-            cdp.res[instance].f_eta_err = error
+            spin.f_eta_err = error
 
         # Return F_R2 sim data.
         if index == 2:
-            cdp.res[instance].f_r2_err = error
+            spin.f_r2_err = error
 
 
     def sim_return_param(self, instance, spin):
