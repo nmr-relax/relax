@@ -475,27 +475,24 @@ class Consistency_tests(Common_functions):
             spin.f_r2_err = error
 
 
-    def sim_return_param(self, instance, spin):
+    def sim_return_param(self, index, spin):
         """Function for returning the array of simulation parameter values."""
 
-        # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
-
         # Skip unselected residues.
-        if not cdp.res[instance].select:
+        if not spin.select:
                 return
 
         # Return J(0) sim data.
         if index == 0:
-            return cdp.res[instance].j0_sim
+            return spin.j0_sim
 
         # Return F_eta sim data.
         if index == 1:
-            return cdp.res[instance].f_eta_sim
+            return spin.f_eta_sim
 
         # Return F_R2 sim data.
         if index == 2:
-            return cdp.res[instance].f_r2_sim
+            return spin.f_r2_sim
 
 
     def sim_return_selected(self, instance):
