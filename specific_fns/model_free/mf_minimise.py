@@ -141,7 +141,7 @@ class Mf_minimise:
                     raise RelaxError, "Negative error for spin '" + `spin.num` + " " + spin.name + "', calculation not possible."
 
             # Create the initial parameter vector.
-            param_vector = self.assemble_param_vector(index=i, sim_index=sim_index)
+            param_vector = self.assemble_param_vector(spin=spin, sim_index=sim_index)
 
             # Repackage the spin.
             if sim_index == None:
