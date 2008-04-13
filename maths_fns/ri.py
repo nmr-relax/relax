@@ -39,7 +39,9 @@ def calc_noe(data, i, frq_num, get_r1, params):
     data.r1[i] = get_r1[i](data, i, frq_num, params)
 
     # Calculate the NOE.
-    if data.r1[i] == 0.0:
+    if data.r1[i] == 0.0 and data.ri_prime[i] == 0.0:
+        data.ri[i] = 1.0
+    elif data.r1[i] == 0.0:
         data.ri[i] = 1e99
     else:
         data.ri[i] = 1.0 + data.g_ratio*(data.ri_prime[i] / data.r1[i])
@@ -53,7 +55,9 @@ def calc_dnoe(data, i, frq_num, get_dr1, params, j):
 
     # Calculate the NOE derivative.
     data.dr1[j, i] = get_dr1[i](data, i, frq_num, params, j)
-    if data.r1[i] == 0.0:
+    if data.r1[i] == 0.0 and data.ri_prime[i] == 0.0:
+        data.dri[j, i] = 0.0
+    elif data.r1[i] == 0.0:
         data.dri[j, i] = 1e99
     else:
         data.dri[j, i] = data.g_ratio * (1.0 / data.r1[i]**2) * (data.r1[i] * data.dri_prime[j, i] - data.ri_prime[i] * data.dr1[j, i])
@@ -67,7 +71,9 @@ def calc_d2noe(data, i, frq_num, get_d2r1, params, j, k):
 
     # Calculate the NOE second derivative.
     data.d2r1[j, k, i] = get_d2r1[i](data, i, frq_num, params, j, k)
-    if data.r1[i] == 0.0:
+    if data.r1[i] == 0.0 and data.ri_prime[i] == 0.0:
+        data.d2ri[j, k, i] = 0.0
+    elif data.r1[i] == 0.0:
         data.d2ri[j, k, i] = 1e99
     else:
         a = data.ri_prime[i] * (2.0 * data.dr1[j, i] * data.dr1[k, i] - data.r1[i] * data.d2r1[j, k, i])
