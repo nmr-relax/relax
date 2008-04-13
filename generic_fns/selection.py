@@ -908,6 +908,51 @@ def reverse(selection=None):
             spin.select = 1
 
 
+def same_sequence(pipe1, pipe2):
+    """Test if the sequence data in both pipes are the same.
+
+    @param pipe1:       The first data pipe.
+    @type pipe1:        str
+    @param pipe2:       The second data pipe.
+    @type pipe2:        str
+    @return:            True if the sequence data matches, False otherwise.
+    @rtype:             bool
+    """
+
+    # Test the data pipes.
+    pipes.test(pipe1)
+    pipes.test(pipe2)
+
+    # Different number of molecules.
+    if len(relax_data_store[pipe1].mol) != len(relax_data_store[pipe2].mol):
+        return False
+
+    # Loop over the molecules.
+    for i in xrange(len(relax_data_store[pipe1].mol)):
+        # Different number of residues.
+        if len(relax_data_store[pipe1].mol[i].res) != len(relax_data_store[pipe2].mol[i].res):
+            return False
+
+        # Loop over the residues.
+        for j in xrange(len(relax_data_store[pipe1].mol[i].res)):
+            # Different number of spins.
+            if len(relax_data_store[pipe1].mol[i].res[j].spins) != len(relax_data_store[pipe2].mol[i].res[j].spins):
+                return False
+
+            # Loop over the spins.
+            for k in xrange(len(relax_data_store[pipe1].mol[i].res[j].spins)):
+                # Different spin numbers.
+                if relax_data_store[pipe1].mol[i].res[j].spins[k].num != relax_data_store[pipe2].mol[i].res[j].spins[k].num:
+                    return False
+
+                # Different spin names.
+                if relax_data_store[pipe1].mol[i].res[j].spins[k].name != relax_data_store[pipe2].mol[i].res[j].spins[k].name:
+                    return False
+
+    # The sequence is the same.
+    return True
+
+
 def sel_all(self, run=None):
     """Function for selecting all residues."""
 
