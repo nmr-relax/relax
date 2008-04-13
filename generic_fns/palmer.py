@@ -24,7 +24,7 @@
 from math import pi
 from os import F_OK, P_WAIT, access, chdir, chmod, getcwd, listdir, remove, system
 from re import match, search
-from string import split
+from string import count, find, split
 
 # UNIX only functions from the os module (Modelfree4 only runs under UNIX anyway).
 try:
@@ -608,23 +608,78 @@ class Palmer:
 
 
     def get_mf_data(self, pos):
-        """Extract the model-free data from the given position of the mfout file."""
+        """Extract the model-free data from the given position of the mfout file.
+
+        This method is designed to catch a number of bugs in Modelfree4's mfout file.
+
+        The first bug is the presence of a series of '*' characters causing a fusion of two columns.
+        This is handled by splitting by the '*' char and then returning the first element.
+
+        The second bug is when the floating point number is too big to fit into Modelfree4's string
+        format limit of 15.3f.  This results in a results line such as:
+
+        246      10000.00019682363392.000    1          0.000          0.000          0.000          0.000
+
+        This is caught by scanning for two '.' characters in the column, and handled by assuming
+        that every floating point number will have three decimal characters.
+
+        @param pos:     The mfout line position.
+        @type pos:      int
+        @return:        The value and error.
+        @rtype:         tuple of 2 floats
+        """
 
         # Split the line up.
         row = split(self.mfout_lines[pos])
 
-        # Attempt to extract the value and error.
-        try:
-            # Catch a series of '*' joining two columns.
-            val = split(row[1], '*')
-            err = split(row[4], '*')
+        # The value and error, assuming a bug free mfout file.
+        val = row[1]
+        err = row[4]
 
-            # Return the value and error.
-            return float(val[0]), float(err[0])
+        # The Modelfree4 '*' column fusion bug.
+        if search('*', val) or search('*', err):
+            # Split by the '*' character.
+            val_row = split(val, '*')
+            err_row = split(err, '*')
 
-        # Otherwise, there is no data???
-        except:
-            return None, None
+            # The value and error (the first elements).
+            val = val_row[0]
+            err = err_row[0]
+
+        # The Modelfree4 large float column fusion bug.
+        new_row = []
+        fused = False
+        for element in row:
+            # Count the number of '.' characters.
+            num = count(element, '.')
+
+            # Catch two or more '.' characters.
+            if num > 1:
+                # Set the fused flag.
+                fused = True
+
+                # Loop over each fused number.
+                for i in xrange(num):
+                    # Find the index of the first '.'.
+                    index = find(element, '.')
+
+                    # The first number (index + decimal point + 3 decimal chars).
+                    new_row.append(element[0:index+4])
+
+                    # Strip the first number from the element for the next loop iteration.
+                    element = element[index+4:]
+
+            # Otherwise the column element is fine.
+            else:
+                new_row.append(element)
+
+        # Bug has been caught.
+        if fused:
+            val = new_row[1]
+            err = new_row[4]
+
+        # Return the value and error, as floats.
+        return float(val), float(err)
 
 
     def line_positions(self):
