@@ -220,12 +220,12 @@ class Internal_PDB(Base_struct_API):
         structure 'het_data' is created.  It is an array of arrays where the first dimension
         corresponds to a different residue and the second dimension has the elements:
 
-            0:  Residue number.
-            1:  Residue name.
-            2:  Chain ID.
-            3:  Total number of atoms in the residue.
-            4:  Number of H atoms in the residue.
-            5:  Number of C atoms in the residue.
+            0.  Residue number.
+            1.  Residue name.
+            2.  Chain ID.
+            3.  Total number of atoms in the residue.
+            4.  Number of H atoms in the residue.
+            5.  Number of C atoms in the residue.
 
 
         @param file:        The PDB file object.  This object must be writable.
