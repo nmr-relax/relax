@@ -290,28 +290,26 @@ def select(method=None, pipes=None):
             pipes.copy(best_model, modsel_pipe)
 
 
-def tests(run):
-    """Function containing tests the given run."""
+def tests(pipe):
+    """Numerous tests for the given data pipe."""
 
-    # Test if the run exists.
-    if not run in relax_data_store.run_names:
-        raise RelaxNoPipeError, run
+    # Test if the data pipe exists.
+    if pipe not in relax_data_store.keys():
+        raise RelaxNoPipeError, pipe
 
-    # Find the index of the run.
-    index = relax_data_store.run_names.index(run)
+    # Switch to this pipe.
+    pipes.switch(pipe)
 
-    # Test if the function type is the same as 'self.function_type' (skip the test if self.function_type is a hybrid).
-    #if self.function_type != 'hybrid' and relax_data_store.run_types[index] != self.function_type:
-    if relax_data_store.run_types[index] != self.function_type[run]:
-        raise RelaxError, "The runs supplied are not all of the same function type."
+    # Alias the pipe.
+    cdp = relax_data_store[pipe]
 
     # Skip all tests if the model is a hybrid.
-    if relax_data_store.run_types[index] == 'hybrid':
+    if cdp.pipe_type == 'hybrid':
         return
 
-    # Test if sequence data is loaded.
-    if not relax_data_store.res.has_key(run):
-        raise RelaxNoSequenceError, run
+    # Test if sequence data exists.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
     # Sequence lengths.
     if len(relax_data_store.res[self.first_run]) != len(relax_data_store.res[run]):
