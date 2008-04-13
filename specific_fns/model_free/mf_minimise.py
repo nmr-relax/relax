@@ -34,7 +34,7 @@ from generic_fns.selection import count_spins, exists_mol_res_spin_data, return_
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
 from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
-from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError
+from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxProtonTypeError, RelaxSpinTypeError
 
 
 
@@ -803,9 +803,13 @@ class Mf_minimise:
                 if not hasattr(spin, 'xh_vect'):
                     raise RelaxNoVectorsError
 
-            # Test if the nucleus type has been set.
-            if not hasattr(spin, 'nucleus'):
-                raise RelaxNucleusError
+                # Test if the spin type has been set.
+                if not hasattr(spin, 'heteronuc_type'):
+                    raise RelaxSpinTypeError
+
+                # Test if the type attached proton has been set.
+                if not hasattr(spin, 'proton_type'):
+                    raise RelaxProtonTypeError
 
         # Test if the model-free parameter values are set for minimising diffusion tensor parameters by themselves.
         if param_set == 'diff':
