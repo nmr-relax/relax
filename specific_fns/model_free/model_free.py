@@ -45,57 +45,62 @@ import specific_fns
 class Model_free_main:
     """Class containing functions specific to model-free analysis."""
 
-    def are_mf_params_set(self, index=None):
-        """Function for testing if the model-free parameter values are set."""
+    def are_mf_params_set(self, spin):
+        """Test if the model-free parameter values are set.
 
-        # Alias the data structure.
-        data = relax_data_store.res[self.run][index]
+        @param spin:    The spin container object.
+        @type spin:     SpinContainer instance
+        @return:        The name of the first parameter in the parameter list in which the
+                        corresponding parameter value is None.  If all parameters are set, then None
+                        is returned.
+        @rtype:         str or None
+        """
 
         # Unselected residue.
-        if data.select == 0:
+        if spin.select == 0:
             return
 
         # Loop over the model-free parameters.
-        for j in xrange(len(data.params)):
+        for j in xrange(len(spin.params)):
             # Local tm.
-            if data.params[j] == 'local_tm' and data.local_tm == None:
-                return data.params[j]
+            if spin.params[j] == 'local_tm' and spin.local_tm == None:
+                return spin.params[j]
 
             # S2.
-            elif data.params[j] == 'S2' and data.s2 == None:
-                return data.params[j]
+            elif spin.params[j] == 'S2' and spin.s2 == None:
+                return spin.params[j]
 
             # S2f.
-            elif data.params[j] == 'S2f' and data.s2f == None:
-                return data.params[j]
+            elif spin.params[j] == 'S2f' and spin.s2f == None:
+                return spin.params[j]
 
             # S2s.
-            elif data.params[j] == 'S2s' and data.s2s == None:
-                return data.params[j]
+            elif spin.params[j] == 'S2s' and spin.s2s == None:
+                return spin.params[j]
 
             # te.
-            elif data.params[j] == 'te' and data.te == None:
-                return data.params[j]
+            elif spin.params[j] == 'te' and spin.te == None:
+                return spin.params[j]
 
             # tf.
-            elif data.params[j] == 'tf' and data.tf == None:
-                return data.params[j]
+            elif spin.params[j] == 'tf' and spin.tf == None:
+                return spin.params[j]
 
             # ts.
-            elif data.params[j] == 'ts' and data.ts == None:
-                return data.params[j]
+            elif spin.params[j] == 'ts' and spin.ts == None:
+                return spin.params[j]
 
             # Rex.
-            elif data.params[j] == 'Rex' and data.rex == None:
-                return data.params[j]
+            elif spin.params[j] == 'Rex' and spin.rex == None:
+                return spin.params[j]
 
             # r.
-            elif data.params[j] == 'r' and data.r == None:
-                return data.params[j]
+            elif spin.params[j] == 'r' and spin.r == None:
+                return spin.params[j]
 
             # CSA.
-            elif data.params[j] == 'CSA' and data.csa == None:
-                return data.params[j]
+            elif spin.params[j] == 'CSA' and spin.csa == None:
+                return spin.params[j]
 
 
     def assemble_param_names(self, model_type, spin_id=None):
