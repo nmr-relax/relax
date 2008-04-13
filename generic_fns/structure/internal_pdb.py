@@ -64,17 +64,17 @@ class Internal_PDB(Base_struct_API):
     def __get_chemical_name(self, hetID):
         """Method for returning the chemical name corresponding to the given residue ID.
 
-        The following names are currently returned:
-        ________________________________________________
-        |        |                                     |
-        | hetID  | Chemical name                       |
-        |________|_____________________________________|
-        |        |                                     |
-        | TNS    | Tensor                              |
-        | COM    | Centre of mass                      |
-        | AXS    | Tensor axes                         |
-        | SIM    | Monte Carlo simulation tensor axes  |
-        |________|_____________________________________|
+        The following names are currently returned::
+         ________________________________________________
+         |        |                                     |
+         | hetID  | Chemical name                       |
+         |________|_____________________________________|
+         |        |                                     |
+         | TNS    | Tensor                              |
+         | COM    | Centre of mass                      |
+         | AXS    | Tensor axes                         |
+         | SIM    | Monte Carlo simulation tensor axes  |
+         |________|_____________________________________|
 
 
         @param res: The residue ID.
