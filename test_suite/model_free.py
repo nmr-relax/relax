@@ -547,7 +547,7 @@ class Mf:
         self.relax.interpreter._Value.set(self.run, [1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
 
         # Minimise.
-        self.relax.interpreter._Minimisation.minimise('cd', 'mt', max_iter=50, run=self.run)
+        self.relax.interpreter._Minimisation.minimise('cd', 'mt', run=self.run)
 
 
         # Test the optimisation statistics and parameter values.
@@ -561,25 +561,25 @@ class Mf:
 
         # Test the values.
         success = 1
-        if not self.test_values(val1=1.0, val2=data.s2, error=error, name='S2 value'):
+        if not self.test_values(val1=0.970, val2=data.s2, error=error, name='S2 value'):
             success = 0
-        if not self.test_values(val1=0.0, val2=data.te, error=error, name='te value (ns)', scale=1e9):
+        if not self.test_values(val1=2048 * 1e-12, val2=data.te, error=error, name='te value (ns)', scale=1e9):
             success = 0
-        if not self.test_values(val1=0.0, val2=data.rex, error=error, name='Rex value'):
+        if not self.test_values(val1=0.149 / (2.0 * pi * data.frq[0])**2, val2=data.rex, error=error, name='Rex value'):
             success = 0
-        if not self.test_values(val1=3.9844117908982288, val2=data.chi2, error=error, name='chi-squared value'):
+        if not self.test_values(val1=2.34772342485e-18, val2=data.chi2, error=error, name='chi-squared value'):
             success = 0
-        if not self.test_values(val1=0, val2=data.iter, name='iteration count', max=1):
+        if not self.test_values(val1=198, val2=data.iter, name='iteration count', max=1):
             success = 0
-        if not self.test_values(val1=1, val2=data.f_count, name='function count', max=1):
+        if not self.test_values(val1=757, val2=data.f_count, name='function count', max=1):
             success = 0
-        if not self.test_values(val1=1, val2=data.g_count, name='gradient count', max=1):
+        if not self.test_values(val1=757, val2=data.g_count, name='gradient count', max=1):
             success = 0
         if not self.test_values(val1=0, val2=data.h_count, name='Hessian count', max=1):
             success = 0
 
         # Warning.
-        if data.warning and not data.warning == 'Maximum number of iterations reached':
+        if data.warning:
             print data.warning
             success = 0
 
