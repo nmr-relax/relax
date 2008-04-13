@@ -27,6 +27,8 @@ from math import log
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxDiffSeqError, RelaxError, RelaxNoPipeError, RelaxNoSequenceError
+import pipes
+from specific_fns.setup import get_specific_fn
 
 
 def aic(chi2, k, n):
@@ -94,135 +96,116 @@ def bic(chi2, k, n):
     return chi2 + k * log(n)
 
 
-def select(method=None, modsel_run=None, runs=None):
+def select(method=None, pipes=None):
     """Model selection function."""
 
-    # Test if the model selection run exists.
-    if not modsel_run in relax_data_store.run_names:
-        raise RelaxNoPipeError, modsel_run
+    # Use all pipes (but the current).
+    if pipes == None:
+        # Get all data pipe names from the relax data store.
+        pipes = relax_data_store.keys()
 
-    # The runs argument.
-    if runs == None:
-        # Use the runs from 'relax_data_store.run_names'.
-        self.runs = deepcopy(relax_data_store.run_names)
-        # Remove the model selection run name if it is in the list.
-        if modsel_run in self.runs:
-            self.runs.remove(modsel_run)
-    else:
-        self.runs = runs
+    # Remove the current data pipe.
+    pipes.remove(relax_data_store.current_pipe)
+
+    # Store the current data pipe as the model selection run
+    modsel_pipe = relax_data_store.current_pipe
 
     # Select the model selection technique.
     if method == 'AIC':
         print "AIC model selection."
-        self.formula = self.aic
+        formula = aic
     elif method == 'AICc':
         print "AICc model selection."
-        self.formula = self.aicc
+        formula = aicc
     elif method == 'BIC':
         print "BIC model selection."
-        self.formula = self.bic
+        formula = bic
     elif method == 'CV':
         print "CV model selection."
         raise RelaxError, "The model selection technique " + `method` + " is not currently supported."
     else:
         raise RelaxError, "The model selection technique " + `method` + " is not currently supported."
 
-    # No runs.
-    if len(self.runs) == 0:
-        raise RelaxError, "No runs are availible for use in model selection."
+    # No pipes.
+    if len(pipes) == 0:
+        raise RelaxError, "No data pipes are available for use in model selection."
 
     # Initialise.
-    self.first_run = None
-    self.function_type = {}
-    self.duplicate_data = {}
-    self.count_num_instances = {}
-    self.model_statistics = {}
-    self.skip_function = {}
+    first_run = None
+    function_type = {}
+    count_num_instances = {}
+    model_statistics = {}
+    skip_function = {}
 
     # Cross validation setup.
-    if type(self.runs[0]) == list:
-        # No runs.
-        if len(run) == 0:
-            raise RelaxError, "No runs are availible for use in model selection in the array " + `run` + "."
+    if type(pipes[0]) == list:
+        # No pipes.
+        if len(pipes[0]) == 0:
+            raise RelaxError, "No pipes are available for use in model selection in the array " + `pipes[0]` + "."
 
-        # Loop over the runs.
-        for i in xrange(len(self.runs)):
-            for j in xrange(len(self.runs[i])):
-                # The run name.
-                run = self.runs[i][j]
-
-                # Function type.
-                self.function_type[run] = relax_data_store.run_types[relax_data_store.run_names.index(run)]
-
-                # Store the first non-hybrid run.
-                if not self.first_run and self.function_type[run] != 'hybrid':
-                    self.first_run = run
+        # Loop over the data pipes.
+        for i in xrange(len(pipes)):
+            for j in xrange(len(pipes[i])):
+                # Alias the data pipe name.
+                pipe = pipes[i][j]
 
                 # Specific duplicate data, number of instances, and model statistics functions.
-                self.duplicate_data[run] = self.relax.specific_setup.setup('duplicate_data', self.function_type[run])
-                self.count_num_instances[run] = self.relax.specific_setup.setup('num_instances', self.function_type[run])
-                self.model_statistics[run] = self.relax.specific_setup.setup('model_stats', self.function_type[run])
-                self.skip_function[run] = self.relax.specific_setup.setup('skip_function', self.function_type[run])
+                count_num_instances[pipe] = get_specific_fn('num_instances', relax_data_store[pipe].pipe_type)
+                model_statistics[pipe] = get_specific_fn('model_stats', relax_data_store[pipe].pipe_type)
+                skip_function[pipe] = get_specific_fn('skip_function', relax_data_store[pipe].pipe_type)
 
                 # Run various tests.
-                self.tests(run)
+                tests(pipe)
 
     # All other model selection setup.
     else:
-        # Loop over the runs.
-        for i in xrange(len(self.runs)):
-            # The run name.
-            run = self.runs[i]
-
-            # Function type.
-            self.function_type[run] = relax_data_store.run_types[relax_data_store.run_names.index(run)]
-
-            # Store the first non-hybrid run.
-            if not self.first_run and self.function_type[run] != 'hybrid':
-                self.first_run = run
+        # Loop over the data pipes.
+        for i in xrange(len(pipes)):
+            # Alias the data pipe name.
+            pipe = pipes[i]
 
             # Specific duplicate data, number of instances, and model statistics functions.
-            self.duplicate_data[run] = self.relax.specific_setup.setup('duplicate_data', self.function_type[run])
-            self.count_num_instances[run] = self.relax.specific_setup.setup('num_instances', self.function_type[run])
-            self.model_statistics[run] = self.relax.specific_setup.setup('model_stats', self.function_type[run])
-            self.skip_function[run] = self.relax.specific_setup.setup('skip_function', self.function_type[run])
+            count_num_instances[pipe] = get_specific_fn('num_instances', relax_data_store[pipe].pipe_type)
+            model_statistics[pipe] = get_specific_fn('model_stats', relax_data_store[pipe].pipe_type)
+            skip_function[pipe] = get_specific_fn('skip_function', relax_data_store[pipe].pipe_type)
 
             # Run various tests.
-            self.tests(run)
+            tests(pipe)
 
 
-    # Number of instances.  If the number is not the same for each run, then the minimum number will give the specific function self.model_statistics the
-    # opportunity to consolidate the instances to the minimum number if possible.
-    self.min_instances = 1e99
-    self.num_instances = []
-    for i in xrange(len(self.runs)):
+    # Number of instances.  If the number is not the same for each data pipe, then the minimum
+    # number will give the specific function model_statistics the opportunity to consolidate the
+    # instances to the minimum number if possible.
+    min_instances = 1e99
+    num_instances = []
+    for i in xrange(len(pipes)):
         # An array of arrays - for cross validation model selection.
-        if type(self.runs[i]) == list:
-            self.num_instances.append([])
+        if type(pipes[i]) == list:
+            num_instances.append([])
 
             # Loop over the nested array.
-            for j in xrange(len(self.runs[i])):
+            for j in xrange(len(pipes[i])):
                 # Number of instances.
-                num = self.count_num_instances[self.runs[i][j]](self.runs[i][j])
-                self.num_instances[i].append(num)
+                num = count_num_instances[pipes[i][j]](pipes[i][j])
+                num_instances[i].append(num)
 
                 # Minimum.
-                if num < self.min_instances:
-                    self.min_instances = num
+                if num < min_instances:
+                    min_instances = num
 
         # All other model selection techniques.
         else:
             # Number of instances.
-            num = self.count_num_instances[self.runs[i]](self.runs[i])
-            self.num_instances.append(num)
+            num = count_num_instances[pipes[i]](pipes[i])
+            num_instances.append(num)
 
             # Minimum.
-            if num < self.min_instances:
-                self.min_instances = num
+            if num < min_instances:
+                min_instances = num
 
 
     # Loop over the number of instances.
-    for i in xrange(self.min_instances):
+    for i in xrange(min_instances):
         # Print out.
         print "\nInstance " + `i` + ".\n"
         print "%-20s %-20s %-20s %-20s %-20s" % ("Run", "Num_params_(k)", "Num_data_sets_(n)", "Chi2", "Criterion")
@@ -231,24 +214,27 @@ def select(method=None, modsel_run=None, runs=None):
         best_model = None
         best_crit = 1e300
 
-        # Loop over the runs.
-        for j in xrange(len(self.runs)):
+        # Loop over the pipes.
+        for j in xrange(len(pipes)):
             # Single-item-out cross validation.
             if method == 'CV':
                 # Sum of chi-squared values.
                 sum_crit = 0.0
 
                 # Loop over the validation samples and sum the chi-squared values.
-                for k in xrange(len(self.runs[j])):
-                    # Reassign the run.
-                    run = self.runs[j][k]
+                for k in xrange(len(pipes[j])):
+                    # Alias the data pipe name.
+                    pipe = pipes[j][k]
+
+                    # Switch to this pipe.
+                    pipes.switch(pipe)
 
                     # Skip function.
-                    if self.skip_function[run](run=run, instance=i):
+                    if skip_function[pipe](instance=i):
                         continue
 
                     # Get the model statistics.
-                    k, n, chi2 = self.model_statistics[run](run=run, instance=i, min_instances=self.min_instances)
+                    k, n, chi2 = model_statistics[pipe](instance=i, min_instances=min_instances)
 
                     # Missing data sets.
                     if k == None or n == None or chi2 == None:
@@ -258,47 +244,50 @@ def select(method=None, modsel_run=None, runs=None):
                     sum_crit = sum_crit + chi2
 
                 # Cross-validation criterion (average chi-squared value).
-                crit = sum_crit / float(len(self.runs[j]))
+                crit = sum_crit / float(len(pipes[j]))
 
             # Other model selection methods.
             else:
-                # Reassign the run.
-                run = self.runs[j]
+                # Reassign the pipe.
+                pipe = pipes[j]
+
+                # Switch to this pipe.
+                pipes.switch(pipe)
 
                 # Skip function.
-                if self.skip_function[run](run=run, instance=i, min_instances=self.min_instances, num_instances=self.num_instances[j]):
+                if skip_function[pipe](instance=i, min_instances=min_instances, num_instances=num_instances[j]):
                     continue
 
                 # Global stats.
-                if self.num_instances[j] > self.min_instances or self.num_instances[j] == 1:
+                if num_instances[j] > min_instances or num_instances[j] == 1:
                     global_stats = 1
                 else:
                     global_stats = 0
 
                 # Get the model statistics.
-                k, n, chi2 = self.model_statistics[run](run=run, instance=i, global_stats=global_stats)
+                k, n, chi2 = model_statistics[pipe](instance=i, global_stats=global_stats)
 
                 # Missing data sets.
                 if k == None or n == None or chi2 == None:
                     continue
 
                 # Calculate the criterion value.
-                crit = self.formula(chi2, float(k), float(n))
+                crit = formula(chi2, float(k), float(n))
 
                 # Print out.
-                print "%-20s %-20i %-20i %-20.5f %-20.5f" % (run, k, n, chi2, crit)
+                print "%-20s %-20i %-20i %-20.5f %-20.5f" % (pipe, k, n, chi2, crit)
 
             # Select model.
             if crit < best_crit:
-                best_model = run
+                best_model = pipe
                 best_crit = crit
 
         # Print out of selected model.
-        print "\nThe model from the run " + `best_model` + " has been selected."
+        print "\nThe model from the data pipe " + `best_model` + " has been selected."
 
-        # Duplicate the data from the 'best_model' to the model selection run 'modsel_run'.
+        # Duplicate the data from the 'best_model' to the model selection data pipe.
         if best_model != None:
-            self.duplicate_data[best_model](new_run=modsel_run, old_run=best_model, instance=i, global_stats=global_stats)
+            pipes.copy(best_model, modsel_pipe)
 
 
 def tests(run):
