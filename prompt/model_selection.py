@@ -101,10 +101,6 @@ class Modsel:
         if type(method) != str:
             raise RelaxStrError, ('model selection method', method)
 
-        # New run modsel_run.
-        if type(modsel_run) != str:
-            raise RelaxStrError, ('modsel_run', modsel_run)
-
         # Runs.
         if pipes == None:
             pass
