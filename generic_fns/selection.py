@@ -936,17 +936,17 @@ def same_sequence(pipe1, pipe2):
         # Loop over the residues.
         for j in xrange(len(relax_data_store[pipe1].mol[i].res)):
             # Different number of spins.
-            if len(relax_data_store[pipe1].mol[i].res[j].spins) != len(relax_data_store[pipe2].mol[i].res[j].spins):
+            if len(relax_data_store[pipe1].mol[i].res[j].spin) != len(relax_data_store[pipe2].mol[i].res[j].spin):
                 return False
 
             # Loop over the spins.
-            for k in xrange(len(relax_data_store[pipe1].mol[i].res[j].spins)):
+            for k in xrange(len(relax_data_store[pipe1].mol[i].res[j].spin)):
                 # Different spin numbers.
-                if relax_data_store[pipe1].mol[i].res[j].spins[k].num != relax_data_store[pipe2].mol[i].res[j].spins[k].num:
+                if relax_data_store[pipe1].mol[i].res[j].spin[k].num != relax_data_store[pipe2].mol[i].res[j].spin[k].num:
                     return False
 
                 # Different spin names.
-                if relax_data_store[pipe1].mol[i].res[j].spins[k].name != relax_data_store[pipe2].mol[i].res[j].spins[k].name:
+                if relax_data_store[pipe1].mol[i].res[j].spin[k].name != relax_data_store[pipe2].mol[i].res[j].spin[k].name:
                     return False
 
     # The sequence is the same.
