@@ -185,6 +185,21 @@ class RelaxNucleusError(BaseError):
         if Debug:
             self.save_state()
 
+# Spin type not set.
+class RelaxSpinTypeError(BaseError):
+    def __init__(self):
+        self.text = "The spin type has not yet been set.  Please use the value.set() user function to set the heteronucleus type."
+        if Debug:
+            self.save_state()
+
+# Proton type not set.
+class RelaxProtonTypeError(BaseError):
+    def __init__(self):
+        self.text = "The type of proton attached to the spin has not yet been set.  Please use the value.set() user function to set the proton type."
+        if Debug:
+            self.save_state()
+
+
 # Argument errors.
 ##################
 
