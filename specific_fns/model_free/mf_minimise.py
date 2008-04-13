@@ -30,6 +30,7 @@ from re import match
 from data import Data as relax_data_store
 from float import isNaN, isInf
 from generic_fns import diffusion_tensor
+from generic_fns.diffusion_tensor import diff_data_exists
 from generic_fns.selection import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
@@ -64,66 +65,56 @@ class Mf_minimise:
         return value
 
 
-    def calculate(self, run=None, res_num=None, verbosity=1, sim_index=None):
-        """Calculation of the model-free chi-squared value."""
+    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
+        """Calculation of the model-free chi-squared value.
 
-        # Arguments.
-        self.run = run
-        self.verbosity = verbosity
+        @keyword spin_id:   The spin identification string.
+        @type spin_id:      str
+        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:    int
+        @keyword sim_index: The optional MC simulation index.
+        @type sim_index:    int
+        """
 
-        # Test if the sequence data for self.run is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        # Test if sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
-        # The residue index.
-        index = None
-        if res_num != None:
-            # Loop over the sequence.
-            for i in xrange(len(relax_data_store.res[self.run])):
-                # Found the residue.
-                if relax_data_store.res[self.run][i].num == res_num:
-                    index = i
-                    break
-
-            # Can't find the residue.
-            if index == None:
-                raise RelaxNoResError, res_num
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Determine the parameter set type.
-        self.param_set = self.determine_param_set_type()
+        param_set = self.determine_param_set_type()
 
-        # Test if diffusion tensor data for the run exists.
-        if self.param_set != 'local_tm' and not relax_data_store.diff.has_key(self.run):
-            raise RelaxNoTensorError, self.run
+        # Test if diffusion tensor data exists.
+        if param_set != 'local_tm' and not diff_data_exists():
+            raise RelaxNoTensorError, 'diffusion'
 
         # Test if the PDB file has been loaded.
-        if self.param_set != 'local_tm' and relax_data_store.diff[self.run].type != 'sphere' and not relax_data_store.pdb.has_key(self.run):
-            raise RelaxNoPdbError, self.run
+        if param_set != 'local_tm' and cdp.diff_tensor.type != 'sphere' and not hasattr(cdp, 'structure'):
+            raise RelaxNoPdbError
 
-        # Test if the nucleus type has been set.
-        if not hasattr(relax_data_store, 'gx'):
-            raise RelaxNucleusError
-
-        # Loop over the residues.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Alias the data structure.
-            data = relax_data_store.res[self.run][i]
-
-            # Skip deselected residues.
-            if not data.select:
-                continue
-
-            # Single residue.
-            if index != None and index != i:
+        # Loop over the spins.
+        for spin in spin_loop(spin_id):
+            # Skip deselected spins.
+            if not spin.select:
                 continue
 
             # Test if the model-free model has been setup.
-            if not data.model:
-                raise RelaxNoModelError, self.run
+            if not spin.model:
+                raise RelaxNoModelError
 
             # Test if unit vectors exist.
-            if self.param_set != 'local_tm' and relax_data_store.diff[self.run].type != 'sphere' and not hasattr(data, 'xh_vect'):
-                raise RelaxNoVectorsError, self.run
+            if param_set != 'local_tm' and cdp.diff_tensor.type != 'sphere' and not hasattr(spin, 'xh_vect'):
+                raise RelaxNoVectorsError
+
+            # Test if the spin type has been set.
+            if not hasattr(spin, 'heteronuc_type'):
+                raise RelaxSpinTypeError
+
+            # Test if the type attached proton has been set.
+            if not hasattr(spin, 'proton_type'):
+                raise RelaxProtonTypeError
 
             # Test if the model-free parameter values exist.
             unset_param = self.are_mf_params_set(i)
@@ -131,90 +122,87 @@ class Mf_minimise:
                 raise RelaxNoValueError, unset_param
 
             # Test if the CSA value has been set.
-            if not hasattr(data, 'csa') or data.csa == None:
+            if not hasattr(data, 'csa') or spin.csa == None:
                 raise RelaxNoValueError, "CSA"
 
             # Test if the bond length value has been set.
-            if not hasattr(data, 'r') or data.r == None:
+            if not hasattr(data, 'r') or spin.r == None:
                 raise RelaxNoValueError, "bond length"
 
-            # Skip residues where there is no data or errors.
+            # Skip spins where there is no data or errors.
             if not hasattr(data, 'relax_data') or not hasattr(data, 'relax_error'):
                 continue
 
             # Make sure that the errors are strictly positive numbers.
-            for j in xrange(len(data.relax_error)):
-                if data.relax_error[j] == 0.0:
-                    raise RelaxError, "Zero error for residue '" + `data.num` + " " + data.name + "', calculation not possible."
-                elif data.relax_error[j] < 0.0:
-                    raise RelaxError, "Negative error for residue '" + `data.num` + " " + data.name + "', calculation not possible."
+            for j in xrange(len(spin.relax_error)):
+                if spin.relax_error[j] == 0.0:
+                    raise RelaxError, "Zero error for spin '" + `spin.num` + " " + spin.name + "', calculation not possible."
+                elif spin.relax_error[j] < 0.0:
+                    raise RelaxError, "Negative error for spin '" + `spin.num` + " " + spin.name + "', calculation not possible."
 
             # Create the initial parameter vector.
-            self.param_vector = self.assemble_param_vector(index=i, sim_index=sim_index)
+            param_vector = self.assemble_param_vector(index=i, sim_index=sim_index)
 
-            # Repackage the data.
+            # Repackage the spin.
             if sim_index == None:
-                relax_data = [data.relax_data]
-                r = [data.r]
-                csa = [data.csa]
+                relax_data = [spin.relax_data]
+                r = [spin.r]
+                csa = [spin.csa]
             else:
-                relax_data = [data.relax_sim_data[sim_index]]
-                r = [data.r_sim[sim_index]]
-                csa = [data.csa_sim[sim_index]]
+                relax_data = [spin.relax_sim_data[sim_index]]
+                r = [spin.r_sim[sim_index]]
+                csa = [spin.csa_sim[sim_index]]
 
             # Vectors.
-            if self.param_set != 'local_tm' and relax_data_store.diff[self.run].type != 'sphere':
-                xh_unit_vectors = [data.xh_vect]
+            if param_set != 'local_tm' and cdp.diff_tensor.type != 'sphere':
+                xh_unit_vectors = [spin.xh_vect]
             else:
                 xh_unit_vectors = [None]
 
             # Count the number of model-free parameters for the residue index.
-            num_params = [len(data.params)]
+            num_params = [len(spin.params)]
 
             # Repackage the parameter values for minimising just the diffusion tensor parameters.
             param_values = [self.assemble_param_vector(param_set='mf')]
 
             # Convert to Numeric arrays.
-            relax_data = [array(data.relax_data, float64)]
-            relax_error = [array(data.relax_error, float64)]
+            relax_data = [array(spin.relax_data, float64)]
+            relax_error = [array(spin.relax_error, float64)]
 
             # Package the diffusion tensor parameters.
-            if self.param_set == 'local_tm':
-                diff_params = [relax_data_store.res[self.run][i].local_tm]
+            if param_set == 'local_tm':
+                diff_params = [spin.local_tm]
                 diff_type = 'sphere'
             else:
-                # Alias.
-                diff_data = relax_data_store.diff[self.run]
-
                 # Diff type.
-                diff_type = diff_data.type
+                diff_type = cdp.diff_tensor.type
 
                 # Spherical diffusion.
                 if diff_type == 'sphere':
-                    diff_params = [diff_data.tm]
+                    diff_params = [cdp.diff_tensor.tm]
 
                 # Spheroidal diffusion.
                 elif diff_type == 'spheroid':
-                    diff_params = [diff_data.tm, diff_data.Da, diff_data.theta, diff_data.phi]
+                    diff_params = [cdp.diff_tensor.tm, cdp.diff_tensor.Da, cdp.diff_tensor.theta, cdp.diff_tensor.phi]
 
                 # Ellipsoidal diffusion.
                 elif diff_type == 'ellipsoid':
-                    diff_params = [diff_data.tm, diff_data.Da, diff_data.Dr, diff_data.alpha, diff_data.beta, diff_data.gamma]
+                    diff_params = [cdp.diff_tensor.tm, cdp.diff_tensor.Da, cdp.diff_tensor.Dr, cdp.diff_tensor.alpha, cdp.diff_tensor.beta, cdp.diff_tensor.gamma]
 
             # Initialise the model-free function.
-            self.mf = Mf(init_params=self.param_vector, param_set='mf', diff_type=diff_type, diff_params=diff_params, num_res=1, equations=[data.equation], param_types=[data.params], param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=[data.num_frq], frq=[data.frq], num_ri=[data.num_ri], remap_table=[data.remap_table], noe_r1_table=[data.noe_r1_table], ri_labels=[data.ri_labels], gx=relax_data_store.gx, gh=relax_data_store.gh, g_ratio=relax_data_store.g_ratio, h_bar=relax_data_store.h_bar, mu0=relax_data_store.mu0, num_params=num_params, vectors=xh_unit_vectors)
+            mf = Mf(init_params=param_vector, param_set='mf', diff_type=diff_type, diff_params=diff_params, num_res=1, equations=[spin.equation], param_types=[spin.params], param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=[spin.num_frq], frq=[spin.frq], num_ri=[spin.num_ri], remap_table=[spin.remap_table], noe_r1_table=[spin.noe_r1_table], ri_labels=[spin.ri_labels], gx=relax_data_store.gx, gh=relax_data_store.gh, g_ratio=relax_data_store.g_ratio, h_bar=relax_data_store.h_bar, mu0=relax_data_store.mu0, num_params=num_params, vectors=xh_unit_vectors)
 
             # Chi-squared calculation.
             try:
-                chi2 = self.mf.func(self.param_vector)
+                chi2 = mf.func(param_vector)
             except OverflowError:
                 chi2 = 1e200
 
             # Global chi-squared value.
-            if self.param_set == 'all' or self.param_set == 'diff':
-                relax_data_store.chi2[self.run] = relax_data_store.chi2[self.run] + chi2
+            if param_set == 'all' or param_set == 'diff':
+                cdp.chi2 = cdp.chi2 + chi2
             else:
-                relax_data_store.res[self.run][i].chi2 = chi2
+                spin.chi2 = chi2
 
 
     def disassemble_param_vector(self, param_set, param_vector=None, spin=None, spin_id=None, sim_index=None):
