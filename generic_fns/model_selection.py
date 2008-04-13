@@ -32,13 +32,19 @@ from relax_errors import RelaxDiffSeqError, RelaxError, RelaxNoPipeError, RelaxN
 def aic(chi2, k, n):
     """Akaike's Information Criteria (AIC).
 
-    The formula is:
+    The formula is::
 
         AIC = chi2 + 2k
 
-    where:
-        chi2 is the minimised chi-squared value.
-        k is the number of parameters in the model.
+
+    @param chi2:    The minimised chi-squared value.
+    @type chi2:     float
+    @param k:       The number of parameters in the model.
+    @type k:        int
+    @param n:       The dimension of the relaxation data set.
+    @type n:        int
+    @return:        The AIC value.
+    @rtype:         float
     """
 
     return chi2 + 2.0*k
