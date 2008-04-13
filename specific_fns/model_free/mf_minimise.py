@@ -122,15 +122,15 @@ class Mf_minimise:
                 raise RelaxNoValueError, unset_param
 
             # Test if the CSA value has been set.
-            if not hasattr(data, 'csa') or spin.csa == None:
+            if not hasattr(spin, 'csa') or spin.csa == None:
                 raise RelaxNoValueError, "CSA"
 
             # Test if the bond length value has been set.
-            if not hasattr(data, 'r') or spin.r == None:
+            if not hasattr(spin, 'r') or spin.r == None:
                 raise RelaxNoValueError, "bond length"
 
             # Skip spins where there is no data or errors.
-            if not hasattr(data, 'relax_data') or not hasattr(data, 'relax_error'):
+            if not hasattr(spin, 'relax_data') or not hasattr(spin, 'relax_error'):
                 continue
 
             # Make sure that the errors are strictly positive numbers.
