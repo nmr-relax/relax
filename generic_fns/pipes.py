@@ -39,8 +39,8 @@ except ImportError:
 def copy(pipe_from=None, pipe_to=None):
     """Copy the contents of the source data pipe to a new target data pipe.
 
-    If the 'pipe_from' argument is None then the current run is assumed as the source.  The data
-    pipe corresponding to 'pipe_to' cannot exist.
+    If the 'pipe_from' argument is None then the current data pipe is assumed as the source.  The
+    data pipe corresponding to 'pipe_to' cannot exist.
 
     @param pipe_from:   The name of the source data pipe to copy the data from.
     @type pipe_from:    str
