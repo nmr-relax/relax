@@ -162,7 +162,7 @@ class Mf_minimise:
             # Count the number of model-free parameters for the residue index.
             num_params = [len(spin.params)]
 
-            # Repackage the parameter values for minimising just the diffusion tensor parameters.
+            # Repackage the parameter values as a local model (ignore if the diffusion tensor is not fixed).
             param_values = [self.assemble_param_vector(param_set='mf')]
 
             # Convert to Numeric arrays.
