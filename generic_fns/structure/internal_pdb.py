@@ -36,18 +36,19 @@ class Internal_PDB(Base_struct_API):
     The structural data object for this class is a dictionary of arrays.  The keys correspond to the
     'atom_id' strings.  The elements of the array are:
 
-        0:  Atom number.
-        1:  The record name (one of ATOM, HETATM, or TER).
-        2:  Atom name.
-        3:  Residue name.
-        4:  Chain ID.
-        5:  Residue number.
-        6:  The x coordinate of the atom.
-        7:  The y coordinate of the atom.
-        8:  The z coordinate of the atom.
-        9:  Segment ID.
-        10:  Element symbol.
-        11+:  The bonded atom numbers.
+        0.  Atom number.
+        1.  The record name (one of ATOM, HETATM, or TER).
+        2.  Atom name.
+        3.  Residue name.
+        4.  Chain ID.
+        5.  Residue number.
+        6.  The x coordinate of the atom.
+        7.  The y coordinate of the atom.
+        8.  The z coordinate of the atom.
+        9.  Segment ID.
+        10.  Element symbol.
+        11.  Bonded atom number 1.  Element 11 onwards correspond to the bonded atoms, this number
+             being unlimited.
     """
 
     # Identification string.
