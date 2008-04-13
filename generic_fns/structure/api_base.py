@@ -31,8 +31,11 @@ prototype method stub with all arguments, raised errors, and return values docum
 from relax_errors import RelaxImplementError
 
 
-class Str_object:
-    """The structural object base class."""
+class Base_struct_API:
+    """The structural object base class.
+
+    All API methods are prototyped here as stub methods.
+    """
 
 
     def __init__(self):

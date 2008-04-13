@@ -25,12 +25,12 @@
 
 
 # relax module imports.
-from api_base import Str_object
+from api_base import Base_struct_API
 from relax_errors import RelaxError
 
 
 
-class Internal_PDB(Str_object):
+class Internal_PDB(Base_struct_API):
     """The internal relax PDB data object.
 
     The structural data object for this class is a dictionary of arrays.  The keys correspond to the

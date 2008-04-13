@@ -66,7 +66,7 @@ def cone_edge(structure=None, res_name='CON', res_num=None, apex=None, axis=None
 
 
     @param structure:       The structural data object.
-    @type structure:        instance of class derived from Str_object
+    @type structure:        instance of class derived from Base_struct_API
     @param res_name:        The residue name.
     @type res_name:         str
     @param res_num:         The residue number.
@@ -476,7 +476,7 @@ def generate_vector_dist(structure=None, atom_id_ext='', res_name=None, res_num=
 
 
     @param structure:       The structural data object.
-    @type structure:        instance of class derived from Str_object
+    @type structure:        instance of class derived from Base_struct_API
     @param atom_id_ext:     The atom identifier extension.
     @type atom_id_ext:      str
     @param res_name:        The residue name.
@@ -577,7 +577,7 @@ def generate_vector_residues(structure=None, vector=None, atom_name=None, res_na
     simulations.
 
     @param structure:       The structural data object.
-    @type structure:        instance of class derived from Str_object
+    @type structure:        instance of class derived from Base_struct_API
     @param vector:          The vector to be represented in the PDB.
     @type vector:           numpy array, len 3
     @param atom_name:       The atom name used to label the atom representing the head of the
@@ -658,7 +658,7 @@ def stitch_cap_to_cone(structure=None, atom_id_ext='', max_angle=None, inc=None)
     """Function for stitching the cap of a cone to the cone edge, in the PDB representations.
 
     @param structure:       The structural data object.
-    @type structure:        instance of class derived from Str_object
+    @type structure:        instance of class derived from Base_struct_API
     @param atom_id_ext:     The atom identifier extension.
     @type atom_id_ext:      str
     @param max_angle:       The maximal polar angle, in rad, after which all vectors are skipped.

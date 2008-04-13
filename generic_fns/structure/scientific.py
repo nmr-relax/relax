@@ -37,14 +37,14 @@ except ImportError:
     module_avail = False
 
 # relax module imports.
-from api_base import Str_object
+from api_base import Base_struct_API
 from data import Data as relax_data_store
 from generic_fns.selection import parse_token, tokenise
 from relax_errors import RelaxNoPdbChainError, RelaxNoResError, RelaxPdbLoadError
 from relax_warnings import RelaxNoAtomWarning, RelaxZeroVectorWarning
 
 
-class Scientific_data(Str_object):
+class Scientific_data(Base_struct_API):
     """The Scientific Python specific data object."""
 
     # Identification string.
