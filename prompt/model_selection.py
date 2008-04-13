@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003, 2004, 2008 Edward d'Auvergne                            #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,6 +24,7 @@
 import sys
 
 # relax module imports.
+from generic_fns import model_selection
 from relax_errors import RelaxError, RelaxNoneListError, RelaxStrError
 
 
@@ -34,7 +35,7 @@ class Modsel:
         self.relax = relax
 
 
-    def model_selection(self, method=None, modsel_run=None, runs=None):
+    def model_selection(self, method=None, pipes=None):
         """Function for model selection.
 
         Keyword arguments
@@ -42,9 +43,7 @@ class Modsel:
 
         method:  The model selection technique (see below).
 
-        modsel_run:  The run name to assign to the results of model selection.
-
-        runs:  An array containing the names of all runs to include in model selection.
+        pipes:  An array containing the names of all data pipes to include in model selection.
 
 
         Description
@@ -52,51 +51,50 @@ class Modsel:
 
         The following model selection methods are supported:
 
-        AIC:  Akaike's Information Criteria.
+            AIC:  Akaike's Information Criteria.
 
-        AICc:  Small sample size corrected AIC.
+            AICc:  Small sample size corrected AIC.
 
-        BIC:  Bayesian or Schwarz Information Criteria.
+            BIC:  Bayesian or Schwarz Information Criteria.
 
-        Bootstrap:  Bootstrap model selection.
+            Bootstrap:  Bootstrap model selection.
 
-        CV:  Single-item-out cross-validation.
+            CV:  Single-item-out cross-validation.
 
-        Expect:  The expected overall discrepancy (the true values of the parameters are required).
+            Expect:  The expected overall discrepancy (the true values of the parameters are
+                     required).
 
-        Farrow:  Old model-free method by Farrow et al., 1994.
+            Farrow:  Old model-free method by Farrow et al., 1994.
 
-        Palmer:  Old model-free method by Mandel et al., 1995.
+            Palmer:  Old model-free method by Mandel et al., 1995.
 
-        Overall:  The realised overall discrepancy (the true values of the parameters are required).
+            Overall:  The realised overall discrepancy (the true values of the parameters are
+                      required).
 
         For the methods 'Bootstrap', 'Expect', and 'Overall', the function 'monte_carlo' should have
-        previously been run with the type argument set to the appropriate value to modify its
+        previously been executed with the type argument set to the appropriate value to modify its
         behaviour.
 
-        If the runs argument is not supplied then all runs currently set or loaded will be used for
-        model selection, although this could cause problems.
+        If the pipes argument is not supplied then all data pipes will be used for model selection.
 
 
         Example
         ~~~~~~~
 
         For model-free analysis, if the preset models 1 to 5 are minimised and loaded into the
-        program, the following commands will carry out AIC model selection and assign the results
-        to the run name 'mixed':
+        program, the following commands will carry out AIC model selection:
 
-        relax> model_selection('AIC', 'mixed')
-        relax> model_selection(method='AIC', modsel_run='mixed')
-        relax> model_selection('AIC', 'mixed', ['m1', 'm2', 'm3', 'm4', 'm5'])
-        relax> model_selection(method='AIC', modsel_run='mixed', runs=['m1', 'm2', 'm3', 'm4', 'm5'])
+        relax> model_selection('AIC')
+        relax> model_selection(method='AIC')
+        relax> model_selection('AIC', ['m1', 'm2', 'm3', 'm4', 'm5'])
+        relax> model_selection(method='AIC', pipes=['m1', 'm2', 'm3', 'm4', 'm5'])
         """
 
         # Function intro text.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "model_selection("
             text = text + "method=" + `method`
-            text = text + ", modsel_run=" + `modsel_run`
-            text = text + ", runs=" + `runs` + ")"
+            text = text + ", pipes=" + `pipes` + ")"
             print text
 
         # Method.
@@ -108,18 +106,18 @@ class Modsel:
             raise RelaxStrError, ('modsel_run', modsel_run)
 
         # Runs.
-        if runs == None:
+        if pipes == None:
             pass
-        elif type(runs) != list:
-            raise RelaxNoneListError, ('runs', runs)
+        elif type(pipes) != list:
+            raise RelaxNoneListError, ('data pipes', pipes)
         else:
-            for name in runs:
+            for name in pipes:
                 if type(name) == list:
                     for name2 in name:
                         if type(name2) != str:
-                            raise RelaxError, "The elements of the second dimension of the runs argument must be strings."
+                            raise RelaxError, "The elements of the second dimension of the pipes argument must be strings."
                 elif type(name) != str:
-                    raise RelaxError, "The elements of the first dimension of the runs argument must be either strings or arrays."
+                    raise RelaxError, "The elements of the first dimension of the pipes argument must be either strings or arrays."
 
         # Execute the functional code.
-        self.relax.generic.model_selection.select(method=method, modsel_run=modsel_run, runs=runs)
+        model_selection.select(method=method, pipes=pipes)
