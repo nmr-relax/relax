@@ -358,7 +358,7 @@ class Mf(TestCase):
         self.assertAlmostEqual(spin.rex, 0.149 / (2.0 * pi * spin.frq[0])**2, msg=mesg)
         self.assertAlmostEqual(spin.chi2, 7.3040158179665562e-28, msg=mesg)
         self.assertEqual(spin.iter, 18, msg=mesg)
-        self.assertEqual(spin.f_count, 96, msg=mesg)
+        self.assertEqual(spin.f_count, 55, msg=mesg)
         self.assertEqual(spin.g_count, 23, msg=mesg)
         self.assertEqual(spin.h_count, 18, msg=mesg)
         self.assertEqual(spin.warning, None, msg=mesg)
