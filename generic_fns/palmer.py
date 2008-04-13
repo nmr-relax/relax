@@ -586,13 +586,8 @@ class Palmer:
             # Get the Rex data.
             if 'Rex' in spin.params:
                 spin.rex, spin.rex_err = self.get_mf_data(self.mfout_Rex_pos + pos)
-                try:
-                    spin.rex = spin.rex / (2.0 * pi * spin.frq[0])**2
-                    spin.rex_err = spin.rex_err / (2.0 * pi * spin.frq[0])**2
-                except TypeError:
-                    # Bug in Modelfree4's mfout output file (fusion of columns).
-                    spin.rex = None
-                    spin_rex_err = None
+                spin.rex = spin.rex / (2.0 * pi * spin.frq[0])**2
+                spin.rex_err = spin.rex_err / (2.0 * pi * spin.frq[0])**2
 
             # Get the chi-squared data.
             if not sims:
