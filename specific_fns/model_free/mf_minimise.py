@@ -159,6 +159,10 @@ class Mf_minimise:
             else:
                 xh_unit_vectors = [None]
 
+            # Gyromagnetic ratios.
+            gx = [return_gyromagnetic_ratio(spin.heteronuc_type)]
+            gh = [return_gyromagnetic_ratio(spin.proton_type)]
+
             # Count the number of model-free parameters for the residue index.
             num_params = [len(spin.params)]
 
@@ -190,7 +194,7 @@ class Mf_minimise:
                     diff_params = [cdp.diff_tensor.tm, cdp.diff_tensor.Da, cdp.diff_tensor.Dr, cdp.diff_tensor.alpha, cdp.diff_tensor.beta, cdp.diff_tensor.gamma]
 
             # Initialise the model-free function.
-            mf = Mf(init_params=param_vector, param_set='mf', diff_type=diff_type, diff_params=diff_params, num_spins=1, equations=[spin.equation], param_types=[spin.params], param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=[spin.num_frq], frq=[spin.frq], num_ri=[spin.num_ri], remap_table=[spin.remap_table], noe_r1_table=[spin.noe_r1_table], ri_labels=[spin.ri_labels], gx=return_gyromagnetic_ratio(spin.heteronuc_type), gh=return_gyromagnetic_ratio(spin.proton_type), h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
+            mf = Mf(init_params=param_vector, param_set='mf', diff_type=diff_type, diff_params=diff_params, num_spins=1, equations=[spin.equation], param_types=[spin.params], param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=[spin.num_frq], frq=[spin.frq], num_ri=[spin.num_ri], remap_table=[spin.remap_table], noe_r1_table=[spin.noe_r1_table], ri_labels=[spin.ri_labels], gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
 
             # Chi-squared calculation.
             try:
