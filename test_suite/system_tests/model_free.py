@@ -46,6 +46,25 @@ class Mf(TestCase):
         relax_data_store.__reset__()
 
 
+    def mesg_opt_debug(self, spin):
+        """Method for returning a string to help debug the minimisation.
+
+        @param spin:    The SpinContainer of the optimised spin.
+        @type spin:     SpinContainer instance
+        @return:        The debugging string.
+        @rtype:         str
+        """
+
+        # Initialise the string.
+        string = 'Optimisation failure.\n\n'
+
+        # Add the SpinContainer contents.
+        string = string + `spin`
+
+        # Return the string.
+        return string
+
+
     def test_create_m4(self):
         """Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()."""
 
@@ -357,18 +376,21 @@ class Mf(TestCase):
         # Alias the relevent spin container.
         spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
+        # Get the debugging message.
+        mesg = self.mesg_opt_debug(spin)
+
         # Test the values.
         self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
-        self.assertEqual(spin.select, True)
-        self.assertAlmostEqual(spin.s2, 0.970)
-        self.assertAlmostEqual(spin.te, 2048 * 1e-12)
-        self.assertAlmostEqual(spin.rex, 0.149 / (2.0 * pi * spin.frq[0])**2)
-        self.assertAlmostEqual(spin.chi2, 6.8756889983348349e-28)
-        self.assertEqual(spin.iter, 22)
-        self.assertEqual(spin.f_count, 159)
-        self.assertEqual(spin.g_count, 159)
-        self.assertEqual(spin.h_count, 22)
-        self.assertEqual(spin.warning, None)
+        self.assertEqual(spin.select, True, msg=mesg)
+        self.assertAlmostEqual(spin.s2, 0.970, msg=mesg)
+        self.assertAlmostEqual(spin.te, 2048 * 1e-12, msg=mesg)
+        self.assertAlmostEqual(spin.rex, 0.149 / (2.0 * pi * spin.frq[0])**2, msg=mesg)
+        self.assertAlmostEqual(spin.chi2, 6.8756889983348349e-28, msg=mesg)
+        self.assertEqual(spin.iter, 22, msg=mesg)
+        self.assertEqual(spin.f_count, 159, msg=mesg)
+        self.assertEqual(spin.g_count, 159, msg=mesg)
+        self.assertEqual(spin.h_count, 22, msg=mesg)
+        self.assertEqual(spin.warning, None, msg=mesg)
 
 
     def test_opt_constr_sd_back_S2_0_970_te_2048_Rex_0_149(self):
