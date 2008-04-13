@@ -39,11 +39,14 @@ class Pymol:
     the PyMOL child process pipe.
     """
 
-    command_history = ""
-    """Variable for storing the pymol command history."""
+    def __init__(self):
+        """Class initialisation method used to set the command history and the PyMOL pipe."""
 
-    pipe = None
-    """Writable pipe (file handle) to the PyMOL child process."""
+        self.command_history = ""
+        """Variable for storing the pymol command history."""
+
+        self.pipe = None
+        """Writable pipe (file handle) to the PyMOL child process."""
 
 
     def clear_history(self):
