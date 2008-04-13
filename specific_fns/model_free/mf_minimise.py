@@ -163,7 +163,7 @@ class Mf_minimise:
             num_params = [len(spin.params)]
 
             # Repackage the parameter values as a local model (ignore if the diffusion tensor is not fixed).
-            param_values = [self.assemble_param_vector(param_set='mf')]
+            param_values = [self.assemble_param_vector(model_type='mf')]
 
             # Convert to Numeric arrays.
             relax_data = [array(spin.relax_data, float64)]
