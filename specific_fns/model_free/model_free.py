@@ -124,18 +124,18 @@ class Model_free_main:
         # Diffusion tensor parameters.
         if model_type == 'diff' or model_type == 'all':
             # Spherical diffusion.
-            if cdp.diff.type == 'sphere':
+            if cdp.diff_tensor.type == 'sphere':
                 param_names.append('tm')
 
             # Spheroidal diffusion.
-            elif cdp.diff.type == 'spheroid':
+            elif cdp.diff_tensor.type == 'spheroid':
                 param_names.append('tm')
                 param_names.append('Da')
                 param_names.append('theta')
                 param_names.append('phi')
 
             # Ellipsoidal diffusion.
-            elif cdp.diff.type == 'ellipsoid':
+            elif cdp.diff_tensor.type == 'ellipsoid':
                 param_names.append('tm')
                 param_names.append('Da')
                 param_names.append('Dr')
@@ -184,46 +184,46 @@ class Model_free_main:
             # Normal parameters.
             if sim_index == None:
                 # Spherical diffusion.
-                if cdp.diff.type == 'sphere':
-                    param_vector.append(cdp.diff.tm)
+                if cdp.diff_tensor.type == 'sphere':
+                    param_vector.append(cdp.diff_tensor.tm)
 
                 # Spheroidal diffusion.
-                elif cdp.diff.type == 'spheroid':
-                    param_vector.append(cdp.diff.tm)
-                    param_vector.append(cdp.diff.Da)
-                    param_vector.append(cdp.diff.theta)
-                    param_vector.append(cdp.diff.phi)
+                elif cdp.diff_tensor.type == 'spheroid':
+                    param_vector.append(cdp.diff_tensor.tm)
+                    param_vector.append(cdp.diff_tensor.Da)
+                    param_vector.append(cdp.diff_tensor.theta)
+                    param_vector.append(cdp.diff_tensor.phi)
 
                 # Ellipsoidal diffusion.
-                elif cdp.diff.type == 'ellipsoid':
-                    param_vector.append(cdp.diff.tm)
-                    param_vector.append(cdp.diff.Da)
-                    param_vector.append(cdp.diff.Dr)
-                    param_vector.append(cdp.diff.alpha)
-                    param_vector.append(cdp.diff.beta)
-                    param_vector.append(cdp.diff.gamma)
+                elif cdp.diff_tensor.type == 'ellipsoid':
+                    param_vector.append(cdp.diff_tensor.tm)
+                    param_vector.append(cdp.diff_tensor.Da)
+                    param_vector.append(cdp.diff_tensor.Dr)
+                    param_vector.append(cdp.diff_tensor.alpha)
+                    param_vector.append(cdp.diff_tensor.beta)
+                    param_vector.append(cdp.diff_tensor.gamma)
 
             # Monte Carlo diffusion tensor parameters.
             else:
                 # Spherical diffusion.
-                if cdp.diff.type == 'sphere':
-                    param_vector.append(cdp.diff.tm_sim[sim_index])
+                if cdp.diff_tensor.type == 'sphere':
+                    param_vector.append(cdp.diff_tensor.tm_sim[sim_index])
 
                 # Spheroidal diffusion.
-                elif cdp.diff.type == 'spheroid':
-                    param_vector.append(cdp.diff.tm_sim[sim_index])
-                    param_vector.append(cdp.diff.Da_sim[sim_index])
-                    param_vector.append(cdp.diff.theta_sim[sim_index])
-                    param_vector.append(cdp.diff.phi_sim[sim_index])
+                elif cdp.diff_tensor.type == 'spheroid':
+                    param_vector.append(cdp.diff_tensor.tm_sim[sim_index])
+                    param_vector.append(cdp.diff_tensor.Da_sim[sim_index])
+                    param_vector.append(cdp.diff_tensor.theta_sim[sim_index])
+                    param_vector.append(cdp.diff_tensor.phi_sim[sim_index])
 
                 # Ellipsoidal diffusion.
-                elif cdp.diff.type == 'ellipsoid':
-                    param_vector.append(cdp.diff.tm_sim[sim_index])
-                    param_vector.append(cdp.diff.Da_sim[sim_index])
-                    param_vector.append(cdp.diff.Dr_sim[sim_index])
-                    param_vector.append(cdp.diff.alpha_sim[sim_index])
-                    param_vector.append(cdp.diff.beta_sim[sim_index])
-                    param_vector.append(cdp.diff.gamma_sim[sim_index])
+                elif cdp.diff_tensor.type == 'ellipsoid':
+                    param_vector.append(cdp.diff_tensor.tm_sim[sim_index])
+                    param_vector.append(cdp.diff_tensor.Da_sim[sim_index])
+                    param_vector.append(cdp.diff_tensor.Dr_sim[sim_index])
+                    param_vector.append(cdp.diff_tensor.alpha_sim[sim_index])
+                    param_vector.append(cdp.diff_tensor.beta_sim[sim_index])
+                    param_vector.append(cdp.diff_tensor.gamma_sim[sim_index])
 
         # Model-free parameters (residue specific parameters).
         if model_type != 'diff':
@@ -1661,7 +1661,7 @@ class Model_free_main:
 
         # Is structural data required?
         need_vect = False
-        if hasattr(cdp, 'diff') and (cdp.diff.type == 'spheroid' or cdp.diff.type == 'ellipsoid'):
+        if hasattr(cdp, 'diff') and (cdp.diff_tensor.type == 'spheroid' or cdp.diff_tensor.type == 'ellipsoid'):
             need_vect = True
 
         # Loop over the sequence.
