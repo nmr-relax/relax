@@ -282,7 +282,7 @@ class Mf:
             self.data[i].num_params = num_params[i]
             self.data[i].xh_unit_vector = vectors[i]
 
-            # Parameter values for minimising soley the diffusion tensor parameters.
+            # Parameter values for minimising solely the diffusion tensor parameters.
             if self.param_set == 'diff':
                 self.data[i].param_values = param_values[i]
 
