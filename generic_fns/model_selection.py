@@ -76,14 +76,19 @@ def aicc(chi2, k, n):
 def bic(chi2, k, n):
     """Bayesian or Schwarz Information Criteria.
 
-    The formula is:
+    The formula is::
 
         BIC = chi2 + k ln n
 
-    where:
-        chi2 - is the minimised chi-squared value.
-        k - is the number of parameters in the model.
-        n is the dimension of the relaxation data set.
+
+    @param chi2:    The minimised chi-squared value.
+    @type chi2:     float
+    @param k:       The number of parameters in the model.
+    @type k:        int
+    @param n:       The dimension of the relaxation data set.
+    @type n:        int
+    @return:        The AIC value.
+    @rtype:         float
     """
 
     return chi2 + k * log(n)
