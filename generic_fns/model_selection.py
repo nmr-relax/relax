@@ -53,16 +53,21 @@ def aic(chi2, k, n):
 def aicc(chi2, k, n):
     """Small sample size corrected AIC.
 
-    The formula is:
+    The formula is::
 
                            2k(k + 1)
         AICc = chi2 + 2k + ---------
                            n - k - 1
 
-    where:
-        chi2 is the minimised chi-squared value.
-        k is the number of parameters in the model.
-        n is the dimension of the relaxation data set.
+
+    @param chi2:    The minimised chi-squared value.
+    @type chi2:     float
+    @param k:       The number of parameters in the model.
+    @type k:        int
+    @param n:       The dimension of the relaxation data set.
+    @type n:        int
+    @return:        The AIC value.
+    @rtype:         float
     """
 
     return chi2 + 2.0*k + 2.0*k*(k + 1.0) / (n - k - 1.0)
