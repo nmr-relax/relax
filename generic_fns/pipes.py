@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for manipulating data pipes."""
+
+
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError
@@ -30,12 +34,6 @@ try:
     from maths_fns.relax_fit import func
 except ImportError:
     C_module_exp_fn = 0
-
-
-# The relax data storage object.
-
-
-"""Class containing the methods for manipulating data pipes."""
 
 
 def copy(pipe_from=None, pipe_to=None):
