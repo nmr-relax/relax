@@ -117,7 +117,7 @@ class Mf_minimise:
                 raise RelaxProtonTypeError
 
             # Test if the model-free parameter values exist.
-            unset_param = self.are_mf_params_set(i)
+            unset_param = self.are_mf_params_set(spin)
             if unset_param != None:
                 raise RelaxNoValueError, unset_param
 
