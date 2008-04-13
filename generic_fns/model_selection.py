@@ -26,8 +26,9 @@ from math import log
 
 # relax module imports.
 from data import Data as relax_data_store
-from relax_errors import RelaxDiffSeqError, RelaxError, RelaxNoPipeError, RelaxNoSequenceError
+from generic_fns.selection import same_sequence
 import pipes
+from relax_errors import RelaxDiffSeqError, RelaxError, RelaxNoPipeError, RelaxNoSequenceError
 from specific_fns.setup import get_specific_fn
 
 
@@ -154,8 +155,8 @@ def select(method=None, pipes=None):
                 model_statistics[pipe] = get_specific_fn('model_stats', relax_data_store[pipe].pipe_type)
                 skip_function[pipe] = get_specific_fn('skip_function', relax_data_store[pipe].pipe_type)
 
-                # Run various tests.
-                tests(pipe)
+                # Check that the sequence is the same in all data pipes.
+                same_sequence(pipes[0][0], pipe)
 
     # All other model selection setup.
     else:
@@ -169,8 +170,8 @@ def select(method=None, pipes=None):
             model_statistics[pipe] = get_specific_fn('model_stats', relax_data_store[pipe].pipe_type)
             skip_function[pipe] = get_specific_fn('skip_function', relax_data_store[pipe].pipe_type)
 
-            # Run various tests.
-            tests(pipe)
+            # Check that the sequence is the same in all data pipes.
+            same_sequence(pipes[0], pipe)
 
 
     # Number of instances.  If the number is not the same for each data pipe, then the minimum
@@ -288,39 +289,3 @@ def select(method=None, pipes=None):
         # Duplicate the data from the 'best_model' to the model selection data pipe.
         if best_model != None:
             pipes.copy(best_model, modsel_pipe)
-
-
-def tests(pipe):
-    """Numerous tests for the given data pipe."""
-
-    # Test if the data pipe exists.
-    if pipe not in relax_data_store.keys():
-        raise RelaxNoPipeError, pipe
-
-    # Switch to this pipe.
-    pipes.switch(pipe)
-
-    # Alias the pipe.
-    cdp = relax_data_store[pipe]
-
-    # Skip all tests if the model is a hybrid.
-    if cdp.pipe_type == 'hybrid':
-        return
-
-    # Test if sequence data exists.
-    if not exists_mol_res_spin_data():
-        raise RelaxNoSequenceError
-
-    # Sequence lengths.
-    if len(relax_data_store.res[self.first_run]) != len(relax_data_store.res[run]):
-        raise RelaxDiffSeqError, (self.first_run, run)
-
-    # Loop over the sequence and test that the residue number and residue name are the same.
-    for i in xrange(len(relax_data_store.res[self.first_run])):
-        # Residue number.
-        if relax_data_store.res[self.first_run][i].num != relax_data_store.res[run][i].num:
-            raise RelaxDiffSeqError, (self.first_run, run)
-
-        # Residue name.
-        if relax_data_store.res[self.first_run][i].name != relax_data_store.res[run][i].name:
-            raise RelaxDiffSeqError, (self.first_run, run)
