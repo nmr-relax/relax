@@ -766,7 +766,7 @@ class Mf_minimise:
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # Test if the model-free model has been setup.
+        # Test if the model-free model has been setup, and that the heteronucleus and attached proton type have been set.
         for spin in spin_loop():
             # Skip deselected spins.
             if not spin.select:
@@ -775,6 +775,14 @@ class Mf_minimise:
             # Not setup.
             if not spin.model:
                 raise RelaxNoModelError
+
+            # Test if the spin type has been set.
+            if not hasattr(spin, 'heteronuc_type'):
+                raise RelaxSpinTypeError
+
+            # Test if the type attached proton has been set.
+            if not hasattr(spin, 'proton_type'):
+                raise RelaxProtonTypeError
 
         # Determine the parameter set type.
         param_set = self.determine_param_set_type()
@@ -787,7 +795,7 @@ class Mf_minimise:
         if param_set != 'local_tm' and not diffusion_tensor.diff_data_exists():
             raise RelaxNoTensorError, 'diffusion'
 
-        # Tests for the PDB file, unit vectors, and nuclues type.
+        # Tests for the PDB file and unit vectors.
         if param_set != 'local_tm' and cdp.diff_tensor.type != 'sphere':
             # Test if the structure file has been loaded.
             if not hasattr(cdp.structure, 'structures'):
@@ -802,14 +810,6 @@ class Mf_minimise:
                 # Unit vector.
                 if not hasattr(spin, 'xh_vect'):
                     raise RelaxNoVectorsError
-
-                # Test if the spin type has been set.
-                if not hasattr(spin, 'heteronuc_type'):
-                    raise RelaxSpinTypeError
-
-                # Test if the type attached proton has been set.
-                if not hasattr(spin, 'proton_type'):
-                    raise RelaxProtonTypeError
 
         # Test if the model-free parameter values are set for minimising diffusion tensor parameters by themselves.
         if param_set == 'diff':
