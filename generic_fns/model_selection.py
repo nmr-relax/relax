@@ -29,6 +29,55 @@ from data import Data as relax_data_store
 from relax_errors import RelaxDiffSeqError, RelaxError, RelaxNoPipeError, RelaxNoSequenceError
 
 
+def aic(chi2, k, n):
+    """Akaike's Information Criteria (AIC).
+
+    The formula is:
+
+        AIC = chi2 + 2k
+
+    where:
+        chi2 is the minimised chi-squared value.
+        k is the number of parameters in the model.
+    """
+
+    return chi2 + 2.0*k
+
+
+def aicc(chi2, k, n):
+    """Small sample size corrected AIC.
+
+    The formula is:
+
+                           2k(k + 1)
+        AICc = chi2 + 2k + ---------
+                           n - k - 1
+
+    where:
+        chi2 is the minimised chi-squared value.
+        k is the number of parameters in the model.
+        n is the dimension of the relaxation data set.
+    """
+
+    return chi2 + 2.0*k + 2.0*k*(k + 1.0) / (n - k - 1.0)
+
+
+def bic(chi2, k, n):
+    """Bayesian or Schwarz Information Criteria.
+
+    The formula is:
+
+        BIC = chi2 + k ln n
+
+    where:
+        chi2 - is the minimised chi-squared value.
+        k - is the number of parameters in the model.
+        n is the dimension of the relaxation data set.
+    """
+
+    return chi2 + k * log(n)
+
+
 def select(method=None, modsel_run=None, runs=None):
     """Model selection function."""
 
@@ -234,55 +283,6 @@ def select(method=None, modsel_run=None, runs=None):
         # Duplicate the data from the 'best_model' to the model selection run 'modsel_run'.
         if best_model != None:
             self.duplicate_data[best_model](new_run=modsel_run, old_run=best_model, instance=i, global_stats=global_stats)
-
-
-def aic(chi2, k, n):
-    """Akaike's Information Criteria (AIC).
-
-    The formula is:
-
-        AIC = chi2 + 2k
-
-    where:
-        chi2 is the minimised chi-squared value.
-        k is the number of parameters in the model.
-    """
-
-    return chi2 + 2.0*k
-
-
-def aicc(chi2, k, n):
-    """Small sample size corrected AIC.
-
-    The formula is:
-
-                           2k(k + 1)
-        AICc = chi2 + 2k + ---------
-                           n - k - 1
-
-    where:
-        chi2 is the minimised chi-squared value.
-        k is the number of parameters in the model.
-        n is the dimension of the relaxation data set.
-    """
-
-    return chi2 + 2.0*k + 2.0*k*(k + 1.0) / (n - k - 1.0)
-
-
-def bic(chi2, k, n):
-    """Bayesian or Schwarz Information Criteria.
-
-    The formula is:
-
-        BIC = chi2 + k ln n
-
-    where:
-        chi2 - is the minimised chi-squared value.
-        k - is the number of parameters in the model.
-        n is the dimension of the relaxation data set.
-    """
-
-    return chi2 + k * log(n)
 
 
 def tests(run):
