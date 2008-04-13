@@ -155,26 +155,30 @@ class Model_free_main:
                 param_names = param_names + spin.params
 
 
-    def assemble_param_vector(self, spin=None, spin_id=None, sim_index=None):
+    def assemble_param_vector(self, spin=None, spin_id=None, sim_index=None, model_type=None):
         """Assemble the model-free parameter vector (as numpy array).
 
         If the spin argument is supplied, then the spin_id argument will be ignored.
 
-        @keyword spin:      The spin data container.
-        @type spin:         SpinContainer instance
-        @keyword spin_id:   The spin identification string.
-        @type spin_id:      str
-        @keyword sim_index: The optional MC simulation index.
-        @type sim_index:    int
-        @return:            An array of the parameter values of the model-free model.
-        @rtype:             numpy array
+        @keyword spin:          The spin data container.
+        @type spin:             SpinContainer instance
+        @keyword spin_id:       The spin identification string.
+        @type spin_id:          str
+        @keyword sim_index:     The optional MC simulation index.
+        @type sim_index:        int
+        @keyword model_type:    The optional parameter set, one of 'all', 'diff', 'mf', or
+                                'local_tm'. 
+        @type model_type:       str or None
+        @return:                An array of the parameter values of the model-free model.
+        @rtype:                 numpy array
         """
 
         # Initialise.
         param_vector = []
 
         # Determine the model type.
-        model_type = self.determine_param_set_type()
+        if not model_type:
+            model_type = self.determine_param_set_type()
 
         # Alias the current data pipe.
         cdp = relax_data_store[relax_data_store.current_pipe]
