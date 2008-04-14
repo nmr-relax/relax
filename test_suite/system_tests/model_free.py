@@ -435,18 +435,10 @@ class Mf(TestCase):
         h_count = 22
         warning = None
 
-        # Non-standard optimisation.
+        # Optimisation differences.
         if SYSTEM == 'Linux' and ARCH[0] == '64bit':
-            select = True
-            s2 = 0.970
-            te = 2048 * 1e-12
-            rex = 0.149 / (2.0 * pi * spin.frq[0])**2
-            chi2 = 6.8756889983348349e-28
-            iter = 22
             f_count = 91
             g_count = 91
-            h_count = 22
-            warning = None
 
         # Test the values.
         self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
