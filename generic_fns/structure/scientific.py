@@ -39,7 +39,7 @@ except ImportError:
 # relax module imports.
 from api_base import Base_struct_API
 from data import Data as relax_data_store
-from generic_fns.selection import parse_token, tokenise
+from generic_fns.selection import parse_token, tokenise, wildcard_match
 from relax_errors import RelaxNoPdbChainError, RelaxNoResError, RelaxPdbLoadError
 from relax_warnings import RelaxNoAtomWarning, RelaxZeroVectorWarning
 
@@ -77,7 +77,7 @@ class Scientific_data(Base_struct_API):
                     mol_name = None
 
                 # Skip non-matching molecules.
-                if molecules and mol_name not in molecules:
+                if molecules and not wildcard_match(mol_name, molecules):
                     continue
 
                 # Yield the molecule and its name.
@@ -95,7 +95,7 @@ class Scientific_data(Base_struct_API):
                     mol_name = None
 
                 # Skip non-matching molecules.
-                if molecules and mol_name not in molecules:
+                if molecules and not wildcard_match(mol_name, molecules):
                     continue
 
                 # Yield the molecule and its name.
@@ -133,7 +133,7 @@ class Scientific_data(Base_struct_API):
                 res_num = res.number
 
                 # Skip non-matching residues.
-                if residues and not (res_name in residues or res_num in residues):
+                if residues and not (wildcard_match(res_name, residues) or res_num in residues):
                     continue
 
                 # Yield the residue info.
@@ -143,7 +143,7 @@ class Scientific_data(Base_struct_API):
         else:
             for res in mol:
                 # Skip non-matching residues.
-                if residues and not (res.name in residues or res.number in residues):
+                if residues and not (wildcard_match(res.name, residues) or res.number in residues):
                     continue
 
                 # Yield the residue info.
@@ -201,7 +201,7 @@ class Scientific_data(Base_struct_API):
                         pos = atom.position.array
 
                         # Skip non-matching atoms.
-                        if atom_token and not (atom_name in atoms or atom_num in atoms):
+                        if atom_token and not (wildcard_match(atom_name, atoms) or atom_num in atoms):
                             continue
 
                         # Build the tuple to be yielded.
