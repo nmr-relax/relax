@@ -423,9 +423,6 @@ class Mf(TestCase):
         # Alias the relevent spin container.
         spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
-        # Get the debugging message.
-        mesg = self.mesg_opt_debug(spin)
-
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
         s2 = 0.970
@@ -452,17 +449,8 @@ class Mf(TestCase):
             warning = None
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False, msg=mesg)
-        self.assertEqual(spin.select, select, msg=mesg)
-        self.assertAlmostEqual(spin.s2, s2, msg=mesg)
-        self.assertAlmostEqual(spin.te, te, msg=mesg)
-        self.assertAlmostEqual(spin.rex, rex, msg=mesg)
-        self.assertAlmostEqual(spin.chi2, chi2, msg=mesg)
-        self.assertEqual(spin.iter, iter, msg=mesg)
-        self.assertEqual(spin.f_count, f_count, msg=mesg)
-        self.assertEqual(spin.g_count, g_count, msg=mesg)
-        self.assertEqual(spin.h_count, h_count, msg=mesg)
-        self.assertEqual(spin.warning, warning, msg=mesg)
+        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
     def test_opt_constr_sd_back_S2_0_970_te_2048_Rex_0_149(self):
@@ -752,3 +740,24 @@ class Mf(TestCase):
         # Test the values.
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, N15_CSA)
         self.assertEqual(cdp.mol[0].res[1].spin[0].r, NH_BOND_LENGTH)
+
+
+    def value_test(self, spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning):
+        """Method for testing the optimisation values.
+
+        """
+
+        # Get the debugging message.
+        mesg = self.mesg_opt_debug(spin)
+
+        # Test all the values.
+        self.assertEqual(spin.select, select, msg=mesg)
+        self.assertAlmostEqual(spin.s2, s2, msg=mesg)
+        self.assertAlmostEqual(spin.te, te, msg=mesg)
+        self.assertAlmostEqual(spin.rex, rex, msg=mesg)
+        self.assertAlmostEqual(spin.chi2, chi2, msg=mesg)
+        self.assertEqual(spin.iter, iter, msg=mesg)
+        self.assertEqual(spin.f_count, f_count, msg=mesg)
+        self.assertEqual(spin.g_count, g_count, msg=mesg)
+        self.assertEqual(spin.h_count, h_count, msg=mesg)
+        self.assertEqual(spin.warning, warning, msg=mesg)
