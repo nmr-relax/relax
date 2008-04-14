@@ -760,7 +760,7 @@ class Mf(TestCase):
 
         # Test all the values.
         self.assertEqual(spin.select, select, msg=mesg)
-        self.assertAlmostEqual(spin.s2, s2, msg=mesg)
+        self.assertAlmostEqual(spin.s2, s2, places=12, msg=mesg)
         self.assertAlmostEqual(spin.te, te, msg=mesg)
         self.assertAlmostEqual(spin.rex, rex, msg=mesg)
         self.assertAlmostEqual(spin.chi2, chi2, msg=mesg)
