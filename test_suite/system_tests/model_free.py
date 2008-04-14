@@ -455,6 +455,10 @@ class Mf(TestCase):
 
         # Optimisation differences.
         if SYSTEM == 'Linux' and ARCH[0] == '64bit':
+            s2 = 0.9699999999999994
+            te = 2048.0000000000445
+            rex = 0.14900000000001614
+            chi2 = 8.331260138136833e-28
             f_count = 91
             g_count = 91
 
