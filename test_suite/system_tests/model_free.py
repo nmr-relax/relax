@@ -210,7 +210,7 @@ class Mf(TestCase):
         select = True
         s2 = 0.9699999999999995
         te = 2048.000000000022283 * 1e-12
-        rex = 0.149 / (2.0 * pi * spin.frq[0])**2
+        rex = 0.14900000000000566
         chi2 = 5.24794913425e-24
         iter = 203
         f_count = 955
@@ -259,7 +259,7 @@ class Mf(TestCase):
         select = True
         s2 = 0.9700000000000580
         te = 2048.000000011044449 * 1e-12
-        rex = 0.149 / (2.0 * pi * spin.frq[0])**2
+        rex = 0.148999999998904
         chi2 = 3.1024517431117421e-27
         iter = 120
         f_count = 388
@@ -307,7 +307,7 @@ class Mf(TestCase):
         select = True
         s2 = 0.9097900390625
         te = 2.5000000000000001e-11
-        rex = 1.24017333984375 / (2.0 * pi * spin.frq[0])**2
+        rex = 1.24017333984375
         chi2 = 53.476155463267176
         iter = 50
         f_count = 131
@@ -350,7 +350,7 @@ class Mf(TestCase):
         select = True
         s2 = 0.9700000000219674
         te = 2048.000001534187049 * 1e-12
-        rex = 0.149 / (2.0 * pi * spin.frq[0])**2
+        rex = 0.14899999946977982
         chi2 = 2.34772342485e-18
         iter = 198
         f_count = 738
@@ -399,7 +399,7 @@ class Mf(TestCase):
         select = True
         s2 = 0.9699999999999994
         te = 2048.000000000045020 * 1e-12
-        rex = 0.149 / (2.0 * pi * spin.frq[0])**2
+        rex = 0.14900000000001817
         chi2 = 7.3040158179665562e-28
         iter = 18
         f_count = 55
@@ -443,7 +443,7 @@ class Mf(TestCase):
         select = True
         s2 = 0.9699999999999993
         te = 2048.000000000041837 * 1e-12
-        rex = 0.149 / (2.0 * pi * spin.frq[0])**2
+        rex = 0.14900000000002225
         chi2 = 6.8756889983348349e-28
         iter = 22
         f_count = 159
@@ -491,7 +491,7 @@ class Mf(TestCase):
         select = True
         s2 = 0.91579220834688024
         te = 3.056865872253173e-13
-        rex = 0.34008409798366124 / (2.0 * pi * spin.frq[0])**2
+        rex = 0.34008409798366124
         chi2 = 68.321956795264342
         iter = 50
         f_count = 134
@@ -762,7 +762,7 @@ class Mf(TestCase):
         self.assertEqual(spin.select, select, msg=mesg)
         self.assertEqual(spin.s2, s2, msg=mesg)
         self.assertEqual(spin.te, te, msg=mesg)
-        self.assertAlmostEqual(spin.rex, rex, msg=mesg)
+        self.assertEqual(spin.rex * (2.0 * pi * spin.frq[0])**2, rex, msg=mesg)
         self.assertAlmostEqual(spin.chi2, chi2, msg=mesg)
         self.assertEqual(spin.iter, iter, msg=mesg)
         self.assertEqual(spin.f_count, f_count, msg=mesg)
