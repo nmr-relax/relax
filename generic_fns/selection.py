@@ -124,21 +124,21 @@ class Selection(object):
         elif isinstance(obj, MoleculeContainer):
             if not self.molecules:
                 return True
-            elif self.wildcard_match(str(obj.name), self.molecules):
+            elif self.wildcard_match(obj.name, self.molecules):
                 return True
 
         # The object is a residue.
         elif isinstance(obj, ResidueContainer):
             if not self.residues:
                 return True
-            elif self.wildcard_match(str(obj.name), self.residues) or obj.num in self.residues:
+            elif self.wildcard_match(obj.name, self.residues) or obj.num in self.residues:
                 return True
 
         # The object is a spin.
         elif isinstance(obj, SpinContainer):
             if not self.spins:
                 return True
-            elif self.wildcard_match(str(obj.name), self.spins) or obj.num in self.spins:
+            elif self.wildcard_match(obj.name, self.spins) or obj.num in self.spins:
                 return True
 
         # No match.
@@ -177,16 +177,20 @@ class Selection(object):
         This method converts from relax's RE syntax to that of the re python module.
 
         @param string:      The molecule/res/spin name or number.
-        @type string:       str
+        @type string:       None, str, or number
         @param patterns:    A list of patterns to match.  This should be the output of
                             parse_token().
         @return:            True if there is a match, False otherwise.
         @rtype:             bool
         """
 
-        # Catch the None string.
+        # Catch None.
         if string == None:
             return False
+
+        # If a number, convert to a string.
+        if type(string) == int or type(string) == float:
+            string = str(string)
 
         # Loop over the patterns.
         for pattern in patterns:
