@@ -124,21 +124,21 @@ class Selection(object):
         elif isinstance(obj, MoleculeContainer):
             if not self.molecules:
                 return True
-            elif self.match(obj.name, self.molecules):
+            elif self.wildcard_match(obj.name, self.molecules):
                 return True
 
         # The object is a residue.
         elif isinstance(obj, ResidueContainer):
             if not self.residues:
                 return True
-            elif self.match(obj.name, self.residues) or obj.num in self.residues:
+            elif self.wildcard_match(obj.name, self.residues) or obj.num in self.residues:
                 return True
 
         # The object is a spin.
         elif isinstance(obj, SpinContainer):
             if not self.spins:
                 return True
-            elif self.match(obj.name, self.spins) or obj.num in self.spins:
+            elif self.wildcard_match(obj.name, self.spins) or obj.num in self.spins:
                 return True
 
         # No match.
@@ -158,8 +158,23 @@ class Selection(object):
         self._intersect = (select_obj0, select_obj1)
 
 
-    def match(self, string, patterns):
+    def union(self, select_obj0, select_obj1):
+        """Make a Selection object the union of two Selection objects
+
+        @type select_obj0: Instance of class Selection
+        @param select_obj0: First Selection object in union
+        @type select_obj1: Instance of class Selection
+        @param select_obj1: First Selection object in union"""
+
+        if self._union or self._intersect or self.molecules or self.residues or self.spins:
+            raise RelaxError, "Cannot define multiple Boolean relationships between Selection objects"
+        self._union = (select_obj0, select_obj1)
+
+
+    def wildcard_match(self, string, patterns):
         """Determine if the string is in the list of patterns, allowing for regular expressions.
+
+        This method converts from relax's RE syntax to that of the re python module.
 
         @param string:      The molecule/res/spin name or number.
         @type string:       str
@@ -186,18 +201,6 @@ class Selection(object):
         # No matches.
         return False
 
-
-    def union(self, select_obj0, select_obj1):
-        """Make a Selection object the union of two Selection objects
-
-        @type select_obj0: Instance of class Selection
-        @param select_obj0: First Selection object in union
-        @type select_obj1: Instance of class Selection
-        @param select_obj1: First Selection object in union"""
-
-        if self._union or self._intersect or self.molecules or self.residues or self.spins:
-            raise RelaxError, "Cannot define multiple Boolean relationships between Selection objects"
-        self._union = (select_obj0, select_obj1)
 
 
 def count_selected_spins(selection=None):
