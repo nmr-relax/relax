@@ -208,7 +208,7 @@ class Mf(TestCase):
 
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
-        s2 = 0.970
+        s2 = 0.9699999999999995
         te = 2048 * 1e-12
         rex = 0.149 / (2.0 * pi * spin.frq[0])**2
         chi2 = 5.24794913425e-24
@@ -257,7 +257,7 @@ class Mf(TestCase):
 
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
-        s2 = 0.970
+        s2 = 0.9700000000000580
         te = 2048 * 1e-12
         rex = 0.149 / (2.0 * pi * spin.frq[0])**2
         chi2 = 3.1024517431117421e-27
@@ -348,7 +348,7 @@ class Mf(TestCase):
 
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
-        s2 = 0.970
+        s2 = 0.9700000000219674
         te = 2048 * 1e-12
         rex = 0.149 / (2.0 * pi * spin.frq[0])**2
         chi2 = 2.34772342485e-18
@@ -397,7 +397,7 @@ class Mf(TestCase):
 
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
-        s2 = 0.970
+        s2 = 0.9699999999999994
         te = 2048 * 1e-12
         rex = 0.149 / (2.0 * pi * spin.frq[0])**2
         chi2 = 7.3040158179665562e-28
@@ -441,7 +441,7 @@ class Mf(TestCase):
 
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
-        s2 = 0.970
+        s2 = 0.9699999999999993
         te = 2048 * 1e-12
         rex = 0.149 / (2.0 * pi * spin.frq[0])**2
         chi2 = 6.8756889983348349e-28
@@ -760,7 +760,7 @@ class Mf(TestCase):
 
         # Test all the values.
         self.assertEqual(spin.select, select, msg=mesg)
-        self.assertAlmostEqual(spin.s2, s2, places=12, msg=mesg)
+        self.assertEqual(spin.s2, s2, msg=mesg)
         self.assertAlmostEqual(spin.te, te, msg=mesg)
         self.assertAlmostEqual(spin.rex, rex, msg=mesg)
         self.assertAlmostEqual(spin.chi2, chi2, msg=mesg)
