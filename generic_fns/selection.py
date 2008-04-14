@@ -124,21 +124,21 @@ class Selection(object):
         elif isinstance(obj, MoleculeContainer):
             if not self.molecules:
                 return True
-            elif self.wildcard_match(obj.name, self.molecules):
+            elif self.wildcard_match(str(obj.name), self.molecules):
                 return True
 
         # The object is a residue.
         elif isinstance(obj, ResidueContainer):
             if not self.residues:
                 return True
-            elif self.wildcard_match(obj.name, self.residues) or obj.num in self.residues:
+            elif self.wildcard_match(str(obj.name), self.residues) or obj.num in self.residues:
                 return True
 
         # The object is a spin.
         elif isinstance(obj, SpinContainer):
             if not self.spins:
                 return True
-            elif self.wildcard_match(obj.name, self.spins) or obj.num in self.spins:
+            elif self.wildcard_match(str(obj.name), self.spins) or obj.num in self.spins:
                 return True
 
         # No match.
@@ -190,9 +190,8 @@ class Selection(object):
 
         # Loop over the patterns.
         for pattern in patterns:
-            # Skip integers.
-            if type(pattern) == int:
-                continue
+            # Force a conversion to str.
+            pattern = str(pattern)
 
             # String matches.
             if search(pattern, string):
