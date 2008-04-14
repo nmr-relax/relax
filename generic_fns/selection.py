@@ -138,7 +138,7 @@ class Selection(object):
         elif isinstance(obj, SpinContainer):
             if not self.spins:
                 return True
-            elif obj.name in self.spins or obj.num in self.spins:
+            elif self.match(obj.name, self.spins) or obj.num in self.spins:
                 return True
 
         # No match.
@@ -156,6 +156,35 @@ class Selection(object):
         if self._union or self._intersect or self.molecules or self.residues or self.spins:
             raise RelaxError, "Cannot define multiple Boolean relationships between Selection objects"
         self._intersect = (select_obj0, select_obj1)
+
+
+    def match(self, string, patterns):
+        """Determine if the string is in the list of patterns, allowing for regular expressions.
+
+        @param string:      The molecule/res/spin name or number.
+        @type string:       str
+        @param patterns:    A list of patterns to match.  This should be the output of
+                            parse_token().
+        @return:            True if there is a match, False otherwise.
+        @rtype:             bool
+        """
+
+        # Catch the None string.
+        if string == None:
+            return False
+
+        # Loop over the patterns.
+        for pattern in patterns:
+            # Skip integers.
+            if type(pattern) == int:
+                continue
+
+            # String matches.
+            if search(pattern, string):
+                return True
+
+        # No matches.
+        return False
 
 
     def union(self, select_obj0, select_obj1):
