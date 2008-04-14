@@ -171,26 +171,44 @@ class Selection(object):
 
         # Molecule container.
         if mol:
+            # No molecules in selection object, therefore default to a match.
             if not self.molecules:
                 select_mol = True
+
+            # A true match.
             elif wildcard_match(mol.name, self.molecules):
                 select_mol = True
+        else:
+            # No molecule container sent in, therefore the molecule is assumed to match.
+            select_mol = True
 
         # Residue container.
         if res:
+            # No residues in selection object, therefore default to a match.
             if not self.residues:
                 select_res = True
+
+            # A true match.
             elif wildcard_match(res.name, self.residues) or res.num in self.residues:
                 select_res = True
+        else:
+            # No residue container sent in, therefore the residue is assumed to match.
+            select_res = True
 
         # Spin container.
         if spin:
+            # No spins in selection object, therefore default to a match.
             if not self.spins:
                 select_spin = True
+
+            # A true match.
             elif wildcard_match(spin.name, self.spins) or spin.num in self.spins:
                 select_spin = True
+        else:
+            # No spin container sent in, therefore the spin is assumed to match.
+            select_spin = True
 
-        # Return the selection flag.
+        # Return the selection status.
         return select_mol and select_res and select_spin
 
 
