@@ -23,7 +23,7 @@
 # Python module imports.
 from os import F_OK, access
 from re import compile, match, search, split
-from string import strip
+from string import replace, strip
 from textwrap import fill
 
 # relax module imports.
@@ -192,6 +192,9 @@ class Selection(object):
         for pattern in patterns:
             # Force a conversion to str.
             pattern = str(pattern)
+
+            # First replace any '*' with '+' (relax to re conversion).
+            pattern = replace(pattern, '*', '+')
 
             # String matches.
             if search(pattern, string):
