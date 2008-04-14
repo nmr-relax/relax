@@ -106,10 +106,12 @@ class Selection(object):
     def __contains__(self, obj):
         """Replacement function for determining if an object matches the selection.
 
-        @param obj:     The data object.
-        @type obj:      MoleculeContainer, ResidueContainer, or SpinContainer object.
+        @param obj:     The data object.  This can be a MoleculeContainer, ResidueContainer, or
+                        SpinContainer instance or a type of these instances.  If a tuple, only one
+                        type of object can be in the tuple.
+        @type obj:      instance or type of instances.
         @return:        The answer of whether the object matches the selection.
-        @rtype:         Boolean
+        @rtype:         bool
         """
 
         # The selection object is a union.
@@ -120,29 +122,74 @@ class Selection(object):
         elif self._intersect:
             return (obj in self._intersect[0]) and (obj in self._intersect[1])
 
-        # The object is a molecule.
-        elif isinstance(obj, MoleculeContainer):
+        # Initialise the molecule, residue, and spin objects.
+        mol = None
+        res = None
+        spin = None
+
+        # The object is not a tuple, so lets turn it into one.
+        if type(obj) != tuple:
+            obj = (obj,)
+
+        # Max 3 objects (cannot match, so False).
+        if len(obj) > 3:
+            return False
+
+        # Loop over the objects.
+        for i in range(len(obj)):
+            # The object is a molecule.
+            if isinstance(obj[i], MoleculeContainer):
+                # Error.
+                if mol != None:
+                    raise RelaxError, "Comparing two molecular containers simultaneously with the selection object is not supported."
+
+                # Unpack.
+                mol = obj[i]
+
+            # The object is a residue.
+            elif isinstance(obj[i], ResidueContainer):
+                # Error.
+                if res != None:
+                    raise RelaxError, "Comparing two residue containers simultaneously with the selection object is not supported."
+
+                # Unpack.
+                res = obj[i]
+
+            # The object is a spin.
+            elif isinstance(obj[i], SpinContainer):
+                # Error.
+                if spin != None:
+                    raise RelaxError, "Comparing two spin containers simultaneously with the selection object is not supported."
+
+                # Unpack.
+                spin = obj[i]
+
+        # Selection flag.
+        select = False
+
+        # Molecule container.
+        if mol:
             if not self.molecules:
-                return True
-            elif wildcard_match(obj.name, self.molecules):
-                return True
+                select = True
+            elif wildcard_match(mol.name, self.molecules):
+                select = True
 
-        # The object is a residue.
-        elif isinstance(obj, ResidueContainer):
+        # Residue container.
+        if res:
             if not self.residues:
-                return True
-            elif wildcard_match(obj.name, self.residues) or obj.num in self.residues:
-                return True
+                select = True
+            elif wildcard_match(res.name, self.residues) or res.num in self.residues:
+                select = True
 
-        # The object is a spin.
-        elif isinstance(obj, SpinContainer):
+        # Spin container.
+        if spin:
             if not self.spins:
-                return True
-            elif wildcard_match(obj.name, self.spins) or obj.num in self.spins:
-                return True
+                select = True
+            elif wildcard_match(spin.name, self.spins) or spin.num in self.spins:
+                select = True
 
-        # No match.
-        return False
+        # Return the selection flag.
+        return select
 
 
     def intersection(self, select_obj0, select_obj1):
