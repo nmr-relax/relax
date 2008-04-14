@@ -111,8 +111,9 @@ def load_spins(spin_id=None):
             # Print out when a spin is appended.
             write_line(sys.stdout, mol_name, res_num, res_name, atom_num, atom_name, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
 
-        # Add the position vector to the spin container.
+        # Add the position vector and element type to the spin container.
         spin_cont.pos = pos
+        spin_cont.element = element
 
 
 def read_pdb(file=None, dir=None, model=None, parser='scientific', fail=True, verbosity=1):
