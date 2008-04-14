@@ -110,6 +110,34 @@ class Test_selection(TestCase):
         self.assertEqual(obj._intersect[1].spins, ['Ca'])
 
 
+    def test_Selection_boolean_or(self):
+        """Test the Selection object for boolean '|' mol-res-spin selections."""
+
+        # The Selection object.
+        obj = selection.Selection("#Ap4Aase:Glu | #RNA@C8")
+
+        # Test the highest level object.
+        self.assertNotEqual(obj._union, None)
+        self.assertEqual(obj._intersect, None)
+        self.assertEqual(obj.molecules, [])
+        self.assertEqual(obj.residues, [])
+        self.assertEqual(obj.spins, [])
+
+        # Test the 1st union.
+        self.assertEqual(obj._union[0]._union, None)
+        self.assertEqual(obj._union[0]._intersect, None)
+        self.assertEqual(obj._union[0].molecules, ['Ap4Aase'])
+        self.assertEqual(obj._union[0].residues, ['Glu'])
+        self.assertEqual(obj._union[0].spins, [])
+
+        # Test the 2nd union.
+        self.assertEqual(obj._union[1]._union, None)
+        self.assertEqual(obj._union[1]._intersect, None)
+        self.assertEqual(obj._union[1].molecules, ['RNA'])
+        self.assertEqual(obj._union[1].residues, [])
+        self.assertEqual(obj._union[1].spins, ['C8'])
+
+
     def test_Selection_complex_boolean(self):
         """Test the Selection object for complex boolean mol-res-spin selections."""
 
@@ -1359,12 +1387,6 @@ class Test_selection(TestCase):
 
         # Tokenise an invalid string.
         self.assertRaises(RelaxError, selection.tokenise, '')
-
-
-    def test_boolean_or_selection(self):
-        """Test boolean or in mol-res-spin selections."""
-
-        self.assert_(list(selection.spin_loop("#Ap4Aase | #RNA@N5")) == list(selection.spin_loop()))
 
 
     def test_boolean_and_selection(self):
