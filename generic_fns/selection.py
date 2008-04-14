@@ -1366,6 +1366,7 @@ def wildcard_match(id, patterns):
     The changes include:
 
         1.  All '*' to '.*'.
+        2.  The identifier is bracketed, '^' is added to the start and '$' to the end.
 
 
     @param id:          The identification object.
@@ -1392,6 +1393,9 @@ def wildcard_match(id, patterns):
 
         # First replace any '*' with '.*' (relax to re conversion).
         pattern = replace(pattern, '*', '.*')
+
+        # Bracket the pattern.
+        pattern = '^' + pattern + '$'
 
         # String matches.
         if search(pattern, id):
