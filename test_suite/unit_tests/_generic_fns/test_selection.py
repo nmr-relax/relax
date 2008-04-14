@@ -1382,13 +1382,18 @@ class Test_selection(TestCase):
     def test_boolean_complex_selection(self):
         """Test complex boolean mol-res-spin selections."""
 
-        # The selection loop:
+        # The residue selection loop.
         sel = list(selection.residue_loop("#Ap4Aase:4 & :Pro | #RNA"))
 
-        # Test:
+        # Residue names and numbers.
+        names = ['Pro', None, None]
+        numbers = [4, -5, -4]
+
+        # The residues.
         self.assertEqual(len(sel), 3)
-        for res in sel:
-            self.assert_(res.num in [-5,-4,4])
+        for i in xrange(3):
+            self.assertEqual(sel[i].name, names[i])
+            self.assertEqual(sel[i].num, numbers[i])
 
 
     def test_boolean_parenthesis_selection(self):
