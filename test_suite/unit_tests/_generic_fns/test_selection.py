@@ -966,6 +966,30 @@ class Test_selection(TestCase):
         self.assertEqual(i, 2)
 
 
+    def test_spin_loop_boolean_or(self):
+        """Test the operation of the spin loop with the selection "#Ap4Aase:Glu | #RNA@C8".
+
+        The function tested is generic_fns.selection.spin_loop().
+        """
+
+        # Selection, and spin name and number.
+        select = [1, 0, 1]
+        name = ['NH', 'C8', 'C8']
+        num = [63, None, None]
+
+        # Loop over the spins.
+        i = 0
+        for spin in selection.spin_loop("#Ap4Aase:Glu | #RNA@C8"):
+            # Test the spin.
+            self.assertEqual([spin.select, spin.name, spin.num], [select[i], name[i], num[i]])
+
+            # Increment i.
+            i = i + 1
+
+        # Test loop length.
+        self.assertEqual(i, 3)
+
+
     def test_spin_loop_multiatom(self):
         """Test the proper operation of the spin loop with spin selection '@NH|@N5'.
 
