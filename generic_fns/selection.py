@@ -164,32 +164,34 @@ class Selection(object):
                 # Unpack.
                 spin = obj[i]
 
-        # Selection flag.
-        select = False
+        # Selection flags.
+        select_mol = False
+        select_res = False
+        select_spin = False
 
         # Molecule container.
         if mol:
             if not self.molecules:
-                select = True
+                select_mol = True
             elif wildcard_match(mol.name, self.molecules):
-                select = True
+                select_mol = True
 
         # Residue container.
         if res:
             if not self.residues:
-                select = True
+                select_res = True
             elif wildcard_match(res.name, self.residues) or res.num in self.residues:
-                select = True
+                select_res = True
 
         # Spin container.
         if spin:
             if not self.spins:
-                select = True
+                select_spin = True
             elif wildcard_match(spin.name, self.spins) or spin.num in self.spins:
-                select = True
+                select_spin = True
 
         # Return the selection flag.
-        return select
+        return select_mol and select_res and select_spin
 
 
     def intersection(self, select_obj0, select_obj1):
