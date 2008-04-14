@@ -646,14 +646,10 @@ def residue_loop(selection=None, pipe=None, full_info=False):
 
     # Loop over the molecules.
     for mol in relax_data_store[pipe].mol:
-        # Skip the molecule if there is no match to the selection.
-        if mol not in select_obj:
-            continue
-
         # Loop over the residues.
         for res in mol.res:
             # Skip the residue if there is no match to the selection.
-            if res not in select_obj:
+            if (mol, res) not in select_obj:
                 continue
 
             # Yield the residue data container.
