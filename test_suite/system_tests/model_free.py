@@ -90,8 +90,17 @@ class Mf(TestCase):
         string = string + "Python version: " + PY_VER + "\n"
         string = string + "numpy version: " + numpy.__version__ + "\n"
 
-        # Add the SpinContainer contents.
-        string = string + "\n\n" + `spin`
+
+        # Minimisation info.
+        string = string + "\n\n%-10s%10.16f" % ('s2:', spin.s2)
+        string = string + "\n%-10s%10.13f" % ('te:', spin.te * 1e12)
+        string = string + "\n%-10s%10.17f" % ('rex:', spin.rex * (2.0 * pi * spin.frq[0])**2)
+        string = string + "\n%-10s%10.16g" % ('chi2:', spin.chi2)
+        string = string + "\n%-10s%-10i" % ('iter:', spin.iter)
+        string = string + "\n%-10s%-10i" % ('f_count:', spin.f_count)
+        string = string + "\n%-10s%-10i" % ('g_count:', spin.g_count)
+        string = string + "\n%-10s%-10i" % ('h_count:', spin.h_count)
+        string = string + "\n%-10s%-10s" % ('warning:', spin.warning)
 
         # Return the string.
         return string
