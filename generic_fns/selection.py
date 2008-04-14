@@ -1245,20 +1245,21 @@ def spin_index_loop(selection=None, pipe=None):
 
     # Loop over the molecules.
     for mol_index in xrange(len(relax_data_store[pipe].mol)):
-        # Skip the molecule if there is no match to the selection.
-        if relax_data_store[pipe].mol[mol_index] not in select_obj:
-            continue
+        # Alias the molecule container.
+        mol = relax_data_store[pipe].mol[mol_index]
 
         # Loop over the residues.
         for res_index in xrange(len(relax_data_store[pipe].mol[mol_index].res)):
-            # Skip the residue if there is no match to the selection.
-            if relax_data_store[pipe].mol[mol_index].res[res_index] not in select_obj:
-                continue
+            # Alias the residue container.
+            res = relax_data_store[pipe].mol[mol_index].res[res_index]
 
             # Loop over the spins.
             for spin_index in xrange(len(relax_data_store[pipe].mol[mol_index].res[res_index].spin)):
+                # Alias the spin container.
+                spin = relax_data_store[pipe].mol[mol_index].res[res_index].spin[spin_index]
+
                 # Skip the spin if there is no match to the selection.
-                if relax_data_store[pipe].mol[mol_index].res[res_index].spin[spin_index] not in select_obj:
+                if (mol, res, spin) not in select_obj:
                     continue
 
                 # Yield the spin system specific indecies.
