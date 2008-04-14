@@ -116,9 +116,40 @@ class Test_selection(TestCase):
         # The Selection object.
         obj = selection.Selection("#Ap4Aase:4 & :Pro | #RNA")
 
-        # Tests.
-        self.assertEqual(obj._intersect, None)
-        self.assertNotEqual(obj._union, None)
+        # Test the highest level object.
+        self.assertEqual(obj._union, None)
+        self.assertNotEqual(obj._intersect, None)
+        self.assertEqual(obj.molecules, [])
+        self.assertEqual(obj.residues, [])
+        self.assertEqual(obj.spins, [])
+
+        # Test the 1st intersection.
+        self.assertEqual(obj._intersect[0]._union, None)
+        self.assertEqual(obj._intersect[0]._intersect, None)
+        self.assertEqual(obj._intersect[0].molecules, ['Ap4Aase'])
+        self.assertEqual(obj._intersect[0].residues, [4])
+        self.assertEqual(obj._intersect[0].spins, [])
+
+        # Test the 2nd intersection (which should be a union).
+        self.assertNotEqual(obj._intersect[1]._union, None)
+        self.assertEqual(obj._intersect[1]._intersect, None)
+        self.assertEqual(obj._intersect[1].molecules, [])
+        self.assertEqual(obj._intersect[1].residues, [])
+        self.assertEqual(obj._intersect[1].spins, [])
+
+        # Test the 2nd intersection, 1st union.
+        self.assertEqual(obj._intersect[1]._union[0]._union, None)
+        self.assertEqual(obj._intersect[1]._union[0]._intersect, None)
+        self.assertEqual(obj._intersect[1]._union[0].molecules, [])
+        self.assertEqual(obj._intersect[1]._union[0].residues, ['Pro'])
+        self.assertEqual(obj._intersect[1]._union[0].spins, [])
+
+        # Test the 2nd intersection, 2nd union.
+        self.assertEqual(obj._intersect[1]._union[1]._union, None)
+        self.assertEqual(obj._intersect[1]._union[1]._intersect, None)
+        self.assertEqual(obj._intersect[1]._union[1].molecules, ['RNA'])
+        self.assertEqual(obj._intersect[1]._union[1].residues, [])
+        self.assertEqual(obj._intersect[1]._union[1].spins, [])
 
 
     def test_count_spins(self):
