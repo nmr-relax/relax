@@ -1058,6 +1058,18 @@ class Test_selection(TestCase):
         self.assertEqual(spin_token, 'N,CA')
 
 
+    def test_tokenise8(self):
+        """Test the generic_fns.selection.tokenise() function on the string '@N*'."""
+
+        # Tokenise.
+        mol_token, res_token, spin_token = selection.tokenise('@N*')
+
+        # Check the tokens.
+        self.assertEqual(mol_token, None)
+        self.assertEqual(res_token, None)
+        self.assertEqual(spin_token, 'N*')
+
+
     def test_tokenise_dup_atom_id_fail1(self):
         """Test failure of the generic_fns.selection.tokenise() function on the string '@N@1'.
 
