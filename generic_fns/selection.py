@@ -61,15 +61,16 @@ id_string_doc = string
 class Selection(object):
     """An object containing mol-res-spin selections.
 
-    A Selection object represents either a set of selected
-    molecules, residues and spins, or the union or intersection
-    of two other Selection objects."""
+    A Selection object represents either a set of selected molecules, residues and spins, or the
+    union or intersection of two other Selection objects.
+    """
 
     def __init__(self, select_string):
         """Initialise a Selection object.
 
-        @type select_string: string
-        @param select_string: a mol-res-spin selection string"""
+        @param select_string:   A mol-res-spin selection string.
+        @type select_string:    string
+        """
 
         self._union = None
         self._intersect = None
