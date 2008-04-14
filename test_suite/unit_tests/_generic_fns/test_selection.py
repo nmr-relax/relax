@@ -82,6 +82,17 @@ class Test_selection(TestCase):
         relax_data_store.__reset__()
 
 
+    def test_Selection_complex_boolean(self):
+        """Test the Selection object for complex boolean mol-res-spin selections."""
+
+        # The Selection object:
+        obj = selection.Selection("#Ap4Aase:4 & :Pro | #RNA")
+
+        # Tests
+        self.assertEqual(obj._intersect, None)
+        self.assertNotEqual(obj._union, None)
+
+
     def test_count_spins(self):
         """Test that the number of spins can be properly counted.
 
@@ -1331,4 +1342,3 @@ class Test_selection(TestCase):
         self.assertEqual(len(sel), 2)
         for res in sel:
             self.assert_(res.num in [-4,4])
-
