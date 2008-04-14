@@ -61,15 +61,16 @@ id_string_doc = string
 class Selection(object):
     """An object containing mol-res-spin selections.
 
-    A Selection object represents either a set of selected
-    molecules, residues and spins, or the union or intersection
-    of two other Selection objects."""
+    A Selection object represents either a set of selected molecules, residues and spins, or the
+    union or intersection of two other Selection objects.
+    """
 
     def __init__(self, select_string):
         """Initialise a Selection object.
 
-        @type select_string: string
-        @param select_string: a mol-res-spin selection string"""
+        @param select_string:   A mol-res-spin selection string.
+        @type select_string:    string
+        """
 
         self._union = None
         self._intersect = None
@@ -106,10 +107,12 @@ class Selection(object):
     def __contains__(self, obj):
         """Replacement function for determining if an object matches the selection.
 
-        @param obj:     The data object.
-        @type obj:      MoleculeContainer, ResidueContainer, or SpinContainer object.
+        @param obj:     The data object.  This can be a MoleculeContainer, ResidueContainer, or
+                        SpinContainer instance or a type of these instances.  If a tuple, only one
+                        type of object can be in the tuple.
+        @type obj:      instance or type of instances.
         @return:        The answer of whether the object matches the selection.
-        @rtype:         Boolean
+        @rtype:         bool
         """
 
         # The selection object is a union.
@@ -120,29 +123,94 @@ class Selection(object):
         elif self._intersect:
             return (obj in self._intersect[0]) and (obj in self._intersect[1])
 
-        # The object is a molecule.
-        elif isinstance(obj, MoleculeContainer):
+        # Initialise the molecule, residue, and spin objects.
+        mol = None
+        res = None
+        spin = None
+
+        # The object is not a tuple, so lets turn it into one.
+        if type(obj) != tuple:
+            obj = (obj,)
+
+        # Max 3 objects (cannot match, so False).
+        if len(obj) > 3:
+            return False
+
+        # Loop over the objects.
+        for i in range(len(obj)):
+            # The object is a molecule.
+            if isinstance(obj[i], MoleculeContainer):
+                # Error.
+                if mol != None:
+                    raise RelaxError, "Comparing two molecular containers simultaneously with the selection object is not supported."
+
+                # Unpack.
+                mol = obj[i]
+
+            # The object is a residue.
+            elif isinstance(obj[i], ResidueContainer):
+                # Error.
+                if res != None:
+                    raise RelaxError, "Comparing two residue containers simultaneously with the selection object is not supported."
+
+                # Unpack.
+                res = obj[i]
+
+            # The object is a spin.
+            elif isinstance(obj[i], SpinContainer):
+                # Error.
+                if spin != None:
+                    raise RelaxError, "Comparing two spin containers simultaneously with the selection object is not supported."
+
+                # Unpack.
+                spin = obj[i]
+
+        # Selection flags.
+        select_mol = False
+        select_res = False
+        select_spin = False
+
+        # Molecule container.
+        if mol:
+            # No molecules in selection object, therefore default to a match.
             if not self.molecules:
-                return True
-            elif wildcard_match(obj.name, self.molecules):
-                return True
+                select_mol = True
 
-        # The object is a residue.
-        elif isinstance(obj, ResidueContainer):
+            # A true match.
+            elif wildcard_match(mol.name, self.molecules):
+                select_mol = True
+        else:
+            # No molecule container sent in, therefore the molecule is assumed to match.
+            select_mol = True
+
+        # Residue container.
+        if res:
+            # No residues in selection object, therefore default to a match.
             if not self.residues:
-                return True
-            elif wildcard_match(obj.name, self.residues) or obj.num in self.residues:
-                return True
+                select_res = True
 
-        # The object is a spin.
-        elif isinstance(obj, SpinContainer):
+            # A true match.
+            elif wildcard_match(res.name, self.residues) or res.num in self.residues:
+                select_res = True
+        else:
+            # No residue container sent in, therefore the residue is assumed to match.
+            select_res = True
+
+        # Spin container.
+        if spin:
+            # No spins in selection object, therefore default to a match.
             if not self.spins:
-                return True
-            elif wildcard_match(obj.name, self.spins) or obj.num in self.spins:
-                return True
+                select_spin = True
 
-        # No match.
-        return False
+            # A true match.
+            elif wildcard_match(spin.name, self.spins) or spin.num in self.spins:
+                select_spin = True
+        else:
+            # No spin container sent in, therefore the spin is assumed to match.
+            select_spin = True
+
+        # Return the selection status.
+        return select_mol and select_res and select_spin
 
 
     def intersection(self, select_obj0, select_obj1):
@@ -597,14 +665,10 @@ def residue_loop(selection=None, pipe=None, full_info=False):
 
     # Loop over the molecules.
     for mol in relax_data_store[pipe].mol:
-        # Skip the molecule if there is no match to the selection.
-        if mol not in select_obj:
-            continue
-
         # Loop over the residues.
         for res in mol.res:
             # Skip the residue if there is no match to the selection.
-            if res not in select_obj:
+            if (mol, res) not in select_obj:
                 continue
 
             # Yield the residue data container.
@@ -687,14 +751,10 @@ def return_residue(selection=None, pipe=None):
     res_num = 0
     res_container = None
     for mol in relax_data_store[pipe].mol:
-        # Skip the molecule if there is no match to the selection.
-        if mol not in select_obj:
-            continue
-
         # Loop over the residues.
         for res in mol.res:
             # Skip the residue if there is no match to the selection.
-            if res not in select_obj:
+            if (mol, res) not in select_obj:
                 continue
 
             # Store the residue container.
@@ -737,20 +797,12 @@ def return_spin(selection=None, pipe=None):
     spin_num = 0
     spin_container = None
     for mol in relax_data_store[pipe].mol:
-        # Skip the molecule if there is no match to the selection.
-        if mol not in select_obj:
-            continue
-
         # Loop over the residues.
         for res in mol.res:
-            # Skip the residue if there is no match to the selection.
-            if res not in select_obj:
-                continue
-
             # Loop over the spins.
             for spin in res.spin:
                 # Skip the spin if there is no match to the selection.
-                if spin not in select_obj:
+                if (mol, res, spin) not in select_obj:
                     continue
 
                 # Store the spin container.
@@ -1196,20 +1248,21 @@ def spin_index_loop(selection=None, pipe=None):
 
     # Loop over the molecules.
     for mol_index in xrange(len(relax_data_store[pipe].mol)):
-        # Skip the molecule if there is no match to the selection.
-        if relax_data_store[pipe].mol[mol_index] not in select_obj:
-            continue
+        # Alias the molecule container.
+        mol = relax_data_store[pipe].mol[mol_index]
 
         # Loop over the residues.
         for res_index in xrange(len(relax_data_store[pipe].mol[mol_index].res)):
-            # Skip the residue if there is no match to the selection.
-            if relax_data_store[pipe].mol[mol_index].res[res_index] not in select_obj:
-                continue
+            # Alias the residue container.
+            res = relax_data_store[pipe].mol[mol_index].res[res_index]
 
             # Loop over the spins.
             for spin_index in xrange(len(relax_data_store[pipe].mol[mol_index].res[res_index].spin)):
+                # Alias the spin container.
+                spin = relax_data_store[pipe].mol[mol_index].res[res_index].spin[spin_index]
+
                 # Skip the spin if there is no match to the selection.
-                if relax_data_store[pipe].mol[mol_index].res[res_index].spin[spin_index] not in select_obj:
+                if (mol, res, spin) not in select_obj:
                     continue
 
                 # Yield the spin system specific indecies.
@@ -1249,20 +1302,12 @@ def spin_loop(selection=None, pipe=None, full_info=False):
 
     # Loop over the molecules.
     for mol in relax_data_store[pipe].mol:
-        # Skip the molecule if there is no match to the selection.
-        if mol not in select_obj:
-            continue
-
         # Loop over the residues.
         for res in mol.res:
-            # Skip the residue if there is no match to the selection.
-            if res not in select_obj:
-                continue
-
             # Loop over the spins.
             for spin in res.spin:
                 # Skip the spin if there is no match to the selection.
-                if spin not in select_obj:
+                if (mol, res, spin) not in select_obj:
                     continue
 
                 # Yield the spin system data container.
