@@ -171,8 +171,8 @@ class Selection(object):
         self._union = (select_obj0, select_obj1)
 
 
-    def wildcard_match(self, string, patterns):
-        """Determine if the string is in the list of patterns, allowing for regular expressions.
+    def wildcard_match(self, id, patterns):
+        """Determine if the id is in the list of patterns, allowing for regular expressions.
 
         This method converts from relax's RE syntax to that of the re python module.
 
@@ -180,21 +180,23 @@ class Selection(object):
 
             1.  All '*' to '.*'.
 
-        @param string:      The molecule/res/spin name or number.
-        @type string:       None, str, or number
-        @param patterns:    A list of patterns to match.  This should be the output of
-                            parse_token().
+
+        @param id:          The identification object.
+        @type id:           None, str, or number
+        @param patterns:    A list of patterns to match.  The elements will be converted to strings,
+                            so the list can consist of anything.
+        @type patterns:     list
         @return:            True if there is a match, False otherwise.
         @rtype:             bool
         """
 
         # Catch None.
-        if string == None:
+        if id == None:
             return False
 
         # If a number, convert to a string.
-        if type(string) == int or type(string) == float:
-            string = str(string)
+        if type(id) == int or type(id) == float:
+            id = str(id)
 
         # Loop over the patterns.
         for pattern in patterns:
@@ -205,7 +207,7 @@ class Selection(object):
             pattern = replace(pattern, '*', '.*')
 
             # String matches.
-            if search(pattern, string):
+            if search(pattern, id):
                 return True
 
         # No matches.
