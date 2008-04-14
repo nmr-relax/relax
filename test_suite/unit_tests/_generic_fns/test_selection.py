@@ -1057,6 +1057,31 @@ class Test_selection(TestCase):
         self.assertEqual(i, 7)
 
 
+    def test_spin_loop_single_spin(self):
+        """Test the operation of the spin loop with the single spin selection '#Ap4Aase:Glu@63'.
+
+        The function tested is generic_fns.selection.spin_loop().
+        """
+
+        # Loop over the spins.
+        i = 0
+        for spin in selection.spin_loop('#Ap4Aase:Glu@63'):
+            # Test the selection.
+            self.assertEqual(spin.select, 1)
+
+            # Test the spin name.
+            self.assertEqual(spin.name, 'NH')
+
+            # Test the spin number.
+            self.assertEqual(spin.num, 63)
+
+            # Increment i.
+            i = i + 1
+
+        # Test loop length.
+        self.assertEqual(i, 1)
+
+
     def test_spin_loop_wildcard(self):
         """Test the proper operation of the spin loop with wildcard spin selection '@N*'.
 
