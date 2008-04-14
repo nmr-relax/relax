@@ -80,7 +80,7 @@ class Mf(TestCase):
         string = string + "Architecture: " + arch[0] + " " + arch[1] + "\n"
         string = string + "Machine: " + mach + "\n"
         string = string + "Processor: " + proc + "\n"
-        string = string + "Python: " + py_ver + "\n"
+        string = string + "Python version: " + py_ver + "\n"
         string = string + "numpy version: " + numpy.__version__ + "\n"
 
         # Add the SpinContainer contents.
