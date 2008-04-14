@@ -176,6 +176,10 @@ class Selection(object):
 
         This method converts from relax's RE syntax to that of the re python module.
 
+        The changes include:
+
+            1.  All '*' to '.*'.
+
         @param string:      The molecule/res/spin name or number.
         @type string:       None, str, or number
         @param patterns:    A list of patterns to match.  This should be the output of
@@ -197,8 +201,8 @@ class Selection(object):
             # Force a conversion to str.
             pattern = str(pattern)
 
-            # First replace any '*' with '+' (relax to re conversion).
-            pattern = replace(pattern, '*', '+')
+            # First replace any '*' with '.*' (relax to re conversion).
+            pattern = replace(pattern, '*', '.*')
 
             # String matches.
             if search(pattern, string):
