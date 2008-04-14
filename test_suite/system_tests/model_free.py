@@ -209,7 +209,7 @@ class Mf(TestCase):
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
         s2 = 0.9699999999999995
-        te = 2048 * 1e-12
+        te = 2048.000000000022283 * 1e-12
         rex = 0.149 / (2.0 * pi * spin.frq[0])**2
         chi2 = 5.24794913425e-24
         iter = 203
@@ -258,7 +258,7 @@ class Mf(TestCase):
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
         s2 = 0.9700000000000580
-        te = 2048 * 1e-12
+        te = 2048.000000011044449 * 1e-12
         rex = 0.149 / (2.0 * pi * spin.frq[0])**2
         chi2 = 3.1024517431117421e-27
         iter = 120
@@ -349,7 +349,7 @@ class Mf(TestCase):
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
         s2 = 0.9700000000219674
-        te = 2048 * 1e-12
+        te = 2048.000001534187049 * 1e-12
         rex = 0.149 / (2.0 * pi * spin.frq[0])**2
         chi2 = 2.34772342485e-18
         iter = 198
@@ -398,7 +398,7 @@ class Mf(TestCase):
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
         s2 = 0.9699999999999994
-        te = 2048 * 1e-12
+        te = 2048.000000000045020 * 1e-12
         rex = 0.149 / (2.0 * pi * spin.frq[0])**2
         chi2 = 7.3040158179665562e-28
         iter = 18
@@ -442,7 +442,7 @@ class Mf(TestCase):
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
         s2 = 0.9699999999999993
-        te = 2048 * 1e-12
+        te = 2048.000000000041837 * 1e-12
         rex = 0.149 / (2.0 * pi * spin.frq[0])**2
         chi2 = 6.8756889983348349e-28
         iter = 22
@@ -761,7 +761,7 @@ class Mf(TestCase):
         # Test all the values.
         self.assertEqual(spin.select, select, msg=mesg)
         self.assertEqual(spin.s2, s2, msg=mesg)
-        self.assertAlmostEqual(spin.te, te, msg=mesg)
+        self.assertEqual(spin.te, te, msg=mesg)
         self.assertAlmostEqual(spin.rex, rex, msg=mesg)
         self.assertAlmostEqual(spin.chi2, chi2, msg=mesg)
         self.assertEqual(spin.iter, iter, msg=mesg)
