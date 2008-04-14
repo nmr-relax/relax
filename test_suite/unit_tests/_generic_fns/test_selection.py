@@ -922,6 +922,32 @@ class Test_selection(TestCase):
         self.assertEqual(i, 7)
 
 
+    def test_spin_loop_wildcard(self):
+        """Test the proper operation of the spin loop with wildcard spin selection.
+
+        The function tested is generic_fns.selection.spin_loop().
+        """
+
+        # Spin data.
+        select = [0, 1, 1, 0]
+        name = ['NH', 'NH', 'N5', 'N5']
+
+        # Loop over the spins.
+        i = 0
+        for spin in selection.spin_loop('@N*'):
+            # Test the selection.
+            self.assertEqual(spin.select, select[i])
+
+            # Test the spin names.
+            self.assertEqual(spin.name, name[i])
+
+            # Increment i.
+            i = i + 1
+
+        # Test loop length.
+        self.assertEqual(i, 4)
+
+
     def test_tokenise1(self):
         """Test the generic_fns.selection.tokenise() function on the string '@1'."""
 
