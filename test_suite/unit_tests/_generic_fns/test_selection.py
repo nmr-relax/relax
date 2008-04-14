@@ -949,7 +949,7 @@ class Test_selection(TestCase):
 
 
     def test_spin_loop_wildcard(self):
-        """Test the proper operation of the spin loop with wildcard spin selection.
+        """Test the proper operation of the spin loop with wildcard spin selection '@N*'.
 
         The function tested is generic_fns.selection.spin_loop().
         """
