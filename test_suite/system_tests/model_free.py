@@ -303,21 +303,21 @@ class Mf(TestCase):
         # Alias the relevent spin container.
         spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
-        # Get the debugging message.
-        mesg = self.mesg_opt_debug(spin)
+        # Optimisation values (from 32 bit Linux as the standard).
+        select = True
+        s2 = 0.9097900390625
+        te = 2.5000000000000001e-11
+        rex = 1.24017333984375 / (2.0 * pi * spin.frq[0])**2
+        chi2 = 53.476155463267176
+        iter = 50
+        f_count = 131
+        g_count = 51
+        h_count = 0
+        warning = 'Maximum number of iterations reached'
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False, msg=mesg)
-        self.assertEqual(spin.select, True, msg=mesg)
-        self.assertAlmostEqual(spin.s2, 0.9097900390625, msg=mesg)
-        self.assertAlmostEqual(spin.te, 2.5000000000000001e-11, msg=mesg)
-        self.assertAlmostEqual(spin.rex, 1.24017333984375 / (2.0 * pi * spin.frq[0])**2, msg=mesg)
-        self.assertAlmostEqual(spin.chi2, 53.476155463267176, msg=mesg)
-        self.assertEqual(spin.iter, 50, msg=mesg)
-        self.assertEqual(spin.f_count, 131, msg=mesg)
-        self.assertEqual(spin.g_count, 51, msg=mesg)
-        self.assertEqual(spin.h_count, 0, msg=mesg)
-        self.assertEqual(spin.warning, None or 'Maximum number of iterations reached', msg=mesg)
+        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
     def test_opt_constr_cd_mt_S2_0_970_te_2048_Rex_0_149(self):
@@ -395,21 +395,21 @@ class Mf(TestCase):
         # Alias the relevent spin container.
         spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
-        # Get the debugging message.
-        mesg = self.mesg_opt_debug(spin)
+        # Optimisation values (from 32 bit Linux as the standard).
+        select = True
+        s2 = 0.970
+        te = 2048 * 1e-12
+        rex = 0.149 / (2.0 * pi * spin.frq[0])**2
+        chi2 = 7.3040158179665562e-28
+        iter = 18
+        f_count = 55
+        g_count = 23
+        h_count = 18
+        warning = None
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False, msg=mesg)
-        self.assertEqual(spin.select, True, msg=mesg)
-        self.assertAlmostEqual(spin.s2, 0.970, msg=mesg)
-        self.assertAlmostEqual(spin.te, 2048 * 1e-12, msg=mesg)
-        self.assertAlmostEqual(spin.rex, 0.149 / (2.0 * pi * spin.frq[0])**2, msg=mesg)
-        self.assertAlmostEqual(spin.chi2, 7.3040158179665562e-28, msg=mesg)
-        self.assertEqual(spin.iter, 18, msg=mesg)
-        self.assertEqual(spin.f_count, 55, msg=mesg)
-        self.assertEqual(spin.g_count, 23, msg=mesg)
-        self.assertEqual(spin.h_count, 18, msg=mesg)
-        self.assertEqual(spin.warning, None, msg=mesg)
+        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
     def test_opt_constr_newton_gmw_mt_S2_0_970_te_2048_Rex_0_149(self):
@@ -487,21 +487,21 @@ class Mf(TestCase):
         # Alias the relevent spin container.
         spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
-        # Get the debugging message.
-        mesg = self.mesg_opt_debug(spin)
+        # Optimisation values (from 32 bit Linux as the standard).
+        select = True
+        s2 = 0.91579220834688024
+        te = 3.056865872253173e-13
+        rex = 0.34008409798366124 / (2.0 * pi * spin.frq[0])**2
+        chi2 = 68.321956795264342
+        iter = 50
+        f_count = 134
+        g_count = 51
+        h_count = 0
+        warning = 'Maximum number of iterations reached'
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False, msg=mesg)
-        self.assertEqual(spin.select, True, msg=mesg)
-        self.assertAlmostEqual(spin.s2, 0.91579220834688024, msg=mesg)
-        self.assertAlmostEqual(spin.te, 3.056865872253173e-13, msg=mesg)
-        self.assertAlmostEqual(spin.rex, 0.34008409798366124 / (2.0 * pi * spin.frq[0])**2, msg=mesg)
-        self.assertAlmostEqual(spin.chi2, 68.321956795264342, msg=mesg)
-        self.assertEqual(spin.iter, 50, msg=mesg)
-        self.assertEqual(spin.f_count, 134, msg=mesg)
-        self.assertEqual(spin.g_count, 51, msg=mesg)
-        self.assertEqual(spin.h_count, 0, msg=mesg)
-        self.assertEqual(spin.warning, None or 'Maximum number of iterations reached', msg=mesg)
+        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
     def test_opt_constr_sd_mt_S2_0_970_te_2048_Rex_0_149(self):
@@ -568,21 +568,21 @@ class Mf(TestCase):
         # Alias the relevent spin container.
         spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
 
-        # Get the debugging message.
-        mesg = self.mesg_opt_debug(spin)
+        # Optimisation values (from 32 bit Linux as the standard).
+        select = True
+        s2 = 1.0
+        te = 0.0
+        rex = 0.0
+        chi2 = 3.9844117908982288
+        iter = 1331
+        f_count = 1331
+        g_count = 0
+        h_count = 0
+        warning = None
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False, msg=mesg)
-        self.assertEqual(spin.select, True, msg=mesg)
-        self.assertAlmostEqual(spin.s2, 1.0, msg=mesg)
-        self.assertAlmostEqual(spin.te, 0.0, msg=mesg)
-        self.assertAlmostEqual(spin.rex, 0.0, msg=mesg)
-        self.assertAlmostEqual(spin.chi2, 3.9844117908982288, msg=mesg)
-        self.assertEqual(spin.iter, 1331, msg=mesg)
-        self.assertEqual(spin.f_count, 1331, msg=mesg)
-        self.assertEqual(spin.g_count, 0, msg=mesg)
-        self.assertEqual(spin.h_count, 0, msg=mesg)
-        self.assertEqual(spin.warning, None, msg=mesg)
+        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
     def test_read_relax_data(self):
