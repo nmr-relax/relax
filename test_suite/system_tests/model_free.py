@@ -95,7 +95,7 @@ class Mf(TestCase):
         string = string + "\n\n%-10s%10.16f" % ('s2:', spin.s2)
         string = string + "\n%-10s%10.13f" % ('te:', spin.te * 1e12)
         string = string + "\n%-10s%10.17f" % ('rex:', spin.rex * (2.0 * pi * spin.frq[0])**2)
-        string = string + "\n%-10s%10.16g" % ('chi2:', spin.chi2)
+        string = string + "\n%-10s%10.17g" % ('chi2:', spin.chi2)
         string = string + "\n%-10s%-10i" % ('iter:', spin.iter)
         string = string + "\n%-10s%-10i" % ('f_count:', spin.f_count)
         string = string + "\n%-10s%-10i" % ('g_count:', spin.g_count)
@@ -229,7 +229,10 @@ class Mf(TestCase):
 
         # Optimisation differences.
         if SYSTEM == 'Linux' and ARCH[0] == '64bit':
-            chi2 = 5.24794913425e-24
+            s2 = 0.9699999999999785
+            te = 2047.9999999962433
+            rex = 0.14900000000039709
+            chi2 = 5.2479491342506911e-24
             iter = 162
             f_count = 758
             g_count = 169
@@ -279,7 +282,10 @@ class Mf(TestCase):
 
         # Optimisation differences.
         if SYSTEM == 'Linux' and ARCH[0] == '64bit':
-            chi2 = 3.1024517431117421e-27
+            s2 = 0.9700000000000603
+            te = 2048.0000000114601
+            rex = 0.14899999999886163
+            chi2 = 4.7289676642197204e-23
             f_count = 384
             g_count = 384
 
@@ -417,6 +423,13 @@ class Mf(TestCase):
         g_count = 23
         h_count = 18
         warning = None
+
+        # Optimisation differences.
+        if SYSTEM == 'Linux' and ARCH[0] == '64bit':
+            s2 = 0.9699999999999995
+            te = 2048.0000000000473
+            rex = 0.14900000000001926
+            chi2 = 7.93572083972557e-28
 
         # Test the values.
         self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
