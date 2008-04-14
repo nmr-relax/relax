@@ -732,14 +732,10 @@ def return_residue(selection=None, pipe=None):
     res_num = 0
     res_container = None
     for mol in relax_data_store[pipe].mol:
-        # Skip the molecule if there is no match to the selection.
-        if mol not in select_obj:
-            continue
-
         # Loop over the residues.
         for res in mol.res:
             # Skip the residue if there is no match to the selection.
-            if res not in select_obj:
+            if (mol, res) not in select_obj:
                 continue
 
             # Store the residue container.
@@ -782,20 +778,12 @@ def return_spin(selection=None, pipe=None):
     spin_num = 0
     spin_container = None
     for mol in relax_data_store[pipe].mol:
-        # Skip the molecule if there is no match to the selection.
-        if mol not in select_obj:
-            continue
-
         # Loop over the residues.
         for res in mol.res:
-            # Skip the residue if there is no match to the selection.
-            if res not in select_obj:
-                continue
-
             # Loop over the spins.
             for spin in res.spin:
                 # Skip the spin if there is no match to the selection.
-                if spin not in select_obj:
+                if (mol, res, spin) not in select_obj:
                     continue
 
                 # Store the spin container.
