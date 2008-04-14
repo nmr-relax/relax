@@ -146,28 +146,36 @@ class Selection(object):
 
 
     def intersection(self, select_obj0, select_obj1):
-        """Make a Selection object the intersection of two Selection objects
+        """Make this Selection object the intersection of two other Selection objects.
 
-        @type select_obj0: Instance of class Selection
-        @param select_obj0: First Selection object in intersection
-        @type select_obj1: Instance of class Selection
-        @param select_obj1: First Selection object in intersection"""
+        @param select_obj0: First Selection object in intersection.
+        @type select_obj0:  Selection instance.
+        @param select_obj1: First Selection object in intersection.
+        @type select_obj1:  Selection instance.
+        """
 
+        # Check that nothing is set.
         if self._union or self._intersect or self.molecules or self.residues or self.spins:
             raise RelaxError, "Cannot define multiple Boolean relationships between Selection objects"
+
+        # Create the intersection.
         self._intersect = (select_obj0, select_obj1)
 
 
     def union(self, select_obj0, select_obj1):
-        """Make a Selection object the union of two Selection objects
+        """Make this Selection object the union of two other Selection objects.
 
-        @type select_obj0: Instance of class Selection
-        @param select_obj0: First Selection object in union
-        @type select_obj1: Instance of class Selection
-        @param select_obj1: First Selection object in union"""
+        @param select_obj0: First Selection object in intersection.
+        @type select_obj0:  Selection instance.
+        @param select_obj1: First Selection object in intersection.
+        @type select_obj1:  Selection instance.
+        """
 
+        # Check that nothing is set.
         if self._union or self._intersect or self.molecules or self.residues or self.spins:
             raise RelaxError, "Cannot define multiple Boolean relationships between Selection objects"
+
+        # Create the union.
         self._union = (select_obj0, select_obj1)
 
 
