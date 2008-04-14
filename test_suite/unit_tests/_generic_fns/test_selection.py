@@ -88,25 +88,23 @@ class Test_selection(TestCase):
         # The Selection object.
         obj = selection.Selection("#Ap4Aase:4 & :Pro@Ca")
 
-        # Test the union and intersection structure.
+        # Test the highest level object.
         self.assertEqual(obj._union, None)
         self.assertNotEqual(obj._intersect, None)
-        self.assertEqual(obj._intersect[0]._union, None)
-        self.assertEqual(obj._intersect[0]._intersect, None)
-        self.assertEqual(obj._intersect[1]._union, None)
-        self.assertEqual(obj._intersect[1]._intersect, None)
-
-        # Test the molecule, residue, and spins structures of the highest level object.
         self.assertEqual(obj.molecules, [])
         self.assertEqual(obj.residues, [])
         self.assertEqual(obj.spins, [])
 
-        # Test the molecule, residue, and spins structures of the first intersection.
+        # Test the first intersection.
+        self.assertEqual(obj._intersect[0]._union, None)
+        self.assertEqual(obj._intersect[0]._intersect, None)
         self.assertEqual(obj._intersect[0].molecules, ['Ap4Aase'])
         self.assertEqual(obj._intersect[0].residues, [4])
         self.assertEqual(obj._intersect[0].spins, [])
 
-        # Test the molecule, residue, and spins structures of the second intersection.
+        # Test the second intersection.
+        self.assertEqual(obj._intersect[1]._union, None)
+        self.assertEqual(obj._intersect[1]._intersect, None)
         self.assertEqual(obj._intersect[1].molecules, [])
         self.assertEqual(obj._intersect[1].residues, ['Pro'])
         self.assertEqual(obj._intersect[1].spins, ['Ca'])
