@@ -32,6 +32,18 @@ from data import Data as relax_data_store
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 
 
+# Get the platform information.
+SYSTEM = platform.system()
+RELEASE = platform.release()
+VERSION = platform.version()
+WIN32_VER = platform.win32_ver()
+DIST = platform.dist()
+ARCH = platform.architecture()
+MACH = platform.machine()
+PROC = platform.processor()
+PY_VER = platform.python_version()
+
+
 class Mf(TestCase):
     """TestCase class for the functional tests of model-free analysis."""
 
@@ -60,27 +72,16 @@ class Mf(TestCase):
         # Initialise the string.
         string = 'Optimisation failure.\n\n'
 
-        # Get the platform information.
-        system = platform.system()
-        release = platform.release()
-        version = platform.version()
-        win32_ver = platform.win32_ver()
-        dist = platform.dist()
-        arch = platform.architecture()
-        mach = platform.machine()
-        proc = platform.processor()
-        py_ver = platform.python_version()
-
         # Create the string.
-        string = string + "System: " + system + "\n"
-        string = string + "Release: " + release + "\n"
-        string = string + "Version: " + version + "\n"
-        string = string + "Win32 version: " + win32_ver[0] + " " + win32_ver[1] + " " + win32_ver[2] + " " + win32_ver[3] + "\n"
-        string = string + "Distribution: " + dist[0] + " " + dist[1] + " " + dist[2] + "\n"
-        string = string + "Architecture: " + arch[0] + " " + arch[1] + "\n"
-        string = string + "Machine: " + mach + "\n"
-        string = string + "Processor: " + proc + "\n"
-        string = string + "Python version: " + py_ver + "\n"
+        string = string + "System: " + SYSTEM + "\n"
+        string = string + "Release: " + RELEASE + "\n"
+        string = string + "Version: " + VERSION + "\n"
+        string = string + "Win32 version: " + WIN32_VER[0] + " " + WIN32_VER[1] + " " + WIN32_VER[2] + " " + WIN32_VER[3] + "\n"
+        string = string + "Distribution: " + DIST[0] + " " + DIST[1] + " " + DIST[2] + "\n"
+        string = string + "Architecture: " + ARCH[0] + " " + ARCH[1] + "\n"
+        string = string + "Machine: " + MACH + "\n"
+        string = string + "Processor: " + PROC + "\n"
+        string = string + "Python version: " + PY_VER + "\n"
         string = string + "numpy version: " + numpy.__version__ + "\n"
 
         # Add the SpinContainer contents.
