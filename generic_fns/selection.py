@@ -124,14 +124,14 @@ class Selection(object):
         elif isinstance(obj, MoleculeContainer):
             if not self.molecules:
                 return True
-            elif obj.name in self.molecules:
+            elif self.match(obj.name, self.molecules):
                 return True
 
         # The object is a residue.
         elif isinstance(obj, ResidueContainer):
             if not self.residues:
                 return True
-            elif obj.name in self.residues or obj.num in self.residues:
+            elif self.match(obj.name, self.residues) or obj.num in self.residues:
                 return True
 
         # The object is a spin.
