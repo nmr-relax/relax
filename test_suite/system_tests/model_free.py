@@ -43,6 +43,12 @@ MACH = platform.machine()
 PROC = platform.processor()
 PY_VER = platform.python_version()
 
+# Windows system name pain.
+if SYSTEM == 'Windows' or SYSTEM == 'Microsoft':
+    # Set the system to 'Windows' no matter what.
+    SYSTEM = 'Windows'
+
+
 
 class Mf(TestCase):
     """TestCase class for the functional tests of model-free analysis."""
