@@ -462,6 +462,17 @@ class Test_selection(TestCase):
         self.assertEqual(list[0], 'G')
 
 
+    def test_parse_token_single_element_wildcard_name(self):
+        """Test the generic_fns.selection.parse_token() function on the string 'N*'."""
+
+        # Parse the token.
+        list = selection.parse_token('N*')
+
+        # Check the list elements.
+        self.assertEqual(len(list), 1)
+        self.assertEqual(list[0], 'N*')
+
+
     def test_parse_token_single_element_range(self):
         """Test the generic_fns.selection.parse_token() function on the string '1-10'."""
 
