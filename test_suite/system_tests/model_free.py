@@ -211,7 +211,7 @@ class Mf(TestCase):
         s2 = 0.9699999999999995
         te = 2048.000000000022283
         rex = 0.14900000000000566
-        chi2 = 5.24794913425e-24
+        chi2 = 3.1024517431117421e-27
         iter = 203
         f_count = 955
         g_count = 209
@@ -220,6 +220,7 @@ class Mf(TestCase):
 
         # Optimisation differences.
         if SYSTEM == 'Linux' and ARCH[0] == '64bit':
+            chi2 = 5.24794913425e-24
             iter = 162
             f_count = 758
             g_count = 169
@@ -260,7 +261,7 @@ class Mf(TestCase):
         s2 = 0.9700000000000580
         te = 2048.000000011044449
         rex = 0.148999999998904
-        chi2 = 3.1024517431117421e-27
+        chi2 = 4.3978813282102374e-23
         iter = 120
         f_count = 388
         g_count = 388
@@ -269,6 +270,7 @@ class Mf(TestCase):
 
         # Optimisation differences.
         if SYSTEM == 'Linux' and ARCH[0] == '64bit':
+            chi2 = 3.1024517431117421e-27
             f_count = 384
             g_count = 384
 
@@ -351,7 +353,7 @@ class Mf(TestCase):
         s2 = 0.9700000000219674
         te = 2048.000001534187049
         rex = 0.14899999946977982
-        chi2 = 2.34772342485e-18
+        chi2 = 2.3477234248531005e-18
         iter = 198
         f_count = 738
         g_count = 738
@@ -763,7 +765,7 @@ class Mf(TestCase):
         self.assertEqual(spin.s2, s2, msg=mesg)
         self.assertEqual(spin.te / 1e-12, te, msg=mesg)
         self.assertEqual(spin.rex * (2.0 * pi * spin.frq[0])**2, rex, msg=mesg)
-        self.assertAlmostEqual(spin.chi2, chi2, msg=mesg)
+        self.assertEqual(spin.chi2, chi2, msg=mesg)
         self.assertEqual(spin.iter, iter, msg=mesg)
         self.assertEqual(spin.f_count, f_count, msg=mesg)
         self.assertEqual(spin.g_count, g_count, msg=mesg)
