@@ -501,6 +501,13 @@ class Mf(TestCase):
         h_count = 0
         warning = 'Maximum number of iterations reached'
 
+        # Optimisation differences.
+        if SYSTEM == 'Linux' and ARCH[0] == '64bit':
+            s2 = 0.915792208346891567
+            te = 0.305686587225278583
+            rex = 0.340084097980648314
+            chi2 = 68.321956795340568647
+
         # Test the values.
         self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
         self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
