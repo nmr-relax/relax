@@ -22,6 +22,8 @@
 
 # Python module imports.
 from math import pi
+import platform
+import numpy
 import sys
 from unittest import TestCase
 
@@ -58,8 +60,31 @@ class Mf(TestCase):
         # Initialise the string.
         string = 'Optimisation failure.\n\n'
 
+        # Get the platform information.
+        system = platform.system()
+        release = platform.release()
+        version = platform.version()
+        win32_ver = platform.win32_ver()
+        dist = platform.dist()
+        arch = platform.architecture()
+        mach = platform.machine()
+        proc = platform.processor()
+        py_ver = platform.python_version()
+
+        # Create the string.
+        string = string + "System: " + system + "\n"
+        string = string + "Release: " + release + "\n"
+        string = string + "Version: " + version + "\n"
+        string = string + "Win32 version: " + win32_ver[0] + " " + win32_ver[1] + " " + win32_ver[2] + " " + win32_ver[3] + "\n"
+        string = string + "Distribution: " + dist[0] + " " + dist[1] + " " + dist[2] + "\n"
+        string = string + "Architecture: " + arch[0] + " " + arch[1] + "\n"
+        string = string + "Machine: " + mach + "\n"
+        string = string + "Processor: " + proc + "\n"
+        string = string + "Python: " + py_ver + "\n"
+        string = string + "numpy version: " + numpy.__version__ + "\n"
+
         # Add the SpinContainer contents.
-        string = string + `spin`
+        string = string + "\n\n" + `spin`
 
         # Return the string.
         return string
