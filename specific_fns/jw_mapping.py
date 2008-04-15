@@ -30,7 +30,7 @@ from base_class import Common_functions
 from generic_fns.selection import exists_mol_res_spin_data, spin_loop
 from maths_fns.jw_mapping import Mapping
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError, RelaxNucleusError, RelaxParamSetError
-from physical_constants import N15_CSA, NH_BOND_LENGTH
+from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
 
 
 class Jw_mapping(Common_functions):
@@ -119,7 +119,7 @@ class Jw_mapping(Common_functions):
                 continue
 
             # Initialise the function to calculate.
-            self.jw = Mapping(frq=cdp.jw_frq, gx=spin.gx, gh=spin.gh, mu0=spin.mu0, h_bar=spin.h_bar)
+            self.jw = Mapping(frq=cdp.jw_frq, gx=return_gyromagnetic_ratio(spin.heteronuc_type), gh=return_gyromagnetic_ratio(spin.proton_type), mu0=mu0, h_bar=h_bar)
 
             # Calculate the spectral density values.
             j0, jwx, jwh = self.jw.func(r=spin.r, csa=spin.csa, r1=r1, r2=r2, noe=noe)
