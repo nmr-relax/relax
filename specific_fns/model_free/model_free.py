@@ -33,7 +33,7 @@ import sys
 from data import Data as relax_data_store
 from float import isNaN,isInf
 from generic_fns import diffusion_tensor
-from generic_fns.selection import exists_mol_res_spin_data, spin_loop
+from generic_fns.selection import count_spins, exists_mol_res_spin_data, spin_loop
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
 from physical_constants import N15_CSA, NH_BOND_LENGTH
@@ -1627,25 +1627,28 @@ class Model_free_main:
         return k, n, chi2
 
 
-    def num_instances(self, run=None):
-        """Function for returning the number of instances."""
+    def num_instances(self):
+        """Function for returning the number of instances.
 
-        # Arguments.
-        self.run = run
+        @return:    The number of instances used for optimisation.  Either the number of spins if
+                    the local optimisations are setup ('mf' and 'local_tm'), or 1 for the global
+                    models.
+        @rtype:     int
+        """
 
-        # Test if sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
+        # Test if sequence data exists.
+        if not exists_mol_res_spin_data():
             return 0
 
         # Determine the parameter set type.
-        self.param_set = self.determine_param_set_type()
+        param_set = self.determine_param_set_type()
 
         # Sequence specific data.
-        if self.param_set == 'mf' or self.param_set == 'local_tm':
-            return len(relax_data_store.res[self.run])
+        if param_set == 'mf' or param_set == 'local_tm':
+            return count_spins()
 
         # Other data.
-        elif self.param_set == 'diff' or self.param_set == 'all':
+        elif param_set == 'diff' or param_set == 'all':
             return 1
 
         # Should not be here.
