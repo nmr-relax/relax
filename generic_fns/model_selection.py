@@ -97,19 +97,13 @@ def bic(chi2, k, n):
     return chi2 + k * log(n)
 
 
-def select(method=None, pipes=None):
+def select(method=None, modsel_pipe=None, pipes=None):
     """Model selection function."""
 
     # Use all pipes (but the current).
     if pipes == None:
         # Get all data pipe names from the relax data store.
         pipes = relax_data_store.keys()
-
-    # Remove the current data pipe.
-    pipes.remove(relax_data_store.current_pipe)
-
-    # Store the current data pipe as the model selection run
-    modsel_pipe = relax_data_store.current_pipe
 
     # Select the model selection technique.
     if method == 'AIC':
