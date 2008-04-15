@@ -37,7 +37,7 @@ class Modsel(TestCase):
         relax_data_store.__reset__()
 
 
-    def test_diff(self):
+    def test_aic_mod_sel_diff_tensor(self):
         """AIC model selection between two diffusion tensors."""
 
         # Init.
