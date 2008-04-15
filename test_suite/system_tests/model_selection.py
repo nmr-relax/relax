@@ -73,11 +73,8 @@ class Modsel(TestCase):
         relax_data_store['sphere'].chi2 = 200
         relax_data_store['spheroid'].chi2 = 0
 
-        # Create the data pipe for model selection.
-        self.relax.interpreter._Pipe.create('aic', 'mf')
-
         # Model selection.
-        self.relax.interpreter._Modsel.model_selection(method='AIC')
+        self.relax.interpreter._Modsel.model_selection(method='AIC', modsel_pipe='aic')
 
         # Test if the spheroid has been selected.
         self.assert_(hasattr(relax_data_store['aic'], 'diff_tensor'))
