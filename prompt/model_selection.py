@@ -35,13 +35,16 @@ class Modsel:
         self.relax = relax
 
 
-    def model_selection(self, method=None, pipes=None):
+    def model_selection(self, method=None, modsel_pipe=None, pipes=None):
         """Function for model selection.
 
         Keyword arguments
         ~~~~~~~~~~~~~~~~~
 
         method:  The model selection technique (see below).
+
+        modsel_pipe:  The name of the new data pipe which will be created by this user function by
+            the copying of the selected data pipe.
 
         pipes:  An array containing the names of all data pipes to include in model selection.
 
@@ -82,24 +85,30 @@ class Modsel:
         ~~~~~~~
 
         For model-free analysis, if the preset models 1 to 5 are minimised and loaded into the
-        program, the following commands will carry out AIC model selection:
+        program, the following commands will carry out AIC model selection and to place the selected
+        results into the 'mixed' data pipe, type one of:
 
-        relax> model_selection('AIC')
-        relax> model_selection(method='AIC')
-        relax> model_selection('AIC', ['m1', 'm2', 'm3', 'm4', 'm5'])
-        relax> model_selection(method='AIC', pipes=['m1', 'm2', 'm3', 'm4', 'm5'])
+        relax> model_selection('AIC', 'mixed')
+        relax> model_selection(method='AIC', modsel_pipe='mixed')
+        relax> model_selection('AIC', 'mixed', ['m1', 'm2', 'm3', 'm4', 'm5'])
+        relax> model_selection(method='AIC', modsel_pipe='mixed', pipes=['m1', 'm2', 'm3', 'm4', 'm5'])
         """
 
         # Function intro text.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "model_selection("
             text = text + "method=" + `method`
+            text = text + ", modsel_pipe=" + `modsel_pipe`
             text = text + ", pipes=" + `pipes` + ")"
             print text
 
         # Method.
         if type(method) != str:
             raise RelaxStrError, ('model selection method', method)
+
+        # Model selection data pipe name.
+        if type(modsel_pipe) != str:
+            raise RelaxStrError, ('model selection data pipe name', modsel_pipe)
 
         # Runs.
         if pipes == None:
@@ -116,4 +125,4 @@ class Modsel:
                     raise RelaxError, "The elements of the first dimension of the pipes argument must be either strings or arrays."
 
         # Execute the functional code.
-        model_selection.select(method=method, pipes=pipes)
+        model_selection.select(method=method, modsel_pipe=modsel_pipe, pipes=pipes)
