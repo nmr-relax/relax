@@ -80,5 +80,5 @@ class Modsel(TestCase):
         self.relax.interpreter._Modsel.model_selection(method='AIC')
 
         # Test if the spheroid has been selected.
-        self._assert(hasattr(relax_data_store['aic'], 'diff'))
+        self.assert_(hasattr(relax_data_store['aic'], 'diff_tensor'))
         self.assertEqual(relax_data_store['aic'].diff.type, 'spheroid')
