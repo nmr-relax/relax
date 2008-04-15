@@ -187,7 +187,7 @@ def select(method=None, pipes=None):
             # Loop over the nested array.
             for j in xrange(len(pipes[i])):
                 # Number of instances.
-                num = count_num_instances[pipes[i][j]](pipes[i][j])
+                num = count_num_instances[pipes[i][j]]()
                 num_instances[i].append(num)
 
                 # Minimum.
@@ -197,7 +197,7 @@ def select(method=None, pipes=None):
         # All other model selection techniques.
         else:
             # Number of instances.
-            num = count_num_instances[pipes[i]](pipes[i])
+            num = count_num_instances[pipes[i]]()
             num_instances.append(num)
 
             # Minimum.
