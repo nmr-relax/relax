@@ -33,7 +33,7 @@ import sys
 from data import Data as relax_data_store
 from float import isNaN,isInf
 from generic_fns import diffusion_tensor
-from generic_fns.selection import count_spins, exists_mol_res_spin_data, spin_loop
+from generic_fns.selection import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
 from physical_constants import N15_CSA, NH_BOND_LENGTH
@@ -1553,75 +1553,87 @@ class Model_free_main:
                 spin.params = params
 
 
-    def model_statistics(self, run=None, instance=None, global_stats=None):
+    def model_statistics(self, instance=None, global_stats=None):
         """Function for returning k, n, and chi2.
 
         k - number of parameters.
         n - number of data points.
         chi2 - the chi-squared value.
-        """
 
-        # Arguments.
-        self.run = run
+
+        @keyword instance:      This is the optimisation instance index.
+        @type instance:         int
+        @keyword global_stats:  A parameter which determines if global or local statistics are
+                                returned.  If None, then the appropriateness of global or local
+                                statistics is automatically determined.
+        @type global_stats:     None or bool
+        @return:                The optimisation statistics, in tuple format, of the number of
+                                parameters (k), the number of data points (n), and the chi-squared
+                                value (chi2).
+        @rtype:                 tuple of (int, int, float)
+        """
 
         # Determine if local or global statistics will be returned.
         if global_stats == None:
             global_stats = 1
-            for i in xrange(len(relax_data_store.res[self.run])):
-                if hasattr(relax_data_store.res[self.run][i], 'chi2') and relax_data_store.res[self.run][i].chi2 != None:
+            for spin in spin_loop():
+                if hasattr(spin, 'chi2') and spin.chi2 != None:
                     global_stats = 0
                     break
 
         # Determine the parameter set type.
-        self.param_set = self.determine_param_set_type()
+        param_set = self.determine_param_set_type()
 
         # Statistics for a single residue.
         if not global_stats:
+            # Get the SpinContainer.
+            spin = return_spin_from_index(instance)
+
             # Skip unselected residues.
-            if not relax_data_store.res[self.run][instance].select:
+            if not spin.select:
                 return None, None, None
 
             # Missing data sets.
-            if not hasattr(relax_data_store.res[self.run][instance], 'relax_data'):
+            if not hasattr(spin, 'relax_data'):
                 return None, None, None
 
             # Count the number of parameters.
-            self.param_vector = self.assemble_param_vector(index=instance)
-            k = len(self.param_vector)
+            param_vector = self.assemble_param_vector(index=instance)
+            k = len(param_vector)
 
             # Count the number of data points.
-            n = len(relax_data_store.res[self.run][instance].relax_data)
+            n = len(spin.relax_data)
 
             # The chi2 value.
-            chi2 = relax_data_store.res[self.run][instance].chi2
+            chi2 = spin.chi2
 
         # Global stats.
         elif global_stats:
             # Count the number of parameters.
-            self.param_vector = self.assemble_param_vector()
-            k = len(self.param_vector)
+            param_vector = self.assemble_param_vector()
+            k = len(param_vector)
 
             # Count the number of data points.
             n = 0
             chi2 = 0
-            for i in xrange(len(relax_data_store.res[self.run])):
+            for spin in spin_loop():
                 # Skip unselected residues.
-                if not relax_data_store.res[self.run][i].select:
+                if not spin.select:
                     continue
 
                 # Skip residues with no relaxation data.
-                if not hasattr(relax_data_store.res[self.run][i], 'relax_data') or not len(relax_data_store.res[self.run][i].relax_data):
+                if not hasattr(spin, 'relax_data') or not len(spin.relax_data):
                     continue
 
-                n = n + len(relax_data_store.res[self.run][i].relax_data)
+                n = n + len(spin.relax_data)
 
                 # Local tm models.
-                if self.param_set == 'local_tm':
-                    chi2 = chi2 + relax_data_store.res[self.run][i].chi2
+                if param_set == 'local_tm':
+                    chi2 = chi2 + spin.chi2
 
             # The chi2 value.
-            if self.param_set != 'local_tm':
-                chi2 = relax_data_store.chi2[self.run]
+            if param_set != 'local_tm':
+                chi2 = relax_data_store[relax_data_store.current_pipe].chi2
 
         # Return the data.
         return k, n, chi2
