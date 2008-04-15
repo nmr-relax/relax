@@ -289,4 +289,3 @@ def select(method=None, modsel_pipe=None, pipes=None):
         # Duplicate the data from the 'best_model' to the model selection data pipe.
         if best_model != None:
             copy(best_model, modsel_pipe)
-            raise NameError, best_model
