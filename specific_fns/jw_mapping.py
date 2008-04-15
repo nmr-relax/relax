@@ -54,18 +54,25 @@ class Jw_mapping(Common_functions):
 
         # Test if the CSA and bond length values have been set.
         for spin in spin_loop(spin_id):
-
             # Skip unselected residues.
             if not spin.select:
                 continue
 
-            # CSA value.
+            # Test if the CSA value has been set.
             if not hasattr(spin, 'csa') or spin.csa == None:
                 raise RelaxNoValueError, "CSA"
 
-            # Bond length value.
+            # Test if the bond length has been set.
             if not hasattr(spin, 'r') or spin.r == None:
                 raise RelaxNoValueError, "bond length"
+
+            # Test if the spin type has been set.
+            if not hasattr(spin, 'heteronuc_type'):
+                raise RelaxSpinTypeError
+
+            # Test if the type attached proton has been set.
+            if not hasattr(spin, 'proton_type'):
+                raise RelaxProtonTypeError
 
         # Frequency index.
         if cdp.jw_frq not in cdp.frq:
