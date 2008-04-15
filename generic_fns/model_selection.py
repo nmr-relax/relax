@@ -98,7 +98,21 @@ def bic(chi2, k, n):
 
 
 def select(method=None, modsel_pipe=None, pipes=None):
-    """Model selection function."""
+    """Model selection function.
+
+    @keyword method:        The model selection method.  This can currently be one of:
+                                - 'AIC', Akaike's Information Criteria.
+                                - 'AICc', Small sample size corrected AIC.
+                                - 'BIC', Bayesian or Schwarz Information Criteria.
+                                - 'CV', Single-item-out cross-validation.
+                            None of the other model selection techniques are currently supported.
+    @type method:           str
+    @keyword modsel_pipe:   The name of the new data pipe to be created by copying of the selected
+                            data pipe.
+    @type modsel_pipe:      str
+    @keyword pipes:         A list of the data pipes to use in the model selection.
+    @type pipes:            list of str
+    """
 
     # Use all pipes (but the current).
     if pipes == None:
