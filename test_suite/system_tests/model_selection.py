@@ -81,4 +81,4 @@ class Modsel(TestCase):
 
         # Test if the spheroid has been selected.
         self.assert_(hasattr(relax_data_store['aic'], 'diff_tensor'))
-        self.assertEqual(relax_data_store['aic'].diff.type, 'spheroid')
+        self.assertEqual(relax_data_store['aic'].diff_tensor.type, 'spheroid')
