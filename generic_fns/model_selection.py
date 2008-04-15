@@ -27,7 +27,7 @@ from math import log
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns.selection import same_sequence
-import pipes
+from pipes import copy, switch
 from relax_errors import RelaxDiffSeqError, RelaxError, RelaxNoPipeError, RelaxNoSequenceError
 from specific_fns.setup import get_specific_fn
 
@@ -186,6 +186,9 @@ def select(method=None, pipes=None):
 
             # Loop over the nested array.
             for j in xrange(len(pipes[i])):
+                # Switch pipes.
+                switch(pipes[i][j])
+
                 # Number of instances.
                 num = count_num_instances[pipes[i][j]]()
                 num_instances[i].append(num)
@@ -196,6 +199,9 @@ def select(method=None, pipes=None):
 
         # All other model selection techniques.
         else:
+            # Switch pipes.
+            switch(pipes[i])
+
             # Number of instances.
             num = count_num_instances[pipes[i]]()
             num_instances.append(num)
@@ -228,7 +234,7 @@ def select(method=None, pipes=None):
                     pipe = pipes[j][k]
 
                     # Switch to this pipe.
-                    pipes.switch(pipe)
+                    switch(pipe)
 
                     # Skip function.
                     if skip_function[pipe](instance=i):
@@ -253,7 +259,7 @@ def select(method=None, pipes=None):
                 pipe = pipes[j]
 
                 # Switch to this pipe.
-                pipes.switch(pipe)
+                switch(pipe)
 
                 # Skip function.
                 if skip_function[pipe](instance=i, min_instances=min_instances, num_instances=num_instances[j]):
@@ -288,4 +294,5 @@ def select(method=None, pipes=None):
 
         # Duplicate the data from the 'best_model' to the model selection data pipe.
         if best_model != None:
-            pipes.copy(best_model, modsel_pipe)
+            copy(best_model, modsel_pipe)
+            raise NameError, best_model
