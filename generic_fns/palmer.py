@@ -527,9 +527,16 @@ def extract(dir, spin_id=None):
 
     # Loop over the sequence.
     pos = 0
-    for spin in spin_loop(spin_id):
+    for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
         # Skip unselected residues.
         if not spin.select:
+            continue
+
+        # Get the residue number from the mfout file.
+        mfout_res_num = int(split(mfout_lines[s2_pos + pos])[0])
+
+        # Skip the spin if the residue doesn't match.
+        if mfout_res_num != res_num:
             continue
 
         # Test that the model has been set (needed to differentiate between te and ts).
