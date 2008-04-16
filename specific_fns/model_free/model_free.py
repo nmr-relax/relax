@@ -1561,16 +1561,20 @@ class Model_free_main:
                 spin.params = params
 
 
-    def model_statistics(self, instance=None, global_stats=None):
-        """Function for returning k, n, and chi2.
+    def model_statistics(self, instance=None, spin_id=None, global_stats=None):
+        """Return the k, n, and chi2 model statistics.
 
         k - number of parameters.
         n - number of data points.
         chi2 - the chi-squared value.
 
 
-        @keyword instance:      This is the optimisation instance index.
-        @type instance:         int
+        @keyword instance:      This is the optimisation instance index.  Either this or the spin_id
+                                keyword argument must be supplied.
+        @type instance:         None or int
+        @keyword spin_id:       The spin identification string.  Either this or the instance keyword
+                                argument must be supplied.
+        @type spin_id:          None or str
         @keyword global_stats:  A parameter which determines if global or local statistics are
                                 returned.  If None, then the appropriateness of global or local
                                 statistics is automatically determined.
@@ -1580,6 +1584,12 @@ class Model_free_main:
                                 value (chi2).
         @rtype:                 tuple of (int, int, float)
         """
+
+        # Bad argument combination.
+        if instance == None and spin_id == None:
+            raise RelaxError, "Either the instance or spin_id argument must be supplied."
+        elif instance != None and spin_id != None:
+            raise RelaxError, "The instance arg " + `instance` + " and spin_id arg " + `spin_id` + " clash.  Only one should be supplied."
 
         # Determine if local or global statistics will be returned.
         if global_stats == None:
@@ -1595,7 +1605,10 @@ class Model_free_main:
         # Statistics for a single residue.
         if not global_stats:
             # Get the SpinContainer.
-            spin = return_spin_from_index(instance)
+            if spin_id:
+                spin = return_spin(spin_id)
+            else:
+                spin = return_spin_from_index(instance)
 
             # Skip unselected residues.
             if not spin.select:
@@ -1606,7 +1619,7 @@ class Model_free_main:
                 return None, None, None
 
             # Count the number of parameters.
-            param_vector = self.assemble_param_vector(index=instance)
+            param_vector = self.assemble_param_vector(spin=spin)
             k = len(param_vector)
 
             # Count the number of data points.
