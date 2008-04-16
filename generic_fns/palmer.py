@@ -538,41 +538,41 @@ def extract(dir, spin_id=None):
 
         # Get the S2 data.
         if 'S2' in spin.params:
-            spin.s2, spin.s2_err = get_mf_data(mfout_S2_pos + pos)
+            spin.s2, spin.s2_err = get_mf_data(s2_pos + pos)
 
         # Get the S2f data.
         if 'S2f' in spin.params or 'S2s' in spin.params:
-            spin.s2f, spin.s2f_err = get_mf_data(mfout_S2f_pos + pos)
+            spin.s2f, spin.s2f_err = get_mf_data(s2f_pos + pos)
 
         # Get the S2s data.
         if 'S2f' in spin.params or 'S2s' in spin.params:
-            spin.s2s, spin.s2s_err = get_mf_data(mfout_S2s_pos + pos)
+            spin.s2s, spin.s2s_err = get_mf_data(s2s_pos + pos)
 
         # Get the te data.
         if 'te' in spin.params:
-            spin.te, spin.te_err = get_mf_data(mfout_te_pos + pos)
+            spin.te, spin.te_err = get_mf_data(te_pos + pos)
             spin.te = spin.te / 1e12
             spin.te_err = spin.te_err / 1e12
 
         # Get the ts data.
         if 'ts' in spin.params:
-            spin.ts, spin.ts_err = get_mf_data(mfout_te_pos + pos)
+            spin.ts, spin.ts_err = get_mf_data(te_pos + pos)
             spin.ts = spin.ts / 1e12
             spin.ts_err = spin.ts_err / 1e12
 
         # Get the Rex data.
         if 'Rex' in spin.params:
-            spin.rex, spin.rex_err = get_mf_data(mfout_Rex_pos + pos)
+            spin.rex, spin.rex_err = get_mf_data(rex_pos + pos)
             spin.rex = spin.rex / (2.0 * pi * spin.frq[0])**2
             spin.rex_err = spin.rex_err / (2.0 * pi * spin.frq[0])**2
 
         # Get the chi-squared data.
         if not sims:
-            row = split(mfout_lines[mfout_chi2_pos + pos])
+            row = split(mfout_lines[chi2_pos + pos])
             spin.chi2 = float(row[1])
         else:
             # The mfout chi2 position (with no sims) plus 2 (for the extra XML) plus the residue position times 22 (because of the simulated SSE rows).
-            row = split(mfout_lines[mfout_chi2_pos + 2 + 22*pos])
+            row = split(mfout_lines[chi2_pos + 2 + 22*pos])
             spin.chi2 = float(row[1])
 
         # Increment the residue position.
