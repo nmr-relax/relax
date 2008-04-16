@@ -1492,6 +1492,8 @@ class Model_free_main:
 
         @param param:   The name of the parameter to return the lower and upper bounds of.
         @type param:    str
+        @param spin_id:     The spin identification string.
+        @type spin_id:      str
         @return:        The upper and lower bounds of the parameter.
         @rtype:         list of float
         """
