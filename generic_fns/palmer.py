@@ -579,7 +579,7 @@ def extract(dir, spin_id=None):
         pos = pos + 1
 
 
-def get_mf_data(pos):
+def get_mf_data(mfout_lines, pos):
     """Extract the model-free data from the given position of the mfout file.
 
     This method is designed to catch a number of bugs in Modelfree4's mfout file.
@@ -595,14 +595,16 @@ def get_mf_data(pos):
     This is caught by scanning for two '.' characters in the column, and handled by assuming
     that every floating point number will have three decimal characters.
 
-    @param pos:     The mfout line position.
-    @type pos:      int
-    @return:        The value and error.
-    @rtype:         tuple of 2 floats
+    @param mfout_lines: A list of all the lines of the mfout file.
+    @type mfout_lines:  list of str
+    @param pos:         The mfout line position.
+    @type pos:          int
+    @return:            The value and error.
+    @rtype:             tuple of 2 floats
     """
 
     # Split the line up.
-    row = split(self.mfout_lines[pos])
+    row = split(mfout_lines[pos])
 
     # The value and error, assuming a bug free mfout file.
     val = row[1]
