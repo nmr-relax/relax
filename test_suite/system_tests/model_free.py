@@ -158,7 +158,7 @@ class Mf(TestCase):
         self.relax.interpreter._Model_free.select_model(model='m4')
 
         # Map the space.
-        self.relax.interpreter._OpenDX.map(params=['theta', 'phi', 'Da'], res_num=2, inc=2, lower=[0, 0, -0.5*1e7], upper=[pi, 2.0*pi, 1.0*1e7], file='devnull')
+        self.relax.interpreter._OpenDX.map(params=['theta', 'phi', 'Da'], spin_id=':2', inc=2, lower=[0, 0, -0.5*1e7], upper=[pi, 2.0*pi, 1.0*1e7], file_prefix='devnull')
 
 
     def test_opendx_tm_s2_te(self):
@@ -186,7 +186,7 @@ class Mf(TestCase):
         self.relax.interpreter._Model_free.select_model(model='tm2')
 
         # Map the space.
-        self.relax.interpreter._OpenDX.map(params=['local_tm', 'S2', 'te'], res_num=2, inc=2, file='devnull')
+        self.relax.interpreter._OpenDX.map(params=['local_tm', 'S2', 'te'], spin_id=':2', inc=2, file_prefix='devnull')
 
 
     def test_opt_constr_bfgs_back_S2_0_970_te_2048_Rex_0_149(self):
