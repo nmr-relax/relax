@@ -528,17 +528,8 @@ def extract(dir, spin_id=None):
     # Loop over the sequence.
     pos = 0
     for spin in spin_loop(spin_id):
-
         # Skip unselected residues.
         if not spin.select:
-            continue
-
-        # Missing data sets.
-        if not hasattr(spin, 'model'):
-            continue
-
-        # No relaxation data.
-        if not hasattr(spin, 'num_frq'):
             continue
 
         # Get the S2 data.
