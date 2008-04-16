@@ -26,22 +26,48 @@ from re import search
 
 # relax module imports.
 from data import Data as relax_data_store
-from isosurface_3D import Iso3D
+import isosurface_3D
 from relax_errors import RelaxError, RelaxNoResError
+from relax_io import test_binary
 
 
-def map(run=None, params=None, map_type='Iso3D', res_num=None, inc=20, lower=None, upper=None, axis_incs=10, file="map", dir="dx", point=None, point_file="point", remap=None):
-    """Function for mapping the given space and creating OpenDX files."""
+def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=None, axis_incs=10, file_prefix="map", dir="dx", point=None, point_file="point", remap=None):
+    """Map the space corresponding to the spin identifier and create the OpenDX files.
 
-    # Residue index.
-    index = None
-    if res_num:
-        for i in xrange(len(relax_data_store.res[run])):
-            if relax_data_store.res[run][i].num == res_num:
-                index = i
-                break
-        if index == None:
-            raise RelaxNoResError, res_num
+    @keyword params:        
+    @type params:           
+    @keyword map_type:      The type of map to create.  The available options are:
+                                - 'Iso3D', a 3D isosurface visualisation of the space.
+    @type map_type:         str
+    @keyword spin_id:       The spin identification string.
+    @type spin_id:          str
+    @keyword inc:           The resolution of the plot.  This is the number of increments per
+                            dimension.
+    @type inc:              int
+    @keyword lower:         The lower bounds of the space to map.  If supplied, this should be a
+                            list of floats, its length equal to the number of parameters in the
+                            model.
+    @type lower:            None or list of float
+    @keyword upper:         The upper bounds of the space to map.  If supplied, this should be a
+                            list of floats, its length equal to the number of parameters in the
+                            model.
+    @type upper:            None or list of float
+    @keyword axis_incs:     The number of tick marks to display in the OpenDX plot in each
+                            dimension.
+    @type axis_incs:        int
+    @keyword file_prefix:   The file prefix for all the created files.
+    @type file_prefix:      str
+    @keyword dir:           The directory to place the files into.
+    @type dir:              str or None
+    @keyword point:         If supplied, a red sphere will be placed at these coordinates.
+    @type point:            None or list of float
+    @keyword point_file:    The file prefix for the point output files.
+    @type point_file:       str or None
+    @keyword remap:         A function which is used to remap the space.  The function should accept
+                            the parameter array (list of float) and return an array of equal length
+                            (again list of float).
+    @type remap:            None or func
+    """
 
     # Space type.
     if search("^[Ii]so3[Dd]", map_type):
@@ -49,13 +75,23 @@ def map(run=None, params=None, map_type='Iso3D', res_num=None, inc=20, lower=Non
             raise RelaxError, "The 3D isosurface map requires a 3 parameter model."
 
         # Create the map.
-        self.iso3d.map_space(run, params, res_num, index, inc, lower, upper, axis_incs, file, dir, point, point_file, remap)
+        isosurface_3D.map_space(params, spin_id, inc, lower, upper, axis_incs, file, dir, point, point_file, remap)
     else:
         raise RelaxError, "The map type '" + map_type + "' is not supported."
 
 
-def run(file="map", dir="dx", dx_exe="dx", vp_exec=1):
-    """Function for running OpenDX."""
+def run(file_prefix="map", dir="dx", dx_exe="dx", vp_exec=True):
+    """Execute OpenDX.
+
+    @keyword file_prefix:   The file prefix for all the created files.
+    @type file_prefix:      str
+    @keyword dir:           The directory to place the files into.
+    @type dir:              str or None
+    @keyword dx_exe:        
+    @type dx_exe:           
+    @keyword vp_exec:       
+    @type vp_exec:          
+    """
 
     # Text for changing to the directory dir.
     dir_text = ""
@@ -68,7 +104,7 @@ def run(file="map", dir="dx", dx_exe="dx", vp_exec=1):
         execute_text = " -execute"
 
     # Test the binary file string corresponds to a valid executable.
-    self.relax.IO.test_binary(dx_exe)
+    test_binary(dx_exe)
 
     # Run OpenDX.
     system(dx_exe + dir_text + " -program " + file + ".net" + execute_text + " &")
