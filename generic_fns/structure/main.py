@@ -222,12 +222,9 @@ def vectors(heteronuc=None, proton=None, spin_id=None, verbosity=1):
     if heteronuc == proton:
         raise RelaxError, "The proton and heteronucleus are set to the same atom."
 
-    # Number of structures.
-    num_str = len(cdp.structure.structures)
-
     # Print out.
     if verbosity:
-        if num_str > 1:
+        if cdp.structure.num_str() > 1:
             print "\nCalculating and averaging the unit XH vectors from all structures."
         else:
             print "\nCalculating the unit XH vectors from the structure."
