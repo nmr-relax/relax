@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,10 +29,7 @@ from base_map import Base_Map
 
 
 class Iso3D(Base_Map):
-    def __init__(self, relax):
-        """3D isosurface class."""
-
-        self.relax = relax
+    """OpenDX 3D space isosurface mapping class."""
 
 
     def config_text(self):
