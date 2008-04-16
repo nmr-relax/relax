@@ -28,7 +28,7 @@ from types import FunctionType
 from doc_string import regexp_doc
 import help
 from generic_fns import diffusion_tensor
-from relax_errors import RelaxBinError, RelaxError, RelaxFunctionError, RelaxIntError, RelaxLenError, RelaxListError, RelaxListNumError, RelaxListStrError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxBinError, RelaxError, RelaxFunctionError, RelaxIntError, RelaxLenError, RelaxListError, RelaxListNumError, RelaxListStrError, RelaxNoneStrError, RelaxStrError
 from specific_fns.model_free import Model_free
 
 
@@ -186,7 +186,7 @@ class OpenDX:
             text = sys.ps3 + "map("
             text = text + "params=" + `params`
             text = text + ", map_type=" + `map_type`
-            text = text + ", res_num=" + `res_num`
+            text = text + ", spin_id=" + `spin_id`
             text = text + ", inc=" + `inc`
             text = text + ", lower=" + `lower`
             text = text + ", upper=" + `upper`
@@ -210,9 +210,9 @@ class OpenDX:
         if type(map_type) != str:
             raise RelaxStrError, ('map type', map_type)
 
-        # The residue number.
-        if type(res_num) != int and res_num != None:
-            raise RelaxNoneIntError, ('residue number', res_num)
+        # Spin identifier.
+        if spin_id != None and type(spin_id) != str:
+            raise RelaxNoneStrError, ('spin identifier', spin_id)
 
         # Increment.
         if type(inc) != int:
@@ -246,9 +246,9 @@ class OpenDX:
         elif axis_incs <= 1:
             raise RelaxError, "The axis increment value needs to be greater than 1."
 
-        # File name.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+        # File prefix.
+        if type(file_prefix) != str:
+            raise RelaxStrError, ('file prefix', file_prefix)
 
         # Directory name.
         if dir != None and type(dir) != str:
@@ -271,7 +271,7 @@ class OpenDX:
             raise RelaxFunctionError, ('remap function', remap)
 
         # Execute the functional code.
-        opendx.main.map(params=params, map_type=map_type, res_num=res_num, inc=inc, lower=lower, upper=upper, axis_incs=axis_incs, file=file, dir=dir, point=point, point_file=point_file, remap=remap)
+        opendx.main.map(params=params, map_type=map_type, spin_id=spin_id, inc=inc, lower=lower, upper=upper, axis_incs=axis_incs, file_prefix=file_prefix, dir=dir, point=point, point_file=point_file, remap=remap)
 
 
     # Docstring modification.
