@@ -35,7 +35,7 @@ from relax_io import open_write_file
 class Base_Map:
     """The space mapping base class."""
 
-    def __init__(self, params, spin_id, index, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file, remap):
+    def __init__(self, params, spin_id, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file, remap):
         """Map the space upon class instantiation."""
 
         # Initialise.
