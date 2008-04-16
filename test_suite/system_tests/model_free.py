@@ -188,7 +188,7 @@ class Mf(TestCase):
         self.relax.interpreter._Model_free.select_model(model='tm2')
 
         # Map the space.
-        self.relax.interpreter._OpenDX.map(params=['local_tm', 'S2', 'te'], spin_id=':2', inc=2, file_prefix='devnull')
+        self.relax.interpreter._OpenDX.map(params=['local_tm', 'S2', 'te'], spin_id=':2', inc=2, lower=[5e-9, 0.0, 0.0], file_prefix='devnull')
 
 
     def test_opt_constr_bfgs_back_S2_0_970_te_2048_Rex_0_149(self):
