@@ -290,7 +290,7 @@ class Base_Map:
             name = self.return_data_name(self.params[i])
 
             # Diffusion tensor parameter.
-            if relax_data_store[relax_data_store.current_pipe].type == 'mf':
+            if relax_data_store[relax_data_store.current_pipe].pipe_type == 'mf':
                 # The diffusion tensor parameter name.
                 diff_name = diffusion_tensor.return_data_name(self.params[i])
 
