@@ -32,8 +32,109 @@ from relax_errors import RelaxError, RelaxUnknownParamError
 
 
 class Base_Map:
-    def __init__(self):
-        """The space mapping base class."""
+    """The space mapping base class."""
+
+    def __init__(self, run, params, res_num, index, inc, lower, upper, axis_incs, file, dir, point, point_file, remap):
+        """Map the space upon class instantiation."""
+
+        # Initialise.
+        #############
+
+        # Function type.
+        self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
+
+        # Function arguments.
+        self.run = run
+        self.params = params
+        self.res_num = res_num
+        self.index = index
+        self.n = len(params)
+        self.inc = inc
+        self.axis_incs = axis_incs
+        self.file = file
+        self.dir = dir
+        self.point_file = point_file
+        self.remap = remap
+
+        # Specific function setup.
+        self.calculate = self.relax.specific_setup.setup('calculate', self.function_type)
+        self.model_stats = self.relax.specific_setup.setup('model_stats', self.function_type)
+        self.return_data_name = self.relax.specific_setup.setup('return_data_name', self.function_type)
+        self.map_bounds = []
+        self.return_conversion_factor = []
+        self.return_units = []
+        for i in xrange(self.n):
+            self.map_bounds.append(self.relax.specific_setup.setup('map_bounds', self.function_type))
+            self.return_conversion_factor.append(self.relax.specific_setup.setup('return_conversion_factor', self.function_type))
+            self.return_units.append(self.relax.specific_setup.setup('return_units', self.function_type))
+
+        # Diffusion tensor parameter flag.
+        self.diff_params = zeros(self.n)
+
+        # Get the parameter names.
+        self.get_param_names()
+
+        # Specific function setup (for diffusion tensor parameters).
+        for i in xrange(self.n):
+            if self.diff_params[i]:
+                self.map_bounds[i] = self.relax.generic.diffusion_tensor.map_bounds
+                self.return_conversion_factor[i] = self.relax.generic.diffusion_tensor.return_conversion_factor
+                self.return_units[i] = self.relax.generic.diffusion_tensor.return_units
+
+        # Points.
+        if point != None:
+            self.point = array(point, float64)
+            self.num_points = 1
+        else:
+            self.num_points = 0
+
+        # Get the default map bounds.
+        self.bounds = zeros((self.n, 2), float64)
+        for i in xrange(self.n):
+            # Get the bounds for the parameter i.
+            bounds = self.map_bounds[i](self.run, self.param_names[i])
+
+            # No bounds found.
+            if not bounds:
+                raise RelaxError, "No bounds for the parameter " + `self.params[i]` + " could be determined."
+
+            # Assign the bounds to the global data structure.
+            self.bounds[i] = bounds
+
+        # Lower bounds.
+        if lower != None:
+            self.bounds[:, 0] = array(lower, float64)
+
+        # Upper bounds.
+        if upper != None:
+            self.bounds[:, 1] = array(upper, float64)
+
+        # Setup the step sizes.
+        self.step_size = zeros(self.n, float64)
+        self.step_size = (self.bounds[:, 1] - self.bounds[:, 0]) / self.inc
+
+
+        # Create all the OpenDX data and files.
+        #######################################
+
+        # Get the date.
+        self.get_date()
+
+        # Create the OpenDX .net program file.
+        self.create_program()
+
+        # Create the OpenDX .cfg program configuration file.
+        self.create_config()
+
+        # Create the OpenDX .general file.
+        self.create_general()
+
+        # Create the OpenDX .general and data files for the given point.
+        if self.num_points == 1:
+            self.create_point()
+
+        # Generate the map.
+        self.create_map()
 
 
     def create_config(self):
@@ -248,106 +349,3 @@ class Base_Map:
                 string = string + " " + `val`
                 val = val + loc_inc
             self.tick_locations.append("{" + string + " }")
-
-
-    def map_space(self, run, params, res_num, index, inc, lower, upper, axis_incs, file, dir, point, point_file, remap):
-        """Generic function for mapping a space."""
-
-        # Initialise.
-        #############
-
-        # Function type.
-        self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
-
-        # Function arguments.
-        self.run = run
-        self.params = params
-        self.res_num = res_num
-        self.index = index
-        self.n = len(params)
-        self.inc = inc
-        self.axis_incs = axis_incs
-        self.file = file
-        self.dir = dir
-        self.point_file = point_file
-        self.remap = remap
-
-        # Specific function setup.
-        self.calculate = self.relax.specific_setup.setup('calculate', self.function_type)
-        self.model_stats = self.relax.specific_setup.setup('model_stats', self.function_type)
-        self.return_data_name = self.relax.specific_setup.setup('return_data_name', self.function_type)
-        self.map_bounds = []
-        self.return_conversion_factor = []
-        self.return_units = []
-        for i in xrange(self.n):
-            self.map_bounds.append(self.relax.specific_setup.setup('map_bounds', self.function_type))
-            self.return_conversion_factor.append(self.relax.specific_setup.setup('return_conversion_factor', self.function_type))
-            self.return_units.append(self.relax.specific_setup.setup('return_units', self.function_type))
-
-        # Diffusion tensor parameter flag.
-        self.diff_params = zeros(self.n)
-
-        # Get the parameter names.
-        self.get_param_names()
-
-        # Specific function setup (for diffusion tensor parameters).
-        for i in xrange(self.n):
-            if self.diff_params[i]:
-                self.map_bounds[i] = self.relax.generic.diffusion_tensor.map_bounds
-                self.return_conversion_factor[i] = self.relax.generic.diffusion_tensor.return_conversion_factor
-                self.return_units[i] = self.relax.generic.diffusion_tensor.return_units
-
-        # Points.
-        if point != None:
-            self.point = array(point, float64)
-            self.num_points = 1
-        else:
-            self.num_points = 0
-
-        # Get the default map bounds.
-        self.bounds = zeros((self.n, 2), float64)
-        for i in xrange(self.n):
-            # Get the bounds for the parameter i.
-            bounds = self.map_bounds[i](self.run, self.param_names[i])
-
-            # No bounds found.
-            if not bounds:
-                raise RelaxError, "No bounds for the parameter " + `self.params[i]` + " could be determined."
-
-            # Assign the bounds to the global data structure.
-            self.bounds[i] = bounds
-
-        # Lower bounds.
-        if lower != None:
-            self.bounds[:, 0] = array(lower, float64)
-
-        # Upper bounds.
-        if upper != None:
-            self.bounds[:, 1] = array(upper, float64)
-
-        # Setup the step sizes.
-        self.step_size = zeros(self.n, float64)
-        self.step_size = (self.bounds[:, 1] - self.bounds[:, 0]) / self.inc
-
-
-        # Create all the OpenDX data and files.
-        #######################################
-
-        # Get the date.
-        self.get_date()
-
-        # Create the OpenDX .net program file.
-        self.create_program()
-
-        # Create the OpenDX .cfg program configuration file.
-        self.create_config()
-
-        # Create the OpenDX .general file.
-        self.create_general()
-
-        # Create the OpenDX .general and data files for the given point.
-        if self.num_points == 1:
-            self.create_point()
-
-        # Generate the map.
-        self.create_map()
