@@ -27,6 +27,7 @@ from time import asctime, localtime
 # relax module imports.
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxUnknownParamError
+from relax_io import open_write_file
 
 
 
@@ -143,7 +144,7 @@ class Base_Map:
         print "\nCreating the OpenDX .cfg program configuration file."
 
         # Open the file.
-        config_file = self.relax.IO.open_write_file(file_name=self.file_prefix+".cfg", dir=self.dir, force=1)
+        config_file = open_write_file(file_name=self.file_prefix+".cfg", dir=self.dir, force=1)
 
         # Get the text of the configuration file.
         text = self.config_text()
@@ -162,7 +163,7 @@ class Base_Map:
         print "\nCreating the OpenDX .general file."
 
         # Open the file.
-        general_file = self.relax.IO.open_write_file(file_name=self.file_prefix+".general", dir=self.dir, force=1)
+        general_file = open_write_file(file_name=self.file_prefix+".general", dir=self.dir, force=1)
 
         # Get the text of the configuration file.
         text = self.general_text()
@@ -181,7 +182,7 @@ class Base_Map:
         print "\nCreating the map."
 
         # Open the file.
-        map_file = self.relax.IO.open_write_file(file_name=self.file_prefix, dir=self.dir, force=1)
+        map_file = open_write_file(file_name=self.file_prefix, dir=self.dir, force=1)
 
         # Generate and write the text of the map.
         self.map_text(map_file)
@@ -212,8 +213,8 @@ class Base_Map:
         print "\nCreating the OpenDX .general and data files for the given point."
 
         # Open the files.
-        point_file = self.relax.IO.open_write_file(file_name=self.point_file, dir=self.dir, force=1)
-        point_file_general = self.relax.IO.open_write_file(file_name=self.point_file+".general", dir=self.dir, force=1)
+        point_file = open_write_file(file_name=self.point_file, dir=self.dir, force=1)
+        point_file_general = open_write_file(file_name=self.point_file+".general", dir=self.dir, force=1)
 
         # Calculate the coordinate values.
         coords = self.inc * (self.point - self.bounds[:, 0]) / (self.bounds[:, 1] - self.bounds[:, 0])
@@ -239,7 +240,7 @@ class Base_Map:
         print "\nCreating the OpenDX .net program file."
 
         # Open the file.
-        program_file = self.relax.IO.open_write_file(file_name=self.file_prefix+".net", dir=self.dir, force=1)
+        program_file = open_write_file(file_name=self.file_prefix+".net", dir=self.dir, force=1)
 
         # Create the strings associated with the map axes.
         self.map_axes()
