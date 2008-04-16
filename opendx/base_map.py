@@ -48,7 +48,6 @@ class Base_Map:
         # Function arguments.
         self.params = params
         self.spin_id = spin_id
-        self.index = index
         self.n = len(params)
         self.inc = inc
         self.axis_incs = axis_incs
