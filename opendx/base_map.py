@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007 Edward d'Auvergne                             #
+# Copyright (C) 2003-2005, 2007-2008 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -19,6 +19,10 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
 #                                                                             #
 ###############################################################################
+
+# Module docstring.
+"""Module containing the base class for the OpenDX space mapping classes."""
+
 
 # Python module imports.
 from numpy import float64, array, zeros
