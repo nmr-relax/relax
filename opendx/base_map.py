@@ -34,17 +34,13 @@ from relax_errors import RelaxError, RelaxUnknownParamError
 class Base_Map:
     """The space mapping base class."""
 
-    def __init__(self, run, params, res_num, index, inc, lower, upper, axis_incs, file, dir, point, point_file, remap):
+    def __init__(self, params, res_num, index, inc, lower, upper, axis_incs, file, dir, point, point_file, remap):
         """Map the space upon class instantiation."""
 
         # Initialise.
         #############
 
-        # Function type.
-        self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
-
         # Function arguments.
-        self.run = run
         self.params = params
         self.res_num = res_num
         self.index = index
@@ -56,17 +52,20 @@ class Base_Map:
         self.point_file = point_file
         self.remap = remap
 
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
         # Specific function setup.
-        self.calculate = self.relax.specific_setup.setup('calculate', self.function_type)
-        self.model_stats = self.relax.specific_setup.setup('model_stats', self.function_type)
-        self.return_data_name = self.relax.specific_setup.setup('return_data_name', self.function_type)
+        self.calculate = get_specific_fn('calculate', cdp.pipe_type)
+        self.model_stats = get_specific_fn('model_stats', cdp.pipe_type)
+        self.return_data_name = get_specific_fn('return_data_name', cdp.pipe_type)
         self.map_bounds = []
         self.return_conversion_factor = []
         self.return_units = []
         for i in xrange(self.n):
-            self.map_bounds.append(self.relax.specific_setup.setup('map_bounds', self.function_type))
-            self.return_conversion_factor.append(self.relax.specific_setup.setup('return_conversion_factor', self.function_type))
-            self.return_units.append(self.relax.specific_setup.setup('return_units', self.function_type))
+            self.map_bounds.append(get_specific_fn('map_bounds', cdp.pipe_type))
+            self.return_conversion_factor.append(get_specific_fn('return_conversion_factor', cdp.pipe_type))
+            self.return_units.append(get_specific_fn('return_units', cdp.pipe_type))
 
         # Diffusion tensor parameter flag.
         self.diff_params = zeros(self.n)
@@ -92,7 +91,7 @@ class Base_Map:
         self.bounds = zeros((self.n, 2), float64)
         for i in xrange(self.n):
             # Get the bounds for the parameter i.
-            bounds = self.map_bounds[i](self.run, self.param_names[i])
+            bounds = self.map_bounds[i](self.param_names[i])
 
             # No bounds found.
             if not bounds:
