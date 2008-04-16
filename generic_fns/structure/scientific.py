@@ -338,11 +338,8 @@ class Scientific_data(Base_struct_API):
         vector_array = []
         ave_vector = zeros(3, float64)
 
-        # Number of structures.
-        num_str = len(self.structural_data)
-
         # Loop over the structures.
-        for i in xrange(num_str):
+        for i in xrange(self.num_str()):
             # The vectors from a specific structure.
             if structure != None and structure != i:
                 continue
