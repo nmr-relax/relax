@@ -95,21 +95,19 @@ class OpenDX:
         opendx.run(file=file, dir=dir, dx_exe=dx_exe, vp_exec=vp_exec)
 
 
-    def map(self, run=None, params=None, map_type="Iso3D", res_num=None, inc=20, lower=None, upper=None, axis_incs=5, file="map", dir="dx", point=None, point_file="point", remap=None):
+    def map(self, params=None, map_type="Iso3D", spin_id=None, inc=20, lower=None, upper=None, axis_incs=5, file_prefix="map", dir="dx", point=None, point_file="point", remap=None):
         """Function for creating a map of the given space in OpenDX format.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
-
-        params:  The parameters to be mapped.  This argument should be an array of strings, values
-        of which are described below.
+        params:  The parameters to be mapped.  This argument should be an array of strings, the
+        meanings of which are described below.
 
         map_type:  The type of map to create.  For example the default, a 3D isosurface, the type is
         'Iso3D'.  See below for more details.
 
-        res_num:  The residue number.
+        spin_id:  The spin identification numbe.
 
         inc:  The number of increments to map in each dimension.  This value controls the resolution
         of the map.
@@ -127,7 +125,7 @@ class OpenDX:
         axis_incs:  The number of increments or ticks displaying parameter values along the axes of
         the OpenDX plot.
 
-        file:  The file name.  All the output files are prefixed with this name.  The main file
+        file_prefix:  The file name.  All the output files are prefixed with this name.  The main file
         containing the data points will be called the value of 'file'.  The OpenDX program will be
         called 'file.net' and the OpenDX import file will be called 'file.general'.
 
@@ -153,42 +151,40 @@ class OpenDX:
         | Surface type                              | Pattern                       |
         |___________________________________________|_______________________________|
         |                                           |                               |
-        | 3D isosurface                             | '^[Ii]so3[Dd]'                |
+        | 3D isosurface                             | 'Iso3D'                       |
         |___________________________________________|_______________________________|
 
-        Pattern syntax is simply regular expression syntax where square brackets '[]' means any
-        character within the brackets, '^' means the start of the string, etc.
+        This argument is case insensitive.
 
 
         Examples
         ~~~~~~~~
 
-        The following commands will generate a map of the extended model-free space defined as run
-        'm5' which consists of the parameters {S2, S2f, ts}.  Files will be output into the
-        directory 'dx' and will be prefixed by 'map'.  The residue, in this case, is number 6.
+        The following commands will generate a map of the extended model-free space for model 'm5'
+        consisting of the parameters {S2, S2f, ts}.  Files will be output into the
+        directory 'dx' and will be prefixed by 'map'.  In this case, the system is a protein and
+        residue number 6 will be mapped.
 
-        relax> dx.map('m5', ['S2', 'S2f', 'ts'], 6)
-        relax> dx.map('m5', ['S2', 'S2f', 'ts'], 6, 20, 'map', 'dx')
-        relax> dx.map('m5', ['S2', 'S2f', 'ts'], res_num=6, file='map', dir='dx')
-        relax> dx.map(run='m5', params=['S2', 'S2f', 'ts'], res_num=6, inc=20, file='map', dir='dx')
-        relax> dx.map(run='m5', params=['S2', 'S2f', 'ts'], res_num=6, type='Iso3D', inc=20,
-                      swap=[0, 1, 2], file='map', dir='dx')
+        relax> dx.map(['S2', 'S2f', 'ts'], ':6')
+        relax> dx.map(['S2', 'S2f', 'ts'], ':6', 20, 'map', 'dx')
+        relax> dx.map(['S2', 'S2f', 'ts'], spin_id=':6', file='map', dir='dx')
+        relax> dx.map(params=['S2', 'S2f', 'ts'], spin_id=':6', inc=20, file='map', dir='dx')
+        relax> dx.map(params=['S2', 'S2f', 'ts'], spin_id=':6', type='Iso3D', inc=20,
+                      file='map', dir='dx')
 
 
-        To map the model-free space 'm4' defined by the parameters {S2, te, Rex}, name the results
-        'test', and not place the files in a subdirectory, use the following commands (assuming
-        residue 2).
+        To map the model-free space 'm4' for residue 2, spin N6 defined by the parameters {S2, te,
+        Rex}, name the results 'test', and to place the files in the current directory, use one of
+        the following commands:
 
-        relax> dx.map('m4', ['S2', 'te', 'Rex'], res_num=2, file='test', dir=None)
-        relax> dx.map(run='m4', params=['S2', 'te', 'Rex'], res_num=2, inc=100, file='test',
-                      dir=None)
+        relax> dx.map(['S2', 'te', 'Rex'], spin_id=':2@N6', file='test', dir=None)
+        relax> dx.map(params=['S2', 'te', 'Rex'], spin_id=':2@N6', inc=100, file='test', dir=None)
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "map("
-            text = text + "run=" + `run`
-            text = text + ", params=" + `params`
+            text = text + "params=" + `params`
             text = text + ", map_type=" + `map_type`
             text = text + ", res_num=" + `res_num`
             text = text + ", inc=" + `inc`
@@ -201,10 +197,6 @@ class OpenDX:
             text = text + ", point_file=" + `point_file`
             text = text + ", remap=" + `remap` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The parameters to map.
         if type(params) != list:
@@ -279,7 +271,7 @@ class OpenDX:
             raise RelaxFunctionError, ('remap function', remap)
 
         # Execute the functional code.
-        self.__relax__.generic.opendx.map(run=run, params=params, map_type=map_type, res_num=res_num, inc=inc, lower=lower, upper=upper, axis_incs=axis_incs, file=file, dir=dir, point=point, point_file=point_file, remap=remap)
+        opendx.main.map(params=params, map_type=map_type, res_num=res_num, inc=inc, lower=lower, upper=upper, axis_incs=axis_incs, file=file, dir=dir, point=point, point_file=point_file, remap=remap)
 
 
     # Docstring modification.
