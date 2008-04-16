@@ -24,7 +24,8 @@
 """The API for accessing, creating, and modifying structural information.
 
 The full API is documented within this base class object.  Each available API call is given as a
-prototype method stub with all arguments, raised errors, and return values documented.
+prototype method stub (or functional method) with all arguments, raised errors, and return values
+documented.
 """
 
 # relax module import.
