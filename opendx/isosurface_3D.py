@@ -28,8 +28,9 @@
 from numpy import float64, zeros
 
 # relax module imports.
-from data import Data as relax_data_store
 from base_map import Base_Map
+from data import Data as relax_data_store
+from generic_fns import value
 
 
 class Iso3D(Base_Map):
@@ -73,6 +74,9 @@ class Iso3D(Base_Map):
     def map_text(self, map_file):
         """Function for creating the text of a 3D map."""
 
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
         # Initialise.
         values = zeros(3, float64)
         percent = 0.0
@@ -80,10 +84,10 @@ class Iso3D(Base_Map):
         print "%-10s%8.3f%-1s" % ("Progress:", percent, "%")
 
         # Fix the diffusion tensor.
-        unfix = 0
-        if relax_data_store.diff.has_key(self.run) and not relax_data_store.diff[self.run].fixed:
-            relax_data_store.diff[self.run].fixed = 1
-            unfix = 1
+        unfix = False
+        if hasattr(cdp, 'diff_tensor') and not cdp.diff_tensor.fixed:
+            cdp.diff_tensor.fixed = True
+            unfix = True
 
         # Initial value of the first parameter.
         values[0] = self.bounds[0, 0]
@@ -101,13 +105,13 @@ class Iso3D(Base_Map):
                 # Loop over the third parameter.
                 for k in xrange((self.inc + 1)):
                     # Set the parameter values.
-                    self.relax.generic.value.set(run=self.run, value=values, param=self.params, res_num=self.res_num, force=1)
+                    value.set(value=values, param=self.params, spin_id=self.spin_id, force=True)
 
                     # Calculate the function values.
-                    self.calculate(run=self.run, res_num=self.res_num, verbosity=0)
+                    self.calculate(spin_id=self.spin_id, verbosity=0)
 
                     # Get the minimisation statistics for the model.
-                    k, n, chi2 = self.model_stats(run=self.run, instance=self.index)
+                    k, n, chi2 = self.model_stats(spin_id=self.spin_id)
 
                     # Set maximum value to 1e20 to stop the OpenDX server connection from breaking.
                     if chi2 > 1e20:
@@ -130,7 +134,7 @@ class Iso3D(Base_Map):
 
         # Unfix the diffusion tensor.
         if unfix:
-            relax_data_store.diff[self.run].fixed = 0
+            cdp.diff_tensor.fixed = False
 
 
     def general_text(self):
