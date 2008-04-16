@@ -142,7 +142,7 @@ class Iso3D(Base_Map):
 
         # Generate the text.
         text = ""
-        text = text + "file = " + self.file + "\n"
+        text = text + "file = " + self.file_prefix + "\n"
         text = text + "grid = " + `(self.inc + 1)` + " x " + `(self.inc + 1)` + " x " + `(self.inc + 1)` + "\n"
         text = text + "format = ascii\n"
         text = text + "interleaving = field\n"
@@ -289,8 +289,8 @@ main_Receiver_2_out_1[cache: 0] = GreySphere;"""
         # Common code.
         text = text + """
     // 
-    // node Import[3]: x = 225, y = 84, inputs = 6, label = """ + self.file + """
-    // input[1]: defaulting = 0, visible = 1, type = 32, value = \"""" + self.file + """.general"
+    // node Import[3]: x = 225, y = 84, inputs = 6, label = """ + self.file_prefix + """
+    // input[1]: defaulting = 0, visible = 1, type = 32, value = \"""" + self.file_prefix + """.general"
     // input[3]: defaulting = 1, visible = 1, type = 32, value = "general"
     // page group: Isosurfaces
     //
@@ -1029,7 +1029,7 @@ main_Receiver_2_out_1 = NULL;"""
 
         # Common code.
         text = text + """
-main_Import_3_in_1 = \"""" + self.file + """.general";
+main_Import_3_in_1 = \"""" + self.file_prefix + """.general";
 main_Import_3_in_2 = NULL;
 main_Import_3_in_3 = NULL;
 main_Import_3_in_4 = NULL;
