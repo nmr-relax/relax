@@ -156,6 +156,16 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
+    def num_str(self):
+        """Method for returning the number of structures (i.e. number of NMR models, etc.).
+
+        @return:    The number of structures.
+        @rtype:     int
+        """
+
+        return len(self.structural_data)
+
+
     def terminate(self, atom_id_ext='', res_num=None):
         """Prototype method stub for terminating the structural chain.
 
