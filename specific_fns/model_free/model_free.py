@@ -2617,7 +2617,7 @@ class Model_free_main:
         representation is in picoseconds, therefore this function will return 1e-12 for te.
 
 
-        @param param:   The name of the parameter to return the lower and upper bounds of.
+        @param param:   The name of the parameter to return the conversion factor for.
         @type param:    str
         @param spin_id: The spin identification string.
         @type spin_id:  str
