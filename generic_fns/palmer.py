@@ -39,7 +39,7 @@ except ImportError:
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns.selection import exists_mol_res_spin_data, spin_loop
-from relax_errors import RelaxDirError, RelaxFileError, RelaxFileOverwriteError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNucleusError, RelaxProgFailError
+from relax_errors import RelaxDirError, RelaxFileError, RelaxFileOverwriteError, RelaxNoModelError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNucleusError, RelaxProgFailError
 from relax_io import mkdir_nofail, open_write_file, test_binary
 
 
@@ -531,6 +531,10 @@ def extract(dir, spin_id=None):
         # Skip unselected residues.
         if not spin.select:
             continue
+
+        # Test that the model has been set (needed to differentiate between te and ts).
+        if not hasattr(spin, 'model'):
+            raise RelaxNoModelError
 
         # Get the S2 data.
         if 'S2' in spin.params:
