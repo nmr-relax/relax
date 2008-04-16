@@ -29,7 +29,7 @@ from doc_string import regexp_doc
 import help
 from generic_fns import diffusion_tensor
 import opendx.main
-from relax_errors import RelaxBinError, RelaxError, RelaxFunctionError, RelaxIntError, RelaxLenError, RelaxListError, RelaxListNumError, RelaxListStrError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxBoolError, RelaxError, RelaxFunctionError, RelaxIntError, RelaxLenError, RelaxListError, RelaxListNumError, RelaxListStrError, RelaxNoneStrError, RelaxStrError
 from specific_fns.model_free import Model_free
 
 
@@ -46,7 +46,7 @@ class OpenDX:
         self.__relax__ = relax
 
 
-    def execute(self, file="map", dir="dx", dx_exe="dx", vp_exec=1):
+    def execute(self, file="map", dir="dx", dx_exe="dx", vp_exec=True):
         """Function for running OpenDX.
 
         Keyword Arguments
@@ -55,14 +55,13 @@ class OpenDX:
         file:  The file name prefix.  For example if file is set to 'temp', then the OpenDX program
         temp.net will be loaded.
 
-        dir:  The directory to change to for running OpenDX.  If this is set to 'None', OpenDX will
+        dir:  The directory to change to for running OpenDX.  If this is set to None, OpenDX will
         be run in the current directory.
 
         dx_exe:  The OpenDX executable file.
 
         vp_exec:  A flag specifying whether to execute the visual program automatically at
-        start-up.  The default is 1 which turns execution on.  Setting the value to zero turns
-        execution off.
+        start-up.  The default of True causes the program to be executed.
         """
 
         # Function intro text.
@@ -89,8 +88,8 @@ class OpenDX:
             raise RelaxStrError, ('OpenDX executable file name', dx_exe)
 
         # Visual program execution flag.
-        if type(vp_exec) != int or (vp_exec != 0 and vp_exec != 1):
-            raise RelaxBinError, ('visual program execution flag', vp_exec)
+        if type(vp_exec) != bool:
+            raise RelaxBoolError, ('visual program execution flag', vp_exec)
 
         # Execute the functional code.
         opendx.main.run(file=file, dir=dir, dx_exe=dx_exe, vp_exec=vp_exec)
