@@ -40,7 +40,7 @@ except ImportError:
 from data import Data as relax_data_store
 from generic_fns.selection import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxDirError, RelaxFileError, RelaxFileOverwriteError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNucleusError, RelaxProgFailError
-from relax_io import mkdir, open_write_file, test_binary
+from relax_io import mkdir_nofail, open_write_file, test_binary
 
 
 def create(dir, force, binary, diff_search, sims, sim_type, trim, steps, constraints, heteronuc_type, atom1, atom2, spin_id):
@@ -72,7 +72,7 @@ def create(dir, force, binary, diff_search, sims, sim_type, trim, steps, constra
     # Directory creation.
     if dir == None:
         dir = pipe
-    mkdir(dir, verbosity=0)
+    mkdir_nofail(dir, verbosity=0)
 
     # Place the arguments into 'self'.
     self.pipe = pipe
