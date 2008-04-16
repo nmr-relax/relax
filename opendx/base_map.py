@@ -30,6 +30,7 @@ from time import asctime, localtime
 
 # relax module imports.
 from data import Data as relax_data_store
+from generic_fns import diffusion_tensor
 from relax_errors import RelaxError, RelaxUnknownParamError
 from relax_io import open_write_file
 from specific_fns.setup import get_specific_fn
@@ -289,9 +290,9 @@ class Base_Map:
             name = self.return_data_name(self.params[i])
 
             # Diffusion tensor parameter.
-            if self.function_type == 'mf':
+            if relax_data_store[relax_data_store.current_pipe].type == 'mf':
                 # The diffusion tensor parameter name.
-                diff_name = self.relax.generic.diffusion_tensor.return_data_name(self.params[i])
+                diff_name = diffusion_tensor.return_data_name(self.params[i])
 
                 # Replace the model-free parameter with the diffusion tensor parameter if it exists.
                 if diff_name:
