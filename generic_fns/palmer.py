@@ -659,52 +659,62 @@ def get_mf_data(pos):
     return float(val), float(err)
 
 
-def line_positions():
-    """Function for getting the section positions (line number) of the mfout file."""
+def line_positions(mfout_lines):
+    """Function for getting the section positions (line number) of the mfout file.
+
+    @param mfout_lines:     A list of all the lines of the mfout file.
+    @type mfout_lines:      list of str
+    @return:                The line indices where the s2, s2f, s2s, te, rex, and chi2 sections
+                            start in the mfout file.
+    @rtype:                 tuple of int
+    """
 
     # Loop over the file.
     i = 0
-    while i < len(self.mfout_lines):
+    while i < len(mfout_lines):
         # Model-free data.
-        if match('data_model_1', self.mfout_lines[i]):
+        if match('data_model_1', mfout_lines[i]):
             # Shift down two lines (to avoid the lines not starting with a space)..
             i = i + 2
 
             # Walk through all the data.
             while 1:
                 # Break once the end of the data section is reached.
-                if not self.mfout_lines[i] == '\n' and not search('^ ', self.mfout_lines[i]):
+                if not mfout_lines[i] == '\n' and not search('^ ', mfout_lines[i]):
                     break
 
                 # Split the line up.
-                row = split(self.mfout_lines[i])
+                row = split(mfout_lines[i])
 
                 # S2 position (skip the heading and move to the first residue).
                 if len(row) == 2 and row[0] == 'S2':
-                    self.mfout_S2_pos = i + 1
+                    s2_pos = i + 1
 
                 # S2f position (skip the heading and move to the first residue).
                 if len(row) == 2 and row[0] == 'S2f':
-                    self.mfout_S2f_pos = i + 1
+                    s2f_pos = i + 1
 
                 # S2s position (skip the heading and move to the first residue).
                 if len(row) == 2 and row[0] == 'S2s':
-                    self.mfout_S2s_pos = i + 1
+                    s2s_pos = i + 1
 
                 # te position (skip the heading and move to the first residue).
                 if len(row) == 2 and row[0] == 'te':
-                    self.mfout_te_pos = i + 1
+                    te_pos = i + 1
 
                 # Rex position (skip the heading and move to the first residue).
                 if len(row) == 2 and row[0] == 'Rex':
-                    self.mfout_Rex_pos = i + 1
+                    rex_pos = i + 1
 
                 # Move to the next line number.
                 i = i + 1
 
         # Chi-squared values.
-        if match('data_sse', self.mfout_lines[i]):
-            self.mfout_chi2_pos = i + 3
+        if match('data_sse', mfout_lines[i]):
+            chi2_pos = i + 3
 
         # Move to the next line number.
         i = i + 1
+
+    # Return the positions.
+    return s2_pos, s2f_pos, s2s_pos, te_pos, rex_pos, chi2_pos
