@@ -516,7 +516,7 @@ def extract(dir, spin_id=None):
     mfout_file.close()
 
     # Get the section line positions of the mfout file.
-    line_positions()
+    s2_pos, s2f_pos, s2s_pos, te_pos, rex_pos, chi2_pos = line_positions(mfout_lines)
 
     # Find out if simulations were carried out.
     sims = 0
