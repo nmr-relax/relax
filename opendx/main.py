@@ -88,10 +88,11 @@ def run(file_prefix="map", dir="dx", dx_exe="dx", vp_exec=True):
     @type file_prefix:      str
     @keyword dir:           The directory to place the files into.
     @type dir:              str or None
-    @keyword dx_exe:        
-    @type dx_exe:           
-    @keyword vp_exec:       
-    @type vp_exec:          
+    @keyword dx_exe:        The path to the OpenDX executable file.  This can be changed if the
+                            binary 'dx' is not located in the system path.
+    @type dx_exe:           str
+    @keyword vp_exec:       If True, then the OpenDX visual program will be launched.
+    @type vp_exec:          bool
     """
 
     # Text for changing to the directory dir.
