@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the OpenDX 3D space isosurface mapping class."""
+
+
 # Python module imports.
 from numpy import float64, zeros
 
