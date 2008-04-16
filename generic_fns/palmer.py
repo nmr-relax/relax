@@ -103,14 +103,14 @@ def create(dir, force, binary, diff_search, sims, sim_type, trim, steps, constra
                         self.frq.append(frq)
 
     # The 'mfin' file.
-    mfin = self.open_file('mfin')
+    mfin = open_write_file('mfin', dir, force)
     self.create_mfin(mfin)
     mfin.close()
 
     # Open the 'mfdata', 'mfmodel', and 'mfpar' files.
-    mfdata = self.open_file('mfdata')
-    mfmodel = self.open_file('mfmodel')
-    mfpar = self.open_file('mfpar')
+    mfdata = open_write_file('mfdata', dir, force)
+    mfmodel = open_write_file('mfmodel', dir, force)
+    mfpar = open_write_file('mfpar', dir, force)
 
     # Loop over the sequence.
     for spin in spin_loop(spin_id):
@@ -131,7 +131,7 @@ def create(dir, force, binary, diff_search, sims, sim_type, trim, steps, constra
     mfpar.close()
 
     # The 'run.sh' script.
-    run = self.open_file('run.sh')
+    run = open_write_file('run.sh', dir, force)
     self.create_run(run)
     run.close()
     chmod(self.dir + '/run.sh', 0755)
@@ -719,12 +719,3 @@ def line_positions():
 
         # Move to the next line number.
         i = i + 1
-
-
-def open_file(file_name):
-    """Function for opening a file to write to."""
-
-    file_name = self.dir + "/" + file_name
-    if access(file_name, F_OK) and not self.force:
-        raise RelaxFileOverwriteError, (file_name, 'force flag')
-    return open(file_name, 'w')
