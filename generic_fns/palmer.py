@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for creating and processing input and output for Art Palmer's Modelfree 4 program."""
+
+
 # Python module imports.
 from math import pi
 from os import F_OK, P_WAIT, access, chdir, chmod, getcwd, listdir, remove, system
@@ -38,13 +42,8 @@ from generic_fns.selection import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxDirError, RelaxFileError, RelaxFileOverwriteError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNucleusError, RelaxProgFailError
 
 
-# The relax data storage object.
-
-
-
 class Palmer:
     def __init__(self, relax):
-        """Class used to create and process input and output for the program Modelfree 4."""
 
         self.relax = relax
 
