@@ -40,6 +40,7 @@ except ImportError:
 from data import Data as relax_data_store
 from generic_fns.selection import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxDirError, RelaxFileError, RelaxFileOverwriteError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNucleusError, RelaxProgFailError
+from relax_io import mkdir, open_write_file, test_binary
 
 
 def create(dir, force, binary, diff_search, sims, sim_type, trim, steps, constraints, heteronuc_type, atom1, atom2, spin_id):
@@ -71,7 +72,7 @@ def create(dir, force, binary, diff_search, sims, sim_type, trim, steps, constra
     # Directory creation.
     if dir == None:
         dir = pipe
-    self.relax.IO.mkdir(dir, verbosity=0)
+    mkdir(dir, verbosity=0)
 
     # Place the arguments into 'self'.
     self.pipe = pipe
@@ -471,7 +472,7 @@ def execute(dir, force, binary):
                     remove(file)
 
         # Test the binary file string corresponds to a valid executable.
-        self.relax.IO.test_binary(self.binary)
+        test_binary(self.binary)
 
         # Execute Modelfree4 (inputting a PDB file).
         if pdb:
