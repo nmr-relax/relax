@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docsting.
+"""Module containing the functions which interface relax with OpenDX."""
+
+
 # Python module imports.
 from os import system
 from re import search
