@@ -25,6 +25,7 @@ relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
 diffusion_tensor.init(1e-8, fixed=True)
 value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
 value.set('15N', 'heteronucleus')
+value.set('1H', 'proton')
 
 # Select the model.
 model_free.select_model(model='m4')
