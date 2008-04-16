@@ -2608,12 +2608,23 @@ class Model_free_main:
         relax_data_store.warning[self.run] = None
 
 
-    def return_conversion_factor(self, param):
-        """Function for returning the factor of conversion between different parameter units.
+    def return_conversion_factor(self, param, spin_id):
+        """Return the factor of conversion between different parameter units.
 
         For example, the internal representation of te is in seconds, whereas the external
         representation is in picoseconds, therefore this function will return 1e-12 for te.
+
+
+        @param param:   The name of the parameter to return the lower and upper bounds of.
+        @type param:    str
+        @param spin_id: The spin identification string.
+        @type spin_id:  str
+        @return:        The conversion factor.
+        @rtype:         float
         """
+
+        # Get the spin.
+        spin = return_spin(spin_id)
 
         # Get the object name.
         object_name = self.return_data_name(param)
@@ -2628,7 +2639,7 @@ class Model_free_main:
 
         # Rex (value at 1st field strength).
         elif object_name == 'rex':
-            return 1.0 / (2.0 * pi * relax_data_store.frq[self.run][0])**2
+            return 1.0 / (2.0 * pi * spin.frq[0])**2
 
         # Bond length (Angstrom).
         elif object_name == 'r':
