@@ -23,7 +23,7 @@
 # Python module imports.
 from os import system
 from re import search
-from string import lower
+import string
 
 # relax module imports.
 from data import Data as relax_data_store
@@ -71,7 +71,7 @@ def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=N
     """
 
     # Space type.
-    if lower(map_type) == "iso3d":
+    if string.lower(map_type) == "iso3d":
         if len(params) != 3:
             raise RelaxError, "The 3D isosurface map requires a 3 parameter model."
 
