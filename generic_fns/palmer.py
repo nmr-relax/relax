@@ -74,38 +74,23 @@ def create(dir, force, binary, diff_search, sims, sim_type, trim, steps, constra
         dir = pipe
     mkdir_nofail(dir, verbosity=0)
 
-    # Place the arguments into 'self'.
-    self.pipe = pipe
-    self.dir = dir
-    self.force = force
-    self.binary = binary
-    self.diff_search = diff_search
-    self.sims = sims
-    self.sim_type = sim_type
-    self.trim = trim
-    self.steps = steps
-    self.constraints = constraints
-    self.heteronuc_type = heteronuc_type
-    self.atom1 = atom1
-    self.atom2 = atom2
-
     # Number of field strengths and values.
-    self.num_frq = 0
-    self.frq = []
+    num_frq = 0
+    frq = []
     for spin in spin_loop(spin_id):
         if hasattr(spin, 'num_frq'):
-            if spin.num_frq > self.num_frq:
+            if spin.num_frq > num_frq:
                 # Number of field strengths.
-                self.num_frq = spin.num_frq
+                num_frq = spin.num_frq
 
                 # Field strength values.
                 for frq in spin.frq:
-                    if frq not in self.frq:
-                        self.frq.append(frq)
+                    if frq not in frq:
+                        frq.append(frq)
 
     # The 'mfin' file.
     mfin = open_write_file('mfin', dir, force)
-    self.create_mfin(mfin)
+    create_mfin(mfin)
     mfin.close()
 
     # Open the 'mfdata', 'mfmodel', and 'mfpar' files.
@@ -117,14 +102,14 @@ def create(dir, force, binary, diff_search, sims, sim_type, trim, steps, constra
     for spin in spin_loop(spin_id):
         if hasattr(spin, 'num_frq'):
             # The 'mfdata' file.
-            if not self.create_mfdata(i, mfdata):
+            if not create_mfdata(i, mfdata):
                 continue
 
             # The 'mfmodel' file.
-            self.create_mfmodel(i, mfmodel)
+            create_mfmodel(i, mfmodel)
 
             # The 'mfpar' file.
-            self.create_mfpar(i, mfpar)
+            create_mfpar(i, mfpar)
 
     # Close the 'mfdata', 'mfmodel', and 'mfpar' files.
     mfdata.close()
@@ -133,9 +118,9 @@ def create(dir, force, binary, diff_search, sims, sim_type, trim, steps, constra
 
     # The 'run.sh' script.
     run = open_write_file('run.sh', dir, force)
-    self.create_run(run)
+    create_run(run)
     run.close()
-    chmod(self.dir + '/run.sh', 0755)
+    chmod(dir + '/run.sh', 0755)
 
 
 def create_mfdata(i, file):
