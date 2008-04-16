@@ -105,7 +105,7 @@ class Iso3D(Base_Map):
                 # Loop over the third parameter.
                 for k in xrange((self.inc + 1)):
                     # Set the parameter values.
-                    value.set(value=values, param=self.params, spin_id=self.spin_id, force=True)
+                    value.set(val=values, param=self.params, spin_id=self.spin_id, force=True)
 
                     # Calculate the function values.
                     self.calculate(spin_id=self.spin_id, verbosity=0)
