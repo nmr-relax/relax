@@ -34,7 +34,7 @@ from relax_errors import RelaxError, RelaxUnknownParamError
 class Base_Map:
     """The space mapping base class."""
 
-    def __init__(self, params, spin_id, index, inc, lower, upper, axis_incs, file, dir, point, point_file, remap):
+    def __init__(self, params, spin_id, index, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file, remap):
         """Map the space upon class instantiation."""
 
         # Initialise.
@@ -47,7 +47,7 @@ class Base_Map:
         self.n = len(params)
         self.inc = inc
         self.axis_incs = axis_incs
-        self.file = file
+        self.file_prefix = file_prefix
         self.dir = dir
         self.point_file = point_file
         self.remap = remap
@@ -143,7 +143,7 @@ class Base_Map:
         print "\nCreating the OpenDX .cfg program configuration file."
 
         # Open the file.
-        config_file = self.relax.IO.open_write_file(file_name=self.file+".cfg", dir=self.dir, force=1)
+        config_file = self.relax.IO.open_write_file(file_name=self.file_prefix+".cfg", dir=self.dir, force=1)
 
         # Get the text of the configuration file.
         text = self.config_text()
@@ -162,7 +162,7 @@ class Base_Map:
         print "\nCreating the OpenDX .general file."
 
         # Open the file.
-        general_file = self.relax.IO.open_write_file(file_name=self.file+".general", dir=self.dir, force=1)
+        general_file = self.relax.IO.open_write_file(file_name=self.file_prefix+".general", dir=self.dir, force=1)
 
         # Get the text of the configuration file.
         text = self.general_text()
@@ -181,7 +181,7 @@ class Base_Map:
         print "\nCreating the map."
 
         # Open the file.
-        map_file = self.relax.IO.open_write_file(file_name=self.file, dir=self.dir, force=1)
+        map_file = self.relax.IO.open_write_file(file_name=self.file_prefix, dir=self.dir, force=1)
 
         # Generate and write the text of the map.
         self.map_text(map_file)
@@ -239,7 +239,7 @@ class Base_Map:
         print "\nCreating the OpenDX .net program file."
 
         # Open the file.
-        program_file = self.relax.IO.open_write_file(file_name=self.file+".net", dir=self.dir, force=1)
+        program_file = self.relax.IO.open_write_file(file_name=self.file_prefix+".net", dir=self.dir, force=1)
 
         # Create the strings associated with the map axes.
         self.map_axes()
