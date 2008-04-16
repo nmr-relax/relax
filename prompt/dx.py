@@ -28,6 +28,7 @@ from types import FunctionType
 from doc_string import regexp_doc
 import help
 from generic_fns import diffusion_tensor
+import opendx.main
 from relax_errors import RelaxBinError, RelaxError, RelaxFunctionError, RelaxIntError, RelaxLenError, RelaxListError, RelaxListNumError, RelaxListStrError, RelaxNoneStrError, RelaxStrError
 from specific_fns.model_free import Model_free
 
@@ -92,7 +93,7 @@ class OpenDX:
             raise RelaxBinError, ('visual program execution flag', vp_exec)
 
         # Execute the functional code.
-        opendx.run(file=file, dir=dir, dx_exe=dx_exe, vp_exec=vp_exec)
+        opendx.main.run(file=file, dir=dir, dx_exe=dx_exe, vp_exec=vp_exec)
 
 
     def map(self, params=None, map_type="Iso3D", spin_id=None, inc=20, lower=None, upper=None, axis_incs=5, file_prefix="map", dir="dx", point=None, point_file="point", remap=None):
