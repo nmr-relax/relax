@@ -33,7 +33,7 @@ import sys
 from data import Data as relax_data_store
 from float import isNaN,isInf
 from generic_fns import diffusion_tensor
-from generic_fns.selection import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
+from generic_fns.selection import count_spins, exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
 from physical_constants import N15_CSA, NH_BOND_LENGTH
@@ -1487,23 +1487,29 @@ class Model_free_main:
         return A, b
 
 
-    def map_bounds(self, run, param):
-        """The function for creating bounds for the mapping function."""
+    def map_bounds(self, param, spin_id):
+        """Create bounds for the OpenDX mapping function.
 
-        # Arguments.
-        self.run = run
+        @param param:   The name of the parameter to return the lower and upper bounds of.
+        @type param:    str
+        @return:        The upper and lower bounds of the parameter.
+        @rtype:         list of float
+        """
+
+        # Get the spin.
+        spin = return_spin(spin_id)
 
         # {S2, S2f, S2s}.
         if search('^s2', param):
-            return [0, 1]
+            return [0.0, 1.0]
 
         # {local tm, te, tf, ts}.
         elif search('^t', param) or param == 'local_tm':
-            return [0, 1e-8]
+            return [0.0, 1e-8]
 
         # Rex.
         elif param == 'rex':
-            return [0, 30.0 / (2.0 * pi * relax_data_store.frq[self.run][0])**2]
+            return [0.0, 30.0 / (2.0 * pi * spin.frq[0])**2]
 
         # Bond length.
         elif param == 'r':
