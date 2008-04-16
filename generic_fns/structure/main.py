@@ -240,7 +240,7 @@ def vectors(heteronuc=None, proton=None, spin_id=None, verbosity=1):
         spin.heteronuc = heteronuc
 
         # Calculate the vector.
-        vector = xh_vector(spin)
+        vector = cdp.structure.xh_vector(spin)
 
         # Set the vector and deselect the spin if the vector doesn't exist.
         if vector != None:
