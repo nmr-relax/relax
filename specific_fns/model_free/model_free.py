@@ -2790,13 +2790,24 @@ class Model_free_main:
             return '\\qCSA\\Q'
 
 
-    def return_units(self, param):
+    def return_units(self, param, spin_id):
         """Function for returning a string representing the parameters units.
 
         For example, the internal representation of te is in seconds, whereas the external
         representation is in picoseconds, therefore this function will return the string
         'picoseconds' for te.
+
+
+        @param param:   The name of the parameter to return the units string for.
+        @type param:    str
+        @param spin_id: The spin identification string.
+        @type spin_id:  str
+        @return:        The parameter units string.
+        @rtype:         str
         """
+
+        # Get the spin.
+        spin = return_spin(spin_id)
 
         # Get the object name.
         object_name = self.return_data_name(param)
@@ -2811,7 +2822,7 @@ class Model_free_main:
 
         # Rex (value at 1st field strength).
         elif object_name == 'rex':
-            return relax_data_store.frq_labels[self.run][0] + ' MHz'
+            return spin.frq_labels[0] + ' MHz'
 
         # Bond length (Angstrom).
         elif object_name == 'r':
