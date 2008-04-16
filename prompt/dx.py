@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -92,7 +92,7 @@ class OpenDX:
             raise RelaxBinError, ('visual program execution flag', vp_exec)
 
         # Execute the functional code.
-        self.__relax__.generic.opendx.run(file=file, dir=dir, dx_exe=dx_exe, vp_exec=vp_exec)
+        opendx.run(file=file, dir=dir, dx_exe=dx_exe, vp_exec=vp_exec)
 
 
     def map(self, run=None, params=None, map_type="Iso3D", res_num=None, inc=20, lower=None, upper=None, axis_incs=5, file="map", dir="dx", point=None, point_file="point", remap=None):
