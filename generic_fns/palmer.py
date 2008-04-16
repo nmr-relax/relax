@@ -611,7 +611,7 @@ class Palmer:
         err = row[4]
 
         # The Modelfree4 '*' column fusion bug.
-        if search('*', val) or search('*', err):
+        if search('\*', val) or search('\*', err):
             # Split by the '*' character.
             val_row = split(val, '*')
             err_row = split(err, '*')
