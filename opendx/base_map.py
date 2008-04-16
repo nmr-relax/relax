@@ -34,7 +34,7 @@ from relax_errors import RelaxError, RelaxUnknownParamError
 class Base_Map:
     """The space mapping base class."""
 
-    def __init__(self, params, res_num, index, inc, lower, upper, axis_incs, file, dir, point, point_file, remap):
+    def __init__(self, params, spin_id, index, inc, lower, upper, axis_incs, file, dir, point, point_file, remap):
         """Map the space upon class instantiation."""
 
         # Initialise.
@@ -42,7 +42,7 @@ class Base_Map:
 
         # Function arguments.
         self.params = params
-        self.res_num = res_num
+        self.spin_id = spin_id
         self.index = index
         self.n = len(params)
         self.inc = inc
