@@ -32,6 +32,7 @@ from time import asctime, localtime
 from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxUnknownParamError
 from relax_io import open_write_file
+from specific_fns.setup import get_specific_fn
 
 
 
