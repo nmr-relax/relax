@@ -761,7 +761,7 @@ def uniform_vect_dist_spherical_angles(inc=20):
             z = cos(phi[j])
 
             # Append the vector.
-            vectors.append([x, y, z])
+            vectors.append(array([x, y, z], float64))
 
     # Return the array of vectors.
     return vectors
