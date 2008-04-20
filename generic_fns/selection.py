@@ -125,6 +125,26 @@ class Selection(object):
         elif self._intersect:
             return (obj in self._intersect[0]) and (obj in self._intersect[1])
 
+        # Simple spin identification string.
+        if type(obj) == str:
+            return self.__contains_spin_id(obj)
+
+        # Comparison of data containers to this selection object.
+        else:
+            return self.__contains_mol_res_spin_containers(obj)
+
+
+    def __contains_mol_res_spin_containers(self, obj):
+        """Are the MoleculeContainer, ResidueContainer, and/or SpinContainer in the selection.
+
+        @param obj:     The data object.  This can be a MoleculeContainer, ResidueContainer, or
+                        SpinContainer instance or a type of these instances.  If a tuple, only one
+                        type of object can be in the tuple.
+        @type obj:      instance or type of instances.
+        @return:        The answer of whether the objects are found within the selection object.
+        @rtype:         bool
+        """
+
         # Initialise the molecule, residue, and spin objects.
         mol = None
         res = None
@@ -166,6 +186,10 @@ class Selection(object):
 
                 # Unpack.
                 spin = obj[i]
+
+            # Unknown object (so return False).
+            else:
+                return False
 
         # Selection flags.
         select_mol = False
