@@ -26,6 +26,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Data as relax_data_store
+from generic_fns.selection import Selection
 from generic_fns.structure.scientific import Scientific_data
 
 
@@ -66,6 +67,30 @@ class Test_scientific(TestCase):
         # Loop over the molecules.
         mol_count = 0
         for mol, mol_name, mol_type in self.data._Scientific_data__molecule_loop(self.data.structural_data[0]):
+            mol_count = mol_count + 1
+
+        # Test the number of molecules looped over.
+        self.assertEqual(mol_count, 1)
+
+        # Test the molecular data.
+        self.assertEqual(mol_name, None)
+        self.assertEqual(mol_type, 'protein')
+        self.assertEqual(len(mol.residues), 12)
+        self.assertEqual(mol.sequence(), ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY'])
+
+
+    def test___molecule_loop_selection(self):
+        """Test the private Scientific_data.__molecule_loop() method with a selection object."""
+
+        # Load the PDB file.
+        self.data.load_structures(self.test_pdb_path)
+
+        # Create the selection object (which should match the molecule name of None).
+        sel_obj = Selection('@1')
+
+        # Loop over the molecules.
+        mol_count = 0
+        for mol, mol_name, mol_type in self.data._Scientific_data__molecule_loop(self.data.structural_data[0], sel_obj):
             mol_count = mol_count + 1
 
         # Test the number of molecules looped over.
