@@ -183,7 +183,7 @@ class Interpreter:
         gpl = GPL = self._GPL()
 
         # Place the user functions in the local namespace.
-        angles = self._Angles.angles
+        angle_diff_frame = self._Angles.angle_diff_frame
         calc = self._Minimisation.calc
         eliminate = self._Eliminate.eliminate
         fix = self._Fix.fix
