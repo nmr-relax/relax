@@ -223,19 +223,6 @@ class Test_structure(Structure_base_class, TestCase):
             self.assertRaises(RelaxStrError, self.structure_fns.read_pdb, parser=data[1])
 
 
-    def test_vectors_argfail_heteronuc(self):
-        """The heteronuc arg test of the structure.vectors() user function."""
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the str arguments, and skip them.
-            if data[0] == 'str':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxStrError, self.structure_fns.vectors, heteronuc=data[1])
-
-
     def test_vectors_argfail_proton(self):
         """The proton arg test of the structure.vectors() user function."""
 
