@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2007 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2006-2008 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,12 +25,14 @@ from os import F_OK, access
 from re import compile, match, search, split
 from string import replace, strip
 from textwrap import fill
+from warnings import warn
 
 # relax module imports.
 from data import Data as relax_data_store
 from data.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRegExpError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 from generic_fns import pipes
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRegExpError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
+from relax_warnings import RelaxWarning
 
 
 id_string_doc = """
@@ -237,6 +239,29 @@ class Selection(object):
 
         # Return the selection status.
         return select_mol and select_res and select_spin
+
+
+    def __contains_spin_id(self, spin_id):
+        """Is the molecule, residue, and/or spin of the spin_id string located in the selection.
+
+        Only the simple selections allowed by the tokenise function are currently supported.
+
+
+        @param spin_id: The spin identification string.
+        @type spin_id:  str
+        @return:        The answer of whether the molecule, residue, and/or spin corresponding to
+                        the spin_id string found within the selection object.
+        @rtype:         bool
+        """
+
+        # Parse the spin_id string.
+        try:
+            mol_token, res_token, spin_token = tokenise(spin_id)
+            molecules = parse_token(mol_token)
+            residues = parse_token(res_token)
+            spins = parse_token(spin_token)
+        except RelaxError:
+            warn(RelaxWarning("The spin identification string " + `spin_id` + " is too complex for the selection object."))
 
 
     def intersection(self, select_obj0, select_obj1):
