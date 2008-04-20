@@ -231,13 +231,13 @@ class Test_selection(TestCase):
 
 
     def test_Selection_contains_res1(self):
-        """The Selection object "#Ap4Aase:Glu | #RNA@C8" contains the res 'Glu'."""
+        """The Selection object "#Ap4Aase:Glu | #RNA@C8" does not contain the res 'Glu' (without the mol name)."""
 
         # The Selection object.
         obj = selection.Selection("#Ap4Aase:Glu | #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(obj.contains_res('Glu'))
+        self.assert_(not obj.contains_res(res_name='Glu'))
 
 
     def test_Selection_contains_res2(self):
@@ -247,7 +247,7 @@ class Test_selection(TestCase):
         obj = selection.Selection("#Ap4Aase:Glu | #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(obj.contains_res('Glu', 'Ap4Aase'))
+        self.assert_(obj.contains_res(res_name='Glu', mol='Ap4Aase'))
 
 
     def test_Selection_contains_res3(self):
@@ -257,7 +257,7 @@ class Test_selection(TestCase):
         obj = selection.Selection("#Ap4Aase:Glu & #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(not obj.contains_res('Glu'))
+        self.assert_(not obj.contains_res(res_name='Glu'))
 
 
     def test_Selection_contains_res4(self):
@@ -267,7 +267,7 @@ class Test_selection(TestCase):
         obj = selection.Selection("#Ap4Aase:Glu | #RNA@C8")
 
         # Check if the molecule is in the selection.
-        self.assert_(not obj.contains_res('Ala'))
+        self.assert_(not obj.contains_res(res_name='Ala'))
 
 
     def test_Selection_contains_res5(self):
@@ -287,7 +287,7 @@ class Test_selection(TestCase):
         obj = selection.Selection("#Ap4Aase")
 
         # Check if the molecule is in the selection.
-        self.assert_(obj.contains_res())
+        self.assert_(obj.contains_res(mol='Ap4Aase'))
 
 
     def test_Selection_contains_res7(self):
@@ -297,7 +297,7 @@ class Test_selection(TestCase):
         obj = selection.Selection("#Ap4Aase")
 
         # Check if the molecule is in the selection.
-        self.assert_(obj.contains_res(mol='RNA'))
+        self.assert_(not obj.contains_res(mol='RNA'))
 
 
     def test_Selection_full_spin_id(self):
