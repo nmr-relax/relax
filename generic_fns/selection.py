@@ -276,11 +276,11 @@ class Selection(object):
 
         # The selection object is a union.
         if self._union:
-            return self._union[0].cotains_mol(mol) or self._union[1].contains_mol(mol)
+            return self._union[0].contains_mol(mol) or self._union[1].contains_mol(mol)
 
         # The selection object is an intersection.
         elif self._intersect:
-            return self._intersect[0].cotains_mol(mol) and self._intersect[1].contains_mol(mol)
+            return self._intersect[0].contains_mol(mol) and self._intersect[1].contains_mol(mol)
 
         # The check.
         if mol in self.molecules:
