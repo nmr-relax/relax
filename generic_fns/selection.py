@@ -334,6 +334,53 @@ class Selection(object):
         return select_res and select_mol
 
 
+    def contains_spin(self, spin_num=None, spin_name=None, res_num=None, res_name=None, mol=None):
+        """Determine if the spin is contained in this selection object.
+
+        @keyword spin_num:  The spin number.
+        @type spin_num:     int or None
+        @keyword spin_name: The spin name.
+        @type spin_name:    str or None
+        @keyword res_num:   The residue number.
+        @type res_num:      int or None
+        @keyword res_name:  The residue name.
+        @type res_name:     str or None
+        @keyword mol:       The molecule name.
+        @type mol:          str or None
+        @return:            The answer of whether the spin is contained withing the selection
+                            object.
+        @rtype:             bool
+        """
+
+        # The selection object is a union.
+        if self._union:
+            return self._union[0].contains_spin(spin_num, spin_name, res_num, res_name, mol) or self._union[1].contains_spin(spin_num, spin_name, res_num, res_name, mol)
+
+        # The selection object is an intersection.
+        elif self._intersect:
+            return self._intersect[0].contains_spin(spin_num, spin_name, res_num, res_name, mol) and self._intersect[1].contains_spin(spin_num, spin_name, res_num, res_name, mol)
+
+        # Does it contain the molecule.
+        select_mol = self.contains_mol(mol)
+
+        # Does it contain the residue.
+        select_res = self.contains_res(res_num, res_name, mol)
+
+        # Spin selection flag.
+        select_spin = False
+
+        # The spin checks.
+        if spin_num in self.spins or spin_name in self.spins:
+            select_spin = True
+
+        # Nothingness.
+        if not self.spins:
+            select_spin = True
+
+        # Return the result.
+        return select_spin and select_res and select_mol
+
+
     def intersection(self, select_obj0, select_obj1):
         """Make this Selection object the intersection of two other Selection objects.
 
