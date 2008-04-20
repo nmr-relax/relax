@@ -107,17 +107,18 @@ class Scientific_data(Base_struct_API):
                 yield struct.molecules[key], key, 'other'
 
 
-    def __residue_loop(self, mol, mol_type, residues):
+    def __residue_loop(self, mol, mol_name, mol_type, sel_obj=None):
         """Generator function for looping over all residues in the Scientific PDB data objects.
 
         @param mol:         The individual molecule Scientific Python PDB data object.
         @type mol:          Scientific Python PDB object
+        @param mol_name:    The name of the molecule.
+        @type mol_name:     str or None
         @param mol_type:    The type of the molecule.  This can be one of 'protein', 'nucleic acid',
                             or 'other'.
         @type mol_type:     str
-        @param residues:    A list of residue names.  If non-empty, only residues found in this list
-                            will be returned.
-        @type residues:     list of str
+        @keyword sel_obj:   The selection object.
+        @type sel_obj:      instance of generic_fns.selection.Selection
         @return:            A tuple of the Scientific Python PDB object representing a single
                             residue, the residue number, and residue name.
         @rtype:             (Scientific Python PDB object, str, str)
@@ -135,7 +136,7 @@ class Scientific_data(Base_struct_API):
                 res_num = res.number
 
                 # Skip non-matching residues.
-                if residues and not (wildcard_match(res_name, residues) or res_num in residues):
+                if sel_obj and not sel_obj.contains_res(res_num, res_name, mol_name):
                     continue
 
                 # Yield the residue info.
@@ -145,7 +146,7 @@ class Scientific_data(Base_struct_API):
         else:
             for res in mol:
                 # Skip non-matching residues.
-                if residues and not (wildcard_match(res.name, residues) or res.number in residues):
+                if sel_obj and not sel_obj.contains_res(res.number, res.name, mol_name):
                     continue
 
                 # Yield the residue info.
