@@ -196,7 +196,7 @@ class Test_scientific(TestCase):
             atom_count = atom_count + 1
 
         # Test the number of atoms looped over.
-        self.assertEqual(atom_count, 174)
+        self.assertEqual(atom_count, 150)
 
 
     def test_load_structures(self):
