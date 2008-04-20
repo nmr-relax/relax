@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+import sys
 from unittest import TestCase
 
 # relax module imports.
@@ -33,6 +34,14 @@ class Test_scientific(TestCase):
 
     def setUp(self):
         """Set up for all the Scientific Python PDB structural object unit tests."""
+
+        # Get the relative path of relax.
+        self.path = sys.path[0]
+        if self.path == '.':
+            self.path = sys.path[-1]
+
+        # The path to a PDB file.
+        self.test_pdb_path = self.path+'/test_suite/shared_data/test.pdb'
 
         # Instantiate the structural data object.
         self.data = Scientific_data()
@@ -49,10 +58,7 @@ class Test_scientific(TestCase):
 
 
     def test_load_structures(self):
-        """Test the loading of a PDB file.
-
-        This tests the Scientific_data.load_structures() method.
-        """
+        """Load a PDB file using Scientific_data.load_structures()."""
 
         # Load the PDB file.
-        self.data.load_structures()
+        self.data.load_structures(self.test_pdb_path)
