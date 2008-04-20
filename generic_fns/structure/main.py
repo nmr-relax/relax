@@ -194,12 +194,11 @@ def set_vector(spin=None, xh_vect=None):
     spin.xh_vect = xh_vect
 
 
-def vectors(heteronuc=None, proton=None, spin_id=None, verbosity=1):
+def vectors(proton=None, spin_id=None, verbosity=1):
     """Function for calculating/extracting the XH unit vector from the loaded structure.
 
-    @param heteronuc:   The name of the heteronucleus.
-    @type heteronuc:    str
-    @param proton:      The name of the proton.
+    @param proton:      The name of the proton attached to the spin, as given in the structural
+                        file.
     @type proton:       str
     @param spin_id:     The molecule, residue, and spin identifier string.
     @type spin_id:      str
@@ -218,10 +217,6 @@ def vectors(heteronuc=None, proton=None, spin_id=None, verbosity=1):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Test that the nuclei have been correctly set.
-    if heteronuc == proton:
-        raise RelaxError, "The proton and heteronucleus are set to the same atom."
-
     # Print out.
     if verbosity:
         if cdp.structure.num_str() > 1:
@@ -235,9 +230,8 @@ def vectors(heteronuc=None, proton=None, spin_id=None, verbosity=1):
         if not spin.select:
             continue
 
-        # Set the proton and heteronucleus names.
-        spin.proton = proton
-        spin.heteronuc = heteronuc
+        # Set the attached proton name.
+        spin.attached_proton = proton
 
         # Calculate the vector.
         vector = cdp.structure.xh_vector(spin)
