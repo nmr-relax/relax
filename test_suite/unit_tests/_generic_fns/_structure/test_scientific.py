@@ -71,6 +71,12 @@ class Test_scientific(TestCase):
         # Test the number of molecules looped over.
         self.assertEqual(mol_count, 1)
 
+        # Test the molecular data.
+        self.assertEqual(mol_name, None)
+        self.assertEqual(mol_type, 'protein')
+        self.assertEqual(len(mol.residues), 12)
+        self.assertEqual(mol.sequence(), ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY'])
+
 
     def test_atom_loop(self):
         """Test the Scientific_data.atom_loop() method."""
