@@ -35,8 +35,8 @@ class Angles:
         self.relax = relax
 
 
-    def angles(self):
-        """Function for calculating the angles between the XH bond vector and the diffusion tensor.
+    def angle_diff_frame(self):
+        """Calculate the angles defining the XH bond vector within the diffusion frame.
 
         Description
         ~~~~~~~~~~~
@@ -51,8 +51,8 @@ class Angles:
 
         # Function intro text.
         if self.relax.interpreter.intro:
-            text = sys.ps3 + "angles()"
+            text = sys.ps3 + "angle_diff_frame()"
             print text
 
         # Execute the functional code.
-        angles.angles()
+        angles.angle_diff_frame()
