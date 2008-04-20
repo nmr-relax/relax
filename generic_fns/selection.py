@@ -48,6 +48,8 @@ where the token elements are
     <atom_id>, the atom or spin system identifier which can be a number, name, or range of numbers.
 
 If one of the tokens is left out then all elements will be assumed to match.  For example if the string does not contain the '#' character then all molecules will match the string.
+
+Regular expression can be used to select spins.  For example the string '@H*' will select the protons 'H', 'H2', 'H98'.
 """
 
 # Wrap the id string doc.
