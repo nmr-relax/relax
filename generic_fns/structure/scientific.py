@@ -39,7 +39,7 @@ except ImportError:
 # relax module imports.
 from api_base import Base_struct_API
 from data import Data as relax_data_store
-from generic_fns.selection import parse_token, tokenise, wildcard_match
+from generic_fns.selection import Selection, parse_token, tokenise, wildcard_match
 from relax_errors import RelaxNoPdbChainError, RelaxNoResError, RelaxPdbLoadError
 from relax_warnings import RelaxNoAtomWarning, RelaxZeroVectorWarning
 
@@ -183,20 +183,15 @@ class Scientific_data(Base_struct_API):
                                     element name (str), and atomic position (array of len 3).
         """
 
-        # Split up the selection string.
-        mol_token, res_token, atom_token = tokenise(atom_id)
-
-        # Parse the tokens.
-        molecules = parse_token(mol_token)
-        residues = parse_token(res_token)
-        atoms = parse_token(atom_token)
+        # Generate the selection object.
+        sel_obj = Selection(atom_id)
 
         # Loop over the models.
         for struct in self.structural_data:
             # Loop over each individual molecule.
-            for mol, mol_name, mol_type in self.__molecule_loop(struct, molecules):
+            for mol, mol_name, mol_type in self.__molecule_loop(struct, sel_obj):
                 # Loop over the residues of the protein in the PDB file.
-                for res, res_num, res_name in self.__residue_loop(mol, mol_type, residues):
+                for res, res_num, res_name in self.__residue_loop(mol, mol_type, sel_obj):
                     # Loop over the atoms of the residue.
                     for atom in res:
                         # Atom number, name, and position.
