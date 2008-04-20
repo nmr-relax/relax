@@ -264,14 +264,14 @@ class Selection(object):
             warn(RelaxWarning("The spin identification string " + `spin_id` + " is too complex for the selection object."))
 
 
-    def contains_mol(self, mol):
+    def contains_mol(self, mol=None):
         """Determine if the molecule name, in string form, is contained in this selection object.
 
-        @param molecule:    The name of the molecule.
-        @type molecule:     str or None
-        @return:            The answer of whether the molecule is contained withing the selection
-                            object.
-        @rtype:             bool
+        @keyword mol:   The name of the molecule.
+        @type mol:      str or None
+        @return:        The answer of whether the molecule is contained withing the selection
+                        object.
+        @rtype:         bool
         """
 
         # The selection object is a union.
