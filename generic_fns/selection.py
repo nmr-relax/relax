@@ -264,6 +264,29 @@ class Selection(object):
             warn(RelaxWarning("The spin identification string " + `spin_id` + " is too complex for the selection object."))
 
 
+    def contains_mol(self, mol):
+        """Determine if the molecule name, in string form, is contained in this selection object.
+
+        @param molecule:    The name of the molecule.
+        @type molecule:     str or None
+        @return:            The answer of whether the molecule is contained withing the selection
+                            object.
+        @rtype:             bool
+        """
+
+        # The selection object is a union.
+        if self._union:
+            return self._union[0].cotains_mol(mol) or self._union[1].contains_mol(mol)
+
+        # The selection object is an intersection.
+        elif self._intersect:
+            return self._intersect[0].cotains_mol(mol) and self._intersect[1].contains_mol(mol)
+
+        # The check.
+        if mol in self.molecules:
+            return True
+
+
     def intersection(self, select_obj0, select_obj1):
         """Make this Selection object the intersection of two other Selection objects.
 
