@@ -294,25 +294,27 @@ class Selection(object):
         return False
 
 
-    def contains_res(self, res=None, mol=None):
+    def contains_res(self, res_num=None, res_name=None, mol=None):
         """Determine if the residue name, in string form, is contained in this selection object.
 
-        @keyword res:   The name of the residue.
-        @type res:      str or None
-        @keyword mol:   The name of the molecule.
-        @type mol:      str or None
-        @return:        The answer of whether the molecule is contained withing the selection
-                        object.
-        @rtype:         bool
+        @keyword res_num:   The residue number.
+        @type res_num:      int or None
+        @keyword res_name:  The residue name.
+        @type res_name:     str or None
+        @keyword mol:       The molecule name.
+        @type mol:          str or None
+        @return:            The answer of whether the molecule is contained withing the selection
+                            object.
+        @rtype:             bool
         """
 
         # The selection object is a union.
         if self._union:
-            return self._union[0].contains_res(res, mol) or self._union[1].contains_res(res, mol)
+            return self._union[0].contains_res(res_num, res_name, mol) or self._union[1].contains_res(res_num, res_name, mol)
 
         # The selection object is an intersection.
         elif self._intersect:
-            return self._intersect[0].contains_res(res, mol) and self._intersect[1].contains_res(res, mol)
+            return self._intersect[0].contains_res(res_num, res_name, mol) and self._intersect[1].contains_res(res_num, res_name, mol)
 
         # Does it contain the molecule.
         select_mol = self.contains_mol(mol)
@@ -321,15 +323,15 @@ class Selection(object):
         select_res = False
 
         # The residue checks.
-        if res in self.residues:
+        if res_num in self.residues or res_name in self.residues:
             select_res = True
 
-        # Double nothingness.
-        if res == None and not self.residues:
+        # Triple nothingness.
+        if res_num == None and res_name == None and not self.residues:
             select_res = True
 
         # Return the result.
-        return select_res or select_mol
+        return select_res and select_mol
 
 
     def intersection(self, select_obj0, select_obj1):
