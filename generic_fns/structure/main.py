@@ -194,7 +194,7 @@ def set_vector(spin=None, xh_vect=None):
     spin.xh_vect = xh_vect
 
 
-def vectors(proton=None, spin_id=None, verbosity=1):
+def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
     """Function for calculating/extracting the XH unit vector from the loaded structure.
 
     @param proton:      The name of the proton attached to the spin, as given in the structural
@@ -204,6 +204,9 @@ def vectors(proton=None, spin_id=None, verbosity=1):
     @type spin_id:      str
     @param verbosity:   The higher the value, the more information is printed to screen.
     @type verbosity:    int
+    @keyword unit:      A flag which if set will cause the function to return the unit XH vector
+                        rather than the full vector.
+    @type unit:         bool
     """
 
     # Alias the current data pipe.
