@@ -189,13 +189,14 @@ class Test_selection(TestCase):
         # Alias the current data pipe.
         cdp = relax_data_store[relax_data_store.current_pipe]
 
-        # The molecule, residue, and spin container for that spin.
-        mol = cdp.mol[0]
-        res = mol[1]
-        spin = res[0]
-
-        # Test that the spin is in the selection.
-        self.assert_((mol, res, spin) in obj)
+        # Test if various spins are in the selection.
+        self.assert_((cdp.mol[0], cdp.mol[0].res[0], cdp.mol[0].res[0].spin[0]) not in obj)
+        self.assert_((cdp.mol[0], cdp.mol[0].res[1], cdp.mol[0].res[1].spin[0]) in obj)
+        self.assert_((cdp.mol[0], cdp.mol[0].res[2], cdp.mol[0].res[2].spin[0]) not in obj)
+        self.assert_((cdp.mol[1], cdp.mol[1].res[0], cdp.mol[1].res[0].spin[0]) not in obj)
+        self.assert_((cdp.mol[1], cdp.mol[1].res[0], cdp.mol[1].res[0].spin[1]) not in obj)
+        self.assert_((cdp.mol[1], cdp.mol[1].res[1], cdp.mol[1].res[1].spin[0]) not in obj)
+        self.assert_((cdp.mol[1], cdp.mol[1].res[1], cdp.mol[1].res[1].spin[1]) not in obj)
 
 
     def test_count_spins(self):
