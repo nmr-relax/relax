@@ -153,7 +153,7 @@ class Test_scientific(TestCase):
 
         # Loop over the residues.
         res_count = 0
-        for res, res_num, res_name in self.data._Scientific_data__residue_loop(self.data.structural_data[0].peptide_chains[0], None, 'protein', sel_obj):
+        for res, res_num, res_name in self.data._Scientific_data__residue_loop(self.data.structural_data[0].peptide_chains[0], 'Ap4Aase', 'protein', sel_obj):
             res_count = res_count + 1
 
         # Test the number of residues looped over.
