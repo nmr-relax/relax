@@ -76,7 +76,7 @@ class Scientific_data(Base_struct_API):
                     mol_name = None
 
                 # Skip non-matching molecules.
-                if sel_obj and mol_name and '#' + mol_name not in sel_obj:
+                if sel_obj and not sel_obj.contains_mol(mol_name):
                     continue
 
                 # Yield the molecule and its name.
@@ -94,7 +94,7 @@ class Scientific_data(Base_struct_API):
                     mol_name = None
 
                 # Skip non-matching molecules.
-                if sel_obj and mol_name and '#' + mol_name not in sel_obj:
+                if sel_obj and not sel_obj.contains_mol(mol_name):
                     continue
 
                 # Yield the molecule and its name.
