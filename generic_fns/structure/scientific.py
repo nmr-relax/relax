@@ -244,13 +244,8 @@ class Scientific_data(Base_struct_API):
                                 name (str), and atomic position (array of len 3, or list of arrays)
         """
 
-        # Split up the selection string.
-        mol_token, res_token, atom_token = tokenise(atom_id)
-
-        # Parse the tokens.
-        molecules = parse_token(mol_token)
-        residues = parse_token(res_token)
-        atoms = parse_token(atom_token)
+        # Generate the selection object.
+        sel_obj = Selection(atom_id)
 
         # Init.
         atom_found = False
@@ -262,13 +257,13 @@ class Scientific_data(Base_struct_API):
                 continue
 
             # Loop over each individual molecule.
-            for mol, mol_name, mol_type in self.__molecule_loop(struct, molecules):
+            for mol, mol_name, mol_type in self.__molecule_loop(struct, sel_obj):
                 # Loop over the residues of the protein in the PDB file.
-                for res, res_num, res_name in self.__residue_loop(mol, mol_type, residues):
+                for res, res_num, res_name in self.__residue_loop(mol, mol_type, sel_obj):
                     # Loop over the atoms of the residue.
                     for atom in res:
                         # Skip non-matching atoms.
-                        if atom_token and not (wildcard_match(atom.name, atoms) or atom.properties['serial_number'] in atoms):
+                        if sel_obj and not sel_obj.contains_spin(atom.properties['serial_number'], atom.name, res_num, res_name, mol_name):
                             continue
 
                         # More than one matching atom!
