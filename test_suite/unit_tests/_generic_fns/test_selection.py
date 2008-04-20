@@ -180,6 +180,56 @@ class Test_selection(TestCase):
         self.assertEqual(obj._union[0]._intersect[1].spins, [])
 
 
+    def test_Selection_contains_mol1(self):
+        """The Selection object "#Ap4Aase:Glu | #RNA@C8" contains the molecule 'RNA'."""
+
+        # The Selection object.
+        obj = selection.Selection("#Ap4Aase:Glu | #RNA@C8")
+
+        # Check if the molecule is in the selection.
+        self.assert_(obj.contains_mol('RNA'))
+
+
+    def test_Selection_contains_mol2(self):
+        """The Selection object "#Ap4Aase:Glu & #RNA@C8" does not contain the molecule 'RNA'."""
+
+        # The Selection object.
+        obj = selection.Selection("#Ap4Aase:Glu & #RNA@C8")
+
+        # Check if the molecule is in the selection.
+        self.assert_(not obj.contains_mol('RNA'))
+
+
+    def test_Selection_contains_mol3(self):
+        """The Selection object "#Ap4Aase:Glu | #RNA@C8" does not contain the molecule 'XXX'."""
+
+        # The Selection object.
+        obj = selection.Selection("#Ap4Aase:Glu | #RNA@C8")
+
+        # Check if the molecule is in the selection.
+        self.assert_(not obj.contains_mol('XXX'))
+
+
+    def test_Selection_contains_mol4(self):
+        """The Selection object "#Ap4Aase:Glu | #RNA@C8" does not contain the molecule None."""
+
+        # The Selection object.
+        obj = selection.Selection("#Ap4Aase:Glu | #RNA@C8")
+
+        # Check if the molecule is in the selection.
+        self.assert_(not obj.contains_mol())
+
+
+    def test_Selection_contains_mol5(self):
+        """The Selection object ":Glu" does contain the molecule None."""
+
+        # The Selection object.
+        obj = selection.Selection(":Glu")
+
+        # Check if the molecule is in the selection.
+        self.assert_(obj.contains_mol())
+
+
     def test_Selection_full_spin_id(self):
         """Test the Selection object for the single spin identifier '#Ap4Aase:2&:Glu@63&@NH'."""
 
