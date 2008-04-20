@@ -51,15 +51,14 @@ class Scientific_data(Base_struct_API):
     id = 'scientific'
 
 
-    def __molecule_loop(self, struct, molecules):
-        """Generator function for looping over all molecules in the Scientific PDB data objects.
+    def __molecule_loop(self, struct, sel_obj=None):
+        """Generator function for looping over molecules in the Scientific PDB data objects.
 
         @param struct:      The individual structure object, the highest level Scientific Python PDB
                             object.
         @type struct:       Scientific Python PDB object
-        @param molecules:   A list of molecule names.  If non-empty, only molecules found in this
-                            list will be returned.
-        @type molecules:    list of str
+        @keyword sel_obj:   The selection object.
+        @type sel_obj:      instance of generic_fns.selection.Selection
         @return:            A tuple of the Scientific Python PDB object representing a single
                             molecule, the molecule name, and molecule type.
         @rtype:             (Scientific Python PDB object, str, str)
@@ -77,7 +76,7 @@ class Scientific_data(Base_struct_API):
                     mol_name = None
 
                 # Skip non-matching molecules.
-                if molecules and not wildcard_match(mol_name, molecules):
+                if sel_obj and '#' + mol_name not in sel_obj:
                     continue
 
                 # Yield the molecule and its name.
@@ -95,7 +94,7 @@ class Scientific_data(Base_struct_API):
                     mol_name = None
 
                 # Skip non-matching molecules.
-                if molecules and not wildcard_match(mol_name, molecules):
+                if sel_obj and '#' + mol_name not in sel_obj:
                     continue
 
                 # Yield the molecule and its name.
