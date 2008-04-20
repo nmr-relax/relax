@@ -358,15 +358,13 @@ class Structure:
         generic_fns.structure.main.read_pdb(file=file, dir=dir, model=model, parser=parser)
 
 
-    def vectors(self, heteronuc='N', proton='H', spin_id=None, verbosity=1):
+    def vectors(self, proton='H', spin_id=None, verbosity=1):
         """Function for calculating/extracting XH vectors from the structure.
 
         Keyword arguments
         ~~~~~~~~~~~~~~~~~
 
-        heteronuc:  The heteronucleus name as specified in the PDB file.
-
-        proton:  The name of the proton as specified in the PDB file.
+        proton:  The name of the proton attached to the spin, as specified in the structural file.
 
         spin_id:  The spin identification string.
 
@@ -377,52 +375,64 @@ class Structure:
         Description
         ~~~~~~~~~~~
 
-        Once the PDB structures have been loaded, the unit XH bond vectors must be calculated for
-        the non-spherical diffusion models.  The vectors are calculated using the atomic coordinates
-        of the atoms specified by the arguments heteronuc and proton.  If more than one model
-        structure is loaded, the unit XH vectors for each model will be calculated and the final
-        unit XH vector will be taken as the average.
+        Once the structures have been loaded, the unit XH bond vectors must be extracted for the
+        non-spherical diffusion models.  The vectors are calculated using the atomic coordinates
+        of the atoms specified by spin itself and its singly attached proton.
+
+        If more than one model structure is loaded, the unit XH vectors for each model will be
+        calculated and the final unit XH vector will be taken as the average.
 
 
         Example
         ~~~~~~~
 
         To calculate the XH vectors of the backbone amide nitrogens where in the PDB file the
-        backbone nitrogen is called 'N' and the attached proton is called 'H', type:
+        backbone nitrogen is called 'N' and the attached proton is called 'H', assuming multiple
+        types of spin have already been loaded, type one of:
 
-        relax> structure.vectors()
-        relax> structure.vectors('N')
-        relax> structure.vectors('N', 'H')
-        relax> structure.vectors(heteronuc='N', proton='H')
+        relax> structure.vectors(spin_id='@N')
+        relax> structure.vectors('H', spin_id='@N')
+        relax> structure.vectors(proton='H', spin_id='@N')
 
         If the attached proton is called 'HN', type:
 
-        relax> structure.vectors(proton='HN')
+        relax> structure.vectors(proton='HN', spin_id='@N')
+
+        For the Ca, type:
+
+        relax> structure.vectors(proton='HA', spin_id='@CA')
+
 
         If you are working with RNA, you can use the residue name identifier to calculate the
-        vectors for each residue separately.  For example:
+        vectors for each residue separately.  For example to calculate the vectors for all possible
+        spins in the bases, type:
 
-        relax> structure.vectors('N1', 'H1', spin_id=':G')
-        relax> structure.vectors('N3', 'H3', spin_id=':U')
+        relax> structure.vectors('H2', spin_id=':A')
+        relax> structure.vectors('H8', spin_id=':A')
+        relax> structure.vectors('H1', spin_id=':G')
+        relax> structure.vectors('H8', spin_id=':G')
+        relax> structure.vectors('H5', spin_id=':C')
+        relax> structure.vectors('H6', spin_id=':C')
+        relax> structure.vectors('H3', spin_id=':U')
+        relax> structure.vectors('H5', spin_id=':U')
+        relax> structure.vectors('H6', spin_id=':U')
 
+        Alternatively, assuming the desired spins have been loaded, regular expression can be used:
+
+        relax> structure.vectors('H*')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "structure.vectors("
-            text = text + "heteronuc=" + `heteronuc`
-            text = text + ", proton=" + `proton`
+            text = text + "proton=" + `proton`
             text = text + ", spin_id=" + `spin_id`
             text = text + ", verbosity=" + `verbosity` + ")"
             print text
 
-        # The heteronucleus argument.
-        if type(heteronuc) != str:
-            raise RelaxStrError, ('heteronucleus', heteronuc)
-
-        # The proton argument.
+        # The attached proton argument.
         if type(proton) != str:
-            raise RelaxStrError, ('proton', proton)
+            raise RelaxStrError, ('the attached proton', proton)
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:
@@ -433,4 +443,4 @@ class Structure:
             raise RelaxIntError, ('verbosity level', verbosity)
 
         # Execute the functional code.
-        generic_fns.structure.main.vectors(heteronuc=heteronuc, proton=proton, spin_id=spin_id, verbosity=verbosity)
+        generic_fns.structure.main.vectors(proton=proton, spin_id=spin_id, verbosity=verbosity)
