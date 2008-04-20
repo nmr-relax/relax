@@ -5,7 +5,7 @@ import sys
 sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + '/test_suite/system_tests/data')
 
 # Read a PDB file.
-structure.read_pdb(file='test.pdb', dir=sys.path[-1] + '/test_suite/system_tests/data', model=1)
+structure.read_pdb(file='test.pdb', dir=sys.path[-1] + '/test_suite/shared_data', model=1)
 
 # Load the spins.
 structure.load_spins('@N')
