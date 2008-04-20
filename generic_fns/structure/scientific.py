@@ -262,13 +262,25 @@ class Scientific_data(Base_struct_API):
                 for res, res_num, res_name in self.__residue_loop(mol, mol_type, sel_obj):
                     # Loop over the atoms of the residue.
                     for atom in res:
+                        # Atom number, name, and position.
+                        atom_num = atom.properties['serial_number']
+                        atom_name = atom.name
+                        element = atom.properties['element']
+                        pos = atom.position.array
+
                         # Skip non-matching atoms.
-                        if sel_obj and not sel_obj.contains_spin(atom.properties['serial_number'], atom.name, res_num, res_name, mol_name):
+                        if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol_name):
                             continue
 
                         # More than one matching atom!
                         if atom_found:
                             raise RelaxError, "The atom_id argument " + `atom_id` + " must correspond to a single atom."
+
+        # Return the atom info.
+        if atom_found:
+            return atom_num, atom_name, element, pos
+        else:
+            return None, None, None, None
 
 
     def load_structures(self, file_path, model=None, verbosity=False):
