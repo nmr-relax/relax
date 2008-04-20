@@ -815,15 +815,21 @@ def return_residue(selection=None, pipe=None):
     return res_container
 
 
-def return_spin(selection=None, pipe=None):
+def return_spin(selection=None, pipe=None, full_info=False):
     """Function for returning the spin data container of the given selection.
 
     @param selection:   The spin selection identifier.
     @type selection:    str
     @param pipe:        The data pipe containing the spin.  Defaults to the current data pipe.
     @type pipe:         str
-    @return:            The spin specific data container.
-    @rtype:             instance of the SpinContainer class.
+    @param full_info:   A flag specifying if the amount of information to be returned.  If false,
+                        only the data container is returned.  If true, the molecule name, residue
+                        number, and residue name is additionally returned.
+    @type full_info:    boolean
+    @return:            The spin system specific data container and, if full_info=True, the molecule
+                        name, residue number, and residue name.
+    @rtype:             instance of the SpinContainer class.  If full_info=True, the type is the
+                        tuple (SpinContainer, str, int, str).
     """
 
     # The data pipe.
@@ -849,7 +855,9 @@ def return_spin(selection=None, pipe=None):
                 if (mol, res, spin) not in select_obj:
                     continue
 
-                # Store the spin container.
+                # Store all containers.
+                mol_container = mol
+                res_container = res
                 spin_container = spin
 
                 # Increment the spin number counter.
@@ -860,7 +868,10 @@ def return_spin(selection=None, pipe=None):
         raise RelaxError, "The identifier " + `selection` + " corresponds to more than a single spin in the " + `pipe` + " data pipe."
 
     # Return the spin container.
-    return spin_container
+    if full_info:
+        return mol_container.name, res_container.num, res_container.name, spin_container
+    else:
+        return spin_container
 
 
 def return_spin_from_index(global_index=None, pipe=None, return_spin_id=False):
