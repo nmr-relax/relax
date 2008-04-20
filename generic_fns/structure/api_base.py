@@ -402,23 +402,3 @@ class Base_struct_API:
 
         # Raise the error.
         raise RelaxImplementError
-
-
-    def xh_vector(self, spin, structure=None, unit=True):
-        """Prototype method stub for calculating/extracting the XH vector from the loaded structure.
-
-        @param spin:        The spin system data container.
-        @type spin:         SpinContainer instance
-        @keyword structure: The structure number to get the XH vector from.  If set to None and
-                            multiple structures exist, then the XH vector will be averaged across
-                            all structures.
-        @type structure:    int
-        @keyword unit:      A flag which if set will cause the method to return the unit XH vector
-                            rather than the full vector.
-        @type unit:         bool
-        @return:            The XH vector (or unit vector if the unit flag is set).
-        @rtype:             list or None
-        """
-
-        # Raise the error.
-        raise RelaxImplementError
