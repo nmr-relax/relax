@@ -17,4 +17,4 @@ structure.vectors(proton='H')
 diffusion_tensor.init((1.698e7, 1.417e7, 67.174, -83.718), param_types=3)
 
 # Calculate the angles.
-angles()
+angle_diff_frame()
