@@ -92,26 +92,29 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def atom_loop(self, atom_id=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False):
+    def atom_loop(self, atom_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False):
         """Prototype generator method stub for looping over all atoms in the structural data object.
 
         This method should be designed as a generator (http://www.python.org/dev/peps/pep-0255/).
         It should loop over all atoms of the system yielding the following atomic information, if
         the corresponding flag is True, in tuple form:
 
-            1.  Molecule name.
-            2.  Residue number.
-            3.  Residue name.
-            4.  Atom number.
-            5.  Atom name.
-            6.  The element name (its atomic symbol and optionally the isotope, e.g. 'N', 'Mg',
+            1.  Model number.
+            2.  Molecule name.
+            3.  Residue number.
+            4.  Residue name.
+            5.  Atom number.
+            6.  Atom name.
+            7.  The element name (its atomic symbol and optionally the isotope, e.g. 'N', 'Mg',
                 '17O', '13C', etc).
-            7.  The position of the atom in Euclidean space.
+            8.  The position of the atom in Euclidean space.
 
 
         @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms
                                     matching this selection will be yielded.
         @type atom_id:              str
+        @keyword model_num_flag:    A flag which if True will cause the model number to be yielded.
+        @type model_num_flag:       bool
         @keyword mol_name_flag:     A flag which if True will cause the molecule name to be yielded.
         @type mol_name_flag:        bool
         @keyword res_num_flag:      A flag which if True will cause the residue number to be
