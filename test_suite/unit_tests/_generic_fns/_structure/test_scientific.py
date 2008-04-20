@@ -57,6 +57,21 @@ class Test_scientific(TestCase):
         relax_data_store.__reset__()
 
 
+    def test_atom_loop(self):
+        """Test the Scientific_data.atom_loop() method."""
+
+        # Load the PDB file.
+        self.data.load_structures(self.test_pdb_path)
+
+        # Loop over the atoms.
+        atom_count = 0
+        for atom in self.data.atom_loop():
+            atom_count = atom_count + 1
+
+        # Test the number of atoms looped over.
+        self.assertEqual(atom_count, 174)
+
+
     def test_load_structures(self):
         """Load a PDB file using Scientific_data.load_structures()."""
 
