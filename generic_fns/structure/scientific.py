@@ -111,8 +111,11 @@ class Scientific_data(Base_struct_API):
     def __residue_loop(self, mol, mol_type, residues):
         """Generator function for looping over all residues in the Scientific PDB data objects.
 
-        @param mol:         The individual residue Scientific Python PDB data object.
+        @param mol:         The individual molecule Scientific Python PDB data object.
         @type mol:          Scientific Python PDB object
+        @param mol_type:    The type of the molecule.  This can be one of 'protein', 'nucleic acid',
+                            or 'other'.
+        @type mol_type:     str
         @param residues:    A list of residue names.  If non-empty, only residues found in this list
                             will be returned.
         @type residues:     list of str
