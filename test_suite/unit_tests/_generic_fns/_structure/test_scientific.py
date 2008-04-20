@@ -103,6 +103,24 @@ class Test_scientific(TestCase):
         self.assertEqual(mol.sequence(), ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY'])
 
 
+    def test___molecule_loop_selection_no_match(self):
+        """Test the Scientific_data.__molecule_loop() method with a non-matching selection object."""
+
+        # Load the PDB file.
+        self.data.load_structures(self.test_pdb_path)
+
+        # Create the non-matching selection object.
+        sel_obj = Selection('#XXX')
+
+        # Loop over the molecules.
+        mol_count = 0
+        for mol, mol_name, mol_type in self.data._Scientific_data__molecule_loop(self.data.structural_data[0], sel_obj):
+            mol_count = mol_count + 1
+
+        # Test the number of molecules looped over.
+        self.assertEqual(mol_count, 0)
+
+
     def test_atom_loop(self):
         """Test the Scientific_data.atom_loop() method."""
 
