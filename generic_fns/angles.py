@@ -23,12 +23,14 @@
 # Python module imports.
 from math import acos, sin
 from numpy import dot
+from warnings import warn
 
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns import pipes
-from generic_fns.selection import exists_mol_res_spin_data
+from generic_fns.selection import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
+from relax_warnings import RelaxWarning
 
 
 def angle_diff_frame():
@@ -95,18 +97,18 @@ def ellipsoid_frame():
 def spheroid_frame():
     """Function for calculating the angle alpha of the XH vector within the spheroid frame."""
 
-    # Get the unit vector Dpar of the diffusion tensor axis.
-    Dpar = diffusion_tensor.unit_axes()
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Loop over the sequence.
-    for i in xrange(len(cdp.mol[0].res)):
+    for spin in spin_loop():
         # Test if the vector exists.
-        if not hasattr(cdp.mol[0].res[i], 'xh_vect'):
-            print "No angles could be calculated for residue '" + `cdp.mol[0].res[i].num` + " " + cdp.mol[0].res[i].name + "'."
+        if not hasattr(spin, 'xh_vect'):
+            warn(RelaxWarning("No angles could be calculated for residue '" + str(spin.num) + " " + str(spin.name) + "'."))
             continue
 
         # Calculate alpha.
-        cdp.mol[0].res[i].alpha = acos(dot(Dpar, cdp.mol[0].res[i].xh_vect))
+        spin.alpha = acos(dot(cdp.diff_tensor.Dpar_unit, spin.xh_vect))
 
 
 def wrap_angles(angle, lower, upper):
