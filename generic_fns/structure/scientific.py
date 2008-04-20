@@ -229,6 +229,55 @@ class Scientific_data(Base_struct_API):
                         yield atomic_tuple
 
 
+    def attached_atom(self, atom_id=None, attached_atom=None, model=None):
+        """Find the atom corresponding to 'attached_atom' which is attached to the atom of 'atom_id'.
+
+        @keyword atom_id:       The molecule, residue, and atom identifier string.  This must
+                                correspond to a single atom in the system.
+        @type atom_id:          str
+        @keyword attached_atom: The name of the attached atom to return.
+        @type attached_atom:    str
+        @keyword model:         The model to return the positional information from.  If not
+                                supplied and multiple models exist, then the returned atomic
+                                position will be a list of the positions in each model.
+        @type model:            None or int
+        @return:                A tuple of information about the attached atom.
+        @rtype:                 tuple consisting of the atom number (int), atom name(str), element
+                                name (str), and atomic position (array of len 3, or list of arrays)
+        """
+
+        # Split up the selection string.
+        mol_token, res_token, atom_token = tokenise(atom_id)
+
+        # Parse the tokens.
+        molecules = parse_token(mol_token)
+        residues = parse_token(res_token)
+        atoms = parse_token(atom_token)
+
+        # Init.
+        atom_found = False
+
+        # Loop over the models.
+        for struct in self.structural_data:
+            # Skip non-matching models.
+            if model != None and model != struct.model:
+                continue
+
+            # Loop over each individual molecule.
+            for mol, mol_name, mol_type in self.__molecule_loop(struct, molecules):
+                # Loop over the residues of the protein in the PDB file.
+                for res, res_num, res_name in self.__residue_loop(mol, mol_type, residues):
+                    # Loop over the atoms of the residue.
+                    for atom in res:
+                        # Skip non-matching atoms.
+                        if atom_token and not (wildcard_match(atom.name, atoms) or atom.properties['serial_number'] in atoms):
+                            continue
+
+                        # More than one matching atom!
+                        if atom_found:
+                            raise RelaxError, "The atom_id argument " + `atom_id` + " must correspond to a single atom."
+
+
     def load_structures(self, file_path, model, verbosity=False):
         """Function for loading the structures from the PDB file.
 
