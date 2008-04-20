@@ -895,7 +895,7 @@ def return_spin_from_index(global_index=None, pipe=None, return_spin_id=False):
             # Return the spin and the spin_id string.
             if return_spin_id:
                 # The spin identification string.
-                spin_id = generate_spin_id([mol_name, res_num, res_name, spin.num, spin.name], mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4)
+                spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
 
                 # Return both objects.
                 return spin, spin_id
