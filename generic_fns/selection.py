@@ -286,8 +286,8 @@ class Selection(object):
         if mol in self.molecules:
             return True
 
-        # Double nothingness.
-        if mol == None and not self.molecules:
+        # Nothingness.
+        if not self.molecules:
             return True
 
         # No match.
