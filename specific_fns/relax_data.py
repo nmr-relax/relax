@@ -27,7 +27,7 @@ import sys
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns import pipes
-from generic_fns.selection import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
+from generic_fns.selection import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxNoResError, RelaxNoRiError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
 from relax_io import extract_data, strip
 
@@ -624,7 +624,7 @@ class Rx_data:
                 continue
 
             # Generate the spin identification string.
-            id = generate_spin_id(data=file_data[i], mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
+            id = generate_spin_id_data_array(data=file_data[i], mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
 
             # Convert the data.
             value = eval(file_data[i][data_col])
