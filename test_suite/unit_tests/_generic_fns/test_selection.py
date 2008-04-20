@@ -290,6 +290,16 @@ class Test_selection(TestCase):
         self.assert_(obj.contains_res())
 
 
+    def test_Selection_contains_res7(self):
+        """The Selection object "#Ap4Aase" does not contain the res None of the mol 'RNA'."""
+
+        # The Selection object.
+        obj = selection.Selection("#Ap4Aase")
+
+        # Check if the molecule is in the selection.
+        self.assert_(obj.contains_res(mol='RNA'))
+
+
     def test_Selection_full_spin_id(self):
         """Test the Selection object for the single spin identifier '#Ap4Aase:2&:Glu@63&@NH'."""
 
