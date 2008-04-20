@@ -28,7 +28,7 @@ from warnings import warn
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns import molmol
-from generic_fns.selection import exists_mol_res_spin_data, return_molecule, return_residue, return_spin, spin_loop
+from generic_fns.selection import exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_loop
 from generic_fns.sequence import write_header, write_line
 from generic_fns.structure.scientific import Scientific_data
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPipeError, RelaxNoSequenceError, RelaxPdbError
@@ -233,21 +233,8 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
         model_num, mol_name, res_num, res_name, atom_num, atom_name, element, pos = atom
 
         # The spin identification string.
-        spin_id = ''
-        if mol_name != None:
-            spin_id = spin_id + '#' + mol_name
-        if res_num != None and res_name != None:
-            spin_id = spin_id + ':' + `res_num` + '&:' + res_name
-        elif res_num != None:
-            spin_id = spin_id + ':' + `res_num`
-        elif res_name != None:
-            spin_id = spin_id + ':' + res_name
-        if atom_num != None and atom_name != None:
-            spin_id = spin_id + '@' + `atom_num` + '&@' + atom_name
-        elif atom_num != None:
-            spin_id = spin_id + '@' + `atom_num`
-        elif atom_name != None:
-            spin_id = spin_id + '@' + atom_name
+        spin_id = generate_spin_id(mol_name, res_num, res_name, atom_num, atom_name)
+        print spin_id
 
         # Get the corresponding spin.
         spin = return_spin(selection=spin_id)
