@@ -230,6 +230,66 @@ class Test_selection(TestCase):
         self.assert_(obj.contains_mol())
 
 
+    def test_Selection_contains_res1(self):
+        """The Selection object "#Ap4Aase:Glu | #RNA@C8" contains the res 'Glu'."""
+
+        # The Selection object.
+        obj = selection.Selection("#Ap4Aase:Glu | #RNA@C8")
+
+        # Check if the molecule is in the selection.
+        self.assert_(obj.contains_res('Glu'))
+
+
+    def test_Selection_contains_res2(self):
+        """The Selection object "#Ap4Aase:Glu | #RNA@C8" contains the res 'Glu' of the mol 'Ap4Aase'."""
+
+        # The Selection object.
+        obj = selection.Selection("#Ap4Aase:Glu | #RNA@C8")
+
+        # Check if the molecule is in the selection.
+        self.assert_(obj.contains_res('Glu', 'Ap4Aase'))
+
+
+    def test_Selection_contains_res3(self):
+        """The Selection object "#Ap4Aase:Glu & #RNA@C8" does not contain the res 'Glu'."""
+
+        # The Selection object.
+        obj = selection.Selection("#Ap4Aase:Glu & #RNA@C8")
+
+        # Check if the molecule is in the selection.
+        self.assert_(not obj.contains_res('Glu'))
+
+
+    def test_Selection_contains_res4(self):
+        """The Selection object "#Ap4Aase:Glu | #RNA@C8" does not contain the res 'Ala'."""
+
+        # The Selection object.
+        obj = selection.Selection("#Ap4Aase:Glu | #RNA@C8")
+
+        # Check if the molecule is in the selection.
+        self.assert_(not obj.contains_res('Ala'))
+
+
+    def test_Selection_contains_res5(self):
+        """The Selection object "#Ap4Aase:Glu | #RNA:14@C8" does not contain the res None."""
+
+        # The Selection object.
+        obj = selection.Selection("#Ap4Aase:Glu | #RNA:14@C8")
+
+        # Check if the molecule is in the selection.
+        self.assert_(not obj.contains_res())
+
+
+    def test_Selection_contains_res6(self):
+        """The Selection object "#Ap4Aase" does contains the res None."""
+
+        # The Selection object.
+        obj = selection.Selection("#Ap4Aase")
+
+        # Check if the molecule is in the selection.
+        self.assert_(obj.contains_res())
+
+
     def test_Selection_full_spin_id(self):
         """Test the Selection object for the single spin identifier '#Ap4Aase:2&:Glu@63&@NH'."""
 
