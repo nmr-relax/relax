@@ -326,8 +326,8 @@ class Selection(object):
         if res_num in self.residues or res_name in self.residues:
             select_res = True
 
-        # Triple nothingness.
-        if res_num == None and res_name == None and not self.residues:
+        # Nothingness.
+        if not self.residues:
             select_res = True
 
         # Return the result.
