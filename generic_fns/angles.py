@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007 Edward d'Auvergne                             #
+# Copyright (C) 2003-2005, 2007-2008 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,6 +26,8 @@ from numpy import dot
 
 # relax module imports.
 from data import Data as relax_data_store
+from generic_fns import pipes
+from generic_fns.selection import exists_mol_res_spin_data
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
 
 
@@ -39,7 +41,7 @@ def angle_diff_frame():
     cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Test if the PDB file has been loaded.
-    if not hasattr(relax_data_store, 'structure'):
+    if not hasattr(cdp, 'structure'):
         raise RelaxNoPdbError
 
     # Test if sequence data is loaded.
@@ -47,7 +49,7 @@ def angle_diff_frame():
         raise RelaxNoSequenceError
 
     # Test if the diffusion tensor data is loaded.
-    if not diff_data_exists():
+    if not hasattr(cdp, 'diff_tensor'):
         raise RelaxNoTensorError, 'diffusion'
 
     # Sphere.
