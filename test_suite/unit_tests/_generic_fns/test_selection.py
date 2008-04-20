@@ -180,6 +180,24 @@ class Test_selection(TestCase):
         self.assertEqual(obj._union[0]._intersect[1].spins, [])
 
 
+    def test_Selection_full_spin_id(self):
+        """Test the Selection object for the single spin identifier '#Ap4Aase:2&:Glu@63&@NH'."""
+
+        # The Selection object.
+        obj = selection.Selection("#Ap4Aase:2&:Glu@63&@NH")
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # The molecule, residue, and spin container for that spin.
+        mol = cdp.mol[0]
+        res = mol[1]
+        spin = res[0]
+
+        # Test that the spin is in the selection.
+        self.assert_((mol, res, spin) in obj)
+
+
     def test_count_spins(self):
         """Test that the number of spins can be properly counted.
 
