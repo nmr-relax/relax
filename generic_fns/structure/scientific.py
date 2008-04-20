@@ -276,13 +276,13 @@ class Scientific_data(Base_struct_API):
                             raise RelaxError, "The atom_id argument " + `atom_id` + " must correspond to a single atom."
 
 
-    def load_structures(self, file_path, model, verbosity=False):
+    def load_structures(self, file_path, model=None, verbosity=False):
         """Function for loading the structures from the PDB file.
 
         @param file_path:   The full path of the file.
         @type file_path:    str
         @param model:       The PDB model to use.
-        @type model:        int
+        @type model:        None or int
         @keyword verbosity: A flag which if True will cause messages to be printed.
         @type verbosity:    bool
         """
