@@ -299,10 +299,16 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
         else:
             spin.xh_vect = spin.xh_vect + vector
 
-    # Average the XH vectors for all models.
+    # Header print out.
+    write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+
+    # Loop over all the modified spins.
     for spin_id in spin_list:
         # Get the spin.
-        spin = return_spin(selection=spin_id)
+        mol_name, res_num, res_name, spin = return_spin(selection=spin_id, full_info=True)
 
-        # Average the vector.
+        # Print out of modified spins.
+        write_line(sys.stdout, mol_name, res_num, res_name, atom_num, atom_name, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+
+        # Average the XH vectors for all models.
         spin.xh_vect = spin.xh_vect / cdp.structure.num_models()
