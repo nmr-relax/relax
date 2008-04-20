@@ -57,6 +57,21 @@ class Test_scientific(TestCase):
         relax_data_store.__reset__()
 
 
+    def test___molecule_loop(self):
+        """Test the private Scientific_data.__molecule_loop() method."""
+
+        # Load the PDB file.
+        self.data.load_structures(self.test_pdb_path)
+
+        # Loop over the molecules.
+        mol_count = 0
+        for mol, mol_name, mol_type in self.data._Scientific_data__molecule_loop(self.data.structural_data[0]):
+            mol_count = mol_count + 1
+
+        # Test the number of molecules looped over.
+        self.assertEqual(mol_count, 1)
+
+
     def test_atom_loop(self):
         """Test the Scientific_data.atom_loop() method."""
 
