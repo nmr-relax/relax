@@ -22,6 +22,7 @@
 
 # Python module imports.
 import sys
+from numpy import array
 from unittest import TestCase
 
 # relax module imports.
@@ -197,6 +198,105 @@ class Test_scientific(TestCase):
 
         # Test the number of atoms looped over.
         self.assertEqual(atom_count, 150)
+
+
+    def test_atom_loop_mol_selection(self):
+        """Test the Scientific_data.atom_loop() method with the '#XXX' mol selection."""
+
+        # Load the PDB file.
+        self.data.load_structures(self.test_pdb_path)
+
+        # Loop over the atoms.
+        atom_count = 0
+        for atom in self.data.atom_loop(atom_id='#XXX'):
+            atom_count = atom_count + 1
+
+        # Test the number of atoms looped over.
+        self.assertEqual(atom_count, 0)
+
+
+    def test_atom_loop_res_selection1(self):
+        """Test the Scientific_data.atom_loop() method with the ':8' res selection."""
+
+        # Load the PDB file.
+        self.data.load_structures(self.test_pdb_path)
+
+        # Loop over the atoms.
+        atom_count = 0
+        for res_num, res_name in self.data.atom_loop(atom_id=':8', res_num_flag=True, res_name_flag=True):
+            # Test the residue name and number.
+            self.assertEqual(res_num, 8)
+            self.assertEqual(res_name, 'SER')
+
+            # Increment the atom count.
+            atom_count = atom_count + 1
+
+        # Test the number of atoms looped over.
+        self.assertEqual(atom_count, 11)
+
+
+    def test_atom_loop_res_selection2(self):
+        """Test the Scientific_data.atom_loop() method with the ':PRO' res selection."""
+
+        # Load the PDB file.
+        self.data.load_structures(self.test_pdb_path)
+
+        # Loop over the atoms.
+        atom_count = 0
+        for atom in self.data.atom_loop(atom_id=':PRO', res_name_flag=True):
+            # Test the residue name.
+            self.assertEqual(atom[0], 'PRO')
+
+            # Increment the atom count.
+            atom_count = atom_count + 1
+
+        # Test the number of atoms looped over.
+        self.assertEqual(atom_count, 42)
+
+
+    def test_atom_loop_spin_selection1(self):
+        """Test the Scientific_data.atom_loop() method with the '@CA' spin selection."""
+
+        # Load the PDB file.
+        self.data.load_structures(self.test_pdb_path)
+
+        # Loop over the atoms.
+        atom_count = 0
+        for spin_name in self.data.atom_loop(atom_id='@CA', spin_name_flag=True):
+            # Test the spin name.
+            self.assertEqual(spin_name, 'CA')
+
+            # Increment the atom count.
+            atom_count = atom_count + 1
+
+        # Test the number of atoms looped over.
+        self.assertEqual(atom_count, 11)
+
+
+    def test_atom_loop_spin_selection1(self):
+        """Test the Scientific_data.atom_loop() method with the '@163' spin selection."""
+
+        # Load the PDB file.
+        self.data.load_structures(self.test_pdb_path)
+
+        # Loop over the atoms.
+        atom_count = 0
+        for model_num, mol_name, res_num, res_name, spin_num, spin_name, element, pos in self.data.atom_loop(atom_id='@163', model_num_flag=True, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
+            # Test the spin info.
+            self.assertEqual(model_num, 1)
+            self.assertEqual(mol_name, None)
+            self.assertEqual(res_num, 11)
+            self.assertEqual(res_name, 'GLU')
+            self.assertEqual(spin_num, 163)
+            self.assertEqual(spin_name, 'OE1')
+            self.assertEqual(element, 'O')
+            self.assertEqual(pos, array([10.055, -2.740, -13.193]))
+
+            # Increment the atom count.
+            atom_count = atom_count + 1
+
+        # Test the number of atoms looped over.
+        self.assertEqual(atom_count, 1)
 
 
     def test_load_structures(self):
