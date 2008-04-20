@@ -222,10 +222,37 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
 
     # Print out.
     if verbosity:
-        if cdp.structure.num_str() > 1:
+        if cdp.structure.num_models() > 1:
             print "\nCalculating and averaging the unit XH vectors from all structures."
         else:
             print "\nCalculating the unit XH vectors from the structure."
+
+    # Loop over all the structural data.
+    for atom in cdp.structure.atom_loop(atom_id=spin_id, model_num_flag=True, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
+        # Unpack the data.
+        model_num, mol_name, res_num, res_name, atom_num, atom_name, element, pos = atom
+
+        # The spin identification string.
+        spin_id = ''
+        if mol_name != None:
+            spin_id = spin_id + '#' + mol_name
+        if res_num != None and res_name != None:
+            spin_id = spin_id + ':' + `res_num` + '&:' + res_name
+        elif res_num != None:
+            spin_id = spin_id + ':' + `res_num`
+        elif res_name != None:
+            spin_id = spin_id + ':' + res_name
+        if atom_num != None and atom_name != None:
+            spin_id = spin_id + '@' + `atom_num` + '&@' + atom_name
+        elif atom_num != None:
+            spin_id = spin_id + '@' + `atom_num`
+        elif atom_name != None:
+            spin_id = spin_id + '@' + atom_name
+
+        # Get the corresponding spin.
+        spin = return_spin(selection=spin_id)
+
+    return
 
     # Loop over the sequence.
     for spin in spin_loop(spin_id):
