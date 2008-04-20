@@ -229,6 +229,19 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
         else:
             print "\nCalculating the unit XH vectors from the structure."
 
+    # Loop over the spins.
+    for spin, mol_name, res_num, res_name in spin_loop(selection=spin_id, full_info=True):
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
+        # The spin identification string.
+        spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
+
+        # Get the attached proton.
+        atom_num, atom_name, element, pos = cdp.structure.attached_atom(atom_id=atom_id, attached_atom=proton)
+
+
     # Loop over all the structural data.
     first_model = None
     spin_list = []
