@@ -201,7 +201,7 @@ class Scientific_data(Base_struct_API):
                         pos = atom.position.array
 
                         # Skip non-matching atoms.
-                        if atom_token and not (wildcard_match(atom_name, atoms) or atom_num in atoms):
+                        if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol_name):
                             continue
 
                         # Build the tuple to be yielded.
