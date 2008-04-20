@@ -121,6 +121,69 @@ class Test_scientific(TestCase):
         self.assertEqual(mol_count, 0)
 
 
+    def test___residue_loop(self):
+        """Test the private Scientific_data.__residue_loop() method."""
+
+        # Load the PDB file.
+        self.data.load_structures(self.test_pdb_path)
+
+        # Loop over the residues.
+        res_count = 0
+        for res, res_num, res_name in self.data._Scientific_data__residue_loop(self.data.structural_data[0].peptide_chains[0], None, 'protein'):
+            res_count = res_count + 1
+
+        # Test the number of residues looped over.
+        self.assertEqual(res_count, 12)
+
+        # Test the data of the last residue.
+        self.assertEqual(res_num, 12)
+        self.assertEqual(res_name, 'GLY')
+        self.assertEqual(len(res.atoms), 7)
+        self.assertEqual(res.atoms.keys(), ['C', 'H', 'CA', 'O', 'N', '1HA', '2HA'])
+
+
+    def test___residue_loop_selection(self):
+        """Test the private Scientific_data.__residue_loop() method with a selection object."""
+
+        # Load the PDB file.
+        self.data.load_structures(self.test_pdb_path)
+
+        # Create the selection object (which should match the residue name of None).
+        sel_obj = Selection('#Ap4Aase')
+
+        # Loop over the residues.
+        res_count = 0
+        for res, res_num, res_name in self.data._Scientific_data__residue_loop(self.data.structural_data[0].peptide_chains[0], None, 'protein', sel_obj):
+            res_count = res_count + 1
+
+        # Test the number of residues looped over.
+        self.assertEqual(res_count, 12)
+
+        # Test the data of the last residue.
+        self.assertEqual(res_num, 12)
+        self.assertEqual(res_name, 'GLY')
+        self.assertEqual(len(res.atoms), 7)
+        self.assertEqual(res.atoms.keys(), ['C', 'H', 'CA', 'O', 'N', '1HA', '2HA'])
+
+
+    def test___residue_loop_selection_no_match(self):
+        """Test the Scientific_data.__residue_loop() method with a non-matching selection object."""
+
+        # Load the PDB file.
+        self.data.load_structures(self.test_pdb_path)
+
+        # Create the non-matching selection object.
+        sel_obj = Selection(':XXX')
+
+        # Loop over the residues.
+        res_count = 0
+        for res, res_num, res_name in self.data._Scientific_data__residue_loop(self.data.structural_data[0].peptide_chains[0], None, 'protein', sel_obj):
+            res_count = res_count + 1
+
+        # Test the number of residues looped over.
+        self.assertEqual(res_count, 0)
+
+
     def test_atom_loop(self):
         """Test the Scientific_data.atom_loop() method."""
 
