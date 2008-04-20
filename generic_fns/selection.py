@@ -286,6 +286,13 @@ class Selection(object):
         if mol in self.molecules:
             return True
 
+        # Double nothingness.
+        if mol == None and not self.molecules:
+            return True
+
+        # No match.
+        return False
+
 
     def intersection(self, select_obj0, select_obj1):
         """Make this Selection object the intersection of two other Selection objects.
