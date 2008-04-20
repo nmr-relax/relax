@@ -372,97 +372,97 @@ class Test_selection(TestCase):
         self.assertRaises(RelaxNoPipeError, selection.exists_mol_res_spin_data)
 
 
-    def test_generate_spin_id1(self):
+    def test_generate_spin_id_data_array1(self):
         """First test of the spin ID generation function.
 
-        The function tested is generic_fns.selection.generate_spin_id().
+        The function tested is generic_fns.selection.generate_spin_id_data_array().
         """
 
         # The data.
         data = ['1', 'GLY']
 
         # The ID.
-        id = selection.generate_spin_id(data)
+        id = selection.generate_spin_id_data_array(data)
 
         # Test the string.
         self.assertEqual(id, ':1&:GLY')
 
 
-    def test_generate_spin_id2(self):
+    def test_generate_spin_id_data_array2(self):
         """Second test of the spin ID generation function.
 
-        The function tested is generic_fns.selection.generate_spin_id().
+        The function tested is generic_fns.selection.generate_spin_id_data_array().
         """
 
         # The data.
         data = ['1', 'GLY', '234', 'NH']
 
         # The ID.
-        id = selection.generate_spin_id(data, spin_num_col=2, spin_name_col=3)
+        id = selection.generate_spin_id_data_array(data, spin_num_col=2, spin_name_col=3)
 
         # Test the string.
         self.assertEqual(id, ':1&:GLY@234&@NH')
 
 
-    def test_generate_spin_id3(self):
+    def test_generate_spin_id_data_array3(self):
         """Third test of the spin ID generation function.
 
-        The function tested is generic_fns.selection.generate_spin_id().
+        The function tested is generic_fns.selection.generate_spin_id_data_array().
         """
 
         # The data.
         data = ['Ap4Aase', '234', 'NH']
 
         # The ID.
-        id = selection.generate_spin_id(data, mol_name_col=0, res_num_col=None, res_name_col=None, spin_num_col=1, spin_name_col=2)
+        id = selection.generate_spin_id_data_array(data, mol_name_col=0, res_num_col=None, res_name_col=None, spin_num_col=1, spin_name_col=2)
 
         # Test the string.
         self.assertEqual(id, '#Ap4Aase@234&@NH')
 
 
-    def test_generate_spin_id4(self):
+    def test_generate_spin_id_data_array4(self):
         """Fourth test of the spin ID generation function.
 
-        The function tested is generic_fns.selection.generate_spin_id().
+        The function tested is generic_fns.selection.generate_spin_id_data_array().
         """
 
         # The data.
         data = ['Ap4Aase', '1', 'GLY']
 
         # The ID.
-        id = selection.generate_spin_id(data, mol_name_col=0, res_num_col=1, res_name_col=2)
+        id = selection.generate_spin_id_data_array(data, mol_name_col=0, res_num_col=1, res_name_col=2)
 
         # Test the string.
         self.assertEqual(id, '#Ap4Aase:1&:GLY')
 
 
-    def test_generate_spin_id5(self):
+    def test_generate_spin_id_data_array5(self):
         """Fifth test of the spin ID generation function.
 
-        The function tested is generic_fns.selection.generate_spin_id().
+        The function tested is generic_fns.selection.generate_spin_id_data_array().
         """
 
         # The data.
         data = ['Ap4Aase', '1', 'GLY', '234', 'NH']
 
         # The ID.
-        id = selection.generate_spin_id(data, mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4)
+        id = selection.generate_spin_id_data_array(data, mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4)
 
         # Test the string.
         self.assertEqual(id, '#Ap4Aase:1&:GLY@234&@NH')
 
 
-    def test_generate_spin_id6(self):
+    def test_generate_spin_id_data_array6(self):
         """Sixth test of the spin ID generation function.
 
-        The function tested is generic_fns.selection.generate_spin_id().
+        The function tested is generic_fns.selection.generate_spin_id_data_array().
         """
 
         # The data.
         data = ['1', 'GLY', None, None]
 
         # The ID.
-        id = selection.generate_spin_id(data)
+        id = selection.generate_spin_id_data_array(data)
 
         # Test the string.
         self.assertEqual(id, ':1&:GLY')
