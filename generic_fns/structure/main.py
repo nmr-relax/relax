@@ -239,15 +239,15 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
             continue
 
         # The spin identification string.
-        spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
+        id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
 
         # The XH vector already exists.
         if hasattr(spin, 'xh_vect'):
-            warn(RelaxWarning("The XH vector for the spin " + `spin_id` + " already exists"))
+            warn(RelaxWarning("The XH vector for the spin " + `id` + " already exists"))
             continue
 
         # Get the bond info.
-        bond_vectors = cdp.structure.bond_vectors(atom_id=spin_id, attached_atom=proton)
+        bond_vectors = cdp.structure.bond_vectors(atom_id=id, attached_atom=proton)
 
         # No attached proton.
         if not bond_vectors:
@@ -269,7 +269,7 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
 
                 # Test for zero length.
                 if norm_factor == 0.0:
-                    warn(RelaxZeroVectorWarning(spin_id))
+                    warn(RelaxZeroVectorWarning(id))
 
                 # Calculate the normalised vector.
                 else:
