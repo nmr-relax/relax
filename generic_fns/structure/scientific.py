@@ -51,6 +51,45 @@ class Scientific_data(Base_struct_API):
     id = 'scientific'
 
 
+    def __find_bonded_atom(self, attached_atom, mol_type, res):
+        """Find the atom named attached_atom directly bonded to the desired atom.
+
+        @param attached_atom:   The name of the attached atom to return.
+        @type attached_atom:    str
+        @param mol_type:        The type of the molecule.  This can be one of 'protein', 'nucleic acid',
+                                or 'other'.
+        @type mol_type:         str
+        @param res:             The Scientific Python residue object.
+        @type res:              Scientific Python residue instance
+        @return:                A tuple of information about the bonded atom.
+        @rtype:                 tuple consisting of the atom number (int), atom name (str), element
+                                name (str), and atomic position (array of len 3, or list of arrays)
+        """
+
+        # Init.
+        bonded_found = False
+
+        # The attached atom is in the residue.
+        if attached_atom in res.atoms:
+            # The bonded atom object.
+            bonded = res[attached_atom]
+
+            # The bonded atom info.
+            bonded_num = bonded.properties['serial_number']
+            bonded_name = bonded.name
+            element = bonded.properties['element']
+            pos = bonded.position.array
+
+            # The bonded atom has been found.
+            bonded_found = True
+
+        # Return the information.
+        if bonded_found:
+            return bonded_num, bonded_name, element, pos
+        else:
+            return None, None, None, None
+
+
     def __molecule_loop(self, struct, sel_obj=None):
         """Generator function for looping over molecules in the Scientific PDB data objects.
 
@@ -228,7 +267,7 @@ class Scientific_data(Base_struct_API):
 
 
     def attached_atom(self, atom_id=None, attached_atom=None, model=None):
-        """Find the atom corresponding to 'attached_atom' which is attached to the atom of 'atom_id'.
+        """Find the atom corresponding to 'attached_atom' which is bonded to the atom of 'atom_id'.
 
         @keyword atom_id:       The molecule, residue, and atom identifier string.  This must
                                 correspond to a single atom in the system.
@@ -239,8 +278,8 @@ class Scientific_data(Base_struct_API):
                                 supplied and multiple models exist, then the returned atomic
                                 position will be a list of the positions in each model.
         @type model:            None or int
-        @return:                A tuple of information about the attached atom.
-        @rtype:                 tuple consisting of the atom number (int), atom name(str), element
+        @return:                A tuple of information about the bonded atom.
+        @rtype:                 tuple consisting of the atom number (int), atom name (str), element
                                 name (str), and atomic position (array of len 3, or list of arrays)
         """
 
@@ -265,8 +304,6 @@ class Scientific_data(Base_struct_API):
                         # Atom number, name, and position.
                         atom_num = atom.properties['serial_number']
                         atom_name = atom.name
-                        element = atom.properties['element']
-                        pos = atom.position.array
 
                         # Skip non-matching atoms.
                         if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol_name):
@@ -276,9 +313,22 @@ class Scientific_data(Base_struct_API):
                         if atom_found:
                             raise RelaxError, "The atom_id argument " + `atom_id` + " must correspond to a single atom."
 
-        # Return the atom info.
+                        # The atom has been found, so store some info.
+                        atom_found = True
+                        atom_num_match = atom_num
+                        atom_name_match = atom_name
+                        mol_type_match = mol_type
+                        res_match = res
+
+        # Found the atom.
         if atom_found:
-            return atom_num, atom_name, element, pos
+            # Find the atom bonded to this molecule/residue/atom.
+            bonded_num, bonded_name, element, pos = self.__find_bonded_atom(attached_atom, mol_type_match, res_match)
+
+            # Return the atom info.
+            return bonded_num, bonded_name, element, pos
+
+        # Nothing found.
         else:
             return None, None, None, None
 
