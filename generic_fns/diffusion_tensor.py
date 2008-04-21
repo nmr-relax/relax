@@ -858,12 +858,20 @@ def return_eigenvalues(run=None):
     return Dx, Dy, Dz
 
 
-def return_units(param):
+def return_units(param, spin_id=None):
     """Function for returning a string representing the parameters units.
 
     For example, the internal representation of tm is in seconds, whereas the external
     representation is in nanoseconds, therefore this function will return the string
     'nanoseconds' for tm.
+
+
+    @param param:       The name of the parameter to return the units for.
+    @type param:        str
+    @keyword spin_id:   The spin identification string.  This arg is unused.
+    @type spin_id:      None or str
+    @return:            The parameter units string.
+    @rtype:             str
     """
 
     # Get the object name.
@@ -874,11 +882,11 @@ def return_units(param):
         return 'ns'
 
     # Diso, Da, Dx, Dy, Dz, Dpar, Dper.
-    elif object_name in ['Diso', 'Da', 'Dx', 'Dy', 'Dz', 'Dpar', 'Dper']:
+    if object_name in ['Diso', 'Da', 'Dx', 'Dy', 'Dz', 'Dpar', 'Dper']:
         return '1e6 1/s'
 
     # Angles.
-    elif object_name in ['theta', 'phi', 'alpha', 'beta', 'gamma']:
+    if object_name in ['theta', 'phi', 'alpha', 'beta', 'gamma']:
         return 'deg'
 
 
