@@ -16,5 +16,8 @@ structure.vectors(proton='H')
 # Initialise a diffusion tensor.
 diffusion_tensor.init((1.698e7, 1.417e7, 67.174, -83.718), param_types=3)
 
+# Display the sequence.
+sequence.display()
+
 # Calculate the angles.
 angle_diff_frame()
