@@ -96,3 +96,57 @@ class PipeContainer(Prototype):
 
         # Return the text representation.
         return text
+
+
+    def is_empty(self):
+        """Method for testing if the data pipe is empty.
+
+        @return:    True if the data pipe is empty, False otherwise.
+        @rtype:     bool
+        """
+
+        # Is the molecule structure data object empty?
+        if not self.structure.is_empty():
+            return False
+
+        # Is the molecule/residue/spin data object empty?
+        if not self.mol.is_empty():
+            return False
+
+        # Tests for the initialised data.
+        if self.pipe_type != None:
+            return False
+        if self.hybrid_runs != {}:
+            return False
+        if self.chi != None:
+            return False
+        if self.iter != None:
+            return False
+        if self.f_count != None:
+            return False
+        if self.g_count != None:
+            return False
+        if self.h_count != None:
+            return False
+        if self.warning != None:
+            return False
+
+        # An object has been added to the container.
+        for name in dir(self):
+            # Skip the objects initialised in __init__().
+            if name == 'structure' or name == 'mol' or name == 'pipe_type' or name == 'hybrid_runs' or name == 'chi2' or name == 'iter' or name == 'f_count' or name == 'g_count' or name == 'h_count' or name == 'warning':
+                continue
+
+            # Skip the PipeContainer methods.
+            if name == 'is_empty':
+                continue
+
+            # Skip special objects.
+            if match("^__", name):
+                continue
+
+            # An object has been added.
+            return False
+
+        # The data pipe is empty.
+        return True
