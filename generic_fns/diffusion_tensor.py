@@ -574,11 +574,14 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     test_params(num_params)
 
 
-def map_bounds(run, param):
-    """The function for creating bounds for the mapping function."""
+def map_bounds(param):
+    """The function for creating bounds for the mapping function.
 
-    # Initialise.
-    run = run
+    @param param:   The name of the parameter to return the bounds for.
+    @type param:    str
+    @return:        The bounds for the parameter.
+    @rtype:         list of len 2 of floats
+    """
 
     # tm.
     if param == 'tm':
@@ -593,31 +596,31 @@ def map_bounds(run, param):
         return [-3.0/2.0 * 1e7, 3.0 * 1e7]
 
     # Dr.
-    elif param == 'Dr':
+    if param == 'Dr':
         return [0, 1]
 
     # Dratio.
-    elif param == 'Dratio':
+    if param == 'Dratio':
         return [1.0/3.0, 3.0]
 
     # theta.
-    elif param == 'theta':
+    if param == 'theta':
         return [0, pi]
 
     # phi.
-    elif param == 'phi':
+    if param == 'phi':
         return [0, 2*pi]
 
     # alpha.
-    elif param == 'alpha':
+    if param == 'alpha':
         return [0, 2*pi]
 
     # beta.
-    elif param == 'beta':
+    if param == 'beta':
         return [0, pi]
 
     # gamma.
-    elif param == 'gamma':
+    if param == 'gamma':
         return [0, 2*pi]
 
 
