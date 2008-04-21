@@ -141,6 +141,28 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
+    def attached_atom(self, atom_id=None, attached_atom=None, model=None):
+        """Prototype method stub for finding the atom 'attached_atom' bonded to the atom 'atom_id'.
+
+        @keyword atom_id:       The molecule, residue, and atom identifier string.  This must
+                                correspond to a single atom in the system.
+        @type atom_id:          str
+        @keyword attached_atom: The name of the attached atom to return.
+        @type attached_atom:    str
+        @keyword model:         The model to return the positional information from.  If not
+                                supplied and multiple models exist, then the returned atomic
+                                position will be a list of the positions in each model.
+        @type model:            None or int
+        @return:                A tuple of information about the bonded atom.
+        @rtype:                 tuple consisting of the atom number (int), atom name (str), element
+                                name (str), and atomic positions for each model (list of numpy
+                                arrays)
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
+
+
     def load_structures(self, file_path, model, verbosity=False):
         """Prototype method stub for loading structures from a file.
 
