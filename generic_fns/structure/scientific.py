@@ -26,7 +26,7 @@
 
 # Python module imports.
 from math import sqrt
-from numpy import dot, float64, zeros
+from numpy import array, dot, float64, zeros
 from warnings import warn
 
 # Scientific Python import.
@@ -63,7 +63,7 @@ class Scientific_data(Base_struct_API):
         @type res:              Scientific Python residue instance
         @return:                A tuple of information about the bonded atom.
         @rtype:                 tuple consisting of the atom number (int), atom name (str), element
-                                name (str), and atomic position (array of len 3, or list of arrays)
+                                name (str), and atomic position (Numeric array of len 3)
         """
 
         # Init.
@@ -280,17 +280,24 @@ class Scientific_data(Base_struct_API):
         @type model:            None or int
         @return:                A tuple of information about the bonded atom.
         @rtype:                 tuple consisting of the atom number (int), atom name (str), element
-                                name (str), and atomic position (array of len 3, or list of arrays)
+                                name (str), and atomic positions for each model (list of numpy
+                                arrays)
         """
 
         # Generate the selection object.
         sel_obj = Selection(atom_id)
 
-        # Init.
-        atom_found = False
+        # Initialise some objects.
+        bonded_num = None
+        bonded_name = None
+        element = None
+        pos_array = []
 
         # Loop over the models.
         for struct in self.structural_data:
+            # Init.
+            atom_found = False
+
             # Skip non-matching models.
             if model != None and model != struct.model:
                 continue
@@ -320,17 +327,16 @@ class Scientific_data(Base_struct_API):
                         mol_type_match = mol_type
                         res_match = res
 
-        # Found the atom.
-        if atom_found:
-            # Find the atom bonded to this molecule/residue/atom.
-            bonded_num, bonded_name, element, pos = self.__find_bonded_atom(attached_atom, mol_type_match, res_match)
+            # Found the atom.
+            if atom_found:
+                # Find the atom bonded to this model/molecule/residue/atom.
+                bonded_num, bonded_name, element, pos = self.__find_bonded_atom(attached_atom, mol_type_match, res_match)
 
-            # Return the atom info.
-            return bonded_num, bonded_name, element, pos
+                # Append the position to the position array (converting from a Numeric array to a numpy array).
+                pos_array.append(array(pos, float64))
 
-        # Nothing found.
-        else:
-            return None, None, None, None
+        # Return the atom info.
+        return bonded_num, bonded_name, element, pos_array
 
 
     def load_structures(self, file_path, model=None, verbosity=False):
