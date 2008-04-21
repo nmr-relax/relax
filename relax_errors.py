@@ -493,6 +493,14 @@ class RelaxInvalidSeqError(BaseError):
         if Debug:
             self.save_state()
 
+# The spins have not been loaded
+class RelaxSpinsNotLoadedError(BaseError):
+    def __init__(self, spin_id):
+        self.text = "The spin information for the spin " + `spin_id` + " has not yet been loaded, please use the structure.load_spins() user function."
+        if Debug:
+            self.save_state()
+
+
 
 
 # Relaxation data errors.
