@@ -31,7 +31,7 @@ from data import Data as relax_data_store
 from generic_fns.selection import exists_mol_res_spin_data, spin_loop
 from maths_fns.consistency_tests import Consistency
 from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
-from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError
+from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
 
 
 class Consistency_tests(Common_functions):
@@ -55,26 +55,33 @@ class Consistency_tests(Common_functions):
 
         # Test if the CSA, bond length, angle Theta and correlation time values have been set.
         for spin in spin_loop(spin_id):
-
             # Skip unselected spins.
             if not spin.select:
                 continue
 
-            # CSA value.
+            # Test if the CSA value has been set.
             if not hasattr(spin, 'csa') or spin.csa == None:
                 raise RelaxNoValueError, "CSA"
 
-            # Bond length value.
+            # Test if the bond length has been set.
             if not hasattr(spin, 'r') or spin.r == None:
                 raise RelaxNoValueError, "bond length"
 
-            # Angle Theta
+            # Test if the angle Theta has been set.
             if not hasattr(spin, 'orientation') or spin.orientation == None:
                 raise RelaxNoValueError, "angle Theta"
 
-            # Correlation time
+            # Test if the correlation time has been set.
             if not hasattr(spin, 'tc') or spin.tc == None:
                 raise RelaxNoValueError, "correlation time"
+
+            # Test if the spin type has been set.
+            if not hasattr(spin, 'heteronuc_type'):
+                raise RelaxSpinTypeError
+
+            # Test if the type attached proton has been set.
+            if not hasattr(spin, 'proton_type'):
+                raise RelaxProtonTypeError
 
         # Frequency index.
         if cdp.ct_frq not in cdp.frq:
