@@ -28,7 +28,7 @@ from warnings import warn
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns import pipes
-from generic_fns.selection import exists_mol_res_spin_data, spin_loop
+from generic_fns.selection import exists_mol_res_spin_data, generate_spin_id, spin_loop
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
 from relax_warnings import RelaxWarning
 
@@ -101,10 +101,16 @@ def spheroid_frame():
     cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Loop over the sequence.
-    for spin in spin_loop():
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # Test if the vector exists.
         if not hasattr(spin, 'xh_vect'):
-            warn(RelaxWarning("No angles could be calculated for residue '" + str(spin.num) + " " + str(spin.name) + "'."))
+            # Get the spin id string.
+            spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
+
+            # Throw a warning.
+            warn(RelaxWarning("No angles could be calculated for the spin " + `spin_id` + "."))
+
+            # Skip the spin.
             continue
 
         # Calculate alpha.
