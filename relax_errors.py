@@ -457,8 +457,11 @@ class RelaxNoSequenceError(BaseError):
 
 # The sequence already exists.
 class RelaxSequenceError(BaseError):
-    def __init__(self, pipe):
-        self.text = "The sequence data for the data pipe " + `pipe` + " already exists."
+    def __init__(self, pipe=None):
+        if pipe == None:
+            self.text = "The sequence data already exists."
+        else:
+            self.text = "The sequence data for the data pipe " + `pipe` + " already exists."
         if Debug:
             self.save_state()
 
