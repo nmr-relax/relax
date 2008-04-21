@@ -82,9 +82,9 @@ class Base_Map:
         # Specific function setup (for diffusion tensor parameters).
         for i in xrange(self.n):
             if self.diff_params[i]:
-                self.map_bounds[i] = self.relax.generic.diffusion_tensor.map_bounds
-                self.return_conversion_factor[i] = self.relax.generic.diffusion_tensor.return_conversion_factor
-                self.return_units[i] = self.relax.generic.diffusion_tensor.return_units
+                self.map_bounds[i] = diffusion_tensor.map_bounds
+                self.return_conversion_factor[i] = diffusion_tensor.return_conversion_factor
+                self.return_units[i] = diffusion_tensor.return_units
 
         # Points.
         if point != None:
