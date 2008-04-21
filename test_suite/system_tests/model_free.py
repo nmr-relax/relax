@@ -643,14 +643,11 @@ class Mf(TestCase):
         self.assertEqual(cdp.mol[0].res[1].spin[0].relax_error[0], 0.027749955318795365)
 
 
-    def test_read_results(self):
-        """The reading of model-free results using the user function results.read()."""
-
-        # Load the original state.
-        self.relax.interpreter._State.load(state='orig_state', dir_name=sys.path[-1] + '/test_suite/system_tests/data/model_free')
+    def test_read_results_1_2(self):
+        """Read a relax 1.2 model-free results file using the user function results.read()."""
 
         # Read the results.
-        self.relax.interpreter._Results.read(dir=sys.path[-1] + '/test_suite/system_tests/data/model_free')
+        self.relax.interpreter._Results.read(file='results_1.2', dir=sys.path[-1] + '/test_suite/system_tests/data/model_free')
 
         # Alias the current data pipe.
         cdp = relax_data_store[relax_data_store.current_pipe]
