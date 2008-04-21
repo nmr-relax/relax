@@ -35,7 +35,7 @@ from generic_fns.sequence import write_header, write_line
 from generic_fns.structure.scientific import Scientific_data
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPipeError, RelaxNoSequenceError, RelaxPdbError
 from relax_io import get_file_path
-from relax_warnings import RelaxNoPDBFileWarning, RelaxZeroVectorWarning
+from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
 
 
 
@@ -241,9 +241,14 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
         # The spin identification string.
         id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
 
+        # Test that the spin number and name are set (essential for the single atom identification).
+        if spin.num == None and spin.name == None:
+            warn(RelaxWarning("The spin num and name are not set for the spin " + `id` + "."))
+            continue
+
         # The XH vector already exists.
         if hasattr(spin, 'xh_vect'):
-            warn(RelaxWarning("The XH vector for the spin " + `id` + " already exists"))
+            warn(RelaxWarning("The XH vector for the spin " + `id` + " already exists."))
             continue
 
         # Get the bond info.
