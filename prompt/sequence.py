@@ -42,7 +42,7 @@ class Sequence:
         self.__relax__ = relax
 
 
-    def display(self, sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
+    def display(self, sep=None, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True):
         """Function for displaying sequences of molecules, residues, and/or spins.
 
         Keyword Arguments
