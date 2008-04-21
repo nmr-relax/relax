@@ -163,6 +163,26 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
+    def bond_vectors(self, atom_id=None, attached_atom=None, model=None):
+        """Prototype method stub for finding the bond vectors between 'attached_atom' and 'atom_id'.
+
+        @keyword atom_id:       The molecule, residue, and atom identifier string.  This must
+                                correspond to a single atom in the system.
+        @type atom_id:          str
+        @keyword attached_atom: The name of the bonded atom.
+        @type attached_atom:    str
+        @keyword model:         The model to return the vectors information from.  If not
+                                supplied and multiple models exist, then the returned data will
+                                contain the vectors for all models.
+        @type model:            None or int
+        @return:                The list of bond vectors for each model.
+        @rtype:                 list of numpy arrays
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
+
+
     def load_structures(self, file_path, model, verbosity=False):
         """Prototype method stub for loading structures from a file.
 
