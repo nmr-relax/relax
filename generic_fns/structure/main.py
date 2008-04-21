@@ -22,7 +22,7 @@
 
 # Python module imports.
 from math import sqrt
-from numpy import dot
+from numpy import dot, ndarray
 from os import F_OK, access
 import sys
 from warnings import warn
@@ -238,14 +238,32 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
         if not spin.select:
             continue
 
-        # The atom identification string.
-        atom_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
+        # The spin identification string.
+        spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
 
-        # Get the attached proton.
-        atom_num, atom_name, element, pos = cdp.structure.attached_atom(atom_id=atom_id, attached_atom=proton)
+        # The XH vector already exists.
+        if hasattr(spin, 'xh_vect'):
+            warn(RelaxWarning("The XH vector for the spin " + `spin_id` + " already exists"))
+            continue
+
+        # Get the attached proton info.
+        bonded_num, bonded_name, bonded_element, bonded_pos = cdp.structure.attached_atom(atom_id=spin_id, attached_atom=proton)
+
+        # No attached proton.
+        if (bonded_num, bonded_name, bonded_element, bonded_pos) == (None, None, None, None):
+            continue
+
+        # Convert the bonded_pos into a list if only a single model is being used.
+        if type(bonded_pos) == ndarray:
+            bonded_pos = [bonded_pos]
 
         # Print out.
-        print atom_num, atom_name, element, pos
+        print bonded_num, bonded_name, bonded_element, bonded_pos
+
+
+
+
+
 
     # Loop over all the structural data.
     first_model = None
