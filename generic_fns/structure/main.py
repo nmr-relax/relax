@@ -229,6 +229,9 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
         else:
             print "\nCalculating the unit XH vectors from the structure."
 
+    # Header print out.
+    write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+
     # Loop over the spins.
     for spin, mol_name, res_num, res_name in spin_loop(selection=spin_id, full_info=True):
         # Skip deselected spins.
@@ -241,6 +244,8 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
         # Get the attached proton.
         atom_num, atom_name, element, pos = cdp.structure.attached_atom(atom_id=atom_id, attached_atom=proton)
 
+        # Print out.
+        print atom_num, atom_name, element, pos
 
     # Loop over all the structural data.
     first_model = None
@@ -311,9 +316,6 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
             spin.xh_vect = vector
         else:
             spin.xh_vect = spin.xh_vect + vector
-
-    # Header print out.
-    write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
 
     # Loop over all the modified spins.
     for spin_id in spin_list:
