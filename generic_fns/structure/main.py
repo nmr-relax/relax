@@ -22,7 +22,7 @@
 
 # Python module imports.
 from math import sqrt
-from numpy import dot, ndarray
+from numpy import dot, float64, ndarray, zeros
 from os import F_OK, access
 import sys
 from warnings import warn
@@ -225,9 +225,9 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
     # Print out.
     if verbosity:
         if cdp.structure.num_models() > 1:
-            print "\nCalculating and averaging the unit XH vectors from all structures."
+            print "\nCalculating and averaging the following unit XH vectors from all models:"
         else:
-            print "\nCalculating the unit XH vectors from the structure."
+            print "\nCalculating the following unit XH vectors from the structure:"
 
     # Header print out.
     write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
@@ -253,91 +253,36 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
         if not bond_vectors:
             continue
 
-        # Print out.
-        print bond_vectors
-
-
-
-
-
-
-    # Loop over all the structural data.
-    first_model = None
-    spin_list = []
-    for atom in cdp.structure.atom_loop(atom_id=spin_id, model_num_flag=True, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
-        # Unpack the data.
-        model_num, mol_name, res_num, res_name, atom_num, atom_name, element, pos = atom
-
-        # The spin identification string.
-        spin_id = generate_spin_id(mol_name, res_num, res_name, atom_num, atom_name)
-
-        # Get the corresponding spin.
-        spin = return_spin(selection=spin_id)
-
-        # Proton name does not match, so skip the atom.
-        if proton != atom_name:
-            continue
-
-        # No matching spin, so skip the atom.
-        if not spin:
-            continue
-
-        # Skip deselected spins.
-        if not spin.select:
-            continue
-
-        # The first model.
-        if first_model == None:
-            first_model = model_num
-
-        # The XH vector already exists.
-        if first_model == model_num and hasattr(spin, 'xh_vect'):
-            warn(RelaxWarning("The XH vector for the spin " + `spin_id` + " already exists"))
-            continue
-
-        # Store the spin_id.
-        if first_model == model_num:
-            spin_list.append(spin_id)
-
         # Set the attached proton name.
         if not hasattr(spin, 'attached_proton'):
             spin.attached_proton = proton
         elif spin.attached_proton != proton:
             raise RelaxError, "The attached proton " + `spin.attached_proton` + " does not match the proton argument " + `proton` + "."
 
-        # Set the heteronucleus and proton positions.
-        posX = spin.pos
-        posH = pos
+        # Loop over the individual vectors.
+        ave_vector = zeros(3, float64)
+        for vector in bond_vectors:
+            # Unit vector.
+            if unit:
+                # Normalisation factor.
+                norm_factor = sqrt(dot(vector, vector))
 
-        # Calculate the XH bond vector.
-        vector = posH - posX
+                # Test for zero length.
+                if norm_factor == 0.0:
+                    warn(RelaxZeroVectorWarning(spin_id))
 
-        # Unit vector.
-        if unit:
-            # Normalisation factor.
-            norm_factor = sqrt(dot(vector, vector))
+                # Calculate the normalised vector.
+                else:
+                    vector = vector / norm_factor
 
-            # Test for zero length.
-            if norm_factor == 0.0:
-                warn(RelaxZeroVectorWarning(spin_id))
+            # Sum the vectors.
+            ave_vector = ave_vector + vector
 
-            # Calculate the normalised vector.
-            else:
-                vector = vector / norm_factor
+        # Average.
+        ave_vector = ave_vector / float(len(bond_vectors))
 
-        # Set the vector and deselect the spin if the vector doesn't exist.
-        if not hasattr(spin, 'xh_vect'):
-            spin.xh_vect = vector
-        else:
-            spin.xh_vect = spin.xh_vect + vector
-
-    # Loop over all the modified spins.
-    for spin_id in spin_list:
-        # Get the spin.
-        mol_name, res_num, res_name, spin = return_spin(selection=spin_id, full_info=True)
+        # Set the vector.
+        spin.xh_vect = ave_vector
 
         # Print out of modified spins.
-        write_line(sys.stdout, mol_name, res_num, res_name, atom_num, atom_name, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
-
-        # Average the XH vectors for all models.
-        spin.xh_vect = spin.xh_vect / cdp.structure.num_models()
+        write_line(sys.stdout, mol_name, res_num, res_name, spin.num, spin.name, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
