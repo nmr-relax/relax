@@ -22,7 +22,7 @@
 
 # Python module imports.
 import sys
-from numpy import array
+from numpy import fromstring
 from unittest import TestCase
 
 # relax module imports.
@@ -290,7 +290,7 @@ class Test_scientific(TestCase):
             self.assertEqual(spin_num, 163)
             self.assertEqual(spin_name, 'OE1')
             self.assertEqual(element, 'O')
-            self.assertEqual(pos, array([10.055, -2.740, -13.193]))
+            self.assertEqual(pos.tostring(), '\\\x8f\xc2\xf5(\x1c$@\xecQ\xb8\x1e\x85\xeb\x05\xc0\x89A`\xe5\xd0b*\xc0')
 
             # Increment the atom count.
             atom_count = atom_count + 1
