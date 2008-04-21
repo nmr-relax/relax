@@ -97,7 +97,7 @@ class Base_Map:
         self.bounds = zeros((self.n, 2), float64)
         for i in xrange(self.n):
             # Get the bounds for the parameter i.
-            bounds = self.map_bounds[i](self.param_names[i], self.spin_id)
+            bounds = self.map_bounds[i](self.param_names[i])
 
             # No bounds found.
             if not bounds:
