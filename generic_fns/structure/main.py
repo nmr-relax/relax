@@ -246,15 +246,15 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
             warn(RelaxWarning("The XH vector for the spin " + `spin_id` + " already exists"))
             continue
 
-        # Get the attached proton info.
-        bonded_num, bonded_name, bonded_element, bonded_pos = cdp.structure.attached_atom(atom_id=spin_id, attached_atom=proton)
+        # Get the bond info.
+        bond_vectors = cdp.structure.bond_vectors(atom_id=spin_id, attached_atom=proton)
 
         # No attached proton.
-        if (bonded_num, bonded_name, bonded_element) == (None, None, None):
+        if not bond_vectors:
             continue
 
         # Print out.
-        print bonded_num, bonded_name, bonded_element, bonded_pos
+        print bond_vectors
 
 
 
