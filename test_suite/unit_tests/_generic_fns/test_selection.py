@@ -319,6 +319,37 @@ class Test_selection(TestCase):
         self.assert_((cdp.mol[1], cdp.mol[1].res[1], cdp.mol[1].res[1].spin[1]) not in obj)
 
 
+    def test_Selection_memory(self):
+        """Test that the Selection object has no memory of previous selections."""
+
+        # The original Selection object.
+        obj = selection.Selection(":1&:Glu@16&@N")
+
+        # The new Selection object.
+        obj = selection.Selection(":13&:Pro")
+
+        # Test the highest level object.
+        self.assertEqual(obj._union, None)
+        self.assertNotEqual(obj._intersect, None)
+        self.assertEqual(obj.molecules, [])
+        self.assertEqual(obj.residues, [])
+        self.assertEqual(obj.spins, [])
+
+        # Test the 1st intersection.
+        self.assertEqual(obj._intersect[0]._union, None)
+        self.assertEqual(obj._intersect[0]._intersect, None)
+        self.assertEqual(obj._intersect[0].molecules, [])
+        self.assertEqual(obj._intersect[0].residues, [13])
+        self.assertEqual(obj._intersect[0].spins, [])
+
+        # Test the 2nd intersection.
+        self.assertEqual(obj._intersect[1]._union, None)
+        self.assertEqual(obj._intersect[1]._intersect, None)
+        self.assertEqual(obj._intersect[1].molecules, [])
+        self.assertEqual(obj._intersect[1].residues, ['Pro'])
+        self.assertEqual(obj._intersect[1].spins, [])
+
+
     def test_count_spins(self):
         """Test that the number of spins can be properly counted.
 
