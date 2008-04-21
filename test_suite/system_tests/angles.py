@@ -98,10 +98,10 @@ class Angles(TestCase):
 
                 # The XH vector.
                 for j in xrange(3):
-                    self.assertEqual(cdp.mol[0].res[i].spin[0].xh_vect[j], xh_vects[i][j])
+                    self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].xh_vect[j], xh_vects[i][j])
 
                 # Check the alpha angles.
-                self.assertEqual(cdp.mol[0].res[i].spin[0].alpha, alpha[i])
+                self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].alpha, alpha[i])
 
             # No angles calculated.
             else:
