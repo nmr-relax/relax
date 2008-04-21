@@ -680,11 +680,19 @@ def map_labels(run, index, params, bounds, swap, inc):
     return labels, tick_locations, tick_values
 
 
-def return_conversion_factor(param):
+def return_conversion_factor(param, spin_id=None):
     """Function for returning the factor of conversion between different parameter units.
 
     For example, the internal representation of tm is in seconds, whereas the external
     representation is in nanoseconds, therefore this function will return 1e-9 for tm.
+
+
+    @param param:       The name of the parameter to return the conversion factor for.
+    @type param:        str
+    @keyword spin_id:   The spin identification string.  This arg is unused.
+    @type spin_id:      None or str
+    @return:            The conversion factor.
+    @rtype:             float
     """
 
     # Get the object name.
@@ -695,16 +703,15 @@ def return_conversion_factor(param):
         return 1e-9
 
     # Diso, Da, Dx, Dy, Dz, Dpar, Dper.
-    elif object_name in ['Diso', 'Da', 'Dx', 'Dy', 'Dz', 'Dpar', 'Dper']:
+    if object_name in ['Diso', 'Da', 'Dx', 'Dy', 'Dz', 'Dpar', 'Dper']:
         return 1e6
 
     # Angles.
-    elif object_name in ['theta', 'phi', 'alpha', 'beta', 'gamma']:
+    if object_name in ['theta', 'phi', 'alpha', 'beta', 'gamma']:
         return (2.0*pi) / 360.0
 
     # No conversion factor.
-    else:
-        return 1.0
+    return 1.0
 
 
 def return_data_name(name):
