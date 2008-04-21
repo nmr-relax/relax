@@ -250,12 +250,8 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
         bonded_num, bonded_name, bonded_element, bonded_pos = cdp.structure.attached_atom(atom_id=spin_id, attached_atom=proton)
 
         # No attached proton.
-        if (bonded_num, bonded_name, bonded_element, bonded_pos) == (None, None, None, None):
+        if (bonded_num, bonded_name, bonded_element) == (None, None, None):
             continue
-
-        # Convert the bonded_pos into a list if only a single model is being used.
-        if type(bonded_pos) == ndarray:
-            bonded_pos = [bonded_pos]
 
         # Print out.
         print bonded_num, bonded_name, bonded_element, bonded_pos
