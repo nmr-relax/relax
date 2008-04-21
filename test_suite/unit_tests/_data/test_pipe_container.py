@@ -49,10 +49,10 @@ class Test_pipe_container(TestCase):
 
         # Reset the data pipe, and modify an object.
         self.setUp()
-        self.data_pipe.pipe_type = 'mf'
-        self.assert_(not self.data_pipe.is_empty())
-
-        # Reset the data pipe, and modify another object.
-        self.setUp()
         self.data_pipe.mol[0].name = 'Ap4Aase'
         self.assert_(not self.data_pipe.is_empty())
+
+        # The pipe type can be set in the empty data pipe.
+        self.setUp()
+        self.data_pipe.pipe_type = 'mf'
+        self.assert_(self.data_pipe.is_empty())
