@@ -132,40 +132,63 @@ def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, 
     mol_index = 0
     res_index = 0
 
+    # Header print out.
+    write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+
     # Fill the molecule-residue-spin data.
     for i in xrange(len(file_data)):
+        # The spin info.
+        mol_name = None
+        res_num = None
+        res_name = None
+        spin_num = None
+        spin_name = None
+        if mol_name_col != None:
+            mol_name = file_data[i][mol_name_col]
+        if res_num_col != None:
+            res_num = int(file_data[i][res_num_col])
+        if res_name_col != None:
+            res_name = file_data[i][res_name_col]
+        if spin_num_col != None:
+            spin_num = int(file_data[i][spin_num_col])
+        if spin_name_col != None:
+            spin_name = file_data[i][spin_name_col]
+
         # A new molecule.
-        if mol_name_col and cdp.mol[mol_index].name != file_data[i][mol_name_col]:
+        if mol_name_col != None and cdp.mol[mol_index].name != mol_name:
             # Replace the first empty molecule.
             if mol_index == 0 and cdp.mol[0].name == None:
-                cdp.mol[0].name = file_data[i][mol_name_col]
+                cdp.mol[0].name = mol_name
 
             # Create a new molecule.
             else:
                 # Add the molecule.
-                cdp.mol.add_item(mol_name=file_data[i][mol_name_col])
+                cdp.mol.add_item(mol_name=mol_name)
 
                 # Increment the molecule index.
                 mol_index = mol_index + 1
 
         # A new residue.
-        if res_name_col and cdp.mol[mol_index].res[res_index].num != file_data[i][res_num_col]:
+        if res_name_col != None and cdp.mol[mol_index].res[res_index].num != res_num:
             # Replace the first empty residue.
             if res_index == 0 and cdp.mol[mol_index].res[0].name == None:
-                cdp.mol[mol_index].res[0].name = file_data[i][res_name_col]
-                cdp.mol[mol_index].res[0].num = int(file_data[i][res_num_col])
+                cdp.mol[mol_index].res[0].name = res_name
+                cdp.mol[mol_index].res[0].num = res_num
 
             # Create a new residue.
             else:
                 # Add the residue.
-                cdp.mol[mol_index].res.add_item(res_name=file_data[i][res_name_col], res_num=int(file_data[i][res_num_col]))
+                cdp.mol[mol_index].res.add_item(res_name=res_name, res_num=res_num)
 
                 # Increment the residue index.
                 res_index = res_index + 1
 
         # A new spin.
-        if spin_num_col:
-            cdp.mol[mol_index].res[res_index].spin.add_item(spin_name=file_data[i][spin_name_col], spin_num=int(file_data[i][spin_num_col]))
+        if spin_num_col != None:
+            cdp.mol[mol_index].res[res_index].spin.add_item(spin_name=spin_name, spin_num=spin_num)
+
+        # Print out of all the spins.
+        write_line(sys.stdout, mol_name, res_num, res_name, spin_num, spin_name, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
 
 
 def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None):
