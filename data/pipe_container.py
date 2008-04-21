@@ -118,7 +118,7 @@ class PipeContainer(Prototype):
             return False
         if self.hybrid_runs != {}:
             return False
-        if self.chi != None:
+        if self.chi2 != None:
             return False
         if self.iter != None:
             return False
