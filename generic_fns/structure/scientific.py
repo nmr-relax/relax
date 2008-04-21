@@ -40,7 +40,7 @@ except ImportError:
 from api_base import Base_struct_API
 from data import Data as relax_data_store
 from generic_fns.selection import Selection, parse_token, tokenise, wildcard_match
-from relax_errors import RelaxNoPdbChainError, RelaxNoResError, RelaxPdbLoadError
+from relax_errors import RelaxError, RelaxNoPdbChainError, RelaxNoResError, RelaxPdbLoadError
 from relax_warnings import RelaxNoAtomWarning, RelaxZeroVectorWarning
 
 
