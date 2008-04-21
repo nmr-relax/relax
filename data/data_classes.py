@@ -46,6 +46,30 @@ class Element:
         return text
 
 
+    def is_empty(self):
+        """Method for testing if the Element container is empty.
+
+        @return:    True if the Element container is empty, False otherwise.
+        @rtype:     bool
+        """
+
+        # An object has been added to the container.
+        for name in dir(self):
+            # Skip the Element methods.
+            if name == 'is_empty':
+                continue
+
+            # Skip special objects.
+            if match("^__", name):
+                continue
+
+            # An object has been added.
+            return False
+
+        # The Element container is empty.
+        return True
+
+
 
 # Residue specific data.
 ########################
