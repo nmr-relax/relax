@@ -80,6 +80,22 @@ class _RelaxTestResult(_TextTestResult):
         self.errors[-1] = (self.errors[-1][0], self.capt_stdout.getvalue() + self.errors[-1][1])
 
 
+    def addFailure(self, test, err):
+        """Override of the TestResult.addFailure() method.
+
+        The STDOUT captured text is prepended to the error text here.
+        """
+
+        # Execute the normal addFailure method.
+        _TextTestResult.addFailure(self, test, err)
+
+        # Prepend STDERR to the second element of the tuple.
+        self.failures[-1] = (self.failures[-1][0], self.capt_stderr.getvalue() + self.failures[-1][1])
+
+        # Prepend STDOUT to the second element of the tuple.
+        self.failures[-1] = (self.failures[-1][0], self.capt_stdout.getvalue() + self.failures[-1][1])
+
+
 
 
 class RelaxTestRunner(TextTestRunner):
