@@ -25,12 +25,12 @@ from re import search
 from string import replace
 
 # relax module imports.
-from data import Data as relax_data_store
 from base_class import Common_functions
+from data import Data as relax_data_store
 from generic_fns.selection import exists_mol_res_spin_data, spin_loop
 from maths_fns.jw_mapping import Mapping
-from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError, RelaxNucleusError, RelaxParamSetError, RelaxProtonTypeError, RelaxSpinTypeError
 from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
+from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError, RelaxNucleusError, RelaxParamSetError, RelaxProtonTypeError, RelaxSpinTypeError
 
 
 class Jw_mapping(Common_functions):
