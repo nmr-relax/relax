@@ -43,7 +43,7 @@ def format(message, category, filename, lineno):
 
     # Add the text 'RelaxWarning: ' to the start of the warning message.
     #if issubclass(category, BaseWarning):
-    message = "RelaxWarning: %s\n\n" % message
+    message = "RelaxWarning: %s\n" % message
 
     # Print stack-trace in debug mode.
     if Debug:
