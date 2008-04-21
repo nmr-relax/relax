@@ -113,9 +113,7 @@ class PipeContainer(Prototype):
         if not self.mol.is_empty():
             return False
 
-        # Tests for the initialised data.
-        if self.pipe_type != None:
-            return False
+        # Tests for the initialised data (the pipe type can be set in an empty data pipe, so this isn't checked).
         if self.hybrid_runs != {}:
             return False
         if self.chi2 != None:
