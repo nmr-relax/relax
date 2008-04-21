@@ -574,13 +574,15 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     test_params(num_params)
 
 
-def map_bounds(param):
+def map_bounds(param, spin_id=None):
     """The function for creating bounds for the mapping function.
 
-    @param param:   The name of the parameter to return the bounds for.
-    @type param:    str
-    @return:        The bounds for the parameter.
-    @rtype:         list of len 2 of floats
+    @param param:       The name of the parameter to return the bounds for.
+    @type param:        str
+    @keyword spin_id:   The spin identification string.  This arg is unused.
+    @type spin_id:      None or str
+    @return:            The bounds for the parameter.
+    @rtype:             list of len 2 of floats
     """
 
     # tm.
