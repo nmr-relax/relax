@@ -339,6 +339,80 @@ class Scientific_data(Base_struct_API):
         return bonded_num, bonded_name, element, pos_array
 
 
+    def bond_vectors(self, atom_id=None, attached_atom=None, model=None):
+        """Find the bond vectors between the atoms of 'attached_atom' and 'atom_id'.
+
+        @keyword atom_id:       The molecule, residue, and atom identifier string.  This must
+                                correspond to a single atom in the system.
+        @type atom_id:          str
+        @keyword attached_atom: The name of the bonded atom.
+        @type attached_atom:    str
+        @keyword model:         The model to return the vectors information from.  If not
+                                supplied and multiple models exist, then the returned data will
+                                contain the vectors for all models.
+        @type model:            None or int
+        @return:                The list of bond vectors for each model.
+        @rtype:                 list of numpy arrays
+        """
+
+        # Generate the selection object.
+        sel_obj = Selection(atom_id)
+
+        # Initialise some objects.
+        vectors = []
+
+        # Loop over the models.
+        for struct in self.structural_data:
+            # Init.
+            atom_found = False
+
+            # Skip non-matching models.
+            if model != None and model != struct.model:
+                continue
+
+            # Loop over each individual molecule.
+            for mol, mol_name, mol_type in self.__molecule_loop(struct, sel_obj):
+                # Loop over the residues of the protein in the PDB file.
+                for res, res_num, res_name in self.__residue_loop(mol, mol_type, sel_obj):
+                    # Loop over the atoms of the residue.
+                    for atom in res:
+                        # Atom number, name, and position.
+                        atom_num = atom.properties['serial_number']
+                        atom_name = atom.name
+
+                        # Skip non-matching atoms.
+                        if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol_name):
+                            continue
+
+                        # More than one matching atom!
+                        if atom_found:
+                            raise RelaxError, "The atom_id argument " + `atom_id` + " must correspond to a single atom."
+
+                        # The atom has been found, so store some info.
+                        atom_found = True
+                        pos_match = atom.position.array
+                        mol_type_match = mol_type
+                        res_match = res
+
+            # Found the atom.
+            if atom_found:
+                # Find the atom bonded to this model/molecule/residue/atom.
+                bonded_num, bonded_name, element, pos = self.__find_bonded_atom(attached_atom, mol_type_match, res_match)
+
+                # No bonded atom.
+                if (bonded_num, bonded_name, element) == (None, None, None):
+                    continue
+
+                # The bond vector.
+                vector = pos - pos_match
+
+                # Append the vector to the vectors array (converting from a Numeric array to a numpy array).
+                vectors.append(array(vector, float64))
+
+        # Return the bond vectors.
+        return vectors
+
+
     def load_structures(self, file_path, model=None, verbosity=False):
         """Function for loading the structures from the PDB file.
 
