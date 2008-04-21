@@ -66,7 +66,7 @@ class Sequence:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "sequence.display("
             text = text + "sep=" + `sep`
-            text = text + "mol_name_flag=" + `mol_name_flag`
+            text = text + ", mol_name_flag=" + `mol_name_flag`
             text = text + ", res_num_flag=" + `res_num_flag`
             text = text + ", res_name_flag=" + `res_name_flag`
             text = text + ", spin_num_flag=" + `spin_num_flag`
