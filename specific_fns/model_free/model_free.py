@@ -2396,11 +2396,15 @@ class Model_free_main:
         self.relax.specific.relax_data.add_residue(run=self.run, res_index=self.res_index, ri_labels=self.ri_labels, remap_table=self.remap_table, frq_labels=self.frq_labels, frq=self.frq, values=values, errors=errors, sim=sim)
 
 
-    def read_columnar_results(self, run, file_data, verbosity=1):
-        """Function for reading the results file."""
+    def read_columnar_results(self, file_data, verbosity=1):
+        """Function for reading the results file.
 
-        # Arguments.
-        self.run = run
+        @param file_data:   The processed results file data.
+        @type file_data:    list of lists of str
+        @keyword verbosity: A flag specifying the amount of information to print.  The higher the
+                            value, the greater the verbosity.
+        @type verbosity:    int
+        """
 
         # Extract and remove the header.
         header = file_data[0]
