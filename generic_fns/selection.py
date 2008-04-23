@@ -283,7 +283,7 @@ class Selection(object):
             return self._intersect[0].contains_mol(mol) and self._intersect[1].contains_mol(mol)
 
         # The check.
-        if mol in self.molecules:
+        if wildcard_match(mol, self.molecules):
             return True
 
         # Nothingness.
@@ -323,7 +323,7 @@ class Selection(object):
         select_res = False
 
         # The residue checks.
-        if res_num in self.residues or res_name in self.residues:
+        if res_num in self.residues or wildcard_match(res_name, self.residues):
             select_res = True
 
         # Nothingness.
@@ -370,7 +370,7 @@ class Selection(object):
         select_spin = False
 
         # The spin checks.
-        if spin_num in self.spins or spin_name in self.spins:
+        if spin_num in self.spins or wildcard_match(spin_name, self.spins):
             select_spin = True
 
         # Nothingness.
