@@ -1637,7 +1637,10 @@ class Test_selection(TestCase):
             self.assertEqual(sel[i].num, numbers[i])
 
 
-    def test_boolean_parenthesis_selection(self):
+    ######################################################
+    # Test disabled until this functionality is enabled. #
+    ######################################################
+    def xxx_test_boolean_parenthesis_selection(self):
         """Test complex boolean mol-res-spin selections with parenthesis."""
 
         # The selection loop:
