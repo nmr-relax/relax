@@ -273,7 +273,7 @@ class Test_scientific(TestCase):
         self.assertEqual(atom_count, 11)
 
 
-    def test_atom_loop_spin_selection1(self):
+    def test_atom_loop_spin_selection2(self):
         """Test the Scientific_data.atom_loop() method with the '@163' spin selection."""
 
         # Load the PDB file.
