@@ -37,6 +37,12 @@ class Test_pipe_container(TestCase):
         self.data_pipe = PipeContainer()
 
 
+    def tearDown(self):
+        """Delete the data pipe."""
+
+        del self.data_pipe
+
+
     def test_PipeContainer_printout(self):
         """Print out the contents of a data pipe, (testing the PipeContainer.__repr__() method)."""
 
