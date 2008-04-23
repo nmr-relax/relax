@@ -87,6 +87,10 @@ class PipeContainer(Prototype):
             if name == 'structure':
                 text = text + "  structure: The 3D molecular data object\n"
 
+            # Skip the PipeContainer methods.
+            if name == 'is_empty':
+                continue
+
             # Skip certain objects.
             if match("^_", name) or name in spec_obj:
                 continue
