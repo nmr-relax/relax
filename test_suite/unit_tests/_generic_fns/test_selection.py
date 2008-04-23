@@ -300,6 +300,76 @@ class Test_selection(TestCase):
         self.assert_(not obj.contains_res(mol='RNA'))
 
 
+    def test_Selection_contains_spin1(self):
+        """The Selection object "#Ap4Aase:Glu | #RNA@C8" does not contain the spin 'C8' (without the mol name)."""
+
+        # The Selection object.
+        obj = selection.Selection("#Ap4Aase:Glu | #RNA@C8")
+
+        # Check if the molecule is in the selection.
+        self.assert_(not obj.contains_spin(spin_name='C8'))
+
+
+    def test_Selection_contains_spin2(self):
+        """The Selection object "#Ap4Aase:Glu | #RNA@C8" contains the spin 'C8' of the mol 'RNA'."""
+
+        # The Selection object.
+        obj = selection.Selection("#Ap4Aase:Glu | #RNA@C8")
+
+        # Check if the molecule is in the selection.
+        self.assert_(obj.contains_spin(spin_name='C8', mol='RNA'))
+
+
+    def test_Selection_contains_spin3(self):
+        """The Selection object "#Ap4Aase:Glu & #RNA@C8" does not contain the spin 'C8'."""
+
+        # The Selection object.
+        obj = selection.Selection("#Ap4Aase:Glu & #RNA@C8")
+
+        # Check if the molecule is in the selection.
+        self.assert_(not obj.contains_spin(spin_name='C8'))
+
+
+    def test_Selection_contains_spin4(self):
+        """The Selection object "#Ap4Aase:Glu | #RNA@C8" does not contain the spin 'N3'."""
+
+        # The Selection object.
+        obj = selection.Selection("#Ap4Aase:Glu | #RNA@C8")
+
+        # Check if the molecule is in the selection.
+        self.assert_(not obj.contains_spin(spin_name='N3'))
+
+
+    def test_Selection_contains_spin5(self):
+        """The Selection object "#Ap4Aase:Glu | #RNA:14@C8" does not contain the spin None."""
+
+        # The Selection object.
+        obj = selection.Selection("#Ap4Aase:Glu | #RNA:14@C8")
+
+        # Check if the molecule is in the selection.
+        self.assert_(not obj.contains_spin())
+
+
+    def test_Selection_contains_spin6(self):
+        """The Selection object "#Ap4Aase" does contains the spin None."""
+
+        # The Selection object.
+        obj = selection.Selection("#Ap4Aase")
+
+        # Check if the molecule is in the selection.
+        self.assert_(obj.contains_spin(mol='Ap4Aase'))
+
+
+    def test_Selection_contains_spin7(self):
+        """The Selection object "#Ap4Aase" does not contain the spin None of the mol 'RNA'."""
+
+        # The Selection object.
+        obj = selection.Selection("#Ap4Aase")
+
+        # Check if the molecule is in the selection.
+        self.assert_(not obj.contains_spin(mol='RNA'))
+
+
     def test_Selection_full_spin_id(self):
         """Test the Selection object for the single spin identifier '#Ap4Aase:2&:Glu@63&@NH'."""
 
