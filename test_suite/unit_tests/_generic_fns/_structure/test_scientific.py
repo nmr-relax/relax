@@ -262,15 +262,15 @@ class Test_scientific(TestCase):
 
         # Loop over the atoms.
         atom_count = 0
-        for spin_name in self.data.atom_loop(atom_id='@CA', spin_name_flag=True):
+        for spin_name in self.data.atom_loop(atom_id='@CA', atom_name_flag=True):
             # Test the spin name.
-            self.assertEqual(spin_name, 'CA')
+            self.assertEqual(spin_name[0], 'CA')
 
             # Increment the atom count.
             atom_count = atom_count + 1
 
         # Test the number of atoms looped over.
-        self.assertEqual(atom_count, 11)
+        self.assertEqual(atom_count, 12)
 
 
     def test_atom_loop_spin_selection2(self):
