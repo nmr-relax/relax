@@ -141,18 +141,6 @@ class SpinList(list):
     def add_item(self, spin_name=None, spin_num=None, select=True):
         """Function for appending an empty container to the list."""
 
-        # Test if the spin number (or name if unnumbered) already exists.
-        for i in xrange(len(self)):
-            # Spin number has been supplied.
-            if spin_num != None:
-                if self[i].num == spin_num:
-                    raise RelaxError, "The spin number '" + `spin_num` + "' already exists."
-
-            # No spin numbers.
-            else:
-                if self[i].name == spin_name:
-                    raise RelaxError, "The unnumbered spin name '" + `spin_name` + "' already exists."
-
         # If no spin data exists, replace the empty first spin with this spin.
         if self.is_empty():
             self[0].num = spin_num
@@ -161,6 +149,19 @@ class SpinList(list):
 
         # Otherwise append a new SpinContainer.
         else:
+            # Test if the spin number (or name if unnumbered) already exists.
+            for i in xrange(len(self)):
+                # Spin number has been supplied.
+                if spin_num != None:
+                    if self[i].num == spin_num:
+                        raise RelaxError, "The spin number '" + `spin_num` + "' already exists."
+
+                # No spin numbers.
+                else:
+                    if self[i].name == spin_name:
+                        raise RelaxError, "The unnumbered spin name '" + `spin_name` + "' already exists."
+
+            # Append a new SpinContainer.
             self.append(SpinContainer(spin_name, spin_num, select))
 
 
@@ -301,26 +302,27 @@ class ResidueList(list):
     def add_item(self, res_name=None, res_num=None, select=True):
         """Append an empty ResidueContainer to the ResidueList."""
 
-        # Test if the residue number (or name if unnumbered) already exists.
-        for i in xrange(len(self)):
-            # Residue number has been supplied.
-            if res_num != None:
-                if self[i].num == res_num:
-                    raise RelaxError, "The residue number '" + `res_num` + "' already exists in the sequence."
-
-            # No residue numbers.
-            else:
-                if self[i].name == res_name:
-                    raise RelaxError, "The unnumbered residue name '" + `res_name` + "' already exists."
-
         # If no residue data exists, replace the empty first residue with this residue.
         if self.is_empty():
             self[0].num = res_num
             self[0].name = res_name
             self[0].select = select
 
-        # Append a new ResidueContainer.
+        # Otherwise append a new ResidueContainer.
         else:
+            # Test if the residue number (or name if unnumbered) already exists.
+            for i in xrange(len(self)):
+                # Residue number has been supplied.
+                if res_num != None:
+                    if self[i].num == res_num:
+                        raise RelaxError, "The residue number '" + `res_num` + "' already exists in the sequence."
+
+                # No residue numbers.
+                else:
+                    if self[i].name == res_name:
+                        raise RelaxError, "The unnumbered residue name '" + `res_name` + "' already exists."
+
+            # Append a new ResidueContainer.
             self.append(ResidueContainer(res_name, res_num, select))
 
 
@@ -456,11 +458,6 @@ class MoleculeList(list):
     def add_item(self, mol_name=None, select=True):
         """Append an empty MoleculeContainer to the MoleculeList."""
 
-        # Test if the molecule name already exists.
-        for i in xrange(len(self)):
-            if self[i].name == mol_name:
-                raise RelaxError, "The molecule '" + `mol_name` + "' already exists in the sequence."
-
         # If no molecule data exists, replace the empty first molecule with this molecule (just a renaming).
         if self.is_empty():
             self[0].name = mol_name
@@ -468,6 +465,12 @@ class MoleculeList(list):
 
         # Otherwise append an empty MoleculeContainer.
         else:
+            # Test if the molecule name already exists.
+            for i in xrange(len(self)):
+                if self[i].name == mol_name:
+                    raise RelaxError, "The molecule '" + `mol_name` + "' already exists in the sequence."
+
+            # Append an empty MoleculeContainer.
             self.append(MoleculeContainer(mol_name, select))
 
 
