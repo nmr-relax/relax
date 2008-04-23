@@ -1635,7 +1635,7 @@ def tokenise(selection):
 
 
 def wildcard_match(id, patterns):
-    """Determine if the id is in the list of patterns, allowing for regular expressions.
+    """Determine if id is in the list of patterns, or vice versa, allowing for regular expressions.
 
     This method converts from relax's RE syntax to that of the re python module.
 
@@ -1643,6 +1643,9 @@ def wildcard_match(id, patterns):
 
         1.  All '*' to '.*'.
         2.  The identifier is bracketed, '^' is added to the start and '$' to the end.
+
+    After conversion of both the id and patterns, the comparison is then performed both ways from
+    the converted string matching the original string (using re.search()).
 
 
     @param id:          The identification object.
@@ -1668,13 +1671,17 @@ def wildcard_match(id, patterns):
         pattern = str(pattern)
 
         # First replace any '*' with '.*' (relax to re conversion).
-        pattern = replace(pattern, '*', '.*')
+        pattern_re = replace(pattern, '*', '.*')
+        id_re =      replace(id,      '*', '.*')
 
         # Bracket the pattern.
-        pattern = '^' + pattern + '$'
+        pattern_re = '^' + pattern_re + '$'
+        id_re = '^' + id_re + '$'
 
-        # String matches.
-        if search(pattern, id):
+        # String matches (both ways).
+        if search(pattern_re, id):
+            return True
+        if search(id_re, pattern):
             return True
 
     # No matches.
