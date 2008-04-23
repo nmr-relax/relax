@@ -911,10 +911,6 @@ def return_molecule(selection=None, pipe=None):
     # Parse the selection string.
     select_obj = Selection(selection)
 
-    # No selection.
-    if len(select_obj.molecules) == 0:
-        return None
-
     # Loop over the molecules.
     mol_num = 0
     mol_container = None
