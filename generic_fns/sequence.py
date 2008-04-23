@@ -22,7 +22,7 @@
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns.selection import count_spins, exists_mol_res_spin_data, spin_loop
+from generic_fns.selection import count_spins, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError
 from relax_io import extract_data, open_write_file, strip
 import sys
@@ -60,6 +60,54 @@ def display(sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=Fal
 
     # Write the data.
     write_body(file=sys.stdout, sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag)
+
+
+def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
+    """Generate the sequence item-by-item by adding a single molecule/residue/spin container as necessary.
+
+    @keyword mol_name:          The molecule name.
+    @type mol_name:             bool
+    @keyword res_num:           The residue number.
+    @type res_num:              bool
+    @keyword res_name:          The residue name.
+    @type res_name:             bool
+    @keyword spin_num:          The spin number.
+    @type spin_num:             bool
+    @keyword spin_name:         The spin name.
+    @type spin_name:            bool
+    """
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Get the molecule.
+    curr_mol = return_molecule(generate_spin_id(mol_name=mol_name))
+
+    # A new molecule.
+    if not curr_mol:
+        # Add the molecule (and store it in the 'curr_mol' object).
+        cdp.mol.add_item(mol_name=mol_name)
+        curr_mol = cdp.mol[-1]
+
+    # Get the residue.
+    curr_res = return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name))
+
+    # A new residue.
+    if not curr_res:
+        # Add the residue (and store it in the 'curr_res' object).
+        curr_mol.res.add_item(res_name=res_name, res_num=res_num)
+        curr_res = curr_mol.res[-1]
+
+    # Get the spin.
+    curr_spin = return_spin(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name))
+
+    # A new spin.
+    if not curr_spin:
+        # Add the spin.
+        curr_res.spin.add_item(spin_name=spin_name, spin_num=spin_num)
+
+    # Print out of all the spins.
+    write_line(sys.stdout, mol_name, res_num, res_name, spin_num, spin_name, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
 
 
 def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, sep=None):
@@ -122,15 +170,8 @@ def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, 
     if not file_data:
         raise RelaxFileEmptyError
 
-    # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
-
     # Test if the sequence data is valid.
     validate_sequence(file_data, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
-
-    # Init some indecies.
-    mol_index = 0
-    res_index = 0
 
     # Header print out.
     write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
@@ -154,41 +195,8 @@ def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, 
         if spin_name_col != None:
             spin_name = file_data[i][spin_name_col]
 
-        # A new molecule.
-        if mol_name_col != None and cdp.mol[mol_index].name != mol_name:
-            # Replace the first empty molecule.
-            if mol_index == 0 and cdp.mol[0].name == None:
-                cdp.mol[0].name = mol_name
-
-            # Create a new molecule.
-            else:
-                # Add the molecule.
-                cdp.mol.add_item(mol_name=mol_name)
-
-                # Increment the molecule index.
-                mol_index = mol_index + 1
-
-        # A new residue.
-        if res_name_col != None and cdp.mol[mol_index].res[res_index].num != res_num:
-            # Replace the first empty residue.
-            if res_index == 0 and cdp.mol[mol_index].res[0].name == None:
-                cdp.mol[mol_index].res[0].name = res_name
-                cdp.mol[mol_index].res[0].num = res_num
-
-            # Create a new residue.
-            else:
-                # Add the residue.
-                cdp.mol[mol_index].res.add_item(res_name=res_name, res_num=res_num)
-
-                # Increment the residue index.
-                res_index = res_index + 1
-
-        # A new spin.
-        if spin_num_col != None:
-            cdp.mol[mol_index].res[res_index].spin.add_item(spin_name=spin_name, spin_num=spin_num)
-
-        # Print out of all the spins.
-        write_line(sys.stdout, mol_name, res_num, res_name, spin_num, spin_name, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+        # Generate the sequence.
+        generate(mol_name, res_num, res_name, spin_num, spin_name)
 
 
 def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None):
