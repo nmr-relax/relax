@@ -43,22 +43,22 @@ class Test_pipe_container(TestCase):
         del self.data_pipe
 
 
-    def test_PipeContainer_printout(self):
-        """Print out the contents of a data pipe, (testing the PipeContainer.__repr__() method)."""
+    def test_PipeContainer_repr(self):
+        """Test the PipeContainer.__repr__() method."""
 
         # Add a few objects.
         self.data_pipe.x = 10
         self.data_pipe.chi2 = PipeContainer()
 
-        # Print out.
-        print self.data_pipe
+        # Test that __repr__() returns a string.
+        self.assert_(type(self.data_pipe.__repr__()), str)
 
 
-    def test_PipeContainer_printout_empty(self):
-        """Print out the contents of an empty data pipe, (testing the PipeContainer.__repr__() method)."""
+    def test_PipeContainer_repr_empty_pipe(self):
+        """Test the PipeContainer.__repr__() method for an empty data pipe."""
 
-        # Print out.
-        print self.data_pipe
+        # Test that __repr__() returns a string.
+        self.assert_(type(self.data_pipe.__repr__()), str)
 
 
     def test_PipeContainer_is_empty(self):
