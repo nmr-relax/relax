@@ -43,7 +43,7 @@ class Test_scientific(TestCase):
             self.path = sys.path[-1]
 
         # The path to a PDB file.
-        self.test_pdb_path = self.path+'/test_suite/shared_data/test.pdb'
+        self.test_pdb_path = self.path+'/test_suite/shared_data/structures/Ap4Aase_res1-12.pdb'
 
         # Instantiate the structural data object.
         self.data = Scientific_data()
