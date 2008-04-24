@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2007 Edward d'Auvergne                                  #
+# Copyright (C) 2004, 2007-2008 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,7 +30,9 @@ from warnings import warn
 
 # relax module imports.
 from data import Data as relax_data_store
+from generic_fns.selection import generate_spin_id, return_spin
 from relax_errors import RelaxError, RelaxArgNotInListError, RelaxNoPipeError, RelaxNoSequenceError
+from relax_io import extract_data, strip
 from relax_warnings import RelaxWarning
 
 
@@ -171,92 +173,97 @@ def number_of_header_lines():
     return header_lines
 
 
-def read(run=None, file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=None, assign_func=None):
-    """Function for reading peak intensity data."""
+def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=None, assign_func=None):
+    """Read the peak intensity data.
 
-    # Arguments.
-    self.run = run
-    self.format = format
-    self.heteronuc = heteronuc
-    self.proton = proton
-    self.int_col = int_col
-    self.assign_func = assign_func
+    @keyword file:          The name of the file containing the peak intensities.
+    @type file:             str
+    @keyword dir:           The directory where the file is located.
+    @type dir:              str
+    @keyword format:        The type of file containing peak intensities.  This can currently be
+                            one of 'sparky' or 'xeasy'.
+    @type format:           str
+    @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity
+                            file.
+    @type heteronuc:        str
+    @keyword proton:        The name of the proton as specified in the peak intensity file.
+    @type proton:           str
+    @keyword int_col:       The column containing the peak intensity data (for a non-standard
+                            formatted file).
+    @type int_col:          int
+    @keyword assign_func:   A function used to place the intensity data within the spin container.
+    @type assign_func:      func
+    """
 
     # Format argument.
     format_list = ['sparky', 'xeasy']
-    if self.format not in format_list:
-        raise RelaxArgNotInListError, ('format', self.format, format_list)
+    if format not in format_list:
+        raise RelaxArgNotInListError, ('format', format, format_list)
 
     # Sparky.
-    if self.format == 'sparky':
+    if format == 'sparky':
         # Print out.
         print "Sparky formatted data file.\n"
 
         # Set the intensity reading function.
-        self.intensity = self.intensity_sparky
+        intensity = intensity_sparky
 
     # XEasy.
-    elif self.format == 'xeasy':
+    elif format == 'xeasy':
         # Print out.
         print "XEasy formatted data file.\n"
 
         # Set the intensity reading function.
-        self.intensity = self.intensity_xeasy
+        intensity = intensity_xeasy
 
         # Set the default proton dimension.
-        self.H_dim = 'w1'
+        H_dim = 'w1'
 
-    # Test if the run exists.
-    if not self.run in relax_data_store.run_names:
-        raise RelaxNoPipeError, self.run
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
 
     # Test if sequence data is loaded.
-    if not relax_data_store.res.has_key(self.run):
-        raise RelaxNoSequenceError, self.run
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
     # Extract the data from the file.
-    self.file_data = self.relax.IO.extract_data(file, dir)
+    file_data = extract_data(file, dir)
 
     # Determine the number of header lines.
-    num = self.number_of_header_lines()
+    num = number_of_header_lines()
     print "Number of header lines found: " + `num`
 
     # Remove the header.
-    self.file_data = self.file_data[num:]
+    file_data = file_data[num:]
 
     # Strip the data.
-    self.file_data = self.relax.IO.strip(self.file_data)
+    file_data = strip(file_data)
 
     # Determine the proton and heteronucleus dimensions in the XEasy text file.
-    if self.format == 'xeasy':
-        self.det_dimensions()
+    if format == 'xeasy':
+        det_dimensions()
 
     # Loop over the peak intensity data.
-    for i in xrange(len(self.file_data)):
+    for i in xrange(len(file_data)):
         # Extract the data.
-        res_num, H_name, X_name, intensity = self.intensity(self.file_data[i])
+        res_num, H_name, X_name, intensity = intensity(file_data[i])
 
         # Skip data.
-        if X_name != self.heteronuc or H_name != self.proton:
-            warn(RelaxWarning("Proton and heteronucleus names do not match, skipping the data %s: " % `self.file_data[i]`))
+        if X_name != heteronuc or H_name != proton:
+            warn(RelaxWarning("Proton and heteronucleus names do not match, skipping the data %s: " % `file_data[i]`))
             continue
 
-        # Find the index of relax_data_store.res[self.run] which corresponds to res_num.
-        index = None
-        for j in xrange(len(relax_data_store.res[self.run])):
-            if relax_data_store.res[self.run][j].num == res_num:
-                index = j
-                break
-        if index == None:
-            warn(RelaxWarning("Cannot find residue number %s within the sequence." % res_num))
+        # Get the spin container.
+        spin_id = generate_spin_id(res_num=res_num, spin_name=X_name)
+        spin = return_spin(spin_id)
+        if not spin:
+            warn(RelaxWarning("Cannot find the spin %s within the sequence." % spin_id))
             continue
 
-        # Remap the data structure 'relax_data_store.res[self.run][index]'.
-        data = relax_data_store.res[self.run][index]
-
-        # Skip unselected residues.
-        if not data.select:
+        # Skip unselected spins.
+        if not spin.select:
             continue
 
         # Assign the data.
-        self.assign_func(run=self.run, i=index, intensity=intensity)
+        assign_func(spin=spin, intensity=intensity)
