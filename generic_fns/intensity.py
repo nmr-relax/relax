@@ -70,10 +70,18 @@ def det_dimensions():
             break
 
 
-def intensity_sparky(line):
+def intensity_sparky(line, int_col=None):
     """Function for returning relevant data from the Sparky peak intensity line.
 
     The residue number, heteronucleus and proton names, and peak intensity will be returned.
+
+
+    @param line:        The single line of information from the intensity file.
+    @type line:         list of str
+    @keyword int_col:   The column containing the peak intensity data (for a non-standard formatted
+                        file).
+    @type int_col:      int
+    @raises RelaxError: When the expected peak intensity is not a float.
     """
 
     # The Sparky assignment.
@@ -91,12 +99,12 @@ def intensity_sparky(line):
     h_name = assignment[4]
 
     # The peak intensity column.
-    if self.int_col == None:
-        self.int_col = 3
+    if int_col == None:
+        int_col = 3
 
     # Intensity.
     try:
-        intensity = float(line[self.int_col])
+        intensity = float(line[int_col])
     except ValueError:
         raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
 
@@ -108,6 +116,11 @@ def intensity_xeasy(line):
     """Function for returning relevant data from the XEasy peak intensity line.
 
     The residue number, heteronucleus and proton names, and peak intensity will be returned.
+
+
+    @param line:        The single line of information from the intensity file.
+    @type line:         list of str
+    @raises RelaxError: When the expected peak intensity is not a float.
     """
 
     # Test for invalid assignment lines which have the column numbers changed and return empty data.
@@ -121,7 +134,7 @@ def intensity_xeasy(line):
         raise RelaxError, "Improperly formatted XEasy file."
 
     # Nuclei names.
-    if self.H_dim == 'w1':
+    if H_dim == 'w1':
         h_name = line[4]
         x_name = line[7]
     else:
@@ -138,7 +151,7 @@ def intensity_xeasy(line):
     return res_num, h_name, x_name, intensity
 
 
-def number_of_header_lines(file_data, format, intensity):
+def number_of_header_lines(file_data, format, int_col, intensity):
     """Function for determining how many header lines are in the intensity file.
 
     @param file_data:   The processed results file data.
@@ -146,6 +159,9 @@ def number_of_header_lines(file_data, format, intensity):
     @param format:      The type of file containing peak intensities.  This can currently be one of
                         'sparky' or 'xeasy'.
     @type format:       str
+    @param int_col:     The column containing the peak intensity data (for a non-standard
+                        formatted file).
+    @type int_col:      int
     @param intensity:   The intensity extraction function.
     @type intensity:    func
     @return:            The number of header lines.
@@ -168,7 +184,10 @@ def number_of_header_lines(file_data, format, intensity):
     for i in xrange(len(file_data)):
         # Try to see if the intensity can be extracted.
         try:
-            intensity(file_data[i])
+            if int_col:
+                intensity(file_data[i], int_col)
+            else:
+                intensity(file_data[i])
         except RelaxError:
             header_lines = header_lines + 1
         except IndexError:
@@ -238,7 +257,7 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
     file_data = extract_data(file, dir)
 
     # Determine the number of header lines.
-    num = number_of_header_lines(file_data, format, intensity)
+    num = number_of_header_lines(file_data, format, int_col, intensity)
     print "Number of header lines found: " + `num`
 
     # Remove the header.
