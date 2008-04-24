@@ -47,6 +47,3 @@ monte_carlo.error_analysis(name)
 # Grace plots of the relaxation rate.
 #grace.write(name, y_data_type='rx', file='rx.agr', force=1)
 #grace.view(file='rx.agr')
-
-# Save the program state.
-state.save(file=name + '.save', force=1)
