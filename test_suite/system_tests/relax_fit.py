@@ -44,6 +44,13 @@ class Relax_fit(TestCase):
         relax_data_store.__reset__()
 
 
+    def test_curve_fitting(self):
+        """Test the relaxation curve fitting C modules."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/relax_fit.py')
+
+
     def test_read_sparky(self):
         """The Sparky peak height loading test."""
 
