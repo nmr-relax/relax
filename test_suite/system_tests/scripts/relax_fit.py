@@ -1,7 +1,7 @@
 # Script for relaxation curve fitting.
 
 # Create the data pipe.
-run.create('rx', 'relax_fit')
+pipe.create('rx', 'relax_fit')
 
 # Load the sequence.
 sequence.read('Ap4Aase.seq', dir='..')
