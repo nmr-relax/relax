@@ -856,7 +856,7 @@ class Relax_fit(Common_functions):
 
         # Number of spectra.
         if not hasattr(cdp, 'num_spectra'):
-            relax_data_store.num_spectra = []
+            cdp.num_spectra = []
 
         # Determine if the relaxation time already exists for the residue (duplicated spectra).
         index = None
