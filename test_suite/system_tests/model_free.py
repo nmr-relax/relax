@@ -232,10 +232,6 @@ class Mf(TestCase):
 
         # Optimisation differences.
         if SYSTEM == 'Linux' and ARCH[0] == '64bit':
-            s2 = 0.9699999999999785
-            te = 2047.9999999962433
-            rex = 0.14900000000039709
-            chi2 = 5.2479491342506911e-24
             iter = 162
             f_count = 758
             g_count = 169
@@ -285,10 +281,6 @@ class Mf(TestCase):
 
         # Optimisation differences.
         if SYSTEM == 'Linux' and ARCH[0] == '64bit':
-            s2 = 0.9700000000000603
-            te = 2048.0000000114601
-            rex = 0.14899999999886163
-            chi2 = 4.7289676642197204e-23
             f_count = 384
             g_count = 384
 
@@ -427,13 +419,6 @@ class Mf(TestCase):
         h_count = 18
         warning = None
 
-        # Optimisation differences.
-        if SYSTEM == 'Linux' and ARCH[0] == '64bit':
-            s2 = 0.9699999999999995
-            te = 2048.0000000000473
-            rex = 0.14900000000001926
-            chi2 = 7.93572083972557e-28
-
         # Test the values.
         self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
         self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
@@ -480,10 +465,6 @@ class Mf(TestCase):
 
         # Optimisation differences.
         if SYSTEM == 'Linux' and ARCH[0] == '64bit':
-            s2 = 0.9699999999999994
-            te = 2048.0000000000445
-            rex = 0.14900000000001614
-            chi2 = 8.331260138136833e-28
             f_count = 91
             g_count = 91
 
@@ -529,13 +510,6 @@ class Mf(TestCase):
         g_count = 51
         h_count = 0
         warning = 'Maximum number of iterations reached'
-
-        # Optimisation differences.
-        if SYSTEM == 'Linux' and ARCH[0] == '64bit':
-            s2 = 0.915792208346891567
-            te = 0.305686587225278583
-            rex = 0.340084097980648314
-            chi2 = 68.321956795340568647
 
         # Test the values.
         self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
@@ -795,10 +769,10 @@ class Mf(TestCase):
 
         # Test all the values.
         self.assertEqual(spin.select, select, msg=mesg)
-        self.assertEqual(spin.s2, s2, msg=mesg)
-        self.assertEqual(spin.te / 1e-12, te, msg=mesg)
-        self.assertEqual(spin.rex * (2.0 * pi * spin.frq[0])**2, rex, msg=mesg)
-        self.assertEqual(spin.chi2, chi2, msg=mesg)
+        self.assertAlmostEqual(spin.s2, s2, msg=mesg)
+        self.assertAlmostEqual(spin.te / 1e-12, te, msg=mesg)
+        self.assertAlmostEqual(spin.rex * (2.0 * pi * spin.frq[0])**2, rex, msg=mesg)
+        self.assertAlmostEqual(spin.chi2, chi2, msg=mesg)
         self.assertEqual(spin.iter, iter, msg=mesg)
         self.assertEqual(spin.f_count, f_count, msg=mesg)
         self.assertEqual(spin.g_count, g_count, msg=mesg)
