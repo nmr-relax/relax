@@ -112,7 +112,7 @@ def intensity_sparky(line, int_col=None):
     return res_num, h_name, x_name, intensity
 
 
-def intensity_xeasy(line):
+def intensity_xeasy(line, int_col=None):
     """Function for returning relevant data from the XEasy peak intensity line.
 
     The residue number, heteronucleus and proton names, and peak intensity will be returned.
@@ -120,6 +120,9 @@ def intensity_xeasy(line):
 
     @param line:        The single line of information from the intensity file.
     @type line:         list of str
+    @keyword int_col:   The column containing the peak intensity data (for a non-standard formatted
+                        file).
+    @type int_col:      int
     @raises RelaxError: When the expected peak intensity is not a float.
     """
 
@@ -141,9 +144,13 @@ def intensity_xeasy(line):
         x_name = line[4]
         h_name = line[7]
 
-    # Intensity (located in column 10).
+    # The peak intensity column.
+    if int_col == None:
+        int_col = 10
+
+    # Intensity.
     try:
-        intensity = float(line[10])
+        intensity = float(line[int_col])
     except ValueError:
         raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
 
