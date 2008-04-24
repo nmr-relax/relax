@@ -821,52 +821,66 @@ class Relax_fit(Common_functions):
                 continue
 
 
-    def read(self, run=None, file=None, dir=None, relax_time=0.0, format=None, heteronuc=None, proton=None, int_col=None):
-        """Function for reading peak intensity data."""
+    def read(self, file=None, dir=None, relax_time=0.0, format=None, heteronuc=None, proton=None, int_col=None):
+        """Read in the peak intensity data.
 
-        # Arguments.
-        self.run = run
-        self.relax_time = relax_time
-        self.format = format
-        self.heteronuc = heteronuc
-        self.proton = proton
-        self.int_col = int_col
+        This method sets up the global data structures in the current data pipe and then calls
+        intensity.read().
+
+
+        @keyword file:          The name of the file containing the peak intensities.
+        @type file:             str
+        @keyword dir:           The directory where the file is located.
+        @type dir:              str
+        @keyword relax_time:    The time, in seconds, of the relaxation period.
+        @type relax_time:       float
+        @keyword format:        The type of file containing peak intensities.  This can currently be
+                                one of 'sparky' or 'xeasy'.
+        @type format:           str
+        @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity
+                                file.
+        @type heteronuc:        str
+        @keyword proton:        The name of the proton as specified in the peak intensity file.
+        @type proton:           str
+        @keyword int_col:       The column containing the peak intensity data (for a non-standard
+                                formatted file).
+        @type int_col:          int
+        """
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Initialise the global data if necessary.
         self.data_init()
 
         # Global relaxation time data structure.
-        if not hasattr(relax_data_store, 'relax_times'):
-            relax_data_store.relax_times = {}
-        if not relax_data_store.relax_times.has_key(self.run):
-            relax_data_store.relax_times[self.run] = []
+        if not hasattr(cdp, 'relax_times'):
+            cdp.relax_times = []
 
         # Number of spectra.
-        if not hasattr(relax_data_store, 'num_spectra'):
-            relax_data_store.num_spectra = {}
-        if not relax_data_store.num_spectra.has_key(self.run):
-            relax_data_store.num_spectra[self.run] = []
+        if not hasattr(cdp, 'num_spectra'):
+            relax_data_store.num_spectra = []
 
         # Determine if the relaxation time already exists for the residue (duplicated spectra).
         index = None
-        for i in xrange(len(relax_data_store.relax_times[self.run])):
-            if self.relax_time == relax_data_store.relax_times[self.run][i]:
+        for i in xrange(len(cdp.relax_times)):
+            if relax_time == cdp.relax_times[i]:
                 index = i
 
         # A new relaxation time.
         if index == None:
             # Add the time.
-            relax_data_store.relax_times[self.run].append(self.relax_time)
+            cdp.relax_times.append(relax_time)
 
             # First spectrum.
-            relax_data_store.num_spectra[self.run].append(1)
+            cdp.num_spectra.append(1)
 
         # Duplicated spectra.
         else:
-            relax_data_store.num_spectra[self.run][index] = relax_data_store.num_spectra[self.run][index] + 1
+            cdp.num_spectra[index] = cdp.num_spectra[index] + 1
 
         # Generic intensity function.
-        self.relax.generic.intensity.read(run=run, file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self.assign_function)
+        intensity.read(file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self.assign_function)
 
 
     def return_data(self, run, i):
