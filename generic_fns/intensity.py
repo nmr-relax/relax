@@ -239,7 +239,7 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
         print "Sparky formatted data file.\n"
 
         # Set the intensity reading function.
-        intensity = intensity_sparky
+        intensity_fn = intensity_sparky
 
     # XEasy.
     elif format == 'xeasy':
@@ -247,7 +247,7 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
         print "XEasy formatted data file.\n"
 
         # Set the intensity reading function.
-        intensity = intensity_xeasy
+        intensity_fn = intensity_xeasy
 
         # Set the default proton dimension.
         H_dim = 'w1'
@@ -264,7 +264,7 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
     file_data = extract_data(file, dir)
 
     # Determine the number of header lines.
-    num = number_of_header_lines(file_data, format, int_col, intensity)
+    num = number_of_header_lines(file_data, format, int_col, intensity_fn)
     print "Number of header lines found: " + `num`
 
     # Remove the header.
@@ -280,7 +280,7 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
     # Loop over the peak intensity data.
     for i in xrange(len(file_data)):
         # Extract the data.
-        res_num, H_name, X_name, intensity = intensity(file_data[i])
+        res_num, H_name, X_name, intensity = intensity_fn(file_data[i])
 
         # Skip data.
         if X_name != heteronuc or H_name != proton:
