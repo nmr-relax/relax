@@ -138,18 +138,25 @@ def intensity_xeasy(line):
     return res_num, h_name, x_name, intensity
 
 
-def number_of_header_lines():
+def number_of_header_lines(file_data, format, intensity):
     """Function for determining how many header lines are in the intensity file.
 
-    @return:    The number of header lines.
-    @rtype:     int
+    @param file_data:   The processed results file data.
+    @type file_data:    list of lists of str
+    @param format:      The type of file containing peak intensities.  This can currently be one of
+                        'sparky' or 'xeasy'.
+    @type format:       str
+    @param intensity:   The intensity extraction function.
+    @type intensity:    func
+    @return:            The number of header lines.
+    @rtype:             int
     """
 
     # Sparky.
     #########
 
     # Assume the Sparky file has two header lines!
-    if self.format == 'sparky':
+    if format == 'sparky':
         return 2
 
 
@@ -158,10 +165,10 @@ def number_of_header_lines():
 
     # Loop over the lines of the file until a peak intensity value is reached.
     header_lines = 0
-    for i in xrange(len(self.file_data)):
+    for i in xrange(len(file_data)):
         # Try to see if the intensity can be extracted.
         try:
-            self.intensity(self.file_data[i])
+            intensity(file_data[i])
         except RelaxError:
             header_lines = header_lines + 1
         except IndexError:
@@ -231,7 +238,7 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
     file_data = extract_data(file, dir)
 
     # Determine the number of header lines.
-    num = number_of_header_lines()
+    num = number_of_header_lines(file_data, format, intensity)
     print "Number of header lines found: " + `num`
 
     # Remove the header.
