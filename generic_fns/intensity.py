@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing functions for the handling of peak intensities."""
+
+
 # Python module imports.
 from re import split
 from warnings import warn
