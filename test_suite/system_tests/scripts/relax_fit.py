@@ -39,10 +39,3 @@ monte_carlo.create_data()
 monte_carlo.initial_values()
 minimise('simplex', constraints=0)
 monte_carlo.error_analysis()
-
-# Save the relaxation rates.
-#value.write(param='rx', file='rx.out', force=1)
-
-# Grace plots of the relaxation rate.
-#grace.write(y_data_type='rx', file='rx.agr', force=1)
-#grace.view(file='rx.agr')
