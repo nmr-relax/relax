@@ -850,9 +850,6 @@ class Relax_fit(Common_functions):
         # Alias the current data pipe.
         cdp = relax_data_store[relax_data_store.current_pipe]
 
-        # Initialise the global data if necessary.
-        self.data_init()
-
         # Global relaxation time data structure.
         if not hasattr(cdp, 'relax_times'):
             cdp.relax_times = []
