@@ -30,6 +30,7 @@ import sys
 # relax module imports.
 from data import Data as relax_data_store
 from base_class import Common_functions
+from generic_fns import intensity
 from minimise.generic import generic_minimise
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoPipeError, RelaxNoSequenceError
 
