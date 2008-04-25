@@ -198,17 +198,9 @@ def name(spin_id=None, name=None):
     @type name:         str
     """
 
-    # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(spin_id)
-
-    # Parse the tokens.
-    spins = parse_token(spin_token)
-
-    # Spin loop.
+    # Rename the spin.
     for spin in spin_loop(spin_id):
-        # Rename the spin if there is a match.
-        if spin.num in spins or spin.name in spins:
-            spin.name = name
+        spin.name = name
 
 
 def number(spin_id=None, number=None):
@@ -220,24 +212,15 @@ def number(spin_id=None, number=None):
     @type number:       int
     """
 
-    # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(spin_id)
-
-    # Parse the tokens.
-    spins = parse_token(spin_token)
-
     # Catch multiple renumberings!
     i = 0
     for spin in spin_loop(spin_id):
-        if spin.num in spins or spin.name in spins:
-            i = i + 1
+        i = i + 1
 
     # Fail if multiple spins are numbered.
     if i > 1:
         raise RelaxError, "The numbering of multiple spins is disallowed, as each spin requires a unique number."
 
-    # Spin loop.
+    # Rename the spin.
     for spin in spin_loop(spin_id):
-        # Rename the spin if there is a match.
-        if spin.num in spins or spin.name in spins:
-            spin.num = number
+        spin.num = number
