@@ -567,23 +567,23 @@ class Relax_fit(Common_functions):
                     continue
 
                 # Skip and unselect spins which have no data.
-                if not hasattr(data, 'intensities'):
-                    data.select = 0
+                if not hasattr(spin, 'intensities'):
+                    spin.select = 0
                     continue
 
                 # Initialise the average intensity and standard deviation data structures.
-                if not hasattr(data, 'ave_intensities'):
-                    data.ave_intensities = []
-                if not hasattr(data, 'sd'):
-                    data.sd = []
+                if not hasattr(spin, 'ave_intensities'):
+                    spin.ave_intensities = []
+                if not hasattr(spin, 'sd'):
+                    spin.sd = []
 
                 # Average intensity.
-                data.ave_intensities.append(average(data.intensities[time_index]))
+                spin.ave_intensities.append(average(spin.intensities[time_index]))
 
                 # Sum of squared errors.
                 SSE = 0.0
                 for j in xrange(cdp.num_spectra[time_index]):
-                    SSE = SSE + (data.intensities[time_index][j] - data.ave_intensities[time_index]) ** 2
+                    SSE = SSE + (spin.intensities[time_index][j] - spin.ave_intensities[time_index]) ** 2
 
                 # Standard deviation.
                 #                 ____________________________
@@ -595,14 +595,14 @@ class Relax_fit(Common_functions):
                     sd = 0.0
                 else:
                     sd = sqrt(1.0 / (cdp.num_spectra[time_index] - 1.0) * SSE)
-                data.sd.append(sd)
+                spin.sd.append(sd)
 
                 # Print out.
                 if verbosity:
-                    print "%-5i%-6s%-20s%-20s" % (data.num, data.name, `data.ave_intensities[time_index]`, `data.sd[time_index]`)
+                    print "%-5i%-6s%-20s%-20s" % (spin.num, spin.name, `spin.ave_intensities[time_index]`, `spin.sd[time_index]`)
 
                 # Sum of standard deviations (for average).
-                cdp.sd[time_index] = cdp.sd[time_index] + data.sd[time_index]
+                cdp.sd[time_index] = cdp.sd[time_index] + spin.sd[time_index]
 
             # Average sd.
             cdp.sd[time_index] = cdp.sd[time_index] / float(count_spins())
