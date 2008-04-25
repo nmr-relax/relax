@@ -343,18 +343,18 @@ class Spin_base_class:
         self.spin_fns.display('#New mol:6@3239')
 
 
-    def test_rename(self):
+    def test_name(self):
         """Test the renaming of a spin.
 
-        The function tested is both generic_fns.spin.rename() and prompt.spin.rename().
+        The function tested is both generic_fns.spin.name() and prompt.spin.name().
         """
 
         # Rename some spins.
-        self.spin_fns.rename(spin_id='@C26', new_name='C25')
-        self.spin_fns.rename(spin_id=':2@78', new_name='Ca')
-        self.spin_fns.rename(spin_id='#New mol:6@3239', new_name='NHe')
+        self.spin_fns.name(spin_id='@C26', name='C25')
+        self.spin_fns.name(spin_id=':2@78', name='Ca')
+        self.spin_fns.name(spin_id='#New mol:6@3239', name='NHe')
 
-        # Test that the spins have been renamed (and that the others have not).
+        # Test that the spins have been named (and that the others have not).
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C8')
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].name, 'C19')
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].name, 'C21')
@@ -366,14 +366,14 @@ class Spin_base_class:
         self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[1].name, 'NHe')
 
 
-    def test_rename_many(self):
+    def test_name_many(self):
         """Test the renaming of multiple spins.
 
-        The function tested is both generic_fns.spin.rename() and prompt.spin.rename().
+        The function tested is both generic_fns.spin.name() and prompt.spin.name().
         """
 
         # Rename all NHs.
-        self.spin_fns.rename(spin_id='@NH', new_name='N')
+        self.spin_fns.name(spin_id='@NH', name='N')
 
         # Test the renaming of the NHs (and that the other spins have not changed).
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C8')
@@ -387,23 +387,23 @@ class Spin_base_class:
         self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[1].name, 'N')
 
 
-    def test_renumber(self):
-        """Test the renumbering of a spin.
+    def test_number(self):
+        """Test the numbering of a spin.
 
-        The function tested is both generic_fns.spin.renumber() and prompt.spin.renumber().
+        The function tested is both generic_fns.spin.number() and prompt.spin.number().
         """
 
         # Rename a few spins.
-        self.spin_fns.renumber(spin_id='@111', new_number=1)
-        self.spin_fns.renumber(spin_id='@6', new_number=2)
-        self.spin_fns.renumber(spin_id='@7', new_number=3)
-        self.spin_fns.renumber(spin_id='@8', new_number=4)
-        self.spin_fns.renumber(spin_id='@9', new_number=5)
-        self.spin_fns.renumber(spin_id='@78', new_number=6)
-        self.spin_fns.renumber(spin_id='@239', new_number=7)
-        self.spin_fns.renumber(spin_id='@3239', new_number=9)
+        self.spin_fns.number(spin_id='@111', number=1)
+        self.spin_fns.number(spin_id='@6', number=2)
+        self.spin_fns.number(spin_id='@7', number=3)
+        self.spin_fns.number(spin_id='@8', number=4)
+        self.spin_fns.number(spin_id='@9', number=5)
+        self.spin_fns.number(spin_id='@78', number=6)
+        self.spin_fns.number(spin_id='@239', number=7)
+        self.spin_fns.number(spin_id='@3239', number=9)
 
-        # Test that the spins have been renumbered.
+        # Test that the spins have been numbered.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 1)
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].num, 2)
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].num, 3)
@@ -414,11 +414,11 @@ class Spin_base_class:
         self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[1].num, 9)
 
 
-    def test_renumber_many_fail(self):
+    def test_number_many_fail(self):
         """Test the renaming of multiple spins.
 
-        The function tested is both generic_fns.spin.renumber() and prompt.spin.renumber().
+        The function tested is both generic_fns.spin.number() and prompt.spin.number().
         """
 
-        # Try renumbering all NHs.
-        self.assertRaises(RelaxError, self.spin_fns.renumber, spin_id='@NH', new_number=-6)
+        # Try numbering all NHs.
+        self.assertRaises(RelaxError, self.spin_fns.number, spin_id='@NH', number=-6)

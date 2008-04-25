@@ -158,8 +158,21 @@ class Test_spin(Spin_base_class, TestCase):
             self.assertRaises(RelaxNoneStrError, self.spin_fns.display, spin_id=data[1])
 
 
-    def test_rename_argfail_spin_id(self):
-        """Test the proper failure of the spin.rename() user function for the spin_id argument."""
+    def test_name_argfail_spin_id(self):
+        """Test the proper failure of the spin.name() user function for the spin_id argument."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.spin_fns.name, spin_id=data[1])
+
+
+    def test_name_argfail_name(self):
+        """Test the proper failure of the spin.name() user function for the name argument."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -168,37 +181,24 @@ class Test_spin(Spin_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.spin_fns.rename, spin_id=data[1])
+            self.assertRaises(RelaxStrError, self.spin_fns.name, name=data[1])
 
 
-    def test_rename_argfail_new_name(self):
-        """Test the proper failure of the spin.rename() user function for the new_name argument."""
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the str arguments, and skip them.
-            if data[0] == 'str':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxStrError, self.spin_fns.rename, new_name=data[1])
-
-
-    def test_renumber_argfail_spin_id(self):
-        """Test the proper failure of the spin.renumber() user function for the spin_id argument."""
+    def test_number_argfail_spin_id(self):
+        """Test the proper failure of the spin.number() user function for the spin_id argument."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the str arguments, and skip them.
-            if data[0] == 'str':
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.spin_fns.renumber, spin_id=data[1])
+            self.assertRaises(RelaxNoneStrError, self.spin_fns.number, spin_id=data[1])
 
 
-    def test_renumber_argfail_new_number(self):
-        """Test the proper failure of the spin.renumber() user function for the new_number argument."""
+    def test_number_argfail_number(self):
+        """Test the proper failure of the spin.number() user function for the number argument."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -207,4 +207,4 @@ class Test_spin(Spin_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.spin_fns.renumber, spin_id='@111', new_number=data[1])
+            self.assertRaises(RelaxIntError, self.spin_fns.number, spin_id='@111', number=data[1])
