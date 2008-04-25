@@ -39,16 +39,13 @@ class _RelaxTestResult(_TextTestResult):
     def startTest(self, test):
         """Override of the _TextTestResult.startTest() method.
 
-        The start of STDOUT capture occurs here.
+        The start of STDOUT and STDERR capture occurs here.
         """
 
-        # Catch stdout.
-        self.capt_stdout = StringIO()
-        sys.stdout = self.capt_stdout
-
-        # Catch stderr.
-        self.capt_stderr = StringIO()
-        sys.stderr = self.capt_stderr
+        # Catch stdout and stderr.
+        self.capt = StringIO()
+        sys.stdout = self.capt
+        sys.stderr = self.capt
 
         # Execute the normal startTest method.
         _TextTestResult.startTest(self, test)
@@ -57,43 +54,38 @@ class _RelaxTestResult(_TextTestResult):
     def stopTest(self, test):
         """Override of the TestResult.stopTest() method.
 
-        The end of STDOUT capture occurs here.
+        The end of STDOUT and STDERR capture occurs here.
         """
 
-        # Restore stdout.
+        # Restore stdout and stderr.
         sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
 
 
     def addError(self, test, err):
         """Override of the TestResult.addError() method.
 
-        The STDOUT captured text is prepended to the error text here.
+        The STDOUT and STDERR captured text is prepended to the error text here.
         """
 
         # Execute the normal addError method.
         _TextTestResult.addError(self, test, err)
 
-        # Prepend STDERR to the second element of the tuple.
-        self.errors[-1] = (self.errors[-1][0], self.capt_stderr.getvalue() + self.errors[-1][1])
-
-        # Prepend STDOUT to the second element of the tuple.
-        self.errors[-1] = (self.errors[-1][0], self.capt_stdout.getvalue() + self.errors[-1][1])
+        # Prepend the STDOUT and STDERR messages to the second element of the tuple.
+        self.errors[-1] = (self.errors[-1][0], self.capt.getvalue() + self.errors[-1][1])
 
 
     def addFailure(self, test, err):
         """Override of the TestResult.addFailure() method.
 
-        The STDOUT captured text is prepended to the error text here.
+        The STDOUT and STDERR captured text is prepended to the failure text here.
         """
 
         # Execute the normal addFailure method.
         _TextTestResult.addFailure(self, test, err)
 
-        # Prepend STDERR to the second element of the tuple.
-        self.failures[-1] = (self.failures[-1][0], self.capt_stderr.getvalue() + self.failures[-1][1])
-
-        # Prepend STDOUT to the second element of the tuple.
-        self.failures[-1] = (self.failures[-1][0], self.capt_stdout.getvalue() + self.failures[-1][1])
+        # Prepend the STDOUT and STDERR messages to the second element of the tuple.
+        self.failures[-1] = (self.failures[-1][0], self.capt.getvalue() + self.failures[-1][1])
 
 
 
