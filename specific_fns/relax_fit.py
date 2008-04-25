@@ -521,53 +521,51 @@ class Relax_fit(Common_functions):
         return A, b
 
 
-    def mean_and_error(self, run=None, verbosity=0):
-        """Function for calculating the average intensity and standard deviation of all spectra."""
+    def mean_and_error(self, verbosity=0):
+        """Calculate the average intensity and standard deviation of all spectra.
 
-        # Arguments.
-        self.run = run
+        @keyword verbosity: The amount of information to print.  The higher the value, the greater
+                            the verbosity.
+        @type verbosity:    int
+        """
 
-        # Test if the standard deviation is already calculated.
-        if hasattr(relax_data_store, 'sd'):
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Test if the standard deviation has already been calculated.
+        if hasattr(cdp, 'sd'):
             raise RelaxError, "The average intensity and standard deviation of all spectra has already been calculated."
 
         # Print out.
         print "\nCalculating the average intensity and standard deviation of all spectra."
 
         # Initialise.
-        relax_data_store.sd = {}
-        relax_data_store.sd[self.run] = []
+        cdp.sd = []
 
         # Loop over the time points.
-        for time_index in xrange(len(relax_data_store.relax_times[self.run])):
+        for time_index in xrange(len(cdp.relax_times)):
             # Print out.
-            print "\nTime point:  " + `relax_data_store.relax_times[self.run][time_index]` + " s"
-            print "Number of spectra:  " + `relax_data_store.num_spectra[self.run][time_index]`
+            print "\nTime point:  " + `cdp.relax_times[time_index]` + " s"
+            print "Number of spectra:  " + `cdp.num_spectra[time_index]`
             if verbosity:
                 print "%-5s%-6s%-20s%-20s" % ("Num", "Name", "Average", "SD")
 
             # Append zero to the global standard deviation structure.
-            relax_data_store.sd[self.run].append(0.0)
-
-            # Initialise the time point and residue specific sd.
-            total_res = 0
+            cdp.sd.append(0.0)
 
             # Test for multiple spectra.
-            if relax_data_store.num_spectra[self.run][time_index] == 1:
+            if cdp.num_spectra[time_index] == 1:
                 multiple_spectra = 0
             else:
                 multiple_spectra = 1
 
             # Calculate the mean value.
-            for i in xrange(len(relax_data_store.res[self.run])):
-                # Alias the residue specific data structure.
-                data = relax_data_store.res[self.run][i]
-
-                # Skip unselected residues.
-                if not data.select:
+            for spin in spin_loop():
+                # Skip unselected spins.
+                if not spin.select:
                     continue
 
-                # Skip and unselect residues which have no data.
+                # Skip and unselect spins which have no data.
                 if not hasattr(data, 'intensities'):
                     data.select = 0
                     continue
@@ -583,7 +581,7 @@ class Relax_fit(Common_functions):
 
                 # Sum of squared errors.
                 SSE = 0.0
-                for j in xrange(relax_data_store.num_spectra[self.run][time_index]):
+                for j in xrange(cdp.num_spectra[time_index]):
                     SSE = SSE + (data.intensities[time_index][j] - data.ave_intensities[time_index]) ** 2
 
                 # Standard deviation.
@@ -592,10 +590,10 @@ class Relax_fit(Common_functions):
                 #       sd =    /  ----- * sum({Xi - Xav}^2)]
                 #             \/   n - 1
                 #
-                if relax_data_store.num_spectra[self.run][time_index] == 1:
+                if cdp.num_spectra[time_index] == 1:
                     sd = 0.0
                 else:
-                    sd = sqrt(1.0 / (relax_data_store.num_spectra[self.run][time_index] - 1.0) * SSE)
+                    sd = sqrt(1.0 / (cdp.num_spectra[time_index] - 1.0) * SSE)
                 data.sd.append(sd)
 
                 # Print out.
@@ -603,40 +601,37 @@ class Relax_fit(Common_functions):
                     print "%-5i%-6s%-20s%-20s" % (data.num, data.name, `data.ave_intensities[time_index]`, `data.sd[time_index]`)
 
                 # Sum of standard deviations (for average).
-                relax_data_store.sd[self.run][time_index] = relax_data_store.sd[self.run][time_index] + data.sd[time_index]
-
-                # Increment the number of residues counter.
-                total_res = total_res + 1
+                cdp.sd[time_index] = cdp.sd[time_index] + data.sd[time_index]
 
             # Average sd.
-            relax_data_store.sd[self.run][time_index] = relax_data_store.sd[self.run][time_index] / float(total_res)
+            cdp.sd[time_index] = cdp.sd[time_index] / float(count_num_spins())
 
             # Print out.
-            print "Standard deviation for time point %s:  %s" % (`time_index`, `relax_data_store.sd[self.run][time_index]`)
+            print "Standard deviation for time point %s:  %s" % (`time_index`, `cdp.sd[time_index]`)
 
 
         # Average across all spectra if there are time points with a single spectrum.
-        if 0.0 in relax_data_store.sd[self.run]:
+        if 0.0 in cdp.sd:
             # Initialise.
             sd = 0.0
             num_dups = 0
 
             # Loop over all time points.
-            for i in xrange(len(relax_data_store.relax_times[self.run])):
+            for i in xrange(len(cdp.relax_times)):
                 # Single spectrum (or extrodinarily accurate NMR spectra!).
-                if relax_data_store.sd[self.run][i] == 0.0:
+                if cdp.sd[i] == 0.0:
                     continue
 
                 # Sum and count.
-                sd = sd + relax_data_store.sd[self.run][i]
+                sd = sd + cdp.sd[i]
                 num_dups = num_dups + 1
 
             # Average value.
             sd = sd / float(num_dups)
 
             # Assign the average value to all time points.
-            for i in xrange(len(relax_data_store.relax_times[self.run])):
-                relax_data_store.sd[self.run][i] = sd
+            for i in xrange(len(cdp.relax_times)):
+                cdp.sd[i] = sd
 
             # Print out.
             print "\nStandard deviation (averaged over all spectra):  " + `sd`
