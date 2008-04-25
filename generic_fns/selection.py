@@ -543,7 +543,7 @@ def desel_read(self, run=None, file=None, dir=None, change_all=None, column=None
             if change_all:
                 data.select = 1
 
-            # Unselect the residue if it is in the list deselect.
+            # Deselect the residue if it is in the list deselect.
             if data.num in deselect:
                 data.select = 0
 
@@ -608,7 +608,7 @@ def desel_res(self, run=None, num=None, name=None, change_all=None):
                 if not match(name, data.name):
                     continue
 
-            # Unselect the residue.
+            # Deselect the residue.
             data.select = 0
 
             # Match flag.

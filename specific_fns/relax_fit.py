@@ -195,7 +195,7 @@ class Relax_fit(Common_functions):
         # Alias the residue specific data structure.
         data = relax_data_store.res[self.run][i]
 
-        # Skip unselected residues.
+        # Skip deselected residues.
         if not data.select:
             return
 
@@ -562,11 +562,11 @@ class Relax_fit(Common_functions):
 
             # Calculate the mean value.
             for spin in spin_loop():
-                # Skip unselected spins.
+                # Skip deselected spins.
                 if not spin.select:
                     continue
 
-                # Skip and unselect spins which have no data.
+                # Skip and deselect spins which have no data.
                 if not hasattr(spin, 'intensities'):
                     spin.select = 0
                     continue
@@ -654,7 +654,7 @@ class Relax_fit(Common_functions):
             # Alias the residue specific data structure.
             data = relax_data_store.res[self.run][i]
 
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not data.select:
                 continue
 
@@ -796,7 +796,7 @@ class Relax_fit(Common_functions):
 
         # Loop over the sequence.
         for i in xrange(len(relax_data_store.res[self.run])):
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not relax_data_store.res[self.run][i].select:
                 continue
 

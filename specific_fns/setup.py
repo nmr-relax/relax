@@ -201,9 +201,9 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         if eqi == 'skip_function':
             function = inst.skip_function
 
-        # Unselect function.
-        if eqi == 'unselect':
-            function = inst.unselect
+        # Deselection function.
+        if eqi == 'deselect':
+            function = inst.deselect
 
         # Write results function (Columnar format).
         if eqi == 'write_columnar_results':

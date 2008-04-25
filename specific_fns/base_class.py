@@ -204,7 +204,7 @@ class Common_functions:
         # Arguments.
         self.run = run
 
-        # Skip unselected residues.
+        # Skip deselected residues.
         if not relax_data_store.res[self.run][instance].select:
             return
 
@@ -265,7 +265,7 @@ class Common_functions:
 
         # Loop over the residues.
         for i in xrange(len(relax_data_store.res[self.run])):
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not relax_data_store.res[self.run][i].select:
                 continue
 
@@ -284,7 +284,7 @@ class Common_functions:
 
         # Loop over the residues.
         for i in xrange(len(relax_data_store.res[self.run])):
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not relax_data_store.res[self.run][i].select:
                 continue
 
@@ -327,7 +327,7 @@ class Common_functions:
         # Arguments.
         self.run = run
 
-        # Skip unselected residues.
+        # Skip deselected residues.
         if not relax_data_store.res[self.run][instance].select:
             return
 

@@ -294,7 +294,7 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
             warn(RelaxWarning("Cannot find the spin %s within the sequence." % spin_id))
             continue
 
-        # Skip unselected spins.
+        # Skip deselected spins.
         if not spin.select:
             continue
 

@@ -202,7 +202,7 @@ class Rx_data:
             # Remap the data structure 'relax_data_store.res[self.run][i]'.
             data = relax_data_store.res[self.run][i]
 
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not data.select:
                 continue
 

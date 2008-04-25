@@ -79,7 +79,7 @@ class Relax_fit(TestCase):
             # Residue names.
             self.assertEqual(orig_data.name, new_data.name)
 
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not orig_data.spin[0].select:
                 continue
 

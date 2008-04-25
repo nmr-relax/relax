@@ -28,11 +28,11 @@ import help
 from relax_errors import RelaxBinError, RelaxError, RelaxIntError, RelaxListStrError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
 
 
-class Unselect:
+class Deselect:
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \
-        """Class for unselecting residues."""
+        """Class for deselecting residues."""
 
         # Add the generic help string.
         self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
@@ -42,7 +42,7 @@ class Unselect:
 
 
     def all(self, run=None):
-        """Function for unselecting all residues.
+        """Function for deselecting all residues.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -54,12 +54,12 @@ class Unselect:
         Examples
         ~~~~~~~~
 
-        To unselect all residues type:
+        To deselect all residues type:
 
-        relax> unselect.all()
+        relax> deselect.all()
 
 
-        To unselect all residues for the run 'srls_m1', type:
+        To deselect all residues for the run 'srls_m1', type:
 
         relax> select.all('srls_m1')
         relax> select.all(run='srls_m1')
@@ -67,7 +67,7 @@ class Unselect:
 
         # Function intro test.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "unselect.all("
+            text = sys.ps3 + "deselect.all("
             text = text + "run=" + `run` + ")"
             print text
 
@@ -80,11 +80,11 @@ class Unselect:
                     raise RelaxListStrError, ('run', run)
 
         # Execute the functional code.
-        self.__relax__.generic.selection.unsel_all(run=run)
+        self.__relax__.generic.selection.desel_all(run=run)
 
 
     def read(self, run=None, file=None, dir=None, change_all=0, column=0):
-        """Function for unselecting the residues contained in a file.
+        """Function for deselecting the residues contained in a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -92,7 +92,7 @@ class Unselect:
         run:  The name of the run(s).  By supplying a single string, array of strings, or None, a
         single run, multiple runs, or all runs will be selected respectively.
 
-        file:  The name of the file containing the list of residues to unselect.
+        file:  The name of the file containing the list of residues to deselect.
 
         dir:  The directory where the file is located.
 
@@ -107,28 +107,28 @@ class Unselect:
         Empty lines and lines beginning with a hash are ignored.
 
         The 'change_all' flag argument default is zero meaning that all residues currently either
-        selected or unselected will remain that way.  Setting the argument to 1 will cause all
+        selected or deselected will remain that way.  Setting the argument to 1 will cause all
         residues not specified in the file to be selected.
 
 
         Examples
         ~~~~~~~~
 
-        To unselect all overlapped residues in the file 'unresolved', type:
+        To deselect all overlapped residues in the file 'unresolved', type:
 
-        relax> unselect.read('noe', 'unresolved')
-        relax> unselect.read(run='noe', file='unresolved')
+        relax> deselect.read('noe', 'unresolved')
+        relax> deselect.read(run='noe', file='unresolved')
 
-        To unselect the residues in the second column of the relaxation data file 'r1.600' while
+        To deselect the residues in the second column of the relaxation data file 'r1.600' while
         selecting all other residues, type one of:
 
-        relax> unselect.read('test', 'r1.600', change_all=1, column=1)
-        relax> unselect.read(run='test', file='r1.600', change_all=1, column=1)
+        relax> deselect.read('test', 'r1.600', change_all=1, column=1)
+        relax> deselect.read(run='test', file='r1.600', change_all=1, column=1)
         """
 
         # Function intro test.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "unselect.read("
+            text = sys.ps3 + "deselect.read("
             text = text + "run=" + `run`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
@@ -161,11 +161,11 @@ class Unselect:
             raise RelaxIntError, ('residue number column', column)
 
         # Execute the functional code.
-        self.__relax__.generic.selection.unsel_read(run=run, file=file, dir=dir, change_all=change_all, column=column)
+        self.__relax__.generic.selection.desel_read(run=run, file=file, dir=dir, change_all=change_all, column=column)
 
 
     def res(self, run=None, num=None, name=None, change_all=0):
-        """Function for unselecting specific residues.
+        """Function for deselecting specific residues.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -183,37 +183,37 @@ class Unselect:
         Description
         ~~~~~~~~~~~
 
-        The residue number can be either an integer for unselecting a single residue or a python
-        regular expression, in string form, for unselecting multiple residues.  For details about
+        The residue number can be either an integer for deselecting a single residue or a python
+        regular expression, in string form, for deselecting multiple residues.  For details about
         using regular expression, see the python documentation for the module 're'.
 
         The residue name argument must be a string.  Regular expression is also allowed.
 
         The 'change_all' flag argument default is zero meaning that all residues currently either
-        selected or unselected will remain that way.  Setting the argument to 1 will cause all
+        selected or deselected will remain that way.  Setting the argument to 1 will cause all
         residues not specified by 'num' or 'name' to become selected.
 
 
         Examples
         ~~~~~~~~
 
-        To unselect all glycines for the run 'm5', type:
+        To deselect all glycines for the run 'm5', type:
 
-        relax> unselect.res(run='m5', name='GLY|ALA')
-        relax> unselect.res(run='m5', name='[GA]L[YA]')
+        relax> deselect.res(run='m5', name='GLY|ALA')
+        relax> deselect.res(run='m5', name='[GA]L[YA]')
 
-        To unselect residue 12 MET type:
+        To deselect residue 12 MET type:
 
-        relax> unselect.res('m5', 12)
-        relax> unselect.res('m5', 12, 'MET')
-        relax> unselect.res('m5', '12')
-        relax> unselect.res('m5', '12', 'MET')
-        relax> unselect.res(run='m5', num='12', name='MET')
+        relax> deselect.res('m5', 12)
+        relax> deselect.res('m5', 12, 'MET')
+        relax> deselect.res('m5', '12')
+        relax> deselect.res('m5', '12', 'MET')
+        relax> deselect.res(run='m5', num='12', name='MET')
         """
 
         # Function intro test.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "unselect.res("
+            text = sys.ps3 + "deselect.res("
             text = text + "run=" + `run`
             text = text + ", num=" + `num`
             text = text + ", name=" + `name`
@@ -245,7 +245,7 @@ class Unselect:
             raise RelaxBinError, ('change_all', change_all)
 
         # Execute the functional code.
-        self.__relax__.generic.selection.unsel_res(run=run, num=num, name=name, change_all=change_all)
+        self.__relax__.generic.selection.desel_res(run=run, num=num, name=name, change_all=change_all)
 
 
     def reverse(self, run=None):
@@ -261,14 +261,14 @@ class Unselect:
         Examples
         ~~~~~~~~
 
-        To unselect all currently selected residues and select those which are unselected type:
+        To deselect all currently selected residues and select those which are deselected type:
 
-        relax> unselect.reverse()
+        relax> deselect.reverse()
         """
 
         # Function intro test.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "unselect.reverse("
+            text = sys.ps3 + "deselect.reverse("
             text = text + "run=" + `run` + ")"
             print text
 

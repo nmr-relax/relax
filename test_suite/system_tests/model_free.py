@@ -647,7 +647,7 @@ class Mf(TestCase):
             self.assertEqual(orig_data.name, new_data.name)
             self.assertEqual(orig_data.select, new_data.select)
 
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not orig_data.select:
                 continue
 

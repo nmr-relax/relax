@@ -151,7 +151,7 @@ def set(val=None, param=None, spin_id=None, force=False):
             if not force:
                 # Loop over the spins.
                 for spin in spin_loop(spin_id):
-                    # Skip unselected spins.
+                    # Skip deselected spins.
                     if not spin.select:
                         continue
 
@@ -166,7 +166,7 @@ def set(val=None, param=None, spin_id=None, force=False):
 
             # Loop over the spins.
             for spin in spin_loop(spin_id):
-                # Skip unselected residues.
+                # Skip deselected residues.
                 if not spin.select:
                     continue
 
@@ -190,7 +190,7 @@ def set(val=None, param=None, spin_id=None, force=False):
         if exists_mol_res_spin_data():
             # Loop over the spins.
             for spin in spin_loop(spin_id):
-                # Skip unselected spins.
+                # Skip deselected spins.
                 if not spin.select:
                     continue
 
@@ -446,7 +446,7 @@ class Value:
 
         # Test data corresponding to param already exists.
         for i in xrange(len(relax_data_store.res[self.run])):
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not relax_data_store.res[self.run][i].select:
                 continue
 

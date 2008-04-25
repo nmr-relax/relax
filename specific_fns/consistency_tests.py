@@ -55,7 +55,7 @@ class Consistency_tests(Common_functions):
 
         # Test if the CSA, bond length, angle Theta and correlation time values have been set.
         for spin in spin_loop(spin_id):
-            # Skip unselected spins.
+            # Skip deselected spins.
             if not spin.select:
                 continue
 
@@ -89,7 +89,7 @@ class Consistency_tests(Common_functions):
 
         # Consistency testing.
         for spin in spin_loop(spin_id):
-            # Skip unselected spins.
+            # Skip deselected spins.
             if not spin.select:
                 continue
 
@@ -485,7 +485,7 @@ class Consistency_tests(Common_functions):
     def sim_return_param(self, index, spin):
         """Function for returning the array of simulation parameter values."""
 
-        # Skip unselected residues.
+        # Skip deselected residues.
         if not spin.select:
                 return
 

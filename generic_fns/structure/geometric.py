@@ -377,7 +377,7 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
         # Alias the spin system data.
         data = relax_data_store.res[run][i]
 
-        # Skip unselected spin systems.
+        # Skip deselected spin systems.
         if not data.select:
             continue
 
@@ -416,7 +416,7 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
             # Alias the spin system data.
             data = relax_data_store.res[run][i]
 
-            # Skip unselected spin systems.
+            # Skip deselected spin systems.
             if not data.select:
                 continue
 

@@ -43,8 +43,8 @@ noe.error(error=3000, spectrum_type='sat')
 noe.error(error=122000, spectrum_type='ref', res_num=114)
 noe.error(error=8500, spectrum_type='sat', res_num=114)
 
-# Unselect unresolved residues.
-unselect.read(file='unresolved')
+# Deselect unresolved residues.
+deselect.read(file='unresolved')
 
 # Calculate the NOEs.
 calc()

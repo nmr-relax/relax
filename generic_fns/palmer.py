@@ -528,7 +528,7 @@ def extract(dir, spin_id=None):
     # Loop over the sequence.
     pos = 0
     for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
-        # Skip unselected residues.
+        # Skip deselected residues.
         if not spin.select:
             continue
 

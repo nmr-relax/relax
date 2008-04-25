@@ -52,12 +52,12 @@ class Eliminate:
             # Function type.
             function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
 
-            # Specific eliminate, parameter names, parameter values, number of instances, and unselect function setup.
+            # Specific eliminate, parameter names, parameter values, number of instances, and deselect function setup.
             eliminate = self.relax.specific_setup.setup('eliminate', function_type)
             param_names = self.relax.specific_setup.setup('param_names', function_type)
             param_values = self.relax.specific_setup.setup('param_values', function_type)
             num_instances = self.relax.specific_setup.setup('num_instances', function_type)
-            unselect = self.relax.specific_setup.setup('unselect', function_type)
+            deselect = self.relax.specific_setup.setup('deselect', function_type)
 
             # Get the number of instances and loop over them.
             for i in xrange(num_instances(self.run)):
@@ -91,9 +91,9 @@ class Eliminate:
                         if eliminate(names[j], values[j], self.run, i, args):
                             flag = 1
 
-                    # Unselect.
+                    # Deselect.
                     if flag:
-                        unselect(self.run, i)
+                        deselect(self.run, i)
 
 
                 # Simulation elimination.
@@ -121,6 +121,6 @@ class Eliminate:
                             if eliminate(names[k], values[k], self.run, i, args):
                                 flag = 1
 
-                        # Unselect.
+                        # Deselect.
                         if flag:
-                            unselect(self.run, i, sim_index=j)
+                            deselect(self.run, i, sim_index=j)

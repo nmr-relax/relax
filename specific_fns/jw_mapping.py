@@ -54,7 +54,7 @@ class Jw_mapping(Common_functions):
 
         # Test if the CSA and bond length values have been set.
         for spin in spin_loop(spin_id):
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not spin.select:
                 continue
 
@@ -81,7 +81,7 @@ class Jw_mapping(Common_functions):
         # Reduced spectral density mapping.
         for spin in spin_loop(spin_id):
 
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not spin.select:
                 continue
 
@@ -428,7 +428,7 @@ class Jw_mapping(Common_functions):
     def sim_return_param(self, spin, index):
         """Function for returning the array of simulation parameter values."""
 
-        # Skip unselected residues.
+        # Skip deselected residues.
         if not spin.select:
                 return
 

@@ -79,7 +79,7 @@ class Monte_carlo:
 
         # Loop over the sequence.
         for i in xrange(len(relax_data_store.res[self.run])):
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not relax_data_store.res[self.run][i].select:
                 continue
 
@@ -200,7 +200,7 @@ class Monte_carlo:
                     # The total number of simulations.
                     n = 0
                     for i in xrange(len(param_array)):
-                        # Skip unselected simulations.
+                        # Skip deselected simulations.
                         if not select_sim[i]:
                             continue
 
@@ -214,7 +214,7 @@ class Monte_carlo:
                     # Calculate the sum of the parameter value for all simulations.
                     Xsum = 0.0
                     for i in xrange(len(param_array)):
-                        # Skip unselected simulations.
+                        # Skip deselected simulations.
                         if not select_sim[i]:
                             continue
 
@@ -234,7 +234,7 @@ class Monte_carlo:
                     # Calculate the sum part of the standard deviation.
                     sd = 0.0
                     for i in xrange(len(param_array)):
-                        # Skip unselected simulations.
+                        # Skip deselected simulations.
                         if not select_sim[i]:
                             continue
 

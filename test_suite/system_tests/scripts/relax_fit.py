@@ -30,8 +30,8 @@ relax_fit.read(file='T2_ncyc11b_ave.list', dir=data_path, relax_time=0.1936)
 # Calculate the peak intensity averages and the standard deviation of all spectra.
 relax_fit.mean_and_error()
 
-# Unselect unresolved residues.
-unselect.read(file='unresolved', dir=data_path)
+# Deselect unresolved residues.
+deselect.read(file='unresolved', dir=data_path)
 
 # Set the relaxation curve type.
 relax_fit.select_model('exp')

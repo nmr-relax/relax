@@ -146,7 +146,7 @@ class Molmol:
         if data_type == 'S2':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id):
-                # Skip unselected spins.
+                # Skip deselected spins.
                 if not spin.select:
                     continue
 
@@ -164,7 +164,7 @@ class Molmol:
         elif data_type == 'S2f':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id):
-                # Skip unselected spins.
+                # Skip deselected spins.
                 if not spin.select:
                     continue
 
@@ -183,7 +183,7 @@ class Molmol:
         elif data_type == 'S2s':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id):
-                # Skip unselected spins.
+                # Skip deselected spins.
                 if not spin.select:
                     continue
 
@@ -202,7 +202,7 @@ class Molmol:
         elif data_type == 'amp_fast':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id):
-                # Skip unselected spins.
+                # Skip deselected spins.
                 if not spin.select:
                     continue
 
@@ -239,7 +239,7 @@ class Molmol:
         elif data_type == 'amp_slow':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id):
-                # Skip unselected spins.
+                # Skip deselected spins.
                 if not spin.select:
                     continue
 
@@ -267,7 +267,7 @@ class Molmol:
         elif data_type == 'te':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id):
-                # Skip unselected spins.
+                # Skip deselected spins.
                 if not spin.select:
                     continue
 
@@ -285,7 +285,7 @@ class Molmol:
         elif data_type == 'tf':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id):
-                # Skip unselected spins.
+                # Skip deselected spins.
                 if not spin.select:
                     continue
 
@@ -303,7 +303,7 @@ class Molmol:
         elif data_type == 'ts':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id):
-                # Skip unselected spins.
+                # Skip deselected spins.
                 if not spins.select:
                     continue
 
@@ -327,7 +327,7 @@ class Molmol:
         elif data_type == 'time_fast':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id):
-                # Skip unselected spins.
+                # Skip deselected spins.
                 if not spin.select:
                     continue
 
@@ -357,7 +357,7 @@ class Molmol:
         elif data_type == 'time_slow':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id):
-                # Skip unselected spins.
+                # Skip deselected spins.
                 if not spin.select:
                     continue
 
@@ -392,7 +392,7 @@ class Molmol:
         elif data_type == 'Rex':
             # Loop over the spins.
             for spin, mol_name, res_num, res_name in spin_loop(spin_id):
-                # Skip unselected spins.
+                # Skip deselected spins.
                 if not spin.select:
                     continue
 
