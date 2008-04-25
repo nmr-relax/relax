@@ -189,13 +189,13 @@ def display(spin_id=None):
         print "%-15s %-15s %-15s %-15s %-15s" % (mol_name, `res_num`, res_name, `spin.num`, spin.name)
 
 
-def rename(spin_id, new_name=None):
-    """Function for renaming spins.
+def name(spin_id=None, name=None):
+    """Name the spins.
 
-    @param spin_id:     The identifier string for the spin(s) to rename.
+    @param spin_id:     The spin identification string.
     @type spin_id:      str
-    @param new_name:    The new spin name.
-    @type new_name:     str
+    @param name:        The new spin name.
+    @type name:         str
     """
 
     # Split up the selection string.
@@ -208,16 +208,16 @@ def rename(spin_id, new_name=None):
     for spin in spin_loop(spin_id):
         # Rename the spin if there is a match.
         if spin.num in spins or spin.name in spins:
-            spin.name = new_name
+            spin.name = name
 
 
-def renumber(spin_id, new_number=None):
-    """Function for renumbering spins.
+def number(spin_id=None, number=None):
+    """Number the spins.
 
-    @param spin_id:     The identifier string for the spin to renumber.
+    @param spin_id:     The spin identification string.
     @type spin_id:      str
-    @param new_number:  The new spin number.
-    @type new_number:   int
+    @param number:      The new spin number.
+    @type number:       int
     """
 
     # Split up the selection string.
@@ -227,17 +227,17 @@ def renumber(spin_id, new_number=None):
     spins = parse_token(spin_token)
 
     # Catch multiple renumberings!
-    number = 0
+    i = 0
     for spin in spin_loop(spin_id):
         if spin.num in spins or spin.name in spins:
-            number = number + 1
+            i = i + 1
 
     # Fail if multiple spins are numbered.
-    if number > 1:
-        raise RelaxError, "The renumbering of multiple spins is disallowed."
+    if i > 1:
+        raise RelaxError, "The numbering of multiple spins is disallowed, as each spin requires a unique number."
 
     # Spin loop.
     for spin in spin_loop(spin_id):
         # Rename the spin if there is a match.
         if spin.num in spins or spin.name in spins:
-            spin.num = new_number
+            spin.num = number
