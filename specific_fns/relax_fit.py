@@ -124,29 +124,37 @@ class Relax_fit(Common_functions):
             i = i + 1
 
 
-    def assign_function(self, run=None, i=None, intensity=None):
-        """Function for assigning peak intensity data to either the reference or saturated spectra."""
+    def assign_function(self, spin=None, intensity=None):
+        """Place the peak intensity data into the spin container.
 
-        # Alias the residue specific data structure.
-        data = relax_data_store.res[run][i]
+        The intensity data can be either that of the reference or saturated spectrum.
+
+        @keyword spin:      The spin container.
+        @type spin:         SpinContainer instance
+        @keyword intensity: The intensity value.
+        @type intensity:    float
+        """
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Initialise.
         index = None
-        if not hasattr(data, 'intensities'):
-            data.intensities = []
+        if not hasattr(spin, 'intensities'):
+            spin.intensities = []
 
-        # Determine if the relaxation time already exists for the residue (duplicated spectra).
-        for i in xrange(len(relax_data_store.relax_times[self.run])):
-            if self.relax_time == relax_data_store.relax_times[self.run][i]:
+        # Determine if the relaxation time already exists for the spin (duplicated spectra).
+        for i in xrange(len(cdp.relax_times)):
+            if self.__relax_time == cdp.relax_times[i]:
                 index = i
 
         # A new relaxation time has been encountered.
-        if index >= len(data.intensities):
-            data.intensities.append([intensity])
+        if index >= len(spin.intensities):
+            spin.intensities.append([intensity])
 
         # Duplicated spectra.
         else:
-            data.intensities[index].append(intensity)
+            spin.intensities[index].append(intensity)
 
 
     def back_calc(self, run=None, index=None, relax_time_index=None):
@@ -850,6 +858,9 @@ class Relax_fit(Common_functions):
 
         # Alias the current data pipe.
         cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Store the relaxation time in the class instance.
+        self.__relax_time = relax_time
 
         # Global relaxation time data structure.
         if not hasattr(cdp, 'relax_times'):
