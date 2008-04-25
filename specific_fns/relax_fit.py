@@ -31,6 +31,7 @@ import sys
 from data import Data as relax_data_store
 from base_class import Common_functions
 from generic_fns import intensity
+from generic_fns.selection import count_spins, spin_loop
 from minimise.generic import generic_minimise
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoPipeError, RelaxNoSequenceError
 
@@ -604,7 +605,7 @@ class Relax_fit(Common_functions):
                 cdp.sd[time_index] = cdp.sd[time_index] + data.sd[time_index]
 
             # Average sd.
-            cdp.sd[time_index] = cdp.sd[time_index] / float(count_num_spins())
+            cdp.sd[time_index] = cdp.sd[time_index] / float(count_spins())
 
             # Print out.
             print "Standard deviation for time point %s:  %s" % (`time_index`, `cdp.sd[time_index]`)
