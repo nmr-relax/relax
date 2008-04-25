@@ -12,6 +12,9 @@ data_path = sys.path[-1] + '/test_suite/shared_data/curve_fitting'
 # Load the sequence.
 sequence.read('Ap4Aase.seq', dir=sys.path[-1] + '/test_suite/system_tests/data')
 
+# Name the spins so they can be matched to the assignments.
+spin.rename(new_name='N')
+
 # Load the peak intensities.
 relax_fit.read(file='T2_ncyc1_ave.list', dir=data_path, relax_time=0.0176)
 relax_fit.read(file='T2_ncyc1b_ave.list', dir=data_path, relax_time=0.0176)
