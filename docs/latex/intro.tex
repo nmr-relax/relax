@@ -1,13 +1,138 @@
-% The how to use relax chapter.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Introduction chapter.
+%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{How to use relax}
+\chapter{Introduction}
+
+The program relax is designed for the study of the dynamics of proteins or other macromolecules though the analysis of NMR relaxation data.  It is a community driven project created by NMR spectroscopists for NMR spectroscopists.  It supports exponential curve fitting for the calculation of the $\Rone$ and $\Rtwo$ relaxation rates, calculation of the NOE, reduced spectral density mapping, and the Lipari and Szabo model-free analysis.
+
+
+The aim of relax is to provide a seamless and extremely flexible environment able to accept input in any format produced by other NMR software, able to faultlessly create input files, control, and read output from various programs including Modelfree and Dasha, output results in many formats, and visualise the data by controlling programs such as Grace\index{software!Grace|textbf}, OpenDX\index{software!OpenDX|textbf}, MOLMOL\index{software!MOLMOL|textbf}, and PyMOL\index{software!PyMOL|textbf}.  All data analysis tools from optimisation to model selection to Monte Carlo simulations are inbuilt into relax. Therefore the use of additional programs is optional.
+
+The flexibility of relax arises from the choice of either relax's scripting capabilities or its Python\index{Python|textbf} prompt interface. Extremely complex scripts can be created from simple building blocks to fully automate data analysis. A number of sample scripts have been provided to help understand script construction. In addition, any of Python's powerful features or functions can be incorporated as the script is executed as an arbitrary Python source file within relax's environment.  The modules of relax can also used as a vast library of dynamics related functions by your own software.
+
+relax is free software (free as in freedom) which is licenced under the GNU General Public Licence (GPL)\index{GPL|textbf}. You are free to copy, modify, or redistribute relax under the terms of the GPL. 
+
+
+% Program features.
+%%%%%%%%%%%%%%%%%%%
+
+\section{Program features}
+
+
+% Literature.
+%~~~~~~~~~~~~
+
+\subsection{Literature}
+
+The primary references for the program relax are \citet{dAuvergneGooley08a} and \citet{dAuvergneGooley08b}.
+
+Other literature related to the improved model-free analysis used within relax, which can nevertheless be applied to other techniques such as SRLS\index{SRLS}, include model-free model selection \citep{dAuvergneGooley03, Chen04}\index{model selection}, model-free model elimination \citep{dAuvergneGooley06}\index{model elimination}, the theory \citep{dAuvergneGooley07} behind the new model-free optimisation protocol \citep{dAuvergneGooley08b}, and the hybridisation of different models \citep{Horne07, dAuvergneGooley08b}. Most of these details can be found in the PhD thesis of \citet{dAuvergne06}.
+
+
+% Supported NMR theories.
+%~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Supported NMR theories}
+
+The following relaxation data analysis techniques are currently supported by relax:
+
+\begin{itemize}
+\item Model-free analysis \citep{LipariSzabo82a, LipariSzabo82b, Clore90a}.
+\item Reduced spectral density mapping \citep{Farrow95, Lefevre96}\index{reduced spectral density mapping}.
+\item Exponential curve fitting (to find the $\Rone$ and $\Rtwo$ relaxation rates)\index{exponential curve fitting}.
+\item Steady-state NOE calculation\index{NOE}.
+\end{itemize}
+
+
+% The future.
+\subsubsection{The future}
+
+At some time in the future the following techniques are planned to be implemented within relax:
+
+\begin{itemize}
+\item Relaxation dispersion\index{relaxation dispersion}.
+\item SRLS -- Slowly relaxing local structure \citep{Tugarinov01}\index{SRLS}.
+\end{itemize}
+
+Because relax is free software, if you would like to contribute addition features, functions, or modules which you have written for your own publications for the benefit of the field, almost anything relating to molecular dynamics may be accepted.  Please see the Open Source chapter for more details.
+
+
+
+% Data analysis tools.
+%~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Data analysis tools}
+
+The following tools are implemented as modular components to be used by any data analysis technique:
+
+\begin{itemize}
+\item Numerous high-precision optimisation algorithms\index{minisation}.
+\item Model selection \citep{dAuvergneGooley03, Chen04}\index{model selection}:
+    \begin{itemize}
+    \item Akaike's Information Criteria (AIC)\index{model selection!AIC}.
+    \item Small sample size corrected AIC (AICc)\index{model selection!AICc}.
+    \item Bayesian or Schwarz Information Criteria (BIC)\index{model selection!BIC}.
+    \item Bootstrap model selection\index{model selection!bootstrap}.
+    \item Single-item-out cross-validation (CV)\index{model selection!cross-validation}.
+    \item Hypothesis testing ANOVA model selection (only the model-free specific technique of \citet{Mandel95} is supported)\index{model selection!hypothesis testing}\index{model selection!ANOVA}.
+    \end{itemize}
+\item Monte Carlo simulations (error analysis for all data analysis techniques)\index{Monte Carlo simulation}.
+\item Model elimination -- the removal of failed models prior to model selection \citep{dAuvergneGooley06}\index{model elimination}.
+\end{itemize}
+
+
+% Data visualisation.
+%~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Data visualisation}
+
+The results of an analysis, or any data input into relax, can be visualised using a number of programs:
+
+\begin{description}
+\item[MOLMOL] 1D data can be mapped onto a structure either by the creation of MOLMOL macros or by direct control of the program\index{software!MOLMOL}.
+\item[PyMOL] 3D objects such as the diffusion tensor representation can be displayed with the structure\index{software!PyMOL}.
+\item[Grace] any 2D data can be plotted\index{software!Grace}.
+\item[OpenDX] The chi-squared space of models with three parameters can be mapped and 3D images of the space produced\index{software!OpenDX}.
+\end{description}
+
+
+% Interfacing with other programs.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Interfacing with other programs}
+
+relax can create the input files, execute in-line, and then read the output of the following programs. These programs can be used as optimisation engines replacing the minimisation algorithms built into relax:
+
+\begin{itemize}
+\item Dasha (model-free analysis)\index{software!Dasha}.
+\item Modelfree (model-free analysis)\index{software!Modelfree}.
+\end{itemize}
+
+
+% The user interfaces (UI).
+%~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The user interfaces (UI)}
+
+relax can be used through the following UIs:
+
+\begin{description}
+\item[The prompt] this is the primary interface of relax. Rather than reinventing a new command language, relax's interface is the powerful Python prompt. This gives the power user full access to a proven programming language.
+\item[Scripting] this provides a more powerful and flexible framework for controlling the program. The script will be executed as Python code enabling advanced programming for automating data analysis. All the features available within the prompt environment are accessible to the script.
+\end{description}
+
+
+
+% The relax HOWTO.
+%%%%%%%%%%%%%%%%%%
+
+\section{How to use relax}
 
 
 % The prompt.
 %~~~~~~~~~~~~
 
-\section{The prompt}
+\subsection{The prompt}
 \index{prompt|textbf}
 
 The primary interface of relax is the prompt.  After typing \texttt{`relax'} within a terminal\index{terminal} you will be presented with
@@ -39,7 +164,7 @@ relax>
 % Python.
 %~~~~~~~~
 
-\section{Python}
+\subsection{Python}
 
 \index{Python|textbf}
 relax has been designed such that knowledge about Python is not required to be able to fully use the program.  A few basics though will aid in understanding relax.
@@ -67,7 +192,7 @@ Two types of arguments exist in Python\index{Python|textbf} -- standard argument
 % User functions.
 %~~~~~~~~~~~~~~~~
 
-\section{User functions}
+\subsection{User functions}
 \index{user functions|textbf}
 
 For standard data analysis a large number of specially tailored functions called `user functions' have been implemented.  These are accessible from the relax prompt by simply typing the name of the function.  An example is \texttt{`help()'}\index{help system}.  An alphabetical listing of all accessible user functions together with full descriptions is presented later in this manual.
@@ -87,7 +212,7 @@ On first usage the relax prompt can be quite daunting.  Two features exist to in
 % The help system.
 %~~~~~~~~~~~~~~~~~
 
-\section{The help system}
+\subsection{The help system}
 \index{help system|textbf}
 
 For assistance in using a function simply type
@@ -108,7 +233,7 @@ is typed the help for the python object is returned.  This system is similar to 
 % Tab completion.
 %~~~~~~~~~~~~~~~~
 
-\section{Tab completion}
+\subsection{Tab completion}
 \index{tab completion|textbf}
 
 Tab completion is implemented to prevent insanity as the function names can be quite long -- a deliberate feature to improve usability.  The behaviour of the tab completion is very similar to that of the bash prompt.
@@ -142,7 +267,7 @@ All the objects beginning with an underscore are ``hidden'', they contain inform
 % The `run'.
 %~~~~~~~~~~~
 
-\section{The `run'}
+\subsection{The `run'}
 \index{run|textbf}
 
 Within relax the majority of operations are assigned to a special construct called a `run'.  For example to load relaxation data into the program it must be committed to a pre-created `run'.  Within one instance of relax multiple runs can be created and various operations performed in sequence on these runs.  This is useful for operations such as model selection whereby the function \texttt{`model\_selection'} can operate on a number of runs corresponding to different models and then assign the results to a newly created run.
@@ -180,7 +305,7 @@ Currently the NOE calculation, relaxation curve-fitting, model-free analysis, an
 % Scripting.
 %~~~~~~~~~~~
 
-\section{Scripting}
+\subsection{Scripting}
 \index{scripting|textbf}
 
 What ever is done within the prompt is also accessible through scripting.  Just type your commands into a text file and then at the terminal type
@@ -234,7 +359,7 @@ Scripting is much more powerful than the prompt as advanced Python\index{Python}
 % Sample scripts.
 %~~~~~~~~~~~~~~~~
 
-\section{Sample scripts}
+\subsection{Sample scripts}
 \index{scripting!sample scripts}
 
 A few sample scripts have been provided in the directory `sample\_scripts'.  These can be copied and modified for different types of data analysis.
@@ -244,7 +369,7 @@ A few sample scripts have been provided in the directory `sample\_scripts'.  The
 % The test suite.
 %~~~~~~~~~~~~~~~~
 
-\section{The test suite}
+\subsection{The test suite}
 \index{test suite}
 
 To test that the program functions correctly, relax possesses an inbuilt test suite.  The suite is a collection of simple tests which execute or probe different parts of the program checking that the software runs without problem.  The test suite is executed by running relax using the command \texttt{`relax --test-suite'}.
@@ -254,7 +379,7 @@ To test that the program functions correctly, relax possesses an inbuilt test su
 % The GUI.
 %~~~~~~~~~
 
-\section{The GUI}
+\subsection{The GUI}
 \index{GUI}
 
 relax has been designed primarily for scripting and, as such, no graphical user interface (GUI) currently exists.  The internal structure of the program has been specifically designed so any type of control mechanism can be easily added, including a GUI, therefore in the future one may be written.  A GUI will, however, detract from the power and flexibility inherent in the control by scripting.
@@ -264,7 +389,7 @@ relax has been designed primarily for scripting and, as such, no graphical user 
 % Access to the internals of relax.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\section{Access to the internals of relax}
+\subsection{Access to the internals of relax}
 
 To enable advanced Python\index{Python} scripting and control almost every part of relax has been designed in an object oriented fashion.  If you would like to play with internals of the program the entirety of relax is accessible within the object called \texttt{`self.relax'}.  To access the raw objects within relax which contain the program data the object called \texttt{`self.relax.data'} stores all the data.
 
