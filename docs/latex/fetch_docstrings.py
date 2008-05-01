@@ -182,8 +182,8 @@ class Fetch_docstrings:
         self.entries.append(['copy', 'copy'])
         self.entries.append(['correlation time', 'correlation time'])
 
-        self.entries.append(['dasha', 'computer programs!Dasha'])
-        self.entries.append(['Dasha', 'computer programs!Dasha'])
+        self.entries.append(['dasha', 'software!Dasha'])
+        self.entries.append(['Dasha', 'software!Dasha'])
         self.entries.append(['delete', 'delete'])
         self.entries.append(['diffusion tensor', 'diffusion!tensor'])
         self.entries.append(['display', 'display'])
@@ -198,8 +198,8 @@ class Fetch_docstrings:
         self.entries.append(['Fletcher-Reeves', 'minimisation techniques!Fletcher-Reeves'])
         self.entries.append(['floating point', 'floating point number'])
 
-        self.entries.append(['grace', 'computer programs!Grace'])
-        self.entries.append(['Grace', 'computer programs!Grace'])
+        self.entries.append(['grace', 'software!Grace'])
+        self.entries.append(['Grace', 'software!Grace'])
         self.entries.append(['gzip', 'compression!gzip'])
 
         self.entries.append(['Hestenes-Stiefel', 'minimisation techniques!Hestenes-Stiefel'])
@@ -214,15 +214,15 @@ class Fetch_docstrings:
         self.entries.append(['minimise', 'minimisation'])
         self.entries.append(['minimisation', 'minimisation'])
         self.entries.append(['model elimination', 'model elimination'])
-        self.entries.append(['modelfree4', 'computer programs!Modelfree4'])
-        self.entries.append(['Modelfree4', 'computer programs!Modelfree4'])
+        self.entries.append(['modelfree4', 'software!Modelfree'])
+        self.entries.append(['Modelfree4', 'software!Modelfree'])
         self.entries.append(['modelling', 'modelling'])
         self.entries.append(['molecule', 'molecule'])
-        self.entries.append(['molmol', 'computer programs!Molmol'])
-        self.entries.append(['Molmol', 'computer programs!Molmol'])
+        self.entries.append(['molmol', 'software!MOLMOL'])
+        self.entries.append(['Molmol', 'software!MOLMOL'])
 
-        self.entries.append(['opendx', 'computer programs!OpenDX'])
-        self.entries.append(['OpenDX', 'computer programs!OpenDX'])
+        self.entries.append(['opendx', 'software!OpenDX'])
+        self.entries.append(['OpenDX', 'software!OpenDX'])
         self.entries.append(['optimise', 'optimise'])
         self.entries.append(['order parameter', 'order parameter'])
 
@@ -247,8 +247,8 @@ class Fetch_docstrings:
         self.entries.append(['simplex', 'minimisation techniques!simplex'])
         self.entries.append(['sphere', 'diffusion!sphere (isotropic)'])
         self.entries.append(['spheroid', 'diffusion!spheroid (axially symmetric)'])
-        self.entries.append(['sparky', 'computer programs!Sparky'])
-        self.entries.append(['Sparky', 'computer programs!Sparky'])
+        self.entries.append(['sparky', 'software!Sparky'])
+        self.entries.append(['Sparky', 'software!Sparky'])
         self.entries.append(['steepest descent', 'minimisation techniques!steepest descent'])
 
         self.entries.append(['tar', 'tar'])
@@ -257,9 +257,9 @@ class Fetch_docstrings:
 
         self.entries.append(['write', 'write'])
 
-        self.entries.append(['xeasy', 'computer programs!XEasy'])
-        self.entries.append(['Xeasy', 'computer programs!XEasy'])
-        self.entries.append(['XEasy', 'computer programs!XEasy'])
+        self.entries.append(['xeasy', 'software!XEasy'])
+        self.entries.append(['Xeasy', 'software!XEasy'])
+        self.entries.append(['XEasy', 'software!XEasy'])
 
         # Modifications.
         for i in xrange(len(self.entries)):
