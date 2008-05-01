@@ -733,45 +733,44 @@ The sample script which demonstrates the optimisation of model-free model $m4$ w
 name = `m4' \\
 run.create(name, `mf') \\
  \\
-\# Nuclei type \\
-nuclei(`N') \\
- \\
 \# Load the sequence. \\
-sequence.read(name, `noe.500.out') \\
+sequence.read(`noe.500.out') \\
  \\
 \# Load the relaxation data. \\
-relax\_data.read(name, `R1', `600', 600.0 * 1e6, `r1.600.out') \\
-relax\_data.read(name, `R2', `600', 600.0 * 1e6, `r2.600.out') \\
-relax\_data.read(name, `NOE', `600', 600.0 * 1e6, `noe.600.out') \\
-relax\_data.read(name, `R1', `500', 500.0 * 1e6, `r1.500.out') \\
-relax\_data.read(name, `R2', `500', 500.0 * 1e6, `r2.500.out') \\
-relax\_data.read(name, `NOE', `500', 500.0 * 1e6, `noe.500.out') \\
+relax\_data.read(`R1', `600', 600.0 * 1e6, `r1.600.out') \\
+relax\_data.read(`R2', `600', 600.0 * 1e6, `r2.600.out') \\
+relax\_data.read(`NOE', `600', 600.0 * 1e6, `noe.600.out') \\
+relax\_data.read(`R1', `500', 500.0 * 1e6, `r1.500.out') \\
+relax\_data.read(`R2', `500', 500.0 * 1e6, `r2.500.out') \\
+relax\_data.read(`NOE', `500', 500.0 * 1e6, `noe.500.out') \\
  \\
 \# Setup other values. \\
-diffusion\_tensor.init(name, 10e-9, fixed=1) \\
-value.set(name, 1.02 * 1e-10, `bond\_length') \\
-value.set(name, -160 * 1e-6, `csa') \\
+diffusion\_tensor.init(10e-9, fixed=True) \\
+value.set(1.02 * 1e-10, `bond\_length') \\
+value.set(-160 * 1e-6, `csa') \\
+value.set(`15N', `heteronucleus') \\
+value.set(`1H', `proton') \\
  \\
 \# Select the model-free model. \\
-model\_free.select\_model(run=name, model=name) \\
+model\_free.select\_model(model=name) \\
  \\
 \# Grid search. \\
-grid\_search(name, inc=11) \\
+grid\_search(inc=11) \\
  \\
 \# Minimise. \\
-minimise(`newton', run=name) \\
+minimise(`newton') \\
  \\
 \# Monte Carlo simulations. \\
-monte\_carlo.setup(name, number=100) \\
-monte\_carlo.create\_data(name) \\
-monte\_carlo.initial\_values(name) \\
-minimise(`newton', run=name) \\
-eliminate(run=name) \\
-monte\_carlo.error\_analysis(name) \\
+monte\_carlo.setup(number=100) \\
+monte\_carlo.create\_data() \\
+monte\_carlo.initial\_values() \\
+minimise(`newton') \\
+eliminate() \\
+monte\_carlo.error\_analysis() \\
  \\
 \# Finish. \\
-results.write(run=name, file=`results', force=1) \\
-state.save(`save', force=1)
+results.write(file=`results', force=True) \\
+state.save(`save', force=True)
 \end{exampleenv}
 
 
