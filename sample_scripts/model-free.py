@@ -56,6 +56,8 @@ value.set(-172 * 1e-6, 'csa')
 #value.set(2048e-12, 'ts')
 #value.set(2048e-12, 'tf')
 #value.set(0.149/(2*pi*600e6)**2, 'rex')
+value.set('15N', 'heteronucleus')
+value.set('1H', 'proton')
 
 # Select the model-free model.
 model_free.select_model(model=name)
