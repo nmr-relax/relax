@@ -729,9 +729,9 @@ The sample script which demonstrates the optimisation of model-free model $m4$ w
 \begin{exampleenv}
 \# Script for model-free analysis. \\
  \\
-\# Create the run. \\
+\# Create the data pipe. \\
 name = `m4' \\
-run.create(name, `mf') \\
+pipe.create(name, `mf') \\
  \\
 \# Load the sequence. \\
 sequence.read(`noe.500.out') \\
@@ -796,50 +796,47 @@ Until this section is completed please look at the sample script \texttt{`model-
 
 \subsection{The sample script}
 
-The sample script which demonstrates the optimisation of all model-free models from $m0$ to $m9$ of individual residues is \texttt{`mf\_multimodel.py'}.  The text of the script is:
+The sample script which demonstrates the optimisation of all model-free models from $m0$ to $m9$ of individual residues is \texttt{`mf\_multimodel.py'}.  The important parts of the script are:
 
 \begin{exampleenv}
-\# Script for model-free analysis. \\
+\# Set the data pipe names (also the names of preset model-free models). \\
+pipes = [`m0', `m1', `m2', `m3', `m4', `m5', `m6', `m7', `m8', `m9'] \\
  \\
-\# Set the run names (also the names of preset model-free models). \\
-runs = [`m0', `m1', `m2', `m3', `m4', `m5', `m6', `m7', `m8', `m9'] \\
- \\
-\# Nuclei type \\
-nuclei(`N') \\
- \\
-\# Loop over the runs. \\
-for name in runs: \\
-\hspace*{4ex} \# Create the run. \\
-\hspace*{4ex} run.create(name, `mf') \\
+\# Loop over the pipes. \\
+for name in pipes: \\
+\hspace*{4ex} \# Create the data pipe. \\
+\hspace*{4ex} pipe.create(name, `mf') \\
  \\
 \hspace*{4ex} \# Load the sequence. \\
-\hspace*{4ex} sequence.read(name, `noe.500.out') \\
+\hspace*{4ex} sequence.read(`noe.500.out') \\
  \\
 \hspace*{4ex} \# Load the relaxation data. \\
-\hspace*{4ex} relax\_data.read(name, `R1', `600', 600.0 * 1e6, `r1.600.out') \\
-\hspace*{4ex} relax\_data.read(name, `R2', `600', 600.0 * 1e6, `r2.600.out') \\
-\hspace*{4ex} relax\_data.read(name, `NOE', `600', 600.0 * 1e6, `noe.600.out') \\
-\hspace*{4ex} relax\_data.read(name, `R1', `500', 500.0 * 1e6, `r1.500.out') \\
-\hspace*{4ex} relax\_data.read(name, `R2', `500', 500.0 * 1e6, `r2.500.out') \\
-\hspace*{4ex} relax\_data.read(name, `NOE', `500', 500.0 * 1e6, `noe.500.out') \\
+\hspace*{4ex} relax\_data.read(`R1', `600', 600.0 * 1e6, `r1.600.out') \\
+\hspace*{4ex} relax\_data.read(`R2', `600', 600.0 * 1e6, `r2.600.out') \\
+\hspace*{4ex} relax\_data.read(`NOE', `600', 600.0 * 1e6, `noe.600.out') \\
+\hspace*{4ex} relax\_data.read(`R1', `500', 500.0 * 1e6, `r1.500.out') \\
+\hspace*{4ex} relax\_data.read(`R2', `500', 500.0 * 1e6, `r2.500.out') \\
+\hspace*{4ex} relax\_data.read(`NOE', `500', 500.0 * 1e6, `noe.500.out') \\
  \\
 \hspace*{4ex} \# Setup other values. \\
-\hspace*{4ex} diffusion\_tensor.init(name, 1e-8, fixed=1) \\
-\hspace*{4ex} value.set(name, 1.02 * 1e-10, `bond\_length') \\
-\hspace*{4ex} value.set(name, -160 * 1e-6, `csa') \\
+\hspace*{4ex} diffusion\_tensor.init(1e-8, fixed=True) \\
+\hspace*{4ex} value.set(1.02 * 1e-10, `bond\_length') \\
+\hspace*{4ex} value.set(-160 * 1e-6, `csa') \\
+\hspace*{4ex} value.set(`15N', `heteronucleus') \\
+\hspace*{4ex} value.set(`1H', `proton') \\
  \\
 \hspace*{4ex} \# Select the model-free model. \\
-\hspace*{4ex} model\_free.select\_model(run=name, model=name) \\
+\hspace*{4ex} model\_free.select\_model(model=name) \\
  \\
 \hspace*{4ex} \# Minimise. \\
-\hspace*{4ex} grid\_search(name, inc=11) \\
-\hspace*{4ex} minimise(`newton', run=name) \\
+\hspace*{4ex} grid\_search(inc=11) \\
+\hspace*{4ex} minimise(`newton') \\
  \\
 \hspace*{4ex} \# Write the results. \\
-\hspace*{4ex} results.write(run=name, file=`results', force=1) \\
+\hspace*{4ex} results.write(file=`results', force=True) \\
  \\
 \# Save the program state. \\
-state.save(`save', force=1)
+state.save(`save', force=True)
 \end{exampleenv}
 
 
@@ -868,34 +865,28 @@ Until this section is completed please look at the sample script \texttt{`mf\_mu
 The sample script which demonstrates both model-free model elimination and model-free model selection between models from $m0$ to $m9$ is \texttt{`modsel.py'}.  The text of the script is:
 
 \begin{exampleenv}
-\# Script for model-free model selection. \\
+\# Set the data pipe names. \\
+pipes = [`m0', `m1', `m2', `m3', `m4', `m5', `m6', `m7', `m8', `m9'] \\
  \\
-\# Nuclei type \\
-nuclei(`N') \\
- \\
-\# Set the run names. \\
-runs = [`m0', `m1', `m2', `m3', `m4', `m5', `m6', `m7', `m8', `m9'] \\
- \\
-\# Loop over the run names. \\
-for name in runs: \\
+\# Loop over the data pipe names. \\
+for name in pipes: \\
 \hspace*{4ex} print ``$\backslash$n$\backslash$n\# '' + name + `` \#'' \\
  \\
-\hspace*{4ex} \# Create the run. \\
-\hspace*{4ex} run.create(name, `mf') \\
+\hspace*{4ex} \# Create the data pipe. \\
+\hspace*{4ex} pipe.create(name, `mf') \\
  \\
 \hspace*{4ex} \# Reload precalculated results from the file `m1/results', etc. \\
-\hspace*{4ex} results.read(run=name, file=`results', dir=name) \\
+\hspace*{4ex} results.read(file=`results', dir=name) \\
  \\
 \# Model elimination. \\
 eliminate() \\
  \\
 \# Model selection. \\
-run.create(`aic', `mf') \\
-model\_selection(`AIC', `aic') \\
+model\_selection(method=`AIC', modsel\_pipe=`aic') \\
  \\
 \# Write the results. \\
-state.save(`save', force=1) \\
-results.write(run=`aic', file=`results', force=1)
+state.save(`save', force=True) \\
+results.write(file=`results', force=True)
 \end{exampleenv}
 
 
