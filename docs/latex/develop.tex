@@ -82,11 +82,8 @@ An example of a single line docstring is:
 
 \begin{footnotesize}
 \begin{verbatim}
-    def delete(self, run):
+    def delete(self):
         """Function for deleting all model-free data."""
-
-        # Arguments.
-        self.run = run
 \end{verbatim}
 \end{footnotesize}
 
@@ -121,21 +118,45 @@ In relax a mixture of both camel case (eg. CamelCase)\index{camel case} and lowe
 % Variables and functions.
 \subsubsection{Variables and functions}
 
-For both variables and functions lower case with underscores between words is always used.  This is for readability as the convention is much more fluent than camel case.  A few rare exceptions exist, an example is the Brownian diffusion tensor parameter of anisotropy $\Diff_a$ which is referenced as \texttt{self.relax.data.diff[run].Da}.  As a rule though all new variable or function names should be kept as lower case.  An example of this convention for both the variable name and function name is:
+For both variables and functions lower case with underscores between words is always used.  This is for readability as the convention is much more fluent than camel case.  A few rare exceptions exist, an example is the Brownian diffusion tensor parameter of anisotropy $\Diff_a$ which is referenced as \texttt{cdp.diff\_tensor.Da}.  As a rule though all new variable or function names should be kept as lower case.  An example of this convention for both the variable name and function name is:
 
 \begin{footnotesize}
 \begin{verbatim}
-    def assemble_param_names(self, index=None):
-        """Function for assembling various pieces of data into a Numeric array."""
+    def assemble_param_vector(self, spin=None, spin_id=None, sim_index=None, model_type=None):
+        """Assemble the model-free parameter vector (as numpy array).
+
+        If the spin argument is supplied, then the spin_id argument will be ignored.
+
+        @keyword spin:          The spin data container.
+        @type spin:             SpinContainer instance
+        @keyword spin_id:       The spin identification string.
+        @type spin_id:          str
+        @keyword sim_index:     The optional MC simulation index.
+        @type sim_index:        int
+        @keyword model_type:    The optional parameter set, one of 'all', 'diff', 'mf', or
+                                'local_tm'. 
+        @type model_type:       str or None
+        @return:                An array of the parameter values of the model-free model.
+        @rtype:                 numpy array
+        """
 
         # Initialise.
-        self.param_names = []
+        param_vector = []
+
+        # Determine the model type.
+        if not model_type:
+            model_type = self.determine_param_set_type()
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Diffusion tensor parameters.
-        if self.param_set == 'diff' or self.param_set == 'all':
-            # Spherical diffusion.
-            if self.relax.data.diff[self.run].type == 'sphere':
-                self.param_names.append('tm')
+        if model_type == 'diff' or model_type == 'all':
+            # Normal parameters.
+            if sim_index == None:
+                # Spherical diffusion.
+                if cdp.diff_tensor.type == 'sphere':
+                    param_vector.append(cdp.diff_tensor.tm)
 \end{verbatim}
 \end{footnotesize}
 
@@ -181,28 +202,35 @@ The following conventions are for general code cleanliness and readability:
 An example which shows most of these conventions is:
 \begin{footnotesize}
 \begin{verbatim*}
-from random import gauss
+class Scientific_data(Base_struct_API):
+    """The Scientific Python specific data object."""
+
+    # Identification string.
+    id = 'scientific'
 
 
-class Monte_carlo:
-    def __init__(self, relax):
-        """Class containing functions for Monte Carlo simulations."""
+    def __find_bonded_atom(self, attached_atom, mol_type, res):
+        """Find the atom named attached_atom directly bonded to the desired atom.
 
-        self.relax = relax
-
-
-    def create_data(self, run=None, method=None):
-        """Function for creating simulation data.
-
-        It is assumed that all data types are residue specific.
+        @param attached_atom:   The name of the attached atom to return.
+        @type attached_atom:    str
+        @param mol_type:        The type of the molecule.  This can be one of 'protein', 'nucleic acid',
+                                or 'other'.
+        @type mol_type:         str
+        @param res:             The Scientific Python residue object.
+        @type res:              Scientific Python residue instance
+        @return:                A tuple of information about the bonded atom.
+        @rtype:                 tuple consisting of the atom number (int), atom name (str), element
+                                name (str), and atomic position (Numeric array of len 3)
         """
 
-        # Arguments.
-        self.run = run
+        # Init.
+        bonded_found = False
 
-        # Test if the run exists.
-        if not self.run in self.relax.data.run_names:
-            raise RelaxNoPipeError, self.run
+        # The attached atom is in the residue.
+        if attached_atom in res.atoms:
+            # The bonded atom object.
+            bonded = res[attached_atom]
 \end{verbatim*}
 \end{footnotesize}
 
@@ -612,11 +640,11 @@ Each of the boxes in Figure~\ref{fig: core design} represents a different groupi
 
 \item[Other interfaces:]  Any number of interfaces for example other GUIs, an ncurses interface, a web based interface, or an MPI interface could be added to relax without modification of the current sources.
 
-\item[Generic code:]  This code includes classes and functions which are independent of the UI and not specific to a certain run type, for example not being involved in model-free analysis, relaxation curve-fitting, the NOE calculation, and reduced spectral density mapping.  All this code is located in the directory \texttt{generic\_fns/}.
+\item[Generic code:]  This code includes classes and functions which are independent of the UI and not specific to a certain data pipe type, for example not being involved in model-free analysis, relaxation curve-fitting, the NOE calculation, and reduced spectral density mapping.  All this code is located in the directory \texttt{generic\_fns/}.
 
-\item[Specific setup:]  This code implements the internal interface between the generic and specific code.  The generic code calls the specific setup asking for a specific function for the given run type.  For example by asking for the minimise function when the run type is model-free analysis the function \texttt{self.rel\-ax.spec\-if\-ic.mod\-el\_free.min\-im\-ise()} is returned.  Although the generic code accesses the specific code solely through this interface the specific code can access the generic code directly.  The code is located in the file \texttt{specific\_fns/specific\_setup.py}.
+\item[Specific setup:]  This code implements the internal interface between the generic and specific code.  The generic code calls the specific setup asking for a specific function for the given data pipe type.  For example by asking for the minimise function when the data pipe type is model-free analysis the function \texttt{self.rel\-ax.spec\-if\-ic.mod\-el\_free.min\-im\-ise()} is returned.  Although the generic code accesses the specific code solely through this interface the specific code can access the generic code directly.  The code is located in the file \texttt{specific\_fns/specific\_setup.py}.
 
-\item[Specific code:]  This is the code which is specific to the run type -- model-free analysis, relaxation curve-fitting, reduced spectral density mapping, and the NOE calculation.  Each type is located in a separate file in the directory \texttt{specific\_fns/}.
+\item[Specific code:]  This is the code which is specific to the data pipe type -- model-free analysis, relaxation curve-fitting, reduced spectral density mapping, and the NOE calculation.  Each type is located in a separate file in the directory \texttt{specific\_fns/}.
 
 \item[Mathematical functions:]  This is reserved for CPU intensive code involved in calculations.  The code may be written in Python however C code can be used to significantly increase the speed of the calculations.  For optimisation the code can include function evaluations, calculation of gradients, and calculation of Hessians.  These functions are located in the directory \texttt{maths\_fns/}.
 
