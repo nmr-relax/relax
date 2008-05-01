@@ -42,8 +42,8 @@ noe.error(name, error=3000, spectrum\_type=`sat') \\
 noe.error(name, error=122000, spectrum\_type=`ref', res\_num=114) \\
 noe.error(name, error=8500, spectrum\_type=`sat', res\_num=114) \\
  \\
-\# Unselect unresolved residues. \\
-unselect.read(name, file=`unresolved') \\
+\# Deselect unresolved residues. \\
+deselect.read(name, file=`unresolved') \\
  \\
 \# Calculate the NOEs. \\
 calc(name) \\
@@ -138,7 +138,7 @@ noe.error(name, error=8500, spectrum\_type=`sat', res\_num=114)
 
 As the peaks of certain residues overlap to such an extent that the heights cannot be resolved a simple text file was created called \texttt{unresolved} in which each line consists of a single residue number.  By using the command
 
-\example{unselect.read(name, file=`unresolved')}
+\example{deselect.read(name, file=`unresolved')}
 
 all residues in the file \texttt{unresolved} are excluded from the analysis.
 

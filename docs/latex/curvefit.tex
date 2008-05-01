@@ -45,8 +45,8 @@ relax\_fit.read(name, file=`T2\_ncyc11b.list', relax\_time=0.1936) \\
 \# Calculate the peak intensity averages and the standard deviation of all spectra. \\
 relax\_fit.mean\_and\_error(name) \\
  \\
-\# Unselect unresolved residues. \\
-unselect.read(name, file=`unresolved') \\
+\# Deselect unresolved residues. \\
+deselect.read(name, file=`unresolved') \\
  \\
 \# Set the relaxation curve type. \\
 relax\_fit.select\_model(name, `exp') \\
@@ -122,7 +122,7 @@ Once all the peak intensity data has been loaded a few calculations are required
 
 Any residues which cannot be resolved due to peak overlap were included in a file called \texttt{`unresolved'}.  This file consists solely of one residue number per line.  These residues are excluded from the analysis by the user function
 
-\example{unselect.read(name, file=`unresolved')}
+\example{deselect.read(name, file=`unresolved')}
 
 Finally the experiment type is specified by the command
 
