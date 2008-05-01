@@ -77,7 +77,7 @@ state.save(`save', force=True)
 
 The data pipe is simply created by the command
 
-\example{run.create(`NOE', `noe')}
+\example{pipe.create(`NOE', `noe')}
 
 This user function will then create a NOE calculation specific data pipe labelled \texttt{`NOE'}.  The second argument sets the pipe type to that of the NOE calculation.  Setting the pipe type is important so that the program knows which user functions are compatible with the data pipe, for example the function \texttt{minimise()} is meaningless in this sample script as the NOE values are directly calculated rather than optimised.
 
