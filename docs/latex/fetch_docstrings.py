@@ -161,13 +161,18 @@ class Fetch_docstrings:
         # The index entries (where to index and the index name).
         ########################################################
 
+        self.entries.append(['AIC', 'model selection!AIC'])
+        self.entries.append(['AICc', 'model selection!AICc'])
         self.entries.append(['angle', 'angles'])
         self.entries.append(['anisotropic', 'diffusion!anisotropic'])
+        self.entries.append(['ANOVA', 'model selection!ANOVA'])
         self.entries.append(['asymmetric', 'diffusion!ellipsoid (asymmetric)'])
         self.entries.append(['axially symmetric', 'diffusion!spheroid (axially symmetric)'])
 
+        self.entries.append(['BIC', 'model selection!BIC'])
         self.entries.append(['BFGS', 'minimisation techniques!BFGS'])
         self.entries.append(['bond length', 'bond length'])
+        self.entries.append(['bootstrap', 'model selection!bootstrap'])
         self.entries.append(['bound', 'parameter!bounds'])
         self.entries.append(['Brownian', 'diffusion!Brownian'])
         self.entries.append(['bzip2', 'compression!bzip2'])
@@ -181,6 +186,7 @@ class Fetch_docstrings:
         self.entries.append(['constraint', 'constraint'])
         self.entries.append(['copy', 'copy'])
         self.entries.append(['correlation time', 'correlation time'])
+        self.entries.append(['cross-validation', 'model selection!cross-validation'])
 
         self.entries.append(['dasha', 'software!Dasha'])
         self.entries.append(['Dasha', 'software!Dasha'])
@@ -203,6 +209,7 @@ class Fetch_docstrings:
         self.entries.append(['gzip', 'compression!gzip'])
 
         self.entries.append(['Hestenes-Stiefel', 'minimisation techniques!Hestenes-Stiefel'])
+        self.entries.append(['hypothesis testing', 'model selection!hypothesis testing'])
 
         self.entries.append(['isotropic', 'diffusion!sphere (isotropic)'])
 
