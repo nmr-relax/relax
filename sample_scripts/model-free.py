@@ -23,7 +23,7 @@
 # This script performs a model-free analysis for the single model 'm4'.
 #######################################################################
 
-# Create the run.
+# Create the data pipe.
 name = 'm4'
 pipe.create(name, 'mf')
 
