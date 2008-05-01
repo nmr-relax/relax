@@ -91,19 +91,25 @@ An example of a multiline docstring is:
 
 \begin{footnotesize}
 \begin{verbatim}
-    def aic(self, chi2, k, n):
-        """Akaike's Information Criteria (AIC).
+def aic(chi2, k, n):
+    """Akaike's Information Criteria (AIC).
 
-        The formula is:
+    The formula is::
 
-            AIC = chi2 + 2k
+        AIC = chi2 + 2k
 
-        where:
-            chi2 is the minimised chi-squared value.
-            k is the number of parameters in the model.
-        """
 
-        return chi2 + 2.0*k
+    @param chi2:    The minimised chi-squared value.
+    @type chi2:     float
+    @param k:       The number of parameters in the model.
+    @type k:        int
+    @param n:       The dimension of the relaxation data set.
+    @type n:        int
+    @return:        The AIC value.
+    @rtype:         float
+    """
+
+    return chi2 + 2.0*k
 \end{verbatim}
 \end{footnotesize}
 
@@ -169,11 +175,23 @@ For classes relax uses a mix of camel case (for example all the \texttt{RelaxErr
 
 \begin{footnotesize}
 \begin{verbatim}
-class Model_free(Common_functions):
-    def __init__(self, relax):
-        """Class containing functions specific to model-free analysis."""
+class Model_free_main:
+    """Class containing functions specific to model-free analysis."""
 
-        self.relax = relax
+    def are_mf_params_set(self, spin):
+        """Test if the model-free parameter values are set.
+
+        @param spin:    The spin container object.
+        @type spin:     SpinContainer instance
+        @return:        The name of the first parameter in the parameter list in which the
+                        corresponding parameter value is None.  If all parameters are set, then None
+                        is returned.
+        @rtype:         str or None
+        """
+
+        # Deselected residue.
+        if spin.select == 0:
+            return
 \end{verbatim}
 \end{footnotesize}
 
@@ -195,7 +213,7 @@ The following conventions are for general code cleanliness and readability:
 \item Trailing whitespace should be avoided, although this is not very important.
 \item All functions should be preceded by two empty lines.  The only exception is the first function of the class definition.
 \item Function arguments should be separated by a comma followed by a single space.
-\item The assignment operator should be surrounded by spaces, for example `\verb*|self.relax = relax|'.  The exception is function arguments where for example `\verb*|self.classic_colour(res_num=None, width=0.3)|'.
+\item The assignment operator should be surrounded by spaces, for example `\verb*|tm = 1e-8|'.  The exception is function arguments where for example `\verb*|self.classic_colour(res_num=None, width=0.3)|'.
 \item The comparison operators should also be surrounded by spaces, e.g.\ `\verb*| < |', `\verb*| > |', `\verb*| == |', `\verb*| <= |', `\verb*| => |', `\verb*| <> |', `\verb*| != |', `\verb*| is |', and `\verb*| in |'.
 \end{itemize}
 
