@@ -27,9 +27,6 @@
 name = 'm4'
 pipe.create(name, 'mf')
 
-# Nuclei type
-nuclei('N')
-
 # Load the sequence.
 sequence.read('noe.500.out')
 
