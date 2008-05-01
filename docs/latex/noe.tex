@@ -23,38 +23,38 @@ The calculation of NOE values is a straight forward and quick procedure which in
 \begin{exampleenv}
 \# Script for calculating NOEs. \\
  \\
-\# Create the run \\
-name = `noe' \\
-run.create(name, `noe') \\
+\# Create the data pipe. \\
+pipe.create(`NOE', `noe') \\
  \\
 \# Load the sequence from a PDB file. \\
-pdb(name, `Ap4Aase\_new\_3.pdb', load\_seq=1) \\
+structure.read\_pdb(name, `Ap4Aase\_new\_3.pdb') \\
+structure.load\_spins(spin\_id=`@N')
  \\
 \# Load the reference spectrum and saturated spectrum peak intensities. \\
-noe.read(name, file=`ref.list', spectrum\_type=`ref') \\
-noe.read(name, file=`sat.list', spectrum\_type=`sat') \\
+noe.read(file=`ref.list', spectrum\_type=`ref') \\
+noe.read(file=`sat.list', spectrum\_type=`sat') \\
  \\
 \# Set the errors. \\
-noe.error(name, error=3600, spectrum\_type=`ref') \\
-noe.error(name, error=3000, spectrum\_type=`sat') \\
+noe.error(error=3600, spectrum\_type=`ref') \\
+noe.error(error=3000, spectrum\_type=`sat') \\
  \\
 \# Individual residue errors. \\
-noe.error(name, error=122000, spectrum\_type=`ref', res\_num=114) \\
-noe.error(name, error=8500, spectrum\_type=`sat', res\_num=114) \\
+noe.error(error=122000, spectrum\_type=`ref', res\_num=114) \\
+noe.error(error=8500, spectrum\_type=`sat', res\_num=114) \\
  \\
 \# Deselect unresolved residues. \\
-deselect.read(name, file=`unresolved') \\
+deselect.read(file=`unresolved') \\
  \\
 \# Calculate the NOEs. \\
-calc(name) \\
+calc() \\
  \\
 \# Save the NOEs. \\
-value.write(name, param=`noe', file=`noe.out', force=1) \\
+value.write(param=`noe', file=`noe.out', force=True) \\
  \\
 \# Create grace files. \\
-grace.write(name, y\_data\_type=`ref', file=`ref.agr', force=1) \\
-grace.write(name, y\_data\_type=`sat', file=`sat.agr', force=1) \\
-grace.write(name, y\_data\_type=`noe', file=`noe.agr', force=1) \\
+grace.write(y\_data\_type=`ref', file=`ref.agr', force=True) \\
+grace.write(y\_data\_type=`sat', file=`sat.agr', force=True) \\
+grace.write(y\_data\_type=`noe', file=`noe.agr', force=True) \\
  \\
 \# View the grace files. \\
 grace.view(file=`ref.agr') \\
@@ -62,28 +62,24 @@ grace.view(file=`sat.agr') \\
 grace.view(file=`noe.agr') \\
  \\
 \# Write the results. \\
-results.write(name, file=`results', dir=None, force=1) \\
+results.write(file=`results', dir=None, force=True) \\
  \\
 \# Save the program state. \\
-state.save(`save', force=1)
+state.save(`save', force=True)
 \end{exampleenv}
 
 
 
-% Initialisation of the run.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Initialisation of the data pipe.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Initialisation of the run} \label{NOE initialisation}
+\section{Initialisation of the data pipe} \label{NOE initialisation}
 
-Firstly to simplify referencing of the run name in the relevent functions the name \texttt{`noe'} is assigned to to the object \texttt{name} by the command
+The data pipe is simply created by the command
 
-\example{name = `noe'}
+\example{run.create(`NOE', `noe')}
 
-Therefore instead of typing \texttt{`noe'} each time the run needs to be referenced, \texttt{name} can be used instead.  The run is created by the command
-
-\example{run.create(name, `noe')}
-
-This user function will then create a run which is named \texttt{`noe'}, the second argument setting the run type to that of calculating the NOE.  Setting the run type is important so that the program knows which user functions are compatible with the run, for example the function \texttt{minimise()} is meaningless in this sample script as the NOE values are directly calculated rather than optimised.
+This user function will then create a NOE calculation specific data pipe labelled \texttt{`NOE'}.  The second argument sets the pipe type to that of the NOE calculation.  Setting the pipe type is important so that the program knows which user functions are compatible with the data pipe, for example the function \texttt{minimise()} is meaningless in this sample script as the NOE values are directly calculated rather than optimised.
 
 
 
@@ -92,21 +88,25 @@ This user function will then create a run which is named \texttt{`noe'}, the sec
 
 \section{Loading the data}
 
-The first thing which need to be completed prior to any residue specific command is to load the sequence.  In this case the command
+The first thing which need to be completed prior to any residue specific command is to generate the sequence from a PDB file.  In this case the command
 
-\example{pdb(name, `Ap4Aase\_new\_3.pdb', load\_seq=1)}
+\example{structure.read\_pdb(name, `Ap4Aase\_new\_3.pdb')}
 \index{PDB}
 
-will extract the sequence from the PDB file `Ap4Aase\_new\_3.pdb'.  The first argument specifies the run into which the sequence will be loaded, the second specifies the file name, and the third causes the function to extract the sequence rather than just load the PDB into relax.  Although the PDB coordinates have been loaded into the program the structure serves no purpose when calculating NOE values.
+will load the PDB file `Ap4Aase\_new\_3.pdb' into relax.  Then
+
+\example{structure.load\_spins(spin\_id=`@N')}
+
+will generate the molecule, residue, and spin sequence for the current data pipe.  In this situation there will be a single spin system per residue generated corresponding to the backbone amide nitrogens.  Although the PDB coordinates have been loaded into the program, the structural information serves no purpose when calculating NOE values.
 
 The next two commands
 
 \begin{exampleenv}
-noe.read(name, file=`ref.list', spectrum\_type=`ref') \\
-noe.read(name, file=`sat.list', spectrum\_type=`sat')
+noe.read(file=`ref.list', spectrum\_type=`ref') \\
+noe.read(file=`sat.list', spectrum\_type=`sat')
 \end{exampleenv}
 
-load the peak heights\index{peak!height} of the reference and saturated NOE experiments (although the volume\index{peak!volume} could be used instead).  The keyword argument \texttt{format} has not been specified hence the default format of a Sparky\index{computer programs!Sparky} peak list (saved after typing \texttt{`lt'}) is assumed.  If the program XEasy\index{computer programs!XEasy} was used to analyse the spectra the argument \texttt{format='xeasy'} is necessary.  The first column of the file should be the Sparky assignment string and it is assumed that the 4$^\textrm{th}$ column contains either the peak height.  If you have any other format you would like read by relax please send an email to the relax development mailing list\index{mailing list!relax-devel} detailing the software used, the format of the file (specifically where the residue number and peak intensity\index{peak!intensity} are located), and possibly attaching an example of the file itself.
+load the peak heights\index{peak!height} of the reference and saturated NOE experiments (although the volume\index{peak!volume} could be used instead).  The keyword argument \texttt{format} has not been specified hence the default format of a Sparky\index{computer programs!Sparky} peak list (saved after typing \texttt{`lt'}) is assumed.  If the program XEasy\index{computer programs!XEasy} was used to analyse the spectra the argument \texttt{format=`xeasy'} is necessary.  The first column of the file should be the Sparky assignment string and it is assumed that the 4$^\textrm{th}$ column contains either the peak height or peak volume.  If you have any other format you would like read by relax please send an email to the relax development mailing list\index{mailing list!relax-devel} detailing the software used, the format of the file (specifically where the residue number and peak intensity\index{peak!intensity} are located), and possibly attaching an example of the file itself.
 
 
 
@@ -115,18 +115,18 @@ load the peak heights\index{peak!height} of the reference and saturated NOE expe
 
 \section{Setting the errors}
 
-In this example the errors where measured from the base plain noise.  The Sparky RMSD\index{RMSD} function was used to estimate the maximal noise levels across the spectrum in regions containing no peaks.  For the reference spectrum the RMSD was approximately 3600 whereas in the saturated spectrum the RMSD was 3000.  These errors are set by the commands
+In this example the errors where measured from the base plain noise.  The Sparky\index{software!Sparky} RMSD\index{RMSD} function was used to estimate the maximal noise levels across the spectrum in regions containing no peaks.  For the reference spectrum the RMSD was approximately 3600 whereas in the saturated spectrum the RMSD was 3000.  These errors are set by the commands
 
 \begin{exampleenv}
-noe.error(name, error=3600, spectrum\_type=`ref') \\
-noe.error(name, error=3000, spectrum\_type=`sat')
+noe.error(error=3600, spectrum\_type=`ref') \\
+noe.error(error=3000, spectrum\_type=`sat')
 \end{exampleenv}
 
 For the residue G114, the noise levels are significantly increased compared to the rest of the protein as the peak is located close to the water signal.  The higher errors for this residue are specified by the commands
 
 \begin{exampleenv}
-noe.error(name, error=122000, spectrum\_type=`ref', res\_num=114) \\
-noe.error(name, error=8500, spectrum\_type=`sat', res\_num=114)
+noe.error(error=122000, spectrum\_type=`ref', res\_num=114) \\
+noe.error(error=8500, spectrum\_type=`sat', res\_num=114)
 \end{exampleenv}
 
 
@@ -136,7 +136,7 @@ noe.error(name, error=8500, spectrum\_type=`sat', res\_num=114)
 
 \section{Unresolved residues}
 
-As the peaks of certain residues overlap to such an extent that the heights cannot be resolved a simple text file was created called \texttt{unresolved} in which each line consists of a single residue number.  By using the command
+As the peaks of certain residues overlap to such an extent that the heights cannot be resolved, a simple text file was created called \texttt{unresolved} in which each line consists of a single residue number.  By using the command
 
 \example{deselect.read(name, file=`unresolved')}
 
@@ -151,7 +151,7 @@ all residues in the file \texttt{unresolved} are excluded from the analysis.
 
 At this point the NOE can be calculated.  The user function
 
-\example{calc(name)}
+\example{calc()}
 
 will calculate both the NOE and the errors.  The NOE value will be calculated using the formula
 \begin{equation}
@@ -165,7 +165,7 @@ NOE = \frac{I_{sat}}{I_{ref}},
 
 \noindent where $\sigma_{sat}$ and $\sigma_{ref}$ are the peak intensity errors in the saturated and reference spectra respectively.  To create a file of the NOEs the command
 
-\example{value.write(name, param=`noe', file=`noe.out', force=1)}
+\example{value.write(param=`noe', file=`noe.out', force=True)}
 
 will create a file called \texttt{noe.out} with the NOE values and errors.  The force flag will cause any file with the same name to be overwritten.  An example of the format of \texttt{noe.out} is
 
@@ -197,14 +197,14 @@ Num  Name  Value                         Error
 Any two dimensional data set can be plotted in relax in conjunction with the program \href{http://plasma-gate.weizmann.ac.il/Grace/}{Grace}\index{computer programs!Grace|textbf}.  The program is also known as Xmgrace and was previously known as ACE/gr or Xmgr.  The highly flexible relax user function \texttt{grace.write} is capable of producing 2D plots of any x-y data sets.  The three commands
 
 \begin{exampleenv}
-grace.write(name, y\_data\_type=`ref', file=`ref.agr', force=1) \\
-grace.write(name, y\_data\_type=`sat', file=`sat.agr', force=1) \\
-grace.write(name, y\_data\_type=`noe', file=`noe.agr', force=1)
+grace.write(y\_data\_type=`ref', file=`ref.agr', force=True) \\
+grace.write(y\_data\_type=`sat', file=`sat.agr', force=True) \\
+grace.write(y\_data\_type=`noe', file=`noe.agr', force=True)
 \end{exampleenv}
 
 create three separate plots of the peak intensity of the reference and saturated spectra as well as the NOE.  The x-axis in all three defaults to the residue number.  As the x and y-axes can be any parameter the command
 
-\example{grace.write(name, x\_data\_type=`ref', y\_data\_type=`sat', file=`ref\_vs\_sat.agr', force=1)}
+\example{grace.write(x\_data\_type=`ref', y\_data\_type=`sat', file=`ref\_vs\_sat.agr', force=True)}
 
 would create a plot of the reference verses the saturated intensity with one point per residue.  Returning to the sample script three Grace data files are created \texttt{ref.agr}, \texttt{sat.agr}, and \texttt{noe.agr} and placed in the default directory \texttt{./grace}.  These can be visualised by opening the file within Grace.  However relax will do that for you with the commands
 
