@@ -106,7 +106,7 @@ noe.read(file=`ref.list', spectrum\_type=`ref') \\
 noe.read(file=`sat.list', spectrum\_type=`sat')
 \end{exampleenv}
 
-load the peak heights\index{peak!height} of the reference and saturated NOE experiments (although the volume\index{peak!volume} could be used instead).  The keyword argument \texttt{format} has not been specified hence the default format of a Sparky\index{computer programs!Sparky} peak list (saved after typing \texttt{`lt'}) is assumed.  If the program XEasy\index{computer programs!XEasy} was used to analyse the spectra the argument \texttt{format=`xeasy'} is necessary.  The first column of the file should be the Sparky assignment string and it is assumed that the 4$^\textrm{th}$ column contains either the peak height or peak volume.  If you have any other format you would like read by relax please send an email to the relax development mailing list\index{mailing list!relax-devel} detailing the software used, the format of the file (specifically where the residue number and peak intensity\index{peak!intensity} are located), and possibly attaching an example of the file itself.
+load the peak heights\index{peak!height} of the reference and saturated NOE experiments (although the volume\index{peak!volume} could be used instead).  The keyword argument \texttt{format} has not been specified hence the default format of a Sparky\index{software!Sparky} peak list (saved after typing \texttt{`lt'}) is assumed.  If the program XEasy\index{software!XEasy} was used to analyse the spectra the argument \texttt{format=`xeasy'} is necessary.  The first column of the file should be the Sparky assignment string and it is assumed that the 4$^\textrm{th}$ column contains either the peak height or peak volume.  If you have any other format you would like read by relax please send an email to the relax development mailing list\index{mailing list!relax-devel} detailing the software used, the format of the file (specifically where the residue number and peak intensity\index{peak!intensity} are located), and possibly attaching an example of the file itself.
 
 
 
@@ -194,7 +194,7 @@ Num  Name  Value                         Error
 
 \section{Viewing the results}
 
-Any two dimensional data set can be plotted in relax in conjunction with the program \href{http://plasma-gate.weizmann.ac.il/Grace/}{Grace}\index{computer programs!Grace|textbf}.  The program is also known as Xmgrace and was previously known as ACE/gr or Xmgr.  The highly flexible relax user function \texttt{grace.write} is capable of producing 2D plots of any x-y data sets.  The three commands
+Any two dimensional data set can be plotted in relax in conjunction with the program \href{http://plasma-gate.weizmann.ac.il/Grace/}{Grace}\index{software!Grace|textbf}.  The program is also known as Xmgrace and was previously known as ACE/gr or Xmgr.  The highly flexible relax user function \texttt{grace.write} is capable of producing 2D plots of any x-y data sets.  The three commands
 
 \begin{exampleenv}
 grace.write(y\_data\_type=`ref', file=`ref.agr', force=True) \\
@@ -218,5 +218,5 @@ An example of the output after modifying the axes is shown in figure~\ref{fig: N
 
 \begin{figure}
 \centerline{\includegraphics[width=0.8\textwidth, bb=0 0 792 612]{images/noe.eps.gz}}
-\caption[NOE plot]{A Grace\index{computer programs!Grace|textbf} plot of the NOE value and error against the residue number.  This is an example of the output of the user function \texttt{grace.write()}.}\label{fig: NOE plot}
+\caption[NOE plot]{A Grace\index{software!Grace|textbf} plot of the NOE value and error against the residue number.  This is an example of the output of the user function \texttt{grace.write()}.}\label{fig: NOE plot}
 \end{figure}
