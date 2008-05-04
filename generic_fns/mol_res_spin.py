@@ -20,6 +20,21 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for the manipulation of the molecule-residue-spin data structures in the relax data store.
+
+The functionality of this module is diverse:
+    - Documentation for the spin identification string.
+    - Functions for parsing or generating spin identification strings.
+    - The mol-res-spin selection object (derived from the Selection class).
+    - Generator functions for looping over molecules, residues, or spins.
+    - Functions for returning MoleculeContainer, ResidueContainer, and SpinContainer objects or
+    information about these.
+    - Functions for copying, creating, deleting, displaying, naming, and numbering
+    MoleculeContainer, ResidueContainer, and SpinContainer objects in the relax data store.
+    - Functions for counting spins or testing their existence.
+"""
+
 # Python module imports.
 from os import F_OK, access
 from re import compile, match, search, split
