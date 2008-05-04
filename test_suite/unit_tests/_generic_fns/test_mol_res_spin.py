@@ -31,6 +31,11 @@ from test_suite.unit_tests.molecule_testing_base import Molecule_base_class
 from test_suite.unit_tests.residue_testing_base import Residue_base_class
 from test_suite.unit_tests.spin_testing_base import Spin_base_class
 
+# Import some dummy modules.
+import molecule
+import residue
+import spin
+
 
 class Test_mol_res_spin(Molecule_base_class, Residue_base_class, Spin_base_class, TestCase):
     """Unit tests for the functions of the 'generic_fns.mol_res_spin' module."""
