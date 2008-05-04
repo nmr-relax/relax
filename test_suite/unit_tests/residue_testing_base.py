@@ -523,11 +523,11 @@ class Residue_base_class:
 
 
     def test_number_residue_no_spin(self):
-        """Test the failure of renaming a residue when a spin id is given.
+        """Test the failure of naming a residue when a spin id is given.
 
         The function tested is both generic_fns.mol_res_spin.number_residue() and
         prompt.residue.number().
         """
 
-        # Try renaming using a atom id.
+        # Try naming using a atom id.
         self.assertRaises(RelaxSpinSelectDisallowError, self.residue_fns.number, res_id='@111', number=10)
