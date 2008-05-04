@@ -115,7 +115,7 @@ class Spin_base_class:
         """
 
         # Copy the spin '111' from the first molecule, first residue to the second molecule, fifth residue.
-        self.spin.copy(spin_from='#Old mol:1@111', spin_to='#New mol:5@334')
+        self.spin_fns.copy(spin_from='#Old mol:1@111', spin_to='#New mol:5@334')
 
         # Test the original spin.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
@@ -142,7 +142,7 @@ class Spin_base_class:
         """
 
         # Copy the spin '111' from the first residue to the third residue.
-        self.spin.copy(spin_from='#Old mol:1@111', spin_to='#Old mol:2')
+        self.spin_fns.copy(spin_from='#Old mol:1@111', spin_to='#Old mol:2')
 
         # Test the original spin.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
@@ -169,7 +169,7 @@ class Spin_base_class:
         """
 
         # Copy the spin data.
-        self.spin.copy(spin_from='#Old mol:1@111', pipe_to='test')
+        self.spin_fns.copy(spin_from='#Old mol:1@111', pipe_to='test')
 
         # Change the first spin's data.
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
@@ -192,7 +192,7 @@ class Spin_base_class:
         """
 
         # Copy the spin to the second data pipe.
-        self.assertRaises(RelaxNoPipeError, self.spin.copy, spin_from='#Old mol:1@111', pipe_to='test2')
+        self.assertRaises(RelaxNoPipeError, self.spin_fns.copy, spin_from='#Old mol:1@111', pipe_to='test2')
 
 
 
@@ -204,7 +204,7 @@ class Spin_base_class:
         """
 
         # Copy a non-existent residue (1 Met, @111).
-        self.assertRaises(RelaxError, self.spin.copy, spin_from=':Met@111', spin_to=':2,Gly')
+        self.assertRaises(RelaxError, self.spin_fns.copy, spin_from=':Met@111', spin_to=':2,Gly')
 
 
     def test_copy_spin_fail2(self):
@@ -215,7 +215,7 @@ class Spin_base_class:
         """
 
         # Copy a non-existent spin (1 Ala, @234).
-        self.assertRaises(RelaxError, self.spin.copy, spin_from=':Ala@234', spin_to=':2,Gly')
+        self.assertRaises(RelaxError, self.spin_fns.copy, spin_from=':Ala@234', spin_to=':2,Gly')
 
 
     def test_copy_spin_fail3(self):
@@ -226,7 +226,7 @@ class Spin_base_class:
         """
 
         # Copy to a non-existent residue (3).
-        self.assertRaises(RelaxError, self.spin.copy, spin_from='#Old mol:1@111', spin_to='#Old mol:3')
+        self.assertRaises(RelaxError, self.spin_fns.copy, spin_from='#Old mol:1@111', spin_to='#Old mol:3')
 
 
     def test_copy_spin_fail4(self):
@@ -237,7 +237,7 @@ class Spin_base_class:
         """
 
         # Copy a spin to a number which already exists.
-        self.assertRaises(RelaxError, self.spin.copy, spin_from=':1', spin_to=':2@78')
+        self.assertRaises(RelaxError, self.spin_fns.copy, spin_from=':1', spin_to=':2@78')
 
 
     def test_create_spin(self):
@@ -248,9 +248,9 @@ class Spin_base_class:
         """
 
         # Create a few new spins.
-        self.spin.create(1, 'C3')
-        self.spin.create(2, 'C17')
-        self.spin.create(-3, 'N7', res_id='#New mol:6')
+        self.spin_fns.create(1, 'C3')
+        self.spin_fns.create(2, 'C17')
+        self.spin_fns.create(-3, 'N7', res_id='#New mol:6')
 
         # Test that the spin numbers are correct.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[5].num, 1)
@@ -271,10 +271,10 @@ class Spin_base_class:
         """
 
         # Create the first spin.
-        self.spin.create(1, 'P1')
+        self.spin_fns.create(1, 'P1')
 
         # Assert that a RelaxError occurs when the next added spin has the same number as the first.
-        self.assertRaises(RelaxError, self.spin.create, 1, 'P3')
+        self.assertRaises(RelaxError, self.spin_fns.create, 1, 'P3')
 
 
     def test_delete_spin_name(self):
@@ -285,7 +285,7 @@ class Spin_base_class:
         """
 
         # Delete the first spin.
-        self.spin.delete(spin_id='@C8')
+        self.spin_fns.delete(spin_id='@C8')
 
         # Test that the first spin is now 6, C19.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 6)
@@ -301,7 +301,7 @@ class Spin_base_class:
         """
 
         # Delete the first spin.
-        self.spin.delete(spin_id='@111')
+        self.spin_fns.delete(spin_id='@111')
 
         # Test that the first spin is now 6, C19.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 6)
@@ -317,7 +317,7 @@ class Spin_base_class:
         """
 
         # Delete all spins.
-        self.spin.delete(spin_id='@1-200')
+        self.spin_fns.delete(spin_id='@1-200')
 
         # Test that the first spin defaults back to the empty spin.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, None)
@@ -332,7 +332,7 @@ class Spin_base_class:
         """
 
         # Delete the first and third spins.
-        self.spin.delete(spin_id='@111,7')
+        self.spin_fns.delete(spin_id='@111,7')
 
         # Test that the remaining spins.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 6)
@@ -351,11 +351,11 @@ class Spin_base_class:
         """
 
         # The following should all work without error.
-        self.spin.display()
-        self.spin.display(':1')
-        self.spin.display('#Old mol:1')
-        self.spin.display('#New mol:5')
-        self.spin.display('#New mol:6@3239')
+        self.spin_fns.display()
+        self.spin_fns.display(':1')
+        self.spin_fns.display('#Old mol:1')
+        self.spin_fns.display('#New mol:5')
+        self.spin_fns.display('#New mol:6@3239')
 
 
     def test_name_spin(self):
@@ -366,9 +366,9 @@ class Spin_base_class:
         """
 
         # Rename some spins.
-        self.spin.name(spin_id='@C26', name='C25')
-        self.spin.name(spin_id=':2@78', name='Ca')
-        self.spin.name(spin_id='#New mol:6@3239', name='NHe')
+        self.spin_fns.name(spin_id='@C26', name='C25')
+        self.spin_fns.name(spin_id=':2@78', name='Ca')
+        self.spin_fns.name(spin_id='#New mol:6@3239', name='NHe')
 
         # Test that the spins have been named (and that the others have not).
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C8')
@@ -390,7 +390,7 @@ class Spin_base_class:
         """
 
         # Rename all NHs.
-        self.spin.name(spin_id='@NH', name='N')
+        self.spin_fns.name(spin_id='@NH', name='N')
 
         # Test the renaming of the NHs (and that the other spins have not changed).
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C8')
@@ -412,14 +412,14 @@ class Spin_base_class:
         """
 
         # Rename a few spins.
-        self.spin.number(spin_id='@111', number=1)
-        self.spin.number(spin_id='@6', number=2)
-        self.spin.number(spin_id='@7', number=3)
-        self.spin.number(spin_id='@8', number=4)
-        self.spin.number(spin_id='@9', number=5)
-        self.spin.number(spin_id='@78', number=6)
-        self.spin.number(spin_id='@239', number=7)
-        self.spin.number(spin_id='@3239', number=9)
+        self.spin_fns.number(spin_id='@111', number=1)
+        self.spin_fns.number(spin_id='@6', number=2)
+        self.spin_fns.number(spin_id='@7', number=3)
+        self.spin_fns.number(spin_id='@8', number=4)
+        self.spin_fns.number(spin_id='@9', number=5)
+        self.spin_fns.number(spin_id='@78', number=6)
+        self.spin_fns.number(spin_id='@239', number=7)
+        self.spin_fns.number(spin_id='@3239', number=9)
 
         # Test that the spins have been numbered.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 1)
@@ -440,4 +440,4 @@ class Spin_base_class:
         """
 
         # Try numbering all NHs.
-        self.assertRaises(RelaxError, self.spin.number, spin_id='@NH', number=-6)
+        self.assertRaises(RelaxError, self.spin_fns.number, spin_id='@NH', number=-6)

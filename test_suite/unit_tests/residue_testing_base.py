@@ -58,7 +58,7 @@ class Residue_base_class:
         """Function for setting up some data for the unit tests."""
 
         # Create the first residue and add some data to its spin container.
-        self.residue.create(1, 'Ala')
+        self.residue_fns.create(1, 'Ala')
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
         relax_data_store['orig'].mol[0].name = 'Old mol'
@@ -67,8 +67,8 @@ class Residue_base_class:
         relax_data_store['orig'].mol.add_item('New mol')
 
         # Copy the residue to the new molecule.
-        self.residue.copy(res_from=':1', res_to='#New mol')
-        self.residue.copy(res_from='#Old mol:1', res_to='#New mol:5')
+        self.residue_fns.copy(res_from=':1', res_to='#New mol')
+        self.residue_fns.copy(res_from='#Old mol:1', res_to='#New mol:5')
 
         # Change the first residue's data.
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
@@ -114,13 +114,13 @@ class Residue_base_class:
         """
 
         # Create the first residue and add some data to its spin container.
-        self.residue.create(1, 'Ala')
+        self.residue_fns.create(1, 'Ala')
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
 
         # Copy the residue to the second data pipe.
-        self.residue.copy(res_from=':1', pipe_to='test')
-        self.residue.copy(pipe_from='orig', res_from=':1', pipe_to='test', res_to=':5')
+        self.residue_fns.copy(res_from=':1', pipe_to='test')
+        self.residue_fns.copy(pipe_from='orig', res_from=':1', pipe_to='test', res_to=':5')
 
         # Change the first residue's data.
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
@@ -153,12 +153,12 @@ class Residue_base_class:
         """
 
         # Create the first residue and add some data to its spin container.
-        self.residue.create(1, 'Ala')
+        self.residue_fns.create(1, 'Ala')
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
 
         # Copy the residue to the second data pipe.
-        self.assertRaises(RelaxNoPipeError, self.residue.copy, res_from=':1', pipe_to='test2')
+        self.assertRaises(RelaxNoPipeError, self.residue_fns.copy, res_from=':1', pipe_to='test2')
 
 
     def test_copy_residue_within_molecule(self):
@@ -169,20 +169,20 @@ class Residue_base_class:
         """
 
         # Create the first residue and add some data to its spin container.
-        self.residue.create(1, 'Ala')
+        self.residue_fns.create(1, 'Ala')
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
 
         # Copy the residue a few times.
-        self.residue.copy(res_from=':1', res_to=':2')
-        self.residue.copy(res_from=':1', pipe_to='orig', res_to=':3')
+        self.residue_fns.copy(res_from=':1', res_to=':2')
+        self.residue_fns.copy(res_from=':1', pipe_to='orig', res_to=':3')
 
         # Change the first residue's data.
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
 
         # Copy the residue once more.
-        self.residue.copy(res_from=':1', res_to=':4,Met')
+        self.residue_fns.copy(res_from=':1', res_to=':4,Met')
 
         # Test the original residue.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
@@ -217,11 +217,11 @@ class Residue_base_class:
         """
 
         # Create a few residues.
-        self.residue.create(1, 'Ala')
-        self.residue.create(-1, 'His')
+        self.residue_fns.create(1, 'Ala')
+        self.residue_fns.create(-1, 'His')
 
         # Copy a non-existent residue (1 Met).
-        self.assertRaises(RelaxError, self.residue.copy, res_from=':Met', res_to=':2,Gly')
+        self.assertRaises(RelaxError, self.residue_fns.copy, res_from=':Met', res_to=':2,Gly')
 
 
     def test_copy_residue_within_molecule_fail2(self):
@@ -232,11 +232,11 @@ class Residue_base_class:
         """
 
         # Create a few residues.
-        self.residue.create(1, 'Ala')
-        self.residue.create(-1, 'His')
+        self.residue_fns.create(1, 'Ala')
+        self.residue_fns.create(-1, 'His')
 
         # Copy a residue to a number which already exists.
-        self.assertRaises(RelaxError, self.residue.copy, res_from=':1', res_to=':-1,Gly')
+        self.assertRaises(RelaxError, self.residue_fns.copy, res_from=':1', res_to=':-1,Gly')
 
 
     def test_create_residue(self):
@@ -247,9 +247,9 @@ class Residue_base_class:
         """
 
         # Create a few new residues.
-        self.residue.create(1, 'Ala')
-        self.residue.create(2, 'Leu')
-        self.residue.create(-3, 'Ser')
+        self.residue_fns.create(1, 'Ala')
+        self.residue_fns.create(2, 'Leu')
+        self.residue_fns.create(-3, 'Ser')
 
         # Test that the residue numbers are correct.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
@@ -270,10 +270,10 @@ class Residue_base_class:
         """
 
         # Create the first residue.
-        self.residue.create(1, 'Ala')
+        self.residue_fns.create(1, 'Ala')
 
         # Assert that a RelaxError occurs when the next added residue has the same sequence number as the first.
-        self.assertRaises(RelaxError, self.residue.create, 1, 'Ala')
+        self.assertRaises(RelaxError, self.residue_fns.create, 1, 'Ala')
 
 
     def test_delete_residue_name(self):
@@ -284,15 +284,15 @@ class Residue_base_class:
         """
 
         # Create some residues and add some data to the spin containers.
-        self.residue.create(1, 'Ala')
-        self.residue.create(2, 'Ala')
-        self.residue.create(3, 'Ala')
-        self.residue.create(4, 'Gly')
+        self.residue_fns.create(1, 'Ala')
+        self.residue_fns.create(2, 'Ala')
+        self.residue_fns.create(3, 'Ala')
+        self.residue_fns.create(4, 'Gly')
         relax_data_store['orig'].mol[0].res[3].spin[0].num = 111
         relax_data_store['orig'].mol[0].res[3].spin[0].x = 1
 
         # Delete the first residue.
-        self.residue.delete(res_id=':Ala')
+        self.residue_fns.delete(res_id=':Ala')
 
         # Test that the first residue is 4 Gly.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 4)
@@ -309,15 +309,15 @@ class Residue_base_class:
         """
 
         # Create some residues and add some data to the spin containers.
-        self.residue.create(1, 'Ala')
-        self.residue.create(2, 'Ala')
-        self.residue.create(3, 'Ala')
-        self.residue.create(4, 'Gly')
+        self.residue_fns.create(1, 'Ala')
+        self.residue_fns.create(2, 'Ala')
+        self.residue_fns.create(3, 'Ala')
+        self.residue_fns.create(4, 'Gly')
         relax_data_store['orig'].mol[0].res[3].spin[0].num = 111
         relax_data_store['orig'].mol[0].res[3].spin[0].x = 1
 
         # Delete the first residue.
-        self.residue.delete(res_id=':1')
+        self.residue_fns.delete(res_id=':1')
 
         # Test that the sequence.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 2)
@@ -338,15 +338,15 @@ class Residue_base_class:
         """
 
         # Create some residues and add some data to the spin containers.
-        self.residue.create(1, 'Ala')
-        self.residue.create(2, 'Ala')
-        self.residue.create(3, 'Ala')
-        self.residue.create(4, 'Ala')
+        self.residue_fns.create(1, 'Ala')
+        self.residue_fns.create(2, 'Ala')
+        self.residue_fns.create(3, 'Ala')
+        self.residue_fns.create(4, 'Ala')
         relax_data_store['orig'].mol[0].res[3].spin[0].num = 111
         relax_data_store['orig'].mol[0].res[3].spin[0].x = 1
 
         # Delete all residues.
-        self.residue.delete(res_id=':1-4')
+        self.residue_fns.delete(res_id=':1-4')
 
         # Test that the first residue defaults back to the empty residue.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, None)
@@ -361,15 +361,15 @@ class Residue_base_class:
         """
 
         # Create some residues and add some data to the spin containers.
-        self.residue.create(1, 'Ala')
-        self.residue.create(2, 'Ala')
-        self.residue.create(3, 'Ala')
-        self.residue.create(4, 'Ala')
+        self.residue_fns.create(1, 'Ala')
+        self.residue_fns.create(2, 'Ala')
+        self.residue_fns.create(3, 'Ala')
+        self.residue_fns.create(4, 'Ala')
         relax_data_store['orig'].mol[0].res[3].spin[0].num = 111
         relax_data_store['orig'].mol[0].res[3].spin[0].x = 1
 
         # Delete the first and third residues.
-        self.residue.delete(res_id=':1,3')
+        self.residue_fns.delete(res_id=':1,3')
 
         # Test that the remaining residues.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 2)
@@ -386,7 +386,7 @@ class Residue_base_class:
         """
 
         # Supply an atom id.
-        self.assertRaises(RelaxSpinSelectDisallowError, self.residue.delete, res_id='@2')
+        self.assertRaises(RelaxSpinSelectDisallowError, self.residue_fns.delete, res_id='@2')
 
 
     def test_display_residue(self):
@@ -400,10 +400,10 @@ class Residue_base_class:
         self.setup_data()
 
         # The following should all work without error.
-        self.residue.display()
-        self.residue.display(':1')
-        self.residue.display('#New mol:5')
-        self.residue.display('#Old mol:1')
+        self.residue_fns.display()
+        self.residue_fns.display(':1')
+        self.residue_fns.display('#New mol:5')
+        self.residue_fns.display('#Old mol:1')
 
 
     def test_display_residue_fail(self):
@@ -417,7 +417,7 @@ class Residue_base_class:
         self.setup_data()
 
         # The following should fail.
-        self.assertRaises(RelaxSpinSelectDisallowError, self.residue.display, '@N')
+        self.assertRaises(RelaxSpinSelectDisallowError, self.residue_fns.display, '@N')
 
 
     def test_rename_residue(self):
@@ -428,10 +428,10 @@ class Residue_base_class:
         """
 
         # Create the first residue and add some data to its spin container.
-        self.residue.create(-10, 'His')
+        self.residue_fns.create(-10, 'His')
 
         # Rename the residue.
-        self.residue.rename(res_id=':-10', new_name='K')
+        self.residue_fns.rename(res_id=':-10', new_name='K')
 
         # Test that the residue has been renamed.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'K')
@@ -445,21 +445,21 @@ class Residue_base_class:
         """
 
         # Create the first residue and add some data to its spin container.
-        self.residue.create(1, 'Ala')
+        self.residue_fns.create(1, 'Ala')
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
 
         # Copy the residue a few times.
-        self.residue.copy(res_from=':1', res_to=':2')
-        self.residue.copy(res_from=':1', res_to=':3')
+        self.residue_fns.copy(res_from=':1', res_to=':2')
+        self.residue_fns.copy(res_from=':1', res_to=':3')
 
         # Change the first residue's data.
         relax_data_store['orig'].mol[0].res[0].name = 'His'
 
         # Copy the residue once more.
-        self.residue.copy(res_from=':1', res_to=':4,Met')
+        self.residue_fns.copy(res_from=':1', res_to=':4,Met')
 
         # Rename all alanines.
-        self.residue.rename(res_id=':Ala', new_name='Gln')
+        self.residue_fns.rename(res_id=':Ala', new_name='Gln')
 
         # Test the renaming of alanines.
         self.assertEqual(relax_data_store['orig'].mol[0].res[1].name, 'Gln')
@@ -478,7 +478,7 @@ class Residue_base_class:
         """
 
         # Try renaming using a atom id.
-        self.assertRaises(RelaxSpinSelectDisallowError, self.residue.rename, res_id='@111', new_name='K')
+        self.assertRaises(RelaxSpinSelectDisallowError, self.residue_fns.rename, res_id='@111', new_name='K')
 
 
     def test_renumber_residue(self):
@@ -489,10 +489,10 @@ class Residue_base_class:
         """
 
         # Create the first residue and add some data to its spin container.
-        self.residue.create(-10, 'His')
+        self.residue_fns.create(-10, 'His')
 
         # Rename the residue.
-        self.residue.renumber(res_id=':-10', new_number=10)
+        self.residue_fns.renumber(res_id=':-10', new_number=10)
 
         # Test that the residue has been renumbered.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 10)
@@ -506,20 +506,20 @@ class Residue_base_class:
         """
 
         # Create the first residue and add some data to its spin container.
-        residue.create(1, 'Ala')
+        self.residue_fns.create(1, 'Ala')
 
         # Copy the residue a few times.
-        residue.copy(res_from=':1', res_to=':2')
-        residue.copy(res_from=':1', res_to=':3')
+        self.residue_fns.copy(res_from=':1', res_to=':2')
+        self.residue_fns.copy(res_from=':1', res_to=':3')
 
         # Change the first residue's data.
         relax_data_store['orig'].mol[0].res[0].spin[0].name = 'His'
 
         # Copy the residue once more.
-        residue.copy(res_from=':1', res_to=':4,Met')
+        self.residue_fns.copy(res_from=':1', res_to=':4,Met')
 
         # Try renumbering all alanines.
-        self.assertRaises(RelaxError, residue.renumber, res_id=':Ala', new_number=10)
+        self.assertRaises(RelaxError, self.residue_fns.renumber, res_id=':Ala', new_number=10)
 
 
     def test_renumber_residue_no_spin(self):
@@ -530,4 +530,4 @@ class Residue_base_class:
         """
 
         # Try renaming using a atom id.
-        self.assertRaises(RelaxSpinSelectDisallowError, self.residue.renumber, res_id='@111', new_number=10)
+        self.assertRaises(RelaxSpinSelectDisallowError, self.residue_fns.renumber, res_id='@111', new_number=10)
