@@ -32,3 +32,4 @@ create = mol_res_spin.create_spin
 delete = mol_res_spin.delete_spin
 display = mol_res_spin.display_spin
 name = mol_res_spin.name_spin
+number = mol_res_spin.number_spin

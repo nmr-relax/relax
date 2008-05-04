@@ -32,3 +32,4 @@ create = mol_res_spin.create_residue
 delete = mol_res_spin.delete_residue
 display = mol_res_spin.display_residue
 name = mol_res_spin.name_residue
+number = mol_res_spin.number_residue
