@@ -1120,6 +1120,80 @@ def molecule_loop(selection=None, pipe=None):
         yield mol
 
 
+def name_molecule(mol_id, new_name=None):
+    """Function for renaming molecules.
+
+    @param mol_id:      The identifier string for the molecule to rename.
+    @type mol_id:       str
+    @param new_name:    The new molecule name.
+    @type new_name:     str
+    """
+
+    # Split up the selection string.
+    mol_token, res_token, spin_token = tokenise(mol_id)
+
+    # Disallow spin selections.
+    if spin_token != None:
+        raise RelaxSpinSelectDisallowError
+
+    # Disallow residue selections.
+    if res_token != None:
+        raise RelaxResSelectDisallowError
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # Parse the tokens.
+    molecules = parse_token(mol_token)
+
+    # Get the single molecule data container.
+    mol = return_molecule(mol_id)
+
+    # Rename the molecule is there is a match.
+    if mol:
+        mol.name = new_name
+        
+
+def name_residue(res_id, new_name=None):
+    """Function for renaming residues.
+
+    @param res_id:      The identifier string for the residue(s) to rename.
+    @type res_id:       str
+    @param new_name:    The new residue name.
+    @type new_name:     str
+    """
+
+    # Split up the selection string.
+    mol_token, res_token, spin_token = tokenise(res_id)
+
+    # Disallow spin selections.
+    if spin_token != None:
+        raise RelaxSpinSelectDisallowError
+
+    # Parse the tokens.
+    residues = parse_token(res_token)
+
+    # Residue loop.
+    for res in residue_loop(res_id):
+        # Rename the residue is there is a match.
+        if res.num in residues or res.name in residues:
+            res.name = new_name
+
+
+def name_spin(spin_id=None, name=None):
+    """Name the spins.
+
+    @param spin_id:     The spin identification string.
+    @type spin_id:      str
+    @param name:        The new spin name.
+    @type name:         str
+    """
+
+    # Rename the spin.
+    for spin in spin_loop(spin_id):
+        spin.name = name
+
+
 def parse_token(token):
     """Parse the token string and return a list of identifying numbers and names.
 

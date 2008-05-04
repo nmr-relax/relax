@@ -33,35 +33,4 @@ This touches part of the molecule-residue-spin data structure.
 """
 
 
-def name_molecule(mol_id, new_name=None):
-    """Function for renaming molecules.
 
-    @param mol_id:      The identifier string for the molecule to rename.
-    @type mol_id:       str
-    @param new_name:    The new molecule name.
-    @type new_name:     str
-    """
-
-    # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(mol_id)
-
-    # Disallow spin selections.
-    if spin_token != None:
-        raise RelaxSpinSelectDisallowError
-
-    # Disallow residue selections.
-    if res_token != None:
-        raise RelaxResSelectDisallowError
-
-    # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
-
-    # Parse the tokens.
-    molecules = parse_token(mol_token)
-
-    # Get the single molecule data container.
-    mol = return_molecule(mol_id)
-
-    # Rename the molecule is there is a match.
-    if mol:
-        mol.name = new_name

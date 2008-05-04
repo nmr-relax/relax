@@ -33,20 +33,6 @@ This touches part of the molecule-residue-spin data structure.
 """
 
 
-def name_spin(spin_id=None, name=None):
-    """Name the spins.
-
-    @param spin_id:     The spin identification string.
-    @type spin_id:      str
-    @param name:        The new spin name.
-    @type name:         str
-    """
-
-    # Rename the spin.
-    for spin in spin_loop(spin_id):
-        spin.name = name
-
-
 def number_spin(spin_id=None, number=None):
     """Number the spins.
 

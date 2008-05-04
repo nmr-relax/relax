@@ -33,32 +33,6 @@ This touches part of the molecule-residue-spin data structure.
 """
 
 
-def name_residue(res_id, new_name=None):
-    """Function for renaming residues.
-
-    @param res_id:      The identifier string for the residue(s) to rename.
-    @type res_id:       str
-    @param new_name:    The new residue name.
-    @type new_name:     str
-    """
-
-    # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(res_id)
-
-    # Disallow spin selections.
-    if spin_token != None:
-        raise RelaxSpinSelectDisallowError
-
-    # Parse the tokens.
-    residues = parse_token(res_token)
-
-    # Residue loop.
-    for res in residue_loop(res_id):
-        # Rename the residue is there is a match.
-        if res.num in residues or res.name in residues:
-            res.name = new_name
-
-
 def number_residue(res_id, new_number=None):
     """Function for renumbering residues.
 
