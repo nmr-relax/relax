@@ -33,7 +33,7 @@ This touches part of the molecule-residue-spin data structure.
 """
 
 
-def copy(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
+def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
     """Copy the contents of a molecule container to a new molecule.
 
     For copying to be successful, the mol_from identification string must match an existent molecule.
@@ -98,7 +98,7 @@ def copy(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
         relax_data_store[pipe_to].mol[-1].name = mol_name_to
 
 
-def create(mol_name=None):
+def create_molecule(mol_name=None):
     """Function for adding a molecule into the relax data store."""
 
     # Test if the current data pipe exists.
@@ -118,7 +118,7 @@ def create(mol_name=None):
     cdp.mol.add_item(mol_name=mol_name)
 
 
-def delete(mol_id=None):
+def delete_molecule(mol_id=None):
     """Function for deleting molecules from the current data pipe.
 
     @param mol_id:  The molecule identifier string.
@@ -163,7 +163,7 @@ def delete(mol_id=None):
         cdp.mol.add_item()
 
 
-def display(mol_id=None):
+def display_molecule(mol_id=None):
     """Function for displaying the information associated with the molecule.
 
     @param mol_id:  The molecule identifier string.
@@ -194,7 +194,7 @@ def display(mol_id=None):
         print "%-15s %-15s" % (mol.name, `len(mol.res)`)
 
 
-def rename(mol_id, new_name=None):
+def rename_molecule(mol_id, new_name=None):
     """Function for renaming molecules.
 
     @param mol_id:      The identifier string for the molecule to rename.

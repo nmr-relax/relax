@@ -33,7 +33,7 @@ This touches part of the molecule-residue-spin data structure.
 """
 
 
-def copy(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
+def copy_residue(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
     """Copy the contents of the residue structure from one residue to a new residue.
 
     For copying to be successful, the res_from identification string must match an existent residue.
@@ -102,7 +102,7 @@ def copy(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
         mol_to_container.res[-1].name = res_name_to
 
 
-def create(res_num=None, res_name=None, mol_id=None):
+def create_residue(res_num=None, res_name=None, mol_id=None):
     """Function for adding a residue into the relax data store.
 
     @param res_num:     The identification number of the new residue.
@@ -138,7 +138,7 @@ def create(res_num=None, res_name=None, mol_id=None):
     mol_to_cont.res.add_item(res_num=res_num, res_name=res_name)
 
 
-def delete(res_id=None):
+def delete_residue(res_id=None):
     """Function for deleting residues from the current data pipe.
 
     @param res_id:  The molecule and residue identifier string.
@@ -178,7 +178,7 @@ def delete(res_id=None):
             mol.res.add_item()
 
 
-def display(res_id=None):
+def display_residue(res_id=None):
     """Function for displaying the information associated with the residue.
 
     @param res_id:  The molecule and residue identifier string.
@@ -200,7 +200,7 @@ def display(res_id=None):
         print "%-15s %-15s %-15s %-15s" % (mol_name, `res.num`, res.name, `len(res.spin)`)
 
 
-def rename(res_id, new_name=None):
+def rename_residue(res_id, new_name=None):
     """Function for renaming residues.
 
     @param res_id:      The identifier string for the residue(s) to rename.
@@ -226,7 +226,7 @@ def rename(res_id, new_name=None):
             res.name = new_name
 
 
-def renumber(res_id, new_number=None):
+def renumber_residue(res_id, new_number=None):
     """Function for renumbering residues.
 
     @param res_id:      The identifier string for the residue to renumber.

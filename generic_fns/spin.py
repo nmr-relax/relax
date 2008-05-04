@@ -33,7 +33,7 @@ This touches part of the molecule-residue-spin data structure.
 """
 
 
-def copy(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
+def copy_spin(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
     """Copy the contents of the spin structure from one spin to a new spin.
 
     For copying to be successful, the spin_from identification string must match an existent spin.
@@ -103,7 +103,7 @@ def copy(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
         res_to_cont.spin[-1].name = spin_name_to
 
 
-def create(spin_num=None, spin_name=None, res_id=None):
+def create_spin(spin_num=None, spin_name=None, res_id=None):
     """Function for adding a spin into the relax data store.
     
     @param spin_num:    The identification number of the new spin.
@@ -137,7 +137,7 @@ def create(spin_num=None, spin_name=None, res_id=None):
     res_to_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
 
 
-def delete(spin_id=None):
+def delete_spin(spin_id=None):
     """Function for deleting spins from the current data pipe.
 
     @param spin_id: The molecule, residue, and spin identifier string.
@@ -173,7 +173,7 @@ def delete(spin_id=None):
             res.spin.add_item()
 
 
-def display(spin_id=None):
+def display_spin(spin_id=None):
     """Function for displaying the information associated with the spin.
 
     @param spin_id: The molecule and residue identifier string.
@@ -189,7 +189,7 @@ def display(spin_id=None):
         print "%-15s %-15s %-15s %-15s %-15s" % (mol_name, `res_num`, res_name, `spin.num`, spin.name)
 
 
-def name(spin_id=None, name=None):
+def name_spin(spin_id=None, name=None):
     """Name the spins.
 
     @param spin_id:     The spin identification string.
@@ -203,7 +203,7 @@ def name(spin_id=None, name=None):
         spin.name = name
 
 
-def number(spin_id=None, number=None):
+def number_spin(spin_id=None, number=None):
     """Number the spins.
 
     @param spin_id:     The spin identification string.
