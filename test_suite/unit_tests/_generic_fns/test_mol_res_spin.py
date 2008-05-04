@@ -28,19 +28,9 @@ from data import Data as relax_data_store
 from generic_fns import mol_res_spin
 from relax_errors import RelaxError, RelaxNoPipeError
 
-# Import some dummy modules.
-import molecule
-import residue
-import spin
-
 
 class Test_mol_res_spin(TestCase):
     """Unit tests for the functions of the 'generic_fns.mol_res_spin' module."""
-
-    # Place the molecule, residue, and spin modules into the class namespace.
-    molecule_fns = molecule
-    residue_fns = residue
-    spin_fns = spin
 
     def setUp(self):
         """Set up some molecules, residues, and spins for testing."""
