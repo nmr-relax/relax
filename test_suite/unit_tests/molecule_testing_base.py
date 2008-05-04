@@ -332,7 +332,7 @@ class Molecule_base_class:
         self.assertRaises(RelaxResSelectDisallowError, self.molecule_fns.display, ':1')
 
 
-    def test_rename_molecule(self):
+    def test_name_molecule(self):
         """Test the renaming of a molecule.
 
         The function tested is both generic_fns.mol_res_spin.name_molecule() and
@@ -343,28 +343,28 @@ class Molecule_base_class:
         self.setup_data()
 
         # Rename the molecule.
-        self.molecule_fns.rename(mol_id='#New mol', new_name='K')
+        self.molecule_fns.name(mol_id='#New mol', name='K')
 
         # Test that the molecule has been renamed.
         self.assertEqual(relax_data_store['orig'].mol[1].name, 'K')
 
 
-    def test_rename_molecule_fail(self):
-        """Test the failure of renaming a molecule when a residue or spin id is given.
+    def test_name_molecule_fail(self):
+        """Test the failure of naming a molecule when a residue or spin id is given.
 
         The function tested is both generic_fns.mol_res_spin.name_molecule() and
         prompt.molecule.name().
         """
 
-        # Try renaming using a spin id.
-        self.assertRaises(RelaxSpinSelectDisallowError, self.molecule_fns.rename, mol_id='@111', new_name='K')
+        # Try naming using a spin id.
+        self.assertRaises(RelaxSpinSelectDisallowError, self.molecule_fns.name, mol_id='@111', name='K')
 
-        # Try renaming using a residue id.
-        self.assertRaises(RelaxResSelectDisallowError, self.molecule_fns.rename, mol_id=':1', new_name='K')
+        # Try naming using a residue id.
+        self.assertRaises(RelaxResSelectDisallowError, self.molecule_fns.name, mol_id=':1', name='K')
 
 
-    def test_rename_molecule_many_fail(self):
-        """Test the failure of the renaming of multiple molecules to the same name.
+    def test_name_molecule_many_fail(self):
+        """Test the failure of the naming of multiple molecules to the same name.
 
         The function tested is both generic_fns.mol_res_spin.name_molecule() and
         prompt.molecule.name().
@@ -374,4 +374,4 @@ class Molecule_base_class:
         self.setup_data()
 
         # Test for the failure.
-        self.assertRaises(RelaxError, self.molecule_fns.rename, mol_id='#Old mol,New mol', new_name='K')
+        self.assertRaises(RelaxError, self.molecule_fns.name, mol_id='#Old mol,New mol', name='K')
