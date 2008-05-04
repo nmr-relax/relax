@@ -27,9 +27,6 @@ from unittest import TestCase
 from data import Data as relax_data_store
 from generic_fns import mol_res_spin
 from relax_errors import RelaxError, RelaxNoPipeError
-from test_suite.unit_tests.molecule_testing_base import Molecule_base_class
-from test_suite.unit_tests.residue_testing_base import Residue_base_class
-from test_suite.unit_tests.spin_testing_base import Spin_base_class
 
 # Import some dummy modules.
 import molecule
@@ -37,7 +34,7 @@ import residue
 import spin
 
 
-class Test_mol_res_spin(Molecule_base_class, Residue_base_class, Spin_base_class, TestCase):
+class Test_mol_res_spin(TestCase):
     """Unit tests for the functions of the 'generic_fns.mol_res_spin' module."""
 
     # Place the molecule, residue, and spin modules into the class namespace.
