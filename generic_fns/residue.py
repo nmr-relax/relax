@@ -33,37 +33,4 @@ This touches part of the molecule-residue-spin data structure.
 """
 
 
-def number_residue(res_id, new_number=None):
-    """Function for renumbering residues.
 
-    @param res_id:      The identifier string for the residue to renumber.
-    @type res_id:       str
-    @param new_number:  The new residue number.
-    @type new_number:   int
-    """
-
-    # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(res_id)
-
-    # Disallow spin selections.
-    if spin_token != None:
-        raise RelaxSpinSelectDisallowError
-
-    # Parse the tokens.
-    residues = parse_token(res_token)
-
-    # Catch multiple renumberings!
-    number = 0
-    for res in residue_loop(res_id):
-        if res.num in residues or res.name in residues:
-            number = number + 1
-
-    # Fail if multiple residues are numbered.
-    if number > 1:
-        raise RelaxError, "The renumbering of multiple residues is disallowed."
-
-    # Residue loop.
-    for res in residue_loop(res_id):
-        # Rename the residue is there is a match.
-        if res.num in residues or res.name in residues:
-            res.num = new_number

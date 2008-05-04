@@ -1194,6 +1194,65 @@ def name_spin(spin_id=None, name=None):
         spin.name = name
 
 
+def number_residue(res_id, new_number=None):
+    """Function for renumbering residues.
+
+    @param res_id:      The identifier string for the residue to renumber.
+    @type res_id:       str
+    @param new_number:  The new residue number.
+    @type new_number:   int
+    """
+
+    # Split up the selection string.
+    mol_token, res_token, spin_token = tokenise(res_id)
+
+    # Disallow spin selections.
+    if spin_token != None:
+        raise RelaxSpinSelectDisallowError
+
+    # Parse the tokens.
+    residues = parse_token(res_token)
+
+    # Catch multiple renumberings!
+    number = 0
+    for res in residue_loop(res_id):
+        if res.num in residues or res.name in residues:
+            number = number + 1
+
+    # Fail if multiple residues are numbered.
+    if number > 1:
+        raise RelaxError, "The renumbering of multiple residues is disallowed."
+
+    # Residue loop.
+    for res in residue_loop(res_id):
+        # Rename the residue is there is a match.
+        if res.num in residues or res.name in residues:
+            res.num = new_number
+
+
+def number_spin(spin_id=None, number=None):
+    """Number the spins.
+
+    @param spin_id:     The spin identification string.
+    @type spin_id:      str
+    @param number:      The new spin number.
+    @type number:       int
+    """
+
+    # Catch multiple renumberings!
+    i = 0
+    for spin in spin_loop(spin_id):
+        i = i + 1
+
+    # Fail if multiple spins are numbered.
+    if i > 1:
+        raise RelaxError, "The numbering of multiple spins is disallowed, as each spin requires a unique number."
+
+    # Rename the spin.
+    for spin in spin_loop(spin_id):
+        spin.num = number
+
+
 def parse_token(token):
     """Parse the token string and return a list of identifying numbers and names.
 

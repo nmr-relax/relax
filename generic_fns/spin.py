@@ -32,25 +32,3 @@ from selection import parse_token, residue_loop, return_residue, return_spin, re
 This touches part of the molecule-residue-spin data structure.
 """
 
-
-def number_spin(spin_id=None, number=None):
-    """Number the spins.
-
-    @param spin_id:     The spin identification string.
-    @type spin_id:      str
-    @param number:      The new spin number.
-    @type number:       int
-    """
-
-    # Catch multiple renumberings!
-    i = 0
-    for spin in spin_loop(spin_id):
-        i = i + 1
-
-    # Fail if multiple spins are numbered.
-    if i > 1:
-        raise RelaxError, "The numbering of multiple spins is disallowed, as each spin requires a unique number."
-
-    # Rename the spin.
-    for spin in spin_loop(spin_id):
-        spin.num = number
