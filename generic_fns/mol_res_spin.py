@@ -431,6 +431,210 @@ class Selection(object):
 
 
 
+def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
+    """Copy the contents of a molecule container to a new molecule.
+
+    For copying to be successful, the mol_from identification string must match an existent molecule.
+
+    @param pipe_from:   The data pipe to copy the molecule data from.  This defaults to the current
+                        data pipe.
+    @type pipe_from:    str
+    @param mol_from:    The molecule identification string for the structure to copy the data from.
+    @type mol_from:     str
+    @param pipe_to:     The data pipe to copy the molecule data to.  This defaults to the current
+                        data pipe.
+    @type pipe_to:      str
+    @param mol_to:      The molecule identification string for the structure to copy the data to.
+    @type mol_to:       str
+    """
+
+    # The current data pipe.
+    if pipe_from == None:
+        pipe_from = relax_data_store.current_pipe
+    if pipe_to == None:
+        pipe_to = relax_data_store.current_pipe
+
+    # The second pipe does not exist.
+    if pipe_to not in relax_data_store.keys():
+        raise RelaxNoPipeError, pipe_to
+
+    # Split up the selection string.
+    mol_from_token, res_from_token, spin_from_token = tokenise(mol_from)
+    mol_to_token, res_to_token, spin_to_token = tokenise(mol_to)
+
+    # Disallow spin selections.
+    if spin_from_token != None or spin_to_token != None:
+        raise RelaxSpinSelectDisallowError
+
+    # Disallow residue selections.
+    if res_from_token != None or res_to_token != None:
+        raise RelaxResSelectDisallowError
+
+    # Parse the molecule token for renaming.
+    mol_name_to = return_single_molecule_info(mol_to_token)
+
+    # Test if the molecule name already exists.
+    mol_to_cont = return_molecule(mol_to, pipe_to)
+    if mol_to_cont and not mol_to_cont.is_empty():
+        raise RelaxError, "The molecule " + `mol_to` + " already exists in the " + `pipe_to` + " data pipe."
+
+    # Get the single molecule data container.
+    mol_from_cont = return_molecule(mol_from, pipe_from)
+
+    # No molecule to copy data from.
+    if mol_from_cont == None:
+        raise RelaxError, "The molecule " + `mol_from` + " does not exist in the " + `pipe_from` + " data pipe."
+
+    # Copy the data.
+    if relax_data_store[pipe_to].mol[0].name == None and len(relax_data_store[pipe_to].mol) == 1:
+        relax_data_store[pipe_to].mol[0] = mol_from_cont.__clone__()
+    else:
+        relax_data_store[pipe_to].mol.append(mol_from_cont.__clone__())
+
+    # Change the new molecule name.
+    if mol_name_to != None:
+        relax_data_store[pipe_to].mol[-1].name = mol_name_to
+
+
+def copy_residue(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
+    """Copy the contents of the residue structure from one residue to a new residue.
+
+    For copying to be successful, the res_from identification string must match an existent residue.
+    The new residue number must be unique.
+
+    @param pipe_from:   The data pipe to copy the residue from.  This defaults to the current data
+                        pipe.
+    @type pipe_from:    str
+    @param res_from:    The residue identification string for the structure to copy the data from.
+    @type res_from:     str
+    @param pipe_to:     The data pipe to copy the residue to.  This defaults to the current data
+                        pipe.
+    @type pipe_to:      str
+    @param res_to:      The residue identification string for the structure to copy the data to.
+    @type res_to:       str
+    """
+
+    # The current data pipe.
+    if pipe_from == None:
+        pipe_from = relax_data_store.current_pipe
+    if pipe_to == None:
+        pipe_to = relax_data_store.current_pipe
+
+    # The second pipe does not exist.
+    if pipe_to not in relax_data_store.keys():
+        raise RelaxNoPipeError, pipe_to
+
+    # Split up the selection string.
+    mol_from_token, res_from_token, spin_from_token = tokenise(res_from)
+    mol_to_token, res_to_token, spin_to_token = tokenise(res_to)
+
+    # Disallow spin selections.
+    if spin_from_token != None or spin_to_token != None:
+        raise RelaxSpinSelectDisallowError
+
+    # Parse the residue token for renaming and renumbering.
+    res_num_to, res_name_to = return_single_residue_info(res_to_token)
+
+    # Test if the residue number already exists.
+    res_to_cont = return_residue(res_to, pipe_to)
+    if res_to_cont and not res_to_cont.is_empty():
+        raise RelaxError, "The residue " + `res_to` + " already exists in the " + `pipe_to` + " data pipe."
+
+    # Get the single residue data container.
+    res_from_cont = return_residue(res_from, pipe_from)
+
+    # No residue to copy data from.
+    if res_from_cont == None:
+        raise RelaxError, "The residue " + `res_from` + " does not exist in the " + `pipe_from` + " data pipe."
+
+    # Get the single molecule data container to copy the residue to (default to the first molecule).
+    mol_to_container = return_molecule(res_to, pipe_to)
+    if mol_to_container == None:
+        mol_to_container = relax_data_store[pipe_to].mol[0]
+
+    # Copy the data.
+    if mol_to_container.res[0].num == None and mol_to_container.res[0].name == None and len(mol_to_container.res) == 1:
+        mol_to_container.res[0] = res_from_cont.__clone__()
+    else:
+        mol_to_container.res.append(res_from_cont.__clone__())
+
+    # Change the new residue number and name.
+    if res_num_to != None:
+        mol_to_container.res[-1].num = res_num_to
+    if res_name_to != None:
+        mol_to_container.res[-1].name = res_name_to
+
+
+def copy_spin(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
+    """Copy the contents of the spin structure from one spin to a new spin.
+
+    For copying to be successful, the spin_from identification string must match an existent spin.
+    The new spin number must be unique.
+
+    @param pipe_from:   The data pipe to copy the spin from.  This defaults to the current data
+                        pipe.
+    @type pipe_from:    str
+    @param spin_from:   The spin identification string for the structure to copy the data from.
+    @type spin_from:    str
+    @param pipe_to:     The data pipe to copy the spin to.  This defaults to the current data
+                        pipe.
+    @type pipe_to:      str
+    @param spin_to:     The spin identification string for the structure to copy the data to.
+    @type spin_to:      str
+    """
+
+    # The current data pipe.
+    if pipe_from == None:
+        pipe_from = relax_data_store.current_pipe
+    if pipe_to == None:
+        pipe_to = relax_data_store.current_pipe
+
+    # The second pipe does not exist.
+    if pipe_to not in relax_data_store.keys():
+        raise RelaxNoPipeError, pipe_to
+
+    # Split up the selection string.
+    mol_to_token, res_to_token, spin_to_token = tokenise(spin_to)
+
+    # Test if the spin number already exists.
+    if spin_to_token:
+        spin_to_cont = return_spin(spin_to, pipe_to)
+        if spin_to_cont and not spin_to_cont.is_empty():
+            raise RelaxError, "The spin " + `spin_to` + " already exists in the " + `pipe_from` + " data pipe."
+
+    # No residue to copy data from.
+    if not return_residue(spin_from, pipe_from):
+        raise RelaxError, "The residue in " + `spin_from` + " does not exist in the " + `pipe_from` + " data pipe."
+
+    # No spin to copy data from.
+    spin_from_cont = return_spin(spin_from, pipe_from)
+    if spin_from_cont == None:
+        raise RelaxError, "The spin " + `spin_from` + " does not exist in the " + `pipe_from` + " data pipe."
+
+    # Get the single residue data container to copy the spin to (default to the first molecule, first residue).
+    res_to_cont = return_residue(spin_to, pipe_to)
+    if res_to_cont == None and spin_to:
+        # No residue to copy data to.
+        raise RelaxError, "The residue in " + `spin_to` + " does not exist in the " + `pipe_from` + " data pipe."
+    if res_to_cont == None:
+        res_to_cont = relax_data_store[pipe_to].mol[0].res[0]
+
+    # Copy the data.
+    if res_to_cont.spin[0].num == None and res_to_cont.spin[0].name == None and len(res_to_cont.spin) == 1:
+        res_to_cont.spin[0] = spin_from_cont.__clone__()
+    else:
+        res_to_cont.spin.append(spin_from_cont.__clone__())
+
+    # Parse the spin token for renaming and renumbering.
+    spin_num_to, spin_name_to = return_single_spin_info(spin_to_token)
+
+    # Change the new spin number and name.
+    if spin_num_to != None:
+        res_to_cont.spin[-1].num = spin_num_to
+    if spin_name_to != None:
+        res_to_cont.spin[-1].name = spin_name_to
+
+
 def count_selected_spins(selection=None):
     """Function for counting the number of spins for which there is data and which are selected.
 
