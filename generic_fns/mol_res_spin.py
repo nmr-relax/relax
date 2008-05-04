@@ -1132,6 +1132,13 @@ def name_molecule(mol_id, name=None):
     # Get the single molecule data container.
     mol = return_molecule(mol_id)
 
+    # Disallow residue and spin selections.
+    select_obj = Selection(mol_id)
+    if select_obj.has_residues():
+        raise RelaxResSelectDisallowError
+    if select_obj.has_spins():
+        raise RelaxSpinSelectDisallowError
+
     # Name the molecule is there is a single match.
     if mol:
         mol.name = name
@@ -1145,6 +1152,11 @@ def name_residue(res_id, name=None):
     @param name:        The new residue name.
     @type name:         str
     """
+
+    # Disallow spin selections.
+    select_obj = Selection(res_id)
+    if select_obj.has_spins():
+        raise RelaxSpinSelectDisallowError
 
     # Rename the matching residues.
     for res in residue_loop(res_id):
@@ -1174,7 +1186,7 @@ def number_residue(res_id, number=None):
     @type number:       int
     """
 
-    # Catch multiple renumberings!
+    # Catch multiple numberings!
     i = 0
     for res in residue_loop(res_id):
         i = i + 1
@@ -1182,6 +1194,11 @@ def number_residue(res_id, number=None):
     # Fail if multiple residues are numbered.
     if i > 1:
         raise RelaxError, "The numbering of multiple residues is disallowed, each residue requires a unique number."
+
+    # Disallow spin selections.
+    select_obj = Selection(res_id)
+    if select_obj.has_spins():
+        raise RelaxSpinSelectDisallowError
 
     # Rename the residue.
     for res in residue_loop(res_id):
