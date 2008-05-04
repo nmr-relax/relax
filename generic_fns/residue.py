@@ -33,29 +33,7 @@ This touches part of the molecule-residue-spin data structure.
 """
 
 
-def display_residue(res_id=None):
-    """Function for displaying the information associated with the residue.
-
-    @param res_id:  The molecule and residue identifier string.
-    @type res_id:   str
-    """
-
-    # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(res_id)
-
-    # Disallow spin selections.
-    if spin_token != None:
-        raise RelaxSpinSelectDisallowError
-
-    # Print a header.
-    print "\n\n%-15s %-15s %-15s %-15s" % ("Molecule", "Res number", "Res name", "Number of spins")
-
-    # Residue loop.
-    for res, mol_name in residue_loop(res_id, full_info=True):
-        print "%-15s %-15s %-15s %-15s" % (mol_name, `res.num`, res.name, `len(res.spin)`)
-
-
-def rename_residue(res_id, new_name=None):
+def name_residue(res_id, new_name=None):
     """Function for renaming residues.
 
     @param res_id:      The identifier string for the residue(s) to rename.
@@ -81,7 +59,7 @@ def rename_residue(res_id, new_name=None):
             res.name = new_name
 
 
-def renumber_residue(res_id, new_number=None):
+def number_residue(res_id, new_number=None):
     """Function for renumbering residues.
 
     @param res_id:      The identifier string for the residue to renumber.

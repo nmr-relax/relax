@@ -33,22 +33,6 @@ This touches part of the molecule-residue-spin data structure.
 """
 
 
-def display_spin(spin_id=None):
-    """Function for displaying the information associated with the spin.
-
-    @param spin_id: The molecule and residue identifier string.
-    @type spin_id:  str
-    """
-
-    # Print a header.
-    print "\n\n%-15s %-15s %-15s %-15s %-15s" % ("Molecule", "Res number", "Res name", "Spin number", "Spin name")
-
-    # Spin loop.
-    for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
-        # Print the residue data.
-        print "%-15s %-15s %-15s %-15s %-15s" % (mol_name, `res_num`, res_name, `spin.num`, spin.name)
-
-
 def name_spin(spin_id=None, name=None):
     """Name the spins.
 

@@ -33,38 +33,7 @@ This touches part of the molecule-residue-spin data structure.
 """
 
 
-def display_molecule(mol_id=None):
-    """Function for displaying the information associated with the molecule.
-
-    @param mol_id:  The molecule identifier string.
-    @type mol_id:   str
-    """
-
-    # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(mol_id)
-
-    # Disallowed selections.
-    if res_token != None:
-        raise RelaxResSelectDisallowError
-    if spin_token != None:
-        raise RelaxSpinSelectDisallowError
-
-    # The molecule selection string.
-    if mol_token:
-        mol_sel = '#' + mol_token
-    else:
-        mol_sel = None
-
-    # Print a header.
-    print "\n\n%-15s %-15s" % ("Molecule", "Number of residues")
-
-    # Molecule loop.
-    for mol in molecule_loop(mol_sel):
-        # Print the molecule data.
-        print "%-15s %-15s" % (mol.name, `len(mol.res)`)
-
-
-def rename_molecule(mol_id, new_name=None):
+def name_molecule(mol_id, new_name=None):
     """Function for renaming molecules.
 
     @param mol_id:      The identifier string for the molecule to rename.
