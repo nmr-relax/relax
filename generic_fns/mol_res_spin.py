@@ -899,6 +899,75 @@ def delete_spin(spin_id=None):
             res.spin.add_item()
 
 
+def display_molecule(mol_id=None):
+    """Function for displaying the information associated with the molecule.
+
+    @param mol_id:  The molecule identifier string.
+    @type mol_id:   str
+    """
+
+    # Split up the selection string.
+    mol_token, res_token, spin_token = tokenise(mol_id)
+
+    # Disallowed selections.
+    if res_token != None:
+        raise RelaxResSelectDisallowError
+    if spin_token != None:
+        raise RelaxSpinSelectDisallowError
+
+    # The molecule selection string.
+    if mol_token:
+        mol_sel = '#' + mol_token
+    else:
+        mol_sel = None
+
+    # Print a header.
+    print "\n\n%-15s %-15s" % ("Molecule", "Number of residues")
+
+    # Molecule loop.
+    for mol in molecule_loop(mol_sel):
+        # Print the molecule data.
+        print "%-15s %-15s" % (mol.name, `len(mol.res)`)
+
+
+def display_residue(res_id=None):
+    """Function for displaying the information associated with the residue.
+
+    @param res_id:  The molecule and residue identifier string.
+    @type res_id:   str
+    """
+
+    # Split up the selection string.
+    mol_token, res_token, spin_token = tokenise(res_id)
+
+    # Disallow spin selections.
+    if spin_token != None:
+        raise RelaxSpinSelectDisallowError
+
+    # Print a header.
+    print "\n\n%-15s %-15s %-15s %-15s" % ("Molecule", "Res number", "Res name", "Number of spins")
+
+    # Residue loop.
+    for res, mol_name in residue_loop(res_id, full_info=True):
+        print "%-15s %-15s %-15s %-15s" % (mol_name, `res.num`, res.name, `len(res.spin)`)
+
+
+def display_spin(spin_id=None):
+    """Function for displaying the information associated with the spin.
+
+    @param spin_id: The molecule and residue identifier string.
+    @type spin_id:  str
+    """
+
+    # Print a header.
+    print "\n\n%-15s %-15s %-15s %-15s %-15s" % ("Molecule", "Res number", "Res name", "Spin number", "Spin name")
+
+    # Spin loop.
+    for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
+        # Print the residue data.
+        print "%-15s %-15s %-15s %-15s %-15s" % (mol_name, `res_num`, res_name, `spin.num`, spin.name)
+
+
 def exists_mol_res_spin_data():
     """Function for determining if any molecule-residue-spin data exists.
 
