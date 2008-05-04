@@ -25,7 +25,6 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns import residue
 from prompt.molecule import Molecule
 from relax_errors import RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.molecule_testing_base import Molecule_base_class
@@ -40,7 +39,6 @@ class Test_molecule(Molecule_base_class, TestCase):
 
     # Instantiate the user function class.
     molecule_fns = Molecule(fake_relax.fake_instance())
-    residue_fns = residue
 
 
     def test_copy_argfail_pipe_from(self):
