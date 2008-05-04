@@ -33,26 +33,6 @@ This touches part of the molecule-residue-spin data structure.
 """
 
 
-def create_molecule(mol_name=None):
-    """Function for adding a molecule into the relax data store."""
-
-    # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
-        raise RelaxNoPipeError
-
-    # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
-
-    # Test if the molecule name already exists.
-    for i in xrange(len(cdp.mol)):
-        if cdp.mol[i].name == mol_name:
-            raise RelaxError, "The molecule '" + `mol_name` + "' already exists in the relax data store."
-
-
-    # Append the molecule.
-    cdp.mol.add_item(mol_name=mol_name)
-
-
 def delete_molecule(mol_id=None):
     """Function for deleting molecules from the current data pipe.
 

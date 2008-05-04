@@ -33,42 +33,6 @@ This touches part of the molecule-residue-spin data structure.
 """
 
 
-def create_residue(res_num=None, res_name=None, mol_id=None):
-    """Function for adding a residue into the relax data store.
-
-    @param res_num:     The identification number of the new residue.
-    @type res_num:      int
-    @param res_name:    The name of the new residue.
-    @type res_name:     str
-    @param mol_id:      The molecule identification string.
-    @type mol_id:       str
-    """
-
-    # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(mol_id)
-
-    # Disallowed selections.
-    if res_token != None:
-        raise RelaxResSelectDisallowError
-    if spin_token != None:
-        raise RelaxSpinSelectDisallowError
-
-    # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
-        raise RelaxNoPipeError
-
-    # Get the molecule container to add the residue to.
-    if mol_id:
-        mol_to_cont = return_molecule(mol_id)
-        if mol_to_cont == None:
-            raise RelaxError, "The molecule in " + `mol_id` + " does not exist in the current data pipe."
-    else:
-        mol_to_cont = relax_data_store[relax_data_store.current_pipe].mol[0]
-
-    # Add the residue.
-    mol_to_cont.res.add_item(res_num=res_num, res_name=res_name)
-
-
 def delete_residue(res_id=None):
     """Function for deleting residues from the current data pipe.
 
