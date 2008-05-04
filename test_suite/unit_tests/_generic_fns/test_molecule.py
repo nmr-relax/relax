@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from generic_fns import molecule, residue
+import molecule
 from test_suite.unit_tests.molecule_testing_base import Molecule_base_class
 
 
@@ -32,6 +32,5 @@ from test_suite.unit_tests.molecule_testing_base import Molecule_base_class
 class Test_molecule(Molecule_base_class, TestCase):
     """Unit tests for the functions of the 'generic_fns.molecule' module."""
 
-    # Place the generic_fns.molecule and generic_fns.residue modules into the class namespace.
+    # Place the molecule dummy module into the class namespace.
     molecule_fns = molecule
-    residue_fns = residue
