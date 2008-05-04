@@ -202,21 +202,21 @@ class Molecule:
         display_molecule(mol_id=mol_id)
 
 
-    def rename(self, mol_id=None, new_name=None):
-        """Function for renaming an existent molecule.
+    def name(self, mol_id=None, name=None):
+        """Function for naming a molecule.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         mol_id:  The molecule identification string corresponding to one or more molecules.
 
-        new_name:  The new molecule name.
+        name:  The new molecule name.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function simply allows molecules to be renamed.
+        This function simply allows molecules to be named (or renamed).
 
 
         Examples
@@ -224,17 +224,17 @@ class Molecule:
 
         To rename the molecule 'Ap4Aase' to 'Inhib Ap4Aase', type:
 
-        relax> molecule.rename('#Ap4Aase', 'Inhib Ap4Aase')
-        relax> molecule.rename(mol_id='#Ap4Aase', new_name='Inhib Ap4Aase')
+        relax> molecule.name('#Ap4Aase', 'Inhib Ap4Aase')
+        relax> molecule.name(mol_id='#Ap4Aase', name='Inhib Ap4Aase')
 
         This assumes the molecule 'Ap4Aase' already exists.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "molecule.rename("
+            text = sys.ps3 + "molecule.name("
             text = text + "mol_id=" + `mol_id`
-            text = text + ", new_name=" + `new_name` + ")"
+            text = text + ", name=" + `name` + ")"
             print text
 
         # Residue identification string.
@@ -242,11 +242,11 @@ class Molecule:
             raise RelaxStrError, ('molecule identification string', mol_id)
 
         # New molecule name.
-        if type(new_name) != str:
-            raise RelaxStrError, ('new molecule name', new_name)
+        if type(name) != str:
+            raise RelaxStrError, ('new molecule name', name)
 
         # Execute the functional code.
-        rename_molecule(mol_id=mol_id, new_name=new_name)
+        name_molecule(mol_id=mol_id, name=name)
 
 
 
@@ -257,5 +257,4 @@ class Molecule:
     copy.__doc__ = copy.__doc__ + "\n\n" + id_string_doc + "\n"
     delete.__doc__ = delete.__doc__ + "\n\n" + id_string_doc + "\n"
     display.__doc__ = display.__doc__ + "\n\n" + id_string_doc + "\n"
-    rename.__doc__ = rename.__doc__ + "\n\n" + id_string_doc + "\n"
-    #renumber.__doc__ = renumber.__doc__ + "\n\n" + id_string_doc + "\n"
+    name.__doc__ = name.__doc__ + "\n\n" + id_string_doc + "\n"
