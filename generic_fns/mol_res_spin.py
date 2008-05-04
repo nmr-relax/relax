@@ -396,6 +396,66 @@ class Selection(object):
         return select_spin and select_res and select_mol
 
 
+    def has_molecules(self):
+        """Determine if the selection object contains molecules.
+
+        @return:            The answer of whether the selection contains molecules.
+        @rtype:             bool
+        """
+
+        # The selection object is a union.
+        if self._union:
+            return self._union[0].has_molecules() or self._union[1].has_molecules()
+
+        # The selection object is an intersection.
+        elif self._intersect:
+            return self._intersect[0].has_molecules() and self._intersect[1].has_molecules()
+
+        # Molecules are present.
+        if self.molecules:
+            return True
+
+
+    def has_residues(self):
+        """Determine if the selection object contains residues.
+
+        @return:            The answer of whether the selection contains residues.
+        @rtype:             bool
+        """
+
+        # The selection object is a union.
+        if self._union:
+            return self._union[0].has_residues() or self._union[1].has_residues()
+
+        # The selection object is an intersection.
+        elif self._intersect:
+            return self._intersect[0].has_residues() and self._intersect[1].has_residues()
+
+        # Residues are present.
+        if self.residues:
+            return True
+
+
+    def has_spins(self):
+        """Determine if the selection object contains spins.
+
+        @return:            The answer of whether the selection contains spins.
+        @rtype:             bool
+        """
+
+        # The selection object is a union.
+        if self._union:
+            return self._union[0].has_spins() or self._union[1].has_spins()
+
+        # The selection object is an intersection.
+        elif self._intersect:
+            return self._intersect[0].has_spins() and self._intersect[1].has_spins()
+
+        # Spins are present.
+        if self.spins:
+            return True
+
+
     def intersection(self, select_obj0, select_obj1):
         """Make this Selection object the intersection of two other Selection objects.
 
