@@ -25,8 +25,7 @@ import sys
 
 # relax module imports.
 import help
-from generic_fns import residue
-from generic_fns.selection import id_string_doc
+from generic_fns.mol_res_spin import copy_residue, create_residue, delete_residue, display_residue, id_string_doc, name_residue, number_residue
 from relax_errors import RelaxIntError, RelaxNoneStrError, RelaxStrError
 
 
@@ -112,7 +111,7 @@ class Residue:
             raise RelaxNoneStrError, ('residue to', res_to)
 
         # Execute the functional code.
-        residue.copy(pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
+        copy_residue(pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
 
 
     def create(self, res_num=None, res_name=None, mol_id=None):
@@ -170,7 +169,7 @@ class Residue:
             raise RelaxNoneStrError, ('molecule identification string', mol_id)
 
         # Execute the functional code.
-        residue.create(res_num=res_num, res_name=res_name, mol_id=mol_id)
+        create_residue(res_num=res_num, res_name=res_name, mol_id=mol_id)
 
 
     def delete(self, res_id=None):
@@ -201,7 +200,7 @@ class Residue:
             raise RelaxStrError, ('residue identifier', res_id)
 
         # Execute the functional code.
-        residue.delete(res_id=res_id)
+        delete_residue(res_id=res_id)
 
 
     def display(self, res_id=None):
@@ -224,7 +223,7 @@ class Residue:
             raise RelaxNoneStrError, ('residue identification string', res_id)
 
         # Execute the functional code.
-        residue.display(res_id=res_id)
+        display_residue(res_id=res_id)
 
 
     def rename(self, res_id=None, new_name=None):
@@ -275,7 +274,7 @@ class Residue:
             raise RelaxStrError, ('new residue name', new_name)
 
         # Execute the functional code.
-        residue.rename(res_id=res_id, new_name=new_name)
+        rename_residue(res_id=res_id, new_name=new_name)
 
 
     def renumber(self, res_id=None, new_number=None):
@@ -323,7 +322,7 @@ class Residue:
             raise RelaxIntError, ('new residue number', new_number)
 
         # Execute the functional code.
-        residue.renumber(res_id=res_id, new_number=new_number)
+        renumber_residue(res_id=res_id, new_number=new_number)
 
 
 

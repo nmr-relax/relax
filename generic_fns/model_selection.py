@@ -26,7 +26,7 @@ from math import log
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns.selection import same_sequence
+from generic_fns.mol_res_spin import same_sequence
 from pipes import copy, switch
 from relax_errors import RelaxDiffSeqError, RelaxError, RelaxNoPipeError, RelaxNoSequenceError
 from specific_fns.setup import get_specific_fn

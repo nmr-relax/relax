@@ -25,8 +25,7 @@ import sys
 
 # relax module imports.
 import help
-from generic_fns import molecule
-from generic_fns.selection import id_string_doc
+from generic_fns.mol_res_spin import copy_molecule, create_molecule, delete_molecule, display_molecule, id_string_doc, name_molecule
 from relax_errors import RelaxIntError, RelaxNoneStrError, RelaxStrError
 
 
@@ -108,7 +107,7 @@ class Molecule:
             raise RelaxNoneStrError, ('molecule to', mol_to)
 
         # Execute the functional code.
-        molecule.copy(pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
+        copy_molecule(pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
 
 
     def create(self, mol_name=None):
@@ -148,7 +147,7 @@ class Molecule:
             raise RelaxStrError, ('molecule name', mol_name)
 
         # Execute the functional code.
-        molecule.create(mol_name=mol_name)
+        create_molecule(mol_name=mol_name)
 
 
     def delete(self, mol_id=None):
@@ -177,7 +176,7 @@ class Molecule:
             raise RelaxStrError, ('molecule identifier', mol_id)
 
         # Execute the functional code.
-        molecule.delete(mol_id=mol_id)
+        delete_molecule(mol_id=mol_id)
 
 
     def display(self, mol_id=None):
@@ -200,7 +199,7 @@ class Molecule:
             raise RelaxNoneStrError, ('molecule identifier', mol_id)
 
         # Execute the functional code.
-        molecule.display(mol_id=mol_id)
+        display_molecule(mol_id=mol_id)
 
 
     def rename(self, mol_id=None, new_name=None):
@@ -247,7 +246,7 @@ class Molecule:
             raise RelaxStrError, ('new molecule name', new_name)
 
         # Execute the functional code.
-        molecule.rename(mol_id=mol_id, new_name=new_name)
+        rename_molecule(mol_id=mol_id, new_name=new_name)
 
 
 

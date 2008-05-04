@@ -31,7 +31,7 @@ import sys
 from data import Data as relax_data_store
 from base_class import Common_functions
 from generic_fns import intensity
-from generic_fns.selection import count_spins, spin_loop
+from generic_fns.mol_res_spin import count_spins, spin_loop
 from minimise.generic import generic_minimise
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoPipeError, RelaxNoSequenceError
 
