@@ -420,7 +420,7 @@ class Residue_base_class:
         self.assertRaises(RelaxSpinSelectDisallowError, self.residue_fns.display, '@N')
 
 
-    def test_rename_residue(self):
+    def test_name_residue(self):
         """Test the renaming of a residue.
 
         The function tested is both generic_fns.mol_res_spin.name_residue() and
@@ -431,13 +431,13 @@ class Residue_base_class:
         self.residue_fns.create(-10, 'His')
 
         # Rename the residue.
-        self.residue_fns.rename(res_id=':-10', new_name='K')
+        self.residue_fns.name(res_id=':-10', name='K')
 
         # Test that the residue has been renamed.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'K')
 
 
-    def test_rename_residue_many(self):
+    def test_name_residue_many(self):
         """Test the renaming of multiple residues.
 
         The function tested is both generic_fns.mol_res_spin.name_residue() and
@@ -459,7 +459,7 @@ class Residue_base_class:
         self.residue_fns.copy(res_from=':1', res_to=':4,Met')
 
         # Rename all alanines.
-        self.residue_fns.rename(res_id=':Ala', new_name='Gln')
+        self.residue_fns.name(res_id=':Ala', name='Gln')
 
         # Test the renaming of alanines.
         self.assertEqual(relax_data_store['orig'].mol[0].res[1].name, 'Gln')
@@ -470,18 +470,18 @@ class Residue_base_class:
         self.assertEqual(relax_data_store['orig'].mol[0].res[3].name, 'Met')
 
 
-    def test_rename_residue_no_spin(self):
-        """Test the failure of renaming a residue when a spin id is given.
+    def test_name_residue_no_spin(self):
+        """Test the failure of naming a residue when a spin id is given.
 
         The function tested is both generic_fns.mol_res_spin.name_residue() and
         prompt.residue.name().
         """
 
-        # Try renaming using a atom id.
-        self.assertRaises(RelaxSpinSelectDisallowError, self.residue_fns.rename, res_id='@111', new_name='K')
+        # Try naming using a atom id.
+        self.assertRaises(RelaxSpinSelectDisallowError, self.residue_fns.name, res_id='@111', name='K')
 
 
-    def test_renumber_residue(self):
+    def test_number_residue(self):
         """Test the renumbering of a residue.
 
         The function tested is both generic_fns.mol_res_spin.number_residue() and
@@ -492,14 +492,14 @@ class Residue_base_class:
         self.residue_fns.create(-10, 'His')
 
         # Rename the residue.
-        self.residue_fns.renumber(res_id=':-10', new_number=10)
+        self.residue_fns.number(res_id=':-10', number=10)
 
         # Test that the residue has been renumbered.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 10)
 
 
-    def test_renumber_residue_many_fail(self):
-        """Test the renaming of multiple residues.
+    def test_number_residue_many_fail(self):
+        """Test the numbering of multiple residues.
 
         The function tested is both generic_fns.mol_res_spin.number_residue() and
         prompt.residue.number().
@@ -518,11 +518,11 @@ class Residue_base_class:
         # Copy the residue once more.
         self.residue_fns.copy(res_from=':1', res_to=':4,Met')
 
-        # Try renumbering all alanines.
-        self.assertRaises(RelaxError, self.residue_fns.renumber, res_id=':Ala', new_number=10)
+        # Try numbering all alanines.
+        self.assertRaises(RelaxError, self.residue_fns.number, res_id=':Ala', number=10)
 
 
-    def test_renumber_residue_no_spin(self):
+    def test_number_residue_no_spin(self):
         """Test the failure of renaming a residue when a spin id is given.
 
         The function tested is both generic_fns.mol_res_spin.number_residue() and
@@ -530,4 +530,4 @@ class Residue_base_class:
         """
 
         # Try renaming using a atom id.
-        self.assertRaises(RelaxSpinSelectDisallowError, self.residue_fns.renumber, res_id='@111', new_number=10)
+        self.assertRaises(RelaxSpinSelectDisallowError, self.residue_fns.number, res_id='@111', number=10)
