@@ -75,7 +75,7 @@ class Residue_base_class:
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
 
 
-    def test_copy_between_molecules(self):
+    def test_copy_residue_between_molecules(self):
         """Test the copying of the residue data between different molecules.
 
         The function tested is both generic_fns.mol_res_spin.copy_residue() and
@@ -106,7 +106,7 @@ class Residue_base_class:
 
 
 
-    def test_copy_between_pipes(self):
+    def test_copy_residue_between_pipes(self):
         """Test the copying of the residue data between different data pipes.
 
         The function tested is both generic_fns.mol_res_spin.copy_residue() and
@@ -145,7 +145,7 @@ class Residue_base_class:
         self.assertEqual(relax_data_store['test'].mol[0].res[1].spin[0].x, 1)
 
 
-    def test_copy_between_pipes_fail_no_pipe(self):
+    def test_copy_residue_between_pipes_fail_no_pipe(self):
         """Test the copying of the residue data between different data pipes.
 
         The function tested is both generic_fns.mol_res_spin.copy_residue() and
@@ -161,7 +161,7 @@ class Residue_base_class:
         self.assertRaises(RelaxNoPipeError, residue.copy, res_from=':1', pipe_to='test2')
 
 
-    def test_copy_within_molecule(self):
+    def test_copy_residue_within_molecule(self):
         """Test the copying of the residue data within a single molecule.
 
         The function tested is both generic_fns.mol_res_spin.copy_residue() and
@@ -209,7 +209,7 @@ class Residue_base_class:
         self.assertEqual(relax_data_store['orig'].mol[0].res[3].spin[0].x, 2)
 
 
-    def test_copy_within_molecule_fail1(self):
+    def test_copy_residue_within_molecule_fail1(self):
         """The failure of copying residue data within a molecule of a non-existent residue.
 
         The function tested is both generic_fns.mol_res_spin.copy_residue() and
@@ -224,7 +224,7 @@ class Residue_base_class:
         self.assertRaises(RelaxError, residue.copy, res_from=':Met', res_to=':2,Gly')
 
 
-    def test_copy_within_molecule_fail2(self):
+    def test_copy_residue_within_molecule_fail2(self):
         """The failure of copying residue data within a molecule to a residue which already exists.
 
         The function tested is both generic_fns.mol_res_spin.copy_residue() and
@@ -239,7 +239,7 @@ class Residue_base_class:
         self.assertRaises(RelaxError, residue.copy, res_from=':1', res_to=':-1,Gly')
 
 
-    def test_creation(self):
+    def test_create_residue(self):
         """Test the creation of a residue.
 
         The function tested is both generic_fns.mol_res_spin.create_residue() and
@@ -262,7 +262,7 @@ class Residue_base_class:
         self.assertEqual(relax_data_store['orig'].mol[0].res[2].name, 'Ser')
 
 
-    def test_creation_fail(self):
+    def test_create_residue_fail(self):
         """Test the failure of residue creation (by supplying two residues with the same number).
 
         The function tested is both generic_fns.mol_res_spin.create_residue() and
@@ -276,7 +276,7 @@ class Residue_base_class:
         self.assertRaises(RelaxError, residue.create, 1, 'Ala')
 
 
-    def test_delete_name(self):
+    def test_delete_residue_name(self):
         """Test residue deletion using residue name identifiers.
 
         The function tested is both generic_fns.mol_res_spin.delete_residue() and
@@ -301,7 +301,7 @@ class Residue_base_class:
         self.assert_(hasattr(relax_data_store['orig'].mol[0].res[0].spin[0], 'x'))
 
 
-    def test_delete_num(self):
+    def test_delete_residue_num(self):
         """Test residue deletion using residue number identifiers.
 
         The function tested is both generic_fns.mol_res_spin.delete_residue() and
@@ -330,7 +330,7 @@ class Residue_base_class:
         self.assert_(hasattr(relax_data_store['orig'].mol[0].res[2].spin[0], 'x'))
 
 
-    def test_delete_all(self):
+    def test_delete_residue_all(self):
         """Test the deletion of all residues.
 
         The function tested is both generic_fns.mol_res_spin.delete_residue() and
@@ -353,7 +353,7 @@ class Residue_base_class:
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, None)
 
 
-    def test_delete_shift(self):
+    def test_delete_residue_shift(self):
         """Test the deletion of multiple residues.
 
         The function tested is both generic_fns.mol_res_spin.delete_residue() and
@@ -378,7 +378,7 @@ class Residue_base_class:
         self.assert_(hasattr(relax_data_store['orig'].mol[0].res[1].spin[0], 'x'))
 
 
-    def test_delete_fail(self):
+    def test_delete_residue_fail(self):
         """Test the failure of residue deletion when an atom id is supplied.
 
         The function tested is both generic_fns.mol_res_spin.delete_residue() and
@@ -389,7 +389,7 @@ class Residue_base_class:
         self.assertRaises(RelaxSpinSelectDisallowError, residue.delete, res_id='@2')
 
 
-    def test_display(self):
+    def test_display_residue(self):
         """Test the display of residue information.
 
         The function tested is both generic_fns.mol_res_spin.display_residue() and
@@ -406,7 +406,7 @@ class Residue_base_class:
         residue.display('#Old mol:1')
 
 
-    def test_display_fail(self):
+    def test_display_residue_fail(self):
         """Test the failure of the display of residue information.
 
         The function tested is both generic_fns.mol_res_spin.display_residue() and
@@ -420,7 +420,7 @@ class Residue_base_class:
         self.assertRaises(RelaxSpinSelectDisallowError, residue.display, '@N')
 
 
-    def test_rename(self):
+    def test_rename_residue(self):
         """Test the renaming of a residue.
 
         The function tested is both generic_fns.mol_res_spin.name_residue() and
@@ -437,7 +437,7 @@ class Residue_base_class:
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'K')
 
 
-    def test_rename_many(self):
+    def test_rename_residue_many(self):
         """Test the renaming of multiple residues.
 
         The function tested is both generic_fns.mol_res_spin.name_residue() and
@@ -470,7 +470,7 @@ class Residue_base_class:
         self.assertEqual(relax_data_store['orig'].mol[0].res[3].name, 'Met')
 
 
-    def test_rename_no_spin(self):
+    def test_rename_residue_no_spin(self):
         """Test the failure of renaming a residue when a spin id is given.
 
         The function tested is both generic_fns.mol_res_spin.name_residue() and
@@ -481,7 +481,7 @@ class Residue_base_class:
         self.assertRaises(RelaxSpinSelectDisallowError, residue.rename, res_id='@111', new_name='K')
 
 
-    def test_renumber(self):
+    def test_renumber_residue(self):
         """Test the renumbering of a residue.
 
         The function tested is both generic_fns.mol_res_spin.number_residue() and
@@ -498,7 +498,7 @@ class Residue_base_class:
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 10)
 
 
-    def test_renumber_many_fail(self):
+    def test_renumber_residue_many_fail(self):
         """Test the renaming of multiple residues.
 
         The function tested is both generic_fns.mol_res_spin.number_residue() and
@@ -522,7 +522,7 @@ class Residue_base_class:
         self.assertRaises(RelaxError, residue.renumber, res_id=':Ala', new_number=10)
 
 
-    def test_renumber_no_spin(self):
+    def test_renumber_residue_no_spin(self):
         """Test the failure of renaming a residue when a spin id is given.
 
         The function tested is both generic_fns.mol_res_spin.number_residue() and
