@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -27,14 +27,14 @@ from relax_errors import RelaxError, RelaxNoPipeError
 
 
 class Spin_base_class:
-    """Base class for the tests of both the 'prompt.spin' and 'generic_fns.spin' modules.
+    """Testing base class for 'prompt.spin' and corresponding 'generic_fns.mol_res_spin' fns.
 
     This base class also contains many shared unit tests.
     """
 
 
     def setUp(self):
-        """Set up for all the generic_fns.spin unit tests.
+        """Set up for all the spin unit tests.
 
         The data contained within the 'orig' data pipe is:
 
@@ -110,11 +110,12 @@ class Spin_base_class:
     def test_copy_between_molecules(self):
         """Test the copying of the spin data between different molecules.
 
-        The function tested is both generic_fns.spin.copy() and prompt.spin.copy().
+        The function tested is both generic_fns.mol_res_spin.copy_spin() and
+        prompt.spin.copy().
         """
 
         # Copy the spin '111' from the first molecule, first residue to the second molecule, fifth residue.
-        self.spin_fns.copy(spin_from='#Old mol:1@111', spin_to='#New mol:5@334')
+        spin.copy(spin_from='#Old mol:1@111', spin_to='#New mol:5@334')
 
         # Test the original spin.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
@@ -136,11 +137,12 @@ class Spin_base_class:
     def test_copy_between_residues(self):
         """Test the copying of the spin data between different residues.
 
-        The function tested is both generic_fns.spin.copy() and prompt.spin.copy().
+        The function tested is both generic_fns.mol_res_spin.copy_spin() and
+        prompt.spin.copy().
         """
 
         # Copy the spin '111' from the first residue to the third residue.
-        self.spin_fns.copy(spin_from='#Old mol:1@111', spin_to='#Old mol:2')
+        spin.copy(spin_from='#Old mol:1@111', spin_to='#Old mol:2')
 
         # Test the original spin.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
@@ -162,11 +164,12 @@ class Spin_base_class:
     def test_copy_between_pipes(self):
         """Test the copying of the spin data between different data pipes.
 
-        The function tested is both generic_fns.spin.copy() and prompt.spin.copy().
+        The function tested is both generic_fns.mol_res_spin.copy_spin() and
+        prompt.spin.copy().
         """
 
         # Copy the spin data.
-        self.spin_fns.copy(spin_from='#Old mol:1@111', pipe_to='test')
+        spin.copy(spin_from='#Old mol:1@111', pipe_to='test')
 
         # Change the first spin's data.
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
@@ -184,64 +187,70 @@ class Spin_base_class:
     def test_copy_between_pipes_fail(self):
         """Test the copying of the spin data between different data pipes.
 
-        The function tested is both generic_fns.spin.copy() and prompt.spin.copy().
+        The function tested is both generic_fns.mol_res_spin.copy_spin() and
+        prompt.spin.copy().
         """
 
         # Copy the spin to the second data pipe.
-        self.assertRaises(RelaxNoPipeError, self.spin_fns.copy, spin_from='#Old mol:1@111', pipe_to='test2')
+        self.assertRaises(RelaxNoPipeError, spin.copy, spin_from='#Old mol:1@111', pipe_to='test2')
 
 
 
     def test_copy_fail1(self):
         """Test the failure of the copying of the spin data of a non-existent residue.
 
-        The function tested is both generic_fns.spin.copy() and prompt.spin.copy().
+        The function tested is both generic_fns.mol_res_spin.copy_spin() and
+        prompt.spin.copy().
         """
 
         # Copy a non-existent residue (1 Met, @111).
-        self.assertRaises(RelaxError, self.spin_fns.copy, spin_from=':Met@111', spin_to=':2,Gly')
+        self.assertRaises(RelaxError, spin.copy, spin_from=':Met@111', spin_to=':2,Gly')
 
 
     def test_copy_fail2(self):
         """Test the failure of the copying of the spin data of a non-existent spin.
 
-        The function tested is both generic_fns.spin.copy() and prompt.spin.copy().
+        The function tested is both generic_fns.mol_res_spin.copy_spin() and
+        prompt.spin.copy().
         """
 
         # Copy a non-existent spin (1 Ala, @234).
-        self.assertRaises(RelaxError, self.spin_fns.copy, spin_from=':Ala@234', spin_to=':2,Gly')
+        self.assertRaises(RelaxError, spin.copy, spin_from=':Ala@234', spin_to=':2,Gly')
 
 
     def test_copy_fail3(self):
         """Test the failure of the copying of the spin data to a non-existent residue.
 
-        The function tested is both generic_fns.spin.copy() and prompt.spin.copy().
+        The function tested is both generic_fns.mol_res_spin.copy_spin() and
+        prompt.spin.copy().
         """
 
         # Copy to a non-existent residue (3).
-        self.assertRaises(RelaxError, self.spin_fns.copy, spin_from='#Old mol:1@111', spin_to='#Old mol:3')
+        self.assertRaises(RelaxError, spin.copy, spin_from='#Old mol:1@111', spin_to='#Old mol:3')
 
 
     def test_copy_fail4(self):
         """Test the failure of the copying of the spin data to a number which already exists.
 
-        The function tested is both generic_fns.spin.copy() and prompt.spin.copy().
+        The function tested is both generic_fns.mol_res_spin.copy_spin() and
+        prompt.spin.copy().
         """
 
         # Copy a spin to a number which already exists.
-        self.assertRaises(RelaxError, self.spin_fns.copy, spin_from=':1', spin_to=':2@78')
+        self.assertRaises(RelaxError, spin.copy, spin_from=':1', spin_to=':2@78')
 
 
     def test_creation(self):
         """Test the creation of a spin.
 
-        The function tested is both generic_fns.spin.create() and prompt.spin.create().
+        The function tested is both generic_fns.mol_res_spin.create_spin() and
+        prompt.spin.create().
         """
 
         # Create a few new spins.
-        self.spin_fns.create(1, 'C3')
-        self.spin_fns.create(2, 'C17')
-        self.spin_fns.create(-3, 'N7', res_id='#New mol:6')
+        spin.create(1, 'C3')
+        spin.create(2, 'C17')
+        spin.create(-3, 'N7', res_id='#New mol:6')
 
         # Test that the spin numbers are correct.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[5].num, 1)
@@ -257,24 +266,26 @@ class Spin_base_class:
     def test_creation_fail(self):
         """Test the failure of spin creation (by supplying two spins with the same number).
 
-        The function tested is both generic_fns.spin.create() and prompt.spin.create().
+        The function tested is both generic_fns.mol_res_spin.create_spin() and
+        prompt.spin.create().
         """
 
         # Create the first spin.
-        self.spin_fns.create(1, 'P1')
+        spin.create(1, 'P1')
 
         # Assert that a RelaxError occurs when the next added spin has the same number as the first.
-        self.assertRaises(RelaxError, self.spin_fns.create, 1, 'P3')
+        self.assertRaises(RelaxError, spin.create, 1, 'P3')
 
 
     def test_delete_name(self):
         """Test spin deletion using spin name identifiers.
 
-        The function tested is both generic_fns.spin.delete() and prompt.spin.delete().
+        The function tested is both generic_fns.mol_res_spin.delete_spin() and
+        prompt.spin.delete().
         """
 
         # Delete the first spin.
-        self.spin_fns.delete(spin_id='@C8')
+        spin.delete(spin_id='@C8')
 
         # Test that the first spin is now 6, C19.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 6)
@@ -285,11 +296,12 @@ class Spin_base_class:
     def test_delete_num(self):
         """Test spin deletion using spin number identifiers.
 
-        The function tested is both generic_fns.spin.delete() and prompt.spin.delete().
+        The function tested is both generic_fns.mol_res_spin.delete_spin() and
+        prompt.spin.delete().
         """
 
         # Delete the first spin.
-        self.spin_fns.delete(spin_id='@111')
+        spin.delete(spin_id='@111')
 
         # Test that the first spin is now 6, C19.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 6)
@@ -300,11 +312,12 @@ class Spin_base_class:
     def test_delete_all(self):
         """Test the deletion of all spins in one residue.
 
-        The function tested is both generic_fns.spin.delete() and prompt.spin.delete().
+        The function tested is both generic_fns.mol_res_spin.delete_spin() and
+        prompt.spin.delete().
         """
 
         # Delete all spins.
-        self.spin_fns.delete(spin_id='@1-200')
+        spin.delete(spin_id='@1-200')
 
         # Test that the first spin defaults back to the empty spin.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, None)
@@ -314,11 +327,12 @@ class Spin_base_class:
     def test_delete_shift(self):
         """Test the deletion of multiple spins.
 
-        The function tested is both generic_fns.spin.delete() and prompt.spin.delete().
+        The function tested is both generic_fns.mol_res_spin.delete_spin() and
+        prompt.spin.delete().
         """
 
         # Delete the first and third spins.
-        self.spin_fns.delete(spin_id='@111,7')
+        spin.delete(spin_id='@111,7')
 
         # Test that the remaining spins.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 6)
@@ -332,27 +346,29 @@ class Spin_base_class:
     def test_display(self):
         """Test the display of spin information.
 
-        The function tested is both generic_fns.spin.display() and prompt.spin.display().
+        The function tested is both generic_fns.mol_res_spin.display_spin() and
+        prompt.spin.display().
         """
 
         # The following should all work without error.
-        self.spin_fns.display()
-        self.spin_fns.display(':1')
-        self.spin_fns.display('#Old mol:1')
-        self.spin_fns.display('#New mol:5')
-        self.spin_fns.display('#New mol:6@3239')
+        spin.display()
+        spin.display(':1')
+        spin.display('#Old mol:1')
+        spin.display('#New mol:5')
+        spin.display('#New mol:6@3239')
 
 
     def test_name(self):
         """Test the renaming of a spin.
 
-        The function tested is both generic_fns.spin.name() and prompt.spin.name().
+        The function tested is both generic_fns.mol_res_spin.name_spin() and
+        prompt.spin.name().
         """
 
         # Rename some spins.
-        self.spin_fns.name(spin_id='@C26', name='C25')
-        self.spin_fns.name(spin_id=':2@78', name='Ca')
-        self.spin_fns.name(spin_id='#New mol:6@3239', name='NHe')
+        spin.name(spin_id='@C26', name='C25')
+        spin.name(spin_id=':2@78', name='Ca')
+        spin.name(spin_id='#New mol:6@3239', name='NHe')
 
         # Test that the spins have been named (and that the others have not).
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C8')
@@ -369,11 +385,12 @@ class Spin_base_class:
     def test_name_many(self):
         """Test the renaming of multiple spins.
 
-        The function tested is both generic_fns.spin.name() and prompt.spin.name().
+        The function tested is both generic_fns.mol_res_spin.name_spin() and
+        prompt.spin.name().
         """
 
         # Rename all NHs.
-        self.spin_fns.name(spin_id='@NH', name='N')
+        spin.name(spin_id='@NH', name='N')
 
         # Test the renaming of the NHs (and that the other spins have not changed).
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C8')
@@ -390,18 +407,19 @@ class Spin_base_class:
     def test_number(self):
         """Test the numbering of a spin.
 
-        The function tested is both generic_fns.spin.number() and prompt.spin.number().
+        The function tested is both generic_fns.mol_res_spin.number_spin() and
+        prompt.spin.number().
         """
 
         # Rename a few spins.
-        self.spin_fns.number(spin_id='@111', number=1)
-        self.spin_fns.number(spin_id='@6', number=2)
-        self.spin_fns.number(spin_id='@7', number=3)
-        self.spin_fns.number(spin_id='@8', number=4)
-        self.spin_fns.number(spin_id='@9', number=5)
-        self.spin_fns.number(spin_id='@78', number=6)
-        self.spin_fns.number(spin_id='@239', number=7)
-        self.spin_fns.number(spin_id='@3239', number=9)
+        spin.number(spin_id='@111', number=1)
+        spin.number(spin_id='@6', number=2)
+        spin.number(spin_id='@7', number=3)
+        spin.number(spin_id='@8', number=4)
+        spin.number(spin_id='@9', number=5)
+        spin.number(spin_id='@78', number=6)
+        spin.number(spin_id='@239', number=7)
+        spin.number(spin_id='@3239', number=9)
 
         # Test that the spins have been numbered.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 1)
@@ -417,8 +435,9 @@ class Spin_base_class:
     def test_number_many_fail(self):
         """Test the renaming of multiple spins.
 
-        The function tested is both generic_fns.spin.number() and prompt.spin.number().
+        The function tested is both generic_fns.mol_res_spin.number_spin() and
+        prompt.spin.number().
         """
 
         # Try numbering all NHs.
-        self.assertRaises(RelaxError, self.spin_fns.number, spin_id='@NH', number=-6)
+        self.assertRaises(RelaxError, spin.number, spin_id='@NH', number=-6)
