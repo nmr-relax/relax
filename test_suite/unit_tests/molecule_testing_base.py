@@ -77,7 +77,7 @@ class Molecule_base_class:
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
 
 
-    def test_copy_between_pipes(self):
+    def test_copy_molecule_between_pipes(self):
         """Test the copying of the molecule data between different data pipes.
 
         The function tested is both generic_fns.mol_res_spin.copy_molecule() and
@@ -120,7 +120,7 @@ class Molecule_base_class:
         self.assertEqual(relax_data_store['test'].mol[1].res[0].spin[0].x, 1)
 
 
-    def test_copy_between_pipes_fail_no_pipe(self):
+    def test_copy_molecule_between_pipes_fail_no_pipe(self):
         """Test the failure of copying of the molecule data between different data pipes.
 
         The function tested is both generic_fns.mol_res_spin.copy_molecule() and
@@ -137,7 +137,7 @@ class Molecule_base_class:
         self.assertRaises(RelaxNoPipeError, molecule.copy, mol_from='#Old mol', pipe_to='test2')
 
 
-    def test_copy_within_pipe(self):
+    def test_copy_molecule_within_pipe(self):
         """Test the copying of the molecule data within a single data pipe.
 
         The function tested is both generic_fns.mol_res_spin.copy_molecule() and
@@ -190,7 +190,7 @@ class Molecule_base_class:
         self.assertEqual(relax_data_store['orig'].mol[3].res[0].spin[0].x, 2)
 
 
-    def test_copy_within_pipe_fail(self):
+    def test_copy_molecule_within_pipe_fail(self):
         """Test the failure of the copying of the molecule data within a molecule.
 
         The function tested is both generic_fns.mol_res_spin.copy_molecule() and
@@ -208,7 +208,7 @@ class Molecule_base_class:
         self.assertRaises(RelaxError, molecule.copy, mol_from='#GST', mol_to='#GB1')
 
 
-    def test_creation(self):
+    def test_create_molecule(self):
         """Test the creation of a molecule data structure.
 
         The function tested is both generic_fns.mol_res_spin.create_molecule() and
@@ -226,7 +226,7 @@ class Molecule_base_class:
         self.assertEqual(relax_data_store['orig'].mol[2].name, 'MgF4')
 
 
-    def test_creation_fail(self):
+    def test_create_molecule_fail(self):
         """Test the failure of molecule creation by supplying two molecules with the same name.
 
         The function tested is both generic_fns.mol_res_spin.create_molecule() and
@@ -240,7 +240,7 @@ class Molecule_base_class:
         self.assertRaises(RelaxError, molecule.create, 'CaM')
 
 
-    def test_delete(self):
+    def test_delete_molecule(self):
         """Test molecule deletion.
 
         The function tested is both generic_fns.mol_res_spin.delete_molecule() and
@@ -265,7 +265,7 @@ class Molecule_base_class:
         self.assert_(hasattr(relax_data_store['orig'].mol[0].res[1].spin[0], 'x'))
 
 
-    def test_delete_all(self):
+    def test_delete_molecule_all(self):
         """Test the deletion of all molecules.
 
         The function tested is both generic_fns.mol_res_spin.delete_molecule() and
@@ -287,7 +287,7 @@ class Molecule_base_class:
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, None)
 
 
-    def test_delete_fail(self):
+    def test_delete_molecule_fail(self):
         """Test the failure of molecule deletion when a residue or spin id is supplied.
 
         The function tested is both generic_fns.mol_res_spin.delete_molecule() and
@@ -301,7 +301,7 @@ class Molecule_base_class:
         self.assertRaises(RelaxResSelectDisallowError, molecule.delete, mol_id=':1')
 
 
-    def test_display(self):
+    def test_display_molecule(self):
         """Test the display of molecular information.
 
         The function tested is both generic_fns.mol_res_spin.display_molecule() and
@@ -317,7 +317,7 @@ class Molecule_base_class:
         molecule.display(mol_id='#New mol')
 
 
-    def test_display_fail(self):
+    def test_display_molecule_fail(self):
         """Test the failure of the display of molecule information.
 
         The function tested is both generic_fns.mol_res_spin.display_molecule() and
@@ -332,7 +332,7 @@ class Molecule_base_class:
         self.assertRaises(RelaxResSelectDisallowError, molecule.display, ':1')
 
 
-    def test_rename(self):
+    def test_rename_molecule(self):
         """Test the renaming of a molecule.
 
         The function tested is both generic_fns.mol_res_spin.name_molecule() and
@@ -349,7 +349,7 @@ class Molecule_base_class:
         self.assertEqual(relax_data_store['orig'].mol[1].name, 'K')
 
 
-    def test_rename_fail(self):
+    def test_rename_molecule_fail(self):
         """Test the failure of renaming a molecule when a residue or spin id is given.
 
         The function tested is both generic_fns.mol_res_spin.name_molecule() and
@@ -363,7 +363,7 @@ class Molecule_base_class:
         self.assertRaises(RelaxResSelectDisallowError, molecule.rename, mol_id=':1', new_name='K')
 
 
-    def test_rename_many_fail(self):
+    def test_rename_molecule_many_fail(self):
         """Test the failure of the renaming of multiple molecules to the same name.
 
         The function tested is both generic_fns.mol_res_spin.name_molecule() and
