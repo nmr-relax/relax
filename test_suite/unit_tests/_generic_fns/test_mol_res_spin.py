@@ -1219,28 +1219,6 @@ class Test_mol_res_spin(TestCase):
         self.assertRaises(RelaxNoPipeError, mol_res_spin.return_spin, selection=':2', pipe='new')
 
 
-    def test_reverse(self):
-        """Test spin system selection reversal.
-
-        The function tested is generic_fns.mol_res_spin.reverse().
-        """
-
-        # Reverse the selection.
-        mol_res_spin.reverse()
-
-        # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
-
-        # Test the selection status.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].select, 1)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].select, 0)
-        self.assertEqual(cdp.mol[0].res[2].spin[0].select, 1)
-        self.assertEqual(cdp.mol[1].res[0].spin[0].select, 1)
-        self.assertEqual(cdp.mol[1].res[0].spin[1].select, 0)
-        self.assertEqual(cdp.mol[1].res[1].spin[0].select, 0)
-        self.assertEqual(cdp.mol[1].res[1].spin[1].select, 1)
-
-
     def test_spin_loop(self):
         """Test the proper operation of the spin loop with spin selection.
 

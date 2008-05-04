@@ -80,3 +80,25 @@ class Test_selection(TestCase):
 
         # Reset.
         relax_data_store.__reset__()
+
+
+    def test_reverse(self):
+        """Test spin system selection reversal.
+
+        The function tested is generic_fns.selection.reverse().
+        """
+
+        # Reverse the selection.
+        selection.reverse()
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Test the selection status.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].select, 1)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].select, 0)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].select, 1)
+        self.assertEqual(cdp.mol[1].res[0].spin[0].select, 1)
+        self.assertEqual(cdp.mol[1].res[0].spin[1].select, 0)
+        self.assertEqual(cdp.mol[1].res[1].spin[0].select, 0)
+        self.assertEqual(cdp.mol[1].res[1].spin[1].select, 1)
