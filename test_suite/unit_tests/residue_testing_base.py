@@ -506,20 +506,20 @@ class Residue_base_class:
         """
 
         # Create the first residue and add some data to its spin container.
-        self.residue.create(1, 'Ala')
+        residue.create(1, 'Ala')
 
         # Copy the residue a few times.
-        self.residue.copy(res_from=':1', res_to=':2')
-        self.residue.copy(res_from=':1', res_to=':3')
+        residue.copy(res_from=':1', res_to=':2')
+        residue.copy(res_from=':1', res_to=':3')
 
         # Change the first residue's data.
         relax_data_store['orig'].mol[0].res[0].spin[0].name = 'His'
 
         # Copy the residue once more.
-        self.residue.copy(res_from=':1', res_to=':4,Met')
+        residue.copy(res_from=':1', res_to=':4,Met')
 
         # Try renumbering all alanines.
-        self.assertRaises(RelaxError, self.residue.renumber, res_id=':Ala', new_number=10)
+        self.assertRaises(RelaxError, residue.renumber, res_id=':Ala', new_number=10)
 
 
     def test_renumber_residue_no_spin(self):

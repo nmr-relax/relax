@@ -32,44 +32,13 @@ from test_suite.unit_tests.residue_testing_base import Residue_base_class
 from test_suite.unit_tests.spin_testing_base import Spin_base_class
 
 
-class Molecule:
-    """Class for creating an object containing the molecule specific fns."""
-
-    copy = mol_res_spin.copy_molecule
-    create = mol_res_spin.create_molecule
-    delete = mol_res_spin.delete_molecule
-    display = mol_res_spin.display_molecule
-    name = mol_res_spin.name_molecule
-
-class Residue:
-    """Class for creating an object containing the residue specific fns."""
-
-    copy = mol_res_spin.copy_residue
-    create = mol_res_spin.create_residue
-    delete = mol_res_spin.delete_residue
-    display = mol_res_spin.display_residue
-    name = mol_res_spin.name_residue
-    number = mol_res_spin.number_residue
-
-class Spin:
-    """Class for creating an object containing the spin specific fns."""
-
-    copy = mol_res_spin.copy_spin
-    create = mol_res_spin.create_spin
-    delete = mol_res_spin.delete_spin
-    display = mol_res_spin.display_spin
-    name = mol_res_spin.name_spin
-    number = mol_res_spin.number_spin
-
-
-
 class Test_mol_res_spin(Molecule_base_class, Residue_base_class, Spin_base_class, TestCase):
     """Unit tests for the functions of the 'generic_fns.mol_res_spin' module."""
 
-    # Set up the molecule, residue, and spin objects.
-    molecule = Molecule()
-    residue = Residue()
-    spin = Spin()
+    # Place the molecule, residue, and spin modules into the class namespace.
+    molecule_fns = molecule
+    residue_fns = residue
+    spin_fns = spin
 
     def setUp(self):
         """Set up some molecules, residues, and spins for testing."""
