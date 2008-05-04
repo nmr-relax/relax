@@ -226,21 +226,21 @@ class Residue:
         display_residue(res_id=res_id)
 
 
-    def rename(self, res_id=None, new_name=None):
-        """Function for renaming an existent residue(s).
+    def name(self, res_id=None, name=None):
+        """Function for naming residues.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         res_id:  The residue identification string corresponding to one or more residues.
 
-        new_name:  The new name.
+        name:  The new name.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function simply allows residues to be renamed.
+        This function simply allows residues to be named (or renamed).
 
 
         Examples
@@ -249,20 +249,20 @@ class Residue:
         The following sequence of commands will rename the sequence {1 ALA, 2 GLY, 3 LYS} to {1 XXX,
         2 XXX, 3 XXX}:
 
-        relax> residue.rename(':1', 'XXX')
-        relax> residue.rename(':2', 'XXX')
-        relax> residue.rename(':3', 'XXX')
+        relax> residue.name(':1', 'XXX')
+        relax> residue.name(':2', 'XXX')
+        relax> residue.name(':3', 'XXX')
 
         Alternatively:
 
-        relax> residue.rename(':1,2,3', 'XXX')
+        relax> residue.name(':1,2,3', 'XXX')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "residue.rename("
+            text = sys.ps3 + "residue.name("
             text = text + "res_id=" + `res_id`
-            text = text + ", new_name=" + `new_name` + ")"
+            text = text + ", name=" + `name` + ")"
             print text
 
         # Residue identification string.
@@ -270,28 +270,28 @@ class Residue:
             raise RelaxStrError, ('residue identification string', res_id)
 
         # New residue name.
-        if type(new_name) != str:
-            raise RelaxStrError, ('new residue name', new_name)
+        if type(name) != str:
+            raise RelaxStrError, ('new residue name', name)
 
         # Execute the functional code.
-        rename_residue(res_id=res_id, new_name=new_name)
+        name_residue(res_id=res_id, name=name)
 
 
-    def renumber(self, res_id=None, new_number=None):
-        """Function for renumbering an existent residue.
+    def number(self, res_id=None, number=None):
+        """Function for numbering residues.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         res_id:  The residue identification string corresponding to a single residue.
 
-        new_number:  The new residue number.
+        number:  The new residue number.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function simply allows residues to be renumbered.  The new number cannot correspond to
+        This function simply allows residues to be numbered.  The new number cannot correspond to
         an existing residue.
 
 
@@ -301,16 +301,16 @@ class Residue:
         The following sequence of commands will renumber the sequence {1 ALA, 2 GLY, 3 LYS} to
         {101 ALA, 102 GLY, 103 LYS}:
 
-        relax> residue.renumber(':1', 101)
-        relax> residue.renumber(':2', 102)
-        relax> residue.renumber(':3', 103)
+        relax> residue.number(':1', 101)
+        relax> residue.number(':2', 102)
+        relax> residue.number(':3', 103)
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "residue.renumber("
+            text = sys.ps3 + "residue.number("
             text = text + "res_id=" + `res_id`
-            text = text + ", new_number=" + `new_number` + ")"
+            text = text + ", number=" + `number` + ")"
             print text
 
         # Residue identification string.
@@ -318,11 +318,11 @@ class Residue:
             raise RelaxStrError, ('residue identification string', res_id)
 
         # New residue number.
-        if type(new_number) != int:
-            raise RelaxIntError, ('new residue number', new_number)
+        if type(number) != int:
+            raise RelaxIntError, ('new residue number', number)
 
         # Execute the functional code.
-        renumber_residue(res_id=res_id, new_number=new_number)
+        number_residue(res_id=res_id, number=number)
 
 
 
@@ -333,5 +333,5 @@ class Residue:
     copy.__doc__ = copy.__doc__ + "\n\n" + id_string_doc + "\n"
     delete.__doc__ = delete.__doc__ + "\n\n" + id_string_doc + "\n"
     display.__doc__ = display.__doc__ + "\n\n" + id_string_doc + "\n"
-    rename.__doc__ = rename.__doc__ + "\n\n" + id_string_doc + "\n"
-    renumber.__doc__ = renumber.__doc__ + "\n\n" + id_string_doc + "\n"
+    name.__doc__ = name.__doc__ + "\n\n" + id_string_doc + "\n"
+    number.__doc__ = number.__doc__ + "\n\n" + id_string_doc + "\n"
