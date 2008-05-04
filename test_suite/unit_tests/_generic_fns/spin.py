@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2008 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,18 +20,16 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from unittest import TestCase
+# Module docstring.
+"""Dummy spin module used for renaming the generic_fns.mol_res_spin fns."""
 
 # relax module imports.
-import spin
-from test_suite.unit_tests.spin_testing_base import Spin_base_class
+from generic_fns import mol_res_spin
 
 
-
-class Test_spin(Spin_base_class, TestCase):
-    """Unit tests for the functions of the 'generic_fns.spin' module."""
-
-    # Place the spin dummy module into the class namespace.
-    spin_fns = spin
-
+copy = mol_res_spin.copy_spin
+create = mol_res_spin.create_spin
+delete = mol_res_spin.delete_spin
+display = mol_res_spin.display_spin
+name = mol_res_spin.name_spin
+number = mol_res_spin.number_spin

@@ -25,7 +25,7 @@ from re import search
 
 # relax module imports.
 from data import Data as relax_data_store
-from selection import spin_loop
+from generic_fns.mol_res_spin import spin_loop
 from relax_errors import RelaxError
 from specific_fns.setup import get_specific_fn
 

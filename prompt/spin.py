@@ -25,8 +25,7 @@ import sys
 
 # relax module imports.
 import help
-from generic_fns import spin
-from generic_fns.selection import id_string_doc
+from generic_fns.mol_res_spin import copy_spin, create_spin, delete_spin, display_spin, id_string_doc, name_spin, number_spin
 from relax_errors import RelaxIntError, RelaxNoneStrError, RelaxStrError
 
 
@@ -112,7 +111,7 @@ class Spin:
             raise RelaxNoneStrError, ('spin to', spin_to)
 
         # Execute the functional code.
-        spin.copy(pipe_from=pipe_from, spin_from=spin_from, pipe_to=pipe_to, spin_to=spin_to)
+        copy_spin(pipe_from=pipe_from, spin_from=spin_from, pipe_to=pipe_to, spin_to=spin_to)
 
 
     def create(self, spin_num=None, spin_name=None, res_id=None):
@@ -166,7 +165,7 @@ class Spin:
             raise RelaxNoneStrError, ('residue identification string', res_id)
 
         # Execute the functional code.
-        spin.create(spin_num=spin_num, spin_name=spin_name, res_id=res_id)
+        create_spin(spin_num=spin_num, spin_name=spin_name, res_id=res_id)
 
 
     def delete(self, spin_id=None):
@@ -196,7 +195,7 @@ class Spin:
             raise RelaxStrError, ('spin identifier', spin_id)
 
         # Execute the functional code.
-        spin.delete(spin_id=spin_id)
+        delete_spin(spin_id=spin_id)
 
 
     def display(self, spin_id=None):
@@ -219,7 +218,7 @@ class Spin:
             raise RelaxNoneStrError, ('spin identification string', spin_id)
 
         # Execute the functional code.
-        spin.display(spin_id=spin_id)
+        display_spin(spin_id=spin_id)
 
 
     def name(self, spin_id=None, name=None):
@@ -266,7 +265,7 @@ class Spin:
             raise RelaxStrError, ('new spin name', name)
 
         # Execute the functional code.
-        spin.name(spin_id=spin_id, name=name)
+        name_spin(spin_id=spin_id, name=name)
 
 
     def number(self, spin_id=None, number=None):
@@ -315,7 +314,7 @@ class Spin:
             raise RelaxIntError, ('new spin number', number)
 
         # Execute the functional code.
-        spin.number(spin_id=spin_id, number=number)
+        number_spin(spin_id=spin_id, number=number)
 
 
 

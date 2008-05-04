@@ -28,7 +28,7 @@ from warnings import warn
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns.selection import exists_mol_res_spin_data
+from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from internal_pdb import Internal_PDB
 from maths_fns.rotation_matrix import R_2vect
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError

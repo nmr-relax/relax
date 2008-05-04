@@ -39,7 +39,7 @@ except ImportError:
 # relax module imports.
 from api_base import Base_struct_API
 from data import Data as relax_data_store
-from generic_fns.selection import Selection, parse_token, tokenise, wildcard_match
+from generic_fns.mol_res_spin import Selection, parse_token, tokenise, wildcard_match
 from relax_errors import RelaxError, RelaxNoPdbChainError, RelaxNoResError, RelaxPdbLoadError
 from relax_warnings import RelaxNoAtomWarning, RelaxZeroVectorWarning
 
@@ -97,7 +97,7 @@ class Scientific_data(Base_struct_API):
                             object.
         @type struct:       Scientific Python PDB object
         @keyword sel_obj:   The selection object.
-        @type sel_obj:      instance of generic_fns.selection.Selection
+        @type sel_obj:      instance of generic_fns.mol_res_spin.Selection
         @return:            A tuple of the Scientific Python PDB object representing a single
                             molecule, the molecule name, and molecule type.
         @rtype:             (Scientific Python PDB object, str, str)
@@ -157,7 +157,7 @@ class Scientific_data(Base_struct_API):
                             or 'other'.
         @type mol_type:     str
         @keyword sel_obj:   The selection object.
-        @type sel_obj:      instance of generic_fns.selection.Selection
+        @type sel_obj:      instance of generic_fns.mol_res_spin.Selection
         @return:            A tuple of the Scientific Python PDB object representing a single
                             residue, the residue number, and residue name.
         @rtype:             (Scientific Python PDB object, str, str)

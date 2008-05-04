@@ -158,8 +158,8 @@ class Test_residue(Residue_base_class, TestCase):
             self.assertRaises(RelaxNoneStrError, self.residue_fns.display, res_id=data[1])
 
 
-    def test_rename_argfail_res_id(self):
-        """Test the proper failure of the residue.rename() user function for the res_id argument."""
+    def test_name_argfail_res_id(self):
+        """Test the proper failure of the residue.name() user function for the res_id argument."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -168,24 +168,11 @@ class Test_residue(Residue_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.residue_fns.rename, res_id=data[1])
+            self.assertRaises(RelaxStrError, self.residue_fns.name, res_id=data[1])
 
 
-    def test_rename_argfail_new_name(self):
-        """Test the proper failure of the residue.rename() user function for the new_name argument."""
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the str arguments, and skip them.
-            if data[0] == 'str':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxStrError, self.residue_fns.rename, new_name=data[1])
-
-
-    def test_renumber_argfail_res_id(self):
-        """Test the proper failure of the residue.renumber() user function for the res_id argument."""
+    def test_name_argfail_name(self):
+        """Test the proper failure of the residue.name() user function for the name argument."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -194,11 +181,24 @@ class Test_residue(Residue_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.residue_fns.renumber, res_id=data[1])
+            self.assertRaises(RelaxStrError, self.residue_fns.name, name=data[1])
 
 
-    def test_renumber_argfail_new_number(self):
-        """Test the proper failure of the residue.renumber() user function for the new_number argument."""
+    def test_number_argfail_res_id(self):
+        """Test the proper failure of the residue.number() user function for the res_id argument."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str arguments, and skip them.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.residue_fns.number, res_id=data[1])
+
+
+    def test_number_argfail_number(self):
+        """Test the proper failure of the residue.number() user function for the number argument."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -207,4 +207,4 @@ class Test_residue(Residue_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.residue_fns.renumber, res_id=':1', new_number=data[1])
+            self.assertRaises(RelaxIntError, self.residue_fns.number, res_id=':1', number=data[1])
