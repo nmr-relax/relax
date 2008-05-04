@@ -135,8 +135,8 @@ class Test_molecule(Molecule_base_class, TestCase):
             self.assertRaises(RelaxNoneStrError, self.molecule_fns.display, mol_id=data[1])
 
 
-    def test_rename_argfail_mol_id(self):
-        """Test the proper failure of the molecule.rename() user function for the mol_id argument."""
+    def test_name_argfail_mol_id(self):
+        """Test the proper failure of the molecule.name() user function for the mol_id argument."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -145,11 +145,11 @@ class Test_molecule(Molecule_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.molecule_fns.rename, mol_id=data[1])
+            self.assertRaises(RelaxStrError, self.molecule_fns.name, mol_id=data[1])
 
 
-    def test_rename_argfail_new_name(self):
-        """Test the proper failure of the molecule.rename() user function for the new_name argument."""
+    def test_name_argfail_name(self):
+        """Test the proper failure of the molecule.name() user function for the name argument."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -158,4 +158,4 @@ class Test_molecule(Molecule_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.molecule_fns.rename, new_name=data[1])
+            self.assertRaises(RelaxStrError, self.molecule_fns.name, name=data[1])
