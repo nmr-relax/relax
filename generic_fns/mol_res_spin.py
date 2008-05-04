@@ -1120,64 +1120,35 @@ def molecule_loop(selection=None, pipe=None):
         yield mol
 
 
-def name_molecule(mol_id, new_name=None):
-    """Function for renaming molecules.
+def name_molecule(mol_id, name=None):
+    """Name the molecules.
 
-    @param mol_id:      The identifier string for the molecule to rename.
+    @param mol_id:      The molecule identification string.
     @type mol_id:       str
-    @param new_name:    The new molecule name.
-    @type new_name:     str
+    @param name:        The new molecule name.
+    @type name:         str
     """
-
-    # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(mol_id)
-
-    # Disallow spin selections.
-    if spin_token != None:
-        raise RelaxSpinSelectDisallowError
-
-    # Disallow residue selections.
-    if res_token != None:
-        raise RelaxResSelectDisallowError
-
-    # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
-
-    # Parse the tokens.
-    molecules = parse_token(mol_token)
 
     # Get the single molecule data container.
     mol = return_molecule(mol_id)
 
-    # Rename the molecule is there is a match.
+    # Name the molecule is there is a single match.
     if mol:
-        mol.name = new_name
+        mol.name = name
         
 
-def name_residue(res_id, new_name=None):
-    """Function for renaming residues.
+def name_residue(res_id, name=None):
+    """Name the residues.
 
-    @param res_id:      The identifier string for the residue(s) to rename.
+    @param res_id:      The residue identification string.
     @type res_id:       str
-    @param new_name:    The new residue name.
-    @type new_name:     str
+    @param name:        The new residue name.
+    @type name:         str
     """
 
-    # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(res_id)
-
-    # Disallow spin selections.
-    if spin_token != None:
-        raise RelaxSpinSelectDisallowError
-
-    # Parse the tokens.
-    residues = parse_token(res_token)
-
-    # Residue loop.
+    # Rename the matching residues.
     for res in residue_loop(res_id):
-        # Rename the residue is there is a match.
-        if res.num in residues or res.name in residues:
-            res.name = new_name
+        res.name = name
 
 
 def name_spin(spin_id=None, name=None):
@@ -1189,7 +1160,7 @@ def name_spin(spin_id=None, name=None):
     @type name:         str
     """
 
-    # Rename the spin.
+    # Rename the matching spins.
     for spin in spin_loop(spin_id):
         spin.name = name
 
