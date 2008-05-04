@@ -778,6 +778,127 @@ def create_spin(spin_num=None, spin_name=None, res_id=None):
     res_to_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
 
 
+def delete_molecule(mol_id=None):
+    """Function for deleting molecules from the current data pipe.
+
+    @param mol_id:  The molecule identifier string.
+    @type mol_id:   str
+    """
+
+    # Split up the selection string.
+    mol_token, res_token, spin_token = tokenise(mol_id)
+
+    # Disallow spin selections.
+    if spin_token != None:
+        raise RelaxSpinSelectDisallowError
+
+    # Disallow residue selections.
+    if res_token != None:
+        raise RelaxResSelectDisallowError
+
+    # Parse the token.
+    molecules = parse_token(mol_token)
+
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
+
+    # List of indecies to delete.
+    indecies = []
+
+    # Loop over the molecules.
+    for i in xrange(len(cdp.mol)):
+        # Remove the residue is there is a match.
+        if cdp.mol[i].name in molecules:
+            indecies.append(i)
+
+    # Reverse the indecies.
+    indecies.reverse()
+
+    # Delete the molecules.
+    for index in indecies:
+        cdp.mol.pop(index)
+
+    # Create an empty residue container if no residues remain.
+    if len(cdp.mol) == 0:
+        cdp.mol.add_item()
+
+
+def delete_residue(res_id=None):
+    """Function for deleting residues from the current data pipe.
+
+    @param res_id:  The molecule and residue identifier string.
+    @type res_id:   str
+    """
+
+    # Split up the selection string.
+    mol_token, res_token, spin_token = tokenise(res_id)
+
+    # Disallow spin selections.
+    if spin_token != None:
+        raise RelaxSpinSelectDisallowError
+
+    # Parse the tokens.
+    residues = parse_token(res_token)
+
+    # Molecule loop.
+    for mol in molecule_loop(mol_token):
+        # List of indecies to delete.
+        indecies = []
+
+        # Loop over the residues of the molecule.
+        for i in xrange(len(mol.res)):
+            # Remove the residue is there is a match.
+            if mol.res[i].num in residues or mol.res[i].name in residues:
+                indecies.append(i)
+
+        # Reverse the indecies.
+        indecies.reverse()
+
+        # Delete the residues.
+        for index in indecies:
+            mol.res.pop(index)
+
+        # Create an empty residue container if no residues remain.
+        if len(mol.res) == 0:
+            mol.res.add_item()
+
+
+def delete_spin(spin_id=None):
+    """Function for deleting spins from the current data pipe.
+
+    @param spin_id: The molecule, residue, and spin identifier string.
+    @type spin_id:  str
+    """
+
+    # Split up the selection string.
+    mol_token, res_token, spin_token = tokenise(spin_id)
+
+    # Parse the tokens.
+    spins = parse_token(spin_token)
+
+    # Residue loop.
+    for res in residue_loop(spin_id):
+        # List of indecies to delete.
+        indecies = []
+
+        # Loop over the spins of the residue.
+        for i in xrange(len(res.spin)):
+            # Store the spin indecies for deletion.
+            if res.spin[i].num in spins or res.spin[i].name in spins:
+                indecies.append(i)
+
+        # Reverse the indecies.
+        indecies.reverse()
+
+        # Delete the spins.
+        for index in indecies:
+            res.spin.pop(index)
+
+        # Create an empty spin container if no spins remain.
+        if len(res.spin) == 0:
+            res.spin.add_item()
+
+
 def exists_mol_res_spin_data():
     """Function for determining if any molecule-residue-spin data exists.
 

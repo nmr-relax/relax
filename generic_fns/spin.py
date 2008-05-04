@@ -33,42 +33,6 @@ This touches part of the molecule-residue-spin data structure.
 """
 
 
-def delete_spin(spin_id=None):
-    """Function for deleting spins from the current data pipe.
-
-    @param spin_id: The molecule, residue, and spin identifier string.
-    @type spin_id:  str
-    """
-
-    # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(spin_id)
-
-    # Parse the tokens.
-    spins = parse_token(spin_token)
-
-    # Residue loop.
-    for res in residue_loop(spin_id):
-        # List of indecies to delete.
-        indecies = []
-
-        # Loop over the spins of the residue.
-        for i in xrange(len(res.spin)):
-            # Store the spin indecies for deletion.
-            if res.spin[i].num in spins or res.spin[i].name in spins:
-                indecies.append(i)
-
-        # Reverse the indecies.
-        indecies.reverse()
-
-        # Delete the spins.
-        for index in indecies:
-            res.spin.pop(index)
-
-        # Create an empty spin container if no spins remain.
-        if len(res.spin) == 0:
-            res.spin.add_item()
-
-
 def display_spin(spin_id=None):
     """Function for displaying the information associated with the spin.
 

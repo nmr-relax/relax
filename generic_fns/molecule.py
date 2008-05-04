@@ -33,51 +33,6 @@ This touches part of the molecule-residue-spin data structure.
 """
 
 
-def delete_molecule(mol_id=None):
-    """Function for deleting molecules from the current data pipe.
-
-    @param mol_id:  The molecule identifier string.
-    @type mol_id:   str
-    """
-
-    # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(mol_id)
-
-    # Disallow spin selections.
-    if spin_token != None:
-        raise RelaxSpinSelectDisallowError
-
-    # Disallow residue selections.
-    if res_token != None:
-        raise RelaxResSelectDisallowError
-
-    # Parse the token.
-    molecules = parse_token(mol_token)
-
-    # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
-
-    # List of indecies to delete.
-    indecies = []
-
-    # Loop over the molecules.
-    for i in xrange(len(cdp.mol)):
-        # Remove the residue is there is a match.
-        if cdp.mol[i].name in molecules:
-            indecies.append(i)
-
-    # Reverse the indecies.
-    indecies.reverse()
-
-    # Delete the molecules.
-    for index in indecies:
-        cdp.mol.pop(index)
-
-    # Create an empty residue container if no residues remain.
-    if len(cdp.mol) == 0:
-        cdp.mol.add_item()
-
-
 def display_molecule(mol_id=None):
     """Function for displaying the information associated with the molecule.
 
