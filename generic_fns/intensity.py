@@ -33,7 +33,7 @@ from data import Data as relax_data_store
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin
 from relax_errors import RelaxError, RelaxArgNotInListError, RelaxNoPipeError, RelaxNoSequenceError
 from relax_io import extract_data, strip
-from relax_warnings import RelaxWarning
+from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
 
 def det_dimensions():
@@ -291,7 +291,7 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
         spin_id = generate_spin_id(res_num=res_num, spin_name=X_name)
         spin = return_spin(spin_id)
         if not spin:
-            warn(RelaxWarning("Cannot find the spin %s within the sequence." % spin_id))
+            warn(RelaxNoSpinWarning(spin_id))
             continue
 
         # Skip deselected spins.
