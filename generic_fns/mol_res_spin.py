@@ -1738,6 +1738,52 @@ def same_sequence(pipe1, pipe2):
     return True
 
 
+def spin_in_list(spin_list, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
+    """Function for determining if the spin is located within the list of spins.
+
+    @param spin_list:       The list of spins.  The first dimension corresponds to different spins,
+                            the second corresponds to the spin information columns.
+    @type spin_list:        list of lists of str
+    @keyword mol_name_col:  The column containing the molecule name information.
+    @type mol_name_col:     int or None
+    @keyword res_num_col:   The column containing the residue number information.
+    @type res_num_col:      int or None
+    @keyword res_name_col:  The column containing the residue name information.
+    @type res_name_col:     int or None
+    @keyword spin_num_col:  The column containing the spin number information.
+    @type spin_num_col:     int or None
+    @keyword spin_name_col: The column containing the spin name information.
+    @type spin_name_col:    int or None
+    @keyword mol_name:      The molecule name.
+    @type mol_name:         str or None
+    @keyword res_num:       The residue number.
+    @type res_num:          int or None
+    @keyword res_name:      The residue name.
+    @type res_name:         str or None
+    @keyword spin_num:      The spin number.
+    @type spin_num:         int or None
+    @keyword spin_name:     The spin name.
+    @type spin_name:        str or None
+    @return:                The answer of whether the spin is within the list.
+    @rtype:                 bool
+    """
+
+    # Create a selection object based on the spin.
+    select_obj = Selection(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name))
+
+    # Loop over the spins.
+    for spin in spin_list:
+        # Generate the spin identification string.
+        spin_id = generate_spin_id_data_array(data=file_data[i], mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
+
+        # There is a hit.
+        if spin_id in select_obj:
+            return True
+
+    # Not in the list.
+    return False
+
+
 def spin_index_loop(selection=None, pipe=None):
     """Generator function for looping over all selected spins, returning the mol-res-spin indecies.
 
