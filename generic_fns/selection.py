@@ -20,11 +20,15 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports
+from warnings import warn
+
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSpinError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
 from relax_io import extract_data, strip
+from relax_warnings import RelaxNoSpinWarning
 
 
 def desel_all():
@@ -120,7 +124,7 @@ def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_nam
         # Get the corresponding spin container.
         spin = return_spin(id)
         if spin == None:
-            raise RelaxNoSpinError, id
+            warn(RelaxNoSpinWarning(id))
 
         # Deselect the spin.
         spin.select = 0
