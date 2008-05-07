@@ -167,8 +167,21 @@ class Deselect:
         selection.desel_read(file=file, dir=dir, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, change_all=change_all)
 
 
-    def reverse(self):
+    def reverse(self, spin_id=None):
         """Function for the reversal of the spin selection.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        spin_id:  The spin identification string.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        By supplying the spin_id argument, a subset of spin can have their selection status
+        reversed.
+
 
         Examples
         ~~~~~~~~
@@ -180,11 +193,16 @@ class Deselect:
 
         # Function intro test.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "deselect.reverse()"
+            text = sys.ps3 + "deselect.reverse("
+            text = text + "spin_id=" + `spin_id` + ")"
             print text
 
+        # Spin identification string.
+        if spin_id != None and type(spin_id) != str:
+            raise RelaxNoneStrError, ('Spin identification string', spin_id)
+
         # Execute the functional code.
-        selection.reverse()
+        selection.reverse(spin_id=spin_id)
 
 
     def spin(self, spin_id=None, change_all=False):
