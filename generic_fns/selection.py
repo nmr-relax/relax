@@ -215,33 +215,57 @@ def sel_all():
         spin.select = 1
 
 
-def sel_read(self, run=None, file=None, dir=None, boolean='OR', change_all=0, column=None):
-    """Select the residues contained in the given file.
+def sel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, boolean='OR', change_all=False):
+    """Select the spins contained in the given file.
 
-    @param run:         The run name.
-    @type run:          str
-    @param file:        The name of the file.
-    @type file:         str
-    @param dir:         The directory containing the file.
-    @type dir:          str
-    @param boolean:     The boolean operator used to select the spin systems with.  It can be
-        one of 'OR', 'NOR', 'AND', 'NAND', 'XOR', or 'XNOR'.
-    @type boolean:      str
-    @param change_all:  A flag which if set will set the selection to solely those of the file.
-    @type change_all:   int
-    @param column:      The whitespace separated column in which the residue numbers are
-        located.
-    @type column:       int
+    @keyword file:                  The name of the file to open.
+    @type file:                     str
+    @keyword dir:                   The directory containing the file (defaults to the current
+                                    directory if None).
+    @type dir:                      str or None
+    @keyword file_data:             An alternative opening a file, if the data already exists in the
+                                    correct format.  The format is a list of lists where the first
+                                    index corresponds to the row and the second the column.
+    @type file_data:                list of lists
+    @keyword mol_name_col:          The column containing the molecule name information.
+    @type mol_name_col:             int or None
+    @keyword res_name_col:          The column containing the residue name information.
+    @type res_name_col:             int or None
+    @keyword res_num_col:           The column containing the residue number information.
+    @type res_num_col:              int or None
+    @keyword spin_name_col:         The column containing the spin name information.
+    @type spin_name_col:            int or None
+    @keyword spin_num_col:          The column containing the spin number information.
+    @type spin_num_col:             int or None
+    @keyword sep:                   The column separator which, if None, defaults to whitespace.
+    @type sep:                      str or None
+    @param boolean:                 The boolean operator used to select the spin systems with.  It
+                                    can be one of 'OR', 'NOR', 'AND', 'NAND', 'XOR', or 'XNOR'.
+    @type boolean:                  str
+    @keyword change_all:            A flag which if True will cause all spins not specified in the
+                                    file to be selected.
+    @type change_all:               bool
+    @raises RelaxNoPipeError:       If the current data pipe does not exist.
+    @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
     """
+
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
+
+    # Test if sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
     # Extract the data from the file.
     file_data = extract_data(file, dir)
 
     # Count the number of header lines.
     header_lines = 0
+    num_col = max(res_num_col, spin_num_col)
     for i in xrange(len(file_data)):
         try:
-            int(file_data[i][column])
+            int(file_data[i][num_col])
         except:
             header_lines = header_lines + 1
         else:
@@ -253,57 +277,33 @@ def sel_read(self, run=None, file=None, dir=None, boolean='OR', change_all=0, co
     # Strip the data.
     file_data = strip(file_data)
 
-    # Create the list of residues to select.
-    select = []
-    for i in xrange(len(file_data)):
-        try:
-            select.append(int(file_data[i][column]))
-        except:
-            raise RelaxError, "Improperly formatted file."
+    # Minimum number of columns.
+    min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col)
 
-    # Create the list of runs.
-    self.runs = self.relax.generic.runs.list_of_runs(run)
+    # Loop over the spins.
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True)
+        # The spin system is in the file.
+        flag = spin_in_list(file_data, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin.num, spin_name=spin.name)
 
-    # Loop over the runs.
-    for self.run in self.runs:
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
+        # Skip spins not the file.
+        if not change_all and not flag:
+            continue
 
-        # Test if sequence data is loaded.
-        if not len(relax_data_store.res[self.run]):
-            raise RelaxNoSequenceError, self.run
-
-        # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Remap the data structure 'relax_data_store.res[self.run][i]'.
-            data = relax_data_store.res[self.run][i]
-
-            # The spin system is in the new selection list.
-            if data.num in select:
-                new_select = 1
-            else:
-                new_select = 0
-
-            # Select just the residues in the file.
-            if change_all:
-                data.select = new_select
-
-            # Boolean selections.
-            if boolean == 'OR':
-                data.select = data.select or new_select
-            elif boolean == 'NOR':
-                data.select = not (data.select or new_select)
-            elif boolean == 'AND':
-                data.select = data.select and new_select
-            elif boolean == 'NAND':
-                data.select = not (data.select and new_select)
-            elif boolean == 'XOR':
-                data.select = not (data.select and new_select) and (data.select or new_select)
-            elif boolean == 'XNOR':
-                data.select = (data.select and new_select) or not (data.select or new_select)
-            else:
-                raise RelaxError, "Unknown boolean operator " + `boolean`
+        # Boolean selections.
+        if boolean == 'OR':
+            spin.select = spin.select or flag
+        elif boolean == 'NOR':
+            spin.select = not (spin.select or flag)
+        elif boolean == 'AND':
+            spin.select = spin.select and flag
+        elif boolean == 'NAND':
+            spin.select = not (spin.select and flag)
+        elif boolean == 'XOR':
+            spin.select = not (spin.select and flag) and (spin.select or flag)
+        elif boolean == 'XNOR':
+            spin.select = (spin.select and flag) or not (spin.select or flag)
+        else:
+            raise RelaxError, "Unknown boolean operator " + `boolean`
 
 
 def sel_res(self, run=None, num=None, name=None, boolean='OR', change_all=0):
