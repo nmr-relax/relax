@@ -123,8 +123,11 @@ def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_nam
 
         # Get the corresponding spin container.
         spin = return_spin(id)
+
+        # No spin.
         if spin == None:
             warn(RelaxNoSpinWarning(id))
+            continue
 
         # Deselect the spin.
         spin.select = 0
