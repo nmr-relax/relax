@@ -154,3 +154,29 @@ class Test_deselect(TestCase):
 
             # The argument test.
             self.assertRaises(RelaxBoolError, self.deselect_fns.read, file='unresolved', change_all=data[1])
+
+
+    def test_spin_argfail_spin_id(self):
+        """The spin_id arg test of the deselect.spin() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.deselect_fns.spin, spin_id=data[1])
+
+
+    def test_spin_argfail_change_all(self):
+        """The change_all arg test of the deselect.spin() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxBoolError, self.deselect_fns.spin, change_all=data[1])
