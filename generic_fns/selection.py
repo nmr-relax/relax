@@ -133,68 +133,32 @@ def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_nam
         spin.select = 0
 
 
-def desel_res(self, run=None, num=None, name=None, change_all=None):
-    """Function for deselecting specific residues."""
+def desel_spin(spin_id=None, change_all=None):
+    """Deselect specific spins.
 
-    # Test if the residue number is a valid regular expression.
-    if type(num) == str:
-        try:
-            compile(num)
-        except:
-            raise RelaxRegExpError, ('residue number', num)
+    @keyword spin_id:       The spin identification string.
+    @type spin_id:          str or None
+    @keyword change_all:    A flag which if True will cause all spins not specified in the file to
+                            be selected.
+    @type change_all:       bool
+    """
 
-    # Test if the residue name is a valid regular expression.
-    if name:
-        try:
-            compile(name)
-        except:
-            raise RelaxRegExpError, ('residue name', name)
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
 
-    # Create the list of runs.
-    self.runs = self.relax.generic.runs.list_of_runs(run)
+    # Test if sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
-    # Loop over the runs.
-    no_match = 1
-    for self.run in self.runs:
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
+    # First select all spins if desired.
+    if change_all:
+        for spin in spin_loop():
+            spin.select = 1
 
-        # Test if sequence data is loaded.
-        if not len(relax_data_store.res[self.run]):
-            raise RelaxNoSequenceError, self.run
-
-        # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Remap the data structure 'relax_data_store.res[self.run][i]'.
-            data = relax_data_store.res[self.run][i]
-
-            # Select all residues.
-            if change_all:
-                data.select = 1
-
-            # Skip the residue if there is no match to 'num'.
-            if type(num) == int:
-                if not data.num == num:
-                    continue
-            if type(num) == str:
-                if not match(num, `data.num`):
-                    continue
-
-            # Skip the residue if there is no match to 'name'.
-            if name != None:
-                if not match(name, data.name):
-                    continue
-
-            # Deselect the residue.
-            data.select = 0
-
-            # Match flag.
-            no_match = 0
-
-    # No residue matched.
-    if no_match:
-        print "No residues match."
+    # Then deselect the desired spins.
+    for spin in spin_loop(spin_id):
+        spin.select = 0
 
 
 def reverse(selection=None):
