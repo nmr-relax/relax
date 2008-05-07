@@ -25,14 +25,15 @@ import sys
 
 # relax module imports.
 import help
-from relax_errors import RelaxBinError, RelaxError, RelaxIntError, RelaxListStrError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
+from generic_fns import selection
+from relax_errors import RelaxBoolError, RelaxError, RelaxIntError, RelaxListStrError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
 
 
 class Deselect:
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \
-        """Class for deselecting residues."""
+        """Class for deselecting spins."""
 
         # Add the generic help string.
         self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
@@ -41,64 +42,49 @@ class Deselect:
         self.__relax__ = relax
 
 
-    def all(self, run=None):
-        """Function for deselecting all residues.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run(s).  By supplying a single string, array of strings, or None, a
-        single run, multiple runs, or all runs will be selected respectively.
-
+    def all(self):
+        """Function for deselecting all spins.
 
         Examples
         ~~~~~~~~
 
-        To deselect all residues type:
+        To deselect all spins, simply type:
 
         relax> deselect.all()
-
-
-        To deselect all residues for the run 'srls_m1', type:
-
-        relax> select.all('srls_m1')
-        relax> select.all(run='srls_m1')
         """
 
         # Function intro test.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "deselect.all("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "deselect.all()"
             print text
 
-        # The run argument.
-        if run != None and type(run) != str and type(run) != list:
-            raise RelaxNoneStrListError, ('run', run)
-        if type(run) == list:
-            for i in xrange(len(run)):
-                if type(run[i]) != str:
-                    raise RelaxListStrError, ('run', run)
-
         # Execute the functional code.
-        self.__relax__.generic.selection.desel_all(run=run)
+        selection.desel_all()
 
 
-    def read(self, run=None, file=None, dir=None, change_all=0, column=0):
-        """Function for deselecting the residues contained in a file.
+    def read(self, file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, change_all=False):
+        """Function for deselecting the spins contained in a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run(s).  By supplying a single string, array of strings, or None, a
-        single run, multiple runs, or all runs will be selected respectively.
-
-        file:  The name of the file containing the list of residues to deselect.
+        file:  The name of the file containing the list of spins to deselect.
 
         dir:  The directory where the file is located.
 
-        change_all:  A flag specifying if all other residues should be changed.
+        mol_name_col:  The molecule name column (this defaults to no column).
 
-        column:  The column containing the residue numbers (defaulting to 0, the first column).
+        res_num_col:  The residue number column (the default is 0, i.e. the first column).
+
+        res_name_col:  The residue name column (this defaults to no column).
+
+        spin_num_col:  The spin number column (this defaults to no column).
+
+        spin_name_col:  The spin name column (this defaults to no column).
+
+        sep:  The column separator (the default is white space).
+
+        change_all:  A flag specifying if all other spins should be changed.
 
 
         Description
@@ -106,43 +92,40 @@ class Deselect:
 
         Empty lines and lines beginning with a hash are ignored.
 
-        The 'change_all' flag argument default is zero meaning that all residues currently either
-        selected or deselected will remain that way.  Setting the argument to 1 will cause all
-        residues not specified in the file to be selected.
+        The 'change_all' flag argument default is False meaning that all spins currently either
+        selected or deselected will remain that way.  Setting the argument to True will cause all
+        spins not specified in the file to be selected.
 
 
         Examples
         ~~~~~~~~
 
-        To deselect all overlapped residues in the file 'unresolved', type:
+        To deselect all overlapped residues listed with residue numbers in the first column of the
+        file 'unresolved', type:
 
-        relax> deselect.read('noe', 'unresolved')
-        relax> deselect.read(run='noe', file='unresolved')
+        relax> deselect.read('unresolved')
+        relax> deselect.read(file='unresolved')
 
-        To deselect the residues in the second column of the relaxation data file 'r1.600' while
-        selecting all other residues, type one of:
+        To deselect the spins in the second column of the relaxation data file 'r1.600' while
+        selecting all other spins, for example type:
 
-        relax> deselect.read('test', 'r1.600', change_all=1, column=1)
-        relax> deselect.read(run='test', file='r1.600', change_all=1, column=1)
+        relax> deselect.read('r1.600', change_all=True, spin_num_col=1)
+        relax> deselect.read(file='r1.600', change_all=True, spin_num_col=1)
         """
 
         # Function intro test.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "deselect.read("
-            text = text + "run=" + `run`
-            text = text + ", file=" + `file`
+            text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
-            text = text + ", change_all=" + `change_all`
-            text = text + ", column=" + `column` + ")"
+            text = text + ", mol_name_col=" + `mol_name_col`
+            text = text + ", res_num_col=" + `res_num_col`
+            text = text + ", res_name_col=" + `res_name_col`
+            text = text + ", spin_num_col=" + `spin_num_col`
+            text = text + ", spin_name_col=" + `spin_name_col`
+            text = text + ", sep=" + `sep`
+            text = text + ", change_all=" + `change_all` + ")"
             print text
-
-        # The run argument.
-        if run != None and type(run) != str and type(run) != list:
-            raise RelaxNoneStrListError, ('run', run)
-        if type(run) == list:
-            for i in xrange(len(run)):
-                if type(run[i]) != str:
-                    raise RelaxListStrError, ('run', run)
 
         # File name.
         if type(file) != str:
@@ -152,133 +135,105 @@ class Deselect:
         if dir != None and type(dir) != str:
             raise RelaxNoneStrError, ('directory name', dir)
 
-        # Change all flag.
-        if type(change_all) != int or (change_all != 0 and change_all != 1):
-            raise RelaxBinError, ('change_all', change_all)
+        # Molecule name column.
+        if mol_name_col != None and type(mol_name_col) != int:
+            raise RelaxNoneIntError, ('molecule name column', mol_name_col)
 
-        # The residue column.
-        if type(column) != int:
-            raise RelaxIntError, ('residue number column', column)
+        # Residue number column.
+        if res_name_col != None and type(res_num_col) != int:
+            raise RelaxNoneIntError, ('residue number column', res_num_col)
+
+        # Residue name column.
+        if res_name_col != None and type(res_name_col) != int:
+            raise RelaxNoneIntError, ('residue name column', res_name_col)
+
+        # Spin number column.
+        if spin_num_col != None and type(spin_num_col) != int:
+            raise RelaxNoneIntError, ('spin number column', spin_num_col)
+
+        # Spin name column.
+        if spin_name_col != None and type(spin_name_col) != int:
+            raise RelaxNoneIntError, ('spin name column', spin_name_col)
+
+        # Column separator.
+        if sep != None and type(sep) != str:
+            raise RelaxNoneStrError, ('column separator', sep)
+
+        # Change all flag.
+        if type(change_all) != bool:
+            raise RelaxBoolError, ('change_all', change_all)
 
         # Execute the functional code.
-        self.__relax__.generic.selection.desel_read(run=run, file=file, dir=dir, change_all=change_all, column=column)
+        selection.desel_read(file=file, dir=dir, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, change_all=change_all)
 
 
-    def res(self, run=None, num=None, name=None, change_all=0):
-        """Function for deselecting specific residues.
+    def spin(self, spin_id=None, change_all=False):
+        """Function for deselecting specific spins.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run(s).  By supplying a single string, array of strings, or None, a
-        single run, multiple runs, or all runs will be selected respectively.
+        spin_id:  The spin identification string.
 
-        num:  The residue number.
-
-        name:  The residue name.
-
-        change_all:  A flag specifying if all other residues should be changed.
+        change_all:  A flag specifying if all other spins should be changed.
 
 
         Description
         ~~~~~~~~~~~
 
-        The residue number can be either an integer for deselecting a single residue or a python
-        regular expression, in string form, for deselecting multiple residues.  For details about
-        using regular expression, see the python documentation for the module 're'.
-
-        The residue name argument must be a string.  Regular expression is also allowed.
-
-        The 'change_all' flag argument default is zero meaning that all residues currently either
-        selected or deselected will remain that way.  Setting the argument to 1 will cause all
-        residues not specified by 'num' or 'name' to become selected.
+        The 'change_all' flag argument default is False meaning that all spins currently either
+        selected or deselected will remain that way.  Setting the argument to True will cause all
+        spins not specified by 'spin_id' to be selected.
 
 
         Examples
         ~~~~~~~~
 
-        To deselect all glycines for the run 'm5', type:
+        To deselect all glycines and alanines, type:
 
-        relax> deselect.res(run='m5', name='GLY|ALA')
-        relax> deselect.res(run='m5', name='[GA]L[YA]')
+        relax> deselect.spin(spin_id=':GLY|:ALA')
 
         To deselect residue 12 MET type:
 
-        relax> deselect.res('m5', 12)
-        relax> deselect.res('m5', 12, 'MET')
-        relax> deselect.res('m5', '12')
-        relax> deselect.res('m5', '12', 'MET')
-        relax> deselect.res(run='m5', num='12', name='MET')
+        relax> deselect.spin(':12')
+        relax> deselect.spin(spin_id=':12')
+        relax> deselect.spin(spin_id=':12&:MET')
         """
 
         # Function intro test.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "deselect.res("
-            text = text + "run=" + `run`
-            text = text + ", num=" + `num`
-            text = text + ", name=" + `name`
+            text = sys.ps3 + "deselect.spin("
+            text = text + "spin_id=" + `spin_id`
             text = text + ", change_all=" + `change_all` + ")"
             print text
 
-        # The run argument.
-        if run != None and type(run) != str and type(run) != list:
-            raise RelaxNoneStrListError, ('run', run)
-        if type(run) == list:
-            for i in xrange(len(run)):
-                if type(run[i]) != str:
-                    raise RelaxListStrError, ('run', run)
-
-        # Residue number.
-        if num != None and type(num) != int and type(num) != str:
-            raise RelaxNoneIntStrError, ('residue number', num)
-
-        # Residue name.
-        if name != None and type(name) != str:
-            raise RelaxNoneStrError, ('residue name', name)
-
-        # Neither are given.
-        if num == None and name == None:
-            raise RelaxError, "At least one of the number or name arguments is required."
+        # Spin identification string.
+        if spin_id != None and type(spin_id) != str:
+            raise RelaxNoneStrError, ('Spin identification string', spin_id)
 
         # Change all flag.
-        if type(change_all) != int or (change_all != 0 and change_all != 1):
-            raise RelaxBinError, ('change_all', change_all)
+        if type(change_all) != bool:
+            raise RelaxBoolError, ('change_all', change_all)
 
         # Execute the functional code.
-        self.__relax__.generic.selection.desel_res(run=run, num=num, name=name, change_all=change_all)
+        selection.desel_spin(spin_id=spin_id, change_all=change_all)
 
 
-    def reverse(self, run=None):
-        """Function for the reversal of the residue selection.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run(s).  By supplying a single string, array of strings, or None, a
-        single run, multiple runs, or all runs will be selected respectively.
-
+    def reverse(self):
+        """Function for the reversal of the spin selection.
 
         Examples
         ~~~~~~~~
 
-        To deselect all currently selected residues and select those which are deselected type:
+        To deselect all currently selected spins and select those which are deselected type:
 
         relax> deselect.reverse()
         """
 
         # Function intro test.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "deselect.reverse("
-            text = text + "run=" + `run` + ")"
+            text = sys.ps3 + "deselect.reverse()"
             print text
 
-        # The run argument.
-        if run != None and type(run) != str and type(run) != list:
-            raise RelaxNoneStrListError, ('run', run)
-        if type(run) == list:
-            for i in xrange(len(run)):
-                if type(run[i]) != str:
-                    raise RelaxListStrError, ('run', run)
-
         # Execute the functional code.
-        self.__relax__.generic.selection.reverse(run=run)
+        selection.reverse()
