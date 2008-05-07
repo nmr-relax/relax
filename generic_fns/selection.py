@@ -306,39 +306,26 @@ def sel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_
             raise RelaxError, "Unknown boolean operator " + `boolean`
 
 
-def sel_res(self, run=None, num=None, name=None, boolean='OR', change_all=0):
-    """Select specific residues.
+def sel_spin(spin_id=None, boolean='OR', change_all=False):
+    """Select specific spins.
 
-    @param run:         The run name.
-    @type run:          str
-    @param num:         The residue number.
-    @type num:          int or regular expression str
-    @param name:        The residue name.
-    @type name:         regular expression str
-    @param boolean:     The boolean operator used to select the spin systems with.  It can be
-        one of 'OR', 'NOR', 'AND', 'NAND', 'XOR', or 'XNOR'.
-    @type boolean:      str
-    @param change_all:  A flag which if set will set the selection to solely those residues
-        specified.
-    @type change_all:   int
+    @keyword spin_id:               The spin identification string.
+    @type spin_id:                  str or None
+    @param boolean:                 The boolean operator used to select the spin systems with.  It
+                                    can be one of 'OR', 'NOR', 'AND', 'NAND', 'XOR', or 'XNOR'.
+    @type boolean:                  str
+    @keyword change_all:            A flag which if True will cause all spins not specified in the
+                                    file to be selected.
+    @type change_all:               bool
     """
 
-    # Test if the residue number is a valid regular expression.
-    if type(num) == str:
-        try:
-            compile(num)
-        except:
-            raise RelaxRegExpError, ('residue number', num)
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
 
-    # Test if the residue name is a valid regular expression.
-    if name:
-        try:
-            compile(name)
-        except:
-            raise RelaxRegExpError, ('residue name', name)
-
-    # Create the list of runs.
-    self.runs = self.relax.generic.runs.list_of_runs(run)
+    # Test if sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
     # Loop over the runs.
     no_match = 1
@@ -391,11 +378,3 @@ def sel_res(self, run=None, num=None, name=None, boolean='OR', change_all=0):
                 data.select = (data.select and new_select) or not (data.select or new_select)
             else:
                 raise RelaxError, "Unknown boolean operator " + `boolean`
-
-            # Match flag.
-            if new_select:
-                no_match = 0
-
-    # No residue matched.
-    if no_match:
-        print "No residues match."
