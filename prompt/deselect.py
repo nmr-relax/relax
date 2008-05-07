@@ -109,8 +109,8 @@ class Deselect:
         To deselect the spins in the second column of the relaxation data file 'r1.600' while
         selecting all other spins, for example type:
 
-        relax> deselect.read('r1.600', change_all=True, spin_num_col=1)
-        relax> deselect.read(file='r1.600', change_all=True, spin_num_col=1)
+        relax> deselect.read('r1.600', res_num_col=None, spin_num_col=1, change_all=True)
+        relax> deselect.read(file='r1.600', res_num_col=None, spin_num_col=1, change_all=True)
         """
 
         # Function intro test.
