@@ -32,7 +32,11 @@ from relax_warnings import RelaxNoSpinWarning
 
 
 def desel_all():
-    """Deselect all spins."""
+    """Deselect all spins.
+
+    @raises RelaxNoPipeError:       If the current data pipe does not exist.
+    @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
+    """
 
     # Test if the current data pipe exists.
     if not relax_data_store.current_pipe:
@@ -50,30 +54,32 @@ def desel_all():
 def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, change_all=False):
     """Deselect the spins contained in a file.
 
-    @keyword file:          The name of the file to open.
-    @type file:             str
-    @keyword dir:           The directory containing the file (defaults to the current directory if
-                            None).
-    @type dir:              str or None
-    @keyword file_data:     An alternative opening a file, if the data already exists in the correct
-                            format.  The format is a list of lists where the first index corresponds
-                            to the row and the second the column.
-    @type file_data:        list of lists
-    @keyword mol_name_col:  The column containing the molecule name information.
-    @type mol_name_col:     int or None
-    @keyword res_name_col:  The column containing the residue name information.
-    @type res_name_col:     int or None
-    @keyword res_num_col:   The column containing the residue number information.
-    @type res_num_col:      int or None
-    @keyword spin_name_col: The column containing the spin name information.
-    @type spin_name_col:    int or None
-    @keyword spin_num_col:  The column containing the spin number information.
-    @type spin_num_col:     int or None
-    @keyword sep:           The column separator which, if None, defaults to whitespace.
-    @type sep:              str or None
-    @keyword change_all:    A flag which if True will cause all spins not specified in the file to
-                            be selected.
-    @type change_all:       bool
+    @keyword file:                  The name of the file to open.
+    @type file:                     str
+    @keyword dir:                   The directory containing the file (defaults to the current
+                                    directory if None).
+    @type dir:                      str or None
+    @keyword file_data:             An alternative opening a file, if the data already exists in the
+                                    correct format.  The format is a list of lists where the first
+                                    index corresponds to the row and the second the column.
+    @type file_data:                list of lists
+    @keyword mol_name_col:          The column containing the molecule name information.
+    @type mol_name_col:             int or None
+    @keyword res_name_col:          The column containing the residue name information.
+    @type res_name_col:             int or None
+    @keyword res_num_col:           The column containing the residue number information.
+    @type res_num_col:              int or None
+    @keyword spin_name_col:         The column containing the spin name information.
+    @type spin_name_col:            int or None
+    @keyword spin_num_col:          The column containing the spin number information.
+    @type spin_num_col:             int or None
+    @keyword sep:                   The column separator which, if None, defaults to whitespace.
+    @type sep:                      str or None
+    @keyword change_all:            A flag which if True will cause all spins not specified in the
+                                    file to be selected.
+    @type change_all:               bool
+    @raises RelaxNoPipeError:       If the current data pipe does not exist.
+    @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
     """
 
     # Test if the current data pipe exists.
@@ -136,11 +142,13 @@ def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_nam
 def desel_spin(spin_id=None, change_all=None):
     """Deselect specific spins.
 
-    @keyword spin_id:       The spin identification string.
-    @type spin_id:          str or None
-    @keyword change_all:    A flag which if True will cause all spins not specified in the file to
-                            be selected.
-    @type change_all:       bool
+    @keyword spin_id:               The spin identification string.
+    @type spin_id:                  str or None
+    @keyword change_all:            A flag which if True will cause all spins not specified in the
+                                    file to be selected.
+    @type change_all:               bool
+    @raises RelaxNoPipeError:       If the current data pipe does not exist.
+    @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
     """
 
     # Test if the current data pipe exists.
@@ -164,9 +172,19 @@ def desel_spin(spin_id=None, change_all=None):
 def reverse(spin_id=None):
     """Reversal of spin selections.
 
-    @keyword spin_id:       The spin identification string.
-    @type spin_id:          str or None
+    @keyword spin_id:               The spin identification string.
+    @type spin_id:                  str or None
+    @raises RelaxNoPipeError:       If the current data pipe does not exist.
+    @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
     """
+
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
+
+    # Test if sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
     # Loop over the spin systems and reverse the selection flag.
     for spin in spin_loop(spin_id):
