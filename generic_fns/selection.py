@@ -161,11 +161,15 @@ def desel_spin(spin_id=None, change_all=None):
         spin.select = 0
 
 
-def reverse(selection=None):
-    """Function for the reversal of the spin system selection."""
+def reverse(spin_id=None):
+    """Reversal of spin selections.
+
+    @keyword spin_id:       The spin identification string.
+    @type spin_id:          str or None
+    """
 
     # Loop over the spin systems and reverse the selection flag.
-    for spin in spin_loop(selection):
+    for spin in spin_loop(spin_id):
         # Reverse the selection.
         if spin.select:
             spin.select = 0
