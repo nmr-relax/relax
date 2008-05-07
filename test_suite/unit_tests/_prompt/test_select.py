@@ -143,6 +143,19 @@ class Test_select(TestCase):
             self.assertRaises(RelaxNoneStrError, self.select_fns.read, file='unresolved', sep=data[1])
 
 
+    def test_read_argfail_boolean(self):
+        """The boolean arg test of the select.read() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.select_fns.read, file='unresolved', boolean=data[1])
+
+
     def test_read_argfail_change_all(self):
         """The change_all arg test of the select.read() user function."""
 
@@ -180,6 +193,19 @@ class Test_select(TestCase):
 
             # The argument test.
             self.assertRaises(RelaxNoneStrError, self.select_fns.spin, spin_id=data[1])
+
+
+    def test_spin_argfail_boolean(self):
+        """The boolean arg test of the select.spin() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.select_fns.spin, boolean=data[1])
 
 
     def test_spin_argfail_change_all(self):
