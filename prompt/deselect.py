@@ -167,6 +167,26 @@ class Deselect:
         selection.desel_read(file=file, dir=dir, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, change_all=change_all)
 
 
+    def reverse(self):
+        """Function for the reversal of the spin selection.
+
+        Examples
+        ~~~~~~~~
+
+        To deselect all currently selected spins and select those which are deselected type:
+
+        relax> deselect.reverse()
+        """
+
+        # Function intro test.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "deselect.reverse()"
+            print text
+
+        # Execute the functional code.
+        selection.reverse()
+
+
     def spin(self, spin_id=None, change_all=False):
         """Function for deselecting specific spins.
 
@@ -217,23 +237,3 @@ class Deselect:
 
         # Execute the functional code.
         selection.desel_spin(spin_id=spin_id, change_all=change_all)
-
-
-    def reverse(self):
-        """Function for the reversal of the spin selection.
-
-        Examples
-        ~~~~~~~~
-
-        To deselect all currently selected spins and select those which are deselected type:
-
-        relax> deselect.reverse()
-        """
-
-        # Function intro test.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "deselect.reverse()"
-            print text
-
-        # Execute the functional code.
-        selection.reverse()
