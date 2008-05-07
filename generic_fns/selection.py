@@ -20,20 +20,10 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from os import F_OK, access
-from re import compile, match, search, split
-from string import replace, strip
-from textwrap import fill
-from warnings import warn
-
 # relax module imports.
 from data import Data as relax_data_store
-from data.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
-from generic_fns import pipes
 from generic_fns.mol_res_spin import spin_loop
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRegExpError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
-from relax_warnings import RelaxWarning
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
 
 
 def desel_all(self, run=None):
