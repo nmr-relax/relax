@@ -177,25 +177,24 @@ def reverse(spin_id=None):
             spin.select = 1
 
 
-def sel_all(self, run=None):
-    """Function for selecting all residues."""
+def sel_all():
+    """Select all residues.
 
-    # Create the list of runs.
-    self.runs = self.relax.generic.runs.list_of_runs(run)
+    @raises RelaxNoPipeError:       If the current data pipe does not exist.
+    @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
+    """
 
-    # Loop over the runs.
-    for self.run in self.runs:
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
 
-        # Test if sequence data is loaded.
-        if not len(relax_data_store.res[self.run]):
-            raise RelaxNoSequenceError, self.run
+    # Test if sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
-        # Loop over the sequence and set the selection flag to 1.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            relax_data_store.res[self.run][i].select = 1
+    # Loop over the spins and select them.
+    for spin in spin_loop():
+        spin.select = 1
 
 
 def sel_read(self, run=None, file=None, dir=None, boolean='OR', change_all=0, column=None):
