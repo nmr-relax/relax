@@ -356,7 +356,7 @@ class Relax_data:
             raise RelaxNoneIntError, ('molecule name column', mol_name_col)
 
         # Residue number column.
-        if res_name_col != None and type(res_num_col) != int:
+        if res_num_col != None and type(res_num_col) != int:
             raise RelaxNoneIntError, ('residue number column', res_num_col)
 
         # Residue name column.
