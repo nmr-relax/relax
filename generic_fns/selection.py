@@ -22,8 +22,9 @@
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns.mol_res_spin import spin_loop
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSpinError
+from relax_io import extract_data, strip
 
 
 def desel_all():
@@ -42,17 +43,52 @@ def desel_all():
         spin.select = 0
 
 
-def desel_read(self, run=None, file=None, dir=None, change_all=None, column=None):
-    """Function for deselecting the residues contained in a file."""
+def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, change_all=False):
+    """Deselect the spins contained in a file.
+
+    @keyword file:          The name of the file to open.
+    @type file:             str
+    @keyword dir:           The directory containing the file (defaults to the current directory if
+                            None).
+    @type dir:              str or None
+    @keyword file_data:     An alternative opening a file, if the data already exists in the correct
+                            format.  The format is a list of lists where the first index corresponds
+                            to the row and the second the column.
+    @type file_data:        list of lists
+    @keyword mol_name_col:  The column containing the molecule name information.
+    @type mol_name_col:     int or None
+    @keyword res_name_col:  The column containing the residue name information.
+    @type res_name_col:     int or None
+    @keyword res_num_col:   The column containing the residue number information.
+    @type res_num_col:      int or None
+    @keyword spin_name_col: The column containing the spin name information.
+    @type spin_name_col:    int or None
+    @keyword spin_num_col:  The column containing the spin number information.
+    @type spin_num_col:     int or None
+    @keyword sep:           The column separator which, if None, defaults to whitespace.
+    @type sep:              str or None
+    @keyword change_all:    A flag which if True will cause all spins not specified in the file to
+                            be selected.
+    @type change_all:       bool
+    """
+
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
+
+    # Test if sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
     # Extract the data from the file.
-    file_data = self.relax.IO.extract_data(file, dir)
+    file_data = extract_data(file, dir)
 
     # Count the number of header lines.
     header_lines = 0
+    num_col = max(res_num_col, spin_num_col)
     for i in xrange(len(file_data)):
         try:
-            int(file_data[i][column])
+            int(file_data[i][num_col])
         except:
             header_lines = header_lines + 1
         else:
@@ -62,49 +98,32 @@ def desel_read(self, run=None, file=None, dir=None, change_all=None, column=None
     file_data = file_data[header_lines:]
 
     # Strip the data.
-    file_data = self.relax.IO.strip(file_data)
+    file_data = strip(file_data)
 
-    # Create the list of residues to deselect.
-    deselect = []
+    # Minimum number of columns.
+    min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col)
+
+    # First select all spins if desired.
+    if change_all:
+        for spin in spin_loop():
+            spin.select = 1
+
+    # Then deselect the spins in the file.
     for i in xrange(len(file_data)):
-        try:
-            deselect.append(int(file_data[i][column]))
-        except:
-            raise RelaxError, "Improperly formatted file."
+        # Skip missing data.
+        if len(file_data[i]) <= min_col_num:
+            continue
 
-    # Create the list of runs.
-    self.runs = self.relax.generic.runs.list_of_runs(run)
+        # Generate the spin identification string.
+        id = generate_spin_id_data_array(data=file_data[i], mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
 
-    # Loop over the runs.
-    no_match = 1
-    for self.run in self.runs:
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
+        # Get the corresponding spin container.
+        spin = return_spin(id)
+        if spin == None:
+            raise RelaxNoSpinError, id
 
-        # Test if sequence data is loaded.
-        if not len(relax_data_store.res[self.run]):
-            raise RelaxNoSequenceError, self.run
-
-        # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Remap the data structure 'relax_data_store.res[self.run][i]'.
-            data = relax_data_store.res[self.run][i]
-
-            # Select all residues.
-            if change_all:
-                data.select = 1
-
-            # Deselect the residue if it is in the list deselect.
-            if data.num in deselect:
-                data.select = 0
-
-            # Match flag.
-            no_match = 0
-
-    # No residue matched.
-    if no_match:
-        print "No residues match."
+        # Deselect the spin.
+        spin.select = 0
 
 
 def desel_res(self, run=None, num=None, name=None, change_all=None):
@@ -224,7 +243,7 @@ def sel_read(self, run=None, file=None, dir=None, boolean='OR', change_all=0, co
     """
 
     # Extract the data from the file.
-    file_data = self.relax.IO.extract_data(file, dir)
+    file_data = extract_data(file, dir)
 
     # Count the number of header lines.
     header_lines = 0
@@ -240,7 +259,7 @@ def sel_read(self, run=None, file=None, dir=None, boolean='OR', change_all=0, co
     file_data = file_data[header_lines:]
 
     # Strip the data.
-    file_data = self.relax.IO.strip(file_data)
+    file_data = strip(file_data)
 
     # Create the list of residues to select.
     select = []
