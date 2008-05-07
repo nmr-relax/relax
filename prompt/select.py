@@ -26,7 +26,7 @@ import sys
 # relax module imports.
 import help
 from generic_fns import selection
-from relax_errors import RelaxBinError, RelaxError, RelaxIntError, RelaxListStrError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
+from relax_errors import RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 
 
 class Select:
