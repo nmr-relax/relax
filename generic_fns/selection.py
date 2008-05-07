@@ -26,25 +26,20 @@ from generic_fns.mol_res_spin import spin_loop
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
 
 
-def desel_all(self, run=None):
-    """Function for deselecting all residues."""
+def desel_all():
+    """Deselect all spins."""
 
-    # Create the list of runs.
-    self.runs = self.relax.generic.runs.list_of_runs(run)
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
 
-    # Loop over the runs.
-    for self.run in self.runs:
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
+    # Test if sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
-        # Test if sequence data is loaded.
-        if not len(relax_data_store.res[self.run]):
-            raise RelaxNoSequenceError, self.run
-
-        # Loop over the sequence and set the selection flag to 0.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            relax_data_store.res[self.run][i].select = 0
+    # Loop over the spins and deselect them.
+    for spin in spin_loop():
+        spin.select = 0
 
 
 def desel_read(self, run=None, file=None, dir=None, change_all=None, column=None):
