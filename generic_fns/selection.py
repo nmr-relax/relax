@@ -281,7 +281,7 @@ def sel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_
     min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col)
 
     # Loop over the spins.
-    for spin, mol_name, res_num, res_name in spin_loop(full_info=True)
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # The spin system is in the file.
         flag = spin_in_list(file_data, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin.num, spin_name=spin.name)
 
