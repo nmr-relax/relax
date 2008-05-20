@@ -59,69 +59,6 @@ class Test_internal(TestCase):
         relax_data_store.__reset__()
 
 
-    def test___molecule_loop(self):
-        """Test the private Internal.__molecule_loop() method."""
-
-        # Load the PDB file.
-        self.data.load_pdb(self.test_pdb_path)
-
-        # Loop over the molecules.
-        mol_count = 0
-        for mol, mol_name, mol_type in self.data._Internal__molecule_loop(self.data.structural_data[0]):
-            mol_count = mol_count + 1
-
-        # Test the number of molecules looped over.
-        self.assertEqual(mol_count, 1)
-
-        # Test the molecular data.
-        self.assertEqual(mol_name, None)
-        self.assertEqual(mol_type, 'protein')
-        self.assertEqual(len(mol.residues), 12)
-        self.assertEqual(mol.sequence(), ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY'])
-
-
-    def test___molecule_loop_selection(self):
-        """Test the private Internal.__molecule_loop() method with a selection object."""
-
-        # Load the PDB file.
-        self.data.load_pdb(self.test_pdb_path)
-
-        # Create the selection object (which should match the molecule name of None).
-        sel_obj = Selection('@1')
-
-        # Loop over the molecules.
-        mol_count = 0
-        for mol, mol_name, mol_type in self.data._Internal__molecule_loop(self.data.structural_data[0], sel_obj):
-            mol_count = mol_count + 1
-
-        # Test the number of molecules looped over.
-        self.assertEqual(mol_count, 1)
-
-        # Test the molecular data.
-        self.assertEqual(mol_name, None)
-        self.assertEqual(mol_type, 'protein')
-        self.assertEqual(len(mol.residues), 12)
-        self.assertEqual(mol.sequence(), ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY'])
-
-
-    def test___molecule_loop_selection_no_match(self):
-        """Test the Internal.__molecule_loop() method with a non-matching selection object."""
-
-        # Load the PDB file.
-        self.data.load_pdb(self.test_pdb_path)
-
-        # Create the non-matching selection object.
-        sel_obj = Selection('#XXX')
-
-        # Loop over the molecules.
-        mol_count = 0
-        for mol, mol_name, mol_type in self.data._Internal__molecule_loop(self.data.structural_data[0], sel_obj):
-            mol_count = mol_count + 1
-
-        # Test the number of molecules looped over.
-        self.assertEqual(mol_count, 0)
-
-
     def test___parse_pdb_record(self):
         """Test the private Internal.__parse_pdb_record() method."""
 
@@ -145,69 +82,6 @@ class Test_internal(TestCase):
         self.assertEqual(record[13], None)
         self.assertEqual(record[14], 'C')
         self.assertEqual(record[15], None)
-
-
-    def test___residue_loop(self):
-        """Test the private Internal.__residue_loop() method."""
-
-        # Load the PDB file.
-        self.data.load_pdb(self.test_pdb_path)
-
-        # Loop over the residues.
-        res_count = 0
-        for res, res_num, res_name in self.data._Internal__residue_loop(self.data.structural_data[0].peptide_chains[0], None, 'protein'):
-            res_count = res_count + 1
-
-        # Test the number of residues looped over.
-        self.assertEqual(res_count, 12)
-
-        # Test the data of the last residue.
-        self.assertEqual(res_num, 12)
-        self.assertEqual(res_name, 'GLY')
-        self.assertEqual(len(res.atoms), 7)
-        self.assertEqual(res.atoms.keys(), ['C', 'H', 'CA', 'O', 'N', '1HA', '2HA'])
-
-
-    def test___residue_loop_selection(self):
-        """Test the private Internal.__residue_loop() method with a selection object."""
-
-        # Load the PDB file.
-        self.data.load_pdb(self.test_pdb_path)
-
-        # Create the selection object (which should match the residue name of None).
-        sel_obj = Selection('#Ap4Aase')
-
-        # Loop over the residues.
-        res_count = 0
-        for res, res_num, res_name in self.data._Internal__residue_loop(self.data.structural_data[0].peptide_chains[0], 'Ap4Aase', 'protein', sel_obj):
-            res_count = res_count + 1
-
-        # Test the number of residues looped over.
-        self.assertEqual(res_count, 12)
-
-        # Test the data of the last residue.
-        self.assertEqual(res_num, 12)
-        self.assertEqual(res_name, 'GLY')
-        self.assertEqual(len(res.atoms), 7)
-        self.assertEqual(res.atoms.keys(), ['C', 'H', 'CA', 'O', 'N', '1HA', '2HA'])
-
-
-    def test___residue_loop_selection_no_match(self):
-        """Test the Internal.__residue_loop() method with a non-matching selection object."""
-
-        # Load the PDB file.
-        self.data.load_pdb(self.test_pdb_path)
-
-        # Create the non-matching selection object.
-        sel_obj = Selection(':XXX')
-
-        # Loop over the residues.
-        res_count = 0
-        for res, res_num, res_name in self.data._Internal__residue_loop(self.data.structural_data[0].peptide_chains[0], None, 'protein', sel_obj):
-            res_count = res_count + 1
-
-        # Test the number of residues looped over.
-        self.assertEqual(res_count, 0)
 
 
     def test_atom_loop(self):
