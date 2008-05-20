@@ -70,7 +70,7 @@ class Internal(Base_struct_API):
                 record = self.__parse_pdb_record(record)
 
                 # Add the atom.
-                self.atom_add(pdb_record=record[0], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=record[14], model=model)
+                self.atom_add(pdb_record=record[0], atom_num=record[1], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=record[14], model=model)
 
 
     def __get_chemical_name(self, hetID):
@@ -289,7 +289,7 @@ class Internal(Base_struct_API):
             raise RelaxError, "The structural data is invalid."
 
 
-    def atom_add(self, pdb_record=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, model=None):
+    def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, model=None):
         """Method for adding an atom to the structural data object.
 
         This method will create the key-value pair for the given atom.
@@ -297,6 +297,8 @@ class Internal(Base_struct_API):
 
         @keyword pdb_record:    The optional PDB record name, e.g. 'ATOM', 'HETATM', or 'TER'.
         @type pdb_record:       str or None
+        @keyword atom_num:      The atom number.
+        @type atom_num:         int or None
         @keyword atom_name:     The atom name, e.g. 'H1'.
         @type atom_name:        str or None
         @keyword res_name:      The residue name.
@@ -324,6 +326,7 @@ class Internal(Base_struct_API):
                 continue
 
             # Append to all the arrays.
+            struct.atom_num.append(atom_num)
             struct.atom_name.append(atom_name)
             struct.bonded.append([])
             struct.chain_id.append(chain_id)
@@ -401,7 +404,7 @@ class Internal(Base_struct_API):
             # Loop over all atoms.
             for i in xrange(len(struct.atom_name)):
                 # Skip non-matching atoms.
-                if sel_obj and not sel_obj.contains_spin(i, struct.atom_name[i], struct.res_num[i], struct.res_name[i]):
+                if sel_obj and not sel_obj.contains_spin(struct.atom_num[i], struct.atom_name[i], struct.res_num[i], struct.res_name[i]):
                     continue
 
                 # Build the tuple to be yielded.
@@ -415,7 +418,7 @@ class Internal(Base_struct_API):
                 if res_name_flag:
                     atomic_tuple = atomic_tuple + (struct.res_name[i],)
                 if atom_num_flag:
-                    atomic_tuple = atomic_tuple + (i,)
+                    atomic_tuple = atomic_tuple + (struct.atom_num[i],)
                 if atom_name_flag:
                     atomic_tuple = atomic_tuple + (struct.atom_name[i],)
                 if element_flag:
@@ -654,10 +657,8 @@ class Internal(Base_struct_API):
 
         # Loop over the atomic data.
         for i in xrange(len(self.structural_data.atom_names)):
-            # Atom number.
-            atom_num = i + 1
-
             # Aliases.
+            atom_num = self.structural_data.atom_num[i]
             atom_name = self.structural_data.atom_name[i]
             res_name = self.structural_data.res_name[i]
             chain_id = self.structural_data.chain_id[i]
@@ -774,6 +775,7 @@ class Structure_container:
     The structural data object for this class is a container possessing a number of different arrays
     corresponding to different structural information.  These objects include:
 
+        - atom_num:  The atom name.
         - atom_name:  The atom name.
         - bonded:  Each element an array of bonded atom indecies.
         - chain_id:  The chain ID.
@@ -796,6 +798,9 @@ class Structure_container:
 
         # The model.
         self.model = None
+
+        # The atom num (array of int).
+        self.atom_num = []
 
         # The atom name (array of str).
         self.atom_name = []
