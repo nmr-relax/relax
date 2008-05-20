@@ -727,7 +727,7 @@ class Structure_container:
     """
 
 
-    def init(self):
+    def __init__(self):
         """Initialise all the arrays."""
 
         # The atom name (array of str).
