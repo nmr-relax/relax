@@ -23,10 +23,15 @@
 # Module docstring.
 """Module containing the internal relax structural object."""
 
+# Python module imports.
+from re import search
+from string import split, strip
 
 # relax module imports.
 from api_base import Base_struct_API
+from data import Data as relax_data_store
 from relax_errors import RelaxError
+from relax_io import open_read_file
 
 
 
@@ -42,11 +47,29 @@ class Internal(Base_struct_API):
     id = 'internal'
 
 
-    def __init__(self):
-        """Initialise the structural object."""
+    def __generate_object_from_pdb(self, records):
+        """Method for generating a complete Structure_container object from the given PDB records.
 
-        # Reinitialise the data object to an empty structure container.
-        self.structural_data = Structure_container()
+        @param records:     A list of structural PDB records.
+        @type records:      list of str
+        @return:            The structural object containing all the atomic information in the PDB
+                            records.
+        @rtype:             Structure_container instance
+        """
+
+        # Initialise the structural object.
+        str_obj = Structure_container()
+
+        # Loop over the records.
+        for record in records:
+            # Parse the record.
+            record = self.__parse_pdb_record(record)
+
+            # Add the atom.
+            self.atom_add(pdb_record=record[0], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=record[14])
+
+        # Return the structural object.
+        return str_obj
 
 
     def __get_chemical_name(self, hetID):
@@ -104,6 +127,154 @@ class Internal(Base_struct_API):
 
         # Unknown hetID.
         raise RelaxError, "The residue ID (hetID) " + `hetID` + " is not recognised."
+
+
+    def __parse_models(self, file_path):
+        """Generator function for looping over the models in the PDB file.
+
+        @param file_path:   The full path of the PDB file.
+        @type file_path:    str
+        @return:            The model number and all the records for that model.
+        @rtype:             tuple of int and array of str
+        """
+
+        # Open the file.
+        file = open_read_file(file_path)
+        lines = file.readlines()
+        file.close()
+
+        # Init.
+        model = None
+        records = []
+
+        # Loop over the data.
+        for i in xrange(len(lines)):
+            # A new model record.
+            if search('^MODEL', lines[i]):
+                model = int(split(lines[i])[1])
+
+            # Skip all records prior to the first ATOM record.
+            if not search('^ATOM', lines[i]) and not len(records):
+                continue
+
+            # End of the model.
+            if search('^ENDMDL', lines[i]):
+                # Yield the info.
+                yield model, records
+
+                # Reset the records.
+                records = []
+
+                # Skip the rest of this loop.
+                continue
+
+            # Append the line as a record of the model.
+            records.append(lines[i])
+
+        # If records is not empty then there are no models, so yield the lot.
+        if len(records):
+            yield model, records
+
+
+    def __parse_pdb_record(self, record):
+        """Parse the PDB record string and return an array of the corresponding atomic information.
+
+        The format of the ATOM and HETATM records is::
+         __________________________________________________________________________________________
+         |         |              |              |                                                |
+         | Columns | Data type    | Field        | Definition                                     |
+         |_________|______________|______________|________________________________________________|
+         |         |              |              |                                                |
+         |  1 -  6 | Record name  | "ATOM"       |                                                |
+         |  7 - 11 | Integer      | serial       | Atom serial number.                            |
+         | 13 - 16 | Atom         | name         | Atom name.                                     |
+         | 17      | Character    | altLoc       | Alternate location indicator.                  |
+         | 18 - 20 | Residue name | resName      | Residue name.                                  |
+         | 22      | Character    | chainID      | Chain identifier.                              |
+         | 23 - 26 | Integer      | resSeq       | Residue sequence number.                       |
+         | 27      | AChar        | iCode        | Code for insertion of residues.                |
+         | 31 - 38 | Real(8.3)    | x            | Orthogonal coordinates for X in Angstroms.     |
+         | 39 - 46 | Real(8.3)    | y            | Orthogonal coordinates for Y in Angstroms.     |
+         | 47 - 54 | Real(8.3)    | z            | Orthogonal coordinates for Z in Angstroms.     |
+         | 55 - 60 | Real(6.2)    | occupancy    | Occupancy.                                     |
+         | 61 - 66 | Real(6.2)    | tempFactor   | Temperature factor.                            |
+         | 73 - 76 | LString(4)   | segID        | Segment identifier, left-justified.            |
+         | 77 - 78 | LString(2)   | element      | Element symbol, right-justified.               |
+         | 79 - 80 | LString(2)   | charge       | Charge on the atom.                            |
+         |_________|______________|______________|________________________________________________|
+
+
+        The format of the TER record is::
+         __________________________________________________________________________________________
+         |         |              |              |                                                |
+         | Columns | Data type    | Field        | Definition                                     |
+         |_________|______________|______________|________________________________________________|
+         |         |              |              |                                                |
+         |  1 -  6 | Record name  | "TER   "     |                                                |
+         |  7 - 11 | Integer      | serial       | Serial number.                                 |
+         | 18 - 20 | Residue name | resName      | Residue name.                                  |
+         | 22      | Character    | chainID      | Chain identifier.                              |
+         | 23 - 26 | Integer      | resSeq       | Residue sequence number.                       |
+         | 27      | AChar        | iCode        | Insertion code.                                |
+         |_________|______________|______________|________________________________________________|
+
+
+        @param record:  The single line PDB record.
+        @type record:   str
+        @return:        The list of atomic information, each element corresponding to the PDB fields
+                        as defined in "Protein Data Bank Contents Guide: Atomic Coordinate Entry
+                        Format Description" version 2.1 (draft), October 25, 1996.
+        @rtype:         list of str
+        """
+
+        # Initialise.
+        fields = []
+
+        # Split up the record.
+        fields.append(record[0:6])
+        fields.append(record[6:11])
+        fields.append(record[12:16])
+        fields.append(record[16])
+        fields.append(record[17:20])
+        fields.append(record[21])
+        fields.append(record[22:26])
+        fields.append(record[26])
+        fields.append(record[30:38])
+        fields.append(record[38:46])
+        fields.append(record[46:54])
+        fields.append(record[54:60])
+        fields.append(record[60:66])
+        fields.append(record[72:76])
+        fields.append(record[76:78])
+        fields.append(record[78:80])
+
+        # Loop over the fields.
+        for i in xrange(len(fields)):
+            # Strip all whitespace.
+            fields[i] = strip(fields[i])
+
+            # Replace nothingness with None.
+            if fields[i] == '':
+                fields[i] = None
+
+        # Convert strings to numbers.
+        if fields[1]:
+            fields[1] = int(fields[1])
+        if fields[6]:
+            fields[6] = int(fields[6])
+        if fields[8]:
+            fields[8] = float(fields[8])
+        if fields[9]:
+            fields[9] = float(fields[9])
+        if fields[10]:
+            fields[10] = float(fields[10])
+        if fields[11]:
+            fields[11] = float(fields[11])
+        if fields[12]:
+            fields[12] = float(fields[12])
+
+        # Return the atomic info.
+        return fields
 
 
     def __validate_data_arrays(self):
@@ -170,6 +341,62 @@ class Internal(Base_struct_API):
         # Update the bonded array structure.
         self.structural_data.bonded[index1].append(index2)
         self.structural_data.bonded[index2].append(index1)
+
+
+    def load_pdb(self, file_path, model=None, verbosity=False):
+        """Method for loading structures from a PDB file.
+
+        @param file_path:   The full path of the PDB file.
+        @type file_path:    str
+        @param model:       The structural model to use.
+        @type model:        int
+        @keyword verbosity: A flag which if True will cause messages to be printed.
+        @type verbosity:    bool
+        """
+
+        # Initial print out.
+        if verbosity:
+            print "Internal relax PDB parser.\n"
+
+        # Store the file name (with full path).
+        self.file_name = file_path
+
+        # Store the model number.
+        self.model = model
+
+        # Use pointers (references) if the PDB data exists in another run.
+        for data_pipe in relax_data_store:
+            if hasattr(data_pipe, 'structure') and data_pipe.structure.file_name == file_path and data_pipe.structure.model == model and data_pipe.structure.id == 'internal':
+                # Make a pointer to the data.
+                self.structural_data = data_pipe.structure.structural_data
+
+                # Print out.
+                if verbosity:
+                    print "Using the structures from the data pipe " + `data_pipe.pipe_name` + "."
+                    for i in xrange(len(self.structural_data)):
+                        print self.structural_data[i]
+
+                # Exit this function.
+                return
+
+        # Print out.
+        if verbosity:
+            if type(model) == int:
+                print "Loading structure " + `model` + " from the PDB file."
+            else:
+                print "Loading all structures from the PDB file."
+
+        # Loop over all models in the PDB file.
+        for model_num, records in self.__parse_models(file_path):
+            # Only load the desired model.
+            if model != None and model != model_num:
+                continue
+
+            # Generate the structural data object.
+            str_obj = self.__generate_object_from_pdb(records)
+
+            # Place the structure in 'self.structural_data'.
+            self.structural_data.append(str_obj)
 
 
     def terminate(self):
