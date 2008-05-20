@@ -41,6 +41,10 @@ class Test_api_base(TestCase):
         # Method start.
         text = name + '('
 
+        # No keywords.
+        if defaults == None:
+            defaults = ()
+
         # Args.
         for i in xrange(len(args) - len(defaults)):
             # Separator.
