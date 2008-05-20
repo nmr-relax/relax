@@ -413,6 +413,7 @@ class Internal(Base_struct_API):
 
             # Initialise and fill the structural data object.
             self.structural_data.append(Structure_container())
+            self.structural_data[-1].model = model_num
             self.__fill_object_from_pdb(records, model_num)
 
 
