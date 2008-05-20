@@ -40,7 +40,7 @@ class Base_struct_API:
 
 
     def __init__(self):
-        """Initialise the PDB object."""
+        """Initialise the structural object."""
 
         # The parser specific data object.
         self.structural_data = []
