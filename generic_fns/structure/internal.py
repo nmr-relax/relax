@@ -158,10 +158,10 @@ class Internal(Base_struct_API):
         This method will append index2 to the array at bonded[index1] and vice versa.
 
 
-        @param atom_index:      The index of the first atom.
-        @type atom_index:       int
-        @param bonded_index:    The index of the second atom.
-        @type bonded_index:     int
+        @param index1:  The index of the first atom.
+        @type index1:   int
+        @param index2:  The index of the second atom.
+        @type index2:   int
         """
 
         # Update the bonded array structure.
