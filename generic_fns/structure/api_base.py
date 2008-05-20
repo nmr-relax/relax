@@ -183,7 +183,7 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def load_structures(self, file_path, model, verbosity=False):
+    def load_pdb(self, file_path, model=None, verbosity=False):
         """Prototype method stub for loading structures from a file.
 
         This inherited prototype method is a stub which, if the functionality is desired, should be
@@ -225,7 +225,7 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def write_pdb_file(self, file):
+    def write_pdb(self, file):
         """Prototype method stub for the creation of a PDB file from the structural data.
 
         The PDB records
