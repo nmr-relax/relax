@@ -185,13 +185,13 @@ class Base_struct_API:
 
 
     def load_pdb(self, file_path, model=None, verbosity=False):
-        """Prototype method stub for loading structures from a file.
+        """Prototype method stub for loading structures from a PDB file.
 
         This inherited prototype method is a stub which, if the functionality is desired, should be
         overwritten by the derived class.
 
 
-        @param file_path:   The full path of the file.
+        @param file_path:   The full path of the PDB file.
         @type file_path:    str
         @param model:       The structural model to use.
         @type model:        int
