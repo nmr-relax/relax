@@ -49,9 +49,12 @@ class Test_api_base(TestCase):
             if search('^_', name):
                 continue
 
+            # Get the object in the derived class.
+            obj = getattr(internal, name)
+
             # Not present.
             if name not in base_names:
-                self.fail('The object ' + name + ' cannot be found in the structural API base class')
+                self.fail('The object ' + `name` + ' ' + `type(obj)` + ' cannot be found in the structural API base class.')
 
 
     def test_Scientific_objects(self):
@@ -70,6 +73,9 @@ class Test_api_base(TestCase):
             if search('^_', name):
                 continue
 
+            # Get the object in the derived class.
+            obj = getattr(sci, name)
+
             # Not present.
             if name not in base_names:
-                self.fail('The object ' + name + ' cannot be found in the structural API base class')
+                self.fail('The object ' + `name` + ' ' + `type(obj)` + ' cannot be found in the structural API base class.')
