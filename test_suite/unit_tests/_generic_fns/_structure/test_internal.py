@@ -28,14 +28,14 @@ from unittest import TestCase
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns.mol_res_spin import Selection
-from generic_fns.structure.scientific import Scientific_data
+from generic_fns.structure.internal import Internal
 
 
-class Test_scientific(TestCase):
-    """Unit tests for the functions of the 'generic_fns.structure.scientific' module."""
+class Test_internal(TestCase):
+    """Unit tests for the functions of the 'generic_fns.structure.internal' module."""
 
     def setUp(self):
-        """Set up for all the Scientific Python PDB structural object unit tests."""
+        """Set up for all the internal relax structural object unit tests."""
 
         # Get the relative path of relax.
         self.path = sys.path[0]
@@ -46,7 +46,7 @@ class Test_scientific(TestCase):
         self.test_pdb_path = self.path+'/test_suite/shared_data/structures/Ap4Aase_res1-12.pdb'
 
         # Instantiate the structural data object.
-        self.data = Scientific_data()
+        self.data = Internal()
 
 
     def tearDown(self):
@@ -60,14 +60,14 @@ class Test_scientific(TestCase):
 
 
     def test___molecule_loop(self):
-        """Test the private Scientific_data.__molecule_loop() method."""
+        """Test the private Internal.__molecule_loop() method."""
 
         # Load the PDB file.
         self.data.load_structures(self.test_pdb_path)
 
         # Loop over the molecules.
         mol_count = 0
-        for mol, mol_name, mol_type in self.data._Scientific_data__molecule_loop(self.data.structural_data[0]):
+        for mol, mol_name, mol_type in self.data._Internal__molecule_loop(self.data.structural_data[0]):
             mol_count = mol_count + 1
 
         # Test the number of molecules looped over.
@@ -81,7 +81,7 @@ class Test_scientific(TestCase):
 
 
     def test___molecule_loop_selection(self):
-        """Test the private Scientific_data.__molecule_loop() method with a selection object."""
+        """Test the private Internal.__molecule_loop() method with a selection object."""
 
         # Load the PDB file.
         self.data.load_structures(self.test_pdb_path)
@@ -91,7 +91,7 @@ class Test_scientific(TestCase):
 
         # Loop over the molecules.
         mol_count = 0
-        for mol, mol_name, mol_type in self.data._Scientific_data__molecule_loop(self.data.structural_data[0], sel_obj):
+        for mol, mol_name, mol_type in self.data._Internal__molecule_loop(self.data.structural_data[0], sel_obj):
             mol_count = mol_count + 1
 
         # Test the number of molecules looped over.
@@ -105,7 +105,7 @@ class Test_scientific(TestCase):
 
 
     def test___molecule_loop_selection_no_match(self):
-        """Test the Scientific_data.__molecule_loop() method with a non-matching selection object."""
+        """Test the Internal.__molecule_loop() method with a non-matching selection object."""
 
         # Load the PDB file.
         self.data.load_structures(self.test_pdb_path)
@@ -115,7 +115,7 @@ class Test_scientific(TestCase):
 
         # Loop over the molecules.
         mol_count = 0
-        for mol, mol_name, mol_type in self.data._Scientific_data__molecule_loop(self.data.structural_data[0], sel_obj):
+        for mol, mol_name, mol_type in self.data._Internal__molecule_loop(self.data.structural_data[0], sel_obj):
             mol_count = mol_count + 1
 
         # Test the number of molecules looped over.
@@ -123,14 +123,14 @@ class Test_scientific(TestCase):
 
 
     def test___residue_loop(self):
-        """Test the private Scientific_data.__residue_loop() method."""
+        """Test the private Internal.__residue_loop() method."""
 
         # Load the PDB file.
         self.data.load_structures(self.test_pdb_path)
 
         # Loop over the residues.
         res_count = 0
-        for res, res_num, res_name in self.data._Scientific_data__residue_loop(self.data.structural_data[0].peptide_chains[0], None, 'protein'):
+        for res, res_num, res_name in self.data._Internal__residue_loop(self.data.structural_data[0].peptide_chains[0], None, 'protein'):
             res_count = res_count + 1
 
         # Test the number of residues looped over.
@@ -144,7 +144,7 @@ class Test_scientific(TestCase):
 
 
     def test___residue_loop_selection(self):
-        """Test the private Scientific_data.__residue_loop() method with a selection object."""
+        """Test the private Internal.__residue_loop() method with a selection object."""
 
         # Load the PDB file.
         self.data.load_structures(self.test_pdb_path)
@@ -154,7 +154,7 @@ class Test_scientific(TestCase):
 
         # Loop over the residues.
         res_count = 0
-        for res, res_num, res_name in self.data._Scientific_data__residue_loop(self.data.structural_data[0].peptide_chains[0], 'Ap4Aase', 'protein', sel_obj):
+        for res, res_num, res_name in self.data._Internal__residue_loop(self.data.structural_data[0].peptide_chains[0], 'Ap4Aase', 'protein', sel_obj):
             res_count = res_count + 1
 
         # Test the number of residues looped over.
@@ -168,7 +168,7 @@ class Test_scientific(TestCase):
 
 
     def test___residue_loop_selection_no_match(self):
-        """Test the Scientific_data.__residue_loop() method with a non-matching selection object."""
+        """Test the Internal.__residue_loop() method with a non-matching selection object."""
 
         # Load the PDB file.
         self.data.load_structures(self.test_pdb_path)
@@ -178,7 +178,7 @@ class Test_scientific(TestCase):
 
         # Loop over the residues.
         res_count = 0
-        for res, res_num, res_name in self.data._Scientific_data__residue_loop(self.data.structural_data[0].peptide_chains[0], None, 'protein', sel_obj):
+        for res, res_num, res_name in self.data._Internal__residue_loop(self.data.structural_data[0].peptide_chains[0], None, 'protein', sel_obj):
             res_count = res_count + 1
 
         # Test the number of residues looped over.
@@ -186,7 +186,7 @@ class Test_scientific(TestCase):
 
 
     def test_atom_loop(self):
-        """Test the Scientific_data.atom_loop() method."""
+        """Test the Internal.atom_loop() method."""
 
         # Load the PDB file.
         self.data.load_structures(self.test_pdb_path)
@@ -201,7 +201,7 @@ class Test_scientific(TestCase):
 
 
     def test_atom_loop_mol_selection(self):
-        """Test the Scientific_data.atom_loop() method with the '#XXX' mol selection."""
+        """Test the Internal.atom_loop() method with the '#XXX' mol selection."""
 
         # Load the PDB file.
         self.data.load_structures(self.test_pdb_path)
@@ -216,7 +216,7 @@ class Test_scientific(TestCase):
 
 
     def test_atom_loop_res_selection1(self):
-        """Test the Scientific_data.atom_loop() method with the ':8' res selection."""
+        """Test the Internal.atom_loop() method with the ':8' res selection."""
 
         # Load the PDB file.
         self.data.load_structures(self.test_pdb_path)
@@ -236,7 +236,7 @@ class Test_scientific(TestCase):
 
 
     def test_atom_loop_res_selection2(self):
-        """Test the Scientific_data.atom_loop() method with the ':PRO' res selection."""
+        """Test the Internal.atom_loop() method with the ':PRO' res selection."""
 
         # Load the PDB file.
         self.data.load_structures(self.test_pdb_path)
@@ -255,7 +255,7 @@ class Test_scientific(TestCase):
 
 
     def test_atom_loop_spin_selection1(self):
-        """Test the Scientific_data.atom_loop() method with the '@CA' spin selection."""
+        """Test the Internal.atom_loop() method with the '@CA' spin selection."""
 
         # Load the PDB file.
         self.data.load_structures(self.test_pdb_path)
@@ -274,7 +274,7 @@ class Test_scientific(TestCase):
 
 
     def test_atom_loop_spin_selection2(self):
-        """Test the Scientific_data.atom_loop() method with the '@163' spin selection."""
+        """Test the Internal.atom_loop() method with the '@163' spin selection."""
 
         # Load the PDB file.
         self.data.load_structures(self.test_pdb_path)
@@ -299,11 +299,11 @@ class Test_scientific(TestCase):
         self.assertEqual(atom_count, 1)
 
 
-    def test_load_structures(self):
-        """Load a PDB file using Scientific_data.load_structures()."""
+    def test_load_pdb(self):
+        """Load a PDB file using Internal.load_pdb()."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Test the structural data.
         self.assertEqual(self.data.file_name, self.test_pdb_path)
