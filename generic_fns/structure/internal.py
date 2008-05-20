@@ -47,29 +47,29 @@ class Internal(Base_struct_API):
     id = 'internal'
 
 
-    def __generate_object_from_pdb(self, records):
+    def __fill_object_from_pdb(self, records, model=None):
         """Method for generating a complete Structure_container object from the given PDB records.
 
         @param records:     A list of structural PDB records.
         @type records:      list of str
-        @return:            The structural object containing all the atomic information in the PDB
-                            records.
-        @rtype:             Structure_container instance
+        @keyword model:     The model to add the data to.  If not supplied and multiple models
+                            exist, then the data will be added to all models.
+        @type model:        None or int
         """
 
-        # Initialise the structural object.
-        str_obj = Structure_container()
+        # Loop over the models.
+        for struct in self.structural_data:
+            # Skip non-matching models.
+            if model != None and model != struct.model:
+                continue
 
-        # Loop over the records.
-        for record in records:
-            # Parse the record.
-            record = self.__parse_pdb_record(record)
+            # Loop over the records.
+            for record in records:
+                # Parse the record.
+                record = self.__parse_pdb_record(record)
 
-            # Add the atom.
-            self.atom_add(pdb_record=record[0], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=record[14])
-
-        # Return the structural object.
-        return str_obj
+                # Add the atom.
+                self.atom_add(pdb_record=record[0], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=record[14], model=model)
 
 
     def __get_chemical_name(self, hetID):
@@ -411,11 +411,9 @@ class Internal(Base_struct_API):
             if model != None and model != model_num:
                 continue
 
-            # Generate the structural data object.
-            str_obj = self.__generate_object_from_pdb(records)
-
-            # Place the structure in 'self.structural_data'.
-            self.structural_data.append(str_obj)
+            # Initialise and fill the structural data object.
+            self.structural_data.append(Structure_container())
+            self.__fill_object_from_pdb(records, model_num)
 
 
     def terminate(self, model=None):
