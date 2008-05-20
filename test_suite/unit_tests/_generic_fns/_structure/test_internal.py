@@ -310,4 +310,3 @@ class Test_internal(TestCase):
         self.assertEqual(self.data.model, None)
         self.assertEqual(len(self.data.structural_data), 1)
         self.assertEqual(type(self.data.structural_data), list)
-        self.assertEqual(self.data.structural_data[0].filename, self.test_pdb_path)
