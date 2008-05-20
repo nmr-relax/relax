@@ -49,46 +49,44 @@ class Base_struct_API:
         self.structural_data = []
 
 
-    def atom_add(self, atom_id=None, record_name='', atom_name='', res_name='', chain_id='', res_num=None, pos=[None, None, None], segment_id='', element=''):
+    def atom_add(self, pdb_record=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None):
         """Prototype method stub for adding an atom to the structural data object.
 
         This method will create the key-value pair for the given atom.
 
 
-        @param atom_id:     The atom identifier.  This is used as the key within the dictionary.
-        @type atom_id:      str
-        @param record_name: The record name, e.g. 'ATOM', 'HETATM', or 'TER'.
-        @type record_name:  str
+        @param pdb_record:  The record name, e.g. 'ATOM', 'HETATM', or 'TER'.
+        @type pdb_record:   str or None
         @param atom_name:   The atom name, e.g. 'H1'.
-        @type atom_name:    str
+        @type atom_name:    str or None
         @param res_name:    The residue name.
-        @type res_name:     str
+        @type res_name:     str or None
         @param chain_id:    The chain identifier.
-        @type chain_id:     str
+        @type chain_id:     str or None
         @param res_num:     The residue number.
-        @type res_num:      int
+        @type res_num:      int or None
         @param pos:         The position vector of coordinates.
         @type pos:          list (length = 3)
         @param segment_id:  The segment identifier.
-        @type segment_id:   str
+        @type segment_id:   str or None
         @param element:     The element symbol.
-        @type element:      str
+        @type element:      str or None
         """
 
         # Raise the error.
         raise RelaxImplementError
 
 
-    def atom_connect(self, atom_id=None, bonded_id=None):
+    def atom_connect(self, index1=None, index2=None):
         """Prototype method stub for connecting two atoms within the data structure object.
 
-        This method will connect the atoms corresponding to atom_id and bonded_id.
+        This method should connect the atoms corresponding to the two indecies.
 
 
-        @param atom_id:     The atom identifier.
-        @type atom_id:      str
-        @param bonded_id:   The second atom identifier.
-        @type bonded_id:    str
+        @param index1:  The index of the first atom.
+        @type index1:   int
+        @param index2:  The index of the second atom.
+        @type index2:   int
         """
 
         # Raise the error.
