@@ -122,6 +122,31 @@ class Test_internal(TestCase):
         self.assertEqual(mol_count, 0)
 
 
+    def test___parse_pdb_record(self):
+        """Test the private Internal.__parse_pdb_record() method."""
+
+        # Parse a PDB record.
+        record = self.data._Internal__parse_pdb_record('ATOM    158  CG  GLU    11       9.590  -1.041 -11.596  1.00  0.00           C')
+
+        # Test the elements.
+        self.assertEqual(record[0], 'ATOM')
+        self.assertEqual(record[1], 158)
+        self.assertEqual(record[2], 'CG')
+        self.assertEqual(record[3], None)
+        self.assertEqual(record[4], 'GLU')
+        self.assertEqual(record[5], None)
+        self.assertEqual(record[6], 11)
+        self.assertEqual(record[7], None)
+        self.assertEqual(record[8], 9.59)
+        self.assertEqual(record[9], -1.041)
+        self.assertEqual(record[10], -11.596)
+        self.assertEqual(record[11], 1.0)
+        self.assertEqual(record[12], 0.0)
+        self.assertEqual(record[13], None)
+        self.assertEqual(record[14], 'C')
+        self.assertEqual(record[15], None)
+
+
     def test___residue_loop(self):
         """Test the private Internal.__residue_loop() method."""
 
