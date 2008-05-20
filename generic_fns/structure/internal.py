@@ -728,6 +728,9 @@ class Structure_container:
     def __init__(self):
         """Initialise all the arrays."""
 
+        # The model.
+        self.model = None
+
         # The atom name (array of str).
         self.atom_name = []
 
