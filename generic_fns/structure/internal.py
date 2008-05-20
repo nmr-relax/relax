@@ -62,6 +62,9 @@ class Internal(Base_struct_API):
          | COM    | Centre of mass                      |
          | AXS    | Tensor axes                         |
          | SIM    | Monte Carlo simulation tensor axes  |
+         | PIV    | Pivot point                         |
+         | CON    | Cone object                         |
+         | AVE    | Average vector                      |
          |________|_____________________________________|
 
 
