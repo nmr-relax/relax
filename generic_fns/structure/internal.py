@@ -30,6 +30,7 @@ from string import split, strip
 # relax module imports.
 from api_base import Base_struct_API
 from data import Data as relax_data_store
+from generic_fns.mol_res_spin import Selection
 from relax_errors import RelaxError
 from relax_io import open_read_file
 
@@ -360,6 +361,70 @@ class Internal(Base_struct_API):
             # Update the bonded array structure.
             struct.bonded[index1].append(index2)
             struct.bonded[index2].append(index1)
+
+
+    def atom_loop(self, atom_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False):
+        """Generator function for looping over all atoms in the internal relax structural object.
+
+        @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms
+                                    matching this selection will be yielded.
+        @type atom_id:              str
+        @keyword model_num_flag:    A flag which if True will cause the model number to be yielded.
+        @type model_num_flag:       bool
+        @keyword mol_name_flag:     A flag which if True will cause the molecule name to be yielded.
+        @type mol_name_flag:        bool
+        @keyword res_num_flag:      A flag which if True will cause the residue number to be
+                                    yielded.
+        @type res_num_flag:         bool
+        @keyword res_name_flag:     A flag which if True will cause the residue name to be yielded.
+        @type res_name_flag:        bool
+        @keyword atom_num_flag:     A flag which if True will cause the atom number to be yielded.
+        @type atom_num_flag:        bool
+        @keyword atom_name_flag:    A flag which if True will cause the atom name to be yielded.
+        @type atom_name_flag:       bool
+        @keyword element_flag:      A flag which if True will cause the element name to be yielded.
+        @type element_flag:         bool
+        @keyword pos_flag:          A flag which if True will cause the atomic position to be
+                                    yielded.
+        @type pos_flag:             bool
+        @return:                    A tuple of atomic information, as described in the docstring.
+        @rtype:                     tuple consisting of optional molecule name (str), residue number
+                                    (int), residue name (str), atom number (int), atom name(str),
+                                    element name (str), and atomic position (array of len 3).
+        """
+
+        # Generate the selection object.
+        sel_obj = Selection(atom_id)
+
+        # Loop over the models.
+        for struct in self.structural_data:
+            # Loop over all atoms.
+            for i in xrange(len(struct.atom_name)):
+                # Skip non-matching atoms.
+                if sel_obj and not sel_obj.contains_spin(i, struct.atom_name[i], struct.res_num[i], struct.res_name[i]):
+                    continue
+
+                # Build the tuple to be yielded.
+                atomic_tuple = ()
+                if model_num_flag:
+                    atomic_tuple = atomic_tuple + (struct.model,)
+                if mol_name_flag:
+                    atomic_tuple = atomic_tuple + (None,)
+                if res_num_flag:
+                    atomic_tuple = atomic_tuple + (struct.res_num[i],)
+                if res_name_flag:
+                    atomic_tuple = atomic_tuple + (struct.res_name[i],)
+                if atom_num_flag:
+                    atomic_tuple = atomic_tuple + (i,)
+                if atom_name_flag:
+                    atomic_tuple = atomic_tuple + (struct.atom_name[i],)
+                if element_flag:
+                    atomic_tuple = atomic_tuple + (struct.element[i],)
+                if pos_flag:
+                    atomic_tuple = atomic_tuple + ([struct.x[i], struct.y[i], struct.z[i]],)
+
+                # Yield the information.
+                yield atomic_tuple
 
 
     def load_pdb(self, file_path, model=None, verbosity=False):
