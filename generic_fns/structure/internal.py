@@ -346,6 +346,9 @@ class Internal(Base_struct_API):
         @type index1:       int
         @keyword index2:    The index of the second atom.
         @type index2:       int
+        @keyword model:     The model to add the atom to.  If not supplied and multiple models
+                            exist, then the atom will be added to all models.
+        @type model:        None or int
         """
 
         # Loop over the models.
@@ -415,18 +418,32 @@ class Internal(Base_struct_API):
             self.structural_data.append(str_obj)
 
 
-    def terminate(self):
+    def terminate(self, model=None):
         """Method for terminating the chain by adding a TER record to the structural data object.
 
         The residue number and name are taken from the last atom in the current structural object.
+
+
+        @keyword model:     The model to add the atom to.  If not supplied and multiple models
+                            exist, then the atom will be added to all models.
+        @type model:        None or int
         """
 
-        # The name and number of the last residue.
-        res_name = self.structural_data.res_name[-1]
-        res_num = self.structural_data.res_num[-1]
+        # Loop over the models.
+        for i in xrange(len(self.structural_data)):
+            # Alias the structure.
+            struct = self.structural_data[i]
 
-        # Add the TER 'atom'.
-        self.atom_add(pdb_record='TER', res_name=res_name, res_num=res_num)
+            # Skip non-matching models.
+            if model != None and model != struct.model:
+                continue
+
+            # The name and number of the last residue.
+            res_name = struct.res_name[-1]
+            res_num = struct.res_num[-1]
+
+            # Add the TER 'atom'.
+            self.atom_add(pdb_record='TER', res_name=res_name, res_num=res_num, model=i)
 
 
     def write_pdb(self, file):
