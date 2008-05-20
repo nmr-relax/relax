@@ -33,22 +33,9 @@ from relax_errors import RelaxError
 class Internal(Base_struct_API):
     """The internal relax structural data object.
 
-    The structural data object for this class is a dictionary of arrays.  The keys correspond to the
-    'atom_id' strings.  The elements of the array are:
-
-        0.  Atom number.
-        1.  The record name (one of ATOM, HETATM, or TER).
-        2.  Atom name.
-        3.  Residue name.
-        4.  Chain ID.
-        5.  Residue number.
-        6.  The x coordinate of the atom.
-        7.  The y coordinate of the atom.
-        8.  The z coordinate of the atom.
-        9.  Segment ID.
-        10.  Element symbol.
-        11.  Bonded atom number 1.  Element 11 onwards correspond to the bonded atoms, this number
-             being unlimited.
+    The structural data object for this class is a container possessing a number of different arrays
+    corresponding to different structural information.  These objects are described in the
+    structural container docstring.
     """
 
     # Identification string.
@@ -58,8 +45,8 @@ class Internal(Base_struct_API):
     def __init__(self):
         """Initialise the structural object."""
 
-        # Reinitialise the data object to an empty dictionary.
-        self.structural_data = {}
+        # Reinitialise the data object to an empty structure container.
+        self.structural_data = Structure_container()
 
 
     def __get_chemical_name(self, hetID):
@@ -116,100 +103,86 @@ class Internal(Base_struct_API):
         raise RelaxError, "The residue ID (hetID) " + `hetID` + " is not recognised."
 
 
-    def atom_add(self, atom_id=None, record_name='', atom_name='', res_name='', chain_id='', res_num=None, pos=[None, None, None], segment_id='', element=''):
+    def __validate_data_arrays(self):
+        """Check the validity of the data arrays in the structure object."""
+
+        # The number of atoms.
+        num = len(self.structural_data.atom_name)
+
+        # Check the other lengths.
+        if len(bonded) != num and len(chain_id) != num and len(element) != num and len(pdb_record) != num and len(res_name) != num and len(res_num) != num and len(seg_id) != num and len(x) != num and len(y) != num and len(z) != num:
+            raise RelaxError, "The structural data is invalid."
+
+
+    def atom_add(self, pdb_record=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None):
         """Method for adding an atom to the structural data object.
 
         This method will create the key-value pair for the given atom.
 
 
-        @param atom_id:     The atom identifier.  This is used as the key within the dictionary.
-        @type atom_id:      str
-        @param record_name: The record name, e.g. 'ATOM', 'HETATM', or 'TER'.
-        @type record_name:  str
+        @param pdb_record:  The optional PDB record name, e.g. 'ATOM', 'HETATM', or 'TER'.
+        @type pdb_record:   str or None
         @param atom_name:   The atom name, e.g. 'H1'.
-        @type atom_name:    str
+        @type atom_name:    str or None
         @param res_name:    The residue name.
-        @type res_name:     str
+        @type res_name:     str or None
         @param chain_id:    The chain identifier.
-        @type chain_id:     str
+        @type chain_id:     str or None
         @param res_num:     The residue number.
-        @type res_num:      int
+        @type res_num:      int or None
         @param pos:         The position vector of coordinates.
         @type pos:          list (length = 3)
         @param segment_id:  The segment identifier.
-        @type segment_id:   str
+        @type segment_id:   str or None
         @param element:     The element symbol.
-        @type element:      str
+        @type element:      str or None
         """
 
-        # Initialise the key-value pair.
-        self.structural_data[atom_id] = []
-
-        # Fill the positions.
-        self.structural_data[atom_id].append(len(self.structural_data))
-        self.structural_data[atom_id].append(record_name)
-        self.structural_data[atom_id].append(atom_name)
-        self.structural_data[atom_id].append(res_name)
-        self.structural_data[atom_id].append(chain_id)
-        self.structural_data[atom_id].append(res_num)
-        self.structural_data[atom_id].append(pos[0])
-        self.structural_data[atom_id].append(pos[1])
-        self.structural_data[atom_id].append(pos[2])
-        self.structural_data[atom_id].append(segment_id)
-        self.structural_data[atom_id].append(element)
+        # Append to all the arrays.
+        self.structural_data.atom_name.append(atom_name)
+        self.structural_data.bonded.append([])
+        self.structural_data.chain_id.append(chain_id)
+        self.structural_data.element.append(element)
+        self.structural_data.pdb_record.append(pdb_record)
+        self.structural_data.res_name.append(res_name)
+        self.structural_data.res_num.append(res_num)
+        self.structural_data.seg_id.append(segment_id)
+        self.structural_data.x.append(pos[0])
+        self.structural_data.y.append(pos[1])
+        self.structural_data.z.append(pos[2])
 
 
-    def atom_connect(self, atom_id=None, bonded_id=None):
+    def atom_connect(self, index1=None, index2=None):
         """Method for connecting two atoms within the data structure object.
 
-        This method will find the atom number corresponding to both the atom_id and bonded_id.
-        The bonded_id atom number will then be appended to the atom_id array.  Because the
-        connections work both ways, the atom_id atom number will be appended to the bonded_id atom
-        array as well.
+        This method will append index2 to the array at bonded[index1] and vice versa.
 
 
-        @param atom_id:     The atom identifier.  This is used as the key within the dictionary.
-        @type atom_id:      str
-        @param bonded_id:   The second atom identifier.  This is used as the key within the
-                            dictionary.
-        @type bonded_id:    str
+        @param atom_index:      The index of the first atom.
+        @type atom_index:       int
+        @param bonded_index:    The index of the second atom.
+        @type bonded_index:     int
         """
 
-        # Find the atom number corresponding to atom_id.
-        if self.structural_data.has_key(atom_id):
-            atom_num = self.structural_data[atom_id][0]
-        else:
-            raise RelaxError, "The atom corresponding to the atom_id " + `atom_id` + " doesn't exist."
-
-        # Find the atom number corresponding to bonded_id.
-        if self.structural_data.has_key(bonded_id):
-            bonded_num = self.structural_data[bonded_id][0]
-        else:
-            raise RelaxError, "The atom corresponding to the bonded_id " + `bonded_id` + " doesn't exist."
-
-        # Add the bonded_id to the atom_id array.
-        self.structural_data[atom_id].append(bonded_num)
-
-        # Add the atom_id to the bonded_id array.
-        self.structural_data[bonded_id].append(atom_num)
+        # Update the bonded array structure.
+        self.structural_data.bonded[index1].append(index2)
+        self.structural_data.bonded[index2].append(index1)
 
 
-    def terminate(self, atom_id_ext='', res_num=None):
-        """Method for terminating the chain by adding a TER record to the structral data object.
+    def terminate(self):
+        """Method for terminating the chain by adding a TER record to the structural data object.
 
-        @param atom_id_ext:     The atom identifier extension.
-        @type atom_id_ext:      str
+        The 
         @param res_num:         The residue number.
         @type res_num:          int
         """
 
-        # The name of the last residue.
-        atomic_arrays = self.structural_data.values()
-        atomic_arrays.sort()
-        last_res = atomic_arrays[-1][3]
+        # The name and number of the last residue.
+        res_name = self.structural_data.res_name[-1]
+        res_num = self.structural_data.res_num[-1]
 
         # Add the TER 'atom'.
-        self.atom_add(atom_id='TER' + atom_id_ext, record_name='TER', res_name=last_res, res_num=res_num)
+        self.atom_add(pdb_record='TER', res_name=res_name, res_num=res_num)
 
 
     def write_pdb(self, file):
@@ -232,12 +205,8 @@ class Internal(Base_struct_API):
         @type file:         file object
         """
 
-        # Sort the atoms.
-        #################
-
-        # Convert the self.structural_data structure from a dictionary of arrays to an array of arrays and sort it by atom number.
-        atomic_arrays = self.structural_data.values()
-        atomic_arrays.sort()
+        # Check the validity of the data.
+        self.__validate_data_arrays()
 
 
         # Collect the non-standard residue info.
@@ -249,38 +218,34 @@ class Internal(Base_struct_API):
         het_data = []
 
         # Loop over the atomic data.
-        for array in atomic_arrays:
-            # Skip all ATOM and TER records.
-            if array[1] != 'HETATM':
+        for i in xrange(len(self.structural_data.atom_names)):
+            # Catch the HETATM records.
+            if self.structural_data.pdb_record[i] != 'HETATM':
                 continue
-
-            # The residue number and element.
-            res_num = array[5]
-            element = array[10]
 
             # If the residue is not already stored initialise a new het_data element.
             # (residue number, residue name, chain ID, number of atoms, number of H, number of C, number of N).
-            if not het_data or not res_num == het_data[-1][0]:
-                het_data.append([array[5], array[3], array[4], 0, 0, 0, 0])
+            if not het_data or not self.structural_data.res_num[i] == het_data[-1][0]:
+                het_data.append([self.structural_data.res_num[i], self.structural_data.res_name[i], self.structural_data.chain_id[i], 0, 0, 0, 0])
 
             # Total atom count.
             het_data[-1][3] = het_data[-1][3] + 1
 
             # Proton count.
-            if element == 'H':
+            if self.structural_data.element[i] == 'H':
                 het_data[-1][4] = het_data[-1][4] + 1
 
             # Carbon count.
-            elif element == 'C':
+            elif self.structural_data.element[i] == 'C':
                 het_data[-1][5] = het_data[-1][5] + 1
 
             # Nitrogen count.
-            elif element == 'N':
+            elif self.structural_data.element[i] == 'N':
                 het_data[-1][6] = het_data[-1][6] + 1
 
             # Unsupported element type.
             else:
-                raise RelaxError, "The element " + `element` + " was expected to be one of ['H', 'C', 'N']."
+                raise RelaxError, "The element " + `self.structural_data.element[i]` + " was expected to be one of ['H', 'C', 'N']."
 
 
         # The HET records.
@@ -363,18 +328,52 @@ class Internal(Base_struct_API):
         print "Creating the atomic coordinate records (ATOM, HETATM, and TER)."
 
         # Loop over the atomic data.
-        for array in atomic_arrays:
+        for i in xrange(len(self.structural_data.atom_names)):
+            # Atom number.
+            atom_num = i + 1
+
+            # Aliases.
+            atom_name = self.structural_data.atom_name[i]
+            res_name = self.structural_data.res_name[i]
+            chain_id = self.structural_data.chain_id[i]
+            res_num = self.structural_data.res_num[i]
+            x = self.structural_data.x[i]
+            y = self.structural_data.y[i]
+            z = self.structural_data.z[i]
+            seg_id = self.structural_data.seg_id[i]
+            element = self.structural_data.element[i]
+
+            # Replace None with ''.
+            if atom_name == None:
+                atom_name = ''
+            if res_name == None:
+                res_name = ''
+            if chain_id == None:
+                chain_id = ''
+            if res_num == None:
+                res_num = ''
+            if x == None:
+                x = ''
+            if y == None:
+                y = ''
+            if z == None:
+                z = ''
+            if seg_id == None:
+                seg_id = ''
+            if element == None:
+                element = ''
+
             # Write the ATOM record.
             if array[1] == 'ATOM':
-                file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', array[0], array[2], '', array[3], array[4], array[5], '', array[6], array[7], array[8], 1.0, 0, array[9], array[10], ''))
+                file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
 
             # Write the HETATM record.
             if array[1] == 'HETATM':
-                file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', array[0], array[2], '', array[3], array[4], array[5], '', array[6], array[7], array[8], 1.0, 0, array[9], array[10], ''))
+                file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
 
             # Write the TER record.
             if array[1] == 'TER':
-                file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', array[0], array[3], array[4], array[5], ''))
+                file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', atom_num, res_name, chain_id, res_num, ''))
 
 
         # Create the CONECT records.
@@ -384,13 +383,10 @@ class Internal(Base_struct_API):
         print "Creating the CONECT records."
 
         connect_count = 0
-        for array in atomic_arrays:
+        for i in xrange(len(self.structural_data.atom_names)):
             # No bonded atoms, hence no CONECT record is required.
-            if len(array) == 10:
+            if not len(self.structural_data.bonded[i]):
                 continue
-
-            # The atom number.
-            atom_num = array[0]
 
             # Initialise some data structures.
             flush = 0
@@ -398,17 +394,17 @@ class Internal(Base_struct_API):
             bonded = ['', '', '', '']
 
             # Loop over the bonded atoms.
-            for i in xrange(len(array[11:])):
+            for j in xrange(len(self.structural_data.bonded[i])):
                 # End of the array, hence create the CONECT record in this iteration.
-                if i == len(array[11:])-1:
+                if j == len(self.structural_data.bonded[i])-1:
                     flush = 1
 
                 # Only four covalently bonded atoms allowed in one CONECT record.
                 if bonded_index == 3:
                     flush = 1
 
-                # Get the bonded atom name.
-                bonded[bonded_index] = array[i+11]
+                # Get the bonded atom index.
+                bonded[bonded_index] = self.structural_data.bonded[i][j]
 
                 # Increment the bonded_index value.
                 bonded_index = bonded_index + 1
@@ -416,7 +412,7 @@ class Internal(Base_struct_API):
                 # Generate the CONECT record and increment the counter.
                 if flush:
                     # Write the CONECT record.
-                    file.write("%-6s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('CONECT', atom_num, bonded[0], bonded[1], bonded[2], bonded[3], '', '', '', '', '', ''))
+                    file.write("%-6s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('CONECT', i+1, bonded[0], bonded[1], bonded[2], bonded[3], '', '', '', '', '', ''))
 
                     # Increment the CONECT record count.
                     connect_count = connect_count + 1
@@ -445,3 +441,63 @@ class Internal(Base_struct_API):
 
         # Write the END record.
         file.write("END\n")
+
+
+class Structure_container:
+    """The container for the structural information.
+
+    The structural data object for this class is a container possessing a number of different arrays
+    corresponding to different structural information.  These objects include:
+
+        - atom_name:  The atom name.
+        - bonded:  Each element an array of bonded atom indecies.
+        - chain_id:  The chain ID.
+        - element:  The element symbol.
+        - pdb_record:  The optional PDB record name (one of ATOM, HETATM, or TER).
+        - res_name:  The residue name.
+        - res_num:  The residue number.
+        - seg_id:  The segment ID.
+        - x:  The x coordinate of the atom.
+        - y:  The y coordinate of the atom.
+        - z:  The z coordinate of the atom.
+
+    All arrays should be of equal length so that an atom index can retrieve all the corresponding
+    data.  Only the atom identification string is compulsory, all other arrays can contain None.
+    """
+
+
+    def init(self):
+        """Initialise all the arrays."""
+
+        # The atom name (array of str).
+        atom_name = []
+
+        # The bonded atom indecies (array of arrays of int).
+        bonded = []
+
+        # The chain ID (array of str).
+        chain_id = []
+
+        # The element symbol (array of str).
+        element = []
+
+        # The optional PDB record name (array of str).
+        pdb_record = []
+
+        # The residue name (array of str).
+        res_name = []
+
+        # The residue number (array of int).
+        res_num = []
+
+        # The segment ID (array of int).
+        seg_id = []
+
+        # The x coordinate (array of float).
+        x = []
+
+        # The y coordinate (array of float).
+        y = []
+
+        # The z coordinate (array of float).
+        z = []
