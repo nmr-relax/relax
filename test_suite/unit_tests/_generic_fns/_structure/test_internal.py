@@ -63,7 +63,7 @@ class Test_internal(TestCase):
         """Test the private Internal.__molecule_loop() method."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Loop over the molecules.
         mol_count = 0
@@ -84,7 +84,7 @@ class Test_internal(TestCase):
         """Test the private Internal.__molecule_loop() method with a selection object."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Create the selection object (which should match the molecule name of None).
         sel_obj = Selection('@1')
@@ -108,7 +108,7 @@ class Test_internal(TestCase):
         """Test the Internal.__molecule_loop() method with a non-matching selection object."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Create the non-matching selection object.
         sel_obj = Selection('#XXX')
@@ -126,7 +126,7 @@ class Test_internal(TestCase):
         """Test the private Internal.__residue_loop() method."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Loop over the residues.
         res_count = 0
@@ -147,7 +147,7 @@ class Test_internal(TestCase):
         """Test the private Internal.__residue_loop() method with a selection object."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Create the selection object (which should match the residue name of None).
         sel_obj = Selection('#Ap4Aase')
@@ -171,7 +171,7 @@ class Test_internal(TestCase):
         """Test the Internal.__residue_loop() method with a non-matching selection object."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Create the non-matching selection object.
         sel_obj = Selection(':XXX')
@@ -189,7 +189,7 @@ class Test_internal(TestCase):
         """Test the Internal.atom_loop() method."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Loop over the atoms.
         atom_count = 0
@@ -204,7 +204,7 @@ class Test_internal(TestCase):
         """Test the Internal.atom_loop() method with the '#XXX' mol selection."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Loop over the atoms.
         atom_count = 0
@@ -219,7 +219,7 @@ class Test_internal(TestCase):
         """Test the Internal.atom_loop() method with the ':8' res selection."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Loop over the atoms.
         atom_count = 0
@@ -239,7 +239,7 @@ class Test_internal(TestCase):
         """Test the Internal.atom_loop() method with the ':PRO' res selection."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Loop over the atoms.
         atom_count = 0
@@ -258,7 +258,7 @@ class Test_internal(TestCase):
         """Test the Internal.atom_loop() method with the '@CA' spin selection."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Loop over the atoms.
         atom_count = 0
@@ -277,7 +277,7 @@ class Test_internal(TestCase):
         """Test the Internal.atom_loop() method with the '@163' spin selection."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Loop over the atoms.
         atom_count = 0
