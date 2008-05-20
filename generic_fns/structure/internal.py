@@ -212,7 +212,7 @@ class Internal(Base_struct_API):
         self.atom_add(atom_id='TER' + atom_id_ext, record_name='TER', res_name=last_res, res_num=res_num)
 
 
-    def write_pdb_file(self, file):
+    def write_pdb(self, file):
         """Method for the creation of a PDB file from the structural data.
 
         A number of PDB records including HET, HETNAM, FORMUL, HETATM, TER, CONECT, MASTER, and END
