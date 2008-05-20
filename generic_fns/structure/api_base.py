@@ -38,6 +38,9 @@ class Base_struct_API:
     All API methods are prototyped here as stub methods.
     """
 
+    # Identification string.
+    id = 'API'
+
 
     def __init__(self):
         """Initialise the structural object."""
