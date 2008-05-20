@@ -731,34 +731,34 @@ class Structure_container:
         """Initialise all the arrays."""
 
         # The atom name (array of str).
-        atom_name = []
+        self.atom_name = []
 
         # The bonded atom indecies (array of arrays of int).
-        bonded = []
+        self.bonded = []
 
         # The chain ID (array of str).
-        chain_id = []
+        self.chain_id = []
 
         # The element symbol (array of str).
-        element = []
+        self.element = []
 
         # The optional PDB record name (array of str).
-        pdb_record = []
+        self.pdb_record = []
 
         # The residue name (array of str).
-        res_name = []
+        self.res_name = []
 
         # The residue number (array of int).
-        res_num = []
+        self.res_num = []
 
         # The segment ID (array of int).
-        seg_id = []
+        self.seg_id = []
 
         # The x coordinate (array of float).
-        x = []
+        self.x = []
 
         # The y coordinate (array of float).
-        y = []
+        self.y = []
 
         # The z coordinate (array of float).
-        z = []
+        self.z = []
