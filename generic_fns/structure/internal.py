@@ -24,6 +24,7 @@
 """Module containing the internal relax structural object."""
 
 # Python module imports.
+from numpy import array, float64
 from re import search
 from string import split, strip
 
@@ -424,7 +425,7 @@ class Internal(Base_struct_API):
                 if element_flag:
                     atomic_tuple = atomic_tuple + (struct.element[i],)
                 if pos_flag:
-                    atomic_tuple = atomic_tuple + ([struct.x[i], struct.y[i], struct.z[i]],)
+                    atomic_tuple = atomic_tuple + (array([struct.x[i], struct.y[i], struct.z[i]], float64),)
 
                 # Yield the information.
                 yield atomic_tuple
