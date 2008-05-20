@@ -336,21 +336,27 @@ class Internal(Base_struct_API):
             struct.z.append(pos[2])
 
 
-    def atom_connect(self, index1=None, index2=None):
+    def atom_connect(self, index1=None, index2=None, model=None):
         """Method for connecting two atoms within the data structure object.
 
         This method will append index2 to the array at bonded[index1] and vice versa.
 
 
-        @param index1:  The index of the first atom.
-        @type index1:   int
-        @param index2:  The index of the second atom.
-        @type index2:   int
+        @keyword index1:    The index of the first atom.
+        @type index1:       int
+        @keyword index2:    The index of the second atom.
+        @type index2:       int
         """
 
-        # Update the bonded array structure.
-        self.structural_data.bonded[index1].append(index2)
-        self.structural_data.bonded[index2].append(index1)
+        # Loop over the models.
+        for struct in self.structural_data:
+            # Skip non-matching models.
+            if model != None and model != struct.model:
+                continue
+
+            # Update the bonded array structure.
+            struct.bonded[index1].append(index2)
+            struct.bonded[index2].append(index1)
 
 
     def load_pdb(self, file_path, model=None, verbosity=False):
