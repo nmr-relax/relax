@@ -213,14 +213,8 @@ class Base_struct_API:
         return len(self.structural_data)
 
 
-    def terminate(self, atom_id_ext='', res_num=None):
-        """Prototype method stub for terminating the structural chain.
-
-        @param atom_id_ext:     The atom identifier extension.
-        @type atom_id_ext:      str
-        @param res_num:         The residue number.
-        @type res_num:          int
-        """
+    def terminate(self):
+        """Prototype method stub for terminating the structural chain."""
 
         # Raise the error.
         raise RelaxImplementError
