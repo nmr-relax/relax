@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing a relax specific PDB structural object."""
+"""Module containing the internal relax structural object."""
 
 
 # relax module imports.
@@ -30,8 +30,8 @@ from relax_errors import RelaxError
 
 
 
-class Internal_PDB(Base_struct_API):
-    """The internal relax PDB data object.
+class Internal(Base_struct_API):
+    """The internal relax structural data object.
 
     The structural data object for this class is a dictionary of arrays.  The keys correspond to the
     'atom_id' strings.  The elements of the array are:
@@ -52,11 +52,11 @@ class Internal_PDB(Base_struct_API):
     """
 
     # Identification string.
-    id = 'internal pdb'
+    id = 'internal'
 
 
     def __init__(self):
-        """Initialise the PDB object."""
+        """Initialise the structural object."""
 
         # Reinitialise the data object to an empty dictionary.
         self.structural_data = {}
@@ -164,8 +164,8 @@ class Internal_PDB(Base_struct_API):
 
         This method will find the atom number corresponding to both the atom_id and bonded_id.
         The bonded_id atom number will then be appended to the atom_id array.  Because the
-        connections work both ways in the PDB file, the atom_id atom number will be appended to the
-        bonded_id atom array as well.
+        connections work both ways, the atom_id atom number will be appended to the bonded_id atom
+        array as well.
 
 
         @param atom_id:     The atom identifier.  This is used as the key within the dictionary.
