@@ -172,9 +172,7 @@ class Internal(Base_struct_API):
     def terminate(self):
         """Method for terminating the chain by adding a TER record to the structural data object.
 
-        The 
-        @param res_num:         The residue number.
-        @type res_num:          int
+        The residue number and name are taken from the last atom in the current structural object.
         """
 
         # The name and number of the last residue.
