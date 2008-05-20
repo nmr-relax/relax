@@ -49,7 +49,7 @@ class Base_struct_API:
         self.structural_data = []
 
 
-    def atom_add(self, pdb_record=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, model=None):
+    def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, model=None):
         """Prototype method stub for adding an atom to the structural data object.
 
         This method will create the key-value pair for the given atom.
@@ -57,6 +57,8 @@ class Base_struct_API:
 
         @keyword pdb_record:    The optional PDB record name, e.g. 'ATOM', 'HETATM', or 'TER'.
         @type pdb_record:       str or None
+        @keyword atom_num:      The atom number.
+        @type atom_num:         int or None
         @keyword atom_name:     The atom name, e.g. 'H1'.
         @type atom_name:        str or None
         @keyword res_name:      The residue name.
