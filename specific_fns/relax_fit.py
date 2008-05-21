@@ -347,35 +347,43 @@ class Relax_fit(Common_functions):
             return 0.0
 
 
-    def disassemble_param_vector(self, index=None, sim_index=None):
-        """Function for disassembling the parameter vector."""
+    def disassemble_param_vector(self, param_vector=None, spin=None, sim_index=None):
+        """Disassemble the parameter vector.
 
-        # Alias the residue specific data structure.
-        data = relax_data_store.res[self.run][index]
+        @keyword param_vector:  The parameter vector.
+        @type param_vector:     numpy array
+        @keyword spin:          The spin data container.
+        @type spin:             SpinContainer instance
+        @keyword sim_index:     The optional MC simulation index.
+        @type sim_index:        int
+        """
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Monte Carlo simulations.
         if sim_index != None:
             # The relaxation rate.
-            data.rx_sim[sim_index] = self.param_vector[0]
+            spin.rx_sim[sim_index] = param_vector[0]
 
             # Initial intensity.
-            data.i0_sim[sim_index] = self.param_vector[1]
+            spin.i0_sim[sim_index] = param_vector[1]
 
             # Intensity at infinity.
-            if relax_data_store.curve_type[self.run] == 'inv':
-                data.iinf_sim[sim_index] = self.param_vector[2]
+            if cdp.curve_type == 'inv':
+                spin.iinf_sim[sim_index] = param_vector[2]
 
         # Parameter values.
         else:
             # The relaxation rate.
-            data.rx = self.param_vector[0]
+            spin.rx = param_vector[0]
 
             # Initial intensity.
-            data.i0 = self.param_vector[1]
+            spin.i0 = param_vector[1]
 
             # Intensity at infinity.
-            if relax_data_store.curve_type[self.run] == 'inv':
-                data.iinf = self.param_vector[2]
+            if cdp.curve_type == 'inv':
+                spin.iinf = param_vector[2]
 
 
     def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
