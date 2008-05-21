@@ -272,40 +272,40 @@ def initial_values():
     init_sim_values()
 
 
-def off(run=None):
-    """Function for turning simulations off."""
+def off():
+    """Turn simulations off."""
 
-    # Arguments.
-    self.run = run
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
 
-    # Test if the run exists.
-    if not self.run in relax_data_store.run_names:
-        raise RelaxNoPipeError, self.run
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Test if simulations have been set up.
-    if not hasattr(relax_data_store, 'sim_state'):
-        raise RelaxError, "Monte Carlo simulations for the run " + `self.run` + " have not been set up."
+    if not hasattr(cdp, 'sim_state'):
+        raise RelaxError, "Monte Carlo simulations have not been set up."
 
     # Turn simulations off.
-    relax_data_store.sim_state[self.run] = 0
+    cdp.sim_state = False
 
 
-def on(run=None):
-    """Function for turning simulations on."""
+def on():
+    """Turn simulations on."""
 
-    # Arguments.
-    self.run = run
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
 
-    # Test if the run exists.
-    if not self.run in relax_data_store.run_names:
-        raise RelaxNoPipeError, self.run
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Test if simulations have been set up.
-    if not hasattr(relax_data_store, 'sim_state'):
-        raise RelaxError, "Monte Carlo simulations for the run " + `self.run` + " have not been set up."
+    if not hasattr(cdp, 'sim_state'):
+        raise RelaxError, "Monte Carlo simulations have not been set up."
 
     # Turn simulations on.
-    relax_data_store.sim_state[self.run] = 1
+    cdp.sim_state = True
 
 
 def select_all_sims(number=None, all_select_sim=None):
