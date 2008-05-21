@@ -247,21 +247,20 @@ class Jw_mapping(Common_functions):
 
 
     def overfit_deselect(self):
-        """Function for deselecting spins without sufficient data to support calculation"""
+        """Deselect spins which have insufficient data to support calculation."""
 
-        # Test the sequence data exists:
+        # Test the sequence data exists.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # Loop over spin data:
+        # Loop over spin data.
         for spin in spin_loop():
-
-            # Check for sufficient data
+            # Check if data exists.
             if not hasattr(spin, 'relax_data'):
                 spin.select = 0
                 continue
 
-            # Require 3 or more data points
+            # Require 3 or more data points.
             if len(spin.relax_data) < 3:
                 spin.select = 0
                 continue
