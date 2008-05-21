@@ -175,23 +175,31 @@ class Relax_fit(Common_functions):
             spin.intensities[index].append(intensity)
 
 
-    def back_calc(self, run=None, index=None, relax_time_index=None):
-        """Back-calculation of peak intensity for the given relaxation time."""
+    def back_calc(self, spin=None, relax_time_index=None):
+        """Back-calculation of peak intensity for the given relaxation time.
 
-        # Run argument.
-        self.run = run
+        @keyword spin:              The spin container.
+        @type spin:                 SpinContainer instance
+        @keyword relax_time_index:  The index for the desired relaxation time.
+        @type relax_time_index:     int
+        @return:                    The peak intensity for the desired relaxation time.
+        @rtype:                     float
+        """
 
-        # Alias the residue specific data structure.
-        data = relax_data_store.res[self.run][index]
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Create the initial parameter vector.
-        self.param_vector = self.assemble_param_vector(index=index)
+        param_vector = self.assemble_param_vector(spin=spin)
+
+        # Create a scaling matrix.
+        scaling_matrix = self.assemble_scaling_matrix(spin=spin, scaling=False)
 
         # Initialise the relaxation fit functions.
-        setup(num_params=len(data.params), num_times=len(relax_data_store.relax_times[self.run]), values=data.ave_intensities, sd=relax_data_store.sd[self.run], relax_times=relax_data_store.relax_times[self.run], scaling_matrix=self.scaling_matrix)
+        setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=spin.ave_intensities, sd=cdp.sd, relax_times=cdp.relax_times, scaling_matrix=scaling_matrix)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the C module.
-        func(self.param_vector)
+        func(param_vector)
 
         # Get the data back.
         results = back_calc_I()
