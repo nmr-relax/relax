@@ -1034,7 +1034,7 @@ class Relax_fit(Common_functions):
         @rtype:         list of float
         """
 
-        return relax_data_store[relax_data_store].sd
+        return relax_data_store[relax_data_store.current_pipe].sd
 
 
     def return_data_name(self, name):
