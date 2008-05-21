@@ -834,7 +834,7 @@ class Relax_fit(Common_functions):
                 results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)
             if results == None:
                 return
-            param_vector, func, iter_count, f_count, g_count, h_count, warning = results
+            param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
 
             # Scaling.
             if scaling:
@@ -846,7 +846,7 @@ class Relax_fit(Common_functions):
             # Monte Carlo minimisation statistics.
             if sim_index != None:
                 # Chi-squared statistic.
-                spin.chi2_sim[sim_index] = func
+                spin.chi2_sim[sim_index] = chi2
 
                 # Iterations.
                 spin.iter_sim[sim_index] = iter_count
@@ -867,7 +867,7 @@ class Relax_fit(Common_functions):
             # Normal statistics.
             else:
                 # Chi-squared statistic.
-                spin.chi2 = func
+                spin.chi2 = chi2
 
                 # Iterations.
                 spin.iter = iter_count
