@@ -1182,12 +1182,18 @@ class Relax_fit(Common_functions):
         spin.select_sim = select_sim
 
 
-    def sim_pack_data(self, run, i, sim_data):
-        """Function for packing Monte Carlo simulation data."""
+    def sim_pack_data(self, spin, sim_data):
+        """Pack the Monte Carlo simulation data.
+
+        @param spin:        The spin container.
+        @type spin:         SpinContainer instance
+        @param sim_data:    The Monte Carlo simulation data.
+        @type sim_data:     list of float
+        """
 
         # Test if the simulation data already exists.
-        if hasattr(relax_data_store.res[run][i], 'sim_intensities'):
+        if hasattr(spin, 'sim_intensities'):
             raise RelaxError, "Monte Carlo simulation data already exists."
 
         # Create the data structure.
-        relax_data_store.res[run][i].sim_intensities = sim_data
+        spin.sim_intensities = sim_data
