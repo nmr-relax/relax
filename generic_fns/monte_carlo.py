@@ -251,25 +251,25 @@ def error_analysis(run=None, prune=0.0):
             index = index + 1
 
 
-def initial_values(run=None):
-    """Function for setting the initial simulation parameter values."""
+def initial_values():
+    """Set the initial simulation parameter values."""
 
-    # Arguments.
-    self.run = run
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
 
-    # Test if the run exists.
-    if not self.run in relax_data_store.run_names:
-        raise RelaxNoPipeError, self.run
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Test if simulations have been set up.
-    if not hasattr(relax_data_store, 'sim_state'):
-        raise RelaxError, "Monte Carlo simulations for the run " + `self.run` + " have not been set up."
+    if not hasattr(cdp, 'sim_state'):
+        raise RelaxError, "Monte Carlo simulations have not been set up."
 
     # Specific initial Monte Carlo parameter value function setup.
     init_sim_values = get_specific_fn('init_sim_values', cdp.pipe_type)
 
     # Set the initial parameter values.
-    init_sim_values(self.run)
+    init_sim_values()
 
 
 def off(run=None):
