@@ -34,7 +34,7 @@ import sys
 from data import Data as relax_data_store
 from base_class import Common_functions
 from generic_fns import intensity
-from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, spin_loop
+from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_spin_from_index, spin_loop
 from minimise.generic import generic_minimise
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoPipeError, RelaxNoSequenceError
 
@@ -1143,14 +1143,17 @@ class Relax_fit(Common_functions):
         """
 
 
-    def set_selected_sim(self, spin, select_sim):
+    def set_selected_sim(self, instance, select_sim):
         """Set the simulation selection flag for the spin.
 
-        @param spin:        The spin data container.
-        @type spin:         SpinContainer instance
+        @param instance:    The optimisation instance index.
+        @type instance:     int
         @param select_sim:  The selection flag for the simulations.
         @type select_sim:   bool
         """
+
+        # Get the SpinContainer.
+        spin = return_spin_from_index(instance)
 
         # Multiple spins.
         spin.select_sim = select_sim
