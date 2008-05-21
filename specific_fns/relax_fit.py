@@ -54,8 +54,6 @@ class Relax_fit(Common_functions):
     def assemble_param_vector(self, spin=None, sim_index=None):
         """Assemble the exponential curve parameter vector (as a numpy array).
 
-        If the spin argument is supplied, then the spin_id argument will be ignored.
-
         @keyword spin:          The spin data container.
         @type spin:             SpinContainer instance
         @keyword sim_index:     The optional MC simulation index.
@@ -100,7 +98,7 @@ class Relax_fit(Common_functions):
         return array(param_vector, float64)
 
 
-    def assemble_scaling_matrix(self, index=None, scaling=1):
+    def assemble_scaling_matrix(self, spin=spin, scaling=True):
         """Function for creating the scaling matrix."""
 
         # Initialise.
