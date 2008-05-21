@@ -362,16 +362,32 @@ class Relax_fit(Common_functions):
                 data.iinf = self.param_vector[2]
 
 
-    def grid_search(self, run, lower, upper, inc, constraints, verbosity, sim_index=None):
-        """The grid search function."""
+    def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
+        """The exponential curve fitting grid search function.
 
-        # Arguments.
-        self.lower = lower
-        self.upper = upper
-        self.inc = inc
+        @keyword lower:         The lower bounds of the grid search which must be equal to the
+                                number of parameters in the model.
+        @type lower:            array of numbers
+        @keyword upper:         The upper bounds of the grid search which must be equal to the
+                                number of parameters in the model.
+        @type upper:            array of numbers
+        @keyword inc:           The increments for each dimension of the space for the grid search.
+                                The number of elements in the array must equal to the number of
+                                parameters in the model.
+        @type inc:              array of int
+        @keyword constraints:   If True, constraints are applied during the grid search (eliminating
+                                parts of the grid).  If False, no constraints are used.
+        @type constraints:      bool
+        @keyword verbosity:     A flag specifying the amount of information to print.  The higher
+                                the value, the greater the verbosity.
+        @type verbosity:        int
+        @keyword sim_index:     The index of the simulation to apply the grid search to.  If None,
+                                the normal model is optimised.
+        @type sim_index:        int
+        """
 
         # Minimisation.
-        self.minimise(run=run, min_algor='grid', constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+        self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
     def grid_search_setup(self, index=None):
