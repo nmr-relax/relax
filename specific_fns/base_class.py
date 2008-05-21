@@ -321,14 +321,20 @@ class Common_functions:
                     sim_object.append(deepcopy(getattr(spin, object_name)))
 
 
-    def sim_return_param(self, run, instance, index):
-        """Function for returning the array of simulation parameter values."""
+    def sim_return_param(self, instance, index):
+        """Return the array of simulation parameter values.
+ 
+        @param instance:    The optimisation instance index.
+        @type instance:     int
+        @param index:       The index of the parameter to return the array of values for.
+        @type index:        int
+        """
 
-        # Arguments.
-        self.run = run
+        # Get the SpinContainer.
+        spin = return_spin_from_index(instance)
 
-        # Skip deselected residues.
-        if not relax_data_store.res[self.run][instance].select:
+        # Skip deselected spins.
+        if not spin.select:
             return
 
         # Parameter increment counter.
@@ -338,7 +344,7 @@ class Common_functions:
         for param in self.data_names(set='params'):
             # Return the parameter array.
             if index == inc:
-                return getattr(relax_data_store.res[self.run][instance], param + "_sim")
+                return getattr(spin, param + "_sim")
 
             # Increment.
             inc = inc + 1
