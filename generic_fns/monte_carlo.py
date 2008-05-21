@@ -341,43 +341,31 @@ def select_all_sims(number=None, all_select_sim=None):
         set_selected_sim(self.run, instance, select_sim)
 
 
-def setup(run=None, number=None, all_select_sim=None):
+def setup(number=None, all_select_sim=None):
     """Function for setting up Monte Carlo simulations.
 
-    @param run:             The name of the run.
-    @type run:              str
-    @param number:          The number of Monte Carlo simulations to set up.
-    @type number:           int
-    @params all_select_sim: The selection status of the Monte Carlo simulations.  The first
-        dimension of this matrix corresponds to the simulation and the second corresponds to the
-        instance.
-    @type all_select_sim:   numpy matrix (int)
+    @keyword number:            The number of Monte Carlo simulations to set up.
+    @type number:               int
+    @keyword all_select_sim:    The selection status of the Monte Carlo simulations.  The first
+                                dimension of this matrix corresponds to the simulation and the
+                                second corresponds to the instance.
+    @type all_select_sim:       numpy matrix (int)
     """
 
-    # Arguments.
-    self.run = run
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
 
-    # Test if the run exists.
-    if not self.run in relax_data_store.run_names:
-        raise RelaxNoPipeError, self.run
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
-    # Test if Monte Carlo simulations have already been set up for the given run.
-    if hasattr(relax_data_store, 'sim_number') and relax_data_store.sim_number.has_key(self.run):
-        raise RelaxError, "Monte Carlo simulations for the run " + `self.run` + " have already been set up."
+    # Test if Monte Carlo simulations have already been set up.
+    if hasattr(cdp, 'sim_number'):
+        raise RelaxError, "Monte Carlo simulations have already been set up."
 
-    # Create the data structure 'sim_number' if it doesn't exist.
-    if not hasattr(relax_data_store, 'sim_number'):
-        relax_data_store.sim_number = {}
-
-    # Add the simulation number.
-    relax_data_store.sim_number[self.run] = number
-
-    # Create the data structure 'sim_state'.
-    if not hasattr(relax_data_store, 'sim_state'):
-        relax_data_store.sim_state = {}
-
-    # Turn simulations on.
-    relax_data_store.sim_state[self.run] = 1
+    # Create a number of MC sim data structures.
+    cdp.sim_number = number
+    cdp.sim_state = 1
 
     # Select all simulations.
-    self.select_all_sims(number=number, all_select_sim=all_select_sim)
+    select_all_sims(number=number, all_select_sim=all_select_sim)
