@@ -511,27 +511,27 @@ class Relax_fit(Common_functions):
         return min_options
 
 
-    def linear_constraints(self, index=None):
-        """Function for setting up the linear constraint matrices A and b.
+    def linear_constraints(self, spin=None, scaling_matrix=None):
+        """Set up the relaxation curve fitting linear constraint matrices A and b.
 
         Standard notation
-        ~~~~~~~~~~~~~~~~~
+        =================
 
-        The relaxation rate constraints are:
+        The relaxation rate constraints are::
 
             Rx >= 0
 
-        The intensity constraints are:
+        The intensity constraints are::
 
             I0 >= 0
             Iinf >= 0
 
 
         Matrix notation
-        ~~~~~~~~~~~~~~~
+        ===============
 
         In the notation A.x >= b, where A is an matrix of coefficients, x is an array of parameter
-        values, and b is a vector of scalars, these inequality constraints are:
+        values, and b is a vector of scalars, these inequality constraints are::
 
             | 1  0  0 |     |  Rx  |      |    0    |
             |         |     |      |      |         |
@@ -539,23 +539,25 @@ class Relax_fit(Common_functions):
             |         |     |      |      |         |
             | 1  0  0 |     | Iinf |      |    0    |
 
+
+        @keyword spin:              The spin data container.
+        @type spin:                 SpinContainer instance
+        @keyword scaling_matrix:    The diagonal, square scaling matrix.
+        @type scaling_matrix:       numpy diagonal matrix
         """
 
         # Initialisation (0..j..m).
         A = []
         b = []
-        n = len(self.param_vector)
+        n = len(spin.params)
         zero_array = zeros(n, float64)
         i = 0
         j = 0
 
-        # Alias the residue specific data structure.
-        data = relax_data_store.res[self.run][index]
-
         # Loop over the parameters.
-        for k in xrange(len(data.params)):
+        for k in xrange(len(spin.params)):
             # Relaxation rate.
-            if data.params[k] == 'Rx':
+            if spin.params[k] == 'Rx':
                 # Rx >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
@@ -563,7 +565,7 @@ class Relax_fit(Common_functions):
                 j = j + 1
 
             # Intensity parameter.
-            elif search('^I', data.params[k]):
+            elif search('^I', spin.params[k]):
                 # I0, Iinf >= 0.
                 A.append(zero_array * 0.0)
                 A[j][i] = 1.0
