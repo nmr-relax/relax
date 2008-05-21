@@ -655,51 +655,90 @@ class Relax_fit(Common_functions):
             print "\nStandard deviation (averaged over all spectra):  " + `sd`
 
 
-    def minimise(self, run=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=0, scaling=1, verbosity=0, sim_index=None):
-        """Relaxation curve fitting function."""
+    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
+        """Relaxation curve fitting function.
 
-        # Arguments.
-        self.run = run
-        self.verbosity = verbosity
+        @keyword min_algor:         The minimisation algorithm to use.
+        @type min_algor:            str
+        @keyword min_options:       An array of options to be used by the minimisation algorithm.
+        @type min_options:          array of str
+        @keyword func_tol:          The function tolerence which, when reached, terminates optimisation.
+                                    Setting this to None turns of the check.
+        @type func_tol:             None or float
+        @keyword grad_tol:          The gradient tolerence which, when reached, terminates optimisation.
+                                    Setting this to None turns of the check.
+        @type grad_tol:             None or float
+        @keyword max_iterations:    The maximum number of iterations for the algorithm.
+        @type max_iterations:       int
+        @keyword constraints:       If True, constraints are used during optimisation.
+        @type constraints:          bool
+        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow
+                                    the problem to be better conditioned.
+        @type scaling:              bool
+        @keyword verbosity:         The amount of information to print.  The higher the value, the
+                                    greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The index of the simulation to optimise.  This should be None if
+                                    normal optimisation is desired.
+        @type sim_index:            None or int
+        @keyword lower:             The lower bounds of the grid search which must be equal to the
+                                    number of parameters in the model.  This optional argument is only
+                                    used when doing a grid search.
+        @type lower:                array of numbers
+        @keyword upper:             The upper bounds of the grid search which must be equal to the
+                                    number of parameters in the model.  This optional argument is only
+                                    used when doing a grid search.
+        @type upper:                array of numbers
+        @keyword inc:               The increments for each dimension of the space for the grid search.
+                                    The number of elements in the array must equal to the number of
+                                    parameters in the model.  This argument is only used when doing a
+                                    grid search.
+        @type inc:                  array of int
+        """
 
-        # Test if the sequence data for self.run is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
+        # Test if sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Alias the residue specific data structure.
-            data = relax_data_store.res[self.run][i]
-
-            # Skip deselected residues.
-            if not data.select:
+        for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+            # Skip deselected spins.
+            if not spin.select:
                 continue
 
-            # Skip residues which have no data.
-            if not hasattr(data, 'intensities'):
+            # Skip spins which have no data.
+            if not hasattr(spin, 'intensities'):
                 continue
 
             # Create the initial parameter vector.
-            self.param_vector = self.assemble_param_vector(index=i, sim_index=sim_index)
+            param_vector = self.assemble_param_vector(spin=spin)
 
             # Diagonal scaling.
-            self.assemble_scaling_matrix(index=i, scaling=scaling)
-            self.param_vector = dot(inverse(self.scaling_matrix), self.param_vector)
+            scaling_matrix = self.assemble_scaling_matrix(spin=spin, scaling=scaling)
+            if len(scaling_matrix):
+                param_vector = dot(inverse(scaling_matrix), param_vector)
 
             # Get the grid search minimisation options.
             if match('^[Gg]rid', min_algor):
-                min_options = self.grid_search_setup(index=i)
+                min_options = self.grid_search_setup(spin=spin, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
 
             # Linear constraints.
             if constraints:
-                A, b = self.linear_constraints(index=i)
+                A, b = self.linear_constraints(spin=spin, scaling_matrix=scaling_matrix)
 
             # Print out.
             if self.verbosity >= 1:
-                # Individual residue print out.
+                # Get the spin id string.
+                spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
+
+                # Individual spin print out.
                 if self.verbosity >= 2:
                     print "\n\n"
-                string = "Fitting to residue: " + `data.num` + " " + data.name
+
+                string = "Fitting to spin " + `spin_id`
                 print "\n\n" + string
                 print len(string) * '~'
 
@@ -712,11 +751,11 @@ class Relax_fit(Common_functions):
             ######################################
 
             if sim_index == None:
-                values = data.ave_intensities
+                values = spin.ave_intensities
             else:
-                values = data.sim_intensities[sim_index]
+                values = spin.sim_intensities[sim_index]
 
-            setup(num_params=len(data.params), num_times=len(relax_data_store.relax_times[self.run]), values=values, sd=relax_data_store.sd[self.run], relax_times=relax_data_store.relax_times[self.run], scaling_matrix=self.scaling_matrix)
+            setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=values, sd=cdp.sd, relax_times=cdp.relax_times, scaling_matrix=scaling_matrix)
 
 
             # Setup the minimisation algorithm when constraints are present.
@@ -733,9 +772,9 @@ class Relax_fit(Common_functions):
 
             if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
                 # Reconstruct the error data structure.
-                lm_error = zeros(len(data.relax_times), float64)
+                lm_error = zeros(len(spin.relax_times), float64)
                 index = 0
-                for k in xrange(len(data.relax_times)):
+                for k in xrange(len(spin.relax_times)):
                     lm_error[index:index+len(relax_error[k])] = relax_error[k]
                     index = index + len(relax_error[k])
 
@@ -746,60 +785,60 @@ class Relax_fit(Common_functions):
             ###############
 
             if constraints:
-                results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=verbosity)
+                results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
             else:
-                results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
+                results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)
             if results == None:
                 return
-            self.param_vector, self.func, self.iter_count, self.f_count, self.g_count, self.h_count, self.warning = results
+            param_vector, func, iter_count, f_count, g_count, h_count, warning = results
 
             # Scaling.
             if scaling:
-                self.param_vector = dot(self.scaling_matrix, self.param_vector)
+                param_vector = dot(scaling_matrix, param_vector)
 
             # Disassemble the parameter vector.
-            self.disassemble_param_vector(index=i, sim_index=sim_index)
+            self.disassemble_param_vector(param_vector=param_vector, spin=spin, sim_index=sim_index)
 
             # Monte Carlo minimisation statistics.
             if sim_index != None:
                 # Chi-squared statistic.
-                data.chi2_sim[sim_index] = self.func
+                spin.chi2_sim[sim_index] = func
 
                 # Iterations.
-                data.iter_sim[sim_index] = self.iter_count
+                spin.iter_sim[sim_index] = iter_count
 
                 # Function evaluations.
-                data.f_count_sim[sim_index] = self.f_count
+                spin.f_count_sim[sim_index] = f_count
 
                 # Gradient evaluations.
-                data.g_count_sim[sim_index] = self.g_count
+                spin.g_count_sim[sim_index] = g_count
 
                 # Hessian evaluations.
-                data.h_count_sim[sim_index] = self.h_count
+                spin.h_count_sim[sim_index] = h_count
 
                 # Warning.
-                data.warning_sim[sim_index] = self.warning
+                spin.warning_sim[sim_index] = warning
 
 
             # Normal statistics.
             else:
                 # Chi-squared statistic.
-                data.chi2 = self.func
+                spin.chi2 = func
 
                 # Iterations.
-                data.iter = self.iter_count
+                spin.iter = iter_count
 
                 # Function evaluations.
-                data.f_count = self.f_count
+                spin.f_count = f_count
 
                 # Gradient evaluations.
-                data.g_count = self.g_count
+                spin.g_count = g_count
 
                 # Hessian evaluations.
-                data.h_count = self.h_count
+                spin.h_count = h_count
 
                 # Warning.
-                data.warning = self.warning
+                spin.warning = warning
 
 
     def model_setup(self, model, params):
