@@ -31,7 +31,7 @@ import sys
 from data import Data as relax_data_store
 from base_class import Common_functions
 from generic_fns import intensity
-from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, spin_loop
+from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, spin_loop
 from minimise.generic import generic_minimise
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoPipeError, RelaxNoSequenceError
 
@@ -428,10 +428,11 @@ class Relax_fit(Common_functions):
         @type inc:                  array of int
         @keyword scaling_matrix:    The scaling matrix.
         @type scaling_matrix:       numpy diagonal matrix
-        @return:                    The minimisation options.  The first dimension corresponds to
-                                    the model parameter.  The second dimension is a list of the
-                                    number of increments, the lower bound, and upper bound.
-        @rtype:                     list of lists [int, float, float]
+        @return:                    A tuple of the grid size and the minimisation options.  For the
+                                    minimisation options, the first dimension corresponds to the
+                                    model parameter.  The second dimension is a list of the number
+                                    of increments, the lower bound, and upper bound.
+        @rtype:                     (int, list of lists [int, float, float])
         """
 
         # The length of the parameter array.
@@ -508,7 +509,7 @@ class Relax_fit(Common_functions):
             min_options[j][1] = min_options[j][1] / scaling_matrix[j, j]
             min_options[j][2] = min_options[j][2] / scaling_matrix[j, j]
 
-        return min_options
+        return grid_size, min_options
 
 
     def linear_constraints(self, spin=None, scaling_matrix=None):
@@ -766,19 +767,19 @@ class Relax_fit(Common_functions):
 
             # Get the grid search minimisation options.
             if match('^[Gg]rid', min_algor):
-                min_options = self.grid_search_setup(spin=spin, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+                grid_size, min_options = self.grid_search_setup(spin=spin, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
 
             # Linear constraints.
             if constraints:
                 A, b = self.linear_constraints(spin=spin, scaling_matrix=scaling_matrix)
 
             # Print out.
-            if self.verbosity >= 1:
+            if verbosity >= 1:
                 # Get the spin id string.
                 spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
 
                 # Individual spin print out.
-                if self.verbosity >= 2:
+                if verbosity >= 2:
                     print "\n\n"
 
                 string = "Fitting to spin " + `spin_id`
@@ -787,7 +788,7 @@ class Relax_fit(Common_functions):
 
                 # Grid search print out.
                 if match('^[Gg]rid', min_algor):
-                    print "Unconstrained grid search size: " + `self.grid_size` + " (constraints may decrease this size).\n"
+                    print "Unconstrained grid search size: " + `grid_size` + " (constraints may decrease this size).\n"
 
 
             # Initialise the function to minimise.
