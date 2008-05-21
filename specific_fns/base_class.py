@@ -25,7 +25,7 @@ from copy import deepcopy
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, spin_loop
+from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from relax_errors import RelaxError
 
 
@@ -344,14 +344,17 @@ class Common_functions:
             inc = inc + 1
 
 
-    def sim_return_selected(self, spin):
-        """Function for returning the array of selected simulation flags for the given spin.
+    def sim_return_selected(self, instance):
+        """Return the array of selected simulation flags for the spin.
 
-        @param spin:    The SpinContainer object.
-        @type spin:     SpinContainer instance
-        @return:        The array of selected simulation flags.
-        @rtype:         list of int
+        @param instance:    The spin index.
+        @type instance:     int
+        @return:            The array of selected simulation flags.
+        @rtype:             list of int
         """
+
+        # Get the SpinContainer.
+        spin = return_spin_from_index(instance)
 
         # Return the array.
         return spin.select_sim
