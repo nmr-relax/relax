@@ -21,5 +21,7 @@
 ###############################################################################
 
 
-__all__ = ['test_internal',
+__all__ = ['test_api_base',
+           'test__init__',
+           'test_internal',
            'test_scientific']
