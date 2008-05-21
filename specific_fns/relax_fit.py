@@ -200,34 +200,37 @@ class Relax_fit(Common_functions):
         return results[relax_time_index]
 
 
-    def create_mc_data(self, run, i):
-        """Function for creating the Monte Carlo peak intensity data."""
+    def create_mc_data(self, spin):
+        """Create the Monte Carlo peak intensity data.
 
-        # Arguments
-        self.run = run
+        @param spin:    The spin container.
+        @type spin:     SpinContainer instance
+        @return:        The Monte Carlo simulation data.
+        @rtype:         list of floats
+        """
 
         # Initialise the MC data data structure.
         mc_data = []
 
-        # Alias the residue specific data structure.
-        data = relax_data_store.res[self.run][i]
-
-        # Skip deselected residues.
-        if not data.select:
+        # Skip deselected spins.
+        if not spin.select:
             return
 
-        # Skip residues which have no data.
-        if not hasattr(data, 'intensities'):
+        # Skip spins which have no data.
+        if not hasattr(spin, 'intensities'):
             return
 
         # Test if the model is set.
-        if not hasattr(data, 'model') or not data.model:
-            raise RelaxNoModelError, self.run
+        if not hasattr(spin, 'model') or not spin.model:
+            raise RelaxNoModelError
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Loop over the spectral time points.
-        for j in xrange(len(relax_data_store.relax_times[run])):
+        for j in xrange(len(cdp.relax_times)):
             # Back calculate the value.
-            value = self.back_calc(run=run, index=i, relax_time_index=j)
+            value = self.back_calc(spin=spin, relax_time_index=j)
 
             # Append the value.
             mc_data.append(value)
