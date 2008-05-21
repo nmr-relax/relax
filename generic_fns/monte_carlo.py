@@ -132,16 +132,13 @@ def error_analysis(run=None, prune=0.0):
     if not hasattr(relax_data_store, 'sim_state'):
         raise RelaxError, "Monte Carlo simulations for the run " + `self.run` + " have not been set up."
 
-    # Function type.
-    function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
-
     # Specific number of instances, return simulation chi2 array, return selected simulation array, return simulation parameter array, and set error functions.
-    count_num_instances = self.relax.specific_setup.setup('num_instances', function_type)
+    count_num_instances = get_specific_fn('num_instances', cdp.pipe_type)
     if prune > 0.0:
-        return_sim_chi2 = self.relax.specific_setup.setup('return_sim_chi2', function_type)
-    return_selected_sim = self.relax.specific_setup.setup('return_selected_sim', function_type)
-    return_sim_param = self.relax.specific_setup.setup('return_sim_param', function_type)
-    set_error = self.relax.specific_setup.setup('set_error', function_type)
+        return_sim_chi2 = get_specific_fn('return_sim_chi2', cdp.pipe_type)
+    return_selected_sim = get_specific_fn('return_selected_sim', cdp.pipe_type)
+    return_sim_param = get_specific_fn('return_sim_param', cdp.pipe_type)
+    set_error = get_specific_fn('set_error', cdp.pipe_type)
 
     # Count the number of instances.
     num_instances = count_num_instances(self.run)
@@ -268,11 +265,8 @@ def initial_values(run=None):
     if not hasattr(relax_data_store, 'sim_state'):
         raise RelaxError, "Monte Carlo simulations for the run " + `self.run` + " have not been set up."
 
-    # Function type.
-    function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
-
     # Specific initial Monte Carlo parameter value function setup.
-    init_sim_values = self.relax.specific_setup.setup('init_sim_values', function_type)
+    init_sim_values = get_specific_fn('init_sim_values', cdp.pipe_type)
 
     # Set the initial parameter values.
     init_sim_values(self.run)
@@ -315,14 +309,11 @@ def on(run=None):
 
 
 def select_all_sims(number=None, all_select_sim=None):
-    """Function for setting the select flag of all simulations of all instances to one."""
-
-    # Function type.
-    function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
+    """Set the select flag of all simulations of all instances to one."""
 
     # Specific number of instances and set the selected simulation array functions.
-    count_num_instances = self.relax.specific_setup.setup('num_instances', function_type)
-    set_selected_sim = self.relax.specific_setup.setup('set_selected_sim', function_type)
+    count_num_instances = get_specific_fn('num_instances', cdp.pipe_type)
+    set_selected_sim = get_specific_fn('set_selected_sim', cdp.pipe_type)
 
     # Count the number of instances.
     num_instances = count_num_instances(self.run)
