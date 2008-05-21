@@ -798,14 +798,14 @@ class Relax_fit(Common_functions):
         # Set the model.
         relax_data_store[relax_data_store.current_pipe].curve_type = model
 
-        # Initialise the data structures (if needed).
-        self.data_init()
-
         # Loop over the sequence.
         for spin in spin_loop():
             # Skip deselected spins.
             if not spin.select:
                 continue
+
+            # Initialise the data structures (if needed).
+            self.data_init(spin)
 
             # The model and parameter names.
             spin.model = model
