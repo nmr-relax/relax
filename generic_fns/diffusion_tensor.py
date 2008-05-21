@@ -30,7 +30,7 @@ from angles import wrap_angles
 from data import Data as relax_data_store
 from data.diff_tensor import DiffTensorData
 import pipes
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
+from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
 
 def copy(pipe_from=None, pipe_to=None):
