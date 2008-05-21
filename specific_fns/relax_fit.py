@@ -51,43 +51,50 @@ class Relax_fit(Common_functions):
         """Class containing functions for relaxation data."""
 
 
-    def assemble_param_vector(self, index=None, sim_index=None):
-        """Function for assembling various pieces of data into a numpy parameter array."""
+    def assemble_param_vector(self, spin=None, sim_index=None):
+        """Assemble the exponential curve parameter vector (as a numpy array).
+
+        If the spin argument is supplied, then the spin_id argument will be ignored.
+
+        @keyword spin:          The spin data container.
+        @type spin:             SpinContainer instance
+        @keyword sim_index:     The optional MC simulation index.
+        @type sim_index:        int
+        @return:                An array of the parameter values of the exponential model.
+        @rtype:                 numpy array
+        """
 
         # Initialise.
         param_vector = []
 
-        # Alias the residue specific data structure.
-        data = relax_data_store.res[self.run][index]
-
         # Loop over the model parameters.
-        for i in xrange(len(data.params)):
+        for i in xrange(len(spin.params)):
             # Relaxation rate.
-            if data.params[i] == 'Rx':
+            if spin.params[i] == 'Rx':
                 if sim_index != None:
-                    param_vector.append(data.rx_sim[sim_index])
-                elif data.rx == None:
+                    param_vector.append(spin.rx_sim[sim_index])
+                elif spin.rx == None:
                     param_vector.append(0.0)
                 else:
-                    param_vector.append(data.rx)
+                    param_vector.append(spin.rx)
 
             # Initial intensity.
-            elif data.params[i] == 'I0':
+            elif spin.params[i] == 'I0':
                 if sim_index != None:
-                    param_vector.append(data.i0_sim[sim_index])
-                elif data.i0 == None:
+                    param_vector.append(spin.i0_sim[sim_index])
+                elif spin.i0 == None:
                     param_vector.append(0.0)
                 else:
-                    param_vector.append(data.i0)
+                    param_vector.append(spin.i0)
 
             # Intensity at infinity.
-            elif data.params[i] == 'Iinf':
+            elif spin.params[i] == 'Iinf':
                 if sim_index != None:
-                    param_vector.append(data.iinf_sim[sim_index])
-                elif data.iinf == None:
+                    param_vector.append(spin.iinf_sim[sim_index])
+                elif spin.iinf == None:
                     param_vector.append(0.0)
                 else:
-                    param_vector.append(data.iinf)
+                    param_vector.append(spin.iinf)
 
         # Return a numpy array.
         return array(param_vector, float64)
