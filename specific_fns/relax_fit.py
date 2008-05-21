@@ -812,24 +812,23 @@ class Relax_fit(Common_functions):
             spin.params = params
 
 
-    def overfit_deselect(self, run):
-        """Function for deselecting residues without sufficient data to support minimisation"""
+    def overfit_deselect(self):
+        """Deselect spins which have insufficient data to support minimisation."""
 
-        # Test the sequence data exists:
-        if not relax_data_store.res.has_key(run):
-            raise RelaxNoSequenceError, run
+        # Test the sequence data exists.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
-        # Loop over residue data:
-        for residue in relax_data_store.res[run]:
-
-            # Check for sufficient data
-            if not hasattr(residue, 'intensities'):
-                residue.select = 0
+        # Loop over spin data.
+        for spin in spin_loop():
+            # Check if data exists.
+            if not hasattr(spin, 'intensities'):
+                spin.select = 0
                 continue
 
-            # Require 3 or more data points
-            if len(residue.intensities) < 3:
-                residue.select = 0
+            # Require 3 or more data points.
+            if len(spin.intensities) < 3:
+                spin.select = 0
                 continue
 
 
