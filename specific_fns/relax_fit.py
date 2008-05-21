@@ -47,9 +47,7 @@ else:
 
 
 class Relax_fit(Common_functions):
-    def __init__(self):
-        """Class containing functions for relaxation data."""
-
+    """Class containing functions for relaxation curve fitting."""
 
     def assemble_param_vector(self, spin=None, sim_index=None):
         """Assemble the exponential curve parameter vector (as a numpy array).
