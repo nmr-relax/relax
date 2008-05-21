@@ -40,11 +40,11 @@ relax_fit.select_model('exp')
 grid_search(inc=11)
 
 # Minimise.
-minimise('simplex', constraints=0)
+minimise('simplex', constraints=False)
 
 # Monte Carlo simulations.
 monte_carlo.setup(number=10)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise('simplex', constraints=0)
+minimise('simplex', constraints=False)
 monte_carlo.error_analysis()
