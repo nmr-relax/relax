@@ -220,13 +220,14 @@ class Relax_fit(Common_functions):
 
 
     def data_init(self, spin):
-        """Function for initialising the data structures."""
+        """Initialise the spin specific data structures.
 
-        # Get the data names.
-        data_names = self.data_names()
+        @param spin:    The spin container.
+        @type spin:     SpinContainer instance
+        """
 
         # Loop over the data structure names.
-        for name in data_names:
+        for name in self.data_names():
             # Data structures which are initially empty arrays.
             list_data = [ 'params' ]
             if name in list_data:
