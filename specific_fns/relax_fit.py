@@ -42,7 +42,7 @@ from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNo
 try:
     from maths_fns.relax_fit import setup, func, dfunc, d2func, back_calc_I
 except ImportError:
-    sys.stderr.write("\nImportError: relaxation curve fitting is unavailible, try compiling the C modules.\n")
+    sys.stderr.write("\nImportError: relaxation curve fitting is unavailable, try compiling the C modules.\n")
     C_module_exp_fn = 0
 else:
     C_module_exp_fn = 1
