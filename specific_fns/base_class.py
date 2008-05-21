@@ -198,14 +198,22 @@ class Common_functions:
         return value, error
 
 
-    def set_error(self, run, instance, index, error):
-        """Function for setting parameter errors."""
+    def set_error(self, instance, index, error):
+        """Set the parameter errors.
 
-        # Arguments.
-        self.run = run
+        @param instance:    The spin index.
+        @type instance:     int
+        @param index:       The index of the parameter to set the errors for.
+        @type index:        int
+        @param error:       The error value.
+        @type error:        float
+        """
 
-        # Skip deselected residues.
-        if not relax_data_store.res[self.run][instance].select:
+        # Get the SpinContainer.
+        spin = return_spin_from_index(instance)
+
+        # Skip deselected spins.
+        if not spin.select:
             return
 
         # Parameter increment counter.
@@ -215,7 +223,7 @@ class Common_functions:
         for param in self.data_names(set='params'):
             # Return the parameter array.
             if index == inc:
-                setattr(relax_data_store.res[self.run][instance], param + "_err", error)
+                setattr(spin, param + "_err", error)
 
             # Increment.
             inc = inc + 1
