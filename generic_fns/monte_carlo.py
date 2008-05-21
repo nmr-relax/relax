@@ -31,64 +31,64 @@ from random import gauss
 
 # relax module imports.
 from data import Data as relax_data_store
+from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
+from specific_fns.setup import get_specific_fn
 
 
-def create_data(run=None, method=None):
+def create_data(method=None):
     """Function for creating simulation data.
 
-    It is assumed that all data types are residue specific.
+    @keyword method:    The type of Monte Carlo simulation to perform.
+    @type method:       str
     """
 
-    # Arguments.
-    self.run = run
+    # Test if the current data pipe exists.
+    if not relax_data_store.current_pipe:
+        raise RelaxNoPipeError
 
-    # Test if the run exists.
-    if not self.run in relax_data_store.run_names:
-        raise RelaxNoPipeError, self.run
+    # Alias the current data pipe.
+    cdp = relax_data_store[relax_data_store.current_pipe]
 
     # Test if simulations have been set up.
-    if not hasattr(relax_data_store, 'sim_state'):
-        raise RelaxError, "Monte Carlo simulations for the run " + `self.run` + " have not been set up."
+    if not hasattr(cdp, 'sim_state'):
+        raise RelaxError, "Monte Carlo simulations have not been set up."
 
-    # Test if sequence data is loaded.
-    if not relax_data_store.res.has_key(self.run):
-        raise RelaxNoSequenceError, self.run
+    # Test if sequence data exists.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
     # Test the method argument.
     valid_methods = ['back_calc', 'direct']
     if method not in valid_methods:
         raise RelaxError, "The simulation creation method " + `method` + " is not valid."
 
-    # Function type.
-    function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
-
     # Specific Monte Carlo data creation, data return, and error return function setup.
-    create_mc_data = self.relax.specific_setup.setup('create_mc_data', function_type)
-    return_data = self.relax.specific_setup.setup('return_data', function_type)
-    return_error = self.relax.specific_setup.setup('return_error', function_type)
-    pack_sim_data = self.relax.specific_setup.setup('pack_sim_data', function_type)
+    create_mc_data = get_specific_fn('create_mc_data', cdp.pipe_type)
+    return_data = get_specific_fn('return_data', cdp.pipe_type)
+    return_error = get_specific_fn('return_error', cdp.pipe_type)
+    pack_sim_data = get_specific_fn('pack_sim_data', cdp.pipe_type)
 
     # Loop over the sequence.
-    for i in xrange(len(relax_data_store.res[self.run])):
+    for spin in spin_loop():
         # Skip deselected residues.
-        if not relax_data_store.res[self.run][i].select:
+        if not spin.select:
             continue
 
         # Create the Monte Carlo data.
         if method == 'back_calc':
-            data = create_mc_data(self.run, i)
+            data = create_mc_data(spin)
 
         # Get the original data.
         else:
-            data = return_data(self.run, i)
+            data = return_data(spin)
 
         # Get the errors.
-        error = return_error(self.run, i)
+        error = return_error(spin)
 
         # Loop over the Monte Carlo simulations.
         random = []
-        for j in xrange(relax_data_store.sim_number[self.run]):
+        for j in xrange(cdp.sim_number):
             # Randomise the data.
             random.append([])
             for k in xrange(len(data)):
@@ -101,7 +101,7 @@ def create_data(run=None, method=None):
                 random[j].append(gauss(data[k], error[k]))
 
         # Pack the simulation data.
-        pack_sim_data(self.run, i, random)
+        pack_sim_data(spin, random)
 
 
 def error_analysis(run=None, prune=0.0):
