@@ -786,23 +786,29 @@ class Relax_fit(Common_functions):
 
 
     def model_setup(self, model, params):
-        """Function for updating various data structures dependant on the model selected."""
+        """Update various model specific data structures.
+
+        @param model:   The exponential curve type.
+        @type model:    str
+        @param params:  A list consisting of the model parameters.
+        @type params:   list of str
+        """
 
         # Set the model.
-        relax_data_store.curve_type[self.run] = model
+        relax_data_store[relax_data_store.current_pipe].curve_type = model
 
         # Initialise the data structures (if needed).
         self.data_init()
 
         # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Skip deselected residues.
-            if not relax_data_store.res[self.run][i].select:
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
                 continue
 
             # The model and parameter names.
-            relax_data_store.res[self.run][i].model = model
-            relax_data_store.res[self.run][i].params = params
+            spin.model = model
+            spin.params = params
 
 
     def overfit_deselect(self, run):
