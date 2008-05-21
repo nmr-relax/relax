@@ -1013,16 +1013,28 @@ class Relax_fit(Common_functions):
         intensity.read(file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self.assign_function)
 
 
-    def return_data(self, run, i):
-        """Function for returning the peak intensity data structure."""
+    def return_data(self, spin):
+        """Function for returning the peak intensity data structure.
 
-        return relax_data_store.res[run][i].intensities
+        @param spin:    The spin container.
+        @type spin:     SpinContainer instance
+        @return:        The peak intensity data structure.
+        @rtype:         list of float
+        """
+
+        return spin.intensities
 
 
-    def return_error(self, run, i):
-        """Function for returning the standard deviation data structure."""
+    def return_error(self, spin):
+        """Return the standard deviation data structure.
 
-        return relax_data_store.sd[run]
+        @param spin:    The spin container.
+        @type spin:     SpinContainer instance
+        @return:        The standard deviation data structure.
+        @rtype:         list of float
+        """
+
+        return relax_data_store[relax_data_store].sd
 
 
     def return_data_name(self, name):
