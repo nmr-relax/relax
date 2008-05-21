@@ -32,6 +32,7 @@ from data import Data as relax_data_store
 from generic_fns import molmol
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_loop
 from generic_fns.sequence import write_header, write_line
+from generic_fns.structure.internal import Internal
 from generic_fns.structure.scientific import Scientific_data
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPipeError, RelaxNoSequenceError, RelaxPdbError
 from relax_io import get_file_path
@@ -124,8 +125,10 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', fail=True, ve
     Parsers
     =======
 
-    Currently only the Scientific Python parser is available for reading PDB files.  This parser is
-    selected only if the parser keyword argument is set to 'scientific'.
+    A number of parsers are available for reading PDB files.  These include:
+    
+        - 'scientific', the Scientific Python PDB parser.
+        - 'internal', a low quality yet fast PDB parser built into relax.
 
 
     @keyword file:          The name of the PDB file to read.
@@ -172,9 +175,11 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', fail=True, ve
             warn(RelaxNoPDBFileWarning(file_path))
             return
 
-    # Place the Scientific Python structural object into the relax data store.
+    # Place the parser specific structural object into the relax data store.
     if parser == 'scientific':
         cdp.structure = Scientific_data()
+    elif parser == 'internal':
+        cdp.structure = Internal()
 
     # Load the structures.
     cdp.structure.load_pdb(file_path, model, verbosity)
