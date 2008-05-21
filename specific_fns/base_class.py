@@ -247,11 +247,8 @@ class Common_functions:
         return
 
 
-    def sim_init_values(self, run):
-        """Function for initialising Monte Carlo parameter values."""
-
-        # Arguments.
-        self.run = run
+    def sim_init_values(self):
+        """Initialise the Monte Carlo parameter values."""
 
         # Get the parameter object names.
         param_names = self.data_names(set='params')
@@ -259,14 +256,17 @@ class Common_functions:
         # Get the minimisation statistic object names.
         min_names = self.data_names(set='min')
 
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
 
         # Test if Monte Carlo parameter values have already been set.
         #############################################################
 
-        # Loop over the residues.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Skip deselected residues.
-            if not relax_data_store.res[self.run][i].select:
+        # Loop over the spins.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
                 continue
 
             # Loop over all the parameter names.
@@ -275,7 +275,7 @@ class Common_functions:
                 sim_object_name = object_name + '_sim'
 
                 # Test if the simulation object already exists.
-                if hasattr(relax_data_store.res[self.run][i], sim_object_name):
+                if hasattr(spin, sim_object_name):
                     raise RelaxError, "Monte Carlo parameter values have already been set."
 
 
@@ -283,9 +283,9 @@ class Common_functions:
         #######################################
 
         # Loop over the residues.
-        for i in xrange(len(relax_data_store.res[self.run])):
+        for spin in spin_loop():
             # Skip deselected residues.
-            if not relax_data_store.res[self.run][i].select:
+            if not spin.select:
                 continue
 
             # Loop over all the data names.
@@ -294,15 +294,15 @@ class Common_functions:
                 sim_object_name = object_name + '_sim'
 
                 # Create the simulation object.
-                setattr(relax_data_store.res[self.run][i], sim_object_name, [])
+                setattr(spin, sim_object_name, [])
 
                 # Get the simulation object.
-                sim_object = getattr(relax_data_store.res[self.run][i], sim_object_name)
+                sim_object = getattr(spin, sim_object_name)
 
                 # Loop over the simulations.
-                for j in xrange(relax_data_store.sim_number[self.run]):
+                for j in xrange(cdp.sim_number):
                     # Copy and append the data.
-                    sim_object.append(deepcopy(getattr(relax_data_store.res[self.run][i], object_name)))
+                    sim_object.append(deepcopy(getattr(spin, object_name)))
 
             # Loop over all the minimisation object names.
             for object_name in min_names:
@@ -310,15 +310,15 @@ class Common_functions:
                 sim_object_name = object_name + '_sim'
 
                 # Create the simulation object.
-                setattr(relax_data_store.res[self.run][i], sim_object_name, [])
+                setattr(spin, sim_object_name, [])
 
                 # Get the simulation object.
-                sim_object = getattr(relax_data_store.res[self.run][i], sim_object_name)
+                sim_object = getattr(spin, sim_object_name)
 
                 # Loop over the simulations.
-                for j in xrange(relax_data_store.sim_number[self.run]):
+                for j in xrange(cdp.sim_number):
                     # Copy and append the data.
-                    sim_object.append(deepcopy(getattr(relax_data_store.res[self.run][i], object_name)))
+                    sim_object.append(deepcopy(getattr(spin, object_name)))
 
 
     def sim_return_param(self, run, instance, index):
