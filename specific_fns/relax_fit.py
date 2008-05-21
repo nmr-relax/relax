@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""The relaxation curve fitting specific code."""
+
 # Python module imports.
 from math import sqrt
 from numpy import array, average, dot, float64, identity, zeros
