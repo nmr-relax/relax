@@ -406,82 +406,107 @@ class Relax_fit(Common_functions):
         self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
-    def grid_search_setup(self, index=None):
-        """The grid search setup function."""
+    def grid_search_setup(self, spin=None, param_vector=None, lower=None, upper=None, inc=None, scaling_matrix=None):
+        """The grid search setup function.
+
+        @keyword spin:              The spin data container.
+        @type spin:                 SpinContainer instance
+        @keyword param_vector:      The parameter vector.
+        @type param_vector:         numpy array
+        @keyword lower:             The lower bounds of the grid search which must be equal to the
+                                    number of parameters in the model.  This optional argument is
+                                    only used when doing a grid search.
+        @type lower:                array of numbers
+        @keyword upper:             The upper bounds of the grid search which must be equal to the
+                                    number of parameters in the model.  This optional argument is
+                                    only used when doing a grid search.
+        @type upper:                array of numbers
+        @keyword inc:               The increments for each dimension of the space for the grid
+                                    search.  The number of elements in the array must equal to the
+                                    number of parameters in the model.  This argument is only used
+                                    when doing a grid search.
+        @type inc:                  array of int
+        @keyword scaling_matrix:    The scaling matrix.
+        @type scaling_matrix:       numpy diagonal matrix
+        @return:                    The minimisation options.  The first dimension corresponds to
+                                    the model parameter.  The second dimension is a list of the
+                                    number of increments, the lower bound, and upper bound.
+        @rtype:                     list of lists [int, float, float]
+        """
 
         # The length of the parameter array.
-        n = len(self.param_vector)
+        n = len(param_vector)
 
         # Make sure that the length of the parameter array is > 0.
         if n == 0:
             raise RelaxError, "Cannot run a grid search on a model with zero parameters."
 
         # Lower bounds.
-        if self.lower != None:
-            if len(self.lower) != n:
+        if lower != None:
+            if len(lower) != n:
                 raise RelaxLenError, ('lower bounds', n)
 
         # Upper bounds.
-        if self.upper != None:
-            if len(self.upper) != n:
+        if upper != None:
+            if len(upper) != n:
                 raise RelaxLenError, ('upper bounds', n)
 
         # Increment.
-        if type(self.inc) == list:
-            if len(self.inc) != n:
+        if type(inc) == list:
+            if len(inc) != n:
                 raise RelaxLenError, ('increment', n)
-            inc = self.inc
-        elif type(self.inc) == int:
+            inc = inc
+        elif type(inc) == int:
             temp = []
             for j in xrange(n):
-                temp.append(self.inc)
+                temp.append(inc)
             inc = temp
+
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Minimisation options initialisation.
         min_options = []
         j = 0
 
-        # Alias the residue specific data structure.
-        data = relax_data_store.res[self.run][index]
-
         # Loop over the parameters.
-        for i in xrange(len(data.params)):
+        for i in xrange(len(spin.params)):
             # Relaxation rate (from 0 to 20 s^-1).
-            if data.params[i] == 'Rx':
+            if spin.params[i] == 'Rx':
                 min_options.append([inc[j], 0.0, 20.0])
 
             # Intensity
-            elif search('^I', data.params[i]):
+            elif search('^I', spin.params[i]):
                 # Find the position of the first time point.
-                pos = relax_data_store.relax_times[self.run].index(min(relax_data_store.relax_times[self.run]))
+                pos = cdp.relax_times.index(min(cdp.relax_times))
 
                 # Scaling.
-                min_options.append([inc[j], 0.0, average(data.intensities[pos])])
+                min_options.append([inc[j], 0.0, average(spin.intensities[pos])])
 
             # Increment j.
             j = j + 1
 
         # Set the lower and upper bounds if these are supplied.
-        if self.lower != None:
+        if lower != None:
             for j in xrange(n):
-                if self.lower[j] != None:
-                    min_options[j][1] = self.lower[j]
-        if self.upper != None:
+                if lower[j] != None:
+                    min_options[j][1] = lower[j]
+        if upper != None:
             for j in xrange(n):
-                if self.upper[j] != None:
-                    min_options[j][2] = self.upper[j]
+                if upper[j] != None:
+                    min_options[j][2] = upper[j]
 
         # Test if the grid is too large.
-        self.grid_size = 1
+        grid_size = 1
         for i in xrange(len(min_options)):
-            self.grid_size = self.grid_size * min_options[i][0]
-        if type(self.grid_size) == long:
-            raise RelaxError, "A grid search of size " + `self.grid_size` + " is too large."
+            grid_size = grid_size * min_options[i][0]
+        if type(grid_size) == long:
+            raise RelaxError, "A grid search of size " + `grid_size` + " is too large."
 
         # Diagonal scaling of minimisation options.
         for j in xrange(len(min_options)):
-            min_options[j][1] = min_options[j][1] / self.scaling_matrix[j, j]
-            min_options[j][2] = min_options[j][2] / self.scaling_matrix[j, j]
+            min_options[j][1] = min_options[j][1] / scaling_matrix[j, j]
+            min_options[j][2] = min_options[j][2] / scaling_matrix[j, j]
 
         return min_options
 
@@ -739,7 +764,7 @@ class Relax_fit(Common_functions):
 
             # Get the grid search minimisation options.
             if match('^[Gg]rid', min_algor):
-                min_options = self.grid_search_setup(spin=spin, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+                min_options = self.grid_search_setup(spin=spin, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
 
             # Linear constraints.
             if constraints:
