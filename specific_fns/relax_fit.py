@@ -98,36 +98,47 @@ class Relax_fit(Common_functions):
         return array(param_vector, float64)
 
 
-    def assemble_scaling_matrix(self, spin=spin, scaling=True):
-        """Function for creating the scaling matrix."""
+    def assemble_scaling_matrix(self, spin=None, scaling=True):
+        """Create and return the scaling matrix.
+
+        @keyword spin:          The spin data container.
+        @type spin:             SpinContainer instance
+        @keyword scaling:       A flag which if false will cause the identity matrix to be returned.
+        @type scaling:          bool
+        @return:                The diagonal and square scaling matrix.
+        @rtype:                 numpy diagonal matrix
+        """
 
         # Initialise.
-        self.scaling_matrix = identity(len(self.param_vector), float64)
+        scaling_matrix = identity(len(spin.params), float64)
         i = 0
 
         # No diagonal scaling.
         if not scaling:
-            return
+            return scaling_matrix
 
-        # Alias the residue specific data structure.
-        data = relax_data_store.res[self.run][index]
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
 
         # Loop over the parameters.
-        for i in xrange(len(data.params)):
+        for i in xrange(len(spin.params)):
             # Relaxation rate.
-            if data.params[i] == 'Rx':
+            if spin.params[i] == 'Rx':
                 pass
 
             # Intensity scaling.
-            elif search('^i', data.params[i]):
+            elif search('^i', spin.params[i]):
                 # Find the position of the first time point.
-                pos = relax_data_store.relax_times[self.run].index(min(relax_data_store.relax_times[self.run]))
+                pos = cdp.relax_times.index(min(cdp.relax_times))
 
                 # Scaling.
-                self.scaling_matrix[i, i] = 1.0 / average(data.intensities[pos])
+                scaling_matrix[i, i] = 1.0 / average(spin.intensities[pos])
 
             # Increment i.
             i = i + 1
+
+        # Return the scaling matrix.
+        return scaling_matrix
 
 
     def assign_function(self, spin=None, intensity=None):
