@@ -31,7 +31,7 @@ import sys
 from data import Data as relax_data_store
 from base_class import Common_functions
 from generic_fns import intensity
-from generic_fns.mol_res_spin import count_spins, spin_loop
+from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, spin_loop
 from minimise.generic import generic_minimise
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoPipeError, RelaxNoSequenceError
 
@@ -980,24 +980,25 @@ class Relax_fit(Common_functions):
         return None
 
 
-    def select_model(self, run=None, model='exp'):
-        """Function for selecting the model of the exponential curve."""
+    def select_model(self, model='exp'):
+        """Function for selecting the model of the exponential curve.
 
-        # Arguments.
-        self.run = run
+        @keyword model: The exponential curve type.  Can be one of 'exp' or 'inv'.
+        @type model:    str
+        """
 
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current pipe exists.
+        if not relax_data_store.current_pipe:
+            raise RelaxNoPipeError
 
-        # Test if the run type is set to 'relax_fit'.
-        function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
+        # Test if the pipe type is set to 'relax_fit'.
+        function_type = relax_data_store[relax_data_store.current_pipe].pipe_type
         if function_type != 'relax_fit':
-            raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
+            raise RelaxFuncSetupError, specific_setup.get_string(function_type)
 
         # Test if sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Two parameter exponential fit.
         if model == 'exp':
