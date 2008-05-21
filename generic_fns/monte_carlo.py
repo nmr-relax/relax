@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005, 2007 Edward d'Auvergne                             #
+# Copyright (C) 2004-2005, 2007-2008 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for performing Monte Carlo simulations for error analysis."""
+
 # Python module imports.
 from copy import deepcopy
 from math import sqrt
@@ -31,16 +34,8 @@ from data import Data as relax_data_store
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
 
 
-# The relax data storage object.
-
-
-
 class Monte_carlo:
-    def __init__(self, relax):
-        """Class containing functions for Monte Carlo simulations."""
-
-        self.relax = relax
-
+    """Class containing functions for Monte Carlo simulations."""
 
     def create_data(self, run=None, method=None):
         """Function for creating simulation data.
