@@ -21,9 +21,9 @@
 ###############################################################################
 
 # Python module imports.
-from LinearAlgebra import inverse
 from math import sqrt
 from numpy import array, average, dot, float64, identity, zeros
+from numpy.linalg import inv
 from re import match, search
 import sys
 
@@ -735,7 +735,7 @@ class Relax_fit(Common_functions):
             # Diagonal scaling.
             scaling_matrix = self.assemble_scaling_matrix(spin=spin, scaling=scaling)
             if len(scaling_matrix):
-                param_vector = dot(inverse(scaling_matrix), param_vector)
+                param_vector = dot(inv(scaling_matrix), param_vector)
 
             # Get the grid search minimisation options.
             if match('^[Gg]rid', min_algor):
