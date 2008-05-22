@@ -292,7 +292,8 @@ def sel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_
     # Loop over all spins.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # Skip spins not the file.
-        if not spin_in_list(file_data, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin.num, spin_name=spin.name)
+        if not spin_in_list(file_data, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin.num, spin_name=spin.name):
+            continue
 
         # Select just the specified residues.
         if change_all:
