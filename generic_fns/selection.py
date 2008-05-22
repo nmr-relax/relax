@@ -241,9 +241,12 @@ def sel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_
     @type sep:                      str or None
     @param boolean:                 The boolean operator used to select the spin systems with.  It
                                     can be one of 'OR', 'NOR', 'AND', 'NAND', 'XOR', or 'XNOR'.
+                                    This will be ignored if the change_all flag is set.
     @type boolean:                  str
     @keyword change_all:            A flag which if True will cause all spins not specified in the
-                                    file to be selected.
+                                    file to be selected.  Only the boolean operator 'OR' is
+                                    compatible with this flag set to True (all others will be
+                                    ignored).
     @type change_all:               bool
     @raises RelaxNoPipeError:       If the current data pipe does not exist.
     @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
@@ -280,30 +283,37 @@ def sel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_
     # Minimum number of columns.
     min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col)
 
-    # Loop over the spins.
-    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
-        # The spin system is in the file.
-        flag = spin_in_list(file_data, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin.num, spin_name=spin.name)
+    # First deselect all spins if the change_all flag is set.
+    if change_all:
+        # Loop over all spins.
+        for spin in spin_loop():
+            spin.select = False
 
+    # Loop over all spins.
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # Skip spins not the file.
-        if not change_all and not flag:
-            continue
+        if not spin_in_list(file_data, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin.num, spin_name=spin.name)
+
+        # Select just the specified residues.
+        if change_all:
+            spin.select = True
 
         # Boolean selections.
-        if boolean == 'OR':
-            spin.select = spin.select or flag
-        elif boolean == 'NOR':
-            spin.select = not (spin.select or flag)
-        elif boolean == 'AND':
-            spin.select = spin.select and flag
-        elif boolean == 'NAND':
-            spin.select = not (spin.select and flag)
-        elif boolean == 'XOR':
-            spin.select = not (spin.select and flag) and (spin.select or flag)
-        elif boolean == 'XNOR':
-            spin.select = (spin.select and flag) or not (spin.select or flag)
         else:
-            raise RelaxError, "Unknown boolean operator " + `boolean`
+            if boolean == 'OR':
+                spin.select = spin.select or True
+            elif boolean == 'NOR':
+                spin.select = not (spin.select or True)
+            elif boolean == 'AND':
+                spin.select = spin.select and True
+            elif boolean == 'NAND':
+                spin.select = not (spin.select and True)
+            elif boolean == 'XOR':
+                spin.select = not (spin.select and True) and (spin.select or True)
+            elif boolean == 'XNOR':
+                spin.select = (spin.select and True) or not (spin.select or True)
+            else:
+                raise RelaxError, "Unknown boolean operator " + `boolean`
 
 
 def sel_spin(spin_id=None, boolean='OR', change_all=False):
@@ -320,6 +330,8 @@ def sel_spin(spin_id=None, boolean='OR', change_all=False):
                                     compatible with this flag set to True (all others will be
                                     ignored).
     @type change_all:               bool
+    @raises RelaxNoPipeError:       If the current data pipe does not exist.
+    @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
     """
 
     # Test if the current data pipe exists.
