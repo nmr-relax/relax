@@ -139,13 +139,19 @@ def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_nam
         spin.select = False
 
 
-def desel_spin(spin_id=None, change_all=None):
+def desel_spin(spin_id=None, boolean='AND', change_all=False):
     """Deselect specific spins.
 
     @keyword spin_id:               The spin identification string.
     @type spin_id:                  str or None
+    @param boolean:                 The boolean operator used to select the spin systems with.  It
+                                    can be one of 'OR', 'NOR', 'AND', 'NAND', 'XOR', or 'XNOR'.
+                                    This will be ignored if the change_all flag is set.
+    @type boolean:                  str
     @keyword change_all:            A flag which if True will cause all spins not specified in the
-                                    file to be selected.
+                                    file to be selected.  Only the boolean operator 'AND' is
+                                    compatible with this flag set to True (all others will be
+                                    ignored).
     @type change_all:               bool
     @raises RelaxNoPipeError:       If the current data pipe does not exist.
     @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
@@ -159,14 +165,33 @@ def desel_spin(spin_id=None, change_all=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # First select all spins if desired.
+    # First select all spins if the change_all flag is set.
     if change_all:
         for spin in spin_loop():
             spin.select = True
 
-    # Then deselect the desired spins.
+    # Loop over the specified spins.
     for spin in spin_loop(spin_id):
-        spin.select = False
+        # Deselect just the specified residues.
+        if change_all:
+            spin.select = False
+
+        # Boolean selections.
+        else:
+            if boolean == 'OR':
+                spin.select = spin.select or False
+            elif boolean == 'NOR':
+                spin.select = not (spin.select or False)
+            elif boolean == 'AND':
+                spin.select = spin.select and False
+            elif boolean == 'NAND':
+                spin.select = not (spin.select and False)
+            elif boolean == 'XOR':
+                spin.select = not (spin.select and False) and (spin.select or False)
+            elif boolean == 'XNOR':
+                spin.select = (spin.select and False) or not (spin.select or False)
+            else:
+                raise RelaxError, "Unknown boolean operator " + `boolean`
 
 
 def reverse(spin_id=None):
