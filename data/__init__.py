@@ -82,7 +82,7 @@ class Relax_data_store(dict):
         text = text + "\n"
         text = text + "Objects:\n"
         for name in dir(self):
-            if match("^_", name) or name in dict.__dict__ or name == 'add':
+            if match("^_", name) or name in dict.__dict__ or name == 'add' or name == 'instance':
                 continue
             text = text + "  %s: %s\n" % (name, `getattr(self, name)`)
 
