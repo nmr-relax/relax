@@ -26,6 +26,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Data as relax_data_store
+from generic_fns.mol_res_spin import return_spin_from_index, spin_index_loop
 
 
 class Relax_fit(TestCase):
@@ -55,33 +56,33 @@ class Relax_fit(TestCase):
         """The Sparky peak height loading test."""
 
         # Load the original state.
-        self.relax.interpreter._State.load(state='rx.save', dir_name=sys.path[-1] + '/test_suite/system_tests/data/curve_fitting')
+        self.relax.interpreter._State.load(state='basic_heights_T2_ncyc1', dir_name=sys.path[-1] + '/test_suite/shared_data/saved_states')
+
+        # Create a new data pipe for the new data.
+        self.relax.interpreter._Pipe.create('new', 'relax_fit')
 
         # Load the Lupin Ap4Aase sequence.
         self.relax.interpreter._Sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/system_tests/data")
 
         # Read the peak heights.
-        self.relax.interpreter._Relax_fit.read(file="T2_ncyc1_ave.list", dir=sys.path[-1] + "/test_suite/system_tests/data/curve_fitting", relax_time=0.0176)
+        self.relax.interpreter._Relax_fit.read(file="T2_ncyc1_ave.list", dir=sys.path[-1] + "/test_suite/shared_data/curve_fitting", relax_time=0.0176)
 
 
         # Test the integrity of the data.
         #################################
 
-        # Loop over the residues of the original data.
-        for i in xrange(len(relax_data_store['rx'].mol[0].res)):
-            # Aliases
-            orig_data = relax_data_store['rx'].mol[0].res[i]
-            new_data = relax_data_store[relax_data_store.current_pipe].mol[0].res[i]
+        # Loop over the spins of the original data.
+        for index in spin_index_loop():
+            # Get the spins from both pipes.
+            orig_spin, orig_id = return_spin_from_index(index, pipe='rx', return_spin_id=True)
+            new_spin, new_id = return_spin_from_index(index, return_spin_id=True)
 
-            # Residue numbers.
-            self.assertEqual(orig_data.num, new_data.num)
+            # Check spin ids.
+            self.assertEqual(orig_id, new_id)
 
-            # Residue names.
-            self.assertEqual(orig_data.name, new_data.name)
-
-            # Skip deselected residues.
-            if not orig_data.spin[0].select:
+            # Skip deselected spins.
+            if not orig_spin.select:
                 continue
 
-            # The intensity.
-            self.assertEqual(orig_data.spin[0].intensities[0][0], new_data.spin[0].intensities[0][0])
+            # Check intensities.
+            self.assertEqual(orig_spin.intensities[0][0], new_spin.intensities[0][0])
