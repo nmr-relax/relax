@@ -27,7 +27,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns.selection import Selection
+from generic_fns.mol_res_spin import Selection
 from generic_fns.structure.scientific import Scientific_data
 
 
@@ -63,7 +63,7 @@ class Test_scientific(TestCase):
         """Test the private Scientific_data.__molecule_loop() method."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Loop over the molecules.
         mol_count = 0
@@ -84,7 +84,7 @@ class Test_scientific(TestCase):
         """Test the private Scientific_data.__molecule_loop() method with a selection object."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Create the selection object (which should match the molecule name of None).
         sel_obj = Selection('@1')
@@ -108,7 +108,7 @@ class Test_scientific(TestCase):
         """Test the Scientific_data.__molecule_loop() method with a non-matching selection object."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Create the non-matching selection object.
         sel_obj = Selection('#XXX')
@@ -126,7 +126,7 @@ class Test_scientific(TestCase):
         """Test the private Scientific_data.__residue_loop() method."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Loop over the residues.
         res_count = 0
@@ -147,7 +147,7 @@ class Test_scientific(TestCase):
         """Test the private Scientific_data.__residue_loop() method with a selection object."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Create the selection object (which should match the residue name of None).
         sel_obj = Selection('#Ap4Aase')
@@ -171,7 +171,7 @@ class Test_scientific(TestCase):
         """Test the Scientific_data.__residue_loop() method with a non-matching selection object."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Create the non-matching selection object.
         sel_obj = Selection(':XXX')
@@ -189,7 +189,7 @@ class Test_scientific(TestCase):
         """Test the Scientific_data.atom_loop() method."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Loop over the atoms.
         atom_count = 0
@@ -204,7 +204,7 @@ class Test_scientific(TestCase):
         """Test the Scientific_data.atom_loop() method with the '#XXX' mol selection."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Loop over the atoms.
         atom_count = 0
@@ -219,7 +219,7 @@ class Test_scientific(TestCase):
         """Test the Scientific_data.atom_loop() method with the ':8' res selection."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Loop over the atoms.
         atom_count = 0
@@ -239,7 +239,7 @@ class Test_scientific(TestCase):
         """Test the Scientific_data.atom_loop() method with the ':PRO' res selection."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Loop over the atoms.
         atom_count = 0
@@ -258,7 +258,7 @@ class Test_scientific(TestCase):
         """Test the Scientific_data.atom_loop() method with the '@CA' spin selection."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Loop over the atoms.
         atom_count = 0
@@ -277,7 +277,7 @@ class Test_scientific(TestCase):
         """Test the Scientific_data.atom_loop() method with the '@163' spin selection."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Loop over the atoms.
         atom_count = 0
@@ -299,11 +299,11 @@ class Test_scientific(TestCase):
         self.assertEqual(atom_count, 1)
 
 
-    def test_load_structures(self):
-        """Load a PDB file using Scientific_data.load_structures()."""
+    def test_load_pdb(self):
+        """Load a PDB file using Scientific_data.load_pdb()."""
 
         # Load the PDB file.
-        self.data.load_structures(self.test_pdb_path)
+        self.data.load_pdb(self.test_pdb_path)
 
         # Test the structural data.
         self.assertEqual(self.data.file_name, self.test_pdb_path)

@@ -25,7 +25,6 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns import residue
 from prompt.molecule import Molecule
 from relax_errors import RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.molecule_testing_base import Molecule_base_class
@@ -40,7 +39,6 @@ class Test_molecule(Molecule_base_class, TestCase):
 
     # Instantiate the user function class.
     molecule_fns = Molecule(fake_relax.fake_instance())
-    residue_fns = residue
 
 
     def test_copy_argfail_pipe_from(self):
@@ -137,8 +135,8 @@ class Test_molecule(Molecule_base_class, TestCase):
             self.assertRaises(RelaxNoneStrError, self.molecule_fns.display, mol_id=data[1])
 
 
-    def test_rename_argfail_mol_id(self):
-        """Test the proper failure of the molecule.rename() user function for the mol_id argument."""
+    def test_name_argfail_mol_id(self):
+        """Test the proper failure of the molecule.name() user function for the mol_id argument."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -147,11 +145,11 @@ class Test_molecule(Molecule_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.molecule_fns.rename, mol_id=data[1])
+            self.assertRaises(RelaxStrError, self.molecule_fns.name, mol_id=data[1])
 
 
-    def test_rename_argfail_new_name(self):
-        """Test the proper failure of the molecule.rename() user function for the new_name argument."""
+    def test_name_argfail_name(self):
+        """Test the proper failure of the molecule.name() user function for the name argument."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -160,4 +158,4 @@ class Test_molecule(Molecule_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.molecule_fns.rename, new_name=data[1])
+            self.assertRaises(RelaxStrError, self.molecule_fns.name, name=data[1])

@@ -21,8 +21,8 @@
 /* This include must come first */
 #include <Python.h>
 
-/* The Numeric array object header file, must come second */
-#include <Numeric/arrayobject.h>
+/* The numpy array object header file, must come second */
+#include <numpy/arrayobject.h>
 
 /* The header for all functions which will be called */
 #include "relax_fit.h"
@@ -56,13 +56,13 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
     Py_XDECREF(numpy_relax_times);
     Py_XDECREF(numpy_scaling_matrix);
              
-    /* Make the Numeric arrays contiguous */
+    /* Make the numpy arrays contiguous */
     numpy_values = (PyArrayObject *) PyArray_ContiguousFromObject(values_arg, PyArray_DOUBLE, 1, 1);
     numpy_sd = (PyArrayObject *) PyArray_ContiguousFromObject(sd_arg, PyArray_DOUBLE, 1, 1);
     numpy_relax_times = (PyArrayObject *) PyArray_ContiguousFromObject(relax_times_arg, PyArray_DOUBLE, 1, 1);
     numpy_scaling_matrix = (PyArrayObject *) PyArray_ContiguousFromObject(scaling_matrix_arg, PyArray_DOUBLE, 2, 2);
 
-    /* Pointers to the Numeric arrays */
+    /* Pointers to the numpy arrays */
     values = (double *) numpy_values->data;
     sd = (double *) numpy_sd->data;
     relax_times = (double *) numpy_relax_times->data;
@@ -92,10 +92,10 @@ func(PyObject *self, PyObject *args) {
     if (!PyArg_ParseTuple(args, "O", &arg1))
         return NULL;
 
-    /* Convert the Numeric array to be contiguous */
+    /* Convert the numpy array to be contiguous */
     numpy_params = (PyArrayObject *) PyArray_ContiguousFromObject(arg1, PyArray_DOUBLE, 1, 1);
 
-    /* Pointers to the Numeric arrays */
+    /* Pointers to the numpy arrays */
     params = (double *) numpy_params->data;
 
     /* Back calculated the peak intensities */
@@ -126,22 +126,22 @@ dfunc(PyObject *self, PyObject *args) {
     if (!PyArg_ParseTuple(args, "O", &arg1))
         return NULL;
 
-    /* Convert the Numeric array to be contiguous */
+    /* Convert the numpy array to be contiguous */
     numpy_params = (PyArrayObject *) PyArray_ContiguousFromObject(arg1, PyArray_DOUBLE, 1, 1);
 
-    /* Pointers to the Numeric arrays */
+    /* Pointers to the numpy arrays */
     params = (double *) numpy_params->data;
 
     /* Back calculated the peak intensities */
     exponential(params, relax_times, back_calc, num_times);
 
 
-    /* Test code (convert aaa to a Numeric array */
+    /* Test code (convert aaa to a numpy array */
     /* aaa_numpy = (PyArrayObject *) PyArray_FromDimsAndData(1, num_params, PyArray_DOUBLE, aaa_pointer); */
     /*aaa_numpy = (PyArrayObject *) PyArray_FromDims(1, &num_params, PyArray_DOUBLE);
     aaa_pointer = (double *) aaa_numpy->data;*/
 
-    /* Fill the Numeric array */
+    /* Fill the numpy array */
     /*for (i = 0; i < 2; i++)
         aaa_pointer[i] = aaa[i];*/
 
@@ -159,7 +159,7 @@ d2func(PyObject *self, PyObject *args) {
 
 static PyObject *
 back_calc_I(PyObject *self, PyObject *args) {
-    /* Function for returning as a Numeric array the back calculated peak intensities */
+    /* Function for returning as a numpy array the back calculated peak intensities */
 
     /* Declarations */
     extern double back_calc[];
@@ -173,7 +173,7 @@ back_calc_I(PyObject *self, PyObject *args) {
     for (i = 0; i < num_times; i++)
         PyList_SetItem(back_calc_py, i, Py_BuildValue("f", back_calc[i]));
 
-    /* Return the Numeric array */
+    /* Return the numpy array */
     return back_calc_py;
 }
 
@@ -195,6 +195,6 @@ initrelax_fit(void)
 {
     (void) Py_InitModule("relax_fit", relax_fit_methods);
 
-    /* Import the Numeric array module.  This is essential. */
+    /* Import the numpy array module.  This is essential. */
     import_array();
 }

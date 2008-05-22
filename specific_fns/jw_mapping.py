@@ -27,7 +27,7 @@ from string import replace
 # relax module imports.
 from base_class import Common_functions
 from data import Data as relax_data_store
-from generic_fns.selection import exists_mol_res_spin_data, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from maths_fns.jw_mapping import Mapping
 from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError, RelaxNucleusError, RelaxParamSetError, RelaxProtonTypeError, RelaxSpinTypeError
@@ -54,7 +54,7 @@ class Jw_mapping(Common_functions):
 
         # Test if the CSA and bond length values have been set.
         for spin in spin_loop(spin_id):
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not spin.select:
                 continue
 
@@ -81,7 +81,7 @@ class Jw_mapping(Common_functions):
         # Reduced spectral density mapping.
         for spin in spin_loop(spin_id):
 
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not spin.select:
                 continue
 
@@ -247,21 +247,20 @@ class Jw_mapping(Common_functions):
 
 
     def overfit_deselect(self):
-        """Function for deselecting spins without sufficient data to support calculation"""
+        """Deselect spins which have insufficient data to support calculation."""
 
-        # Test the sequence data exists:
+        # Test the sequence data exists.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # Loop over spin data:
+        # Loop over spin data.
         for spin in spin_loop():
-
-            # Check for sufficient data
+            # Check if data exists.
             if not hasattr(spin, 'relax_data'):
                 spin.select = 0
                 continue
 
-            # Require 3 or more data points
+            # Require 3 or more data points.
             if len(spin.relax_data) < 3:
                 spin.select = 0
                 continue
@@ -428,7 +427,7 @@ class Jw_mapping(Common_functions):
     def sim_return_param(self, spin, index):
         """Function for returning the array of simulation parameter values."""
 
-        # Skip unselected residues.
+        # Skip deselected residues.
         if not spin.select:
                 return
 

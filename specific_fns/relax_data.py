@@ -27,7 +27,7 @@ import sys
 # relax module imports.
 from data import Data as relax_data_store
 from generic_fns import pipes
-from generic_fns.selection import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxNoResError, RelaxNoRiError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
 from relax_io import extract_data, strip
 
@@ -202,7 +202,7 @@ class Rx_data:
             # Remap the data structure 'relax_data_store.res[self.run][i]'.
             data = relax_data_store.res[self.run][i]
 
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not data.select:
                 continue
 

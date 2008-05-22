@@ -25,7 +25,7 @@ from copy import deepcopy
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns.selection import count_spins, exists_mol_res_spin_data, spin_loop
+from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from relax_errors import RelaxError
 
 
@@ -198,14 +198,22 @@ class Common_functions:
         return value, error
 
 
-    def set_error(self, run, instance, index, error):
-        """Function for setting parameter errors."""
+    def set_error(self, instance, index, error):
+        """Set the parameter errors.
 
-        # Arguments.
-        self.run = run
+        @param instance:    The spin index.
+        @type instance:     int
+        @param index:       The index of the parameter to set the errors for.
+        @type index:        int
+        @param error:       The error value.
+        @type error:        float
+        """
 
-        # Skip unselected residues.
-        if not relax_data_store.res[self.run][instance].select:
+        # Get the SpinContainer.
+        spin = return_spin_from_index(instance)
+
+        # Skip deselected spins.
+        if not spin.select:
             return
 
         # Parameter increment counter.
@@ -215,7 +223,7 @@ class Common_functions:
         for param in self.data_names(set='params'):
             # Return the parameter array.
             if index == inc:
-                setattr(relax_data_store.res[self.run][instance], param + "_err", error)
+                setattr(spin, param + "_err", error)
 
             # Increment.
             inc = inc + 1
@@ -247,11 +255,8 @@ class Common_functions:
         return
 
 
-    def sim_init_values(self, run):
-        """Function for initialising Monte Carlo parameter values."""
-
-        # Arguments.
-        self.run = run
+    def sim_init_values(self):
+        """Initialise the Monte Carlo parameter values."""
 
         # Get the parameter object names.
         param_names = self.data_names(set='params')
@@ -259,14 +264,17 @@ class Common_functions:
         # Get the minimisation statistic object names.
         min_names = self.data_names(set='min')
 
+        # Alias the current data pipe.
+        cdp = relax_data_store[relax_data_store.current_pipe]
+
 
         # Test if Monte Carlo parameter values have already been set.
         #############################################################
 
-        # Loop over the residues.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Skip unselected residues.
-            if not relax_data_store.res[self.run][i].select:
+        # Loop over the spins.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
                 continue
 
             # Loop over all the parameter names.
@@ -275,7 +283,7 @@ class Common_functions:
                 sim_object_name = object_name + '_sim'
 
                 # Test if the simulation object already exists.
-                if hasattr(relax_data_store.res[self.run][i], sim_object_name):
+                if hasattr(spin, sim_object_name):
                     raise RelaxError, "Monte Carlo parameter values have already been set."
 
 
@@ -283,9 +291,9 @@ class Common_functions:
         #######################################
 
         # Loop over the residues.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Skip unselected residues.
-            if not relax_data_store.res[self.run][i].select:
+        for spin in spin_loop():
+            # Skip deselected residues.
+            if not spin.select:
                 continue
 
             # Loop over all the data names.
@@ -294,15 +302,15 @@ class Common_functions:
                 sim_object_name = object_name + '_sim'
 
                 # Create the simulation object.
-                setattr(relax_data_store.res[self.run][i], sim_object_name, [])
+                setattr(spin, sim_object_name, [])
 
                 # Get the simulation object.
-                sim_object = getattr(relax_data_store.res[self.run][i], sim_object_name)
+                sim_object = getattr(spin, sim_object_name)
 
                 # Loop over the simulations.
-                for j in xrange(relax_data_store.sim_number[self.run]):
+                for j in xrange(cdp.sim_number):
                     # Copy and append the data.
-                    sim_object.append(deepcopy(getattr(relax_data_store.res[self.run][i], object_name)))
+                    sim_object.append(deepcopy(getattr(spin, object_name)))
 
             # Loop over all the minimisation object names.
             for object_name in min_names:
@@ -310,25 +318,31 @@ class Common_functions:
                 sim_object_name = object_name + '_sim'
 
                 # Create the simulation object.
-                setattr(relax_data_store.res[self.run][i], sim_object_name, [])
+                setattr(spin, sim_object_name, [])
 
                 # Get the simulation object.
-                sim_object = getattr(relax_data_store.res[self.run][i], sim_object_name)
+                sim_object = getattr(spin, sim_object_name)
 
                 # Loop over the simulations.
-                for j in xrange(relax_data_store.sim_number[self.run]):
+                for j in xrange(cdp.sim_number):
                     # Copy and append the data.
-                    sim_object.append(deepcopy(getattr(relax_data_store.res[self.run][i], object_name)))
+                    sim_object.append(deepcopy(getattr(spin, object_name)))
 
 
-    def sim_return_param(self, run, instance, index):
-        """Function for returning the array of simulation parameter values."""
+    def sim_return_param(self, instance, index):
+        """Return the array of simulation parameter values.
+ 
+        @param instance:    The optimisation instance index.
+        @type instance:     int
+        @param index:       The index of the parameter to return the array of values for.
+        @type index:        int
+        """
 
-        # Arguments.
-        self.run = run
+        # Get the SpinContainer.
+        spin = return_spin_from_index(instance)
 
-        # Skip unselected residues.
-        if not relax_data_store.res[self.run][instance].select:
+        # Skip deselected spins.
+        if not spin.select:
             return
 
         # Parameter increment counter.
@@ -338,20 +352,23 @@ class Common_functions:
         for param in self.data_names(set='params'):
             # Return the parameter array.
             if index == inc:
-                return getattr(relax_data_store.res[self.run][instance], param + "_sim")
+                return getattr(spin, param + "_sim")
 
             # Increment.
             inc = inc + 1
 
 
-    def sim_return_selected(self, spin):
-        """Function for returning the array of selected simulation flags for the given spin.
+    def sim_return_selected(self, instance):
+        """Return the array of selected simulation flags for the spin.
 
-        @param spin:    The SpinContainer object.
-        @type spin:     SpinContainer instance
-        @return:        The array of selected simulation flags.
-        @rtype:         list of int
+        @param instance:    The spin index.
+        @type instance:     int
+        @return:            The array of selected simulation flags.
+        @rtype:             list of int
         """
+
+        # Get the SpinContainer.
+        spin = return_spin_from_index(instance)
 
         # Return the array.
         return spin.select_sim

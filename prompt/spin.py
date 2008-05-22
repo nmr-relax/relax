@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,8 +25,7 @@ import sys
 
 # relax module imports.
 import help
-from generic_fns import spin
-from generic_fns.selection import id_string_doc
+from generic_fns.mol_res_spin import copy_spin, create_spin, delete_spin, display_spin, id_string_doc, name_spin, number_spin
 from relax_errors import RelaxIntError, RelaxNoneStrError, RelaxStrError
 
 
@@ -112,7 +111,7 @@ class Spin:
             raise RelaxNoneStrError, ('spin to', spin_to)
 
         # Execute the functional code.
-        spin.copy(pipe_from=pipe_from, spin_from=spin_from, pipe_to=pipe_to, spin_to=spin_to)
+        copy_spin(pipe_from=pipe_from, spin_from=spin_from, pipe_to=pipe_to, spin_to=spin_to)
 
 
     def create(self, spin_num=None, spin_name=None, res_id=None):
@@ -166,7 +165,7 @@ class Spin:
             raise RelaxNoneStrError, ('residue identification string', res_id)
 
         # Execute the functional code.
-        spin.create(spin_num=spin_num, spin_name=spin_name, res_id=res_id)
+        create_spin(spin_num=spin_num, spin_name=spin_name, res_id=res_id)
 
 
     def delete(self, spin_id=None):
@@ -196,7 +195,7 @@ class Spin:
             raise RelaxStrError, ('spin identifier', spin_id)
 
         # Execute the functional code.
-        spin.delete(spin_id=spin_id)
+        delete_spin(spin_id=spin_id)
 
 
     def display(self, spin_id=None):
@@ -219,24 +218,24 @@ class Spin:
             raise RelaxNoneStrError, ('spin identification string', spin_id)
 
         # Execute the functional code.
-        spin.display(spin_id=spin_id)
+        display_spin(spin_id=spin_id)
 
 
-    def rename(self, spin_id=None, new_name=None):
-        """Function for renaming an existent spin(s).
+    def name(self, spin_id=None, name=None):
+        """Function for naming spins.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         spin_id:  The spin identification string corresponding to one or more spins.
 
-        new_name:  The new name.
+        name:  The new name.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function simply allows spins to be renamed.
+        This function simply allows spins to be named (or renamed).
 
 
         Examples
@@ -245,46 +244,46 @@ class Spin:
         The following sequence of commands will rename the sequence {1 C1, 2 C2, 3 C3} to {1 C11,
         2 C12, 3 C13}:
 
-        relax> spin.rename('@1', 'C11')
-        relax> spin.rename('@2', 'C12')
-        relax> spin.rename('@3', 'C13')
+        relax> spin.name('@1', 'C11')
+        relax> spin.name('@2', 'C12')
+        relax> spin.name('@3', 'C13')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "spin.rename("
+            text = sys.ps3 + "spin.name("
             text = text + "spin_id=" + `spin_id`
-            text = text + ", new_name=" + `new_name` + ")"
+            text = text + ", name=" + `name` + ")"
             print text
 
         # Spin identification string.
-        if type(spin_id) != str:
-            raise RelaxStrError, ('spin identification string', spin_id)
+        if spin_id != None and type(spin_id) != str:
+            raise RelaxNoneStrError, ('spin identification string', spin_id)
 
         # New spin name.
-        if type(new_name) != str:
-            raise RelaxStrError, ('new spin name', new_name)
+        if type(name) != str:
+            raise RelaxStrError, ('new spin name', name)
 
         # Execute the functional code.
-        spin.rename(spin_id=spin_id, new_name=new_name)
+        name_spin(spin_id=spin_id, name=name)
 
 
-    def renumber(self, spin_id=None, new_number=None):
-        """Function for renumbering an existent spin.
+    def number(self, spin_id=None, number=None):
+        """Function for numbering spins.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         spin_id:  The spin identification string corresponding to a single spin.
 
-        new_number:  The new spin number.
+        number:  The new spin number.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function simply allows spins to be renumbered.  The new number cannot correspond to
-        an existing spin number (for that residue or that molecule).
+        This function simply allows spins to be numbered.  The new number cannot correspond to
+        an existing spin number.
 
 
         Examples
@@ -293,29 +292,29 @@ class Spin:
         The following sequence of commands will renumber the sequence {1 C1, 2 C2, 3 C3} to
         {-1 C1, -2 C2, -3 C3}:
 
-        relax> spin.renumber('@1', -1)
-        relax> spin.renumber('@2', -2)
-        relax> spin.renumber('@3', -3)
+        relax> spin.number('@1', -1)
+        relax> spin.number('@2', -2)
+        relax> spin.number('@3', -3)
 
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "spin.renumber("
+            text = sys.ps3 + "spin.number("
             text = text + "spin_id=" + `spin_id`
-            text = text + ", new_number=" + `new_number` + ")"
+            text = text + ", number=" + `number` + ")"
             print text
 
         # Spin identification string.
-        if type(spin_id) != str:
-            raise RelaxStrError, ('spin identification string', spin_id)
+        if spin_id != None and type(spin_id) != str:
+            raise RelaxNoneStrError, ('spin identification string', spin_id)
 
         # New spin number.
-        if type(new_number) != int:
-            raise RelaxIntError, ('new spin number', new_number)
+        if type(number) != int:
+            raise RelaxIntError, ('new spin number', number)
 
         # Execute the functional code.
-        spin.renumber(spin_id=spin_id, new_number=new_number)
+        number_spin(spin_id=spin_id, number=number)
 
 
 
@@ -327,5 +326,5 @@ class Spin:
     create.__doc__ = create.__doc__ + "\n\n" + id_string_doc + "\n"
     delete.__doc__ = delete.__doc__ + "\n\n" + id_string_doc + "\n"
     display.__doc__ = display.__doc__ + "\n\n" + id_string_doc + "\n"
-    rename.__doc__ = rename.__doc__ + "\n\n" + id_string_doc + "\n"
-    renumber.__doc__ = renumber.__doc__ + "\n\n" + id_string_doc + "\n"
+    name.__doc__ = name.__doc__ + "\n\n" + id_string_doc + "\n"
+    number.__doc__ = number.__doc__ + "\n\n" + id_string_doc + "\n"

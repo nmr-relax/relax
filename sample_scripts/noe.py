@@ -43,19 +43,19 @@ noe.error(error=3000, spectrum_type='sat')
 noe.error(error=122000, spectrum_type='ref', res_num=114)
 noe.error(error=8500, spectrum_type='sat', res_num=114)
 
-# Unselect unresolved residues.
-unselect.read(file='unresolved')
+# Deselect unresolved residues.
+deselect.read(file='unresolved')
 
 # Calculate the NOEs.
 calc()
 
 # Save the NOEs.
-value.write(param='noe', file='noe.out', force=1)
+value.write(param='noe', file='noe.out', force=True)
 
 # Create grace files.
-grace.write(y_data_type='ref', file='ref.agr', force=1)
-grace.write(y_data_type='sat', file='sat.agr', force=1)
-grace.write(y_data_type='noe', file='noe.agr', force=1)
+grace.write(y_data_type='ref', file='ref.agr', force=True)
+grace.write(y_data_type='sat', file='sat.agr', force=True)
+grace.write(y_data_type='noe', file='noe.agr', force=True)
 
 # View the grace files.
 grace.view(file='ref.agr')
@@ -63,7 +63,7 @@ grace.view(file='sat.agr')
 grace.view(file='noe.agr')
 
 # Write the results.
-results.write(file='results', dir=None, force=1)
+results.write(file='results', dir=None, force=True)
 
 # Save the program state.
-state.save('save', force=1)
+state.save('save', force=True)

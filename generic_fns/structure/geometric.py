@@ -28,8 +28,8 @@ from warnings import warn
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns.selection import exists_mol_res_spin_data
-from internal_pdb import Internal_PDB
+from generic_fns.mol_res_spin import exists_mol_res_spin_data
+from internal import Internal
 from maths_fns.rotation_matrix import R_2vect
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
 from relax_io import open_write_file
@@ -177,7 +177,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         pipes = [relax_data_store.current_pipe]
 
     # Create the structural object.
-    structure = Internal_PDB()
+    structure = Internal()
 
     # Loop over the pipes.
     for pipe_index in xrange(len(pipes)):
@@ -353,7 +353,7 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     #############
 
     # Create the structural object.
-    structure = Internal_PDB()
+    structure = Internal()
 
     # Initialise the residue number.
     res_num = 1
@@ -377,7 +377,7 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
         # Alias the spin system data.
         data = relax_data_store.res[run][i]
 
-        # Skip unselected spin systems.
+        # Skip deselected spin systems.
         if not data.select:
             continue
 
@@ -416,7 +416,7 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
             # Alias the spin system data.
             data = relax_data_store.res[run][i]
 
-            # Skip unselected spin systems.
+            # Skip deselected spin systems.
             if not data.select:
                 continue
 

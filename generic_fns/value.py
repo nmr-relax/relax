@@ -29,7 +29,7 @@ import sys
 from data import Data as relax_data_store
 from generic_fns import diffusion_tensor
 from generic_fns.minimise import reset_min_stats
-from generic_fns.selection import exists_mol_res_spin_data, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxParamSetError, RelaxRegExpError, RelaxUnknownParamError, RelaxValueError
 from specific_fns.setup import get_specific_fn
 
@@ -151,7 +151,7 @@ def set(val=None, param=None, spin_id=None, force=False):
             if not force:
                 # Loop over the spins.
                 for spin in spin_loop(spin_id):
-                    # Skip unselected spins.
+                    # Skip deselected spins.
                     if not spin.select:
                         continue
 
@@ -166,7 +166,7 @@ def set(val=None, param=None, spin_id=None, force=False):
 
             # Loop over the spins.
             for spin in spin_loop(spin_id):
-                # Skip unselected residues.
+                # Skip deselected residues.
                 if not spin.select:
                     continue
 
@@ -190,7 +190,7 @@ def set(val=None, param=None, spin_id=None, force=False):
         if exists_mol_res_spin_data():
             # Loop over the spins.
             for spin in spin_loop(spin_id):
-                # Skip unselected spins.
+                # Skip deselected spins.
                 if not spin.select:
                     continue
 
@@ -446,7 +446,7 @@ class Value:
 
         # Test data corresponding to param already exists.
         for i in xrange(len(relax_data_store.res[self.run])):
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not relax_data_store.res[self.run][i].select:
                 continue
 

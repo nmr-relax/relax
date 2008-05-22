@@ -83,6 +83,15 @@ class RelaxWarning(BaseWarning):
         self.text = text
 
 
+# Sequence errors.
+##################
+
+# Cannot find the spin in the sequence.
+class RelaxNoSpinWarning(BaseWarning):
+    def __init__(self, spin_id):
+        self.text = "Cannot find the spin %s within the sequence." % spin_id
+
+
 # PDB warnings.
 ###############
 

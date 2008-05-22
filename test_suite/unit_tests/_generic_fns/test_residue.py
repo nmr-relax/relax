@@ -24,12 +24,12 @@
 from unittest import TestCase
 
 # relax module imports.
-from generic_fns import residue
+import residue
 from test_suite.unit_tests.residue_testing_base import Residue_base_class
 
 
 class Test_residue(Residue_base_class, TestCase):
     """Unit tests for the functions of the 'generic_fns.residue' module."""
 
-    # Place the generic_fns.residue module into the class namespace.
+    # Place the residue dummy module into the class namespace.
     residue_fns = residue

@@ -38,7 +38,7 @@ except ImportError:
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns.selection import exists_mol_res_spin_data, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxDirError, RelaxFileError, RelaxFileOverwriteError, RelaxNoModelError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNucleusError, RelaxProgFailError
 from relax_io import mkdir_nofail, open_write_file, test_binary
 
@@ -528,7 +528,7 @@ def extract(dir, spin_id=None):
     # Loop over the sequence.
     pos = 0
     for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
-        # Skip unselected residues.
+        # Skip deselected residues.
         if not spin.select:
             continue
 

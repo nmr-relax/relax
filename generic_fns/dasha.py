@@ -214,7 +214,7 @@ class Dasha:
                 # Reassign the data.
                 data = relax_data_store.res[self.run][j]
 
-                # Skip unselected residues.
+                # Skip deselected residues.
                 if not data.select:
                     continue
 
@@ -231,7 +231,7 @@ class Dasha:
                 # Reassign the data.
                 data = relax_data_store.res[self.run][i]
 
-                # Skip unselected residues.
+                # Skip deselected residues.
                 if not data.select:
                     continue
 
@@ -422,7 +422,7 @@ class Dasha:
 
             # Clean up of non-existant parameters (set the parameter to None!).
             for i in xrange(len(relax_data_store.res[self.run])):
-                # Skip unselected residues.
+                # Skip deselected residues.
                 if not relax_data_store.res[self.run][i].select:
                     continue
 

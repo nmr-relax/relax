@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from generic_fns import spin
+import spin
 from test_suite.unit_tests.spin_testing_base import Spin_base_class
 
 
@@ -32,6 +32,6 @@ from test_suite.unit_tests.spin_testing_base import Spin_base_class
 class Test_spin(Spin_base_class, TestCase):
     """Unit tests for the functions of the 'generic_fns.spin' module."""
 
-    # Place the generic_fns.spin module into the class namespace.
+    # Place the spin dummy module into the class namespace.
     spin_fns = spin
 

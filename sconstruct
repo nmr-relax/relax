@@ -26,8 +26,9 @@
 
 
 # Import statements.
-import platform
+from numpy import get_include
 from os import getcwd, path, remove, sep, walk
+import platform
 from re import search
 import sys
 
@@ -470,11 +471,14 @@ class Main:
         py_include_minpath = sys.prefix + path.sep + 'include'
         py_include_fullpath = py_include_minpath + path.sep + 'python' + `sys.version_info[0]` + '.' + `sys.version_info[1]`
 
+        # Get the numpy include path (for numpy/arrayobject.h).
+        numpy_path = get_include()
+
         # C flags.
         if SYSTEM == 'Windows':
-            cflags = '/nologo /I\"' + py_include_minpath + '\"'
+            cflags = '/nologo /I\"' + py_include_minpath + '\" /I\"' + numpy_path + '\"'
         else:
-            cflags = '-I' + py_include_fullpath
+            cflags = '-I' + py_include_fullpath + ' -I' + numpy_path
 
         # Relaxation curve fitting build environment.
         env = Environment()

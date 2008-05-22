@@ -31,7 +31,7 @@ from data import Data as relax_data_store
 from float import isNaN, isInf
 from generic_fns import diffusion_tensor
 from generic_fns.diffusion_tensor import diff_data_exists
-from generic_fns.selection import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
+from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
 from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
@@ -224,8 +224,6 @@ class Mf_minimise:
         @type spin_id:          str
         @keyword sim_index:     The optional MC simulation index.
         @type sim_index:        int
-        @return:                An array of the parameter values of the model-free model.
-        @rtype:                 numpy array
         """
 
         # Initialise.

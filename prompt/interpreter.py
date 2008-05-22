@@ -73,7 +73,7 @@ from select import Select
 from sequence import Sequence
 from spin import Spin
 from state import State
-from unselect import Unselect
+from deselect import Deselect
 from value import Value
 from vmd import Vmd
 
@@ -153,7 +153,7 @@ class Interpreter:
         self._Sequence = Sequence(relax)
         self._Spin = Spin(relax)
         self._State = State(relax)
-        self._Unselect = Unselect(relax)
+        self._Deselect = Deselect(relax)
         self._Value = Value(relax)
         self._Vmd = Vmd(relax)
 
@@ -218,7 +218,7 @@ class Interpreter:
         sequence = self._Sequence
         spin = self._Spin
         state = self._State
-        unselect = self._Unselect
+        deselect = self._Deselect
         vmd = self._Vmd
         value = self._Value
 

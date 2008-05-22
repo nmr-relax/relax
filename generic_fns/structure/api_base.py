@@ -38,54 +38,63 @@ class Base_struct_API:
     All API methods are prototyped here as stub methods.
     """
 
+    # Identification string.
+    id = 'API'
+
 
     def __init__(self):
-        """Initialise the PDB object."""
+        """Initialise the structural object."""
 
         # The parser specific data object.
         self.structural_data = []
 
 
-    def atom_add(self, atom_id=None, record_name='', atom_name='', res_name='', chain_id='', res_num=None, pos=[None, None, None], segment_id='', element=''):
+    def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, model=None):
         """Prototype method stub for adding an atom to the structural data object.
 
         This method will create the key-value pair for the given atom.
 
 
-        @param atom_id:     The atom identifier.  This is used as the key within the dictionary.
-        @type atom_id:      str
-        @param record_name: The record name, e.g. 'ATOM', 'HETATM', or 'TER'.
-        @type record_name:  str
-        @param atom_name:   The atom name, e.g. 'H1'.
-        @type atom_name:    str
-        @param res_name:    The residue name.
-        @type res_name:     str
-        @param chain_id:    The chain identifier.
-        @type chain_id:     str
-        @param res_num:     The residue number.
-        @type res_num:      int
-        @param pos:         The position vector of coordinates.
-        @type pos:          list (length = 3)
-        @param segment_id:  The segment identifier.
-        @type segment_id:   str
-        @param element:     The element symbol.
-        @type element:      str
+        @keyword pdb_record:    The optional PDB record name, e.g. 'ATOM', 'HETATM', or 'TER'.
+        @type pdb_record:       str or None
+        @keyword atom_num:      The atom number.
+        @type atom_num:         int or None
+        @keyword atom_name:     The atom name, e.g. 'H1'.
+        @type atom_name:        str or None
+        @keyword res_name:      The residue name.
+        @type res_name:         str or None
+        @keyword chain_id:      The chain identifier.
+        @type chain_id:         str or None
+        @keyword res_num:       The residue number.
+        @type res_num:          int or None
+        @keyword pos:           The position vector of coordinates.
+        @type pos:              list (length = 3)
+        @keyword segment_id:    The segment identifier.
+        @type segment_id:       str or None
+        @keyword element:       The element symbol.
+        @type element:          str or None
+        @keyword model:         The model to add the atom to.  If not supplied and multiple models
+                                exist, then the atom will be added to all models.
+        @type model:            None or int
         """
 
         # Raise the error.
         raise RelaxImplementError
 
 
-    def atom_connect(self, atom_id=None, bonded_id=None):
+    def atom_connect(self, index1=None, index2=None, model=None):
         """Prototype method stub for connecting two atoms within the data structure object.
 
-        This method will connect the atoms corresponding to atom_id and bonded_id.
+        This method should connect the atoms corresponding to the two indecies.
 
 
-        @param atom_id:     The atom identifier.
-        @type atom_id:      str
-        @param bonded_id:   The second atom identifier.
-        @type bonded_id:    str
+        @keyword index1:    The index of the first atom.
+        @type index1:       int
+        @keyword index2:    The index of the second atom.
+        @type index2:       int
+        @keyword model:     The model to add the atom to.  If not supplied and multiple models
+                            exist, then the atom will be added to all models.
+        @type model:        None or int
         """
 
         # Raise the error.
@@ -183,14 +192,14 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def load_structures(self, file_path, model, verbosity=False):
-        """Prototype method stub for loading structures from a file.
+    def load_pdb(self, file_path, model=None, verbosity=False):
+        """Prototype method stub for loading structures from a PDB file.
 
         This inherited prototype method is a stub which, if the functionality is desired, should be
         overwritten by the derived class.
 
 
-        @param file_path:   The full path of the file.
+        @param file_path:   The full path of the PDB file.
         @type file_path:    str
         @param model:       The structural model to use.
         @type model:        int
@@ -212,20 +221,19 @@ class Base_struct_API:
         return len(self.structural_data)
 
 
-    def terminate(self, atom_id_ext='', res_num=None):
+    def terminate(self, model=None):
         """Prototype method stub for terminating the structural chain.
 
-        @param atom_id_ext:     The atom identifier extension.
-        @type atom_id_ext:      str
-        @param res_num:         The residue number.
-        @type res_num:          int
+        @keyword model:     The model to add the atom to.  If not supplied and multiple models
+                            exist, then the atom will be added to all models.
+        @type model:        None or int
         """
 
         # Raise the error.
         raise RelaxImplementError
 
 
-    def write_pdb_file(self, file):
+    def write_pdb(self, file):
         """Prototype method stub for the creation of a PDB file from the structural data.
 
         The PDB records

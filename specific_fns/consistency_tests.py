@@ -28,7 +28,7 @@ from string import replace
 # relax module imports.
 from base_class import Common_functions
 from data import Data as relax_data_store
-from generic_fns.selection import exists_mol_res_spin_data, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from maths_fns.consistency_tests import Consistency
 from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
@@ -55,7 +55,7 @@ class Consistency_tests(Common_functions):
 
         # Test if the CSA, bond length, angle Theta and correlation time values have been set.
         for spin in spin_loop(spin_id):
-            # Skip unselected spins.
+            # Skip deselected spins.
             if not spin.select:
                 continue
 
@@ -89,7 +89,7 @@ class Consistency_tests(Common_functions):
 
         # Consistency testing.
         for spin in spin_loop(spin_id):
-            # Skip unselected spins.
+            # Skip deselected spins.
             if not spin.select:
                 continue
 
@@ -485,7 +485,7 @@ class Consistency_tests(Common_functions):
     def sim_return_param(self, index, spin):
         """Function for returning the array of simulation parameter values."""
 
-        # Skip unselected residues.
+        # Skip deselected residues.
         if not spin.select:
                 return
 

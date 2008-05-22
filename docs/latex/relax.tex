@@ -20,7 +20,7 @@
 \usepackage{amssymb}
 
 % Hyperlinks.
-\usepackage[pdfauthor={Edward d'Auvergne}, pdftitle={The relax manual}]{hyperref}
+\usepackage[pdftitle={The relax manual}]{hyperref}
 \hypersetup{colorlinks,
             citecolor=blue,%
             filecolor=blue,%
@@ -101,10 +101,6 @@
 {\huge \textbf{data analysis}}
 \vspace{\stretch{1}}
 
-% Author.
-{\Large Edward d'Auvergne}
-\vspace{\stretch{0.5}}
-
 % Date.
 {\large \today}
 \vspace*{\stretch{2}}
@@ -159,8 +155,8 @@
 \item[NOE]  nuclear Overhauser effect
 \item[pdf]  probability distribution function
 \item[$r$]  bond length
-\item[R$_1$]  spin-lattice relaxation rate
-\item[R$_2$]  spin-spin relaxation rate
+\item[$\Rone$]  spin-lattice relaxation rate
+\item[$\Rtwo$]  spin-spin relaxation rate
 \item[$R_{ex}$]  chemical exchange relaxation rate
 \item[$S^2$, $S^2_f$, and $S^2_s$]  model-free generalised order parameters
 \item[$\tau_e$, $\tau_f$, and $\tau_s$]  model-free effective internal correlation times
@@ -181,8 +177,8 @@
 % The chapters.
 %%%%%%%%%%%%%%%
 
-\include{install}
 \include{intro}
+\include{install}
 \include{infrastruct}
 \include{noe}
 \include{curvefit}

@@ -1,0 +1,837 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+#                                                                             #
+# This file is part of the program relax.                                     #
+#                                                                             #
+# relax is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# relax is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with relax; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+#                                                                             #
+###############################################################################
+
+# Module docstring.
+"""Module containing the internal relax structural object."""
+
+# Python module imports.
+from numpy import array, float64
+from re import search
+from string import split, strip
+
+# relax module imports.
+from api_base import Base_struct_API
+from data import Data as relax_data_store
+from generic_fns.mol_res_spin import Selection
+from relax_errors import RelaxError
+from relax_io import open_read_file
+
+
+
+class Internal(Base_struct_API):
+    """The internal relax structural data object.
+
+    The structural data object for this class is a container possessing a number of different arrays
+    corresponding to different structural information.  These objects are described in the
+    structural container docstring.
+    """
+
+    # Identification string.
+    id = 'internal'
+
+
+    def __fill_object_from_pdb(self, records, model=None):
+        """Method for generating a complete Structure_container object from the given PDB records.
+
+        @param records:     A list of structural PDB records.
+        @type records:      list of str
+        @keyword model:     The model to add the data to.  If not supplied and multiple models
+                            exist, then the data will be added to all models.
+        @type model:        None or int
+        """
+
+        # Loop over the models.
+        for struct in self.structural_data:
+            # Skip non-matching models.
+            if model != None and model != struct.model:
+                continue
+
+            # Loop over the records.
+            for record in records:
+                # Parse the record.
+                record = self.__parse_pdb_record(record)
+
+                # Add the atom.
+                self.atom_add(pdb_record=record[0], atom_num=record[1], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=record[14], model=model)
+
+
+    def __get_chemical_name(self, hetID):
+        """Method for returning the chemical name corresponding to the given residue ID.
+
+        The following names are currently returned::
+         ________________________________________________
+         |        |                                     |
+         | hetID  | Chemical name                       |
+         |________|_____________________________________|
+         |        |                                     |
+         | TNS    | Tensor                              |
+         | COM    | Centre of mass                      |
+         | AXS    | Tensor axes                         |
+         | SIM    | Monte Carlo simulation tensor axes  |
+         | PIV    | Pivot point                         |
+         | CON    | Cone object                         |
+         | AVE    | Average vector                      |
+         |________|_____________________________________|
+
+
+        @param res: The residue ID.
+        @type res:  str
+        @return:    The chemical name.
+        @rtype:     str
+        """
+
+        # Tensor.
+        if hetID == 'TNS':
+            return 'Tensor'
+
+        # Centre of mass.
+        if hetID == 'COM':
+            return 'Centre of mass'
+
+        # Tensor axes.
+        if hetID == 'AXS':
+            return 'Tensor axes'
+
+        # Monte Carlo simulation tensor axes.
+        if hetID == 'SIM':
+            return 'Monte Carlo simulation tensor axes'
+
+        # Pivot point.
+        if hetID == 'PIV':
+            return 'Pivot point'
+
+        # Cone object.
+        if hetID == 'CON':
+            return 'Cone'
+
+        # Average vector.
+        if hetID == 'AVE':
+            return 'Average vector'
+
+        # Unknown hetID.
+        raise RelaxError, "The residue ID (hetID) " + `hetID` + " is not recognised."
+
+
+    def __parse_models(self, file_path):
+        """Generator function for looping over the models in the PDB file.
+
+        @param file_path:   The full path of the PDB file.
+        @type file_path:    str
+        @return:            The model number and all the records for that model.
+        @rtype:             tuple of int and array of str
+        """
+
+        # Open the file.
+        file = open_read_file(file_path)
+        lines = file.readlines()
+        file.close()
+
+        # Init.
+        model = None
+        records = []
+
+        # Loop over the data.
+        for i in xrange(len(lines)):
+            # A new model record.
+            if search('^MODEL', lines[i]):
+                model = int(split(lines[i])[1])
+
+            # Skip all records prior to the first ATOM record.
+            if not search('^ATOM', lines[i]) and not len(records):
+                continue
+
+            # End of the model.
+            if search('^ENDMDL', lines[i]):
+                # Yield the info.
+                yield model, records
+
+                # Reset the records.
+                records = []
+
+                # Skip the rest of this loop.
+                continue
+
+            # Append the line as a record of the model.
+            records.append(lines[i])
+
+        # If records is not empty then there are no models, so yield the lot.
+        if len(records):
+            yield model, records
+
+
+    def __parse_pdb_record(self, record):
+        """Parse the PDB record string and return an array of the corresponding atomic information.
+
+        The format of the ATOM and HETATM records is::
+         __________________________________________________________________________________________
+         |         |              |              |                                                |
+         | Columns | Data type    | Field        | Definition                                     |
+         |_________|______________|______________|________________________________________________|
+         |         |              |              |                                                |
+         |  1 -  6 | Record name  | "ATOM"       |                                                |
+         |  7 - 11 | Integer      | serial       | Atom serial number.                            |
+         | 13 - 16 | Atom         | name         | Atom name.                                     |
+         | 17      | Character    | altLoc       | Alternate location indicator.                  |
+         | 18 - 20 | Residue name | resName      | Residue name.                                  |
+         | 22      | Character    | chainID      | Chain identifier.                              |
+         | 23 - 26 | Integer      | resSeq       | Residue sequence number.                       |
+         | 27      | AChar        | iCode        | Code for insertion of residues.                |
+         | 31 - 38 | Real(8.3)    | x            | Orthogonal coordinates for X in Angstroms.     |
+         | 39 - 46 | Real(8.3)    | y            | Orthogonal coordinates for Y in Angstroms.     |
+         | 47 - 54 | Real(8.3)    | z            | Orthogonal coordinates for Z in Angstroms.     |
+         | 55 - 60 | Real(6.2)    | occupancy    | Occupancy.                                     |
+         | 61 - 66 | Real(6.2)    | tempFactor   | Temperature factor.                            |
+         | 73 - 76 | LString(4)   | segID        | Segment identifier, left-justified.            |
+         | 77 - 78 | LString(2)   | element      | Element symbol, right-justified.               |
+         | 79 - 80 | LString(2)   | charge       | Charge on the atom.                            |
+         |_________|______________|______________|________________________________________________|
+
+
+        The format of the TER record is::
+         __________________________________________________________________________________________
+         |         |              |              |                                                |
+         | Columns | Data type    | Field        | Definition                                     |
+         |_________|______________|______________|________________________________________________|
+         |         |              |              |                                                |
+         |  1 -  6 | Record name  | "TER   "     |                                                |
+         |  7 - 11 | Integer      | serial       | Serial number.                                 |
+         | 18 - 20 | Residue name | resName      | Residue name.                                  |
+         | 22      | Character    | chainID      | Chain identifier.                              |
+         | 23 - 26 | Integer      | resSeq       | Residue sequence number.                       |
+         | 27      | AChar        | iCode        | Insertion code.                                |
+         |_________|______________|______________|________________________________________________|
+
+
+        @param record:  The single line PDB record.
+        @type record:   str
+        @return:        The list of atomic information, each element corresponding to the PDB fields
+                        as defined in "Protein Data Bank Contents Guide: Atomic Coordinate Entry
+                        Format Description" version 2.1 (draft), October 25, 1996.
+        @rtype:         list of str
+        """
+
+        # Initialise.
+        fields = []
+
+        # Split up the record.
+        fields.append(record[0:6])
+        fields.append(record[6:11])
+        fields.append(record[12:16])
+        fields.append(record[16])
+        fields.append(record[17:20])
+        fields.append(record[21])
+        fields.append(record[22:26])
+        fields.append(record[26])
+        fields.append(record[30:38])
+        fields.append(record[38:46])
+        fields.append(record[46:54])
+        fields.append(record[54:60])
+        fields.append(record[60:66])
+        fields.append(record[72:76])
+        fields.append(record[76:78])
+        fields.append(record[78:80])
+
+        # Loop over the fields.
+        for i in xrange(len(fields)):
+            # Strip all whitespace.
+            fields[i] = strip(fields[i])
+
+            # Replace nothingness with None.
+            if fields[i] == '':
+                fields[i] = None
+
+        # Convert strings to numbers.
+        if fields[1]:
+            fields[1] = int(fields[1])
+        if fields[6]:
+            fields[6] = int(fields[6])
+        if fields[8]:
+            fields[8] = float(fields[8])
+        if fields[9]:
+            fields[9] = float(fields[9])
+        if fields[10]:
+            fields[10] = float(fields[10])
+        if fields[11]:
+            fields[11] = float(fields[11])
+        if fields[12]:
+            fields[12] = float(fields[12])
+
+        # Return the atomic info.
+        return fields
+
+
+    def __validate_data_arrays(self):
+        """Check the validity of the data arrays in the structure object."""
+
+        # The number of atoms.
+        num = len(self.structural_data.atom_name)
+
+        # Check the other lengths.
+        if len(bonded) != num and len(chain_id) != num and len(element) != num and len(pdb_record) != num and len(res_name) != num and len(res_num) != num and len(seg_id) != num and len(x) != num and len(y) != num and len(z) != num:
+            raise RelaxError, "The structural data is invalid."
+
+
+    def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, model=None):
+        """Method for adding an atom to the structural data object.
+
+        This method will create the key-value pair for the given atom.
+
+
+        @keyword pdb_record:    The optional PDB record name, e.g. 'ATOM', 'HETATM', or 'TER'.
+        @type pdb_record:       str or None
+        @keyword atom_num:      The atom number.
+        @type atom_num:         int or None
+        @keyword atom_name:     The atom name, e.g. 'H1'.
+        @type atom_name:        str or None
+        @keyword res_name:      The residue name.
+        @type res_name:         str or None
+        @keyword chain_id:      The chain identifier.
+        @type chain_id:         str or None
+        @keyword res_num:       The residue number.
+        @type res_num:          int or None
+        @keyword pos:           The position vector of coordinates.
+        @type pos:              list (length = 3)
+        @keyword segment_id:    The segment identifier.
+        @type segment_id:       str or None
+        @keyword element:       The element symbol.
+        @type element:          str or None
+        @keyword model:         The model to add the atom to.  If not supplied and multiple models
+                                exist, then the atom will be added to all models.
+        @type model:            None or int
+        """
+
+
+        # Loop over the models.
+        for struct in self.structural_data:
+            # Skip non-matching models.
+            if model != None and model != struct.model:
+                continue
+
+            # Append to all the arrays.
+            struct.atom_num.append(atom_num)
+            struct.atom_name.append(atom_name)
+            struct.bonded.append([])
+            struct.chain_id.append(chain_id)
+            struct.element.append(element)
+            struct.pdb_record.append(pdb_record)
+            struct.res_name.append(res_name)
+            struct.res_num.append(res_num)
+            struct.seg_id.append(segment_id)
+            struct.x.append(pos[0])
+            struct.y.append(pos[1])
+            struct.z.append(pos[2])
+
+
+    def atom_connect(self, index1=None, index2=None, model=None):
+        """Method for connecting two atoms within the data structure object.
+
+        This method will append index2 to the array at bonded[index1] and vice versa.
+
+
+        @keyword index1:    The index of the first atom.
+        @type index1:       int
+        @keyword index2:    The index of the second atom.
+        @type index2:       int
+        @keyword model:     The model to add the atom to.  If not supplied and multiple models
+                            exist, then the atom will be added to all models.
+        @type model:        None or int
+        """
+
+        # Loop over the models.
+        for struct in self.structural_data:
+            # Skip non-matching models.
+            if model != None and model != struct.model:
+                continue
+
+            # Update the bonded array structure.
+            struct.bonded[index1].append(index2)
+            struct.bonded[index2].append(index1)
+
+
+    def atom_loop(self, atom_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False):
+        """Generator function for looping over all atoms in the internal relax structural object.
+
+        @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms
+                                    matching this selection will be yielded.
+        @type atom_id:              str
+        @keyword model_num_flag:    A flag which if True will cause the model number to be yielded.
+        @type model_num_flag:       bool
+        @keyword mol_name_flag:     A flag which if True will cause the molecule name to be yielded.
+        @type mol_name_flag:        bool
+        @keyword res_num_flag:      A flag which if True will cause the residue number to be
+                                    yielded.
+        @type res_num_flag:         bool
+        @keyword res_name_flag:     A flag which if True will cause the residue name to be yielded.
+        @type res_name_flag:        bool
+        @keyword atom_num_flag:     A flag which if True will cause the atom number to be yielded.
+        @type atom_num_flag:        bool
+        @keyword atom_name_flag:    A flag which if True will cause the atom name to be yielded.
+        @type atom_name_flag:       bool
+        @keyword element_flag:      A flag which if True will cause the element name to be yielded.
+        @type element_flag:         bool
+        @keyword pos_flag:          A flag which if True will cause the atomic position to be
+                                    yielded.
+        @type pos_flag:             bool
+        @return:                    A tuple of atomic information, as described in the docstring.
+        @rtype:                     tuple consisting of optional molecule name (str), residue number
+                                    (int), residue name (str), atom number (int), atom name(str),
+                                    element name (str), and atomic position (array of len 3).
+        """
+
+        # Generate the selection object.
+        sel_obj = Selection(atom_id)
+
+        # Loop over the models.
+        for struct in self.structural_data:
+            # Loop over all atoms.
+            for i in xrange(len(struct.atom_name)):
+                # Skip non-matching atoms.
+                if sel_obj and not sel_obj.contains_spin(struct.atom_num[i], struct.atom_name[i], struct.res_num[i], struct.res_name[i]):
+                    continue
+
+                # Build the tuple to be yielded.
+                atomic_tuple = ()
+                if model_num_flag:
+                    atomic_tuple = atomic_tuple + (struct.model,)
+                if mol_name_flag:
+                    atomic_tuple = atomic_tuple + (None,)
+                if res_num_flag:
+                    atomic_tuple = atomic_tuple + (struct.res_num[i],)
+                if res_name_flag:
+                    atomic_tuple = atomic_tuple + (struct.res_name[i],)
+                if atom_num_flag:
+                    atomic_tuple = atomic_tuple + (struct.atom_num[i],)
+                if atom_name_flag:
+                    atomic_tuple = atomic_tuple + (struct.atom_name[i],)
+                if element_flag:
+                    atomic_tuple = atomic_tuple + (struct.element[i],)
+                if pos_flag:
+                    atomic_tuple = atomic_tuple + (array([struct.x[i], struct.y[i], struct.z[i]], float64),)
+
+                # Yield the information.
+                yield atomic_tuple
+
+
+    def load_pdb(self, file_path, model=None, verbosity=False):
+        """Method for loading structures from a PDB file.
+
+        @param file_path:   The full path of the PDB file.
+        @type file_path:    str
+        @param model:       The structural model to use.
+        @type model:        int
+        @keyword verbosity: A flag which if True will cause messages to be printed.
+        @type verbosity:    bool
+        """
+
+        # Initial print out.
+        if verbosity:
+            print "Internal relax PDB parser.\n"
+
+        # Store the file name (with full path).
+        self.file_name = file_path
+
+        # Store the model number.
+        self.model = model
+
+        # Use pointers (references) if the PDB data exists in another run.
+        for data_pipe in relax_data_store:
+            if hasattr(data_pipe, 'structure') and data_pipe.structure.file_name == file_path and data_pipe.structure.model == model and data_pipe.structure.id == 'internal':
+                # Make a pointer to the data.
+                self.structural_data = data_pipe.structure.structural_data
+
+                # Print out.
+                if verbosity:
+                    print "Using the structures from the data pipe " + `data_pipe.pipe_name` + "."
+                    for i in xrange(len(self.structural_data)):
+                        print self.structural_data[i]
+
+                # Exit this function.
+                return
+
+        # Print out.
+        if verbosity:
+            if type(model) == int:
+                print "Loading structure " + `model` + " from the PDB file."
+            else:
+                print "Loading all structures from the PDB file."
+
+        # Loop over all models in the PDB file.
+        for model_num, records in self.__parse_models(file_path):
+            # Only load the desired model.
+            if model != None and model != model_num:
+                continue
+
+            # Initialise and fill the structural data object.
+            self.structural_data.append(Structure_container())
+            self.structural_data[-1].model = model_num
+            self.__fill_object_from_pdb(records, model_num)
+
+
+    def terminate(self, model=None):
+        """Method for terminating the chain by adding a TER record to the structural data object.
+
+        The residue number and name are taken from the last atom in the current structural object.
+
+
+        @keyword model:     The model to add the atom to.  If not supplied and multiple models
+                            exist, then the atom will be added to all models.
+        @type model:        None or int
+        """
+
+        # Loop over the models.
+        for i in xrange(len(self.structural_data)):
+            # Alias the structure.
+            struct = self.structural_data[i]
+
+            # Skip non-matching models.
+            if model != None and model != struct.model:
+                continue
+
+            # The name and number of the last residue.
+            res_name = struct.res_name[-1]
+            res_num = struct.res_num[-1]
+
+            # Add the TER 'atom'.
+            self.atom_add(pdb_record='TER', res_name=res_name, res_num=res_num, model=i)
+
+
+    def write_pdb(self, file):
+        """Method for the creation of a PDB file from the structural data.
+
+        A number of PDB records including HET, HETNAM, FORMUL, HETATM, TER, CONECT, MASTER, and END
+        are created.  To create the non-standard residue records HET, HETNAM, and FORMUL, the data
+        structure 'het_data' is created.  It is an array of arrays where the first dimension
+        corresponds to a different residue and the second dimension has the elements:
+
+            0.  Residue number.
+            1.  Residue name.
+            2.  Chain ID.
+            3.  Total number of atoms in the residue.
+            4.  Number of H atoms in the residue.
+            5.  Number of C atoms in the residue.
+
+
+        @param file:        The PDB file object.  This object must be writable.
+        @type file:         file object
+        """
+
+        # Check the validity of the data.
+        self.__validate_data_arrays()
+
+
+        # Collect the non-standard residue info.
+        ########################################
+
+        # Initialise some data.
+        H_count = 0
+        C_count = 0
+        het_data = []
+
+        # Loop over the atomic data.
+        for i in xrange(len(self.structural_data.atom_names)):
+            # Catch the HETATM records.
+            if self.structural_data.pdb_record[i] != 'HETATM':
+                continue
+
+            # If the residue is not already stored initialise a new het_data element.
+            # (residue number, residue name, chain ID, number of atoms, number of H, number of C, number of N).
+            if not het_data or not self.structural_data.res_num[i] == het_data[-1][0]:
+                het_data.append([self.structural_data.res_num[i], self.structural_data.res_name[i], self.structural_data.chain_id[i], 0, 0, 0, 0])
+
+            # Total atom count.
+            het_data[-1][3] = het_data[-1][3] + 1
+
+            # Proton count.
+            if self.structural_data.element[i] == 'H':
+                het_data[-1][4] = het_data[-1][4] + 1
+
+            # Carbon count.
+            elif self.structural_data.element[i] == 'C':
+                het_data[-1][5] = het_data[-1][5] + 1
+
+            # Nitrogen count.
+            elif self.structural_data.element[i] == 'N':
+                het_data[-1][6] = het_data[-1][6] + 1
+
+            # Unsupported element type.
+            else:
+                raise RelaxError, "The element " + `self.structural_data.element[i]` + " was expected to be one of ['H', 'C', 'N']."
+
+
+        # The HET records.
+        ##################
+
+        # Print out.
+        print "Creating the HET records."
+
+        # Write the HET records.
+        for het in het_data:
+            file.write("%-6s %3s  %1s%4s%1s  %5s     %-40s\n" % ('HET', het[2], het[1], het[0], '', het[3], ''))
+
+
+        # The HETNAM records.
+        #####################
+
+        # Print out.
+        print "Creating the HETNAM records."
+
+        # Loop over the non-standard residues.
+        residues = []
+        for het in het_data:
+            # Test if the residue HETNAM record as already been written (otherwise store its name).
+            if het[1] in residues:
+                continue
+            else:
+                residues.append(het[1])
+
+            # Get the chemical name.
+            chemical_name = self.__get_chemical_name(het[1])
+
+            # Write the HETNAM records.
+            file.write("%-6s  %2s %3s %-55s\n" % ('HETNAM', '', het[1], chemical_name))
+
+
+        # The FORMUL records.
+        #####################
+
+        # Print out.
+        print "Creating the FORMUL records."
+
+        # Loop over the non-standard residues and generate and write the chemical formula.
+        residues = []
+        for het in het_data:
+            # Test if the residue HETNAM record as already been written (otherwise store its name).
+            if het[1] in residues:
+                continue
+            else:
+                residues.append(het[1])
+
+            # Initialise the chemical formula.
+            formula = ''
+
+            # Protons.
+            if het[4]:
+                if formula:
+                    formula = formula + ' '
+                formula = formula + 'H' + `het[4]`
+
+            # Carbon.
+            if het[5]:
+                if formula:
+                    formula = formula + ' '
+                formula = formula + 'C' + `het[5]`
+
+            # Nitrogen
+            if het[6]:
+                if formula:
+                    formula = formula + ' '
+                formula = formula + 'N' + `het[6]`
+
+            # The FORMUL record (chemical formula).
+            file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', het[0], het[1], '', '', formula))
+
+
+        # Add the atomic coordinate records (ATOM, HETATM, and TER).
+        ############################################################
+
+        # Print out.
+        print "Creating the atomic coordinate records (ATOM, HETATM, and TER)."
+
+        # Loop over the atomic data.
+        for i in xrange(len(self.structural_data.atom_names)):
+            # Aliases.
+            atom_num = self.structural_data.atom_num[i]
+            atom_name = self.structural_data.atom_name[i]
+            res_name = self.structural_data.res_name[i]
+            chain_id = self.structural_data.chain_id[i]
+            res_num = self.structural_data.res_num[i]
+            x = self.structural_data.x[i]
+            y = self.structural_data.y[i]
+            z = self.structural_data.z[i]
+            seg_id = self.structural_data.seg_id[i]
+            element = self.structural_data.element[i]
+
+            # Replace None with ''.
+            if atom_name == None:
+                atom_name = ''
+            if res_name == None:
+                res_name = ''
+            if chain_id == None:
+                chain_id = ''
+            if res_num == None:
+                res_num = ''
+            if x == None:
+                x = ''
+            if y == None:
+                y = ''
+            if z == None:
+                z = ''
+            if seg_id == None:
+                seg_id = ''
+            if element == None:
+                element = ''
+
+            # Write the ATOM record.
+            if array[1] == 'ATOM':
+                file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
+
+            # Write the HETATM record.
+            if array[1] == 'HETATM':
+                file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
+
+            # Write the TER record.
+            if array[1] == 'TER':
+                file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', atom_num, res_name, chain_id, res_num, ''))
+
+
+        # Create the CONECT records.
+        ############################
+
+        # Print out.
+        print "Creating the CONECT records."
+
+        connect_count = 0
+        for i in xrange(len(self.structural_data.atom_names)):
+            # No bonded atoms, hence no CONECT record is required.
+            if not len(self.structural_data.bonded[i]):
+                continue
+
+            # Initialise some data structures.
+            flush = 0
+            bonded_index = 0
+            bonded = ['', '', '', '']
+
+            # Loop over the bonded atoms.
+            for j in xrange(len(self.structural_data.bonded[i])):
+                # End of the array, hence create the CONECT record in this iteration.
+                if j == len(self.structural_data.bonded[i])-1:
+                    flush = 1
+
+                # Only four covalently bonded atoms allowed in one CONECT record.
+                if bonded_index == 3:
+                    flush = 1
+
+                # Get the bonded atom index.
+                bonded[bonded_index] = self.structural_data.bonded[i][j]
+
+                # Increment the bonded_index value.
+                bonded_index = bonded_index + 1
+
+                # Generate the CONECT record and increment the counter.
+                if flush:
+                    # Write the CONECT record.
+                    file.write("%-6s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('CONECT', i+1, bonded[0], bonded[1], bonded[2], bonded[3], '', '', '', '', '', ''))
+
+                    # Increment the CONECT record count.
+                    connect_count = connect_count + 1
+
+                    # Reset the flush flag, the bonded atom count, and the bonded atom names.
+                    flush = 0
+                    bonded_index = 0
+                    bonded = ['', '', '', '']
+
+
+        # MASTER record.
+        ################
+
+        # Print out.
+        print "Creating the MASTER record."
+
+        # Write the MASTER record.
+        file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data), 0, 0, 0, 0, 0, len(self.structural_data), 1, connect_count, 0))
+
+
+        # END.
+        ######
+
+        # Print out.
+        print "Creating the END record."
+
+        # Write the END record.
+        file.write("END\n")
+
+
+class Structure_container:
+    """The container for the structural information.
+
+    The structural data object for this class is a container possessing a number of different arrays
+    corresponding to different structural information.  These objects include:
+
+        - atom_num:  The atom name.
+        - atom_name:  The atom name.
+        - bonded:  Each element an array of bonded atom indecies.
+        - chain_id:  The chain ID.
+        - element:  The element symbol.
+        - pdb_record:  The optional PDB record name (one of ATOM, HETATM, or TER).
+        - res_name:  The residue name.
+        - res_num:  The residue number.
+        - seg_id:  The segment ID.
+        - x:  The x coordinate of the atom.
+        - y:  The y coordinate of the atom.
+        - z:  The z coordinate of the atom.
+
+    All arrays should be of equal length so that an atom index can retrieve all the corresponding
+    data.  Only the atom identification string is compulsory, all other arrays can contain None.
+    """
+
+
+    def __init__(self):
+        """Initialise all the arrays."""
+
+        # The model.
+        self.model = None
+
+        # The atom num (array of int).
+        self.atom_num = []
+
+        # The atom name (array of str).
+        self.atom_name = []
+
+        # The bonded atom indecies (array of arrays of int).
+        self.bonded = []
+
+        # The chain ID (array of str).
+        self.chain_id = []
+
+        # The element symbol (array of str).
+        self.element = []
+
+        # The optional PDB record name (array of str).
+        self.pdb_record = []
+
+        # The residue name (array of str).
+        self.res_name = []
+
+        # The residue number (array of int).
+        self.res_num = []
+
+        # The segment ID (array of int).
+        self.seg_id = []
+
+        # The x coordinate (array of float).
+        self.x = []
+
+        # The y coordinate (array of float).
+        self.y = []
+
+        # The z coordinate (array of float).
+        self.z = []

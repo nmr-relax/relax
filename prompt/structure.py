@@ -309,23 +309,27 @@ class Structure:
         structure beginning with the line 'MODEL i' in the PDB file will be loaded.  Otherwise all
         structures will be loaded starting from the model number 1.
 
-        Currently only the Scientific Python PDB parser can be used to read structural data.
-        Therefore the 'parser' argument should be set to the string 'scientific'.
+        A few different PDB parsers can be used to read the structural data.  These are selected by
+        setting the 'parser' argument to one of:
+
+            'scientific' - the Scientific Python PDB parser.
+            'internal' - a lower quality and less reliable, although faster, PDB parser built into
+                relax.
 
 
         Example
         ~~~~~~~
 
-        To load all structures from the PDB file 'test.pdb' in the directory '~/pdb', type:
+        To load all structures from the PDB file 'test.pdb' in the directory '~/pdb', type one of:
 
         relax> structure.read_pdb('test.pdb', '~/pdb')
         relax> structure.read_pdb(file='test.pdb', dir='pdb')
 
 
-        To load the 10th model from the file 'test.pdb', use:
+        To load the 10th model from the file 'test.pdb' using the internal relax parser, use one of:
 
-        relax> structure.read_pdb('test.pdb', model=10)
-        relax> structure.read_pdb(file='test.pdb', model=10)
+        relax> structure.read_pdb('test.pdb', model=10, parser='internal')
+        relax> structure.read_pdb(file='test.pdb', model=10, parser='internal')
 
         """
 

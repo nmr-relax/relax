@@ -22,8 +22,8 @@
 /* This include must come first */
 #include <Python.h>
 
-/* The Numeric array object header file, must come second */
-#include <Numeric/arrayobject.h>
+/* The numpy array object header file, must come second */
+#include <numpy/arrayobject.h>
 
 /* The header for all functions which will be called */
 #include "relax_fit.h"

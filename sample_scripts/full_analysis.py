@@ -600,9 +600,9 @@ class Main:
             for data in RELAX_DATA:
                 relax_data.read(data[0], data[1], data[2], data[3])
 
-            # Unselect unresolved residues.
+            # Deselect unresolved residues.
             if UNRES:
-                unselect.read(file=UNRES)
+                deselect.read(file=UNRES)
 
             # Copy the diffusion tensor from the 'opt' data pipe and prevent it from being minimised.
             if not local_tm:

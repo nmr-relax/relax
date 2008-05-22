@@ -33,7 +33,7 @@ import sys
 from data import Data as relax_data_store
 from float import isNaN,isInf
 from generic_fns import diffusion_tensor
-from generic_fns.selection import count_spins, exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
+from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
 from physical_constants import N15_CSA, NH_BOND_LENGTH
@@ -56,7 +56,7 @@ class Model_free_main:
         @rtype:         str or None
         """
 
-        # Unselected residue.
+        # Deselected residue.
         if spin.select == 0:
             return
 
@@ -147,7 +147,7 @@ class Model_free_main:
         if model_type != 'diff':
             # Loop over the spins.
             for spin in spin_loop(spin_id):
-                # Skip unselected residues.
+                # Skip deselected residues.
                 if not spin.select:
                     continue
 
@@ -239,7 +239,7 @@ class Model_free_main:
 
             # Loop over the spins.
             for spin in loop:
-                # Skip unselected residues.
+                # Skip deselected residues.
                 if not spin.select:
                     continue
 
@@ -403,7 +403,7 @@ class Model_free_main:
 
             # Loop over the spins.
             for spin in loop:
-                # Skip unselected spins.
+                # Skip deselected spins.
                 if not spin.select:
                     continue
 
@@ -866,7 +866,7 @@ class Model_free_main:
         # If there is a local tm, fail if not all residues have a local tm parameter.
         local_tm = 0
         for spin in spin_loop():
-            # Skip unselected residues.
+            # Skip deselected residues.
             # This code causes a bug after model elimination if the model has been eliminated (select = 0).
             #if not spin.select:
             #    continue
@@ -886,7 +886,7 @@ class Model_free_main:
         # Check if any model-free parameters are allowed to vary.
         mf_all_fixed = 1
         for spin in spin_loop():
-            # Skip unselected residues.
+            # Skip deselected residues.
             # This code causes a bug after model elimination if the model has been eliminated (select = 0).
             #if not spin.select:
             #    continue
@@ -1066,7 +1066,7 @@ class Model_free_main:
 
         # Test if the model-free model has been setup.
         for j in xrange(len(relax_data_store.res[self.run])):
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not relax_data_store.res[self.run][j].select:
                 continue
 
@@ -1102,7 +1102,7 @@ class Model_free_main:
 
         # Test if the model-free model has been setup.
         for j in xrange(len(relax_data_store.res[self.run])):
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not relax_data_store.res[self.run][j].select:
                 continue
 
@@ -1367,7 +1367,7 @@ class Model_free_main:
 
             # Loop over the spins.
             for spin in loop:
-                # Skip unselected spins.
+                # Skip deselected spins.
                 if not spin.select:
                     continue
 
@@ -1610,7 +1610,7 @@ class Model_free_main:
             else:
                 spin = return_spin_from_index(instance)
 
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not spin.select:
                 return None, None, None
 
@@ -1638,7 +1638,7 @@ class Model_free_main:
             n = 0
             chi2 = 0
             for spin in spin_loop():
-                # Skip unselected residues.
+                # Skip deselected residues.
                 if not spin.select:
                     continue
 
@@ -2588,7 +2588,7 @@ class Model_free_main:
             # Remap the data structure.
             data = relax_data_store.res[self.run][i]
 
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not data.select:
                 continue
 
@@ -3234,7 +3234,7 @@ class Model_free_main:
         if self.param_set == 'all':
             # Loop over the sequence.
             for i in xrange(len(relax_data_store.res[self.run])):
-                # Skip unselected residues.
+                # Skip deselected residues.
                 if not relax_data_store.res[self.run][i].select:
                     continue
 
@@ -3252,7 +3252,7 @@ class Model_free_main:
         ###################################################################
 
         if self.param_set == 'mf' or self.param_set == 'local_tm':
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not relax_data_store.res[self.run][instance].select:
                 return
 
@@ -3378,7 +3378,7 @@ class Model_free_main:
         # Residue specific parameters.
         if self.param_set != 'diff':
             for i in xrange(len(relax_data_store.res[self.run])):
-                # Skip unselected residues.
+                # Skip deselected residues.
                 if not relax_data_store.res[self.run][i].select:
                     continue
 
@@ -3442,7 +3442,7 @@ class Model_free_main:
         # Residue specific parameters.
         if self.param_set != 'diff':
             for i in xrange(len(relax_data_store.res[self.run])):
-                # Skip unselected residues.
+                # Skip deselected residues.
                 if not relax_data_store.res[self.run][i].select:
                     continue
 
@@ -3575,7 +3575,7 @@ class Model_free_main:
         if self.param_set == 'all':
             # Loop over the sequence.
             for i in xrange(len(relax_data_store.res[self.run])):
-                # Skip unselected residues.
+                # Skip deselected residues.
                 if not relax_data_store.res[self.run][i].select:
                     continue
 
@@ -3593,7 +3593,7 @@ class Model_free_main:
         ###################################################################
 
         if self.param_set == 'mf' or self.param_set == 'local_tm':
-            # Skip unselected residues.
+            # Skip deselected residues.
             if not relax_data_store.res[self.run][instance].select:
                 return
 
@@ -3647,8 +3647,8 @@ class Model_free_main:
         return 0
 
 
-    def unselect(self, run, i, sim_index=None):
-        """Function for unselecting models or simulations."""
+    def deselect(self, run, i, sim_index=None):
+        """Function for deselecting models or simulations."""
 
         # Arguments.
         self.run = run
@@ -3656,7 +3656,7 @@ class Model_free_main:
         # Determine the parameter set type.
         self.param_set = self.determine_param_set_type()
 
-        # Simulation unselect.
+        # Simulation deselect.
         if sim_index != None:
             # Single instance.
             if self.param_set == 'mf' or self.param_set == 'local_tm':
@@ -3666,7 +3666,7 @@ class Model_free_main:
             else:
                 relax_data_store.select_sim[self.run][sim_index] = 0
 
-        # Residue unselect.
+        # Residue deselect.
         else:
             # Single residue.
             if self.param_set == 'mf' or self.param_set == 'local_tm':

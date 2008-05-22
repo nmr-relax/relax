@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,7 +26,7 @@ from relax_errors import RelaxError, RelaxNoPipeError, RelaxSpinSelectDisallowEr
 
 
 class Residue_base_class:
-    """Base class for the tests of both the 'prompt.residue' and 'generic_fns.residue' modules.
+    """Testing base class for 'prompt.residue' and corresponding 'generic_fns.mol_res_spin' fns.
 
     This base class also contains many shared unit tests.
     """
@@ -75,10 +75,11 @@ class Residue_base_class:
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
 
 
-    def test_copy_between_molecules(self):
+    def test_copy_residue_between_molecules(self):
         """Test the copying of the residue data between different molecules.
 
-        The function tested is both generic_fns.residue.copy() and prompt.residue.copy().
+        The function tested is both generic_fns.mol_res_spin.copy_residue() and
+        prompt.residue.copy().
         """
 
         # Set up some data.
@@ -105,10 +106,11 @@ class Residue_base_class:
 
 
 
-    def test_copy_between_pipes(self):
+    def test_copy_residue_between_pipes(self):
         """Test the copying of the residue data between different data pipes.
 
-        The function tested is both generic_fns.residue.copy() and prompt.residue.copy().
+        The function tested is both generic_fns.mol_res_spin.copy_residue() and
+        prompt.residue.copy().
         """
 
         # Create the first residue and add some data to its spin container.
@@ -143,10 +145,11 @@ class Residue_base_class:
         self.assertEqual(relax_data_store['test'].mol[0].res[1].spin[0].x, 1)
 
 
-    def test_copy_between_pipes_fail_no_pipe(self):
+    def test_copy_residue_between_pipes_fail_no_pipe(self):
         """Test the copying of the residue data between different data pipes.
 
-        The function tested is both generic_fns.residue.copy() and prompt.residue.copy().
+        The function tested is both generic_fns.mol_res_spin.copy_residue() and
+        prompt.residue.copy().
         """
 
         # Create the first residue and add some data to its spin container.
@@ -158,10 +161,11 @@ class Residue_base_class:
         self.assertRaises(RelaxNoPipeError, self.residue_fns.copy, res_from=':1', pipe_to='test2')
 
 
-    def test_copy_within_molecule(self):
+    def test_copy_residue_within_molecule(self):
         """Test the copying of the residue data within a single molecule.
 
-        The function tested is both generic_fns.residue.copy() and prompt.residue.copy().
+        The function tested is both generic_fns.mol_res_spin.copy_residue() and
+        prompt.residue.copy().
         """
 
         # Create the first residue and add some data to its spin container.
@@ -205,10 +209,11 @@ class Residue_base_class:
         self.assertEqual(relax_data_store['orig'].mol[0].res[3].spin[0].x, 2)
 
 
-    def test_copy_within_molecule_fail1(self):
+    def test_copy_residue_within_molecule_fail1(self):
         """The failure of copying residue data within a molecule of a non-existent residue.
 
-        The function tested is both generic_fns.residue.copy() and prompt.residue.copy().
+        The function tested is both generic_fns.mol_res_spin.copy_residue() and
+        prompt.residue.copy().
         """
 
         # Create a few residues.
@@ -219,10 +224,11 @@ class Residue_base_class:
         self.assertRaises(RelaxError, self.residue_fns.copy, res_from=':Met', res_to=':2,Gly')
 
 
-    def test_copy_within_molecule_fail2(self):
+    def test_copy_residue_within_molecule_fail2(self):
         """The failure of copying residue data within a molecule to a residue which already exists.
 
-        The function tested is both generic_fns.residue.copy() and prompt.residue.copy().
+        The function tested is both generic_fns.mol_res_spin.copy_residue() and
+        prompt.residue.copy().
         """
 
         # Create a few residues.
@@ -233,10 +239,11 @@ class Residue_base_class:
         self.assertRaises(RelaxError, self.residue_fns.copy, res_from=':1', res_to=':-1,Gly')
 
 
-    def test_creation(self):
+    def test_create_residue(self):
         """Test the creation of a residue.
 
-        The function tested is both generic_fns.residue.create() and prompt.residue.create().
+        The function tested is both generic_fns.mol_res_spin.create_residue() and
+        prompt.residue.create().
         """
 
         # Create a few new residues.
@@ -255,10 +262,11 @@ class Residue_base_class:
         self.assertEqual(relax_data_store['orig'].mol[0].res[2].name, 'Ser')
 
 
-    def test_creation_fail(self):
+    def test_create_residue_fail(self):
         """Test the failure of residue creation (by supplying two residues with the same number).
 
-        The function tested is both generic_fns.residue.create() and prompt.residue.create().
+        The function tested is both generic_fns.mol_res_spin.create_residue() and
+        prompt.residue.create().
         """
 
         # Create the first residue.
@@ -268,10 +276,11 @@ class Residue_base_class:
         self.assertRaises(RelaxError, self.residue_fns.create, 1, 'Ala')
 
 
-    def test_delete_name(self):
+    def test_delete_residue_name(self):
         """Test residue deletion using residue name identifiers.
 
-        The function tested is both generic_fns.residue.delete() and prompt.residue.delete().
+        The function tested is both generic_fns.mol_res_spin.delete_residue() and
+        prompt.residue.delete().
         """
 
         # Create some residues and add some data to the spin containers.
@@ -292,10 +301,11 @@ class Residue_base_class:
         self.assert_(hasattr(relax_data_store['orig'].mol[0].res[0].spin[0], 'x'))
 
 
-    def test_delete_num(self):
+    def test_delete_residue_num(self):
         """Test residue deletion using residue number identifiers.
 
-        The function tested is both generic_fns.residue.delete() and prompt.residue.delete().
+        The function tested is both generic_fns.mol_res_spin.delete_residue() and
+        prompt.residue.delete().
         """
 
         # Create some residues and add some data to the spin containers.
@@ -320,10 +330,11 @@ class Residue_base_class:
         self.assert_(hasattr(relax_data_store['orig'].mol[0].res[2].spin[0], 'x'))
 
 
-    def test_delete_all(self):
+    def test_delete_residue_all(self):
         """Test the deletion of all residues.
 
-        The function tested is both generic_fns.residue.delete() and prompt.residue.delete().
+        The function tested is both generic_fns.mol_res_spin.delete_residue() and
+        prompt.residue.delete().
         """
 
         # Create some residues and add some data to the spin containers.
@@ -342,10 +353,11 @@ class Residue_base_class:
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, None)
 
 
-    def test_delete_shift(self):
+    def test_delete_residue_shift(self):
         """Test the deletion of multiple residues.
 
-        The function tested is both generic_fns.residue.delete() and prompt.residue.delete().
+        The function tested is both generic_fns.mol_res_spin.delete_residue() and
+        prompt.residue.delete().
         """
 
         # Create some residues and add some data to the spin containers.
@@ -366,20 +378,22 @@ class Residue_base_class:
         self.assert_(hasattr(relax_data_store['orig'].mol[0].res[1].spin[0], 'x'))
 
 
-    def test_delete_fail(self):
+    def test_delete_residue_fail(self):
         """Test the failure of residue deletion when an atom id is supplied.
 
-        The function tested is both generic_fns.residue.delete() and prompt.residue.delete().
+        The function tested is both generic_fns.mol_res_spin.delete_residue() and
+        prompt.residue.delete().
         """
 
         # Supply an atom id.
         self.assertRaises(RelaxSpinSelectDisallowError, self.residue_fns.delete, res_id='@2')
 
 
-    def test_display(self):
+    def test_display_residue(self):
         """Test the display of residue information.
 
-        The function tested is both generic_fns.residue.display() and prompt.residue.display().
+        The function tested is both generic_fns.mol_res_spin.display_residue() and
+        prompt.residue.display().
         """
 
         # Set up some data.
@@ -392,10 +406,11 @@ class Residue_base_class:
         self.residue_fns.display('#Old mol:1')
 
 
-    def test_display_fail(self):
+    def test_display_residue_fail(self):
         """Test the failure of the display of residue information.
 
-        The function tested is both generic_fns.residue.display() and prompt.residue.display().
+        The function tested is both generic_fns.mol_res_spin.display_residue() and
+        prompt.residue.display().
         """
 
         # Set up some data.
@@ -405,26 +420,28 @@ class Residue_base_class:
         self.assertRaises(RelaxSpinSelectDisallowError, self.residue_fns.display, '@N')
 
 
-    def test_rename(self):
+    def test_name_residue(self):
         """Test the renaming of a residue.
 
-        The function tested is both generic_fns.residue.rename() and prompt.residue.rename().
+        The function tested is both generic_fns.mol_res_spin.name_residue() and
+        prompt.residue.name().
         """
 
         # Create the first residue and add some data to its spin container.
         self.residue_fns.create(-10, 'His')
 
         # Rename the residue.
-        self.residue_fns.rename(res_id=':-10', new_name='K')
+        self.residue_fns.name(res_id=':-10', name='K')
 
         # Test that the residue has been renamed.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'K')
 
 
-    def test_rename_many(self):
+    def test_name_residue_many(self):
         """Test the renaming of multiple residues.
 
-        The function tested is both generic_fns.residue.rename() and prompt.residue.rename().
+        The function tested is both generic_fns.mol_res_spin.name_residue() and
+        prompt.residue.name().
         """
 
         # Create the first residue and add some data to its spin container.
@@ -442,7 +459,7 @@ class Residue_base_class:
         self.residue_fns.copy(res_from=':1', res_to=':4,Met')
 
         # Rename all alanines.
-        self.residue_fns.rename(res_id=':Ala', new_name='Gln')
+        self.residue_fns.name(res_id=':Ala', name='Gln')
 
         # Test the renaming of alanines.
         self.assertEqual(relax_data_store['orig'].mol[0].res[1].name, 'Gln')
@@ -453,36 +470,39 @@ class Residue_base_class:
         self.assertEqual(relax_data_store['orig'].mol[0].res[3].name, 'Met')
 
 
-    def test_rename_no_spin(self):
-        """Test the failure of renaming a residue when a spin id is given.
+    def test_name_residue_no_spin(self):
+        """Test the failure of naming a residue when a spin id is given.
 
-        The function tested is both generic_fns.residue.rename() and prompt.residue.rename().
+        The function tested is both generic_fns.mol_res_spin.name_residue() and
+        prompt.residue.name().
         """
 
-        # Try renaming using a atom id.
-        self.assertRaises(RelaxSpinSelectDisallowError, self.residue_fns.rename, res_id='@111', new_name='K')
+        # Try naming using a atom id.
+        self.assertRaises(RelaxSpinSelectDisallowError, self.residue_fns.name, res_id='@111', name='K')
 
 
-    def test_renumber(self):
+    def test_number_residue(self):
         """Test the renumbering of a residue.
 
-        The function tested is both generic_fns.residue.renumber() and prompt.residue.renumber().
+        The function tested is both generic_fns.mol_res_spin.number_residue() and
+        prompt.residue.number().
         """
 
         # Create the first residue and add some data to its spin container.
         self.residue_fns.create(-10, 'His')
 
         # Rename the residue.
-        self.residue_fns.renumber(res_id=':-10', new_number=10)
+        self.residue_fns.number(res_id=':-10', number=10)
 
         # Test that the residue has been renumbered.
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 10)
 
 
-    def test_renumber_many_fail(self):
-        """Test the renaming of multiple residues.
+    def test_number_residue_many_fail(self):
+        """Test the numbering of multiple residues.
 
-        The function tested is both generic_fns.residue.renumber() and prompt.residue.renumber().
+        The function tested is both generic_fns.mol_res_spin.number_residue() and
+        prompt.residue.number().
         """
 
         # Create the first residue and add some data to its spin container.
@@ -498,15 +518,16 @@ class Residue_base_class:
         # Copy the residue once more.
         self.residue_fns.copy(res_from=':1', res_to=':4,Met')
 
-        # Try renumbering all alanines.
-        self.assertRaises(RelaxError, self.residue_fns.renumber, res_id=':Ala', new_number=10)
+        # Try numbering all alanines.
+        self.assertRaises(RelaxError, self.residue_fns.number, res_id=':Ala', number=10)
 
 
-    def test_renumber_no_spin(self):
-        """Test the failure of renaming a residue when a spin id is given.
+    def test_number_residue_no_spin(self):
+        """Test the failure of naming a residue when a spin id is given.
 
-        The function tested is both generic_fns.residue.renumber() and prompt.residue.renumber().
+        The function tested is both generic_fns.mol_res_spin.number_residue() and
+        prompt.residue.number().
         """
 
-        # Try renaming using a atom id.
-        self.assertRaises(RelaxSpinSelectDisallowError, self.residue_fns.renumber, res_id='@111', new_number=10)
+        # Try naming using a atom id.
+        self.assertRaises(RelaxSpinSelectDisallowError, self.residue_fns.number, res_id='@111', number=10)

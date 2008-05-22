@@ -82,6 +82,66 @@ class State_base_class:
         self.assertEqual(relax_data_store.y, 'Hello')
 
 
+    def test_load_and_modify(self):
+        """The modification of an unpickled and restored relax data storage singleton.
+
+        This tests the normal operation of the generic_fns.state.load() function.
+        """
+
+        # Test the contents of the empty singleton.
+        self.assertEqual(relax_data_store.keys(), [])
+        self.assertEqual(relax_data_store.current_pipe, None)
+        self.assert_(not hasattr(relax_data_store, 'y'))
+
+        # Get the relative path of relax.
+        path = sys.path[0]
+        if path == '.':
+            path = sys.path[-1]
+
+        # Load the state.
+        self.state.load_state(state='basic_single_pipe', dir_name=path+'/test_suite/shared_data/saved_states')
+
+        # Add a new data pipe and some data to it.
+        relax_data_store.add('new', 'jw_mapping')
+        relax_data_store[relax_data_store.current_pipe].z = [None, None]
+
+
+        # Test the contents of the restored singleton (with subsequent data added).
+        self.assertEqual(relax_data_store.keys(), ['orig', 'new'])
+        self.assertEqual(relax_data_store.current_pipe, 'new')
+        self.assertEqual(relax_data_store['orig'].x, 1)
+        self.assertEqual(relax_data_store.y, 'Hello')
+        self.assertEqual(relax_data_store['new'].z, [None, None])
+
+
+    def test_load_and_reset(self):
+        """The resetting of an unpickled and restored relax data storage singleton.
+
+        This tests the normal operation of the generic_fns.state.load() function.
+        """
+
+        # Test the contents of the empty singleton.
+        self.assertEqual(relax_data_store.keys(), [])
+        self.assertEqual(relax_data_store.current_pipe, None)
+        self.assert_(not hasattr(relax_data_store, 'y'))
+
+        # Get the relative path of relax.
+        path = sys.path[0]
+        if path == '.':
+            path = sys.path[-1]
+
+        # Load the state.
+        self.state.load_state(state='basic_single_pipe', dir_name=path+'/test_suite/shared_data/saved_states')
+
+        # Reset.
+        relax_data_store.__reset__()
+
+        # Test that there are no contents in the reset singleton.
+        self.assertEqual(relax_data_store.keys(), [])
+        self.assertEqual(relax_data_store.current_pipe, None)
+        self.assert_(not hasattr(relax_data_store, 'y'))
+
+
     def test_save(self):
         """The pickling and saving of the relax data storage singleton.
 

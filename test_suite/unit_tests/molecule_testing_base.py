@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,12 +22,13 @@
 
 # relax module imports.
 from data import Data as relax_data_store
+from generic_fns.mol_res_spin import copy_residue, create_residue
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 
 
 
 class Molecule_base_class:
-    """Base class for the tests of both the 'prompt.molecule' and 'generic_fns.molecule' modules.
+    """Testing base class for 'prompt.molecule' and corresponding 'generic_fns.mol_spin_res' fns.
 
     This base class also contains many shared unit tests.
     """
@@ -59,7 +60,7 @@ class Molecule_base_class:
         """Function for setting up some data for the unit tests."""
 
         # Create the first residue and add some data to its spin container.
-        self.residue_fns.create(1, 'Ala')
+        create_residue(1, 'Ala')
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
         relax_data_store['orig'].mol[0].name = 'Old mol'
@@ -68,23 +69,24 @@ class Molecule_base_class:
         relax_data_store['orig'].mol.add_item('New mol')
 
         # Copy the residue to the new molecule.
-        self.residue_fns.copy(res_from=':1', res_to='#New mol')
-        self.residue_fns.copy(res_from='#Old mol:1', res_to='#New mol:5')
+        copy_residue(res_from=':1', res_to='#New mol')
+        copy_residue(res_from='#Old mol:1', res_to='#New mol:5')
 
         # Change the first residue's data.
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
 
 
-    def test_copy_between_pipes(self):
+    def test_copy_molecule_between_pipes(self):
         """Test the copying of the molecule data between different data pipes.
 
-        The function tested is both generic_fns.molecule.copy() and prompt.molecule.copy().
+        The function tested is both generic_fns.mol_res_spin.copy_molecule() and
+        prompt.molecule.copy().
         """
 
         # Create the first molecule and residue and add some data to its spin container.
         self.molecule_fns.create('Old mol')
-        self.residue_fns.create(1, 'Ala')
+        create_residue(1, 'Ala')
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
 
@@ -118,15 +120,16 @@ class Molecule_base_class:
         self.assertEqual(relax_data_store['test'].mol[1].res[0].spin[0].x, 1)
 
 
-    def test_copy_between_pipes_fail_no_pipe(self):
+    def test_copy_molecule_between_pipes_fail_no_pipe(self):
         """Test the failure of copying of the molecule data between different data pipes.
 
-        The function tested is both generic_fns.molecule.copy() and prompt.molecule.copy().
+        The function tested is both generic_fns.mol_res_spin.copy_molecule() and
+        prompt.molecule.copy().
         """
 
         # Create the first molecule and residue and add some data to its spin container.
         self.molecule_fns.create('Old mol')
-        self.residue_fns.create(1, 'Ala')
+        create_residue(1, 'Ala')
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
 
@@ -134,15 +137,16 @@ class Molecule_base_class:
         self.assertRaises(RelaxNoPipeError, self.molecule_fns.copy, mol_from='#Old mol', pipe_to='test2')
 
 
-    def test_copy_within_pipe(self):
+    def test_copy_molecule_within_pipe(self):
         """Test the copying of the molecule data within a single data pipe.
 
-        The function tested is both generic_fns.molecule.copy() and prompt.molecule.copy().
+        The function tested is both generic_fns.mol_res_spin.copy_molecule() and
+        prompt.molecule.copy().
         """
 
         # Create the first molecule and residue and add some data to its spin container.
         self.molecule_fns.create('Old mol')
-        self.residue_fns.create(1, 'Ala')
+        create_residue(1, 'Ala')
         relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
         relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
 
@@ -186,10 +190,11 @@ class Molecule_base_class:
         self.assertEqual(relax_data_store['orig'].mol[3].res[0].spin[0].x, 2)
 
 
-    def test_copy_within_pipe_fail(self):
+    def test_copy_molecule_within_pipe_fail(self):
         """Test the failure of the copying of the molecule data within a molecule.
 
-        The function tested is both generic_fns.molecule.copy() and prompt.molecule.copy().
+        The function tested is both generic_fns.mol_res_spin.copy_molecule() and
+        prompt.molecule.copy().
         """
 
         # Create a few molecules.
@@ -203,10 +208,11 @@ class Molecule_base_class:
         self.assertRaises(RelaxError, self.molecule_fns.copy, mol_from='#GST', mol_to='#GB1')
 
 
-    def test_creation(self):
+    def test_create_molecule(self):
         """Test the creation of a molecule data structure.
 
-        The function tested is both generic_fns.molecule.create() and prompt.molecule.create().
+        The function tested is both generic_fns.mol_res_spin.create_molecule() and
+        prompt.molecule.create().
         """
 
         # Create a few new molecules.
@@ -220,10 +226,11 @@ class Molecule_base_class:
         self.assertEqual(relax_data_store['orig'].mol[2].name, 'MgF4')
 
 
-    def test_creation_fail(self):
+    def test_create_molecule_fail(self):
         """Test the failure of molecule creation by supplying two molecules with the same name.
 
-        The function tested is both generic_fns.molecule.create() and prompt.molecule.create().
+        The function tested is both generic_fns.mol_res_spin.create_molecule() and
+        prompt.molecule.create().
         """
 
         # Create the first molecule.
@@ -233,10 +240,11 @@ class Molecule_base_class:
         self.assertRaises(RelaxError, self.molecule_fns.create, 'CaM')
 
 
-    def test_delete(self):
+    def test_delete_molecule(self):
         """Test molecule deletion.
 
-        The function tested is both generic_fns.molecule.delete() and prompt.molecule.delete().
+        The function tested is both generic_fns.mol_res_spin.delete_molecule() and
+        prompt.molecule.delete().
         """
 
         # Set up some data.
@@ -257,10 +265,11 @@ class Molecule_base_class:
         self.assert_(hasattr(relax_data_store['orig'].mol[0].res[1].spin[0], 'x'))
 
 
-    def test_delete_all(self):
+    def test_delete_molecule_all(self):
         """Test the deletion of all molecules.
 
-        The function tested is both generic_fns.molecule.delete() and prompt.molecule.delete().
+        The function tested is both generic_fns.mol_res_spin.delete_molecule() and
+        prompt.molecule.delete().
         """
 
         # Set up some data.
@@ -278,10 +287,11 @@ class Molecule_base_class:
         self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, None)
 
 
-    def test_delete_fail(self):
+    def test_delete_molecule_fail(self):
         """Test the failure of molecule deletion when a residue or spin id is supplied.
 
-        The function tested is both generic_fns.molecule.delete() and prompt.molecule.delete().
+        The function tested is both generic_fns.mol_res_spin.delete_molecule() and
+        prompt.molecule.delete().
         """
 
         # Supply a spin id.
@@ -291,10 +301,11 @@ class Molecule_base_class:
         self.assertRaises(RelaxResSelectDisallowError, self.molecule_fns.delete, mol_id=':1')
 
 
-    def test_display(self):
+    def test_display_molecule(self):
         """Test the display of molecular information.
 
-        The function tested is both generic_fns.molecule.display() and prompt.molecule.display().
+        The function tested is both generic_fns.mol_res_spin.display_molecule() and
+        prompt.molecule.display().
         """
 
         # Set up some data.
@@ -306,10 +317,11 @@ class Molecule_base_class:
         self.molecule_fns.display(mol_id='#New mol')
 
 
-    def test_display_fail(self):
+    def test_display_molecule_fail(self):
         """Test the failure of the display of molecule information.
 
-        The function tested is both generic_fns.molecule.display() and prompt.molecule.display().
+        The function tested is both generic_fns.mol_res_spin.display_molecule() and
+        prompt.molecule.display().
         """
 
         # Set up some data.
@@ -320,43 +332,46 @@ class Molecule_base_class:
         self.assertRaises(RelaxResSelectDisallowError, self.molecule_fns.display, ':1')
 
 
-    def test_rename(self):
+    def test_name_molecule(self):
         """Test the renaming of a molecule.
 
-        The function tested is both generic_fns.molecule.rename() and prompt.molecule.rename().
+        The function tested is both generic_fns.mol_res_spin.name_molecule() and
+        prompt.molecule.name().
         """
 
         # Set up some data.
         self.setup_data()
 
         # Rename the molecule.
-        self.molecule_fns.rename(mol_id='#New mol', new_name='K')
+        self.molecule_fns.name(mol_id='#New mol', name='K')
 
         # Test that the molecule has been renamed.
         self.assertEqual(relax_data_store['orig'].mol[1].name, 'K')
 
 
-    def test_rename_fail(self):
-        """Test the failure of renaming a molecule when a residue or spin id is given.
+    def test_name_molecule_fail(self):
+        """Test the failure of naming a molecule when a residue or spin id is given.
 
-        The function tested is both generic_fns.molecule.rename() and prompt.molecule.rename().
+        The function tested is both generic_fns.mol_res_spin.name_molecule() and
+        prompt.molecule.name().
         """
 
-        # Try renaming using a spin id.
-        self.assertRaises(RelaxSpinSelectDisallowError, self.molecule_fns.rename, mol_id='@111', new_name='K')
+        # Try naming using a spin id.
+        self.assertRaises(RelaxSpinSelectDisallowError, self.molecule_fns.name, mol_id='@111', name='K')
 
-        # Try renaming using a residue id.
-        self.assertRaises(RelaxResSelectDisallowError, self.molecule_fns.rename, mol_id=':1', new_name='K')
+        # Try naming using a residue id.
+        self.assertRaises(RelaxResSelectDisallowError, self.molecule_fns.name, mol_id=':1', name='K')
 
 
-    def test_rename_many_fail(self):
-        """Test the failure of the renaming of multiple molecules to the same name.
+    def test_name_molecule_many_fail(self):
+        """Test the failure of the naming of multiple molecules to the same name.
 
-        The function tested is both generic_fns.molecule.rename() and prompt.molecule.rename().
+        The function tested is both generic_fns.mol_res_spin.name_molecule() and
+        prompt.molecule.name().
         """
 
         # Set up some data.
         self.setup_data()
 
         # Test for the failure.
-        self.assertRaises(RelaxError, self.molecule_fns.rename, mol_id='#Old mol,New mol', new_name='K')
+        self.assertRaises(RelaxError, self.molecule_fns.name, mol_id='#Old mol,New mol', name='K')

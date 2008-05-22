@@ -26,7 +26,7 @@ from string import split
 
 # relax module imports.
 from data import Data as relax_data_store
-from generic_fns.selection import exists_mol_res_spin_data
+from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
 from relax_io import open_write_file, test_binary
 from specific_fns.setup import get_specific_fn
