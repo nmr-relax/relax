@@ -107,7 +107,7 @@ class State_base_class:
 
 
         # Test the contents of the restored singleton (with subsequent data added).
-        self.assertEqual(relax_data_store.keys(), ['orig', 'new'])
+        self.assertEqual(relax_data_store.keys().sort(), ['orig', 'new'].sort())
         self.assertEqual(relax_data_store.current_pipe, 'new')
         self.assertEqual(relax_data_store['orig'].x, 1)
         self.assertEqual(relax_data_store.y, 'Hello')
