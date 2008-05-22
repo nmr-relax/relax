@@ -301,7 +301,7 @@ class Select:
             raise RelaxBoolError, ('change_all', change_all)
 
         # Execute the functional code.
-        selection.sel_res(spin_id=spin_id, boolean=boolean, change_all=change_all)
+        selection.sel_spin(spin_id=spin_id, boolean=boolean, change_all=change_all)
 
 
 
