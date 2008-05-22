@@ -35,7 +35,7 @@ from float import isNaN,isInf
 from generic_fns import diffusion_tensor
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
-from minimise.generic import generic_minimise
+from minfx.generic import generic_minimise
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxTensorError
 import specific_fns
