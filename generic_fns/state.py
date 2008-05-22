@@ -53,8 +53,8 @@ def load_state(state=None, dir_name=None):
     # Reset the relax data storage object.
     relax_data_store.__reset__()
 
-    # Black list of objects.
-    black_list = ['__weakref__']
+    # Black list of objects (all dict objects, non-modifiable objects, data store specific methods, and other special objects).
+    black_list = dir(dict) + ['__weakref__', '__dict__', '__module__', '__reset__', 'add']
 
     # Loop over the objects in the saved state, and dump them into the relax data store.
     for name in dir(state):
