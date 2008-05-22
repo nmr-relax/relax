@@ -26,7 +26,7 @@ from string import replace
 
 # relax module imports.
 from base_class import Common_functions
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from maths_fns.jw_mapping import Mapping
 from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
@@ -42,7 +42,7 @@ class Jw_mapping(Common_functions):
         """Calculation of the spectral density values."""
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test if the frequency has been set.
         if not hasattr(cdp, 'jw_frq') or type(cdp.jw_frq) != float:
@@ -385,14 +385,14 @@ class Jw_mapping(Common_functions):
         """Function for selecting which relaxation data to use in the J(w) mapping."""
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test if the current pipe exists.
-        if not relax_data_store.current_pipe:
+        if not ds.current_pipe:
             raise RelaxNoPipeError
 
         # Test if the pipe type is set to 'jw'.
-        function_type = relax_data_store[relax_data_store.current_pipe].pipe_type
+        function_type = ds[ds.current_pipe].pipe_type
         if function_type != 'jw':
             raise RelaxFuncSetupError, specific_fns.setup.get_string(function_type)
 
@@ -462,11 +462,11 @@ class Jw_mapping(Common_functions):
         """Function for packing Monte Carlo simulation data."""
 
         # Test if the simulation data already exists.
-        if hasattr(relax_data_store.res[run][i], 'relax_sim_data'):
+        if hasattr(ds.res[run][i], 'relax_sim_data'):
             raise RelaxError, "Monte Carlo simulation data already exists."
 
         # Create the data structure.
-        relax_data_store.res[run][i].relax_sim_data = sim_data
+        ds.res[run][i].relax_sim_data = sim_data
 
 
     def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, heteronuc_type=None, wH=None, j0=None, jwx=None, jwh=None, r=None, csa=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
@@ -522,10 +522,10 @@ class Jw_mapping(Common_functions):
         """Function for printing the results into a file."""
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
+        if not self.run in ds.run_names:
             raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
@@ -539,7 +539,7 @@ class Jw_mapping(Common_functions):
         # Relaxation data and errors.
         ri = []
         ri_error = []
-        if hasattr(relax_data_store, 'num_ri'):
+        if hasattr(ds, 'num_ri'):
             for i in xrange(cdp.num_ri):
                 ri.append('Ri_(' + cdp.ri_labels[i] + "_" + cdp.frq_labels[cdp.remap_table[i]] + ")")
                 ri_error.append('Ri_error_(' + cdp.ri_labels[i] + "_" + cdp.frq_labels[cdp.remap_table[i]] + ")")

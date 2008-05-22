@@ -28,7 +28,7 @@ import sys
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 
 
@@ -63,7 +63,7 @@ class Mf(TestCase):
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        relax_data_store.__reset__()
+        ds.__reset__()
 
 
     def mesg_opt_debug(self, spin):
@@ -113,7 +113,7 @@ class Mf(TestCase):
         self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/create_m4.py')
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test the model.
         self.assertEqual(cdp.mol[0].res[1].spin[0].model, 'm4')
@@ -216,7 +216,7 @@ class Mf(TestCase):
         self.relax.interpreter._Minimisation.minimise('bfgs', 'back')
 
         # Alias the relevent spin container.
-        spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
+        spin = ds[ds.current_pipe].mol[0].res[1].spin[0]
 
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
@@ -237,7 +237,7 @@ class Mf(TestCase):
             g_count = 169
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(ds[ds.current_pipe].mol[0].res[0].spin[0].select, False)
         self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
@@ -265,7 +265,7 @@ class Mf(TestCase):
         self.relax.interpreter._Minimisation.minimise('bfgs', 'mt')
 
         # Alias the relevent spin container.
-        spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
+        spin = ds[ds.current_pipe].mol[0].res[1].spin[0]
 
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
@@ -285,7 +285,7 @@ class Mf(TestCase):
             g_count = 384
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(ds[ds.current_pipe].mol[0].res[0].spin[0].select, False)
         self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
@@ -313,7 +313,7 @@ class Mf(TestCase):
         self.relax.interpreter._Minimisation.minimise('cd', 'back', max_iter=50)
 
         # Alias the relevent spin container.
-        spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
+        spin = ds[ds.current_pipe].mol[0].res[1].spin[0]
 
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
@@ -328,7 +328,7 @@ class Mf(TestCase):
         warning = 'Maximum number of iterations reached'
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(ds[ds.current_pipe].mol[0].res[0].spin[0].select, False)
         self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
@@ -356,7 +356,7 @@ class Mf(TestCase):
         self.relax.interpreter._Minimisation.minimise('cd', 'mt')
 
         # Alias the relevent spin container.
-        spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
+        spin = ds[ds.current_pipe].mol[0].res[1].spin[0]
 
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
@@ -376,7 +376,7 @@ class Mf(TestCase):
             g_count = 757
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(ds[ds.current_pipe].mol[0].res[0].spin[0].select, False)
         self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
@@ -405,7 +405,7 @@ class Mf(TestCase):
         self.relax.interpreter._Minimisation.minimise('newton', 'gmw', 'back')
 
         # Alias the relevent spin container.
-        spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
+        spin = ds[ds.current_pipe].mol[0].res[1].spin[0]
 
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
@@ -420,7 +420,7 @@ class Mf(TestCase):
         warning = None
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(ds[ds.current_pipe].mol[0].res[0].spin[0].select, False)
         self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
@@ -449,7 +449,7 @@ class Mf(TestCase):
         self.relax.interpreter._Minimisation.minimise('newton', 'gmw', 'mt')
 
         # Alias the relevent spin container.
-        spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
+        spin = ds[ds.current_pipe].mol[0].res[1].spin[0]
 
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
@@ -469,7 +469,7 @@ class Mf(TestCase):
             g_count = 91
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(ds[ds.current_pipe].mol[0].res[0].spin[0].select, False)
         self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
@@ -497,7 +497,7 @@ class Mf(TestCase):
         self.relax.interpreter._Minimisation.minimise('sd', 'back', max_iter=50)
 
         # Alias the relevent spin container.
-        spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
+        spin = ds[ds.current_pipe].mol[0].res[1].spin[0]
 
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
@@ -512,7 +512,7 @@ class Mf(TestCase):
         warning = 'Maximum number of iterations reached'
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(ds[ds.current_pipe].mol[0].res[0].spin[0].select, False)
         self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
@@ -540,13 +540,13 @@ class Mf(TestCase):
         self.relax.interpreter._Minimisation.minimise('sd', 'mt', max_iter=50)
 
         # Alias the relevent spin container.
-        spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
+        spin = ds[ds.current_pipe].mol[0].res[1].spin[0]
 
         # Get the debugging message.
         mesg = self.mesg_opt_debug(spin)
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False, msg=mesg)
+        self.assertEqual(ds[ds.current_pipe].mol[0].res[0].spin[0].select, False, msg=mesg)
         self.assertEqual(spin.select, True, msg=mesg)
         self.assertAlmostEqual(spin.s2, 0.91619994957822126, msg=mesg)
         self.assertAlmostEqual(spin.te, 1.2319687570987945e-13, msg=mesg)
@@ -578,7 +578,7 @@ class Mf(TestCase):
         self.relax.interpreter._Minimisation.grid_search(inc=11)
 
         # Alias the relevent spin container.
-        spin = relax_data_store[relax_data_store.current_pipe].mol[0].res[1].spin[0]
+        spin = ds[ds.current_pipe].mol[0].res[1].spin[0]
 
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
@@ -593,7 +593,7 @@ class Mf(TestCase):
         warning = None
 
         # Test the values.
-        self.assertEqual(relax_data_store[relax_data_store.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(ds[ds.current_pipe].mol[0].res[0].spin[0].select, False)
         self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
@@ -610,7 +610,7 @@ class Mf(TestCase):
         self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test the data and error.
         self.assertEqual(cdp.mol[0].res[1].spin[0].relax_data[0], 1.3874977659397683)
@@ -624,20 +624,20 @@ class Mf(TestCase):
         self.relax.interpreter._Results.read(file='results_1.2', dir=sys.path[-1] + '/test_suite/system_tests/data/model_free')
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Diffusion tensor type.
-        self.assertEqual(relax_data_store['orig'].diff.type, cdp.diff.type)
+        self.assertEqual(ds['orig'].diff.type, cdp.diff.type)
 
         # tm.
-        self.assertEqual(relax_data_store['orig'].diff.tm, cdp.diff.tm)
+        self.assertEqual(ds['orig'].diff.tm, cdp.diff.tm)
 
         # Loop over the residues of the original data.
         for i in xrange(len(cdp.mol[0].res)):
             # Aliases
-            orig_data_res = relax_data_store['orig'].mol[0].res[i]
+            orig_data_res = ds['orig'].mol[0].res[i]
             new_data_res = cdp.mol[0].res[i]
-            orig_data = relax_data_store['orig'].mol[0].res[i].spin[0]
+            orig_data = ds['orig'].mol[0].res[i].spin[0]
             new_data = cdp.mol[0].res[i].spin[0]
 
             # Spin info tests.
@@ -694,7 +694,7 @@ class Mf(TestCase):
         self.relax.interpreter._Model_free.select_model(model='m4')
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test the model.
         self.assertEqual(cdp.mol[0].res[1].spin[0].model, 'm4')
@@ -714,7 +714,7 @@ class Mf(TestCase):
         self.relax.interpreter._Value.set(NH_BOND_LENGTH, 'bond_length')
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test the value.
         self.assertEqual(cdp.mol[0].res[1].spin[0].r, NH_BOND_LENGTH)
@@ -733,7 +733,7 @@ class Mf(TestCase):
         self.relax.interpreter._Value.set(N15_CSA, 'csa')
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test the value.
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, N15_CSA)
@@ -752,7 +752,7 @@ class Mf(TestCase):
         self.relax.interpreter._Value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, N15_CSA)

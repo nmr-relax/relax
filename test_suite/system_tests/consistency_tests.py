@@ -26,7 +26,7 @@ import sys
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import residue_loop
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 
@@ -45,7 +45,7 @@ class Ct(TestCase):
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        relax_data_store.__reset__()
+        ds.__reset__()
 
 
     def test_calc(self):

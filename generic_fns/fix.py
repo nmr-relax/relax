@@ -24,7 +24,7 @@
 from re import match
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError
 
 
@@ -42,46 +42,46 @@ class Fix:
         """Function for fixing or allowing parameter values to change."""
 
         # Test if the run exists.
-        if not run in relax_data_store.run_names:
+        if not run in ds.run_names:
             raise RelaxNoPipeError, run
 
         # Diffusion tensor.
         if element == 'diff':
             # Test if the diffusion tensor data is loaded.
-            if not relax_data_store.diff.has_key(run):
+            if not ds.diff.has_key(run):
                 raise RelaxNoTensorError, 'diffusion'
 
             # Set the fixed flag.
-            relax_data_store.diff[run].fixed = fixed
+            ds.diff[run].fixed = fixed
 
 
         # All residues.
         elif element == 'all_res':
             # Test if sequence data is loaded.
-            if not relax_data_store.res.has_key(run):
+            if not ds.res.has_key(run):
                 raise RelaxNoSequenceError, run
 
             # Loop over the sequence and set the fixed flag.
-            for i in xrange(len(relax_data_store.res[run])):
-                relax_data_store.res[run][i].fixed = fixed
+            for i in xrange(len(ds.res[run])):
+                ds.res[run][i].fixed = fixed
 
 
         # All parameters.
         elif element == 'all':
             # Test if sequence data is loaded.
-            if not relax_data_store.res.has_key(run):
+            if not ds.res.has_key(run):
                 raise RelaxNoSequenceError, run
 
             # Test if the diffusion tensor data is loaded.
-            if not relax_data_store.diff.has_key(run):
+            if not ds.diff.has_key(run):
                 raise RelaxNoTensorError, 'diffusion'
 
             # Set the fixed flag for the diffusion tensor.
-            relax_data_store.diff[run].fixed = fixed
+            ds.diff[run].fixed = fixed
 
             # Loop over the sequence and set the fixed flag.
-            for i in xrange(len(relax_data_store.res[run])):
-                relax_data_store.res[run][i].fixed = fixed
+            for i in xrange(len(ds.res[run])):
+                ds.res[run][i].fixed = fixed
 
 
         # Unknown.

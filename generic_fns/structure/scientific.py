@@ -38,7 +38,7 @@ except ImportError:
 
 # relax module imports.
 from api_base import Base_struct_API
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import Selection, parse_token, tokenise, wildcard_match
 from relax_errors import RelaxError, RelaxNoPdbChainError, RelaxNoResError, RelaxPdbLoadError
 from relax_warnings import RelaxNoAtomWarning, RelaxZeroVectorWarning
@@ -435,7 +435,7 @@ class Scientific_data(Base_struct_API):
         self.model = model
 
         # Use pointers (references) if the PDB data exists in another run.
-        for data_pipe in relax_data_store:
+        for data_pipe in ds:
             if hasattr(data_pipe, 'structure') and data_pipe.structure.file_name == file_path and data_pipe.structure.model == model:
                 # Make a pointer to the data.
                 self.structural_data = data_pipe.structure.structural_data

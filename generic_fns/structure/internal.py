@@ -30,7 +30,7 @@ from string import split, strip
 
 # relax module imports.
 from api_base import Base_struct_API
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import Selection
 from relax_errors import RelaxError
 from relax_io import open_read_file
@@ -453,7 +453,7 @@ class Internal(Base_struct_API):
         self.model = model
 
         # Use pointers (references) if the PDB data exists in another run.
-        for data_pipe in relax_data_store:
+        for data_pipe in ds:
             if hasattr(data_pipe, 'structure') and data_pipe.structure.file_name == file_path and data_pipe.structure.model == model and data_pipe.structure.id == 'internal':
                 # Make a pointer to the data.
                 self.structural_data = data_pipe.structure.structural_data

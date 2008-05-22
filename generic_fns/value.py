@@ -26,7 +26,7 @@ from re import compile, match
 import sys
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import diffusion_tensor
 from generic_fns.minimise import reset_min_stats
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
@@ -50,7 +50,7 @@ def partition_params(val, param):
     """
 
     # Specific functions.
-    is_spin_param = get_specific_fn('is_spin_param', relax_data_store[relax_data_store.current_pipe].pipe_type)
+    is_spin_param = get_specific_fn('is_spin_param', ds[ds.current_pipe].pipe_type)
 
     # Initialise.
     spin_params = []
@@ -129,12 +129,12 @@ def set(val=None, param=None, spin_id=None, force=False):
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Specific functions.
-    return_value = get_specific_fn('return_value', relax_data_store[relax_data_store.current_pipe].pipe_type)
-    set_non_spin_params = get_specific_fn('set_non_spin_params', relax_data_store[relax_data_store.current_pipe].pipe_type)
+    return_value = get_specific_fn('return_value', ds[ds.current_pipe].pipe_type)
+    set_non_spin_params = get_specific_fn('set_non_spin_params', ds[ds.current_pipe].pipe_type)
 
     # The parameters have been specified.
     if param:
@@ -221,10 +221,10 @@ def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
     """
 
     # Specific functions.
-    data_init = get_specific_fn('data_init', relax_data_store[relax_data_store.current_pipe].pipe_type)
-    default_value = get_specific_fn('default_value', relax_data_store[relax_data_store.current_pipe].pipe_type)
-    return_data_name = get_specific_fn('return_data_name', relax_data_store[relax_data_store.current_pipe].pipe_type)
-    set_update = get_specific_fn('set_update', relax_data_store[relax_data_store.current_pipe].pipe_type)
+    data_init = get_specific_fn('data_init', ds[ds.current_pipe].pipe_type)
+    default_value = get_specific_fn('default_value', ds[ds.current_pipe].pipe_type)
+    return_data_name = get_specific_fn('return_data_name', ds[ds.current_pipe].pipe_type)
+    set_update = get_specific_fn('set_update', ds[ds.current_pipe].pipe_type)
 
 
     # Setting the model parameters prior to minimisation.
@@ -336,23 +336,23 @@ class Value:
         self.param = param
 
         # Test if run1 exists.
-        if not run1 in relax_data_store.run_names:
+        if not run1 in ds.run_names:
             raise RelaxNoPipeError, run1
 
         # Test if run2 exists.
-        if not run2 in relax_data_store.run_names:
+        if not run2 in ds.run_names:
             raise RelaxNoPipeError, run2
 
         # Test if the sequence data for run1 is loaded.
-        if not relax_data_store.res.has_key(run1):
+        if not ds.res.has_key(run1):
             raise RelaxNoSequenceError, run1
 
         # Test if the sequence data for run2 is loaded.
-        if not relax_data_store.res.has_key(run2):
+        if not ds.res.has_key(run2):
             raise RelaxNoSequenceError, run2
 
         # Function type.
-        self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(run1)]
+        self.function_type = ds.run_types[ds.run_names.index(run1)]
 
         # Specific value and error returning function.
         return_value = self.relax.specific_setup.setup('return_value', self.function_type)
@@ -361,7 +361,7 @@ class Value:
         set = self.relax.specific_setup.setup('set', self.function_type)
 
         # Test if the data exists for run2.
-        for i in xrange(len(relax_data_store.res[run2])):
+        for i in xrange(len(ds.res[run2])):
             # Get the value and error for run2.
             value, error = return_value(run2, i, param)
 
@@ -370,7 +370,7 @@ class Value:
                 raise RelaxValueError, (param, run2)
 
         # Copy the values.
-        for i in xrange(len(relax_data_store.res[run1])):
+        for i in xrange(len(ds.res[run1])):
             # Get the value and error for run1.
             value, error = return_value(run1, i, param)
 
@@ -392,11 +392,11 @@ class Value:
         self.param = param
 
         # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
+        if not self.run in ds.run_names:
             raise RelaxNoPipeError, self.run
 
         # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
+        if not ds.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Print the data.
@@ -412,15 +412,15 @@ class Value:
         self.scaling = scaling
 
         # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
+        if not self.run in ds.run_names:
             raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
+        if not ds.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Function type.
-        self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
+        self.function_type = ds.run_types[ds.run_names.index(self.run)]
 
         # Minimisation parameter.
         if self.relax.generic.minimise.return_data_name(param):
@@ -445,9 +445,9 @@ class Value:
             set = self.relax.specific_setup.setup('set', self.function_type)
 
         # Test data corresponding to param already exists.
-        for i in xrange(len(relax_data_store.res[self.run])):
+        for i in xrange(len(ds.res[self.run])):
             # Skip deselected residues.
-            if not relax_data_store.res[self.run][i].select:
+            if not ds.res[self.run][i].select:
                 continue
 
             # Get the value and error.
@@ -537,10 +537,10 @@ class Value:
             else:
                 error = None
 
-            # Find the index of relax_data_store.res[self.run] which corresponds to the relaxation data set i.
+            # Find the index of ds.res[self.run] which corresponds to the relaxation data set i.
             index = None
-            for j in xrange(len(relax_data_store.res[self.run])):
-                if relax_data_store.res[self.run][j].num == spin_num and (spin_name == None or relax_data_store.res[self.run][j].name == spin_name):
+            for j in xrange(len(ds.res[self.run])):
+                if ds.res[self.run][j].num == spin_num and (spin_name == None or ds.res[self.run][j].name == spin_name):
                     index = j
                     break
             if index == None:
@@ -566,11 +566,11 @@ class Value:
         self.param = param
 
         # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
+        if not self.run in ds.run_names:
             raise RelaxNoPipeError, self.run
 
         # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
+        if not ds.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Open the file for writing.
@@ -589,7 +589,7 @@ class Value:
         # Get the value and error returning function if required.
         if not return_value:
             # Function type.
-            self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
+            self.function_type = ds.run_types[ds.run_names.index(run)]
 
             # Specific value and error returning function.
             return_value = self.relax.specific_setup.setup('return_value', self.function_type)
@@ -598,9 +598,9 @@ class Value:
         file.write("%-5s%-6s%-30s%-30s\n" % ('Num', 'Name', 'Value', 'Error'))
 
         # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[run])):
-            # Remap the data structure 'relax_data_store.res[run][i]'.
-            data = relax_data_store.res[run][i]
+        for i in xrange(len(ds.res[run])):
+            # Remap the data structure 'ds.res[run][i]'.
+            data = ds.res[run][i]
 
             # Get the value and error.
             value, error = return_value(run, i, param)

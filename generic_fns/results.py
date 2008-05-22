@@ -24,7 +24,7 @@
 import sys
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPipeError
 from relax_io import extract_data, open_write_file, strip
 from specific_fns.setup import get_specific_fn, get_string
@@ -34,15 +34,15 @@ def copy(run1=None, run2=None, sim=None):
     """Function for copying all results from run1 to run2."""
 
     # Test if run1 exists.
-    if not run1 in relax_data_store.run_names:
+    if not run1 in ds.run_names:
         raise RelaxNoPipeError, run1
 
     # Test if run2 exists.
-    if not run2 in relax_data_store.run_names:
+    if not run2 in ds.run_names:
         raise RelaxNoPipeError, run2
 
     # Function type.
-    function_type = relax_data_store.run_types[relax_data_store.run_names.index(run1)]
+    function_type = ds.run_types[ds.run_names.index(run1)]
 
     # Copy function.
     copy = self.relax.specific_setup.setup('copy', function_type, raise_error=0)
@@ -55,11 +55,11 @@ def display(run=None, format='columnar'):
     """Function for displaying the results."""
 
     # Test if the run exists.
-    if not run in relax_data_store.run_names:
+    if not run in ds.run_names:
         raise RelaxNoPipeError, run
 
     # Function type.
-    function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
+    function_type = ds.run_types[ds.run_names.index(run)]
 
     # Specific results writing function.
     if format == 'xml':
@@ -82,15 +82,15 @@ def read(file='results', directory=None, file_data=None, format='columnar', verb
     """Function for reading the data out of a file."""
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Specific results writing function.
     if format == 'xml':
         format = 'XML'
-        read_function = get_specific_fn('read_xml_results', relax_data_store[relax_data_store.current_pipe].pipe_type, raise_error=False)
+        read_function = get_specific_fn('read_xml_results', ds[ds.current_pipe].pipe_type, raise_error=False)
     elif format == 'columnar':
-        read_function = get_specific_fn('read_columnar_results', relax_data_store[relax_data_store.current_pipe].pipe_type, raise_error=False)
+        read_function = get_specific_fn('read_columnar_results', ds[ds.current_pipe].pipe_type, raise_error=False)
     else:
         raise RelaxError, "Unknown format " + `format` + "."
 
@@ -99,7 +99,7 @@ def read(file='results', directory=None, file_data=None, format='columnar', verb
         raise RelaxError, "The " + format + " format is not currently supported for " + self.relax.specific_setup.get_string(function_type) + "."
 
     # Make sure that the data pipe is empty.
-    if not relax_data_store[relax_data_store.current_pipe].is_empty():
+    if not ds[ds.current_pipe].is_empty():
         raise RelaxError, "The current data pipe is not empty."
 
     # Extract the data from the file.
@@ -120,21 +120,21 @@ def write(file="results", directory=None, force=False, format='columnar', compre
     """Create the results file."""
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Specific results writing function.
     if format == 'xml':
         format = 'XML'
-        write_function = get_specific_fn('write_xml_results', relax_data_store[relax_data_store.current_pipe].pipe_type, raise_error=False)
+        write_function = get_specific_fn('write_xml_results', ds[ds.current_pipe].pipe_type, raise_error=False)
     elif format == 'columnar':
-        write_function = get_specific_fn('write_columnar_results', relax_data_store[relax_data_store.current_pipe].pipe_type, raise_error=False)
+        write_function = get_specific_fn('write_columnar_results', ds[ds.current_pipe].pipe_type, raise_error=False)
     else:
         raise RelaxError, "Unknown format " + `format` + "."
 
     # No function.
     if not write_function:
-        raise RelaxError, "The " + format + " format is not currently supported for " + get_string(relax_data_store[relax_data_store.current_pipe].pipe_type) + "."
+        raise RelaxError, "The " + format + " format is not currently supported for " + get_string(ds[ds.current_pipe].pipe_type) + "."
 
     # Open the file for writing.
     results_file = open_write_file(file_name=file, dir=directory, force=force, compress_type=compress_type, verbosity=verbosity)

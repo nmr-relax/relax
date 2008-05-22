@@ -26,7 +26,7 @@
 from numpy import float64, array, identity, sqrt, zeros
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from maths_fns.relax_fit import back_calc_I, func, setup
 
 
@@ -40,7 +40,7 @@ def back_calc(name):
     """
 
     # Loop over the spins.
-    for spin in relax_data_store.res[name]:
+    for spin in ds.res[name]:
         # Skip deselected spins.
         if not spin.select:
             continue
@@ -49,7 +49,7 @@ def back_calc(name):
         param_vector = array([spin.rx, spin.i0], float64)
 
         # Initialise the relaxation fit functions.
-        setup(num_params=len(spin.params), num_times=len(relax_data_store.relax_times[name]), values=spin.ave_intensities, sd=relax_data_store.sd[name], relax_times=relax_data_store.relax_times[name], scaling_matrix=identity(2, float64))
+        setup(num_params=len(spin.params), num_times=len(ds.relax_times[name]), values=spin.ave_intensities, sd=ds.sd[name], relax_times=ds.relax_times[name], scaling_matrix=identity(2, float64))
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the C module.
         func(param_vector)
@@ -72,8 +72,8 @@ def calc_ave_sd():
     """
 
     # Diff array, std deviation array, and number of spins.
-    diff_array = zeros(sum(relax_data_store.num_spectra[name]), float64)
-    sd_array = zeros(sum(relax_data_store.num_spectra[name]), float64)
+    diff_array = zeros(sum(ds.num_spectra[name]), float64)
+    sd_array = zeros(sum(ds.num_spectra[name]), float64)
     num_spins = 0
 
 
@@ -81,7 +81,7 @@ def calc_ave_sd():
     ###################################
 
     # Loop over the spins.
-    for spin in relax_data_store.res[name]:
+    for spin in ds.res[name]:
         # Skip deselected spins.
         if not spin.select:
             continue
@@ -107,7 +107,7 @@ def calc_ave_sd():
     ####################################
 
     # Loop over the spins.
-    for spin in relax_data_store.res[name]:
+    for spin in ds.res[name]:
         # Skip deselected spins.
         if not spin.select:
             continue
@@ -196,7 +196,7 @@ def grace_plot(ave, sd, name):
     ymax = 2.5*max(ave + sd)
 
     # Grace header.
-    grace_header(file, xmin=0, xmax=relax_data_store.relax_times[name][-1], ymin=ymin, ymax=ymax)
+    grace_header(file, xmin=0, xmax=ds.relax_times[name][-1], ymin=ymin, ymax=ymax)
 
 
     # First time point difference distributions.
@@ -207,15 +207,15 @@ def grace_plot(ave, sd, name):
     file.write("@type xy\n")
 
     # Loop over the individual time points.
-    for i in xrange(len(relax_data_store.num_spectra[name])):
+    for i in xrange(len(ds.num_spectra[name])):
         # Loop over the spins.
-        for spin in relax_data_store.res[name]:
+        for spin in ds.res[name]:
             # Skip deselected spins.
             if not spin.select:
                 continue
 
             # Grace data point.
-            file.write("%-30s%-30s\n" % (`relax_data_store.relax_times[name][i]`, `spin.intensities[i][0] - spin.fit_int[i]`))
+            file.write("%-30s%-30s\n" % (`ds.relax_times[name][i]`, `spin.intensities[i][0] - spin.fit_int[i]`))
 
     # End the graph.
     file.write("&\n")
@@ -229,16 +229,16 @@ def grace_plot(ave, sd, name):
     file.write("@type xy\n")
 
     # Loop over the individual time points.
-    for i in xrange(len(relax_data_store.num_spectra[name])):
+    for i in xrange(len(ds.num_spectra[name])):
         # Loop over the spins.
-        for spin in relax_data_store.res[name]:
+        for spin in ds.res[name]:
             # Skip deselected spins.
             if not spin.select:
                 continue
 
             # Grace data point.
             if len(spin.intensities[i]) == 2:
-                file.write("%-30s%-30s\n" % (`relax_data_store.relax_times[name][i]`, `spin.intensities[i][1] - spin.fit_int[i]`))
+                file.write("%-30s%-30s\n" % (`ds.relax_times[name][i]`, `spin.intensities[i][1] - spin.fit_int[i]`))
 
     # End the graph.
     file.write("&\n")
@@ -253,10 +253,10 @@ def grace_plot(ave, sd, name):
 
     # Loop over the data.
     index = 0
-    for i in xrange(len(relax_data_store.num_spectra[name])):
-        for j in xrange(relax_data_store.num_spectra[name][i]):
+    for i in xrange(len(ds.num_spectra[name])):
+        for j in xrange(ds.num_spectra[name][i]):
             # Grace data point.
-            file.write("%-30s%-30s%-30s\n" % (`relax_data_store.relax_times[name][i]`, `ave[index]`, `sd[index]`))
+            file.write("%-30s%-30s%-30s\n" % (`ds.relax_times[name][i]`, `ave[index]`, `sd[index]`))
 
             # Increment the index.
             index = index + 1

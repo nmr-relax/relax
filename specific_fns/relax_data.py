@@ -25,7 +25,7 @@ from copy import deepcopy
 import sys
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxNoResError, RelaxNoRiError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
@@ -51,11 +51,11 @@ class Rx_data:
         self.frq = frq
 
         # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
+        if not self.run in ds.run_names:
             raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
+        if not ds.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
 
@@ -66,15 +66,15 @@ class Rx_data:
         self.global_flag = 1
 
         # Initialise the global data if necessary.
-        self.data_init(relax_data_store)
+        self.data_init(ds)
 
         # Add the data structures.
-        relax_data_store.ri_labels[self.run] = deepcopy(ri_labels)
-        relax_data_store.remap_table[self.run] = deepcopy(remap_table)
-        relax_data_store.frq_labels[self.run] = deepcopy(frq_labels)
-        relax_data_store.frq[self.run] = deepcopy(frq)
-        relax_data_store.num_ri[self.run] = len(ri_labels)
-        relax_data_store.num_frq[self.run] = len(frq)
+        ds.ri_labels[self.run] = deepcopy(ri_labels)
+        ds.remap_table[self.run] = deepcopy(remap_table)
+        ds.frq_labels[self.run] = deepcopy(frq_labels)
+        ds.frq[self.run] = deepcopy(frq)
+        ds.num_ri[self.run] = len(ri_labels)
+        ds.num_frq[self.run] = len(frq)
 
 
         # Residue specific data.
@@ -83,8 +83,8 @@ class Rx_data:
         # Global data flag.
         self.global_flag = 0
 
-        # Remap the data structure 'relax_data_store.res[self.run][res_index]'.
-        data = relax_data_store.res[self.run][res_index]
+        # Remap the data structure 'ds.res[self.run][res_index]'.
+        data = ds.res[self.run][res_index]
 
         # Relaxation data.
         if not sim:
@@ -160,11 +160,11 @@ class Rx_data:
         self.frq = frq
 
         # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
+        if not self.run in ds.run_names:
             raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
+        if not ds.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Test if relaxation data corresponding to 'self.ri_label' and 'self.frq_label' already exists.
@@ -179,7 +179,7 @@ class Rx_data:
         self.global_flag = 1
 
         # Initialise the global data if necessary.
-        self.data_init(relax_data_store)
+        self.data_init(ds)
 
         # Update the global data.
         self.update_data_structures_pipe(ri_label, frq_label, frq)
@@ -192,21 +192,21 @@ class Rx_data:
         self.global_flag = 0
 
         # Function type.
-        function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
+        function_type = ds.run_types[ds.run_names.index(self.run)]
 
         # Specific back-calculate function setup.
         back_calculate = self.relax.specific_setup.setup('back_calc', function_type)
 
         # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Remap the data structure 'relax_data_store.res[self.run][i]'.
-            data = relax_data_store.res[self.run][i]
+        for i in xrange(len(ds.res[self.run])):
+            # Remap the data structure 'ds.res[self.run][i]'.
+            data = ds.res[self.run][i]
 
             # Skip deselected residues.
             if not data.select:
                 continue
 
-            # Store a copy of all the data in 'relax_data_store.res[self.run][i]' for backing up if the back_calculation function fails.
+            # Store a copy of all the data in 'ds.res[self.run][i]' for backing up if the back_calculation function fails.
             back_up = deepcopy(data)
 
             # Initialise all data structures.
@@ -217,7 +217,7 @@ class Rx_data:
                 value = back_calculate(run=self.run, index=i, ri_label=self.ri_label, frq_label=frq_label, frq=self.frq)
             except:
                 # Restore the data.
-                relax_data_store.res[self.run][i] = deepcopy(back_up)
+                ds.res[self.run][i] = deepcopy(back_up)
                 del back_up
                 raise
 
@@ -233,19 +233,19 @@ class Rx_data:
         self.frq_label = frq_label
 
         # Test if run1 exists.
-        if not run1 in relax_data_store.run_names:
+        if not run1 in ds.run_names:
             raise RelaxNoPipeError, run1
 
         # Test if run2 exists.
-        if not run2 in relax_data_store.run_names:
+        if not run2 in ds.run_names:
             raise RelaxNoPipeError, run2
 
         # Test if the sequence data for run1 is loaded.
-        if not relax_data_store.res.has_key(run1):
+        if not ds.res.has_key(run1):
             raise RelaxNoSequenceError, run1
 
         # Test if the sequence data for run2 is loaded.
-        if not relax_data_store.res.has_key(run2):
+        if not ds.res.has_key(run2):
             raise RelaxNoSequenceError, run2
 
         # Copy all data.
@@ -254,10 +254,10 @@ class Rx_data:
             names = self.data_names()
 
             # Loop over the sequence.
-            for i in xrange(len(relax_data_store.res[run1])):
-                # Remap the data structure 'relax_data_store.res[run1][i]'.
-                data1 = relax_data_store.res[run1][i]
-                data2 = relax_data_store.res[run2][i]
+            for i in xrange(len(ds.res[run1])):
+                # Remap the data structure 'ds.res[run1][i]'.
+                data1 = ds.res[run1][i]
+                data2 = ds.res[run2][i]
 
                 # Loop through the data structure names.
                 for name in names:
@@ -279,10 +279,10 @@ class Rx_data:
                 raise RelaxRiError, (self.ri_label, self.frq_label)
 
             # Loop over the sequence.
-            for i in xrange(len(relax_data_store.res[run1])):
-                # Remap the data structure 'relax_data_store.res[run1][i]'.
-                data1 = relax_data_store.res[run1][i]
-                data2 = relax_data_store.res[run2][i]
+            for i in xrange(len(ds.res[run1])):
+                # Remap the data structure 'ds.res[run1][i]'.
+                data1 = ds.res[run1][i]
+                data2 = ds.res[run2][i]
 
                 # Find the index corresponding to 'ri_label' and 'frq_label'.
                 index = self.find_index(data1, ri_label, frq_label)
@@ -395,11 +395,11 @@ class Rx_data:
         self.frq_label = frq_label
 
         # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
+        if not self.run in ds.run_names:
             raise RelaxNoPipeError, self.run
 
         # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
+        if not ds.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
@@ -407,9 +407,9 @@ class Rx_data:
             raise RelaxNoRiError, (self.ri_label, self.frq_label)
 
         # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Remap the data structure 'relax_data_store.res[self.run][i]'.
-            data = relax_data_store.res[self.run][i]
+        for i in xrange(len(ds.res[self.run])):
+            # Remap the data structure 'ds.res[self.run][i]'.
+            data = ds.res[self.run][i]
 
             # Global data flag.
             self.global_flag = 0
@@ -465,11 +465,11 @@ class Rx_data:
         self.frq_label = frq_label
 
         # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
+        if not self.run in ds.run_names:
             raise RelaxNoPipeError, self.run
 
         # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
+        if not ds.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
@@ -543,7 +543,7 @@ class Rx_data:
         """
 
         # Test if the current data pipe exists.
-        pipes.test(relax_data_store.current_pipe)
+        pipes.test(ds.current_pipe)
 
         # Test if sequence data exists.
         if not exists_mol_res_spin_data():
@@ -605,7 +605,7 @@ class Rx_data:
         self.global_flag = 1
 
         # Initialise the global data for the current pipe if necessary.
-        self.data_init(relax_data_store[relax_data_store.current_pipe])
+        self.data_init(ds[ds.current_pipe])
 
         # Update the global data.
         self.update_data_structures_pipe(ri_label, frq_label, frq)
@@ -657,12 +657,12 @@ class Rx_data:
         error = None
 
         # Find the index corresponding to 'ri_label' and 'frq_label'.
-        index = self.find_index(relax_data_store.res[self.run][i])
+        index = self.find_index(ds.res[self.run][i])
 
         # Get the data.
         if index != None:
-            value = relax_data_store.res[self.run][i].relax_data[index]
-            error = relax_data_store.res[self.run][i].relax_error[index]
+            value = ds.res[self.run][i].relax_data[index]
+            error = ds.res[self.run][i].relax_error[index]
 
         # Return the data.
         return value, error
@@ -704,7 +704,7 @@ class Rx_data:
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise the relaxation data structures (if needed).
         self.data_init(cdp)
@@ -852,11 +852,11 @@ class Rx_data:
         self.frq_label = frq_label
 
         # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
+        if not self.run in ds.run_names:
             raise RelaxNoPipeError, self.run
 
         # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
+        if not ds.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.

@@ -548,7 +548,7 @@ class AlignTensorList(ListType):
         text = text + "%-8s%-20s\n" % ("Index", "Name")
         for i in xrange(len(self)):
             text = text + "%-8i%-20s\n" % (i, self[i].name)
-        text = text + "\nThese can be accessed by typing 'relax_data_store.align_tensor[index]'.\n"
+        text = text + "\nThese can be accessed by typing 'ds.align_tensor[index]'.\n"
         return text
 
 

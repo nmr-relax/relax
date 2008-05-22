@@ -24,7 +24,7 @@
 from copy import deepcopy
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxError, RelaxNoPipeError
 
 
@@ -46,11 +46,11 @@ class Eliminate:
         # Loop over the runs.
         for self.run in self.runs:
             # Test if the run exists.
-            if not self.run in relax_data_store.run_names:
+            if not self.run in ds.run_names:
                 raise RelaxNoPipeError, self.run
 
             # Function type.
-            function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
+            function_type = ds.run_types[ds.run_names.index(self.run)]
 
             # Specific eliminate, parameter names, parameter values, number of instances, and deselect function setup.
             eliminate = self.relax.specific_setup.setup('eliminate', function_type)
@@ -62,7 +62,7 @@ class Eliminate:
             # Get the number of instances and loop over them.
             for i in xrange(num_instances(self.run)):
                 # Determine if simulations are active for the run.
-                if hasattr(relax_data_store, 'sim_state') and relax_data_store.sim_state.has_key(self.run) and relax_data_store.sim_state[self.run] == 1:
+                if hasattr(ds, 'sim_state') and ds.sim_state.has_key(self.run) and ds.sim_state[self.run] == 1:
                     sim_state = 1
                 else:
                     sim_state = 0
@@ -101,7 +101,7 @@ class Eliminate:
 
                 else:
                     # Loop over the simulations.
-                    for j in xrange(relax_data_store.sim_number[self.run]):
+                    for j in xrange(ds.sim_number[self.run]):
                         # Get the parameter names and values.
                         names = param_names(self.run, i)
                         values = param_values(self.run, i, sim_index=j)

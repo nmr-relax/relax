@@ -4,7 +4,7 @@
 from generic.selection import spin_loop
 
 # The relax data storage object.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 
 
 def back_calc():

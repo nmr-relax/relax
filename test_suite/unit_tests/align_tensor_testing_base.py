@@ -24,7 +24,7 @@
 from math import pi
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError
 
 
@@ -40,22 +40,22 @@ class Align_tensor_base_class:
         """Set up for all the alignment tensor unit tests."""
 
         # Reset the relax data storage object.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Add a data pipe to the data store.
-        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+        ds.add(pipe_name='orig', pipe_type='mf')
 
         # Add a second data pipe for copying tests.
-        relax_data_store.add(pipe_name='test', pipe_type='mf')
+        ds.add(pipe_name='test', pipe_type='mf')
 
         # Set the current data pipe to 'orig'.
-        relax_data_store.current_pipe = 'orig'
+        ds.current_pipe = 'orig'
 
 
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        relax_data_store.__reset__()
+        ds.__reset__()
 
 
     def test_copy_pull(self):
@@ -69,17 +69,17 @@ class Align_tensor_base_class:
         self.align_tensor_fns.init(tensor='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
 
         # Change the current data pipe.
-        relax_data_store.current_pipe = 'test'
+        ds.current_pipe = 'test'
 
         # Copy the tensor to the test pipe.
         self.align_tensor_fns.copy(tensor_from='Pf1', pipe_from='orig', tensor_to='Pf1')
 
         # Test the alignment tensor.
-        self.assertEqual(relax_data_store['test'].align_tensors[0].Sxx, -16.6278)
-        self.assertEqual(relax_data_store['test'].align_tensors[0].Syy, 6.13037)
-        self.assertEqual(relax_data_store['test'].align_tensors[0].Sxy, 7.65639)
-        self.assertEqual(relax_data_store['test'].align_tensors[0].Sxz, -1.89157)
-        self.assertEqual(relax_data_store['test'].align_tensors[0].Syz, 19.2561)
+        self.assertEqual(ds['test'].align_tensors[0].Sxx, -16.6278)
+        self.assertEqual(ds['test'].align_tensors[0].Syy, 6.13037)
+        self.assertEqual(ds['test'].align_tensors[0].Sxy, 7.65639)
+        self.assertEqual(ds['test'].align_tensors[0].Sxz, -1.89157)
+        self.assertEqual(ds['test'].align_tensors[0].Syz, 19.2561)
 
 
     def test_copy_push(self):
@@ -96,11 +96,11 @@ class Align_tensor_base_class:
         self.align_tensor_fns.copy(tensor_from='Pf1', pipe_to='test', tensor_to='Pf1')
 
         # Test the alignment tensor.
-        self.assertEqual(relax_data_store['test'].align_tensors[0].Sxx, -16.6278)
-        self.assertEqual(relax_data_store['test'].align_tensors[0].Syy, 6.13037)
-        self.assertEqual(relax_data_store['test'].align_tensors[0].Sxy, 7.65639)
-        self.assertEqual(relax_data_store['test'].align_tensors[0].Sxz, -1.89157)
-        self.assertEqual(relax_data_store['test'].align_tensors[0].Syz, 19.2561)
+        self.assertEqual(ds['test'].align_tensors[0].Sxx, -16.6278)
+        self.assertEqual(ds['test'].align_tensors[0].Syy, 6.13037)
+        self.assertEqual(ds['test'].align_tensors[0].Sxy, 7.65639)
+        self.assertEqual(ds['test'].align_tensors[0].Sxz, -1.89157)
+        self.assertEqual(ds['test'].align_tensors[0].Syz, 19.2561)
 
 
     def test_copy_fail(self):
@@ -131,7 +131,7 @@ class Align_tensor_base_class:
         self.align_tensor_fns.delete(tensor='Pf1')
 
         # Test that Axx does not exist.
-        self.failIf(hasattr(relax_data_store['orig'], 'align_tensors'))
+        self.failIf(hasattr(ds['orig'], 'align_tensors'))
 
 
     def test_delete_fail_no_data(self):
@@ -153,7 +153,7 @@ class Align_tensor_base_class:
         """
 
         # Reset the relax data store.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Try to delete the tensor data.
         self.assertRaises(RelaxNoPipeError, self.align_tensor_fns.delete, 'Pf1')
@@ -192,7 +192,7 @@ class Align_tensor_base_class:
         """
 
         # Reset the relax data store.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Try to display the tensor data.
         self.assertRaises(RelaxNoPipeError, self.align_tensor_fns.display, 'Pf1')
@@ -220,11 +220,11 @@ class Align_tensor_base_class:
         self.align_tensor_fns.init(tensor='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
 
         # Test the alignment tensor.
-        self.assertEqual(relax_data_store['orig'].align_tensors[0].Sxx, -16.6278)
-        self.assertEqual(relax_data_store['orig'].align_tensors[0].Syy, 6.13037)
-        self.assertEqual(relax_data_store['orig'].align_tensors[0].Sxy, 7.65639)
-        self.assertEqual(relax_data_store['orig'].align_tensors[0].Sxz, -1.89157)
-        self.assertEqual(relax_data_store['orig'].align_tensors[0].Syz, 19.2561)
+        self.assertEqual(ds['orig'].align_tensors[0].Sxx, -16.6278)
+        self.assertEqual(ds['orig'].align_tensors[0].Syy, 6.13037)
+        self.assertEqual(ds['orig'].align_tensors[0].Sxy, 7.65639)
+        self.assertEqual(ds['orig'].align_tensors[0].Sxz, -1.89157)
+        self.assertEqual(ds['orig'].align_tensors[0].Syz, 19.2561)
 
 
     def test_matrix_angles_identity(self):
@@ -245,35 +245,35 @@ class Align_tensor_base_class:
         self.align_tensor_fns.matrix_angles()
 
         # Test the angles.
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[0,0], 0.0)
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[0,1], pi/2)
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[0,2], pi/2)
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[0,3], pi/2)
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[0,4], pi/2)
+        self.assertEqual(ds['orig'].align_tensors.angles[0,0], 0.0)
+        self.assertEqual(ds['orig'].align_tensors.angles[0,1], pi/2)
+        self.assertEqual(ds['orig'].align_tensors.angles[0,2], pi/2)
+        self.assertEqual(ds['orig'].align_tensors.angles[0,3], pi/2)
+        self.assertEqual(ds['orig'].align_tensors.angles[0,4], pi/2)
 
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[1,0], pi/2)
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[1,1], 0.0)
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[1,2], pi/2)
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[1,3], pi/2)
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[1,4], pi/2)
+        self.assertEqual(ds['orig'].align_tensors.angles[1,0], pi/2)
+        self.assertEqual(ds['orig'].align_tensors.angles[1,1], 0.0)
+        self.assertEqual(ds['orig'].align_tensors.angles[1,2], pi/2)
+        self.assertEqual(ds['orig'].align_tensors.angles[1,3], pi/2)
+        self.assertEqual(ds['orig'].align_tensors.angles[1,4], pi/2)
 
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[2,0], pi/2)
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[2,1], pi/2)
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[2,2], 0.0)
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[2,3], pi/2)
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[2,4], pi/2)
+        self.assertEqual(ds['orig'].align_tensors.angles[2,0], pi/2)
+        self.assertEqual(ds['orig'].align_tensors.angles[2,1], pi/2)
+        self.assertEqual(ds['orig'].align_tensors.angles[2,2], 0.0)
+        self.assertEqual(ds['orig'].align_tensors.angles[2,3], pi/2)
+        self.assertEqual(ds['orig'].align_tensors.angles[2,4], pi/2)
 
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[3,0], pi/2)
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[3,1], pi/2)
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[3,2], pi/2)
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[3,3], 0.0)
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[3,4], pi/2)
+        self.assertEqual(ds['orig'].align_tensors.angles[3,0], pi/2)
+        self.assertEqual(ds['orig'].align_tensors.angles[3,1], pi/2)
+        self.assertEqual(ds['orig'].align_tensors.angles[3,2], pi/2)
+        self.assertEqual(ds['orig'].align_tensors.angles[3,3], 0.0)
+        self.assertEqual(ds['orig'].align_tensors.angles[3,4], pi/2)
 
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[4,0], pi/2)
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[4,1], pi/2)
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[4,2], pi/2)
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[4,3], pi/2)
-        self.assertEqual(relax_data_store['orig'].align_tensors.angles[4,4], 0.0)
+        self.assertEqual(ds['orig'].align_tensors.angles[4,0], pi/2)
+        self.assertEqual(ds['orig'].align_tensors.angles[4,1], pi/2)
+        self.assertEqual(ds['orig'].align_tensors.angles[4,2], pi/2)
+        self.assertEqual(ds['orig'].align_tensors.angles[4,3], pi/2)
+        self.assertEqual(ds['orig'].align_tensors.angles[4,4], 0.0)
 
 
     def test_svd_identity(self):
@@ -294,9 +294,9 @@ class Align_tensor_base_class:
         self.align_tensor_fns.svd()
 
         # Test the values
-        self.assertEqual(relax_data_store['orig'].align_tensors.singular_vals[0], 1.0)
-        self.assertEqual(relax_data_store['orig'].align_tensors.singular_vals[1], 1.0)
-        self.assertEqual(relax_data_store['orig'].align_tensors.singular_vals[2], 1.0)
-        self.assertEqual(relax_data_store['orig'].align_tensors.singular_vals[3], 1.0)
-        self.assertEqual(relax_data_store['orig'].align_tensors.singular_vals[4], 1.0)
-        self.assertEqual(relax_data_store['orig'].align_tensors.cond_num, 1.0)
+        self.assertEqual(ds['orig'].align_tensors.singular_vals[0], 1.0)
+        self.assertEqual(ds['orig'].align_tensors.singular_vals[1], 1.0)
+        self.assertEqual(ds['orig'].align_tensors.singular_vals[2], 1.0)
+        self.assertEqual(ds['orig'].align_tensors.singular_vals[3], 1.0)
+        self.assertEqual(ds['orig'].align_tensors.singular_vals[4], 1.0)
+        self.assertEqual(ds['orig'].align_tensors.cond_num, 1.0)

@@ -24,7 +24,7 @@
 from re import search
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import spin_loop
 from relax_errors import RelaxError
 from specific_fns.setup import get_specific_fn
@@ -42,10 +42,10 @@ def reset_min_stats(data_pipe=None, spin=None):
 
     # The data pipe.
     if data_pipe == None:
-        data_pipe = relax_data_store.current_pipe
+        data_pipe = ds.current_pipe
 
     # Alias the current data pipe.
-    cdp = relax_data_store[data_pipe]
+    cdp = ds[data_pipe]
 
 
     # Global minimisation statistics.
@@ -116,7 +116,7 @@ def calc(verbosity=1):
     """
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Specific calculate function setup.
     calculate = get_specific_fn('calculate', cdp.pipe_type)
@@ -160,7 +160,7 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     """
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Specific grid search function.
     grid_search = get_specific_fn('grid_search', cdp.pipe_type)
@@ -211,7 +211,7 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
     """
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Specific minimisation function.
     minimise = get_specific_fn('minimise', cdp.pipe_type)
@@ -225,8 +225,8 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
         minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity, sim_index=sim_index)
 
     # Monte Carlo simulation minimisation.
-    elif hasattr(relax_data_store, 'sim_state') and relax_data_store.sim_state == 1:
-        for i in xrange(relax_data_store.sim_number):
+    elif hasattr(ds, 'sim_state') and ds.sim_state == 1:
+        for i in xrange(ds.sim_number):
             if verbosity:
                 print "Simulation " + `i+1`
             minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity-1, sim_index=i)
@@ -354,7 +354,7 @@ def return_value(spin=None, stat_type=None, sim=None):
     """
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Get the object name.
     object_name = return_data_name(stat_type)
@@ -411,7 +411,7 @@ def set(value=None, error=None, param=None, scaling=None, spin=None):
     """
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Get the parameter name.
     param_name = return_data_name(param)

@@ -31,7 +31,7 @@ from re import match, search
 import sys
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from base_class import Common_functions
 from generic_fns import intensity
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_spin_from_index, spin_loop
@@ -119,7 +119,7 @@ class Relax_fit(Common_functions):
             return scaling_matrix
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Loop over the parameters.
         for i in xrange(len(spin.params)):
@@ -154,7 +154,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise.
         index = None
@@ -187,7 +187,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Create the initial parameter vector.
         param_vector = self.assemble_param_vector(spin=spin)
@@ -233,7 +233,7 @@ class Relax_fit(Common_functions):
             raise RelaxNoModelError
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Loop over the spectral time points.
         for j in xrange(len(cdp.relax_times)):
@@ -371,7 +371,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Monte Carlo simulations.
         if sim_index != None:
@@ -484,7 +484,7 @@ class Relax_fit(Common_functions):
             inc = temp
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Minimisation options initialisation.
         min_options = []
@@ -612,7 +612,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test if the standard deviation has already been calculated.
         if hasattr(cdp, 'sd'):
@@ -761,7 +761,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -915,7 +915,7 @@ class Relax_fit(Common_functions):
         """
 
         # Set the model.
-        relax_data_store[relax_data_store.current_pipe].curve_type = model
+        ds[ds.current_pipe].curve_type = model
 
         # Loop over the sequence.
         for spin in spin_loop():
@@ -978,7 +978,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Store the relaxation time in the class instance.
         self.__relax_time = relax_time
@@ -1034,7 +1034,7 @@ class Relax_fit(Common_functions):
         @rtype:         list of float
         """
 
-        return relax_data_store[relax_data_store.current_pipe].sd
+        return ds[ds.current_pipe].sd
 
 
     def return_data_name(self, name):
@@ -1125,11 +1125,11 @@ class Relax_fit(Common_functions):
         """
 
         # Test if the current pipe exists.
-        if not relax_data_store.current_pipe:
+        if not ds.current_pipe:
             raise RelaxNoPipeError
 
         # Test if the pipe type is set to 'relax_fit'.
-        function_type = relax_data_store[relax_data_store.current_pipe].pipe_type
+        function_type = ds[ds.current_pipe].pipe_type
         if function_type != 'relax_fit':
             raise RelaxFuncSetupError, specific_setup.get_string(function_type)
 

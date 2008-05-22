@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import mol_res_spin
 from relax_errors import RelaxError, RelaxNoPipeError
 
@@ -36,10 +36,10 @@ class Test_mol_res_spin(TestCase):
         """Set up some molecules, residues, and spins for testing."""
 
         # Add a data pipe to the data store.
-        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+        ds.add(pipe_name='orig', pipe_type='mf')
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Name the first molecule.
         cdp.mol[0].name = 'Ap4Aase'
@@ -79,7 +79,7 @@ class Test_mol_res_spin(TestCase):
         """Reset the relax data storage object."""
 
         # Reset.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
 
     def test_Selection_boolean_and(self):
@@ -437,7 +437,7 @@ class Test_mol_res_spin(TestCase):
         obj = mol_res_spin.Selection("#Ap4Aase:2&:Glu@63&@NH")
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test if various spins are in the selection.
         self.assert_((cdp.mol[0], cdp.mol[0].res[0], cdp.mol[0].res[0].spin[0]) not in obj)
@@ -498,10 +498,10 @@ class Test_mol_res_spin(TestCase):
         """
 
         # Remove all data.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Add a data pipe to the data store.
-        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+        ds.add(pipe_name='orig', pipe_type='mf')
 
         # Test the number of spins counted.
         self.assertEqual(mol_res_spin.count_spins(), 0)
@@ -514,7 +514,7 @@ class Test_mol_res_spin(TestCase):
         """
 
         # Remove all data.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Test for the error.
         self.assertRaises(RelaxNoPipeError, mol_res_spin.count_spins)
@@ -537,13 +537,13 @@ class Test_mol_res_spin(TestCase):
         """
 
         # Remove all data.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Add a data pipe to the data store.
-        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+        ds.add(pipe_name='orig', pipe_type='mf')
 
         # Name the first molecule.
-        relax_data_store['orig'].mol[0].name = 'TOM40'
+        ds['orig'].mol[0].name = 'TOM40'
 
         # This should be True.
         self.failUnless(mol_res_spin.exists_mol_res_spin_data())
@@ -556,13 +556,13 @@ class Test_mol_res_spin(TestCase):
         """
 
         # Remove all data.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Add a data pipe to the data store.
-        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+        ds.add(pipe_name='orig', pipe_type='mf')
 
         # Name the first residue.
-        relax_data_store['orig'].mol[0].res[0].name = 'Lys'
+        ds['orig'].mol[0].res[0].name = 'Lys'
 
         # This should be True.
         self.failUnless(mol_res_spin.exists_mol_res_spin_data())
@@ -575,13 +575,13 @@ class Test_mol_res_spin(TestCase):
         """
 
         # Remove all data.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Add a data pipe to the data store.
-        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+        ds.add(pipe_name='orig', pipe_type='mf')
 
         # Number the first residue.
-        relax_data_store['orig'].mol[0].res[0].num = 1
+        ds['orig'].mol[0].res[0].num = 1
 
         # This should be True.
         self.failUnless(mol_res_spin.exists_mol_res_spin_data())
@@ -594,13 +594,13 @@ class Test_mol_res_spin(TestCase):
         """
 
         # Remove all data.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Add a data pipe to the data store.
-        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+        ds.add(pipe_name='orig', pipe_type='mf')
 
         # Name the first spin.
-        relax_data_store['orig'].mol[0].res[0].spin[0].name = 'NH'
+        ds['orig'].mol[0].res[0].spin[0].name = 'NH'
 
         # This should be True.
         self.failUnless(mol_res_spin.exists_mol_res_spin_data())
@@ -613,13 +613,13 @@ class Test_mol_res_spin(TestCase):
         """
 
         # Remove all data.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Add a data pipe to the data store.
-        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+        ds.add(pipe_name='orig', pipe_type='mf')
 
         # Number the first spin.
-        relax_data_store['orig'].mol[0].res[0].spin[0].num = 234
+        ds['orig'].mol[0].res[0].spin[0].num = 234
 
         # This should be True.
         self.failUnless(mol_res_spin.exists_mol_res_spin_data())
@@ -632,10 +632,10 @@ class Test_mol_res_spin(TestCase):
         """
 
         # Remove all data.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Add a data pipe to the data store.
-        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+        ds.add(pipe_name='orig', pipe_type='mf')
 
         # This should be False.
         self.failIf(mol_res_spin.exists_mol_res_spin_data())
@@ -648,7 +648,7 @@ class Test_mol_res_spin(TestCase):
         """
 
         # Remove all data.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # This should fail.
         self.assertRaises(RelaxNoPipeError, mol_res_spin.exists_mol_res_spin_data)
@@ -772,10 +772,10 @@ class Test_mol_res_spin(TestCase):
         """
 
         # Reset.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Add a data pipe to the data store.
-        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+        ds.add(pipe_name='orig', pipe_type='mf')
 
         # Loop over the molecules.
         i = 0
@@ -793,7 +793,7 @@ class Test_mol_res_spin(TestCase):
         """
 
         # Reset.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Function for the problem of catching an error in a generator function.
         def fail_test():
@@ -1013,10 +1013,10 @@ class Test_mol_res_spin(TestCase):
         """
 
         # Reset.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Add a data pipe to the data store.
-        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+        ds.add(pipe_name='orig', pipe_type='mf')
 
         # Loop over the residues.
         i = 0
@@ -1034,7 +1034,7 @@ class Test_mol_res_spin(TestCase):
         """
 
         # Reset.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Function for the problem of catching an error in a generator function.
         def fail_test():
@@ -1301,10 +1301,10 @@ class Test_mol_res_spin(TestCase):
         """
 
         # Reset.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Add a data pipe to the data store.
-        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+        ds.add(pipe_name='orig', pipe_type='mf')
 
         # Loop over the spins.
         i = 0
@@ -1322,7 +1322,7 @@ class Test_mol_res_spin(TestCase):
         """
 
         # Reset.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Function for the problem of catching an error in a generator function.
         def fail_test():

@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from prompt.residue import Residue
 from relax_errors import RelaxIntError, RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.residue_testing_base import Residue_base_class
