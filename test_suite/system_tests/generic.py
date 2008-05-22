@@ -58,11 +58,11 @@ class Generic(TestCase):
 
             # Set the order parameter value.
             if s2[i]:
-                self.relax.interpreter._Value.set(s2[i], 'S2', res_num=8)
+                self.relax.interpreter._Value.set(s2[i], 'S2', spin_id=':8')
 
         # Calculate the difference and assign it to residue 8 (located in position 7).
         diff = relax_data_store['orig1'].mol[0].res[7].spin[0].s2 - relax_data_store['orig2'].mol[0].res[7].spin[0].s2
-        self.relax.interpreter._Value.set(diff, 'S2', res_num=8)
+        self.relax.interpreter._Value.set(diff, 'S2', spin_id=':8')
 
         # Test if the difference is 0.2!
         self.assertAlmostEqual(relax_data_store['new'].mol[0].res[7].spin[0].s2, 0.2)
