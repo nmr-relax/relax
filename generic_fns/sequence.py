@@ -21,7 +21,7 @@
 ###############################################################################
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError
 from relax_io import extract_data, open_write_file, strip
@@ -78,7 +78,7 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
     """
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Get the molecule.
     curr_mol = return_molecule(generate_spin_id(mol_name=mol_name))

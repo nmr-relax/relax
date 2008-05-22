@@ -24,7 +24,7 @@
 from math import pi
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import diffusion_tensor
 from relax_errors import RelaxError, RelaxParamSetError, RelaxUnknownParamCombError
 
@@ -41,22 +41,22 @@ class Value_base_class:
         """Set up for all the value unit tests."""
 
         # Reset the relax data storage object.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Add a consistency tests data pipe to the data store for testing consistency tests parameters.
-        relax_data_store.add(pipe_name='ct', pipe_type='ct')
+        ds.add(pipe_name='ct', pipe_type='ct')
 
         # Add a model-free data pipe to the data store for testing model-free and diffusion parameters.
-        relax_data_store.add(pipe_name='mf', pipe_type='mf')
+        ds.add(pipe_name='mf', pipe_type='mf')
 
         # Add a second model-free data pipe for copying tests.
-        relax_data_store.add(pipe_name='mf2', pipe_type='mf')
+        ds.add(pipe_name='mf2', pipe_type='mf')
 
         # Add a reduced spectral density mapping data pipe to the data store for testing RSDM parameters.
-        relax_data_store.add(pipe_name='jw', pipe_type='jw')
+        ds.add(pipe_name='jw', pipe_type='jw')
 
         # Add a relaxation curve fitting data pipe to the data store for testing the associated parameters.
-        relax_data_store.add(pipe_name='relax_fit', pipe_type='relax_fit')
+        ds.add(pipe_name='relax_fit', pipe_type='relax_fit')
 
         # Set up some spins.
         self.set_up_spins(pipe_name='ct')
@@ -68,14 +68,14 @@ class Value_base_class:
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        relax_data_store.__reset__()
+        ds.__reset__()
 
 
     def set_up_spins(self, pipe_name=None):
         """Function for setting up a few spins for the given pipe."""
 
         # Alias the pipe.
-        pipe = relax_data_store[pipe_name]
+        pipe = ds[pipe_name]
 
         # Name the first molecule.
         pipe.mol[0].name = 'Test mol'
@@ -109,10 +109,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='j0', val=4.5e-9)
@@ -129,10 +129,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='f_eta', val=2.3e-10)
@@ -149,10 +149,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='f_r2', val=1.7e-12)
@@ -169,10 +169,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='Bond_length', val=1.04e-10)
@@ -189,10 +189,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='csa', val=-160e-6)
@@ -209,10 +209,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='heteronucleus', val='13C')
@@ -229,10 +229,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='orientation', val=17)
@@ -249,10 +249,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='tc', val=10)
@@ -269,10 +269,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param=['j0', 'f_eta', 'f_r2'], val=[6.4e-9, 3.5e-10, 2.3e-12])
@@ -293,10 +293,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param=['j0', 'f_eta', 'f_r2'], val=1.9e-10)
@@ -317,10 +317,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.assertRaises(RelaxParamSetError, self.value_fns.set, param='j0')
@@ -333,10 +333,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.assertRaises(RelaxParamSetError, self.value_fns.set, param='f_eta')
@@ -349,10 +349,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.assertRaises(RelaxParamSetError, self.value_fns.set, param='f_r2')
@@ -365,10 +365,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='bond-Length')
@@ -385,10 +385,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='csa')
@@ -405,10 +405,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='heteronucleus')
@@ -425,10 +425,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='orientation')
@@ -445,10 +445,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='tc')
@@ -465,10 +465,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.assertRaises(RelaxParamSetError, self.value_fns.set, param=['j0', 'f_eta', 'f_r2'])
@@ -481,10 +481,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='j0', val=4.5e-9, spin_id='@112')
@@ -501,10 +501,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='f_eta', val=2.3e-10, spin_id='@112')
@@ -521,10 +521,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='f_r2', val=1.7e-12, spin_id='@112')
@@ -541,10 +541,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='Bond_length', val=1.04e-10, spin_id='@112')
@@ -561,10 +561,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='csa', val=-160e-6, spin_id='@112')
@@ -581,10 +581,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='heteronucleus', val='13C', spin_id='@112')
@@ -601,10 +601,10 @@ class Value_base_class:
         """
         
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='orientation', val=17, spin_id='@112')
@@ -621,10 +621,10 @@ class Value_base_class:
         """
         
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='tc', val=10, spin_id='@112')
@@ -641,10 +641,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param=['j0', 'f_eta', 'f_r2'], val=[6.4e-9, 3.5e-10, 2.3e-12], spin_id='@112')
@@ -665,10 +665,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'ct'.
-        relax_data_store.current_pipe = 'ct'
+        ds.current_pipe = 'ct'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param=['j0', 'f_eta', 'f_r2'], val=1.9e-10, spin_id='@112')
@@ -696,10 +696,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -718,10 +718,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -740,10 +740,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -759,10 +759,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -778,10 +778,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -797,10 +797,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -816,10 +816,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -835,10 +835,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -854,10 +854,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -873,10 +873,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -892,10 +892,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -911,10 +911,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -930,10 +930,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -949,10 +949,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -968,10 +968,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -987,10 +987,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1009,10 +1009,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1031,10 +1031,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1053,10 +1053,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1072,10 +1072,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1091,10 +1091,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1110,10 +1110,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1129,10 +1129,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1148,10 +1148,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1167,10 +1167,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1189,10 +1189,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1208,10 +1208,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1227,10 +1227,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1246,10 +1246,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1268,10 +1268,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1290,10 +1290,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1313,10 +1313,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1336,10 +1336,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1359,10 +1359,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1382,10 +1382,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1405,10 +1405,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1428,10 +1428,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1447,10 +1447,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -1469,10 +1469,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -1491,10 +1491,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -1513,10 +1513,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -1535,10 +1535,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -1554,10 +1554,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -1573,10 +1573,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -1592,10 +1592,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -1611,10 +1611,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -1630,10 +1630,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -1649,10 +1649,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -1671,10 +1671,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -1693,10 +1693,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -1715,10 +1715,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -1734,10 +1734,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -1753,10 +1753,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.4, 0, 0, 0))
@@ -1777,10 +1777,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.4, 0, 0, 0))
@@ -1801,10 +1801,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.4, 0, 0, 0))
@@ -1825,10 +1825,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.4, 0, 0, 0))
@@ -1844,10 +1844,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -1866,10 +1866,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -1888,10 +1888,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -1907,10 +1907,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -1926,10 +1926,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -1945,10 +1945,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -1964,10 +1964,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -1983,10 +1983,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -2002,10 +2002,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -2021,10 +2021,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -2040,10 +2040,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -2059,10 +2059,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -2078,10 +2078,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -2097,10 +2097,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -2116,10 +2116,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -2135,10 +2135,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2157,10 +2157,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2179,10 +2179,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2201,10 +2201,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2220,10 +2220,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2239,10 +2239,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2258,10 +2258,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2277,10 +2277,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2296,10 +2296,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2315,10 +2315,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2337,10 +2337,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2356,10 +2356,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2375,10 +2375,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2394,10 +2394,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2416,10 +2416,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2438,10 +2438,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2461,10 +2461,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2484,10 +2484,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2507,10 +2507,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2530,10 +2530,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2553,10 +2553,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2576,10 +2576,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2595,10 +2595,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -2617,10 +2617,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -2639,10 +2639,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -2661,10 +2661,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -2683,10 +2683,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -2702,10 +2702,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -2721,10 +2721,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -2740,10 +2740,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -2759,10 +2759,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -2778,10 +2778,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -2797,10 +2797,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -2819,10 +2819,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -2841,10 +2841,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -2863,10 +2863,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -2882,10 +2882,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -2901,10 +2901,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.4, 0, 0, 0))
@@ -2925,10 +2925,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.4, 0, 0, 0))
@@ -2949,10 +2949,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.4, 0, 0, 0))
@@ -2973,10 +2973,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.4, 0, 0, 0))
@@ -2997,10 +2997,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.4, 0, 0, 0))
@@ -3023,10 +3023,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='j0', val=4.5e-9)
@@ -3043,10 +3043,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='jwx', val=2.3e-10)
@@ -3063,10 +3063,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='J(wH)', val=1.7e-12)
@@ -3083,10 +3083,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='Bond_length', val=1.04e-10)
@@ -3103,10 +3103,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='csa', val=-160e-6)
@@ -3123,10 +3123,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='heteronucleus', val='13C')
@@ -3143,10 +3143,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'], val=[6.4e-9, 3.5e-10, 2.3e-12])
@@ -3167,10 +3167,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'], val=1.9e-10)
@@ -3191,10 +3191,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.assertRaises(RelaxParamSetError, self.value_fns.set, param='j0')
@@ -3207,10 +3207,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.assertRaises(RelaxParamSetError, self.value_fns.set, param='jwx')
@@ -3223,10 +3223,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.assertRaises(RelaxParamSetError, self.value_fns.set, param='J(wH)')
@@ -3239,10 +3239,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='bond-Length')
@@ -3259,10 +3259,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='csa')
@@ -3279,10 +3279,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='heteronucleus')
@@ -3299,10 +3299,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.assertRaises(RelaxParamSetError, self.value_fns.set, param=['J(0)', 'jwx', 'J(wH)'])
@@ -3315,10 +3315,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='j0', val=4.5e-9, spin_id='@112')
@@ -3335,10 +3335,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='jwx', val=2.3e-10, spin_id='@112')
@@ -3355,10 +3355,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='J(wH)', val=1.7e-12, spin_id='@112')
@@ -3375,10 +3375,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='Bond_length', val=1.04e-10, spin_id='@112')
@@ -3395,10 +3395,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='csa', val=-160e-6, spin_id='@112')
@@ -3415,10 +3415,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='heteronucleus', val='13C', spin_id='@112')
@@ -3435,10 +3435,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'], val=[6.4e-9, 3.5e-10, 2.3e-12], spin_id='@112')
@@ -3459,10 +3459,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'jw'.
-        relax_data_store.current_pipe = 'jw'
+        ds.current_pipe = 'jw'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'], val=1.9e-10, spin_id='@112')
@@ -3489,10 +3489,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='local tm', val=1e-8)
@@ -3509,10 +3509,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='S2', val=0.8)
@@ -3529,10 +3529,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='S2f', val=0.45)
@@ -3549,10 +3549,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='S2s', val=0.1)
@@ -3569,10 +3569,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='te', val=12.5e-12)
@@ -3589,10 +3589,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='tf', val=20.1e-12)
@@ -3609,10 +3609,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='ts', val=1.23e-9)
@@ -3629,10 +3629,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='Rex', val=2.34)
@@ -3649,10 +3649,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='Bond length', val=1.02e-10)
@@ -3669,10 +3669,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='CSA', val=-172e-6)
@@ -3689,10 +3689,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='heteronucleus', val='13C')
@@ -3709,10 +3709,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param=['S2f', 'S2s'], val=[0.7, 0.9])
@@ -3731,10 +3731,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param=['S2f', 'S2s'], val=0.7)
@@ -3753,10 +3753,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='local tm')
@@ -3773,10 +3773,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='S2')
@@ -3793,10 +3793,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='S2f')
@@ -3813,10 +3813,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='S2s')
@@ -3833,10 +3833,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='te')
@@ -3853,10 +3853,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='tf')
@@ -3873,10 +3873,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='ts')
@@ -3893,10 +3893,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='Rex')
@@ -3913,10 +3913,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='Bond length')
@@ -3933,10 +3933,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='CSA')
@@ -3953,10 +3953,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='heteronucleus')
@@ -3973,10 +3973,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param=['S2f', 'S2s'])
@@ -3995,10 +3995,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='local tm', val=1e-8, spin_id='@112')
@@ -4015,10 +4015,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='S2', val=0.8, spin_id='@112')
@@ -4035,10 +4035,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='S2f', val=0.45, spin_id='@112')
@@ -4055,10 +4055,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='S2s', val=0.1, spin_id='@112')
@@ -4075,10 +4075,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='te', val=12.5e-12, spin_id='@112')
@@ -4095,10 +4095,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='tf', val=20.1e-12, spin_id='@112')
@@ -4115,10 +4115,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='ts', val=1.23e-9, spin_id='@112')
@@ -4135,10 +4135,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='Rex', val=2.34, spin_id='@112')
@@ -4155,10 +4155,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='Bond length', val=1.02e-10, spin_id='@112')
@@ -4175,10 +4175,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='CSA', val=-172e-6, spin_id='@112')
@@ -4195,10 +4195,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='heteronucleus', val='13C', spin_id='@112')
@@ -4215,10 +4215,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param=['S2f', 'S2s'], val=[0.7, 0.9], spin_id='@112')
@@ -4237,10 +4237,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param=['S2f', 'S2s'], val=0.7, spin_id='@112')
@@ -4265,10 +4265,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'relax_fit'.
-        relax_data_store.current_pipe = 'relax_fit'
+        ds.current_pipe = 'relax_fit'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='rx', val=1.2)
@@ -4285,10 +4285,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'relax_fit'.
-        relax_data_store.current_pipe = 'relax_fit'
+        ds.current_pipe = 'relax_fit'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='i0', val=520)
@@ -4305,10 +4305,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'relax_fit'.
-        relax_data_store.current_pipe = 'relax_fit'
+        ds.current_pipe = 'relax_fit'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='Iinf', val=-1.7)
@@ -4325,10 +4325,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'relax_fit'.
-        relax_data_store.current_pipe = 'relax_fit'
+        ds.current_pipe = 'relax_fit'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param=['I0', 'iinf'], val=[123456, -1.7])
@@ -4347,10 +4347,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'relax_fit'.
-        relax_data_store.current_pipe = 'relax_fit'
+        ds.current_pipe = 'relax_fit'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param=['I0', 'iinf'], val=0.0)
@@ -4369,10 +4369,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'relax_fit'.
-        relax_data_store.current_pipe = 'relax_fit'
+        ds.current_pipe = 'relax_fit'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='rx')
@@ -4389,10 +4389,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'relax_fit'.
-        relax_data_store.current_pipe = 'relax_fit'
+        ds.current_pipe = 'relax_fit'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='i0')
@@ -4409,10 +4409,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'relax_fit'.
-        relax_data_store.current_pipe = 'relax_fit'
+        ds.current_pipe = 'relax_fit'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='Iinf')
@@ -4429,10 +4429,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'relax_fit'.
-        relax_data_store.current_pipe = 'relax_fit'
+        ds.current_pipe = 'relax_fit'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param=['I0', 'iinf'])
@@ -4451,10 +4451,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'relax_fit'.
-        relax_data_store.current_pipe = 'relax_fit'
+        ds.current_pipe = 'relax_fit'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='rx', val=1.2, spin_id='@112')
@@ -4471,10 +4471,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'relax_fit'.
-        relax_data_store.current_pipe = 'relax_fit'
+        ds.current_pipe = 'relax_fit'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='i0', val=520, spin_id='@112')
@@ -4491,10 +4491,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'relax_fit'.
-        relax_data_store.current_pipe = 'relax_fit'
+        ds.current_pipe = 'relax_fit'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param='Iinf', val=-1.7, spin_id='@112')
@@ -4511,10 +4511,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'relax_fit'.
-        relax_data_store.current_pipe = 'relax_fit'
+        ds.current_pipe = 'relax_fit'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param=['I0', 'iinf'], val=[123456, -1.7], spin_id='@112')
@@ -4533,10 +4533,10 @@ class Value_base_class:
         """
 
         # Set the current data pipe to 'relax_fit'.
-        relax_data_store.current_pipe = 'relax_fit'
+        ds.current_pipe = 'relax_fit'
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the parameter.
         self.value_fns.set(param=['I0', 'iinf'], val=0.0, spin_id='@112')

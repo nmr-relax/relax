@@ -30,7 +30,7 @@ except ImportError:
     from md5 import new as md5
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 
 
 
@@ -44,10 +44,10 @@ class Sequence_base_class:
         """Set up for all the molecule unit tests."""
 
         # Reset the relax data storage object.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Add a data pipe to the data store.
-        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+        ds.add(pipe_name='orig', pipe_type='mf')
 
         # Get a temporary file name.
         self.tmpfile = mktemp()
@@ -61,7 +61,7 @@ class Sequence_base_class:
         """Reset the relax data storage object."""
 
         # Reset the relax data storage object.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Delete the temporary file.
         try:
@@ -77,7 +77,7 @@ class Sequence_base_class:
         """
 
         # Alias the 'orig' relax data store.
-        cdp = relax_data_store['orig']
+        cdp = ds['orig']
 
         # Create a simple animo acid sequence.
         cdp.mol[0].res[0].num = 1
@@ -107,8 +107,8 @@ class Sequence_base_class:
 
         # Test the entire sequence.
         for i in xrange(len(self.Ap4Aase_res_num)):
-            self.assertEqual(relax_data_store['orig'].mol[0].res[i].num, self.Ap4Aase_res_num[i])
-            self.assertEqual(relax_data_store['orig'].mol[0].res[i].name, self.Ap4Aase_res_name[i])
+            self.assertEqual(ds['orig'].mol[0].res[i].num, self.Ap4Aase_res_num[i])
+            self.assertEqual(ds['orig'].mol[0].res[i].name, self.Ap4Aase_res_name[i])
 
 
     def test_write_protein_sequence(self):
@@ -118,7 +118,7 @@ class Sequence_base_class:
         """
 
         # Alias the 'orig' relax data store.
-        cdp = relax_data_store['orig']
+        cdp = ds['orig']
 
         # Create a simple animo acid sequence.
         cdp.mol[0].res[0].num = 1

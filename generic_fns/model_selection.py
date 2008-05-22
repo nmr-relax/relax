@@ -25,7 +25,7 @@ from copy import deepcopy
 from math import log
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import same_sequence
 from pipes import copy, switch
 from relax_errors import RelaxDiffSeqError, RelaxError, RelaxNoPipeError, RelaxNoSequenceError
@@ -117,7 +117,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
     # Use all pipes (but the current).
     if pipes == None:
         # Get all data pipe names from the relax data store.
-        pipes = relax_data_store.keys()
+        pipes = ds.keys()
 
     # Select the model selection technique.
     if method == 'AIC':
@@ -159,9 +159,9 @@ def select(method=None, modsel_pipe=None, pipes=None):
                 pipe = pipes[i][j]
 
                 # Specific duplicate data, number of instances, and model statistics functions.
-                count_num_instances[pipe] = get_specific_fn('num_instances', relax_data_store[pipe].pipe_type)
-                model_statistics[pipe] = get_specific_fn('model_stats', relax_data_store[pipe].pipe_type)
-                skip_function[pipe] = get_specific_fn('skip_function', relax_data_store[pipe].pipe_type)
+                count_num_instances[pipe] = get_specific_fn('num_instances', ds[pipe].pipe_type)
+                model_statistics[pipe] = get_specific_fn('model_stats', ds[pipe].pipe_type)
+                skip_function[pipe] = get_specific_fn('skip_function', ds[pipe].pipe_type)
 
                 # Check that the sequence is the same in all data pipes.
                 same_sequence(pipes[0][0], pipe)
@@ -174,9 +174,9 @@ def select(method=None, modsel_pipe=None, pipes=None):
             pipe = pipes[i]
 
             # Specific duplicate data, number of instances, and model statistics functions.
-            count_num_instances[pipe] = get_specific_fn('num_instances', relax_data_store[pipe].pipe_type)
-            model_statistics[pipe] = get_specific_fn('model_stats', relax_data_store[pipe].pipe_type)
-            skip_function[pipe] = get_specific_fn('skip_function', relax_data_store[pipe].pipe_type)
+            count_num_instances[pipe] = get_specific_fn('num_instances', ds[pipe].pipe_type)
+            model_statistics[pipe] = get_specific_fn('model_stats', ds[pipe].pipe_type)
+            skip_function[pipe] = get_specific_fn('skip_function', ds[pipe].pipe_type)
 
             # Check that the sequence is the same in all data pipes.
             same_sequence(pipes[0], pipe)

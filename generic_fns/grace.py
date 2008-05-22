@@ -26,7 +26,7 @@ from os import system
 from re import match
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSimError, RelaxRegExpError
 
@@ -100,7 +100,7 @@ class Grace:
         """Function for getting all the xy data."""
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Loop over the residues.
         for spin in spin_loop(spin_id):
@@ -196,7 +196,7 @@ class Grace:
         self.norm = norm
 
         # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
+        if not self.run in ds.run_names:
             raise RelaxNoPipeError, self.run
 
         # Test if the sequence data is loaded.
@@ -222,14 +222,14 @@ class Grace:
             raise RelaxError, "The plot data argument " + `self.plot_data` + " must be set to either 'value', 'error', 'sim'."
 
         # Test if the simulations exist.
-        if self.plot_data == 'sim' and (not hasattr(relax_data_store, 'sim_number') or not relax_data_store.sim_number.has_key(self.run)):
+        if self.plot_data == 'sim' and (not hasattr(ds, 'sim_number') or not ds.sim_number.has_key(self.run)):
             raise RelaxNoSimError, self.run
 
         # Open the file for writing.
         self.file = self.relax.IO.open_write_file(file, dir, force)
 
         # Function type.
-        function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
+        function_type = ds.run_types[ds.run_names.index(run)]
 
         # Specific value and error, conversion factor, and units returning functions.
         self.x_return_value =             self.y_return_value =             self.relax.specific_setup.setup('return_value', function_type)

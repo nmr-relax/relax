@@ -30,7 +30,7 @@ from re import search
 from string import lower
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic.selection import spin_index_loop, spin_loop
 from relax_errors import RelaxError
 
@@ -263,7 +263,7 @@ class Main:
 
                     # Create the final data pipe (for model selection and final optimisation).
                     name = 'final'
-                    if relax_data_store.has_key(name):
+                    if ds.has_key(name):
                         pipe.delete(name)
                     pipe.create(name, 'mf')
 
@@ -336,7 +336,7 @@ class Main:
             ##########################
 
             # Fix the diffusion tensor (if it exists!).
-            if relax_data_store.diff.has_key('final'):
+            if ds.diff.has_key('final'):
                 fix('diff')
 
             # Simulations.
@@ -365,8 +365,8 @@ class Main:
         """Test for the convergence of the global model."""
 
         # Alias the data pipes.
-        cdp = relax_data_store[relax_data_store.current_pipe]
-        prev_pipe = relax_data_store['previous']
+        cdp = ds[ds.current_pipe]
+        prev_pipe = ds['previous']
 
         # Print out.
         print "\n\n\n"
@@ -543,7 +543,7 @@ class Main:
         """Function for loading the optimised diffusion tensor."""
 
         # Create the data pipe for the previous data (deleting the old data pipe first if necessary).
-        if relax_data_store.has_key('previous'):
+        if ds.has_key('previous'):
             pipe.delete('previous')
         pipe.create('previous', 'mf')
 
@@ -584,7 +584,7 @@ class Main:
 
         for name in self.pipes:
             # Create the data pipe.
-            if relax_data_store.has_key(name):
+            if ds.has_key(name):
                 pipe.delete(name)
             pipe.create(name, 'mf')
 

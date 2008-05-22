@@ -25,7 +25,7 @@ import sys
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 
 
 class Modsel(TestCase):
@@ -34,7 +34,7 @@ class Modsel(TestCase):
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        relax_data_store.__reset__()
+        ds.__reset__()
 
 
     def test_aic_mod_sel_diff_tensor(self):
@@ -70,12 +70,12 @@ class Modsel(TestCase):
             self.relax.interpreter._Diffusion_tensor.init(tensors[i], fixed=False)
 
         # Set some global stats.
-        relax_data_store['sphere'].chi2 = 200
-        relax_data_store['spheroid'].chi2 = 0
+        ds['sphere'].chi2 = 200
+        ds['spheroid'].chi2 = 0
 
         # Model selection.
         self.relax.interpreter._Modsel.model_selection(method='AIC', modsel_pipe='aic')
 
         # Test if the spheroid has been selected.
-        self.assert_(hasattr(relax_data_store['aic'], 'diff_tensor'))
-        self.assertEqual(relax_data_store['aic'].diff_tensor.type, 'spheroid')
+        self.assert_(hasattr(ds['aic'], 'diff_tensor'))
+        self.assertEqual(ds['aic'].diff_tensor.type, 'spheroid')

@@ -25,7 +25,7 @@ from numpy import fromstring
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 
 
 class Angles(TestCase):
@@ -41,7 +41,7 @@ class Angles(TestCase):
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        relax_data_store.__reset__()
+        ds.__reset__()
 
 
     def test_angles(self):
@@ -51,7 +51,7 @@ class Angles(TestCase):
         self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/angles.py')
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Res info.
         res_name = ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY', 'TYR', 'ARG', 'ARG'] 

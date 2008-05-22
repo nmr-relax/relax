@@ -27,7 +27,7 @@ from string import ascii_uppercase
 from warnings import warn
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from internal import Internal
 from maths_fns.rotation_matrix import R_2vect
@@ -164,17 +164,17 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         scale = autoscale_tensor(scale)
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Create an array of data pipes to loop over (hybrid support).
     if cdp.pipe_type == 'hybrid':
         pipes = cdp.hybrid_pipes
     else:
-        pipes = [relax_data_store.current_pipe]
+        pipes = [ds.current_pipe]
 
     # Create the structural object.
     structure = Internal()
@@ -182,7 +182,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     # Loop over the pipes.
     for pipe_index in xrange(len(pipes)):
         # Alias the pipe container.
-        pipe = relax_data_store[pipes[pipe_index]]
+        pipe = ds[pipes[pipe_index]]
 
 
         # Tests.
@@ -328,21 +328,21 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     run = run
 
     # Test if the run exists.
-    if not run in relax_data_store.run_names:
+    if not run in ds.run_names:
         raise RelaxNoPipeError, run
 
     # Test if the PDB file of the macromolecule has been loaded.
-    if not relax_data_store.pdb.has_key(run):
+    if not ds.pdb.has_key(run):
         raise RelaxNoPdbError, run
 
     # Test if sequence data is loaded.
-    if not len(relax_data_store.res[run]):
+    if not len(ds.res[run]):
         raise RelaxNoSequenceError, run
 
     # Test if unit vectors exist.
     vectors = 0
-    for i in xrange(len(relax_data_store.res[run])):
-        if hasattr(relax_data_store.res[run][i], 'xh_vect'):
+    for i in xrange(len(ds.res[run])):
+        if hasattr(ds.res[run][i], 'xh_vect'):
             vectors = 1
             break
     if not vectors:
@@ -373,9 +373,9 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     #################
 
     # Loop over the spin systems.
-    for i in xrange(len(relax_data_store.res[run])):
+    for i in xrange(len(ds.res[run])):
         # Alias the spin system data.
-        data = relax_data_store.res[run][i]
+        data = ds.res[run][i]
 
         # Skip deselected spin systems.
         if not data.select:
@@ -412,9 +412,9 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     # Symmetry chain.
     if symmetry:
         # Loop over the spin systems.
-        for i in xrange(len(relax_data_store.res[run])):
+        for i in xrange(len(ds.res[run])):
             # Alias the spin system data.
-            data = relax_data_store.res[run][i]
+            data = ds.res[run][i]
 
             # Skip deselected spin systems.
             if not data.select:

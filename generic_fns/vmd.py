@@ -24,7 +24,7 @@
 from Scientific.Visualization import VMD
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxNoPdbError
 
 
@@ -43,15 +43,15 @@ class Vmd:
         """Function for viewing the collection of molecules using VMD."""
 
         # Test if the PDB file has been loaded.
-        if not relax_data_store.pdb.has_key(run):
+        if not ds.pdb.has_key(run):
             raise RelaxNoPdbError, run
 
         # Create an empty scene.
-        relax_data_store.vmd_scene = VMD.Scene()
+        ds.vmd_scene = VMD.Scene()
 
         # Add the molecules to the scene.
-        for i in xrange(len(relax_data_store.pdb[run].structures)):
-            relax_data_store.vmd_scene.addObject(VMD.Molecules(relax_data_store.pdb[run].structures[i]))
+        for i in xrange(len(ds.pdb[run].structures)):
+            ds.vmd_scene.addObject(VMD.Molecules(ds.pdb[run].structures[i]))
 
         # View the scene.
-        relax_data_store.vmd_scene.view()
+        ds.vmd_scene.view()

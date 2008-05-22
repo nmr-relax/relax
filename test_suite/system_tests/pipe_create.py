@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 
 
 class Pipe_create(TestCase):
@@ -34,7 +34,7 @@ class Pipe_create(TestCase):
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        relax_data_store.__reset__()
+        ds.__reset__()
 
 
     def test_pipe_create(self):

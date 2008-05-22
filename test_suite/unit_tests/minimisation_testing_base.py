@@ -21,7 +21,7 @@
 ###############################################################################
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 
 
 class Minimisation_base_class:
@@ -36,13 +36,13 @@ class Minimisation_base_class:
         """Set up for all the minimisation unit tests."""
 
         # Reset the relax data storage object.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Add a data pipe to the data store.
-        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+        ds.add(pipe_name='orig', pipe_type='mf')
 
 
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        relax_data_store.__reset__()
+        ds.__reset__()

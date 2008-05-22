@@ -90,7 +90,7 @@ class Residue(DictType):
             text = text + "The residue container contains the following keys:\n"
             for key in self:
                 text = text + "    " + `key` + "\n"
-            text = text + "\nThese can be accessed by typing 'relax_data_store.res[key]'.\n"
+            text = text + "\nThese can be accessed by typing 'ds.res[key]'.\n"
 
         return text
 
@@ -109,7 +109,7 @@ class ResidueList(ListType):
         text = text + "%-8s%-8s%-8s%-10s" % ("Index", "Number", "Name", "Selected") + "\n"
         for i in xrange(len(self)):
             text = text + "%-8i%-8i%-8s%-10i" % (i, self[i].num, self[i].name, self[i].select) + "\n"
-        text = text + "\nThese can be accessed by typing 'relax_data_store.res[key][index]'.\n"
+        text = text + "\nThese can be accessed by typing 'ds.res[key][index]'.\n"
         return text
 
 

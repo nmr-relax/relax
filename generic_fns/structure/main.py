@@ -28,7 +28,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import molmol
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_loop
 from generic_fns.sequence import write_header, write_line
@@ -48,7 +48,7 @@ def load_spins(spin_id=None):
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Print out.
@@ -56,7 +56,7 @@ def load_spins(spin_id=None):
     write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Loop over all atoms of the spin_id selection.
     for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
@@ -154,11 +154,11 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', fail=True, ve
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Test if structural data already exists.
     if hasattr(cdp, 'struct'):
@@ -217,7 +217,7 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
     """
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Test if the PDB file has been loaded.
     if not hasattr(cdp, 'structure'):

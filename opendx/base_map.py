@@ -29,7 +29,7 @@ from numpy import float64, array, zeros
 from time import asctime, localtime
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import diffusion_tensor
 from relax_errors import RelaxError, RelaxUnknownParamError
 from relax_io import open_write_file
@@ -59,7 +59,7 @@ class Base_Map:
         self.remap = remap
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Specific function setup.
         self.calculate = get_specific_fn('calculate', cdp.pipe_type)
@@ -290,7 +290,7 @@ class Base_Map:
             name = self.return_data_name(self.params[i])
 
             # Diffusion tensor parameter.
-            if relax_data_store[relax_data_store.current_pipe].pipe_type == 'mf':
+            if ds[ds.current_pipe].pipe_type == 'mf':
                 # The diffusion tensor parameter name.
                 diff_name = diffusion_tensor.return_data_name(self.params[i])
 

@@ -21,7 +21,7 @@
 ###############################################################################
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import copy_residue, create_residue
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 
@@ -38,22 +38,22 @@ class Molecule_base_class:
         """Set up for all the molecule unit tests."""
 
         # Reset the relax data storage object.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Add a data pipe to the data store.
-        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+        ds.add(pipe_name='orig', pipe_type='mf')
 
         # Add a second data pipe for copying tests.
-        relax_data_store.add(pipe_name='test', pipe_type='mf')
+        ds.add(pipe_name='test', pipe_type='mf')
 
         # Set the current data pipe to 'orig'.
-        relax_data_store.current_pipe = 'orig'
+        ds.current_pipe = 'orig'
 
 
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        relax_data_store.__reset__()
+        ds.__reset__()
 
 
     def setup_data(self):
@@ -61,20 +61,20 @@ class Molecule_base_class:
 
         # Create the first residue and add some data to its spin container.
         create_residue(1, 'Ala')
-        relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
-        relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
-        relax_data_store['orig'].mol[0].name = 'Old mol'
+        ds['orig'].mol[0].res[0].spin[0].num = 111
+        ds['orig'].mol[0].res[0].spin[0].x = 1
+        ds['orig'].mol[0].name = 'Old mol'
 
         # Create a second molecule.
-        relax_data_store['orig'].mol.add_item('New mol')
+        ds['orig'].mol.add_item('New mol')
 
         # Copy the residue to the new molecule.
         copy_residue(res_from=':1', res_to='#New mol')
         copy_residue(res_from='#Old mol:1', res_to='#New mol:5')
 
         # Change the first residue's data.
-        relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
-        relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
+        ds['orig'].mol[0].res[0].spin[0].num = 222
+        ds['orig'].mol[0].res[0].spin[0].x = 2
 
 
     def test_copy_molecule_between_pipes(self):
@@ -87,37 +87,37 @@ class Molecule_base_class:
         # Create the first molecule and residue and add some data to its spin container.
         self.molecule_fns.create('Old mol')
         create_residue(1, 'Ala')
-        relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
-        relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
+        ds['orig'].mol[0].res[0].spin[0].num = 111
+        ds['orig'].mol[0].res[0].spin[0].x = 1
 
         # Copy the molecule to the second data pipe.
         self.molecule_fns.copy(mol_from='#Old mol', pipe_to='test')
         self.molecule_fns.copy(pipe_from='orig', mol_from='#Old mol', pipe_to='test', mol_to='#New mol')
 
         # Change the first molecule's data.
-        relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
-        relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
+        ds['orig'].mol[0].res[0].spin[0].num = 222
+        ds['orig'].mol[0].res[0].spin[0].x = 2
 
         # Test the original molecule.
-        self.assertEqual(relax_data_store['orig'].mol[0].name, 'Old mol')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'Ala')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 222)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].x, 2)
+        self.assertEqual(ds['orig'].mol[0].name, 'Old mol')
+        self.assertEqual(ds['orig'].mol[0].res[0].num, 1)
+        self.assertEqual(ds['orig'].mol[0].res[0].name, 'Ala')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].num, 222)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].x, 2)
 
         # Test the new molecule.
-        self.assertEqual(relax_data_store['test'].mol[0].name, 'Old mol')
-        self.assertEqual(relax_data_store['test'].mol[0].res[0].num, 1)
-        self.assertEqual(relax_data_store['test'].mol[0].res[0].name, 'Ala')
-        self.assertEqual(relax_data_store['test'].mol[0].res[0].spin[0].num, 111)
-        self.assertEqual(relax_data_store['test'].mol[0].res[0].spin[0].x, 1)
+        self.assertEqual(ds['test'].mol[0].name, 'Old mol')
+        self.assertEqual(ds['test'].mol[0].res[0].num, 1)
+        self.assertEqual(ds['test'].mol[0].res[0].name, 'Ala')
+        self.assertEqual(ds['test'].mol[0].res[0].spin[0].num, 111)
+        self.assertEqual(ds['test'].mol[0].res[0].spin[0].x, 1)
 
         # Test the second new molecule.
-        self.assertEqual(relax_data_store['test'].mol[1].name, 'New mol')
-        self.assertEqual(relax_data_store['test'].mol[1].res[0].num, 1)
-        self.assertEqual(relax_data_store['test'].mol[1].res[0].name, 'Ala')
-        self.assertEqual(relax_data_store['test'].mol[1].res[0].spin[0].num, 111)
-        self.assertEqual(relax_data_store['test'].mol[1].res[0].spin[0].x, 1)
+        self.assertEqual(ds['test'].mol[1].name, 'New mol')
+        self.assertEqual(ds['test'].mol[1].res[0].num, 1)
+        self.assertEqual(ds['test'].mol[1].res[0].name, 'Ala')
+        self.assertEqual(ds['test'].mol[1].res[0].spin[0].num, 111)
+        self.assertEqual(ds['test'].mol[1].res[0].spin[0].x, 1)
 
 
     def test_copy_molecule_between_pipes_fail_no_pipe(self):
@@ -130,8 +130,8 @@ class Molecule_base_class:
         # Create the first molecule and residue and add some data to its spin container.
         self.molecule_fns.create('Old mol')
         create_residue(1, 'Ala')
-        relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
-        relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
+        ds['orig'].mol[0].res[0].spin[0].num = 111
+        ds['orig'].mol[0].res[0].spin[0].x = 1
 
         # Copy the molecule to the second data pipe.
         self.assertRaises(RelaxNoPipeError, self.molecule_fns.copy, mol_from='#Old mol', pipe_to='test2')
@@ -147,47 +147,47 @@ class Molecule_base_class:
         # Create the first molecule and residue and add some data to its spin container.
         self.molecule_fns.create('Old mol')
         create_residue(1, 'Ala')
-        relax_data_store['orig'].mol[0].res[0].spin[0].num = 111
-        relax_data_store['orig'].mol[0].res[0].spin[0].x = 1
+        ds['orig'].mol[0].res[0].spin[0].num = 111
+        ds['orig'].mol[0].res[0].spin[0].x = 1
 
         # Copy the molecule a few times.
         self.molecule_fns.copy(mol_from='#Old mol', mol_to='#2')
         self.molecule_fns.copy(mol_from='#Old mol', pipe_to='orig', mol_to='#3')
 
         # Change the first molecule's data.
-        relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
-        relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
+        ds['orig'].mol[0].res[0].spin[0].num = 222
+        ds['orig'].mol[0].res[0].spin[0].x = 2
 
         # Copy the molecule once more.
         self.molecule_fns.copy(mol_from='#Old mol', mol_to='#4')
 
         # Test the original molecule.
-        self.assertEqual(relax_data_store['orig'].mol[0].name, 'Old mol')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'Ala')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 222)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].x, 2)
+        self.assertEqual(ds['orig'].mol[0].name, 'Old mol')
+        self.assertEqual(ds['orig'].mol[0].res[0].num, 1)
+        self.assertEqual(ds['orig'].mol[0].res[0].name, 'Ala')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].num, 222)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].x, 2)
 
         # Test the new molecule 2.
-        self.assertEqual(relax_data_store['orig'].mol[1].name, 2)
-        self.assertEqual(relax_data_store['orig'].mol[1].res[0].num, 1)
-        self.assertEqual(relax_data_store['orig'].mol[1].res[0].name, 'Ala')
-        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].num, 111)
-        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].x, 1)
+        self.assertEqual(ds['orig'].mol[1].name, 2)
+        self.assertEqual(ds['orig'].mol[1].res[0].num, 1)
+        self.assertEqual(ds['orig'].mol[1].res[0].name, 'Ala')
+        self.assertEqual(ds['orig'].mol[1].res[0].spin[0].num, 111)
+        self.assertEqual(ds['orig'].mol[1].res[0].spin[0].x, 1)
 
         # Test the new molecule 3.
-        self.assertEqual(relax_data_store['orig'].mol[2].name, 3)
-        self.assertEqual(relax_data_store['orig'].mol[2].res[0].num, 1)
-        self.assertEqual(relax_data_store['orig'].mol[2].res[0].name, 'Ala')
-        self.assertEqual(relax_data_store['orig'].mol[2].res[0].spin[0].num, 111)
-        self.assertEqual(relax_data_store['orig'].mol[2].res[0].spin[0].x, 1)
+        self.assertEqual(ds['orig'].mol[2].name, 3)
+        self.assertEqual(ds['orig'].mol[2].res[0].num, 1)
+        self.assertEqual(ds['orig'].mol[2].res[0].name, 'Ala')
+        self.assertEqual(ds['orig'].mol[2].res[0].spin[0].num, 111)
+        self.assertEqual(ds['orig'].mol[2].res[0].spin[0].x, 1)
 
         # Test the new molecule 4.
-        self.assertEqual(relax_data_store['orig'].mol[3].name, 4)
-        self.assertEqual(relax_data_store['orig'].mol[3].res[0].num, 1)
-        self.assertEqual(relax_data_store['orig'].mol[3].res[0].name, 'Ala')
-        self.assertEqual(relax_data_store['orig'].mol[3].res[0].spin[0].num, 222)
-        self.assertEqual(relax_data_store['orig'].mol[3].res[0].spin[0].x, 2)
+        self.assertEqual(ds['orig'].mol[3].name, 4)
+        self.assertEqual(ds['orig'].mol[3].res[0].num, 1)
+        self.assertEqual(ds['orig'].mol[3].res[0].name, 'Ala')
+        self.assertEqual(ds['orig'].mol[3].res[0].spin[0].num, 222)
+        self.assertEqual(ds['orig'].mol[3].res[0].spin[0].x, 2)
 
 
     def test_copy_molecule_within_pipe_fail(self):
@@ -221,9 +221,9 @@ class Molecule_base_class:
         self.molecule_fns.create(mol_name='MgF4')
 
         # Test that the molecule names are correct.
-        self.assertEqual(relax_data_store['orig'].mol[0].name, 'Ap4Aase')
-        self.assertEqual(relax_data_store['orig'].mol[1].name, 'ATP')
-        self.assertEqual(relax_data_store['orig'].mol[2].name, 'MgF4')
+        self.assertEqual(ds['orig'].mol[0].name, 'Ap4Aase')
+        self.assertEqual(ds['orig'].mol[1].name, 'ATP')
+        self.assertEqual(ds['orig'].mol[2].name, 'MgF4')
 
 
     def test_create_molecule_fail(self):
@@ -254,15 +254,15 @@ class Molecule_base_class:
         self.molecule_fns.delete(mol_id='#Old mol')
 
         # Test that the first molecule is now 'New mol'.
-        self.assertEqual(relax_data_store['orig'].mol[0].name, 'New mol')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'Ala')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 111)
-        self.assert_(hasattr(relax_data_store['orig'].mol[0].res[0].spin[0], 'x'))
-        self.assertEqual(relax_data_store['orig'].mol[0].res[1].num, 5)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[1].name, 'Ala')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].num, 111)
-        self.assert_(hasattr(relax_data_store['orig'].mol[0].res[1].spin[0], 'x'))
+        self.assertEqual(ds['orig'].mol[0].name, 'New mol')
+        self.assertEqual(ds['orig'].mol[0].res[0].num, 1)
+        self.assertEqual(ds['orig'].mol[0].res[0].name, 'Ala')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].num, 111)
+        self.assert_(hasattr(ds['orig'].mol[0].res[0].spin[0], 'x'))
+        self.assertEqual(ds['orig'].mol[0].res[1].num, 5)
+        self.assertEqual(ds['orig'].mol[0].res[1].name, 'Ala')
+        self.assertEqual(ds['orig'].mol[0].res[1].spin[0].num, 111)
+        self.assert_(hasattr(ds['orig'].mol[0].res[1].spin[0], 'x'))
 
 
     def test_delete_molecule_all(self):
@@ -280,11 +280,11 @@ class Molecule_base_class:
         self.molecule_fns.delete(mol_id='#New mol')
 
         # Test that the first molecule defaults back to the empty container.
-        self.assertEqual(relax_data_store['orig'].mol[0].name, None)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, None)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, None)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, None)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, None)
+        self.assertEqual(ds['orig'].mol[0].name, None)
+        self.assertEqual(ds['orig'].mol[0].res[0].num, None)
+        self.assertEqual(ds['orig'].mol[0].res[0].name, None)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].num, None)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].name, None)
 
 
     def test_delete_molecule_fail(self):
@@ -346,7 +346,7 @@ class Molecule_base_class:
         self.molecule_fns.name(mol_id='#New mol', name='K')
 
         # Test that the molecule has been renamed.
-        self.assertEqual(relax_data_store['orig'].mol[1].name, 'K')
+        self.assertEqual(ds['orig'].mol[1].name, 'K')
 
 
     def test_name_molecule_fail(self):

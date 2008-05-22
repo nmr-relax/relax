@@ -13,7 +13,7 @@
 
 
 # The relax data storage object.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 
 
 
@@ -79,7 +79,7 @@ class Latex:
         self.file.write("\multicolumn{2}{c}{$S^2_f$} &%\n")
         self.file.write("\multicolumn{2}{c}{$\\tau_e < 100$ or $\\tau_f$} &%\n")
         self.file.write("\multicolumn{2}{c}{$\\tau_e > 100$ or $\\tau_s$} &%\n")
-        self.file.write("\multicolumn{2}{c}{$R_{ex}$ (" + `relax_data_store.frq[self.run][0] / 1e6` + " MHz)} \\\\\n")
+        self.file.write("\multicolumn{2}{c}{$R_{ex}$ (" + `ds.frq[self.run][0] / 1e6` + " MHz)} \\\\\n")
         self.file.write("\n")
 
         # Units.
@@ -143,9 +143,9 @@ class Latex:
         self.file.write("% The table body.\n")
 
         # Loop over the spin systems.
-        for i in xrange(len(relax_data_store.res[self.run])):
+        for i in xrange(len(ds.res[self.run])):
             # Alias the spin system data container.
-            data = relax_data_store.res[self.run][i]
+            data = ds.res[self.run][i]
 
             # The residue tag.
             self.file.write("%-7s & " % (data.name + `data.num`))
@@ -189,7 +189,7 @@ class Latex:
             if data.rex == None:
                 self.file.write("%21s \\\\\n" % "\\multicolumn{2}{c}{}")
             else:
-                self.file.write("%9.3f & %9.3f \\\\\n" % (data.rex * (2.0 * pi * relax_data_store.frq[self.run][0])**2, data.rex_err * (2.0 * pi * relax_data_store.frq[self.run][0])**2))
+                self.file.write("%9.3f & %9.3f \\\\\n" % (data.rex * (2.0 * pi * ds.frq[self.run][0])**2, data.rex_err * (2.0 * pi * ds.frq[self.run][0])**2))
 
         # Start a new line.
         self.file.write("\n")

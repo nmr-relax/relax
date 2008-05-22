@@ -43,7 +43,7 @@ from textwrap import fill
 from warnings import warn
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from data.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRegExpError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
@@ -510,12 +510,12 @@ def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
 
     # The current data pipe.
     if pipe_from == None:
-        pipe_from = relax_data_store.current_pipe
+        pipe_from = ds.current_pipe
     if pipe_to == None:
-        pipe_to = relax_data_store.current_pipe
+        pipe_to = ds.current_pipe
 
     # The second pipe does not exist.
-    if pipe_to not in relax_data_store.keys():
+    if pipe_to not in ds.keys():
         raise RelaxNoPipeError, pipe_to
 
     # Split up the selection string.
@@ -546,14 +546,14 @@ def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
         raise RelaxError, "The molecule " + `mol_from` + " does not exist in the " + `pipe_from` + " data pipe."
 
     # Copy the data.
-    if relax_data_store[pipe_to].mol[0].name == None and len(relax_data_store[pipe_to].mol) == 1:
-        relax_data_store[pipe_to].mol[0] = mol_from_cont.__clone__()
+    if ds[pipe_to].mol[0].name == None and len(ds[pipe_to].mol) == 1:
+        ds[pipe_to].mol[0] = mol_from_cont.__clone__()
     else:
-        relax_data_store[pipe_to].mol.append(mol_from_cont.__clone__())
+        ds[pipe_to].mol.append(mol_from_cont.__clone__())
 
     # Change the new molecule name.
     if mol_name_to != None:
-        relax_data_store[pipe_to].mol[-1].name = mol_name_to
+        ds[pipe_to].mol[-1].name = mol_name_to
 
 
 def copy_residue(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
@@ -576,12 +576,12 @@ def copy_residue(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
 
     # The current data pipe.
     if pipe_from == None:
-        pipe_from = relax_data_store.current_pipe
+        pipe_from = ds.current_pipe
     if pipe_to == None:
-        pipe_to = relax_data_store.current_pipe
+        pipe_to = ds.current_pipe
 
     # The second pipe does not exist.
-    if pipe_to not in relax_data_store.keys():
+    if pipe_to not in ds.keys():
         raise RelaxNoPipeError, pipe_to
 
     # Split up the selection string.
@@ -610,7 +610,7 @@ def copy_residue(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
     # Get the single molecule data container to copy the residue to (default to the first molecule).
     mol_to_container = return_molecule(res_to, pipe_to)
     if mol_to_container == None:
-        mol_to_container = relax_data_store[pipe_to].mol[0]
+        mol_to_container = ds[pipe_to].mol[0]
 
     # Copy the data.
     if mol_to_container.res[0].num == None and mol_to_container.res[0].name == None and len(mol_to_container.res) == 1:
@@ -645,12 +645,12 @@ def copy_spin(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
 
     # The current data pipe.
     if pipe_from == None:
-        pipe_from = relax_data_store.current_pipe
+        pipe_from = ds.current_pipe
     if pipe_to == None:
-        pipe_to = relax_data_store.current_pipe
+        pipe_to = ds.current_pipe
 
     # The second pipe does not exist.
-    if pipe_to not in relax_data_store.keys():
+    if pipe_to not in ds.keys():
         raise RelaxNoPipeError, pipe_to
 
     # Split up the selection string.
@@ -677,7 +677,7 @@ def copy_spin(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
         # No residue to copy data to.
         raise RelaxError, "The residue in " + `spin_to` + " does not exist in the " + `pipe_from` + " data pipe."
     if res_to_cont == None:
-        res_to_cont = relax_data_store[pipe_to].mol[0].res[0]
+        res_to_cont = ds[pipe_to].mol[0].res[0]
 
     # Copy the data.
     if res_to_cont.spin[0].num == None and res_to_cont.spin[0].name == None and len(res_to_cont.spin) == 1:
@@ -752,11 +752,11 @@ def create_molecule(mol_name=None):
     """Function for adding a molecule into the relax data store."""
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Test if the molecule name already exists.
     for i in xrange(len(cdp.mol)):
@@ -789,7 +789,7 @@ def create_residue(res_num=None, res_name=None, mol_id=None):
         raise RelaxSpinSelectDisallowError
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Get the molecule container to add the residue to.
@@ -798,7 +798,7 @@ def create_residue(res_num=None, res_name=None, mol_id=None):
         if mol_to_cont == None:
             raise RelaxError, "The molecule in " + `mol_id` + " does not exist in the current data pipe."
     else:
-        mol_to_cont = relax_data_store[relax_data_store.current_pipe].mol[0]
+        mol_to_cont = ds[ds.current_pipe].mol[0]
 
     # Add the residue.
     mol_to_cont.res.add_item(res_num=res_num, res_name=res_name)
@@ -823,7 +823,7 @@ def create_spin(spin_num=None, spin_name=None, res_id=None):
         raise RelaxSpinSelectDisallowError
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Get the residue container to add the spin to.
@@ -832,7 +832,7 @@ def create_spin(spin_num=None, spin_name=None, res_id=None):
         if res_to_cont == None:
             raise RelaxError, "The residue in " + `res_id` + " does not exist in the current data pipe."
     else:
-        res_to_cont = relax_data_store[relax_data_store.current_pipe].mol[0].res[0]
+        res_to_cont = ds[ds.current_pipe].mol[0].res[0]
 
     # Add the spin.
     res_to_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
@@ -860,7 +860,7 @@ def delete_molecule(mol_id=None):
     molecules = parse_token(mol_token)
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # List of indecies to delete.
     indecies = []
@@ -1036,10 +1036,10 @@ def exists_mol_res_spin_data():
     """
 
     # Test the data pipe.
-    pipes.test(relax_data_store.current_pipe)
+    pipes.test(ds.current_pipe)
 
     # Alias the data pipe container.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # The molecule, residue, spin object stack is empty.
     if cdp.mol.is_empty():
@@ -1152,7 +1152,7 @@ def molecule_loop(selection=None, pipe=None):
 
     # The data pipe.
     if pipe == None:
-        pipe = relax_data_store.current_pipe
+        pipe = ds.current_pipe
 
     # Test the data pipe.
     pipes.test(pipe)
@@ -1171,7 +1171,7 @@ def molecule_loop(selection=None, pipe=None):
         raise RelaxSpinSelectDisallowError
 
     # Loop over the molecules.
-    for mol in relax_data_store[pipe].mol:
+    for mol in ds[pipe].mol:
         # Skip the molecule if there is no match to the selection.
         if mol not in select_obj:
             continue
@@ -1380,7 +1380,7 @@ def residue_loop(selection=None, pipe=None, full_info=False):
 
     # The data pipe.
     if pipe == None:
-        pipe = relax_data_store.current_pipe
+        pipe = ds.current_pipe
 
     # Test the data pipe.
     pipes.test(pipe)
@@ -1393,7 +1393,7 @@ def residue_loop(selection=None, pipe=None, full_info=False):
     select_obj = Selection(selection)
 
     # Loop over the molecules.
-    for mol in relax_data_store[pipe].mol:
+    for mol in ds[pipe].mol:
         # Loop over the residues.
         for res in mol.res:
             # Skip the residue if there is no match to the selection.
@@ -1420,7 +1420,7 @@ def return_molecule(selection=None, pipe=None):
 
     # The data pipe.
     if pipe == None:
-        pipe = relax_data_store.current_pipe
+        pipe = ds.current_pipe
 
     # Test the data pipe.
     pipes.test(pipe)
@@ -1431,7 +1431,7 @@ def return_molecule(selection=None, pipe=None):
     # Loop over the molecules.
     mol_num = 0
     mol_container = None
-    for mol in relax_data_store[pipe].mol:
+    for mol in ds[pipe].mol:
         # Skip the molecule if there is no match to the selection.
         if mol not in select_obj:
             continue
@@ -1463,7 +1463,7 @@ def return_residue(selection=None, pipe=None):
 
     # The data pipe.
     if pipe == None:
-        pipe = relax_data_store.current_pipe
+        pipe = ds.current_pipe
 
     # Test the data pipe.
     pipes.test(pipe)
@@ -1475,7 +1475,7 @@ def return_residue(selection=None, pipe=None):
     res = None
     res_num = 0
     res_container = None
-    for mol in relax_data_store[pipe].mol:
+    for mol in ds[pipe].mol:
         # Loop over the residues.
         for res in mol.res:
             # Skip the residue if there is no match to the selection.
@@ -1515,7 +1515,7 @@ def return_spin(selection=None, pipe=None, full_info=False):
 
     # The data pipe.
     if pipe == None:
-        pipe = relax_data_store.current_pipe
+        pipe = ds.current_pipe
 
     # Test the data pipe.
     pipes.test(pipe)
@@ -1527,7 +1527,7 @@ def return_spin(selection=None, pipe=None, full_info=False):
     spin = None
     spin_num = 0
     spin_container = None
-    for mol in relax_data_store[pipe].mol:
+    for mol in ds[pipe].mol:
         # Loop over the residues.
         for res in mol.res:
             # Loop over the spins.
@@ -1574,7 +1574,7 @@ def return_spin_from_index(global_index=None, pipe=None, return_spin_id=False):
 
     # The data pipe.
     if pipe == None:
-        pipe = relax_data_store.current_pipe
+        pipe = ds.current_pipe
 
     # Test the data pipe.
     pipes.test(pipe)
@@ -1709,29 +1709,29 @@ def same_sequence(pipe1, pipe2):
     pipes.test(pipe2)
 
     # Different number of molecules.
-    if len(relax_data_store[pipe1].mol) != len(relax_data_store[pipe2].mol):
+    if len(ds[pipe1].mol) != len(ds[pipe2].mol):
         return False
 
     # Loop over the molecules.
-    for i in xrange(len(relax_data_store[pipe1].mol)):
+    for i in xrange(len(ds[pipe1].mol)):
         # Different number of residues.
-        if len(relax_data_store[pipe1].mol[i].res) != len(relax_data_store[pipe2].mol[i].res):
+        if len(ds[pipe1].mol[i].res) != len(ds[pipe2].mol[i].res):
             return False
 
         # Loop over the residues.
-        for j in xrange(len(relax_data_store[pipe1].mol[i].res)):
+        for j in xrange(len(ds[pipe1].mol[i].res)):
             # Different number of spins.
-            if len(relax_data_store[pipe1].mol[i].res[j].spin) != len(relax_data_store[pipe2].mol[i].res[j].spin):
+            if len(ds[pipe1].mol[i].res[j].spin) != len(ds[pipe2].mol[i].res[j].spin):
                 return False
 
             # Loop over the spins.
-            for k in xrange(len(relax_data_store[pipe1].mol[i].res[j].spin)):
+            for k in xrange(len(ds[pipe1].mol[i].res[j].spin)):
                 # Different spin numbers.
-                if relax_data_store[pipe1].mol[i].res[j].spin[k].num != relax_data_store[pipe2].mol[i].res[j].spin[k].num:
+                if ds[pipe1].mol[i].res[j].spin[k].num != ds[pipe2].mol[i].res[j].spin[k].num:
                     return False
 
                 # Different spin names.
-                if relax_data_store[pipe1].mol[i].res[j].spin[k].name != relax_data_store[pipe2].mol[i].res[j].spin[k].name:
+                if ds[pipe1].mol[i].res[j].spin[k].name != ds[pipe2].mol[i].res[j].spin[k].name:
                     return False
 
     # The sequence is the same.
@@ -1797,7 +1797,7 @@ def spin_index_loop(selection=None, pipe=None):
 
     # The data pipe.
     if pipe == None:
-        pipe = relax_data_store.current_pipe
+        pipe = ds.current_pipe
 
     # Test the data pipe.
     pipes.test(pipe)
@@ -1810,19 +1810,19 @@ def spin_index_loop(selection=None, pipe=None):
     select_obj = Selection(selection)
 
     # Loop over the molecules.
-    for mol_index in xrange(len(relax_data_store[pipe].mol)):
+    for mol_index in xrange(len(ds[pipe].mol)):
         # Alias the molecule container.
-        mol = relax_data_store[pipe].mol[mol_index]
+        mol = ds[pipe].mol[mol_index]
 
         # Loop over the residues.
-        for res_index in xrange(len(relax_data_store[pipe].mol[mol_index].res)):
+        for res_index in xrange(len(ds[pipe].mol[mol_index].res)):
             # Alias the residue container.
-            res = relax_data_store[pipe].mol[mol_index].res[res_index]
+            res = ds[pipe].mol[mol_index].res[res_index]
 
             # Loop over the spins.
-            for spin_index in xrange(len(relax_data_store[pipe].mol[mol_index].res[res_index].spin)):
+            for spin_index in xrange(len(ds[pipe].mol[mol_index].res[res_index].spin)):
                 # Alias the spin container.
-                spin = relax_data_store[pipe].mol[mol_index].res[res_index].spin[spin_index]
+                spin = ds[pipe].mol[mol_index].res[res_index].spin[spin_index]
 
                 # Skip the spin if there is no match to the selection.
                 if (mol, res, spin) not in select_obj:
@@ -1851,7 +1851,7 @@ def spin_loop(selection=None, pipe=None, full_info=False):
 
     # The data pipe.
     if pipe == None:
-        pipe = relax_data_store.current_pipe
+        pipe = ds.current_pipe
 
     # Test the data pipe.
     pipes.test(pipe)
@@ -1864,7 +1864,7 @@ def spin_loop(selection=None, pipe=None, full_info=False):
     select_obj = Selection(selection)
 
     # Loop over the molecules.
-    for mol in relax_data_store[pipe].mol:
+    for mol in ds[pipe].mol:
         # Loop over the residues.
         for res in mol.res:
             # Loop over the spins.

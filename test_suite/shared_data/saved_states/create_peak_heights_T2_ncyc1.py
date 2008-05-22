@@ -5,7 +5,7 @@
 import sys
 
 # The relax data store.
-from data import Data as ds
+from data import Relax_data_store; ds = Relax_data_store()
 
 
 # Add a data pipe to the data store.

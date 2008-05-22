@@ -25,7 +25,7 @@ from math import sqrt
 from re import match
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxArgNotInListError, RelaxError, RelaxInvalidDataError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRegExpError
 
 
@@ -39,9 +39,9 @@ class Noe:
 
         # Add the data.
         if self.spectrum_type == 'ref':
-            relax_data_store.res[run][i].ref = intensity
+            ds.res[run][i].ref = intensity
         elif self.spectrum_type == 'sat':
-            relax_data_store.res[run][i].sat = intensity
+            ds.res[run][i].sat = intensity
 
 
     def calculate(self, run=None, verbosity=1):
@@ -58,13 +58,13 @@ class Noe:
         self.run = run
 
         # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
+        if not self.run in ds.run_names:
             raise RelaxNoPipeError, self.run
 
         # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Remap the data structure 'relax_data_store.res[self.run][i]'.
-            data = relax_data_store.res[self.run][i]
+        for i in xrange(len(ds.res[self.run])):
+            # Remap the data structure 'ds.res[self.run][i]'.
+            data = ds.res[self.run][i]
 
             # Skip deselected residues.
             if not data.select:
@@ -81,11 +81,11 @@ class Noe:
         """Function for deselecting residues without sufficient data to support calculation"""
 
         # Test the sequence data exists:
-        if not relax_data_store.res.has_key(run):
+        if not ds.res.has_key(run):
             raise RelaxNoSequenceError, run
 
         # Loop over residue data:
-        for residue in relax_data_store.res[run]:
+        for residue in ds.res[run]:
 
             # Check for sufficient data.
             if not (hasattr(residue, 'ref') and hasattr(residue, 'sat') and hasattr(residue, 'ref_err') and hasattr(residue, 'sat_err')):
@@ -180,15 +180,15 @@ class Noe:
 
             # Find the residue index.
             index = None
-            for j in xrange(len(relax_data_store.res[self.run])):
-                if relax_data_store.res[self.run][j].num == res_num and relax_data_store.res[self.run][j].name == res_name:
+            for j in xrange(len(ds.res[self.run])):
+                if ds.res[self.run][j].num == res_num and ds.res[self.run][j].name == res_name:
                     index = j
                     break
             if index == None:
                 raise RelaxError, "Residue " + `res_num` + " " + res_name + " cannot be found in the sequence."
 
             # Reassign data structure.
-            data = relax_data_store.res[self.run][index]
+            data = ds.res[self.run][index]
 
             # Skip deselected residues.
             if not data.select:
@@ -297,8 +297,8 @@ class Noe:
         # Arguments.
         self.run = run
 
-        # Remap the data structure 'relax_data_store.res[run][i]'.
-        data = relax_data_store.res[run][i]
+        # Remap the data structure 'ds.res[run][i]'.
+        data = ds.res[run][i]
 
         # Get the object.
         object_name = self.return_data_name(data_type)
@@ -330,11 +330,11 @@ class Noe:
         self.res_name = res_name
 
         # Test if the run exists.
-        if not run in relax_data_store.run_names:
+        if not run in ds.run_names:
             raise RelaxNoPipeError, run
 
         # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(run):
+        if not ds.res.has_key(run):
             raise RelaxNoSequenceError, run
 
         # Test if the residue number is a valid regular expression.
@@ -352,9 +352,9 @@ class Noe:
                 raise RelaxRegExpError, ('residue name', res_name)
 
         # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[run])):
-            # Remap the data structure 'relax_data_store.res[self.run][i]'.
-            data = relax_data_store.res[self.run][i]
+        for i in xrange(len(ds.res[run])):
+            # Remap the data structure 'ds.res[self.run][i]'.
+            data = ds.res[self.run][i]
 
             # Skip deselected residues.
             if not data.select:
@@ -384,11 +384,11 @@ class Noe:
         self.run = run
 
         # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
+        if not self.run in ds.run_names:
             raise RelaxNoPipeError, self.run
 
         # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
+        if not ds.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
         # Open the file for writing.
@@ -431,11 +431,11 @@ class Noe:
         self.run = run
 
         # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
+        if not self.run in ds.run_names:
             raise RelaxNoPipeError, self.run
 
         # Test if sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
+        if not ds.res.has_key(self.run):
             raise RelaxNoSequenceError, self.run
 
 
@@ -451,9 +451,9 @@ class Noe:
         #########
 
         # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[self.run])):
+        for i in xrange(len(ds.res[self.run])):
             # Reassign data structure.
-            data = relax_data_store.res[self.run][i]
+            data = ds.res[self.run][i]
 
             # Deselected residues.
             if not data.select:

@@ -26,7 +26,7 @@ from numpy import fromstring
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import Selection
 from generic_fns.structure.internal import Internal
 
@@ -56,7 +56,7 @@ class Test_internal(TestCase):
         del self.data
 
         # Reset.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
 
     def test___parse_pdb_record(self):

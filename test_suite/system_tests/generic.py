@@ -25,7 +25,7 @@ from unittest import TestCase
 import sys
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 
 
 
@@ -35,7 +35,7 @@ class Generic(TestCase):
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        relax_data_store.__reset__()
+        ds.__reset__()
 
 
     def test_value_diff(self):
@@ -61,8 +61,8 @@ class Generic(TestCase):
                 self.relax.interpreter._Value.set(s2[i], 'S2', spin_id=':8')
 
         # Calculate the difference and assign it to residue 8 (located in position 7).
-        diff = relax_data_store['orig1'].mol[0].res[7].spin[0].s2 - relax_data_store['orig2'].mol[0].res[7].spin[0].s2
+        diff = ds['orig1'].mol[0].res[7].spin[0].s2 - ds['orig2'].mol[0].res[7].spin[0].s2
         self.relax.interpreter._Value.set(diff, 'S2', spin_id=':8')
 
         # Test if the difference is 0.2!
-        self.assertAlmostEqual(relax_data_store['new'].mol[0].res[7].spin[0].s2, 0.2)
+        self.assertAlmostEqual(ds['new'].mol[0].res[7].spin[0].s2, 0.2)

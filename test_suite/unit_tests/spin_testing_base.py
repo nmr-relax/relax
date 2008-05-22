@@ -21,7 +21,7 @@
 ###############################################################################
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxError, RelaxNoPipeError
 
 
@@ -53,19 +53,19 @@ class Spin_base_class:
         """
 
         # Reset the relax data storage object.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Add a data pipe to the data store.
-        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+        ds.add(pipe_name='orig', pipe_type='mf')
 
         # Add a second data pipe for copying tests.
-        relax_data_store.add(pipe_name='test', pipe_type='mf')
+        ds.add(pipe_name='test', pipe_type='mf')
 
         # Set the current data pipe to 'orig'.
-        relax_data_store.current_pipe = 'orig'
+        ds.current_pipe = 'orig'
 
         # Alias the 'orig' relax data store.
-        cdp = relax_data_store['orig']
+        cdp = ds['orig']
 
         # Name the first molecule.
         cdp.mol[0].name = 'Old mol'
@@ -104,7 +104,7 @@ class Spin_base_class:
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        relax_data_store.__reset__()
+        ds.__reset__()
 
 
     def test_copy_spin_between_molecules(self):
@@ -118,20 +118,20 @@ class Spin_base_class:
         self.spin_fns.copy(spin_from='#Old mol:1@111', spin_to='#New mol:5@334')
 
         # Test the original spin.
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'Ala')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 111)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C8')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].x, 1)
+        self.assertEqual(ds['orig'].mol[0].res[0].num, 1)
+        self.assertEqual(ds['orig'].mol[0].res[0].name, 'Ala')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].num, 111)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].name, 'C8')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].x, 1)
 
         # Test the new spin.
-        self.assertEqual(relax_data_store['orig'].mol[1].res[0].num, 5)
-        self.assertEqual(relax_data_store['orig'].mol[1].res[0].name, 'Lys')
-        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].num, 239)
-        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].name, 'NH')
-        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[1].num, 334)
-        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[1].name, 'C8')
-        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[1].x, 1)
+        self.assertEqual(ds['orig'].mol[1].res[0].num, 5)
+        self.assertEqual(ds['orig'].mol[1].res[0].name, 'Lys')
+        self.assertEqual(ds['orig'].mol[1].res[0].spin[0].num, 239)
+        self.assertEqual(ds['orig'].mol[1].res[0].spin[0].name, 'NH')
+        self.assertEqual(ds['orig'].mol[1].res[0].spin[1].num, 334)
+        self.assertEqual(ds['orig'].mol[1].res[0].spin[1].name, 'C8')
+        self.assertEqual(ds['orig'].mol[1].res[0].spin[1].x, 1)
 
 
     def test_copy_spin_between_residues(self):
@@ -145,20 +145,20 @@ class Spin_base_class:
         self.spin_fns.copy(spin_from='#Old mol:1@111', spin_to='#Old mol:2')
 
         # Test the original spin.
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].num, 1)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].name, 'Ala')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 111)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C8')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].x, 1)
+        self.assertEqual(ds['orig'].mol[0].res[0].num, 1)
+        self.assertEqual(ds['orig'].mol[0].res[0].name, 'Ala')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].num, 111)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].name, 'C8')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].x, 1)
 
         # Test the new spin.
-        self.assertEqual(relax_data_store['orig'].mol[0].res[1].num, 2)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[1].name, 'Arg')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].num, 78)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].name, 'NH')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[1].num, 111)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[1].name, 'C8')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[1].x, 1)
+        self.assertEqual(ds['orig'].mol[0].res[1].num, 2)
+        self.assertEqual(ds['orig'].mol[0].res[1].name, 'Arg')
+        self.assertEqual(ds['orig'].mol[0].res[1].spin[0].num, 78)
+        self.assertEqual(ds['orig'].mol[0].res[1].spin[0].name, 'NH')
+        self.assertEqual(ds['orig'].mol[0].res[1].spin[1].num, 111)
+        self.assertEqual(ds['orig'].mol[0].res[1].spin[1].name, 'C8')
+        self.assertEqual(ds['orig'].mol[0].res[1].spin[1].x, 1)
 
 
     def test_copy_spin_between_pipes(self):
@@ -172,16 +172,16 @@ class Spin_base_class:
         self.spin_fns.copy(spin_from='#Old mol:1@111', pipe_to='test')
 
         # Change the first spin's data.
-        relax_data_store['orig'].mol[0].res[0].spin[0].num = 222
-        relax_data_store['orig'].mol[0].res[0].spin[0].x = 2
+        ds['orig'].mol[0].res[0].spin[0].num = 222
+        ds['orig'].mol[0].res[0].spin[0].x = 2
 
         # Test the original spin.
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 222)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].x, 2)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].num, 222)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].x, 2)
 
         # Test the new spin.
-        self.assertEqual(relax_data_store['test'].mol[0].res[0].spin[0].num, 111)
-        self.assertEqual(relax_data_store['test'].mol[0].res[0].spin[0].x, 1)
+        self.assertEqual(ds['test'].mol[0].res[0].spin[0].num, 111)
+        self.assertEqual(ds['test'].mol[0].res[0].spin[0].x, 1)
 
 
     def test_copy_spin_between_pipes_fail(self):
@@ -253,14 +253,14 @@ class Spin_base_class:
         self.spin_fns.create(-3, 'N7', res_id='#New mol:6')
 
         # Test that the spin numbers are correct.
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[5].num, 1)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[6].num, 2)
-        self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[2].num, -3)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[5].num, 1)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[6].num, 2)
+        self.assertEqual(ds['orig'].mol[1].res[1].spin[2].num, -3)
 
         # Test that the spin names are correct.
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[5].name, 'C3')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[6].name, 'C17')
-        self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[2].name, 'N7')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[5].name, 'C3')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[6].name, 'C17')
+        self.assertEqual(ds['orig'].mol[1].res[1].spin[2].name, 'N7')
 
 
     def test_create_spin_fail(self):
@@ -288,9 +288,9 @@ class Spin_base_class:
         self.spin_fns.delete(spin_id='@C8')
 
         # Test that the first spin is now 6, C19.
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 6)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C19')
-        self.assert_(not hasattr(relax_data_store['orig'].mol[0].res[0].spin[0], 'x'))
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].num, 6)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].name, 'C19')
+        self.assert_(not hasattr(ds['orig'].mol[0].res[0].spin[0], 'x'))
 
 
     def test_delete_spin_num(self):
@@ -304,9 +304,9 @@ class Spin_base_class:
         self.spin_fns.delete(spin_id='@111')
 
         # Test that the first spin is now 6, C19.
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 6)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C19')
-        self.assert_(not hasattr(relax_data_store['orig'].mol[0].res[0].spin[0], 'x'))
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].num, 6)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].name, 'C19')
+        self.assert_(not hasattr(ds['orig'].mol[0].res[0].spin[0], 'x'))
 
 
     def test_delete_spin_all(self):
@@ -320,8 +320,8 @@ class Spin_base_class:
         self.spin_fns.delete(spin_id='@1-200')
 
         # Test that the first spin defaults back to the empty spin.
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, None)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, None)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].num, None)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].name, None)
 
 
     def test_delete_spin_shift(self):
@@ -335,12 +335,12 @@ class Spin_base_class:
         self.spin_fns.delete(spin_id='@111,7')
 
         # Test that the remaining spins.
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 6)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C19')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].num, 8)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].name, 'C24')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].num, 9)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].name, 'C26')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].num, 6)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].name, 'C19')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[1].num, 8)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[1].name, 'C24')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[2].num, 9)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[2].name, 'C26')
 
 
     def test_display_spin(self):
@@ -371,15 +371,15 @@ class Spin_base_class:
         self.spin_fns.name(spin_id='#New mol:6@3239', name='NHe')
 
         # Test that the spins have been named (and that the others have not).
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C8')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].name, 'C19')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].name, 'C21')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[3].name, 'C24')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[4].name, 'C25')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].name, 'Ca')
-        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].name, 'NH')
-        self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[0].name, None)
-        self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[1].name, 'NHe')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].name, 'C8')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[1].name, 'C19')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[2].name, 'C21')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[3].name, 'C24')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[4].name, 'C25')
+        self.assertEqual(ds['orig'].mol[0].res[1].spin[0].name, 'Ca')
+        self.assertEqual(ds['orig'].mol[1].res[0].spin[0].name, 'NH')
+        self.assertEqual(ds['orig'].mol[1].res[1].spin[0].name, None)
+        self.assertEqual(ds['orig'].mol[1].res[1].spin[1].name, 'NHe')
 
 
     def test_name_spin_many(self):
@@ -393,15 +393,15 @@ class Spin_base_class:
         self.spin_fns.name(spin_id='@NH', name='N')
 
         # Test the renaming of the NHs (and that the other spins have not changed).
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].name, 'C8')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].name, 'C19')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].name, 'C21')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[3].name, 'C24')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[4].name, 'C26')
-        self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].name, 'N')
-        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].name, 'N')
-        self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[0].name, None)
-        self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[1].name, 'N')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].name, 'C8')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[1].name, 'C19')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[2].name, 'C21')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[3].name, 'C24')
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[4].name, 'C26')
+        self.assertEqual(ds['orig'].mol[0].res[1].spin[0].name, 'N')
+        self.assertEqual(ds['orig'].mol[1].res[0].spin[0].name, 'N')
+        self.assertEqual(ds['orig'].mol[1].res[1].spin[0].name, None)
+        self.assertEqual(ds['orig'].mol[1].res[1].spin[1].name, 'N')
 
 
     def test_number_spin(self):
@@ -422,14 +422,14 @@ class Spin_base_class:
         self.spin_fns.number(spin_id='@3239', number=9)
 
         # Test that the spins have been numbered.
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 1)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[1].num, 2)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[2].num, 3)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[3].num, 4)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[4].num, 5)
-        self.assertEqual(relax_data_store['orig'].mol[0].res[1].spin[0].num, 6)
-        self.assertEqual(relax_data_store['orig'].mol[1].res[0].spin[0].num, 7)
-        self.assertEqual(relax_data_store['orig'].mol[1].res[1].spin[1].num, 9)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].num, 1)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[1].num, 2)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[2].num, 3)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[3].num, 4)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[4].num, 5)
+        self.assertEqual(ds['orig'].mol[0].res[1].spin[0].num, 6)
+        self.assertEqual(ds['orig'].mol[1].res[0].spin[0].num, 7)
+        self.assertEqual(ds['orig'].mol[1].res[1].spin[1].num, 9)
 
 
     def test_number_spin_many_fail(self):

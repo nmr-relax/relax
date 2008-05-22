@@ -38,12 +38,26 @@ __all__ = [ 'data_classes',
             'main' ]
 
 
-class Data2(dict):
+class Relax_data_store(dict):
     """The relax data storage object."""
 
     # The current data pipe.
     current_pipe = None
 
+    # Class variable for storing the class instance.
+    instance = None
+
+    def __new__(self, *args, **kargs): 
+        """Replacement function for implementing the singleton design pattern."""
+
+        # First initialisation.
+        if self.instance is None:
+            self.instance = dict.__new__(self, *args, **kargs)
+
+        # Already initialised, so return the instance.
+        return self.instance
+
+    
     def __repr__(self):
         """The string representation of the object.
 
@@ -68,7 +82,7 @@ class Data2(dict):
         text = text + "\n"
         text = text + "Objects:\n"
         for name in dir(self):
-            if match("^_", name) or name in dict.__dict__ or name == 'add':
+            if match("^_", name) or name in dict.__dict__ or name == 'add' or name == 'instance':
                 continue
             text = text + "  %s: %s\n" % (name, `getattr(self, name)`)
 
@@ -128,7 +142,3 @@ class Data2(dict):
 
         # Change the current data pipe.
         self.current_pipe = pipe_name
-
-# Rebind the name Data with an instance to prevent accidental creation
-# of multiple instances of the Data class
-Data = Data2()

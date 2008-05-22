@@ -25,7 +25,7 @@
 
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError
 
 # Relaxation curve fitting modules compilation test.
@@ -49,15 +49,15 @@ def copy(pipe_from=None, pipe_to=None):
     """
 
     # Test if the pipe already exists.
-    if pipe_to in relax_data_store.keys():
+    if pipe_to in ds.keys():
         raise RelaxPipeError, pipe_to
 
     # The current data pipe.
     if pipe_from == None:
-        pipe_from = relax_data_store.current_pipe
+        pipe_from = ds.current_pipe
 
     # Copy the data.
-    relax_data_store[pipe_to] = relax_data_store[pipe_from].__clone__()
+    ds[pipe_to] = ds[pipe_from].__clone__()
 
 
 def create(pipe_name=None, pipe_type=None):
@@ -91,7 +91,7 @@ def create(pipe_name=None, pipe_type=None):
         raise RelaxError, "Relaxation curve fitting is not availible.  Try compiling the C modules on your platform."
 
     # Add the data pipe.
-    relax_data_store.add(pipe_name=pipe_name, pipe_type=pipe_type)
+    ds.add(pipe_name=pipe_name, pipe_type=pipe_type)
 
 
 def current():
@@ -101,7 +101,7 @@ def current():
     @rtype:         str
     """
 
-    return relax_data_store.current_pipe
+    return ds.current_pipe
 
 
 def delete(pipe_name=None):
@@ -112,15 +112,15 @@ def delete(pipe_name=None):
     """
 
     # Test if the data pipe exists.
-    if pipe_name != None and not relax_data_store.has_key(pipe_name):
+    if pipe_name != None and not ds.has_key(pipe_name):
         raise RelaxNoPipeError, pipe_name
 
     # Delete the data pipe.
-    del relax_data_store[pipe_name]
+    del ds[pipe_name]
 
     # Set the current data pipe to None if it is the deleted data pipe.
-    if relax_data_store.current_pipe == pipe_name:
-        relax_data_store.current_pipe = None
+    if ds.current_pipe == pipe_name:
+        ds.current_pipe = None
 
 
 def list():
@@ -130,8 +130,8 @@ def list():
     print "%-20s%-20s" % ("Data pipe name", "Data pipe type")
 
     # Loop over the data pipes.
-    for pipe_name in relax_data_store:
-        print "%-20s%-20s" % (pipe_name, relax_data_store[pipe_name].pipe_type)
+    for pipe_name in ds:
+        print "%-20s%-20s" % (pipe_name, ds[pipe_name].pipe_type)
 
 
 def switch(pipe_name=None):
@@ -142,11 +142,11 @@ def switch(pipe_name=None):
     """
 
     # Test if the data pipe exists.
-    if not relax_data_store.has_key(pipe_name):
+    if not ds.has_key(pipe_name):
         raise RelaxNoPipeError, pipe_name
 
     # Switch the current data pipe.
-    relax_data_store.current_pipe = pipe_name
+    ds.current_pipe = pipe_name
 
 
 def test(pipe_name=None):
@@ -168,6 +168,6 @@ def test(pipe_name=None):
             raise RelaxNoPipeError
 
     # Test if the data pipe exists.
-    if not relax_data_store.has_key(pipe_name):
+    if not ds.has_key(pipe_name):
         raise RelaxNoPipeError, pipe_name
 

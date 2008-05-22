@@ -24,7 +24,7 @@
 from warnings import warn
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
 from relax_io import extract_data, strip
@@ -39,7 +39,7 @@ def desel_all():
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Test if sequence data is loaded.
@@ -90,7 +90,7 @@ def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_nam
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Test if sequence data is loaded.
@@ -184,7 +184,7 @@ def desel_spin(spin_id=None, boolean='AND', change_all=False):
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Test if sequence data is loaded.
@@ -230,7 +230,7 @@ def reverse(spin_id=None):
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Test if sequence data is loaded.
@@ -254,7 +254,7 @@ def sel_all():
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Test if sequence data is loaded.
@@ -305,7 +305,7 @@ def sel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Test if sequence data is loaded.
@@ -400,7 +400,7 @@ def sel_spin(spin_id=None, boolean='OR', change_all=False):
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Test if sequence data is loaded.

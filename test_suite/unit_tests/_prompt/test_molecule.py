@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from prompt.molecule import Molecule
 from relax_errors import RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.molecule_testing_base import Molecule_base_class

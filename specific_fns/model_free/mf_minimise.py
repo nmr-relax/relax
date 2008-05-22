@@ -27,7 +27,7 @@ from numpy.linalg import inv
 from re import match
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from float import isNaN, isInf
 from generic_fns import diffusion_tensor
 from generic_fns.diffusion_tensor import diff_data_exists
@@ -81,7 +81,7 @@ class Mf_minimise:
             raise RelaxNoSequenceError
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Determine the parameter set type.
         param_set = self.determine_param_set_type()
@@ -230,7 +230,7 @@ class Mf_minimise:
         param_index = 0
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Diffusion tensor parameters of the Monte Carlo simulations.
         if sim_index != None and (param_set == 'diff' or param_set == 'all'):
@@ -528,7 +528,7 @@ class Mf_minimise:
         param_set = self.determine_param_set_type()
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Minimisation options for diffusion tensor parameters.
         if param_set == 'diff' or param_set == 'all':
@@ -759,7 +759,7 @@ class Mf_minimise:
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -1114,7 +1114,7 @@ class Mf_minimise:
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise the data structures for the model-free function.
         relax_data = []
