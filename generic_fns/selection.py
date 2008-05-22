@@ -48,7 +48,7 @@ def desel_all():
 
     # Loop over the spins and deselect them.
     for spin in spin_loop():
-        spin.select = 0
+        spin.select = False
 
 
 def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, change_all=False):
@@ -116,7 +116,7 @@ def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_nam
     # First select all spins if desired.
     if change_all:
         for spin in spin_loop():
-            spin.select = 1
+            spin.select = True
 
     # Then deselect the spins in the file.
     for i in xrange(len(file_data)):
@@ -136,7 +136,7 @@ def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_nam
             continue
 
         # Deselect the spin.
-        spin.select = 0
+        spin.select = False
 
 
 def desel_spin(spin_id=None, change_all=None):
@@ -162,11 +162,11 @@ def desel_spin(spin_id=None, change_all=None):
     # First select all spins if desired.
     if change_all:
         for spin in spin_loop():
-            spin.select = 1
+            spin.select = True
 
     # Then deselect the desired spins.
     for spin in spin_loop(spin_id):
-        spin.select = 0
+        spin.select = False
 
 
 def reverse(spin_id=None):
@@ -190,9 +190,9 @@ def reverse(spin_id=None):
     for spin in spin_loop(spin_id):
         # Reverse the selection.
         if spin.select:
-            spin.select = 0
+            spin.select = False
         else:
-            spin.select = 1
+            spin.select = True
 
 
 def sel_all():
@@ -212,7 +212,7 @@ def sel_all():
 
     # Loop over the spins and select them.
     for spin in spin_loop():
-        spin.select = 1
+        spin.select = True
 
 
 def sel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, boolean='OR', change_all=False):
