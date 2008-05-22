@@ -64,6 +64,9 @@ class Relax_fit(TestCase):
         # Load the Lupin Ap4Aase sequence.
         self.relax.interpreter._Sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/system_tests/data")
 
+        # Name the spins so they can be matched to the assignments.
+        self.relax.interpreter._Spin.name(name='N')
+
         # Read the peak heights.
         self.relax.interpreter._Relax_fit.read(file="T2_ncyc1_ave.list", dir=sys.path[-1] + "/test_suite/shared_data/curve_fitting", relax_time=0.0176)
 
@@ -72,17 +75,22 @@ class Relax_fit(TestCase):
         #################################
 
         # Loop over the spins of the original data.
-        for index in spin_index_loop():
-            # Get the spins from both pipes.
-            orig_spin, orig_id = return_spin_from_index(index, pipe='rx', return_spin_id=True)
-            new_spin, new_id = return_spin_from_index(index, return_spin_id=True)
+        for mol_index, res_index, spin_index in spin_index_loop():
+            # Alias the spin containers.
+            new_spin = ds['new'].mol[mol_index].res[res_index].spin[spin_index]
+            orig_spin = ds['rx'].mol[mol_index].res[res_index].spin[spin_index]
 
-            # Check spin ids.
-            self.assertEqual(orig_id, new_id)
+            # Check the sequence info.
+            self.assertEqual(ds['new'].mol[mol_index].name, ds['rx'].mol[mol_index].name)
+            self.assertEqual(ds['new'].mol[mol_index].res[res_index].num, ds['rx'].mol[mol_index].res[res_index].num)
+            self.assertEqual(ds['new'].mol[mol_index].res[res_index].name, ds['rx'].mol[mol_index].res[res_index].name)
+            self.assertEqual(new_spin.num, orig_spin.num)
+            self.assertEqual(new_spin.name, orig_spin.name)
 
             # Skip deselected spins.
             if not orig_spin.select:
                 continue
 
-            # Check intensities.
-            self.assertEqual(orig_spin.intensities[0][0], new_spin.intensities[0][0])
+            # Check intensities (if they exist).
+            if hasattr(orig_spin, 'intensities'):
+                self.assertEqual(orig_spin.intensities[0][0], new_spin.intensities[0][0])
