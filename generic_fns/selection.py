@@ -86,6 +86,7 @@ def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_nam
     @type change_all:               bool
     @raises RelaxNoPipeError:       If the current data pipe does not exist.
     @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
+    @raises RelaxError:             If the boolean operator is unknown.
     """
 
     # Test if the current data pipe exists.
@@ -179,6 +180,7 @@ def desel_spin(spin_id=None, boolean='AND', change_all=False):
     @type change_all:               bool
     @raises RelaxNoPipeError:       If the current data pipe does not exist.
     @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
+    @raises RelaxError:             If the boolean operator is unknown.
     """
 
     # Test if the current data pipe exists.
@@ -299,6 +301,7 @@ def sel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_
     @type change_all:               bool
     @raises RelaxNoPipeError:       If the current data pipe does not exist.
     @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
+    @raises RelaxError:             If the boolean operator is unknown.
     """
 
     # Test if the current data pipe exists.
@@ -393,6 +396,7 @@ def sel_spin(spin_id=None, boolean='OR', change_all=False):
     @type change_all:               bool
     @raises RelaxNoPipeError:       If the current data pipe does not exist.
     @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
+    @raises RelaxError:             If the boolean operator is unknown.
     """
 
     # Test if the current data pipe exists.
