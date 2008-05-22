@@ -51,7 +51,7 @@ def desel_all():
         spin.select = False
 
 
-def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, change_all=False):
+def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, boolean='AND', change_all=False):
     """Deselect the spins contained in a file.
 
     @keyword file:                  The name of the file to open.
@@ -75,8 +75,14 @@ def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_nam
     @type spin_num_col:             int or None
     @keyword sep:                   The column separator which, if None, defaults to whitespace.
     @type sep:                      str or None
+    @param boolean:                 The boolean operator used to deselect the spin systems with.  It
+                                    can be one of 'OR', 'NOR', 'AND', 'NAND', 'XOR', or 'XNOR'.
+                                    This will be ignored if the change_all flag is set.
+    @type boolean:                  str
     @keyword change_all:            A flag which if True will cause all spins not specified in the
-                                    file to be selected.
+                                    file to be selected.  Only the boolean operator 'AND' is
+                                    compatible with this flag set to True (all others will be
+                                    ignored).
     @type change_all:               bool
     @raises RelaxNoPipeError:       If the current data pipe does not exist.
     @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
@@ -113,7 +119,7 @@ def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_nam
     # Minimum number of columns.
     min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col)
 
-    # First select all spins if desired.
+    # First select all spins if the change_all flag is set.
     if change_all:
         for spin in spin_loop():
             spin.select = True
@@ -136,7 +142,25 @@ def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_nam
             continue
 
         # Deselect the spin.
-        spin.select = False
+        if change_all:
+            spin.select = False
+
+        # Boolean selections.
+        else:
+            if boolean == 'OR':
+                spin.select = spin.select or False
+            elif boolean == 'NOR':
+                spin.select = not (spin.select or False)
+            elif boolean == 'AND':
+                spin.select = spin.select and False
+            elif boolean == 'NAND':
+                spin.select = not (spin.select and False)
+            elif boolean == 'XOR':
+                spin.select = not (spin.select and False) and (spin.select or False)
+            elif boolean == 'XNOR':
+                spin.select = (spin.select and False) or not (spin.select or False)
+            else:
+                raise RelaxError, "Unknown boolean operator " + `boolean`
 
 
 def desel_spin(spin_id=None, boolean='AND', change_all=False):
@@ -144,7 +168,7 @@ def desel_spin(spin_id=None, boolean='AND', change_all=False):
 
     @keyword spin_id:               The spin identification string.
     @type spin_id:                  str or None
-    @param boolean:                 The boolean operator used to select the spin systems with.  It
+    @param boolean:                 The boolean operator used to deselect the spin systems with.  It
                                     can be one of 'OR', 'NOR', 'AND', 'NAND', 'XOR', or 'XNOR'.
                                     This will be ignored if the change_all flag is set.
     @type boolean:                  str
@@ -269,7 +293,7 @@ def sel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_
                                     This will be ignored if the change_all flag is set.
     @type boolean:                  str
     @keyword change_all:            A flag which if True will cause all spins not specified in the
-                                    file to be selected.  Only the boolean operator 'OR' is
+                                    file to be deselected.  Only the boolean operator 'OR' is
                                     compatible with this flag set to True (all others will be
                                     ignored).
     @type change_all:               bool
@@ -314,13 +338,24 @@ def sel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_
         for spin in spin_loop():
             spin.select = False
 
-    # Loop over all spins.
-    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
-        # Skip spins not the file.
-        if not spin_in_list(file_data, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin.num, spin_name=spin.name):
+    # Then deselect the spins in the file.
+    for i in xrange(len(file_data)):
+        # Skip missing data.
+        if len(file_data[i]) <= min_col_num:
             continue
 
-        # Select just the specified residues.
+        # Generate the spin identification string.
+        id = generate_spin_id_data_array(data=file_data[i], mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
+
+        # Get the corresponding spin container.
+        spin = return_spin(id)
+
+        # No spin.
+        if spin == None:
+            warn(RelaxNoSpinWarning(id))
+            continue
+
+        # Select the spin.
         if change_all:
             spin.select = True
 
