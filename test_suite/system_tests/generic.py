@@ -54,7 +54,7 @@ class Generic(TestCase):
             self.relax.interpreter._Sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/system_tests/data")
 
             # Only select residue 8.
-            self.relax.interpreter._Select.res(num=8, change_all=1)
+            self.relax.interpreter._Select.spin(spin_id=':8', change_all=True)
 
             # Set the order parameter value.
             if s2[i]:
