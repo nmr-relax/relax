@@ -313,9 +313,12 @@ def sel_spin(spin_id=None, boolean='OR', change_all=False):
     @type spin_id:                  str or None
     @param boolean:                 The boolean operator used to select the spin systems with.  It
                                     can be one of 'OR', 'NOR', 'AND', 'NAND', 'XOR', or 'XNOR'.
+                                    This will be ignored if the change_all flag is set.
     @type boolean:                  str
     @keyword change_all:            A flag which if True will cause all spins not specified in the
-                                    file to be selected.
+                                    file to be deselected.  Only the boolean operator 'OR' is
+                                    compatible with this flag set to True (all others will be
+                                    ignored).
     @type change_all:               bool
     """
 
@@ -327,54 +330,31 @@ def sel_spin(spin_id=None, boolean='OR', change_all=False):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Loop over the runs.
-    no_match = 1
-    for self.run in self.runs:
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
+    # First deselect all spins if the change_all flag is set.
+    if change_all:
+        # Loop over all spins.
+        for spin in spin_loop():
+            spin.select = False
 
-        # Test if sequence data is loaded.
-        if not len(relax_data_store.res[self.run]):
-            raise RelaxNoSequenceError, self.run
+    # Loop over the specified spins.
+    for spin in spin_loop(spin_id):
+        # Select just the specified residues.
+        if change_all:
+            spin.select = True
 
-        # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Remap the data structure 'relax_data_store.res[self.run][i]'.
-            data = relax_data_store.res[self.run][i]
-
-            # Initialise the new selection flag.
-            new_select = 0
-
-            # Set the new selection flag if the residue matches 'num'.
-            if type(num) == int:
-                if data.num == num:
-                    new_select = 1
-            elif type(num) == str:
-                if match(num, `data.num`):
-                    new_select = 1
-
-            # Set the new selection flag if the residue matches 'name'.
-            if name != None:
-                if match(name, data.name):
-                    new_select = 1
-
-            # Select just the specified residues.
-            if change_all:
-                data.select = new_select
-
-            # Boolean selections.
+        # Boolean selections.
+        else:
             if boolean == 'OR':
-                data.select = data.select or new_select
+                spin.select = spin.select or True
             elif boolean == 'NOR':
-                data.select = not (data.select or new_select)
+                spin.select = not (spin.select or True)
             elif boolean == 'AND':
-                data.select = data.select and new_select
+                spin.select = spin.select and True
             elif boolean == 'NAND':
-                data.select = not (data.select and new_select)
+                spin.select = not (spin.select and True)
             elif boolean == 'XOR':
-                data.select = not (data.select and new_select) and (data.select or new_select)
+                spin.select = not (spin.select and True) and (spin.select or True)
             elif boolean == 'XNOR':
-                data.select = (data.select and new_select) or not (data.select or new_select)
+                spin.select = (spin.select and True) or not (spin.select or True)
             else:
                 raise RelaxError, "Unknown boolean operator " + `boolean`
