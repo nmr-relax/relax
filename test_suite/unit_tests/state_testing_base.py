@@ -75,11 +75,17 @@ class State_base_class:
         # Load the state.
         self.state.load_state(state='basic_single_pipe', dir_name=path+'/test_suite/shared_data/saved_states')
 
-        # Test the contents of the restored singleton.
-        self.assertEqual(relax_data_store.keys(), ['orig'])
-        self.assertEqual(relax_data_store.current_pipe, 'orig')
+        # Add a new data pipe and some data to it.
+        relax_data_store.add('new', 'jw_mapping')
+        relax_data_store[relax_data_store.current_pipe].z = [None, None]
+
+
+        # Test the contents of the restored singleton (with subsequent data added).
+        self.assertEqual(relax_data_store.keys(), ['orig', 'new'])
+        self.assertEqual(relax_data_store.current_pipe, 'new')
         self.assertEqual(relax_data_store['orig'].x, 1)
         self.assertEqual(relax_data_store.y, 'Hello')
+        self.assertEqual(relax_data_store['new'].z, [None, None])
 
 
     def test_save(self):
