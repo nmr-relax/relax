@@ -25,12 +25,12 @@
 
 
 # The available modules.
-__all__ = [ 'mf_minimise',
-            'model_free',
+__all__ = [ 'main',
+            'mf_minimise',
             'molmol' ]
 
 # relax module imports.
-from model_free import Model_free_main
+from main import Model_free_main
 from mf_minimise import Mf_minimise
 from molmol import Molmol
 from specific_fns.base_class import Common_functions
