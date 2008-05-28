@@ -944,7 +944,7 @@ class Results:
 
             # XH vector, heteronucleus, and proton.
             if data_set == 'value':
-                self.read_columnar_xh_vect()
+                self.__set_xh_vect(file_line, col, spin_id, verbosity)
 
             # Relaxation data.
             self.read_columnar_relax_data()
@@ -1006,24 +1006,37 @@ class Results:
             generic_fns.selection.desel_spin(spin_id)
 
 
-    def read_columnar_xh_vect(self):
-        """Function for reading the XH unit vectors."""
+    def __set_xh_vect(self, spin_line, col, spin_id, verbosity=1):
+        """Set the XH unit vector and the attached proton name.
+
+        @param spin_line:   The line of data for a single spin.
+        @type spin_line:    list of str
+        @param col:         The column indecies.
+        @type col:          dict of int
+        @param spin_id:     The spin identification string.
+        @type spin_id:      str
+        @keyword verbosity: A variable specifying the amount of information to print.  The higher
+                            the value, the greater the verbosity.
+        @type verbosity:    int
+        """
+
+        # Get the spin.
+        spin = return_spin(spin_id)
 
         # The vector.
-        xh_vect = eval(self.file_line[col['xh_vect']])
+        xh_vect = eval(spin_line[col['xh_vect']])
         if xh_vect:
-            # Numeric array format.
+            # numpy array format.
             try:
                 xh_vect = array(xh_vect, float64)
             except:
-                raise RelaxError, "The XH unit vector " + self.file_line[col['xh_vect']] + " is invalid."
+                raise RelaxError, "The XH unit vector " + spin_line[col['xh_vect']] + " is invalid."
 
             # Set the vector.
-            self.relax.generic.structure.set_vector(run=self.run, res=self.res_index, xh_vect=xh_vect)
+            spin.xh_vect = xh_vect
 
-        # The heteronucleus and proton names.
-        ds.res[self.run][self.res_index].heteronuc = self.file_line[col['pdb_heteronuc']]
-        ds.res[self.run][self.res_index].proton = self.file_line[col['pdb_proton']]
+        # The attached proton name.
+        spin.attached_proton = spin_line[col['pdb_proton']]
 
 
     def write_columnar_line(self, file=None, num=None, name=None, select=None, select_sim=None, data_set=None, nucleus=None, model=None, equation=None, params=None, param_set=None, s2=None, s2f=None, s2s=None, local_tm=None, te=None, tf=None, ts=None, rex=None, r=None, csa=None, chi2=None, i=None, f=None, g=None, h=None, warn=None, diff_type=None, diff_params=None, pdb=None, pdb_model=None, pdb_heteronuc=None, pdb_proton=None, xh_vect=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
