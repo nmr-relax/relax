@@ -194,7 +194,7 @@ class Results:
         """Function for setting up the diffusion tensor from the columnar formatted results file."""
 
         # The diffusion tensor type.
-        diff_type = self.file_line[self.col['diff_type']]
+        diff_type = self.file_line[col['diff_type']]
         if diff_type == 'None':
             diff_type = None
 
@@ -202,10 +202,10 @@ class Results:
         if diff_type == 'sphere':
             # Convert the parameters to floating point numbers.
             try:
-                tm = float(self.file_line[self.col['tm']])
+                tm = float(self.file_line[col['tm']])
             except ValueError:
                 # Errors or simulation values set to None.
-                if self.data_set != 'value' and self.file_line[self.col['tm']] == 'None':
+                if self.data_set != 'value' and self.file_line[col['tm']] == 'None':
                     return
 
                 # Genuine error.
@@ -233,13 +233,13 @@ class Results:
         elif diff_type == 'spheroid' or diff_type == 'oblate' or diff_type == 'prolate':
             # Convert the parameters to floating point numbers.
             try:
-                tm = float(self.file_line[self.col['tm']])
-                Da = float(self.file_line[self.col['da']])
-                theta = float(self.file_line[self.col['theta']]) / 360.0 * 2.0 * pi
-                phi = float(self.file_line[self.col['phi']]) / 360.0 * 2.0 * pi
+                tm = float(self.file_line[col['tm']])
+                Da = float(self.file_line[col['da']])
+                theta = float(self.file_line[col['theta']]) / 360.0 * 2.0 * pi
+                phi = float(self.file_line[col['phi']]) / 360.0 * 2.0 * pi
             except ValueError:
                 # Errors or simulation values set to None.
-                if self.data_set != 'value' and self.file_line[self.col['tm']] == 'None':
+                if self.data_set != 'value' and self.file_line[col['tm']] == 'None':
                     return
 
                 # Genuine error.
@@ -279,15 +279,15 @@ class Results:
         elif diff_type == 'ellipsoid':
             # Convert the parameters to floating point numbers.
             try:
-                tm = float(self.file_line[self.col['tm']])
-                Da = float(self.file_line[self.col['da']])
-                Dr = float(self.file_line[self.col['dr']])
-                alpha = float(self.file_line[self.col['alpha']]) / 360.0 * 2.0 * pi
-                beta = float(self.file_line[self.col['beta']]) / 360.0 * 2.0 * pi
-                gamma = float(self.file_line[self.col['gamma']]) / 360.0 * 2.0 * pi
+                tm = float(self.file_line[col['tm']])
+                Da = float(self.file_line[col['da']])
+                Dr = float(self.file_line[col['dr']])
+                alpha = float(self.file_line[col['alpha']]) / 360.0 * 2.0 * pi
+                beta = float(self.file_line[col['beta']]) / 360.0 * 2.0 * pi
+                gamma = float(self.file_line[col['gamma']]) / 360.0 * 2.0 * pi
             except ValueError:
                 # Errors or simulation values set to None.
-                if self.data_set != 'value' and self.file_line[self.col['tm']] == 'None':
+                if self.data_set != 'value' and self.file_line[col['tm']] == 'None':
                     return
 
                 # Genuine error.
@@ -347,10 +347,10 @@ class Results:
 
         # Residue number and name.
         try:
-            self.res_num = int(self.file_line[self.col['num']])
+            self.res_num = int(self.file_line[col['num']])
         except ValueError:
-            raise RelaxError, "The residue number " + self.file_line[self.col['num']] + " is not an integer."
-        self.res_name = self.file_line[self.col['name']]
+            raise RelaxError, "The residue number " + self.file_line[col['num']] + " is not an integer."
+        self.res_name = self.file_line[col['name']]
 
         # Find the residue index.
         res_index = None
@@ -374,13 +374,13 @@ class Results:
         # Set up the model-free models.
         if self.data_set == 'value':
             # Get the model-free model.
-            model = self.file_line[self.col['model']]
+            model = self.file_line[col['model']]
 
             # Get the model-free equation.
-            equation = self.file_line[self.col['eqi']]
+            equation = self.file_line[col['eqi']]
 
             # Get the model-free parameters.
-            params = eval(self.file_line[self.col['params']])
+            params = eval(self.file_line[col['params']])
 
             # Fix for the 1.2 relax versions whereby the parameter 'tm' was renamed to 'local_tm' (which occurred in version 1.2.5).
             if params:
@@ -396,147 +396,147 @@ class Results:
         if self.data_set == 'value':
             # S2.
             try:
-                data.s2 = float(self.file_line[self.col['s2']]) * self.return_conversion_factor('s2')
+                data.s2 = float(self.file_line[col['s2']]) * self.return_conversion_factor('s2')
             except ValueError:
                 data.s2 = None
 
             # S2f.
             try:
-                data.s2f = float(self.file_line[self.col['s2f']]) * self.return_conversion_factor('s2f')
+                data.s2f = float(self.file_line[col['s2f']]) * self.return_conversion_factor('s2f')
             except ValueError:
                 data.s2f = None
 
             # S2s.
             try:
-                data.s2s = float(self.file_line[self.col['s2s']]) * self.return_conversion_factor('s2s')
+                data.s2s = float(self.file_line[col['s2s']]) * self.return_conversion_factor('s2s')
             except ValueError:
                 data.s2s = None
 
             # Local tm.
             try:
-                data.local_tm = float(self.file_line[self.col['local_tm']]) * self.return_conversion_factor('local_tm')
+                data.local_tm = float(self.file_line[col['local_tm']]) * self.return_conversion_factor('local_tm')
             except ValueError:
                 data.local_tm = None
 
             # te.
             try:
-                data.te = float(self.file_line[self.col['te']]) * self.return_conversion_factor('te')
+                data.te = float(self.file_line[col['te']]) * self.return_conversion_factor('te')
             except ValueError:
                 data.te = None
 
             # tf.
             try:
-                data.tf = float(self.file_line[self.col['tf']]) * self.return_conversion_factor('tf')
+                data.tf = float(self.file_line[col['tf']]) * self.return_conversion_factor('tf')
             except ValueError:
                 data.tf = None
 
             # ts.
             try:
-                data.ts = float(self.file_line[self.col['ts']]) * self.return_conversion_factor('ts')
+                data.ts = float(self.file_line[col['ts']]) * self.return_conversion_factor('ts')
             except ValueError:
                 data.ts = None
 
             # Rex.
             try:
-                data.rex = float(self.file_line[self.col['rex']]) * self.return_conversion_factor('rex')
+                data.rex = float(self.file_line[col['rex']]) * self.return_conversion_factor('rex')
             except ValueError:
                 data.rex = None
 
             # Bond length.
             try:
-                data.r = float(self.file_line[self.col['r']]) * self.return_conversion_factor('r')
+                data.r = float(self.file_line[col['r']]) * self.return_conversion_factor('r')
             except ValueError:
                 data.r = None
 
             # CSA.
             try:
-                data.csa = float(self.file_line[self.col['csa']]) * self.return_conversion_factor('csa')
+                data.csa = float(self.file_line[col['csa']]) * self.return_conversion_factor('csa')
             except ValueError:
                 data.csa = None
 
             # Minimisation details (global minimisation results).
             if self.param_set == 'diff' or self.param_set == 'all':
-                ds.chi2[self.run] = eval(self.file_line[self.col['chi2']])
-                ds.iter[self.run] = eval(self.file_line[self.col['iter']])
-                ds.f_count[self.run] = eval(self.file_line[self.col['f_count']])
-                ds.g_count[self.run] = eval(self.file_line[self.col['g_count']])
-                ds.h_count[self.run] = eval(self.file_line[self.col['h_count']])
-                if self.file_line[self.col['warn']] == 'None':
+                ds.chi2[self.run] = eval(self.file_line[col['chi2']])
+                ds.iter[self.run] = eval(self.file_line[col['iter']])
+                ds.f_count[self.run] = eval(self.file_line[col['f_count']])
+                ds.g_count[self.run] = eval(self.file_line[col['g_count']])
+                ds.h_count[self.run] = eval(self.file_line[col['h_count']])
+                if self.file_line[col['warn']] == 'None':
                     ds.warning[self.run] = None
                 else:
-                    ds.warning[self.run] = replace(self.file_line[self.col['warn']], '_', ' ')
+                    ds.warning[self.run] = replace(self.file_line[col['warn']], '_', ' ')
 
             # Minimisation details (individual residue results).
             else:
-                data.chi2 = eval(self.file_line[self.col['chi2']])
-                data.iter = eval(self.file_line[self.col['iter']])
-                data.f_count = eval(self.file_line[self.col['f_count']])
-                data.g_count = eval(self.file_line[self.col['g_count']])
-                data.h_count = eval(self.file_line[self.col['h_count']])
-                if self.file_line[self.col['warn']] == 'None':
+                data.chi2 = eval(self.file_line[col['chi2']])
+                data.iter = eval(self.file_line[col['iter']])
+                data.f_count = eval(self.file_line[col['f_count']])
+                data.g_count = eval(self.file_line[col['g_count']])
+                data.h_count = eval(self.file_line[col['h_count']])
+                if self.file_line[col['warn']] == 'None':
                     data.warning = None
                 else:
-                    data.warning = replace(self.file_line[self.col['warn']], '_', ' ')
+                    data.warning = replace(self.file_line[col['warn']], '_', ' ')
 
         # Errors.
         if self.data_set == 'error':
             # S2.
             try:
-                data.s2_err = float(self.file_line[self.col['s2']]) * self.return_conversion_factor('s2')
+                data.s2_err = float(self.file_line[col['s2']]) * self.return_conversion_factor('s2')
             except ValueError:
                 data.s2_err = None
 
             # S2f.
             try:
-                data.s2f_err = float(self.file_line[self.col['s2f']]) * self.return_conversion_factor('s2f')
+                data.s2f_err = float(self.file_line[col['s2f']]) * self.return_conversion_factor('s2f')
             except ValueError:
                 data.s2f_err = None
 
             # S2s.
             try:
-                data.s2s_err = float(self.file_line[self.col['s2s']]) * self.return_conversion_factor('s2s')
+                data.s2s_err = float(self.file_line[col['s2s']]) * self.return_conversion_factor('s2s')
             except ValueError:
                 data.s2s_err = None
 
             # Local tm.
             try:
-                data.local_tm_err = float(self.file_line[self.col['local_tm']]) * self.return_conversion_factor('local_tm')
+                data.local_tm_err = float(self.file_line[col['local_tm']]) * self.return_conversion_factor('local_tm')
             except ValueError:
                 data.local_tm_err = None
 
             # te.
             try:
-                data.te_err = float(self.file_line[self.col['te']]) * self.return_conversion_factor('te')
+                data.te_err = float(self.file_line[col['te']]) * self.return_conversion_factor('te')
             except ValueError:
                 data.te_err = None
 
             # tf.
             try:
-                data.tf_err = float(self.file_line[self.col['tf']]) * self.return_conversion_factor('tf')
+                data.tf_err = float(self.file_line[col['tf']]) * self.return_conversion_factor('tf')
             except ValueError:
                 data.tf_err = None
 
             # ts.
             try:
-                data.ts_err = float(self.file_line[self.col['ts']]) * self.return_conversion_factor('ts')
+                data.ts_err = float(self.file_line[col['ts']]) * self.return_conversion_factor('ts')
             except ValueError:
                 data.ts_err = None
 
             # Rex.
             try:
-                data.rex_err = float(self.file_line[self.col['rex']]) * self.return_conversion_factor('rex')
+                data.rex_err = float(self.file_line[col['rex']]) * self.return_conversion_factor('rex')
             except ValueError:
                 data.rex_err = None
 
             # Bond length.
             try:
-                data.r_err = float(self.file_line[self.col['r']]) * self.return_conversion_factor('r')
+                data.r_err = float(self.file_line[col['r']]) * self.return_conversion_factor('r')
             except ValueError:
                 data.r_err = None
 
             # CSA.
             try:
-                data.csa_err = float(self.file_line[self.col['csa']]) * self.return_conversion_factor('csa')
+                data.csa_err = float(self.file_line[col['csa']]) * self.return_conversion_factor('csa')
             except ValueError:
                 data.csa_err = None
 
@@ -574,95 +574,95 @@ class Results:
         if self.data_set != 'value' and self.data_set != 'error':
             # S2.
             try:
-                data.s2_sim.append(float(self.file_line[self.col['s2']]) * self.return_conversion_factor('s2'))
+                data.s2_sim.append(float(self.file_line[col['s2']]) * self.return_conversion_factor('s2'))
             except ValueError:
                 data.s2_sim.append(None)
 
             # S2f.
             try:
-                data.s2f_sim.append(float(self.file_line[self.col['s2f']]) * self.return_conversion_factor('s2f'))
+                data.s2f_sim.append(float(self.file_line[col['s2f']]) * self.return_conversion_factor('s2f'))
             except ValueError:
                 data.s2f_sim.append(None)
 
             # S2s.
             try:
-                data.s2s_sim.append(float(self.file_line[self.col['s2s']]) * self.return_conversion_factor('s2s'))
+                data.s2s_sim.append(float(self.file_line[col['s2s']]) * self.return_conversion_factor('s2s'))
             except ValueError:
                 data.s2s_sim.append(None)
 
             # Local tm.
             try:
-                data.local_tm_sim.append(float(self.file_line[self.col['local_tm']]) * self.return_conversion_factor('local_tm'))
+                data.local_tm_sim.append(float(self.file_line[col['local_tm']]) * self.return_conversion_factor('local_tm'))
             except ValueError:
                 data.local_tm_sim.append(None)
 
             # te.
             try:
-                data.te_sim.append(float(self.file_line[self.col['te']]) * self.return_conversion_factor('te'))
+                data.te_sim.append(float(self.file_line[col['te']]) * self.return_conversion_factor('te'))
             except ValueError:
                 data.te_sim.append(None)
 
             # tf.
             try:
-                data.tf_sim.append(float(self.file_line[self.col['tf']]) * self.return_conversion_factor('tf'))
+                data.tf_sim.append(float(self.file_line[col['tf']]) * self.return_conversion_factor('tf'))
             except ValueError:
                 data.tf_sim.append(None)
 
             # ts.
             try:
-                data.ts_sim.append(float(self.file_line[self.col['ts']]) * self.return_conversion_factor('ts'))
+                data.ts_sim.append(float(self.file_line[col['ts']]) * self.return_conversion_factor('ts'))
             except ValueError:
                 data.ts_sim.append(None)
 
             # Rex.
             try:
-                data.rex_sim.append(float(self.file_line[self.col['rex']]) * self.return_conversion_factor('rex'))
+                data.rex_sim.append(float(self.file_line[col['rex']]) * self.return_conversion_factor('rex'))
             except ValueError:
                 data.rex_sim.append(None)
 
             # Bond length.
             try:
-                data.r_sim.append(float(self.file_line[self.col['r']]) * self.return_conversion_factor('r'))
+                data.r_sim.append(float(self.file_line[col['r']]) * self.return_conversion_factor('r'))
             except ValueError:
                 data.r_sim.append(None)
 
             # CSA.
             try:
-                data.csa_sim.append(float(self.file_line[self.col['csa']]) * self.return_conversion_factor('csa'))
+                data.csa_sim.append(float(self.file_line[col['csa']]) * self.return_conversion_factor('csa'))
             except ValueError:
                 data.csa_sim.append(None)
 
             # Minimisation details (global minimisation results).
             if self.param_set == 'diff' or self.param_set == 'all':
-                ds.chi2_sim[self.run].append(eval(self.file_line[self.col['chi2']]))
-                ds.iter_sim[self.run].append(eval(self.file_line[self.col['iter']]))
-                ds.f_count_sim[self.run].append(eval(self.file_line[self.col['f_count']]))
-                ds.g_count_sim[self.run].append(eval(self.file_line[self.col['g_count']]))
-                ds.h_count_sim[self.run].append(eval(self.file_line[self.col['h_count']]))
-                if self.file_line[self.col['warn']] == 'None':
+                ds.chi2_sim[self.run].append(eval(self.file_line[col['chi2']]))
+                ds.iter_sim[self.run].append(eval(self.file_line[col['iter']]))
+                ds.f_count_sim[self.run].append(eval(self.file_line[col['f_count']]))
+                ds.g_count_sim[self.run].append(eval(self.file_line[col['g_count']]))
+                ds.h_count_sim[self.run].append(eval(self.file_line[col['h_count']]))
+                if self.file_line[col['warn']] == 'None':
                     ds.warning_sim[self.run].append(None)
                 else:
-                    ds.warning_sim[self.run].append(replace(self.file_line[self.col['warn']], '_', ' '))
+                    ds.warning_sim[self.run].append(replace(self.file_line[col['warn']], '_', ' '))
 
             # Minimisation details (individual residue results).
             else:
-                data.chi2_sim.append(eval(self.file_line[self.col['chi2']]))
-                data.iter_sim.append(eval(self.file_line[self.col['iter']]))
-                data.f_count_sim.append(eval(self.file_line[self.col['f_count']]))
-                data.g_count_sim.append(eval(self.file_line[self.col['g_count']]))
-                data.h_count_sim.append(eval(self.file_line[self.col['h_count']]))
-                if self.file_line[self.col['warn']] == 'None':
+                data.chi2_sim.append(eval(self.file_line[col['chi2']]))
+                data.iter_sim.append(eval(self.file_line[col['iter']]))
+                data.f_count_sim.append(eval(self.file_line[col['f_count']]))
+                data.g_count_sim.append(eval(self.file_line[col['g_count']]))
+                data.h_count_sim.append(eval(self.file_line[col['h_count']]))
+                if self.file_line[col['warn']] == 'None':
                     data.warning_sim.append(None)
                 else:
-                    data.warning_sim.append(replace(self.file_line[self.col['warn']], '_', ' '))
+                    data.warning_sim.append(replace(self.file_line[col['warn']], '_', ' '))
 
 
     def read_columnar_param_set(self):
         """Function for reading the parameter set."""
 
         # Extract the parameter set if it exists, otherwise return.
-        if self.file_line[self.col['param_set']] != 'None':
-            self.param_set = self.file_line[self.col['param_set']]
+        if self.file_line[col['param_set']] != 'None':
+            self.param_set = self.file_line[col['param_set']]
         else:
             return
 
@@ -701,10 +701,10 @@ class Results:
         """Function for reading the PDB file."""
 
         # File name.
-        pdb = self.file_line[self.col['pdb']]
+        pdb = self.file_line[col['pdb']]
 
         # PDB model.
-        pdb_model = eval(self.file_line[self.col['pdb_model']])
+        pdb_model = eval(self.file_line[col['pdb_model']])
 
         # Read the PDB file (if it exists).
         if not pdb == 'None':
@@ -722,10 +722,10 @@ class Results:
             return
 
         # Relaxation data structures.
-        self.ri_labels = eval(self.file_line[self.col['ri_labels']])
-        self.remap_table = eval(self.file_line[self.col['remap_table']])
-        self.frq_labels = eval(self.file_line[self.col['frq_labels']])
-        self.frq = eval(self.file_line[self.col['frq']])
+        self.ri_labels = eval(self.file_line[col['ri_labels']])
+        self.remap_table = eval(self.file_line[col['remap_table']])
+        self.frq_labels = eval(self.file_line[col['frq_labels']])
+        self.frq = eval(self.file_line[col['frq']])
 
         # No relaxation data.
         if not self.ri_labels:
@@ -738,8 +738,8 @@ class Results:
         # Loop over the relaxation data of the residue.
         for i in xrange(len(self.ri_labels)):
             # Determine the data and error columns for this relaxation data set.
-            data_col = self.col['frq'] + i + 1
-            error_col = self.col['frq'] + len(self.ri_labels) + i + 1
+            data_col = col['frq'] + i + 1
+            error_col = col['frq'] + len(self.ri_labels) + i + 1
 
             # Append the value and error.
             values.append(eval(self.file_line[data_col]))
@@ -787,10 +787,10 @@ class Results:
         file_data = file_data[1:]
 
         # Sort the column numbers.
-        self.__read_col_numbers(header)
+        col = self.__read_col_numbers(header)
 
         # Test the file.
-        if len(self.col) < 2:
+        if len(col) < 2:
             raise RelaxInvalidDataError
 
         # Initialise some data structures and flags.
@@ -811,7 +811,7 @@ class Results:
         # Generate the sequence.
         for self.file_line in file_data:
             # The data set.
-            self.data_set = self.file_line[self.col['data_set']]
+            self.data_set = self.file_line[col['data_set']]
 
             # Stop creating the sequence once the data_set is no longer 'value'.
             if self.data_set != 'value':
@@ -824,7 +824,7 @@ class Results:
         # Loop over the lines of the file data.
         for self.file_line in file_data:
             # The data set.
-            self.data_set = self.file_line[self.col['data_set']]
+            self.data_set = self.file_line[col['data_set']]
 
             # Find the residue index.
             self.res_index = self.read_columnar_find_index()
@@ -838,8 +838,8 @@ class Results:
 
             # Set the nucleus type.
             if not nucleus_set:
-                if self.file_line[self.col['nucleus']] != 'None':
-                    self.relax.generic.nuclei.set_values(self.file_line[self.col['nucleus']])
+                if self.file_line[col['nucleus']] != 'None':
+                    self.relax.generic.nuclei.set_values(self.file_line[col['nucleus']])
                     nucleus_set = 1
 
             # Simulation number.
@@ -858,7 +858,7 @@ class Results:
                     all_select_sim.append([])
 
                 # Selected simulations.
-                all_select_sim[-1].append(int(self.file_line[self.col['select']]))
+                all_select_sim[-1].append(int(self.file_line[col['select']]))
 
             # Diffusion tensor data.
             if self.data_set == 'value' and not diff_data_set:
@@ -911,33 +911,33 @@ class Results:
 
         # Residue number and name.
         try:
-            res_num = int(self.file_line[self.col['num']])
+            res_num = int(self.file_line[col['num']])
         except ValueError:
-            raise RelaxError, "The residue number " + self.file_line[self.col['num']] + " is not an integer."
-        res_name = self.file_line[self.col['name']]
+            raise RelaxError, "The residue number " + self.file_line[col['num']] + " is not an integer."
+        res_name = self.file_line[col['name']]
 
         # Generate the sequence.
-        self.relax.generic.sequence.add(self.run, res_num, res_name, select=int(self.file_line[self.col['select']]))
+        self.relax.generic.sequence.add(self.run, res_num, res_name, select=int(self.file_line[col['select']]))
 
 
     def read_columnar_xh_vect(self):
         """Function for reading the XH unit vectors."""
 
         # The vector.
-        xh_vect = eval(self.file_line[self.col['xh_vect']])
+        xh_vect = eval(self.file_line[col['xh_vect']])
         if xh_vect:
             # Numeric array format.
             try:
                 xh_vect = array(xh_vect, float64)
             except:
-                raise RelaxError, "The XH unit vector " + self.file_line[self.col['xh_vect']] + " is invalid."
+                raise RelaxError, "The XH unit vector " + self.file_line[col['xh_vect']] + " is invalid."
 
             # Set the vector.
             self.relax.generic.structure.set_vector(run=self.run, res=self.res_index, xh_vect=xh_vect)
 
         # The heteronucleus and proton names.
-        ds.res[self.run][self.res_index].heteronuc = self.file_line[self.col['pdb_heteronuc']]
-        ds.res[self.run][self.res_index].proton = self.file_line[self.col['pdb_proton']]
+        ds.res[self.run][self.res_index].heteronuc = self.file_line[col['pdb_heteronuc']]
+        ds.res[self.run][self.res_index].proton = self.file_line[col['pdb_proton']]
 
 
     def write_columnar_line(self, file=None, num=None, name=None, select=None, select_sim=None, data_set=None, nucleus=None, model=None, equation=None, params=None, param_set=None, s2=None, s2f=None, s2s=None, local_tm=None, te=None, tf=None, ts=None, rex=None, r=None, csa=None, chi2=None, i=None, f=None, g=None, h=None, warn=None, diff_type=None, diff_params=None, pdb=None, pdb_model=None, pdb_heteronuc=None, pdb_proton=None, xh_vect=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
