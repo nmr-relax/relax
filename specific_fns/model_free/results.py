@@ -194,11 +194,23 @@ class Results:
         return col
 
 
-    def read_columnar_diff_tensor(self):
-        """Function for setting up the diffusion tensor from the columnar formatted results file."""
+    def __set_diff_tensor(self, spin_line, col, data_set, verbosity=1):
+        """Set up the diffusion tensor.
+
+        @param spin_line:   The line of data for a single spin.
+        @type spin_line:    list of str
+        @param col:         The column indecies.
+        @type col:          dict of int
+        @param data_set:    The data set type, one of 'value', 'error', or 'sim_xxx' (where xxx is
+                            a number).
+        @type data_set:     str
+        @keyword verbosity: A variable specifying the amount of information to print.  The higher
+                            the value, the greater the verbosity.
+        @type verbosity:    int
+        """
 
         # The diffusion tensor type.
-        diff_type = self.file_line[col['diff_type']]
+        diff_type = spin_line[col['diff_type']]
         if diff_type == 'None':
             diff_type = None
 
@@ -206,144 +218,144 @@ class Results:
         if diff_type == 'sphere':
             # Convert the parameters to floating point numbers.
             try:
-                tm = float(self.file_line[col['tm']])
+                tm = float(spin_line[col['tm']])
             except ValueError:
                 # Errors or simulation values set to None.
-                if self.data_set != 'value' and self.file_line[col['tm']] == 'None':
+                if data_set != 'value' and spin_line[col['tm']] == 'None':
                     return
 
                 # Genuine error.
                 raise RelaxError, "The diffusion tensor parameters are not numbers."
 
             # Values.
-            if self.data_set == 'value':
+            if data_set == 'value':
                 diff_params = tm
 
             # Errors.
-            elif self.data_set == 'error':
-                ds.diff[self.run].tm_err = tm
+            elif data_set == 'error':
+                ds[ds.current_pipe].diff.tm_err = tm
 
             # Simulation values.
             else:
                 # Create the data structure if it doesn't exist.
-                if not hasattr(ds.diff[self.run], 'tm_sim'):
-                    ds.diff[self.run].tm_sim = DiffTensorSimList('tm', ds.diff[self.run])
+                if not hasattr(ds.diff, 'tm_sim'):
+                    ds[ds.current_pipe].diff.tm_sim = DiffTensorSimList('tm', ds[ds.current_pipe].diff)
 
                 # Append the value.
-                ds.diff[self.run].tm_sim.append(tm)
+                ds[ds.current_pipe].diff.tm_sim.append(tm)
 
 
         # Spheroid.
         elif diff_type == 'spheroid' or diff_type == 'oblate' or diff_type == 'prolate':
             # Convert the parameters to floating point numbers.
             try:
-                tm = float(self.file_line[col['tm']])
-                Da = float(self.file_line[col['da']])
-                theta = float(self.file_line[col['theta']]) / 360.0 * 2.0 * pi
-                phi = float(self.file_line[col['phi']]) / 360.0 * 2.0 * pi
+                tm = float(spin_line[col['tm']])
+                Da = float(spin_line[col['da']])
+                theta = float(spin_line[col['theta']]) / 360.0 * 2.0 * pi
+                phi = float(spin_line[col['phi']]) / 360.0 * 2.0 * pi
             except ValueError:
                 # Errors or simulation values set to None.
-                if self.data_set != 'value' and self.file_line[col['tm']] == 'None':
+                if data_set != 'value' and spin_line[col['tm']] == 'None':
                     return
 
                 # Genuine error.
                 raise RelaxError, "The diffusion tensor parameters are not numbers."
 
             # Values.
-            if self.data_set == 'value':
+            if data_set == 'value':
                 diff_params = [tm, Da, theta, phi]
 
             # Errors.
-            elif self.data_set == 'error':
-                ds.diff[self.run].tm_err = tm
-                ds.diff[self.run].Da_err = Da
-                ds.diff[self.run].theta_err = theta
-                ds.diff[self.run].phi_err = phi
+            elif data_set == 'error':
+                ds[ds.current_pipe].diff.tm_err = tm
+                ds[ds.current_pipe].diff.Da_err = Da
+                ds[ds.current_pipe].diff.theta_err = theta
+                ds[ds.current_pipe].diff.phi_err = phi
 
             # Simulation values.
             else:
                 # Create the data structure if it doesn't exist.
-                if not hasattr(ds.diff[self.run], 'tm_sim'):
-                    ds.diff[self.run].tm_sim = DiffTensorSimList('tm', ds.diff[self.run])
-                if not hasattr(ds.diff[self.run], 'Da_sim'):
-                    ds.diff[self.run].Da_sim = DiffTensorSimList('Da', ds.diff[self.run])
-                if not hasattr(ds.diff[self.run], 'theta_sim'):
-                    ds.diff[self.run].theta_sim = DiffTensorSimList('theta', ds.diff[self.run])
-                if not hasattr(ds.diff[self.run], 'phi_sim'):
-                    ds.diff[self.run].phi_sim = DiffTensorSimList('phi', ds.diff[self.run])
+                if not hasattr(ds[ds.current_pipe].diff, 'tm_sim'):
+                    ds[ds.current_pipe].diff.tm_sim = DiffTensorSimList('tm', ds[ds.current_pipe].diff)
+                if not hasattr(ds[ds.current_pipe].diff, 'Da_sim'):
+                    ds[ds.current_pipe].diff.Da_sim = DiffTensorSimList('Da', ds[ds.current_pipe].diff)
+                if not hasattr(ds[ds.current_pipe].diff, 'theta_sim'):
+                    ds[ds.current_pipe].diff.theta_sim = DiffTensorSimList('theta', ds[ds.current_pipe].diff)
+                if not hasattr(ds[ds.current_pipe].diff, 'phi_sim'):
+                    ds[ds.current_pipe].diff.phi_sim = DiffTensorSimList('phi', ds[ds.current_pipe].diff)
 
                 # Append the value.
-                ds.diff[self.run].tm_sim.append(tm)
-                ds.diff[self.run].Da_sim.append(Da)
-                ds.diff[self.run].theta_sim.append(theta)
-                ds.diff[self.run].phi_sim.append(phi)
+                ds[ds.current_pipe].diff.tm_sim.append(tm)
+                ds[ds.current_pipe].diff.Da_sim.append(Da)
+                ds[ds.current_pipe].diff.theta_sim.append(theta)
+                ds[ds.current_pipe].diff.phi_sim.append(phi)
 
 
         # Ellipsoid.
         elif diff_type == 'ellipsoid':
             # Convert the parameters to floating point numbers.
             try:
-                tm = float(self.file_line[col['tm']])
-                Da = float(self.file_line[col['da']])
-                Dr = float(self.file_line[col['dr']])
-                alpha = float(self.file_line[col['alpha']]) / 360.0 * 2.0 * pi
-                beta = float(self.file_line[col['beta']]) / 360.0 * 2.0 * pi
-                gamma = float(self.file_line[col['gamma']]) / 360.0 * 2.0 * pi
+                tm = float(spin_line[col['tm']])
+                Da = float(spin_line[col['da']])
+                Dr = float(spin_line[col['dr']])
+                alpha = float(spin_line[col['alpha']]) / 360.0 * 2.0 * pi
+                beta = float(spin_line[col['beta']]) / 360.0 * 2.0 * pi
+                gamma = float(spin_line[col['gamma']]) / 360.0 * 2.0 * pi
             except ValueError:
                 # Errors or simulation values set to None.
-                if self.data_set != 'value' and self.file_line[col['tm']] == 'None':
+                if data_set != 'value' and spin_line[col['tm']] == 'None':
                     return
 
                 # Genuine error.
                 raise RelaxError, "The diffusion tensor parameters are not numbers."
 
             # Values.
-            if self.data_set == 'value':
+            if data_set == 'value':
                 diff_params = [tm, Da, Dr, alpha, beta, gamma]
 
             # Errors.
-            elif self.data_set == 'error':
-                ds.diff[self.run].tm_err = tm
-                ds.diff[self.run].Da_err = Da
-                ds.diff[self.run].Dr_err = Dr
-                ds.diff[self.run].alpha_err = alpha
-                ds.diff[self.run].beta_err = beta
-                ds.diff[self.run].gamma_err = gamma
+            elif data_set == 'error':
+                ds[ds.current_pipe].diff.tm_err = tm
+                ds[ds.current_pipe].diff.Da_err = Da
+                ds[ds.current_pipe].diff.Dr_err = Dr
+                ds[ds.current_pipe].diff.alpha_err = alpha
+                ds[ds.current_pipe].diff.beta_err = beta
+                ds[ds.current_pipe].diff.gamma_err = gamma
 
             # Simulation values.
             else:
                 # Create the data structure if it doesn't exist.
-                if not hasattr(ds.diff[self.run], 'tm_sim'):
-                    ds.diff[self.run].tm_sim = DiffTensorSimList('tm', ds.diff[self.run])
-                if not hasattr(ds.diff[self.run], 'Da_sim'):
-                    ds.diff[self.run].Da_sim = DiffTensorSimList('Da', ds.diff[self.run])
-                if not hasattr(ds.diff[self.run], 'Dr_sim'):
-                    ds.diff[self.run].Dr_sim = DiffTensorSimList('Dr', ds.diff[self.run])
-                if not hasattr(ds.diff[self.run], 'alpha_sim'):
-                    ds.diff[self.run].alpha_sim = DiffTensorSimList('alpha', ds.diff[self.run])
-                if not hasattr(ds.diff[self.run], 'beta_sim'):
-                    ds.diff[self.run].beta_sim = DiffTensorSimList('beta', ds.diff[self.run])
-                if not hasattr(ds.diff[self.run], 'gamma_sim'):
-                    ds.diff[self.run].gamma_sim = DiffTensorSimList('gamma', ds.diff[self.run])
+                if not hasattr(ds[ds.current_pipe].diff, 'tm_sim'):
+                    ds[ds.current_pipe].diff.tm_sim = DiffTensorSimList('tm', ds[ds.current_pipe].diff)
+                if not hasattr(ds[ds.current_pipe].diff, 'Da_sim'):
+                    ds[ds.current_pipe].diff.Da_sim = DiffTensorSimList('Da', ds[ds.current_pipe].diff)
+                if not hasattr(ds[ds.current_pipe].diff, 'Dr_sim'):
+                    ds[ds.current_pipe].diff.Dr_sim = DiffTensorSimList('Dr', ds[ds.current_pipe].diff)
+                if not hasattr(ds[ds.current_pipe].diff, 'alpha_sim'):
+                    ds[ds.current_pipe].diff.alpha_sim = DiffTensorSimList('alpha', ds[ds.current_pipe].diff)
+                if not hasattr(ds[ds.current_pipe].diff, 'beta_sim'):
+                    ds[ds.current_pipe].diff.beta_sim = DiffTensorSimList('beta', ds[ds.current_pipe].diff)
+                if not hasattr(ds[ds.current_pipe].diff, 'gamma_sim'):
+                    ds[ds.current_pipe].diff.gamma_sim = DiffTensorSimList('gamma', ds[ds.current_pipe].diff)
 
                 # Append the value.
-                ds.diff[self.run].tm_sim.append(tm)
-                ds.diff[self.run].Da_sim.append(Da)
-                ds.diff[self.run].Dr_sim.append(Dr)
-                ds.diff[self.run].alpha_sim.append(alpha)
-                ds.diff[self.run].beta_sim.append(beta)
-                ds.diff[self.run].gamma_sim.append(gamma)
+                ds[ds.current_pipe].diff.tm_sim.append(tm)
+                ds[ds.current_pipe].diff.Da_sim.append(Da)
+                ds[ds.current_pipe].diff.Dr_sim.append(Dr)
+                ds[ds.current_pipe].diff.alpha_sim.append(alpha)
+                ds[ds.current_pipe].diff.beta_sim.append(beta)
+                ds[ds.current_pipe].diff.gamma_sim.append(gamma)
 
 
         # Set the diffusion tensor.
-        if self.data_set == 'value' and diff_type:
+        if data_set == 'value' and diff_type:
             # Sort out the spheroid type.
             spheroid_type = None
             if diff_type == 'oblate' or diff_type == 'prolate':
                 spheroid_type = diff_type
 
             # Set the diffusion tensor.
-            generic_fns.diffusion_tensor.init(run=self.run, params=diff_params, angle_units='rad', spheroid_type=spheroid_type)
+            generic_fns.diffusion_tensor.init(params=diff_params, angle_units='rad', spheroid_type=spheroid_type)
 
 
     def __get_spin_id(self, spin_line, col, verbosity=1):
@@ -876,17 +888,17 @@ class Results:
 
             # Diffusion tensor data.
             if data_set == 'value' and not diff_data_set:
-                self.read_columnar_diff_tensor()
+                self.__set_diff_tensor(file_line, col, data_set, verbosity)
                 diff_data_set = True
 
             # Diffusion tensor errors.
             elif data_set == 'error' and not diff_error_set:
-                self.read_columnar_diff_tensor()
+                self.__set_diff_tensor(file_line, col, data_set, verbosity)
                 diff_error_set = True
 
             # Diffusion tensor simulation data.
             elif data_set != 'value' and data_set != 'error' and sim_num != diff_sim_set:
-                self.read_columnar_diff_tensor()
+                self.__set_diff_tensor(file_line, col, data_set, verbosity)
                 diff_sim_set = sim_num
 
             # Parameter set.
