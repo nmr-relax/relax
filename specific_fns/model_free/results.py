@@ -910,11 +910,11 @@ class Results:
             ds.sim_state[self.run] = False
 
 
-    def __generate_sequence(self, file_line, col, verbosity=1):
+    def __generate_sequence(self, spin_line, col, verbosity=1):
         """Generate the sequence.
 
-        @param file_line:   The line of data for a single spin.
-        @type file_line:    list of str
+        @param spin_line:   The line of data for a single spin.
+        @type spin_line:    list of str
         @param col:         The column indecies.
         @type col:          dict of int
         @keyword verbosity: A variable specifying the amount of information to print.  The higher
@@ -925,18 +925,18 @@ class Results:
         # The spin info (for relax 1.2).
         if col.has_key('num'):
             mol_name = None
-            res_num = int(file_line[col['num']])
-            res_name = file_line[col['name']]
+            res_num = int(spin_line[col['num']])
+            res_name = spin_line[col['name']]
             spin_num = None
             spin_name = None
 
         # The spin info.
         else:
-            mol_name = file_line[col['mol_name']]
-            res_num = int(file_line[col['res_num']])
-            res_name = file_line[col['res_name']]
-            spin_num = int(file_line[col['spin_num']])
-            spin_name = file_line[col['spin_name']]
+            mol_name = spin_line[col['mol_name']]
+            res_num = int(spin_line[col['res_num']])
+            res_name = spin_line[col['res_name']]
+            spin_num = int(spin_line[col['spin_num']])
+            spin_name = spin_line[col['spin_name']]
 
         # Generate the sequence.
         sequence.generate(mol_name, res_num, res_name, spin_num, spin_name)
@@ -945,7 +945,7 @@ class Results:
         spin_id = generate_spin_id(mol_name, res_num, res_name, spin_num, spin_name)
 
         # Set the selection status.
-        select = bool(file_line[col['select']])
+        select = bool(spin_line[col['select']])
         if select:
             selection.sel_spin(spin_id)
         else:
