@@ -68,113 +68,126 @@ class Results:
         return version
 
 
-    def read_columnar_col_numbers(self, header):
-        """Function for sorting the column numbers from the columnar formatted results file."""
+    def __read_col_numbers(self, header):
+        """Determine the column indecies from the header line.
 
-        # Initialise the hash.
-        self.col = {}
+        @param header:      The header line.
+        @type header:       list of str
+        @return:            The column indecies.
+        @rtype:             dictionary of int
+        """
+
+        # Initialise the dictionary of column indecies.
+        col = {}
 
         # Loop over the columns.
         for i in xrange(len(header)):
-            # Residue info.
+            # Residue info (for relax 1.2).
             if header[i] == 'Num':
-                self.col['num'] = i
+                col['num'] = i
             elif header[i] == 'Name':
-                self.col['name'] = i
+                col['name'] = i
+
+            # Spin information.
+            elif header[i] == 'Spin_id':
+                col['spin_id'] = i
             elif header[i] == 'Selected':
-                self.col['select'] = i
+                col['select'] = i
             elif header[i] == 'Data_set':
-                self.col['data_set'] = i
+                col['data_set'] = i
             elif header[i] == 'Nucleus':
-                self.col['nucleus'] = i
+                col['nucleus'] = i
             elif header[i] == 'Model':
-                self.col['model'] = i
+                col['model'] = i
             elif header[i] == 'Equation':
-                self.col['eqi'] = i
+                col['eqi'] = i
             elif header[i] == 'Params':
-                self.col['params'] = i
+                col['params'] = i
             elif header[i] == 'Param_set':
-                self.col['param_set'] = i
+                col['param_set'] = i
 
             # Parameters.
             elif header[i] == 'S2':
-                self.col['s2'] = i
+                col['s2'] = i
             elif header[i] == 'S2f':
-                self.col['s2f'] = i
+                col['s2f'] = i
             elif header[i] == 'S2s':
-                self.col['s2s'] = i
+                col['s2s'] = i
             elif search('^Local_tm', header[i]):
-                self.col['local_tm'] = i
+                col['local_tm'] = i
             elif search('^te', header[i]):
-                self.col['te'] = i
+                col['te'] = i
             elif search('^tf', header[i]):
-                self.col['tf'] = i
+                col['tf'] = i
             elif search('^ts', header[i]):
-                self.col['ts'] = i
+                col['ts'] = i
             elif search('^Rex', header[i]):
-                self.col['rex'] = i
+                col['rex'] = i
             elif search('^Bond_length', header[i]):
-                self.col['r'] = i
+                col['r'] = i
             elif search('^CSA', header[i]):
-                self.col['csa'] = i
+                col['csa'] = i
 
             # Minimisation info.
             elif header[i] == 'Chi-squared':
-                self.col['chi2'] = i
+                col['chi2'] = i
             elif header[i] == 'Iter':
-                self.col['iter'] = i
+                col['iter'] = i
             elif header[i] == 'f_count':
-                self.col['f_count'] = i
+                col['f_count'] = i
             elif header[i] == 'g_count':
-                self.col['g_count'] = i
+                col['g_count'] = i
             elif header[i] == 'h_count':
-                self.col['h_count'] = i
+                col['h_count'] = i
             elif header[i] == 'Warning':
-                self.col['warn'] = i
+                col['warn'] = i
 
-            # Diffusion tensor.
+            # Diffusion tensor (for relax 1.2).
             elif header[i] == 'Diff_type':
-                self.col['diff_type'] = i
+                col['diff_type'] = i
             elif header[i] == 'tm_(s)':
-                self.col['tm'] = i
+                col['tm'] = i
             elif header[i] == 'Da_(1/s)':
-                self.col['da'] = i
+                col['da'] = i
             elif header[i] == 'theta_(deg)':
-                self.col['theta'] = i
+                col['theta'] = i
             elif header[i] == 'phi_(deg)':
-                self.col['phi'] = i
+                col['phi'] = i
             elif header[i] == 'Da_(1/s)':
-                self.col['da'] = i
+                col['da'] = i
             elif header[i] == 'Dr_(1/s)':
-                self.col['dr'] = i
+                col['dr'] = i
             elif header[i] == 'alpha_(deg)':
-                self.col['alpha'] = i
+                col['alpha'] = i
             elif header[i] == 'beta_(deg)':
-                self.col['beta'] = i
+                col['beta'] = i
             elif header[i] == 'gamma_(deg)':
-                self.col['gamma'] = i
+                col['gamma'] = i
 
-            # PDB and XH vector.
+            # PDB and XH vector (for relax 1.2).
             elif header[i] == 'PDB':
-                self.col['pdb'] = i
+                col['pdb'] = i
             elif header[i] == 'PDB_model':
-                self.col['pdb_model'] = i
+                col['pdb_model'] = i
             elif header[i] == 'PDB_heteronuc':
-                self.col['pdb_heteronuc'] = i
+                col['pdb_heteronuc'] = i
             elif header[i] == 'PDB_proton':
-                self.col['pdb_proton'] = i
+                col['pdb_proton'] = i
             elif header[i] == 'XH_vector':
-                self.col['xh_vect'] = i
+                col['xh_vect'] = i
 
-            # Relaxation data.
+            # Relaxation data (for relax 1.2).
             elif header[i] == 'Ri_labels':
-                self.col['ri_labels'] = i
+                col['ri_labels'] = i
             elif header[i] == 'Remap_table':
-                self.col['remap_table'] = i
+                col['remap_table'] = i
             elif header[i] == 'Frq_labels':
-                self.col['frq_labels'] = i
+                col['frq_labels'] = i
             elif header[i] == 'Frequencies':
-                self.col['frq'] = i
+                col['frq'] = i
+
+        # Return the column indecies.
+        return col
 
 
     def read_columnar_diff_tensor(self):
@@ -774,7 +787,7 @@ class Results:
         file_data = file_data[1:]
 
         # Sort the column numbers.
-        self.read_columnar_col_numbers(header)
+        self.__read_col_numbers(header)
 
         # Test the file.
         if len(self.col) < 2:
