@@ -31,7 +31,7 @@ import sys
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import diffusion_tensor, selection, sequence
-from generic_fns.mol_res_spin import generate_spin_id, spin_loop
+from generic_fns.mol_res_spin import generate_spin_id, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxInvalidDataError
 
 
@@ -343,27 +343,36 @@ class Results:
             self.relax.generic.diffusion_tensor.init(run=self.run, params=diff_params, angle_units='rad', spheroid_type=spheroid_type)
 
 
-    def read_columnar_find_index(self):
-        """Function for generating the sequence and or returning the residue index."""
+    def __get_spin_container(self, spin_line, col, verbosity=1):
+        """Get the spin container corresponding to spin_line.
 
-        # Residue number and name.
-        try:
-            self.res_num = int(self.file_line[col['num']])
-        except ValueError:
-            raise RelaxError, "The residue number " + self.file_line[col['num']] + " is not an integer."
-        self.res_name = self.file_line[col['name']]
+        @param spin_line:   The line of data for a single spin.
+        @type spin_line:    list of str
+        @param col:         The column indecies.
+        @type col:          dict of int
+        @keyword verbosity: A variable specifying the amount of information to print.  The higher
+                            the value, the greater the verbosity.
+        @type verbosity:    int
+        """
 
-        # Find the residue index.
-        res_index = None
-        for j in xrange(len(ds.res[self.run])):
-            if ds.res[self.run][j].num == self.res_num and ds.res[self.run][j].name == self.res_name:
-                res_index = j
-                break
-        if res_index == None:
-            raise RelaxError, "Residue " + `self.res_num` + " " + self.res_name + " cannot be found in the sequence."
+        # The spin info (for relax 1.2).
+        if col.has_key('num'):
+            mol_name = None
+            res_num = int(spin_line[col['num']])
+            res_name = spin_line[col['name']]
+            spin_num = None
+            spin_name = None
 
-        # Return the index.
-        return res_index
+        # The spin info.
+        else:
+            mol_name = spin_line[col['mol_name']]
+            res_num = int(spin_line[col['res_num']])
+            res_name = spin_line[col['res_name']]
+            spin_num = int(spin_line[col['spin_num']])
+            spin_name = spin_line[col['spin_name']]
+
+        # Return the spin container.
+        return return_spin(generate_spin_id(mol_name, res_num, res_name, spin_num, spin_name))
 
 
     def read_columnar_model_free_data(self):
@@ -830,11 +839,8 @@ class Results:
             # The data set.
             data_set = file_line[col['data_set']]
 
-            # Find the residue index.
-            res_index = read_columnar_find_index()
-
-            # Reassign data structure.
-            data = ds.res[self.run][res_index]
+            # Get the spin container.
+            spin = self.__get_spin_container(file_line, col, verbosity)
 
             # Backwards compatibility for the reading of the results file from versions 1.2.0 to 1.2.9.
             if len(file_line) == 4:
