@@ -801,20 +801,20 @@ class Results:
         diff_data_set = False
         diff_error_set = False
         diff_sim_set = None
-        self.param_set = None
+        param_set = None
         pdb = False
         pdb_model = None
         pdb_heteronuc = None
         pdb_proton = None
-        self.ri_labels = None
+        ri_labels = None
 
         # Generate the sequence.
-        for self.file_line in file_data:
+        for file_line in file_data:
             # The data set.
-            self.data_set = self.file_line[col['data_set']]
+            data_set = file_line[col['data_set']]
 
             # Stop creating the sequence once the data_set is no longer 'value'.
-            if self.data_set != 'value':
+            if data_set != 'value':
                 break
 
             # Sequence.
@@ -822,30 +822,30 @@ class Results:
 
 
         # Loop over the lines of the file data.
-        for self.file_line in file_data:
+        for file_line in file_data:
             # The data set.
-            self.data_set = self.file_line[col['data_set']]
+            data_set = file_line[col['data_set']]
 
             # Find the residue index.
-            self.res_index = self.read_columnar_find_index()
+            res_index = read_columnar_find_index()
 
             # Reassign data structure.
-            data = ds.res[self.run][self.res_index]
+            data = ds.res[self.run][res_index]
 
             # Backwards compatibility for the reading of the results file from versions 1.2.0 to 1.2.9.
-            if len(self.file_line) == 4:
+            if len(file_line) == 4:
                 continue
 
             # Set the nucleus type.
             if not nucleus_set:
-                if self.file_line[col['nucleus']] != 'None':
-                    self.relax.generic.nuclei.set_values(self.file_line[col['nucleus']])
+                if file_line[col['nucleus']] != 'None':
+                    self.relax.generic.nuclei.set_values(file_line[col['nucleus']])
                     nucleus_set = True
 
             # Simulation number.
-            if self.data_set != 'value' and self.data_set != 'error':
-                # Extract the number from the self.data_set string.
-                sim_num = split(self.data_set, '_')
+            if data_set != 'value' and data_set != 'error':
+                # Extract the number from the data_set string.
+                sim_num = split(data_set, '_')
                 try:
                     sim_num = int(sim_num[1])
                 except:
@@ -858,25 +858,25 @@ class Results:
                     all_select_sim.append([])
 
                 # Selected simulations.
-                all_select_sim[-1].append(int(self.file_line[col['select']]))
+                all_select_sim[-1].append(int(file_line[col['select']]))
 
             # Diffusion tensor data.
-            if self.data_set == 'value' and not diff_data_set:
+            if data_set == 'value' and not diff_data_set:
                 self.read_columnar_diff_tensor()
                 diff_data_set = True
 
             # Diffusion tensor errors.
-            elif self.data_set == 'error' and not diff_error_set:
+            elif data_set == 'error' and not diff_error_set:
                 self.read_columnar_diff_tensor()
                 diff_error_set = True
 
             # Diffusion tensor simulation data.
-            elif self.data_set != 'value' and self.data_set != 'error' and sim_num != diff_sim_set:
+            elif data_set != 'value' and data_set != 'error' and sim_num != diff_sim_set:
                 self.read_columnar_diff_tensor()
                 diff_sim_set = sim_num
 
             # Parameter set.
-            if self.param_set == None:
+            if param_set == None:
                 self.read_columnar_param_set()
 
             # PDB.
@@ -885,7 +885,7 @@ class Results:
                     pdb = True
 
             # XH vector, heteronucleus, and proton.
-            if self.data_set == 'value':
+            if data_set == 'value':
                 self.read_columnar_xh_vect()
 
             # Relaxation data.
