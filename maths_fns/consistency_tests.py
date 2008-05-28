@@ -22,7 +22,7 @@
 ###############################################################################
 
 # Python module imports.
-from math import pi
+from math import cos, pi
 from numpy import float64, zeros
 
 # relax module imports.
