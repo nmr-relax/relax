@@ -23,7 +23,7 @@
 # Python module imports.
 from re import search
 from math import cos, sin
-from Numeric import Float64, dot, identity, transpose, zeros
+from numpy import dot, float64, identity, transpose, zeros
 from types import ListType
 
 # relax module imports.
@@ -284,11 +284,11 @@ def calc_Sxx_unit(alpha, beta, gamma):
     @param gamma:   The Euler angle gamma in radians using the z-y-z convention.
     @type gamma:    float
     @return:        The Sxx unit vector.
-    @rtype:         Numeric array (Float64)
+    @rtype:         numpy array (float64)
     """
 
     # Initilise the vector.
-    Sxx_unit = zeros(3, Float64)
+    Sxx_unit = zeros(3, float64)
 
     # Calculate the x, y, and z components.
     Sxx_unit[0] = -sin(alpha) * sin(gamma)  +  cos(alpha) * cos(beta) * cos(gamma)
@@ -315,11 +315,11 @@ def calc_Syy_unit(alpha, beta, gamma):
     @param gamma:   The Euler angle gamma in radians using the z-y-z convention.
     @type gamma:    float
     @return:        The Syy unit vector.
-    @rtype:         Numeric array (Float64)
+    @rtype:         numpy array (float64)
     """
 
     # Initilise the vector.
-    Syy_unit = zeros(3, Float64)
+    Syy_unit = zeros(3, float64)
 
     # Calculate the x, y, and z components.
     Syy_unit[0] = cos(alpha) * sin(gamma)  +  sin(alpha) * cos(beta) * cos(gamma)
@@ -344,11 +344,11 @@ def calc_Szz_unit(beta, gamma):
     @param gamma:   The Euler angle gamma in radians using the z-y-z convention.
     @type gamma:    float
     @return:        The Szz unit vector.
-    @rtype:         Numeric array (Float64)
+    @rtype:         numpy array (float64)
     """
 
     # Initilise the vector.
-    Szz_unit = zeros(3, Float64)
+    Szz_unit = zeros(3, float64)
 
     # Calculate the x, y, and z components.
     Szz_unit[0] = -sin(beta) * cos(gamma)
@@ -410,17 +410,17 @@ def calc_rotation(Sxx_unit, Syy_unit, Szz_unit):
               | Sxx_unit[2]  Syy_unit[2]  Szz_unit[2] |
 
     @param Sxx_unit:    The Sxx unit vector.
-    @type Sxx_unit:     Numeric array (Float64)
+    @type Sxx_unit:     numpy array (float64)
     @param Syy_unit:    The Syy unit vector.
-    @type Syy_unit:     Numeric array (Float64)
+    @type Syy_unit:     numpy array (float64)
     @param Szz_unit:    The Szz unit vector.
-    @type Szz_unit:     Numeric array (Float64)
+    @type Szz_unit:     numpy array (float64)
     @return:            The rotation matrix.
-    @rtype:             Numeric array ((3, 3), Float64)
+    @rtype:             numpy array ((3, 3), float64)
     """
 
     # Initialise the rotation matrix.
-    rotation = identity(3, Float64)
+    rotation = identity(3, float64)
 
     # First column of the rotation matrix.
     rotation[:, 0] = Sxx_unit
@@ -455,7 +455,7 @@ def calc_tensor(Sxx, Syy, Szz, Sxy, Sxz, Syz):
     """
 
     # Initialise the tensor.
-    tensor = zeros((3, 3), Float64)
+    tensor = zeros((3, 3), float64)
 
     # Populate the diagonal elements.
     tensor[0, 0] = Sxx
@@ -486,11 +486,11 @@ def calc_tensor_diag(rotation, tensor):
         R^T . tensor_diag . R.
 
     @param rotation:    The rotation matrix.
-    @type rotation:     Numeric array ((3, 3), Float64)
+    @type rotation:     numpy array ((3, 3), float64)
     @param tensor:      The full alignment tensor.
-    @type tensor:       Numeric array ((3, 3), Float64)
+    @type tensor:       numpy array ((3, 3), float64)
     @return:        The diagonalised alignment tensor.
-    @rtype:         Numeric array ((3, 3), Float64)
+    @rtype:         numpy array ((3, 3), float64)
     """
 
     # Rotation (R^T . tensor_diag . R).
