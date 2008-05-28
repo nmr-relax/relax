@@ -27,13 +27,15 @@
 # The available modules.
 __all__ = [ 'main',
             'mf_minimise',
-            'molmol' ]
+            'molmol',
+            'results']
 
 # relax module imports.
 from main import Model_free_main
 from mf_minimise import Mf_minimise
 from molmol import Molmol
+from results import Results
 from specific_fns.base_class import Common_functions
 
-class Model_free(Model_free_main, Mf_minimise, Molmol, Common_functions):
+class Model_free(Model_free_main, Mf_minimise, Molmol, Results, Common_functions):
     """Parent class containing all the model-free specific functions."""
