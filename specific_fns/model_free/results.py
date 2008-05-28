@@ -36,7 +36,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 import generic_fns
 from generic_fns.mol_res_spin import generate_spin_id, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxInvalidDataError
-import specific_fns
+import specific_fns.relax_data import relax_data
 
 
 
@@ -823,7 +823,7 @@ class Results:
             sim = False
 
         # Add the relaxation data.
-        specific_fns.relax_data_obj.add_data_to_spin(spin=return_spin(spin_id), ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, values=values, errors=errors, sim=sim)
+        relax_data.add_data_to_spin(spin=return_spin(spin_id), ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, values=values, errors=errors, sim=sim)
 
 
     def read_columnar_results(self, file_data, verbosity=1):
