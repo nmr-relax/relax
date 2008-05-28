@@ -822,7 +822,7 @@ class Results:
                 break
 
             # Sequence.
-            self.__generate_1_2_sequence(file_line, col, verbosity)
+            self.__generate_sequence(file_line, col, verbosity)
 
 
         # Loop over the lines of the file data.
@@ -910,7 +910,7 @@ class Results:
             ds.sim_state[self.run] = False
 
 
-    def __generate_1_2_sequence(self, file_line, col, verbosity=1):
+    def __generate_sequence(self, file_line, col, verbosity=1):
         """Generate the sequence.
 
         @param file_line:   The line of data for a single spin.
@@ -922,18 +922,27 @@ class Results:
         @type verbosity:    int
         """
 
-        # Residue number and name.
-        try:
+        # The spin info (for relax 1.2).
+        if col.has_key('num'):
+            mol_name = None
             res_num = int(file_line[col['num']])
-        except ValueError:
-            raise RelaxError, "The residue number " + file_line[col['num']] + " is not an integer."
-        res_name = file_line[col['name']]
+            res_name = file_line[col['name']]
+            spin_num = None
+            spin_name = None
+
+        # The spin info.
+        else:
+            mol_name = file_line[col['mol_name']]
+            res_num = int(file_line[col['res_num']])
+            res_name = file_line[col['res_name']]
+            spin_num = int(file_line[col['spin_num']])
+            spin_name = file_line[col['spin_name']]
 
         # Generate the sequence.
-        sequence.generate(res_num=res_num, res_name=res_name)
+        sequence.generate(mol_name, res_num, res_name, spin_num, spin_name)
 
         # Get the spin identification string.
-        spin_id = generate_spin_id(res_num=res_num, res_name=res_name)
+        spin_id = generate_spin_id(mol_name, res_num, res_name, spin_num, spin_name)
 
         # Set the selection status.
         select = bool(file_line[col['select']])
