@@ -738,7 +738,7 @@ class Results:
 
 
     def read_columnar_results(self, file_data, verbosity=1):
-        """Function for reading the results file.
+        """Read the model-free results file.
 
         @param file_data:   The processed results file data.
         @type file_data:    list of lists of str
@@ -749,6 +749,21 @@ class Results:
 
         # Determine the results file version.
         version = self.__determine_version(file_data)
+
+        # Execute the version specific methods.
+        if version == '1.2':
+            self.__read_1_2_results(file_data, verbosity)
+
+
+    def read_1_2_results(self, file_data, verbosity=1):
+        """Read the relax 1.2 model-free results file.
+
+        @param file_data:   The processed results file data.
+        @type file_data:    list of lists of str
+        @keyword verbosity: A flag specifying the amount of information to print.  The higher the
+                            value, the greater the verbosity.
+        @type verbosity:    int
+        """
 
         # Extract and remove the header.
         header = file_data[0]
