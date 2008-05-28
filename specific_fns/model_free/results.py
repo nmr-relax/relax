@@ -794,15 +794,15 @@ class Results:
             raise RelaxInvalidDataError
 
         # Initialise some data structures and flags.
-        nucleus_set = 0
+        nucleus_set = False
         sim_num = None
         sims = []
         all_select_sim = []
-        diff_data_set = 0
-        diff_error_set = 0
+        diff_data_set = False
+        diff_error_set = False
         diff_sim_set = None
         self.param_set = None
-        pdb = 0
+        pdb = False
         pdb_model = None
         pdb_heteronuc = None
         pdb_proton = None
@@ -840,7 +840,7 @@ class Results:
             if not nucleus_set:
                 if self.file_line[col['nucleus']] != 'None':
                     self.relax.generic.nuclei.set_values(self.file_line[col['nucleus']])
-                    nucleus_set = 1
+                    nucleus_set = True
 
             # Simulation number.
             if self.data_set != 'value' and self.data_set != 'error':
@@ -863,12 +863,12 @@ class Results:
             # Diffusion tensor data.
             if self.data_set == 'value' and not diff_data_set:
                 self.read_columnar_diff_tensor()
-                diff_data_set = 1
+                diff_data_set = True
 
             # Diffusion tensor errors.
             elif self.data_set == 'error' and not diff_error_set:
                 self.read_columnar_diff_tensor()
-                diff_error_set = 1
+                diff_error_set = True
 
             # Diffusion tensor simulation data.
             elif self.data_set != 'value' and self.data_set != 'error' and sim_num != diff_sim_set:
@@ -882,7 +882,7 @@ class Results:
             # PDB.
             if not pdb:
                 if self.read_columnar_pdb(verbosity):
-                    pdb = 1
+                    pdb = True
 
             # XH vector, heteronucleus, and proton.
             if self.data_set == 'value':
@@ -903,7 +903,7 @@ class Results:
             self.relax.generic.monte_carlo.setup(self.run, number=len(sims), all_select_sim=all_select_sim)
 
             # Turn the simulation state to off!
-            ds.sim_state[self.run] = 0
+            ds.sim_state[self.run] = False
 
 
     def read_columnar_sequence(self):
