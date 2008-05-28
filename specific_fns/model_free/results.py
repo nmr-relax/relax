@@ -872,7 +872,7 @@ class Results:
                     all_select_sim.append([])
 
                 # Selected simulations.
-                all_select_sim[-1].append(int(file_line[col['select']]))
+                all_select_sim[-1].append(bool(file_line[col['select']]))
 
             # Diffusion tensor data.
             if data_set == 'value' and not diff_data_set:
