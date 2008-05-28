@@ -36,6 +36,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 import generic_fns
 from generic_fns.mol_res_spin import generate_spin_id, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxInvalidDataError
+import specific_fns
 
 
 
@@ -771,21 +772,35 @@ class Results:
             return False
 
 
-    def read_columnar_relax_data(self):
-        """Function for reading the relaxation data."""
+    def __load_relax_data(self, spin_line, col, data_set, spin_id, verbosity=1):
+        """Load the relaxation data.
+
+        @param spin_line:   The line of data for a single spin.
+        @type spin_line:    list of str
+        @param col:         The column indecies.
+        @type col:          dict of int
+        @param data_set:    The data set type, one of 'value', 'error', or 'sim_xxx' (where xxx is
+                            a number).
+        @type data_set:     str
+        @param spin_id:     The spin identification string.
+        @type spin_id:      str
+        @keyword verbosity: A variable specifying the amount of information to print.  The higher
+                            the value, the greater the verbosity.
+        @type verbosity:    int
+        """
 
         # Skip the error 'data_set'.
-        if self.data_set == 'error':
+        if data_set == 'error':
             return
 
         # Relaxation data structures.
-        self.ri_labels = eval(self.file_line[col['ri_labels']])
-        self.remap_table = eval(self.file_line[col['remap_table']])
-        self.frq_labels = eval(self.file_line[col['frq_labels']])
-        self.frq = eval(self.file_line[col['frq']])
+        ri_labels = eval(spin_line[col['ri_labels']])
+        remap_table = eval(spin_line[col['remap_table']])
+        frq_labels = eval(spin_line[col['frq_labels']])
+        frq = eval(spin_line[col['frq']])
 
         # No relaxation data.
-        if not self.ri_labels:
+        if not ri_labels:
             return
 
         # Initialise the value and error arrays.
@@ -793,22 +808,22 @@ class Results:
         errors = []
 
         # Loop over the relaxation data of the residue.
-        for i in xrange(len(self.ri_labels)):
+        for i in xrange(len(ri_labels)):
             # Determine the data and error columns for this relaxation data set.
             data_col = col['frq'] + i + 1
-            error_col = col['frq'] + len(self.ri_labels) + i + 1
+            error_col = col['frq'] + len(ri_labels) + i + 1
 
             # Append the value and error.
-            values.append(eval(self.file_line[data_col]))
-            errors.append(eval(self.file_line[error_col]))
+            values.append(eval(spin_line[data_col]))
+            errors.append(eval(spin_line[error_col]))
 
         # Simulations.
-        sim = 0
-        if self.data_set != 'value' and self.data_set != 'error':
-            sim = 1
+        sim = True
+        if data_set != 'value' and data_set != 'error':
+            sim = False
 
         # Add the relaxation data.
-        self.relax.specific.relax_data.add_residue(run=self.run, res_index=self.res_index, ri_labels=self.ri_labels, remap_table=self.remap_table, frq_labels=self.frq_labels, frq=self.frq, values=values, errors=errors, sim=sim)
+        specific_fns.relax_data_obj.add_data_to_spin(spin=return_spin(spin_id), ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, values=values, errors=errors, sim=sim)
 
 
     def read_columnar_results(self, file_data, verbosity=1):
@@ -947,7 +962,7 @@ class Results:
                 self.__set_xh_vect(file_line, col, spin_id, verbosity)
 
             # Relaxation data.
-            self.read_columnar_relax_data()
+            self.__load_relax_data(file_line, col, data_set, spin_id, verbosity)
 
             # Model-free data.
             self.read_columnar_model_free_data()
