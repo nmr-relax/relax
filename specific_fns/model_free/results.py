@@ -30,7 +30,7 @@ import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import diffusion_tensor, selection, sequence
+import generic_fns
 from generic_fns.mol_res_spin import generate_spin_id, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxInvalidDataError
 
@@ -340,7 +340,7 @@ class Results:
                 spheroid_type = diff_type
 
             # Set the diffusion tensor.
-            self.relax.generic.diffusion_tensor.init(run=self.run, params=diff_params, angle_units='rad', spheroid_type=spheroid_type)
+            generic_fns.diffusion_tensor.init(run=self.run, params=diff_params, angle_units='rad', spheroid_type=spheroid_type)
 
 
     def __get_spin_id(self, spin_line, col, verbosity=1):
@@ -820,7 +820,7 @@ class Results:
         # Generate the sequence.
         if verbosity:
             print "\nGenerating the sequence."
-            sequence.write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+            generic_fns.sequence.write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
         for file_line in file_data:
             # The data set.
             data_set = file_line[col['data_set']]
@@ -848,10 +848,10 @@ class Results:
             # Set the heteronucleus and proton types (absent from the 1.2 results file).
             if file_line[col['nucleus']] != 'None':
                 if search('N', file_line[col['nucleus']]):
-                    value.set(val='15N', param='heteronucleus', spin_id=spin_id)
+                    generic_fns.value.set(val='15N', param='heteronucleus', spin_id=spin_id)
                 elif search('C', file_line[col['nucleus']]):
-                    value.set(val='13C', param='heteronucleus', spin_id=spin_id)
-                value.set(val='1H', param='proton', spin_id=spin_id)
+                    generic_fns.value.set(val='13C', param='heteronucleus', spin_id=spin_id)
+                generic_fns.value.set(val='1H', param='proton', spin_id=spin_id)
 
             # Simulation number.
             if data_set != 'value' and data_set != 'error':
@@ -946,7 +946,7 @@ class Results:
             spin_name = spin_line[col['spin_name']]
 
         # Generate the sequence.
-        sequence.generate(mol_name, res_num, res_name, spin_num, spin_name)
+        generic_fns.sequence.generate(mol_name, res_num, res_name, spin_num, spin_name)
 
         # Get the spin identification string.
         spin_id = generate_spin_id(mol_name, res_num, res_name, spin_num, spin_name)
@@ -954,9 +954,9 @@ class Results:
         # Set the selection status.
         select = bool(spin_line[col['select']])
         if select:
-            selection.sel_spin(spin_id)
+            generic_fns.selection.sel_spin(spin_id)
         else:
-            selection.desel_spin(spin_id)
+            generic_fns.selection.desel_spin(spin_id)
 
 
     def read_columnar_xh_vect(self):
