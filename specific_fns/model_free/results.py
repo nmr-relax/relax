@@ -38,6 +38,32 @@ from relax_errors import RelaxError, RelaxInvalidDataError
 class Results:
     """Class containing methods specific to the model-free results files."""
 
+    def __determine_version(self, file_data):
+        """Determine which relax version the results file belongs to.
+
+        @param file_data:   The processed results file data.
+        @type file_data:    list of lists of str
+        @return:            The relax version number.
+        @rtype:             str
+        @raises RelaxError: If the relax version the model-free results file belongs to cannot be
+                            determined.
+        """
+
+        # relax 1.2 results file (test for the 1.2 header line).
+        if len(file_data[0]) == 54 and file_data[0][0:8] == ['Num', 'Name', 'Selected', 'Data_set', 'Nucleus', 'Model', 'Equation', 'Params']:
+            version = '1.2'
+
+        # Can't determine the file version.
+        else:
+            raise RelaxError, "Cannot determine the relax version the model-free results file belongs to."
+
+        # Print out.
+        print "relax " + version + " model-free results file."
+
+        # Return the version.
+        return version
+
+
     def read_columnar_col_numbers(self, header):
         """Function for sorting the column numbers from the columnar formatted results file."""
 
@@ -720,6 +746,9 @@ class Results:
                             value, the greater the verbosity.
         @type verbosity:    int
         """
+
+        # Determine the results file version.
+        version = self.__determine_version(file_data)
 
         # Extract and remove the header.
         header = file_data[0]
