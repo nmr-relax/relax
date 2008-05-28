@@ -38,11 +38,14 @@ from relax_errors import RelaxError, RelaxInvalidDataError
 class Results:
     """Class containing methods specific to the model-free results files."""
 
-    def __determine_version(self, file_data):
+    def __determine_version(self, file_data, verbosity):
         """Determine which relax version the results file belongs to.
 
         @param file_data:   The processed results file data.
         @type file_data:    list of lists of str
+        @param verbosity:   A flag specifying the amount of information to print.  The higher the
+                            value, the greater the verbosity.
+        @type verbosity:    int
         @return:            The relax version number.
         @rtype:             str
         @raises RelaxError: If the relax version the model-free results file belongs to cannot be
@@ -58,7 +61,8 @@ class Results:
             raise RelaxError, "Cannot determine the relax version the model-free results file belongs to."
 
         # Print out.
-        print "relax " + version + " model-free results file."
+        if verbosity:
+            print "relax " + version + " model-free results file."
 
         # Return the version.
         return version
@@ -748,7 +752,7 @@ class Results:
         """
 
         # Determine the results file version.
-        version = self.__determine_version(file_data)
+        version = self.__determine_version(file_data, verbosity)
 
         # Execute the version specific methods.
         if version == '1.2':
