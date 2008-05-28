@@ -818,7 +818,7 @@ class Results:
                 break
 
             # Sequence.
-            self.read_columnar_sequence()
+            self.__generate_sequence()
 
 
         # Loop over the lines of the file data.
@@ -906,7 +906,7 @@ class Results:
             ds.sim_state[self.run] = False
 
 
-    def read_columnar_sequence(self):
+    def __generate_sequence(self):
         """Function for generating the sequence."""
 
         # Residue number and name.
