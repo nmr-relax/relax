@@ -682,44 +682,53 @@ class Results:
                     data.warning_sim.append(replace(self.file_line[col['warn']], '_', ' '))
 
 
-    def read_columnar_param_set(self):
-        """Function for reading the parameter set."""
+    def __fix_params(self, spin_line, col, verbosity=1):
+        """Fix certain parameters depending on the parameter set.
+
+        @param spin_line:   The line of data for a single spin.
+        @type spin_line:    list of str
+        @param col:         The column indecies.
+        @type col:          dict of int
+        @keyword verbosity: A variable specifying the amount of information to print.  The higher
+                            the value, the greater the verbosity.
+        @type verbosity:    int
+        """
 
         # Extract the parameter set if it exists, otherwise return.
-        if self.file_line[col['param_set']] != 'None':
-            self.param_set = self.file_line[col['param_set']]
+        if spin_line[col['param_set']] != 'None':
+            param_set = spin_line[col['param_set']]
         else:
             return
 
         # Local tm and model-free only parameter sets.
-        if self.param_set == 'local_tm' or self.param_set == 'mf':
-            diff_fixed = 1
-            res_fixed = 0
+        if param_set == 'local_tm' or param_set == 'mf':
+            diff_fixed = True
+            res_fixed = False
 
         # Diffusion tensor parameter set.
-        elif self.param_set == 'diff':
-            diff_fixed = 0
-            res_fixed = 1
+        elif param_set == 'diff':
+            diff_fixed = False
+            res_fixed = True
 
         # 'all' parameter set.
-        elif self.param_set == 'all':
-            diff_fixed = 0
-            res_fixed = 0
+        elif param_set == 'all':
+            diff_fixed = False
+            res_fixed = False
 
         # No parameter set.
-        elif self.param_set == 'None':
-            self.param_set = None
+        elif param_set == 'None':
+            param_set = None
             diff_fixed = None
             res_fixed = None
 
         # Set the diffusion tensor fixed flag.
-        if self.param_set != 'local_tm' and diff_fixed != None:
-            ds.diff[self.run].fixed = diff_fixed
+        if param_set != 'local_tm' and diff_fixed != None:
+            ds[ds.current_pipe].diff.fixed = diff_fixed
 
-        # Set the residue specific fixed flag.
-        for i in xrange(len(ds.res[self.run])):
+        # Set the spin specific fixed flags.
+        for spin in spin_loop():
             if res_fixed != None:
-                ds.res[self.run][i].fixed = res_fixed
+                spin.fixed = res_fixed
 
 
     def read_columnar_pdb(self, verbosity=1):
@@ -903,7 +912,7 @@ class Results:
 
             # Parameter set.
             if param_set == None:
-                self.read_columnar_param_set()
+                self.__fix_params(file_line, col, verbosity)
 
             # PDB.
             if not pdb:
