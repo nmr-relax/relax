@@ -38,13 +38,13 @@ from relax_errors import RelaxError, RelaxInvalidDataError
 class Results:
     """Class containing methods specific to the model-free results files."""
 
-    def __determine_version(self, file_data, verbosity):
+    def __determine_version(self, file_data, verbosity=1):
         """Determine which relax version the results file belongs to.
 
         @param file_data:   The processed results file data.
         @type file_data:    list of lists of str
-        @param verbosity:   A flag specifying the amount of information to print.  The higher the
-                            value, the greater the verbosity.
+        @keyword verbosity: A variable specifying the amount of information to print.  The higher
+                            the value, the greater the verbosity.
         @type verbosity:    int
         @return:            The relax version number.
         @rtype:             str
@@ -746,8 +746,8 @@ class Results:
 
         @param file_data:   The processed results file data.
         @type file_data:    list of lists of str
-        @keyword verbosity: A flag specifying the amount of information to print.  The higher the
-                            value, the greater the verbosity.
+        @keyword verbosity: A variable specifying the amount of information to print.  The higher
+                            the value, the greater the verbosity.
         @type verbosity:    int
         """
 
@@ -764,8 +764,8 @@ class Results:
 
         @param file_data:   The processed results file data.
         @type file_data:    list of lists of str
-        @keyword verbosity: A flag specifying the amount of information to print.  The higher the
-                            value, the greater the verbosity.
+        @keyword verbosity: A variable specifying the amount of information to print.  The higher
+                            the value, the greater the verbosity.
         @type verbosity:    int
         """
 
