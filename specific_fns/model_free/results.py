@@ -26,11 +26,12 @@ from math import pi
 from numpy import float64, array, transpose
 from re import search
 from string import replace, split
+import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import diffusion_tensor
-from generic_fns.mol_res_spin import spin_loop
+from generic_fns import diffusion_tensor, selection, sequence
+from generic_fns.mol_res_spin import generate_spin_id, spin_loop
 from relax_errors import RelaxError, RelaxInvalidDataError
 
 
@@ -809,6 +810,9 @@ class Results:
         ri_labels = None
 
         # Generate the sequence.
+        if verbosity:
+            print "\nGenerating the sequence."
+            sequence.write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
         for file_line in file_data:
             # The data set.
             data_set = file_line[col['data_set']]
@@ -818,7 +822,7 @@ class Results:
                 break
 
             # Sequence.
-            self.__generate_sequence()
+            self.__generate_1_2_sequence(file_line, col, verbosity)
 
 
         # Loop over the lines of the file data.
@@ -906,18 +910,37 @@ class Results:
             ds.sim_state[self.run] = False
 
 
-    def __generate_sequence(self):
-        """Function for generating the sequence."""
+    def __generate_1_2_sequence(self, file_line, col, verbosity=1):
+        """Generate the sequence.
+
+        @param file_line:   The line of data for a single spin.
+        @type file_line:    list of str
+        @param col:         The column indecies.
+        @type col:          dict of int
+        @keyword verbosity: A variable specifying the amount of information to print.  The higher
+                            the value, the greater the verbosity.
+        @type verbosity:    int
+        """
 
         # Residue number and name.
         try:
-            res_num = int(self.file_line[col['num']])
+            res_num = int(file_line[col['num']])
         except ValueError:
-            raise RelaxError, "The residue number " + self.file_line[col['num']] + " is not an integer."
-        res_name = self.file_line[col['name']]
+            raise RelaxError, "The residue number " + file_line[col['num']] + " is not an integer."
+        res_name = file_line[col['name']]
 
         # Generate the sequence.
-        self.relax.generic.sequence.add(self.run, res_num, res_name, select=int(self.file_line[col['select']]))
+        sequence.generate(res_num=res_num, res_name=res_name)
+
+        # Get the spin identification string.
+        spin_id = generate_spin_id(res_num=res_num, res_name=res_name)
+
+        # Set the selection status.
+        select = bool(file_line[col['select']])
+        if select:
+            selection.sel_spin(spin_id)
+        else:
+            selection.desel_spin(spin_id)
 
 
     def read_columnar_xh_vect(self):
