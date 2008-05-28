@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for the creation and processing of model-free results files."""
+
 # Python module imports.
 from data.diff_tensor import DiffTensorSimList
 from math import pi
