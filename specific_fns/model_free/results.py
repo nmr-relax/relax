@@ -708,39 +708,39 @@ class Results:
         # Local tm and model-free only parameter sets.
         if param_set == 'local_tm' or param_set == 'mf':
             diff_fixed = True
-            res_fixed = False
+            mf_fixed = False
 
         # Diffusion tensor parameter set.
         elif param_set == 'diff':
             diff_fixed = False
-            res_fixed = True
+            mf_fixed = True
 
         # 'all' parameter set.
         elif param_set == 'all':
             diff_fixed = False
-            res_fixed = False
+            mf_fixed = False
 
         # No parameter set.
         elif param_set == 'None':
             param_set = None
             diff_fixed = None
-            res_fixed = None
+            mf_fixed = None
 
         # Print out.
         if verbosity:
             print "\nFixing parameters based on the parameter set."
             print "Parameter set: " + param_set
             print "Diffusion tensor fixed: " + `diff_fixed`
-            print "Model-free parameters fixed: " + `res_fixed`
+            print "Model-free parameters fixed: " + `mf_fixed`
 
         # Set the diffusion tensor fixed flag.
         if param_set != 'local_tm' and diff_fixed != None:
-            ds[ds.current_pipe].diff.fixed = diff_fixed
+            ds[ds.current_pipe].diff_tensor.fixed = diff_fixed
 
         # Set the spin specific fixed flags.
         for spin in spin_loop():
-            if res_fixed != None:
-                spin.fixed = res_fixed
+            if mf_fixed != None:
+                spin.fixed = mf_fixed
 
 
     def read_columnar_pdb(self, verbosity=1):
