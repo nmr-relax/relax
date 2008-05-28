@@ -759,7 +759,7 @@ class Results:
             self.__read_1_2_results(file_data, verbosity)
 
 
-    def read_1_2_results(self, file_data, verbosity=1):
+    def __read_1_2_results(self, file_data, verbosity=1):
         """Read the relax 1.2 model-free results file.
 
         @param file_data:   The processed results file data.
