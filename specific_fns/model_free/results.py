@@ -804,7 +804,6 @@ class Results:
             raise RelaxInvalidDataError
 
         # Initialise some data structures and flags.
-        nucleus_set = False
         sim_num = None
         sims = []
         all_select_sim = []
@@ -846,11 +845,13 @@ class Results:
             if len(file_line) == 4:
                 continue
 
-            # Set the nucleus type.
-            if not nucleus_set:
-                if file_line[col['nucleus']] != 'None':
-                    self.relax.generic.nuclei.set_values(file_line[col['nucleus']])
-                    nucleus_set = True
+            # Set the heteronucleus and proton types (absent from the 1.2 results file).
+            if file_line[col['nucleus']] != 'None':
+                if search('N', file_line[col['nucleus']]):
+                    value.set(val='15N', param='heteronucleus', spin_id=spin_id)
+                elif search('C', file_line[col['nucleus']]):
+                    value.set(val='13C', param='heteronucleus', spin_id=spin_id)
+                value.set(val='1H', param='proton', spin_id=spin_id)
 
             # Simulation number.
             if data_set != 'value' and data_set != 'error':
