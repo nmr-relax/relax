@@ -40,33 +40,46 @@ class Rx_data:
         self.global_flag = 0
 
 
-    def add_residue(self, run=None, res_index=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, values=None, errors=None, sim=0):
-        """Function for adding all relaxation data for a single residue."""
+    def add_data_to_spin(self, spin=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, values=None, errors=None, sim=False):
+        """Add the relaxation data to the spin.
 
-        # Arguments.
-        self.run = run
-        self.ri_labels = ri_labels
-        self.remap_table = remap_table
-        self.frq_labels = frq_labels
-        self.frq = frq
+        @keyword spin:          The spin container.
+        @type spin:             SpinContainer instance
+        @keyword ri_labels:     The labels corresponding to the data type, eg ['NOE', 'R1', 'R2',
+                                'NOE', 'R1', 'R2'].
+        @type ri_labels:        list of str
+        @keyword remap_table:   A translation table to map relaxation data points to their
+                                frequencies, eg [0, 0, 0, 1, 1, 1].
+        @type remap_table:      list of int
+        @keyword frq_labels:    NMR frequency labels, eg ['600', '500'].
+        @type frq_labels:       list of str
+        @keyword frq:           NMR frequencies in Hz, eg [600.0 * 1e6, 500.0 * 1e6].
+        @type frq:              list of float
+        @keyword values:        The relaxation data.
+        @type values:           list of float
+        @keyword errors:        The relaxation errors.
+        @type errors:           list of float
+        @keyword sim:           A flag which if True means the data corresponds to Monte Carlo
+                                simulation data.
+        @type sim:              bool
+        """
 
-        # Test if the run exists.
-        if not self.run in ds.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current data pipe exists.
+        pipes.test(ds.current_pipe)
 
-        # Test if sequence data is loaded.
-        if not ds.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        # Test if sequence data exists.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
 
-        # Global (non-residue specific) data.
+        # Global (non-spin specific) data.
         #####################################
 
         # Global data flag.
-        self.global_flag = 1
+        global_flag = True
 
         # Initialise the global data if necessary.
-        self.data_init(ds)
+        self.data_init(ds[ds.current_pipe])
 
         # Add the data structures.
         ds.ri_labels[self.run] = deepcopy(ri_labels)
