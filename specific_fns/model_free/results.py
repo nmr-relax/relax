@@ -343,8 +343,8 @@ class Results:
             self.relax.generic.diffusion_tensor.init(run=self.run, params=diff_params, angle_units='rad', spheroid_type=spheroid_type)
 
 
-    def __get_spin_container(self, spin_line, col, verbosity=1):
-        """Get the spin container corresponding to spin_line.
+    def __get_spin_id(self, spin_line, col, verbosity=1):
+        """Get the spin identification string corresponding to spin_line.
 
         @param spin_line:   The line of data for a single spin.
         @type spin_line:    list of str
@@ -372,7 +372,7 @@ class Results:
             spin_name = spin_line[col['spin_name']]
 
         # Return the spin container.
-        return return_spin(generate_spin_id(mol_name, res_num, res_name, spin_num, spin_name))
+        return generate_spin_id(mol_name, res_num, res_name, spin_num, spin_name)
 
 
     def read_columnar_model_free_data(self):
@@ -839,7 +839,7 @@ class Results:
             data_set = file_line[col['data_set']]
 
             # Get the spin container.
-            spin = self.__get_spin_container(file_line, col, verbosity)
+            spin_id = self.__get_spin_id(file_line, col, verbosity)
 
             # Backwards compatibility for the reading of the results file from versions 1.2.0 to 1.2.9.
             if len(file_line) == 4:
