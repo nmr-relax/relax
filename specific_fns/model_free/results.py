@@ -214,6 +214,11 @@ class Results:
         if diff_type == 'None':
             diff_type = None
 
+        # Print out.
+        if verbosity:
+            print "\nSetting the diffusion tensor."
+            print "Diffusion type: " + diff_type
+
         # Sphere.
         if diff_type == 'sphere':
             # Convert the parameters to floating point numbers.
@@ -720,6 +725,13 @@ class Results:
             param_set = None
             diff_fixed = None
             res_fixed = None
+
+        # Print out.
+        if verbosity:
+            print "\nFixing parameters based on the parameter set."
+            print "Parameter set: " + param_set
+            print "Diffusion tensor fixed: " + `diff_fixed`
+            print "Model-free parameters fixed: " + `res_fixed`
 
         # Set the diffusion tensor fixed flag.
         if param_set != 'local_tm' and diff_fixed != None:
