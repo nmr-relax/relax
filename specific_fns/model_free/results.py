@@ -743,21 +743,32 @@ class Results:
                 spin.fixed = mf_fixed
 
 
-    def read_columnar_pdb(self, verbosity=1):
-        """Function for reading the PDB file."""
+    def __load_structure(self, spin_line, col, verbosity=1):
+        """Load the structure back into the current data pipe.
+
+        @param spin_line:   The line of data for a single spin.
+        @type spin_line:    list of str
+        @param col:         The column indecies.
+        @type col:          dict of int
+        @keyword verbosity: A variable specifying the amount of information to print.  The higher
+                            the value, the greater the verbosity.
+        @type verbosity:    int
+        @return:            True if the structure was loaded, False otherwise.
+        @rtype:             bool
+        """
 
         # File name.
-        pdb = self.file_line[col['pdb']]
+        pdb = spin_line[col['pdb']]
 
         # PDB model.
-        pdb_model = eval(self.file_line[col['pdb_model']])
+        pdb_model = eval(spin_line[col['pdb_model']])
 
         # Read the PDB file (if it exists).
         if not pdb == 'None':
-            self.relax.generic.structure.read_pdb(run=self.run, file=pdb, model=pdb_model, fail=0, verbosity=verbosity)
-            return 1
+            generic_fns.structure.main.read_pdb(file=pdb, model=pdb_model, fail=False, verbosity=verbosity)
+            return True
         else:
-            return 0
+            return False
 
 
     def read_columnar_relax_data(self):
@@ -928,7 +939,7 @@ class Results:
 
             # PDB.
             if not pdb:
-                if self.read_columnar_pdb(verbosity):
+                if self.__load_structure(file_line, col, verbosity):
                     pdb = True
 
             # XH vector, heteronucleus, and proton.
