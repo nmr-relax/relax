@@ -36,7 +36,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 import generic_fns
 from generic_fns.mol_res_spin import generate_spin_id, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxInvalidDataError
-import specific_fns.relax_data import relax_data
+from specific_fns.relax_data import relax_data
 
 
 
