@@ -58,7 +58,7 @@ class Results:
         """
 
         # relax 1.2 results file (test for the 1.2 header line).
-        if len(file_data[0]) == 54 and file_data[0][0:8] == ['Num', 'Name', 'Selected', 'Data_set', 'Nucleus', 'Model', 'Equation', 'Params']:
+        if len(file_data[0]) > 9 and file_data[0][0:8] == ['Num', 'Name', 'Selected', 'Data_set', 'Nucleus', 'Model', 'Equation', 'Params']:
             version = '1.2'
 
         # Can't determine the file version.
