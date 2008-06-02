@@ -153,6 +153,9 @@ RELAX_DATA = [['R1', '600', 599.719 * 1e6, 'r1.600.out'],
 # The file containing the list of unresolved residues to exclude from the analysis (set this to None if no residue is to be excluded).
 UNRES = 'unresolved'
 
+# A file containing a list of spins which can be dynamically excluded at any point within the analysis (when set to None, this variable is not used).
+EXCLUDE = None
+
 # The bond length and CSA values.
 BOND_LENGTH = 1.02 * 1e-10
 CSA = -172 * 1e-6
@@ -221,6 +224,10 @@ class Main:
 
                     # Remove the tm parameter.
                     model_free.remove_tm()
+
+                    # Deselect the spins in the EXCLUDE list.
+                    if EXCLUDE:
+                        deselect.read(file=EXCLUDE)
 
                     # Load the PDB file and calculate the unit vectors parallel to the XH bond.
                     if PDB_FILE:
@@ -600,9 +607,11 @@ class Main:
             for data in RELAX_DATA:
                 relax_data.read(data[0], data[1], data[2], data[3])
 
-            # Deselect unresolved residues.
+            # Deselect spins to be excluded (including unresolved and specifically excluded spins).
             if UNRES:
                 deselect.read(file=UNRES)
+            if EXCLUDE:
+                deselect.read(file=EXCLUDE)
 
             # Copy the diffusion tensor from the 'opt' data pipe and prevent it from being minimised.
             if not local_tm:
