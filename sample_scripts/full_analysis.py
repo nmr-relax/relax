@@ -41,7 +41,7 @@ The model-free optimisation methodology herein is that of:
 d'Auvergne, E. J. and Gooley, P. R. (2008). Optimisation of NMR dynamic models II. A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor. J. Biomol. NMR, 40(2), 121-133
 
 
-This script is designed for those who appreciate black-boxes or those who appreciate complex code.  Importantly data at multiple magnetic field strengths is essential for this analysis.  The script will need to be heavily tailored to the protein in question by changing the variables just below this documentation.  If you would like to change how model-free analysis is performed, the code in the class Main can be changed as needed.  For a description of object-oriented coding in python using classes, functions/methods, self, etc., see the python tutorial.
+This script is designed for those who appreciate black-boxes or those who appreciate complex code.  Importantly data at multiple magnetic field strengths is essential for this analysis.  The script will need to be heavily tailored to the molecule in question by changing the variables just below this documentation.  If you would like to change how model-free analysis is performed, the code in the class Main can be changed as needed.  For a description of object-oriented coding in python using classes, functions/methods, self, etc., see the python tutorial.
 
 The value of the variable DIFF_MODEL will determine the behaviour of this script.  The five diffusion models used in this script are:
 
@@ -61,15 +61,15 @@ Model I must be optimised prior to any of the other diffusion models, while the 
 
 This approach has the advantage of eliminating the need for an initial estimate of a global diffusion tensor and removing all the problems associated with the initial estimate.
 
-It is important that the number of parameters in a model does not exceed the number of relaxation data sets for that residue.  If this is the case, the list of models in the MF_MODELS and LOCAL_TM_MODELS variables will need to be trimmed.
+It is important that the number of parameters in a model does not exceed the number of relaxation data sets for that spin.  If this is the case, the list of models in the MF_MODELS and LOCAL_TM_MODELS variables will need to be trimmed.
 
 
 Model I - Local tm
 ~~~~~~~~~~~~~~~~~~
 
-This will optimise the diffusion model whereby all residues of the protein have a local tm value, i.e. there is no global diffusion tensor.  This model needs to be optimised prior to optimising any of the other diffusion models.  Each residue is fitted to the multiple model-free models separately, where the parameter tm is included in each model.
+This will optimise the diffusion model whereby all spin of the molecule have a local tm value, i.e. there is no global diffusion tensor.  This model needs to be optimised prior to optimising any of the other diffusion models.  Each spin is fitted to the multiple model-free models separately, where the parameter tm is included in each model.
 
-AIC model selection is used to select the models for each residue.
+AIC model selection is used to select the models for each spin.
 
 
 Model II - Sphere
@@ -77,7 +77,7 @@ Model II - Sphere
 
 This will optimise the isotropic diffusion model.  Multiple steps are required, an initial optimisation of the diffusion tensor, followed by a repetitive optimisation until convergence of the diffusion tensor.  Each of these steps requires this script to be rerun. For the initial optimisation, which will be placed in the directory './sphere/init/', the following steps are used:
 
-The model-free models and parameter values for each residue are set to those of diffusion model MI.
+The model-free models and parameter values for each spin are set to those of diffusion model MI.
 
 The local tm parameter is removed from the models.
 
@@ -86,9 +86,9 @@ The model-free parameters are fixed and a global spherical diffusion tensor is m
 
 For the repetitive optimisation, each minimisation is named from 'round_1' onwards.  The initial 'round_1' optimisation will extract the diffusion tensor from the results file in './sphere/init/', and the results will be placed in the directory './sphere/round_1/'.  Each successive round will take the diffusion tensor from the previous round.  The following steps are used:
 
-The global diffusion tensor is fixed and the multiple model-free models are fitted to each residue.
+The global diffusion tensor is fixed and the multiple model-free models are fitted to each spin.
 
-AIC model selection is used to select the models for each residue.
+AIC model selection is used to select the models for each spin.
 
 All model-free and diffusion parameters are allowed to vary and a global optimisation of all parameters is carried out.
 
@@ -150,7 +150,7 @@ RELAX_DATA = [['R1', '600', 599.719 * 1e6, 'r1.600.out'],
               ['NOE', '500', 500.208 * 1e6, 'noe.500.out']
 ]
 
-# The file containing the list of unresolved residues to exclude from the analysis (set this to None if no residue is to be excluded).
+# The file containing the list of unresolved spins to exclude from the analysis (set this to None if no spin is to be excluded).
 UNRES = 'unresolved'
 
 # A file containing a list of spins which can be dynamically excluded at any point within the analysis (when set to None, this variable is not used).
