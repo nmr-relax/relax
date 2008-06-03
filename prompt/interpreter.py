@@ -23,7 +23,12 @@
 # Python module imports.
 from code import InteractiveConsole, softspace
 from os import F_OK, access
-import readline
+try:
+    import readline
+    readline_avail = True
+except ImportError:
+    readline_avail = False
+
 #import signal
 import sys
 
@@ -36,7 +41,8 @@ from math import pi
 # Auxiliary modules.
 from help import _Helper, _Helper_python
 from command import Ls, Lh, Ll, system
-from tab_completion import Tab_completion
+if readline_avail:
+    from tab_completion import Tab_completion
 
 # User functions.
 from angles import Angles
@@ -236,10 +242,11 @@ class Interpreter:
         self.local = locals()
 
         # Setup tab completion.
-        readline.set_completer(Tab_completion(name_space=self.local).finish)
-        readline.set_completer_delims(' \t\n`~!@#$%^&*()=+{}\\|;:",<>/?')
-        #readline.set_completer_delims(' \t\n`~!@#$%^&*()=+{}\\|;:\'",<>/?')
-        readline.parse_and_bind("tab: complete")
+        if readline_avail:
+            readline.set_completer(Tab_completion(name_space=self.local).finish)
+            readline.set_completer_delims(' \t\n`~!@#$%^&*()=+{}\\|;:",<>/?')
+            #readline.set_completer_delims(' \t\n`~!@#$%^&*()=+{}\\|;:\'",<>/?')
+            readline.parse_and_bind("tab: complete")
 
         # Execute the script file if given.
         if script_file:
