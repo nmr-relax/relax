@@ -57,6 +57,13 @@ except ImportError:
     sys.stderr.write("The dependency 'Optik' has not been installed.\n")
     sys.exit()
 
+# Minfx python package check.
+try:
+    import minfx
+except ImportError:
+    sys.stderr.write("The dependency 'minfx' has not been installed (see https://gna.org/projects/minfx/).\n")
+    sys.exit()
+
 # relax modules.
 import generic_fns
 from prompt.gpl import gpl
