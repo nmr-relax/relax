@@ -43,11 +43,11 @@ from re import match
 from string import split, strip
 import sys
 
-# Numeric.
+# numpy.
 try:
-    import Numeric
+    import numpy
 except ImportError:
-    sys.stderr.write("The dependency 'Numeric' has not been installed.\n")
+    sys.stderr.write("The dependency 'numpy' has not been installed.\n")
     sys.exit()
 
 # Command line option parser.
