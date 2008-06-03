@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007 Edward d'Auvergne                             #
+# Copyright (C) 2003-2004, 2007-2008 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,7 +21,11 @@
 ###############################################################################
 
 # Python module imports.
-from Scientific.Visualization import VMD
+module_avail = False
+try:
+    from Scientific.Visualization import VMD    # This requires Numeric to be installed (at least in Scientific 2.7.8).
+except ImportError:
+    module_avail = False
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
@@ -41,6 +45,11 @@ class Vmd:
 
     def view(self, run):
         """Function for viewing the collection of molecules using VMD."""
+
+        # Test if the module is available.
+        if not module_avail:
+            print "VMD is not available (cannot import Scientific.Visualization.VMD due to missing Numeric dependency)."
+            return
 
         # Test if the PDB file has been loaded.
         if not ds.pdb.has_key(run):
