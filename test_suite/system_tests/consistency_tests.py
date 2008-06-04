@@ -95,6 +95,7 @@ class Ct(TestCase):
         self.relax.interpreter._Minimisation.calc()
 
         # Loop over residues.
+        index = 0
         for res in residue_loop():
             # Residues -2 and -1 have data.
             if res.num == -2 or res.num == -1:
@@ -102,6 +103,7 @@ class Ct(TestCase):
                 self.assertAlmostEqual(res.spin[0].j0, j0[index])
                 self.assertAlmostEqual(res.spin[0].f_eta, f_eta[index])
                 self.assertAlmostEqual(res.spin[0].f_r2, f_r2[index])
+                index = index + 1
 
             # Other residues have insufficient data.
             else:
