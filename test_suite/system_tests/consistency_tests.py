@@ -66,8 +66,8 @@ class Ct(TestCase):
 
         # Correct consistency functions values:
         j0 = [4.0703318681008998e-09, 3.7739393907014834e-09]
-        f_eta = [0.35164988964635652, 0.32556427866911447]
-        f_r2 = [2.0611470814962761e-09, 1.9117396355237641e-09]
+        f_eta = [0.35356777124326688, 0.32733989059749802]
+        f_r2 = [2.0482909381655862e-09, 1.8998154021753067e-09]
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + '/test_suite/system_tests/data')
