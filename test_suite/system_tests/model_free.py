@@ -235,6 +235,10 @@ class Mf(TestCase):
             iter = 162
             f_count = 758
             g_count = 169
+        elif SYSTEM == 'Windows' and ARCH[0] == '32bit':
+            iter = 156
+            f_count = 701
+            g_count = 163
 
         # Test the values.
         self.assertEqual(ds[ds.current_pipe].mol[0].res[0].spin[0].select, False)
@@ -467,6 +471,9 @@ class Mf(TestCase):
         if SYSTEM == 'Linux' and ARCH[0] == '64bit':
             f_count = 91
             g_count = 91
+        elif SYSTEM == 'Windows' and ARCH[0] == '32bit':
+            f_count = 165
+            g_count = 165
 
         # Test the values.
         self.assertEqual(ds[ds.current_pipe].mol[0].res[0].spin[0].select, False)
