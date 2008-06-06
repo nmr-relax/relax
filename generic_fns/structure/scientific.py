@@ -50,6 +50,16 @@ class Scientific_data(Base_struct_API):
     # Identification string.
     id = 'scientific'
 
+    def __init__(self):
+        """Initialise the class."""
+
+        # Test for the PDB parser availability.
+        if not module_avail:
+            raise RelaxError, "The Scientific python PDB module Scientific.IO.PDB could not be imported."
+
+        # The parser specific data object.
+        self.structural_data = []
+
 
     def __find_bonded_atom(self, attached_atom, mol_type, res):
         """Find the atom named attached_atom directly bonded to the desired atom.
