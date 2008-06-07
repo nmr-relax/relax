@@ -124,12 +124,11 @@ except ImportError, message:
     if system == 'Windows' or system == 'Microsoft':
         file = 'relax_fit.pyd'
     if not access('maths_fns' + sep + file, F_OK):
-        sys.stderr.write("\nImportError: relaxation curve fitting is unavailable, the corresponding C modules have not been compiled.\n")
+        C_module_exp_fn_mesg = "ImportError: relaxation curve fitting is unavailable, the corresponding C modules have not been compiled."
 
-    # Error print out.
+    # Show the full error.
     else:
-        sys.stderr.write("\nImportError: " + message[0])
-        sys.stderr.write("\nRelaxation curve fitting is unavailable, try compiling the C modules.")
+        C_module_exp_fn_mesg = "ImportError: " + message[0] + "\nRelaxation curve fitting is unavailable, try compiling the C modules."
 
     # Set the flag.
     C_module_exp_fn = False
