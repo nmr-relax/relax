@@ -67,6 +67,6 @@ try:
     del setup
 except ImportError:
     sys.stderr.write("\nImportError: relaxation curve fitting is unavailable, try compiling the C modules.\n")
-    C_module_exp_fn = 0
+    C_module_exp_fn = False
 else:
-    C_module_exp_fn = 1
+    C_module_exp_fn = True
