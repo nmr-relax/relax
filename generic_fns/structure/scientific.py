@@ -23,18 +23,15 @@
 # Module docstring.
 """Module containing the Scientific Python PDB specific structural object class."""
 
+# Dependency check module.
+import dep_check
 
 # Python module imports.
 from math import sqrt
 from numpy import array, dot, float64, zeros
-from warnings import warn
-
-# Scientific Python import.
-module_avail = True
-try:
+if dep_check.scientific_pdb_module:
     import Scientific.IO.PDB
-except ImportError:
-    module_avail = False
+from warnings import warn
 
 # relax module imports.
 from api_base import Base_struct_API
@@ -54,7 +51,7 @@ class Scientific_data(Base_struct_API):
         """Initialise the class."""
 
         # Test for the PDB parser availability.
-        if not module_avail:
+        if not dep_check.scientific_pdb_module:
             raise RelaxError, "The Scientific python PDB module Scientific.IO.PDB could not be imported."
 
         # The parser specific data object.

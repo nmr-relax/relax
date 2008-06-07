@@ -96,6 +96,14 @@ except ImportError, message:
     devnull_import = False
     devnull_import_message = message.args[0]
 
+# Scientific Python import.
+try:
+    from Scientific.IO import PDB
+    del PDB
+    scientific_pdb_module = True
+except ImportError:
+    scientific_pdb_module = False
+
 
 # Compiled C modules.
 #####################
