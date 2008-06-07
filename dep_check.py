@@ -61,6 +61,14 @@ except ImportError:
 # Optional packages.
 ####################
 
+# Readline module.
+try:
+    import readline
+    del readline
+    readline_module = True
+except ImportError:
+    readline_module = False
+
 # BZ2 compression module.
 try:
     import bz2

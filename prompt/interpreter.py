@@ -23,14 +23,14 @@
 # Module docstring.
 """The prompt based relax user interface (UI)."""
 
+# Dependency check module.
+import dep_check
+
 # Python module imports.
 from code import InteractiveConsole, softspace
 from os import F_OK, access
-try:
+if dep_check.readline_module:
     import readline
-    readline_avail = True
-except ImportError:
-    readline_avail = False
 import sys
 
 # Python modules accessible on the command prompt.
@@ -42,7 +42,7 @@ from relax_errors import AllRelaxErrors, RelaxBinError, RelaxError, RelaxNoneErr
 # Auxiliary modules.
 from help import _Helper, _Helper_python
 from command import Ls, Lh, Ll, system
-if readline_avail:
+if dep_check.readline_module:
     from tab_completion import Tab_completion
 
 # User functions.
@@ -243,7 +243,7 @@ class Interpreter:
         self.local = locals()
 
         # Setup tab completion.
-        if readline_avail:
+        if dep_check.readline_module:
             readline.set_completer(Tab_completion(name_space=self.local).finish)
             readline.set_completer_delims(' \t\n`~!@#$%^&*()=+{}\\|;:",<>/?')
             #readline.set_completer_delims(' \t\n`~!@#$%^&*()=+{}\\|;:\'",<>/?')
