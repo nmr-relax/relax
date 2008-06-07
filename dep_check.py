@@ -26,10 +26,12 @@
 If essential dependencies are missing, then an error message is printed and the program terminated.
 """
 
+# Python modules.
+import sys
+
 
 # Python packages.
 ##################
-
 
 # numpy.
 try:
@@ -54,3 +56,17 @@ try:
 except ImportError:
     sys.stderr.write("The dependency 'minfx' has not been installed (see https://gna.org/projects/minfx/).\n")
     sys.exit()
+
+
+# Compiled C modules.
+#####################
+
+# Relaxation curve fitting.
+try:
+    from maths_fns.relax_fit import setup
+    del setup
+except ImportError:
+    sys.stderr.write("\nImportError: relaxation curve fitting is unavailable, try compiling the C modules.\n")
+    C_module_exp_fn = 0
+else:
+    C_module_exp_fn = 1

@@ -32,6 +32,7 @@ import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from dep_check import C_module_exp_fn
 from base_class import Common_functions
 from generic_fns import intensity
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_spin_from_index, spin_loop
@@ -39,14 +40,8 @@ from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoPipeError, RelaxNoSequenceError
 
 # C modules.
-try:
+if C_module_exp_fn:
     from maths_fns.relax_fit import setup, func, dfunc, d2func, back_calc_I
-except ImportError:
-    sys.stderr.write("\nImportError: relaxation curve fitting is unavailable, try compiling the C modules.\n")
-    C_module_exp_fn = 0
-else:
-    C_module_exp_fn = 1
-
 
 
 class Relax_fit(Common_functions):
