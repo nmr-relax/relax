@@ -34,6 +34,7 @@ If essential dependencies are missing, then an error message is printed and the 
 # numpy.
 try:
     import numpy
+    del numpy
 except ImportError:
     sys.stderr.write("The dependency 'numpy' has not been installed.\n")
     sys.exit()
@@ -41,6 +42,7 @@ except ImportError:
 # Command line option parser.
 try:
     import optparse
+    del optparse
 except ImportError:
     sys.stderr.write("The dependency 'Optik' has not been installed.\n")
     sys.exit()
@@ -48,6 +50,7 @@ except ImportError:
 # Minfx python package check.
 try:
     import minfx
+    del minfx
 except ImportError:
     sys.stderr.write("The dependency 'minfx' has not been installed (see https://gna.org/projects/minfx/).\n")
     sys.exit()
