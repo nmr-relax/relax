@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""The prompt based relax user interface (UI)."""
+
 # Python module imports.
 from code import InteractiveConsole, softspace
 from os import F_OK, access
@@ -28,15 +31,13 @@ try:
     readline_avail = True
 except ImportError:
     readline_avail = False
-
-#import signal
 import sys
-
-# RelaxError system.
-from relax_errors import AllRelaxErrors, RelaxBinError, RelaxError, RelaxNoneError, RelaxStrError
 
 # Python modules accessible on the command prompt.
 from math import pi
+
+# RelaxError system.
+from relax_errors import AllRelaxErrors, RelaxBinError, RelaxError, RelaxNoneError, RelaxStrError
 
 # Auxiliary modules.
 from help import _Helper, _Helper_python
