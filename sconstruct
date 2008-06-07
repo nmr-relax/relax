@@ -357,7 +357,7 @@ class Main:
         print "###############\n\n"
 
         # Extensions of files to remove.
-        temp_extns = ['so', 'sconsign', 'dll']
+        temp_extns = ['so', 'sconsign', 'dll', 'pyd']
 
         # Print out.
         print "\nRemoving the files ending in " + `temp_extns` + ".\n"
@@ -491,7 +491,12 @@ class Main:
         if env['PLATFORM'] == 'darwin':
             env.Append(LINKFLAGS = ['-bundle', '-bundle_loader', sys.prefix + path.sep + 'bin' + path.sep + 'python', '-dynamic'])
             env['SHLINKFLAGS'] = SCons.Util.CLVar('$LINKFLAGS')
-            env['SHLIBSUFFIX'] = '.so'
+
+        # Shared library prefix and suffix.
+        prefix = ''
+        suffix = '.so'
+        if SYSTEM == 'Windows':
+            suffix = '.pyd'
 
         # Loop over the relaxation curve fitting files.
         nodes = []
@@ -499,7 +504,7 @@ class Main:
             nodes.append(env.SharedObject(dir + path.sep + file, CCFLAGS=cflags))
 
         # Build the relaxation curve fitting module.
-        self.relax_fit_object = env.SharedLibrary(target=dir + path.sep + 'relax_fit', source=nodes, SHLIBPREFIX='')
+        self.relax_fit_object = env.SharedLibrary(target=dir + path.sep + 'relax_fit', source=nodes, SHLIBPREFIX=prefix, SHLIBSUFFIX=suffix)
 
         # Print out string returning function.
         def print_string(target, source, env):
