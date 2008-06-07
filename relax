@@ -34,7 +34,11 @@
 ###############################################################################
 
 
+# Dependency checks.
+import dep_check
+
 # Python modules.
+from optparse import Option, OptionParser
 from os import F_OK, access, getpid, putenv
 import platform
 import profile
@@ -42,27 +46,6 @@ import pstats
 from re import match
 from string import split, strip
 import sys
-
-# numpy.
-try:
-    import numpy
-except ImportError:
-    sys.stderr.write("The dependency 'numpy' has not been installed.\n")
-    sys.exit()
-
-# Command line option parser.
-try:
-    from optparse import Option, OptionParser
-except ImportError:
-    sys.stderr.write("The dependency 'Optik' has not been installed.\n")
-    sys.exit()
-
-# Minfx python package check.
-try:
-    import minfx
-except ImportError:
-    sys.stderr.write("The dependency 'minfx' has not been installed (see https://gna.org/projects/minfx/).\n")
-    sys.exit()
 
 # relax modules.
 import generic_fns
