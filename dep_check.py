@@ -27,6 +27,8 @@ If essential dependencies are missing, then an error message is printed and the 
 """
 
 # Python modules.
+import platform
+from os import F_OK, access, sep
 import sys
 
 
@@ -112,8 +114,22 @@ except ImportError:
 try:
     from maths_fns.relax_fit import setup
     del setup
-except ImportError:
-    sys.stderr.write("\nImportError: relaxation curve fitting is unavailable, try compiling the C modules.\n")
-    C_module_exp_fn = False
-else:
     C_module_exp_fn = True
+except ImportError, message:
+    # The OS.
+    system = platform.system()
+
+    # Does the compiled file exist.
+    file = 'relax_fit.so'
+    if system == 'Windows' or system == 'Microsoft':
+        file = 'relax_fit.pyd'
+    if not access('maths_fns' + sep + file, F_OK):
+        sys.stderr.write("\nImportError: relaxation curve fitting is unavailable, the corresponding C modules have not been compiled.\n")
+
+    # Error print out.
+    else:
+        sys.stderr.write("\nImportError: " + message[0])
+        sys.stderr.write("\nRelaxation curve fitting is unavailable, try compiling the C modules.")
+
+    # Set the flag.
+    C_module_exp_fn = False
