@@ -30,8 +30,8 @@ If essential dependencies are missing, then an error message is printed and the 
 import sys
 
 
-# Python packages.
-##################
+# Essential packages.
+#####################
 
 # numpy.
 try:
@@ -56,6 +56,37 @@ try:
 except ImportError:
     sys.stderr.write("The dependency 'minfx' has not been installed (see https://gna.org/projects/minfx/).\n")
     sys.exit()
+
+
+# Optional packages.
+####################
+
+# BZ2 compression module.
+try:
+    import bz2
+    del bz2
+    bz2_module = True
+except ImportError, message:
+    bz2_module = False
+    bz2_module_message = message.args[0]
+
+# Gzip compression module.
+try:
+    import gzip
+    del gzip
+    gzip_module = True
+except ImportError, message:
+    gzip_module = False
+    gzip_module_message = message.args[0]
+
+# Devnull.
+try:
+    from os import devnull
+    del devnull
+    devnull_import = True
+except ImportError, message:
+    devnull_import = False
+    devnull_import_message = message.args[0]
 
 
 # Compiled C modules.

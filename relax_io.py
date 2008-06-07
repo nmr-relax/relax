@@ -27,27 +27,16 @@ This includes IO redirection, automatic loading and writing of compressed files 
 compression), reading and writing of files, processing of the contents of files, etc.
 """
 
-
-# BZ2 compression module.
-try:
-    from bz2 import BZ2File
-    bz2_module = 1
-except ImportError, message:
-    bz2_module = 0
-    bz2_module_message = message.args[0]
-
-# Gzip compression module.
-from gzip import GzipFile
-
-# Devnull.
-try:
-    from os import devnull
-    devnull_import = True
-except ImportError, message:
-    devnull_import = False
-    devnull_import_message = message.args[0]
+# Dependency check module.
+import dep_check
 
 # Python module imports.
+if dep_check.bz2_module:
+    from bz2 import BZ2File
+if dep_check.gzip_module:
+    from gzip import GzipFile
+if dep_check.devnull_import:
+    from os import devnull
 from os import F_OK, X_OK, access, altsep, getenv, makedirs, pathsep, remove, sep, stat
 from os.path import expanduser, basename, splitext
 from re import match, search
@@ -262,10 +251,10 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
         if compress_type == 0:
             file_obj = open(file_path, 'r')
         elif compress_type == 1:
-            if bz2_module:
+            if dep_check.bz2_module:
                 file_obj = BZ2File(file_path, 'r')
             else:
-                raise RelaxError, "Cannot open the file " + `file_path` + ", try uncompressing first.  " + bz2_module_message + "."
+                raise RelaxError, "Cannot open the file " + `file_path` + ", try uncompressing first.  " + dep_check.bz2_module_message + "."
         elif compress_type == 2:
             file_obj = GzipFile(file_path, 'r')
     except IOError, message:
@@ -308,8 +297,8 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
     # The null device.
     if search('devnull', file_name):
         # Devnull could not be imported!
-        if not devnull_import:
-            raise RelaxError, devnull_import_message + ".  To use devnull, please upgrade to Python >= 2.4."
+        if not dep_check.devnull_import:
+            raise RelaxError, dep_check.devnull_import_message + ".  To use devnull, please upgrade to Python >= 2.4."
 
         # Print out.
         if verbosity:
@@ -333,12 +322,12 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
     # Bzip2 compression.
     if compress_type == 1 and not search('.bz2$', file_path):
         # Bz2 module exists.
-        if bz2_module:
+        if dep_check.bz2_module:
             file_path = file_path + '.bz2'
 
         # Switch to gzip compression.
         else:
-            warn(RelaxWarning("Cannot use Bzip2 compression, using gzip compression instead.  " + bz2_module_message + "."))
+            warn(RelaxWarning("Cannot use Bzip2 compression, using gzip compression instead.  " + dep_check.bz2_module_message + "."))
             compress_type = 2
 
     # Gzip compression.
