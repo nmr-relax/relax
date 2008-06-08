@@ -80,6 +80,58 @@ class Test_relax_data(Relax_data_base_class, TestCase):
             self.assertRaises(RelaxFloatError, self.relax_data_fns.back_calc, ri_label='R2', frq_label='1000', frq=data[1])
 
 
+    def test_copy_argfail_pipe_from(self):
+        """The pipe_from arg test of the relax_data.copy() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.relax_data_fns.copy, pipe_from=data[1])
+
+
+    def test_copy_argfail_pipe_to(self):
+        """The pipe_to arg test of the relax_data.copy() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.relax_data_fns.copy, pipe_from='', pipe_to=data[1])
+
+
+    def test_copy_argfail_ri_label(self):
+        """The ri_label arg test of the relax_data.copy() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.copy, pipe_from='', pipe_to='', ri_label=data[1])
+
+
+    def test_copy_argfail_frq_label(self):
+        """The frq_label arg test of the relax_data.copy() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.copy, pipe_from='', pipe_to='', ri_label='R2', frq_label=data[1])
+
+
     def test_read_argfail_ri_label(self):
         """The ri_label arg test of the relax_data.read() user function."""
 
