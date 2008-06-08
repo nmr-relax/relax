@@ -259,7 +259,7 @@ def copy(run1=None, run2=None, ri_label=None, frq_label=None):
     # Copy all data.
     if ri_label == None and frq_label == None:
         # Get all data structure names.
-        names = self.data_names()
+        names = get_data_names()
 
         # Loop over the sequence.
         for i in xrange(len(ds.res[run1])):
@@ -307,15 +307,18 @@ def copy(run1=None, run2=None, ri_label=None, frq_label=None):
             self.update_data_structures_spin(data2, ri_label, frq_label, frq, value, error)
 
 
-def data_init(container):
+def data_init(container, global_flag=False):
     """Function for initialising the data structures for a spin container.
 
-    @param container:   The data pipe or spin data container (PipeContainer or SpinContainer).
-    @type container:    class instance
+    @param container:       The data pipe or spin data container (PipeContainer or SpinContainer).
+    @type container:        class instance
+    @keyword global_flag:   A flag which if True corresponds to the pipe specific data structures
+                            and if False corresponds to the spin specific data structures.
+    @type global_flag:      bool
     """
 
     # Get the data names.
-    data_names = self.data_names()
+    data_names = get_data_names(global_flag)
 
     # Init.
     list_data = [ 'relax_data',
@@ -338,11 +341,11 @@ def data_init(container):
             setattr(container, name, 0)
 
 
-def data_names():
-    """Function for returning a list of names of data structures associated with relax_data.
+def get_data_names(global_flag):
+    """Return a list of names of data structures associated with relax_data.
 
     Description
-    ~~~~~~~~~~~
+    ===========
 
     The names are as follows:
 
@@ -367,10 +370,15 @@ def data_names():
     frq_labels:  NMR frequency labels, eg ['600', '500']
 
     frq:  NMR frequencies in Hz, eg [600.0 * 1e6, 500.0 * 1e6]
+
+
+    @keyword global_flag:   A flag which if True corresponds to the pipe specific data structures
+                            and if False corresponds to the spin specific data structures.
+    @type global_flag:      bool
     """
 
     # Global data names.
-    if self.global_flag == 1:
+    if global_flag:
         names = [ 'num_ri',
                   'num_frq',
                   'ri_labels',
@@ -558,7 +566,7 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
         raise RelaxNoSequenceError
 
     # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
-    if self.test_labels(ri_label, frq_label):
+    if test_labels(ri_label, frq_label):
         raise RelaxRiError, (ri_label, frq_label)
 
     # Minimum number of columns.
@@ -609,21 +617,15 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
     # Global (non-residue specific) data.
     #####################################
 
-    # Global data flag.
-    self.global_flag = 1
-
     # Initialise the global data for the current pipe if necessary.
-    self.data_init(ds[ds.current_pipe])
+    data_init(ds[ds.current_pipe], global_flag=True)
 
     # Update the global data.
-    self.update_data_structures_pipe(ri_label, frq_label, frq)
+    update_data_structures_pipe(ri_label, frq_label, frq)
 
 
     # Residue specific data.
     ########################
-
-    # Global data flag.
-    self.global_flag = 0
 
     # Loop over the relaxation data.
     for i in xrange(len(file_data)):
@@ -648,7 +650,7 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
             raise RelaxNoSpinError, id
 
         # Update all data structures.
-        self.update_data_structures_spin(spin, ri_label, frq_label, frq, value, error)
+        update_data_structures_spin(spin, ri_label, frq_label, frq, value, error)
 
 
 def return_value(i, data_type):
@@ -715,7 +717,7 @@ def update_data_structures_pipe(ri_label=None, frq_label=None, frq=None):
     cdp = ds[ds.current_pipe]
 
     # Initialise the relaxation data structures (if needed).
-    self.data_init(cdp)
+    data_init(cdp, global_flag=True)
 
     # The index.
     i = len(cdp.ri_labels) - 1
@@ -783,10 +785,10 @@ def update_data_structures_spin(spin=None, ri_label=None, frq_label=None, frq=No
     """
 
     # Initialise the relaxation data structures (if needed).
-    self.data_init(spin)
+    data_init(spin, global_flag=False)
 
     # Find the index corresponding to 'ri_label' and 'frq_label'.
-    index = self.find_index(spin, ri_label, frq_label)
+    index = find_index(spin, ri_label, frq_label)
 
     # Append empty data.
     if index == None:
