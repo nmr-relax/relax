@@ -42,13 +42,11 @@ class Relax_data:
         self.__relax__ = relax
 
 
-    def back_calc(self, run=None, ri_label=None, frq_label=None, frq=None):
+    def back_calc(self, ri_label=None, frq_label=None, frq=None):
         """Function for back calculating relaxation data.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
 
@@ -61,15 +59,10 @@ class Relax_data:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "relax_data.back_calc("
-            text = text + "run=" + `run`
-            text = text + ", ri_label=" + `ri_label`
+            text = text + "ri_label=" + `ri_label`
             text = text + ", frq_label=" + `frq_label`
             text = text + ", frq=" + `frq` + ")"
             print text
-
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # Relaxation data type.
         if type(ri_label) != str:
@@ -84,7 +77,7 @@ class Relax_data:
             raise RelaxFloatError, ('frequency', frq)
 
         # Execute the functional code.
-        self.__relax__.specific.relax_data.back_calc(run=run, ri_label=ri_label, frq_label=frq_label, frq=frq)
+        relax_data.back_calc(ri_label=ri_label, frq_label=frq_label, frq=frq)
 
 
     def copy(self, run1=None, run2=None, ri_label=None, frq_label=None):
