@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from prompt.relax_data import Relax_data
-from relax_errors import RelaxError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.relax_data_testing_base import Relax_data_base_class
 
 # Unit test imports.
@@ -130,6 +130,58 @@ class Test_relax_data(Relax_data_base_class, TestCase):
 
             # The argument test.
             self.assertRaises(RelaxNoneStrError, self.relax_data_fns.copy, pipe_from='', pipe_to='', ri_label='R2', frq_label=data[1])
+
+
+    def test_delete_argfail_ri_label(self):
+        """The ri_label arg test of the relax_data.delete() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.relax_data_fns.delete, ri_label=data[1])
+
+
+    def test_delete_argfail_frq_label(self):
+        """The frq_label arg test of the relax_data.delete() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.relax_data_fns.delete, ri_label='R2', frq_label=data[1])
+
+
+    def test_display_argfail_ri_label(self):
+        """The ri_label arg test of the relax_data.display() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.relax_data_fns.display, ri_label=data[1])
+
+
+    def test_display_argfail_frq_label(self):
+        """The frq_label arg test of the relax_data.display() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.relax_data_fns.display, ri_label='R2', frq_label=data[1])
 
 
     def test_read_argfail_ri_label(self):
@@ -299,3 +351,68 @@ class Test_relax_data(Relax_data_base_class, TestCase):
 
             # The argument test.
             self.assertRaises(RelaxNoneStrError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', sep=data[1])
+
+
+    def test_write_argfail_ri_label(self):
+        """The ri_label arg test of the relax_data.write() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.relax_data_fns.write, ri_label=data[1])
+
+
+    def test_write_argfail_frq_label(self):
+        """The frq_label arg test of the relax_data.write() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.relax_data_fns.write, ri_label='R2', frq_label=data[1])
+
+
+    def test_write_argfail_file(self):
+        """The file arg test of the relax_data.write() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.relax_data_fns.write, ri_label='R2', frq_label='1000', file=data[1])
+
+
+    def test_write_argfail_dir(self):
+        """The dir arg test of the relax_data.write() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.write, ri_label='R2', frq_label='1000', file='a', dir=data[1])
+
+
+    def test_write_argfail_force(self):
+        """The force arg test of the relax_data.write() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxBoolError, self.relax_data_fns.write, ri_label='R2', frq_label='1000', file='a', force=data[1])
