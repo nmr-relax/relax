@@ -70,92 +70,83 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
     # Global (non-spin specific) data.
     #####################################
 
-    # Global data flag.
-    global_flag = True
-
     # Initialise the global data if necessary.
-    self.data_init(ds[ds.current_pipe])
+    data_init(ds[ds.current_pipe], global_flag=True)
 
     # Add the data structures.
-    ds.ri_labels[self.run] = deepcopy(ri_labels)
-    ds.remap_table[self.run] = deepcopy(remap_table)
-    ds.frq_labels[self.run] = deepcopy(frq_labels)
-    ds.frq[self.run] = deepcopy(frq)
-    ds.num_ri[self.run] = len(ri_labels)
-    ds.num_frq[self.run] = len(frq)
+    ds.ri_labels = deepcopy(ri_labels)
+    ds.remap_table = deepcopy(remap_table)
+    ds.frq_labels = deepcopy(frq_labels)
+    ds.frq = deepcopy(frq)
+    ds.num_ri = len(ri_labels)
+    ds.num_frq = len(frq)
 
 
     # Residue specific data.
     ########################
 
-    # Global data flag.
-    self.global_flag = 0
-
-    # Remap the data structure 'ds.res[self.run][res_index]'.
-    data = ds.res[self.run][res_index]
-
     # Relaxation data.
     if not sim:
         # Initialise the relaxation data structures (if needed).
-        self.data_init(data)
+        data_init(spin, global_flag=False)
 
         # Relaxation data and errors.
-        data.relax_data = values
-        data.relax_error = errors
+        spin.relax_data = values
+        spin.relax_error = errors
 
         # Associated data structures.
-        data.ri_labels = ri_labels
-        data.remap_table = remap_table
+        spin.ri_labels = ri_labels
+        spin.remap_table = remap_table
 
         # Remove any data with the value None.
-        for index,Ri in enumerate(data.relax_data):
+        for index, Ri in enumerate(spin.relax_data):
             if Ri == None:
-                data.relax_data.pop(index)
-                data.relax_error.pop(index)
-                data.ri_labels.pop(index)
-                data.remap_table.pop(index)
+                spin.relax_data.pop(index)
+                spin.relax_error.pop(index)
+                spin.ri_labels.pop(index)
+                spin.remap_table.pop(index)
 
         # Remove any data with error of None.
-        for index,error in enumerate(data.relax_error):
+        for index,error in enumerate(spin.relax_error):
             if error == None:
-                data.relax_data.pop(index)
-                data.relax_error.pop(index)
-                data.ri_labels.pop(index)
-                data.remap_table.pop(index)
+                spin.relax_data.pop(index)
+                spin.relax_error.pop(index)
+                spin.ri_labels.pop(index)
+                spin.remap_table.pop(index)
 
         # Associated data structures.
-        data.frq_labels = frq_labels
-        data.frq = frq
-        data.num_ri = len(ri_labels)
-        data.num_frq = len(frq)
+        spin.frq_labels = frq_labels
+        spin.frq = frq
+        spin.num_ri = len(ri_labels)
+        spin.num_frq = len(frq)
 
         # Create an array of None for the NOE R1 translation table.
-        for i in xrange(data.num_ri):
-            data.noe_r1_table.append(None)
+        for i in xrange(spin.num_ri):
+            spin.noe_r1_table.append(None)
 
         # Update the NOE R1 translation table.
-        for i in xrange(data.num_ri):
+        for i in xrange(spin.num_ri):
             # If the data corresponds to 'NOE', try to find if the corresponding R1 data.
-            if data.ri_labels[i] == 'NOE':
-                for j in xrange(data.num_ri):
-                    if data.ri_labels[j] == 'R1' and data.frq_labels[data.remap_table[i]] == data.frq_labels[data.remap_table[j]]:
-                        data.noe_r1_table[i] = j
+            if spin.ri_labels[i] == 'NOE':
+                for j in xrange(spin.num_ri):
+                    if spin.ri_labels[j] == 'R1' and spin.frq_labels[spin.remap_table[i]] == spin.frq_labels[spin.remap_table[j]]:
+                        spin.noe_r1_table[i] = j
 
             # If the data corresponds to 'R1', try to find if the corresponding NOE data.
-            if data.ri_labels[i] == 'R1':
-                for j in xrange(data.num_ri):
-                    if data.ri_labels[j] == 'NOE' and data.frq_labels[data.remap_table[i]] == data.frq_labels[data.remap_table[j]]:
-                        data.noe_r1_table[j] = i
+            if spin.ri_labels[i] == 'R1':
+                for j in xrange(spin.num_ri):
+                    if spin.ri_labels[j] == 'NOE' and spin.frq_labels[spin.remap_table[i]] == spin.frq_labels[spin.remap_table[j]]:
+                        spin.noe_r1_table[j] = i
 
 
     # Simulation data.
     else:
         # Create the data structure if necessary.
-        if not hasattr(data, 'relax_sim_data') or type(data.relax_sim_data) != list:
-            data.relax_sim_data = []
+        if not hasattr(spin, 'relax_sim_data') or type(spin.relax_sim_data) != list:
+            spin.relax_sim_data = []
 
         # Append the simulation's relaxation data.
-        data.relax_sim_data.append(values)
+        spin.relax_sim_data.append(values)
 
 
 def back_calc(ri_label=None, frq_label=None, frq=None):
