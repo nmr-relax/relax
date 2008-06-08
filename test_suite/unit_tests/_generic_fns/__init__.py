@@ -24,6 +24,7 @@
 __all__ = ['_structure',
            'test_molecule',
            'test_pipes',
+           'test_relax_data',
            'test_residue',
            'test_selection',
            'test_spin']
