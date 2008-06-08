@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from specific_fns import relax_data
+from generic_fns import relax_data
 from relax_errors import RelaxError
 from test_suite.unit_tests.relax_data_testing_base import Relax_data_base_class
 
@@ -34,16 +34,16 @@ class Container:
 
 
 class Test_relax_data(Relax_data_base_class, TestCase):
-    """Unit tests for the functions of the 'specific_fns.relax_data' module."""
+    """Unit tests for the functions of the 'generic_fns.relax_data' module."""
 
-    # Place the specific_fns.relax_data module into the class namespace.
-    relax_data_fns = relax_data.Rx_data()
+    # Place the generic_fns.relax_data module into the class namespace.
+    relax_data_fns = relax_data
 
 
     def test_data_init_spin(self):
         """Initial relaxation data structures placed into a spin container.
 
-        The function tested is specific_fns.relax_data.data_init().
+        The function tested is generic_fns.relax_data.data_init().
         """
 
         # Get a container instance.
@@ -70,7 +70,7 @@ class Test_relax_data(Relax_data_base_class, TestCase):
     def test_data_init_pipe(self):
         """Initial relaxation data structures placed into a pipe container.
 
-        The function tested is specific_fns.relax_data.data_init().
+        The function tested is generic_fns.relax_data.data_init().
         """
 
         # Get a container instance.
