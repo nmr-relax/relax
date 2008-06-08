@@ -149,14 +149,12 @@ class Relax_data:
         relax_data.copy(pipe_from=pipe_from, pipe_to=pipe_to, ri_label=ri_label, frq_label=frq_label)
 
 
-    def delete(self, run=None, ri_label=None, frq_label=None):
+    def delete(self, ri_label=None, frq_label=None):
         """Function for deleting the relaxation data corresponding to ri_label and frq_label.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
-
         ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
 
         frq_label:  The field strength label.
@@ -165,23 +163,17 @@ class Relax_data:
         Examples
         ~~~~~~~~
 
-        To delete the relaxation data corresponding to ri_label='NOE', frq_label='600', and the run
-        'm4', type:
+        To delete the relaxation data corresponding to ri_label='NOE', frq_label='600', type:
 
-        relax> relax_data.delete('m4', 'NOE', '600')
+        relax> relax_data.delete('NOE', '600')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "relax_data.delete("
-            text = text + "run=" + `run`
-            text = text + ", ri_label=" + `ri_label`
+            text = text + "ri_label=" + `ri_label`
             text = text + ", frq_label=" + `frq_label` + ")"
             print text
-
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # Relaxation data type.
         if type(ri_label) != str:
@@ -192,16 +184,14 @@ class Relax_data:
             raise RelaxStrError, ('frequency label', frq_label)
 
         # Execute the functional code.
-        self.__relax__.specific.relax_data.delete(run=run, ri_label=ri_label, frq_label=frq_label)
+        relax_data.delete(ri_label=ri_label, frq_label=frq_label)
 
 
-    def display(self, run=None, ri_label=None, frq_label=None):
+    def display(self, ri_label=None, frq_label=None):
         """Function for displaying the relaxation data corresponding to ri_label and frq_label.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
 
@@ -211,22 +201,17 @@ class Relax_data:
         Examples
         ~~~~~~~~
 
-        To display the NOE relaxation data at 600 MHz from the run 'm4', type
+        To display the NOE relaxation data at 600 MHz, type:
 
-        relax> relax_data.display('m4', 'NOE', '600')
+        relax> relax_data.display('NOE', '600')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "relax_data.display("
-            text = text + "run=" + `run`
-            text = text + ", ri_label=" + `ri_label`
+            text = text + "ri_label=" + `ri_label`
             text = text + ", frq_label=" + `frq_label` + ")"
             print text
-
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # Relaxation data type.
         if type(ri_label) != str:
@@ -237,7 +222,7 @@ class Relax_data:
             raise RelaxStrError, ('frequency label', frq_label)
 
         # Execute the functional code.
-        self.__relax__.specific.relax_data.display(run=run, ri_label=ri_label, frq_label=frq_label)
+        relax_data.display(ri_label=ri_label, frq_label=frq_label)
 
 
     def read(self, ri_label=None, frq_label=None, frq=None, file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None):
@@ -380,13 +365,11 @@ class Relax_data:
         relax_data.read(ri_label=ri_label, frq_label=frq_label, frq=frq, file=file, dir=dir, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep)
 
 
-    def write(self, run=None, ri_label=None, frq_label=None, file=None, dir=None, force=False):
+    def write(self, ri_label=None, frq_label=None, file=None, dir=None, force=False):
         """Function for writing R1, R2, or NOE relaxation data to a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         ri_label:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
 
@@ -410,17 +393,12 @@ class Relax_data:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "relax_data.write("
-            text = text + "run=" + `run`
-            text = text + ", ri_label=" + `ri_label`
+            text = text + "ri_label=" + `ri_label`
             text = text + ", frq_label=" + `frq_label`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # Relaxation data type.
         if type(ri_label) != str:
@@ -443,4 +421,4 @@ class Relax_data:
             raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
-        self.__relax__.specific.relax_data.write(run=run, ri_label=ri_label, frq_label=frq_label, file=file, dir=dir, force=force)
+        relax_data.write(ri_label=ri_label, frq_label=frq_label, file=file, dir=dir, force=force)
