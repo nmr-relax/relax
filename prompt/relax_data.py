@@ -409,8 +409,8 @@ class Relax_data:
             raise RelaxStrError, ('frequency label', frq_label)
 
         # File.
-        if file != None and type(file) != str:
-            raise RelaxNoneStrError, ('file name', file)
+        if type(file) != str:
+            raise RelaxStrError, ('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
