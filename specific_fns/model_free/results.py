@@ -438,6 +438,7 @@ class Results:
 
         # The parameter set.
         param_set = spin_line[col['param_set']]
+        print spin
 
         # Values.
         if data_set == 'value':
@@ -835,10 +836,11 @@ class Results:
 
         # Simulations.
         sim = True
-        if data_set != 'value' and data_set != 'error':
+        if data_set == 'value' or data_set == 'error':
             sim = False
 
         # Add the relaxation data.
+        print sim
         add_data_to_spin(spin=spin, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, values=values, errors=errors, sim=sim)
 
 
