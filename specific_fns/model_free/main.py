@@ -37,7 +37,7 @@ from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, retu
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
 from physical_constants import N15_CSA, NH_BOND_LENGTH
-from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxTensorError
+from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSpinSpecError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxTensorError
 import specific_fns
 
 
@@ -1802,6 +1802,10 @@ class Model_free_main:
         @return:        The conversion factor.
         @rtype:         float
         """
+
+        # The spin must be specified to get frequency units.
+        if spin == None and spin_id == None:
+            raise RelaxNoSpinSpecError
 
         # Get the spin.
         if not spin:
