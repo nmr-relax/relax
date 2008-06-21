@@ -902,6 +902,7 @@ class Results:
 
             # Get the spin container.
             spin_id = self.__get_spin_id(file_line, col, verbosity)
+            spin = return_spin(spin_id)
 
             # Backwards compatibility for the reading of the results file from versions 1.2.0 to 1.2.9.
             if len(file_line) == 4:
@@ -959,7 +960,7 @@ class Results:
 
             # XH vector, heteronucleus, and proton.
             if data_set == 'value':
-                self.__set_xh_vect(file_line, col, spin_id, verbosity)
+                self.__set_xh_vect(file_line, col, spin, verbosity)
 
             # Relaxation data.
             self.__load_relax_data(file_line, col, data_set, spin_id, verbosity)
@@ -1021,22 +1022,19 @@ class Results:
             generic_fns.selection.desel_spin(spin_id)
 
 
-    def __set_xh_vect(self, spin_line, col, spin_id, verbosity=1):
+    def __set_xh_vect(self, spin_line, col, spin, verbosity=1):
         """Set the XH unit vector and the attached proton name.
 
         @param spin_line:   The line of data for a single spin.
         @type spin_line:    list of str
         @param col:         The column indecies.
         @type col:          dict of int
-        @param spin_id:     The spin identification string.
-        @type spin_id:      str
+        @param spin:        The spin container.
+        @type spin:         SpinContainer instance
         @keyword verbosity: A variable specifying the amount of information to print.  The higher
                             the value, the greater the verbosity.
         @type verbosity:    int
         """
-
-        # Get the spin.
-        spin = return_spin(spin_id)
 
         # The vector.
         xh_vect = eval(spin_line[col['xh_vect']])
