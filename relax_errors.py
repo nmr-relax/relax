@@ -646,6 +646,14 @@ class RelaxSpinSelectDisallowError(BaseError):
         if Debug:
             self.save_state()
 
+# The spin must be specified.
+class RelaxNoSpinSpecError(BaseError):
+    def __init__(self):
+        self.text = "The spin system must be specified."
+        if Debug:
+            self.save_state()
+
+
 
 # Setup errors.
 ###############
