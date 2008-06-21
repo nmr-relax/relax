@@ -438,7 +438,6 @@ class Results:
 
         # The parameter set.
         param_set = spin_line[col['param_set']]
-        print spin
 
         # Values.
         if data_set == 'value':
