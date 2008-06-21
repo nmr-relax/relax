@@ -772,7 +772,7 @@ class Results:
             return False
 
 
-    def __load_relax_data(self, spin_line, col, data_set, spin_id, verbosity=1):
+    def __load_relax_data(self, spin_line, col, data_set, spin, verbosity=1):
         """Load the relaxation data.
 
         @param spin_line:   The line of data for a single spin.
@@ -782,8 +782,8 @@ class Results:
         @param data_set:    The data set type, one of 'value', 'error', or 'sim_xxx' (where xxx is
                             a number).
         @type data_set:     str
-        @param spin_id:     The spin identification string.
-        @type spin_id:      str
+        @param spin:        The spin container.
+        @type spin:         SpinContainer instance
         @keyword verbosity: A variable specifying the amount of information to print.  The higher
                             the value, the greater the verbosity.
         @type verbosity:    int
@@ -823,7 +823,7 @@ class Results:
             sim = False
 
         # Add the relaxation data.
-        add_data_to_spin(spin=return_spin(spin_id), ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, values=values, errors=errors, sim=sim)
+        add_data_to_spin(spin=spin, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, values=values, errors=errors, sim=sim)
 
 
     def read_columnar_results(self, file_data, verbosity=1):
@@ -963,7 +963,7 @@ class Results:
                 self.__set_xh_vect(file_line, col, spin, verbosity)
 
             # Relaxation data.
-            self.__load_relax_data(file_line, col, data_set, spin_id, verbosity)
+            self.__load_relax_data(file_line, col, data_set, spin, verbosity)
 
             # Model-free data.
             self.read_columnar_model_free_data()
