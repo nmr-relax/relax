@@ -1786,7 +1786,7 @@ class Model_free_main:
         ds.warning[self.run] = None
 
 
-    def return_conversion_factor(self, param, spin_id):
+    def return_conversion_factor(self, param, spin=None, spin_id=None):
         """Return the factor of conversion between different parameter units.
 
         For example, the internal representation of te is in seconds, whereas the external
@@ -1795,14 +1795,17 @@ class Model_free_main:
 
         @param param:   The name of the parameter to return the conversion factor for.
         @type param:    str
-        @param spin_id: The spin identification string.
+        @param spin:    The spin container.
+        @type spin:     SpinContainer instance
+        @param spin_id: The spin identification string (ignored if the spin container is supplied).
         @type spin_id:  str
         @return:        The conversion factor.
         @rtype:         float
         """
 
         # Get the spin.
-        spin = return_spin(spin_id)
+        if not spin:
+            spin = return_spin(spin_id)
 
         # Get the object name.
         object_name = self.return_data_name(param)
