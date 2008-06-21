@@ -396,22 +396,35 @@ class Results:
         return generate_spin_id(mol_name, res_num, res_name, spin_num, spin_name)
 
 
-    def read_columnar_model_free_data(self):
-        """Function for reading the model-free data."""
+    def __load_model_free_data(self, spin_line, col, data_set, spin, spin_id, verbosity=1):
+        """Read the model-free data for the spin.
 
-        # Reassign data structure.
-        data = ds.res[self.run][self.res_index]
+        @param spin_line:   The line of data for a single spin.
+        @type spin_line:    list of str
+        @param col:         The column indecies.
+        @type col:          dict of int
+        @param data_set:    The data set type, one of 'value', 'error', or 'sim_xxx' (where xxx is
+                            a number).
+        @type data_set:     str
+        @param spin:        The spin container.
+        @type spin:         SpinContainer instance
+        @param spin_id:     The spin identification string.
+        @type spin_id:      str
+        @keyword verbosity: A variable specifying the amount of information to print.  The higher
+                            the value, the greater the verbosity.
+        @type verbosity:    int
+        """
 
         # Set up the model-free models.
-        if self.data_set == 'value':
+        if data_set == 'value':
             # Get the model-free model.
-            model = self.file_line[col['model']]
+            model = spin_line[col['model']]
 
             # Get the model-free equation.
-            equation = self.file_line[col['eqi']]
+            equation = spin_line[col['eqi']]
 
             # Get the model-free parameters.
-            params = eval(self.file_line[col['params']])
+            params = eval(spin_line[col['params']])
 
             # Fix for the 1.2 relax versions whereby the parameter 'tm' was renamed to 'local_tm' (which occurred in version 1.2.5).
             if params:
@@ -421,159 +434,162 @@ class Results:
 
             # Set up the model-free model.
             if model and equation:
-                self.model_setup(self.run, model=model, equation=equation, params=params, res_num=self.res_num)
+                self.model_setup(model=model, equation=equation, params=params, spin_id=spin_id)
+
+        # The parameter set.
+        param_set = spin_line[col['param_set']]
 
         # Values.
-        if self.data_set == 'value':
+        if data_set == 'value':
             # S2.
             try:
-                data.s2 = float(self.file_line[col['s2']]) * self.return_conversion_factor('s2')
+                spin.s2 = float(spin_line[col['s2']]) * self.return_conversion_factor('s2', spin=spin)
             except ValueError:
-                data.s2 = None
+                spin.s2 = None
 
             # S2f.
             try:
-                data.s2f = float(self.file_line[col['s2f']]) * self.return_conversion_factor('s2f')
+                spin.s2f = float(spin_line[col['s2f']]) * self.return_conversion_factor('s2f', spin=spin)
             except ValueError:
-                data.s2f = None
+                spin.s2f = None
 
             # S2s.
             try:
-                data.s2s = float(self.file_line[col['s2s']]) * self.return_conversion_factor('s2s')
+                spin.s2s = float(spin_line[col['s2s']]) * self.return_conversion_factor('s2s', spin=spin)
             except ValueError:
-                data.s2s = None
+                spin.s2s = None
 
             # Local tm.
             try:
-                data.local_tm = float(self.file_line[col['local_tm']]) * self.return_conversion_factor('local_tm')
+                spin.local_tm = float(spin_line[col['local_tm']]) * self.return_conversion_factor('local_tm', spin=spin)
             except ValueError:
-                data.local_tm = None
+                spin.local_tm = None
 
             # te.
             try:
-                data.te = float(self.file_line[col['te']]) * self.return_conversion_factor('te')
+                spin.te = float(spin_line[col['te']]) * self.return_conversion_factor('te', spin=spin)
             except ValueError:
-                data.te = None
+                spin.te = None
 
             # tf.
             try:
-                data.tf = float(self.file_line[col['tf']]) * self.return_conversion_factor('tf')
+                spin.tf = float(spin_line[col['tf']]) * self.return_conversion_factor('tf', spin=spin)
             except ValueError:
-                data.tf = None
+                spin.tf = None
 
             # ts.
             try:
-                data.ts = float(self.file_line[col['ts']]) * self.return_conversion_factor('ts')
+                spin.ts = float(spin_line[col['ts']]) * self.return_conversion_factor('ts', spin=spin)
             except ValueError:
-                data.ts = None
+                spin.ts = None
 
             # Rex.
             try:
-                data.rex = float(self.file_line[col['rex']]) * self.return_conversion_factor('rex')
+                spin.rex = float(spin_line[col['rex']]) * self.return_conversion_factor('rex', spin=spin)
             except ValueError:
-                data.rex = None
+                spin.rex = None
 
             # Bond length.
             try:
-                data.r = float(self.file_line[col['r']]) * self.return_conversion_factor('r')
+                spin.r = float(spin_line[col['r']]) * self.return_conversion_factor('r', spin=spin)
             except ValueError:
-                data.r = None
+                spin.r = None
 
             # CSA.
             try:
-                data.csa = float(self.file_line[col['csa']]) * self.return_conversion_factor('csa')
+                spin.csa = float(spin_line[col['csa']]) * self.return_conversion_factor('csa', spin=spin)
             except ValueError:
-                data.csa = None
+                spin.csa = None
 
             # Minimisation details (global minimisation results).
-            if self.param_set == 'diff' or self.param_set == 'all':
-                ds.chi2[self.run] = eval(self.file_line[col['chi2']])
-                ds.iter[self.run] = eval(self.file_line[col['iter']])
-                ds.f_count[self.run] = eval(self.file_line[col['f_count']])
-                ds.g_count[self.run] = eval(self.file_line[col['g_count']])
-                ds.h_count[self.run] = eval(self.file_line[col['h_count']])
-                if self.file_line[col['warn']] == 'None':
-                    ds.warning[self.run] = None
+            if param_set == 'diff' or param_set == 'all':
+                ds[ds.current_pipe].chi2 = eval(spin_line[col['chi2']])
+                ds[ds.current_pipe].iter = eval(spin_line[col['iter']])
+                ds[ds.current_pipe].f_count = eval(spin_line[col['f_count']])
+                ds[ds.current_pipe].g_count = eval(spin_line[col['g_count']])
+                ds[ds.current_pipe].h_count = eval(spin_line[col['h_count']])
+                if spin_line[col['warn']] == 'None':
+                    ds[ds.current_pipe].warning = None
                 else:
-                    ds.warning[self.run] = replace(self.file_line[col['warn']], '_', ' ')
+                    ds[ds.current_pipe].warning = replace(spin_line[col['warn']], '_', ' ')
 
             # Minimisation details (individual residue results).
             else:
-                data.chi2 = eval(self.file_line[col['chi2']])
-                data.iter = eval(self.file_line[col['iter']])
-                data.f_count = eval(self.file_line[col['f_count']])
-                data.g_count = eval(self.file_line[col['g_count']])
-                data.h_count = eval(self.file_line[col['h_count']])
-                if self.file_line[col['warn']] == 'None':
-                    data.warning = None
+                spin.chi2 = eval(spin_line[col['chi2']])
+                spin.iter = eval(spin_line[col['iter']])
+                spin.f_count = eval(spin_line[col['f_count']])
+                spin.g_count = eval(spin_line[col['g_count']])
+                spin.h_count = eval(spin_line[col['h_count']])
+                if spin_line[col['warn']] == 'None':
+                    spin.warning = None
                 else:
-                    data.warning = replace(self.file_line[col['warn']], '_', ' ')
+                    spin.warning = replace(spin_line[col['warn']], '_', ' ')
 
         # Errors.
-        if self.data_set == 'error':
+        if spin == 'error':
             # S2.
             try:
-                data.s2_err = float(self.file_line[col['s2']]) * self.return_conversion_factor('s2')
+                spin.s2_err = float(spin_line[col['s2']]) * self.return_conversion_factor('s2', spin=spin)
             except ValueError:
-                data.s2_err = None
+                spin.s2_err = None
 
             # S2f.
             try:
-                data.s2f_err = float(self.file_line[col['s2f']]) * self.return_conversion_factor('s2f')
+                spin.s2f_err = float(spin_line[col['s2f']]) * self.return_conversion_factor('s2f', spin=spin)
             except ValueError:
-                data.s2f_err = None
+                spin.s2f_err = None
 
             # S2s.
             try:
-                data.s2s_err = float(self.file_line[col['s2s']]) * self.return_conversion_factor('s2s')
+                spin.s2s_err = float(spin_line[col['s2s']]) * self.return_conversion_factor('s2s', spin=spin)
             except ValueError:
-                data.s2s_err = None
+                spin.s2s_err = None
 
             # Local tm.
             try:
-                data.local_tm_err = float(self.file_line[col['local_tm']]) * self.return_conversion_factor('local_tm')
+                spin.local_tm_err = float(spin_line[col['local_tm']]) * self.return_conversion_factor('local_tm', spin=spin)
             except ValueError:
-                data.local_tm_err = None
+                spin.local_tm_err = None
 
             # te.
             try:
-                data.te_err = float(self.file_line[col['te']]) * self.return_conversion_factor('te')
+                spin.te_err = float(spin_line[col['te']]) * self.return_conversion_factor('te', spin=spin)
             except ValueError:
-                data.te_err = None
+                spin.te_err = None
 
             # tf.
             try:
-                data.tf_err = float(self.file_line[col['tf']]) * self.return_conversion_factor('tf')
+                spin.tf_err = float(spin_line[col['tf']]) * self.return_conversion_factor('tf', spin=spin)
             except ValueError:
-                data.tf_err = None
+                spin.tf_err = None
 
             # ts.
             try:
-                data.ts_err = float(self.file_line[col['ts']]) * self.return_conversion_factor('ts')
+                spin.ts_err = float(spin_line[col['ts']]) * self.return_conversion_factor('ts', spin=spin)
             except ValueError:
-                data.ts_err = None
+                spin.ts_err = None
 
             # Rex.
             try:
-                data.rex_err = float(self.file_line[col['rex']]) * self.return_conversion_factor('rex')
+                spin.rex_err = float(spin_line[col['rex']]) * self.return_conversion_factor('rex', spin=spin)
             except ValueError:
-                data.rex_err = None
+                spin.rex_err = None
 
             # Bond length.
             try:
-                data.r_err = float(self.file_line[col['r']]) * self.return_conversion_factor('r')
+                spin.r_err = float(spin_line[col['r']]) * self.return_conversion_factor('r', spin=spin)
             except ValueError:
-                data.r_err = None
+                spin.r_err = None
 
             # CSA.
             try:
-                data.csa_err = float(self.file_line[col['csa']]) * self.return_conversion_factor('csa')
+                spin.csa_err = float(spin_line[col['csa']]) * self.return_conversion_factor('csa', spin=spin)
             except ValueError:
-                data.csa_err = None
+                spin.csa_err = None
 
 
         # Construct the simulation data structures.
-        if self.data_set == 'sim_0':
+        if data_set == 'sim_0':
             # Get the parameter object names.
             param_names = self.data_names(set='params')
 
@@ -586,7 +602,7 @@ class Results:
                 sim_object_name = object_name + '_sim'
 
                 # Create the simulation object.
-                setattr(data, sim_object_name, [])
+                setattr(spin, sim_object_name, [])
 
             # Loop over all the minimisation object names.
             for object_name in min_names:
@@ -594,98 +610,98 @@ class Results:
                 sim_object_name = object_name + '_sim'
 
                 # Create the simulation object.
-                if self.param_set == 'diff' or self.param_set == 'all':
-                    setattr(ds, sim_object_name, {})
-                    object = getattr(ds, sim_object_name)
-                    object[self.run] = []
+                if param_set == 'diff' or param_set == 'all':
+                    setattr(ds[ds.current_pipe], sim_object_name, {})
+                    object = getattr(ds[ds.current_pipe], sim_object_name)
+                    object = []
                 else:
-                    setattr(data, sim_object_name, [])
+                    setattr(spin, sim_object_name, [])
 
         # Simulations.
-        if self.data_set != 'value' and self.data_set != 'error':
+        if data_set != 'value' and data_set != 'error':
             # S2.
             try:
-                data.s2_sim.append(float(self.file_line[col['s2']]) * self.return_conversion_factor('s2'))
+                spin.s2_sim.append(float(spin_line[col['s2']]) * self.return_conversion_factor('s2'), spin=spin)
             except ValueError:
-                data.s2_sim.append(None)
+                spin.s2_sim.append(None)
 
             # S2f.
             try:
-                data.s2f_sim.append(float(self.file_line[col['s2f']]) * self.return_conversion_factor('s2f'))
+                spin.s2f_sim.append(float(spin_line[col['s2f']]) * self.return_conversion_factor('s2f'), spin=spin)
             except ValueError:
-                data.s2f_sim.append(None)
+                spin.s2f_sim.append(None)
 
             # S2s.
             try:
-                data.s2s_sim.append(float(self.file_line[col['s2s']]) * self.return_conversion_factor('s2s'))
+                spin.s2s_sim.append(float(spin_line[col['s2s']]) * self.return_conversion_factor('s2s'), spin=spin)
             except ValueError:
-                data.s2s_sim.append(None)
+                spin.s2s_sim.append(None)
 
             # Local tm.
             try:
-                data.local_tm_sim.append(float(self.file_line[col['local_tm']]) * self.return_conversion_factor('local_tm'))
+                spin.local_tm_sim.append(float(spin_line[col['local_tm']]) * self.return_conversion_factor('local_tm'), spin=spin)
             except ValueError:
-                data.local_tm_sim.append(None)
+                spin.local_tm_sim.append(None)
 
             # te.
             try:
-                data.te_sim.append(float(self.file_line[col['te']]) * self.return_conversion_factor('te'))
+                spin.te_sim.append(float(spin_line[col['te']]) * self.return_conversion_factor('te'), spin=spin)
             except ValueError:
-                data.te_sim.append(None)
+                spin.te_sim.append(None)
 
             # tf.
             try:
-                data.tf_sim.append(float(self.file_line[col['tf']]) * self.return_conversion_factor('tf'))
+                spin.tf_sim.append(float(spin_line[col['tf']]) * self.return_conversion_factor('tf'), spin=spin)
             except ValueError:
-                data.tf_sim.append(None)
+                spin.tf_sim.append(None)
 
             # ts.
             try:
-                data.ts_sim.append(float(self.file_line[col['ts']]) * self.return_conversion_factor('ts'))
+                spin.ts_sim.append(float(spin_line[col['ts']]) * self.return_conversion_factor('ts'), spin=spin)
             except ValueError:
-                data.ts_sim.append(None)
+                spin.ts_sim.append(None)
 
             # Rex.
             try:
-                data.rex_sim.append(float(self.file_line[col['rex']]) * self.return_conversion_factor('rex'))
+                spin.rex_sim.append(float(spin_line[col['rex']]) * self.return_conversion_factor('rex'), spin=spin)
             except ValueError:
-                data.rex_sim.append(None)
+                spin.rex_sim.append(None)
 
             # Bond length.
             try:
-                data.r_sim.append(float(self.file_line[col['r']]) * self.return_conversion_factor('r'))
+                spin.r_sim.append(float(spin_line[col['r']]) * self.return_conversion_factor('r'), spin=spin)
             except ValueError:
-                data.r_sim.append(None)
+                spin.r_sim.append(None)
 
             # CSA.
             try:
-                data.csa_sim.append(float(self.file_line[col['csa']]) * self.return_conversion_factor('csa'))
+                spin.csa_sim.append(float(spin_line[col['csa']]) * self.return_conversion_factor('csa'), spin=spin)
             except ValueError:
-                data.csa_sim.append(None)
+                spin.csa_sim.append(None)
 
             # Minimisation details (global minimisation results).
-            if self.param_set == 'diff' or self.param_set == 'all':
-                ds.chi2_sim[self.run].append(eval(self.file_line[col['chi2']]))
-                ds.iter_sim[self.run].append(eval(self.file_line[col['iter']]))
-                ds.f_count_sim[self.run].append(eval(self.file_line[col['f_count']]))
-                ds.g_count_sim[self.run].append(eval(self.file_line[col['g_count']]))
-                ds.h_count_sim[self.run].append(eval(self.file_line[col['h_count']]))
-                if self.file_line[col['warn']] == 'None':
-                    ds.warning_sim[self.run].append(None)
+            if param_set == 'diff' or param_set == 'all':
+                ds[ds.current_pipe].chi2_sim.append(eval(spin_line[col['chi2']]))
+                ds[ds.current_pipe].iter_sim.append(eval(spin_line[col['iter']]))
+                ds[ds.current_pipe].f_count_sim.append(eval(spin_line[col['f_count']]))
+                ds[ds.current_pipe].g_count_sim.append(eval(spin_line[col['g_count']]))
+                ds[ds.current_pipe].h_count_sim.append(eval(spin_line[col['h_count']]))
+                if spin_line[col['warn']] == 'None':
+                    ds[ds.current_pipe].warning_sim.append(None)
                 else:
-                    ds.warning_sim[self.run].append(replace(self.file_line[col['warn']], '_', ' '))
+                    ds[ds.current_pipe].warning_sim.append(replace(spin_line[col['warn']], '_', ' '))
 
             # Minimisation details (individual residue results).
             else:
-                data.chi2_sim.append(eval(self.file_line[col['chi2']]))
-                data.iter_sim.append(eval(self.file_line[col['iter']]))
-                data.f_count_sim.append(eval(self.file_line[col['f_count']]))
-                data.g_count_sim.append(eval(self.file_line[col['g_count']]))
-                data.h_count_sim.append(eval(self.file_line[col['h_count']]))
-                if self.file_line[col['warn']] == 'None':
-                    data.warning_sim.append(None)
+                spin.chi2_sim.append(eval(spin_line[col['chi2']]))
+                spin.iter_sim.append(eval(spin_line[col['iter']]))
+                spin.f_count_sim.append(eval(spin_line[col['f_count']]))
+                spin.g_count_sim.append(eval(spin_line[col['g_count']]))
+                spin.h_count_sim.append(eval(spin_line[col['h_count']]))
+                if spin_line[col['warn']] == 'None':
+                    spin.warning_sim.append(None)
                 else:
-                    data.warning_sim.append(replace(self.file_line[col['warn']], '_', ' '))
+                    spin.warning_sim.append(replace(spin_line[col['warn']], '_', ' '))
 
 
     def __fix_params(self, spin_line, col, verbosity=1):
@@ -966,7 +982,7 @@ class Results:
             self.__load_relax_data(file_line, col, data_set, spin, verbosity)
 
             # Model-free data.
-            self.read_columnar_model_free_data()
+            self.__load_model_free_data(file_line, col, data_set, spin, spin_id, verbosity)
 
         # Set up the simulations.
         if len(sims):
