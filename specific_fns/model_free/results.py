@@ -839,7 +839,6 @@ class Results:
             sim = False
 
         # Add the relaxation data.
-        print sim
         add_data_to_spin(spin=spin, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, values=values, errors=errors, sim=sim)
 
 
