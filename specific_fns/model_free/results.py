@@ -744,7 +744,7 @@ class Results:
             mf_fixed = None
 
         # Print out.
-        if verbosity:
+        if verbosity >= 2:
             print "\nFixing parameters based on the parameter set."
             print "Parameter set: " + param_set
             print "Diffusion tensor fixed: " + `diff_fixed`
