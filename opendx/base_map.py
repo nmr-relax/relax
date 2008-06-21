@@ -321,7 +321,7 @@ class Base_Map:
         # Loop over the parameters
         for i in xrange(self.n):
             # Parameter conversion factors.
-            factor = self.return_conversion_factor[i](self.param_names[i], self.spin_id)
+            factor = self.return_conversion_factor[i](self.param_names[i], spin_id=self.spin_id)
 
             # Parameter units.
             units = self.return_units[i](self.param_names[i], self.spin_id)
