@@ -74,12 +74,12 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
     data_init(ds[ds.current_pipe], global_flag=True)
 
     # Add the data structures.
-    ds.ri_labels = deepcopy(ri_labels)
-    ds.remap_table = deepcopy(remap_table)
-    ds.frq_labels = deepcopy(frq_labels)
-    ds.frq = deepcopy(frq)
-    ds.num_ri = len(ri_labels)
-    ds.num_frq = len(frq)
+    ds[ds.current_pipe].ri_labels = deepcopy(ri_labels)
+    ds[ds.current_pipe].remap_table = deepcopy(remap_table)
+    ds[ds.current_pipe].frq_labels = deepcopy(frq_labels)
+    ds[ds.current_pipe].frq = deepcopy(frq)
+    ds[ds.current_pipe].num_ri = len(ri_labels)
+    ds[ds.current_pipe].num_frq = len(frq)
 
 
     # Residue specific data.
