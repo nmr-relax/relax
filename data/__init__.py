@@ -25,7 +25,8 @@
 
 
 # Python module imports.
-from re import match
+from re import search
+from string import split
 
 # relax module imports.
 from pipe_container import PipeContainer
@@ -78,28 +79,40 @@ class Relax_data_store(dict):
         else:
             text = text + "  None\n"
 
-        # Objects.
+        # Data store objects.
         text = text + "\n"
-        text = text + "Objects:\n"
-        for name in dir(self):
-            if match("^_", name) or name in dict.__dict__ or name == 'add' or name == 'instance':
-                continue
-            text = text + "  %s: %s\n" % (name, `getattr(self, name)`)
+        text = text + "Data store objects:\n"
+        names = self.__class__.__dict__.keys()
+        names.sort()
+        for name in names:
+            # The object.
+            obj = getattr(self, name)
 
-        # Methods.
-        text = text + "\n"
-        text = text + "Methods:\n"
-        text = text + "  __reset__, Reset the relax data storage object back to its initial state\n"
-        text = text + "  add, Add a new data pipe container.\n"
-
+            # The text.
+            if obj == None or type(obj) == str:
+                text = text + "  %s %s: %s\n" % (name, type(obj), obj)
+            else:
+                text = text + "  %s %s: %s\n" % (name, type(obj), split(obj.__doc__, '\n')[0])
 
         # dict methods.
         text = text + "\n"
         text = text + "Inherited dictionary methods:\n"
         for name in dir(dict):
-            if match("^_", name):
+            # Skip special methods.
+            if search("^_", name):
                 continue
-            text = text + "  %s\n" % name
+
+            # Skip overwritten methods.
+            if name in self.__class__.__dict__.keys():
+                continue
+
+            # The object.
+            obj = getattr(self, name)
+
+            # The text.
+            text = text + "  %s %s: %s\n" % (name, type(obj), split(obj.__doc__, '\n')[0])
+
+        # Return the text.
         return text
 
 
