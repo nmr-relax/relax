@@ -81,9 +81,12 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
     ds[ds.current_pipe].num_ri = len(ri_labels)
     ds[ds.current_pipe].num_frq = len(frq)
 
+    # Update the NOE R1 translation table.
+    update_noe_r1_table(ds[ds.current_pipe])
 
-    # Residue specific data.
-    ########################
+
+    # Spin specific data.
+    #####################
 
     # Relaxation data.
     if not sim:
@@ -120,24 +123,8 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
         spin.num_ri = len(ri_labels)
         spin.num_frq = len(frq)
 
-        # Create an array of None for the NOE R1 translation table.
-        for i in xrange(spin.num_ri):
-            spin.noe_r1_table.append(None)
-
         # Update the NOE R1 translation table.
-        for i in xrange(spin.num_ri):
-            # If the data corresponds to 'NOE', try to find if the corresponding R1 data.
-            if spin.ri_labels[i] == 'NOE':
-                for j in xrange(spin.num_ri):
-                    if spin.ri_labels[j] == 'R1' and spin.frq_labels[spin.remap_table[i]] == spin.frq_labels[spin.remap_table[j]]:
-                        spin.noe_r1_table[i] = j
-
-            # If the data corresponds to 'R1', try to find if the corresponding NOE data.
-            if spin.ri_labels[i] == 'R1':
-                for j in xrange(spin.num_ri):
-                    if spin.ri_labels[j] == 'NOE' and spin.frq_labels[spin.remap_table[i]] == spin.frq_labels[spin.remap_table[j]]:
-                        spin.noe_r1_table[j] = i
-
+        update_noe_r1_table(spin)
 
     # Simulation data.
     else:
@@ -842,6 +829,33 @@ def update_data_structures_spin(spin=None, ri_label=None, frq_label=None, frq=No
         for j in xrange(spin.num_ri):
             if spin.ri_labels[j] == 'NOE' and frq_label == spin.frq_labels[spin.remap_table[j]]:
                 spin.noe_r1_table[j] = spin.num_ri - 1
+
+
+def update_noe_r1_table(cont):
+    """Update the NOE-R1 translation table.
+
+    @param cont:    Either the pipe container or spin container to update the structure of.
+    @type cont:     PipeContainer or SpinContainer instance
+    """
+
+    # Create an array of None for the NOE R1 translation table, if the table is empty.
+    if cont.noe_r1_table == []:
+        for i in xrange(cont.num_ri):
+            cont.noe_r1_table.append(None)
+
+    # Loop over the relaxation data.
+    for i in xrange(cont.num_ri):
+        # If the data corresponds to 'NOE', try to find if the corresponding R1 data.
+        if cont.ri_labels[i] == 'NOE':
+            for j in xrange(cont.num_ri):
+                if cont.ri_labels[j] == 'R1' and cont.frq_labels[cont.remap_table[i]] == cont.frq_labels[cont.remap_table[j]]:
+                    cont.noe_r1_table[i] = j
+
+        # If the data corresponds to 'R1', try to find if the corresponding NOE data.
+        if cont.ri_labels[i] == 'R1':
+            for j in xrange(cont.num_ri):
+                if cont.ri_labels[j] == 'NOE' and cont.frq_labels[cont.remap_table[i]] == cont.frq_labels[cont.remap_table[j]]:
+                    cont.noe_r1_table[j] = i
 
 
 def write(ri_label=None, frq_label=None, file=None, dir=None, force=0):
