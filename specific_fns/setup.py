@@ -73,6 +73,10 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         if eqi == 'data_init':
             function = inst.data_init
 
+        # List of parameter names returning function.
+        if eqi == 'data_names':
+            function = inst.data_names
+
         # Default parameter value returning function.
         if eqi == 'default_value':
             function = inst.default_value
@@ -144,6 +148,10 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         # Data returning function.
         if eqi == 'return_data':
             function = inst.return_data
+
+        # Parameter description returning function.
+        if eqi == 'return_data_desc':
+            function = inst.return_data_desc
 
         # Data or parameter name returning function.
         if eqi == 'return_data_name':
