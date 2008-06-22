@@ -621,28 +621,8 @@ class Model_free_main:
             if name in list_data:
                 init_data = []
 
-            # Data structures which are initially None.
-            none_data = [ 'equation',
-                          'model',
-                          's2',
-                          's2f',
-                          's2s',
-                          'local_tm',
-                          'te',
-                          'tf',
-                          'ts',
-                          'rex',
-                          'r',
-                          'csa',
-                          'nucleus',
-                          'chi2',
-                          'iter',
-                          'f_count',
-                          'g_count',
-                          'h_count',
-                          'warning' ]
-            if name in none_data:
-                init_data = None
+            # Set everything else initially to None.
+            init_data = None
 
             # If the name is not in 'spin', add it.
             if not hasattr(spin, name):
@@ -703,6 +683,12 @@ class Model_free_main:
 
         # Generic.
         if set == 'all' or set == 'generic':
+            names.append('select')
+            names.append('fixed')
+            names.append('proton_type')
+            names.append('heteronuc_type')
+            names.append('attached_proton')
+            names.append('nucleus')
             names.append('model')
             names.append('equation')
             names.append('params')
@@ -719,7 +705,6 @@ class Model_free_main:
             names.append('rex')
             names.append('r')
             names.append('csa')
-            names.append('nucleus')
 
         # Minimisation statistics.
         if set == 'all' or set == 'min':
@@ -730,6 +715,10 @@ class Model_free_main:
             names.append('h_count')
             names.append('warning')
 
+        # Structural data.
+        names.append('xh_vect')
+
+        # Return the names.
         return names
 
 
