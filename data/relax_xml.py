@@ -27,27 +27,6 @@
 from re import search
 
 
-def create_diff_elem(doc, elem):
-    """Create an XML element for the diffusion tensor.
-
-    @param doc:     The XML document object.
-    @type doc:      xml.dom.minidom.Document instance
-    @param elem:    The element to add the diffusion tensor element to.
-    @type elem:     XML element object
-    """
-
-    # Create the diffusion tensor element and add it to the higher level element.
-    tensor_elem = doc.createElement('diff_tensor')
-    elem.appendChild(tensor_elem)
-
-    # Set the diffusion tensor attributes.
-    tensor_elem.setAttribute('desc', 'Diffusion tensor')
-    tensor_elem.setAttribute('type', ds[ds.current_pipe].diff_tensor.type)
-
-    # Add all simple python objects within the PipeContainer to the pipe element.
-    fill_object_contents(doc, tensor_elem, object=ds[ds.current_pipe].diff_tensor, blacklist=['is_empty', 'type'])
-
-
 def create_str_elem(doc, elem):
     """Create an XML element for the structural information.
 

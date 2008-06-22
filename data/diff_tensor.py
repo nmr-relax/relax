@@ -29,6 +29,7 @@ from types import ListType
 # relax module imports.
 from data_classes import Element
 from relax_errors import RelaxError
+from relax_xml import fill_object_contents
 
 
 
@@ -823,6 +824,27 @@ class DiffTensorData(Element):
                 # Initialise an empty array to store the MC simulation object elements (if it doesn't already exist).
                 if not target+'_sim' in self.__dict__:
                     self.__dict__[target+'_sim'] = DiffTensorSimList(target, self)
+
+
+    def xml_create_diff_element(self, doc, element):
+        """Create an XML element for the diffusion tensor.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element:    The element to add the diffusion tensor element to.
+        @type element:     XML element object
+        """
+
+        # Create the diffusion tensor element and add it to the higher level element.
+        tensor_element = doc.createElement('diff_tensor')
+        element.appendChild(tensor_element)
+
+        # Set the diffusion tensor attributes.
+        tensor_element.setAttribute('desc', 'Diffusion tensor')
+        tensor_element.setAttribute('type', self.type)
+
+        # Add all simple python objects within the PipeContainer to the pipe element.
+        fill_object_contents(doc, tensor_element, object=self, blacklist=self.__class__.__dict__.keys())
 
 
 
