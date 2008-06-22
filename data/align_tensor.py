@@ -597,12 +597,6 @@ class AlignTensorData(Element):
                     'Sxy',
                     'Sxz',
                     'Syz',
-                    'alpha',
-                    'beta',
-                    'gamma',
-                    'tensor',
-                    'tensor_diag',
-                    'rotation',
                     'domain',
                     'red']
 
