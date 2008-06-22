@@ -27,24 +27,6 @@
 from re import search
 
 
-def create_str_elem(doc, elem):
-    """Create an XML element for the structural information.
-
-    @param doc:     The XML document object.
-    @type doc:      xml.dom.minidom.Document instance
-    @param elem:    The element to add the structural info to.
-    @type elem:     XML element object
-    """
-
-    # Create the structural element and add it to the higher level element.
-    str_elem = doc.createElement('structure')
-    elem.appendChild(str_elem)
-
-    # Set the structural attributes.
-    str_elem.setAttribute('desc', 'Structural information')
-    str_elem.setAttribute('id', ds[ds.current_pipe].structure.id)
-
-
 def fill_object_contents(doc, elem, object=None, blacklist=None):
     """Place all simple python objects into the XML element namespace.
 
