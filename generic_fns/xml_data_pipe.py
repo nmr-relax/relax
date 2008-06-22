@@ -102,6 +102,24 @@ def create_pipe_elem(doc, elem):
     return pipe_elem
 
 
+def create_str_elem(doc, elem):
+    """Create an element for the structural information.
+
+    @param doc:     The XML document object.
+    @type doc:      xml.dom.minidom.Document instance
+    @param elem:    The element to add the structural info to.
+    @type elem:     XML element object
+    """
+
+    # Create the structural element and add it to the higher level element.
+    str_elem = doc.createElement('structure')
+    elem.appendChild(str_elem)
+
+    # Set the structural attributes.
+    str_elem.setAttribute('desc', 'Structural information')
+    str_elem.setAttribute('id', ds[ds.current_pipe].structure.id)
+
+
 def create_top_level(doc):
     """Create the top level element including all the information needed about relax.
  
@@ -178,6 +196,9 @@ def write(file):
     @type file:         file
     """
 
+    # The current data pipe.
+    cdp = ds[ds.current_pipe]
+
     # Create the XML document object.
     xmldoc = xml.dom.minidom.Document()
 
@@ -191,13 +212,17 @@ def write(file):
     global_elem = xmldoc.createElement('global')
     pipe_elem.appendChild(global_elem)
     global_elem.setAttribute('desc', 'Global data located in the top level of the data pipe')
-    fill_object_contents(xmldoc, global_elem, object=ds[ds.current_pipe], blacklist=['diff_tensor', 'hybrid_pipes', 'is_empty', 'mol', 'pipe_type', 'structure'])
+    fill_object_contents(xmldoc, global_elem, object=cdp, blacklist=['diff_tensor', 'hybrid_pipes', 'is_empty', 'mol', 'pipe_type', 'structure'])
 
     # Hybrid info.
     create_hybrid_elem(xmldoc, pipe_elem)
 
     # Add the diffusion tensor data.
     create_diff_elem(xmldoc, pipe_elem)
+
+    # Add the structural data, if it exists.
+    if hasattr(cdp, 'structure'):
+        create_str_elem(xmldoc, pipe_elem)
 
     # Write out the XML file.
     xml.dom.ext.PrettyPrint(xmldoc, file)
