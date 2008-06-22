@@ -25,7 +25,7 @@ import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import xml
+from generic_fns import xml_data_pipe
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPipeError
 from relax_io import extract_data, open_write_file, strip
 from specific_fns.setup import get_specific_fn, get_string
@@ -64,7 +64,7 @@ def display(run=None, format='columnar'):
 
     # Specific results writing function.
     if format == 'xml':
-        self.write_function = xml.write
+        self.write_function = xml_data_pipe.write
     elif format == 'columnar':
         self.write_function = self.relax.specific_setup.setup('write_columnar_results', function_type, raise_error=0)
     else:
@@ -87,7 +87,7 @@ def read(file='results', directory=None, file_data=None, format='columnar', verb
 
     # Specific results writing function.
     if format == 'xml':
-        read_function = xml.read
+        read_function = xml_data_pipe.read
     elif format == 'columnar':
         read_function = get_specific_fn('read_columnar_results', ds[ds.current_pipe].pipe_type, raise_error=False)
     else:
@@ -128,7 +128,7 @@ def write(file="results", directory=None, force=False, format='columnar', compre
 
     # Specific results writing function.
     if format == 'xml':
-        write_function = xml.write
+        write_function = xml_data_pipe.write
     elif format == 'columnar':
         write_function = get_specific_fn('write_columnar_results', ds[ds.current_pipe].pipe_type, raise_error=False)
     else:
