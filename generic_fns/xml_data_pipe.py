@@ -115,7 +115,11 @@ def fill_object_contents(doc, elem, object=None, blacklist=None):
             continue
 
         # Skip special objects.
-        if search("^__", name):
+        if search("^_", name):
+            continue
+
+        # Only pack objects in the __mod_attr__ list, if that list exists.
+        if hasattr(object, '__mod_attr__') and name not in object.__mod_attr__:
             continue
 
         # Create a new element for this object, and add it to the main element.
