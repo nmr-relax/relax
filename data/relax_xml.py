@@ -73,30 +73,6 @@ def create_hybrid_elem(doc, elem):
     list_elem.appendChild(text_val)
 
 
-def create_pipe_elem(doc, elem):
-    """Create an XML element for the data pipe, and add data pipe info as attributes.
-
-    @param doc:     The XML document object.
-    @type doc:      xml.dom.minidom.Document instance
-    @param elem:    The element to add the pipe element to.
-    @type elem:     XML element object
-    @return:        The data pipe element.
-    @rtype:         XML element object
-    """
-
-    # Create the pipe element and add it to the higher level element.
-    pipe_elem = doc.createElement('pipe')
-    elem.appendChild(pipe_elem)
-
-    # Set the data pipe attributes.
-    pipe_elem.setAttribute('desc', 'The contents of a relax data pipe')
-    pipe_elem.setAttribute('name', ds.current_pipe)
-    pipe_elem.setAttribute('type', ds[ds.current_pipe].pipe_type)
-
-    # Return the pipe element.
-    return pipe_elem
-
-
 def create_str_elem(doc, elem):
     """Create an XML element for the structural information.
 

@@ -28,7 +28,7 @@ from data_classes import Element
 from diff_tensor import DiffTensorData
 from mol_res_spin import MoleculeList
 from prototype import Prototype
-from relax_xml import create_top_level
+from relax_xml import fill_object_contents
 
 
 class PipeContainer(Prototype):
@@ -131,26 +131,28 @@ class PipeContainer(Prototype):
         return True
 
 
-    def xml_write(self, file):
-        """Create a XML elements for the current data pipe.
+    def xml_write(self, doc, elem):
+        """Create a XML element for the current data pipe.
 
-        @param file:        The open file object.
-        @type file:         file
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param elem:    The XML element to add the pipe XML element to.
+        @type elem:     XML element object
         """
 
         # Add all simple python objects within the PipeContainer to the global element.
-        global_elem = xmldoc.createElement('global')
-        pipe_elem.appendChild(global_elem)
+        global_elem = doc.createElement('global')
+        elem.appendChild(global_elem)
         global_elem.setAttribute('desc', 'Global data located in the top level of the data pipe')
-        fill_object_contents(xmldoc, global_elem, object=self, blacklist=['diff_tensor', 'hybrid_pipes', 'is_empty', 'mol', 'pipe_type', 'structure'])
+        fill_object_contents(doc, global_elem, object=self, blacklist=['diff_tensor', 'hybrid_pipes', 'mol', 'pipe_type', 'structure'] + self.__class__.__dict__.keys())
 
         # Hybrid info.
-        create_hybrid_elem(xmldoc, pipe_elem)
+        create_hybrid_elem(doc, elem)
 
         # Add the diffusion tensor data.
         if hasattr(cdp, 'diff_tensor'):
-            create_diff_elem(xmldoc, pipe_elem)
+            create_diff_elem(doc, elem)
 
         # Add the structural data, if it exists.
         if hasattr(cdp, 'structure'):
-            create_str_elem(xmldoc, pipe_elem)
+            create_str_elem(doc, elem)

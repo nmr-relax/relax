@@ -183,8 +183,17 @@ class Relax_data_store(dict):
         # Set the relax version number.
         top_elem.setAttribute('version', version)
 
-        # Create the data pipe element.
-        self[self.current_pipe].xml_write(xmldoc, top_elem)
+        # Create the pipe XML element and add it to the top level XML element.
+        pipe_elem = xmldoc.createElement('pipe')
+        top_elem.appendChild(pipe_elem)
+
+        # Set the data pipe attributes.
+        pipe_elem.setAttribute('desc', 'The contents of a relax data pipe')
+        pipe_elem.setAttribute('name', self.current_pipe)
+        pipe_elem.setAttribute('type', self[self.current_pipe].pipe_type)
+
+        # Fill the data pipe XML element.
+        self[self.current_pipe].xml_write(xmldoc, pipe_elem)
 
         # Write out the XML file.
         xml.dom.ext.PrettyPrint(xmldoc, file)
