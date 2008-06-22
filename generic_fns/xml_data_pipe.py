@@ -54,6 +54,34 @@ def create_diff_elem(doc, elem):
     fill_object_contents(doc, tensor_elem, object=ds[ds.current_pipe].diff_tensor, blacklist=['is_empty', 'type'])
 
 
+def create_hybrid_elem(doc, elem):
+    """Create an element for the data pipe hybridisation information.
+
+    @param doc:     The XML document object.
+    @type doc:      xml.dom.minidom.Document instance
+    @param elem:    The element to add the hybridisation info to.
+    @type elem:     XML element object
+    """
+
+    # Create the hybrid element and add it to the higher level element.
+    hybrid_elem = doc.createElement('hybrid')
+    elem.appendChild(hybrid_elem)
+
+    # Set the hybridisation attributes.
+    hybrid_elem.setAttribute('desc', 'Data pipe hybridisation information')
+
+    # Create an element to store the pipes list.
+    list_elem = doc.createElement('pipes')
+    hybrid_elem.appendChild(list_elem)
+
+    # Add the pipes list.
+    text_val = doc.createTextNode(str(ds[ds.current_pipe].hybrid_pipes))
+    list_elem.appendChild(text_val)
+
+    # Return the element.
+    return hybrid_elem
+
+
 def create_pipe_elem(doc, elem):
     """Create an element for the data pipe, and add data pipe info as attributes.
 
@@ -162,7 +190,10 @@ def write(file):
     global_elem = xmldoc.createElement('global')
     pipe_elem.appendChild(global_elem)
     global_elem.setAttribute('desc', 'Global data located in the top level of the data pipe')
-    fill_object_contents(xmldoc, global_elem, object=ds[ds.current_pipe], blacklist=['diff_tensor', 'is_empty', 'mol', 'pipe_type', 'structure'])
+    fill_object_contents(xmldoc, global_elem, object=ds[ds.current_pipe], blacklist=['diff_tensor', 'hybrid_pipes', 'is_empty', 'mol', 'pipe_type', 'structure'])
+
+    # Hybrid info.
+    hybrid_elem = create_hybrid_elem(xmldoc, pipe_elem)
 
     # Add the diffusion tensor data.
     create_diff_elem(xmldoc, pipe_elem)
