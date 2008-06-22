@@ -1031,7 +1031,7 @@ class Results:
         spin_id = generate_spin_id(mol_name, res_num, res_name, spin_num, spin_name)
 
         # Set the selection status.
-        select = bool(spin_line[col['select']])
+        select = bool(int(spin_line[col['select']]))
         if select:
             generic_fns.selection.sel_spin(spin_id)
         else:
