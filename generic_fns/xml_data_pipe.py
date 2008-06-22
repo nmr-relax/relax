@@ -158,8 +158,11 @@ def write(file):
     # Create the data pipe element.
     pipe_elem = create_pipe_elem(xmldoc, top_elem)
 
-    # Add all simple python objects within the PipeContainer to the pipe element.
-    fill_object_contents(xmldoc, pipe_elem, object=ds[ds.current_pipe], blacklist=['diff_tensor', 'is_empty', 'mol', 'pipe_type', 'structure'])
+    # Add all simple python objects within the PipeContainer to the global element.
+    global_elem = xmldoc.createElement('global')
+    pipe_elem.appendChild(global_elem)
+    global_elem.setAttribute('desc', 'Global data located in the top level of the data pipe')
+    fill_object_contents(xmldoc, global_elem, object=ds[ds.current_pipe], blacklist=['diff_tensor', 'is_empty', 'mol', 'pipe_type', 'structure'])
 
     # Add the diffusion tensor data.
     create_diff_elem(xmldoc, pipe_elem)
@@ -168,6 +171,6 @@ def write(file):
     xml.dom.ext.PrettyPrint(xmldoc, file)
 
     # Print out.
-    print ds[ds.current_pipe].diff_tensor
+    print ds[ds.current_pipe].structure
     print "\n\nXML:"
     xml.dom.ext.PrettyPrint(xmldoc)
