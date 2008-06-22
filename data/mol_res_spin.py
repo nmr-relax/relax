@@ -200,7 +200,6 @@ class SpinList(list):
             # Set the spin attributes.
             spin_element.setAttribute('name', self[i].name)
             spin_element.setAttribute('num', str(self[i].num))
-            spin_element.setAttribute('index', `i`)
             spin_element.setAttribute('desc', 'Spin')
 
             # Add all simple python objects within the SpinContainer to the XML element.
@@ -384,7 +383,6 @@ class ResidueList(list):
             # Set the residue attributes.
             res_element.setAttribute('name', self[i].name)
             res_element.setAttribute('num', str(self[i].num))
-            res_element.setAttribute('index', `i`)
             res_element.setAttribute('desc', 'Residue')
 
             # Add all simple python objects within the ResidueContainer to the XML element.
@@ -557,7 +555,6 @@ class MoleculeList(list):
 
             # Set the molecule attributes.
             mol_element.setAttribute('name', self[i].name)
-            mol_element.setAttribute('index', `i`)
             mol_element.setAttribute('desc', 'Molecule')
 
             # Add all simple python objects within the MoleculeContainer to the XML element.
