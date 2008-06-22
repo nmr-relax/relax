@@ -37,9 +37,6 @@ class PipeContainer(Prototype):
     def __init__(self):
         """Set up all the PipeContainer data structures."""
 
-        # Molecular structure data.
-        self.structure = Element()
-
         # The molecule-residue-spin object.
         self.mol = MoleculeList()
 
@@ -47,15 +44,7 @@ class PipeContainer(Prototype):
         self.pipe_type = None
 
         # Hybrid models.
-        self.hybrid_pipes = {}
-
-        # Global minimisation statistics.
-        self.chi2 = None
-        self.iter = None
-        self.f_count = None
-        self.g_count = None
-        self.h_count = None
-        self.warning = None
+        self.hybrid_pipes = []
 
 
     def __repr__(self):
@@ -110,7 +99,7 @@ class PipeContainer(Prototype):
         """
 
         # Is the molecule structure data object empty?
-        if not self.structure.is_empty():
+        if hasattr(self, 'structure') and not self.structure.is_empty():
             return False
 
         # Is the molecule/residue/spin data object empty?
@@ -118,25 +107,13 @@ class PipeContainer(Prototype):
             return False
 
         # Tests for the initialised data (the pipe type can be set in an empty data pipe, so this isn't checked).
-        if self.hybrid_pipes != {}:
-            return False
-        if self.chi2 != None:
-            return False
-        if self.iter != None:
-            return False
-        if self.f_count != None:
-            return False
-        if self.g_count != None:
-            return False
-        if self.h_count != None:
-            return False
-        if self.warning != None:
+        if self.hybrid_pipes:
             return False
 
         # An object has been added to the container.
         for name in dir(self):
             # Skip the objects initialised in __init__().
-            if name == 'structure' or name == 'mol' or name == 'pipe_type' or name == 'hybrid_pipes' or name == 'chi2' or name == 'iter' or name == 'f_count' or name == 'g_count' or name == 'h_count' or name == 'warning':
+            if name == 'mol' or name == 'pipe_type' or name == 'hybrid_pipes':
                 continue
 
             # Skip the PipeContainer methods.
