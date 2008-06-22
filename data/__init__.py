@@ -175,25 +175,25 @@ class Relax_data_store(dict):
         xmldoc = xml.dom.minidom.Document()
 
         # Create the top level element, including the relax URL.
-        top_elem = xmldoc.createElementNS('http://nmr-relax.com', 'relax')
+        top_element = xmldoc.createElementNS('http://nmr-relax.com', 'relax')
 
         # Append the element.
-        xmldoc.appendChild(top_elem)
+        xmldoc.appendChild(top_element)
 
         # Set the relax version number.
-        top_elem.setAttribute('version', version)
+        top_element.setAttribute('version', version)
 
         # Create the pipe XML element and add it to the top level XML element.
-        pipe_elem = xmldoc.createElement('pipe')
-        top_elem.appendChild(pipe_elem)
+        pipe_element = xmldoc.createElement('pipe')
+        top_element.appendChild(pipe_element)
 
         # Set the data pipe attributes.
-        pipe_elem.setAttribute('desc', 'The contents of a relax data pipe')
-        pipe_elem.setAttribute('name', self.current_pipe)
-        pipe_elem.setAttribute('type', self[self.current_pipe].pipe_type)
+        pipe_element.setAttribute('desc', 'The contents of a relax data pipe')
+        pipe_element.setAttribute('name', self.current_pipe)
+        pipe_element.setAttribute('type', self[self.current_pipe].pipe_type)
 
         # Fill the data pipe XML element.
-        self[self.current_pipe].xml_write(xmldoc, pipe_elem)
+        self[self.current_pipe].xml_create_pipe_element(xmldoc, pipe_element)
 
         # Write out the XML file.
         xml.dom.ext.PrettyPrint(xmldoc, file)

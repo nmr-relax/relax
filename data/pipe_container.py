@@ -131,53 +131,53 @@ class PipeContainer(Prototype):
         return True
 
 
-    def xml_hybrid_elem(self, doc, elem):
+    def xml_create_hybrid_element(self, doc, element):
         """Create an XML element for the data pipe hybridisation information.
 
         @param doc:     The XML document object.
         @type doc:      xml.dom.minidom.Document instance
-        @param elem:    The element to add the hybridisation info to.
-        @type elem:     XML element object
+        @param element: The element to add the hybridisation info to.
+        @type element:  XML element object
         """
 
         # Create the hybrid element and add it to the higher level element.
-        hybrid_elem = doc.createElement('hybrid')
-        elem.appendChild(hybrid_elem)
+        hybrid_element = doc.createElement('hybrid')
+        element.appendChild(hybrid_element)
 
         # Set the hybridisation attributes.
-        hybrid_elem.setAttribute('desc', 'Data pipe hybridisation information')
+        hybrid_element.setAttribute('desc', 'Data pipe hybridisation information')
 
         # Create an element to store the pipes list.
-        list_elem = doc.createElement('pipes')
-        hybrid_elem.appendChild(list_elem)
+        list_element = doc.createElement('pipes')
+        hybrid_element.appendChild(list_element)
 
         # Add the pipes list.
         text_val = doc.createTextNode(str(self.hybrid_pipes))
-        list_elem.appendChild(text_val)
+        list_element.appendChild(text_val)
 
 
-    def xml_write(self, doc, elem):
+    def xml_create_pipe_element(self, doc, element):
         """Create a XML element for the current data pipe.
 
         @param doc:     The XML document object.
         @type doc:      xml.dom.minidom.Document instance
-        @param elem:    The XML element to add the pipe XML element to.
-        @type elem:     XML element object
+        @param element: The XML element to add the pipe XML element to.
+        @type element:  XML element object
         """
 
         # Add all simple python objects within the PipeContainer to the global element.
-        global_elem = doc.createElement('global')
-        elem.appendChild(global_elem)
-        global_elem.setAttribute('desc', 'Global data located in the top level of the data pipe')
-        fill_object_contents(doc, global_elem, object=self, blacklist=['diff_tensor', 'hybrid_pipes', 'mol', 'pipe_type', 'structure'] + self.__class__.__dict__.keys())
+        global_element = doc.createElement('global')
+        element.appendChild(global_element)
+        global_element.setAttribute('desc', 'Global data located in the top level of the data pipe')
+        fill_object_contents(doc, global_element, object=self, blacklist=['diff_tensor', 'hybrid_pipes', 'mol', 'pipe_type', 'structure'] + self.__class__.__dict__.keys())
 
         # Hybrid info.
-        self.xml_hybrid_elem(doc, elem)
+        self.xml_create_hybrid_element(doc, element)
 
         # Add the diffusion tensor data.
-        if hasattr(cdp, 'diff_tensor'):
-            create_diff_elem(doc, elem)
+        if hasattr(self, 'diff_tensor'):
+            self.diff_tensor.xml_create_diff_element(doc, element)
 
         # Add the structural data, if it exists.
-        if hasattr(cdp, 'structure'):
-            create_str_elem(doc, elem)
+        if hasattr(self, 'structure'):
+            self.structure.xml_create_str_element(doc, element)
