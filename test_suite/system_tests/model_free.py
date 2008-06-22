@@ -675,7 +675,7 @@ class Mf(TestCase):
         self.assertEqual(cdp.diff_tensor.tm, 6.2029050826362826e-09)
 
         # Global minimisation statistic tests.
-        self.assertEqual(cdp.chi, 88.0888600975)
+        self.assertEqual(cdp.chi2, 88.0888600975)
         self.assertEqual(cdp.iter, 1)
         self.assertEqual(cdp.f_count, 20)
         self.assertEqual(cdp.g_count, 2)
