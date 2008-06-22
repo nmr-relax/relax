@@ -553,9 +553,6 @@ def dependency_generator(diff_type):
 class DiffTensorData(Element):
     """An empty data container for the diffusion tensor elements."""
 
-    # Set the initial diffusion type to None.
-    type = None
-
     # List of modifiable attributes.
     __mod_attr__ = ['type',
                     'fixed',
@@ -568,6 +565,12 @@ class DiffTensorData(Element):
                     'alpha',
                     'beta',
                     'gamma']
+
+    def __init__(self):
+        """Initialise a few instance variables."""
+
+        # Set the initial diffusion type to None.
+        self.type = None
 
 
     def __setattr__(self, name, value):
