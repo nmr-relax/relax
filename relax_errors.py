@@ -589,7 +589,7 @@ class RelaxFileEmptyError(BaseError):
 # Overwrite file.
 class RelaxFileOverwriteError(BaseError):
     def __init__(self, file_name, flag):
-        self.text = "The file " + `file_name` + " already exists.  Set the " + flag + " to 1 to overwrite."
+        self.text = "The file " + `file_name` + " already exists.  Set the " + flag + " to True to overwrite."
         if Debug:
             self.save_state()
 
