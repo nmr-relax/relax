@@ -30,7 +30,7 @@ from data_classes import Element
 from diff_tensor import DiffTensorData
 from mol_res_spin import MoleculeList
 from prototype import Prototype
-
+from relax_xml import create_top_level
 
 
 class PipeContainer(Prototype):

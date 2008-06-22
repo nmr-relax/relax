@@ -27,7 +27,6 @@
 from re import search
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from version import version
 
 
