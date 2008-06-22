@@ -703,11 +703,11 @@ class Mf(TestCase):
             print spin
 
             # Spin info tests.
-            self.assertEqual(num[i], res.num)
-            self.assertEqual('XXX', res.name)
-            self.assertEqual(None, spin.num)
-            self.assertEqual(None, spin.name)
-            self.assertEqual(select[i], spin.select)
+            self.assertEqual(res.num, num[i])
+            self.assertEqual(res.name, 'XXX')
+            self.assertEqual(spin.num, None)
+            self.assertEqual(spin.name, None)
+            self.assertEqual(spin.select, select[i])
             self.assertEqual(spin.fixed, False)
 
             # Skip deselected spins.
@@ -721,37 +721,37 @@ class Mf(TestCase):
             self.assertEqual(spin.nucleus, None)
 
             # Model-free tests.
-            self.assertEqual(model[j], spin.model)
+            self.assertEqual(spin.model, model[j])
             self.assertEqual(spin.equation, 'mf_ext')
-            self.assertEqual(params[j], spin.params)
-            self.assertEqual(s2[j], spin.s2)
-            self.assertEqual(s2f[j], spin.s2f)
-            self.assertEqual(s2s[j], spin.s2s)
-            self.assertEqual(None, spin.local_tm)
-            self.assertEqual(None, spin.te)
+            self.assertEqual(spin.params, params[j])
+            self.assertEqual(spin.s2, s2[j])
+            self.assertEqual(spin.s2f, s2f[j])
+            self.assertEqual(spin.s2s, s2s[j])
+            self.assertEqual(spin.local_tm, None)
+            self.assertEqual(spin.te, None)
             if tf[j] != None:
                 tf[j] = tf[j]*1e-12
-            self.assertEqual(tf[j], spin.tf)
-            self.assertEqual(ts[j]*1e-12, spin.ts)
+            self.assertEqual(spin.tf, tf[j])
+            self.assertEqual(spin.ts, ts[j]*1e-12)
             if rex[j] != None:
                 rex[j] = rex[j]/(2.0*pi*500000000.0)**2
-            self.assertEqual(rex[j], spin.rex)
-            self.assertEqual(1.0200000000000001e-10, spin.r)
-            self.assertEqual(-0.00016999999999999999, spin.csa)
+            self.assertEqual(spin.rex, rex[j])
+            self.assertEqual(spin.r, 1.0200000000000001e-10)
+            self.assertEqual(spin.csa, -0.00016999999999999999)
 
             # Minimisation statistic tests.
-            self.assertEqual(None, spin.chi2)
-            self.assertEqual(None, spin.iter)
-            self.assertEqual(None, spin.f_count)
-            self.assertEqual(None, spin.g_count)
-            self.assertEqual(None, spin.h_count)
-            self.assertEqual(None, spin.warning)
+            self.assertEqual(spin.chi2, None)
+            self.assertEqual(spin.iter, None)
+            self.assertEqual(spin.f_count, None)
+            self.assertEqual(spin.g_count, None)
+            self.assertEqual(spin.h_count, None)
+            self.assertEqual(spin.warning, None)
 
             # Relaxation data tests.
-            self.assertEqual(['R1','R2','NOE','R1','R2','NOE','R1','R2','NOE'], spin.ri_labels)
-            self.assertEqual([0,0,0,1,1,1,2,2,2], spin.remap_table)
-            self.assertEqual(['500','600','750'], spin.frq_labels)
-            self.assertEqual([500000000.0,600000000.0,750000000.0], spin.frq)
+            self.assertEqual(spin.ri_labels, ['R1','R2','NOE','R1','R2','NOE','R1','R2','NOE'])
+            self.assertEqual(spin.remap_table, [0,0,0,1,1,1,2,2,2])
+            self.assertEqual(spin.frq_labels, ['500','600','750'])
+            self.assertEqual(spin.frq, [500000000.0,600000000.0,750000000.0])
             self.assertEqual(spin.noe_r1_table, [None, None, 0, None, None, 3, None, None, 6])
             self.assertEqual(spin.num_frq, 3)
             self.assertEqual(spin.num_ri, 9)
