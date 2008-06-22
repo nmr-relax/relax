@@ -78,9 +78,6 @@ def create_hybrid_elem(doc, elem):
     text_val = doc.createTextNode(str(ds[ds.current_pipe].hybrid_pipes))
     list_elem.appendChild(text_val)
 
-    # Return the element.
-    return hybrid_elem
-
 
 def create_pipe_elem(doc, elem):
     """Create an element for the data pipe, and add data pipe info as attributes.
@@ -193,7 +190,7 @@ def write(file):
     fill_object_contents(xmldoc, global_elem, object=ds[ds.current_pipe], blacklist=['diff_tensor', 'hybrid_pipes', 'is_empty', 'mol', 'pipe_type', 'structure'])
 
     # Hybrid info.
-    hybrid_elem = create_hybrid_elem(xmldoc, pipe_elem)
+    create_hybrid_elem(xmldoc, pipe_elem)
 
     # Add the diffusion tensor data.
     create_diff_elem(xmldoc, pipe_elem)
@@ -202,6 +199,6 @@ def write(file):
     xml.dom.ext.PrettyPrint(xmldoc, file)
 
     # Print out.
-    print ds[ds.current_pipe].structure
+    print dir(ds[ds.current_pipe].structure)
     print "\n\nXML:"
     xml.dom.ext.PrettyPrint(xmldoc)
