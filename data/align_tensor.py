@@ -590,6 +590,22 @@ class AlignTensorList(ListType):
 class AlignTensorData(Element):
     """An empty data container for the alignment tensor elements."""
 
+    # List of modifiable attributes.
+    __mod_attr__ = ['name',
+                    'Sxx',
+                    'Syy',
+                    'Sxy',
+                    'Sxz',
+                    'Syz',
+                    'alpha',
+                    'beta',
+                    'gamma',
+                    'tensor',
+                    'tensor_diag',
+                    'rotation',
+                    'domain',
+                    'red']
+
     def __init__(self, name):
         """Function for placing the tensor name in the class namespace."""
 
@@ -616,24 +632,8 @@ class AlignTensorData(Element):
             category = 'val'
             param_name = name
 
-        # List of modifiable attributes.
-        mod_attr = ['name',
-                    'Sxx',
-                    'Syy',
-                    'Sxy',
-                    'Sxz',
-                    'Syz',
-                    'alpha',
-                    'beta',
-                    'gamma',
-                    'tensor',
-                    'tensor_diag',
-                    'rotation',
-                    'domain',
-                    'red']
-
         # Test if the attribute that is trying to be set is modifiable.
-        if not param_name in mod_attr:
+        if not param_name in self.__mod_attr__:
             raise RelaxError, "The object " + `name` + " is not modifiable."
 
         # Set the attribute normally.
