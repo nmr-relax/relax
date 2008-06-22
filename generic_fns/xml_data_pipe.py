@@ -24,11 +24,86 @@
 """Module for the creation and parsing of an XML representation of a data pipe."""
 
 # Python module imports.
+from re import search
 import xml.dom.ext
 import xml.dom.minidom
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from version import version
+
+
+def create_pipe_elem(doc, elem):
+    """Create an element for the data pipe, and add data pipe info as attributes.
+
+    @param doc:     The XML document object.
+    @type doc:      xml.dom.minidom.Document instance
+    @param elem:    The element to add the pipe element to.
+    @type elem:     XML element object
+    """
+
+    # Create the pipe element and add it to the higher level element.
+    pipe_elem = doc.createElement('pipe')
+    elem.appendChild(pipe_elem)
+
+    # Set the data pipe attributes.
+    pipe_elem.setAttribute('name', ds.current_pipe)
+    pipe_elem.setAttribute('type', ds[ds.current_pipe].pipe_type)
+
+    # Return the pipe element.
+    return pipe_elem
+
+
+def create_top_level(doc):
+    """Create the top level element including all the information needed about relax.
+ 
+    @param doc:     The XML document object.
+    @type doc:      xml.dom.minidom.Document instance
+    """
+
+    # Create the element, including the relax URL.
+    top_elem = doc.createElementNS('http://nmr-relax.com', 'relax')
+
+    # Append the element.
+    doc.appendChild(top_elem)
+
+    # Set the relax version number.
+    top_elem.setAttribute('version', version)
+
+    # Return the element.
+    return top_elem
+
+
+def fill_object_contents(doc, elem, object=None, blacklist=None):
+    """Place all simple python objects into the element namespace.
+
+    @param doc:         The XML document object.
+    @type doc:          xml.dom.minidom.Document instance
+    @param elem:        The element to add all python objects to.
+    @type elem:         XML element object
+    @param object:      The python class instance containing the objects to add.
+    @type object:       instance
+    @param blacklist:   A list of object names to exclude.
+    @type blacklist:    list of str
+    """
+
+    # Loop over the elements of the object.
+    for name in dir(object):
+        # Skip blacklisted objects.
+        if name in blacklist:
+            continue
+
+        # Skip special objects.
+        if search("^__", name):
+            continue
+
+        # Create a new element for this object, and add it to the main element.
+        sub_elem = doc.createElement(name)
+        elem.appendChild(sub_elem)
+
+        # Add the text value to the sub element.
+        text_val = doc.createTextNode(`getattr(object, name)`)
+        sub_elem.appendChild(text_val)
 
 
 def read(file, verbosity=1):
@@ -51,3 +126,15 @@ def write(file):
 
     # Create the XML document object.
     xmldoc = xml.dom.minidom.Document()
+
+    # Create the top level element.
+    top_elem = create_top_level(xmldoc)
+
+    # Create the data pipe element.
+    pipe_elem = create_pipe_elem(xmldoc, top_elem)
+
+    # Add all simple python objects within the PipeContainer to the pipe element.
+    fill_object_contents(xmldoc, pipe_elem, object=ds[ds.current_pipe], blacklist=['diff_tensor', 'hybrid_pipes', 'is_empty', 'mol', 'pipe_type', 'structure'])
+
+    # Write out the XML file.
+    xml.dom.ext.PrettyPrint(xmldoc, file)
