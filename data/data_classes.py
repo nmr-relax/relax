@@ -38,8 +38,15 @@ class Element:
 
         # Data structures.
         for name in dir(self):
+            # Skip object methods.
+            if name == 'is_empty':
+                continue
+
+            # Skip special objects.
             if search("^_", name):
                 continue
+
+            # Generate the text.
             text = text + "%-25s%-100s\n" % (name, `getattr(self, name)`)
 
         # Return the lot.
