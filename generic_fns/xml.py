@@ -23,6 +23,10 @@
 # Module docstring.
 """Module for the creation and parsing of an XML representation of a data pipe."""
 
+# Python module imports.
+import xml.dom.ext
+import xml.dom.minidom
+
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 
@@ -44,3 +48,6 @@ def write(file):
     @param file:        The open file object.
     @type file:         file
     """
+
+    # Create the XML document object.
+    xmldoc = xml.dom.minidom.Document()
