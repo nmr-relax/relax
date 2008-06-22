@@ -1873,19 +1873,19 @@ class Model_free_main:
         if name == 's2s':
             return 'S2s, the slower motion model-free generalised order parameter'
         if name == 'local_tm':
-            return 'The spin specific global correlation time (ns)'
+            return 'The spin specific global correlation time (' + self.return_units('local_tm') + ')'
         if name == 'te':
-            return 'Single motion effective internal correlation time (ps)'
+            return 'Single motion effective internal correlation time (' + self.return_units('te') + ')'
         if name == 'tf':
-            return 'Faster motion effective internal correlation time (ps)'
+            return 'Faster motion effective internal correlation time (' + self.return_units('tf') + ')'
         if name == 'ts':
-            return 'Slower motion effective internal correlation time (ps)'
+            return 'Slower motion effective internal correlation time (' + self.return_units('ts') + ')'
         if name == 'rex':
-            return 'Chemical exchange relaxation'
+            return 'Chemical exchange relaxation (' + self.return_units('rex') + ')'
         if name == 'r':
-            return 'Bond length'
+            return 'Bond length (' + self.return_units('r') + ')'
         if name == 'csa':
-            return 'Chemical shift anisotropy'
+            return 'Chemical shift anisotropy (' + self.return_units('csa') + ')'
         if name == 'chi2':
             return 'Chi-squared value'
         if name == 'iter':
