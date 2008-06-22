@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""The molecule-residue-spin containers."""
+
 # Python module imports.
 from copy import deepcopy
 from re import match
@@ -28,9 +31,6 @@ from re import match
 from prototype import Prototype
 from relax_errors import RelaxError
 from relax_xml import fill_object_contents
-
-
-"""The molecule-residue-spin containers."""
 
 
 
