@@ -191,6 +191,44 @@ class SpinList(list):
         @type element:  XML element object
         """
 
+        # Order the SpinContainer objects for the XML output.
+        order = ['select',
+                 'fixed',
+                 'proton_type',
+                 'heteronuc_type',
+                 'attached_proton',
+                 'nucleus',
+                 'model',
+                 'equation',
+                 'params',
+                 's2',
+                 's2f',
+                 's2s',
+                 'local_tm',
+                 'te',
+                 'tf',
+                 'ts',
+                 'rex',
+                 'r',
+                 'csa',
+                 'chi2',
+                 'iter',
+                 'f_count',
+                 'g_count',
+                 'h_count',
+                 'warning',
+                 'xh_vect',
+                 'num_frq',
+                 'frq',
+                 'frq_labels',
+                 'num_ri',
+                 'ri_labels',
+                 'remap_table',
+                 'noe_r1_table',
+                 'relax_data',
+                 'relax_error'
+        ]
+
         # Loop over the spins.
         for i in xrange(len(self)):
             # Create an XML element for this spin and add it to the higher level element.
@@ -202,8 +240,22 @@ class SpinList(list):
             spin_element.setAttribute('num', str(self[i].num))
             spin_element.setAttribute('desc', 'Spin')
 
+            # Add the ordered objects.
+            for name in order:
+                # Skip the object if it is missing from the SpinContainer.
+                if not hasattr(self[i], name):
+                    continue
+
+                # Create a new element for this object, and add it to the main element.
+                sub_element = doc.createElement(name)
+                spin_element.appendChild(sub_element)
+
+                # Add the text value to the sub element.
+                text_val = doc.createTextNode(`getattr(self[i], name)`)
+                sub_element.appendChild(text_val)
+
             # Add all simple python objects within the SpinContainer to the XML element.
-            fill_object_contents(doc, spin_element, object=self[i], blacklist=['name', 'num', 'spin'] + self[i].__class__.__dict__.keys())
+            fill_object_contents(doc, spin_element, object=self[i], blacklist=['name', 'num', 'spin'] + order + self[i].__class__.__dict__.keys())
 
 
 
