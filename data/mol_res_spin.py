@@ -201,12 +201,13 @@ class SpinList(list):
 
         # Get the object names and loop over them to get their descriptions.
         object_info = []
-        for name in data_names():
-            # Get the description.
-            desc = return_data_desc(name)
+        if data_names:
+            for name in data_names():
+                # Get the description.
+                desc = return_data_desc(name)
 
-            # Append the two.
-            object_info.append([name, desc])
+                # Append the two.
+                object_info.append([name, desc])
 
         # Loop over the spins.
         for i in xrange(len(self)):
