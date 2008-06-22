@@ -188,13 +188,12 @@ class SpinList(list):
 class ResidueContainer(Prototype):
     """Class containing all the residue specific data."""
 
-    def __init__(self, res_name=None, res_num=None, select=True):
+    def __init__(self, res_name=None, res_num=None):
         """Set up the default objects of the residue data container."""
 
         # The residue name and number.
         self.name = res_name
         self.num = res_num
-        self.select = select
 
         # The empty spin system list.
         self.spin = SpinList()
@@ -248,7 +247,7 @@ class ResidueContainer(Prototype):
         # An object has been added to the container.
         for name in dir(self):
             # Skip the objects initialised in __init__().
-            if name == 'num' or name == 'name' or name == 'select' or name == 'spin':
+            if name == 'num' or name == 'name' or name == 'spin':
                 continue
 
             # Skip the ResidueContainer methods.
@@ -291,22 +290,21 @@ class ResidueList(list):
         text = "Residues.\n\n"
 
         # Residue data.
-        text = text + "%-8s%-8s%-8s%-10s" % ("Index", "Number", "Name", "Selected") + "\n"
+        text = text + "%-8s%-8s%-8s" % ("Index", "Number", "Name") + "\n"
         for i in xrange(len(self)):
-            text = text + "%-8i%-8s%-8s%-10s" % (i, `self[i].num`, self[i].name, self[i].select) + "\n"
+            text = text + "%-8i%-8s%-8s" % (i, `self[i].num`, self[i].name) + "\n"
         text = text + "\nThese can be accessed by typing 'D.mol[i].res[j]', where D is the relax data storage object.\n"
 
         return text
 
 
-    def add_item(self, res_name=None, res_num=None, select=True):
+    def add_item(self, res_name=None, res_num=None):
         """Append an empty ResidueContainer to the ResidueList."""
 
         # If no residue data exists, replace the empty first residue with this residue.
         if self.is_empty():
             self[0].num = res_num
             self[0].name = res_name
-            self[0].select = select
 
         # Otherwise append a new ResidueContainer.
         else:
@@ -323,7 +321,7 @@ class ResidueList(list):
                         raise RelaxError, "The unnumbered residue name '" + `res_name` + "' already exists."
 
             # Append a new ResidueContainer.
-            self.append(ResidueContainer(res_name, res_num, select))
+            self.append(ResidueContainer(res_name, res_num))
 
 
     def is_empty(self):
@@ -349,12 +347,11 @@ class ResidueList(list):
 class MoleculeContainer(Prototype):
     """Class containing all the molecule specific data."""
 
-    def __init__(self, mol_name=None, select=True):
+    def __init__(self, mol_name=None):
         """Set up the default objects of the molecule data container."""
 
         # The name of the molecule, corresponding to that of the structure file if specified.
         self.name = mol_name
-        self.select = select
 
         # The empty residue list.
         self.res = ResidueList()
@@ -408,7 +405,7 @@ class MoleculeContainer(Prototype):
         # An object has been added to the container.
         for name in dir(self):
             # Skip the objects initialised in __init__().
-            if name == 'name' or name == 'select' or name == 'res':
+            if name == 'name' or name == 'res':
                 continue
 
             # Skip the MoleculeContainer methods.
@@ -448,20 +445,19 @@ class MoleculeList(list):
         """
 
         text = "Molecules.\n\n"
-        text = text + "%-8s%-8s%-10s" % ("Index", "Name", "Selected") + "\n"
+        text = text + "%-8s%-8s" % ("Index", "Name") + "\n"
         for i in xrange(len(self)):
-            text = text + "%-8i%-8s%-10s" % (i, self[i].name, self[i].select) + "\n"
+            text = text + "%-8i%-8s" % (i, self[i].name) + "\n"
         text = text + "\nThese can be accessed by typing 'D.mol[i]', where D is the relax data storage object.\n"
         return text
 
 
-    def add_item(self, mol_name=None, select=True):
+    def add_item(self, mol_name=None):
         """Append an empty MoleculeContainer to the MoleculeList."""
 
         # If no molecule data exists, replace the empty first molecule with this molecule (just a renaming).
         if self.is_empty():
             self[0].name = mol_name
-            self[0].select = select
 
         # Otherwise append an empty MoleculeContainer.
         else:
@@ -471,7 +467,7 @@ class MoleculeList(list):
                     raise RelaxError, "The molecule '" + `mol_name` + "' already exists in the sequence."
 
             # Append an empty MoleculeContainer.
-            self.append(MoleculeContainer(mol_name, select))
+            self.append(MoleculeContainer(mol_name))
 
 
     def is_empty(self):
