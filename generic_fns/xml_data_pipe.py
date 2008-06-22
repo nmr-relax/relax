@@ -86,6 +86,8 @@ def create_pipe_elem(doc, elem):
     @type doc:      xml.dom.minidom.Document instance
     @param elem:    The element to add the pipe element to.
     @type elem:     XML element object
+    @return:        The data pipe element.
+    @rtype:         XML element object
     """
 
     # Create the pipe element and add it to the higher level element.
@@ -105,6 +107,8 @@ def create_top_level(doc):
  
     @param doc:     The XML document object.
     @type doc:      xml.dom.minidom.Document instance
+    @return:        The top level relax element.
+    @rtype:         XML element object
     """
 
     # Create the element, including the relax URL.
