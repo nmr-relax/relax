@@ -182,6 +182,31 @@ class SpinList(list):
         return False
 
 
+    def xml_create_element(self, doc, element):
+        """Create XML elements for each spin.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the spin XML elements to.
+        @type element:  XML element object
+        """
+
+        # Loop over the spins.
+        for i in xrange(len(self)):
+            # Create an XML element for this spin and add it to the higher level element.
+            spin_element = doc.createElement('spin')
+            element.appendChild(spin_element)
+
+            # Set the spin attributes.
+            spin_element.setAttribute('name', self[i].name)
+            spin_element.setAttribute('num', str(self[i].num))
+            spin_element.setAttribute('index', `i`)
+            spin_element.setAttribute('desc', 'Spin')
+
+            # Add all simple python objects within the SpinContainer to the XML element.
+            fill_object_contents(doc, spin_element, object=self[i], blacklist=['name', 'num', 'spin'] + self[i].__class__.__dict__.keys())
+
+
 
 # The residue data.
 ###################
@@ -341,6 +366,34 @@ class ResidueList(list):
         return False
 
 
+    def xml_create_element(self, doc, element):
+        """Create XML elements for each residue.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the residue XML elements to.
+        @type element:  XML element object
+        """
+
+        # Loop over the residues.
+        for i in xrange(len(self)):
+            # Create an XML element for this residue and add it to the higher level element.
+            res_element = doc.createElement('res')
+            element.appendChild(res_element)
+
+            # Set the residue attributes.
+            res_element.setAttribute('name', self[i].name)
+            res_element.setAttribute('num', str(self[i].num))
+            res_element.setAttribute('index', `i`)
+            res_element.setAttribute('desc', 'Residue')
+
+            # Add all simple python objects within the ResidueContainer to the XML element.
+            fill_object_contents(doc, res_element, object=self[i], blacklist=['name', 'num', 'spin'] + self[i].__class__.__dict__.keys())
+
+            # Add the residue data.
+            self[i].spin.xml_create_element(doc, res_element)
+
+
 
 # The molecule data.
 ###################
@@ -488,7 +541,7 @@ class MoleculeList(list):
 
 
     def xml_create_element(self, doc, element):
-        """Create an XML elements for each molecule.
+        """Create XML elements for each molecule.
 
         @param doc:     The XML document object.
         @type doc:      xml.dom.minidom.Document instance
@@ -509,3 +562,6 @@ class MoleculeList(list):
 
             # Add all simple python objects within the MoleculeContainer to the XML element.
             fill_object_contents(doc, mol_element, object=self[i], blacklist=['name', 'res'] + self[i].__class__.__dict__.keys())
+
+            # Add the residue data.
+            self[i].res.xml_create_element(doc, mol_element)
