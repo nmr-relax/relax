@@ -61,7 +61,7 @@ class Results:
         results.display()
 
 
-    def read(self, file='results', dir='dir', format='columnar'):
+    def read(self, file='results', dir=None):
         """Function for reading results from a file.
 
         Keyword Arguments
@@ -87,8 +87,7 @@ class Results:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "results.read("
             text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", format=" + `format` + ")"
+            text = text + ", dir=" + `dir` + ")"
             print text
 
         # File.
@@ -99,12 +98,8 @@ class Results:
         if dir != None and type(dir) != str:
             raise RelaxNoneStrError, ('directory name', dir)
 
-        # Format.
-        if type(format) != str:
-            raise RelaxStrError, ('format', format)
-
         # Execute the functional code.
-        results.read(file=file, directory=dir, format=format)
+        results.read(file=file, directory=dir)
 
 
     def write(self, file='results', dir='dir', force=False, format='columnar', compress_type=1):
