@@ -27,6 +27,7 @@ from re import match
 # relax module imports.
 from prototype import Prototype
 from relax_errors import RelaxError
+from relax_xml import fill_object_contents
 
 
 """The molecule-residue-spin containers."""
@@ -484,3 +485,27 @@ class MoleculeList(list):
 
         # Otherwise.
         return False
+
+
+    def xml_create_element(self, doc, element):
+        """Create an XML elements for each molecule.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the molecule XML elements to.
+        @type element:  XML element object
+        """
+
+        # Loop over the molecules.
+        for i in xrange(len(self)):
+            # Create an XML element for this molecule and add it to the higher level element.
+            mol_element = doc.createElement('mol')
+            element.appendChild(mol_element)
+
+            # Set the molecule attributes.
+            mol_element.setAttribute('name', self[i].name)
+            mol_element.setAttribute('index', `i`)
+            mol_element.setAttribute('desc', 'Molecule')
+
+            # Add all simple python objects within the MoleculeContainer to the XML element.
+            fill_object_contents(doc, mol_element, object=self[i], blacklist=['name', 'res'] + self[i].__class__.__dict__.keys())

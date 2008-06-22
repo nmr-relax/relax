@@ -186,6 +186,9 @@ class PipeContainer(Prototype):
         if hasattr(self, 'structure'):
             self.xml_create_str_element(doc, element)
 
+        # Add the molecule-residue-spin data.
+        self.mol.xml_create_element(doc, element)
+
 
     def xml_create_str_elem(doc, element):
         """Create an XML element for the structural information.
