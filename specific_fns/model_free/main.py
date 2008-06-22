@@ -33,6 +33,7 @@ import sys
 from data import Relax_data_store; ds = Relax_data_store()
 from float import isNaN,isInf
 from generic_fns import diffusion_tensor
+from generic_fns import relax_data
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
@@ -717,6 +718,10 @@ class Model_free_main:
 
         # Structural data.
         names.append('xh_vect')
+
+        # Relaxation data.
+        if set == 'all':
+            names = names + relax_data.get_data_names()
 
         # Return the names.
         return names
