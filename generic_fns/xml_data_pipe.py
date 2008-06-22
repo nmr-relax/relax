@@ -34,7 +34,7 @@ from version import version
 
 
 def create_diff_elem(doc, elem):
-    """Create an element for the diffusion tensor.
+    """Create an XML element for the diffusion tensor.
 
     @param doc:     The XML document object.
     @type doc:      xml.dom.minidom.Document instance
@@ -55,7 +55,7 @@ def create_diff_elem(doc, elem):
 
 
 def create_hybrid_elem(doc, elem):
-    """Create an element for the data pipe hybridisation information.
+    """Create an XML element for the data pipe hybridisation information.
 
     @param doc:     The XML document object.
     @type doc:      xml.dom.minidom.Document instance
@@ -80,7 +80,7 @@ def create_hybrid_elem(doc, elem):
 
 
 def create_pipe_elem(doc, elem):
-    """Create an element for the data pipe, and add data pipe info as attributes.
+    """Create an XML element for the data pipe, and add data pipe info as attributes.
 
     @param doc:     The XML document object.
     @type doc:      xml.dom.minidom.Document instance
@@ -104,7 +104,7 @@ def create_pipe_elem(doc, elem):
 
 
 def create_str_elem(doc, elem):
-    """Create an element for the structural information.
+    """Create an XML element for the structural information.
 
     @param doc:     The XML document object.
     @type doc:      xml.dom.minidom.Document instance
@@ -122,7 +122,7 @@ def create_str_elem(doc, elem):
 
 
 def create_top_level(doc):
-    """Create the top level element including all the information needed about relax.
+    """Create the top level XML element including all the information needed about relax.
  
     @param doc:     The XML document object.
     @type doc:      xml.dom.minidom.Document instance
@@ -144,7 +144,7 @@ def create_top_level(doc):
 
 
 def fill_object_contents(doc, elem, object=None, blacklist=None):
-    """Place all simple python objects into the element namespace.
+    """Place all simple python objects into the XML element namespace.
 
     @param doc:         The XML document object.
     @type doc:          xml.dom.minidom.Document instance
