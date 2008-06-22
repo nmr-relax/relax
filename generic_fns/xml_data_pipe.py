@@ -218,7 +218,8 @@ def write(file):
     create_hybrid_elem(xmldoc, pipe_elem)
 
     # Add the diffusion tensor data.
-    create_diff_elem(xmldoc, pipe_elem)
+    if hasattr(cdp, 'diff_tensor'):
+        create_diff_elem(xmldoc, pipe_elem)
 
     # Add the structural data, if it exists.
     if hasattr(cdp, 'structure'):
@@ -228,6 +229,6 @@ def write(file):
     xml.dom.ext.PrettyPrint(xmldoc, file)
 
     # Print out.
-    print dir(ds[ds.current_pipe].structure)
+    print ds[ds.current_pipe]
     print "\n\nXML:"
     xml.dom.ext.PrettyPrint(xmldoc)
