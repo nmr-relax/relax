@@ -123,6 +123,10 @@ def write(file="results", directory=None, force=False, format='columnar', compre
     if not ds.current_pipe:
         raise RelaxNoPipeError
 
+    # The special data pipe name directory.
+    if directory == 'pipe_name':
+        directory = ds.current_pipe
+
     # Specific results writing function.
     if format == 'xml':
         format = 'XML'
