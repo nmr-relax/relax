@@ -208,8 +208,3 @@ class Relax_data_store(dict):
 
         # Write out the XML file.
         xml.dom.ext.PrettyPrint(xmldoc, file)
-
-        # Print out.
-        print self[self.current_pipe]
-        print "\n\nXML:"
-        xml.dom.ext.PrettyPrint(xmldoc)
