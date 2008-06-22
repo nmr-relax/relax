@@ -48,31 +48,6 @@ def create_diff_elem(doc, elem):
     fill_object_contents(doc, tensor_elem, object=ds[ds.current_pipe].diff_tensor, blacklist=['is_empty', 'type'])
 
 
-def create_hybrid_elem(doc, elem):
-    """Create an XML element for the data pipe hybridisation information.
-
-    @param doc:     The XML document object.
-    @type doc:      xml.dom.minidom.Document instance
-    @param elem:    The element to add the hybridisation info to.
-    @type elem:     XML element object
-    """
-
-    # Create the hybrid element and add it to the higher level element.
-    hybrid_elem = doc.createElement('hybrid')
-    elem.appendChild(hybrid_elem)
-
-    # Set the hybridisation attributes.
-    hybrid_elem.setAttribute('desc', 'Data pipe hybridisation information')
-
-    # Create an element to store the pipes list.
-    list_elem = doc.createElement('pipes')
-    hybrid_elem.appendChild(list_elem)
-
-    # Add the pipes list.
-    text_val = doc.createTextNode(str(ds[ds.current_pipe].hybrid_pipes))
-    list_elem.appendChild(text_val)
-
-
 def create_str_elem(doc, elem):
     """Create an XML element for the structural information.
 
