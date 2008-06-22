@@ -556,6 +556,19 @@ class DiffTensorData(Element):
     # Set the initial diffusion type to None.
     type = None
 
+    # List of modifiable attributes.
+    __mod_attr__ = ['type',
+                    'fixed',
+                    'spheroid_type',
+                    'tm',
+                    'Da',
+                    'Dr',
+                    'theta',
+                    'phi',
+                    'alpha',
+                    'beta',
+                    'gamma']
+
 
     def __setattr__(self, name, value):
         """Function for calculating the parameters, unit vectors, and tensors on the fly.
@@ -576,21 +589,8 @@ class DiffTensorData(Element):
             category = 'val'
             param_name = name
 
-        # List of modifiable attributes.
-        mod_attr = ['type',
-                    'fixed',
-                    'spheroid_type',
-                    'tm',
-                    'Da',
-                    'Dr',
-                    'theta',
-                    'phi',
-                    'alpha',
-                    'beta',
-                    'gamma']
-
         # Test if the attribute that is trying to be set is modifiable.
-        if not param_name in mod_attr:
+        if not param_name in self.__mod_attr__:
             raise RelaxError, "The object " + `name` + " is not modifiable."
 
         # Set the attribute normally.
