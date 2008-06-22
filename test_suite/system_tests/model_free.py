@@ -668,7 +668,7 @@ class Mf(TestCase):
 
         # Misc tests.
         self.assertEqual(cdp.pipe_type, 'mf')
-        self.assertEqual(cdp.hybrid_pipes, {})
+        self.assertEqual(cdp.hybrid_pipes, [])
 
         # Diffusion tensor tests.
         self.assertEqual(cdp.diff_tensor.type, 'sphere')
