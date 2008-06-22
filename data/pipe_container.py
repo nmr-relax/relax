@@ -77,7 +77,7 @@ class PipeContainer(Prototype):
                 text = text + "  structure: The 3D molecular data object\n"
 
             # Skip the PipeContainer methods.
-            if name in ['is_empty', 'xml_write']:
+            if name in self.__class__.__dict__.keys():
                 continue
 
             # Skip certain objects.
@@ -117,7 +117,7 @@ class PipeContainer(Prototype):
                 continue
 
             # Skip the PipeContainer methods.
-            if name in ['is_empty', 'xml_write']:
+            if name in self.__class__.__dict__.keys():
                 continue
 
             # Skip special objects.
