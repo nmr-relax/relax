@@ -102,7 +102,7 @@ class Results:
         results.read(file=file, directory=dir)
 
 
-    def write(self, file='results', dir='dir', force=False, format='columnar', compress_type=1):
+    def write(self, file='results', dir='pipe_name', force=False, format='xml', compress_type=1):
         """Function for writing results to a file.
 
         Keyword Arguments
@@ -122,7 +122,9 @@ class Results:
         Description
         ~~~~~~~~~~~
 
-        To place the results file in the current working directory, set dir to None.
+        To place the results file in the current working directory, set dir to None.  If dir is set
+        to the special name 'pipe_name', then the results file will be placed into a directory with
+        the same name as the current data pipe.
 
         The default behaviour of this function is to compress the file using bzip2 compression.  If
         the extension '.bz2' is not included in the file name, it will be added.  The compression
