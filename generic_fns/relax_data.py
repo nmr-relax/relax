@@ -319,7 +319,7 @@ def data_init(container, global_flag=False):
             setattr(container, name, 0)
 
 
-def get_data_names(global_flag):
+def get_data_names(global_flag=False):
     """Return a list of names of data structures associated with relax_data.
 
     Description
