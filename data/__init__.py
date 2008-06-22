@@ -33,6 +33,7 @@ import xml.dom.minidom
 # relax module imports.
 from pipe_container import PipeContainer
 from relax_errors import RelaxPipeError
+from version import version
 
 
 __all__ = [ 'data_classes',
@@ -162,6 +163,10 @@ class Relax_data_store(dict):
     def xml_write(self, file):
         """Create a XML document representation of the current data pipe.
 
+        This method creates the top level XML document including all the information needed
+        about relax, calls the PipeContainer.xml_write() method to fill in the document contents,
+        and writes the XML into the file object.
+
         @param file:        The open file object.
         @type file:         file
         """
@@ -169,11 +174,17 @@ class Relax_data_store(dict):
         # Create the XML document object.
         xmldoc = xml.dom.minidom.Document()
 
-        # Create the top level element.
-        top_elem = create_top_level(xmldoc)
+        # Create the top level element, including the relax URL.
+        top_elem = xmldoc.createElementNS('http://nmr-relax.com', 'relax')
+
+        # Append the element.
+        xmldoc.appendChild(top_elem)
+
+        # Set the relax version number.
+        top_elem.setAttribute('version', version)
 
         # Create the data pipe element.
-        create_pipe_elem(xmldoc, top_elem)
+        self[self.current_pipe].xml_write(xmldoc, top_elem)
 
         # Write out the XML file.
         xml.dom.ext.PrettyPrint(xmldoc, file)

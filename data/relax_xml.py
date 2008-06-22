@@ -26,9 +26,6 @@
 # Python module imports.
 from re import search
 
-# relax module imports.
-from version import version
-
 
 def create_diff_elem(doc, elem):
     """Create an XML element for the diffusion tensor.
@@ -116,28 +113,6 @@ def create_str_elem(doc, elem):
     # Set the structural attributes.
     str_elem.setAttribute('desc', 'Structural information')
     str_elem.setAttribute('id', ds[ds.current_pipe].structure.id)
-
-
-def create_top_level(doc):
-    """Create the top level XML element including all the information needed about relax.
- 
-    @param doc:     The XML document object.
-    @type doc:      xml.dom.minidom.Document instance
-    @return:        The top level relax element.
-    @rtype:         XML element object
-    """
-
-    # Create the element, including the relax URL.
-    top_elem = doc.createElementNS('http://nmr-relax.com', 'relax')
-
-    # Append the element.
-    doc.appendChild(top_elem)
-
-    # Set the relax version number.
-    top_elem.setAttribute('version', version)
-
-    # Return the element.
-    return top_elem
 
 
 def fill_object_contents(doc, elem, object=None, blacklist=None):
