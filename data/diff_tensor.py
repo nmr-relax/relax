@@ -826,13 +826,13 @@ class DiffTensorData(Element):
                     self.__dict__[target+'_sim'] = DiffTensorSimList(target, self)
 
 
-    def xml_create_diff_element(self, doc, element):
+    def xml_create_element(self, doc, element):
         """Create an XML element for the diffusion tensor.
 
         @param doc:     The XML document object.
         @type doc:      xml.dom.minidom.Document instance
-        @param element:    The element to add the diffusion tensor element to.
-        @type element:     XML element object
+        @param element: The element to add the diffusion tensor element to.
+        @type element:  XML element object
         """
 
         # Create the diffusion tensor element and add it to the higher level element.

@@ -29,6 +29,7 @@ from types import ListType
 # relax module imports.
 from data_classes import Element
 from relax_errors import RelaxError
+from relax_xml import fill_object_contents
 
 
 
@@ -557,6 +558,33 @@ class AlignTensorList(ListType):
 
         self.append(AlignTensorData(name))
 
+
+    def xml_create_element(self, doc, element):
+        """Create an XML element for the alignment tensors.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the alignment tensors XML element to.
+        @type element:  XML element object
+        """
+
+        # Create the alignment tensors element and add it to the higher level element.
+        tensor_list_element = doc.createElement('align_tensors')
+        element.appendChild(tensor_list_element)
+
+        # Set the alignment tensor attributes.
+        tensor_list_element.setAttribute('desc', 'Alignment tensor list')
+
+        # Loop over the tensors.
+        for i in xrange(len(self)):
+            # Create an XML element for a single tensor.
+            tensor_element = doc.createElement('align_tensor')
+            tensor_list_element.appendChild(tensor_element)
+            tensor_list_element.setAttribute('index', `i`)
+            tensor_list_element.setAttribute('desc', 'Alignment tensor')
+
+            # Add all simple python objects within the PipeContainer to the pipe element.
+            fill_object_contents(doc, tensor_element, object=self[i], blacklist=self[i].__class__.__dict__.keys())
 
 
 class AlignTensorData(Element):

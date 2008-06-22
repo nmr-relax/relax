@@ -169,7 +169,7 @@ class PipeContainer(Prototype):
         global_element = doc.createElement('global')
         element.appendChild(global_element)
         global_element.setAttribute('desc', 'Global data located in the top level of the data pipe')
-        fill_object_contents(doc, global_element, object=self, blacklist=['diff_tensor', 'hybrid_pipes', 'mol', 'pipe_type', 'structure'] + self.__class__.__dict__.keys())
+        fill_object_contents(doc, global_element, object=self, blacklist=['align_tensors', 'diff_tensor', 'hybrid_pipes', 'mol', 'pipe_type', 'structure'] + self.__class__.__dict__.keys())
 
         # Hybrid info.
         self.xml_create_hybrid_element(doc, element)
@@ -177,6 +177,10 @@ class PipeContainer(Prototype):
         # Add the diffusion tensor data.
         if hasattr(self, 'diff_tensor'):
             self.diff_tensor.xml_create_diff_element(doc, element)
+
+        # Add the alignment tensor data.
+        if hasattr(self, 'align_tensors'):
+            self.align_tensors.xml_create_element(doc, element)
 
         # Add the structural data, if it exists.
         if hasattr(self, 'structure'):
