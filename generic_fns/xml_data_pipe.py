@@ -25,8 +25,6 @@
 
 # Python module imports.
 from re import search
-import xml.dom.ext
-import xml.dom.minidom
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()

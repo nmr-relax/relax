@@ -22,6 +22,8 @@
 
 # Python module imports.
 from re import match
+import xml.dom.ext
+import xml.dom.minidom
 
 # relax module imports.
 from data_classes import Element
@@ -138,9 +140,6 @@ class PipeContainer(Prototype):
         @type file:         file
         """
 
-        # The current data pipe.
-        cdp = ds[ds.current_pipe]
-
         # Create the XML document object.
         xmldoc = xml.dom.minidom.Document()
 
@@ -154,7 +153,7 @@ class PipeContainer(Prototype):
         global_elem = xmldoc.createElement('global')
         pipe_elem.appendChild(global_elem)
         global_elem.setAttribute('desc', 'Global data located in the top level of the data pipe')
-        fill_object_contents(xmldoc, global_elem, object=cdp, blacklist=['diff_tensor', 'hybrid_pipes', 'is_empty', 'mol', 'pipe_type', 'structure'])
+        fill_object_contents(xmldoc, global_elem, object=self, blacklist=['diff_tensor', 'hybrid_pipes', 'is_empty', 'mol', 'pipe_type', 'structure'])
 
         # Hybrid info.
         create_hybrid_elem(xmldoc, pipe_elem)
@@ -171,6 +170,6 @@ class PipeContainer(Prototype):
         xml.dom.ext.PrettyPrint(xmldoc, file)
 
         # Print out.
-        print ds[ds.current_pipe]
+        print self
         print "\n\nXML:"
         xml.dom.ext.PrettyPrint(xmldoc)
