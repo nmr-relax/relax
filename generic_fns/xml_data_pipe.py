@@ -95,6 +95,7 @@ def create_pipe_elem(doc, elem):
     elem.appendChild(pipe_elem)
 
     # Set the data pipe attributes.
+    pipe_elem.setAttribute('desc', 'The contents of a relax data pipe')
     pipe_elem.setAttribute('name', ds.current_pipe)
     pipe_elem.setAttribute('type', ds[ds.current_pipe].pipe_type)
 
