@@ -22,8 +22,6 @@
 
 # Python module imports.
 from re import match
-import xml.dom.ext
-import xml.dom.minidom
 
 # relax module imports.
 from data_classes import Element
@@ -134,20 +132,11 @@ class PipeContainer(Prototype):
 
 
     def xml_write(self, file):
-        """Create a XML document representation of the current data pipe.
+        """Create a XML elements for the current data pipe.
 
         @param file:        The open file object.
         @type file:         file
         """
-
-        # Create the XML document object.
-        xmldoc = xml.dom.minidom.Document()
-
-        # Create the top level element.
-        top_elem = create_top_level(xmldoc)
-
-        # Create the data pipe element.
-        pipe_elem = create_pipe_elem(xmldoc, top_elem)
 
         # Add all simple python objects within the PipeContainer to the global element.
         global_elem = xmldoc.createElement('global')
@@ -165,11 +154,3 @@ class PipeContainer(Prototype):
         # Add the structural data, if it exists.
         if hasattr(cdp, 'structure'):
             create_str_elem(xmldoc, pipe_elem)
-
-        # Write out the XML file.
-        xml.dom.ext.PrettyPrint(xmldoc, file)
-
-        # Print out.
-        print self
-        print "\n\nXML:"
-        xml.dom.ext.PrettyPrint(xmldoc)

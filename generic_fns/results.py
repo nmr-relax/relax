@@ -63,7 +63,7 @@ def display(run=None, format='columnar'):
 
     # Specific results writing function.
     if format == 'xml':
-        self.write_function = ds[ds.current_pipe].xml_write
+        self.write_function = ds.xml_write
     elif format == 'columnar':
         self.write_function = self.relax.specific_setup.setup('write_columnar_results', function_type, raise_error=0)
     else:
@@ -86,7 +86,7 @@ def read(file='results', directory=None, file_data=None, format='columnar', verb
 
     # Specific results writing function.
     if format == 'xml':
-        read_function = ds[ds.current_pipe].xml_read
+        read_function = ds.xml_read
     elif format == 'columnar':
         read_function = get_specific_fn('read_columnar_results', ds[ds.current_pipe].pipe_type, raise_error=False)
     else:
@@ -127,7 +127,7 @@ def write(file="results", directory=None, force=False, format='columnar', compre
 
     # Specific results writing function.
     if format == 'xml':
-        write_function = ds[ds.current_pipe].xml_write
+        write_function = ds.xml_write
     elif format == 'columnar':
         write_function = get_specific_fn('write_columnar_results', ds[ds.current_pipe].pipe_type, raise_error=False)
     else:

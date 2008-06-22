@@ -27,6 +27,8 @@
 # Python module imports.
 from re import search
 from string import split
+import xml.dom.ext
+import xml.dom.minidom
 
 # relax module imports.
 from pipe_container import PipeContainer
@@ -155,3 +157,28 @@ class Relax_data_store(dict):
 
         # Change the current data pipe.
         self.current_pipe = pipe_name
+
+
+    def xml_write(self, file):
+        """Create a XML document representation of the current data pipe.
+
+        @param file:        The open file object.
+        @type file:         file
+        """
+
+        # Create the XML document object.
+        xmldoc = xml.dom.minidom.Document()
+
+        # Create the top level element.
+        top_elem = create_top_level(xmldoc)
+
+        # Create the data pipe element.
+        create_pipe_elem(xmldoc, top_elem)
+
+        # Write out the XML file.
+        xml.dom.ext.PrettyPrint(xmldoc, file)
+
+        # Print out.
+        print self
+        print "\n\nXML:"
+        xml.dom.ext.PrettyPrint(xmldoc)
