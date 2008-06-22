@@ -45,7 +45,7 @@ class Prototype(object):
                 continue
 
             # Skip the class methods.
-            if name in ['is_empty', 'xml_write']:
+            if name in self.__class__.__dict__.keys():
                 continue
 
             # Get the object.
