@@ -51,30 +51,31 @@ def copy(run1=None, run2=None, sim=None):
     copy(run1=run1, run2=run2, sim=sim)
 
 
-def display(run=None, format='columnar'):
-    """Function for displaying the results."""
+def display(format='xml'):
+    """Displaying the results/contents of the current data pipe.
 
-    # Test if the run exists.
-    if not run in ds.run_names:
-        raise RelaxNoPipeError, run
+    @keyword format:    The format of the displayed results.
+    @type format:       str
+    """
 
-    # Function type.
-    function_type = ds.run_types[ds.run_names.index(run)]
+    # Test if the current data pipe exists.
+    if not ds.current_pipe:
+        raise RelaxNoPipeError
 
     # Specific results writing function.
     if format == 'xml':
-        self.write_function = ds.xml_write
+        write_function = ds.xml_write
     elif format == 'columnar':
-        self.write_function = self.relax.specific_setup.setup('write_columnar_results', function_type, raise_error=0)
+        write_function = get_specific_fn('write_columnar_results', ds[ds.current_pipe].pipe_type, raise_error=False)
     else:
         raise RelaxError, "Unknown format " + `format` + "."
 
     # No function.
-    if not self.write_function:
-        raise RelaxError, "The " + format + " format is not currently supported for " + self.relax.specific_setup.get_string(function_type) + "."
+    if not write_function:
+        raise RelaxError, "The " + format + " format is not currently supported for " + get_string(ds[ds.current_pipe].pipe_type) + "."
 
     # Write the results.
-    self.write_function(sys.stdout, run)
+    write_function(sys.stdout)
 
 
 def read(file='results', directory=None, file_data=None, format='columnar', verbosity=1):
