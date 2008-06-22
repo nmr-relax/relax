@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from re import match
+from re import search
 from types import DictType, ListType
 
 
@@ -38,7 +38,7 @@ class Element:
 
         # Data structures.
         for name in dir(self):
-            if match("^_", name):
+            if search("^_", name):
                 continue
             text = text + "%-25s%-100s\n" % (name, `getattr(self, name)`)
 
@@ -60,7 +60,7 @@ class Element:
                 continue
 
             # Skip special objects.
-            if match("^__", name):
+            if search("^__", name):
                 continue
 
             # An object has been added.
