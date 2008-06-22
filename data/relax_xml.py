@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module for the creation and parsing of an XML representation of a data pipe."""
+"""Module containing generic fns for creation and parsing of XML representations of python objects."""
 
 # Python module imports.
 from re import search
