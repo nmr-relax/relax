@@ -42,7 +42,7 @@ class Results:
         self.__relax__ = relax
 
 
-    def display(self, format='columnar'):
+    def display(self, format='xml'):
         """Function for displaying the results.
 
         Keyword Arguments
@@ -58,7 +58,7 @@ class Results:
             print text
 
         # Execute the functional code.
-        results.display()
+        results.display(format=format)
 
 
     def read(self, file='results', dir=None):
