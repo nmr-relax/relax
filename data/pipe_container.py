@@ -47,7 +47,7 @@ class PipeContainer(Prototype):
         self.pipe_type = None
 
         # Hybrid models.
-        self.hybrid_runs = {}
+        self.hybrid_pipes = {}
 
         # Global minimisation statistics.
         self.chi2 = None
@@ -118,7 +118,7 @@ class PipeContainer(Prototype):
             return False
 
         # Tests for the initialised data (the pipe type can be set in an empty data pipe, so this isn't checked).
-        if self.hybrid_runs != {}:
+        if self.hybrid_pipes != {}:
             return False
         if self.chi2 != None:
             return False
@@ -136,7 +136,7 @@ class PipeContainer(Prototype):
         # An object has been added to the container.
         for name in dir(self):
             # Skip the objects initialised in __init__().
-            if name == 'structure' or name == 'mol' or name == 'pipe_type' or name == 'hybrid_runs' or name == 'chi2' or name == 'iter' or name == 'f_count' or name == 'g_count' or name == 'h_count' or name == 'warning':
+            if name == 'structure' or name == 'mol' or name == 'pipe_type' or name == 'hybrid_pipes' or name == 'chi2' or name == 'iter' or name == 'f_count' or name == 'g_count' or name == 'h_count' or name == 'warning':
                 continue
 
             # Skip the PipeContainer methods.

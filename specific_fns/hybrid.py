@@ -49,7 +49,7 @@ class Hybrid:
         ds.run_types[ds.run_names.index(new_run)] = 'hybrid'
 
         # Duplicate the hybrid run data structure.
-        ds.hybrid_runs[new_run] = ds.hybrid_runs[old_run]
+        ds.hybrid_pipes[new_run] = ds.hybrid_pipes[old_run]
 
 
     def hybridise(self, hybrid=None, runs=None):
@@ -88,7 +88,7 @@ class Hybrid:
         ds.run_types.append('hybrid')
 
         # Create the data structure of the runs which form the hybrid.
-        ds.hybrid_runs[hybrid] = runs
+        ds.hybrid_pipes[hybrid] = runs
 
 
     def model_statistics(self, run=None, instance=None, global_stats=None):
@@ -108,7 +108,7 @@ class Hybrid:
         chi2_total = 0.0
 
         # Specific setup.
-        for run in ds.hybrid_runs[self.run]:
+        for run in ds.hybrid_pipes[self.run]:
             # Function type.
             function_type = ds.run_types[ds.run_names.index(run)]
 
