@@ -631,6 +631,33 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
         update_data_structures_spin(spin, ri_label, frq_label, frq, value, error)
 
 
+def return_data_desc(name):
+    """Return a description of the spin specific object.
+
+    @param name:    The name of the spin specific object.
+    @type name:     str
+    """
+
+    if name == 'num_frq':
+        return 'Number of spectrometer frequencies'
+    if name == 'frq':
+        return 'Frequencies'
+    if name == 'frq_labels':
+        return 'Frequency labels'
+    if name == 'num_ri':
+        return 'Number of relaxation data sets'
+    if name == 'ri_labels':
+        return 'Relaxation data set labels'
+    if name == 'remap_table':
+        return 'Table mapping frequencies to relaxation data'
+    if name == 'noe_r1_table':
+        return 'Table mapping the NOE to the corresponding R1'
+    if name == 'relax_data':
+        return 'The relaxation data'
+    if name == 'relax_error':
+        return 'The relaxation data errors'
+
+
 def return_value(i, data_type):
     """Function for returning the value and error corresponding to 'data_type'."""
 

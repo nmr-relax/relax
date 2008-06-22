@@ -28,10 +28,11 @@ from copy import deepcopy
 from re import match
 
 # relax module imports.
+import data
 from prototype import Prototype
 from relax_errors import RelaxError
 from relax_xml import fill_object_contents
-
+import specific_fns
 
 
 # The spin system data.
@@ -191,44 +192,21 @@ class SpinList(list):
         @type element:  XML element object
         """
 
-        # The SpinContainer objects ordered and with description for the XML output.
-        object_info = [
-            ['select', 'The spin selection flag'],
-            ['fixed', 'The fixed flag'],
-            ['proton_type', 'The proton spin type'],
-            ['heteronuc_type', 'The heteronucleus spin type'],
-            ['attached_proton', None],
-            ['nucleus', None],
-            ['model', 'The model'],
-            ['equation', 'The model equation'],
-            ['params', 'The model parameters'],
-            ['s2', 'S2, the model-free generalised order parameter (S2 = S2f.S2s)'],
-            ['s2f', 'S2f, the faster motion model-free generalised order parameter'],
-            ['s2s', 'S2s, the slower motion model-free generalised order parameter'],
-            ['local_tm', 'The spin specific global correlation time (ns)'],
-            ['te', 'Single motion effective internal correlation time (ps)'],
-            ['tf', 'Faster motion effective internal correlation time (ps)'],
-            ['ts', 'Slower motion effective internal correlation time (ps)'],
-            ['rex', 'Chemical exchange relaxation'],
-            ['r', 'Bond length'],
-            ['csa', 'Chemical shift anisotropy'],
-            ['chi2', 'Chi-squared value'],
-            ['iter', 'Optimisation iterations'],
-            ['f_count', 'Number of function calls'],
-            ['g_count', 'Number of gradient calls'],
-            ['h_count', 'Number of Hessian calls'],
-            ['warning', 'Optimisation warning'],
-            ['xh_vect', 'XH bond vector'],
-            ['num_frq', 'Number of spectrometer frequencies'],
-            ['frq', 'Frequencies'],
-            ['frq_labels', 'Frequency labels'],
-            ['num_ri', 'Number of relaxation data sets'],
-            ['ri_labels', 'Relaxation data set labels'],
-            ['remap_table', 'Table mapping frequencies to relaxation data'],
-            ['noe_r1_table', 'Table mapping the NOE to the corresponding R1'],
-            ['relax_data', 'The relaxation data'],
-            ['relax_error', 'The relaxation data errors']
-        ]
+        # The relax data store.
+        ds = data.Relax_data_store()
+
+        # Get the specific functions.
+        data_names = specific_fns.setup.get_specific_fn('data_names', ds[ds.current_pipe].pipe_type, raise_error=False)
+        return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', ds[ds.current_pipe].pipe_type, raise_error=False)
+
+        # Get the object names and loop over them to get their descriptions.
+        object_info = []
+        for name in data_names():
+            # Get the description.
+            desc = return_data_desc(name)
+
+            # Append the two.
+            object_info.append([name, desc])
 
         # Loop over the spins.
         for i in xrange(len(self)):

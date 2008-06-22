@@ -1840,6 +1840,71 @@ class Model_free_main:
             return 1.0
 
 
+    def return_data_desc(self, name):
+        """Return a description of the spin specific object.
+
+        @param name:    The name of the spin specific object.
+        @type name:     str
+        """
+
+        # Model-free specific objects.
+        if name == 'select':
+            return 'The spin selection flag'
+        if name == 'fixed':
+            return 'The fixed flag'
+        if name == 'proton_type':
+            return 'The proton spin type'
+        if name == 'heteronuc_type':
+            return 'The heteronucleus spin type'
+        if name == 'attached_proton':
+            return None
+        if name == 'nucleus':
+            return None
+        if name == 'model':
+            return 'The model'
+        if name == 'equation':
+            return 'The model equation'
+        if name == 'params':
+            return 'The model parameters'
+        if name == 's2':
+            return 'S2, the model-free generalised order parameter (S2 = S2f.S2s)'
+        if name == 's2f':
+            return 'S2f, the faster motion model-free generalised order parameter'
+        if name == 's2s':
+            return 'S2s, the slower motion model-free generalised order parameter'
+        if name == 'local_tm':
+            return 'The spin specific global correlation time (ns)'
+        if name == 'te':
+            return 'Single motion effective internal correlation time (ps)'
+        if name == 'tf':
+            return 'Faster motion effective internal correlation time (ps)'
+        if name == 'ts':
+            return 'Slower motion effective internal correlation time (ps)'
+        if name == 'rex':
+            return 'Chemical exchange relaxation'
+        if name == 'r':
+            return 'Bond length'
+        if name == 'csa':
+            return 'Chemical shift anisotropy'
+        if name == 'chi2':
+            return 'Chi-squared value'
+        if name == 'iter':
+            return 'Optimisation iterations'
+        if name == 'f_count':
+            return 'Number of function calls'
+        if name == 'g_count':
+            return 'Number of gradient calls'
+        if name == 'h_count':
+            return 'Number of Hessian calls'
+        if name == 'warning':
+            return 'Optimisation warning'
+        if name == 'xh_vect':
+            return 'XH bond vector'
+
+        # Ok, try the relaxation data specific objects.
+        return relax_data.return_data_desc(name)
+
+
     def return_data_name(self, name):
         """
         Model-free data type string matching patterns
