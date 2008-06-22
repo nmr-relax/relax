@@ -176,7 +176,7 @@ class PipeContainer(Prototype):
 
         # Add the diffusion tensor data.
         if hasattr(self, 'diff_tensor'):
-            self.diff_tensor.xml_create_diff_element(doc, element)
+            self.diff_tensor.xml_create_element(doc, element)
 
         # Add the alignment tensor data.
         if hasattr(self, 'align_tensors'):
