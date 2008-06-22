@@ -191,42 +191,43 @@ class SpinList(list):
         @type element:  XML element object
         """
 
-        # Order the SpinContainer objects for the XML output.
-        order = ['select',
-                 'fixed',
-                 'proton_type',
-                 'heteronuc_type',
-                 'attached_proton',
-                 'nucleus',
-                 'model',
-                 'equation',
-                 'params',
-                 's2',
-                 's2f',
-                 's2s',
-                 'local_tm',
-                 'te',
-                 'tf',
-                 'ts',
-                 'rex',
-                 'r',
-                 'csa',
-                 'chi2',
-                 'iter',
-                 'f_count',
-                 'g_count',
-                 'h_count',
-                 'warning',
-                 'xh_vect',
-                 'num_frq',
-                 'frq',
-                 'frq_labels',
-                 'num_ri',
-                 'ri_labels',
-                 'remap_table',
-                 'noe_r1_table',
-                 'relax_data',
-                 'relax_error'
+        # The SpinContainer objects ordered and with description for the XML output.
+        object_info = [
+            ['select', 'The spin selection flag'],
+            ['fixed', 'The fixed flag'],
+            ['proton_type', 'The proton spin type'],
+            ['heteronuc_type', 'The heteronucleus spin type'],
+            ['attached_proton', None],
+            ['nucleus', None],
+            ['model', 'The model'],
+            ['equation', 'The model equation'],
+            ['params', 'The model parameters'],
+            ['s2', 'S2, the model-free generalised order parameter (S2 = S2f.S2s)'],
+            ['s2f', 'S2f, the faster motion model-free generalised order parameter'],
+            ['s2s', 'S2s, the slower motion model-free generalised order parameter'],
+            ['local_tm', 'The spin specific global correlation time (ns)'],
+            ['te', 'Single motion effective internal correlation time (ps)'],
+            ['tf', 'Faster motion effective internal correlation time (ps)'],
+            ['ts', 'Slower motion effective internal correlation time (ps)'],
+            ['rex', 'Chemical exchange relaxation'],
+            ['r', 'Bond length'],
+            ['csa', 'Chemical shift anisotropy'],
+            ['chi2', 'Chi-squared value'],
+            ['iter', 'Optimisation iterations'],
+            ['f_count', 'Number of function calls'],
+            ['g_count', 'Number of gradient calls'],
+            ['h_count', 'Number of Hessian calls'],
+            ['warning', 'Optimisation warning'],
+            ['xh_vect', 'XH bond vector'],
+            ['num_frq', 'Number of spectrometer frequencies'],
+            ['frq', 'Frequencies'],
+            ['frq_labels', 'Frequency labels'],
+            ['num_ri', 'Number of relaxation data sets'],
+            ['ri_labels', 'Relaxation data set labels'],
+            ['remap_table', 'Table mapping frequencies to relaxation data'],
+            ['noe_r1_table', 'Table mapping the NOE to the corresponding R1'],
+            ['relax_data', 'The relaxation data'],
+            ['relax_error', 'The relaxation data errors']
         ]
 
         # Loop over the spins.
@@ -241,7 +242,11 @@ class SpinList(list):
             spin_element.setAttribute('desc', 'Spin')
 
             # Add the ordered objects.
-            for name in order:
+            blacklist = []
+            for name, desc in object_info:
+                # Add the name to the blacklist.
+                blacklist.append(name)
+
                 # Skip the object if it is missing from the SpinContainer.
                 if not hasattr(self[i], name):
                     continue
@@ -250,12 +255,16 @@ class SpinList(list):
                 sub_element = doc.createElement(name)
                 spin_element.appendChild(sub_element)
 
+                # Add the object description.
+                if desc:
+                    sub_element.setAttribute('desc', desc)
+
                 # Add the text value to the sub element.
                 text_val = doc.createTextNode(`getattr(self[i], name)`)
                 sub_element.appendChild(text_val)
 
             # Add all simple python objects within the SpinContainer to the XML element.
-            fill_object_contents(doc, spin_element, object=self[i], blacklist=['name', 'num', 'spin'] + order + self[i].__class__.__dict__.keys())
+            fill_object_contents(doc, spin_element, object=self[i], blacklist=['name', 'num', 'spin'] + blacklist + self[i].__class__.__dict__.keys())
 
 
 
