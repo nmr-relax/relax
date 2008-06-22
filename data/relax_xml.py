@@ -61,14 +61,3 @@ def fill_object_contents(doc, elem, object=None, blacklist=None):
         # Add the text value to the sub element.
         text_val = doc.createTextNode(`getattr(object, name)`)
         sub_elem.appendChild(text_val)
-
-
-def read(file, verbosity=1):
-    """Parse a XML document representation of a data pipe, and load it into the relax data store.
-
-    @param file:        The open file object.
-    @type file:         file
-    @keyword verbosity: A flag specifying the amount of information to print.  The higher the value,
-                        the greater the verbosity.
-    @type verbosity:    int
-    """
