@@ -633,6 +633,9 @@ class Mf(TestCase):
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
 
+        # Debugging print out.
+        print cdp
+
         # The spin specific data.
         num = [3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 29, 30, 31, 33, 34, 35]
         select = [False, False, False, False, False, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, False, False, False]
@@ -663,19 +666,30 @@ class Mf(TestCase):
         r2_750_err = [0.1255, 0.1305, 0.11799999999999999, 0.13400000000000001, 0.13800000000000001, 0.13550000000000001, 0.13150000000000001, 0.14050000000000001, 0.13950000000000001, 0.13300000000000001, 0.14000000000000001, 0.14449999999999999, 0.129, 0.13400000000000001, 0.13600000000000001, 0.1295, 0.13850000000000001, 0.13900000000000001, 0.1295, 0.13, 0.13800000000000001, 0.13900000000000001]
         noe_750_err = [0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003, 0.050000000000000003]
 
-        # Diffusion tensor type.
-        self.assertEqual(cdp.diff_tensor.type, 'sphere')
+        # Misc tests.
+        self.assertEqual(cdp.pipe_type, 'mf')
+        self.assertEqual(cdp.hybrid_pipes, {})
 
-        # tm.
+        # Diffusion tensor tests.
+        self.assertEqual(cdp.diff_tensor.type, 'sphere')
         self.assertEqual(cdp.diff_tensor.tm, 6.2029050826362826e-09)
 
         # Global minimisation statistic tests.
-        self.assertEqual(88.0888600975, cdp.chi2)
-        self.assertEqual(1, cdp.iter)
-        self.assertEqual(20, cdp.f_count)
-        self.assertEqual(2, cdp.g_count)
-        self.assertEqual(1, cdp.h_count)
-        self.assertEqual(None, cdp.warning)
+        self.assertEqual(cdp.chi, 88.0888600975)
+        self.assertEqual(cdp.iter, 1)
+        self.assertEqual(cdp.f_count, 20)
+        self.assertEqual(cdp.g_count, 2)
+        self.assertEqual(cdp.h_count, 1)
+        self.assertEqual(cdp.warning, None)
+
+        # Global relaxation data tests.
+        self.assertEqual(cdp.ri_labels, ['R1','R2','NOE','R1','R2','NOE','R1','R2','NOE'])
+        self.assertEqual(cdp.remap_table, [0,0,0,1,1,1,2,2,2])
+        self.assertEqual(cdp.frq_labels, ['500','600','750'])
+        self.assertEqual(cdp.frq, [500000000.0,600000000.0,750000000.0])
+        self.assertEqual(cdp.noe_r1_table, [None, None, 0, None, None, 3, None, None, 6])
+        self.assertEqual(cdp.num_frq, 3)
+        self.assertEqual(cdp.num_ri, 9)
 
         # Loop over the residues of the original data.
         j = 0
@@ -683,6 +697,8 @@ class Mf(TestCase):
             # Aliases
             res = cdp.mol[0].res[i]
             spin = cdp.mol[0].res[i].spin[0]
+
+            # Debugging print out.
             print res
             print spin
 
@@ -692,13 +708,21 @@ class Mf(TestCase):
             self.assertEqual(None, spin.num)
             self.assertEqual(None, spin.name)
             self.assertEqual(select[i], spin.select)
+            self.assertEqual(spin.fixed, False)
 
             # Skip deselected spins.
             if not select[i]:
                 continue
 
+            # Structural info.
+            self.assertEqual(spin.heteronuc_type, '15N')
+            self.assertEqual(spin.proton_type, '1H')
+            self.assertEqual(spin.attached_proton, None)
+            self.assertEqual(spin.nucleus, None)
+
             # Model-free tests.
             self.assertEqual(model[j], spin.model)
+            self.assertEqual(spin.equation, 'mf_ext')
             self.assertEqual(params[j], spin.params)
             self.assertEqual(s2[j], spin.s2)
             self.assertEqual(s2f[j], spin.s2f)
@@ -728,6 +752,9 @@ class Mf(TestCase):
             self.assertEqual([0,0,0,1,1,1,2,2,2], spin.remap_table)
             self.assertEqual(['500','600','750'], spin.frq_labels)
             self.assertEqual([500000000.0,600000000.0,750000000.0], spin.frq)
+            self.assertEqual(spin.noe_r1_table, [None, None, 0, None, None, 3, None, None, 6])
+            self.assertEqual(spin.num_frq, 3)
+            self.assertEqual(spin.num_ri, 9)
             self.assertEqual(spin.relax_data, [r1_500[j], r2_500[j], noe_500[j], r1_600[j], r2_600[j], noe_600[j], r1_750[j], r2_750[j], noe_750[j]])
             self.assertEqual(spin.relax_error, [r1_500_err[j], r2_500_err[j], noe_500_err[j], r1_600_err[j], r2_600_err[j], noe_600_err[j], r1_750_err[j], r2_750_err[j], noe_750_err[j]])
 
