@@ -199,16 +199,6 @@ class SpinList(list):
         data_names = specific_fns.setup.get_specific_fn('data_names', ds[ds.current_pipe].pipe_type, raise_error=False)
         return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', ds[ds.current_pipe].pipe_type, raise_error=False)
 
-        # Get the object names and loop over them to get their descriptions.
-        object_info = []
-        if data_names:
-            for name in data_names():
-                # Get the description.
-                desc = return_data_desc(name)
-
-                # Append the two.
-                object_info.append([name, desc])
-
         # Loop over the spins.
         for i in xrange(len(self)):
             # Create an XML element for this spin and add it to the higher level element.
@@ -219,6 +209,16 @@ class SpinList(list):
             spin_element.setAttribute('name', self[i].name)
             spin_element.setAttribute('num', str(self[i].num))
             spin_element.setAttribute('desc', 'Spin')
+
+            # Get the spin specific object names and loop over them to get their descriptions.
+            object_info = []
+            if data_names:
+                for name in data_names():
+                    # Get the description.
+                    desc = return_data_desc(name, spin=self[i])
+
+                    # Append the two.
+                    object_info.append([name, desc])
 
             # Add the ordered objects.
             blacklist = []
