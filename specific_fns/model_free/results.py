@@ -951,6 +951,13 @@ class Results:
                 # Selected simulations.
                 all_select_sim[-1].append(bool(file_line[col['select']]))
 
+                # Initial print out for the simulation.
+                if verbosity:
+                    if diff_sim_set == None:
+                        print "\nLoading simulations."
+                    if sim_num != diff_sim_set:
+                        print data_set
+
             # Diffusion tensor data.
             if data_set == 'value' and not diff_data_set:
                 self.__set_diff_tensor(file_line, col, data_set, verbosity)
