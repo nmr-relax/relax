@@ -637,53 +637,48 @@ class Model_free_main:
                 setattr(spin, name, init_data)
 
 
-    def data_names(self, set='all'):
-        """Function for returning a list of names of data structures.
+    def data_names(self, set='all', error_names=False, sim_names=False):
+        """Return a list of all spin container specific model-free object names.
 
         Description
-        ~~~~~~~~~~~
+        ===========
 
         The names are as follows:
 
-        model:  The model-free model name.
+            model:  The model-free model name.
+            equation:  The model-free equation type.
+            params:  An array of the model-free parameter names associated with the model.
+            s2:  S2.
+            s2f:  S2f.
+            s2s:  S2s.
+            local_tm:  local tm.
+            te:  te.
+            tf:  tf.
+            ts:  ts.
+            rex:  Rex.
+            r:  Bond length.
+            csa:  CSA value.
+            nucleus:  The heteronucleus type.
+            chi2:  Chi-squared value.
+            iter:  Iterations.
+            f_count:  Function count.
+            g_count:  Gradient count.
+            h_count:  Hessian count.
+            warning:  Minimisation warning.
 
-        equation:  The model-free equation type.
 
-        params:  An array of the model-free parameter names associated with the model.
-
-        s2:  S2.
-
-        s2f:  S2f.
-
-        s2s:  S2s.
-
-        local_tm:  local tm.
-
-        te:  te.
-
-        tf:  tf.
-
-        ts:  ts.
-
-        rex:  Rex.
-
-        r:  Bond length.
-
-        csa:  CSA value.
-
-        nucleus:  The heteronucleus type.
-
-        chi2:  Chi-squared value.
-
-        iter:  Iterations.
-
-        f_count:  Function count.
-
-        g_count:  Gradient count.
-
-        h_count:  Hessian count.
-
-        warning:  Minimisation warning.
+        @keyword set:           The set of object names to return.  This can be set to 'all' for all
+                                names, to 'generic' for generic object names, 'params' for
+                                model-free parameter names, or to 'min' for minimisation specific
+                                object names.
+        @type set:              str
+        @keyword error_names:   A flag which if True will add the error object names as well.
+        @type error_names:      bool
+        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object
+                                names as well.
+        @type sim_names:        bool
+        @return:                The list of object names.
+        @rtype:                 list of str
         """
 
         # Initialise.
