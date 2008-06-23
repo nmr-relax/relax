@@ -2555,24 +2555,17 @@ class Model_free_main:
         diffusion_tensor.set(value=value, param=param)
 
 
-    def set_selected_sim(self, run, instance, select_sim):
-        """Function for returning the array of selected simulation flags."""
+    def set_selected_sim(self, instance, select_sim):
+        """Function for returning the array of selected simulation flags.
 
-        # Arguments.
-        self.run = run
+        @param instance:    Either the spin container or data pipe container object.
+        @type instance:     SpinContainer or PipeContainer instance
+        @param select_sim:  The selection flag.
+        @type select_sim:   bool
+        """
 
-        # Determine the parameter set type.
-        self.param_set = self.determine_param_set_type()
-
-        # Single instance.
-        if self.param_set == 'all' or self.param_set == 'diff':
-            if not hasattr(ds, 'select_sim'):
-                ds.select_sim = {}
-            ds.select_sim[self.run] = select_sim
-
-        # Multiple instances.
-        else:
-            ds.res[self.run][instance].select_sim = select_sim
+        # Set the flag.
+        instance.select_sim = select_sim
 
 
     def set_update(self, param, spin):
