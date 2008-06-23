@@ -2043,7 +2043,7 @@ class Model_free_main:
             return '\\qCSA\\Q'
 
 
-    def return_units(self, param, spin_id):
+    def return_units(self, param, spin=None, spin_id=None):
         """Function for returning a string representing the parameters units.
 
         For example, the internal representation of te is in seconds, whereas the external
@@ -2053,14 +2053,21 @@ class Model_free_main:
 
         @param param:   The name of the parameter to return the units string for.
         @type param:    str
-        @param spin_id: The spin identification string.
+        @param spin:    The spin container.
+        @type spin:     SpinContainer instance
+        @param spin_id: The spin identification string (ignored if the spin container is supplied).
         @type spin_id:  str
         @return:        The parameter units string.
         @rtype:         str
         """
 
+        # The spin must be specified to get frequency units.
+        if spin == None and spin_id == None:
+            raise RelaxNoSpinSpecError
+
         # Get the spin.
-        spin = return_spin(spin_id)
+        if not spin:
+            spin = return_spin(spin_id)
 
         # Get the object name.
         object_name = self.return_data_name(param)
