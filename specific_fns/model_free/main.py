@@ -2065,16 +2065,18 @@ class Model_free_main:
         @rtype:         str
         """
 
-        # The spin must be specified to get frequency units.
-        if spin == None and spin_id == None:
-            raise RelaxNoSpinSpecError
-
-        # Get the spin.
-        if not spin:
-            spin = return_spin(spin_id)
-
         # Get the object name.
         object_name = self.return_data_name(param)
+
+        # Test for objects needing the spin container.
+        if object_name in ['rex']:
+            # The spin must be specified to get frequency units.
+            if spin == None and spin_id == None:
+                raise RelaxNoSpinSpecError
+
+            # Get the spin.
+            if not spin:
+                spin = return_spin(spin_id)
 
         # tm (nanoseconds).
         if object_name == 'tm' or object_name == 'local_tm':
