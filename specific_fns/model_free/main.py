@@ -1840,11 +1840,15 @@ class Model_free_main:
             return 1.0
 
 
-    def return_data_desc(self, name):
+    def return_data_desc(self, name, spin=None):
         """Return a description of the spin specific object.
 
         @param name:    The name of the spin specific object.
         @type name:     str
+        @param spin:    The spin container.
+        @type spin:     SpinContainer instance
+        @return:        The object description, or None.
+        @rtype:         str or None
         """
 
         # Model-free specific objects.
@@ -1873,19 +1877,19 @@ class Model_free_main:
         if name == 's2s':
             return 'S2s, the slower motion model-free generalised order parameter'
         if name == 'local_tm':
-            return 'The spin specific global correlation time (' + self.return_units('local_tm') + ')'
+            return 'The spin specific global correlation time (' + self.return_units('local_tm', spin=spin) + ')'
         if name == 'te':
-            return 'Single motion effective internal correlation time (' + self.return_units('te') + ')'
+            return 'Single motion effective internal correlation time (' + self.return_units('te', spin=spin) + ')'
         if name == 'tf':
-            return 'Faster motion effective internal correlation time (' + self.return_units('tf') + ')'
+            return 'Faster motion effective internal correlation time (' + self.return_units('tf', spin=spin) + ')'
         if name == 'ts':
-            return 'Slower motion effective internal correlation time (' + self.return_units('ts') + ')'
+            return 'Slower motion effective internal correlation time (' + self.return_units('ts', spin=spin) + ')'
         if name == 'rex':
-            return 'Chemical exchange relaxation (' + self.return_units('rex') + ')'
+            return 'Chemical exchange relaxation (' + self.return_units('rex', spin=spin) + ')'
         if name == 'r':
             return 'Bond length (' + self.return_units('r') + ')'
         if name == 'csa':
-            return 'Chemical shift anisotropy (' + self.return_units('csa') + ')'
+            return 'Chemical shift anisotropy (' + self.return_units('csa', spin=spin) + ')'
         if name == 'chi2':
             return 'Chi-squared value'
         if name == 'iter':
