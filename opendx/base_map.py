@@ -324,7 +324,7 @@ class Base_Map:
             factor = self.return_conversion_factor[i](self.param_names[i], spin_id=self.spin_id)
 
             # Parameter units.
-            units = self.return_units[i](self.param_names[i], self.spin_id)
+            units = self.return_units[i](self.param_names[i], spin_id=self.spin_id)
 
             # Labels.
             if units:
