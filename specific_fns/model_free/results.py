@@ -443,43 +443,43 @@ class Results:
         if data_set == 'value':
             # S2.
             try:
-                spin.s2 = float(spin_line[col['s2']]) * self.return_conversion_factor('s2', spin=spin)
+                spin.s2 = float(spin_line[col['s2']]) * self.return_conversion_factor('s2')
             except ValueError:
                 spin.s2 = None
 
             # S2f.
             try:
-                spin.s2f = float(spin_line[col['s2f']]) * self.return_conversion_factor('s2f', spin=spin)
+                spin.s2f = float(spin_line[col['s2f']]) * self.return_conversion_factor('s2f')
             except ValueError:
                 spin.s2f = None
 
             # S2s.
             try:
-                spin.s2s = float(spin_line[col['s2s']]) * self.return_conversion_factor('s2s', spin=spin)
+                spin.s2s = float(spin_line[col['s2s']]) * self.return_conversion_factor('s2s')
             except ValueError:
                 spin.s2s = None
 
             # Local tm.
             try:
-                spin.local_tm = float(spin_line[col['local_tm']]) * self.return_conversion_factor('local_tm', spin=spin)
+                spin.local_tm = float(spin_line[col['local_tm']]) * self.return_conversion_factor('local_tm')
             except ValueError:
                 spin.local_tm = None
 
             # te.
             try:
-                spin.te = float(spin_line[col['te']]) * self.return_conversion_factor('te', spin=spin)
+                spin.te = float(spin_line[col['te']]) * self.return_conversion_factor('te')
             except ValueError:
                 spin.te = None
 
             # tf.
             try:
-                spin.tf = float(spin_line[col['tf']]) * self.return_conversion_factor('tf', spin=spin)
+                spin.tf = float(spin_line[col['tf']]) * self.return_conversion_factor('tf')
             except ValueError:
                 spin.tf = None
 
             # ts.
             try:
-                spin.ts = float(spin_line[col['ts']]) * self.return_conversion_factor('ts', spin=spin)
+                spin.ts = float(spin_line[col['ts']]) * self.return_conversion_factor('ts')
             except ValueError:
                 spin.ts = None
 
@@ -491,13 +491,13 @@ class Results:
 
             # Bond length.
             try:
-                spin.r = float(spin_line[col['r']]) * self.return_conversion_factor('r', spin=spin)
+                spin.r = float(spin_line[col['r']]) * self.return_conversion_factor('r')
             except ValueError:
                 spin.r = None
 
             # CSA.
             try:
-                spin.csa = float(spin_line[col['csa']]) * self.return_conversion_factor('csa', spin=spin)
+                spin.csa = float(spin_line[col['csa']]) * self.return_conversion_factor('csa')
             except ValueError:
                 spin.csa = None
 
@@ -529,43 +529,43 @@ class Results:
         if data_set == 'error':
             # S2.
             try:
-                spin.s2_err = float(spin_line[col['s2']]) * self.return_conversion_factor('s2', spin=spin)
+                spin.s2_err = float(spin_line[col['s2']]) * self.return_conversion_factor('s2')
             except ValueError:
                 spin.s2_err = None
 
             # S2f.
             try:
-                spin.s2f_err = float(spin_line[col['s2f']]) * self.return_conversion_factor('s2f', spin=spin)
+                spin.s2f_err = float(spin_line[col['s2f']]) * self.return_conversion_factor('s2f')
             except ValueError:
                 spin.s2f_err = None
 
             # S2s.
             try:
-                spin.s2s_err = float(spin_line[col['s2s']]) * self.return_conversion_factor('s2s', spin=spin)
+                spin.s2s_err = float(spin_line[col['s2s']]) * self.return_conversion_factor('s2s')
             except ValueError:
                 spin.s2s_err = None
 
             # Local tm.
             try:
-                spin.local_tm_err = float(spin_line[col['local_tm']]) * self.return_conversion_factor('local_tm', spin=spin)
+                spin.local_tm_err = float(spin_line[col['local_tm']]) * self.return_conversion_factor('local_tm')
             except ValueError:
                 spin.local_tm_err = None
 
             # te.
             try:
-                spin.te_err = float(spin_line[col['te']]) * self.return_conversion_factor('te', spin=spin)
+                spin.te_err = float(spin_line[col['te']]) * self.return_conversion_factor('te')
             except ValueError:
                 spin.te_err = None
 
             # tf.
             try:
-                spin.tf_err = float(spin_line[col['tf']]) * self.return_conversion_factor('tf', spin=spin)
+                spin.tf_err = float(spin_line[col['tf']]) * self.return_conversion_factor('tf')
             except ValueError:
                 spin.tf_err = None
 
             # ts.
             try:
-                spin.ts_err = float(spin_line[col['ts']]) * self.return_conversion_factor('ts', spin=spin)
+                spin.ts_err = float(spin_line[col['ts']]) * self.return_conversion_factor('ts')
             except ValueError:
                 spin.ts_err = None
 
@@ -577,13 +577,13 @@ class Results:
 
             # Bond length.
             try:
-                spin.r_err = float(spin_line[col['r']]) * self.return_conversion_factor('r', spin=spin)
+                spin.r_err = float(spin_line[col['r']]) * self.return_conversion_factor('r')
             except ValueError:
                 spin.r_err = None
 
             # CSA.
             try:
-                spin.csa_err = float(spin_line[col['csa']]) * self.return_conversion_factor('csa', spin=spin)
+                spin.csa_err = float(spin_line[col['csa']]) * self.return_conversion_factor('csa')
             except ValueError:
                 spin.csa_err = None
 
@@ -621,61 +621,61 @@ class Results:
         if data_set != 'value' and data_set != 'error':
             # S2.
             try:
-                spin.s2_sim.append(float(spin_line[col['s2']]) * self.return_conversion_factor('s2'), spin=spin)
+                spin.s2_sim.append(float(spin_line[col['s2']]) * self.return_conversion_factor('s2'))
             except ValueError:
                 spin.s2_sim.append(None)
 
             # S2f.
             try:
-                spin.s2f_sim.append(float(spin_line[col['s2f']]) * self.return_conversion_factor('s2f'), spin=spin)
+                spin.s2f_sim.append(float(spin_line[col['s2f']]) * self.return_conversion_factor('s2f'))
             except ValueError:
                 spin.s2f_sim.append(None)
 
             # S2s.
             try:
-                spin.s2s_sim.append(float(spin_line[col['s2s']]) * self.return_conversion_factor('s2s'), spin=spin)
+                spin.s2s_sim.append(float(spin_line[col['s2s']]) * self.return_conversion_factor('s2s'))
             except ValueError:
                 spin.s2s_sim.append(None)
 
             # Local tm.
             try:
-                spin.local_tm_sim.append(float(spin_line[col['local_tm']]) * self.return_conversion_factor('local_tm'), spin=spin)
+                spin.local_tm_sim.append(float(spin_line[col['local_tm']]) * self.return_conversion_factor('local_tm'))
             except ValueError:
                 spin.local_tm_sim.append(None)
 
             # te.
             try:
-                spin.te_sim.append(float(spin_line[col['te']]) * self.return_conversion_factor('te'), spin=spin)
+                spin.te_sim.append(float(spin_line[col['te']]) * self.return_conversion_factor('te'))
             except ValueError:
                 spin.te_sim.append(None)
 
             # tf.
             try:
-                spin.tf_sim.append(float(spin_line[col['tf']]) * self.return_conversion_factor('tf'), spin=spin)
+                spin.tf_sim.append(float(spin_line[col['tf']]) * self.return_conversion_factor('tf'))
             except ValueError:
                 spin.tf_sim.append(None)
 
             # ts.
             try:
-                spin.ts_sim.append(float(spin_line[col['ts']]) * self.return_conversion_factor('ts'), spin=spin)
+                spin.ts_sim.append(float(spin_line[col['ts']]) * self.return_conversion_factor('ts'))
             except ValueError:
                 spin.ts_sim.append(None)
 
             # Rex.
             try:
-                spin.rex_sim.append(float(spin_line[col['rex']]) * self.return_conversion_factor('rex'), spin=spin)
+                spin.rex_sim.append(float(spin_line[col['rex']]) * self.return_conversion_factor('rex', spin=spin))
             except ValueError:
                 spin.rex_sim.append(None)
 
             # Bond length.
             try:
-                spin.r_sim.append(float(spin_line[col['r']]) * self.return_conversion_factor('r'), spin=spin)
+                spin.r_sim.append(float(spin_line[col['r']]) * self.return_conversion_factor('r'))
             except ValueError:
                 spin.r_sim.append(None)
 
             # CSA.
             try:
-                spin.csa_sim.append(float(spin_line[col['csa']]) * self.return_conversion_factor('csa'), spin=spin)
+                spin.csa_sim.append(float(spin_line[col['csa']]) * self.return_conversion_factor('csa'))
             except ValueError:
                 spin.csa_sim.append(None)
 
