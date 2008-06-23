@@ -213,7 +213,7 @@ class SpinList(list):
             # Get the spin specific object names and loop over them to get their descriptions.
             object_info = []
             if data_names:
-                for name in data_names():
+                for name in data_names(error_names=True, sim_names=True):
                     # Get the description.
                     desc = return_data_desc(name, spin=self[i])
 
