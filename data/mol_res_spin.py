@@ -206,9 +206,9 @@ class SpinList(list):
             element.appendChild(spin_element)
 
             # Set the spin attributes.
+            spin_element.setAttribute('desc', 'Spin container')
             spin_element.setAttribute('name', self[i].name)
             spin_element.setAttribute('num', str(self[i].num))
-            spin_element.setAttribute('desc', 'Spin')
 
             # Get the spin specific object names and loop over them to get their descriptions.
             object_info = []
@@ -421,9 +421,9 @@ class ResidueList(list):
             element.appendChild(res_element)
 
             # Set the residue attributes.
+            res_element.setAttribute('desc', 'Residue container')
             res_element.setAttribute('name', self[i].name)
             res_element.setAttribute('num', str(self[i].num))
-            res_element.setAttribute('desc', 'Residue')
 
             # Add all simple python objects within the ResidueContainer to the XML element.
             fill_object_contents(doc, res_element, object=self[i], blacklist=['name', 'num', 'spin'] + self[i].__class__.__dict__.keys())
@@ -594,8 +594,8 @@ class MoleculeList(list):
             element.appendChild(mol_element)
 
             # Set the molecule attributes.
+            mol_element.setAttribute('desc', 'Molecule container')
             mol_element.setAttribute('name', self[i].name)
-            mol_element.setAttribute('desc', 'Molecule')
 
             # Add all simple python objects within the MoleculeContainer to the XML element.
             fill_object_contents(doc, mol_element, object=self[i], blacklist=['name', 'res'] + self[i].__class__.__dict__.keys())
