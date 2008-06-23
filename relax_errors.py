@@ -702,8 +702,11 @@ class RelaxParamSetError(BaseError):
 
 # Value already exists.
 class RelaxValueError(BaseError):
-    def __init__(self, data_type, pipe):
-        self.text = "The data type " + `data_type` + " already exists for the data pipe " + `pipe` + "."
+    def __init__(self, data_type, pipe=None):
+        if pipe != None:
+            self.text = "The data type " + `data_type` + " already exists for the data pipe " + `pipe` + "."
+        else:
+            self.text = "The data type " + `data_type` + " already exists."
         if Debug:
             self.save_state()
 
