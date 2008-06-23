@@ -216,7 +216,7 @@ class Results:
             diff_type = None
 
         # Print out.
-        if verbosity:
+        if diff_type and verbosity:
             print "\nSetting the diffusion tensor."
             print "Diffusion type: " + diff_type
 
