@@ -1885,7 +1885,11 @@ class Model_free_main:
         if name == 'ts':
             return 'Slower motion effective internal correlation time (' + self.return_units('ts', spin=spin) + ')'
         if name == 'rex':
-            return 'Chemical exchange relaxation (' + self.return_units('rex', spin=spin) + ')'
+            rex_units = self.return_units('rex', spin=spin)
+            if rex_units:
+                return 'Chemical exchange relaxation (' + rex_units + ')'
+            else:
+                return 'Chemical exchange relaxation'
         if name == 'r':
             return 'Bond length (' + self.return_units('r') + ')'
         if name == 'csa':
