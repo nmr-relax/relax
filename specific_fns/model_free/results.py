@@ -998,10 +998,10 @@ class Results:
             all_select_sim = transpose(array(all_select_sim))
 
             # Set up the Monte Carlo simulations.
-            self.relax.generic.monte_carlo.setup(self.run, number=len(sims), all_select_sim=all_select_sim)
+            generic_fns.monte_carlo.setup(number=len(sims), all_select_sim=all_select_sim)
 
             # Turn the simulation state to off!
-            ds.sim_state[self.run] = False
+            ds[ds.current_pipe].sim_state = False
 
 
     def __generate_sequence(self, spin_line, col, verbosity=1):
