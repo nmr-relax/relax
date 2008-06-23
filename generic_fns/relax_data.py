@@ -364,7 +364,7 @@ def get_data_names(global_flag=False, sim_names=False):
     names = []
 
     # Global data names.
-    if global_flag:
+    if not sim_names and global_flag:
         names.append('num_frq')
         names.append('frq')
         names.append('frq_labels')
@@ -374,7 +374,7 @@ def get_data_names(global_flag=False, sim_names=False):
         names.append('noe_r1_table')
 
     # Residue specific data names.
-    else:
+    if not sim_names and not global_flag:
         names.append('num_frq')
         names.append('frq')
         names.append('frq_labels')
@@ -386,7 +386,7 @@ def get_data_names(global_flag=False, sim_names=False):
         names.append('relax_error')
 
     # Simulation object names.
-    if sim_names:
+    if sim_names and not global_flag:
         names.append('relax_sim_data')
 
     # Return the list of names.
