@@ -725,6 +725,36 @@ class Model_free_main:
         if set == 'all':
             names = names + relax_data.get_data_names()
 
+        # Parameter errors.
+        if error_names and (set == 'all' or set == 'params'):
+            names.append('s2_err')
+            names.append('s2f_err')
+            names.append('s2s_err')
+            names.append('local_tm_err')
+            names.append('te_err')
+            names.append('tf_err')
+            names.append('ts_err')
+            names.append('rex_err')
+            names.append('r_err')
+            names.append('csa_err')
+
+        # Parameter simulation values.
+        if sim_names and (set == 'all' or set == 'params'):
+            names.append('s2_sim')
+            names.append('s2f_sim')
+            names.append('s2s_sim')
+            names.append('local_tm_sim')
+            names.append('te_sim')
+            names.append('tf_sim')
+            names.append('ts_sim')
+            names.append('rex_sim')
+            names.append('r_sim')
+            names.append('csa_sim')
+
+        # Relaxation data simulation values.
+        if sim_names and set == 'all':
+            names = names + relax_data.get_data_names(sim_names=True)
+
         # Return the names.
         return names
 
