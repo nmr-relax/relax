@@ -319,7 +319,7 @@ def data_init(container, global_flag=False):
             setattr(container, name, 0)
 
 
-def get_data_names(global_flag=False):
+def get_data_names(global_flag=False, sim_names=False):
     """Return a list of names of data structures associated with relax_data.
 
     Description
@@ -353,30 +353,43 @@ def get_data_names(global_flag=False):
     @keyword global_flag:   A flag which if True corresponds to the pipe specific data structures
                             and if False corresponds to the spin specific data structures.
     @type global_flag:      bool
+    @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object names as
+                            well.
+    @type sim_names:        bool
+    @return:                The list of object names.
+    @rtype:                 list of str
     """
+
+    # Initialise.
+    names = []
 
     # Global data names.
     if global_flag:
-        names = [ 'num_frq',
-                  'frq',
-                  'frq_labels',
-                  'num_ri',
-                  'ri_labels',
-                  'remap_table',
-                  'noe_r1_table' ]
+        names.append('num_frq')
+        names.append('frq')
+        names.append('frq_labels')
+        names.append('num_ri')
+        names.append('ri_labels')
+        names.append('remap_table')
+        names.append('noe_r1_table')
 
     # Residue specific data names.
     else:
-        names = [ 'num_frq',
-                  'frq',
-                  'frq_labels',
-                  'num_ri',
-                  'ri_labels',
-                  'remap_table',
-                  'noe_r1_table',
-                  'relax_data',
-                  'relax_error' ]
+        names.append('num_frq')
+        names.append('frq')
+        names.append('frq_labels')
+        names.append('num_ri')
+        names.append('ri_labels')
+        names.append('remap_table')
+        names.append('noe_r1_table')
+        names.append('relax_data')
+        names.append('relax_error')
 
+    # Simulation object names.
+    if sim_names:
+        names.append('relax_sim_data')
+
+    # Return the list of names.
     return names
 
 
