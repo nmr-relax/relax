@@ -357,25 +357,25 @@ def get_data_names(global_flag=False):
 
     # Global data names.
     if global_flag:
-        names = [ 'num_ri',
-                  'num_frq',
+        names = [ 'num_frq',
+                  'frq',
+                  'frq_labels',
+                  'num_ri',
                   'ri_labels',
                   'remap_table',
-                  'noe_r1_table',
-                  'frq_labels',
-                  'frq' ]
+                  'noe_r1_table' ]
 
     # Residue specific data names.
     else:
-        names = [ 'relax_data',
-                  'relax_error',
+        names = [ 'num_frq',
+                  'frq',
+                  'frq_labels',
                   'num_ri',
-                  'num_frq',
                   'ri_labels',
                   'remap_table',
                   'noe_r1_table',
-                  'frq_labels',
-                  'frq' ]
+                  'relax_data',
+                  'relax_error' ]
 
     return names
 
