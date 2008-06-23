@@ -925,12 +925,13 @@ class Results:
                 continue
 
             # Set the heteronucleus and proton types (absent from the 1.2 results file).
-            if file_line[col['nucleus']] != 'None':
-                if search('N', file_line[col['nucleus']]):
-                    generic_fns.value.set(val='15N', param='heteronucleus', spin_id=spin_id)
-                elif search('C', file_line[col['nucleus']]):
-                    generic_fns.value.set(val='13C', param='heteronucleus', spin_id=spin_id)
-                generic_fns.value.set(val='1H', param='proton', spin_id=spin_id)
+            if data_set == 'value':
+                if file_line[col['nucleus']] != 'None':
+                    if search('N', file_line[col['nucleus']]):
+                        generic_fns.value.set(val='15N', param='heteronucleus', spin_id=spin_id)
+                    elif search('C', file_line[col['nucleus']]):
+                        generic_fns.value.set(val='13C', param='heteronucleus', spin_id=spin_id)
+                    generic_fns.value.set(val='1H', param='proton', spin_id=spin_id)
 
             # Simulation number.
             if data_set != 'value' and data_set != 'error':
