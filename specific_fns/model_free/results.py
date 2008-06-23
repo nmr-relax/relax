@@ -526,7 +526,7 @@ class Results:
                     spin.warning = replace(spin_line[col['warn']], '_', ' ')
 
         # Errors.
-        if spin == 'error':
+        if data_set == 'error':
             # S2.
             try:
                 spin.s2_err = float(spin_line[col['s2']]) * self.return_conversion_factor('s2', spin=spin)
