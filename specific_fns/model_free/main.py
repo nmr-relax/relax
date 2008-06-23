@@ -2556,16 +2556,28 @@ class Model_free_main:
 
 
     def set_selected_sim(self, instance, select_sim):
-        """Function for returning the array of selected simulation flags.
+        """Set all simulation selection flags.
 
         @param instance:    Either the spin container or data pipe container object.
         @type instance:     SpinContainer or PipeContainer instance
-        @param select_sim:  The selection flag.
+        @param select_sim:  The selection flags.
         @type select_sim:   bool
         """
 
-        # Set the flag.
-        instance.select_sim = select_sim
+        # Determine the parameter set type.
+        param_set = self.determine_param_set_type()
+
+        # Single instance.
+        if param_set == 'all' or param_set == 'diff':
+            ds[ds.current_pipe].select_sim = select_sim
+
+        # Multiple instances.
+        else:
+            # Get the spin container.
+            spin = return_spin_from_index(instance)
+
+            # Set the simulation flags.
+            spin.select_sim = select_sim
 
 
     def set_update(self, param, spin):
