@@ -27,6 +27,7 @@
 # Python module imports.
 from re import search
 from string import split
+from time import asctime
 import xml.dom.ext
 import xml.dom.minidom
 
@@ -191,8 +192,9 @@ class Relax_data_store(dict):
         # Append the element.
         xmldoc.appendChild(top_element)
 
-        # Set the relax version number.
+        # Set the relax version number, and add a creation time.
         top_element.setAttribute('version', version)
+        top_element.setAttribute('time', asctime())
 
         # Create the pipe XML element and add it to the top level XML element.
         pipe_element = xmldoc.createElement('pipe')
