@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+from re import split
 import sys
 
 # relax module imports.
@@ -112,7 +113,7 @@ def read(file='results', directory=None):
         raise RelaxNoPipeError
 
     # Determine the format of the file.
-    format = determine_format()
+    format = determine_format(file, directory)
 
     # Specific results writing function.
     if format == 'xml':
