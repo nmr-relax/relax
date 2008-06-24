@@ -113,37 +113,37 @@ def read(file='results', directory=None):
     if not ds.current_pipe:
         raise RelaxNoPipeError
 
-    # Determine the format of the file.
-    format = determine_format(file, directory)
-
-    # Specific results writing function.
-    if format == 'xml':
-        read_function = ds.xml_read
-    elif format == 'columnar':
-        read_function = get_specific_fn('read_columnar_results', ds[ds.current_pipe].pipe_type, raise_error=False)
-    else:
-        raise RelaxError, "Unknown format " + `format` + "."
-
-    # No function.
-    if not read_function:
-        raise RelaxError, "The " + format + " format is not currently supported for " + self.relax.specific_setup.get_string(function_type) + "."
-
     # Make sure that the data pipe is empty.
     if not ds[ds.current_pipe].is_empty():
         raise RelaxError, "The current data pipe is not empty."
 
-    # Extract the data from the file.
-    file_data = extract_data(file_name=file, dir=directory, file_data=file_data)
+    # Determine the format of the file.
+    format = determine_format(file, directory)
 
-    # Strip data.
-    file_data = strip(file_data)
+    # XML results.
+    if format == 'xml':
+        read_function = ds.xml_read
 
-    # Do nothing if the file does not exist.
-    if not file_data:
-        raise RelaxFileEmptyError
+    # Columnar results.
+    elif format == 'columnar':
+        read_function = get_specific_fn('read_columnar_results', ds[ds.current_pipe].pipe_type, raise_error=False)
 
-    # Read the results.
-    read_function(file_data, verbosity)
+        # Extract the data from the file.
+        file_data = extract_data(file_name=file, dir=directory)
+
+        # Strip data.
+        file_data = strip(file_data)
+
+        # Do nothing if the file does not exist.
+        if not file_data:
+            raise RelaxFileEmptyError
+
+        # Read the results.
+        read_function(file_data)
+
+    # Unknown results file.
+    else:
+        raise RelaxError, "The format of the results file " + `file_path` + " cannot be determined."
 
 
 def write(file="results", directory=None, force=False, format='columnar', compress_type=1, verbosity=1):
