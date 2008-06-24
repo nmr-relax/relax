@@ -239,6 +239,10 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
         # Nothing to do here!
         return file_name
 
+    # Invalid file name.
+    if not file_name and type(file_name) != str:
+        raise RelaxError, "The file name " + `file_name` + " of type " + `type(file_name)` + " is invalid and cannot be opened."
+
     # File path.
     file_path = get_file_path(file_name, dir)
 
