@@ -116,7 +116,7 @@ def read(file='results', directory=None):
         raise RelaxError, "The current data pipe is not empty."
 
     # Open the file.
-    file = open_read_file(file_name=file, dir=dir)
+    file = open_read_file(file_name=file, dir=directory)
 
     # Determine the format of the file.
     format = determine_format(file)
