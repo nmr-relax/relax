@@ -86,14 +86,14 @@ def determine_compression(file_path):
     return compress_type, file_path
 
 
-def extract_data(file_name=None, dir=None, file_data=None, sep=None):
-    """Open the file 'file' and return all the data.
+def extract_data(file=None, dir=None, file_data=None, sep=None):
+    """Return all data in the file as a list of lines where each line is a list of line elements.
 
-    @param file_name:       The name of the file to extract the data from.
-    @type file_name:        str
-    @param dir:             The path where the file is located.  If None, then the current
-                            directory is assumed.
-    @type dir:              str
+    @param file:            The file to extract the data from.
+    @type file:             str or file object
+    @param dir:             The path where the file is located.  If None and the file argument is a
+                            string, then the current directory is assumed.
+    @type dir:              str or None
     @param file_data:       If the file data has already been extracted from the file, it can be
                             passed into this function using this argument.  If data is supplied
                             here, then the file_name and dir args are ignored.
@@ -108,7 +108,8 @@ def extract_data(file_name=None, dir=None, file_data=None, sep=None):
     # Data not already extracted from the file.
     if not file_data:
         # Open the file.
-        file = open_read_file(file_name=file_name, dir=dir)
+        if type(file) != file:
+            file = open_read_file(file_name=file_name, dir=dir)
 
         # Read lines.
         file_data = file.readlines()
