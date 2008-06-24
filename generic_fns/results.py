@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from re import split
+from string import split
 import sys
 
 # relax module imports.
