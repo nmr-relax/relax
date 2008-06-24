@@ -52,23 +52,21 @@ def copy(run1=None, run2=None, sim=None):
     copy(run1=run1, run2=run2, sim=sim)
 
 
-def determine_format(file=None, dir=None):
+def determine_format(file):
     """Determine the format of the results file.
 
-    @keyword file:  The name of the results file.
-    @type file:     str
-    @keyword dir:   The directory containing the results file.
-    @type dir:      str
+    @keyword file:  The file object representing the results file.
+    @type file:     file object
     @return:        The results file format.  This can be 'xml' or 'columnar'.
     @rtype:         str or None
     """
 
-    # Open the file.
-    file = open_read_file(file_name=file, dir=dir)
-
-    # First line.
+    # Header line.
     header = file.readline()
     header = header[:-1]    # Strip the trailing newline.
+
+    # Be nice and go back to the start of the file.
+    file.seek(0)
 
     # XML.
     if header == "<?xml version='1.0' encoding='UTF-8'?>":
@@ -117,19 +115,22 @@ def read(file='results', directory=None):
     if not ds[ds.current_pipe].is_empty():
         raise RelaxError, "The current data pipe is not empty."
 
+    # Open the file.
+    file = open_read_file(file_name=file, dir=dir)
+
     # Determine the format of the file.
-    format = determine_format(file, directory)
+    format = determine_format(file)
 
     # XML results.
     if format == 'xml':
-        read_function = ds.xml_read
+        read_function = ds.xml_read(file=file)
 
     # Columnar results.
     elif format == 'columnar':
         read_function = get_specific_fn('read_columnar_results', ds[ds.current_pipe].pipe_type, raise_error=False)
 
         # Extract the data from the file.
-        file_data = extract_data(file_name=file, dir=directory)
+        file_data = extract_data(file=file)
 
         # Strip data.
         file_data = strip(file_data)
