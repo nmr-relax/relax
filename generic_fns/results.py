@@ -123,7 +123,7 @@ def read(file='results', directory=None):
 
     # XML results.
     if format == 'xml':
-        read_function = ds.xml_read(file=file)
+        read_function = ds.xml_read(file)
 
     # Columnar results.
     elif format == 'columnar':
