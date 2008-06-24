@@ -109,7 +109,7 @@ def extract_data(file=None, dir=None, file_data=None, sep=None):
     if not file_data:
         # Open the file.
         if type(file) != file:
-            file = open_read_file(file_name=file_name, dir=dir)
+            file = open_read_file(file_name=file, dir=dir)
 
         # Read lines.
         file_data = file.readlines()
