@@ -68,6 +68,7 @@ def determine_format(file=None, dir=None):
 
     # First line.
     header = file.readline()
+    header = header[:-1]    # Strip the trailing newline.
 
     # XML.
     if header == "<?xml version='1.0' encoding='UTF-8'?>":
