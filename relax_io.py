@@ -108,7 +108,7 @@ def extract_data(file=None, dir=None, file_data=None, sep=None):
     # Data not already extracted from the file.
     if not file_data:
         # Open the file.
-        if type(file) != file:
+        if type(file) == str:
             file = open_read_file(file_name=file, dir=dir)
 
         # Read lines.
