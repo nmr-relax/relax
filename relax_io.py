@@ -161,7 +161,8 @@ def get_file_path(file_name=None, dir=None):
         file_path = dir + '/' + file_path
 
     # Expand any ~ characters.
-    file_path = expanduser(file_path)
+    if file_path:    # Catch a file path of None, as expanduser can't handle this.
+        file_path = expanduser(file_path)
 
     # Return the file path.
     return file_path
