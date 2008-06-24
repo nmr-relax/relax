@@ -26,7 +26,7 @@ import sys
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPipeError
-from relax_io import extract_data, open_write_file, strip
+from relax_io import extract_data, open_read_file, open_write_file, strip
 from specific_fns.setup import get_specific_fn, get_string
 
 
@@ -49,6 +49,32 @@ def copy(run1=None, run2=None, sim=None):
 
     # Copy the results.
     copy(run1=run1, run2=run2, sim=sim)
+
+
+def determine_format(file=None, dir=None):
+    """Determine the format of the results file.
+
+    @keyword file:  The name of the results file.
+    @type file:     str
+    @keyword dir:   The directory containing the results file.
+    @type dir:      str
+    @return:        The results file format.  This can be 'xml' or 'columnar'.
+    @rtype:         str or None
+    """
+
+    # Open the file.
+    file = open_read_file(file_name=file, dir=dir)
+
+    # First line.
+    header = file.readline()
+
+    # XML.
+    if header == "<?xml version='1.0' encoding='UTF-8'?>":
+        return 'xml'
+
+    # Columnar.
+    if split(header)[0:3] == ['Num', 'Name', 'Selected']:
+        return 'columnar'
 
 
 def display(format='xml'):
@@ -78,12 +104,15 @@ def display(format='xml'):
     write_function(sys.stdout)
 
 
-def read(file='results', directory=None, file_data=None, format='columnar', verbosity=1):
+def read(file='results', directory=None):
     """Function for reading the data out of a file."""
 
     # Test if the current data pipe exists.
     if not ds.current_pipe:
         raise RelaxNoPipeError
+
+    # Determine the format of the file.
+    format = determine_format()
 
     # Specific results writing function.
     if format == 'xml':
