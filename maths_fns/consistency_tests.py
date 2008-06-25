@@ -136,7 +136,7 @@ class Consistency:
 
         # Calculate F_R2.
         # F_R2 tests the consistency of the transverse relaxation data.
-        f_r2 = (r2 - p_hf) / ((4.0 + 3.0 / (1 + (self.data.frq_list[0, 1] * tc) ** 2)) * (d + c))
+        f_r2 = (r2 - p_hf) / ((4.0 + 3.0 / (1 + (self.data.frq_list[0, 1] * tc) ** 2)) * (d + c/3.0))
 
         # Return the three values.
         return j0, f_eta, f_r2
