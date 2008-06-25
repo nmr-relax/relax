@@ -189,7 +189,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         ########
 
         # Test if the diffusion tensor data is loaded.
-        if not hasattr(pipe, 'diff'):
+        if not hasattr(pipe, 'diff_tensor'):
             raise RelaxNoTensorError, 'diffusion'
 
         # Test if a structure has been loaded.
