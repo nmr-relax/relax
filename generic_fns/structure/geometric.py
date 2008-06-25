@@ -237,7 +237,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         print "\nGenerating the geometric object."
 
         # The distribution.
-        generate_vector_dist(structure=structure, atom_id_ext=atom_id_ext, res_name='TNS', res_num=res_num, chain_id=chain_id, centre=CoM, R=pipe.diff.rotation, warp=pipe.diff.tensor, scale=scale, inc=20)
+        generate_vector_dist(structure=structure, atom_id_ext=atom_id_ext, res_name='TNS', res_num=res_num, chain_id=chain_id, centre=CoM, R=pipe.diff_tensor.rotation, warp=pipe.diff_tensor.tensor, scale=scale, inc=20)
 
         # Increment the residue number.
         res_num = res_num + 1
@@ -247,41 +247,41 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         #####################
 
         # Create the unique axis of the spheroid.
-        if pipe.diff.type == 'spheroid':
+        if pipe.diff_tensor.type == 'spheroid':
             # Print out.
             print "\nGenerating the unique axis of the diffusion tensor."
             print "    Scaling factor:                      " + `scale`
 
             # Simulations.
-            if hasattr(pipe.diff, 'tm_sim'):
-                sim_vectors = pipe.diff.Dpar_sim * pipe.diff.Dpar_unit_sim
+            if hasattr(pipe.diff_tensor, 'tm_sim'):
+                sim_vectors = pipe.diff_tensor.Dpar_sim * pipe.diff_tensor.Dpar_unit_sim
             else:
                 sim_vectors = None
                 
             # Generate the axes representation.
-            res_num = generate_vector_residues(structure=structure, vector=pipe.diff.Dpar*pipe.diff.Dpar_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
+            res_num = generate_vector_residues(structure=structure, vector=pipe.diff_tensor.Dpar*pipe.diff_tensor.Dpar_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
 
 
         # Create the three axes of the ellipsoid.
-        if pipe.diff.type == 'ellipsoid':
+        if pipe.diff_tensor.type == 'ellipsoid':
             # Print out.
             print "Generating the three axes of the ellipsoid."
             print "    Scaling factor:                      " + `scale`
 
             # Simulations.
-            if hasattr(pipe.diff, 'tm_sim'):
-                sim_Dx_vectors = pipe.diff.Dx_sim * pipe.diff.Dx_unit_sim
-                sim_Dy_vectors = pipe.diff.Dy_sim * pipe.diff.Dy_unit_sim
-                sim_Dz_vectors = pipe.diff.Dz_sim * pipe.diff.Dz_unit_sim
+            if hasattr(pipe.diff_tensor, 'tm_sim'):
+                sim_Dx_vectors = pipe.diff_tensor.Dx_sim * pipe.diff_tensor.Dx_unit_sim
+                sim_Dy_vectors = pipe.diff_tensor.Dy_sim * pipe.diff_tensor.Dy_unit_sim
+                sim_Dz_vectors = pipe.diff_tensor.Dz_sim * pipe.diff_tensor.Dz_unit_sim
             else:
                 sim_Dx_vectors = None
                 sim_Dy_vectors = None
                 sim_Dz_vectors = None
                 
             # Generate the axes representation.
-            res_num = generate_vector_residues(structure=structure, vector=pipe.diff.Dx*pipe.diff.Dx_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dx_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
-            res_num = generate_vector_residues(structure=structure, vector=pipe.diff.Dy*pipe.diff.Dy_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dy_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
-            res_num = generate_vector_residues(structure=structure, vector=pipe.diff.Dz*pipe.diff.Dz_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dz_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
+            res_num = generate_vector_residues(structure=structure, vector=pipe.diff_tensor.Dx*pipe.diff_tensor.Dx_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dx_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
+            res_num = generate_vector_residues(structure=structure, vector=pipe.diff_tensor.Dy*pipe.diff_tensor.Dy_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dy_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
+            res_num = generate_vector_residues(structure=structure, vector=pipe.diff_tensor.Dz*pipe.diff_tensor.Dz_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dz_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
 
 
         # Terminate the chain (the TER record).
