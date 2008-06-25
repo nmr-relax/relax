@@ -207,7 +207,7 @@ class SpinList(list):
 
             # Set the spin attributes.
             spin_element.setAttribute('desc', 'Spin container')
-            spin_element.setAttribute('name', self[i].name)
+            spin_element.setAttribute('name', str(self[i].name))
             spin_element.setAttribute('num', str(self[i].num))
 
             # Get the spin specific object names and loop over them to get their descriptions.
@@ -422,7 +422,7 @@ class ResidueList(list):
 
             # Set the residue attributes.
             res_element.setAttribute('desc', 'Residue container')
-            res_element.setAttribute('name', self[i].name)
+            res_element.setAttribute('name', str(self[i].name))
             res_element.setAttribute('num', str(self[i].num))
 
             # Add all simple python objects within the ResidueContainer to the XML element.
