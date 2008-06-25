@@ -28,7 +28,6 @@
 from re import search
 from string import split
 from time import asctime
-import xml.dom.ext
 import xml.dom.minidom
 
 # relax module imports.
@@ -184,20 +183,20 @@ class Relax_data_store(dict):
         """
 
         # Create the XML document object.
-        xmldoc = xml.dom.minidom.Document()
+        self.xmldoc = xml.dom.minidom.Document()
 
         # Create the top level element, including the relax URL.
-        top_element = xmldoc.createElementNS('http://nmr-relax.com', 'relax')
+        top_element = self.xmldoc.createElementNS('http://nmr-relax.com', 'relax')
 
         # Append the element.
-        xmldoc.appendChild(top_element)
+        self.xmldoc.appendChild(top_element)
 
         # Set the relax version number, and add a creation time.
         top_element.setAttribute('version', version)
         top_element.setAttribute('time', asctime())
 
         # Create the pipe XML element and add it to the top level XML element.
-        pipe_element = xmldoc.createElement('pipe')
+        pipe_element = self.xmldoc.createElement('pipe')
         top_element.appendChild(pipe_element)
 
         # Set the data pipe attributes.
@@ -206,7 +205,7 @@ class Relax_data_store(dict):
         pipe_element.setAttribute('type', self[self.current_pipe].pipe_type)
 
         # Fill the data pipe XML element.
-        self[self.current_pipe].xml_create_pipe_element(xmldoc, pipe_element)
+        self[self.current_pipe].xml_create_pipe_element(self.xmldoc, pipe_element)
 
         # Write out the XML file.
-        xml.dom.ext.PrettyPrint(xmldoc, file)
+        file.write(self.xmldoc.toprettyxml())
