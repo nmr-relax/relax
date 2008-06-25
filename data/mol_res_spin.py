@@ -595,7 +595,7 @@ class MoleculeList(list):
 
             # Set the molecule attributes.
             mol_element.setAttribute('desc', 'Molecule container')
-            mol_element.setAttribute('name', self[i].name)
+            mol_element.setAttribute('name', str(self[i].name))
 
             # Add all simple python objects within the MoleculeContainer to the XML element.
             fill_object_contents(doc, mol_element, object=self[i], blacklist=['name', 'res'] + self[i].__class__.__dict__.keys())
