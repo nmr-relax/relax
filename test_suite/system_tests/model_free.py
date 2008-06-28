@@ -24,6 +24,7 @@
 from math import pi
 import platform
 import numpy
+from re import search
 import sys
 from unittest import TestCase
 
@@ -119,11 +120,16 @@ class Mf(TestCase):
             if skip and name in skip:
                 continue
 
+            # Skip objects starting with '_'.
+            if search('^_', name):
+                continue
+
             # Get the sub-objects.
             sub_obj1 = getattr(obj1, name)
             sub_obj2 = getattr(obj2, name)
 
             # Check that they are equal.
+            print type(sub_obj1)
             self.assertEqual(sub_obj1, sub_obj2)
 
 
