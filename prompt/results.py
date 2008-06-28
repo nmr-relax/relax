@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2005,2008 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,7 +26,7 @@ import sys
 # relax module imports.
 import help
 from generic_fns import results
-from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxStrError, RelaxStrFileError
 
 
 class Results:
@@ -108,7 +108,8 @@ class Results:
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        file:  The name of the file to output results to.  The default is 'results'.
+        file:  The name of the file to output results to.  The default is 'results'.  Optionally
+        this can be a file object, or any object with a write() method.
 
         dir:  The directory name.
 
@@ -149,8 +150,8 @@ class Results:
             print text
 
         # File.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+        if type(file) != str and not hasattr(file, 'write'):
+            raise RelaxStrFileError, ('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
