@@ -253,7 +253,7 @@ class Main:
                     minimise(MIN_ALGOR)
 
                     # Write the results.
-                    results.write(file='results', dir=self.base_dir, force=1)
+                    results.write(file='results', dir=self.base_dir, force=True)
 
 
                 # Normal round of optimisation for diffusion models MII to MV.
@@ -284,7 +284,7 @@ class Main:
 
                     # Write the results.
                     dir = self.base_dir + 'opt'
-                    results.write(file='results', dir=dir, force=1)
+                    results.write(file='results', dir=dir, force=True)
 
                     # Test for convergence.
                     converged = self.convergence()
@@ -357,7 +357,7 @@ class Main:
             # Write the final results.
             ##########################
 
-            results.write(file='results', dir='final', force=1)
+            results.write(file='results', dir='final', force=True)
 
 
         # Unknown script behaviour.
@@ -573,7 +573,7 @@ class Main:
 
         # Write the results.
         if write_flag:
-            results.write(file='results', dir=dir, force=1)
+            results.write(file='results', dir=dir, force=True)
 
 
     def multi_model(self, local_tm=0):
@@ -628,7 +628,7 @@ class Main:
 
             # Write the results.
             dir = self.base_dir + name
-            results.write(file='results', dir=dir, force=1)
+            results.write(file='results', dir=dir, force=True)
 
 
 # The main class.
