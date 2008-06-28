@@ -405,6 +405,31 @@ class ResidueList(list):
         return False
 
 
+    def from_xml(self, res_nodes):
+        """Recreate a residue list data structure from the XML residue nodes.
+
+        @param res_nodes:   The residue XML nodes.
+        @type res_nodes:    xml.dom.minicompat.NodeList instance
+        """
+
+        # Test if empty.
+        if not self.is_empty():
+            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
+
+        # Loop over the residues.
+        for res_node in res_nodes:
+            # Get the residue details and add the residue to the ResidueList structure.
+            name = res_node.getAttribute('name')
+            num = res_node.getAttribute('num')
+            self.add_item(res_name=name, res_num=num)
+
+            # Get the spin nodes.
+            spin_nodes = res_node.getElementsByTagName('spin')
+
+            # Recreate the spin data structures for the current residue.
+            self[-1].spin.from_xml(spin_nodes)
+
+
     def xml_create_element(self, doc, element):
         """Create XML elements for each residue.
 
