@@ -407,7 +407,7 @@ class Main:
 
         # Create a string representation of the model-free models of the previous data pipe.
         prev_models = ''
-        for spin in spin_loop(pipe='previous')
+        for spin in spin_loop(pipe='previous'):
             if hasattr(spin, 'model'):
                 if not spin.model == 'None':
                     prev_models = prev_models + spin.model
