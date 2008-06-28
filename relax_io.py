@@ -449,6 +449,12 @@ class DummyFileObject:
         self.data = ''
 
 
+    def close(self):
+        """A method for deleting the contents of this object."""
+
+        del self.data
+
+
     def write(self, str):
         """Mimic the file object write() method so that this class can be used as a file object."""
 
