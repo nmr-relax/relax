@@ -51,7 +51,7 @@ It is important that the number of parameters in a model does not exceed the num
 
 
 Model I - Local tm
-~~~~~~~~~~~~~~~~~~
+==================
 
 This will optimise the diffusion model whereby all spin of the molecule have a local tm value, i.e. there is no global diffusion tensor.  This model needs to be optimised prior to optimising any of the other diffusion models.  Each spin is fitted to the multiple model-free models separately, where the parameter tm is included in each model.
 
@@ -59,7 +59,7 @@ AIC model selection is used to select the models for each spin.
 
 
 Model II - Sphere
-~~~~~~~~~~~~~~~~~
+=================
 
 This will optimise the isotropic diffusion model.  Multiple steps are required, an initial optimisation of the diffusion tensor, followed by a repetitive optimisation until convergence of the diffusion tensor.  Each of these steps requires this script to be rerun. For the initial optimisation, which will be placed in the directory './sphere/init/', the following steps are used:
 
@@ -80,26 +80,26 @@ All model-free and diffusion parameters are allowed to vary and a global optimis
 
 
 Model III - Prolate spheroid
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+============================
 
 The methods used are identical to those of diffusion model MII, except that an axially symmetric diffusion tensor with Da >= 0 is used.  The base directory containing all the results is './prolate/'.
 
 
 Model IV - Oblate spheroid
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+==========================
 
 The methods used are identical to those of diffusion model MII, except that an axially symmetric diffusion tensor with Da <= 0 is used.  The base directory containing all the results is './oblate/'.
 
 
 Model V - Ellipsoid
-~~~~~~~~~~~~~~~~~~~
+===================
 
 The methods used are identical to those of diffusion model MII, except that a fully anisotropic diffusion tensor is used (also known as rhombic or asymmetric diffusion).  The base directory is './ellipsoid/'.
 
 
 
 Final run
-~~~~~~~~~
+=========
 
 Once all the diffusion models have converged, the final run can be executed.  This is done by setting the variable DIFF_MODEL to 'final'.  This consists of two steps, diffusion tensor model selection, and Monte Carlo simulations.  Firstly AIC model selection is used to select between the diffusion tensor models.  Monte Carlo simulations are then run solely on this selected diffusion model.  Minimisation of the model is bypassed as it is assumed that the model is already fully optimised (if this is not the case the final run is not yet appropriate).
 
