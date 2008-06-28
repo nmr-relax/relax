@@ -451,6 +451,17 @@ class DummyFileObject:
         self.data = self.data + str
 
 
+    def readlines(self):
+        """Mimic the file object readlines() method.
+
+        @return:    The contents of the file object separated by newline characters.
+        @rtype:     list of str
+        """
+
+        # Return the split up string.
+        return split(self.data, '\n')
+
+
 
 class IO:
     def __init__(self, relax):
