@@ -30,7 +30,7 @@ from re import match
 # relax module imports.
 import data
 from prototype import Prototype
-from relax_errors import RelaxError
+from relax_errors import RelaxError, RelaxFromXMLNotEmptyError
 from relax_xml import fill_object_contents
 import specific_fns
 
@@ -576,6 +576,30 @@ class MoleculeList(list):
 
         # Otherwise.
         return False
+
+
+    def from_xml(self, mol_nodes):
+        """Recreate a molecule list data structure from the XML molecule nodes.
+
+        @param mol_nodes:   The molecule XML nodes.
+        @type mol_nodes:    xml.dom.minicompat.NodeList instance
+        """
+
+        # Test if empty.
+        if not self.is_empty():
+            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
+
+        # Loop over the molecules.
+        for mol_node in mol_nodes:
+            # Get the molecule details and add the molecule to the MoleculeList structure.
+            name = mol_node.getAttribute('name')
+            self.add_item(mol_name=name)
+
+            # Get the residue nodes.
+            res_nodes = mol_node.getElementsByTagName('res')
+
+            # Recreate the residue data structures for the current molecule.
+            self[-1].res.from_xml(res_nodes)
 
 
     def xml_create_element(self, doc, element):
