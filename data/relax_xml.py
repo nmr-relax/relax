@@ -78,13 +78,16 @@ def node_value_to_python(elem):
     return eval(val)
 
 
-def xml_to_object(elem, base_object=None):
+def xml_to_object(elem, base_object=None, set_fn=None):
     """Convert the XML elements into python objects, and place these into the base object.
 
     @param elem:        The element to extract all python objects from.
     @type elem:         xml.dom.minidom.Element instance
     @param base_object: The python class instance to place the objects into.
     @type  base_bject:  instance
+    @param set_fn:      A function used to replace setattr for placing the object into the base
+                        object.
+    @type set_fn:       function
     """
 
     # Loop over the nodes of the element

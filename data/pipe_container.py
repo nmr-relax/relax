@@ -26,9 +26,10 @@ from re import match
 # relax module imports.
 from data_classes import Element
 from diff_tensor import DiffTensorData
+import generic_fns
 from mol_res_spin import MoleculeList
 from prototype import Prototype
-from relax_xml import fill_object_contents
+from relax_xml import fill_object_contents, node_value_to_python, xml_to_object
 
 
 class PipeContainer(Prototype):
@@ -206,3 +207,34 @@ class PipeContainer(Prototype):
         # Set the structural attributes.
         str_element.setAttribute('desc', 'Structural information')
         str_element.setAttribute('id', ds[ds.current_pipe].structure.id)
+
+
+    def xml_read_element(self, relax_node):
+        """Read a pipe container XML element and place the contents into this pipe.
+
+        @param relax_node:  The relax XML node.
+        @type relax_node:   xml.dom.minidom.Element instance
+        """
+
+        # Get the global data node, and fill the contents of the pipe.
+        global_node = relax_node.getElementsByTagName('global')[0]
+        xml_to_object(global_node, self)
+
+        # Get the hybrid node (and its sub-node), and recreate the hybrid object.
+        hybrid_node = relax_node.getElementsByTagName('hybrid')[0]
+        pipes_node = hybrid_node.getElementsByTagName('pipes')[0]
+        setattr(self, 'hybrid_pipes', node_value_to_python(pipes_node.childNodes[0]))
+
+        # Get the diffusion tensor data node and, if it exists, fill the contents.
+        diff_tensor_node = relax_node.getElementsByTagName('diff_tensor')[0]
+        if diff_tensor_node:
+            # Create the diffusion tensor object.
+            self.diff_tensor = DiffTensorData()
+
+            # Fill its contents.
+            xml_to_object(diff_tensor_node, self.diff_tensor, set_fn=generic_fns.diffusion_tensor.set)
+            self.diff_tensor.tm = 1.0
+
+        # Recreate the molecule, residue, and spin data structure.
+        mol_nodes = relax_node.getElementsByTagName('mol')
+        self.mol.xml_read_element(mol_nodes)
