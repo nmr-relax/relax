@@ -131,7 +131,7 @@ class Mf(TestCase):
         """Mapping the {theta, phi, Da} chi2 space through the OpenDX user function dx.map()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
@@ -167,7 +167,7 @@ class Mf(TestCase):
         """Mapping the {local_tm, S2, te} chi2 space through the OpenDX user function dx.map()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
@@ -608,7 +608,7 @@ class Mf(TestCase):
         """Reading of relaxation data using the user function relax_data.read()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
@@ -628,7 +628,7 @@ class Mf(TestCase):
         """Read a relax 1.2 model-free results file using the user function results.read()."""
 
         # Read the results.
-        self.relax.interpreter._Results.read(file='results_1.2', dir=sys.path[-1] + '/test_suite/system_tests/data/model_free')
+        self.relax.interpreter._Results.read(file='results_1.2', dir=sys.path[-1] + '/test_suite/shared_data/model_free')
 
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
@@ -766,7 +766,7 @@ class Mf(TestCase):
         """Selecting model m4 with parameters {S2, te, Rex} using model_free.select_model()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
@@ -786,7 +786,7 @@ class Mf(TestCase):
         """Setting the bond length through the user function value.set()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
@@ -805,7 +805,7 @@ class Mf(TestCase):
         """Setting the CSA value through the user function value.set()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
@@ -824,7 +824,7 @@ class Mf(TestCase):
         """Setting both the CSA value and bond length through the user function value.set()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/system_tests/data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
