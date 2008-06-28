@@ -131,32 +131,7 @@ class PipeContainer(Prototype):
         return True
 
 
-    def xml_create_hybrid_element(self, doc, element):
-        """Create an XML element for the data pipe hybridisation information.
-
-        @param doc:     The XML document object.
-        @type doc:      xml.dom.minidom.Document instance
-        @param element: The element to add the hybridisation info to.
-        @type element:  XML element object
-        """
-
-        # Create the hybrid element and add it to the higher level element.
-        hybrid_element = doc.createElement('hybrid')
-        element.appendChild(hybrid_element)
-
-        # Set the hybridisation attributes.
-        hybrid_element.setAttribute('desc', 'Data pipe hybridisation information')
-
-        # Create an element to store the pipes list.
-        list_element = doc.createElement('pipes')
-        hybrid_element.appendChild(list_element)
-
-        # Add the pipes list.
-        text_val = doc.createTextNode(str(self.hybrid_pipes))
-        list_element.appendChild(text_val)
-
-
-    def xml_create_pipe_element(self, doc, element):
+    def xml_create_element(self, doc, element):
         """Create a XML element for the current data pipe.
 
         @param doc:     The XML document object.
@@ -188,6 +163,31 @@ class PipeContainer(Prototype):
 
         # Add the molecule-residue-spin data.
         self.mol.xml_create_element(doc, element)
+
+
+    def xml_create_hybrid_element(self, doc, element):
+        """Create an XML element for the data pipe hybridisation information.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the hybridisation info to.
+        @type element:  XML element object
+        """
+
+        # Create the hybrid element and add it to the higher level element.
+        hybrid_element = doc.createElement('hybrid')
+        element.appendChild(hybrid_element)
+
+        # Set the hybridisation attributes.
+        hybrid_element.setAttribute('desc', 'Data pipe hybridisation information')
+
+        # Create an element to store the pipes list.
+        list_element = doc.createElement('pipes')
+        hybrid_element.appendChild(list_element)
+
+        # Add the pipes list.
+        text_val = doc.createTextNode(str(self.hybrid_pipes))
+        list_element.appendChild(text_val)
 
 
     def xml_create_str_elem(doc, element):

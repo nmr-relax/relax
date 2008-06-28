@@ -217,7 +217,7 @@ class Relax_data_store(dict):
         pipe_element.setAttribute('type', self[self.current_pipe].pipe_type)
 
         # Fill the data pipe XML element.
-        self[self.current_pipe].xml_create_pipe_element(self.xmldoc, pipe_element)
+        self[self.current_pipe].xml_create_element(self.xmldoc, pipe_element)
 
         # Write out the XML file.
         file.write(self.xmldoc.toprettyxml(indent='    '))
