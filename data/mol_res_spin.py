@@ -31,7 +31,7 @@ from re import match
 import data
 from prototype import Prototype
 from relax_errors import RelaxError, RelaxFromXMLNotEmptyError
-from relax_xml import fill_object_contents
+from relax_xml import fill_object_contents, xml_to_object
 import specific_fns
 
 
@@ -181,6 +181,28 @@ class SpinList(list):
 
         # Otherwise.
         return False
+
+
+    def from_xml(self, spin_nodes):
+        """Recreate a spin list data structure from the XML spin nodes.
+
+        @param spin_nodes:  The spin XML nodes.
+        @type spin_nodes:   xml.dom.minicompat.NodeList instance
+        """
+
+        # Test if empty.
+        if not self.is_empty():
+            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
+
+        # Loop over the spins.
+        for spin_node in spin_nodes:
+            # Get the spin details and add the spin to the SpinList structure.
+            name = spin_node.getAttribute('name')
+            num = spin_node.getAttribute('num')
+            self.add_item(spin_name=name, spin_num=num)
+
+            # Recreate the current spin container.
+            xml_to_object(spin_node, self[-1])
 
 
     def xml_create_element(self, doc, element):
