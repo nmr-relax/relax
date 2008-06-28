@@ -807,8 +807,10 @@ class Mf(TestCase):
         pipe_13 = ds['1.3']
 
         # Test that the objects in the base pipes are the same.
-        self.object_comparison(obj1=pipe_12, obj2=pipe_13, skip=['mol'])
+        self.object_comparison(obj1=pipe_12, obj2=pipe_13, skip=['mol', 'diff_tensor'])
 
+        # Test that the diffusion tensor data is the same.
+        self.object_comparison(obj1=pipe_12.diff_tensor, obj2=pipe_13.diff_tensor)
 
         # Test the number of molecules.
         self.assertEqual(len(pipe_12.mol), len(pipe_13.mol))
