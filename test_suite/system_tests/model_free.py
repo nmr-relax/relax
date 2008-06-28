@@ -859,17 +859,3 @@ class Mf(TestCase):
         self.assertEqual(spin.g_count, g_count, msg=mesg)
         self.assertEqual(spin.h_count, h_count, msg=mesg)
         self.assertEqual(spin.warning, warning, msg=mesg)
-
-
-class File_mimick:
-    def __init__(self):
-        """Initialise an object for adding the string from all write calls to."""
-
-        self.data = ''
-
-
-    def write(self, str):
-        """Mimic the file object write() method so that this class can be used as a file object."""
-
-        # Append the string to the data object.
-        self.data = self.data + str

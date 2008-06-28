@@ -437,6 +437,21 @@ def test_binary(binary):
 
 
 
+class File_mimick:
+    def __init__(self):
+        """Initialise an object for adding the string from all write calls to."""
+
+        self.data = ''
+
+
+    def write(self, str):
+        """Mimic the file object write() method so that this class can be used as a file object."""
+
+        # Append the string to the data object.
+        self.data = self.data + str
+
+
+
 class IO:
     def __init__(self, relax):
         """Class containing the file operations.
