@@ -838,6 +838,10 @@ class Mf(TestCase):
 
             # Loop over the residues.
             for j in xrange(len(pipe_12.mol[i].res)):
+                # Ok, really don't need to do a full comparison of all 162 residues for this test!
+                if j > 10:
+                    break
+
                 # Test the objects.
                 print "Comparison of the objects of the residue:"
                 self.object_comparison(obj1=pipe_12.mol[i].res[j], obj2=pipe_13.mol[i].res[j], skip=['spin'])
