@@ -793,6 +793,17 @@ class RelaxNaNError(BaseError):
             self.save_state()
 
 
+# XML errors.
+#############
+
+# Cannot recreate from the XML - the structure is not empty.
+class RelaxFromXMLNotEmptyError(BaseError):
+    def __init__(self, name):
+        self.text = "The " + name + " data structure cannot be recreated from the XML elements as the structure is not empty."
+        if Debug:
+            self.save_state()
+
+
 
 # An object of all the RelaxErrors.
 ###################################
