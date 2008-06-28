@@ -27,7 +27,7 @@ import sys
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPipeError
-from relax_io import extract_data, open_read_file, open_write_file, strip
+from relax_io import extract_data, get_file_path, open_read_file, open_write_file, strip
 from specific_fns.setup import get_specific_fn, get_string
 
 
@@ -114,6 +114,9 @@ def read(file='results', directory=None):
     # Make sure that the data pipe is empty.
     if not ds[ds.current_pipe].is_empty():
         raise RelaxError, "The current data pipe is not empty."
+
+    # Get the full file path, for later use.
+    file_path = get_file_path(file_name=file, dir=directory)
 
     # Open the file.
     file = open_read_file(file_name=file, dir=directory)
