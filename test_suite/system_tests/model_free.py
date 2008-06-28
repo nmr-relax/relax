@@ -107,6 +107,26 @@ class Mf(TestCase):
         return string
 
 
+    def object_comparison(self, obj1=None, obj2=None, skip=None):
+        """Check if the contents of 2 objects are the same."""
+
+        # The names are the same.
+        self.assertEqual(dir(obj1), dir(obj2))
+
+        # Loop over the objects in the base objects.
+        for name in dir(obj1):
+            # Skip special objects.
+            if skip and name in skip:
+                continue
+
+            # Get the sub-objects.
+            sub_obj1 = getattr(obj1, name)
+            sub_obj2 = getattr(obj2, name)
+
+            # Check that they are equal.
+            self.assertEqual(sub_obj1, sub_obj2)
+
+
     def test_create_m4(self):
         """Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()."""
 
@@ -761,6 +781,54 @@ class Mf(TestCase):
 
             # Secondary index.
             j = j + 1
+
+
+    def test_read_results_1_3(self):
+        """Read a relax 1.3 model-free results file using the user function results.read()."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/model_free/OMP'
+
+        # Read the results file.
+        self.relax.interpreter._Pipe.create('1.3', 'mf')
+        self.relax.interpreter._Results.read(file='final_results_trunc_1.3', dir=path)
+
+        # Read the equivalent 1.2 results file for the checks.
+        self.relax.interpreter._Pipe.create('1.2', 'mf')
+        self.relax.interpreter._Results.read(file='final_results_trunc_1.2', dir=path)
+
+        # Alias the two data pipes.
+        pipe_12 = ds['1.2']
+        pipe_13 = ds['1.3']
+
+        # Test that the objects in the base pipes are the same.
+        self.object_comparison(obj1=pipe_12, obj2=pipe_13, skip=['mol'])
+
+
+        # Test the number of molecules.
+        self.assertEqual(len(pipe_12.mol), len(pipe_13.mol))
+
+        # Loop over the molecules.
+        for i in xrange(len(pipe_12.mol)):
+            # Test the objects.
+            self.object_comparison(obj1=pipe_12.mol[i], obj2=pipe_13.mol[i], skip=['res'])
+
+            # Test the number of residues.
+            self.assertEqual(len(pipe_12.mol[i].res), len(pipe_13.mol[i].res))
+
+            # Loop over the residues.
+            for j in xrange(len(pipe_12.mol[i].res)):
+                # Test the objects.
+                self.object_comparison(obj1=pipe_12.mol[i].res[j], obj2=pipe_13.mol[i].res[j], skip=['spin'])
+
+                # Test the number of spins.
+                self.assertEqual(len(pipe_12.mol[i].res[j].spin), len(pipe_13.mol[i].res[j].spin))
+
+                # Loop over the spins.
+                for k in xrange(len(pipe_12.mol[i].res[j].spin)):
+                    # Test the objects.
+                    self.object_comparison(obj1=pipe_12.mol[i].res[j].spin[k], obj2=pipe_13.mol[i].res[j].spin[k])
+
 
 
     def test_select_m4(self):
