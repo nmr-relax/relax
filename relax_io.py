@@ -444,15 +444,20 @@ def test_binary(binary):
 
 class DummyFileObject:
     def __init__(self):
-        """Initialise an object for adding the string from all write calls to."""
+        """Set up the dummy object to act as a file object."""
 
+        # Initialise an object for adding the string from all write calls to.
         self.data = ''
+
+        # Set the closed flag.
+        self.closed = False
 
 
     def close(self):
-        """A method for deleting the contents of this object."""
+        """A method for 'closing' this object."""
 
-        del self.data
+        # Set the closed flag.
+        self.closed = True
 
 
     def write(self, str):
@@ -462,19 +467,33 @@ class DummyFileObject:
         @type str:      str
         """
 
+        # Check if the file is closed.
+        if self.closed:
+            raise ValueError, 'I/O operation on closed file'
+
         # Append the string to the data object.
         self.data = self.data + str
 
 
     def readlines(self):
         """Mimic the file object readlines() method.
+        
+        This method works even if this dummy file object is closed!
+
 
         @return:    The contents of the file object separated by newline characters.
         @rtype:     list of str
         """
 
-        # Return the split up string.
-        return split(self.data, '\n')
+        # Split up the string.
+        lines = split(self.data, '\n')
+
+        # Loop over the lines, re-adding the newline character to match the file object readlines() method.
+        for i in xrange(len(lines)):
+            lines[i] = lines[i] + '\n'
+
+        # Return the file lines.
+        return lines
 
 
 
