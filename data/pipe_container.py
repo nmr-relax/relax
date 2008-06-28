@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,6 +29,7 @@ from diff_tensor import DiffTensorData
 import generic_fns
 from mol_res_spin import MoleculeList
 from prototype import Prototype
+from relax_errors import RelaxFromXMLNotEmptyError
 from relax_xml import fill_object_contents, node_value_to_python, xml_to_object
 
 
@@ -215,6 +216,10 @@ class PipeContainer(Prototype):
         @param relax_node:  The relax XML node.
         @type relax_node:   xml.dom.minidom.Element instance
         """
+
+        # Test if empty.
+        if not self.is_empty():
+            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
 
         # Get the global data node, and fill the contents of the pipe.
         global_node = relax_node.getElementsByTagName('global')[0]
