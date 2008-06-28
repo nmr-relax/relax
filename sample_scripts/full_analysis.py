@@ -20,20 +20,6 @@
 #                                                                             #
 ###############################################################################
 
-# Script for complete model-free analysis.
-##########################################
-
-
-# Python module imports.
-from os import getcwd, listdir
-from re import search
-from string import lower
-
-# relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
-from generic.selection import spin_index_loop, spin_loop
-from relax_errors import RelaxError
-
 """Script for black-box model-free analysis.
 
 The model-free optimisation methodology herein is that of:
@@ -119,6 +105,16 @@ Once all the diffusion models have converged, the final run can be executed.  Th
 
 The final black-box model-free results will be placed in the file 'final/results'.
 """
+
+# Python module imports.
+from os import getcwd, listdir
+from re import search
+from string import lower
+
+# relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
+from generic.selection import spin_index_loop, spin_loop
+from relax_errors import RelaxError
 
 
 # User variables.
