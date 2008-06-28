@@ -456,7 +456,11 @@ class DummyFileObject:
 
 
     def write(self, str):
-        """Mimic the file object write() method so that this class can be used as a file object."""
+        """Mimic the file object write() method so that this class can be used as a file object.
+
+        @param str:     The string to be written.
+        @type str:      str
+        """
 
         # Append the string to the data object.
         self.data = self.data + str
