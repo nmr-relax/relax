@@ -30,7 +30,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from physical_constants import N15_CSA, NH_BOND_LENGTH
-from relax_io import DummyFileObject
+from relax_io import DummyFileObject, open_read_file
 
 
 # Get the platform information.
@@ -857,11 +857,23 @@ class Mf(TestCase):
         self.relax.interpreter._Results.write(file=file, dir=path)
 
         # Now, get the contents of that file, and then 'close' that file.
-        lines = file.readlines()
+        lines_test = file.readlines()
         file.close()
 
-        # Test the first line.
-        self.assertEqual(lines[0], '<?xml version="1.0" ?>\n')
+        # Read the 1.3 results file, extract the data, then close it again.
+        file = open_read_file(file_name='final_results_trunc_1.3', dir=path)
+        lines_true = file.readlines()
+        file.close()
+
+        # Test the rest of the lines.
+        for i in xrange(len(lines_test)):
+            # Skip the second line, as it contains the date and hence should not be the same.
+            # Also skip the third line, as the pipe names are different.
+            if i == 1 or i == 2:
+                continue
+
+            # Test that the line is the same.
+            self.assertEqual(lines_test[i], lines_true[i])
 
 
     def value_test(self, spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning):
