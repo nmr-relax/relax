@@ -30,6 +30,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from physical_constants import N15_CSA, NH_BOND_LENGTH
+from relax_io import DummyFileObject
 
 
 # Get the platform information.
@@ -838,6 +839,22 @@ class Mf(TestCase):
         # Test the values.
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, N15_CSA)
         self.assertEqual(cdp.mol[0].res[1].spin[0].r, NH_BOND_LENGTH)
+
+
+    def test_write_results(self):
+        """Writing of model-free results using the user function results.write()."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/model_free/OMP'
+
+        # Read the results file.
+        self.relax.interpreter._Results.read(file='final_results_trunc_1.2', dir=path)
+
+        # A dummy file object for catching the results.write() output.
+        file = DummyFileObject
+
+        # Write the results file into a dummy file.
+        self.relax.interpreter._Results.write(file=file, dir=path)
 
 
     def value_test(self, spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning):
