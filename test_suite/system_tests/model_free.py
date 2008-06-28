@@ -129,7 +129,6 @@ class Mf(TestCase):
             sub_obj2 = getattr(obj2, name)
 
             # Check that they are equal.
-            print type(sub_obj1)
             self.assertEqual(sub_obj1, sub_obj2)
 
 
