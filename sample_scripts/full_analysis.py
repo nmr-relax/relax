@@ -133,11 +133,8 @@ HETNUC = 'N'
 # The PDB file (set this to None if no structure is available).
 PDB_FILE = '1f3y.pdb'
 
-# The file containing the sequence.
-SEQUENCE = 'noe.600.out'
-
-# The sequence.read() arguments (corresponding to the keyword arguments [dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep], see the sequence.read() documentation for more information).
-SEQ_ARGS = [None, None, 0, 1, None, None, None]
+# The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
+SEQ_ARGS = ['noe.600.out', None, None, 0, 1, None, None, None]
 
 # The relaxation data (data type, frequency label, frequency, file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the relax_data.read() user function, please see the documentation for that function for more information.
 RELAX_DATA = [['R1',  '600', 599.719 * 1e6, 'r1.600.out',  None, None, 0, 1, None, None, 2, 3, None],
@@ -592,7 +589,7 @@ class Main:
             pipe.create(name, 'mf')
 
             # Load the sequence.
-            sequence.read(SEQUENCE, SEQ_ARGS[0], SEQ_ARGS[1], SEQ_ARGS[2], SEQ_ARGS[3], SEQ_ARGS[4], SEQ_ARGS[5], SEQ_ARGS[6])
+            sequence.read(SEQ_ARGS[0], SEQ_ARGS[1], SEQ_ARGS[2], SEQ_ARGS[3], SEQ_ARGS[4], SEQ_ARGS[5], SEQ_ARGS[6], SEQ_ARGS[7])
 
             # Load the PDB file and calculate the unit vectors parallel to the XH bond.
             if not local_tm and PDB_FILE:
