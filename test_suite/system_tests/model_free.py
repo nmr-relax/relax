@@ -861,7 +861,7 @@ class Mf(TestCase):
         file.close()
 
         # Test the first line.
-        self.assertEqual(lines[0] == '<?xml version="1.0" ?>\n')
+        self.assertEqual(lines[0], '<?xml version="1.0" ?>\n')
 
 
     def value_test(self, spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning):
