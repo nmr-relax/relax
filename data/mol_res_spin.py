@@ -197,8 +197,10 @@ class SpinList(list):
         # Loop over the spins.
         for spin_node in spin_nodes:
             # Get the spin details and add the spin to the SpinList structure.
-            name = spin_node.getAttribute('name')
-            num = spin_node.getAttribute('num')
+            name = str(spin_node.getAttribute('name'))
+            if name == 'None':
+                name = None
+            num = eval(spin_node.getAttribute('num'))
             self.add_item(spin_name=name, spin_num=num)
 
             # Recreate the current spin container.
@@ -441,8 +443,10 @@ class ResidueList(list):
         # Loop over the residues.
         for res_node in res_nodes:
             # Get the residue details and add the residue to the ResidueList structure.
-            name = res_node.getAttribute('name')
-            num = res_node.getAttribute('num')
+            name = str(res_node.getAttribute('name'))
+            if name == 'None':
+                name = None
+            num = eval(res_node.getAttribute('num'))
             self.add_item(res_name=name, res_num=num)
 
             # Get the spin nodes.
@@ -639,7 +643,9 @@ class MoleculeList(list):
         # Loop over the molecules.
         for mol_node in mol_nodes:
             # Get the molecule details and add the molecule to the MoleculeList structure.
-            name = mol_node.getAttribute('name')
+            name = eval(mol_node.getAttribute('name'))
+            if name == 'None':
+                name = None
             self.add_item(mol_name=name)
 
             # Get the residue nodes.
