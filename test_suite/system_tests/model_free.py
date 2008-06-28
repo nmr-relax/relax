@@ -925,23 +925,35 @@ class Mf(TestCase):
         self.relax.interpreter._Results.write(file=file, dir=path)
 
         # Now, get the contents of that file, and then 'close' that file.
-        lines_test = file.readlines()
+        test_lines = file.readlines()
         file.close()
 
         # Read the 1.3 results file, extract the data, then close it again.
         file = open_read_file(file_name='final_results_trunc_1.3', dir=path)
-        lines_true = file.readlines()
+        true_lines = file.readlines()
         file.close()
 
         # Test the rest of the lines.
-        for i in xrange(len(lines_test)):
+        for i in xrange(len(test_lines)):
             # Skip the second line, as it contains the date and hence should not be the same.
             # Also skip the third line, as the pipe names are different.
             if i == 1 or i == 2:
                 continue
 
+            # Try to convert the test line into a python object (for cross-platform support).
+            try:
+                test_line = eval(test_lines[i])
+            except:
+                test_line = test_lines[i]
+
+            # Try to convert the true line into a python object (for cross-platform support).
+            try:
+                true_line = eval(true_lines[i])
+            except:
+                true_line = true_lines[i]
+
             # Test that the line is the same.
-            self.assertEqual(lines_test[i], lines_true[i])
+            self.assertEqual(test_line, true_line)
 
 
     def value_test(self, spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning):
