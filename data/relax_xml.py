@@ -24,6 +24,7 @@
 """Module containing generic fns for creation and parsing of XML representations of python objects."""
 
 # Python module imports.
+from numpy import array
 from re import search
 from string import strip
 
