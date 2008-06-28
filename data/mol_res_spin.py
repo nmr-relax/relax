@@ -205,7 +205,7 @@ class SpinList(list):
             xml_to_object(spin_node, self[-1])
 
 
-    def xml_create_element(self, doc, element):
+    def to_xml(self, doc, element):
         """Create XML elements for each spin.
 
         @param doc:     The XML document object.
@@ -452,7 +452,7 @@ class ResidueList(list):
             self[-1].spin.from_xml(spin_nodes)
 
 
-    def xml_create_element(self, doc, element):
+    def to_xml(self, doc, element):
         """Create XML elements for each residue.
 
         @param doc:     The XML document object.
@@ -476,7 +476,7 @@ class ResidueList(list):
             fill_object_contents(doc, res_element, object=self[i], blacklist=['name', 'num', 'spin'] + self[i].__class__.__dict__.keys())
 
             # Add the residue data.
-            self[i].spin.xml_create_element(doc, res_element)
+            self[i].spin.to_xml(doc, res_element)
 
 
 
@@ -649,7 +649,7 @@ class MoleculeList(list):
             self[-1].res.from_xml(res_nodes)
 
 
-    def xml_create_element(self, doc, element):
+    def to_xml(self, doc, element):
         """Create XML elements for each molecule.
 
         @param doc:     The XML document object.
@@ -672,4 +672,4 @@ class MoleculeList(list):
             fill_object_contents(doc, mol_element, object=self[i], blacklist=['name', 'res'] + self[i].__class__.__dict__.keys())
 
             # Add the residue data.
-            self[i].res.xml_create_element(doc, mol_element)
+            self[i].res.to_xml(doc, mol_element)

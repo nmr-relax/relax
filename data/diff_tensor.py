@@ -840,7 +840,7 @@ class DiffTensorData(Element):
         xml_to_object(diff_tensor_node, self)
 
 
-    def xml_create_element(self, doc, element):
+    def to_xml(self, doc, element):
         """Create an XML element for the diffusion tensor.
 
         @param doc:     The XML document object.

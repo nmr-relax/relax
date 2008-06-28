@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2007 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2006-2008 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -559,7 +559,7 @@ class AlignTensorList(ListType):
         self.append(AlignTensorData(name))
 
 
-    def xml_create_element(self, doc, element):
+    def to_xml(self, doc, element):
         """Create an XML element for the alignment tensors.
 
         @param doc:     The XML document object.

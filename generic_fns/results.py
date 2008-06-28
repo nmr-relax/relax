@@ -91,7 +91,7 @@ def display(format='xml'):
 
     # Specific results writing function.
     if format == 'xml':
-        write_function = ds.xml_write
+        write_function = ds.to_xml
     elif format == 'columnar':
         write_function = get_specific_fn('write_columnar_results', ds[ds.current_pipe].pipe_type, raise_error=False)
     else:
@@ -127,7 +127,7 @@ def read(file='results', directory=None):
 
     # XML results.
     if format == 'xml':
-        read_function = ds.xml_read(file)
+        read_function = ds.from_xml(file)
 
     # Columnar results.
     elif format == 'columnar':
@@ -164,7 +164,7 @@ def write(file="results", directory=None, force=False, format='columnar', compre
 
     # Specific results writing function.
     if format == 'xml':
-        write_function = ds.xml_write
+        write_function = ds.to_xml
     elif format == 'columnar':
         write_function = get_specific_fn('write_columnar_results', ds[ds.current_pipe].pipe_type, raise_error=False)
     else:

@@ -160,7 +160,7 @@ class Relax_data_store(dict):
         self.current_pipe = pipe_name
 
 
-    def xml_read(self, file, verbosity=1):
+    def from_xml(self, file, verbosity=1):
         """Parse a XML document representation of a data pipe, and load it into the relax data store.
 
         @param file:        The open file object.
@@ -180,10 +180,10 @@ class Relax_data_store(dict):
         relax_version = str(relax_node.getAttribute('version'))
 
         # Fill the pipe.
-        self[self.current_pipe].xml_read_element(relax_node)
+        self[self.current_pipe].from_xml(relax_node)
 
 
-    def xml_write(self, file):
+    def to_xml(self, file):
         """Create a XML document representation of the current data pipe.
 
         This method creates the top level XML document including all the information needed
@@ -217,7 +217,7 @@ class Relax_data_store(dict):
         pipe_element.setAttribute('type', self[self.current_pipe].pipe_type)
 
         # Fill the data pipe XML element.
-        self[self.current_pipe].xml_create_element(self.xmldoc, pipe_element)
+        self[self.current_pipe].to_xml(self.xmldoc, pipe_element)
 
         # Write out the XML file.
         file.write(self.xmldoc.toprettyxml(indent='    '))
