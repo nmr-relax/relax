@@ -410,7 +410,7 @@ class Main:
 
         # Create a string representation of the model-free models of the current data pipe.
         curr_models = ''
-        for spin in spin_loop()
+        for spin in spin_loop():
             if hasattr(spin, 'model'):
                 if not spin.model == 'None':
                     curr_models = curr_models + spin.model
