@@ -851,7 +851,7 @@ class Mf(TestCase):
         self.relax.interpreter._Results.read(file='final_results_trunc_1.2', dir=path)
 
         # A dummy file object for catching the results.write() output.
-        file = DummyFileObject
+        file = DummyFileObject()
 
         # Write the results file into a dummy file.
         self.relax.interpreter._Results.write(file=file, dir=path)
