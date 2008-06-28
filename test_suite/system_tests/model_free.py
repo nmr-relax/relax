@@ -856,6 +856,13 @@ class Mf(TestCase):
         # Write the results file into a dummy file.
         self.relax.interpreter._Results.write(file=file, dir=path)
 
+        # Now, get the contents of that file, and then 'close' that file.
+        lines = file.readlines()
+        file.close()
+
+        # Test the first line.
+        self.assertEqual(lines[0] == '<?xml version="1.0" ?>\n')
+
 
     def value_test(self, spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning):
         """Method for testing the optimisation values.
