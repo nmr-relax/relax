@@ -170,6 +170,18 @@ class Relax_data_store(dict):
         @type verbosity:    int
         """
 
+        # Create the XML document from the file.
+        doc = xml.dom.minidom.parse(file)
+
+        # Get the relax node.
+        relax_node = doc.childNodes[0]
+
+        # Get the relax version of the XML file.
+        relax_version = str(relax_node.getAttribute('version'))
+
+        # Fill the pipe.
+        self[self.current_pipe].xml_read_element(relax_node)
+
 
     def xml_write(self, file):
         """Create a XML document representation of the current data pipe.
