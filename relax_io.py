@@ -437,7 +437,7 @@ def test_binary(binary):
 
 
 
-class File_mimick:
+class DummyFileObject:
     def __init__(self):
         """Initialise an object for adding the string from all write calls to."""
 
