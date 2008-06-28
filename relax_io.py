@@ -300,6 +300,11 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
         # Nothing to do here!
         return file_name
 
+    # Something pretending to be a file object.
+    if hasattr(file_name, 'write'):
+        # Nothing to do here!
+        return file_name
+
     # The null device.
     if search('devnull', file_name):
         # Devnull could not be imported!
