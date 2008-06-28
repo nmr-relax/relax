@@ -139,14 +139,13 @@ SEQUENCE = 'noe.600.out'
 # The sequence.read() arguments (corresponding to the keyword arguments [dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep], see the sequence.read() documentation for more information).
 SEQ_ARGS = [None, None, 0, 1, None, None, None]
 
-# The relaxation data (Data type, frequency label, frequency, file name).
-# These are the arguments 'ri_label', 'frq_label', 'frq', and 'file' to the relax_data.read() user function.  Please read the user function documentation for more information.
-RELAX_DATA = [['R1', '600', 599.719 * 1e6, 'r1.600.out'],
-              ['R2', '600', 599.719 * 1e6, 'r2.600.out'],
-              ['NOE', '600', 599.719 * 1e6, 'noe.600.out'],
-              ['R1', '500', 500.208 * 1e6, 'r1.500.out'],
-              ['R2', '500', 500.208 * 1e6, 'r2.500.out'],
-              ['NOE', '500', 500.208 * 1e6, 'noe.500.out']
+# The relaxation data (data type, frequency label, frequency, file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the relax_data.read() user function, please see the documentation for that function for more information.
+RELAX_DATA = [['R1',  '600', 599.719 * 1e6, 'r1.600.out',  None, None, 0, 1, None, None, 2, 3, None],
+              ['R2',  '600', 599.719 * 1e6, 'r2.600.out',  None, None, 0, 1, None, None, 2, 3, None],
+              ['NOE', '600', 599.719 * 1e6, 'noe.600.out', None, None, 0, 1, None, None, 2, 3, None],
+              ['R1',  '500', 500.208 * 1e6, 'r1.500.out',  None, None, 0, 1, None, None, 2, 3, None],
+              ['R2',  '500', 500.208 * 1e6, 'r2.500.out',  None, None, 0, 1, None, None, 2, 3, None],
+              ['NOE', '500', 500.208 * 1e6, 'noe.500.out', None, None, 0, 1, None, None, 2, 3, None]
 ]
 
 # The file containing the list of unresolved spins to exclude from the analysis (set this to None if no spin is to be excluded).
@@ -602,7 +601,7 @@ class Main:
 
             # Load the relaxation data.
             for data in RELAX_DATA:
-                relax_data.read(data[0], data[1], data[2], data[3])
+                relax_data.read(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12])
 
             # Deselect spins to be excluded (including unresolved and specifically excluded spins).
             if UNRES:
