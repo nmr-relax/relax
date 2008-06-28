@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+from re import search
 from string import split
 import sys
 
@@ -69,7 +70,7 @@ def determine_format(file):
     file.seek(0)
 
     # XML.
-    if header == "<?xml version='1.0' encoding='UTF-8'?>":
+    if search("<\?xml", header):
         return 'xml'
 
     # Columnar.
