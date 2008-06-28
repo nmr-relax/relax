@@ -237,8 +237,7 @@ class PipeContainer(Prototype):
             self.diff_tensor = DiffTensorData()
 
             # Fill its contents.
-            xml_to_object(diff_tensor_node, self.diff_tensor, set_fn=generic_fns.diffusion_tensor.set)
-            self.diff_tensor.tm = 1.0
+            self.diff_tensor.from_xml(diff_tensor_node)
 
         # Recreate the molecule, residue, and spin data structure.
         mol_nodes = relax_node.getElementsByTagName('mol')
