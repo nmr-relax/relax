@@ -124,12 +124,22 @@ class Mf(TestCase):
             if search('^_', name):
                 continue
 
+            # Skip original class methods.
+            if name in obj1.__class__.__dict__.keys():
+                continue
+
+            # Print out.
+            print "\t" + name
+
             # Get the sub-objects.
             sub_obj1 = getattr(obj1, name)
             sub_obj2 = getattr(obj2, name)
 
-            # Check that they are equal.
-            self.assertEqual(sub_obj1, sub_obj2)
+            # Check that they are of the same type.
+            self.assertEqual(type(sub_obj1), type(sub_obj2))
+
+            # Check that they are equal (converting to strings to avoid comparison nastiness).
+            self.assertEqual(str(sub_obj1), str(sub_obj2))
 
 
     def test_create_m4(self):
