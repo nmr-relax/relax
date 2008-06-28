@@ -64,6 +64,20 @@ def fill_object_contents(doc, elem, object=None, blacklist=None):
         sub_elem.appendChild(text_val)
 
 
+def node_value_to_python(elem):
+    """Convert the node value to a python expression.
+
+    @param elem:    The XML element.
+    @type elem:     xml.dom.minidom.Element instance
+    """
+
+    # Remove whitespace.
+    val = strip(elem.nodeValue)
+
+    # Convert to python and return.
+    return eval(val)
+
+
 def xml_to_object(elem, base_object=None):
     """Convert the XML elements into python objects, and place these into the base object.
 
@@ -83,7 +97,7 @@ def xml_to_object(elem, base_object=None):
         name = str(node.localName)
 
         # Get the node contents.
-        val = eval(strip(node.childNodes[0].nodeValue))
+        val = node_value_to_python(node.childNodes[0])
 
         # Set the value.
         setattr(base_object, name, val)
