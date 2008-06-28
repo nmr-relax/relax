@@ -29,7 +29,7 @@ from types import ListType
 # relax module imports.
 from data_classes import Element
 from relax_errors import RelaxError
-from relax_xml import fill_object_contents
+from relax_xml import fill_object_contents, node_value_to_python, xml_to_object
 
 
 
@@ -824,6 +824,20 @@ class DiffTensorData(Element):
                 # Initialise an empty array to store the MC simulation object elements (if it doesn't already exist).
                 if not target+'_sim' in self.__dict__:
                     self.__dict__[target+'_sim'] = DiffTensorSimList(target, self)
+
+
+    def from_xml(self, diff_tensor_node):
+        """Recreate the diffusion tensor data structure from the XML diffusion tensor node.
+
+        @param diff_tensor_node:    The diffusion tensor XML node.
+        @type diff_tensor_node:     xml.dom.minicompat.Element instance
+        """
+
+        # First set the diffusion type.  Doing this first is essential for the proper reconstruction of the object.
+        setattr(self, 'type', str(diff_tensor_node.getAttribute('type')))
+
+        # Recreate all the other data structures.
+        xml_to_object(diff_tensor_node, self)
 
 
     def xml_create_element(self, doc, element):
