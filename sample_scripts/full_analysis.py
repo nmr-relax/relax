@@ -151,9 +151,11 @@ UNRES = 'unresolved'
 # A file containing a list of spins which can be dynamically excluded at any point within the analysis (when set to None, this variable is not used).
 EXCLUDE = None
 
-# The bond length and CSA values.
+# The bond length, CSA values, heteronucleus type, and proton type.
 BOND_LENGTH = 1.02 * 1e-10
 CSA = -172 * 1e-6
+HETNUC = '15N'
+PROTON = '1H'
 
 # The grid search size (the number of increments per dimension).
 GRID_INC = 11
@@ -611,9 +613,11 @@ class Main:
                 diffusion_tensor.copy('previous')
                 fix('diff')
 
-            # Set the bond length and CSA values.
+            # Set all the necessary values.
             value.set(BOND_LENGTH, 'bond_length')
             value.set(CSA, 'csa')
+            value.set(HETNUC, 'heteronucleus')
+            value.set(PROTON, 'proton')
 
             # Select the model-free model.
             model_free.select_model(model=name)
