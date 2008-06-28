@@ -160,7 +160,7 @@ class Relax_data_store(dict):
         self.current_pipe = pipe_name
 
 
-    def xml_read(file, verbosity=1):
+    def xml_read(self, file, verbosity=1):
         """Parse a XML document representation of a data pipe, and load it into the relax data store.
 
         @param file:        The open file object.
