@@ -87,6 +87,9 @@ class Sequence_base_class:
         cdp.mol[0].res.add_item('GLY', 4)
         cdp.mol[0].res.add_item('SER', 5)
 
+        # Add an object which should not be copied.
+        cdp.mol[0].res[2].spin[0].test = True
+
         # Add a new data pipe to the data store.
         ds.add(pipe_name='new', pipe_type='mf')
 
@@ -104,6 +107,9 @@ class Sequence_base_class:
         self.assertEqual(ds['new'].mol[0].res[3].name, 'GLY')
         self.assertEqual(ds['new'].mol[0].res[4].num, 5)
         self.assertEqual(ds['new'].mol[0].res[4].name, 'SER')
+
+        # Test that the extra object was not copied.
+        self.assert_(not hasattr(ds['new'].mol[0].res[2].spin[0], 'test'))
 
 
     def test_display_protein_sequence(self):
