@@ -1028,21 +1028,24 @@ def display_spin(spin_id=None):
         print "%-15s %-15s %-15s %-15s %-15s" % (mol_name, `res_num`, res_name, `spin.num`, spin.name)
 
 
-def exists_mol_res_spin_data():
+def exists_mol_res_spin_data(pipe=None):
     """Function for determining if any molecule-residue-spin data exists.
 
+    @keyword pipe:      The data pipe in which the molecule-residue-spin data will be checked for.
+    @type pipe:         str
     @return:            The answer to the question about the existence of data.
     @rtype:             bool
     """
 
-    # Test the data pipe.
-    pipes.test(ds.current_pipe)
+    # The current data pipe.
+    if pipe == None:
+        pipe = ds.current_pipe
 
-    # Alias the data pipe container.
-    cdp = ds[ds.current_pipe]
+    # Test the data pipe.
+    pipes.test(pipe)
 
     # The molecule, residue, spin object stack is empty.
-    if cdp.mol.is_empty():
+    if ds[pipe].mol.is_empty():
         return False
 
     # Otherwise.
