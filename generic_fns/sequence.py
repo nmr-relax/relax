@@ -64,8 +64,8 @@ def copy(pipe_from=None, pipe_to=None):
     if exists_mol_res_spin_data(pipe_to):
         raise RelaxSequenceError
 
-    # Loop over the spins.
-    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+    # Loop over the spins of the pipe_from data pipe.
+    for spin, mol_name, res_num, res_name in spin_loop(pipe=pipe_from, full_info=True):
         # Generate the new sequence.
         generate(mol_name, res_num, res_name, spin.num, spin.name, pipe_to)
 
