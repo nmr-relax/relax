@@ -567,7 +567,7 @@ class Main:
         eliminate()
 
         # Model selection.
-        model_selection('AIC', pipes=self.pipes)
+        model_selection(method='AIC', modsel_pipe=pipe, pipes=self.pipes)
 
         # Write the results.
         if write_flag:
