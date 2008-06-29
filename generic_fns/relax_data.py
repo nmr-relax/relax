@@ -30,7 +30,7 @@ import sys
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
 from relax_errors import RelaxError, RelaxNoResError, RelaxNoRiError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
 from relax_io import extract_data, strip
 
@@ -211,78 +211,90 @@ def back_calc(ri_label=None, frq_label=None, frq=None):
         self.update_data_structures_spin(data, ri_label, frq_label, frq, value)
 
 
-def copy(run1=None, run2=None, ri_label=None, frq_label=None):
-    """Function for copying relaxation data from run1 to run2."""
+def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
+    """Copy the relaxation data from one data pipe to another.
 
-    # Arguments.
-    self.ri_label = ri_label
-    self.frq_label = frq_label
+    @keyword pipe_from: The data pipe to copy the relaxation data from.  This defaults to the
+                        current data pipe.
+    @type pipe_from:    str
+    @keyword pipe_to:   The data pipe to copy the relaxation data to.  This defaults to the current
+                        data pipe.
+    @type pipe_to:      str
+    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+    @type ri_label:     str
+    @param frq_label:   The field strength label.
+    @type frq_label:    str
+    """
 
-    # Test if run1 exists.
-    if not run1 in ds.run_names:
-        raise RelaxNoPipeError, run1
+    # Defaults.
+    if pipe_from == None and pipe_to == None:
+        raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+    elif pipe_from == None:
+        pipe_from = ds.current_pipe
+    elif pipe_to == None:
+        pipe_to = ds.current_pipe
 
-    # Test if run2 exists.
-    if not run2 in ds.run_names:
-        raise RelaxNoPipeError, run2
+    # Test if the pipe_from and pipe_to data pipes exist.
+    pipes.test(pipe_from)
+    pipes.test(pipe_to)
 
-    # Test if the sequence data for run1 is loaded.
-    if not ds.res.has_key(run1):
-        raise RelaxNoSequenceError, run1
+    # Test if pipe_from contains sequence data.
+    if not exists_mol_res_spin_data(pipe_from):
+        raise RelaxNoSequenceError
 
-    # Test if the sequence data for run2 is loaded.
-    if not ds.res.has_key(run2):
-        raise RelaxNoSequenceError, run2
+    # Test if pipe_to contains sequence data.
+    if not exists_mol_res_spin_data(pipe_to):
+        raise RelaxNoSequenceError
 
     # Copy all data.
     if ri_label == None and frq_label == None:
         # Get all data structure names.
         names = get_data_names()
 
-        # Loop over the sequence.
-        for i in xrange(len(ds.res[run1])):
-            # Remap the data structure 'ds.res[run1][i]'.
-            data1 = ds.res[run1][i]
-            data2 = ds.res[run2][i]
+        # Spin loop.
+        for mol_index, res_index, spin_index in spin_index_loop():
+            # Alias the spin containers.
+            spin_from = ds[pipe_from].mol[mol_index].res[res_index].spin[spin_index]
+            spin_to = ds[pipe_to].mol[mol_index].res[res_index].spin[spin_index]
 
             # Loop through the data structure names.
             for name in names:
                 # Skip the data structure if it does not exist.
-                if not hasattr(data1, name):
+                if not hasattr(spin_from, name):
                     continue
 
                 # Copy the data structure.
-                setattr(data2, name, deepcopy(getattr(data1, name)))
+                setattr(spin_to, name, deepcopy(getattr(spin_from, name)))
 
     # Copy a specific data set.
     else:
-        # Test if relaxation data corresponding to 'self.ri_label' and 'self.frq_label' exists for run1.
-        if not self.test_labels(run1):
-            raise RelaxNoRiError, (self.ri_label, self.frq_label)
+        # Test if relaxation data corresponding to 'ri_label' and 'frq_label' exists for pipe_from.
+        if not test_labels(ri_label, frq_label, pipe=pipe_from):
+            raise RelaxNoRiError, (ri_label, frq_label)
 
-        # Test if relaxation data corresponding to 'self.ri_label' and 'self.frq_label' exists for run2.
-        if self.test_labels(run2):
-            raise RelaxRiError, (self.ri_label, self.frq_label)
+        # Test if relaxation data corresponding to 'ri_label' and 'frq_label' exists for pipe_to.
+        if not test_labels(ri_label, frq_label, pipe=pipe_to):
+            raise RelaxRiError, (ri_label, frq_label)
 
-        # Loop over the sequence.
-        for i in xrange(len(ds.res[run1])):
-            # Remap the data structure 'ds.res[run1][i]'.
-            data1 = ds.res[run1][i]
-            data2 = ds.res[run2][i]
+        # Spin loop.
+        for mol_index, res_index, spin_index in spin_index_loop():
+            # Alias the spin containers.
+            spin_from = ds[pipe_from].mol[mol_index].res[res_index].spin[spin_index]
+            spin_to = ds[pipe_to].mol[mol_index].res[res_index].spin[spin_index]
 
             # Find the index corresponding to 'ri_label' and 'frq_label'.
-            index = self.find_index(data1, ri_label, frq_label)
+            index = find_index(spin_from, ri_label, frq_label)
 
             # Catch any problems.
             if index == None:
                 continue
 
-            # Get the value and error from run1.
-            value = data1.relax_data[index]
-            error = data1.relax_error[index]
+            # Get the value and error from pipe_from.
+            value = spin_from.relax_data[index]
+            error = spin_from.relax_error[index]
 
-            # Update all data structures for run2.
-            self.update_data_structures_spin(data2, ri_label, frq_label, frq, value, error)
+            # Update all data structures for pipe_to.
+            update_data_structures_spin(spin_to, ri_label, frq_label, frq, value, error)
 
 
 def data_init(container, global_flag=False):
