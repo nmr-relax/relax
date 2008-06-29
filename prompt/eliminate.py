@@ -58,16 +58,16 @@ class Eliminate:
         overridden by supplying a function.  The function should accept five arguments, a string
         defining a certain parameter, the value of the parameter, the minimisation
         instance (ie the residue index if the model is residue specific), and the function
-        arguments.  If the model is rejected, the function should return 1, otherwise it should
-        return 0.  The function will be executed multiple times, once for each parameter of the
+        arguments.  If the model is rejected, the function should return True, otherwise it should
+        return False.  The function will be executed multiple times, once for each parameter of the
         model.
 
         The 'args' keyword argument should be a tuple, a list enclosed in round brackets, and will
         be passed to the user supplied function or the inbuilt function.  For a description of the
         arguments accepted by the inbuilt functions, see below.
 
-        Once a model is rejected, the select flag corresponding to that model will be set to 0 so
-        that model selection, or any other function, will then skip the model.
+        Once a model is rejected, the select flag corresponding to that model will be set to False
+        so that model selection, or any other function, will then skip the model.
         """
 
         # Function intro text.
