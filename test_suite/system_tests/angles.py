@@ -22,6 +22,7 @@
 
 # Python module imports.
 from numpy import fromstring
+import sys
 from unittest import TestCase
 
 # relax module imports.
