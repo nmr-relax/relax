@@ -96,14 +96,14 @@ class Sequence_base_class:
         # Test the sequence.
         self.assertEqual(ds['new'].mol[0].res[0].num, 1)
         self.assertEqual(ds['new'].mol[0].res[0].name, 'GLY')
-        self.assertEqual(ds['new'].mol[0].res[0].num, 2)
-        self.assertEqual(ds['new'].mol[0].res[0].name, 'PRO')
-        self.assertEqual(ds['new'].mol[0].res[0].num, 3)
-        self.assertEqual(ds['new'].mol[0].res[0].name, 'LEU')
-        self.assertEqual(ds['new'].mol[0].res[0].num, 4)
-        self.assertEqual(ds['new'].mol[0].res[0].name, 'GLY')
-        self.assertEqual(ds['new'].mol[0].res[0].num, 5)
-        self.assertEqual(ds['new'].mol[0].res[0].name, 'SER')
+        self.assertEqual(ds['new'].mol[0].res[1].num, 2)
+        self.assertEqual(ds['new'].mol[0].res[1].name, 'PRO')
+        self.assertEqual(ds['new'].mol[0].res[2].num, 3)
+        self.assertEqual(ds['new'].mol[0].res[2].name, 'LEU')
+        self.assertEqual(ds['new'].mol[0].res[3].num, 4)
+        self.assertEqual(ds['new'].mol[0].res[3].name, 'GLY')
+        self.assertEqual(ds['new'].mol[0].res[4].num, 5)
+        self.assertEqual(ds['new'].mol[0].res[4].name, 'SER')
 
 
     def test_display_protein_sequence(self):
