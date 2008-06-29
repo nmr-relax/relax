@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module implementing the mathematical modelling step of model elimination."""
+
 # Python module imports.
 from copy import deepcopy
 
