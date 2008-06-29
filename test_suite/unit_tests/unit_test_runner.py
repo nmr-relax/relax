@@ -153,7 +153,10 @@ def get_module_relative_path(package_path, module_name, root_paths=None):
         root_paths = sys.path
     for root_path in root_paths:
         root_path = segment_path(os.path.abspath(root_path))
-        package_path = segment_path(os.path.abspath(package_path))
+
+        # Catch if the package path has already been converted to a segment list.
+        if type(package_path) != list:
+            package_path = segment_path(os.path.abspath(package_path))
 
         common_prefix = get_common_prefix(root_path, package_path)
         if common_prefix == root_path:
