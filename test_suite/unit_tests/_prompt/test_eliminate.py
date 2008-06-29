@@ -50,7 +50,7 @@ class Test_eliminate(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxFunctionError, self.eliminate_fns.eliminate, tensor_from=data[1])
+            self.assertRaises(RelaxFunctionError, self.eliminate_fns.eliminate, function=data[1])
 
 
     def test_eliminate_args(self):
@@ -63,4 +63,4 @@ class Test_eliminate(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneTupleError, self.eliminate_fns.eliminate, tensor_from=data[1])
+            self.assertRaises(RelaxNoneTupleError, self.eliminate_fns.eliminate, args=data[1])
