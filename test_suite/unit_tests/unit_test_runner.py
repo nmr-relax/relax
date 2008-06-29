@@ -271,22 +271,21 @@ class ImportErrorTestCase(unittest.TestCase):
 
 
 def load_test_case(package_path,  module_name, class_name):
-    ''' load a testCase from the file system using a package path, file name
-        and class name
+    '''Load a testCase from the file system using a package path, file name and class name.
 
-        @type package_path: string with . separated fields
-        @param package_path: path to the module as a list of package names
-                             separated by dots
+    @type package_path: string with . separated fields
+    @param package_path: path to the module as a list of package names
+                         separated by dots
 
-        @type module_name: string
-        @param module_name: name of the module to load the class from
+    @type module_name: string
+    @param module_name: name of the module to load the class from
 
-        @type class_name: string
-        @param class_name: name of the class to load
+    @type class_name: string
+    @param class_name: name of the class to load
 
-        @rtype:
-        @return:
-        '''
+    @rtype:
+    @return:
+    '''
 
     result = None
     packages = None
