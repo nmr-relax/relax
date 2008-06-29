@@ -560,7 +560,7 @@ class Main:
             results.read('results', DIFF_MODEL + '/round_' + `self.round - 1` + '/opt')
 
 
-    def model_selection(self, dir=None, write_flag=1):
+    def model_selection(self, pipe=None, dir=None, write_flag=True):
         """Model selection function."""
 
         # Model elimination.
