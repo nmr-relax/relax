@@ -70,6 +70,42 @@ class Sequence_base_class:
             pass
 
 
+    def test_copy_protein_sequence(self):
+        """Test the copying of an amino acid sequence.
+
+        The functions tested are generic_fns.sequence.copy() and prompt.sequence.copy().
+        """
+
+        # Alias the 'orig' relax data store.
+        cdp = ds['orig']
+
+        # Create a simple animo acid sequence.
+        cdp.mol[0].res[0].num = 1
+        cdp.mol[0].res[0].name = 'GLY'
+        cdp.mol[0].res.add_item('PRO', 2)
+        cdp.mol[0].res.add_item('LEU', 3)
+        cdp.mol[0].res.add_item('GLY', 4)
+        cdp.mol[0].res.add_item('SER', 5)
+
+        # Add a new data pipe to the data store.
+        ds.add(pipe_name='new', pipe_type='mf')
+
+        # Copy the residue sequence.
+        self.sequence_fns.copy('orig')
+
+        # Test the sequence.
+        self.assertEqual(ds['new'].mol[0].res[0].num, 1)
+        self.assertEqual(ds['new'].mol[0].res[0].name, 'GLY')
+        self.assertEqual(ds['new'].mol[0].res[0].num, 2)
+        self.assertEqual(ds['new'].mol[0].res[0].name, 'PRO')
+        self.assertEqual(ds['new'].mol[0].res[0].num, 3)
+        self.assertEqual(ds['new'].mol[0].res[0].name, 'LEU')
+        self.assertEqual(ds['new'].mol[0].res[0].num, 4)
+        self.assertEqual(ds['new'].mol[0].res[0].name, 'GLY')
+        self.assertEqual(ds['new'].mol[0].res[0].num, 5)
+        self.assertEqual(ds['new'].mol[0].res[0].name, 'SER')
+
+
     def test_display_protein_sequence(self):
         """Test the display of an amino acid sequence.
 
