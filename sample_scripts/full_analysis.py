@@ -166,8 +166,8 @@ MIN_ALGOR = 'newton'
 # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
 MC_NUM = 200
 
-# Automatic looping over all rounds until convergence.
-CONV_LOOP = 0
+# Automatic looping over all rounds until convergence (must be a boolean value of True or False).
+CONV_LOOP = False
 
 
 class Main:
@@ -186,7 +186,7 @@ class Main:
             self.base_dir = 'local_tm/'
 
             # Sequential optimisation of all model-free models (function must be modified to suit).
-            self.multi_model(local_tm=1)
+            self.multi_model(local_tm=True)
 
             # Model selection data pipe.
             pipe.create('aic', 'mf')
@@ -233,16 +233,16 @@ class Main:
 
                     # Add an arbitrary diffusion tensor which will be optimised.
                     if DIFF_MODEL == 'sphere':
-                        diffusion_tensor.init(10e-9, fixed=0)
+                        diffusion_tensor.init(10e-9, fixed=False)
                         inc = 11
                     elif DIFF_MODEL == 'prolate':
-                        diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='prolate', fixed=0)
+                        diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='prolate', fixed=False)
                         inc = 11
                     elif DIFF_MODEL == 'oblate':
-                        diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='oblate', fixed=0)
+                        diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='oblate', fixed=False)
                         inc = 11
                     elif DIFF_MODEL == 'ellipsoid':
-                        diffusion_tensor.init((10e-09, 0, 0, 0, 0, 0), fixed=0)
+                        diffusion_tensor.init((10e-09, 0, 0, 0, 0, 0), fixed=False)
                         inc = 6
 
                     # Minimise just the diffusion tensor.
@@ -275,7 +275,7 @@ class Main:
                     self.model_selection(dir=self.base_dir + 'aic')
 
                     # Final optimisation of all diffusion and model-free parameters.
-                    fix('all', fixed=0)
+                    fix('all', fixed=False)
 
                     # Minimise all parameters.
                     minimise(MIN_ALGOR)
@@ -333,7 +333,7 @@ class Main:
             pipe.create('final', 'mf')
 
             # Model selection between MI to MV.
-            self.model_selection(pipe='final', write_flag=0)
+            self.model_selection(pipe='final', write_flag=False)
 
 
             # Monte Carlo simulations.
@@ -574,7 +574,7 @@ class Main:
             results.write(file='results', dir=dir, force=True)
 
 
-    def multi_model(self, local_tm=0):
+    def multi_model(self, local_tm=False):
         """Function for optimisation of all model-free models."""
 
         # Set the data pipe names (also the names of preset model-free models).
