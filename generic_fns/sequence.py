@@ -64,8 +64,10 @@ def copy(pipe_from=None, pipe_to=None):
     if exists_mol_res_spin_data(pipe_to):
         raise RelaxSequenceError
 
-    # Copy the data.
-    ds[pipe_to].mol = deepcopy(ds[pipe_from].mol)
+    # Loop over the spins.
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+        # Generate the new sequence.
+        generate(pipe_to, mol_name, res_num, res_name, spin.num, spin.name)
 
 
 def display(sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
