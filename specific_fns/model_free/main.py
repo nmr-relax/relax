@@ -2906,26 +2906,31 @@ class Model_free_main:
             return ds.res[self.run][instance].select_sim
 
 
-    def skip_function(self, run=None, instance=None, min_instances=None, num_instances=None):
-        """Function for skiping certain data."""
+    def skip_function(self, instance=None, min_instances=None, num_instances=None):
+        """Skip certain data.
 
-        # Arguments.
-        self.run = run
+        @keyword instance:      The index of the minimisation instance.
+        @type instance:         int
+        @keyword min_instances: The total number of minimisation instances.
+        @type min_instances:    int
+        @keyword num_instances: The total number of instances.
+        @type num_instances:    int
+        """
 
         # Determine the parameter set type.
-        self.param_set = self.determine_param_set_type()
+        param_set = self.determine_param_set_type()
 
-        # All residues.
-        combine = 0
+        # All spins.
+        combine = False
         if min_instances == 1 and min_instances != num_instances:
-            combine = 1
+            combine = True
 
         # Sequence specific data.
-        if (self.param_set == 'mf' or self.param_set == 'local_tm') and not combine and not ds.res[self.run][instance].select:
-            return 1
+        if (param_set == 'mf' or param_set == 'local_tm') and not combine and not return_spin_from_index(instance).select:
+            return True
 
         # Don't skip.
-        return 0
+        return False
 
 
     def deselect(self, run, i, sim_index=None):
