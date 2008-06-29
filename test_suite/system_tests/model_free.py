@@ -156,6 +156,13 @@ class Mf(TestCase):
         self.assertEqual(cdp.mol[0].res[1].spin[0].params, ['S2', 'te', 'Rex'])
 
 
+    def test_omp_analysis(self):
+        """Try a very minimal model-free analysis on the OMP relaxation data."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/omp_model_free.py')
+
+
     def test_opendx_s2_te_rex(self):
         """Mapping the {S2, te, Rex} chi2 space through the OpenDX user function dx.map()."""
 
