@@ -46,7 +46,7 @@ class Test_eliminate(TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the None and func arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'func':
+            if data[0] == 'None' or data[0] == 'function':
                 continue
 
             # The argument test.
