@@ -22,6 +22,7 @@
 
 # Python module imports.
 import sys
+from types import FunctionType
 
 # relax module imports.
 from generic_fns import eliminate
