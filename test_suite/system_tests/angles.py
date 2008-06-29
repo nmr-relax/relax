@@ -48,7 +48,7 @@ class Angles(TestCase):
         """The user function angles()."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/angles.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/angles.py')
 
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
