@@ -287,7 +287,6 @@ def load_test_case(package_path,  module_name, class_name):
     @return:
     '''
 
-    print "Hello1: " + `package_path`
     result = None
     packages = None
     package_path=get_module_relative_path(package_path, module_name)
@@ -306,16 +305,11 @@ def load_test_case(package_path,  module_name, class_name):
         result.addTest(bad_syntax)
 
 
-    print "Hello2: " + `package_path`
-    print "Hello3: " + `packages`
-    import sys
-    print "sys.path: " + `sys.path`
     if packages != None:
         # some input packages may not contain the required class
         if hasattr(packages[-1], class_name):
             clazz =  getattr(packages[-1], class_name)
             result = unittest.TestLoader().loadTestsFromTestCase(clazz)
-
     return result
 
 
@@ -376,7 +370,6 @@ class Test_finder:
                                    a file as one containing a unit test TestCase
         '''
 
-        print "root_path: " + `root_path`
         self.root_path = root_path
         if self.root_path == None:
             self.root_path = get_startup_path()
@@ -385,7 +378,6 @@ class Test_finder:
             self.patterns.append(re.compile(pattern))
         self.paths_scanned = False
 
-        print "root_path: " + `self.root_path`
 
     def scan_paths(self):
         '''Scan directories and paths for unit test classes and load them into TestSuites
@@ -401,9 +393,6 @@ class Test_finder:
             if __debug__:
                 dir_names=dir_names
 
-            print "Walk, dir_path: " + `dir_path`
-            print "Walk, dir_names: " + `dir_names`
-            print "Walk, file_names: " + `file_names`
             for file_name in file_names:
                 module_found = None
                 for pattern in self.patterns:
@@ -417,9 +406,7 @@ class Test_finder:
                     class_name = string.upper(module_found[0]) + module_found[1:]
 
 
-                    print "dir_path: " + `dir_path`
                     module_path = get_module_relative_path(dir_path, module_found)
-                    print "Module_path: " + `module_path`
                     #FIXME add verbose search option
                     #if self.verbose:
                     #    print 'loading module: ' + module_path
@@ -720,7 +707,6 @@ class Unit_test_runner(object):
                 result.add(tuple(mpath))
 
 
-        print "XXX: " + `result`
         return result
 
 
@@ -756,9 +742,7 @@ class Unit_test_runner(object):
 
 
         module_paths = self.paths_from_test_module(self.test_module)
-        print "Hello: " + `self.test_module`
-        print "Hello: " + `module_paths`
-        if 1:
+        if self.verbose:
             print 'root path:          ', self.root_path
             print 'system directory:   ', self.system_directory
             print 'unit test directory:', self.unit_test_directory
@@ -769,8 +753,8 @@ class Unit_test_runner(object):
 
 
         # add SystemDirectory to python path
-        #sys.path.pop(0)
-        #sys.path.insert(0,self.system_directory)
+        sys.path.pop(0)
+        sys.path.insert(0,self.system_directory)
 
 
 
@@ -780,10 +764,6 @@ class Unit_test_runner(object):
         for module_path in module_paths:
             module_string = os.path.join(*module_path)
 
-            # Convert to an absolute path.
-            #module_string = sys.path[-1] + os.sep + module_string
-
-            print "module_string: " + `module_string`
             if os.path.isdir(module_string):
                 #iterate and load unit tests from module path
                 finder = Test_finder(module_string, self.test_case_patterns)
@@ -792,10 +772,9 @@ class Unit_test_runner(object):
                 break
 
 
-        print "Module paths: " +`module_paths`
         if tests == None:
             for module_path in module_paths:
-                print "Module path: " +`module_path`
+                print module_path
                 path_len = len(module_path)
                 if path_len <= 1:
                     continue
