@@ -50,7 +50,7 @@ class N_state_model(TestCase):
         """
 
         # Execute the script.
-        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/5_state_xz.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/5_state_xz.py')
 
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
