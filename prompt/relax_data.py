@@ -26,7 +26,7 @@ import sys
 # relax module imports.
 import help
 from generic_fns import relax_data
-from relax_errors import RelaxBoolError, RelaxBinError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxError, RelaxBoolError, RelaxBinError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 
 
 class Relax_data:
@@ -130,12 +130,16 @@ class Relax_data:
             print text
 
         # The pipe_from argument.
-        if type(pipe_from) != str:
-            raise RelaxStrError, ('pipe_from', pipe_from)
+        if pipe_from != None and type(pipe_from) != str:
+            raise RelaxNoneStrError, ('pipe_from', pipe_from)
 
         # The pipe_to argument.
-        if type(pipe_to) != str:
-            raise RelaxStrError, ('pipe_to', pipe_to)
+        if pipe_to != None and type(pipe_to) != str:
+            raise RelaxNoneStrError, ('pipe_to', pipe_to)
+
+        # Both pipe arguments cannot be None.
+        if pipe_from == None and pipe_to == None:
+            raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
 
         # Relaxation data type.
         if ri_label != None and type(ri_label) != str:
