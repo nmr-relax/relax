@@ -49,7 +49,7 @@ class Relax_fit(TestCase):
         """Test the relaxation curve fitting C modules."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/relax_fit.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/relax_fit.py')
 
 
     def test_read_sparky(self):
