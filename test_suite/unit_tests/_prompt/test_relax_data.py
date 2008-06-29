@@ -106,6 +106,13 @@ class Test_relax_data(Relax_data_base_class, TestCase):
             self.assertRaises(RelaxNoneStrError, self.relax_data_fns.copy, pipe_from='', pipe_to=data[1])
 
 
+    def test_copy_argfail_both_pipes(self):
+        """The pipe_from and pipe_to arg test of the relax_data.copy() user function."""
+
+        # Test that both cannot be None (the default)!
+        self.assertRaises(RelaxError, self.relax_data_fns.copy)
+
+
     def test_copy_argfail_ri_label(self):
         """The ri_label arg test of the relax_data.copy() user function."""
 
