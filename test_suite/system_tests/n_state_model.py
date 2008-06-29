@@ -22,6 +22,7 @@
 
 # Python module imports.
 from math import pi, sqrt
+import sys
 from unittest import TestCase
 
 # relax module imports.
