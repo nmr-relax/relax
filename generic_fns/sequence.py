@@ -23,10 +23,46 @@
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_loop
+import pipes
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError
 from relax_io import extract_data, open_write_file, strip
 import sys
 
+
+
+def copy(pipe_from=None, pipe_to=None):
+    """Copy the molecule, residue, and spin sequence data from one data pipe to another.
+
+    @param pipe_from:   The data pipe to copy the sequence data from.  This defaults to the current
+                        data pipe.
+    @type pipe_from:    str
+    @param pipe_to:     The data pipe to copy the sequence data to.  This defaults to the current
+                        data pipe.
+    @type pipe_to:      str
+    """
+
+    # Defaults.
+    if pipe_from == None and pipe_to == None:
+        raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+    elif pipe_from == None:
+        pipe_from = ds.current_pipe
+    elif pipe_to == None:
+        pipe_to = ds.current_pipe
+
+    # Test if the pipe_from and pipe_to data pipes exist.
+    pipes.test(pipe_from)
+    pipes.test(pipe_to)
+
+    # Test if pipe_from contains sequence data.
+    if not exists_mol_res_spin_data(pipe_from):
+        raise RelaxNoSequenceError
+
+    # Test if pipe_to contains sequence data.
+    if exists_mol_res_spin_data(pipe_to):
+        raise RelaxSequenceError
+
+    # Copy the data.
+    ds[pipe_to].mol = deepcopy(ds[pipe_from].mol)
 
 
 def display(sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
