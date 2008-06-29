@@ -85,12 +85,12 @@ class Test_relax_data(Relax_data_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the str argument, and skip it.
-            if data[0] == 'str':
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.relax_data_fns.copy, pipe_from=data[1])
+            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.copy, pipe_from=data[1])
 
 
     def test_copy_argfail_pipe_to(self):
@@ -98,12 +98,12 @@ class Test_relax_data(Relax_data_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the str argument, and skip it.
-            if data[0] == 'str':
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.relax_data_fns.copy, pipe_from='', pipe_to=data[1])
+            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.copy, pipe_from='', pipe_to=data[1])
 
 
     def test_copy_argfail_ri_label(self):
