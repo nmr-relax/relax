@@ -226,7 +226,7 @@ class PipeContainer(Prototype):
         list_element.appendChild(text_val)
 
 
-    def xml_create_str_elem(doc, element):
+    def xml_create_str_element(doc, element):
         """Create an XML element for the structural information.
 
         @param doc:     The XML document object.
