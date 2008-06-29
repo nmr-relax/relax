@@ -1860,7 +1860,7 @@ def spin_loop(selection=None, pipe=None, full_info=False):
     pipes.test(pipe)
 
     # Test for the presence of data, and end the execution of this function if there is none.
-    if not exists_mol_res_spin_data():
+    if not exists_mol_res_spin_data(pipe):
         return
 
     # Parse the selection string.
