@@ -67,7 +67,7 @@ def copy(pipe_from=None, pipe_to=None):
     # Loop over the spins.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # Generate the new sequence.
-        generate(pipe_to, mol_name, res_num, res_name, spin.num, spin.name)
+        generate(mol_name, res_num, res_name, spin.num, spin.name, pipe_to)
 
 
 def display(sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
@@ -103,23 +103,27 @@ def display(sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=Fal
     write_body(file=sys.stdout, sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag)
 
 
-def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
+def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None, pipe=None):
     """Generate the sequence item-by-item by adding a single molecule/residue/spin container as necessary.
 
-    @keyword mol_name:          The molecule name.
-    @type mol_name:             bool
-    @keyword res_num:           The residue number.
-    @type res_num:              bool
-    @keyword res_name:          The residue name.
-    @type res_name:             bool
-    @keyword spin_num:          The spin number.
-    @type spin_num:             bool
-    @keyword spin_name:         The spin name.
-    @type spin_name:            bool
+    @keyword mol_name:  The molecule name.
+    @type mol_name:     bool
+    @keyword res_num:   The residue number.
+    @type res_num:      bool
+    @keyword res_name:  The residue name.
+    @type res_name:     bool
+    @keyword spin_num:  The spin number.
+    @type spin_num:     bool
+    @keyword spin_name: The spin name.
+    @type spin_name:    bool
+    @param pipe:        The data pipe in which to generate the sequence.  This defaults to the
+                        current data pipe.
+    @type pipe:         str
     """
 
-    # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    # The current data pipe.
+    if pipe == None:
+        pipe = ds.current_pipe
 
     # Get the molecule.
     curr_mol = return_molecule(generate_spin_id(mol_name=mol_name))
@@ -127,8 +131,8 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
     # A new molecule.
     if not curr_mol:
         # Add the molecule (and store it in the 'curr_mol' object).
-        cdp.mol.add_item(mol_name=mol_name)
-        curr_mol = cdp.mol[-1]
+        ds[pipe].mol.add_item(mol_name=mol_name)
+        curr_mol = ds[pipe].mol[-1]
 
     # Get the residue.
     curr_res = return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name))
