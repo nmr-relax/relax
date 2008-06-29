@@ -241,4 +241,4 @@ class PipeContainer(Prototype):
 
         # Set the structural attributes.
         str_element.setAttribute('desc', 'Structural information')
-        str_element.setAttribute('id', ds[ds.current_pipe].structure.id)
+        str_element.setAttribute('id', self.structure.id)
