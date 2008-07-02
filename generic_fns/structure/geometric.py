@@ -193,7 +193,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
             raise RelaxNoTensorError, 'diffusion'
 
         # Test if a structure has been loaded.
-        if not hasattr(cdp.structure, 'structures'):
+        if not hasattr(cdp, 'structure'):
             raise RelaxNoPdbError
 
         # Test if sequence data is loaded.
