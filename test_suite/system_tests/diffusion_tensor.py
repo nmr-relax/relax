@@ -22,6 +22,7 @@
 
 # Python module imports.
 from unittest import TestCase
+import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
@@ -95,7 +96,7 @@ class Diffusion_tensor(TestCase):
         """The user function structure.create_diff_tensor_pdb()."""
 
         # Create the diffusion tensor object
-        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir='../shared_data/structures/')
+        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1)
         #self.relax.interpreter._Pipe.switch('sphere')
         #self.relax.interpreter._Structure.create_diff_tensor_pdb(file='tensor.pdb')
         #self.relax.interpreter._Pipe.switch('spheroid')
