@@ -25,7 +25,6 @@ from math import log
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import same_sequence
 from pipes import switch
 from relax_errors import RelaxError, RelaxPipeError
 from specific_fns.setup import get_specific_fn
@@ -167,9 +166,6 @@ def select(method=None, modsel_pipe=None, pipes=None):
                 model_statistics[pipe] = get_specific_fn('model_stats', ds[pipe].pipe_type)
                 skip_function[pipe] = get_specific_fn('skip_function', ds[pipe].pipe_type)
 
-                # Check that the sequence is the same in all data pipes.
-                same_sequence(pipes[0][0], pipe)
-
     # All other model selection setup.
     else:
         # Loop over the data pipes.
@@ -182,9 +178,6 @@ def select(method=None, modsel_pipe=None, pipes=None):
             duplicate_data[pipe] = get_specific_fn('duplicate_data', ds[pipe].pipe_type)
             model_statistics[pipe] = get_specific_fn('model_stats', ds[pipe].pipe_type)
             skip_function[pipe] = get_specific_fn('skip_function', ds[pipe].pipe_type)
-
-            # Check that the sequence is the same in all data pipes.
-            same_sequence(pipes[0], pipe)
 
 
     # Number of instances.  If the number is not the same for each data pipe, then the minimum
