@@ -995,7 +995,7 @@ class Model_free_main:
                 continue
 
             # Duplicate the data.
-            data_to = deepcopy(data_from)
+            setattr(ds[pipe_to], data_name, deepcopy(data_from))
 
         # Determine the parameter set type.
         param_set = self.determine_param_set_type()
