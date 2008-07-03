@@ -1166,7 +1166,7 @@ class Results:
         self.run = run
 
         # Determine the parameter set type.
-        self.param_set = self.determine_model_type()
+        model_type = self.determine_model_type()
 
 
         # Header.
@@ -1174,7 +1174,7 @@ class Results:
 
         # Diffusion parameters.
         diff_params = None
-        if self.param_set != 'local_tm' and hasattr(ds, 'diff') and ds.diff.has_key(self.run):
+        if model_type != 'local_tm' and hasattr(ds, 'diff') and ds.diff.has_key(self.run):
             # Sphere.
             if ds.diff[self.run].type == 'sphere':
                 diff_params = ['tm_(s)']
@@ -1208,7 +1208,7 @@ class Results:
         # Diffusion parameters.
         diff_type = None
         diff_params = None
-        if self.param_set != 'local_tm' and hasattr(ds, 'diff') and ds.diff.has_key(self.run):
+        if model_type != 'local_tm' and hasattr(ds, 'diff') and ds.diff.has_key(self.run):
             # Sphere.
             if ds.diff[self.run].type == 'sphere':
                 diff_type = 'sphere'
@@ -1326,7 +1326,7 @@ class Results:
             # Minimisation details.
             try:
                 # Global minimisation results.
-                if self.param_set == 'diff' or self.param_set == 'all':
+                if model_type == 'diff' or model_type == 'all':
                     chi2 = `ds.chi2[self.run]`
                     iter = ds.iter[self.run]
                     f = ds.f_count[self.run]
@@ -1392,7 +1392,7 @@ class Results:
                         ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='value', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=heteronuc, pdb_proton=proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='value', nucleus=nucleus, model=model, equation=equation, params=params, param_set=model_type, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=heteronuc, pdb_proton=proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Errors.
@@ -1402,7 +1402,7 @@ class Results:
         if self.has_errors():
             # Diffusion parameters.
             diff_params = None
-            if self.param_set != 'local_tm' and hasattr(ds, 'diff') and ds.diff.has_key(self.run):
+            if model_type != 'local_tm' and hasattr(ds, 'diff') and ds.diff.has_key(self.run):
                 # Sphere.
                 if ds.diff[self.run].type == 'sphere':
                     diff_params = [None]
@@ -1416,7 +1416,7 @@ class Results:
                     diff_params = [None, None, None, None, None, None]
 
                 # Diffusion parameter errors.
-                if self.param_set == 'diff' or self.param_set == 'all':
+                if model_type == 'diff' or model_type == 'all':
                     # Sphere.
                     if ds.diff[self.run].type == 'sphere' and hasattr(ds.diff[self.run], 'tm_err'):
                         diff_params = [`ds.diff[self.run].tm_err`]
@@ -1520,7 +1520,7 @@ class Results:
                     xh_vect = replace(`data.xh_vect.tolist()`, ' ', '')
 
                 # Write the line.
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=heteronuc, pdb_proton=proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, model=model, equation=equation, params=params, param_set=model_type, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=heteronuc, pdb_proton=proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Simulation values.
@@ -1532,9 +1532,9 @@ class Results:
             for i in xrange(ds.sim_number[self.run]):
                 # Diffusion parameters.
                 diff_params = None
-                if self.param_set != 'local_tm' and hasattr(ds, 'diff') and ds.diff.has_key(self.run):
+                if model_type != 'local_tm' and hasattr(ds, 'diff') and ds.diff.has_key(self.run):
                     # Diffusion parameter simulation values.
-                    if self.param_set == 'diff' or self.param_set == 'all':
+                    if model_type == 'diff' or model_type == 'all':
                         # Sphere.
                         if ds.diff[self.run].type == 'sphere':
                             diff_params = [`ds.diff[self.run].tm_sim[i]`]
@@ -1580,7 +1580,7 @@ class Results:
                         params = replace(`data.params`, ' ', '')
 
                     # Selected simulation.
-                    if self.param_set == 'diff' or self.param_set == 'all':
+                    if model_type == 'diff' or model_type == 'all':
                         select_sim = ds.select_sim[self.run][i]
                     else:
                         select_sim = data.select_sim[i]
@@ -1648,7 +1648,7 @@ class Results:
                     # Minimisation details.
                     try:
                         # Global minimisation results.
-                        if self.param_set == 'diff' or self.param_set == 'all':
+                        if model_type == 'diff' or model_type == 'all':
                             chi2 = `ds.chi2_sim[self.run][i]`
                             iter = ds.iter_sim[self.run][i]
                             f = ds.f_count_sim[self.run][i]
@@ -1707,4 +1707,4 @@ class Results:
                         xh_vect = replace(`data.xh_vect.tolist()`, ' ', '')
 
                     # Write the line.
-                    self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, select_sim=select_sim, data_set='sim_'+`i`, nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=heteronuc, pdb_proton=proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                    self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, select_sim=select_sim, data_set='sim_'+`i`, nucleus=nucleus, model=model, equation=equation, params=params, param_set=model_type, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=heteronuc, pdb_proton=proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)

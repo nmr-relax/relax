@@ -1066,7 +1066,7 @@ class Model_free_main:
             c1, c2 = args
 
         # Get the tm value.
-        if self.param_set == 'local_tm':
+        if model_type == 'local_tm':
             tm = ds.res[run][i].local_tm
         else:
             tm = ds.diff[run].tm
@@ -1131,10 +1131,10 @@ class Model_free_main:
                 raise RelaxNoModelError, self.run
 
         # Determine the parameter set type.
-        self.param_set = self.determine_model_type()
+        model_type = self.determine_model_type()
 
         # Residue index.
-        if self.param_set == 'mf' or self.param_set == 'local_tm':
+        if model_type == 'mf' or model_type == 'local_tm':
             index = i
         else:
             index = None
@@ -2453,7 +2453,7 @@ class Model_free_main:
         # Diffusion tensor parameter errors.
         ####################################
 
-        if self.param_set == 'diff' or self.param_set == 'all':
+        if model_type == 'diff' or model_type == 'all':
             # Spherical diffusion.
             if ds.diff[self.run].type == 'sphere':
                 # Return the parameter array.
@@ -2501,7 +2501,7 @@ class Model_free_main:
         # Model-free parameter errors for the parameter set 'all'.
         ##########################################################
 
-        if self.param_set == 'all':
+        if model_type == 'all':
             # Loop over the sequence.
             for i in xrange(len(ds.res[self.run])):
                 # Skip deselected residues.
@@ -2521,7 +2521,7 @@ class Model_free_main:
         # Model-free parameters for the parameter sets 'mf' and 'local_tm'.
         ###################################################################
 
-        if self.param_set == 'mf' or self.param_set == 'local_tm':
+        if model_type == 'mf' or model_type == 'local_tm':
             # Skip deselected residues.
             if not ds.res[self.run][instance].select:
                 return
@@ -2604,7 +2604,7 @@ class Model_free_main:
         self.run = run
 
         # Determine the parameter set type.
-        self.param_set = self.determine_model_type()
+        model_type = self.determine_model_type()
 
         # Get the parameter object names.
         param_names = self.data_names(set='params')
@@ -2613,7 +2613,7 @@ class Model_free_main:
         min_names = self.data_names(set='min')
 
         # List of diffusion tensor parameters.
-        if self.param_set == 'diff' or self.param_set == 'all':
+        if model_type == 'diff' or model_type == 'all':
             # Spherical diffusion.
             if ds.diff[self.run].type == 'sphere':
                 diff_params = ['tm']
@@ -2631,7 +2631,7 @@ class Model_free_main:
         #############################################################
 
         # Diffusion tensor parameters and non residue specific minimisation statistics.
-        if self.param_set == 'diff' or self.param_set == 'all':
+        if model_type == 'diff' or model_type == 'all':
             # Loop over the parameters.
             for object_name in diff_params:
                 # Name for the simulation object.
@@ -2651,7 +2651,7 @@ class Model_free_main:
                     raise RelaxError, "Monte Carlo parameter values have already been set."
 
         # Residue specific parameters.
-        if self.param_set != 'diff':
+        if model_type != 'diff':
             for i in xrange(len(ds.res[self.run])):
                 # Skip deselected residues.
                 if not ds.res[self.run][i].select:
@@ -2697,7 +2697,7 @@ class Model_free_main:
                 sim_object[self.run].append(deepcopy(object[self.run]))
 
         # Diffusion tensor parameters and non residue specific minimisation statistics.
-        if self.param_set == 'diff' or self.param_set == 'all':
+        if model_type == 'diff' or model_type == 'all':
             # Loop over the parameters.
             for object_name in diff_params:
                 # Name for the simulation object.
@@ -2715,7 +2715,7 @@ class Model_free_main:
                     sim_object.append(deepcopy(getattr(ds.diff[self.run], object_name)))
 
         # Residue specific parameters.
-        if self.param_set != 'diff':
+        if model_type != 'diff':
             for i in xrange(len(ds.res[self.run])):
                 # Skip deselected residues.
                 if not ds.res[self.run][i].select:
@@ -2772,10 +2772,10 @@ class Model_free_main:
         self.run = run
 
         # Determine the parameter set type.
-        self.param_set = self.determine_model_type()
+        model_type = self.determine_model_type()
 
         # Single instance.
-        if self.param_set == 'all' or self.param_set == 'diff':
+        if model_type == 'all' or model_type == 'diff':
             return ds.chi2_sim[self.run]
 
         # Multiple instances.
@@ -2799,7 +2799,7 @@ class Model_free_main:
         # Diffusion tensor parameters.
         ##############################
 
-        if self.param_set == 'diff' or self.param_set == 'all':
+        if model_type == 'diff' or model_type == 'all':
             # Spherical diffusion.
             if ds.diff[self.run].type == 'sphere':
                 # Return the parameter array.
@@ -2847,7 +2847,7 @@ class Model_free_main:
         # Model-free parameters for the parameter set 'all'.
         ####################################################
 
-        if self.param_set == 'all':
+        if model_type == 'all':
             # Loop over the sequence.
             for i in xrange(len(ds.res[self.run])):
                 # Skip deselected residues.
@@ -2867,7 +2867,7 @@ class Model_free_main:
         # Model-free parameters for the parameter sets 'mf' and 'local_tm'.
         ###################################################################
 
-        if self.param_set == 'mf' or self.param_set == 'local_tm':
+        if model_type == 'mf' or model_type == 'local_tm':
             # Skip deselected residues.
             if not ds.res[self.run][instance].select:
                 return
@@ -2889,10 +2889,10 @@ class Model_free_main:
         self.run = run
 
         # Determine the parameter set type.
-        self.param_set = self.determine_model_type()
+        model_type = self.determine_model_type()
 
         # Single instance.
-        if self.param_set == 'all' or self.param_set == 'diff':
+        if model_type == 'all' or model_type == 'diff':
             return ds.select_sim[self.run]
 
         # Multiple instances.
@@ -2934,12 +2934,12 @@ class Model_free_main:
         self.run = run
 
         # Determine the parameter set type.
-        self.param_set = self.determine_model_type()
+        model_type = self.determine_model_type()
 
         # Simulation deselect.
         if sim_index != None:
             # Single instance.
-            if self.param_set == 'mf' or self.param_set == 'local_tm':
+            if model_type == 'mf' or model_type == 'local_tm':
                 ds.res[self.run][i].select_sim[sim_index] = 0
 
             # Multiple instances.
@@ -2949,5 +2949,5 @@ class Model_free_main:
         # Residue deselect.
         else:
             # Single residue.
-            if self.param_set == 'mf' or self.param_set == 'local_tm':
+            if model_type == 'mf' or model_type == 'local_tm':
                 ds.res[self.run][i].select = 0

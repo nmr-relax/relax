@@ -59,14 +59,14 @@ class Dasha:
             raise RelaxNoSequenceError, self.run
 
         # Determine the parameter set.
-        self.param_set = self.relax.specific.model_free.determine_model_type(self.run)
+        model_type = self.relax.specific.model_free.determine_model_type(self.run)
 
         # Test if diffusion tensor data for the run exists.
-        if self.param_set != 'local_tm' and not ds.diff.has_key(self.run):
+        if model_type != 'local_tm' and not ds.diff.has_key(self.run):
             raise RelaxNoTensorError, 'diffusion'
 
         # Test if the PDB file has been loaded (for the spheroid and ellipsoid).
-        if self.param_set != 'local_tm' and ds.diff[self.run].type != 'sphere' and not ds.pdb.has_key(self.run):
+        if model_type != 'local_tm' and ds.diff[self.run].type != 'sphere' and not ds.pdb.has_key(self.run):
             raise RelaxNoPdbError, self.run
 
         # Test if the nucleus type has been set.
@@ -139,7 +139,7 @@ class Dasha:
 
         # Set the diffusion tensor.
         file.write('\n# Set the diffusion tensor.\n')
-        if self.param_set != 'local_tm':
+        if model_type != 'local_tm':
             # Sphere.
             if ds.diff[self.run].type == 'sphere':
                 file.write('set tr ' + `ds.diff[self.run].tm / 1e-9` + '\n')
@@ -225,7 +225,7 @@ class Dasha:
             file.write('exit\n')
 
         # Individual residue optimisation.
-        if self.param_set == 'mf':
+        if model_type == 'mf':
             # Loop over the residues.
             for i in xrange(len(ds.res[self.run])):
                 # Reassign the data.
@@ -333,7 +333,7 @@ class Dasha:
             file.write('write chi2.out F\n')
 
         else:
-            raise RelaxError, 'Optimisation of the parameter set ' + `self.param_set` + ' currently not supported.'
+            raise RelaxError, 'Optimisation of the parameter set ' + `model_type` + ' currently not supported.'
 
 
     def execute(self, run, dir, force, binary):
