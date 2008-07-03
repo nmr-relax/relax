@@ -298,11 +298,12 @@ def select(method=None, modsel_pipe=None, pipes=None):
         # Print out of selected model.
         print "\nThe model from the data pipe " + `best_model` + " has been selected."
 
-        # Switch to the selected data pipe.
-        switch(best_model)
-
         # Duplicate the data from the 'best_model' to the model selection data pipe.
         if best_model != None:
+            # Switch to the selected data pipe.
+            switch(best_model)
+
+            # Duplicate.
             duplicate_data[best_model](pipe_from=best_model, pipe_to=modsel_pipe, model_index=i, global_stats=global_stats)
 
     # Switch to the model selection pipe.
