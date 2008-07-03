@@ -32,8 +32,7 @@ import sys
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from float import isNaN,isInf
-from generic_fns import diffusion_tensor
-from generic_fns import relax_data
+from generic_fns import diffusion_tensor, pipes, relax_data, sequence
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
@@ -950,45 +949,62 @@ class Model_free_main:
             return 'all'
 
 
-    def duplicate_data(self, new_run=None, old_run=None, instance=None, global_stats=0):
-        """Function for duplicating data."""
+    def duplicate_data(self, pipe_from=None, pipe_to=None, model_index=None, global_stats=False):
+        """Duplicate the data specific to a single model-free model.
 
-        # self.run for determining the parameter set.
-        self.run = old_run
+        @keyword pipe_from:     The data pipe to copy the data from.
+        @type pipe_from:        str
+        @keyword pipe_to:       The data pipe to copy the data to.
+        @type pipe_to:          str
+        @keyword model_index:   The index of the model to determine which spin system to duplicate
+                                data from.
+        @type model_index:      int
+        @keyword global_stats:  The global statistics flag
+        @type global_stats:     bool
+        """
 
-        # Duplicate all non-residue specific data.
-        for data_name in dir(ds):
-            # Skip 'res'.
-            if data_name == 'res':
+        # First create the pipe_to data pipe, if it doesn't exist.
+        if not ds.has_key(pipe_to):
+            pipes.create(pipe_to, pipe_type='mf')
+
+        # Duplicate all non-sequence specific data.
+        for data_name in dir(ds[pipe_from]):
+            # Skip the molecule, residue, and spin data structure.
+            if data_name == 'mol':
                 continue
 
-            # Get the object.
-            data = getattr(ds, data_name)
-
-            # Skip the data if it is not a dictionary (or equivalent).
-            if not hasattr(data, 'has_key'):
+            # Skip special objects.
+            if search('^_', data_name) or data_name in ds[pipe_from].__class__.__dict__.keys():
                 continue
 
-            # Skip the data if it doesn't contain the key 'old_run'.
-            if not data.has_key(old_run):
-                continue
+            # Get the original object.
+            data_from = getattr(ds[pipe_from], data_name)
 
-            # If the dictionary already contains the key 'new_run', but the data is different, raise an error (skip PDB and diffusion data).
-            if data_name != 'pdb' and data_name != 'diff' and data.has_key(new_run) and data[old_run] != data[new_run]:
-                raise RelaxError, "The data between run " + `new_run` + " and run " + `old_run` + " is not consistent."
+            # The data already exists.
+            if hasattr(ds[pipe_to], data_name):
+                # Get the object in the target pipe.
+                data_to = getattr(ds[pipe_to], data_name)
 
-            # Skip the data if it contains the key 'new_run'.
-            if data.has_key(new_run):
+                # The data must match!
+                if data_from != data_to:
+                    raise RelaxError, "The object " + `data_name` + " is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
+
+                # Skip the data.
                 continue
 
             # Duplicate the data.
-            data[new_run] = deepcopy(data[old_run])
+            data_to = deepcopy(data_from)
 
         # Determine the parameter set type.
-        self.param_set = self.determine_param_set_type()
+        param_set = self.determine_param_set_type(pipe_from)
 
         # Sequence specific data.
-        if self.param_set == 'mf' or (self.param_set == 'local_tm' and not global_stats):
+        if param_set == 'mf' or (param_set == 'local_tm' and not global_stats):
+            # Duplicate the sequence data if it doesn't exist.
+            if not hasattr(ds[pipe_to], 'mol'):
+                sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to)
+
+            #
             # Create the sequence data if it does not exist.
             if not ds.res.has_key(new_run) or not len(ds.res[new_run]):
                 # Add the new run to 'ds.res'.
@@ -1005,7 +1021,7 @@ class Model_free_main:
                     ds.res[new_run][i].select = ds.res[old_run][i].select
 
             # Duplicate the residue specific data.
-            ds.res[new_run][instance] = deepcopy(ds.res[old_run][instance])
+            ds.res[new_run][model_index] = deepcopy(ds.res[old_run][model_index])
 
         # Other data types.
         else:
