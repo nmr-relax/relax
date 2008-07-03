@@ -220,7 +220,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
     # Loop over the number of instances.
     for i in xrange(min_instances):
         # Print out.
-        print "\nInstance " + `i` + ".\n"
+        print "\nModel index " + `i` + ".\n"
         print "%-20s %-20s %-20s %-20s %-20s" % ("Run", "Num_params_(k)", "Num_data_sets_(n)", "Chi2", "Criterion")
 
         # Initial model.
