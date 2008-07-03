@@ -114,7 +114,11 @@ def select(method=None, modsel_pipe=None, pipes=None):
     @type pipes:            list of str
     """
 
-    # Use all pipes (but the current).
+    # Test if the pipe already exists.
+    if ds.has_key(modsel_pipe):
+        raise RelaxPipeError, modsel_pipe
+
+    # Use all pipes.
     if pipes == None:
         # Get all data pipe names from the relax data store.
         pipes = ds.keys()
