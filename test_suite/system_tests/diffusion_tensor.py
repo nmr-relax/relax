@@ -41,10 +41,16 @@ class Diffusion_tensor(TestCase):
 
         # Initialise some data.
         self.relax.interpreter._Pipe.switch('sphere')
+        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1)
+        self.relax.interpreter._Sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + '/test_suite/system_tests/data/')
         self.relax.interpreter._Diffusion_tensor.init(10e-9, fixed=True)
         self.relax.interpreter._Pipe.switch('spheroid')
+        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1)
+        self.relax.interpreter._Sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + '/test_suite/system_tests/data/')
         self.relax.interpreter._Diffusion_tensor.init((2e-8, 1.3, 60-360, 290), param_types=2, spheroid_type='prolate', fixed=True)
         self.relax.interpreter._Pipe.switch('ellipsoid')
+        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1)
+        self.relax.interpreter._Sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + '/test_suite/system_tests/data/')
         self.relax.interpreter._Diffusion_tensor.init((9e-8, 5e6, 0.3, 60+360, 290, 100), fixed=False)
 
 
@@ -96,11 +102,9 @@ class Diffusion_tensor(TestCase):
         """The user function structure.create_diff_tensor_pdb()."""
 
         # Create the diffusion tensor object
-        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1)
-        self.relax.interpreter._Sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + '/test_suite/system_tests/data/')
-        #self.relax.interpreter._Pipe.switch('sphere')
-        #self.relax.interpreter._Structure.create_diff_tensor_pdb(file='tensor.pdb')
-        #self.relax.interpreter._Pipe.switch('spheroid')
-        #self.relax.interpreter._Structure.create_diff_tensor_pdb(file='tensor.pdb')
+        self.relax.interpreter._Pipe.switch('sphere')
+        self.relax.interpreter._Structure.create_diff_tensor_pdb(file='tensor.pdb')
+        self.relax.interpreter._Pipe.switch('spheroid')
+        self.relax.interpreter._Structure.create_diff_tensor_pdb(file='tensor.pdb')
         self.relax.interpreter._Pipe.switch('ellipsoid')
         self.relax.interpreter._Structure.create_diff_tensor_pdb(file='tensor.pdb')
