@@ -59,7 +59,7 @@ class Dasha:
             raise RelaxNoSequenceError, self.run
 
         # Determine the parameter set.
-        self.param_set = self.relax.specific.model_free.determine_param_set_type(self.run)
+        self.param_set = self.relax.specific.model_free.determine_model_type(self.run)
 
         # Test if diffusion tensor data for the run exists.
         if self.param_set != 'local_tm' and not ds.diff.has_key(self.run):

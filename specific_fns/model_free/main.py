@@ -178,7 +178,7 @@ class Model_free_main:
 
         # Determine the model type.
         if not model_type:
-            model_type = self.determine_param_set_type()
+            model_type = self.determine_model_type()
 
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
@@ -873,7 +873,7 @@ class Model_free_main:
         self.relax.generic.runs.eliminate_unused_runs()
 
 
-    def determine_param_set_type(self):
+    def determine_model_type(self):
         """Determine the type of parameter set.
 
         @return:    The name of the parameter set, which is one of 'all', 'diff', 'mf', or
@@ -998,7 +998,7 @@ class Model_free_main:
             setattr(ds[pipe_to], data_name, deepcopy(data_from))
 
         # Determine the parameter set type.
-        param_set = self.determine_param_set_type()
+        param_set = self.determine_model_type()
 
         # Sequence specific data.
         if param_set == 'mf' or (param_set == 'local_tm' and not global_stats):
@@ -1097,7 +1097,7 @@ class Model_free_main:
         """
 
         # Determine the parameter set type.
-        model_type = self.determine_param_set_type()
+        model_type = self.determine_model_type()
 
         # Get the spin ids.
         if model_type == 'mf' or model_type == 'local_tm':
@@ -1131,7 +1131,7 @@ class Model_free_main:
                 raise RelaxNoModelError, self.run
 
         # Determine the parameter set type.
-        self.param_set = self.determine_param_set_type()
+        self.param_set = self.determine_model_type()
 
         # Residue index.
         if self.param_set == 'mf' or self.param_set == 'local_tm':
@@ -1620,7 +1620,7 @@ class Model_free_main:
                     break
 
         # Determine the parameter set type.
-        param_set = self.determine_param_set_type()
+        param_set = self.determine_model_type()
 
         # Statistics for a single residue.
         if not global_stats:
@@ -1694,7 +1694,7 @@ class Model_free_main:
             return 0
 
         # Determine the parameter set type.
-        param_set = self.determine_param_set_type()
+        param_set = self.determine_model_type()
 
         # Sequence specific data.
         if param_set == 'mf' or param_set == 'local_tm':
@@ -2559,7 +2559,7 @@ class Model_free_main:
         """
 
         # Determine the parameter set type.
-        param_set = self.determine_param_set_type()
+        param_set = self.determine_model_type()
 
         # Single instance.
         if param_set == 'all' or param_set == 'diff':
@@ -2604,7 +2604,7 @@ class Model_free_main:
         self.run = run
 
         # Determine the parameter set type.
-        self.param_set = self.determine_param_set_type()
+        self.param_set = self.determine_model_type()
 
         # Get the parameter object names.
         param_names = self.data_names(set='params')
@@ -2772,7 +2772,7 @@ class Model_free_main:
         self.run = run
 
         # Determine the parameter set type.
-        self.param_set = self.determine_param_set_type()
+        self.param_set = self.determine_model_type()
 
         # Single instance.
         if self.param_set == 'all' or self.param_set == 'diff':
@@ -2889,7 +2889,7 @@ class Model_free_main:
         self.run = run
 
         # Determine the parameter set type.
-        self.param_set = self.determine_param_set_type()
+        self.param_set = self.determine_model_type()
 
         # Single instance.
         if self.param_set == 'all' or self.param_set == 'diff':
@@ -2912,7 +2912,7 @@ class Model_free_main:
         """
 
         # Determine the parameter set type.
-        param_set = self.determine_param_set_type()
+        param_set = self.determine_model_type()
 
         # All spins.
         combine = False
@@ -2934,7 +2934,7 @@ class Model_free_main:
         self.run = run
 
         # Determine the parameter set type.
-        self.param_set = self.determine_param_set_type()
+        self.param_set = self.determine_model_type()
 
         # Simulation deselect.
         if sim_index != None:

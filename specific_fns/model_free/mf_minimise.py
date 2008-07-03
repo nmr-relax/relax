@@ -84,7 +84,7 @@ class Mf_minimise:
         cdp = ds[ds.current_pipe]
 
         # Determine the parameter set type.
-        param_set = self.determine_param_set_type()
+        param_set = self.determine_model_type()
 
         # Test if diffusion tensor data exists.
         if param_set != 'local_tm' and not diff_data_exists():
@@ -525,7 +525,7 @@ class Mf_minimise:
         m = 0
 
         # Determine the parameter set type.
-        param_set = self.determine_param_set_type()
+        param_set = self.determine_model_type()
 
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
@@ -784,7 +784,7 @@ class Mf_minimise:
                 raise RelaxProtonTypeError
 
         # Determine the parameter set type.
-        param_set = self.determine_param_set_type()
+        param_set = self.determine_model_type()
 
         # Parameter set for the back-calculate function.
         if min_algor == 'back_calc' and param_set != 'local_tm':

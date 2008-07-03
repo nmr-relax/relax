@@ -1166,7 +1166,7 @@ class Results:
         self.run = run
 
         # Determine the parameter set type.
-        self.param_set = self.determine_param_set_type()
+        self.param_set = self.determine_model_type()
 
 
         # Header.
