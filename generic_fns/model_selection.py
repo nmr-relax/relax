@@ -121,9 +121,6 @@ def select(method=None, modsel_pipe=None, pipes=None):
         # Get all data pipe names from the relax data store.
         pipes = ds.keys()
 
-    # Store the current data pipe (for restoration at the end).
-    current_pipe = ds.current_pipe
-
     # Select the model selection technique.
     if method == 'AIC':
         print "AIC model selection."
@@ -308,6 +305,6 @@ def select(method=None, modsel_pipe=None, pipes=None):
         if best_model != None:
             duplicate_data[best_model](pipe_from=best_model, pipe_to=modsel_pipe, model_index=i, global_stats=global_stats)
 
-    # Restore the current data pipe.
-    ds.current_pipe = current_pipe
+    # Switch to the model selection pipe.
+    switch(modsel_pipe)
 
