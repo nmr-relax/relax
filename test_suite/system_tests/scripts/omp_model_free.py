@@ -44,9 +44,6 @@ class Main:
         # Sequential optimisation of all model-free models (function must be modified to suit).
         self.multi_model(local_tm=True)
 
-        # Model selection data pipe.
-        pipe.create('aic', 'mf')
-
         # Model selection.
         self.model_selection(pipe='aic')
 
