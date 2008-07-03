@@ -33,7 +33,7 @@ import sys
 from data import Relax_data_store; ds = Relax_data_store()
 from float import isNaN,isInf
 from generic_fns import diffusion_tensor, pipes, relax_data, sequence
-from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
+from generic_fns.mol_res_spin import convert_from_global_index, count_spins, exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
 from physical_constants import N15_CSA, NH_BOND_LENGTH
@@ -1006,12 +1006,11 @@ class Model_free_main:
             if ds[pipe_to].mol.is_empty():
                 sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to)
 
-            # Get the spin containers.
-            spin_from = return_spin_from_index(global_index=model_index, pipe=pipe_from) 
-            spin_to = return_spin_from_index(global_index=model_index, pipe=pipe_to) 
+            # Get the spin container indecies.
+            mol_index, res_index, spin_index = convert_from_global_index(global_index=model_index, pipe=pipe_from)
 
             # Duplicate the spin specific data.
-            spin_to = deepcopy(spin_from)
+            ds[pipe_to].mol[mol_index].res[res_index].spin[spin_index] = deepcopy(ds[pipe_from].mol[mol_index].res[res_index].spin[spin_index])
 
         # Other data types.
         else:
