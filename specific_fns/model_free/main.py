@@ -1091,7 +1091,7 @@ class Model_free_main:
                                 global spin index (which covers the molecule, residue, and spin
                                 indecies).
         @type model_index:      int
-        @return:                The vector of parameter names
+        @return:                The vector of parameter names.
         @rtype:                 list of str
         """
 
@@ -1109,40 +1109,40 @@ class Model_free_main:
         return self.assemble_param_names(model_type, spin_id=spin_id)
 
 
-    def get_param_values(self, run, i, sim_index=None):
-        """Function for returning a vector of parameter values."""
+    def get_param_values(self, model_index=None, sim_index=None):
+        """Return a vector of parameter values.
 
-        # Arguments
-        self.run = run
+        @keyword model_index:   The model index.  This is zero for the global models or equal to the
+                                global spin index (which covers the molecule, residue, and spin
+                                indecies).
+        @type model_index:      int
+        @keyword sim_index:     The Monte Carlo simulation index.
+        @type sim_index:        int
+        @return:                The vector of parameter values.
+        @rtype:                 list of str
+        """
 
-        # Skip residues where there is no data or errors.
-        if not hasattr(ds.res[self.run][i], 'relax_data') or not hasattr(ds.res[self.run][i], 'relax_error'):
-            return
-
-        # Test if the model-free model has been setup.
-        for j in xrange(len(ds.res[self.run])):
-            # Skip deselected residues.
-            if not ds.res[self.run][j].select:
+        # Test if the model-free models have been set up.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
                 continue
 
             # Not setup.
-            if not ds.res[self.run][j].model:
-                raise RelaxNoModelError, self.run
+            if not spin.model:
+                raise RelaxNoModelError
 
         # Determine the model type.
         model_type = self.determine_model_type()
 
-        # Residue index.
+        # Set the spin container (to None if the model is global).
         if model_type == 'mf' or model_type == 'local_tm':
-            index = i
+            spin = return_spin_from_index(model_index)
         else:
-            index = None
+            spin = None
 
-        # Assemble the parameter values.
-        self.param_vector = self.assemble_param_vector(index=index, sim_index=sim_index)
-
-        # Return the parameter names.
-        return self.param_vector
+        # Assemble the parameter values and return them.
+        return self.assemble_param_vector(spin=spin, sim_index=sim_index, model_type=model_type)
 
 
     def is_spin_param(self, name):
