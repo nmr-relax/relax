@@ -40,6 +40,7 @@ from load_spins import Load_spins
 from model_free import Mf
 from model_selection import Modsel
 from n_state_model import N_state_model
+from nmrview import NMRView
 from pipe_create import Pipe_create
 from relax_fit import Relax_fit
 from sequence import Sequence
@@ -54,6 +55,7 @@ __all__ = ['angles',
            'model_free',
            'model_selection',
            'n_state_model',
+           'nmrview',
            'pipe_create',
            'relax_fit',
            'sequence']
@@ -89,6 +91,7 @@ class System_test_runner:
         suite_array.append(TestLoader().loadTestsFromTestCase(Sequence))
         suite_array.append(TestLoader().loadTestsFromTestCase(Pipe_create))
         suite_array.append(TestLoader().loadTestsFromTestCase(N_state_model))
+        suite_array.append(TestLoader().loadTestsFromTestCase(NMRView))
 
         # Add the relax namespace to each TestCase object.
         for i in xrange(len(suite_array)):
