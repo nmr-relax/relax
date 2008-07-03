@@ -40,7 +40,7 @@ from chi2 import *
 
 
 class Mf:
-    def __init__(self, init_params=None, param_set=None, diff_type=None, diff_params=None, scaling_matrix=None, num_spins=None, equations=None, param_types=None, param_values=None, relax_data=None, errors=None, bond_length=None, csa=None, num_frq=0, frq=None, num_ri=None, remap_table=None, noe_r1_table=None, ri_labels=None, gx=0, gh=0, h_bar=0, mu0=0, num_params=None, vectors=None):
+    def __init__(self, init_params=None, model_type=None, diff_type=None, diff_params=None, scaling_matrix=None, num_spins=None, equations=None, param_types=None, param_values=None, relax_data=None, errors=None, bond_length=None, csa=None, num_frq=0, frq=None, num_ri=None, remap_table=None, noe_r1_table=None, ri_labels=None, gx=0, gh=0, h_bar=0, mu0=0, num_params=None, vectors=None):
         """The model-free minimisation class.
 
         This class should be initialised before every calculation.
@@ -197,7 +197,7 @@ class Mf:
         """
 
         # Arguments.
-        self.param_set = param_set
+        self.model_type = model_type
         self.total_num_params = len(init_params)
         self.scaling_matrix = scaling_matrix
         self.num_spins = num_spins
@@ -227,7 +227,7 @@ class Mf:
         elif self.diff_data.type == 'ellipsoid':
             self.param_index = 6
             self.diff_end_index = 6
-        if self.param_set != 'all':
+        if self.model_type != 'all':
             self.param_index = 0
 
         # Create the data array used to store data.
@@ -283,7 +283,7 @@ class Mf:
             self.data[i].xh_unit_vector = vectors[i]
 
             # Parameter values for minimising solely the diffusion tensor parameters.
-            if self.param_set == 'diff':
+            if self.model_type == 'diff':
                 self.data[i].param_values = param_values[i]
 
             # Indecies for constructing the global generic model-free gradient and Hessian kite.
@@ -294,9 +294,9 @@ class Mf:
             self.data[i].end_index = self.data[i].start_index + self.data[i].num_params
 
             # Total number of parameters.
-            if self.param_set == 'mf' or self.param_set == 'local_tm':
+            if self.model_type == 'mf' or self.model_type == 'local_tm':
                 self.data[i].total_num_params = self.data[i].num_params
-            elif self.param_set == 'diff':
+            elif self.model_type == 'diff':
                 self.data[i].total_num_params = self.diff_data.num_params
             else:
                 self.data[i].total_num_params = self.data[i].num_params + self.diff_data.num_params
@@ -309,9 +309,9 @@ class Mf:
                 raise RelaxError, "The model-free equations could not be setup."
 
             # Diffusion tensor parameters.
-            if self.param_set == 'local_tm':
+            if self.model_type == 'local_tm':
                 self.diff_data.params = self.params[0:1]
-            elif self.param_set == 'diff' or self.param_set == 'all':
+            elif self.model_type == 'diff' or self.model_type == 'all':
                 self.diff_data.params = self.params[0:self.diff_end_index]
 
             # Calculate the correlation times ti.
@@ -347,25 +347,25 @@ class Mf:
         ###########################################################
 
         # Functions for minimising model-free parameters for a single residue.
-        if self.param_set == 'mf':
+        if self.model_type == 'mf':
             self.func = self.func_mf
             self.dfunc = self.dfunc_mf
             self.d2func = self.d2func_mf
 
         # Functions for minimising model-free parameters for a single residue with a local tm.
-        elif self.param_set == 'local_tm':
+        elif self.model_type == 'local_tm':
             self.func = self.func_local_tm
             self.dfunc = self.dfunc_local_tm
             self.d2func = self.d2func_local_tm
 
         # Functions for minimising diffusion tensor parameters with all model-free parameters fixed.
-        elif self.param_set == 'diff':
+        elif self.model_type == 'diff':
             self.func = self.func_diff
             self.dfunc = self.dfunc_diff
             self.d2func = self.d2func_diff
 
         # Functions for minimising diffusion tensor parameters together with all model-free parameters.
-        elif self.param_set == 'all':
+        elif self.model_type == 'all':
             self.func = self.func_all
             self.dfunc = self.dfunc_all
             self.d2func = self.d2func_all
@@ -1481,9 +1481,9 @@ class Mf:
         """Return the function used for Levenberg-Marquardt minimisation."""
 
         # Create dri.
-        if self.param_set == 'mf' or self.param_set == 'local_tm':
+        if self.model_type == 'mf' or self.model_type == 'local_tm':
             dri = self.data[0].dri
-        elif self.param_set == 'diff':
+        elif self.model_type == 'diff':
             # Set the total dri gradient to zero.
             self.total_dri = self.total_dri * 0.0
 
@@ -1508,7 +1508,7 @@ class Mf:
             # dri.
             dri = self.total_dri
 
-        elif self.param_set == 'all':
+        elif self.model_type == 'all':
             # Set the total dri gradient to zero.
             self.total_dri = self.total_dri * 0.0
 
@@ -1554,7 +1554,7 @@ class Mf:
         #################
 
         # The number of diffusion parameters.
-        if self.param_set != 'all':
+        if self.model_type != 'all':
             num_diff_params = 0
         elif self.diff_data.type == 'sphere':
             num_diff_params = 1
@@ -1619,7 +1619,7 @@ class Mf:
             self.param_index = self.param_index + data.num_params
 
             # Single residue minimisation with fixed diffusion parameters.
-            if self.param_set == 'mf':
+            if self.model_type == 'mf':
                 # No model-free parameters {}.
                 if data.s2_i == None and data.te_i == None:
                     # Equation.
@@ -1738,7 +1738,7 @@ class Mf:
                     # Gradient.
                     data.calc_djw_comps = calc_diff_djw_comps
 
-                    if self.param_set != 'diff':
+                    if self.model_type != 'diff':
                         # Gradient.
                         data.calc_djw[data.s2_li] = calc_S2_djw_dS2
 
@@ -1749,7 +1749,7 @@ class Mf:
 
                         # Hessian.
                         data.calc_d2jw[0][0] = calc_diff_S2_d2jw_dGjdGk
-                        if self.param_set != 'diff':
+                        if self.model_type != 'diff':
                             data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_diff_S2_d2jw_dGjdS2
 
                     # Diffusion as a spheroid.
@@ -1772,7 +1772,7 @@ class Mf:
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_diff_S2_d2jw_dOjdOk
                         data.calc_d2jw[3][3] =                          calc_diff_S2_d2jw_dOjdOk
 
-                        if self.param_set != 'diff':
+                        if self.model_type != 'diff':
                             data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_diff_S2_d2jw_dGjdS2
                             data.calc_d2jw[1][data.s2_li] = data.calc_d2jw[data.s2_li][1] = calc_diff_S2_d2jw_dGjdS2
                             data.calc_d2jw[2][data.s2_li] = data.calc_d2jw[data.s2_li][2] = calc_diff_S2_d2jw_dOjdS2
@@ -1809,7 +1809,7 @@ class Mf:
                         data.calc_d2jw[4][5] = data.calc_d2jw[5][4] =   calc_diff_S2_d2jw_dOjdOk
                         data.calc_d2jw[5][5] =                          calc_diff_S2_d2jw_dOjdOk
 
-                        if self.param_set != 'diff':
+                        if self.model_type != 'diff':
                             data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_ellipsoid_S2_d2jw_dGjdS2
                             data.calc_d2jw[1][data.s2_li] = data.calc_d2jw[data.s2_li][1] = calc_ellipsoid_S2_d2jw_dGjdS2
                             data.calc_d2jw[2][data.s2_li] = data.calc_d2jw[data.s2_li][2] = calc_ellipsoid_S2_d2jw_dGjdS2
@@ -1827,7 +1827,7 @@ class Mf:
                     # Gradient.
                     data.calc_djw_comps = calc_diff_S2_te_djw_comps
 
-                    if self.param_set != 'diff':
+                    if self.model_type != 'diff':
                         # Gradient.
                         data.calc_djw[data.s2_li] = calc_S2_te_djw_dS2
                         data.calc_djw[data.te_li] = calc_S2_te_djw_dte
@@ -1843,7 +1843,7 @@ class Mf:
 
                         # Hessian.
                         data.calc_d2jw[0][0] = calc_diff_S2_te_d2jw_dGjdGk
-                        if self.param_set != 'diff':
+                        if self.model_type != 'diff':
                             data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_diff_S2_te_d2jw_dGjdS2
                             data.calc_d2jw[0][data.te_li] = data.calc_d2jw[data.te_li][0] = calc_diff_S2_te_d2jw_dGjdte
 
@@ -1867,7 +1867,7 @@ class Mf:
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_diff_S2_te_d2jw_dOjdOk
                         data.calc_d2jw[3][3] =                          calc_diff_S2_te_d2jw_dOjdOk
 
-                        if self.param_set != 'diff':
+                        if self.model_type != 'diff':
                             data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_diff_S2_te_d2jw_dGjdS2
                             data.calc_d2jw[1][data.s2_li] = data.calc_d2jw[data.s2_li][1] = calc_diff_S2_te_d2jw_dGjdS2
                             data.calc_d2jw[2][data.s2_li] = data.calc_d2jw[data.s2_li][2] = calc_diff_S2_te_d2jw_dOjdS2
@@ -1909,7 +1909,7 @@ class Mf:
                         data.calc_d2jw[4][5] = data.calc_d2jw[5][4] =   calc_diff_S2_te_d2jw_dOjdOk
                         data.calc_d2jw[5][5] =                          calc_diff_S2_te_d2jw_dOjdOk
 
-                        if self.param_set != 'diff':
+                        if self.model_type != 'diff':
                             data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_ellipsoid_S2_te_d2jw_dGjdS2
                             data.calc_d2jw[1][data.s2_li] = data.calc_d2jw[data.s2_li][1] = calc_ellipsoid_S2_te_d2jw_dGjdS2
                             data.calc_d2jw[2][data.s2_li] = data.calc_d2jw[data.s2_li][2] = calc_ellipsoid_S2_te_d2jw_dGjdS2
@@ -1968,7 +1968,7 @@ class Mf:
             self.param_index = self.param_index + data.num_params
 
             # Single residue minimisation with fixed diffusion parameters.
-            if self.param_set == 'mf':
+            if self.model_type == 'mf':
                 # Model-free parameters {S2f, S2, ts}.
                 if data.s2f_i != None and data.tf_i == None and data.s2_i != None and data.ts_i != None:
                     # Equation.
@@ -2022,7 +2022,7 @@ class Mf:
                     # Gradient.
                     data.calc_djw_comps = calc_diff_S2f_S2_ts_djw_comps
 
-                    if self.param_set != 'diff':
+                    if self.model_type != 'diff':
                         # Gradient.
                         data.calc_djw[data.s2f_li] =    calc_S2f_S2_ts_djw_dS2f
                         data.calc_djw[data.s2_li] =     calc_S2f_S2_ts_djw_dS2
@@ -2040,7 +2040,7 @@ class Mf:
 
                         # Hessian.
                         data.calc_d2jw[0][0] = calc_diff_S2f_S2_ts_d2jw_dGjdGk
-                        if self.param_set != 'diff':
+                        if self.model_type != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_S2_ts_d2jw_dGjdS2f
                             data.calc_d2jw[0][data.s2_li]  = data.calc_d2jw[data.s2_li][0]  = calc_diff_S2f_S2_ts_d2jw_dGjdS2
                             data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_diff_S2f_S2_ts_d2jw_dGjdts
@@ -2065,7 +2065,7 @@ class Mf:
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_diff_S2f_S2_ts_d2jw_dOjdOk
                         data.calc_d2jw[3][3] =                          calc_diff_S2f_S2_ts_d2jw_dOjdOk
 
-                        if self.param_set != 'diff':
+                        if self.model_type != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_S2_ts_d2jw_dGjdS2f
                             data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_diff_S2f_S2_ts_d2jw_dGjdS2f
                             data.calc_d2jw[2][data.s2f_li] = data.calc_d2jw[data.s2f_li][2] = calc_diff_S2f_S2_ts_d2jw_dOjdS2f
@@ -2112,7 +2112,7 @@ class Mf:
                         data.calc_d2jw[4][5] = data.calc_d2jw[5][4] =   calc_diff_S2f_S2_ts_d2jw_dOjdOk
                         data.calc_d2jw[5][5] =                          calc_diff_S2f_S2_ts_d2jw_dOjdOk
 
-                        if self.param_set != 'diff':
+                        if self.model_type != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f
                             data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f
                             data.calc_d2jw[2][data.s2f_li] = data.calc_d2jw[data.s2f_li][2] = calc_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f
@@ -2144,7 +2144,7 @@ class Mf:
                     # Gradient.
                     data.calc_djw_comps = calc_diff_S2f_tf_S2_ts_djw_comps
 
-                    if self.param_set != 'diff':
+                    if self.model_type != 'diff':
                         # Gradient.
                         data.calc_djw[data.s2f_li] =    calc_S2f_tf_S2_ts_djw_dS2f
                         data.calc_djw[data.tf_li] =     calc_S2f_tf_S2_ts_djw_dtf
@@ -2165,7 +2165,7 @@ class Mf:
 
                         # Hessian.
                         data.calc_d2jw[0][0] = calc_diff_S2f_tf_S2_ts_d2jw_dGjdGk
-                        if self.param_set != 'diff':
+                        if self.model_type != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_tf_S2_ts_d2jw_dGjdS2f
                             data.calc_d2jw[0][data.tf_li]  = data.calc_d2jw[data.tf_li][0]  = calc_diff_S2f_tf_S2_ts_d2jw_dGjdtf
                             data.calc_d2jw[0][data.s2_li]  = data.calc_d2jw[data.s2_li][0]  = calc_diff_S2f_S2_ts_d2jw_dGjdS2
@@ -2191,7 +2191,7 @@ class Mf:
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_diff_S2f_tf_S2_ts_d2jw_dOjdOk
                         data.calc_d2jw[3][3] =                          calc_diff_S2f_tf_S2_ts_d2jw_dOjdOk
 
-                        if self.param_set != 'diff':
+                        if self.model_type != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_tf_S2_ts_d2jw_dGjdS2f
                             data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_diff_S2f_tf_S2_ts_d2jw_dGjdS2f
                             data.calc_d2jw[2][data.s2f_li] = data.calc_d2jw[data.s2f_li][2] = calc_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
@@ -2243,7 +2243,7 @@ class Mf:
                         data.calc_d2jw[4][5] = data.calc_d2jw[5][4] =   calc_diff_S2f_tf_S2_ts_d2jw_dOjdOk
                         data.calc_d2jw[5][5] =                          calc_diff_S2f_tf_S2_ts_d2jw_dOjdOk
 
-                        if self.param_set != 'diff':
+                        if self.model_type != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f
                             data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f
                             data.calc_d2jw[2][data.s2f_li] = data.calc_d2jw[data.s2f_li][2] = calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f
@@ -2315,7 +2315,7 @@ class Mf:
             self.param_index = self.param_index + data.num_params
 
             # Single residue minimisation with fixed diffusion parameters.
-            if self.param_set == 'mf':
+            if self.model_type == 'mf':
                 # Model-free parameters {S2f, S2s, ts}.
                 if data.s2f_i != None and data.tf_i == None and data.s2s_i != None and data.ts_i != None:
                     # Equation.
@@ -2371,7 +2371,7 @@ class Mf:
                     # Gradient.
                     data.calc_djw_comps = calc_diff_S2f_S2s_ts_djw_comps
 
-                    if self.param_set != 'diff':
+                    if self.model_type != 'diff':
                         # Gradient.
                         data.calc_djw[data.s2f_li] =    calc_diff_S2f_S2s_ts_djw_dS2f
                         data.calc_djw[data.s2s_li] =    calc_diff_S2f_S2s_ts_djw_dS2s
@@ -2390,7 +2390,7 @@ class Mf:
 
                         # Hessian.
                         data.calc_d2jw[0][0] = calc_diff_S2f_S2s_ts_d2jw_dGjdGk
-                        if self.param_set != 'diff':
+                        if self.model_type != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] =   calc_diff_S2f_S2s_ts_d2jw_dGjdS2f
                             data.calc_d2jw[0][data.s2s_li] = data.calc_d2jw[data.s2s_li][0] =   calc_diff_S2f_S2s_ts_d2jw_dGjdS2s
                             data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  =   calc_diff_S2f_S2s_ts_d2jw_dGjdts
@@ -2415,7 +2415,7 @@ class Mf:
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_diff_S2f_S2s_ts_d2jw_dOjdOk
                         data.calc_d2jw[3][3] =                          calc_diff_S2f_S2s_ts_d2jw_dOjdOk
 
-                        if self.param_set != 'diff':
+                        if self.model_type != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_S2s_ts_d2jw_dGjdS2f
                             data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_diff_S2f_S2s_ts_d2jw_dGjdS2f
                             data.calc_d2jw[2][data.s2f_li] = data.calc_d2jw[data.s2f_li][2] = calc_diff_S2f_S2s_ts_d2jw_dOjdS2f
@@ -2462,7 +2462,7 @@ class Mf:
                         data.calc_d2jw[4][5] = data.calc_d2jw[5][4] =   calc_diff_S2f_S2s_ts_d2jw_dOjdOk
                         data.calc_d2jw[5][5] =                          calc_diff_S2f_S2s_ts_d2jw_dOjdOk
 
-                        if self.param_set != 'diff':
+                        if self.model_type != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f
                             data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f
                             data.calc_d2jw[2][data.s2f_li] = data.calc_d2jw[data.s2f_li][2] = calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f
@@ -2493,7 +2493,7 @@ class Mf:
                     # Gradient.
                     data.calc_djw_comps = calc_diff_S2f_tf_S2s_ts_djw_comps
 
-                    if self.param_set != 'diff':
+                    if self.model_type != 'diff':
                         # Gradient.
                         data.calc_djw[data.s2f_li] =    calc_diff_S2f_tf_S2s_ts_djw_dS2f
                         data.calc_djw[data.tf_li] =     calc_diff_S2f_tf_S2s_ts_djw_dtf
@@ -2515,7 +2515,7 @@ class Mf:
 
                         # Hessian.
                         data.calc_d2jw[0][0] = calc_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
-                        if self.param_set != 'diff':
+                        if self.model_type != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] =   calc_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f
                             data.calc_d2jw[0][data.tf_li]  = data.calc_d2jw[data.tf_li][0]  =   calc_diff_S2f_tf_S2s_ts_d2jw_dGjdtf
                             data.calc_d2jw[0][data.s2s_li] = data.calc_d2jw[data.s2s_li][0] =   calc_diff_S2f_tf_S2s_ts_d2jw_dGjdS2s
@@ -2541,7 +2541,7 @@ class Mf:
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
                         data.calc_d2jw[3][3] =                          calc_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
 
-                        if self.param_set != 'diff':
+                        if self.model_type != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f
                             data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f
                             data.calc_d2jw[2][data.s2f_li] = data.calc_d2jw[data.s2f_li][2] = calc_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
@@ -2593,7 +2593,7 @@ class Mf:
                         data.calc_d2jw[4][5] = data.calc_d2jw[5][4] =   calc_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
                         data.calc_d2jw[5][5] =                          calc_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
 
-                        if self.param_set != 'diff':
+                        if self.model_type != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f
                             data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f
                             data.calc_d2jw[2][data.s2f_li] = data.calc_d2jw[data.s2f_li][2] = calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f
@@ -2740,7 +2740,7 @@ class Mf:
         # dri_prime and d2ri_prime.
         for i in xrange(data.total_num_params):
             # Diffusion tensor parameters are the only parameters.
-            if self.param_set == 'diff':
+            if self.model_type == 'diff':
                 # Gradient.
                 data.create_dri_prime.append(func_dri_djw_prime)
 

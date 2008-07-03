@@ -83,15 +83,15 @@ class Mf_minimise:
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
 
-        # Determine the parameter set type.
-        param_set = self.determine_model_type()
+        # Determine the model type.
+        model_type = self.determine_model_type()
 
         # Test if diffusion tensor data exists.
-        if param_set != 'local_tm' and not diff_data_exists():
+        if model_type != 'local_tm' and not diff_data_exists():
             raise RelaxNoTensorError, 'diffusion'
 
         # Test if the PDB file has been loaded.
-        if param_set != 'local_tm' and cdp.diff_tensor.type != 'sphere' and not hasattr(cdp, 'structure'):
+        if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere' and not hasattr(cdp, 'structure'):
             raise RelaxNoPdbError
 
         # Loop over the spins.
@@ -105,7 +105,7 @@ class Mf_minimise:
                 raise RelaxNoModelError
 
             # Test if unit vectors exist.
-            if param_set != 'local_tm' and cdp.diff_tensor.type != 'sphere' and not hasattr(spin, 'xh_vect'):
+            if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere' and not hasattr(spin, 'xh_vect'):
                 raise RelaxNoVectorsError
 
             # Test if the spin type has been set.
@@ -154,7 +154,7 @@ class Mf_minimise:
                 csa = [spin.csa_sim[sim_index]]
 
             # Vectors.
-            if param_set != 'local_tm' and cdp.diff_tensor.type != 'sphere':
+            if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
                 xh_unit_vectors = [spin.xh_vect]
             else:
                 xh_unit_vectors = [None]
@@ -174,7 +174,7 @@ class Mf_minimise:
             relax_error = [array(spin.relax_error, float64)]
 
             # Package the diffusion tensor parameters.
-            if param_set == 'local_tm':
+            if model_type == 'local_tm':
                 diff_params = [spin.local_tm]
                 diff_type = 'sphere'
             else:
@@ -194,7 +194,7 @@ class Mf_minimise:
                     diff_params = [cdp.diff_tensor.tm, cdp.diff_tensor.Da, cdp.diff_tensor.Dr, cdp.diff_tensor.alpha, cdp.diff_tensor.beta, cdp.diff_tensor.gamma]
 
             # Initialise the model-free function.
-            mf = Mf(init_params=param_vector, param_set='mf', diff_type=diff_type, diff_params=diff_params, num_spins=1, equations=[spin.equation], param_types=[spin.params], param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=[spin.num_frq], frq=[spin.frq], num_ri=[spin.num_ri], remap_table=[spin.remap_table], noe_r1_table=[spin.noe_r1_table], ri_labels=[spin.ri_labels], gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
+            mf = Mf(init_params=param_vector, model_type='mf', diff_type=diff_type, diff_params=diff_params, num_spins=1, equations=[spin.equation], param_types=[spin.params], param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=[spin.num_frq], frq=[spin.frq], num_ri=[spin.num_ri], remap_table=[spin.remap_table], noe_r1_table=[spin.noe_r1_table], ri_labels=[spin.ri_labels], gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
 
             # Chi-squared calculation.
             try:
@@ -203,18 +203,18 @@ class Mf_minimise:
                 chi2 = 1e200
 
             # Global chi-squared value.
-            if param_set == 'all' or param_set == 'diff':
+            if model_type == 'all' or model_type == 'diff':
                 cdp.chi2 = cdp.chi2 + chi2
             else:
                 spin.chi2 = chi2
 
 
-    def disassemble_param_vector(self, param_set, param_vector=None, spin=None, spin_id=None, sim_index=None):
+    def disassemble_param_vector(self, model_type, param_vector=None, spin=None, spin_id=None, sim_index=None):
         """Disassemble the model-free parameter vector.
 
-        @param param_set:       The model-free model type.  This must be one of 'mf', 'local_tm',
+        @param model_type:      The model-free model type.  This must be one of 'mf', 'local_tm',
                                 'diff', or 'all'.
-        @type param_set:        str
+        @type model_type:       str
         @keyword param_vector:  The model-free parameter vector.
         @type param_vector:     numpy array
         @keyword spin:          The spin data container.  If this argument is supplied, then the spin_id
@@ -233,7 +233,7 @@ class Mf_minimise:
         cdp = ds[ds.current_pipe]
 
         # Diffusion tensor parameters of the Monte Carlo simulations.
-        if sim_index != None and (param_set == 'diff' or param_set == 'all'):
+        if sim_index != None and (model_type == 'diff' or model_type == 'all'):
             # Spherical diffusion.
             if cdp.diff_tensor.type == 'sphere':
                 # Sim values.
@@ -269,7 +269,7 @@ class Mf_minimise:
                 param_index = param_index + 6
 
         # Diffusion tensor parameters.
-        elif param_set == 'diff' or param_set == 'all':
+        elif model_type == 'diff' or model_type == 'all':
             # Spherical diffusion.
             if cdp.diff_tensor.type == 'sphere':
                 # Values.
@@ -305,7 +305,7 @@ class Mf_minimise:
                 param_index = param_index + 6
 
         # Model-free parameters.
-        if param_set != 'diff':
+        if model_type != 'diff':
             # The loop.
             if spin:
                 loop = [spin]
@@ -398,7 +398,7 @@ class Mf_minimise:
                     param_index = param_index + 1
 
         # Calculate all order parameters after unpacking the vector.
-        if param_set != 'diff':
+        if model_type != 'diff':
             # The loop.
             if spin:
                 loop = [spin]
@@ -524,19 +524,19 @@ class Mf_minimise:
         min_options = []
         m = 0
 
-        # Determine the parameter set type.
-        param_set = self.determine_model_type()
+        # Determine the model type.
+        model_type = self.determine_model_type()
 
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
 
         # Minimisation options for diffusion tensor parameters.
-        if param_set == 'diff' or param_set == 'all':
+        if model_type == 'diff' or model_type == 'all':
             # Get the diffusion tensor specific configuration.
             m = self.grid_search_config_diff(min_options, inc, m, verbosity=verbosity)
 
         # Model-free parameters (residue specific parameters).
-        if param_set != 'diff':
+        if model_type != 'diff':
             # The loop.
             if spin:
                 loop = [spin]
@@ -706,17 +706,17 @@ class Mf_minimise:
     def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
         """Model-free minimisation function.
 
-        Three categories of parameter sets exist for which the approach to minimisation is
-        different.  These are:
+        Three categories of models exist for which the approach to minimisation is different.  These
+        are:
 
-        Single spins optimisation:  The 'mf' and 'local_tm' parameter sets which are the
+        Single spin optimisations:  The 'mf' and 'local_tm' model types which are the
         model-free parameters for single spins, optionally with a local tm parameter.  These
         models have no global parameters.
 
-        Diffusion tensor optimisations:  The 'diff' diffusion tensor parameter set.  No spin
+        Diffusion tensor optimisations:  The 'diff' diffusion tensor model type.  No spin
         specific parameters exist.
 
-        Optimisation of everything:  The 'all' parameter set consisting of all model-free and all
+        Optimisation of everything:  The 'all' model type consisting of all model-free and all
         diffusion tensor parameters.
 
 
@@ -783,19 +783,19 @@ class Mf_minimise:
             if not hasattr(spin, 'proton_type'):
                 raise RelaxProtonTypeError
 
-        # Determine the parameter set type.
-        param_set = self.determine_model_type()
+        # Determine the model type.
+        model_type = self.determine_model_type()
 
-        # Parameter set for the back-calculate function.
-        if min_algor == 'back_calc' and param_set != 'local_tm':
-            param_set = 'mf'
+        # Model type for the back-calculate function.
+        if min_algor == 'back_calc' and model_type != 'local_tm':
+            model_type = 'mf'
 
         # Test if diffusion tensor data exists.
-        if param_set != 'local_tm' and not diffusion_tensor.diff_data_exists():
+        if model_type != 'local_tm' and not diffusion_tensor.diff_data_exists():
             raise RelaxNoTensorError, 'diffusion'
 
         # Tests for the PDB file and unit vectors.
-        if param_set != 'local_tm' and cdp.diff_tensor.type != 'sphere':
+        if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
             # Test if the structure file has been loaded.
             if not hasattr(cdp.structure, 'structures'):
                 raise RelaxNoPdbError
@@ -811,7 +811,7 @@ class Mf_minimise:
                     raise RelaxNoVectorsError
 
         # Test if the model-free parameter values are set for minimising diffusion tensor parameters by themselves.
-        if param_set == 'diff':
+        if model_type == 'diff':
             # Loop over the sequence.
             for spin in spin_loop():
                 unset_param = self.are_mf_params_set(spin)
@@ -820,13 +820,13 @@ class Mf_minimise:
 
         # Print out.
         if verbosity >= 1:
-            if param_set == 'mf':
+            if model_type == 'mf':
                 print "Only the model-free parameters for single spins will be used."
-            elif param_set == 'local_mf':
+            elif model_type == 'local_mf':
                 print "Only a local tm value together with the model-free parameters for single spins will be used."
-            elif param_set == 'diff':
+            elif model_type == 'diff':
                 print "Only diffusion tensor parameters will be used."
-            elif param_set == 'all':
+            elif model_type == 'all':
                 print "The diffusion tensor parameters together with the model-free parameters for all spins will be used."
 
         # Test if the CSA and bond length values have been set.
@@ -843,12 +843,12 @@ class Mf_minimise:
             if not hasattr(spin, 'r') or spin.r == None:
                 raise RelaxNoValueError, "bond length"
 
-        # Number of spins, minimisation instances, and data sets for each parameter set type.
-        if param_set == 'mf' or param_set == 'local_tm':
+        # Number of spins, minimisation instances, and data sets for each model type.
+        if model_type == 'mf' or model_type == 'local_tm':
             num_instances = count_spins()
             num_data_sets = 1
             num_spins = 1
-        elif param_set == 'diff' or param_set == 'all':
+        elif model_type == 'diff' or model_type == 'all':
             num_instances = 1
             num_data_sets = count_spins()
             num_spins = count_selected_spins()
@@ -865,7 +865,7 @@ class Mf_minimise:
 
         for i in xrange(num_instances):
             # Get the spin container if required.
-            if param_set == 'diff' or param_set == 'all':
+            if model_type == 'diff' or model_type == 'all':
                 spin_index = None
                 spin, spin_id = None, None
             elif min_algor == 'back_calc':
@@ -876,7 +876,7 @@ class Mf_minimise:
                 spin, spin_id = return_spin_from_index(global_index=spin_index, return_spin_id=True)
 
             # Individual spin stuff.
-            if spin and (param_set == 'mf' or param_set == 'local_tm') and not min_algor == 'back_calc':
+            if spin and (model_type == 'mf' or model_type == 'local_tm') and not min_algor == 'back_calc':
                 # Skip deselected spins.
                 if not spin.select:
                     continue
@@ -888,7 +888,7 @@ class Mf_minimise:
             # Print out.
             if verbosity >= 1:
                 # Individual spin stuff.
-                if param_set == 'mf' or param_set == 'local_tm':
+                if model_type == 'mf' or model_type == 'local_tm':
                     if verbosity >= 2:
                         print "\n\n"
                     string = "Fitting to spin " + `spin_id`
@@ -911,7 +911,7 @@ class Mf_minimise:
                 num_params = len(param_vector)
 
                 # Diagonal scaling.
-                scaling_matrix = self.assemble_scaling_matrix(num_params, param_set=param_set, spin=spin, scaling=scaling)
+                scaling_matrix = self.assemble_scaling_matrix(num_params, model_type=model_type, spin=spin, scaling=scaling)
                 if len(scaling_matrix):
                     param_vector = dot(inv(scaling_matrix), param_vector)
 
@@ -925,7 +925,7 @@ class Mf_minimise:
 
             # Linear constraints.
             if constraints:
-                A, b = self.linear_constraints(num_params, param_set=param_set, spin=spin, scaling_matrix=scaling_matrix)
+                A, b = self.linear_constraints(num_params, model_type=model_type, spin=spin, scaling_matrix=scaling_matrix)
 
             # Initialise the iteration counter and function, gradient, and Hessian call counters.
             iter_count = 0
@@ -934,13 +934,13 @@ class Mf_minimise:
             h_count = 0
 
             # Get the data for minimisation.
-            relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params = self.minimise_data_setup(param_set, min_algor, num_data_sets, spin=spin, sim_index=sim_index)
+            relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params = self.minimise_data_setup(model_type, min_algor, num_data_sets, spin=spin, sim_index=sim_index)
 
 
             # Initialise the function to minimise.
             ######################################
 
-            self.mf = Mf(init_params=param_vector, param_set=param_set, diff_type=diff_type, diff_params=diff_params, scaling_matrix=scaling_matrix, num_spins=num_spins, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
+            self.mf = Mf(init_params=param_vector, model_type=model_type, diff_type=diff_type, diff_params=diff_params, scaling_matrix=scaling_matrix, num_spins=num_spins, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
 
 
             # Setup the minimisation algorithm when constraints are present.
@@ -1006,12 +1006,12 @@ class Mf_minimise:
                 param_vector = dot(scaling_matrix, param_vector)
 
             # Disassemble the parameter vector.
-            self.disassemble_param_vector(param_set, param_vector=param_vector, spin=spin, sim_index=sim_index)
+            self.disassemble_param_vector(model_type, param_vector=param_vector, spin=spin, sim_index=sim_index)
 
             # Monte Carlo minimisation statistics.
             if sim_index != None:
                 # Sequence specific minimisation statistics.
-                if param_set == 'mf' or param_set == 'local_tm':
+                if model_type == 'mf' or model_type == 'local_tm':
                     # Chi-squared statistic.
                     spin.chi2_sim[sim_index] = func
 
@@ -1031,7 +1031,7 @@ class Mf_minimise:
                     spin.warning_sim[sim_index] = warning
 
                 # Global minimisation statistics.
-                elif param_set == 'diff' or param_set == 'all':
+                elif model_type == 'diff' or model_type == 'all':
                     # Chi-squared statistic.
                     cdp.chi2_sim[sim_index] = func
 
@@ -1053,7 +1053,7 @@ class Mf_minimise:
             # Normal statistics.
             else:
                 # Sequence specific minimisation statistics.
-                if param_set == 'mf' or param_set == 'local_tm':
+                if model_type == 'mf' or model_type == 'local_tm':
                     # Chi-squared statistic.
                     spin.chi2 = func
 
@@ -1073,7 +1073,7 @@ class Mf_minimise:
                     spin.warning = warning
 
                 # Global minimisation statistics.
-                elif param_set == 'diff' or param_set == 'all':
+                elif model_type == 'diff' or model_type == 'all':
                     # Chi-squared statistic.
                     cdp.chi2 = func
 
@@ -1093,11 +1093,11 @@ class Mf_minimise:
                     cdp.warning = warning
 
 
-    def minimise_data_setup(self, param_set, min_algor, num_data_sets, spin=None, sim_index=None):
+    def minimise_data_setup(self, model_type, min_algor, num_data_sets, spin=None, sim_index=None):
         """Set up all the data required for minimisation.
 
-        @param param_set:       The parameter set, one of 'all', 'diff', 'mf', or 'local_tm'.
-        @type param_set:        str
+        @param model_type:      The model type, one of 'all', 'diff', 'mf', or 'local_tm'.
+        @type model_type:       str
         @param min_algor:       The minimisation algorithm to use.
         @type min_algor:        str
         @param num_data_sets:   The number of data sets.
@@ -1134,9 +1134,9 @@ class Mf_minimise:
         gh = []
         num_params = []
         xh_unit_vectors = []
-        if param_set == 'local_tm':
+        if model_type == 'local_tm':
             mf_params = []
-        elif param_set == 'diff':
+        elif model_type == 'diff':
             param_values = []
 
         # Set up the data for the back_calc function.
@@ -1156,7 +1156,7 @@ class Mf_minimise:
             ri_labels = [[min_options[1]]]
             gx = [return_gyromagnetic_ratio(spin.heteronuc_type)]
             gh = [return_gyromagnetic_ratio(spin.proton_type)]
-            if param_set != 'local_tm' and cdp.diff_tensor.type != 'sphere':
+            if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
                 xh_unit_vectors = [spin.xh_vect]
             else:
                 xh_unit_vectors = [None]
@@ -1167,7 +1167,7 @@ class Mf_minimise:
         # Loop over the number of data sets.
         for j in xrange(num_data_sets):
             # Set the spin index and get the spin, if not already set.
-            if param_set == 'diff' or param_set == 'all':
+            if model_type == 'diff' or model_type == 'all':
                 spin_index = j
                 spin = return_spin_from_index(global_index=spin_index)
 
@@ -1202,7 +1202,7 @@ class Mf_minimise:
             ri_labels.append(spin.ri_labels)
             gx.append(return_gyromagnetic_ratio(spin.heteronuc_type))
             gh.append(return_gyromagnetic_ratio(spin.proton_type))
-            if sim_index == None or param_set == 'diff':
+            if sim_index == None or model_type == 'diff':
                 r.append(spin.r)
                 csa.append(spin.csa)
             else:
@@ -1210,11 +1210,11 @@ class Mf_minimise:
                 csa.append(spin.csa_sim[sim_index])
 
             # Model-free parameter values.
-            if param_set == 'local_tm':
+            if model_type == 'local_tm':
                 pass
 
             # Vectors.
-            if param_set != 'local_tm' and cdp.diff_tensor.type != 'sphere':
+            if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
                 xh_unit_vectors.append(spin.xh_vect)
             else:
                 xh_unit_vectors.append(None)
@@ -1223,8 +1223,8 @@ class Mf_minimise:
             num_params.append(len(spin.params))
 
             # Repackage the parameter values for minimising just the diffusion tensor parameters.
-            if param_set == 'diff':
-                param_values.append(self.assemble_param_vector(param_set='mf'))
+            if model_type == 'diff':
+                param_values.append(self.assemble_param_vector(model_type='mf'))
 
         # Convert to numpy arrays.
         for k in xrange(len(relax_data)):
@@ -1232,14 +1232,14 @@ class Mf_minimise:
             relax_error[k] = array(relax_error[k], float64)
 
         # Diffusion tensor type.
-        if param_set == 'local_tm':
+        if model_type == 'local_tm':
             diff_type = 'sphere'
         else:
             diff_type = cdp.diff_tensor.type
 
         # Package the diffusion tensor parameters.
         diff_params = None
-        if param_set == 'mf':
+        if model_type == 'mf':
             # Spherical diffusion.
             if diff_type == 'sphere':
                 diff_params = [cdp.diff_tensor.tm]
@@ -1251,7 +1251,7 @@ class Mf_minimise:
             # Ellipsoidal diffusion.
             elif diff_type == 'ellipsoid':
                 diff_params = [cdp.diff_tensor.tm, cdp.diff_tensor.Da, cdp.diff_tensor.Dr, cdp.diff_tensor.alpha, cdp.diff_tensor.beta, cdp.diff_tensor.gamma]
-        elif min_algor == 'back_calc' and param_set == 'local_tm':
+        elif min_algor == 'back_calc' and model_type == 'local_tm':
             # Spherical diffusion.
             diff_params = [spin.local_tm]
 

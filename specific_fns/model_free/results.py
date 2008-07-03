@@ -436,8 +436,8 @@ class Results:
             if model and equation:
                 self.model_setup(model=model, equation=equation, params=params, spin_id=spin_id)
 
-        # The parameter set.
-        param_set = spin_line[col['param_set']]
+        # The model type.
+        model_type = spin_line[col['param_set']]
 
         # Values.
         if data_set == 'value':
@@ -502,7 +502,7 @@ class Results:
                 spin.csa = None
 
             # Minimisation details (global minimisation results).
-            if param_set == 'diff' or param_set == 'all':
+            if model_type == 'diff' or model_type == 'all':
                 ds[ds.current_pipe].chi2 = eval(spin_line[col['chi2']])
                 ds[ds.current_pipe].iter = eval(spin_line[col['iter']])
                 ds[ds.current_pipe].f_count = eval(spin_line[col['f_count']])
@@ -610,7 +610,7 @@ class Results:
                 sim_object_name = object_name + '_sim'
 
                 # Create the simulation object.
-                if param_set == 'diff' or param_set == 'all':
+                if model_type == 'diff' or model_type == 'all':
                     setattr(ds[ds.current_pipe], sim_object_name, {})
                     object = getattr(ds[ds.current_pipe], sim_object_name)
                     object = []
@@ -680,7 +680,7 @@ class Results:
                 spin.csa_sim.append(None)
 
             # Minimisation details (global minimisation results).
-            if param_set == 'diff' or param_set == 'all':
+            if model_type == 'diff' or model_type == 'all':
                 ds[ds.current_pipe].chi2_sim.append(eval(spin_line[col['chi2']]))
                 ds[ds.current_pipe].iter_sim.append(eval(spin_line[col['iter']]))
                 ds[ds.current_pipe].f_count_sim.append(eval(spin_line[col['f_count']]))
@@ -705,7 +705,7 @@ class Results:
 
 
     def __fix_params(self, spin_line, col, verbosity=1):
-        """Fix certain parameters depending on the parameter set.
+        """Fix certain parameters depending on the model type.
 
         @param spin_line:   The line of data for a single spin.
         @type spin_line:    list of str
@@ -716,42 +716,42 @@ class Results:
         @type verbosity:    int
         """
 
-        # Extract the parameter set if it exists, otherwise return.
+        # Extract the model type if it exists, otherwise return.
         if spin_line[col['param_set']] != 'None':
-            param_set = spin_line[col['param_set']]
+            model_type = spin_line[col['param_set']]
         else:
             return
 
-        # Local tm and model-free only parameter sets.
-        if param_set == 'local_tm' or param_set == 'mf':
+        # Local tm and model-free only model types.
+        if model_type == 'local_tm' or model_type == 'mf':
             diff_fixed = True
             mf_fixed = False
 
-        # Diffusion tensor parameter set.
-        elif param_set == 'diff':
+        # Diffusion tensor model type.
+        elif model_type == 'diff':
             diff_fixed = False
             mf_fixed = True
 
-        # 'all' parameter set.
-        elif param_set == 'all':
+        # 'all' model type.
+        elif model_type == 'all':
             diff_fixed = False
             mf_fixed = False
 
-        # No parameter set.
-        elif param_set == 'None':
-            param_set = None
+        # No model type.
+        elif model_type == 'None':
+            model_type = None
             diff_fixed = None
             mf_fixed = None
 
         # Print out.
         if verbosity >= 2:
-            print "\nFixing parameters based on the parameter set."
-            print "Parameter set: " + param_set
+            print "\nFixing parameters based on the model type."
+            print "Model type: " + model_type
             print "Diffusion tensor fixed: " + `diff_fixed`
             print "Model-free parameters fixed: " + `mf_fixed`
 
         # Set the diffusion tensor fixed flag.
-        if param_set != 'local_tm' and diff_fixed != None:
+        if model_type != 'local_tm' and diff_fixed != None:
             ds[ds.current_pipe].diff_tensor.fixed = diff_fixed
 
         # Set the spin specific fixed flags.
@@ -888,7 +888,7 @@ class Results:
         diff_data_set = False
         diff_error_set = False
         diff_sim_set = None
-        param_set = None
+        model_type = None
         pdb = False
         pdb_model = None
         pdb_heteronuc = None
@@ -973,8 +973,8 @@ class Results:
                 self.__set_diff_tensor(file_line, col, data_set, verbosity)
                 diff_sim_set = sim_num
 
-            # Parameter set.
-            if param_set == None:
+            # Model type.
+            if model_type == None:
                 self.__fix_params(file_line, col, verbosity)
 
             # PDB.
@@ -1078,7 +1078,7 @@ class Results:
             spin.attached_proton = None
 
 
-    def write_columnar_line(self, file=None, num=None, name=None, select=None, select_sim=None, data_set=None, nucleus=None, model=None, equation=None, params=None, param_set=None, s2=None, s2f=None, s2s=None, local_tm=None, te=None, tf=None, ts=None, rex=None, r=None, csa=None, chi2=None, i=None, f=None, g=None, h=None, warn=None, diff_type=None, diff_params=None, pdb=None, pdb_model=None, pdb_heteronuc=None, pdb_proton=None, xh_vect=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
+    def write_columnar_line(self, file=None, num=None, name=None, select=None, select_sim=None, data_set=None, nucleus=None, model=None, equation=None, params=None, model_type=None, s2=None, s2f=None, s2s=None, local_tm=None, te=None, tf=None, ts=None, rex=None, r=None, csa=None, chi2=None, i=None, f=None, g=None, h=None, warn=None, diff_type=None, diff_params=None, pdb=None, pdb_model=None, pdb_heteronuc=None, pdb_proton=None, xh_vect=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
         """Function for printing a single line of the columnar formatted results."""
 
         # Residue number and name.
@@ -1099,8 +1099,8 @@ class Results:
         # Model details.
         file.write("%-5s %-9s %-35s " % (model, equation, params))
 
-        # Parameter set.
-        file.write("%-10s " % param_set)
+        # Model type.
+        file.write("%-10s " % model_type)
 
         # Parameters.
         file.write("%-25s " % s2)
@@ -1165,7 +1165,7 @@ class Results:
         # Arguments.
         self.run = run
 
-        # Determine the parameter set type.
+        # Determine the model type.
         model_type = self.determine_model_type()
 
 
@@ -1196,7 +1196,7 @@ class Results:
                 ri_error.append('Ri_error_(' + ds.ri_labels[self.run][i] + "_" + ds.frq_labels[self.run][ds.remap_table[self.run][i]] + ")")
 
         # Write the header line.
-        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', model='Model', equation='Equation', params='Params', param_set='Param_set', s2='S2', s2f='S2f', s2s='S2s', local_tm='Local_tm_(' + self.return_units('local_tm') + ')', te='te_(' + self.return_units('te') + ')', tf='tf_(' + self.return_units('tf') + ')', ts='ts_(' + self.return_units('ts') + ')', rex='Rex_(' + replace(self.return_units('rex'), ' ', '_') + ')', r='Bond_length_(' + self.return_units('r') + ')', csa='CSA_(' + self.return_units('csa') + ')', chi2='Chi-squared', i='Iter', f='f_count', g='g_count', h='h_count', warn='Warning', diff_type='Diff_type', diff_params=diff_params, pdb='PDB', pdb_model='PDB_model', pdb_heteronuc='PDB_heteronuc', pdb_proton='PDB_proton', xh_vect='XH_vector', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
+        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', nucleus='Nucleus', model='Model', equation='Equation', params='Params', model_type='Model_type', s2='S2', s2f='S2f', s2s='S2s', local_tm='Local_tm_(' + self.return_units('local_tm') + ')', te='te_(' + self.return_units('te') + ')', tf='tf_(' + self.return_units('tf') + ')', ts='ts_(' + self.return_units('ts') + ')', rex='Rex_(' + replace(self.return_units('rex'), ' ', '_') + ')', r='Bond_length_(' + self.return_units('r') + ')', csa='CSA_(' + self.return_units('csa') + ')', chi2='Chi-squared', i='Iter', f='f_count', g='g_count', h='h_count', warn='Warning', diff_type='Diff_type', diff_params=diff_params, pdb='PDB', pdb_model='PDB_model', pdb_heteronuc='PDB_heteronuc', pdb_proton='PDB_proton', xh_vect='XH_vector', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
 
 
         # Values.
@@ -1392,7 +1392,7 @@ class Results:
                         ri_error.append(None)
 
             # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='value', nucleus=nucleus, model=model, equation=equation, params=params, param_set=model_type, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=heteronuc, pdb_proton=proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='value', nucleus=nucleus, model=model, equation=equation, params=params, model_type=model_type, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=heteronuc, pdb_proton=proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Errors.
@@ -1520,7 +1520,7 @@ class Results:
                     xh_vect = replace(`data.xh_vect.tolist()`, ' ', '')
 
                 # Write the line.
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, model=model, equation=equation, params=params, param_set=model_type, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=heteronuc, pdb_proton=proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, model=model, equation=equation, params=params, model_type=model_type, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=heteronuc, pdb_proton=proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Simulation values.
@@ -1707,4 +1707,4 @@ class Results:
                         xh_vect = replace(`data.xh_vect.tolist()`, ' ', '')
 
                     # Write the line.
-                    self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, select_sim=select_sim, data_set='sim_'+`i`, nucleus=nucleus, model=model, equation=equation, params=params, param_set=model_type, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=heteronuc, pdb_proton=proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                    self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, select_sim=select_sim, data_set='sim_'+`i`, nucleus=nucleus, model=model, equation=equation, params=params, model_type=model_type, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=heteronuc, pdb_proton=proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)

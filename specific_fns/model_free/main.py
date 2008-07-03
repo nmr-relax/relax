@@ -166,8 +166,7 @@ class Model_free_main:
         @type spin_id:          str
         @keyword sim_index:     The optional MC simulation index.
         @type sim_index:        int
-        @keyword model_type:    The optional parameter set, one of 'all', 'diff', 'mf', or
-                                'local_tm'. 
+        @keyword model_type:    The optional model type, one of 'all', 'diff', 'mf', or 'local_tm'.
         @type model_type:       str or None
         @return:                An array of the parameter values of the model-free model.
         @rtype:                 numpy array
@@ -328,15 +327,15 @@ class Model_free_main:
         return array(param_vector, float64)
 
 
-    def assemble_scaling_matrix(self, num_params, param_set=None, spin=None, spin_id=None, scaling=True):
+    def assemble_scaling_matrix(self, num_params, model_type=None, spin=None, spin_id=None, scaling=True):
         """Create and return the scaling matrix.
 
         If the spin argument is supplied, then the spin_id argument will be ignored.
 
         @param num_params:      The number of parameters in the model.
         @type num_params:       int
-        @keyword param_set:     The parameter set, one of 'all', 'diff', 'mf', or 'local_tm'.
-        @type param_set:        str
+        @keyword model_type:    The model type, one of 'all', 'diff', 'mf', or 'local_tm'.
+        @type model_type:       str
         @keyword spin:          The spin data container.
         @type spin:             SpinContainer instance
         @keyword spin_id:       The spin identification string.
@@ -360,7 +359,7 @@ class Model_free_main:
         ti_scaling = 1e-12
 
         # Diffusion tensor parameters.
-        if param_set == 'diff' or param_set == 'all':
+        if model_type == 'diff' or model_type == 'all':
             # Spherical diffusion.
             if cdp.diff_tensor.type == 'sphere':
                 # tm.
@@ -394,7 +393,7 @@ class Model_free_main:
                 i = i + 6
 
         # Model-free parameters.
-        if param_set != 'diff':
+        if model_type != 'diff':
             # The loop.
             if spin:
                 loop = [spin]
@@ -874,9 +873,9 @@ class Model_free_main:
 
 
     def determine_model_type(self):
-        """Determine the type of parameter set.
+        """Determine the global model type.
 
-        @return:    The name of the parameter set, which is one of 'all', 'diff', 'mf', or
+        @return:    The name of the model type, which will be one of 'all', 'diff', 'mf', or
                     'local_tm'.
         @rtype:     str
         """
@@ -932,7 +931,7 @@ class Model_free_main:
         if not diffusion_tensor.diff_data_exists():
             raise RelaxNoTensorError, 'diffusion'
 
-        # 'diff' parameter set.
+        # 'diff' model type.
         if mf_all_fixed:
             # All parameters fixed!
             if cdp.diff_tensor.fixed:
@@ -940,11 +939,11 @@ class Model_free_main:
 
             return 'diff'
 
-        # 'mf' parameter set.
+        # 'mf' model type.
         if cdp.diff_tensor.fixed:
             return 'mf'
 
-        # 'all' parameter set.
+        # 'all' model type.
         else:
             return 'all'
 
@@ -997,11 +996,11 @@ class Model_free_main:
             # Duplicate the data.
             setattr(ds[pipe_to], data_name, deepcopy(data_from))
 
-        # Determine the parameter set type.
-        param_set = self.determine_model_type()
+        # Determine the model type.
+        model_type = self.determine_model_type()
 
         # Sequence specific data.
-        if param_set == 'mf' or (param_set == 'local_tm' and not global_stats):
+        if model_type == 'mf' or (model_type == 'local_tm' and not global_stats):
             # Duplicate the sequence data if it doesn't exist.
             if ds[pipe_to].mol.is_empty():
                 sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to)
@@ -1096,7 +1095,7 @@ class Model_free_main:
         @rtype:                 list of str
         """
 
-        # Determine the parameter set type.
+        # Determine the model type.
         model_type = self.determine_model_type()
 
         # Get the spin ids.
@@ -1130,7 +1129,7 @@ class Model_free_main:
             if not ds.res[self.run][j].model:
                 raise RelaxNoModelError, self.run
 
-        # Determine the parameter set type.
+        # Determine the model type.
         model_type = self.determine_model_type()
 
         # Residue index.
@@ -1167,7 +1166,7 @@ class Model_free_main:
             return True
 
 
-    def linear_constraints(self, num_params, param_set=None, spin=None, spin_id=None, scaling_matrix=None):
+    def linear_constraints(self, num_params, model_type=None, spin=None, spin_id=None, scaling_matrix=None):
         """Set up the model-free linear constraint matrices A and b.
 
         Standard notation
@@ -1269,8 +1268,8 @@ class Model_free_main:
 
         @param num_params:          The number of parameters in the model.
         @type num_params:           int
-        @keyword param_set:         The parameter set, one of 'all', 'diff', 'mf', or 'local_tm'.
-        @type param_set:            str
+        @keyword model_type:        The model type, one of 'all', 'diff', 'mf', or 'local_tm'.
+        @type model_type:           str
         @keyword spin:              The spin data container.  If this argument is supplied, then the
                                     spin_id argument will be ignored.
         @type spin:                 SpinContainer instance
@@ -1294,7 +1293,7 @@ class Model_free_main:
         j = 0
 
         # Diffusion tensor parameters.
-        if param_set != 'mf' and diffusion_tensor.diff_data_exists():
+        if model_type != 'mf' and diffusion_tensor.diff_data_exists():
             # Spherical diffusion.
             if cdp.diff_tensor.type == 'sphere':
                 # 0 <= tm <= 200 ns.
@@ -1378,7 +1377,7 @@ class Model_free_main:
                 i = i + 3
 
         # Model-free parameters.
-        if param_set != 'diff':
+        if model_type != 'diff':
             # The loop.
             if spin:
                 loop = [spin]
@@ -1456,7 +1455,7 @@ class Model_free_main:
                         # te, tf, ts <= 2 * tm.  (tf not needed because tf <= ts).
                         if upper_time_limit:
                             if not spin.params[l] == 'tf':
-                                if param_set == 'mf':
+                                if model_type == 'mf':
                                     A.append(zero_array * 0.0)
                                     A[j][i] = -1.0
                                     b.append(-2.0 * cdp.diff_tensor.tm / scaling_matrix[i, i])
@@ -1619,8 +1618,8 @@ class Model_free_main:
                     global_stats = 0
                     break
 
-        # Determine the parameter set type.
-        param_set = self.determine_model_type()
+        # Determine the model type.
+        model_type = self.determine_model_type()
 
         # Statistics for a single residue.
         if not global_stats:
@@ -1669,11 +1668,11 @@ class Model_free_main:
                 n = n + len(spin.relax_data)
 
                 # Local tm models.
-                if param_set == 'local_tm':
+                if model_type == 'local_tm':
                     chi2 = chi2 + spin.chi2
 
             # The chi2 value.
-            if param_set != 'local_tm':
+            if model_type != 'local_tm':
                 chi2 = ds[ds.current_pipe].chi2
 
         # Return the data.
@@ -1693,15 +1692,15 @@ class Model_free_main:
         if not exists_mol_res_spin_data():
             return 0
 
-        # Determine the parameter set type.
-        param_set = self.determine_model_type()
+        # Determine the model type.
+        model_type = self.determine_model_type()
 
         # Sequence specific data.
-        if param_set == 'mf' or param_set == 'local_tm':
+        if model_type == 'mf' or model_type == 'local_tm':
             return count_spins()
 
         # Other data.
-        elif param_set == 'diff' or param_set == 'all':
+        elif model_type == 'diff' or model_type == 'all':
             return 1
 
         # Should not be here.
@@ -2498,8 +2497,8 @@ class Model_free_main:
                 inc = inc + 6
 
 
-        # Model-free parameter errors for the parameter set 'all'.
-        ##########################################################
+        # Model-free parameter errors for the model type 'all'.
+        #######################################################
 
         if model_type == 'all':
             # Loop over the sequence.
@@ -2518,8 +2517,8 @@ class Model_free_main:
                     inc = inc + 1
 
 
-        # Model-free parameters for the parameter sets 'mf' and 'local_tm'.
-        ###################################################################
+        # Model-free parameters for the model types 'mf' and 'local_tm'.
+        ################################################################
 
         if model_type == 'mf' or model_type == 'local_tm':
             # Skip deselected residues.
@@ -2558,11 +2557,11 @@ class Model_free_main:
         @type select_sim:   bool
         """
 
-        # Determine the parameter set type.
-        param_set = self.determine_model_type()
+        # Determine the model type.
+        model_type = self.determine_model_type()
 
         # Single instance.
-        if param_set == 'all' or param_set == 'diff':
+        if model_type == 'all' or model_type == 'diff':
             ds[ds.current_pipe].select_sim = select_sim
 
         # Multiple instances.
@@ -2603,7 +2602,7 @@ class Model_free_main:
         # Arguments.
         self.run = run
 
-        # Determine the parameter set type.
+        # Determine the model type.
         model_type = self.determine_model_type()
 
         # Get the parameter object names.
@@ -2771,7 +2770,7 @@ class Model_free_main:
         # Arguments.
         self.run = run
 
-        # Determine the parameter set type.
+        # Determine the model type.
         model_type = self.determine_model_type()
 
         # Single instance.
@@ -2844,8 +2843,8 @@ class Model_free_main:
                 inc = inc + 6
 
 
-        # Model-free parameters for the parameter set 'all'.
-        ####################################################
+        # Model-free parameters for the model type 'all'.
+        #################################################
 
         if model_type == 'all':
             # Loop over the sequence.
@@ -2864,8 +2863,8 @@ class Model_free_main:
                     inc = inc + 1
 
 
-        # Model-free parameters for the parameter sets 'mf' and 'local_tm'.
-        ###################################################################
+        # Model-free parameters for the model types 'mf' and 'local_tm'.
+        ################################################################
 
         if model_type == 'mf' or model_type == 'local_tm':
             # Skip deselected residues.
@@ -2888,7 +2887,7 @@ class Model_free_main:
         # Arguments.
         self.run = run
 
-        # Determine the parameter set type.
+        # Determine the model type.
         model_type = self.determine_model_type()
 
         # Single instance.
@@ -2911,8 +2910,8 @@ class Model_free_main:
         @type num_instances:    int
         """
 
-        # Determine the parameter set type.
-        param_set = self.determine_model_type()
+        # Determine the model type.
+        model_type = self.determine_model_type()
 
         # All spins.
         combine = False
@@ -2920,7 +2919,7 @@ class Model_free_main:
             combine = True
 
         # Sequence specific data.
-        if (param_set == 'mf' or param_set == 'local_tm') and not combine and not return_spin_from_index(instance).select:
+        if (model_type == 'mf' or model_type == 'local_tm') and not combine and not return_spin_from_index(instance).select:
             return True
 
         # Don't skip.
@@ -2933,7 +2932,7 @@ class Model_free_main:
         # Arguments.
         self.run = run
 
-        # Determine the parameter set type.
+        # Determine the model type.
         model_type = self.determine_model_type()
 
         # Simulation deselect.
