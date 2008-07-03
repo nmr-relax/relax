@@ -111,12 +111,12 @@ class Test_residue(Residue_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the str arguments, and skip them.
-            if data[0] == 'str':
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.residue_fns.create, res_name=data[1], res_num=1)
+            self.assertRaises(RelaxNoneStrError, self.residue_fns.create, res_name=data[1], res_num=1)
 
 
     def test_create_argfail_mol_id(self):
