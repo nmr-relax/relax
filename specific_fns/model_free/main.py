@@ -963,9 +963,11 @@ class Model_free_main:
         @type global_stats:     bool
         """
 
-        # First create the pipe_to data pipe, if it doesn't exist.
+        # First create the pipe_to data pipe, if it doesn't exist (restoring the current pipe at the end).
+        current_pipe = ds.current_pipe
         if not ds.has_key(pipe_to):
             pipes.create(pipe_to, pipe_type='mf')
+        ds.current_pipe = current_pipe
 
         # Duplicate all non-sequence specific data.
         for data_name in dir(ds[pipe_from]):
@@ -1001,10 +1003,9 @@ class Model_free_main:
         # Sequence specific data.
         if param_set == 'mf' or (param_set == 'local_tm' and not global_stats):
             # Duplicate the sequence data if it doesn't exist.
-            if not hasattr(ds[pipe_to], 'mol'):
+            if ds[pipe_to].mol.is_empty():
                 sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to)
 
-            #
             # Create the sequence data if it does not exist.
             if not ds.res.has_key(new_run) or not len(ds.res[new_run]):
                 # Add the new run to 'ds.res'.
