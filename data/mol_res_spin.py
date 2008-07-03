@@ -239,7 +239,10 @@ class SpinList(list):
             if data_names:
                 for name in data_names(error_names=True, sim_names=True):
                     # Get the description.
-                    desc = return_data_desc(name, spin=self[i])
+                    if return_data_desc:
+                        desc = return_data_desc(name, spin=self[i])
+                    else:
+                        desc = None
 
                     # Append the two.
                     object_info.append([name, desc])
