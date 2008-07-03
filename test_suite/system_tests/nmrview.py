@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+import sys
 from unittest import TestCase
 
 # relax module imports.
