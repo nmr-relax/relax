@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+import sys
 from unittest import TestCase
 
 # relax module imports.
@@ -41,6 +42,13 @@ class Results(TestCase):
         """Reset the relax data storage object."""
 
         ds.__reset__()
+
+
+    def test_read_empty_results(self):
+        """Test the reading of an empty results file."""
+
+        # Read the results.
+        self.relax.interpreter._Results.read(file='empty', dir=sys.path[-1] + '/test_suite/shared_data/results_files/')
 
 
     def test_write_empty_results(self):
