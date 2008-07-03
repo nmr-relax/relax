@@ -140,7 +140,6 @@ def select(method=None, modsel_pipe=None, pipes=None):
         raise RelaxError, "No data pipes are available for use in model selection."
 
     # Initialise.
-    first_run = None
     function_type = {}
     count_num_instances = {}
     duplicate_data = {}
