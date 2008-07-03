@@ -265,33 +265,38 @@ class Relax_fit(Common_functions):
                 setattr(spin, name, init_data)
 
 
-    def data_names(self, set='all'):
+    def data_names(self, set='all', error_names=False, sim_names=False):
         """Function for returning a list of names of data structures.
 
         Description
-        ~~~~~~~~~~~
+        ===========
 
         The names are as follows:
 
-        params:  An array of the parameter names associated with the model.
+            params:  An array of the parameter names associated with the model.
+            rx:  Either the R1 or R2 relaxation rate.
+            i0:  The initial intensity.
+            iinf:  The intensity at infinity.
+            chi2:  Chi-squared value.
+            iter:  Iterations.
+            f_count:  Function count.
+            g_count:  Gradient count.
+            h_count:  Hessian count.
+            warning:  Minimisation warning.
 
-        rx:  Either the R1 or R2 relaxation rate.
 
-        i0:  The initial intensity.
-
-        iinf:  The intensity at infinity.
-
-        chi2:  Chi-squared value.
-
-        iter:  Iterations.
-
-        f_count:  Function count.
-
-        g_count:  Gradient count.
-
-        h_count:  Hessian count.
-
-        warning:  Minimisation warning.
+        @keyword set:           The set of object names to return.  This can be set to 'all' for all
+                                names, to 'generic' for generic object names, 'params' for
+                                model-free parameter names, or to 'min' for minimisation specific
+                                object names.
+        @type set:              str
+        @keyword error_names:   A flag which if True will add the error object names as well.
+        @type error_names:      bool
+        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object
+                                names as well.
+        @type sim_names:        bool
+        @return:                The list of object names.
+        @rtype:                 list of str
         """
 
         # Initialise.
@@ -316,6 +321,19 @@ class Relax_fit(Common_functions):
             names.append('h_count')
             names.append('warning')
 
+        # Parameter errors.
+        if error_names and (set == 'all' or set == 'params'):
+            names.append('rx_err')
+            names.append('i0_err')
+            names.append('iinf_err')
+
+        # Parameter simulation values.
+        if sim_names and (set == 'all' or set == 'params'):
+            names.append('rx_sim')
+            names.append('i0_sim')
+            names.append('iinf_sim')
+
+        # Return the names.
         return names
 
 
