@@ -858,6 +858,7 @@ def convert_from_global_index(global_index=None, pipe=None):
     pipes.test(pipe)
 
     # Loop over the spins.
+    spin_num = 0
     for mol_index, res_index, spin_index in spin_index_loop(pipe=pipe):
         # Match to the global index.
         if spin_num == global_index:
