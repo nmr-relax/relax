@@ -113,14 +113,14 @@ class PipeContainer(Prototype):
         pipes_node = hybrid_node.getElementsByTagName('pipes')[0]
         setattr(self, 'hybrid_pipes', node_value_to_python(pipes_node.childNodes[0]))
 
-        # Get the diffusion tensor data node and, if it exists, fill the contents.
-        diff_tensor_node = relax_node.getElementsByTagName('diff_tensor')[0]
-        if diff_tensor_node:
+        # Get the diffusion tensor data nodes and, if they exist, fill the contents.
+        diff_tensor_nodes = relax_node.getElementsByTagName('diff_tensor')
+        if diff_tensor_nodes:
             # Create the diffusion tensor object.
             self.diff_tensor = DiffTensorData()
 
             # Fill its contents.
-            self.diff_tensor.from_xml(diff_tensor_node)
+            self.diff_tensor.from_xml(diff_tensor_nodes[0])
 
         # Recreate the molecule, residue, and spin data structure.
         mol_nodes = relax_node.getElementsByTagName('mol')
