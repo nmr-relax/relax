@@ -1085,40 +1085,29 @@ class Model_free_main:
         return 0
 
 
-    def get_param_names(self, run, i):
-        """Function for returning a vector of parameter names."""
+    def get_param_names(self, model_index=None):
+        """Return a vector of parameter names.
 
-        # Arguments
-        self.run = run
-
-        # Skip residues where there is no data or errors.
-        if not hasattr(ds.res[self.run][i], 'relax_data') or not hasattr(ds.res[self.run][i], 'relax_error'):
-            return
-
-        # Test if the model-free model has been setup.
-        for j in xrange(len(ds.res[self.run])):
-            # Skip deselected residues.
-            if not ds.res[self.run][j].select:
-                continue
-
-            # Not setup.
-            if not ds.res[self.run][j].model:
-                raise RelaxNoModelError, self.run
+        @keyword model_index:   The model index.  This is zero for the global models or equal to the
+                                global spin index (which covers the molecule, residue, and spin
+                                indecies).
+        @type model_index:      int
+        @return:                The vector of parameter names
+        @rtype:                 list of str
+        """
 
         # Determine the parameter set type.
-        self.param_set = self.determine_param_set_type()
+        model_type = self.determine_param_set_type()
 
-        # Residue index.
-        if self.param_set == 'mf' or self.param_set == 'local_tm':
-            index = i
+        # Get the spin ids.
+        if model_type == 'mf' or model_type == 'local_tm':
+            # Get the spin and it's id string.
+            spin, spin_id = return_spin_from_index(model_index, return_spin_id=True)
         else:
-            index = None
+            spin_id = None
 
-        # Assemble the parameter names.
-        self.assemble_param_names(index=index)
-
-        # Return the parameter names.
-        return self.param_names
+        # Assemble and return the parameter names.
+        return self.assemble_param_names(model_type, spin_id=spin_id)
 
 
     def get_param_values(self, run, i, sim_index=None):
