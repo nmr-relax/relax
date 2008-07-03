@@ -838,6 +838,35 @@ def create_spin(spin_num=None, spin_name=None, res_id=None):
     res_to_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
 
 
+def convert_from_global_index(global_index=None, pipe=None):
+    """Convert the global index into the molecule, residue, and spin indecies.
+
+    @param global_index:        The global spin index, spanning the molecule and residue containers.
+    @type global_index:         int
+    @param pipe:                The data pipe containing the spin.  Defaults to the current data
+                                pipe.
+    @type pipe:                 str
+    @return:                    The corresponding molecule, residue, and spin indecies.
+    @rtype:                     tuple of int
+    """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = ds.current_pipe
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Loop over the spins.
+    for mol_index, res_index, spin_index in spin_index_loop(pipe=pipe):
+        # Match to the global index.
+        if spin_num == global_index:
+            return mol_index, res_index, spin_index
+
+        # Increment the spin number.
+        spin_num = spin_num + 1
+
+
 def delete_molecule(mol_id=None):
     """Function for deleting molecules from the current data pipe.
 
