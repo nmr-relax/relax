@@ -143,6 +143,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
     first_run = None
     function_type = {}
     count_num_instances = {}
+    duplicate_data = {}
     model_statistics = {}
     skip_function = {}
 
@@ -160,6 +161,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
 
                 # Specific duplicate data, number of instances, and model statistics functions.
                 count_num_instances[pipe] = get_specific_fn('num_instances', ds[pipe].pipe_type)
+                duplicate_data[pipe] = get_specific_fn('duplicate_data', ds[pipe].pipe_type)
                 model_statistics[pipe] = get_specific_fn('model_stats', ds[pipe].pipe_type)
                 skip_function[pipe] = get_specific_fn('skip_function', ds[pipe].pipe_type)
 
@@ -175,6 +177,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
 
             # Specific duplicate data, number of instances, and model statistics functions.
             count_num_instances[pipe] = get_specific_fn('num_instances', ds[pipe].pipe_type)
+            duplicate_data[pipe] = get_specific_fn('duplicate_data', ds[pipe].pipe_type)
             model_statistics[pipe] = get_specific_fn('model_stats', ds[pipe].pipe_type)
             skip_function[pipe] = get_specific_fn('skip_function', ds[pipe].pipe_type)
 
@@ -298,8 +301,8 @@ def select(method=None, modsel_pipe=None, pipes=None):
                 best_crit = crit
 
         # Print out of selected model.
-        print "\nThe model from the data pipe " + `best_model` + " has been selected."
+        print "\nThe model from the run " + `best_model` + " has been selected."
 
         # Duplicate the data from the 'best_model' to the model selection data pipe.
         if best_model != None:
-            copy(best_model, modsel_pipe)
+            duplicate_data[best_model](pipe_from=best_model, pipe_to=modsel_pipe, model_index=i, global_stats=global_stats)
