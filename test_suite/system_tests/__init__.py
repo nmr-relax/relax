@@ -43,6 +43,7 @@ from n_state_model import N_state_model
 from nmrview import NMRView
 from pipe_create import Pipe_create
 from relax_fit import Relax_fit
+from results import Results
 from sequence import Sequence
 
 
@@ -58,6 +59,7 @@ __all__ = ['angles',
            'nmrview',
            'pipe_create',
            'relax_fit',
+           'results',
            'sequence']
 
 
@@ -88,6 +90,7 @@ class System_test_runner:
         suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
         suite_array.append(TestLoader().loadTestsFromTestCase(Modsel))
         suite_array.append(TestLoader().loadTestsFromTestCase(Relax_fit))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Results))
         suite_array.append(TestLoader().loadTestsFromTestCase(Sequence))
         suite_array.append(TestLoader().loadTestsFromTestCase(Pipe_create))
         suite_array.append(TestLoader().loadTestsFromTestCase(N_state_model))
