@@ -41,3 +41,19 @@ class NMRView(TestCase):
         """Reset the relax data storage object."""
 
         ds.__reset__()
+
+
+    def test_read_peak_list(self):
+        """Test the reading of an NMRView peak list."""
+
+        # Create the sequence data, and name the spins.
+        self.relax.interpreter._Residue.create(70)
+        self.relax.interpreter._Residue.create(72)
+        self.relax.interpreter._Spin.name(name='N')
+
+        # Read the peak list.
+        self.relax.interpreter._Relax_fit.read(file="cNTnC.xpk", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", relax_time=0.0176)
+
+        # Test the data.
+        self.assertEqual(ds[ds.current_pipe].mol[0].res[0].spin[0].intensities[0], -6.88333129883)
+        self.assertEqual(ds[ds.current_pipe].mol[0].res[1].spin[0].intensities[0], -5.49038267136)
