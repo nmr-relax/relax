@@ -996,7 +996,7 @@ class Model_free_main:
             data_to = deepcopy(data_from)
 
         # Determine the parameter set type.
-        param_set = self.determine_param_set_type(pipe_from)
+        param_set = self.determine_param_set_type()
 
         # Sequence specific data.
         if param_set == 'mf' or (param_set == 'local_tm' and not global_stats):
