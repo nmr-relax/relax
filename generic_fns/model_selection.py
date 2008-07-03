@@ -21,14 +21,13 @@
 ###############################################################################
 
 # Python module imports.
-from copy import deepcopy
 from math import log
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import same_sequence
-from pipes import copy, switch
-from relax_errors import RelaxDiffSeqError, RelaxError, RelaxNoPipeError, RelaxNoSequenceError
+from pipes import switch
+from relax_errors import RelaxError, RelaxPipeError
 from specific_fns.setup import get_specific_fn
 
 
