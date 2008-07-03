@@ -126,7 +126,7 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
         pipe = ds.current_pipe
 
     # Get the molecule.
-    curr_mol = return_molecule(generate_spin_id(mol_name=mol_name))
+    curr_mol = return_molecule(generate_spin_id(mol_name=mol_name), pipe=pipe)
 
     # A new molecule.
     if not curr_mol:
@@ -135,7 +135,7 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
         curr_mol = ds[pipe].mol[-1]
 
     # Get the residue.
-    curr_res = return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name))
+    curr_res = return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name), pipe=pipe)
 
     # A new residue.
     if not curr_res:
@@ -144,7 +144,7 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
         curr_res = curr_mol.res[-1]
 
     # Get the spin.
-    curr_spin = return_spin(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name))
+    curr_spin = return_spin(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name), pipe=pipe)
 
     # A new spin.
     if not curr_spin:
