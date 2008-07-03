@@ -1006,28 +1006,17 @@ class Model_free_main:
             if ds[pipe_to].mol.is_empty():
                 sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to)
 
-            # Create the sequence data if it does not exist.
-            if not ds.res.has_key(new_run) or not len(ds.res[new_run]):
-                # Add the new run to 'ds.res'.
-                ds.res.add_list(new_run)
+            # Get the spin containers.
+            spin_from = return_spin_from_index(global_index=model_index, pipe=pipe_from) 
+            spin_to = return_spin_from_index(global_index=model_index, pipe=pipe_to) 
 
-                # Fill the array 'ds.res[new_run]' with empty data containers and place sequence data into the array.
-                for i in xrange(len(ds.res[old_run])):
-                    # Append a data container.
-                    ds.res[new_run].add_item()
-
-                    # Insert the data.
-                    ds.res[new_run][i].num = ds.res[old_run][i].num
-                    ds.res[new_run][i].name = ds.res[old_run][i].name
-                    ds.res[new_run][i].select = ds.res[old_run][i].select
-
-            # Duplicate the residue specific data.
-            ds.res[new_run][model_index] = deepcopy(ds.res[old_run][model_index])
+            # Duplicate the spin specific data.
+            spin_to = deepcopy(spin_from)
 
         # Other data types.
         else:
-            # Duplicate the residue specific data.
-            ds.res[new_run] = deepcopy(ds.res[old_run])
+            # Duplicate all the spin specific data.
+            ds[pipe_to].mol = deepcopy(ds[pipe_from].mol)
 
 
     def eliminate(self, name, value, run, i, args):
