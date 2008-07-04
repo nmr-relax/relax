@@ -49,19 +49,22 @@ class Internal(Base_struct_API):
     id = 'internal'
 
 
-    def __atom_index(self, atom_num):
+    def __atom_index(self, atom_num, struct_index):
         """Find the atom index corresponding to the given atom number.
 
-        @param atom_num:    The atom number to find the index of.
-        @type atom_num:     int
-        @return:            The atom index corresponding to the atom.
-        @rtype:             int
+        @param atom_num:        The atom number to find the index of.
+        @type atom_num:         int
+        @param struct_index:    The index of the structural container to extract the atom index
+                                from.
+        @type struct_index:     int
+        @return:                The atom index corresponding to the atom.
+        @rtype:                 int
         """
 
         # Loop over the atoms.
-        for i in xrange(len(self.structural_data[self.struct_index])):
+        for i in xrange(len(self.structural_data[struct_index].atom_num)):
             # Return the index.
-            if self.structural_data[self.struct_index].atom_num[i] == atom_num:
+            if self.structural_data[struct_index].atom_num[i] == atom_num:
                 return i
 
 
@@ -91,7 +94,7 @@ class Internal(Base_struct_API):
             if record[0] == 'CONECT':
                 # Loop over the atoms of the record.
                 for i in xrange(len(record)-2):
-                    self.atom_connect(index1=self.__atom_index(atom_num=record[1]), index2=self.__atom_index(atom_num=record[i+2]), struct_index=struct_index)
+                    self.atom_connect(index1=self.__atom_index(record[1], struct_index), index2=self.__atom_index(record[i+2], struct_index), struct_index=struct_index)
 
 
     def __get_chemical_name(self, hetID):
