@@ -108,7 +108,7 @@ class Internal(Base_struct_API):
 
 
     def __get_chemical_name(self, hetID):
-        """Method for returning the chemical name corresponding to the given residue ID.
+        """Return the chemical name corresponding to the given residue ID.
 
         The following names are currently returned::
          ________________________________________________
@@ -125,11 +125,12 @@ class Internal(Base_struct_API):
          | AVE    | Average vector                      |
          |________|_____________________________________|
 
+        For any other residues, no description is returned.
 
         @param res: The residue ID.
         @type res:  str
         @return:    The chemical name.
-        @rtype:     str
+        @rtype:     str or None
         """
 
         # Tensor.
@@ -159,9 +160,6 @@ class Internal(Base_struct_API):
         # Average vector.
         if hetID == 'AVE':
             return 'Average vector'
-
-        # Unknown hetID.
-        raise RelaxError, "The residue ID (hetID) " + `hetID` + " is not recognised."
 
 
     def __parse_models(self, file_path):
