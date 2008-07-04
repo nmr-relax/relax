@@ -49,6 +49,22 @@ class Internal(Base_struct_API):
     id = 'internal'
 
 
+    def __atom_index(self, atom_num):
+        """Find the atom index corresponding to the given atom number.
+
+        @param atom_num:    The atom number to find the index of.
+        @type atom_num:     int
+        @return:            The atom index corresponding to the atom.
+        @rtype:             int
+        """
+
+        # Loop over the atoms.
+        for i in xrange(len(self.structural_data[self.struct_index])):
+            # Return the index.
+            if self.structural_data[self.struct_index].atom_num[i] == atom_num:
+                return i
+
+
     def __fill_object_from_pdb(self, records, struct_index):
         """Method for generating a complete Structure_container object from the given PDB records.
 
