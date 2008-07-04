@@ -167,6 +167,10 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', fail=True, ve
     # The file path.
     file_path = get_file_path(file, dir)
 
+    # Try adding '.pdb' to the end of the file path, if the file can't be found.
+    if not access(file_path, F_OK):
+        file_path = file_path + '.pdb'
+
     # Test if the file exists.
     if not access(file_path, F_OK):
         if fail:
