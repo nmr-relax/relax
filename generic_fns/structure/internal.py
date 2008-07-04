@@ -723,6 +723,10 @@ class Internal(Base_struct_API):
                 if not het_data or not struct.res_num[i] == het_data[-1][0]:
                     het_data.append([struct.res_num[i], struct.res_name[i], struct.chain_id[i], 0, []])
 
+                    # Catch missing chain_ids.
+                    if het_data[-1][2] == None:
+                        het_data[-1][2] = ''
+
                 # Total atom count.
                 het_data[-1][3] = het_data[-1][3] + 1
 
