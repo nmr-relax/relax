@@ -24,7 +24,7 @@
 """Module containing the internal relax structural object."""
 
 # Python module imports.
-from numpy import array, float64
+from numpy import array, float64, zeros
 from re import search
 from string import split, strip
 
@@ -416,7 +416,55 @@ class Internal(Base_struct_API):
 
         # Average properties mode.
         if ave:
-            pass
+            # Loop over all atoms.
+            for i in xrange(len(self.structural_data[0].atom_name)):
+                # Skip non-matching atoms.
+                if sel_obj and not sel_obj.contains_spin(self.structural_data[0].atom_num[i], self.structural_data[0].atom_name[i], self.structural_data[0].res_num[i], self.structural_data[0].res_name[i]):
+                    continue
+
+                # Initialise.
+                model = None
+                mol_name = None
+                res_num = self.structural_data[0].res_num[i]
+                res_name = self.structural_data[0].res_name[i]
+                atom_num = self.structural_data[0].atom_num[i]
+                atom_name = self.structural_data[0].atom_name[i]
+                element = self.structural_data[0].element[i]
+                pos = zeros(3, float64)
+
+                # Loop over the structures.
+                for struct in self.structural_data:
+                    # Some sanity checks.
+                    if struct.atom_num[i] != atom_num:
+                        raise RelaxError, "The loaded structures do not contain the same atoms.  The average structural properties can not be calculated."
+
+                    # Sum the atom positions.
+                    pos = pos + array([struct.x[i], struct.y[i], struct.z[i]], float64)
+
+                # Average the position array.
+                pos = pos / len(self.structural_data)
+
+                # Build the tuple to be yielded.
+                atomic_tuple = ()
+                if model_num_flag:
+                    atomic_tuple = atomic_tuple + (model,)
+                if mol_name_flag:
+                    atomic_tuple = atomic_tuple + (mol_name,)
+                if res_num_flag:
+                    atomic_tuple = atomic_tuple + (res_num,)
+                if res_name_flag:
+                    atomic_tuple = atomic_tuple + (res_name,)
+                if atom_num_flag:
+                    atomic_tuple = atomic_tuple + (atom_num,)
+                if atom_name_flag:
+                    atomic_tuple = atomic_tuple + (atom_name,)
+                if element_flag:
+                    atomic_tuple = atomic_tuple + (element,)
+                if pos_flag:
+                    atomic_tuple = atomic_tuple + (pos,)
+
+                # Yield the information.
+                yield atomic_tuple
 
         # Individual structure mode.
         else:
