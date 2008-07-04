@@ -348,4 +348,4 @@ def write_pdb(file=None, dir=None, struct_index=None, force=False):
     file = open_write_file(file_path, force=force)
 
     # Write the structures.
-    cdp.structure.write_pdb(file_path, struct_index=struct_index)
+    cdp.structure.write_pdb(file, struct_index=struct_index)
