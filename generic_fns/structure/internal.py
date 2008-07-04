@@ -719,28 +719,27 @@ class Internal(Base_struct_API):
                     continue
 
                 # If the residue is not already stored initialise a new het_data element.
-                # (residue number, residue name, chain ID, number of atoms, number of H, number of C, number of N).
+                # (residue number, residue name, chain ID, number of atoms, atom count array).
                 if not het_data or not struct.res_num[i] == het_data[-1][0]:
-                    het_data.append([struct.res_num[i], struct.res_name[i], struct.chain_id[i], 0, 0, 0, 0])
+                    het_data.append([struct.res_num[i], struct.res_name[i], struct.chain_id[i], 0, []])
 
                 # Total atom count.
                 het_data[-1][3] = het_data[-1][3] + 1
 
-                # Proton count.
-                if struct.element[i] == 'H':
-                    het_data[-1][4] = het_data[-1][4] + 1
+                # Find if the atom has already a count entry.
+                entry = False
+                for i in xrange(len(het_data[-1][4])): 
+                    if struct.element[i] == het_data[-1][4][i][0]:
+                        entry = True
 
-                # Carbon count.
-                elif struct.element[i] == 'C':
-                    het_data[-1][5] = het_data[-1][5] + 1
+                # Create a new specific atom count entry.
+                if not entry:
+                    het_data[-1][4].append([struct.element[i], 0])
 
-                # Nitrogen count.
-                elif struct.element[i] == 'N':
-                    het_data[-1][6] = het_data[-1][6] + 1
-
-                # Unsupported element type.
-                else:
-                    raise RelaxError, "The element " + `struct.element[i]` + " was expected to be one of ['H', 'C', 'N']."
+                # Increment the specific atom count.
+                for i in xrange(len(het_data[-1][4])): 
+                    if struct.element[i] == het_data[-1][4][i][0]:
+                        het_data[-1][4][i][1] = het_data[-1][4][i][1] + 1
 
 
             # The HET records.
