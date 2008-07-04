@@ -452,7 +452,7 @@ class Internal(Base_struct_API):
         # Store the model number.
         self.model = model
 
-        # Use pointers (references) if the PDB data exists in another run.
+        # Use pointers (references) if the PDB data exists in another pipe.
         for data_pipe in ds:
             if hasattr(data_pipe, 'structure') and data_pipe.structure.file_name == file_path and data_pipe.structure.model == model and data_pipe.structure.id == 'internal':
                 # Make a pointer to the data.
