@@ -895,8 +895,13 @@ class Internal(Base_struct_API):
 
                     # Generate the CONECT record and increment the counter.
                     if flush:
+                        # Convert the atom indecies to atom numbers.
+                        for k in range(4):
+                            if bonded[k] != '':
+                                bonded[k] = struct.atom_num[bonded[k]]
+
                         # Write the CONECT record.
-                        file.write("%-6s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('CONECT', i+1, struct.atom_num[bonded[0]], struct.atom_num[bonded[1]], struct.atom_num[bonded[2]], struct.atom_num[bonded[3]], '', '', '', '', '', ''))
+                        file.write("%-6s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('CONECT', i+1, bonded[0], bonded[1], bonded[2], bonded[3], '', '', '', '', '', ''))
 
                         # Increment the CONECT record count.
                         connect_count = connect_count + 1
