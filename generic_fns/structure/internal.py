@@ -664,7 +664,7 @@ class Internal(Base_struct_API):
             self.atom_add(pdb_record='TER', res_name=res_name, res_num=res_num, model=i)
 
 
-    def write_pdb(self, file):
+    def write_pdb(self, file, struct_index=None):
         """Method for the creation of a PDB file from the structural data.
 
         A number of PDB records including HET, HETNAM, FORMUL, HETATM, TER, CONECT, MASTER, and END
@@ -680,8 +680,11 @@ class Internal(Base_struct_API):
             5.  Number of C atoms in the residue.
 
 
-        @param file:        The PDB file object.  This object must be writable.
-        @type file:         file object
+        @param file:            The PDB file object.  This object must be writable.
+        @type file:             file object
+        @param struct_index:    The index of the structural container to write.  If None, all
+                                structures will be written.
+        @type struct_index:     int
         """
 
         # Check the validity of the data.
