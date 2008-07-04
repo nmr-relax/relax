@@ -772,6 +772,8 @@ class Internal(Base_struct_API):
 
                 # Get the chemical name.
                 chemical_name = self.__get_chemical_name(het[1])
+                if not chemical_name:
+                    chemical_name = 'Unknown'
 
                 # Write the HETNAM records.
                 file.write("%-6s  %2s %3s %-55s\n" % ('HETNAM', '', het[1], chemical_name))
