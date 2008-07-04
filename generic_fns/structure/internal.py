@@ -70,8 +70,13 @@ class Internal(Base_struct_API):
                 # Parse the record.
                 record = self.__parse_pdb_record(record)
 
+                # Nothing to do.
+                if not record:
+                    continue
+
                 # Add the atom.
-                self.atom_add(pdb_record=record[0], atom_num=record[1], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=record[14], model=model)
+                if record[0] == 'ATOM' or record[0] == 'HETATM':
+                    self.atom_add(pdb_record=record[0], atom_num=record[1], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=record[14], model=model)
 
 
     def __get_chemical_name(self, hetID):
@@ -232,48 +237,50 @@ class Internal(Base_struct_API):
         # Initialise.
         fields = []
 
-        # Split up the record.
-        fields.append(record[0:6])
-        fields.append(record[6:11])
-        fields.append(record[12:16])
-        fields.append(record[16])
-        fields.append(record[17:20])
-        fields.append(record[21])
-        fields.append(record[22:26])
-        fields.append(record[26])
-        fields.append(record[30:38])
-        fields.append(record[38:46])
-        fields.append(record[46:54])
-        fields.append(record[54:60])
-        fields.append(record[60:66])
-        fields.append(record[72:76])
-        fields.append(record[76:78])
-        fields.append(record[78:80])
+        # ATOM and HETATM records.
+        if search('^ATOM', record) or search('^HETATM', record):
+            # Split up the record.
+            fields.append(record[0:6])
+            fields.append(record[6:11])
+            fields.append(record[12:16])
+            fields.append(record[16])
+            fields.append(record[17:20])
+            fields.append(record[21])
+            fields.append(record[22:26])
+            fields.append(record[26])
+            fields.append(record[30:38])
+            fields.append(record[38:46])
+            fields.append(record[46:54])
+            fields.append(record[54:60])
+            fields.append(record[60:66])
+            fields.append(record[72:76])
+            fields.append(record[76:78])
+            fields.append(record[78:80])
 
-        # Loop over the fields.
-        for i in xrange(len(fields)):
-            # Strip all whitespace.
-            fields[i] = strip(fields[i])
+            # Loop over the fields.
+            for i in xrange(len(fields)):
+                # Strip all whitespace.
+                fields[i] = strip(fields[i])
 
-            # Replace nothingness with None.
-            if fields[i] == '':
-                fields[i] = None
+                # Replace nothingness with None.
+                if fields[i] == '':
+                    fields[i] = None
 
-        # Convert strings to numbers.
-        if fields[1]:
-            fields[1] = int(fields[1])
-        if fields[6]:
-            fields[6] = int(fields[6])
-        if fields[8]:
-            fields[8] = float(fields[8])
-        if fields[9]:
-            fields[9] = float(fields[9])
-        if fields[10]:
-            fields[10] = float(fields[10])
-        if fields[11]:
-            fields[11] = float(fields[11])
-        if fields[12]:
-            fields[12] = float(fields[12])
+            # Convert strings to numbers.
+            if fields[1]:
+                fields[1] = int(fields[1])
+            if fields[6]:
+                fields[6] = int(fields[6])
+            if fields[8]:
+                fields[8] = float(fields[8])
+            if fields[9]:
+                fields[9] = float(fields[9])
+            if fields[10]:
+                fields[10] = float(fields[10])
+            if fields[11]:
+                fields[11] = float(fields[11])
+            if fields[12]:
+                fields[12] = float(fields[12])
 
         # Return the atomic info.
         return fields
