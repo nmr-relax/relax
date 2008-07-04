@@ -48,6 +48,9 @@ class Base_struct_API:
         # The parser specific data object.
         self.structural_data = []
 
+        # Initialise the file name list.
+        self.file_name = []
+
 
     def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, model=None):
         """Prototype method stub for adding an atom to the structural data object.
