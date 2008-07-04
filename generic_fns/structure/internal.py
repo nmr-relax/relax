@@ -713,34 +713,34 @@ class Internal(Base_struct_API):
             het_data = []
 
             # Loop over the atomic data.
-            for i in xrange(len(self.structural_data.atom_names)):
+            for i in xrange(len(struct.atom_name)):
                 # Catch the HETATM records.
-                if self.structural_data.pdb_record[i] != 'HETATM':
+                if struct.pdb_record[i] != 'HETATM':
                     continue
 
                 # If the residue is not already stored initialise a new het_data element.
                 # (residue number, residue name, chain ID, number of atoms, number of H, number of C, number of N).
-                if not het_data or not self.structural_data.res_num[i] == het_data[-1][0]:
-                    het_data.append([self.structural_data.res_num[i], self.structural_data.res_name[i], self.structural_data.chain_id[i], 0, 0, 0, 0])
+                if not het_data or not struct.res_num[i] == het_data[-1][0]:
+                    het_data.append([struct.res_num[i], struct.res_name[i], struct.chain_id[i], 0, 0, 0, 0])
 
                 # Total atom count.
                 het_data[-1][3] = het_data[-1][3] + 1
 
                 # Proton count.
-                if self.structural_data.element[i] == 'H':
+                if struct.element[i] == 'H':
                     het_data[-1][4] = het_data[-1][4] + 1
 
                 # Carbon count.
-                elif self.structural_data.element[i] == 'C':
+                elif struct.element[i] == 'C':
                     het_data[-1][5] = het_data[-1][5] + 1
 
                 # Nitrogen count.
-                elif self.structural_data.element[i] == 'N':
+                elif struct.element[i] == 'N':
                     het_data[-1][6] = het_data[-1][6] + 1
 
                 # Unsupported element type.
                 else:
-                    raise RelaxError, "The element " + `self.structural_data.element[i]` + " was expected to be one of ['H', 'C', 'N']."
+                    raise RelaxError, "The element " + `struct.element[i]` + " was expected to be one of ['H', 'C', 'N']."
 
 
             # The HET records.
@@ -823,18 +823,18 @@ class Internal(Base_struct_API):
             print "Creating the atomic coordinate records (ATOM, HETATM, and TER)."
 
             # Loop over the atomic data.
-            for i in xrange(len(self.structural_data.atom_names)):
+            for i in xrange(len(struct.atom_names)):
                 # Aliases.
-                atom_num = self.structural_data.atom_num[i]
-                atom_name = self.structural_data.atom_name[i]
-                res_name = self.structural_data.res_name[i]
-                chain_id = self.structural_data.chain_id[i]
-                res_num = self.structural_data.res_num[i]
-                x = self.structural_data.x[i]
-                y = self.structural_data.y[i]
-                z = self.structural_data.z[i]
-                seg_id = self.structural_data.seg_id[i]
-                element = self.structural_data.element[i]
+                atom_num = struct.atom_num[i]
+                atom_name = struct.atom_name[i]
+                res_name = struct.res_name[i]
+                chain_id = struct.chain_id[i]
+                res_num = struct.res_num[i]
+                x = struct.x[i]
+                y = struct.y[i]
+                z = struct.z[i]
+                seg_id = struct.seg_id[i]
+                element = struct.element[i]
 
                 # Replace None with ''.
                 if atom_name == None:
@@ -876,9 +876,9 @@ class Internal(Base_struct_API):
             print "Creating the CONECT records."
 
             connect_count = 0
-            for i in xrange(len(self.structural_data.atom_names)):
+            for i in xrange(len(struct.atom_names)):
                 # No bonded atoms, hence no CONECT record is required.
-                if not len(self.structural_data.bonded[i]):
+                if not len(struct.bonded[i]):
                     continue
 
                 # Initialise some data structures.
@@ -887,9 +887,9 @@ class Internal(Base_struct_API):
                 bonded = ['', '', '', '']
 
                 # Loop over the bonded atoms.
-                for j in xrange(len(self.structural_data.bonded[i])):
+                for j in xrange(len(struct.bonded[i])):
                     # End of the array, hence create the CONECT record in this iteration.
-                    if j == len(self.structural_data.bonded[i])-1:
+                    if j == len(struct.bonded[i])-1:
                         flush = 1
 
                     # Only four covalently bonded atoms allowed in one CONECT record.
@@ -897,7 +897,7 @@ class Internal(Base_struct_API):
                         flush = 1
 
                     # Get the bonded atom index.
-                    bonded[bonded_index] = self.structural_data.bonded[i][j]
+                    bonded[bonded_index] = struct.bonded[i][j]
 
                     # Increment the bonded_index value.
                     bonded_index = bonded_index + 1
@@ -923,7 +923,7 @@ class Internal(Base_struct_API):
             print "Creating the MASTER record."
 
             # Write the MASTER record.
-            file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data), 0, 0, 0, 0, 0, len(self.structural_data), 1, connect_count, 0))
+            file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data), 0, 0, 0, 0, 0, len(struct), 1, connect_count, 0))
 
 
         # END.
