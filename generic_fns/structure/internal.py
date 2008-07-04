@@ -797,23 +797,9 @@ class Internal(Base_struct_API):
                 # Initialise the chemical formula.
                 formula = ''
 
-                # Protons.
-                if het[4]:
-                    if formula:
-                        formula = formula + ' '
-                    formula = formula + 'H' + `het[4]`
-
-                # Carbon.
-                if het[5]:
-                    if formula:
-                        formula = formula + ' '
-                    formula = formula + 'C' + `het[5]`
-
-                # Nitrogen
-                if het[6]:
-                    if formula:
-                        formula = formula + ' '
-                    formula = formula + 'N' + `het[6]`
+                # Loop over the atoms.
+                for atom_count in het[4]:
+                    formula = formula + atom_count[0] + `atom_count[1]`
 
                 # The FORMUL record (chemical formula).
                 file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', het[0], het[1], '', '', formula))
