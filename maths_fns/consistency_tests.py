@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2004 Edward d'Auvergne                                        #
-# Copyright (C) 2007 Sebastien Morin                                          #
+# Copyright (C) 2007-2008 Sebastien Morin                                     #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
