@@ -812,7 +812,7 @@ class Internal(Base_struct_API):
             print "Creating the atomic coordinate records (ATOM, HETATM, and TER)."
 
             # Loop over the atomic data.
-            for i in xrange(len(struct.atom_names)):
+            for i in xrange(len(struct.atom_name)):
                 # Aliases.
                 atom_num = struct.atom_num[i]
                 atom_name = struct.atom_name[i]
@@ -846,15 +846,15 @@ class Internal(Base_struct_API):
                     element = ''
 
                 # Write the ATOM record.
-                if array[1] == 'ATOM':
+                if struct.pdb_record[i] == 'ATOM':
                     file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
 
                 # Write the HETATM record.
-                if array[1] == 'HETATM':
+                if struct.pdb_record[i] == 'HETATM':
                     file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
 
                 # Write the TER record.
-                if array[1] == 'TER':
+                if struct.pdb_record[i] == 'TER':
                     file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', atom_num, res_name, chain_id, res_num, ''))
 
 
