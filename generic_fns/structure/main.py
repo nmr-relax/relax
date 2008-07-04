@@ -79,7 +79,7 @@ def load_spins(spin_id=None, str_id=None):
             mol_cont = cdp.mol[0]
 
         # Add the molecule if it doesn't exist.
-        if mol_name and mol_cont == None:
+        if mol_cont == None:
             # Add the molecule.
             cdp.mol.add_item(mol_name=mol_name)
 
@@ -93,7 +93,7 @@ def load_spins(spin_id=None, str_id=None):
         res_cont = return_residue(id)
 
         # Add the residue if it doesn't exist.
-        if res_num and res_name and res_cont == None:
+        if res_cont == None:
             # Add the residue.
             mol_cont.res.add_item(res_name=res_name, res_num=res_num)
 
@@ -107,7 +107,7 @@ def load_spins(spin_id=None, str_id=None):
         spin_cont = return_spin(id)
 
         # Add the spin if it doesn't exist.
-        if atom_name and spin_cont == None:
+        if spin_cont == None:
             # Add the spin.
             res_cont.spin.add_item(spin_name=atom_name, spin_num=atom_num)
 
