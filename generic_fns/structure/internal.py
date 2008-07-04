@@ -714,8 +714,8 @@ class Internal(Base_struct_API):
 
             # Loop over the atomic data.
             for i in xrange(len(struct.atom_name)):
-                # Catch the HETATM records.
-                if struct.pdb_record[i] != 'HETATM':
+                # Skip non-HETATM records and HETATM records with no residue info.
+                if struct.pdb_record[i] != 'HETATM' or struct.res_name[i] == None:
                     continue
 
                 # If the residue is not already stored initialise a new het_data element.
