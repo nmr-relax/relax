@@ -1,16 +1,19 @@
-# Script for consistency testing.
+"""Script for consistency testing."""
+
+# Python module imports.
+import sys
 
 # Create the run.
 name = 'consistency'
 pipe.create(name, 'ct')
 
 # Load the sequence.
-sequence.read('noe.600.out')
+sequence.read(sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/noe.dat')
 
 # Load the relaxation data.
-relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out')
-relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out')
-relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out')
+relax_data.read('R1', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/R1.dat')
+relax_data.read('R2', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/R2.dat')
+relax_data.read('NOE', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/noe.dat')
 
 # Set the nuclei types
 value.set('15N', 'heteronucleus')
