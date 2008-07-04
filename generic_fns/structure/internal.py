@@ -374,7 +374,7 @@ class Internal(Base_struct_API):
             struct.bonded[index2].append(index1)
 
 
-    def atom_loop(self, atom_id=None, str_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False):
+    def atom_loop(self, atom_id=None, str_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
         """Generator function for looping over all atoms in the internal relax structural object.
 
         @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms
@@ -402,6 +402,9 @@ class Internal(Base_struct_API):
         @keyword pos_flag:          A flag which if True will cause the atomic position to be
                                     yielded.
         @type pos_flag:             bool
+        @keyword ave:               A flag which if True will result in this method returning the
+                                    average atom properties across all loaded structures.
+        @type ave:                  bool
         @return:                    A tuple of atomic information, as described in the docstring.
         @rtype:                     tuple consisting of optional molecule name (str), residue number
                                     (int), residue name (str), atom number (int), atom name(str),
