@@ -366,14 +366,18 @@ class Internal(Base_struct_API):
         return fields
 
 
-    def __validate_data_arrays(self):
-        """Check the validity of the data arrays in the structure object."""
+    def __validate_data_arrays(self, struct):
+        """Check the validity of the data arrays in the given structure object.
+
+        @param struct:  The structural object.
+        @type struct:   Structure_container instance
+        """
 
         # The number of atoms.
-        num = len(self.structural_data.atom_name)
+        num = len(struct.atom_name)
 
         # Check the other lengths.
-        if len(bonded) != num and len(chain_id) != num and len(element) != num and len(pdb_record) != num and len(res_name) != num and len(res_num) != num and len(seg_id) != num and len(x) != num and len(y) != num and len(z) != num:
+        if len(struct.bonded) != num and len(struct.chain_id) != num and len(struct.element) != num and len(struct.pdb_record) != num and len(struct.res_name) != num and len(struct.res_num) != num and len(struct.seg_id) != num and len(struct.x) != num and len(struct.y) != num and len(struct.z) != num:
             raise RelaxError, "The structural data is invalid."
 
 
