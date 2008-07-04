@@ -27,6 +27,7 @@
 from numpy import array, float64, zeros
 from re import search
 from string import split, strip
+from warnings import warn
 
 # relax module imports.
 from api_base import Base_struct_API
@@ -34,6 +35,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import Selection
 from relax_errors import RelaxError
 from relax_io import open_read_file
+from relax_warnings import RelaxWarning
 
 
 
@@ -66,6 +68,9 @@ class Internal(Base_struct_API):
             # Return the index.
             if self.structural_data[struct_index].atom_num[i] == atom_num:
                 return i
+
+        # Should not be here, the PDB connect records are incorrect.
+        warn(RelaxWarning("The atom number " + `atom_num` + " from the CONECT record cannot be found within the ATOM and HETATM records."))
 
 
     def __fill_object_from_pdb(self, records, struct_index):
