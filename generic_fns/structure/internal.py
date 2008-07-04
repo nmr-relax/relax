@@ -865,7 +865,7 @@ class Internal(Base_struct_API):
             print "Creating the CONECT records."
 
             connect_count = 0
-            for i in xrange(len(struct.atom_names)):
+            for i in xrange(len(struct.atom_name)):
                 # No bonded atoms, hence no CONECT record is required.
                 if not len(struct.bonded[i]):
                     continue
@@ -879,11 +879,11 @@ class Internal(Base_struct_API):
                 for j in xrange(len(struct.bonded[i])):
                     # End of the array, hence create the CONECT record in this iteration.
                     if j == len(struct.bonded[i])-1:
-                        flush = 1
+                        flush = True
 
                     # Only four covalently bonded atoms allowed in one CONECT record.
                     if bonded_index == 3:
-                        flush = 1
+                        flush = True
 
                     # Get the bonded atom index.
                     bonded[bonded_index] = struct.bonded[i][j]
@@ -900,7 +900,7 @@ class Internal(Base_struct_API):
                         connect_count = connect_count + 1
 
                         # Reset the flush flag, the bonded atom count, and the bonded atom names.
-                        flush = 0
+                        flush = False
                         bonded_index = 0
                         bonded = ['', '', '', '']
 
