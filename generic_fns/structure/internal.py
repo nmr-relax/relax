@@ -225,6 +225,27 @@ class Internal(Base_struct_API):
          |_________|______________|______________|________________________________________________|
 
 
+        The format of the CONECT record is::
+         __________________________________________________________________________________________
+         |         |              |              |                                                |
+         | Columns | Data type    | Field        | Definition                                     |
+         |_________|______________|______________|________________________________________________|
+         |         |              |              |                                                |
+         |  1 -  6 | Record name  | "CONECT"     |                                                |
+         |  7 - 11 | Integer      | serial       | Atom serial number                             |
+         | 12 - 16 | Integer      | serial       | Serial number of bonded atom                   |
+         | 17 - 21 | Integer      | serial       | Serial number of bonded atom                   |
+         | 22 - 26 | Integer      | serial       | Serial number of bonded atom                   |
+         | 27 - 31 | Integer      | serial       | Serial number of bonded atom                   |
+         | 32 - 36 | Integer      | serial       | Serial number of hydrogen bonded atom          |
+         | 37 - 41 | Integer      | serial       | Serial number of hydrogen bonded atom          |
+         | 42 - 46 | Integer      | serial       | Serial number of salt bridged atom             |
+         | 47 - 51 | Integer      | serial       | Serial number of hydrogen bonded atom          |
+         | 52 - 56 | Integer      | serial       | Serial number of hydrogen bonded atom          |
+         | 57 - 61 | Integer      | serial       | Serial number of salt bridged atom             |
+         |_________|______________|______________|________________________________________________|
+
+
         @param record:  The single line PDB record.
         @type record:   str
         @return:        The list of atomic information, each element corresponding to the PDB fields
@@ -280,6 +301,35 @@ class Internal(Base_struct_API):
                 fields[11] = float(fields[11])
             if fields[12]:
                 fields[12] = float(fields[12])
+
+        # CONECT records.
+        if search('^CONECT', record):
+            # Split up the record.
+            fields.append(record[0:6])
+            fields.append(record[6:11])
+            fields.append(record[11:16])
+            fields.append(record[16:21])
+            fields.append(record[21:26])
+            fields.append(record[26:31])
+
+            # Loop over the fields.
+            for i in xrange(len(fields)):
+                # Strip all whitespace.
+                fields[i] = strip(fields[i])
+
+                # Replace nothingness with None.
+                if fields[i] == '':
+                    fields[i] = None
+
+            # Convert strings to numbers.
+            if fields[1]:
+                fields[1] = int(fields[1])
+            if fields[2]:
+                fields[2] = int(fields[2])
+            if fields[3]:
+                fields[3] = int(fields[3])
+            if fields[4]:
+                fields[4] = int(fields[4])
 
         # Return the atomic info.
         return fields
