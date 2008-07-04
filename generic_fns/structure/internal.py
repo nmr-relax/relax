@@ -94,6 +94,11 @@ class Internal(Base_struct_API):
             if record[0] == 'CONECT':
                 # Loop over the atoms of the record.
                 for i in xrange(len(record)-2):
+                    # Skip if there is no record.
+                    if record[i+2] == None:
+                        continue
+
+                    # Make the connection.
                     self.atom_connect(index1=self.__atom_index(record[1], struct_index), index2=self.__atom_index(record[i+2], struct_index), struct_index=struct_index)
 
 
