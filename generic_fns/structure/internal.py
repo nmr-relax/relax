@@ -417,30 +417,31 @@ class Internal(Base_struct_API):
             self.structural_data[i].z.append(pos[2])
 
 
-    def atom_connect(self, index1=None, index2=None, model=None):
+    def atom_connect(self, index1=None, index2=None, struct_index=None):
         """Method for connecting two atoms within the data structure object.
 
         This method will append index2 to the array at bonded[index1] and vice versa.
 
 
-        @keyword index1:    The index of the first atom.
-        @type index1:       int
-        @keyword index2:    The index of the second atom.
-        @type index2:       int
-        @keyword model:     The model to add the atom to.  If not supplied and multiple models
-                            exist, then the atom will be added to all models.
-        @type model:        None or int
+        @keyword index1:        The index of the first atom.
+        @type index1:           int
+        @keyword index2:        The index of the second atom.
+        @type index2:           int
+        @keyword struct_index:  The index of the structure to connect the atoms of.  If not supplied
+                                and multiple structures or models are loaded, then the atoms will be
+                                connected within all structures.
+        @type struct_index:     None or int
         """
 
-        # Loop over the models.
-        for struct in self.structural_data:
-            # Skip non-matching models.
-            if model != None and model != struct.model:
+        # Loop over the structures.
+        for i in xrange(len(self.structural_data)):
+            # Skip non-matching structures.
+            if struct_index != None and struct_index != i:
                 continue
 
             # Update the bonded array structure.
-            struct.bonded[index1].append(index2)
-            struct.bonded[index2].append(index1)
+            self.structural_data[i].bonded[index1].append(index2)
+            self.structural_data[i].bonded[index2].append(index1)
 
 
     def atom_loop(self, atom_id=None, str_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
