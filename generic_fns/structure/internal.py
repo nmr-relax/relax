@@ -381,8 +381,9 @@ class Internal(Base_struct_API):
                                     matching this selection will be yielded.
         @type atom_id:              str
         @keyword str_id:            The structure identifier.  This can be the file name, model
-                                    number, or structure number.
-        @type str_id:               int or str
+                                    number, or structure number.  If None, then all structures will
+                                    be looped over.
+        @type str_id:               str, int, or None
         @keyword model_num_flag:    A flag which if True will cause the model number to be yielded.
         @type model_num_flag:       bool
         @keyword mol_name_flag:     A flag which if True will cause the molecule name to be yielded.
