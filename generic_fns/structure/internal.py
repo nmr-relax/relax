@@ -374,12 +374,15 @@ class Internal(Base_struct_API):
             struct.bonded[index2].append(index1)
 
 
-    def atom_loop(self, atom_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False):
+    def atom_loop(self, atom_id=None, str_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False):
         """Generator function for looping over all atoms in the internal relax structural object.
 
         @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms
                                     matching this selection will be yielded.
         @type atom_id:              str
+        @keyword str_id:            The structure identifier.  This can be the file name, model
+                                    number, or structure number.
+        @type str_id:               int or str
         @keyword model_num_flag:    A flag which if True will cause the model number to be yielded.
         @type model_num_flag:       bool
         @keyword mol_name_flag:     A flag which if True will cause the molecule name to be yielded.

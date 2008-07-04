@@ -40,11 +40,14 @@ from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorW
 
 
 
-def load_spins(spin_id=None):
+def load_spins(spin_id=None, str_id=None):
     """Load the spins from the structural object into the relax data store.
 
     @keyword spin_id:   The molecule, residue, and spin identifier string.
     @type spin_id:      str
+    @keyword str_id:    The structure identifier.  This can be the file name, model number, or
+                        structure number.
+    @type str_id:       int or str
     """
 
     # Test if the current data pipe exists.
@@ -59,7 +62,7 @@ def load_spins(spin_id=None):
     cdp = ds[ds.current_pipe]
 
     # Loop over all atoms of the spin_id selection.
-    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
+    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, str_id=str_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
         # Initialise the identification string.
         id = ''
 
