@@ -71,6 +71,12 @@ class Internal(Base_struct_API):
             if record[0] == 'ATOM' or record[0] == 'HETATM':
                 self.atom_add(pdb_record=record[0], atom_num=record[1], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=record[14], struct_index=struct_index)
 
+            # Connect atoms.
+            if record[0] == 'CONECT':
+                # Loop over the atoms of the record.
+                for i in xrange(len(record)-2):
+                    self.atom_connect(index1=self.__atom_index(atom_num=record[1]), index2=self.__atom_index(atom_num=record[i+2]), struct_index=struct_index)
+
 
     def __get_chemical_name(self, hetID):
         """Method for returning the chemical name corresponding to the given residue ID.
