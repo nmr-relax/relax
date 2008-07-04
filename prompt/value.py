@@ -423,7 +423,7 @@ class Value:
         value.set(val=val, param=param, spin_id=spin_id)
 
 
-    def write(self, run=None, param=None, file=None, dir=None, force=0):
+    def write(self, run=None, param=None, file=None, dir=None, force=Flase):
         """Function for writing residue specific data values to a file.
 
         Keyword Arguments
@@ -437,7 +437,7 @@ class Value:
 
         dir:  The directory name.
 
-        force:  A flag which, if set to 1, will cause the file to be overwritten.
+        force:  A flag which, if set to True, will cause the file to be overwritten.
 
 
         Description
@@ -462,7 +462,7 @@ class Value:
         relax> value.write('noe', 'noe', 'noe.out')
         relax> value.write('noe', param='noe', file='noe.out')
         relax> value.write(run='noe', param='noe', file='noe.out')
-        relax> value.write(run='noe', param='noe', file='noe.out', force=1)
+        relax> value.write(run='noe', param='noe', file='noe.out', force=True)
         """
 
         # Function intro text.
@@ -492,8 +492,8 @@ class Value:
             raise RelaxNoneStrError, ('directory name', dir)
 
         # The force flag.
-        if type(force) != int or (force != 0 and force != 1):
-            raise RelaxBinError, ('force flag', force)
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
         self.__relax__.generic.value.write(run=run, param=param, file=file, dir=dir, force=force)
