@@ -359,6 +359,8 @@ class Internal(Base_struct_API):
                 fields[3] = int(fields[3])
             if fields[4]:
                 fields[4] = int(fields[4])
+            if fields[5]:
+                fields[5] = int(fields[5])
 
         # Return the atomic info.
         return fields
