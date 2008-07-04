@@ -126,3 +126,10 @@ class Ct(TestCase):
         for res in residue_loop():
             self.assertEqual(res.spin[0].r, NH_BOND_LENGTH)
             self.assertEqual(res.spin[0].csa, N15_CSA)
+
+
+    def test_consistency(self):
+        """Test a complete consistency tests run using a script."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/consistency_tests.py')
