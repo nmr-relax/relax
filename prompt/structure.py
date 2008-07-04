@@ -450,7 +450,7 @@ class Structure:
         generic_fns.structure.main.vectors(proton=proton, spin_id=spin_id, verbosity=verbosity)
 
 
-    def write_pdb(self, file=None, dir=None, struct_index=None):
+    def write_pdb(self, file=None, dir=None, struct_index=None, force=False):
         """The PDB writing function.
 
         Keyword Arguments
@@ -462,7 +462,7 @@ class Structure:
 
         struct_index:  The index of the structure to write.
 
-        parser:  The PDB parser used to read the file.
+        force:  A flag which, if set to True, will overwrite the any pre-existing file.
 
 
         Description
@@ -494,7 +494,8 @@ class Structure:
             text = sys.ps3 + "structure.write_pdb("
             text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
-            text = text + ", struct_index=" + `struct_index` + ")"
+            text = text + ", struct_index=" + `struct_index`
+            text = text + ", force=" + `force` + ")"
             print text
 
         # File name.
@@ -509,5 +510,9 @@ class Structure:
         if struct_index != None and type(struct_index) != int:
             raise RelaxNoneIntError, ('structure index', struct_index)
 
+        # The force flag.
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
+
         # Execute the functional code.
-        generic_fns.structure.main.write_pdb(file=file, dir=dir, struct_index=struct_index)
+        generic_fns.structure.main.write_pdb(file=file, dir=dir, struct_index=struct_index, force=force)
