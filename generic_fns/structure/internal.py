@@ -49,34 +49,27 @@ class Internal(Base_struct_API):
     id = 'internal'
 
 
-    def __fill_object_from_pdb(self, records, model=None):
+    def __fill_object_from_pdb(self, records, struct_index):
         """Method for generating a complete Structure_container object from the given PDB records.
 
-        @param records:     A list of structural PDB records.
-        @type records:      list of str
-        @keyword model:     The model to add the data to.  If not supplied and multiple models
-                            exist, then the data will be added to all models.
-        @type model:        None or int
+        @param records:         A list of structural PDB records.
+        @type records:          list of str
+        @param struct_index:    The index of the structural container to add the data to.
+        @type struct_index:     int
         """
 
-        # Loop over the models.
-        for struct in self.structural_data:
-            # Skip non-matching models.
-            if model != None and model != struct.model:
+        # Loop over the records.
+        for record in records:
+            # Parse the record.
+            record = self.__parse_pdb_record(record)
+
+            # Nothing to do.
+            if not record:
                 continue
 
-            # Loop over the records.
-            for record in records:
-                # Parse the record.
-                record = self.__parse_pdb_record(record)
-
-                # Nothing to do.
-                if not record:
-                    continue
-
-                # Add the atom.
-                if record[0] == 'ATOM' or record[0] == 'HETATM':
-                    self.atom_add(pdb_record=record[0], atom_num=record[1], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=record[14], model=model)
+            # Add the atom.
+            if record[0] == 'ATOM' or record[0] == 'HETATM':
+                self.atom_add(pdb_record=record[0], atom_num=record[1], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=record[14], struct_index=struct_index)
 
 
     def __get_chemical_name(self, hetID):
@@ -297,7 +290,7 @@ class Internal(Base_struct_API):
             raise RelaxError, "The structural data is invalid."
 
 
-    def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, model=None):
+    def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, struct_index=None):
         """Method for adding an atom to the structural data object.
 
         This method will create the key-value pair for the given atom.
@@ -321,31 +314,32 @@ class Internal(Base_struct_API):
         @type segment_id:       str or None
         @keyword element:       The element symbol.
         @type element:          str or None
-        @keyword model:         The model to add the atom to.  If not supplied and multiple models
-                                exist, then the atom will be added to all models.
-        @type model:            None or int
+        @keyword struct_index:  The index of the structure to add the atom to.  If not supplied and
+                                multiple structures or models are loaded, then the atom will be
+                                added to all structures.
+        @type struct_index:     None or int
         """
 
 
-        # Loop over the models.
-        for struct in self.structural_data:
-            # Skip non-matching models.
-            if model != None and model != struct.model:
+        # Loop over the structures.
+        for i in xrange(len(self.structural_data)):
+            # Skip non-matching structures.
+            if struct_index != None and struct_index != i:
                 continue
 
             # Append to all the arrays.
-            struct.atom_num.append(atom_num)
-            struct.atom_name.append(atom_name)
-            struct.bonded.append([])
-            struct.chain_id.append(chain_id)
-            struct.element.append(element)
-            struct.pdb_record.append(pdb_record)
-            struct.res_name.append(res_name)
-            struct.res_num.append(res_num)
-            struct.seg_id.append(segment_id)
-            struct.x.append(pos[0])
-            struct.y.append(pos[1])
-            struct.z.append(pos[2])
+            self.structural_data[i].atom_num.append(atom_num)
+            self.structural_data[i].atom_name.append(atom_name)
+            self.structural_data[i].bonded.append([])
+            self.structural_data[i].chain_id.append(chain_id)
+            self.structural_data[i].element.append(element)
+            self.structural_data[i].pdb_record.append(pdb_record)
+            self.structural_data[i].res_name.append(res_name)
+            self.structural_data[i].res_num.append(res_num)
+            self.structural_data[i].seg_id.append(segment_id)
+            self.structural_data[i].x.append(pos[0])
+            self.structural_data[i].y.append(pos[1])
+            self.structural_data[i].z.append(pos[2])
 
 
     def atom_connect(self, index1=None, index2=None, model=None):
@@ -551,7 +545,7 @@ class Internal(Base_struct_API):
             # Initialise and fill the structural data object.
             self.structural_data.append(Structure_container())
             self.structural_data[-1].model = model_num
-            self.__fill_object_from_pdb(records, model_num)
+            self.__fill_object_from_pdb(records, len(self.structural_data)-1)
 
 
     def terminate(self, model=None):
