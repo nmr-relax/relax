@@ -739,9 +739,9 @@ class Internal(Base_struct_API):
                     het_data[-1][4].append([struct.element[i], 0])
 
                 # Increment the specific atom count.
-                for i in xrange(len(het_data[-1][4])): 
-                    if struct.element[i] == het_data[-1][4][i][0]:
-                        het_data[-1][4][i][1] = het_data[-1][4][i][1] + 1
+                for j in xrange(len(het_data[-1][4])): 
+                    if struct.element[i] == het_data[-1][4][j][0]:
+                        het_data[-1][4][j][1] = het_data[-1][4][j][1] + 1
 
 
             # The HET records.
