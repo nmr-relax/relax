@@ -155,8 +155,8 @@ class Internal(Base_struct_API):
             if search('^MODEL', lines[i]):
                 model = int(split(lines[i])[1])
 
-            # Skip all records prior to the first ATOM record.
-            if not search('^ATOM', lines[i]) and not len(records):
+            # Skip all records prior to the first ATOM or HETATM record.
+            if not (search('^ATOM', lines[i]) or search('^HETATM', lines[i])) and not len(records):
                 continue
 
             # End of the model.
