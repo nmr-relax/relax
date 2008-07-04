@@ -414,35 +414,41 @@ class Internal(Base_struct_API):
         # Generate the selection object.
         sel_obj = Selection(atom_id)
 
-        # Loop over the models.
-        for struct in self.structural_data:
-            # Loop over all atoms.
-            for i in xrange(len(struct.atom_name)):
-                # Skip non-matching atoms.
-                if sel_obj and not sel_obj.contains_spin(struct.atom_num[i], struct.atom_name[i], struct.res_num[i], struct.res_name[i]):
-                    continue
+        # Average properties mode.
+        if ave:
+            pass
 
-                # Build the tuple to be yielded.
-                atomic_tuple = ()
-                if model_num_flag:
-                    atomic_tuple = atomic_tuple + (struct.model,)
-                if mol_name_flag:
-                    atomic_tuple = atomic_tuple + (None,)
-                if res_num_flag:
-                    atomic_tuple = atomic_tuple + (struct.res_num[i],)
-                if res_name_flag:
-                    atomic_tuple = atomic_tuple + (struct.res_name[i],)
-                if atom_num_flag:
-                    atomic_tuple = atomic_tuple + (struct.atom_num[i],)
-                if atom_name_flag:
-                    atomic_tuple = atomic_tuple + (struct.atom_name[i],)
-                if element_flag:
-                    atomic_tuple = atomic_tuple + (struct.element[i],)
-                if pos_flag:
-                    atomic_tuple = atomic_tuple + (array([struct.x[i], struct.y[i], struct.z[i]], float64),)
+        # Individual structure mode.
+        else:
+            # Loop over the models.
+            for struct in self.structural_data:
+                # Loop over all atoms.
+                for i in xrange(len(struct.atom_name)):
+                    # Skip non-matching atoms.
+                    if sel_obj and not sel_obj.contains_spin(struct.atom_num[i], struct.atom_name[i], struct.res_num[i], struct.res_name[i]):
+                        continue
 
-                # Yield the information.
-                yield atomic_tuple
+                    # Build the tuple to be yielded.
+                    atomic_tuple = ()
+                    if model_num_flag:
+                        atomic_tuple = atomic_tuple + (struct.model,)
+                    if mol_name_flag:
+                        atomic_tuple = atomic_tuple + (None,)
+                    if res_num_flag:
+                        atomic_tuple = atomic_tuple + (struct.res_num[i],)
+                    if res_name_flag:
+                        atomic_tuple = atomic_tuple + (struct.res_name[i],)
+                    if atom_num_flag:
+                        atomic_tuple = atomic_tuple + (struct.atom_num[i],)
+                    if atom_name_flag:
+                        atomic_tuple = atomic_tuple + (struct.atom_name[i],)
+                    if element_flag:
+                        atomic_tuple = atomic_tuple + (struct.element[i],)
+                    if pos_flag:
+                        atomic_tuple = atomic_tuple + (array([struct.x[i], struct.y[i], struct.z[i]], float64),)
+
+                    # Yield the information.
+                    yield atomic_tuple
 
 
     def load_pdb(self, file_path, model=None, verbosity=False):
