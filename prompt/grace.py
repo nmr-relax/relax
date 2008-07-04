@@ -101,7 +101,7 @@ class Grace:
         self.__relax__.generic.grace.view(file=file, dir=dir, grace_exe=grace_exe)
 
 
-    def write(self, x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot_data='value', norm=0, file=None, dir='grace', force=0):
+    def write(self, x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot_data='value', norm=0, file=None, dir='grace', force=False):
         """Function for creating a grace '.agr' file.
 
         Keyword Arguments
@@ -123,7 +123,7 @@ class Grace:
 
         dir:  The directory name.
 
-        force:  A flag which, if set to 1, will cause the file to be overwritten.
+        force:  A flag which, if set to True, will cause the file to be overwritten.
 
 
         Description
@@ -169,14 +169,14 @@ class Grace:
         relax> grace.write('res', 'noe', file='noe.agr')
         relax> grace.write(y_data_type='noe', file='noe.agr')
         relax> grace.write(x_data_type='res', y_data_type='noe', file='noe.agr')
-        relax> grace.write(y_data_type='noe', file='noe.agr', force=1)
+        relax> grace.write(y_data_type='noe', file='noe.agr', force=True)
 
 
         To create a Grace file of 'S2' vs. 'te' for all residues, type:
 
         relax> grace.write('S2', 'te', file='s2_te.agr')
         relax> grace.write(x_data_type='S2', y_data_type='te', file='s2_te.agr')
-        relax> grace.write(x_data_type='S2', y_data_type='te', file='s2_te.agr', force=1)
+        relax> grace.write(x_data_type='S2', y_data_type='te', file='s2_te.agr', force=True)
 
 
         To create a Grace file of the Monte Carlo simulation values of 'Rex' vs. 'te' for residue
@@ -195,7 +195,7 @@ class Grace:
         emphasises any problems.  To produce this Grace file, type:
 
         relax> grace.write(name, x_data_type='relax_times', y_data_type='ave_int',
-                           norm=1, file='intensities_norm.agr', force=1)
+                           norm=1, file='intensities_norm.agr', force=True)
         """
 
         # Function intro text.
@@ -241,8 +241,8 @@ class Grace:
             raise RelaxNoneStrError, ('directory name', dir)
 
         # The force flag.
-        if type(force) != int or (force != 0 and force != 1):
-            raise RelaxBinError, ('force flag', force)
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
         grace.write(x_data_type=x_data_type, y_data_type=y_data_type, res_num=res_num, res_name=res_name, plot_data=plot_data, norm=norm, file=file, dir=dir, force=force)
