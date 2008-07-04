@@ -730,8 +730,8 @@ class Internal(Base_struct_API):
 
                 # Find if the atom has already a count entry.
                 entry = False
-                for i in xrange(len(het_data[-1][4])): 
-                    if struct.element[i] == het_data[-1][4][i][0]:
+                for j in xrange(len(het_data[-1][4])): 
+                    if struct.element[i] == het_data[-1][4][j][0]:
                         entry = True
 
                 # Create a new specific atom count entry.
