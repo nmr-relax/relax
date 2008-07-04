@@ -24,6 +24,7 @@
 from math import sqrt
 from numpy import dot, float64, ndarray, zeros
 from os import F_OK, access
+from re import search
 import sys
 from warnings import warn
 
@@ -35,7 +36,7 @@ from generic_fns.sequence import write_header, write_line
 from generic_fns.structure.internal import Internal
 from generic_fns.structure.scientific import Scientific_data
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPipeError, RelaxNoSequenceError, RelaxPdbError
-from relax_io import get_file_path
+from relax_io import get_file_path, open_write_file
 from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
 
 
@@ -304,3 +305,47 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
 
         # Print out of modified spins.
         write_line(sys.stdout, mol_name, res_num, res_name, spin.num, spin.name, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+
+
+def write_pdb(file=None, dir=None, struct_index=None, force=False):
+    """The PDB writing function.
+
+    @keyword file:          The name of the PDB file to write.
+    @type file:             str
+    @keyword dir:           The directory where the PDB file will be placed.  If set to None, then
+                            the file will be placed in the current directory.
+    @type dir:              str or None
+    @keyword stuct_index:   The index of the structure to write.  If set to None, then all
+                            structures will be written.
+    @type stuct_index:      int or None
+    @keyword force:         The force flag which if True will cause the file to be overwritten.
+    @type force:            bool
+    """
+
+    # Test if the current data pipe exists.
+    if not ds.current_pipe:
+        raise RelaxNoPipeError
+
+    # Alias the current data pipe.
+    cdp = ds[ds.current_pipe]
+
+    # Check if the structural object exists.
+    if not hasattr(cdp, 'structure'):
+        raise RelaxError, "No structural data is present in the current data pipe."
+
+    # Check if the structural object is writable.
+    if cdp.structure.id in ['scientific']:
+        raise RelaxError, "The structures from the " + cdp.structure.id + " parser are not writable."
+
+    # The file path.
+    file_path = get_file_path(file, dir)
+
+    # Add '.pdb' to the end of the file path if it isn't there yet.
+    if not search(".pdb$", file_path):
+        file_path = file_path + '.pdb'
+
+    # Open the file for writing.
+    file = open_write_file(file_path, force=force)
+
+    # Write the structures.
+    cdp.structure.write_pdb(file_path, struct_index=struct_index)
