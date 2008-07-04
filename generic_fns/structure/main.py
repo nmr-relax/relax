@@ -160,10 +160,6 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', fail=True, ve
     # Alias the current data pipe.
     cdp = ds[ds.current_pipe]
 
-    # Test if structural data already exists.
-    if hasattr(cdp, 'struct'):
-        raise RelaxPdbError
-
     # The file path.
     file_path = get_file_path(file, dir)
 
