@@ -687,230 +687,239 @@ class Internal(Base_struct_API):
         @type struct_index:     int
         """
 
-        # Check the validity of the data.
-        self.__validate_data_arrays()
-
-
-        # Collect the non-standard residue info.
-        ########################################
-
-        # Initialise some data.
-        H_count = 0
-        C_count = 0
-        het_data = []
-
-        # Loop over the atomic data.
-        for i in xrange(len(self.structural_data.atom_names)):
-            # Catch the HETATM records.
-            if self.structural_data.pdb_record[i] != 'HETATM':
+        # Loop over the structures.
+        for i in xrange(len(self.structural_data)):
+            # Skip non-matching structures.
+            if struct_index != None and struct_index != i:
                 continue
 
-            # If the residue is not already stored initialise a new het_data element.
-            # (residue number, residue name, chain ID, number of atoms, number of H, number of C, number of N).
-            if not het_data or not self.structural_data.res_num[i] == het_data[-1][0]:
-                het_data.append([self.structural_data.res_num[i], self.structural_data.res_name[i], self.structural_data.chain_id[i], 0, 0, 0, 0])
+            # Alias the structure container.
+            struct = self.structural_data[i]
 
-            # Total atom count.
-            het_data[-1][3] = het_data[-1][3] + 1
-
-            # Proton count.
-            if self.structural_data.element[i] == 'H':
-                het_data[-1][4] = het_data[-1][4] + 1
-
-            # Carbon count.
-            elif self.structural_data.element[i] == 'C':
-                het_data[-1][5] = het_data[-1][5] + 1
-
-            # Nitrogen count.
-            elif self.structural_data.element[i] == 'N':
-                het_data[-1][6] = het_data[-1][6] + 1
-
-            # Unsupported element type.
-            else:
-                raise RelaxError, "The element " + `self.structural_data.element[i]` + " was expected to be one of ['H', 'C', 'N']."
+            # Check the validity of the data.
+            self.__validate_data_arrays(struct)
 
 
-        # The HET records.
-        ##################
+            # Collect the non-standard residue info.
+            ########################################
 
-        # Print out.
-        print "Creating the HET records."
+            # Initialise some data.
+            H_count = 0
+            C_count = 0
+            het_data = []
 
-        # Write the HET records.
-        for het in het_data:
-            file.write("%-6s %3s  %1s%4s%1s  %5s     %-40s\n" % ('HET', het[2], het[1], het[0], '', het[3], ''))
+            # Loop over the atomic data.
+            for i in xrange(len(self.structural_data.atom_names)):
+                # Catch the HETATM records.
+                if self.structural_data.pdb_record[i] != 'HETATM':
+                    continue
 
+                # If the residue is not already stored initialise a new het_data element.
+                # (residue number, residue name, chain ID, number of atoms, number of H, number of C, number of N).
+                if not het_data or not self.structural_data.res_num[i] == het_data[-1][0]:
+                    het_data.append([self.structural_data.res_num[i], self.structural_data.res_name[i], self.structural_data.chain_id[i], 0, 0, 0, 0])
 
-        # The HETNAM records.
-        #####################
+                # Total atom count.
+                het_data[-1][3] = het_data[-1][3] + 1
 
-        # Print out.
-        print "Creating the HETNAM records."
+                # Proton count.
+                if self.structural_data.element[i] == 'H':
+                    het_data[-1][4] = het_data[-1][4] + 1
 
-        # Loop over the non-standard residues.
-        residues = []
-        for het in het_data:
-            # Test if the residue HETNAM record as already been written (otherwise store its name).
-            if het[1] in residues:
-                continue
-            else:
-                residues.append(het[1])
+                # Carbon count.
+                elif self.structural_data.element[i] == 'C':
+                    het_data[-1][5] = het_data[-1][5] + 1
 
-            # Get the chemical name.
-            chemical_name = self.__get_chemical_name(het[1])
+                # Nitrogen count.
+                elif self.structural_data.element[i] == 'N':
+                    het_data[-1][6] = het_data[-1][6] + 1
 
-            # Write the HETNAM records.
-            file.write("%-6s  %2s %3s %-55s\n" % ('HETNAM', '', het[1], chemical_name))
-
-
-        # The FORMUL records.
-        #####################
-
-        # Print out.
-        print "Creating the FORMUL records."
-
-        # Loop over the non-standard residues and generate and write the chemical formula.
-        residues = []
-        for het in het_data:
-            # Test if the residue HETNAM record as already been written (otherwise store its name).
-            if het[1] in residues:
-                continue
-            else:
-                residues.append(het[1])
-
-            # Initialise the chemical formula.
-            formula = ''
-
-            # Protons.
-            if het[4]:
-                if formula:
-                    formula = formula + ' '
-                formula = formula + 'H' + `het[4]`
-
-            # Carbon.
-            if het[5]:
-                if formula:
-                    formula = formula + ' '
-                formula = formula + 'C' + `het[5]`
-
-            # Nitrogen
-            if het[6]:
-                if formula:
-                    formula = formula + ' '
-                formula = formula + 'N' + `het[6]`
-
-            # The FORMUL record (chemical formula).
-            file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', het[0], het[1], '', '', formula))
+                # Unsupported element type.
+                else:
+                    raise RelaxError, "The element " + `self.structural_data.element[i]` + " was expected to be one of ['H', 'C', 'N']."
 
 
-        # Add the atomic coordinate records (ATOM, HETATM, and TER).
-        ############################################################
+            # The HET records.
+            ##################
 
-        # Print out.
-        print "Creating the atomic coordinate records (ATOM, HETATM, and TER)."
+            # Print out.
+            print "Creating the HET records."
 
-        # Loop over the atomic data.
-        for i in xrange(len(self.structural_data.atom_names)):
-            # Aliases.
-            atom_num = self.structural_data.atom_num[i]
-            atom_name = self.structural_data.atom_name[i]
-            res_name = self.structural_data.res_name[i]
-            chain_id = self.structural_data.chain_id[i]
-            res_num = self.structural_data.res_num[i]
-            x = self.structural_data.x[i]
-            y = self.structural_data.y[i]
-            z = self.structural_data.z[i]
-            seg_id = self.structural_data.seg_id[i]
-            element = self.structural_data.element[i]
-
-            # Replace None with ''.
-            if atom_name == None:
-                atom_name = ''
-            if res_name == None:
-                res_name = ''
-            if chain_id == None:
-                chain_id = ''
-            if res_num == None:
-                res_num = ''
-            if x == None:
-                x = ''
-            if y == None:
-                y = ''
-            if z == None:
-                z = ''
-            if seg_id == None:
-                seg_id = ''
-            if element == None:
-                element = ''
-
-            # Write the ATOM record.
-            if array[1] == 'ATOM':
-                file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
-
-            # Write the HETATM record.
-            if array[1] == 'HETATM':
-                file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
-
-            # Write the TER record.
-            if array[1] == 'TER':
-                file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', atom_num, res_name, chain_id, res_num, ''))
+            # Write the HET records.
+            for het in het_data:
+                file.write("%-6s %3s  %1s%4s%1s  %5s     %-40s\n" % ('HET', het[2], het[1], het[0], '', het[3], ''))
 
 
-        # Create the CONECT records.
-        ############################
+            # The HETNAM records.
+            #####################
 
-        # Print out.
-        print "Creating the CONECT records."
+            # Print out.
+            print "Creating the HETNAM records."
 
-        connect_count = 0
-        for i in xrange(len(self.structural_data.atom_names)):
-            # No bonded atoms, hence no CONECT record is required.
-            if not len(self.structural_data.bonded[i]):
-                continue
+            # Loop over the non-standard residues.
+            residues = []
+            for het in het_data:
+                # Test if the residue HETNAM record as already been written (otherwise store its name).
+                if het[1] in residues:
+                    continue
+                else:
+                    residues.append(het[1])
 
-            # Initialise some data structures.
-            flush = 0
-            bonded_index = 0
-            bonded = ['', '', '', '']
+                # Get the chemical name.
+                chemical_name = self.__get_chemical_name(het[1])
 
-            # Loop over the bonded atoms.
-            for j in xrange(len(self.structural_data.bonded[i])):
-                # End of the array, hence create the CONECT record in this iteration.
-                if j == len(self.structural_data.bonded[i])-1:
-                    flush = 1
-
-                # Only four covalently bonded atoms allowed in one CONECT record.
-                if bonded_index == 3:
-                    flush = 1
-
-                # Get the bonded atom index.
-                bonded[bonded_index] = self.structural_data.bonded[i][j]
-
-                # Increment the bonded_index value.
-                bonded_index = bonded_index + 1
-
-                # Generate the CONECT record and increment the counter.
-                if flush:
-                    # Write the CONECT record.
-                    file.write("%-6s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('CONECT', i+1, bonded[0], bonded[1], bonded[2], bonded[3], '', '', '', '', '', ''))
-
-                    # Increment the CONECT record count.
-                    connect_count = connect_count + 1
-
-                    # Reset the flush flag, the bonded atom count, and the bonded atom names.
-                    flush = 0
-                    bonded_index = 0
-                    bonded = ['', '', '', '']
+                # Write the HETNAM records.
+                file.write("%-6s  %2s %3s %-55s\n" % ('HETNAM', '', het[1], chemical_name))
 
 
-        # MASTER record.
-        ################
+            # The FORMUL records.
+            #####################
 
-        # Print out.
-        print "Creating the MASTER record."
+            # Print out.
+            print "Creating the FORMUL records."
 
-        # Write the MASTER record.
-        file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data), 0, 0, 0, 0, 0, len(self.structural_data), 1, connect_count, 0))
+            # Loop over the non-standard residues and generate and write the chemical formula.
+            residues = []
+            for het in het_data:
+                # Test if the residue HETNAM record as already been written (otherwise store its name).
+                if het[1] in residues:
+                    continue
+                else:
+                    residues.append(het[1])
+
+                # Initialise the chemical formula.
+                formula = ''
+
+                # Protons.
+                if het[4]:
+                    if formula:
+                        formula = formula + ' '
+                    formula = formula + 'H' + `het[4]`
+
+                # Carbon.
+                if het[5]:
+                    if formula:
+                        formula = formula + ' '
+                    formula = formula + 'C' + `het[5]`
+
+                # Nitrogen
+                if het[6]:
+                    if formula:
+                        formula = formula + ' '
+                    formula = formula + 'N' + `het[6]`
+
+                # The FORMUL record (chemical formula).
+                file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', het[0], het[1], '', '', formula))
+
+
+            # Add the atomic coordinate records (ATOM, HETATM, and TER).
+            ############################################################
+
+            # Print out.
+            print "Creating the atomic coordinate records (ATOM, HETATM, and TER)."
+
+            # Loop over the atomic data.
+            for i in xrange(len(self.structural_data.atom_names)):
+                # Aliases.
+                atom_num = self.structural_data.atom_num[i]
+                atom_name = self.structural_data.atom_name[i]
+                res_name = self.structural_data.res_name[i]
+                chain_id = self.structural_data.chain_id[i]
+                res_num = self.structural_data.res_num[i]
+                x = self.structural_data.x[i]
+                y = self.structural_data.y[i]
+                z = self.structural_data.z[i]
+                seg_id = self.structural_data.seg_id[i]
+                element = self.structural_data.element[i]
+
+                # Replace None with ''.
+                if atom_name == None:
+                    atom_name = ''
+                if res_name == None:
+                    res_name = ''
+                if chain_id == None:
+                    chain_id = ''
+                if res_num == None:
+                    res_num = ''
+                if x == None:
+                    x = ''
+                if y == None:
+                    y = ''
+                if z == None:
+                    z = ''
+                if seg_id == None:
+                    seg_id = ''
+                if element == None:
+                    element = ''
+
+                # Write the ATOM record.
+                if array[1] == 'ATOM':
+                    file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
+
+                # Write the HETATM record.
+                if array[1] == 'HETATM':
+                    file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
+
+                # Write the TER record.
+                if array[1] == 'TER':
+                    file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', atom_num, res_name, chain_id, res_num, ''))
+
+
+            # Create the CONECT records.
+            ############################
+
+            # Print out.
+            print "Creating the CONECT records."
+
+            connect_count = 0
+            for i in xrange(len(self.structural_data.atom_names)):
+                # No bonded atoms, hence no CONECT record is required.
+                if not len(self.structural_data.bonded[i]):
+                    continue
+
+                # Initialise some data structures.
+                flush = 0
+                bonded_index = 0
+                bonded = ['', '', '', '']
+
+                # Loop over the bonded atoms.
+                for j in xrange(len(self.structural_data.bonded[i])):
+                    # End of the array, hence create the CONECT record in this iteration.
+                    if j == len(self.structural_data.bonded[i])-1:
+                        flush = 1
+
+                    # Only four covalently bonded atoms allowed in one CONECT record.
+                    if bonded_index == 3:
+                        flush = 1
+
+                    # Get the bonded atom index.
+                    bonded[bonded_index] = self.structural_data.bonded[i][j]
+
+                    # Increment the bonded_index value.
+                    bonded_index = bonded_index + 1
+
+                    # Generate the CONECT record and increment the counter.
+                    if flush:
+                        # Write the CONECT record.
+                        file.write("%-6s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('CONECT', i+1, bonded[0], bonded[1], bonded[2], bonded[3], '', '', '', '', '', ''))
+
+                        # Increment the CONECT record count.
+                        connect_count = connect_count + 1
+
+                        # Reset the flush flag, the bonded atom count, and the bonded atom names.
+                        flush = 0
+                        bonded_index = 0
+                        bonded = ['', '', '', '']
+
+
+            # MASTER record.
+            ################
+
+            # Print out.
+            print "Creating the MASTER record."
+
+            # Write the MASTER record.
+            file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data), 0, 0, 0, 0, 0, len(self.structural_data), 1, connect_count, 0))
 
 
         # END.
