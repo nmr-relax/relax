@@ -1,6 +1,7 @@
 """Script for consistency testing."""
 
 # Python module imports.
+from os import devnull
 import sys
 
 # Create the run.
@@ -42,15 +43,10 @@ calc()
 monte_carlo.error_analysis()
 
 # Create grace files.
-grace.write(y_data_type='j0', file='j0.agr', force=True)
-grace.write(y_data_type='f_eta', file='f_eta.agr', force=True)
-grace.write(y_data_type='f_r2', file='f_r2.agr', force=True)
-
-# View the grace files.
-grace.view(file='j0.agr')
-grace.view(file='f_eta.agr')
-grace.view(file='f_r2.agr')
+grace.write(y_data_type='j0', file=devnull, force=True)
+grace.write(y_data_type='f_eta', file=devnull, force=True)
+grace.write(y_data_type='f_r2', file=devnull, force=True)
 
 # Finish.
-results.write(file='results', force=True)
-state.save('save', force=True)
+results.write(file=devnull, force=True)
+state.save(devnull, force=True)
