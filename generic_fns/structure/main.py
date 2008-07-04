@@ -175,6 +175,10 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', fail=True, ve
             warn(RelaxNoPDBFileWarning(file_path))
             return
 
+    # Check that the parser is the same as the currently loaded PDB files.
+    if hasattr(cdp, 'structure') and cdp.structure.id != parser:
+        raise RelaxError, "The " + `parser` + " parser does not match the " + `cdp.structure.id` + " parser of the PDB loaded into the current pipe."
+
     # Place the parser specific structural object into the relax data store.
     if parser == 'scientific':
         cdp.structure = Scientific_data()
