@@ -423,7 +423,7 @@ class Value:
         value.set(val=val, param=param, spin_id=spin_id)
 
 
-    def write(self, run=None, param=None, file=None, dir=None, force=Flase):
+    def write(self, run=None, param=None, file=None, dir=None, force=False):
         """Function for writing residue specific data values to a file.
 
         Keyword Arguments
