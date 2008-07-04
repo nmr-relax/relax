@@ -124,7 +124,7 @@ class Consistency:
         # Calculate eta.
         # eta is the cross-correlation rate between 15N CSA and 15N-1H dipolar interaction. It is
         # expressed here as proposed in Fushman D. & Cowburn D. (1998) JACS, 120: 7109-7110.
-        eta = ((d * c) ** 0.5) * (4.0 * j0 + 3.0 * jwx) * p_2
+        eta = ((d * c/3.0) ** 0.5) * (4.0 * j0 + 3.0 * jwx) * p_2
 
         # Calculate F_eta.
         # F_eta is independent of the magnetic field for residues with local mobility
