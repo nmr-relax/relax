@@ -453,9 +453,11 @@ class Internal(Base_struct_API):
             if struct_index != None and struct_index != i:
                 continue
 
-            # Update the bonded array structure.
-            self.structural_data[i].bonded[index1].append(index2)
-            self.structural_data[i].bonded[index2].append(index1)
+            # Update the bonded array structure, if necessary.
+            if index2 not in self.structural_data[i].bonded[index1]:
+                self.structural_data[i].bonded[index1].append(index2)
+            if index1 not in self.structural_data[i].bonded[index2]:
+                self.structural_data[i].bonded[index2].append(index1)
 
 
     def atom_loop(self, atom_id=None, str_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
@@ -894,7 +896,7 @@ class Internal(Base_struct_API):
                     # Generate the CONECT record and increment the counter.
                     if flush:
                         # Write the CONECT record.
-                        file.write("%-6s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('CONECT', i+1, bonded[0], bonded[1], bonded[2], bonded[3], '', '', '', '', '', ''))
+                        file.write("%-6s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('CONECT', i+1, struct.atom_num[bonded[0]], struct.atom_num[bonded[1]], struct.atom_num[bonded[2]], struct.atom_num[bonded[3]], '', '', '', '', '', ''))
 
                         # Increment the CONECT record count.
                         connect_count = connect_count + 1
