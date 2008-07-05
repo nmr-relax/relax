@@ -703,13 +703,13 @@ class Internal(Base_struct_API):
         num_remark = 2
 
         # Loop over the structures.
-        for i in xrange(len(self.structural_data)):
+        for index in xrange(len(self.structural_data)):
             # Skip non-matching structures.
-            if struct_index != None and struct_index != i:
+            if struct_index != None and struct_index != index:
                 continue
 
             # Alias the structure container.
-            struct = self.structural_data[i]
+            struct = self.structural_data[index]
 
             # Check the validity of the data.
             self.__validate_data_arrays(struct)
@@ -818,6 +818,17 @@ class Internal(Base_struct_API):
                 file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', het[0], het[1], '', '', formula))
 
 
+            # MODEL record, for multiple structures.
+            ########################################
+
+            if not struct_index and len(self.structural_data) > 1:
+                # Print out.
+                print "\nMODEL " + `index+1`
+
+                # Write the model record.
+                file.write("%-6s    %4i\n" % ('MODEL', index+1))
+
+
             # Add the atomic coordinate records (ATOM, HETATM, and TER).
             ############################################################
 
@@ -923,6 +934,18 @@ class Internal(Base_struct_API):
 
                         # Increment the CONECT record count.
                         num_conect = num_conect + 1
+
+
+            # ENDMDL record, for multiple structures.
+            ########################################
+
+            if not struct_index and len(self.structural_data) > 1:
+                # Print out.
+                print "Creating the ENDMDL record."
+
+                # Write the model record.
+                file.write("%-6s\n" % 'ENDMDL')
+
 
 
         # MASTER record.
