@@ -433,8 +433,8 @@ class Main:
             # Tests.
             for param in params:
                 # Get the parameter values.
-                prev_val = getattr(prev_pipe.diff, param)
-                curr_val = getattr(cdp.diff, param)
+                prev_val = getattr(prev_pipe.diff_tensor, param)
+                curr_val = getattr(cdp.diff_tensor, param)
 
                 # Test if not identical.
                 if prev_val != curr_val:
