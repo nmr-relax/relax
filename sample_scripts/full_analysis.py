@@ -262,14 +262,8 @@ class Main:
                     # Sequential optimisation of all model-free models (function must be modified to suit).
                     self.multi_model()
 
-                    # Create the final data pipe (for model selection and final optimisation).
-                    name = 'final'
-                    if ds.has_key(name):
-                        pipe.delete(name)
-                    pipe.create(name, 'mf')
-
                     # Model selection.
-                    self.model_selection(dir=self.base_dir + 'aic')
+                    self.model_selection(pipe='final', dir=self.base_dir + 'aic')
 
                     # Final optimisation of all diffusion and model-free parameters.
                     fix('all', fixed=False)
