@@ -83,6 +83,7 @@ class Main:
         self.multi_model(local_tm=False)
 
         # Model selection.
+        pipe.delete('aic')
         self.model_selection(pipe='aic')
 
 
