@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for model minimisation/optimisation."""
+
 # Python module imports.
 from re import search
 

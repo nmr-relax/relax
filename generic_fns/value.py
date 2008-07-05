@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for the manipulation of parameter and constant values."""
+
 # Python module imports.
 from numpy import ndarray, zeros
 from re import compile, match

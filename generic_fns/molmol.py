@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for interfacing with Molmol."""
+
 # Python module imports.
 from os import popen
 from string import split

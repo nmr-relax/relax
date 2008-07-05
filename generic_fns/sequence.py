@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for handling the molecule, residue, and spin sequence."""
+
 # Python module imports.
 from copy import deepcopy
 

@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for the manipulation of angular information."""
+
 # Python module imports.
 from math import acos, sin
 from numpy import dot

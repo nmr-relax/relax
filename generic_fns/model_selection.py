@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for selecting the best model."""
+
 # Python module imports.
 from math import log
 

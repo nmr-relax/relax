@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for interfacing with VMD."""
+
 # Python module imports.
 module_avail = False
 try:

@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for selecting and deselecting spins."""
+
 # Python module imports
 from warnings import warn
 
