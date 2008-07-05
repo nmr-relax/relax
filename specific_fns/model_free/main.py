@@ -344,6 +344,9 @@ class Model_free_main:
         @rtype:                 numpy diagonal matrix
         """
 
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
         # Initialise.
         if num_params == 0:
             scaling_matrix = zeros((0, 0), float64)
