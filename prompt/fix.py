@@ -54,13 +54,10 @@ class Fix:
         'diff' - the diffusion tensor parameters.  This will allow all diffusion tensor parameters
         to be toggled.
 
-        an integer - if an integer number is given, then all parameters for the residue
-        corresponding to that number will be toggled.
-
-        'all_res' - using this keyword, all parameters from all residues will be toggled.
+        'all_spins' - using this keyword, all parameters from all spins will be toggled.
 
         'all' - all parameter will be toggled.  This is equivalent to combining both 'diff' and
-        'all_res'.
+        'all_spins'.
 
 
         The flag 'fixed', if set to True, will fix parameters during optimisation whereas a value of
