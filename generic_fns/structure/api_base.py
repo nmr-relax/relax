@@ -420,7 +420,7 @@ class Base_struct_API:
 
 
         ENDMDL record
-        ------------
+        -------------
 
         The end of model record, for multiple structures.  The format of the record is::
          __________________________________________________________________________________________
