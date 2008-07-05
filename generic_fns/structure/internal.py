@@ -916,14 +916,14 @@ class Internal(Base_struct_API):
                         bonded = ['', '', '', '']
 
 
-            # MASTER record.
-            ################
+        # MASTER record.
+        ################
 
-            # Print out.
-            print "Creating the MASTER record."
+        # Print out.
+        print "Creating the MASTER record."
 
-            # Write the MASTER record.
-            file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data), 0, 0, 0, 0, 0, len(struct.atom_num), 1, connect_count, 0))
+        # Write the MASTER record.
+        file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data), 0, 0, 0, 0, 0, len(struct.atom_num), 1, connect_count, 0))
 
 
         # END.
