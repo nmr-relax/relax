@@ -246,9 +246,6 @@ class N_state_model(Common_functions):
             generic_fns.structure.geometric.generate_vector_dist(structure=structure, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=inc)
             generic_fns.structure.geometric.stitch_cap_to_cone(structure=structure, max_angle=angle, inc=inc)
 
-        # Terminate the chain.
-        structure.terminate(res_num=res_num)
-
         # Create the PDB file.
         print "\nGenerating the PDB file."
         pdb_file = open_write_file(file, dir, force=force)

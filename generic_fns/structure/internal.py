@@ -640,34 +640,6 @@ class Internal(Base_struct_API):
             self.__fill_object_from_pdb(records, len(self.structural_data)-1)
 
 
-    def terminate(self, model=None):
-        """Method for terminating the chain by adding a TER record to the structural data object.
-
-        The residue number and name are taken from the last atom in the current structural object.
-
-
-        @keyword model:     The model to add the atom to.  If not supplied and multiple models
-                            exist, then the atom will be added to all models.
-        @type model:        None or int
-        """
-
-        # Loop over the models.
-        for i in xrange(len(self.structural_data)):
-            # Alias the structure.
-            struct = self.structural_data[i]
-
-            # Skip non-matching models.
-            if model != None and model != struct.model:
-                continue
-
-            # The name and number of the last residue.
-            res_name = struct.res_name[-1]
-            res_num = struct.res_num[-1]
-
-            # Add the TER 'atom'.
-            self.atom_add(pdb_record='TER', res_name=res_name, res_num=res_num, model=i)
-
-
     def write_pdb(self, file, struct_index=None):
         """Method for the creation of a PDB file from the structural data.
 

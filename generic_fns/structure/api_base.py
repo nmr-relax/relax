@@ -231,18 +231,6 @@ class Base_struct_API:
         return len(self.structural_data)
 
 
-    def terminate(self, model=None):
-        """Prototype method stub for terminating the structural chain.
-
-        @keyword model:     The model to add the atom to.  If not supplied and multiple models
-                            exist, then the atom will be added to all models.
-        @type model:        None or int
-        """
-
-        # Raise the error.
-        raise RelaxImplementError
-
-
     def write_pdb(self, file):
         """Prototype method stub for the creation of a PDB file from the structural data.
 
