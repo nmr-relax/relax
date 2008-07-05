@@ -240,7 +240,7 @@ class Base_struct_API:
         ===============
 
         The following information about the PDB records has been taken from the "Protein Data Bank
-        Contents Guide: Atomic Coordinate Entry Format Description" version 3.1, February 11, 2008".
+        Contents Guide: Atomic Coordinate Entry Format Description" version 3.1, February 11, 2008.
 
         HET record
         ----------
