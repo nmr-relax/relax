@@ -691,9 +691,16 @@ class Internal(Base_struct_API):
         @type struct_index:     int
         """
 
+        # Initialise record counts.
+        num_hetatm = 0
+        num_atom = 0
+        num_ter = 0
+        num_conect = 0
+
         # Write some initial remarks.
         file.write("REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.1, 1-AUG-2007\n")
         file.write("REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM)\n")
+        num_remark = 2
 
         # Loop over the structures.
         for i in xrange(len(self.structural_data)):
@@ -854,14 +861,17 @@ class Internal(Base_struct_API):
                 # Write the ATOM record.
                 if struct.pdb_record[i] == 'ATOM':
                     file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
+                    num_atom = num_atom + 1
 
                 # Write the HETATM record.
                 if struct.pdb_record[i] == 'HETATM':
                     file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
+                    num_hetatm = num_hetatm + 1
 
                 # Write the TER record.
                 if struct.pdb_record[i] == 'TER':
                     file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', atom_num, res_name, chain_id, res_num, ''))
+                    num_ter = num_ter + 1
 
 
             # Create the CONECT records.
@@ -870,7 +880,6 @@ class Internal(Base_struct_API):
             # Print out.
             print "Creating the CONECT records."
 
-            connect_count = 0
             for i in xrange(len(struct.atom_name)):
                 # No bonded atoms, hence no CONECT record is required.
                 if not len(struct.bonded[i]):
@@ -907,13 +916,13 @@ class Internal(Base_struct_API):
                         # Write the CONECT record.
                         file.write("%-6s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('CONECT', i+1, bonded[0], bonded[1], bonded[2], bonded[3], '', '', '', '', '', ''))
 
-                        # Increment the CONECT record count.
-                        connect_count = connect_count + 1
-
                         # Reset the flush flag, the bonded atom count, and the bonded atom names.
                         flush = False
                         bonded_index = 0
                         bonded = ['', '', '', '']
+
+                        # Increment the CONECT record count.
+                        num_conect = num_conect + 1
 
 
         # MASTER record.
@@ -923,7 +932,7 @@ class Internal(Base_struct_API):
         print "Creating the MASTER record."
 
         # Write the MASTER record.
-        file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data), 0, 0, 0, 0, 0, len(struct.atom_num), 1, connect_count, 0))
+        file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data), 0, 0, 0, 0, 0, num_atom+num_hetatm, num_ter, num_conect, 0))
 
 
         # END.
