@@ -48,6 +48,41 @@ class Main:
         self.model_selection(pipe='aic')
 
 
+        #######################
+        # Spherical diffusion #
+        #######################
+
+        # Initial round of optimisation.
+        ################################
+
+        # Copy the model selection data pipe to a new pipe for the spherical diffusion tensor.
+        pipe.copy('aic', 'sphere')
+
+        # Remove the tm parameter.
+        model_free.remove_tm()
+
+        # Set up the diffusion tensor.
+        diffusion_tensor.init(10e-9, fixed=False)
+
+        # Minimise just the diffusion tensor.
+        fix('all_res')
+        grid_search(inc=GRID_INC)
+        minimise(MIN_ALGOR)
+
+        # Write the results.
+        results.write(file='devnull', force=True)
+
+
+        # Normal optimisation.
+        ######################
+
+        # Sequential optimisation of all model-free models.
+        self.multi_model(local_tm=False)
+
+        # Model selection.
+        self.model_selection(pipe='aic')
+
+
     def model_selection(self, pipe=None):
         """Model selection function."""
 
