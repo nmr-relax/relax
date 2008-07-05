@@ -980,10 +980,15 @@ class Mf_minimise:
             # Minimisation.
             ###############
 
+            # Constrained optimisation.
             if constraints:
                 results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=verbosity)
+
+            # Unconstrained optimisation.
             else:
                 results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
+
+            # Disassemble the results.
             if results == None:
                 continue
             param_vector, func, iter, fc, gc, hc, warning = results
