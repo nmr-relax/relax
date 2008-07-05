@@ -697,7 +697,11 @@ class Internal(Base_struct_API):
         num_ter = 0
         num_conect = 0
 
+        # Print out.
+        print "\nCreating the PDB records\n"
+
         # Write some initial remarks.
+        print "REMARK"
         file.write("REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.1, 1-AUG-2007\n")
         file.write("REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM)\n")
         num_remark = 2
@@ -791,7 +795,7 @@ class Internal(Base_struct_API):
         ##################
 
         # Print out.
-        print "Creating the HET records."
+        print "HET"
 
         # Write the HET records.
         for het in het_data_coll:
@@ -802,7 +806,7 @@ class Internal(Base_struct_API):
         #####################
 
         # Print out.
-        print "Creating the HETNAM records."
+        print "HETNAM"
 
         # Loop over the non-standard residues.
         residues = []
@@ -826,7 +830,7 @@ class Internal(Base_struct_API):
         #####################
 
         # Print out.
-        print "Creating the FORMUL records."
+        print "FORMUL"
 
         # Loop over the non-standard residues and generate and write the chemical formula.
         residues = []
@@ -877,7 +881,7 @@ class Internal(Base_struct_API):
             ############################################################
 
             # Print out.
-            print "Creating the atomic coordinate records (ATOM, HETATM, and TER)."
+            print "ATOM, HETATM, TER"
 
             # Loop over the atomic data.
             for i in xrange(len(struct.atom_name)):
@@ -934,7 +938,7 @@ class Internal(Base_struct_API):
 
             if not struct_index and len(self.structural_data) > 1:
                 # Print out.
-                print "Creating the ENDMDL record."
+                print "ENDMDL"
 
                 # Write the model record.
                 file.write("%-6s\n" % 'ENDMDL')
@@ -944,7 +948,7 @@ class Internal(Base_struct_API):
             ############################
 
             # Print out.
-            print "Creating the CONECT records."
+            print "CONECT"
 
             for i in xrange(len(struct.atom_name)):
                 # No bonded atoms, hence no CONECT record is required.
@@ -996,7 +1000,7 @@ class Internal(Base_struct_API):
         ################
 
         # Print out.
-        print "Creating the MASTER record."
+        print "\nMASTER"
 
         # Write the MASTER record.
         file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data), 0, 0, 0, 0, 0, num_atom+num_hetatm, num_ter, num_conect, 0))
@@ -1006,7 +1010,7 @@ class Internal(Base_struct_API):
         ######
 
         # Print out.
-        print "Creating the END record."
+        print "END"
 
         # Write the END record.
         file.write("END\n")
