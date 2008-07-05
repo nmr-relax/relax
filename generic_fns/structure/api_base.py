@@ -86,19 +86,20 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def atom_connect(self, index1=None, index2=None, model=None):
+    def atom_connect(self, index1=None, index2=None, struct_index=None):
         """Prototype method stub for connecting two atoms within the data structure object.
 
-        This method should connect the atoms corresponding to the two indecies.
+        This method should connect the atoms corresponding to the indecies.
 
 
-        @keyword index1:    The index of the first atom.
-        @type index1:       int
-        @keyword index2:    The index of the second atom.
-        @type index2:       int
-        @keyword model:     The model to add the atom to.  If not supplied and multiple models
-                            exist, then the atom will be added to all models.
-        @type model:        None or int
+        @keyword index1:        The index of the first atom.
+        @type index1:           int
+        @keyword index2:        The index of the second atom.
+        @type index2:           int
+        @keyword struct_index:  The index of the structure to connect the atoms of.  If not supplied
+                                and multiple structures or models are loaded, then the atoms will be
+                                connected within all structures.
+        @type struct_index:     None or int
         """
 
         # Raise the error.
