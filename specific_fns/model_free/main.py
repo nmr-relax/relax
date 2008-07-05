@@ -1003,7 +1003,7 @@ class Model_free_main:
         if hasattr(ds[pipe_from], 'diff_tensor'):
             # Duplicate the tensor if it doesn't exist.
             if not hasattr(ds[pipe_to], 'diff_tensor'):
-                setattr(ds[pipe_from], 'diff_tensor', deepcopy(ds[pipe_from].diff_tensor))
+                setattr(ds[pipe_to], 'diff_tensor', deepcopy(ds[pipe_from].diff_tensor))
 
             # Otherwise compare the objects inside the container.
             else:
