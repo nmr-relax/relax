@@ -243,7 +243,7 @@ class Main:
                         inc = 6
 
                     # Minimise just the diffusion tensor.
-                    fix('all_res')
+                    fix('all_spins')
                     grid_search(inc=inc)
                     minimise(MIN_ALGOR)
 
