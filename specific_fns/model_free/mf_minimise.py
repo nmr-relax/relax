@@ -506,10 +506,6 @@ class Mf_minimise:
         @type verbosity:            int
         """
 
-        # Make sure that the length of the parameter array is > 0.
-        if num_params == 0:
-            print "Cannot run a grid search on a model with zero parameters, skipping the grid search."
-
         # Test the grid search options.
         self.test_grid_ops(lower=lower, upper=upper, inc=inc, n=num_params)
 
