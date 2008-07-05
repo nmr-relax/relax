@@ -691,6 +691,10 @@ class Internal(Base_struct_API):
         @type struct_index:     int
         """
 
+        # Write some initial remarks.
+        file.write("REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.1, 1-AUG-2007\n")
+        file.write("REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM)\n")
+
         # Loop over the structures.
         for i in xrange(len(self.structural_data)):
             # Skip non-matching structures.
