@@ -58,6 +58,7 @@ class Main:
 
         # Copy the model selection data pipe to a new pipe for the spherical diffusion tensor.
         pipe.copy('aic', 'sphere')
+        pipe.switch('sphere')
 
         # Remove the tm parameter.
         model_free.remove_tm()
@@ -78,6 +79,7 @@ class Main:
         ######################
 
         # Sequential optimisation of all model-free models.
+        pipe.copy('sphere', 'previous')
         self.multi_model(local_tm=False)
 
         # Model selection.
