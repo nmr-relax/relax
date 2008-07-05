@@ -927,10 +927,9 @@ class Internal(Base_struct_API):
                     file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
                     num_hetatm = num_hetatm + 1
 
-                # Write the TER record.
-                if struct.pdb_record[i] == 'TER':
-                    file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', atom_num, res_name, chain_id, res_num, ''))
-                    num_ter = num_ter + 1
+            # Finish off with the TER record.
+            file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', atom_num+1, res_name, chain_id, res_num, ''))
+            num_ter = num_ter + 1
 
 
             # ENDMDL record, for multiple structures.
