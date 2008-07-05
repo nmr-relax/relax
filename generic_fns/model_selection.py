@@ -224,7 +224,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
     for i in xrange(min_instances):
         # Print out.
         print "\nModel index " + `i` + ".\n"
-        print "%-20s %-20s %-20s %-20s %-20s" % ("Run", "Num_params_(k)", "Num_data_sets_(n)", "Chi2", "Criterion")
+        print "%-20s %-20s %-20s %-20s %-20s" % ("Data pipe", "Num_params_(k)", "Num_data_sets_(n)", "Chi2", "Criterion")
 
         # Initial model.
         best_model = None
