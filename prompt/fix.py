@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003, 2004, 2008 Edward d'Auvergne                            #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -35,8 +35,8 @@ class Fix:
         self.relax = relax
 
 
-    def fix(self, element=None, fixed=1):
-        """Function for either fixing or allowing parameter values to change.
+    def fix(self, element=None, fixed=True):
+        """Function for either fixing or allowing parameter values to change during optimisation.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -63,11 +63,8 @@ class Fix:
         'all_res'.
 
 
-        The flag 'fixed', if set to 1, will fix parameters, while a value of 0 will allow parameters
-        to vary.
-
-
-        Only current parameters will be affected.
+        The flag 'fixed', if set to True, will fix parameters during optimisation whereas a value of
+        False will allow parameters to vary.
         """
 
         # Function intro text.
@@ -82,8 +79,8 @@ class Fix:
             raise RelaxIntStrError, ('element', element)
 
         # The fixed argument.
-        if type(fixed) != int or (fixed != 0 and fixed != 1):
-            raise RelaxBinError, ('fixed', fixed)
+        if type(fixed) != bool:
+            raise RelaxBoolError, ('fixed', fixed)
 
         # Execute the functional code.
         fix.fix(element=element, fixed=fixed)
