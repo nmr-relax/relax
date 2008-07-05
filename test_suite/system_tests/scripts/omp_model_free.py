@@ -10,8 +10,9 @@ from data import Relax_data_store; ds = Relax_data_store()
 # Path of the relaxation data.
 DATA_PATH = sys.path[-1] + '/test_suite/shared_data/model_free/OMP'
 
-# Mini subset of local tm data pipes.
+# Mini subset of local tm and model-free data pipes.
 LOCAL_TM_MODELS = ['tm0', 'tm1', 'tm2']
+MF_MODELS = ['m0', 'm1', 'm2']
 
 # The bond length, CSA values, heteronucleus type, and proton type.
 BOND_LENGTH = 1.02 * 1e-10
