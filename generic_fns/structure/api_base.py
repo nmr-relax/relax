@@ -250,13 +250,12 @@ class Base_struct_API:
         ===============
 
         The following information about the PDB records has been taken from the "Protein Data Bank
-        Contents Guide: Atomic Coordinate Entry Format Description" version 2.1 (draft),
-        October 25, 1996.
+        Contents Guide: Atomic Coordinate Entry Format Description" version 3.1, February 11, 2008".
 
         HET record
         ----------
 
-        The HET record describes non-standard residues.  The format is of the record is::
+        The HET record describes non-standard residues.  The format of the record is::
          __________________________________________________________________________________________
          |         |              |              |                                                |
          | Columns | Data type    | Field        | Definition                                     |
@@ -293,7 +292,7 @@ class Base_struct_API:
         FORMUL record
         -------------
 
-        The chemical formula for non-standard groups. The format is of the record is::
+        The chemical formula for non-standard groups. The format of the record is::
          __________________________________________________________________________________________
          |         |              |              |                                                |
          | Columns | Data type    | Field        | Definition                                     |
@@ -308,11 +307,25 @@ class Base_struct_API:
          |_________|______________|______________|________________________________________________|
 
 
+        MODEL record
+        ------------
+
+        The model number, for multiple structures.  The format of the record is::
+         __________________________________________________________________________________________
+         |         |              |              |                                                |
+         | Columns | Data type    | Field        | Definition                                     |
+         |_________|______________|______________|________________________________________________|
+         |         |              |              |                                                |
+         |  1 -  6 | Record name  | "MODEL "     |                                                |
+         | 11 - 14 | Integer      | serial       | Model serial number.                           |
+         |_________|______________|______________|________________________________________________|
+
+
         ATOM record
         -----------
 
         The ATOM record contains the atomic coordinates for atoms belonging to standard residues.
-        The format is of the record is::
+        The format of the record is::
          __________________________________________________________________________________________
          |         |              |              |                                                |
          | Columns | Data type    | Field        | Definition                                     |
@@ -341,7 +354,7 @@ class Base_struct_API:
         -------------
 
         The HETATM record contains the atomic coordinates for atoms belonging to non-standard
-        groups.  The format is of the record is::
+        groups.  The format of the record is::
          __________________________________________________________________________________________
          |         |              |              |                                                |
          | Columns | Data type    | Field        | Definition                                     |
@@ -376,7 +389,7 @@ class Base_struct_API:
         code as the terminal residue. The serial number of the TER record is one number greater than
         the serial number of the ATOM/HETATM preceding the TER."}
 
-        The format is of the record is::
+        The format of the record is::
          __________________________________________________________________________________________
          |         |              |              |                                                |
          | Columns | Data type    | Field        | Definition                                     |
@@ -395,7 +408,7 @@ class Base_struct_API:
         -------------
 
         The connectivity between atoms.  This is required for all HET groups and for non-standard
-        bonds.  The format is of the record is::
+        bonds.  The format of the record is::
          __________________________________________________________________________________________
          |         |              |              |                                                |
          | Columns | Data type    | Field        | Definition                                     |
@@ -419,7 +432,7 @@ class Base_struct_API:
         MASTER record
         -------------
 
-        The control record for bookkeeping.  The format is of the record is::
+        The control record for bookkeeping.  The format of the record is::
          __________________________________________________________________________________________
          |         |              |              |                                                |
          | Columns | Data type    | Field        | Definition                                     |
@@ -446,7 +459,7 @@ class Base_struct_API:
         END record
         ----------
 
-        The end of the PDB file.  The format is of the record is::
+        The end of the PDB file.  The format of the record is::
          __________________________________________________________________________________________
          |         |              |              |                                                |
          | Columns | Data type    | Field        | Definition                                     |
