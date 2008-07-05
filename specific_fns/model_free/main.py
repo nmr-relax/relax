@@ -973,8 +973,8 @@ class Model_free_main:
 
         # Duplicate all non-sequence specific data.
         for data_name in dir(ds[pipe_from]):
-            # Skip the molecule, residue, and spin data structure.
-            if data_name == 'mol':
+            # Skip the container objects.
+            if data_name in ['mol', 'diff_tensor']:
                 continue
 
             # Skip special objects.
@@ -998,6 +998,33 @@ class Model_free_main:
 
             # Duplicate the data.
             setattr(ds[pipe_to], data_name, deepcopy(data_from))
+
+        # Diffusion tensor comparison.
+        if hasattr(ds[pipe_from], 'diff_tensor'):
+            # Duplicate the tensor if it doesn't exist.
+            if not hasattr(ds[pipe_to], 'diff_tensor'):
+                setattr(ds[pipe_from], 'diff_tensor', deepcopy(ds[pipe_from].diff_tensor))
+
+            # Otherwise compare the objects inside the container.
+            else:
+                # Loop over the modifiable objects.
+                for data_name in ds[pipe_from].diff_tensor.__mod_attr__:
+                    # Get the original object.
+                    data_from = None
+                    if hasattr(ds[pipe_from].diff_tensor, data_name):
+                        data_from = getattr(ds[pipe_from].diff_tensor, data_name)
+
+                    # Get the target object.
+                    if data_from and not hasattr(ds[pipe_to].diff_tensor, data_name):
+                        raise RelaxError, "The diffusion tensor object " + `data_name` + " of the " + `pipe_from` + " data pipe is not located in the " + `pipe_to` + " data pipe."
+                    elif data_from:
+                        data_to = getattr(ds[pipe_to].diff_tensor, data_name)
+                    else:
+                        continue
+
+                    # The data must match!
+                    if data_from != data_to:
+                        raise RelaxError, "The object " + `data_name` + "." + `data_name` + " is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
 
         # Determine the model type.
         model_type = self.determine_model_type()
