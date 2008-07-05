@@ -929,6 +929,17 @@ class Internal(Base_struct_API):
                     num_ter = num_ter + 1
 
 
+            # ENDMDL record, for multiple structures.
+            ########################################
+
+            if not struct_index and len(self.structural_data) > 1:
+                # Print out.
+                print "Creating the ENDMDL record."
+
+                # Write the model record.
+                file.write("%-6s\n" % 'ENDMDL')
+
+
             # Create the CONECT records.
             ############################
 
@@ -978,17 +989,6 @@ class Internal(Base_struct_API):
 
                         # Increment the CONECT record count.
                         num_conect = num_conect + 1
-
-
-            # ENDMDL record, for multiple structures.
-            ########################################
-
-            if not struct_index and len(self.structural_data) > 1:
-                # Print out.
-                print "Creating the ENDMDL record."
-
-                # Write the model record.
-                file.write("%-6s\n" % 'ENDMDL')
 
 
 
