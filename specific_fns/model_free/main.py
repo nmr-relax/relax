@@ -1712,9 +1712,9 @@ class Model_free_main:
 
 
     def overfit_deselect(self):
-        """Function for deselecting residues without sufficient data to support minimisation"""
+        """Deselect spins which have insufficient data to support minimisation."""
 
-        # Test sequence data exists.
+        # Test if sequence data exists.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
@@ -1723,7 +1723,7 @@ class Model_free_main:
 
         # Is structural data required?
         need_vect = False
-        if hasattr(cdp, 'diff') and (cdp.diff_tensor.type == 'spheroid' or cdp.diff_tensor.type == 'ellipsoid'):
+        if hasattr(cdp, 'diff_tensor') and (cdp.diff_tensor.type == 'spheroid' or cdp.diff_tensor.type == 'ellipsoid'):
             need_vect = True
 
         # Loop over the sequence.
@@ -1737,7 +1737,7 @@ class Model_free_main:
                 spin.select = False
 
             # Require at least as many data points as params to prevent over-fitting.
-            elif hasattr(spin, 'params') and len(spin.params) > len(spin.relax_data):
+            elif hasattr(spin, 'params') and spin.params and len(spin.params) > len(spin.relax_data):
                 spin.select = False
 
             # Test for structural data if required.
