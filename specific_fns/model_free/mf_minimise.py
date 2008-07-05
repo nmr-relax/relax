@@ -782,6 +782,9 @@ class Mf_minimise:
             if not hasattr(spin, 'proton_type'):
                 raise RelaxProtonTypeError
 
+        # Reset the minimisation statistics.
+        self.reset_min_stats()
+
         # Determine the model type.
         model_type = self.determine_model_type()
 
@@ -1261,6 +1264,35 @@ class Mf_minimise:
 
         # Return all the data.
         return relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params
+
+
+    def reset_min_stats(self):
+        """Reset all the minimisation statistics.
+
+        All global and spin specific values will be set to None.
+        """
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
+        # Global stats.
+        if hasattr(cdp, 'chi2'):
+            cdp.chi2 = None
+            cdp.iter = None
+            cdp.f_count = None
+            cdp.g_count = None
+            cdp.h_count = None
+            cdp.warning = None
+
+        # Spin specific stats.
+        for spin in spin_loop():
+            if hasattr(spin, 'chi2'):
+                spin.chi2 = None
+                spin.iter = None
+                spin.f_count = None
+                spin.g_count = None
+                spin.h_count = None
+                spin.warning = None
 
 
     def test_grid_size(self, min_options, verbosity=1):
