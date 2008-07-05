@@ -703,8 +703,13 @@ class Internal(Base_struct_API):
         num_remark = 2
 
 
-        # Hetrogen section.
-        ###################
+        ####################
+        # Hetrogen section #
+        ####################
+
+        # Initialise the hetrogen info array.
+        het_data = []
+        het_data_coll = []
 
         # Loop over the structures.
         for index in xrange(len(self.structural_data)):
@@ -718,16 +723,10 @@ class Internal(Base_struct_API):
             # Check the validity of the data.
             self.__validate_data_arrays(struct)
 
+            # Append an empty array for this structure.
+            het_data.append([])
 
             # Collect the non-standard residue info.
-            ########################################
-
-            # Initialise some data.
-            H_count = 0
-            C_count = 0
-            het_data = []
-
-            # Loop over the atomic data.
             for i in xrange(len(struct.atom_name)):
                 # Skip non-HETATM records and HETATM records with no residue info.
                 if struct.pdb_record[i] != 'HETATM' or struct.res_name[i] == None:
@@ -735,95 +734,123 @@ class Internal(Base_struct_API):
 
                 # If the residue is not already stored initialise a new het_data element.
                 # (residue number, residue name, chain ID, number of atoms, atom count array).
-                if not het_data or not struct.res_num[i] == het_data[-1][0]:
-                    het_data.append([struct.res_num[i], struct.res_name[i], struct.chain_id[i], 0, []])
+                if not het_data[index] or not struct.res_num[i] == het_data[index][-1][0]:
+                    het_data[index].append([struct.res_num[i], struct.res_name[i], struct.chain_id[i], 0, []])
 
                     # Catch missing chain_ids.
-                    if het_data[-1][2] == None:
-                        het_data[-1][2] = ''
+                    if het_data[index][-1][2] == None:
+                        het_data[index][-1][2] = ''
 
                 # Total atom count.
-                het_data[-1][3] = het_data[-1][3] + 1
+                het_data[index][-1][3] = het_data[index][-1][3] + 1
 
                 # Find if the atom has already a count entry.
                 entry = False
-                for j in xrange(len(het_data[-1][4])): 
-                    if struct.element[i] == het_data[-1][4][j][0]:
+                for j in xrange(len(het_data[index][-1][4])): 
+                    if struct.element[i] == het_data[index][-1][4][j][0]:
                         entry = True
 
                 # Create a new specific atom count entry.
                 if not entry:
-                    het_data[-1][4].append([struct.element[i], 0])
+                    het_data[index][-1][4].append([struct.element[i], 0])
 
                 # Increment the specific atom count.
-                for j in xrange(len(het_data[-1][4])): 
-                    if struct.element[i] == het_data[-1][4][j][0]:
-                        het_data[-1][4][j][1] = het_data[-1][4][j][1] + 1
+                for j in xrange(len(het_data[index][-1][4])): 
+                    if struct.element[i] == het_data[index][-1][4][j][0]:
+                        het_data[index][-1][4][j][1] = het_data[index][-1][4][j][1] + 1
+
+            # Create the collective hetrogen info data structure.
+            for i in xrange(len(het_data[index])):
+                # Find the entry in the collective structure.
+                found = False
+                for j in xrange(len(het_data_coll)):
+                    # Matching residue numbers.
+                    if het_data[index][i][0] == het_data_coll[j][0]:
+                        # Change the flag.
+                        found = True
+
+                        # The checks.
+                        if het_data_coll[i][1] != het_data[index][i][1]:
+                            raise RelaxError, "The " + `het_data[index][i][1]` + " residue name of hetrogen " + `het_data[index][i][0]` + " " + het_data[index][i][1] + " of structure " + `index` + " does not match the " + `het_data_coll[j][1]` + " name of the previous structures."
+
+                        elif het_data_coll[i][2] != het_data[index][i][2]:
+                            raise RelaxError, "The hetrogen chain id " + `het_data[index][i][2]` + " does not match " + `het_data_coll[j][2]` + " of residue " + `het_data_coll[j][0]` + " " + het_data_coll[j][1] + " of the previous structures."
+
+                        elif het_data_coll[i][3] != het_data[index][i][3]:
+                            raise RelaxError, "The " + `het_data[index][i][3]` + " atoms of hetrogen " + `het_data_coll[j][0]` + " " + het_data_coll[j][1] + " of structure " + `index` + " does not match the " + `het_data_coll[j][3]` + " of the previous structures."
+
+                        elif het_data_coll[i][4] != het_data[index][i][4]:
+                            raise RelaxError, "The atom counts " + `het_data[index][i][4]` +  " for the hetrogen residue " + `het_data_coll[j][0]` + " " + het_data_coll[j][1] + " of structure " + `index` + " do not match the counts " + `het_data_coll[j][4]` + " of the previous structures."
+
+                # If there is no match, add the new residue to the collective.
+                if not found:
+                    het_data_coll.append(het_data[index][i])
 
 
-            # The HET records.
-            ##################
+        # The HET records.
+        ##################
 
-            # Print out.
-            print "Creating the HET records."
+        # Print out.
+        print "Creating the HET records."
 
-            # Write the HET records.
-            for het in het_data:
-                file.write("%-6s %3s  %1s%4s%1s  %5s     %-40s\n" % ('HET', het[2], het[1], het[0], '', het[3], ''))
-
-
-            # The HETNAM records.
-            #####################
-
-            # Print out.
-            print "Creating the HETNAM records."
-
-            # Loop over the non-standard residues.
-            residues = []
-            for het in het_data:
-                # Test if the residue HETNAM record as already been written (otherwise store its name).
-                if het[1] in residues:
-                    continue
-                else:
-                    residues.append(het[1])
-
-                # Get the chemical name.
-                chemical_name = self.__get_chemical_name(het[1])
-                if not chemical_name:
-                    chemical_name = 'Unknown'
-
-                # Write the HETNAM records.
-                file.write("%-6s  %2s %3s %-55s\n" % ('HETNAM', '', het[1], chemical_name))
+        # Write the HET records.
+        for het in het_data_coll:
+            file.write("%-6s %3s  %1s%4s%1s  %5s     %-40s\n" % ('HET', het[2], het[1], het[0], '', het[3], ''))
 
 
-            # The FORMUL records.
-            #####################
-
-            # Print out.
-            print "Creating the FORMUL records."
-
-            # Loop over the non-standard residues and generate and write the chemical formula.
-            residues = []
-            for het in het_data:
-                # Test if the residue HETNAM record as already been written (otherwise store its name).
-                if het[1] in residues:
-                    continue
-                else:
-                    residues.append(het[1])
-
-                # Initialise the chemical formula.
-                formula = ''
-
-                # Loop over the atoms.
-                for atom_count in het[4]:
-                    formula = formula + atom_count[0] + `atom_count[1]`
-
-                # The FORMUL record (chemical formula).
-                file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', het[0], het[1], '', '', formula))
-
-
-        # Coordinate section.
+        # The HETNAM records.
         #####################
+
+        # Print out.
+        print "Creating the HETNAM records."
+
+        # Loop over the non-standard residues.
+        residues = []
+        for het in het_data_coll:
+            # Test if the residue HETNAM record as already been written (otherwise store its name).
+            if het[1] in residues:
+                continue
+            else:
+                residues.append(het[1])
+
+            # Get the chemical name.
+            chemical_name = self.__get_chemical_name(het[1])
+            if not chemical_name:
+                chemical_name = 'Unknown'
+
+            # Write the HETNAM records.
+            file.write("%-6s  %2s %3s %-55s\n" % ('HETNAM', '', het[1], chemical_name))
+
+
+        # The FORMUL records.
+        #####################
+
+        # Print out.
+        print "Creating the FORMUL records."
+
+        # Loop over the non-standard residues and generate and write the chemical formula.
+        residues = []
+        for het in het_data_coll:
+            # Test if the residue HETNAM record as already been written (otherwise store its name).
+            if het[1] in residues:
+                continue
+            else:
+                residues.append(het[1])
+
+            # Initialise the chemical formula.
+            formula = ''
+
+            # Loop over the atoms.
+            for atom_count in het[4]:
+                formula = formula + atom_count[0] + `atom_count[1]`
+
+            # The FORMUL record (chemical formula).
+            file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', het[0], het[1], '', '', formula))
+
+
+        ######################
+        # Coordinate section #
+        ######################
 
         # Loop over the structures.
         for index in xrange(len(self.structural_data)):
