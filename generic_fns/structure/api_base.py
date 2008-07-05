@@ -233,7 +233,7 @@ class Base_struct_API:
         return len(self.structural_data)
 
 
-    def write_pdb(self, file):
+    def write_pdb(self, file, struct_index=None):
         """Prototype method stub for the creation of a PDB file from the structural data.
 
         The PDB records
@@ -473,8 +473,11 @@ class Base_struct_API:
          |_________|______________|______________|________________________________________________|
 
 
-        @param file:        The PDB file object.  This object must be writable.
-        @type file:         file object
+        @param file:            The PDB file object.  This object must be writable.
+        @type file:             file object
+        @param struct_index:    The index of the structural container to write.  If None, all
+                                structures will be written.
+        @type struct_index:     int
         """
 
         # Raise the error.
