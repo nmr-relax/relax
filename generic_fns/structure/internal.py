@@ -919,7 +919,7 @@ class Internal(Base_struct_API):
             print "Creating the MASTER record."
 
             # Write the MASTER record.
-            file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data), 0, 0, 0, 0, 0, len(struct), 1, connect_count, 0))
+            file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data), 0, 0, 0, 0, 0, len(struct.atom_num), 1, connect_count, 0))
 
 
         # END.
