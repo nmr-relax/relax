@@ -48,8 +48,11 @@ class Base_struct_API:
         # The parser specific data object.
         self.structural_data = []
 
+        # Initialise the file name list.
+        self.file_name = []
 
-    def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, model=None):
+
+    def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, struct_index=None):
         """Prototype method stub for adding an atom to the structural data object.
 
         This method will create the key-value pair for the given atom.
@@ -73,35 +76,37 @@ class Base_struct_API:
         @type segment_id:       str or None
         @keyword element:       The element symbol.
         @type element:          str or None
-        @keyword model:         The model to add the atom to.  If not supplied and multiple models
-                                exist, then the atom will be added to all models.
-        @type model:            None or int
+        @keyword struct_index:  The index of the structure to add the atom to.  If not supplied and
+                                multiple structures or models are loaded, then the atom will be
+                                added to all structures.
+        @type struct_index:     None or int
         """
 
         # Raise the error.
         raise RelaxImplementError
 
 
-    def atom_connect(self, index1=None, index2=None, model=None):
+    def atom_connect(self, index1=None, index2=None, struct_index=None):
         """Prototype method stub for connecting two atoms within the data structure object.
 
-        This method should connect the atoms corresponding to the two indecies.
+        This method should connect the atoms corresponding to the indecies.
 
 
-        @keyword index1:    The index of the first atom.
-        @type index1:       int
-        @keyword index2:    The index of the second atom.
-        @type index2:       int
-        @keyword model:     The model to add the atom to.  If not supplied and multiple models
-                            exist, then the atom will be added to all models.
-        @type model:        None or int
+        @keyword index1:        The index of the first atom.
+        @type index1:           int
+        @keyword index2:        The index of the second atom.
+        @type index2:           int
+        @keyword struct_index:  The index of the structure to connect the atoms of.  If not supplied
+                                and multiple structures or models are loaded, then the atoms will be
+                                connected within all structures.
+        @type struct_index:     None or int
         """
 
         # Raise the error.
         raise RelaxImplementError
 
 
-    def atom_loop(self, atom_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False):
+    def atom_loop(self, atom_id=None, str_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
         """Prototype generator method stub for looping over all atoms in the structural data object.
 
         This method should be designed as a generator (http://www.python.org/dev/peps/pep-0255/).
@@ -122,6 +127,10 @@ class Base_struct_API:
         @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms
                                     matching this selection will be yielded.
         @type atom_id:              str
+        @keyword str_id:            The structure identifier.  This can be the file name, model
+                                    number, or structure number.  If None, then all structures will
+                                    be looped over.
+        @type str_id:               str, int, or None
         @keyword model_num_flag:    A flag which if True will cause the model number to be yielded.
         @type model_num_flag:       bool
         @keyword mol_name_flag:     A flag which if True will cause the molecule name to be yielded.
@@ -140,6 +149,9 @@ class Base_struct_API:
         @keyword pos_flag:          A flag which if True will cause the atomic position to be
                                     yielded.
         @type pos_flag:             bool
+        @keyword ave:               A flag which if True will result in this method returning the
+                                    average atom properties across all loaded structures.
+        @type ave:                  bool
         @return:                    A tuple of atomic information, as described in the docstring.
         @rtype:                     tuple consisting of optional molecule name (str), residue number
                                     (int), residue name (str), atom number (int), atom name(str),
@@ -221,32 +233,19 @@ class Base_struct_API:
         return len(self.structural_data)
 
 
-    def terminate(self, model=None):
-        """Prototype method stub for terminating the structural chain.
-
-        @keyword model:     The model to add the atom to.  If not supplied and multiple models
-                            exist, then the atom will be added to all models.
-        @type model:        None or int
-        """
-
-        # Raise the error.
-        raise RelaxImplementError
-
-
-    def write_pdb(self, file):
+    def write_pdb(self, file, struct_index=None):
         """Prototype method stub for the creation of a PDB file from the structural data.
 
         The PDB records
         ===============
 
         The following information about the PDB records has been taken from the "Protein Data Bank
-        Contents Guide: Atomic Coordinate Entry Format Description" version 2.1 (draft),
-        October 25, 1996.
+        Contents Guide: Atomic Coordinate Entry Format Description" version 3.1, February 11, 2008".
 
         HET record
         ----------
 
-        The HET record describes non-standard residues.  The format is of the record is::
+        The HET record describes non-standard residues.  The format of the record is::
          __________________________________________________________________________________________
          |         |              |              |                                                |
          | Columns | Data type    | Field        | Definition                                     |
@@ -283,7 +282,7 @@ class Base_struct_API:
         FORMUL record
         -------------
 
-        The chemical formula for non-standard groups. The format is of the record is::
+        The chemical formula for non-standard groups. The format of the record is::
          __________________________________________________________________________________________
          |         |              |              |                                                |
          | Columns | Data type    | Field        | Definition                                     |
@@ -298,11 +297,25 @@ class Base_struct_API:
          |_________|______________|______________|________________________________________________|
 
 
+        MODEL record
+        ------------
+
+        The model number, for multiple structures.  The format of the record is::
+         __________________________________________________________________________________________
+         |         |              |              |                                                |
+         | Columns | Data type    | Field        | Definition                                     |
+         |_________|______________|______________|________________________________________________|
+         |         |              |              |                                                |
+         |  1 -  6 | Record name  | "MODEL "     |                                                |
+         | 11 - 14 | Integer      | serial       | Model serial number.                           |
+         |_________|______________|______________|________________________________________________|
+
+
         ATOM record
         -----------
 
         The ATOM record contains the atomic coordinates for atoms belonging to standard residues.
-        The format is of the record is::
+        The format of the record is::
          __________________________________________________________________________________________
          |         |              |              |                                                |
          | Columns | Data type    | Field        | Definition                                     |
@@ -331,7 +344,7 @@ class Base_struct_API:
         -------------
 
         The HETATM record contains the atomic coordinates for atoms belonging to non-standard
-        groups.  The format is of the record is::
+        groups.  The format of the record is::
          __________________________________________________________________________________________
          |         |              |              |                                                |
          | Columns | Data type    | Field        | Definition                                     |
@@ -366,7 +379,7 @@ class Base_struct_API:
         code as the terminal residue. The serial number of the TER record is one number greater than
         the serial number of the ATOM/HETATM preceding the TER."}
 
-        The format is of the record is::
+        The format of the record is::
          __________________________________________________________________________________________
          |         |              |              |                                                |
          | Columns | Data type    | Field        | Definition                                     |
@@ -385,7 +398,7 @@ class Base_struct_API:
         -------------
 
         The connectivity between atoms.  This is required for all HET groups and for non-standard
-        bonds.  The format is of the record is::
+        bonds.  The format of the record is::
          __________________________________________________________________________________________
          |         |              |              |                                                |
          | Columns | Data type    | Field        | Definition                                     |
@@ -406,10 +419,24 @@ class Base_struct_API:
          |_________|______________|______________|________________________________________________|
 
 
+        ENDMDL record
+        ------------
+
+        The end of model record, for multiple structures.  The format of the record is::
+         __________________________________________________________________________________________
+         |         |              |              |                                                |
+         | Columns | Data type    | Field        | Definition                                     |
+         |_________|______________|______________|________________________________________________|
+         |         |              |              |                                                |
+         |  1 -  6 | Record name  | "ENDMDL"     |                                                |
+         |_________|______________|______________|________________________________________________|
+
+
+
         MASTER record
         -------------
 
-        The control record for bookkeeping.  The format is of the record is::
+        The control record for bookkeeping.  The format of the record is::
          __________________________________________________________________________________________
          |         |              |              |                                                |
          | Columns | Data type    | Field        | Definition                                     |
@@ -436,7 +463,7 @@ class Base_struct_API:
         END record
         ----------
 
-        The end of the PDB file.  The format is of the record is::
+        The end of the PDB file.  The format of the record is::
          __________________________________________________________________________________________
          |         |              |              |                                                |
          | Columns | Data type    | Field        | Definition                                     |
@@ -446,8 +473,11 @@ class Base_struct_API:
          |_________|______________|______________|________________________________________________|
 
 
-        @param file:        The PDB file object.  This object must be writable.
-        @type file:         file object
+        @param file:            The PDB file object.  This object must be writable.
+        @type file:             file object
+        @param struct_index:    The index of the structural container to write.  If None, all
+                                structures will be written.
+        @type struct_index:     int
         """
 
         # Raise the error.

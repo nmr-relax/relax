@@ -24,6 +24,7 @@
 from math import sqrt
 from numpy import dot, float64, ndarray, zeros
 from os import F_OK, access
+from re import search
 import sys
 from warnings import warn
 
@@ -35,16 +36,19 @@ from generic_fns.sequence import write_header, write_line
 from generic_fns.structure.internal import Internal
 from generic_fns.structure.scientific import Scientific_data
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPipeError, RelaxNoSequenceError, RelaxPdbError
-from relax_io import get_file_path
+from relax_io import get_file_path, open_write_file
 from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
 
 
 
-def load_spins(spin_id=None):
+def load_spins(spin_id=None, str_id=None):
     """Load the spins from the structural object into the relax data store.
 
     @keyword spin_id:   The molecule, residue, and spin identifier string.
     @type spin_id:      str
+    @keyword str_id:    The structure identifier.  This can be the file name, model number, or
+                        structure number.
+    @type str_id:       int or str
     """
 
     # Test if the current data pipe exists.
@@ -59,7 +63,7 @@ def load_spins(spin_id=None):
     cdp = ds[ds.current_pipe]
 
     # Loop over all atoms of the spin_id selection.
-    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
+    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, str_id=str_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
         # Initialise the identification string.
         id = ''
 
@@ -76,7 +80,7 @@ def load_spins(spin_id=None):
             mol_cont = cdp.mol[0]
 
         # Add the molecule if it doesn't exist.
-        if mol_name and mol_cont == None:
+        if mol_cont == None:
             # Add the molecule.
             cdp.mol.add_item(mol_name=mol_name)
 
@@ -90,7 +94,7 @@ def load_spins(spin_id=None):
         res_cont = return_residue(id)
 
         # Add the residue if it doesn't exist.
-        if res_num and res_name and res_cont == None:
+        if res_cont == None:
             # Add the residue.
             mol_cont.res.add_item(res_name=res_name, res_num=res_num)
 
@@ -104,7 +108,7 @@ def load_spins(spin_id=None):
         spin_cont = return_spin(id)
 
         # Add the spin if it doesn't exist.
-        if atom_name and spin_cont == None:
+        if spin_cont == None:
             # Add the spin.
             res_cont.spin.add_item(spin_name=atom_name, spin_num=atom_num)
 
@@ -160,10 +164,6 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', fail=True, ve
     # Alias the current data pipe.
     cdp = ds[ds.current_pipe]
 
-    # Test if structural data already exists.
-    if hasattr(cdp, 'struct'):
-        raise RelaxPdbError
-
     # The file path.
     file_path = get_file_path(file, dir)
 
@@ -179,11 +179,16 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', fail=True, ve
             warn(RelaxNoPDBFileWarning(file_path))
             return
 
+    # Check that the parser is the same as the currently loaded PDB files.
+    if hasattr(cdp, 'structure') and cdp.structure.id != parser:
+        raise RelaxError, "The " + `parser` + " parser does not match the " + `cdp.structure.id` + " parser of the PDB loaded into the current pipe."
+
     # Place the parser specific structural object into the relax data store.
-    if parser == 'scientific':
-        cdp.structure = Scientific_data()
-    elif parser == 'internal':
-        cdp.structure = Internal()
+    if not hasattr(cdp, 'structure'):
+        if parser == 'scientific':
+            cdp.structure = Scientific_data()
+        elif parser == 'internal':
+            cdp.structure = Internal()
 
     # Load the structures.
     cdp.structure.load_pdb(file_path, model, verbosity)
@@ -300,3 +305,47 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
 
         # Print out of modified spins.
         write_line(sys.stdout, mol_name, res_num, res_name, spin.num, spin.name, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+
+
+def write_pdb(file=None, dir=None, struct_index=None, force=False):
+    """The PDB writing function.
+
+    @keyword file:          The name of the PDB file to write.
+    @type file:             str
+    @keyword dir:           The directory where the PDB file will be placed.  If set to None, then
+                            the file will be placed in the current directory.
+    @type dir:              str or None
+    @keyword stuct_index:   The index of the structure to write.  If set to None, then all
+                            structures will be written.
+    @type stuct_index:      int or None
+    @keyword force:         The force flag which if True will cause the file to be overwritten.
+    @type force:            bool
+    """
+
+    # Test if the current data pipe exists.
+    if not ds.current_pipe:
+        raise RelaxNoPipeError
+
+    # Alias the current data pipe.
+    cdp = ds[ds.current_pipe]
+
+    # Check if the structural object exists.
+    if not hasattr(cdp, 'structure'):
+        raise RelaxError, "No structural data is present in the current data pipe."
+
+    # Check if the structural object is writable.
+    if cdp.structure.id in ['scientific']:
+        raise RelaxError, "The structures from the " + cdp.structure.id + " parser are not writable."
+
+    # The file path.
+    file_path = get_file_path(file, dir)
+
+    # Add '.pdb' to the end of the file path if it isn't there yet.
+    if not search(".pdb$", file_path):
+        file_path = file_path + '.pdb'
+
+    # Open the file for writing.
+    file = open_write_file(file_path, force=force)
+
+    # Write the structures.
+    cdp.structure.write_pdb(file, struct_index=struct_index)

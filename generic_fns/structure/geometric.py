@@ -285,12 +285,6 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
             res_num = generate_vector_residues(structure=structure, vector=pipe.diff_tensor.Dz*pipe.diff_tensor.Dz_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dz_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
 
 
-        # Terminate the chain (the TER record).
-        #######################################
-
-        structure.terminate(atom_id_ext=atom_id_ext, res_num=res_num)
-
-
     # Create the PDB file.
     ######################
 

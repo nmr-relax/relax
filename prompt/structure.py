@@ -448,3 +448,71 @@ class Structure:
 
         # Execute the functional code.
         generic_fns.structure.main.vectors(proton=proton, spin_id=spin_id, verbosity=verbosity)
+
+
+    def write_pdb(self, file=None, dir=None, struct_index=None, force=False):
+        """The PDB writing function.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        file:  The name of the PDB file.
+
+        dir:  The directory where the file is located.
+
+        struct_index:  The index of the structure to write.
+
+        force:  A flag which, if set to True, will overwrite the any pre-existing file.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        If the struct_index argument is None, then each loaded structure will be written to a single
+        file as different models.  This index covers all the structures loaded from individual files
+        and all the structures present as different models within each file.
+
+
+        Example
+        ~~~~~~~
+
+        To write all structures to the PDB file 'ensemble.pdb' within the directory '~/pdb', type
+        one of:
+
+        relax> structure.write_pdb('ensemble.pdb', '~/pdb')
+        relax> structure.write_pdb(file='ensemble.pdb', dir='pdb')
+
+
+        To write the 4th model loaded from a PDB file into the new file 'test.pdb', use one of:
+
+        relax> structure.write_pdb('test.pdb', struct_index=3)
+        relax> structure.write_pdb(file='test.pdb', struct_index=3)
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "structure.write_pdb("
+            text = text + "file=" + `file`
+            text = text + ", dir=" + `dir`
+            text = text + ", struct_index=" + `struct_index`
+            text = text + ", force=" + `force` + ")"
+            print text
+
+        # File name.
+        if type(file) != str:
+            raise RelaxStrError, ('file name', file)
+
+        # Directory.
+        if dir != None and type(dir) != str:
+            raise RelaxNoneStrError, ('directory name', dir)
+
+        # The struct_index argument.
+        if struct_index != None and type(struct_index) != int:
+            raise RelaxNoneIntError, ('structure index', struct_index)
+
+        # The force flag.
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
+
+        # Execute the functional code.
+        generic_fns.structure.main.write_pdb(file=file, dir=dir, struct_index=struct_index, force=force)
