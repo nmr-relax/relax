@@ -66,7 +66,7 @@ class Ct(TestCase):
 
         # Correct consistency functions values:
         j0 = [4.0703318681008998e-09, 3.7739393907014834e-09]
-        f_eta = [0.35356777124326688, 0.32733989059749802]
+        f_eta = [0.20413244790407614, 0.18898977395296815]
         f_r2 = [2.0482909381655862e-09, 1.8998154021753067e-09]
 
         # Read the sequence.
@@ -126,3 +126,10 @@ class Ct(TestCase):
         for res in residue_loop():
             self.assertEqual(res.spin[0].r, NH_BOND_LENGTH)
             self.assertEqual(res.spin[0].csa, N15_CSA)
+
+
+    def test_consistency(self):
+        """Test a complete consistency tests run using a script."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/consistency_tests.py')
