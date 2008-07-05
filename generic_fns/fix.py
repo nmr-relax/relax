@@ -31,62 +31,52 @@ from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError
 
 
+def fix(self, run, element, fixed):
+    """Function for fixing or allowing parameter values to change."""
+
+    # Test if the run exists.
+    if not run in ds.run_names:
+        raise RelaxNoPipeError, run
+
+    # Diffusion tensor.
+    if element == 'diff':
+        # Test if the diffusion tensor data is loaded.
+        if not ds.diff.has_key(run):
+            raise RelaxNoTensorError, 'diffusion'
+
+        # Set the fixed flag.
+        ds.diff[run].fixed = fixed
 
 
+    # All residues.
+    elif element == 'all_res':
+        # Test if sequence data is loaded.
+        if not ds.res.has_key(run):
+            raise RelaxNoSequenceError, run
 
-class Fix:
-    def __init__(self, relax):
-        """Class containing the function for fixing or allowing parameter values to change."""
-
-        self.relax = relax
-
-
-    def fix(self, run, element, fixed):
-        """Function for fixing or allowing parameter values to change."""
-
-        # Test if the run exists.
-        if not run in ds.run_names:
-            raise RelaxNoPipeError, run
-
-        # Diffusion tensor.
-        if element == 'diff':
-            # Test if the diffusion tensor data is loaded.
-            if not ds.diff.has_key(run):
-                raise RelaxNoTensorError, 'diffusion'
-
-            # Set the fixed flag.
-            ds.diff[run].fixed = fixed
+        # Loop over the sequence and set the fixed flag.
+        for i in xrange(len(ds.res[run])):
+            ds.res[run][i].fixed = fixed
 
 
-        # All residues.
-        elif element == 'all_res':
-            # Test if sequence data is loaded.
-            if not ds.res.has_key(run):
-                raise RelaxNoSequenceError, run
+    # All parameters.
+    elif element == 'all':
+        # Test if sequence data is loaded.
+        if not ds.res.has_key(run):
+            raise RelaxNoSequenceError, run
 
-            # Loop over the sequence and set the fixed flag.
-            for i in xrange(len(ds.res[run])):
-                ds.res[run][i].fixed = fixed
+        # Test if the diffusion tensor data is loaded.
+        if not ds.diff.has_key(run):
+            raise RelaxNoTensorError, 'diffusion'
 
+        # Set the fixed flag for the diffusion tensor.
+        ds.diff[run].fixed = fixed
 
-        # All parameters.
-        elif element == 'all':
-            # Test if sequence data is loaded.
-            if not ds.res.has_key(run):
-                raise RelaxNoSequenceError, run
-
-            # Test if the diffusion tensor data is loaded.
-            if not ds.diff.has_key(run):
-                raise RelaxNoTensorError, 'diffusion'
-
-            # Set the fixed flag for the diffusion tensor.
-            ds.diff[run].fixed = fixed
-
-            # Loop over the sequence and set the fixed flag.
-            for i in xrange(len(ds.res[run])):
-                ds.res[run][i].fixed = fixed
+        # Loop over the sequence and set the fixed flag.
+        for i in xrange(len(ds.res[run])):
+            ds.res[run][i].fixed = fixed
 
 
-        # Unknown.
-        else:
-            raise RelaxError, "The 'element' argument " + `element` + " is unknown."
+    # Unknown.
+    else:
+        raise RelaxError, "The 'element' argument " + `element` + " is unknown."
