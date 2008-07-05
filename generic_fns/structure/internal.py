@@ -702,6 +702,10 @@ class Internal(Base_struct_API):
         file.write("REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM)\n")
         num_remark = 2
 
+
+        # Hetrogen section.
+        ###################
+
         # Loop over the structures.
         for index in xrange(len(self.structural_data)):
             # Skip non-matching structures.
@@ -816,6 +820,19 @@ class Internal(Base_struct_API):
 
                 # The FORMUL record (chemical formula).
                 file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', het[0], het[1], '', '', formula))
+
+
+        # Coordinate section.
+        #####################
+
+        # Loop over the structures.
+        for index in xrange(len(self.structural_data)):
+            # Skip non-matching structures.
+            if struct_index != None and struct_index != index:
+                continue
+
+            # Alias the structure container.
+            struct = self.structural_data[index]
 
 
             # MODEL record, for multiple structures.
