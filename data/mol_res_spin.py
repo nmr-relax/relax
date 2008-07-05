@@ -25,10 +25,12 @@
 
 # Python module imports.
 from copy import deepcopy
+import numpy
 from re import match
 
 # relax module imports.
 import data
+from float import floatAsByteArray
 from prototype import Prototype
 from relax_errors import RelaxError, RelaxFromXMLNotEmptyError
 from relax_xml import fill_object_contents, xml_to_object
@@ -265,8 +267,15 @@ class SpinList(list):
                 if desc:
                     sub_element.setAttribute('desc', desc)
 
+                # Get the object.
+                object = getattr(self[i], name)
+
+                # Store floats as IEEE-754 byte arrays, for higher precision.
+                if type(object) == float or type(object) == numpy.float64:
+                    sub_element.setAttribute('ieee_754_byte_array', `floatAsByteArray(object)`)
+
                 # Add the text value to the sub element.
-                text_val = doc.createTextNode(`getattr(self[i], name)`)
+                text_val = doc.createTextNode(`object`)
                 sub_element.appendChild(text_val)
 
             # Add all simple python objects within the SpinContainer to the XML element.
