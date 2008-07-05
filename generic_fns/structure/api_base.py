@@ -52,7 +52,7 @@ class Base_struct_API:
         self.file_name = []
 
 
-    def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, model=None):
+    def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, struct_index=None):
         """Prototype method stub for adding an atom to the structural data object.
 
         This method will create the key-value pair for the given atom.
@@ -76,9 +76,10 @@ class Base_struct_API:
         @type segment_id:       str or None
         @keyword element:       The element symbol.
         @type element:          str or None
-        @keyword model:         The model to add the atom to.  If not supplied and multiple models
-                                exist, then the atom will be added to all models.
-        @type model:            None or int
+        @keyword struct_index:  The index of the structure to add the atom to.  If not supplied and
+                                multiple structures or models are loaded, then the atom will be
+                                added to all structures.
+        @type struct_index:     None or int
         """
 
         # Raise the error.
