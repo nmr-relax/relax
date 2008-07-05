@@ -533,7 +533,7 @@ class Mf_minimise:
         # Minimisation options for diffusion tensor parameters.
         if model_type == 'diff' or model_type == 'all':
             # Get the diffusion tensor specific configuration.
-            m = self.grid_search_config_diff(min_options, inc, m, verbosity=verbosity)
+            m = self.grid_search_config_diff(min_options, inc, m)
 
         # Model-free parameters (residue specific parameters).
         if model_type != 'diff':
@@ -580,6 +580,9 @@ class Mf_minimise:
         @return:            The index of the last parameter encountered (m).
         @rtype:             int
         """
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
 
         # Spherical diffusion {tm}.
         if cdp.diff.type == 'sphere':
