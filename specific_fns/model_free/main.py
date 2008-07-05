@@ -1742,67 +1742,61 @@ class Model_free_main:
                 spin.select = False
 
 
-    def remove_tm(self, run, res_num):
-        """Function for removing the local tm parameter from the model-free parameters."""
+    def remove_tm(self, spin_id=None):
+        """Remove local tm from the set of model-free parameters for the given spins.
 
-        # Arguments.
-        self.run = run
+        @param spin_id: The spin identification string.
+        @type spin_id:  str or None
+        """
 
-        # Test if the run exists.
-        if not self.run in ds.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current data pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
 
-        # Test if the run type is set to 'mf'.
-        function_type = ds.run_types[ds.run_names.index(self.run)]
+        # Test if the pipe type is 'mf'.
+        function_type = ds[ds.current_pipe].pipe_type
         if function_type != 'mf':
-            raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
+            raise RelaxFuncSetupError, specific_fns.get_string(function_type)
 
         # Test if sequence data is loaded.
-        if not ds.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
-        # Loop over the sequence.
-        for i in xrange(len(ds.res[self.run])):
-            # Remap the data structure.
-            data = ds.res[self.run][i]
-
-            # Skip deselected residues.
-            if not data.select:
-                continue
-
-            # If res_num is set, then skip all other residues.
-            if res_num != None and res_num != data.num:
+        # Loop over the spins.
+        for spin in spin_loop(spin_id):
+            # Skip deselected spins.
+            if not spin.select:
                 continue
 
             # Test if a local tm parameter exists.
-            if not hasattr(data, 'params') or not 'local_tm' in data.params:
+            if not hasattr(spin, 'params') or not 'local_tm' in spin.params:
                 continue
 
             # Remove tm.
-            data.params.remove('local_tm')
+            spin.params.remove('local_tm')
 
             # Model name.
-            if match('^tm', data.model):
-                data.model = data.model[1:]
+            if match('^tm', spin.model):
+                spin.model = spin.model[1:]
 
-            # Set the local tm value to None.
-            data.local_tm = None
+            # Delete the local tm variable.
+            del spin.local_tm
 
-            # Set all the minimisation details to None.
-            data.chi2 = None
-            data.iter = None
-            data.f_count = None
-            data.g_count = None
-            data.h_count = None
-            data.warning = None
+            # Set all the minimisation stats to None.
+            spin.chi2 = None
+            spin.iter = None
+            spin.f_count = None
+            spin.g_count = None
+            spin.h_count = None
+            spin.warning = None
 
-        # Set the global minimisation details to None.
-        ds.chi2[self.run] = None
-        ds.iter[self.run] = None
-        ds.f_count[self.run] = None
-        ds.g_count[self.run] = None
-        ds.h_count[self.run] = None
-        ds.warning[self.run] = None
+        # Set the global minimisation stats to None.
+        ds[ds.current_pipe].chi2 = None
+        ds[ds.current_pipe].iter = None
+        ds[ds.current_pipe].f_count = None
+        ds[ds.current_pipe].g_count = None
+        ds[ds.current_pipe].h_count = None
+        ds[ds.current_pipe].warning = None
 
 
     def return_conversion_factor(self, param, spin=None, spin_id=None):
