@@ -29,7 +29,7 @@ from re import search
 from string import strip
 
 # relax module imports.
-from float import floatAsByteArray
+from float import floatAsByteArray, packBytesAsPyFloat
 
 
 def fill_object_contents(doc, elem, object=None, blacklist=None):
@@ -66,7 +66,7 @@ def fill_object_contents(doc, elem, object=None, blacklist=None):
         # Get the sub-object.
         subobj = getattr(object, name)
 
-        # Store floats as IEEE-754 byte arrays, for higher precision.
+        # Store floats as IEEE-754 byte arrays (for full precision storage).
         if type(subobj) == float or type(subobj) == float64:
             sub_elem.setAttribute('ieee_754_byte_array', `floatAsByteArray(subobj)`)
 
@@ -110,8 +110,14 @@ def xml_to_object(elem, base_object=None, set_fn=None):
         # The name of the python object to recreate.
         name = str(node.localName)
 
+        # IEEE-754 floats (for full precision restoration).
+        ieee_array = node.getAttribute('ieee_754_byte_array')
+        if ieee_array:
+            val = packBytesAsPyFloat(eval(ieee_array))
+
         # Get the node contents.
-        val = node_value_to_python(node.childNodes[0])
+        else:
+            val = node_value_to_python(node.childNodes[0])
 
         # Set the value.
         setattr(base_object, name, val)

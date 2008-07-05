@@ -270,7 +270,7 @@ class SpinList(list):
                 # Get the object.
                 object = getattr(self[i], name)
 
-                # Store floats as IEEE-754 byte arrays, for higher precision.
+                # Store floats as IEEE-754 byte arrays (for full precision storage).
                 if type(object) == float or type(object) == numpy.float64:
                     sub_element.setAttribute('ieee_754_byte_array', `floatAsByteArray(object)`)
 
