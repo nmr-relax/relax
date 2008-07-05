@@ -65,7 +65,7 @@ class Main:
         diffusion_tensor.init(10e-9, fixed=False)
 
         # Minimise just the diffusion tensor.
-        fix('all_res')
+        fix('all_spins')
         grid_search(inc=GRID_INC)
         minimise(MIN_ALGOR)
 
