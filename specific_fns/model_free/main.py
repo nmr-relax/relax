@@ -1564,10 +1564,9 @@ class Model_free_main:
         """
 
         # Test that no diffusion tensor exists if local tm is a parameter in the model.
-        if params:
-            for param in params:
-                if param == 'local_tm' and hasattr(ds, 'diff'):
-                    raise RelaxTensorError, 'diffusion'
+        for param in params:
+            if param == 'local_tm' and hasattr(ds, 'diff_tensor'):
+                raise RelaxTensorError, 'diffusion'
 
         # Loop over the sequence.
         for spin in spin_loop(spin_id):
@@ -1575,12 +1574,9 @@ class Model_free_main:
             self.data_init(spin)
 
             # Model-free model, equation, and parameter types.
-            if model:
-                spin.model = model
-            if equation:
-                spin.equation = equation
-            if params:
-                spin.params = params
+            spin.model = model
+            spin.equation = equation
+            spin.params = params
 
 
     def model_statistics(self, instance=None, spin_id=None, global_stats=None):
