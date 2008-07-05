@@ -189,7 +189,7 @@ class Main:
             self.multi_model(local_tm=True)
 
             # Model selection.
-            self.model_selection(pipe='aic', dir=self.base_dir + 'aic')
+            self.model_selection(modsel_pipe='aic', dir=self.base_dir + 'aic')
 
 
         # Diffusion models MII to MV.
@@ -263,7 +263,7 @@ class Main:
                     self.multi_model()
 
                     # Model selection.
-                    self.model_selection(pipe='final', dir=self.base_dir + 'aic')
+                    self.model_selection(modsel_pipe='final', dir=self.base_dir + 'aic')
 
                     # Final optimisation of all diffusion and model-free parameters.
                     fix('all', fixed=False)
@@ -324,7 +324,7 @@ class Main:
             pipe.create('final', 'mf')
 
             # Model selection between MI to MV.
-            self.model_selection(pipe='final', write_flag=False)
+            self.model_selection(modsel_pipe='final', write_flag=False)
 
 
             # Monte Carlo simulations.
@@ -551,14 +551,16 @@ class Main:
             results.read('results', DIFF_MODEL + '/round_' + `self.round - 1` + '/opt')
 
 
-    def model_selection(self, pipe=None, dir=None, write_flag=True):
+    def model_selection(self, modsel_pipe=None, dir=None, write_flag=True):
         """Model selection function."""
 
         # Model elimination.
         eliminate()
 
-        # Model selection.
-        model_selection(method='AIC', modsel_pipe=pipe, pipes=self.pipes)
+        # Model selection (delete the model selection pipe if it already exists).
+        if ds.has_key(modsel_pipe):
+            pipe.delete(modsel_pipe)
+        model_selection(method='AIC', modsel_pipe=modsel_pipe, pipes=self.pipes)
 
         # Write the results.
         if write_flag:
