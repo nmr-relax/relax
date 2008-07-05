@@ -1003,7 +1003,7 @@ class Internal(Base_struct_API):
         print "\nMASTER"
 
         # Write the MASTER record.
-        file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data), 0, 0, 0, 0, 0, num_atom+num_hetatm, num_ter, num_conect, 0))
+        file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data_coll), 0, 0, 0, 0, 0, num_atom+num_hetatm, num_ter, num_conect, 0))
 
 
         # END.
