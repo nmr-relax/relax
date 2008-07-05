@@ -585,16 +585,16 @@ class Mf_minimise:
         cdp = ds[ds.current_pipe]
 
         # Spherical diffusion {tm}.
-        if cdp.diff.type == 'sphere':
+        if cdp.diff_tensor.type == 'sphere':
             min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
             m = m + 1
 
         # Spheroidal diffusion {tm, Da, theta, phi}.
-        if cdp.diff.type == 'spheroid':
+        if cdp.diff_tensor.type == 'spheroid':
             min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
-            if cdp.diff.spheroid_type == 'prolate':
+            if cdp.diff_tensor.spheroid_type == 'prolate':
                 min_options.append([inc[1], 0.0, 1e7])
-            elif cdp.diff.spheroid_type == 'oblate':
+            elif cdp.diff_tensor.spheroid_type == 'oblate':
                 min_options.append([inc[1], -1e7, 0.0])
             else:
                 min_options.append([inc[1], -1e7, 1e7])
@@ -603,7 +603,7 @@ class Mf_minimise:
             m = m + 4
 
         # Ellipsoidal diffusion {tm, Da, Dr, alpha, beta, gamma}.
-        elif cdp.diff.type == 'ellipsoid':
+        elif cdp.diff_tensor.type == 'ellipsoid':
             min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
             min_options.append([inc[1], 0.0, 1e7])
             min_options.append([inc[2], 0.0, 1.0])
