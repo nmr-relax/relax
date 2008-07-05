@@ -385,7 +385,7 @@ class Internal(Base_struct_API):
         This method will create the key-value pair for the given atom.
 
 
-        @keyword pdb_record:    The optional PDB record name, e.g. 'ATOM', 'HETATM', or 'TER'.
+        @keyword pdb_record:    The optional PDB record name, e.g. 'ATOM' or 'HETATM'.
         @type pdb_record:       str or None
         @keyword atom_num:      The atom number.
         @type atom_num:         int or None
