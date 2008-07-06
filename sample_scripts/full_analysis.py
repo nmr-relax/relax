@@ -113,6 +113,7 @@ from string import lower
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from float import floatAsByteArray
 from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
 from relax_errors import RelaxError
 
