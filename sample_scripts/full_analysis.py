@@ -321,9 +321,6 @@ class Main:
                 # Load the diffusion model results.
                 results.read(file='results', dir=model + '/round_' + `self.round` + '/opt')
 
-            # Create the data pipe for model selection (which will be a copy of the selected diffusion model or data pipe).
-            pipe.create('final', 'mf')
-
             # Model selection between MI to MV.
             self.model_selection(modsel_pipe='final', write_flag=False)
 
@@ -331,8 +328,8 @@ class Main:
             # Monte Carlo simulations.
             ##########################
 
-            # Fix the diffusion tensor (if it exists!).
-            if ds.diff.has_key('final'):
+            # Fix the diffusion tensor, if it exists.
+            if hasattr(ds['final'], 'diff_tensor'):
                 fix('diff')
 
             # Simulations.
