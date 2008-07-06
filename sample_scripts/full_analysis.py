@@ -113,7 +113,7 @@ from string import lower
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import spin_index_loop, spin_loop
+from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
 from relax_errors import RelaxError
 
 
@@ -465,6 +465,9 @@ class Main:
                     if not hasattr(prev_spin, 'params') or not hasattr(curr_spin, 'params'):
                         continue
 
+                    # The spin ID string.
+                    spin_id = generate_spin_id(mol_name=cdp.mol[mol_index].name, res_num=cdp.mol[mol_index].res[res_index].num, res_name=cdp.mol[mol_index].res[res_index].name, spin_num=cdp.mol[mol_index].res[res_index].spin[spin_index].num, spin_name=cdp.mol[mol_index].res[res_index].spin[spin_index].name)
+
                     # Loop over the parameters.
                     for j in xrange(len(curr_spin.params)):
                         # Get the parameter values.
@@ -473,10 +476,7 @@ class Main:
 
                         # Test if not identical.
                         if prev_val != curr_val:
-                            if curr_spin.name:
-                                print "    Spin system: " + `curr_spin.num` + ' ' + curr_spin.name
-                            else:
-                                print "    Spin system: " + `curr_spin.num`
+                            print "    Spin ID:     " + `spin_id`
                             print "    Parameter:   " + curr_spin.params[j]
                             print "    Value (k-1): " + `prev_val`
                             print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
