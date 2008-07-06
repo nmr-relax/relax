@@ -379,9 +379,9 @@ class Main:
         ###################
 
         print "Chi-squared test:"
-        print "    chi2 (k-1): " + `prev_pipe.chi2`
+        print "    chi2 (k-1):          " + `prev_pipe.chi2`
         print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_pipe.chi2)` + ')'
-        print "    chi2 (k):   " + `cdp.chi2`
+        print "    chi2 (k):            " + `cdp.chi2`
         print "        (as an IEEE-754 byte array: " + `floatAsByteArray(cdp.chi2)` + ')'
         print "    chi2 (difference):   " + `prev_pipe.chi2 - cdp.chi2`
         if prev_pipe.chi2 == cdp.chi2:
