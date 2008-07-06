@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+from os import devnull
 from unittest import TestCase
 import sys
 
@@ -103,8 +104,8 @@ class Diffusion_tensor(TestCase):
 
         # Create the diffusion tensor object
         self.relax.interpreter._Pipe.switch('sphere')
-        self.relax.interpreter._Structure.create_diff_tensor_pdb(file='tensor.pdb')
+        self.relax.interpreter._Structure.create_diff_tensor_pdb(file=devnull)
         self.relax.interpreter._Pipe.switch('spheroid')
-        self.relax.interpreter._Structure.create_diff_tensor_pdb(file='tensor.pdb')
+        self.relax.interpreter._Structure.create_diff_tensor_pdb(file=devnull)
         self.relax.interpreter._Pipe.switch('ellipsoid')
-        self.relax.interpreter._Structure.create_diff_tensor_pdb(file='tensor.pdb')
+        self.relax.interpreter._Structure.create_diff_tensor_pdb(file=devnull)
