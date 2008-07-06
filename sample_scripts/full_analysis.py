@@ -380,7 +380,10 @@ class Main:
 
         print "Chi-squared test:"
         print "    chi2 (k-1): " + `prev_pipe.chi2`
+        print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_pipe.chi2)` + ')'
         print "    chi2 (k):   " + `cdp.chi2`
+        print "        (as an IEEE-754 byte array: " + `floatAsByteArray(cdp.chi2)` + ')'
+        print "    chi2 (difference):   " + `prev_pipe.chi2 - cdp.chi2`
         if prev_pipe.chi2 == cdp.chi2:
             print "    The chi-squared value has converged.\n"
         else:
@@ -440,7 +443,9 @@ class Main:
                 if prev_val != curr_val:
                     print "    Parameter:   " + param
                     print "    Value (k-1): " + `prev_val`
+                    print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
                     print "    Value (k):   " + `curr_val`
+                    print "        (as an IEEE-754 byte array: " + `floatAsByteArray(curr_val)` + ')'
                     print "    The diffusion parameters have not converged.\n"
                     params_converged = False
 
@@ -471,7 +476,9 @@ class Main:
                             print "    Spin system: " + `curr_spin.num` + ' ' + curr_spin.name
                             print "    Parameter:   " + curr_spin.params[j]
                             print "    Value (k-1): " + `prev_val`
+                            print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
                             print "    Value (k):   " + `curr_val`
+                            print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
                             print "    The model-free parameters have not converged.\n"
                             params_converged = False
                             break
