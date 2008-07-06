@@ -473,7 +473,10 @@ class Main:
 
                         # Test if not identical.
                         if prev_val != curr_val:
-                            print "    Spin system: " + `curr_spin.num` + ' ' + curr_spin.name
+                            if curr_spin.name:
+                                print "    Spin system: " + `curr_spin.num` + ' ' + curr_spin.name
+                            else:
+                                print "    Spin system: " + `curr_spin.num`
                             print "    Parameter:   " + curr_spin.params[j]
                             print "    Value (k-1): " + `prev_val`
                             print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
