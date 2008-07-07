@@ -11,7 +11,7 @@ structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/s
 structure.load_spins('@N')
 
 # Set the NH vector.
-structure.vectors(proton='H')
+structure.vectors(attached='H')
 
 # Initialise a diffusion tensor.
 diffusion_tensor.init((1.698e7, 1.417e7, 67.174, -83.718), param_types=3)
