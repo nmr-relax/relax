@@ -295,7 +295,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     tensor_pdb_file = open_write_file(file, dir, force=force)
 
     # Write the data.
-    write_pdb_file(tensor_pdb_file)
+    structure.write_pdb(tensor_pdb_file)
 
     # Close the file.
     tensor_pdb_file.close()
@@ -455,7 +455,7 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     tensor_pdb_file = open_write_file(file, dir, force=force)
 
     # Write the data.
-    write_pdb_file(tensor_pdb_file)
+    structure.write_pdb(tensor_pdb_file)
 
     # Close the file.
     tensor_pdb_file.close()
