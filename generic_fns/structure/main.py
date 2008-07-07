@@ -308,13 +308,18 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
 
         # No attached atom.
         if not bond_vectors:
+            # Warning messages.
+            if warnings:
+                warn(RelaxWarning(warnings))
+
+            # Skip the spin.
             continue
 
         # Set the attached atom name.
         if not hasattr(spin, 'attached_atom'):
-            spin.attached_atom = attached
-        elif spin.attached_atom != attached:
-            raise RelaxError, "The attached atom " + `spin.attached_atom` + " does not match the attached argument " + `atom` + "."
+            spin.attached_atom = attached_name
+        elif spin.attached_atom != attached_name:
+            raise RelaxError, "The " + `spin.attached_atom` + " atom already attached to the spin does not match the attached atom " + `attached_name` + "."
 
         # Initialise the average vector.
         if ave:
