@@ -799,7 +799,7 @@ class Mf_minimise:
         # Tests for the PDB file and unit vectors.
         if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
             # Test if the structure file has been loaded.
-            if not hasattr(cdp.structure, 'structures'):
+            if not hasattr(cdp, 'structure'):
                 raise RelaxNoPdbError
 
             # Test if unit vectors exist.
