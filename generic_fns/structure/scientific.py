@@ -80,7 +80,7 @@ class Scientific_data(Base_struct_API):
         # The find the attached atom in the residue (FIXME).
         matching_list = []
         for atom in res.atoms:
-            if relax_re.search(atom, attached_atom):
+            if relax_re.search(attached_atom, atom):
                 matching_list.append(atom)
         num_attached = len(matching_list)
 
