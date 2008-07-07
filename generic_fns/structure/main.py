@@ -245,14 +245,17 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
 
     # Print out.
     if verbosity:
+        # Number of structures.
+        num = cdp.structure.num_structures()
+
         # Multiple structures loaded.
-        if cdp.structure.num_structures() > 1:
+        if num > 1:
             if struct_index:
                 print "Extracting vectors for structure " + `struct_index` + "."
             else:
-                print "Extracting vectors for all structures."
+                print "Extracting vectors for all " + `num` + " structures."
                 if ave:
-                    print "\nAveraging all vectors."
+                    print "Averaging all vectors."
 
         # Single structure loaded.
         else:
@@ -260,7 +263,7 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
 
         # Unit vectors.
         if unit:
-            print "Calculating the unit vector."
+            print "Calculating the unit vectors."
 
     # Header print out.
     write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
