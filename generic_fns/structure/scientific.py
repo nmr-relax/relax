@@ -353,7 +353,7 @@ class Scientific_data(Base_struct_API):
         return bonded_num, bonded_name, element, pos_array
 
 
-    def bond_vectors(self, atom_id=None, attached_atom=None, model=None):
+    def bond_vectors(self, atom_id=None, attached_atom=None, struct_index=None):
         """Find the bond vectors between the atoms of 'attached_atom' and 'atom_id'.
 
         @keyword atom_id:       The molecule, residue, and atom identifier string.  This must
@@ -361,11 +361,12 @@ class Scientific_data(Base_struct_API):
         @type atom_id:          str
         @keyword attached_atom: The name of the bonded atom.
         @type attached_atom:    str
-        @keyword model:         The model to return the vectors information from.  If not
-                                supplied and multiple models exist, then the returned data will
-                                contain the vectors for all models.
-        @type model:            None or int
-        @return:                The list of bond vectors for each model.
+        @keyword struct_index:  The index of the structure to return the vectors from.  If not
+                                supplied and multiple structures/models exist, then vectors from all
+                                structures will be returned.
+        @type struct_index:     None or int
+        @type struct_index:     None or int.
+        @return:                The list of bond vectors for each structure.
         @rtype:                 list of numpy arrays
         """
 
@@ -375,14 +376,14 @@ class Scientific_data(Base_struct_API):
         # Initialise some objects.
         vectors = []
 
-        # Loop over the models.
-        for struct in self.structural_data:
+        # Loop over the structures.
+        for i in xrange(len(self.structural_data)):
+            # Single structure.
+            if struct_index and struct_index != i:
+                continue
+
             # Init.
             atom_found = False
-
-            # Skip non-matching models.
-            if model != None and model != struct.model:
-                continue
 
             # Loop over each individual molecule.
             for mol, mol_name, mol_type in self.__molecule_loop(struct, sel_obj):
@@ -410,7 +411,7 @@ class Scientific_data(Base_struct_API):
 
             # Found the atom.
             if atom_found:
-                # Find the atom bonded to this model/molecule/residue/atom.
+                # Find the atom bonded to this structure/molecule/residue/atom.
                 bonded_num, bonded_name, element, pos = self.__find_bonded_atom(attached_atom, mol_type_match, res_match)
 
                 # No bonded atom.
