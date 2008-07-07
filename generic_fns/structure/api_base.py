@@ -223,10 +223,10 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def num_models(self):
-        """Method for returning the number of loaded models (i.e. number of NMR models, etc.).
+    def num_structures(self):
+        """Method for returning the number of loaded structures (i.e. number of NMR models, etc.).
 
-        @return:    The number of models which have been loaded.
+        @return:    The number of structures which have been loaded.
         @rtype:     int
         """
 
