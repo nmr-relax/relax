@@ -140,12 +140,12 @@ class Internal(Base_struct_API):
             for i in matching_list:
                 matching_names.append(struct.atom_name[i])
 
-            # Return nothing.
-            return None, None, None, None
+            # Return nothing but a warning.
+            return None, None, None, None, 'More than one attached atom found: ' + `matching_names`
 
         # No attached atoms.
         if num_attached == 0:
-            return None, None, None, None
+            return None, None, None, None, "No attached atom could be found."
 
         # The bonded atom info.
         bonded_num = struct.atom_num[bonded_index]
@@ -154,7 +154,7 @@ class Internal(Base_struct_API):
         pos = [struct.x[bonded_index], struct.y[bonded_index], struct.z[bonded_index]]
 
         # Return the information.
-        return bonded_num, bonded_name, element, pos
+        return bonded_num, bonded_name, element, pos, None
 
 
     def __get_chemical_name(self, hetID):
@@ -635,21 +635,26 @@ class Internal(Base_struct_API):
                     yield atomic_tuple
 
 
-    def bond_vectors(self, atom_id=None, attached_atom=None, struct_index=None):
+    def bond_vectors(self, atom_id=None, attached_atom=None, struct_index=None, return_name=False, return_warnings=False):
         """Find the bond vector between the atoms of 'attached_atom' and 'atom_id'.
 
-        @keyword atom_id:       The molecule, residue, and atom identifier string.  This must
-                                correspond to a single atom in the system.
-        @type atom_id:          str
-        @keyword attached_atom: The name of the bonded atom.
-        @type attached_atom:    str
-        @keyword struct_index:  The index of the structure to return the vectors from.  If not
-                                supplied and multiple structures/models exist, then vectors from all
-                                structures will be returned.
-        @type struct_index:     None or int
-        @type struct_index:     None or int.
-        @return:                The list of bond vectors for each structure.
-        @rtype:                 list of numpy arrays
+        @keyword atom_id:           The molecule, residue, and atom identifier string.  This must
+                                    correspond to a single atom in the system.
+        @type atom_id:              str
+        @keyword attached_atom:     The name of the bonded atom.
+        @type attached_atom:        str
+        @keyword struct_index:      The index of the structure to return the vectors from.  If not
+                                    supplied and multiple structures/models exist, then vectors from
+                                    all structures will be returned.
+        @type struct_index:         None or int
+        @keyword return_name:       A flag which if True will cause the name of the attached atom to
+                                    be returned together with the bond vectors.
+        @type return_name:          bool
+        @keyword return_warnings:   A flag which if True will cause warning messages to be returned.
+        @type return_warnings:      bool
+        @return:                    The list of bond vectors for each structure.
+        @rtype:                     list of numpy arrays (or a tuple if return_name or
+                                    return_warnings are set)
         """
 
         # Generate the selection object.
@@ -687,7 +692,7 @@ class Internal(Base_struct_API):
             # Found the atom.
             if atom_found:
                 # Find the atom bonded to this structure/molecule/residue/atom.
-                bonded_num, bonded_name, element, pos = self.__find_bonded_atom(attached_atom, index, i)
+                bonded_num, bonded_name, element, pos, warnings = self.__find_bonded_atom(attached_atom, index, i)
 
                 # No bonded atom.
                 if (bonded_num, bonded_name, element) == (None, None, None):
@@ -699,8 +704,15 @@ class Internal(Base_struct_API):
                 # Append the vector to the vectors array.
                 vectors.append(vector)
 
-        # Return the bond vectors.
-        return vectors
+        # Build the tuple to be yielded.
+        data = (vectors,)
+        if return_name:
+            data = data + (struct.atom_name[index],)
+        if return_warnings:
+            data = data + (warnings,)
+
+        # Return the data.
+        return data
 
 
     def load_pdb(self, file_path, model=None, verbosity=False):
