@@ -30,7 +30,7 @@ from warnings import warn
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import molmol
+from generic_fns import molmol, relax_re
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_loop
 from generic_fns.sequence import write_header, write_line
 from generic_fns.structure.internal import Internal
@@ -267,6 +267,22 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
 
     # Header print out.
     write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+
+    # Determine if the attached atom is a proton.
+    proton = False
+    if relax_re.search('.*H.*', attached) or relax_re.search(attached, 'H'):
+        proton = True
+    if verbosity:
+        if proton:
+            print "The attached atom is a proton."
+        else:
+            print "The attached atom is not a proton."
+
+    # Set the variable name in which the vectors will be stored.
+    if proton:
+        object = 'xh_vect'
+    else:
+        object = 'bond_vect'
 
     # Loop over the spins.
     for spin, mol_name, res_num, res_name in spin_loop(selection=spin_id, full_info=True):
