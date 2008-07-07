@@ -36,7 +36,7 @@ from warnings import warn
 # relax module imports.
 from api_base import Base_struct_API
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import Selection, parse_token, tokenise, wildcard_match
+from generic_fns.mol_res_spin import Selection, parse_token, tokenise
 from relax_errors import RelaxError, RelaxNoPdbChainError, RelaxNoResError, RelaxPdbLoadError
 from relax_warnings import RelaxNoAtomWarning, RelaxZeroVectorWarning
 

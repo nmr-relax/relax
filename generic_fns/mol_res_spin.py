@@ -46,6 +46,7 @@ from warnings import warn
 from data import Relax_data_store; ds = Relax_data_store()
 from data.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
 from generic_fns import pipes
+from generic_fns import relax_re
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRegExpError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 from relax_warnings import RelaxWarning
 
@@ -220,7 +221,7 @@ class Selection(object):
                 select_mol = True
 
             # A true match.
-            elif wildcard_match(mol.name, self.molecules):
+            elif relax_re.search(mol.name, self.molecules):
                 select_mol = True
         else:
             # No molecule container sent in, therefore the molecule is assumed to match.
@@ -233,7 +234,7 @@ class Selection(object):
                 select_res = True
 
             # A true match.
-            elif wildcard_match(res.name, self.residues) or res.num in self.residues:
+            elif relax_re.search(res.name, self.residues) or res.num in self.residues:
                 select_res = True
         else:
             # No residue container sent in, therefore the residue is assumed to match.
@@ -246,7 +247,7 @@ class Selection(object):
                 select_spin = True
 
             # A true match.
-            elif wildcard_match(spin.name, self.spins) or spin.num in self.spins:
+            elif relax_re.search(spin.name, self.spins) or spin.num in self.spins:
                 select_spin = True
         else:
             # No spin container sent in, therefore the spin is assumed to match.
@@ -298,7 +299,7 @@ class Selection(object):
             return self._intersect[0].contains_mol(mol) and self._intersect[1].contains_mol(mol)
 
         # The check.
-        if wildcard_match(mol, self.molecules):
+        if relax_re.search(mol, self.molecules):
             return True
 
         # Nothingness.
@@ -338,7 +339,7 @@ class Selection(object):
         select_res = False
 
         # The residue checks.
-        if res_num in self.residues or wildcard_match(res_name, self.residues):
+        if res_num in self.residues or relax_re.search(res_name, self.residues):
             select_res = True
 
         # Nothingness.
@@ -385,7 +386,7 @@ class Selection(object):
         select_spin = False
 
         # The spin checks.
-        if spin_num in self.spins or wildcard_match(spin_name, self.spins):
+        if spin_num in self.spins or relax_re.search(spin_name, self.spins):
             select_spin = True
 
         # Nothingness.
