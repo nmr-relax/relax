@@ -24,7 +24,7 @@
 """Module implementing relax regular expression."""
 
 # Python module imports.
-from re import search
+import re
 from string import replace
 
 
@@ -73,9 +73,9 @@ def search(id, patterns):
         id_re = '^' + id_re + '$'
 
         # String matches (both ways).
-        if search(pattern_re, id):
+        if re.search(pattern_re, id):
             return True
-        if search(id_re, pattern):
+        if re.search(id_re, pattern):
             return True
 
     # No matches.
