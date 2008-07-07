@@ -82,7 +82,7 @@ def ellipsoid_frame():
     # Spin loop.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # Test if the vector exists.
-        if not hasattr(spin, 'bond_vect'):
+        if not hasattr(spin, 'xh_vect'):
             # Get the spin id string.
             spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
 
@@ -93,8 +93,8 @@ def ellipsoid_frame():
             continue
 
         # dz and dx direction cosines.
-        dz = dot(Dz, spin.bond_vect)
-        dx = dot(Dx, spin.bond_vect)
+        dz = dot(Dz, spin.xh_vect)
+        dx = dot(Dx, spin.xh_vect)
 
         # Calculate the polar angle theta.
         spin.theta = acos(dz)
@@ -112,7 +112,7 @@ def spheroid_frame():
     # Loop over the sequence.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # Test if the vector exists.
-        if not hasattr(spin, 'bond_vect'):
+        if not hasattr(spin, 'xh_vect'):
             # Get the spin id string.
             spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
 
@@ -123,7 +123,7 @@ def spheroid_frame():
             continue
 
         # Calculate alpha.
-        spin.alpha = acos(dot(cdp.diff_tensor.Dpar_unit, spin.bond_vect))
+        spin.alpha = acos(dot(cdp.diff_tensor.Dpar_unit, spin.xh_vect))
 
 
 def wrap_angles(angle, lower, upper):
