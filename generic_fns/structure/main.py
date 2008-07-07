@@ -299,8 +299,8 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
             continue
 
         # The bond vector already exists.
-        if hasattr(spin, 'bond_vect'):
-            warn(RelaxWarning("The XH vector for the spin " + `id` + " already exists."))
+        if hasattr(spin, object_name):
+            warn(RelaxWarning("The bond vector for the spin " + `id` + " already exists."))
             continue
 
         # Get the bond info.
