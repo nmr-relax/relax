@@ -265,9 +265,6 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
         if unit:
             print "Calculating the unit vectors."
 
-    # Header print out.
-    write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
-
     # Determine if the attached atom is a proton.
     proton = False
     if relax_re.search('.*H.*', attached) or relax_re.search(attached, 'H'):
@@ -283,6 +280,9 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
         object = 'xh_vect'
     else:
         object = 'bond_vect'
+
+    # Header print out.
+    write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
 
     # Loop over the spins.
     for spin, mol_name, res_num, res_name in spin_loop(selection=spin_id, full_info=True):
