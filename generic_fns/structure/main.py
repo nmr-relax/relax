@@ -277,9 +277,9 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
 
     # Set the variable name in which the vectors will be stored.
     if proton:
-        object = 'xh_vect'
+        object_name = 'xh_vect'
     else:
-        object = 'bond_vect'
+        object_name = 'bond_vect'
 
     # Header print out.
     write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
@@ -344,7 +344,7 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
             vector = ave_vector / float(len(bond_vectors))
 
         # Set the vector.
-        spin.bond_vect = vector
+        setattr(spin, object_name, vector)
 
         # Print out of modified spins.
         write_line(sys.stdout, mol_name, res_num, res_name, spin.num, spin.name, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
