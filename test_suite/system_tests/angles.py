@@ -58,7 +58,7 @@ class Angles(TestCase):
         res_name = ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY', 'TYR', 'ARG', 'ARG'] 
         spin_num = [1, 11, 28, 51, 59, 71, 91, 104, 116, 133, 150, 167, None, None, None]
         spin_name = ['N']*12 + [None]*3
-        attached_protons = [None, None, 'H', 'H', 'H', 'H', 'H', 'H', None, None, 'H', 'H', None, None, None]
+        attached_atoms = [None, None, 'H', 'H', 'H', 'H', 'H', 'H', None, None, 'H', 'H', None, None, None]
         xh_vects = [
             None,
             None,
@@ -85,6 +85,7 @@ class Angles(TestCase):
 
         # Checks for the first 15 residues.
         for i in xrange(15):
+            print cdp.mol[0].res[i].spin[0]
             # Check the residue and spin info.
             self.assertEqual(cdp.mol[0].res[i].num, i+1)
             self.assertEqual(cdp.mol[0].res[i].name, res_name[i])
@@ -93,9 +94,9 @@ class Angles(TestCase):
             self.assertEqual(cdp.mol[0].res[i].spin[0].name, spin_name[i])
 
             # Angles have been calculated.
-            if hasattr(cdp.mol[0].res[i].spin[0], 'attached_proton'):
+            if hasattr(cdp.mol[0].res[i].spin[0], 'attached_atom'):
                 # The attached proton.
-                self.assertEqual(cdp.mol[0].res[i].spin[0].attached_proton, attached_protons[i])
+                self.assertEqual(cdp.mol[0].res[i].spin[0].attached_atom, attached_atoms[i])
 
                 # The XH vector.
                 for j in xrange(3):
@@ -106,6 +107,6 @@ class Angles(TestCase):
 
             # No angles calculated.
             else:
-                self.assertEqual(attached_protons[i], None)
+                self.assertEqual(attached_atoms[i], None)
                 self.assert_(not hasattr(cdp.mol[0].res[i].spin[0], 'xh_vect'))
                 self.assert_(not hasattr(cdp.mol[0].res[i].spin[0], 'alpha'))
