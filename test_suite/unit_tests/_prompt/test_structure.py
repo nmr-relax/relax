@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from prompt.structure import Structure
-from relax_errors import RelaxBinError, RelaxBoolError, RelaxFloatError, RelaxNoneIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
+from relax_errors import RelaxBinError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 from test_suite.unit_tests.structure_testing_base import Structure_base_class
 
 # Unit test imports.
@@ -247,5 +247,58 @@ class Test_structure(Structure_base_class, TestCase):
 
             # The argument test.
             self.assertRaises(RelaxNoneStrError, self.structure_fns.vectors, spin_id=data[1])
+
+
+    def test_vectors_argfail_struct_index(self):
+        """The struct_index arg test of the structure.vectors() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None, bin, and int arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'bin' or data[0] == 'int':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneIntError, self.structure_fns.vectors, struct_index=data[1])
+
+
+    def test_vectors_argfail_verbosity(self):
+        """The verbosity arg test of the structure.vectors() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the bin and int arguments, and skip them.
+            if data[0] == 'bin' or data[0] == 'int':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxIntError, self.structure_fns.vectors, verbosity=data[1])
+
+
+    def test_vectors_argfail_ave(self):
+        """The ave arg test of the structure.vectors() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxBoolError, self.structure_fns.vectors, ave=data[1])
+
+
+    def test_vectors_argfail_unit(self):
+        """The unit arg test of the structure.vectors() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the bool arguments, and skip them.
+            if data[0] == 'bool':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxBoolError, self.structure_fns.vectors, unit=data[1])
+
 
 
