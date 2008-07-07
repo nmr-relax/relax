@@ -277,31 +277,34 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
         # The spin identification string.
         id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
 
-        # Test that the spin number and name are set (essential for the single atom identification).
-        if spin.num == None and spin.name == None:
-            warn(RelaxWarning("The spin num and name are not set for the spin " + `id` + "."))
+        # Test that the spin number or name are set (one or both are essential for the identification of the atom).
+        if spin.num == None or spin.name == None:
+            warn(RelaxWarning("Either the spin number or spin name must be set for the spin " + `id` + " to identify the corresponding atom in the structure."))
             continue
 
-        # The XH vector already exists.
-        if hasattr(spin, 'xh_vect'):
+        # The bond vector already exists.
+        if hasattr(spin, 'bond_vect'):
             warn(RelaxWarning("The XH vector for the spin " + `id` + " already exists."))
             continue
 
         # Get the bond info.
-        bond_vectors = cdp.structure.bond_vectors(atom_id=id, attached_atom=proton)
+        bond_vectors = cdp.structure.bond_vectors(atom_id=id, attached=attached, struct_index=struct_index)
 
-        # No attached proton.
+        # No attached atom.
         if not bond_vectors:
             continue
 
-        # Set the attached proton name.
-        if not hasattr(spin, 'attached_proton'):
-            spin.attached_proton = proton
-        elif spin.attached_proton != proton:
-            raise RelaxError, "The attached proton " + `spin.attached_proton` + " does not match the proton argument " + `proton` + "."
+        # Set the attached atom name.
+        if not hasattr(spin, 'attached_atom'):
+            spin.attached_atom = attached
+        elif spin.attached_atom != attached:
+            raise RelaxError, "The attached atom " + `spin.attached_atom` + " does not match the attached argument " + `atom` + "."
+
+        # Initialise the average vector.
+        if ave:
+            ave_vector = zeros(3, float64)
 
         # Loop over the individual vectors.
-        ave_vector = zeros(3, float64)
         for vector in bond_vectors:
             # Unit vector.
             if unit:
@@ -317,13 +320,15 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
                     vector = vector / norm_factor
 
             # Sum the vectors.
-            ave_vector = ave_vector + vector
+            if ave:
+                ave_vector = ave_vector + vector
 
         # Average.
-        ave_vector = ave_vector / float(len(bond_vectors))
+        if ave:
+            vector = ave_vector / float(len(bond_vectors))
 
         # Set the vector.
-        spin.xh_vect = ave_vector
+        spin.bond_vect = vector
 
         # Print out of modified spins.
         write_line(sys.stdout, mol_name, res_num, res_name, spin.num, spin.name, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
