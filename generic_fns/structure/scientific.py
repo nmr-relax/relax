@@ -36,9 +36,10 @@ from warnings import warn
 # relax module imports.
 from api_base import Base_struct_API
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import relax_re
 from generic_fns.mol_res_spin import Selection, parse_token, tokenise
 from relax_errors import RelaxError, RelaxNoPdbChainError, RelaxNoResError, RelaxPdbLoadError
-from relax_warnings import RelaxNoAtomWarning, RelaxZeroVectorWarning
+from relax_warnings import RelaxWarning, RelaxNoAtomWarning, RelaxZeroVectorWarning
 
 
 class Scientific_data(Base_struct_API):
@@ -76,19 +77,34 @@ class Scientific_data(Base_struct_API):
         # Init.
         bonded_found = False
 
-        # The attached atom is in the residue.
-        if attached_atom in res.atoms:
-            # The bonded atom object.
-            bonded = res[attached_atom]
+        # The find the attached atom in the residue (FIXME).
+        matching_list = []
+        for atom in res.atoms:
+            if relax_re.search(atom, attached_atom):
+                matching_list.append(atom)
+        num_attached = len(matching_list)
 
-            # The bonded atom info.
-            bonded_num = bonded.properties['serial_number']
-            bonded_name = bonded.name
-            element = bonded.properties['element']
-            pos = bonded.position.array
+        # Problem.
+        if num_attached > 1:
+            warn(RelaxWarning('More than one attached atom found: ' + `matching_list`))
+            return None, None, None, None
 
-            # The bonded atom has been found.
-            bonded_found = True
+        # No attached atoms.
+        if num_attached == 0:
+            warn(RelaxWarning('No attached atom found.'))
+            return None, None, None, None
+
+        # The bonded atom object.
+        bonded = res[attached_atom]
+
+        # The bonded atom info.
+        bonded_num = bonded.properties['serial_number']
+        bonded_name = bonded.name
+        element = bonded.properties['element']
+        pos = bonded.position.array
+
+        # The bonded atom has been found.
+        bonded_found = True
 
         # Return the information.
         if bonded_found:
