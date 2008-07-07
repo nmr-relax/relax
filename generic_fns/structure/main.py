@@ -210,19 +210,26 @@ def set_vector(spin=None, xh_vect=None):
     spin.xh_vect = xh_vect
 
 
-def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
-    """Function for calculating/extracting the XH unit vector from the loaded structure.
+def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=True, unit=True):
+    """Extract the bond vectors from the loaded structures.
 
-    @param proton:      The name of the proton attached to the spin, as given in the structural
-                        file.
-    @type proton:       str
-    @param spin_id:     The molecule, residue, and spin identifier string.
-    @type spin_id:      str
-    @param verbosity:   The higher the value, the more information is printed to screen.
-    @type verbosity:    int
-    @keyword unit:      A flag which if set will cause the function to return the unit XH vector
-                        rather than the full vector.
-    @type unit:         bool
+    @keyword attached:      The name of the atom attached to the spin, as given in the structural
+                            file.  Regular expression can be used, for example 'H*'.  This uses
+                            relax rather than Python regular expression (i.e. shell like syntax).
+    @type attached:         str
+    @keyword spin_id:       The spin identifier string.
+    @type spin_id:          str
+    @keyword struct_index:  The index of the structure to extract the vector from.  If None, all
+                            vectors will be extracted.
+    @type struct_index:     str
+    @keyword verbosity:     The higher the value, the more information is printed to screen.
+    @type verbosity:        int
+    @keyword ave:           A flag which if True will cause the average of all vectors to be
+                            extracted.
+    @type ave:              bool
+    @keyword unit:          A flag which if True will cause the function to calculate the unit
+                            vectors.
+    @type unit:             bool
     """
 
     # Alias the current data pipe.
@@ -238,10 +245,22 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
 
     # Print out.
     if verbosity:
-        if cdp.structure.num_models() > 1:
-            print "\nCalculating and averaging the following unit XH vectors from all models:"
+        # Multiple structures loaded.
+        if cdp.structure.num_structures() > 1:
+            if struct_index:
+                print "Extracting vectors for structure " + `struct_index` + "."
+            else:
+                print "Extracting vectors for all structures."
+                if ave:
+                    print "\nAveraging all vectors."
+
+        # Single structure loaded.
         else:
-            print "\nCalculating the following unit XH vectors from the structure:"
+            print "\nExtracting vectors from the single structure."
+
+        # Unit vectors.
+        if unit:
+            print "Calculating the unit vector."
 
     # Header print out.
     write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
