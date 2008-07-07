@@ -223,8 +223,8 @@ class Test_structure(Structure_base_class, TestCase):
             self.assertRaises(RelaxStrError, self.structure_fns.read_pdb, parser=data[1])
 
 
-    def test_vectors_argfail_proton(self):
-        """The proton arg test of the structure.vectors() user function."""
+    def test_vectors_argfail_attached(self):
+        """The attached arg test of the structure.vectors() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -233,7 +233,7 @@ class Test_structure(Structure_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.structure_fns.vectors, proton=data[1])
+            self.assertRaises(RelaxStrError, self.structure_fns.vectors, attached=data[1])
 
 
     def test_vectors_argfail_spin_id(self):
