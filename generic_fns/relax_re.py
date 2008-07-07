@@ -28,8 +28,8 @@ import re
 from string import replace
 
 
-def search(id, patterns):
-    """Determine if id is in the list of patterns, or vice versa, allowing for regular expressions.
+def search(pattern, id):
+    """Determine if id matches the pattern, or vice versa, allowing for regular expressions.
 
     This method converts from relax's RE syntax to that of the re python module.
 
@@ -38,15 +38,16 @@ def search(id, patterns):
         1.  All '*' to '.*'.
         2.  The identifier is bracketed, '^' is added to the start and '$' to the end.
 
-    After conversion of both the id and patterns, the comparison is then performed both ways from
-    the converted string matching the original string (using re.search()).
+    After conversion of both the string and patterns, the comparison is then performed both ways
+    from the converted string matching the original string (using re.search()).
 
 
+    @param pattern:     The pattern to match the string to.  This can be a list of patterns.  All
+                        elements will be converted to strings, so the pattern or list can consist of
+                        anything.
+    @type pattern:      anything
     @param id:          The identification object.
     @type id:           None, str, or number
-    @param patterns:    A list of patterns to match.  The elements will be converted to strings,
-                        so the list can consist of anything.
-    @type patterns:     list
     @return:            True if there is a match, False otherwise.
     @rtype:             bool
     """
@@ -58,6 +59,12 @@ def search(id, patterns):
     # If a number, convert to a string.
     if type(id) == int or type(id) == float:
         id = str(id)
+
+    # If pattern is not a list, convert it to one.
+    if type(pattern) != list:
+        patterns = [pattern]
+    else:
+        patterns = pattern
 
     # Loop over the patterns.
     for pattern in patterns:
