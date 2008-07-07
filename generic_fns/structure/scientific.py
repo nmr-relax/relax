@@ -273,6 +273,18 @@ class Scientific_data(Base_struct_API):
                         if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol_name):
                             continue
 
+                        # Replace empty variables with None.
+                        if not mol_name:
+                            mol_name = None
+                        if not res_num:
+                            res_num = None
+                        if not res_name:
+                            res_name = None
+                        if not atom_num:
+                            atom_num = None
+                        if not atom_name:
+                            atom_name = None
+
                         # Build the tuple to be yielded.
                         atomic_tuple = ()
                         if model_num_flag:
