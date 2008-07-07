@@ -141,20 +141,22 @@ class Internal(Base_struct_API):
                 matching_names.append(struct.atom_name[i])
 
             # Return nothing but a warning.
-            return None, None, None, None, 'More than one attached atom found: ' + `matching_names`
+            return None, None, None, None, None, 'More than one attached atom found: ' + `matching_names`
 
         # No attached atoms.
         if num_attached == 0:
-            return None, None, None, None, "No attached atom could be found."
+            return None, None, None, None, None, "No attached atom could be found."
 
         # The bonded atom info.
-        bonded_num = struct.atom_num[bonded_index]
-        bonded_name = struct.atom_name[bonded_index]
-        element = struct.element[bonded_index]
-        pos = [struct.x[bonded_index], struct.y[bonded_index], struct.z[bonded_index]]
+        index = matching_list[0]
+        bonded_num = struct.atom_num[index]
+        bonded_name = struct.atom_name[index]
+        element = struct.element[index]
+        pos = [struct.x[index], struct.y[index], struct.z[index]]
+        attached_name = struct.atom_name[index]
 
         # Return the information.
-        return bonded_num, bonded_name, element, pos, None
+        return bonded_num, bonded_name, element, pos, attached_name, None
 
 
     def __get_chemical_name(self, hetID):
@@ -692,7 +694,7 @@ class Internal(Base_struct_API):
             # Found the atom.
             if atom_found:
                 # Find the atom bonded to this structure/molecule/residue/atom.
-                bonded_num, bonded_name, element, pos, warnings = self.__find_bonded_atom(attached_atom, index, i)
+                bonded_num, bonded_name, element, pos, attached_name, warnings = self.__find_bonded_atom(attached_atom, index, i)
 
                 # No bonded atom.
                 if (bonded_num, bonded_name, element) == (None, None, None):
@@ -707,7 +709,7 @@ class Internal(Base_struct_API):
         # Build the tuple to be yielded.
         data = (vectors,)
         if return_name:
-            data = data + (struct.atom_name[index],)
+            data = data + (attached_name,)
         if return_warnings:
             data = data + (warnings,)
 
