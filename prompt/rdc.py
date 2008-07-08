@@ -25,7 +25,7 @@ import sys
 
 # relax module imports.
 import help
-from generic_fns import relax_data
+from generic_fns import rdc
 from relax_errors import RelaxError, RelaxBoolError, RelaxBinError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 
 
@@ -58,7 +58,7 @@ class RDC:
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_data.back_calc("
+            text = sys.ps3 + "rdc.back_calc("
             text = text + "id=" + `id`
             text = text + ", frq_label=" + `frq_label`
             text = text + ", frq=" + `frq` + ")"
@@ -77,7 +77,7 @@ class RDC:
             raise RelaxFloatError, ('frequency', frq)
 
         # Execute the functional code.
-        relax_data.back_calc(id=id, frq_label=frq_label, frq=frq)
+        rdc.back_calc(id=id, frq_label=frq_label, frq=frq)
 
 
     def copy(self, pipe_from=None, pipe_to=None, id=None, frq_label=None):
@@ -108,21 +108,21 @@ class RDC:
 
         To copy all relaxation data from pipe 'm1' to pipe 'm9', type one of:
 
-        relax> relax_data.copy('m1', 'm9')
-        relax> relax_data.copy(pipe_from='m1', pipe_to='m9')
-        relax> relax_data.copy('m1', 'm9', None, None)
-        relax> relax_data.copy(pipe_from='m1', pipe_to='m9', id=None, frq_label=None)
+        relax> rdc.copy('m1', 'm9')
+        relax> rdc.copy(pipe_from='m1', pipe_to='m9')
+        relax> rdc.copy('m1', 'm9', None, None)
+        relax> rdc.copy(pipe_from='m1', pipe_to='m9', id=None, frq_label=None)
 
         To copy only the NOE relaxation data with the frq_label of '800' from 'm3' to 'm6', type one
         of:
 
-        relax> relax_data.copy('m3', 'm6', 'NOE', '800')
-        relax> relax_data.copy(pipe_from='m3', pipe_to='m6', id='NOE', frq_label='800')
+        relax> rdc.copy('m3', 'm6', 'NOE', '800')
+        relax> rdc.copy(pipe_from='m3', pipe_to='m6', id='NOE', frq_label='800')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_data.copy("
+            text = sys.ps3 + "rdc.copy("
             text = text + "pipe_from=" + `pipe_from`
             text = text + ", pipe_to=" + `pipe_to`
             text = text + ", id=" + `id`
@@ -150,7 +150,7 @@ class RDC:
             raise RelaxNoneStrError, ('frequency label', frq_label)
 
         # Execute the functional code.
-        relax_data.copy(pipe_from=pipe_from, pipe_to=pipe_to, id=id, frq_label=frq_label)
+        rdc.copy(pipe_from=pipe_from, pipe_to=pipe_to, id=id, frq_label=frq_label)
 
 
     def delete(self, id=None, frq_label=None):
@@ -169,12 +169,12 @@ class RDC:
 
         To delete the relaxation data corresponding to id='NOE', frq_label='600', type:
 
-        relax> relax_data.delete('NOE', '600')
+        relax> rdc.delete('NOE', '600')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_data.delete("
+            text = sys.ps3 + "rdc.delete("
             text = text + "id=" + `id`
             text = text + ", frq_label=" + `frq_label` + ")"
             print text
@@ -188,7 +188,7 @@ class RDC:
             raise RelaxStrError, ('frequency label', frq_label)
 
         # Execute the functional code.
-        relax_data.delete(id=id, frq_label=frq_label)
+        rdc.delete(id=id, frq_label=frq_label)
 
 
     def display(self, id=None, frq_label=None):
@@ -207,12 +207,12 @@ class RDC:
 
         To display the NOE relaxation data at 600 MHz, type:
 
-        relax> relax_data.display('NOE', '600')
+        relax> rdc.display('NOE', '600')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_data.display("
+            text = sys.ps3 + "rdc.display("
             text = text + "id=" + `id`
             text = text + ", frq_label=" + `frq_label` + ")"
             print text
@@ -226,7 +226,7 @@ class RDC:
             raise RelaxStrError, ('frequency label', frq_label)
 
         # Execute the functional code.
-        relax_data.display(id=id, frq_label=frq_label)
+        rdc.display(id=id, frq_label=frq_label)
 
 
     def read(self, id=None, file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None):
@@ -264,7 +264,7 @@ class RDC:
         The following commands will read the RDC data out of the file 'Tb.txt' where the columns are
         separated by the symbol ',', and store the RDCs under the identifier 'Tb'.
 
-        relax> relax_data.read('Tb', 'Tb.txt', sep=',')
+        relax> rdc.read('Tb', 'Tb.txt', sep=',')
         """
 
         # Function intro text.
@@ -358,7 +358,7 @@ class RDC:
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_data.write("
+            text = sys.ps3 + "rdc.write("
             text = text + "id=" + `id`
             text = text + ", frq_label=" + `frq_label`
             text = text + ", file=" + `file`
@@ -387,4 +387,4 @@ class RDC:
             raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
-        relax_data.write(id=id, frq_label=frq_label, file=file, dir=dir, force=force)
+        rdc.write(id=id, frq_label=frq_label, file=file, dir=dir, force=force)
