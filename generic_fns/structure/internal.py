@@ -145,7 +145,7 @@ class Internal(Base_struct_API):
 
         # No attached atoms.
         if num_attached == 0:
-            return None, None, None, None, None, "No attached atom could be found."
+            return None, None, None, None, None, "No attached atom could be found"
 
         # The bonded atom info.
         index = matching_list[0]

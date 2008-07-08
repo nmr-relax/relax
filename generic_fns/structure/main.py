@@ -274,15 +274,13 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
             print "The attached atom is a proton."
         else:
             print "The attached atom is not a proton."
+        print
 
     # Set the variable name in which the vectors will be stored.
     if proton:
         object_name = 'xh_vect'
     else:
         object_name = 'bond_vect'
-
-    # Header print out.
-    write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
 
     # Loop over the spins.
     for spin, mol_name, res_num, res_name in spin_loop(selection=spin_id, full_info=True):
@@ -310,7 +308,7 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
         if not bond_vectors:
             # Warning messages.
             if warnings:
-                warn(RelaxWarning(warnings))
+                warn(RelaxWarning(warnings + "  (for " + `id` + ")."))
 
             # Skip the spin.
             continue
@@ -352,7 +350,8 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
         setattr(spin, object_name, vector)
 
         # Print out of modified spins.
-        write_line(sys.stdout, mol_name, res_num, res_name, spin.num, spin.name, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+        if verbosity:
+            print "Extracted vectors for " + `id` + '.'
 
 
 def write_pdb(file=None, dir=None, struct_index=None, force=False):
