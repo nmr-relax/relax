@@ -849,10 +849,6 @@ class N_state_model(Common_functions):
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
 
-        # Test if the N-state model has been set up.
-        if not hasattr(cdp, 'N'):
-            raise RelaxNoModelError, 'N-state'
-
         # Get the model parameters if param is None.
         if param == None:
             param = cdp.params
