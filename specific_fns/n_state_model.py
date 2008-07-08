@@ -734,6 +734,12 @@ class N_state_model(Common_functions):
         | Euler angle beta       | 'beta'                      | 'beta0', 'beta1', ...             |
         |                        |                             |                                   |
         | Euler angle gamma      | 'gamma'                     | 'gamma0', 'gamma1', ...           |
+        |                        |                             |                                   |
+        | Bond length            | 'r'                         | '^r$' or '[Bb]ond[ -_][Ll]ength'  |
+        |                        |                             |                                   |
+        | Heteronucleus type     | 'heteronuc_type'            | '^[Hh]eteronucleus$'              |
+        |                        |                             |                                   |
+        | Proton type            | 'proton_type'               | '^[Pp]roton$'                     |
         |________________________|_____________________________|___________________________________|
 
         The objects corresponding to the object names are lists (or arrays) with each element
@@ -797,6 +803,27 @@ class N_state_model(Common_functions):
             else:
                 return 'gamma'
 
+
+        # Bond length.
+        if search('^r$', name) or search('[Bb]ond[ -_][Ll]ength', name):
+            if index:
+                return 'r', None
+            else:
+                return 'r'
+
+        # Heteronucleus type.
+        if search('^[Hh]eteronucleus$', name):
+            if index:
+                return 'heteronuc_type', None
+            else:
+                return 'heteronuc_type'
+
+        # Proton type.
+        if search('^[Pp]roton$', name):
+            if index:
+                return 'proton_type', None
+            else:
+                return 'proton_type'
 
         # Return nothing.
         if index:
