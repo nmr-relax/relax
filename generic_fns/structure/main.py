@@ -298,8 +298,10 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
 
         # The bond vector already exists.
         if hasattr(spin, object_name):
-            warn(RelaxWarning("The bond vector for the spin " + `id` + " already exists."))
-            continue
+            obj = getattr(spin, object_name)
+            if obj:
+                warn(RelaxWarning("The bond vector for the spin " + `id` + " already exists."))
+                continue
 
         # Get the bond info.
         bond_vectors, attached_name, warnings = cdp.structure.bond_vectors(atom_id=id, attached_atom=attached, struct_index=struct_index, return_name=True, return_warnings=True)
