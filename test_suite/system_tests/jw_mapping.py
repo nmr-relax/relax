@@ -119,3 +119,10 @@ class Jw(TestCase):
         for res in residue_loop():
             self.assertEqual(res.spin[0].r, NH_BOND_LENGTH)
             self.assertEqual(res.spin[0].csa, N15_CSA)
+
+
+    def test_mapping(self):
+        """Test a complete jw mapping run using a script."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/jw_mapping.py')
