@@ -611,7 +611,7 @@ def generate_vector_residues(structure=None, vector=None, atom_name=None, res_na
         atom_id_ext = ''
 
     # The origin atom.
-    structure.atom_add(pdb_record='HETATM', atom_num='R_vect'+atom_id_ext, atom_name=R, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin, segment_id=None, element='C', struct_index=None)
+    structure.atom_add(pdb_record='HETATM', atom_num='R_vect'+atom_id_ext, atom_name='R', res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin, segment_id=None, element='C', struct_index=None)
 
     # Create the PDB residue representing the vector.
     structure.atom_add(pdb_record='HETATM', atom_num=atom_name+atom_id_ext, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+vector*scale, segment_id=None, element='C', struct_index=None)
