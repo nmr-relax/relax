@@ -259,7 +259,7 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
 
         # Single structure loaded.
         else:
-            print "\nExtracting vectors from the single structure."
+            print "Extracting vectors from the single structure."
 
         # Unit vectors.
         if unit:
