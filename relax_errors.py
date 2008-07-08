@@ -524,6 +524,24 @@ class RelaxRiError(BaseError):
             self.save_state()
 
 
+# RDC data errors.
+##################
+
+# No RDC data.
+class RelaxNoRDCError(BaseError):
+    def __init__(self, id):
+        self.text = "RDC data corresponding to the identification string " + `id` + " does not exist."
+        if Debug:
+            self.save_state()
+
+# RDC data already exists.
+class RelaxRDCError(BaseError):
+    def __init__(self, id):
+        self.text = "RDC data corresponding to the identification string " + `id` + " already exists."
+        if Debug:
+            self.save_state()
+
+
 # Model-free errors.
 ####################
 
