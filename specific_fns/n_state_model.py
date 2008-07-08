@@ -750,7 +750,6 @@ class N_state_model(Common_functions):
         # Probability.
         if search('^p[0-9]*$', name):
             # Get the state index, otherwise return with nothing if there is an error (parameter unknown).
-            print 'hello1'
             try:
                 i = int(name[1:])
             except ValueError:
@@ -902,15 +901,10 @@ class N_state_model(Common_functions):
             for i in xrange(len(param)):
                 value.append(self.default_value(param[i]))
 
-        print param
         # Set the parameter values.
         for i in xrange(len(param)):
             # Get the object name and the parameter index.
-            try:
-                object_name, index = self.return_data_name(param[i], index=True)
-            except:
-                print `self.return_data_name(param[i], index=True)`
-                raise
+            object_name, index = self.return_data_name(param[i], index=True)
             if not object_name:
                 raise RelaxError, "The data type " + `param[i]` + " does not exist."
 
