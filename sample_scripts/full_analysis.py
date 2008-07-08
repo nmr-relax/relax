@@ -227,7 +227,7 @@ class Main:
                     # Load the PDB file and calculate the unit vectors parallel to the XH bond.
                     if PDB_FILE:
                         structure.read_pdb(PDB_FILE)
-                        structure.vectors(heteronuc='N', proton='H')
+                        structure.vectors(attached='H')
 
                     # Add an arbitrary diffusion tensor which will be optimised.
                     if DIFF_MODEL == 'sphere':
@@ -597,7 +597,7 @@ class Main:
             # Load the PDB file and calculate the unit vectors parallel to the XH bond.
             if not local_tm and PDB_FILE:
                 structure.read_pdb(PDB_FILE)
-                structure.vectors(heteronuc='N', proton='H')
+                structure.vectors(attached='H')
 
             # Load the relaxation data.
             for data in RELAX_DATA:
