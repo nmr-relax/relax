@@ -798,6 +798,13 @@ class N_state_model(Common_functions):
                 return 'gamma'
 
 
+        # Return nothing.
+        if index:
+            return None, None
+        else:
+            return None
+
+
     def set_doc(self):
         """
         N-state model set details
