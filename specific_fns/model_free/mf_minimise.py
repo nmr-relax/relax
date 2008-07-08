@@ -31,7 +31,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from float import isNaN, isInf
 from generic_fns import diffusion_tensor
 from generic_fns.diffusion_tensor import diff_data_exists
-from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
+from generic_fns.mol_res_spin import count_selected_spins, count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
 from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
@@ -506,10 +506,6 @@ class Mf_minimise:
         @type verbosity:            int
         """
 
-        # Make sure that the length of the parameter array is > 0.
-        if num_params == 0:
-            print "Cannot run a grid search on a model with zero parameters, skipping the grid search."
-
         # Test the grid search options.
         self.test_grid_ops(lower=lower, upper=upper, inc=inc, n=num_params)
 
@@ -533,7 +529,7 @@ class Mf_minimise:
         # Minimisation options for diffusion tensor parameters.
         if model_type == 'diff' or model_type == 'all':
             # Get the diffusion tensor specific configuration.
-            m = self.grid_search_config_diff(min_options, inc, m, verbosity=verbosity)
+            m = self.grid_search_config_diff(min_options, inc, m)
 
         # Model-free parameters (residue specific parameters).
         if model_type != 'diff':
@@ -581,17 +577,20 @@ class Mf_minimise:
         @rtype:             int
         """
 
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
         # Spherical diffusion {tm}.
-        if cdp.diff.type == 'sphere':
+        if cdp.diff_tensor.type == 'sphere':
             min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
             m = m + 1
 
         # Spheroidal diffusion {tm, Da, theta, phi}.
-        if cdp.diff.type == 'spheroid':
+        if cdp.diff_tensor.type == 'spheroid':
             min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
-            if cdp.diff.spheroid_type == 'prolate':
+            if cdp.diff_tensor.spheroid_type == 'prolate':
                 min_options.append([inc[1], 0.0, 1e7])
-            elif cdp.diff.spheroid_type == 'oblate':
+            elif cdp.diff_tensor.spheroid_type == 'oblate':
                 min_options.append([inc[1], -1e7, 0.0])
             else:
                 min_options.append([inc[1], -1e7, 1e7])
@@ -600,7 +599,7 @@ class Mf_minimise:
             m = m + 4
 
         # Ellipsoidal diffusion {tm, Da, Dr, alpha, beta, gamma}.
-        elif cdp.diff.type == 'ellipsoid':
+        elif cdp.diff_tensor.type == 'ellipsoid':
             min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
             min_options.append([inc[1], 0.0, 1e7])
             min_options.append([inc[2], 0.0, 1.0])
@@ -783,6 +782,9 @@ class Mf_minimise:
             if not hasattr(spin, 'proton_type'):
                 raise RelaxProtonTypeError
 
+        # Reset the minimisation statistics.
+        self.reset_min_stats()
+
         # Determine the model type.
         model_type = self.determine_model_type()
 
@@ -797,7 +799,7 @@ class Mf_minimise:
         # Tests for the PDB file and unit vectors.
         if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
             # Test if the structure file has been loaded.
-            if not hasattr(cdp.structure, 'structures'):
+            if not hasattr(cdp, 'structure'):
                 raise RelaxNoPdbError
 
             # Test if unit vectors exist.
@@ -981,10 +983,15 @@ class Mf_minimise:
             # Minimisation.
             ###############
 
+            # Constrained optimisation.
             if constraints:
                 results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=verbosity)
+
+            # Unconstrained optimisation.
             else:
                 results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
+
+            # Disassemble the results.
             if results == None:
                 continue
             param_vector, func, iter, fc, gc, hc, warning = results
@@ -1257,6 +1264,35 @@ class Mf_minimise:
 
         # Return all the data.
         return relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params
+
+
+    def reset_min_stats(self):
+        """Reset all the minimisation statistics.
+
+        All global and spin specific values will be set to None.
+        """
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
+        # Global stats.
+        if hasattr(cdp, 'chi2'):
+            cdp.chi2 = None
+            cdp.iter = None
+            cdp.f_count = None
+            cdp.g_count = None
+            cdp.h_count = None
+            cdp.warning = None
+
+        # Spin specific stats.
+        for spin in spin_loop():
+            if hasattr(spin, 'chi2'):
+                spin.chi2 = None
+                spin.iter = None
+                spin.f_count = None
+                spin.g_count = None
+                spin.h_count = None
+                spin.warning = None
 
 
     def test_grid_size(self, min_options, verbosity=1):

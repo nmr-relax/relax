@@ -184,20 +184,25 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def bond_vectors(self, atom_id=None, attached_atom=None, model=None):
+    def bond_vectors(self, atom_id=None, attached_atom=None, struct_index=None, return_name=False, return_warnings=False):
         """Prototype method stub for finding the bond vectors between 'attached_atom' and 'atom_id'.
 
-        @keyword atom_id:       The molecule, residue, and atom identifier string.  This must
-                                correspond to a single atom in the system.
-        @type atom_id:          str
-        @keyword attached_atom: The name of the bonded atom.
-        @type attached_atom:    str
-        @keyword model:         The model to return the vectors information from.  If not
-                                supplied and multiple models exist, then the returned data will
-                                contain the vectors for all models.
-        @type model:            None or int
-        @return:                The list of bond vectors for each model.
-        @rtype:                 list of numpy arrays
+        @keyword atom_id:           The molecule, residue, and atom identifier string.  This must
+                                    correspond to a single atom in the system.
+        @type atom_id:              str
+        @keyword attached_atom:     The name of the bonded atom.
+        @type attached_atom:        str
+        @keyword struct_index:      The index of the structure to return the vectors from.  If not
+                                    supplied and multiple structures/models exist, then vectors from
+                                    all structures will be returned.
+        @type struct_index:         None or int
+        @keyword return_name:       A flag which if True will cause the name of the attached atom to
+                                    be returned together with the bond vectors.
+        @type return_name:          bool
+        @keyword return_warnings:   A flag which if True will cause warning messages to be returned.
+        @type return_warnings:      bool
+        @return:                    The list of bond vectors for each model.
+        @rtype:                     list of numpy arrays
         """
 
         # Raise the error.
@@ -223,10 +228,10 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def num_models(self):
-        """Method for returning the number of loaded models (i.e. number of NMR models, etc.).
+    def num_structures(self):
+        """Method for returning the number of loaded structures (i.e. number of NMR models, etc.).
 
-        @return:    The number of models which have been loaded.
+        @return:    The number of structures which have been loaded.
         @rtype:     int
         """
 
@@ -240,7 +245,7 @@ class Base_struct_API:
         ===============
 
         The following information about the PDB records has been taken from the "Protein Data Bank
-        Contents Guide: Atomic Coordinate Entry Format Description" version 3.1, February 11, 2008".
+        Contents Guide: Atomic Coordinate Entry Format Description" version 3.1, February 11, 2008.
 
         HET record
         ----------
@@ -420,7 +425,7 @@ class Base_struct_API:
 
 
         ENDMDL record
-        ------------
+        -------------
 
         The end of model record, for multiple structures.  The format of the record is::
          __________________________________________________________________________________________

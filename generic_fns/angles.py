@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for the manipulation of angular information."""
+
 # Python module imports.
 from math import acos, sin
 from numpy import dot
@@ -68,7 +71,7 @@ def angle_diff_frame():
 
 
 def ellipsoid_frame():
-    """Function for calculating the spherical angles of the XH vector in the ellipsoid frame."""
+    """Calculate the spherical angles of the bond vector in the ellipsoid frame."""
 
     # Alias the current data pipe.
     cdp = ds[ds.current_pipe]
@@ -76,22 +79,28 @@ def ellipsoid_frame():
     # Get the unit vectors Dx, Dy, and Dz of the diffusion tensor axes.
     Dx, Dy, Dz = diffusion_tensor.unit_axes()
 
-    # Loop over the sequence.
-    for i in xrange(len(cdp.mol[0].res)):
+    # Spin loop.
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # Test if the vector exists.
-        if not hasattr(cdp.mol[0].res[i], 'xh_vect'):
-            print "No angles could be calculated for residue '" + `cdp.mol[0].res[i].num` + " " + cdp.mol[0].res[i].name + "'."
+        if not hasattr(spin, 'xh_vect'):
+            # Get the spin id string.
+            spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
+
+            # Throw a warning.
+            warn(RelaxWarning("No angles could be calculated for the spin " + `spin_id` + "."))
+
+            # Skip the spin.
             continue
 
         # dz and dx direction cosines.
-        dz = dot(Dz, cdp.mol[0].res[i].xh_vect)
-        dx = dot(Dx, cdp.mol[0].res[i].xh_vect)
+        dz = dot(Dz, spin.xh_vect)
+        dx = dot(Dx, spin.xh_vect)
 
         # Calculate the polar angle theta.
-        cdp.mol[0].res[i].theta = acos(dz)
+        spin.theta = acos(dz)
 
         # Calculate the azimuthal angle phi.
-        cdp.mol[0].res[i].phi = acos(dx / sin(cdp.mol[0].res[i].theta))
+        spin.phi = acos(dx / sin(spin.theta))
 
 
 def spheroid_frame():

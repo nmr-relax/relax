@@ -66,19 +66,11 @@ def centre_of_mass(return_mass=False):
         else:
             mol_cont = return_molecule('#' + mol_name)
 
-        # Deselected molecules.
-        if mol_cont and not mol_cont.select:
-            continue
-
         # Get the corresponding residue container.
         if res_name == None and res_num == None:
             res_cont = mol_cont.res[0]
         else:
             res_cont = return_residue(':' + `res_num`)
-
-        # Deselected residues.
-        if res_cont and not res_cont.select:
-            continue
 
         # Get the corresponding spin container.
         if atom_name == None and atom_num == None:

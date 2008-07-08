@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing functions for the handling of alignment tensors."""
+
 # Python module imports.
 from copy import deepcopy
 from math import cos, pi, sin

@@ -36,9 +36,10 @@ from warnings import warn
 # relax module imports.
 from api_base import Base_struct_API
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import Selection, parse_token, tokenise, wildcard_match
+from generic_fns import relax_re
+from generic_fns.mol_res_spin import Selection, parse_token, tokenise
 from relax_errors import RelaxError, RelaxNoPdbChainError, RelaxNoResError, RelaxPdbLoadError
-from relax_warnings import RelaxNoAtomWarning, RelaxZeroVectorWarning
+from relax_warnings import RelaxWarning, RelaxNoAtomWarning, RelaxZeroVectorWarning
 
 
 class Scientific_data(Base_struct_API):
@@ -76,25 +77,33 @@ class Scientific_data(Base_struct_API):
         # Init.
         bonded_found = False
 
-        # The attached atom is in the residue.
-        if attached_atom in res.atoms:
-            # The bonded atom object.
-            bonded = res[attached_atom]
+        # The find the attached atom in the residue (FIXME).
+        matching_list = []
+        for atom in res.atoms.keys():
+            if relax_re.search(atom, attached_atom):
+                matching_list.append(atom)
+        num_attached = len(matching_list)
 
-            # The bonded atom info.
-            bonded_num = bonded.properties['serial_number']
-            bonded_name = bonded.name
-            element = bonded.properties['element']
-            pos = bonded.position.array
+        # Problem.
+        if num_attached > 1:
+            return None, None, None, None, None, 'More than one attached atom found: ' + `matching_list`
 
-            # The bonded atom has been found.
-            bonded_found = True
+        # No attached atoms.
+        if num_attached == 0:
+            return None, None, None, None, None, "No attached atom could be found"
+
+        # The bonded atom object.
+        bonded = res[attached_atom]
+
+        # The bonded atom info.
+        bonded_num = bonded.properties['serial_number']
+        bonded_name = bonded.name
+        element = bonded.properties['element']
+        pos = bonded.position.array
+        attached_name = matching_list[0]
 
         # Return the information.
-        if bonded_found:
-            return bonded_num, bonded_name, element, pos
-        else:
-            return None, None, None, None
+        return bonded_num, bonded_name, element, pos, attached_name, None
 
 
     def __molecule_loop(self, struct, sel_obj=None):
@@ -257,6 +266,18 @@ class Scientific_data(Base_struct_API):
                         if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol_name):
                             continue
 
+                        # Replace empty variables with None.
+                        if not mol_name:
+                            mol_name = None
+                        if not res_num:
+                            res_num = None
+                        if not res_name:
+                            res_name = None
+                        if not atom_num:
+                            atom_num = None
+                        if not atom_name:
+                            atom_name = None
+
                         # Build the tuple to be yielded.
                         atomic_tuple = ()
                         if model_num_flag:
@@ -353,20 +374,25 @@ class Scientific_data(Base_struct_API):
         return bonded_num, bonded_name, element, pos_array
 
 
-    def bond_vectors(self, atom_id=None, attached_atom=None, model=None):
+    def bond_vectors(self, atom_id=None, attached_atom=None, struct_index=None, return_name=False, return_warnings=False):
         """Find the bond vectors between the atoms of 'attached_atom' and 'atom_id'.
 
-        @keyword atom_id:       The molecule, residue, and atom identifier string.  This must
-                                correspond to a single atom in the system.
-        @type atom_id:          str
-        @keyword attached_atom: The name of the bonded atom.
-        @type attached_atom:    str
-        @keyword model:         The model to return the vectors information from.  If not
-                                supplied and multiple models exist, then the returned data will
-                                contain the vectors for all models.
-        @type model:            None or int
-        @return:                The list of bond vectors for each model.
-        @rtype:                 list of numpy arrays
+        @keyword atom_id:           The molecule, residue, and atom identifier string.  This must
+                                    correspond to a single atom in the system.
+        @type atom_id:              str
+        @keyword attached_atom:     The name of the bonded atom.
+        @type attached_atom:        str
+        @keyword struct_index:      The index of the structure to return the vectors from.  If not
+                                    supplied and multiple structures/models exist, then vectors from
+                                    all structures will be returned.
+        @type struct_index:         None or int
+        @keyword return_name:       A flag which if True will cause the name of the attached atom to
+                                    be returned together with the bond vectors.
+        @type return_name:          bool
+        @keyword return_warnings:   A flag which if True will cause warning messages to be returned.
+        @type return_warnings:      bool
+        @return:                    The list of bond vectors for each structure.
+        @rtype:                     list of numpy arrays
         """
 
         # Generate the selection object.
@@ -374,20 +400,22 @@ class Scientific_data(Base_struct_API):
 
         # Initialise some objects.
         vectors = []
+        attached_name = None
+        warnings = None
 
-        # Loop over the models.
-        for struct in self.structural_data:
+        # Loop over the structures.
+        for i in xrange(len(self.structural_data)):
+            # Single structure.
+            if struct_index and struct_index != i:
+                continue
+
             # Init.
             atom_found = False
 
-            # Skip non-matching models.
-            if model != None and model != struct.model:
-                continue
-
             # Loop over each individual molecule.
-            for mol, mol_name, mol_type in self.__molecule_loop(struct, sel_obj):
+            for mol, mol_name, mol_type in self.__molecule_loop(self.structural_data[i], sel_obj):
                 # Loop over the residues of the protein in the PDB file.
-                for res, res_num, res_name in self.__residue_loop(mol, mol_type, sel_obj):
+                for res, res_num, res_name in self.__residue_loop(mol, mol_name, mol_type, sel_obj):
                     # Loop over the atoms of the residue.
                     for atom in res:
                         # Atom number, name, and position.
@@ -410,8 +438,8 @@ class Scientific_data(Base_struct_API):
 
             # Found the atom.
             if atom_found:
-                # Find the atom bonded to this model/molecule/residue/atom.
-                bonded_num, bonded_name, element, pos = self.__find_bonded_atom(attached_atom, mol_type_match, res_match)
+                # Find the atom bonded to this structure/molecule/residue/atom.
+                bonded_num, bonded_name, element, pos, attached_name, warnings = self.__find_bonded_atom(attached_atom, mol_type_match, res_match)
 
                 # No bonded atom.
                 if (bonded_num, bonded_name, element) == (None, None, None):
@@ -423,8 +451,15 @@ class Scientific_data(Base_struct_API):
                 # Append the vector to the vectors array (converting from a Numeric array to a numpy array).
                 vectors.append(array(vector, float64))
 
-        # Return the bond vectors.
-        return vectors
+        # Build the tuple to be yielded.
+        data = (vectors,)
+        if return_name:
+            data = data + (attached_name,)
+        if return_warnings:
+            data = data + (warnings,)
+
+        # Return the data.
+        return data
 
 
     def load_pdb(self, file_path, model=None, verbosity=False):

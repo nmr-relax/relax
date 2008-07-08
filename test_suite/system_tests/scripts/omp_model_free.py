@@ -10,8 +10,9 @@ from data import Relax_data_store; ds = Relax_data_store()
 # Path of the relaxation data.
 DATA_PATH = sys.path[-1] + '/test_suite/shared_data/model_free/OMP'
 
-# Mini subset of local tm data pipes.
+# Mini subset of local tm and model-free data pipes.
 LOCAL_TM_MODELS = ['tm0', 'tm1', 'tm2']
+MF_MODELS = ['m0', 'm1', 'm2']
 
 # The bond length, CSA values, heteronucleus type, and proton type.
 BOND_LENGTH = 1.02 * 1e-10
@@ -45,6 +46,44 @@ class Main:
         self.multi_model(local_tm=True)
 
         # Model selection.
+        self.model_selection(pipe='aic')
+
+
+        #######################
+        # Spherical diffusion #
+        #######################
+
+        # Initial round of optimisation.
+        ################################
+
+        # Copy the model selection data pipe to a new pipe for the spherical diffusion tensor.
+        pipe.copy('aic', 'sphere')
+        pipe.switch('sphere')
+
+        # Remove the tm parameter.
+        model_free.remove_tm()
+
+        # Set up the diffusion tensor.
+        diffusion_tensor.init(10e-9, fixed=False)
+
+        # Minimise just the diffusion tensor.
+        fix('all_spins')
+        grid_search(inc=GRID_INC)
+        minimise(MIN_ALGOR)
+
+        # Write the results.
+        results.write(file='devnull', force=True)
+
+
+        # Normal optimisation.
+        ######################
+
+        # Sequential optimisation of all model-free models.
+        pipe.copy('sphere', 'previous')
+        self.multi_model(local_tm=False)
+
+        # Model selection.
+        pipe.delete('aic')
         self.model_selection(pipe='aic')
 
 

@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for reading/writing/displaying the results in a data pipe."""
+
 # Python module imports.
 from re import search
 from string import split

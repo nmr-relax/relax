@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007-2008 Edward d'Auvergne                        #
+# Copyright (C) 2008 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,50 +20,33 @@
 #                                                                             #
 ###############################################################################
 
-# Module docstring.
-"""Module for interfacing with VMD."""
-
 # Python module imports.
-module_avail = False
-try:
-    from Scientific.Visualization import VMD    # This requires Numeric to be installed (at least in Scientific 2.7.8).
-except ImportError:
-    module_avail = False
+from unittest import TestCase
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
-from relax_errors import RelaxNoPdbError
+from generic_fns import relax_re
 
 
-# The relax data storage object.
+class Test_relax_re(TestCase):
+    """Unit tests for the functions of the 'generic_fns.relax_re' module."""
+
+    # Place the generic_fns.relax_re module into the class namespace.
+    relax_re_fns = relax_re
 
 
+    def test_search(self):
+        """Test the proper behaviour of the generic_fns.relax_re.search() function."""
 
-class Vmd:
-    def __init__(self, relax):
-        """Class containing the functions for viewing molecules."""
+        # Test a number of calls which should return True.
+        self.assertTrue(self.relax_re_fns.search('H', 'H'))
+        self.assertTrue(self.relax_re_fns.search('H*', 'H'))
+        self.assertTrue(self.relax_re_fns.search('H*', 'H1'))
+        self.assertTrue(self.relax_re_fns.search('H1', 'H1'))
+        self.assertTrue(self.relax_re_fns.search('^H*', 'H'))
+        self.assertTrue(self.relax_re_fns.search('^H*$', 'H'))
+        self.assertTrue(self.relax_re_fns.search('^H*$', 'H'))
 
-        self.relax = relax
-
-
-    def view(self, run):
-        """Function for viewing the collection of molecules using VMD."""
-
-        # Test if the module is available.
-        if not module_avail:
-            print "VMD is not available (cannot import Scientific.Visualization.VMD due to missing Numeric dependency)."
-            return
-
-        # Test if the PDB file has been loaded.
-        if not ds.pdb.has_key(run):
-            raise RelaxNoPdbError, run
-
-        # Create an empty scene.
-        ds.vmd_scene = VMD.Scene()
-
-        # Add the molecules to the scene.
-        for i in xrange(len(ds.pdb[run].structures)):
-            ds.vmd_scene.addObject(VMD.Molecules(ds.pdb[run].structures[i]))
-
-        # View the scene.
-        ds.vmd_scene.view()
+        # Test a number of calls which should return False.
+        self.assertFalse(self.relax_re_fns.search('H*', 'NH'))
+        self.assertFalse(self.relax_re_fns.search('H', 'HN'))
+        self.assertFalse(self.relax_re_fns.search('H', 'H1'))

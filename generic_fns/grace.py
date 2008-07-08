@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -19,6 +19,9 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
 #                                                                             #
 ###############################################################################
+
+# Module docstring.
+"""Module for interfacing with Grace (also known as Xmgrace, Xmgr, and ace)."""
 
 # Python module imports.
 from numpy import array

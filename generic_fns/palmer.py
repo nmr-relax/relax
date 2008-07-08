@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module for creating and processing input and output for Art Palmer's Modelfree 4 program."""
+"""Module for interfacing with Art Palmer's Modelfree 4 program."""
 
 
 # Python module imports.

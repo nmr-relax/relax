@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for reading and writing the relax program state."""
+
 # Python module imports.
 from cPickle import dump, load
 

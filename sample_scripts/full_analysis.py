@@ -113,7 +113,8 @@ from string import lower
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import spin_index_loop, spin_loop
+from float import floatAsByteArray
+from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
 from relax_errors import RelaxError
 
 
@@ -189,7 +190,7 @@ class Main:
             self.multi_model(local_tm=True)
 
             # Model selection.
-            self.model_selection(pipe='aic', dir=self.base_dir + 'aic')
+            self.model_selection(modsel_pipe='aic', dir=self.base_dir + 'aic')
 
 
         # Diffusion models MII to MV.
@@ -226,7 +227,7 @@ class Main:
                     # Load the PDB file and calculate the unit vectors parallel to the XH bond.
                     if PDB_FILE:
                         structure.read_pdb(PDB_FILE)
-                        structure.vectors(heteronuc='N', proton='H')
+                        structure.vectors(attached='H')
 
                     # Add an arbitrary diffusion tensor which will be optimised.
                     if DIFF_MODEL == 'sphere':
@@ -243,7 +244,7 @@ class Main:
                         inc = 6
 
                     # Minimise just the diffusion tensor.
-                    fix('all_res')
+                    fix('all_spins')
                     grid_search(inc=inc)
                     minimise(MIN_ALGOR)
 
@@ -262,14 +263,8 @@ class Main:
                     # Sequential optimisation of all model-free models (function must be modified to suit).
                     self.multi_model()
 
-                    # Create the final data pipe (for model selection and final optimisation).
-                    name = 'final'
-                    if ds.has_key(name):
-                        pipe.delete(name)
-                    pipe.create(name, 'mf')
-
                     # Model selection.
-                    self.model_selection(dir=self.base_dir + 'aic')
+                    self.model_selection(modsel_pipe='final', dir=self.base_dir + 'aic')
 
                     # Final optimisation of all diffusion and model-free parameters.
                     fix('all', fixed=False)
@@ -326,18 +321,15 @@ class Main:
                 # Load the diffusion model results.
                 results.read(file='results', dir=model + '/round_' + `self.round` + '/opt')
 
-            # Create the data pipe for model selection (which will be a copy of the selected diffusion model or data pipe).
-            pipe.create('final', 'mf')
-
             # Model selection between MI to MV.
-            self.model_selection(pipe='final', write_flag=False)
+            self.model_selection(modsel_pipe='final', write_flag=False)
 
 
             # Monte Carlo simulations.
             ##########################
 
-            # Fix the diffusion tensor (if it exists!).
-            if ds.diff.has_key('final'):
+            # Fix the diffusion tensor, if it exists.
+            if hasattr(ds['final'], 'diff_tensor'):
                 fix('diff')
 
             # Simulations.
@@ -385,8 +377,11 @@ class Main:
         ###################
 
         print "Chi-squared test:"
-        print "    chi2 (k-1): " + `prev_pipe.chi2`
-        print "    chi2 (k):   " + `cdp.chi2`
+        print "    chi2 (k-1):          " + `prev_pipe.chi2`
+        print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_pipe.chi2)` + ')'
+        print "    chi2 (k):            " + `cdp.chi2`
+        print "        (as an IEEE-754 byte array: " + `floatAsByteArray(cdp.chi2)` + ')'
+        print "    chi2 (difference):   " + `prev_pipe.chi2 - cdp.chi2`
         if prev_pipe.chi2 == cdp.chi2:
             print "    The chi-squared value has converged.\n"
         else:
@@ -439,14 +434,16 @@ class Main:
             # Tests.
             for param in params:
                 # Get the parameter values.
-                prev_val = getattr(prev_pipe.diff, param)
-                curr_val = getattr(cdp.diff, param)
+                prev_val = getattr(prev_pipe.diff_tensor, param)
+                curr_val = getattr(cdp.diff_tensor, param)
 
                 # Test if not identical.
                 if prev_val != curr_val:
                     print "    Parameter:   " + param
                     print "    Value (k-1): " + `prev_val`
+                    print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
                     print "    Value (k):   " + `curr_val`
+                    print "        (as an IEEE-754 byte array: " + `floatAsByteArray(curr_val)` + ')'
                     print "    The diffusion parameters have not converged.\n"
                     params_converged = False
 
@@ -466,6 +463,9 @@ class Main:
                     if not hasattr(prev_spin, 'params') or not hasattr(curr_spin, 'params'):
                         continue
 
+                    # The spin ID string.
+                    spin_id = generate_spin_id(mol_name=cdp.mol[mol_index].name, res_num=cdp.mol[mol_index].res[res_index].num, res_name=cdp.mol[mol_index].res[res_index].name, spin_num=cdp.mol[mol_index].res[res_index].spin[spin_index].num, spin_name=cdp.mol[mol_index].res[res_index].spin[spin_index].name)
+
                     # Loop over the parameters.
                     for j in xrange(len(curr_spin.params)):
                         # Get the parameter values.
@@ -474,10 +474,12 @@ class Main:
 
                         # Test if not identical.
                         if prev_val != curr_val:
-                            print "    Spin system: " + `curr_spin.num` + ' ' + curr_spin.name
+                            print "    Spin ID:     " + `spin_id`
                             print "    Parameter:   " + curr_spin.params[j]
                             print "    Value (k-1): " + `prev_val`
+                            print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
                             print "    Value (k):   " + `curr_val`
+                            print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
                             print "    The model-free parameters have not converged.\n"
                             params_converged = False
                             break
@@ -557,14 +559,16 @@ class Main:
             results.read('results', DIFF_MODEL + '/round_' + `self.round - 1` + '/opt')
 
 
-    def model_selection(self, pipe=None, dir=None, write_flag=True):
+    def model_selection(self, modsel_pipe=None, dir=None, write_flag=True):
         """Model selection function."""
 
         # Model elimination.
         eliminate()
 
-        # Model selection.
-        model_selection(method='AIC', modsel_pipe=pipe, pipes=self.pipes)
+        # Model selection (delete the model selection pipe if it already exists).
+        if ds.has_key(modsel_pipe):
+            pipe.delete(modsel_pipe)
+        model_selection(method='AIC', modsel_pipe=modsel_pipe, pipes=self.pipes)
 
         # Write the results.
         if write_flag:
@@ -593,7 +597,7 @@ class Main:
             # Load the PDB file and calculate the unit vectors parallel to the XH bond.
             if not local_tm and PDB_FILE:
                 structure.read_pdb(PDB_FILE)
-                structure.vectors(heteronuc='N', proton='H')
+                structure.vectors(attached='H')
 
             # Load the relaxation data.
             for data in RELAX_DATA:

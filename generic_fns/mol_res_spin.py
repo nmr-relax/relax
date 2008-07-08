@@ -46,6 +46,7 @@ from warnings import warn
 from data import Relax_data_store; ds = Relax_data_store()
 from data.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
 from generic_fns import pipes
+from generic_fns import relax_re
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRegExpError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 from relax_warnings import RelaxWarning
 
@@ -220,7 +221,7 @@ class Selection(object):
                 select_mol = True
 
             # A true match.
-            elif wildcard_match(mol.name, self.molecules):
+            elif relax_re.search(self.molecules, mol.name):
                 select_mol = True
         else:
             # No molecule container sent in, therefore the molecule is assumed to match.
@@ -233,7 +234,7 @@ class Selection(object):
                 select_res = True
 
             # A true match.
-            elif wildcard_match(res.name, self.residues) or res.num in self.residues:
+            elif relax_re.search(self.residues, res.name) or res.num in self.residues:
                 select_res = True
         else:
             # No residue container sent in, therefore the residue is assumed to match.
@@ -246,7 +247,7 @@ class Selection(object):
                 select_spin = True
 
             # A true match.
-            elif wildcard_match(spin.name, self.spins) or spin.num in self.spins:
+            elif relax_re.search(self.spins, spin.name) or spin.num in self.spins:
                 select_spin = True
         else:
             # No spin container sent in, therefore the spin is assumed to match.
@@ -298,7 +299,7 @@ class Selection(object):
             return self._intersect[0].contains_mol(mol) and self._intersect[1].contains_mol(mol)
 
         # The check.
-        if wildcard_match(mol, self.molecules):
+        if relax_re.search(self.molecules, mol):
             return True
 
         # Nothingness.
@@ -338,7 +339,7 @@ class Selection(object):
         select_res = False
 
         # The residue checks.
-        if res_num in self.residues or wildcard_match(res_name, self.residues):
+        if res_num in self.residues or relax_re.search(self.residues, res_name):
             select_res = True
 
         # Nothingness.
@@ -385,7 +386,7 @@ class Selection(object):
         select_spin = False
 
         # The spin checks.
-        if spin_num in self.spins or wildcard_match(spin_name, self.spins):
+        if spin_num in self.spins or relax_re.search(self.spins, spin_name):
             select_spin = True
 
         # Nothingness.
@@ -2005,57 +2006,3 @@ def tokenise(selection):
 
     # Return the three tokens.
     return mol_token, res_token, spin_token
-
-
-def wildcard_match(id, patterns):
-    """Determine if id is in the list of patterns, or vice versa, allowing for regular expressions.
-
-    This method converts from relax's RE syntax to that of the re python module.
-
-    The changes include:
-
-        1.  All '*' to '.*'.
-        2.  The identifier is bracketed, '^' is added to the start and '$' to the end.
-
-    After conversion of both the id and patterns, the comparison is then performed both ways from
-    the converted string matching the original string (using re.search()).
-
-
-    @param id:          The identification object.
-    @type id:           None, str, or number
-    @param patterns:    A list of patterns to match.  The elements will be converted to strings,
-                        so the list can consist of anything.
-    @type patterns:     list
-    @return:            True if there is a match, False otherwise.
-    @rtype:             bool
-    """
-
-    # Catch None.
-    if id == None:
-        return False
-
-    # If a number, convert to a string.
-    if type(id) == int or type(id) == float:
-        id = str(id)
-
-    # Loop over the patterns.
-    for pattern in patterns:
-        # Force a conversion to str.
-        pattern = str(pattern)
-
-        # First replace any '*' with '.*' (relax to re conversion).
-        pattern_re = replace(pattern, '*', '.*')
-        id_re =      replace(id,      '*', '.*')
-
-        # Bracket the pattern.
-        pattern_re = '^' + pattern_re + '$'
-        id_re = '^' + id_re + '$'
-
-        # String matches (both ways).
-        if search(pattern_re, id):
-            return True
-        if search(id_re, pattern):
-            return True
-
-    # No matches.
-    return False

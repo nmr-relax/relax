@@ -344,6 +344,9 @@ class Model_free_main:
         @rtype:                 numpy diagonal matrix
         """
 
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
         # Initialise.
         if num_params == 0:
             scaling_matrix = zeros((0, 0), float64)
@@ -970,8 +973,8 @@ class Model_free_main:
 
         # Duplicate all non-sequence specific data.
         for data_name in dir(ds[pipe_from]):
-            # Skip the molecule, residue, and spin data structure.
-            if data_name == 'mol':
+            # Skip the container objects.
+            if data_name in ['mol', 'diff_tensor']:
                 continue
 
             # Skip special objects.
@@ -995,6 +998,33 @@ class Model_free_main:
 
             # Duplicate the data.
             setattr(ds[pipe_to], data_name, deepcopy(data_from))
+
+        # Diffusion tensor comparison.
+        if hasattr(ds[pipe_from], 'diff_tensor'):
+            # Duplicate the tensor if it doesn't exist.
+            if not hasattr(ds[pipe_to], 'diff_tensor'):
+                setattr(ds[pipe_to], 'diff_tensor', deepcopy(ds[pipe_from].diff_tensor))
+
+            # Otherwise compare the objects inside the container.
+            else:
+                # Loop over the modifiable objects.
+                for data_name in ds[pipe_from].diff_tensor.__mod_attr__:
+                    # Get the original object.
+                    data_from = None
+                    if hasattr(ds[pipe_from].diff_tensor, data_name):
+                        data_from = getattr(ds[pipe_from].diff_tensor, data_name)
+
+                    # Get the target object.
+                    if data_from and not hasattr(ds[pipe_to].diff_tensor, data_name):
+                        raise RelaxError, "The diffusion tensor object " + `data_name` + " of the " + `pipe_from` + " data pipe is not located in the " + `pipe_to` + " data pipe."
+                    elif data_from:
+                        data_to = getattr(ds[pipe_to].diff_tensor, data_name)
+                    else:
+                        continue
+
+                    # The data must match!
+                    if data_from != data_to:
+                        raise RelaxError, "The object " + `data_name` + "." + `data_name` + " is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
 
         # Determine the model type.
         model_type = self.determine_model_type()
@@ -1561,10 +1591,9 @@ class Model_free_main:
         """
 
         # Test that no diffusion tensor exists if local tm is a parameter in the model.
-        if params:
-            for param in params:
-                if param == 'local_tm' and hasattr(ds, 'diff'):
-                    raise RelaxTensorError, 'diffusion'
+        for param in params:
+            if param == 'local_tm' and hasattr(ds, 'diff_tensor'):
+                raise RelaxTensorError, 'diffusion'
 
         # Loop over the sequence.
         for spin in spin_loop(spin_id):
@@ -1572,12 +1601,9 @@ class Model_free_main:
             self.data_init(spin)
 
             # Model-free model, equation, and parameter types.
-            if model:
-                spin.model = model
-            if equation:
-                spin.equation = equation
-            if params:
-                spin.params = params
+            spin.model = model
+            spin.equation = equation
+            spin.params = params
 
 
     def model_statistics(self, instance=None, spin_id=None, global_stats=None):
@@ -1709,9 +1735,9 @@ class Model_free_main:
 
 
     def overfit_deselect(self):
-        """Function for deselecting residues without sufficient data to support minimisation"""
+        """Deselect spins which have insufficient data to support minimisation."""
 
-        # Test sequence data exists.
+        # Test if sequence data exists.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
@@ -1720,7 +1746,7 @@ class Model_free_main:
 
         # Is structural data required?
         need_vect = False
-        if hasattr(cdp, 'diff') and (cdp.diff_tensor.type == 'spheroid' or cdp.diff_tensor.type == 'ellipsoid'):
+        if hasattr(cdp, 'diff_tensor') and (cdp.diff_tensor.type == 'spheroid' or cdp.diff_tensor.type == 'ellipsoid'):
             need_vect = True
 
         # Loop over the sequence.
@@ -1734,7 +1760,7 @@ class Model_free_main:
                 spin.select = False
 
             # Require at least as many data points as params to prevent over-fitting.
-            elif hasattr(spin, 'params') and len(spin.params) > len(spin.relax_data):
+            elif hasattr(spin, 'params') and spin.params and len(spin.params) > len(spin.relax_data):
                 spin.select = False
 
             # Test for structural data if required.
@@ -1742,67 +1768,61 @@ class Model_free_main:
                 spin.select = False
 
 
-    def remove_tm(self, run, res_num):
-        """Function for removing the local tm parameter from the model-free parameters."""
+    def remove_tm(self, spin_id=None):
+        """Remove local tm from the set of model-free parameters for the given spins.
 
-        # Arguments.
-        self.run = run
+        @param spin_id: The spin identification string.
+        @type spin_id:  str or None
+        """
 
-        # Test if the run exists.
-        if not self.run in ds.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current data pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
 
-        # Test if the run type is set to 'mf'.
-        function_type = ds.run_types[ds.run_names.index(self.run)]
+        # Test if the pipe type is 'mf'.
+        function_type = ds[ds.current_pipe].pipe_type
         if function_type != 'mf':
-            raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
+            raise RelaxFuncSetupError, specific_fns.get_string(function_type)
 
         # Test if sequence data is loaded.
-        if not ds.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
-        # Loop over the sequence.
-        for i in xrange(len(ds.res[self.run])):
-            # Remap the data structure.
-            data = ds.res[self.run][i]
-
-            # Skip deselected residues.
-            if not data.select:
-                continue
-
-            # If res_num is set, then skip all other residues.
-            if res_num != None and res_num != data.num:
+        # Loop over the spins.
+        for spin in spin_loop(spin_id):
+            # Skip deselected spins.
+            if not spin.select:
                 continue
 
             # Test if a local tm parameter exists.
-            if not hasattr(data, 'params') or not 'local_tm' in data.params:
+            if not hasattr(spin, 'params') or not 'local_tm' in spin.params:
                 continue
 
             # Remove tm.
-            data.params.remove('local_tm')
+            spin.params.remove('local_tm')
 
             # Model name.
-            if match('^tm', data.model):
-                data.model = data.model[1:]
+            if match('^tm', spin.model):
+                spin.model = spin.model[1:]
 
-            # Set the local tm value to None.
-            data.local_tm = None
+            # Delete the local tm variable.
+            del spin.local_tm
 
-            # Set all the minimisation details to None.
-            data.chi2 = None
-            data.iter = None
-            data.f_count = None
-            data.g_count = None
-            data.h_count = None
-            data.warning = None
+            # Set all the minimisation stats to None.
+            spin.chi2 = None
+            spin.iter = None
+            spin.f_count = None
+            spin.g_count = None
+            spin.h_count = None
+            spin.warning = None
 
-        # Set the global minimisation details to None.
-        ds.chi2[self.run] = None
-        ds.iter[self.run] = None
-        ds.f_count[self.run] = None
-        ds.g_count[self.run] = None
-        ds.h_count[self.run] = None
-        ds.warning[self.run] = None
+        # Set the global minimisation stats to None.
+        ds[ds.current_pipe].chi2 = None
+        ds[ds.current_pipe].iter = None
+        ds[ds.current_pipe].f_count = None
+        ds[ds.current_pipe].g_count = None
+        ds[ds.current_pipe].h_count = None
+        ds[ds.current_pipe].warning = None
 
 
     def return_conversion_factor(self, param, spin=None, spin_id=None):

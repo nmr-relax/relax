@@ -182,7 +182,7 @@ class Mf(TestCase):
         # Read the PDF file and set the vectors.
         self.relax.interpreter._Structure.read_pdb(file='pdb', dir=path, model=1)
         self.relax.interpreter._Structure.load_spins('@N')
-        self.relax.interpreter._Structure.vectors(proton='H')
+        self.relax.interpreter._Structure.vectors(attached='H')
 
         # Read the relaxation data.
         self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007 Edward d'Auvergne                             #
+# Copyright (C) 2003-2004, 2007-2008 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,70 +20,60 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for holding certain model components fixed during optimisation."""
+
 # Python module imports.
 from re import match
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError
 
 
+def fix(element, fixed):
+    """Fix or allow certain model components values to vary during optimisation.
+
+    @param element:     The model component to fix or unfix.  If set to 'diff', then the diffusion
+                        parameters can be toggled.  If set to 'all_spins', then all spins can be
+                        toggled.  If set to 'all', then all model components are toggled.
+    @type element:      str.
+    """
+
+    # Test if the current data pipe exists.
+    if not ds.current_pipe:
+        raise RelaxNoPipeError
+
+    # Alias the current data pipe.
+    cdp = ds[ds.current_pipe]
+
+    # Diffusion tensor.
+    if element == 'diff' or element == 'all':
+        # Test if the diffusion tensor data is loaded.
+        if not hasattr(cdp, 'diff_tensor'):
+            raise RelaxNoTensorError, 'diffusion'
+
+        # Set the fixed flag.
+        cdp.diff_tensor.fixed = fixed
 
 
+    # All spins.
+    elif element == 'all_spins' or element == 'all':
+        # Test if sequence data exists.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
-class Fix:
-    def __init__(self, relax):
-        """Class containing the function for fixing or allowing parameter values to change."""
+        # Loop over the sequence and set the fixed flag.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
 
-        self.relax = relax
-
-
-    def fix(self, run, element, fixed):
-        """Function for fixing or allowing parameter values to change."""
-
-        # Test if the run exists.
-        if not run in ds.run_names:
-            raise RelaxNoPipeError, run
-
-        # Diffusion tensor.
-        if element == 'diff':
-            # Test if the diffusion tensor data is loaded.
-            if not ds.diff.has_key(run):
-                raise RelaxNoTensorError, 'diffusion'
-
-            # Set the fixed flag.
-            ds.diff[run].fixed = fixed
+            # Set the flag.
+            spin.fixed = fixed
 
 
-        # All residues.
-        elif element == 'all_res':
-            # Test if sequence data is loaded.
-            if not ds.res.has_key(run):
-                raise RelaxNoSequenceError, run
-
-            # Loop over the sequence and set the fixed flag.
-            for i in xrange(len(ds.res[run])):
-                ds.res[run][i].fixed = fixed
-
-
-        # All parameters.
-        elif element == 'all':
-            # Test if sequence data is loaded.
-            if not ds.res.has_key(run):
-                raise RelaxNoSequenceError, run
-
-            # Test if the diffusion tensor data is loaded.
-            if not ds.diff.has_key(run):
-                raise RelaxNoTensorError, 'diffusion'
-
-            # Set the fixed flag for the diffusion tensor.
-            ds.diff[run].fixed = fixed
-
-            # Loop over the sequence and set the fixed flag.
-            for i in xrange(len(ds.res[run])):
-                ds.res[run][i].fixed = fixed
-
-
-        # Unknown.
-        else:
-            raise RelaxError, "The 'element' argument " + `element` + " is unknown."
+    # Unknown.
+    if element not in ['diff', 'all_spins', 'all']:
+        raise RelaxError, "The 'element' argument " + `element` + " is unknown."
