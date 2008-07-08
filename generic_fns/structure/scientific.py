@@ -86,13 +86,11 @@ class Scientific_data(Base_struct_API):
 
         # Problem.
         if num_attached > 1:
-            warn(RelaxWarning('More than one attached atom found: ' + `matching_list`))
-            return None, None, None, None
+            return None, None, None, None, None, 'More than one attached atom found: ' + `matching_list`
 
         # No attached atoms.
         if num_attached == 0:
-            warn(RelaxWarning('No attached atom found.'))
-            return None, None, None, None
+            return None, None, None, None, None, "No attached atom could be found"
 
         # The bonded atom object.
         bonded = res[attached_atom]
@@ -102,15 +100,10 @@ class Scientific_data(Base_struct_API):
         bonded_name = bonded.name
         element = bonded.properties['element']
         pos = bonded.position.array
-
-        # The bonded atom has been found.
-        bonded_found = True
+        attached_name = matching_list[0]
 
         # Return the information.
-        if bonded_found:
-            return bonded_num, bonded_name, element, pos
-        else:
-            return None, None, None, None
+        return bonded_num, bonded_name, element, pos, attached_name, None
 
 
     def __molecule_loop(self, struct, sel_obj=None):
@@ -444,7 +437,7 @@ class Scientific_data(Base_struct_API):
             # Found the atom.
             if atom_found:
                 # Find the atom bonded to this structure/molecule/residue/atom.
-                bonded_num, bonded_name, element, pos = self.__find_bonded_atom(attached_atom, mol_type_match, res_match)
+                bonded_num, bonded_name, element, pos, attached_name, warnings = self.__find_bonded_atom(attached_atom, mol_type_match, res_match)
 
                 # No bonded atom.
                 if (bonded_num, bonded_name, element) == (None, None, None):
@@ -456,8 +449,15 @@ class Scientific_data(Base_struct_API):
                 # Append the vector to the vectors array (converting from a Numeric array to a numpy array).
                 vectors.append(array(vector, float64))
 
-        # Return the bond vectors.
-        return vectors
+        # Build the tuple to be yielded.
+        data = (vectors,)
+        if return_name:
+            data = data + (attached_name,)
+        if return_warnings:
+            data = data + (warnings,)
+
+        # Return the data.
+        return data
 
 
     def load_pdb(self, file_path, model=None, verbosity=False):
