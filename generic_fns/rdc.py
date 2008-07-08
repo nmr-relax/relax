@@ -601,7 +601,9 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
             # Skip missing data.
             if len(file_data[i]) <= min_col_num:
                 continue
-            elif file_data[i][data_col] == 'None' or file_data[i][error_col] == 'None':
+            elif file_data[i][data_col] == 'None':
+                continue
+            elif error_col and file_data[i][error_col] == 'None':
                 continue
 
             # Test that the data are numbers.
@@ -611,7 +613,8 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
                 if spin_num_col != None:
                     int(file_data[i][spin_num_col])
                 float(file_data[i][data_col])
-                float(file_data[i][error_col])
+                if error_col:
+                    float(file_data[i][error_col])
             except ValueError:
                 raise RelaxError, "The RDC data in the line " + `file_data[i]` + " is invalid."
 
@@ -645,7 +648,7 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
             error = eval(file_data[i][error_col])
 
         # Skip all rows where the value or error is None.
-        if value == None or error == None:
+        if value == None or (error_col and error == None):
             continue
 
         # Get the corresponding spin container.
