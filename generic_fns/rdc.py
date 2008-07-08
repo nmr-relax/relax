@@ -31,7 +31,7 @@ import sys
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
-from relax_errors import RelaxError, RelaxNoResError, RelaxNoRiError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
+from relax_errors import RelaxError, RelaxNoResError, RelaxNoRDCError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRDCError
 from relax_io import extract_data, strip
 
 
@@ -529,15 +529,11 @@ def find_index(data, ri_label, frq_label):
     return index
 
 
-def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None):
-    """Function for reading R1, R2, or NOE relaxation data.
+def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None):
+    """Read the RDC data from file.
 
-    @param ri_label:        The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-    @type ri_label:         str
-    @param frq_label:       The field strength label.
-    @type frq_label:        str
-    @param frq:             The spectrometer proton frequency in Hz.
-    @type frq:              float
+    @param id:              The RDC identification string.
+    @type id:               str
     @param file:            The name of the file to open.
     @type file:             str
     @param dir:             The directory containing the file (defaults to the current directory
@@ -568,9 +564,12 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
-    if test_labels(ri_label, frq_label):
-        raise RelaxRiError, (ri_label, frq_label)
+    # Alias the current data pipe.
+    cdp = ds[ds.current_pipe]
+
+    # Test if RDC data corresponding to 'id' already exists.
+    if hasattr(cdp, 'rdc_ids') and id in cdp.rdc_ids:
+        raise RelaxRDCError, id
 
     # Minimum number of columns.
     min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col)
@@ -594,10 +593,10 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
         # Remove the header.
         file_data = file_data[header_lines:]
 
-        # Strip the data.
+        # Strip the data of all comments and empty lines.
         file_data = strip(file_data)
 
-        # Test the validity of the relaxation data.
+        # Test the validity of the RDC data.
         for i in xrange(len(file_data)):
             # Skip missing data.
             if len(file_data[i]) <= min_col_num:
@@ -614,23 +613,24 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
                 float(file_data[i][data_col])
                 float(file_data[i][error_col])
             except ValueError:
-                raise RelaxError, "The relaxation data in the line " + `file_data[i]` + " is invalid."
+                raise RelaxError, "The RDC data in the line " + `file_data[i]` + " is invalid."
 
 
-    # Global (non-residue specific) data.
-    #####################################
+    # Global (non-spin specific) data.
+    ##################################
 
-    # Initialise the global data for the current pipe if necessary.
-    data_init(ds[ds.current_pipe], global_flag=True)
+    # Initialise.
+    if not hasattr(cdp, 'rdc_ids'):
+        cdp.rdc_ids = []
 
-    # Update the global data.
-    update_data_structures_pipe(ri_label, frq_label, frq)
+    # Add the RDC id string.
+    cdp.rdc_ids.append(id)
 
 
-    # Residue specific data.
-    ########################
+    # Spin specific data.
+    #####################
 
-    # Loop over the relaxation data.
+    # Loop over the RDC data.
     for i in xrange(len(file_data)):
         # Skip missing data.
         if len(file_data[i]) <= min_col_num:
@@ -641,7 +641,8 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
 
         # Convert the data.
         value = eval(file_data[i][data_col])
-        error = eval(file_data[i][error_col])
+        if error_col:
+            error = eval(file_data[i][error_col])
 
         # Skip all rows where the value or error is None.
         if value == None or error == None:
@@ -652,8 +653,14 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
         if spin == None:
             raise RelaxNoSpinError, id
 
-        # Update all data structures.
-        update_data_structures_spin(spin, ri_label, frq_label, frq, value, error)
+        # Add the data.
+        if not hasattr(spin, 'rdc'):
+            spin.rdc = []
+        spin.rdc.append(value)
+        if error_col:
+            if not hasattr(spin, 'rdc_err'):
+                spin.rdc_err = []
+            spin.rdc_err.append(error)
 
 
 def return_data_desc(name):
