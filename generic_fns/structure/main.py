@@ -324,11 +324,11 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
             ave_vector = zeros(3, float64)
 
         # Loop over the individual vectors.
-        for vector in bond_vectors:
+        for i in xrange(len(bond_vectors)):
             # Unit vector.
             if unit:
                 # Normalisation factor.
-                norm_factor = sqrt(dot(vector, vector))
+                norm_factor = sqrt(dot(bond_vectors[i], bond_vectors[i]))
 
                 # Test for zero length.
                 if norm_factor == 0.0:
@@ -336,15 +336,17 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
 
                 # Calculate the normalised vector.
                 else:
-                    vector = vector / norm_factor
+                    bond_vectors[i] = bond_vectors[i] / norm_factor
 
             # Sum the vectors.
             if ave:
-                ave_vector = ave_vector + vector
+                ave_vector = ave_vector + bond_vectors[i]
 
         # Average.
         if ave:
             vector = ave_vector / float(len(bond_vectors))
+        else:
+            vector = bond_vectors
 
         # Set the vector.
         setattr(spin, object_name, vector)
