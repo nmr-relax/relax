@@ -351,7 +351,7 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
 
         # Print out of modified spins.
         if verbosity:
-            print "Extracted vectors for " + `id` + '.'
+            print "Extracted " + spin.name + "-" + attached_name + " vectors for " + `id` + '.'
 
 
 def write_pdb(file=None, dir=None, struct_index=None, force=False):
