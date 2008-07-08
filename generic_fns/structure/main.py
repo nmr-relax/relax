@@ -292,8 +292,8 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
         id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
 
         # Test that the spin number or name are set (one or both are essential for the identification of the atom).
-        if spin.num == None or spin.name == None:
-            warn(RelaxWarning("Either the spin number or spin name must be set for the spin " + `id` + " to identify the corresponding atom in the structure."))
+        if spin.num == None and spin.name == None:
+            warn(RelaxWarning("Either the spin number or name must be set for the spin " + `id` + " to identify the corresponding atom in the structure."))
             continue
 
         # The bond vector already exists.
