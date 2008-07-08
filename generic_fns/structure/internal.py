@@ -664,6 +664,8 @@ class Internal(Base_struct_API):
 
         # Initialise some objects.
         vectors = []
+        attached_name = None
+        warnings = None
 
         # Loop over the structures.
         for i in xrange(len(self.structural_data)):
