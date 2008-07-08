@@ -285,8 +285,8 @@ class RDC:
             raise RelaxIntError, ('data column', data_col)
 
         # The error column.
-        if type(error_col) != int:
-            raise RelaxIntError, ('error column', error_col)
+        if error_col != None and type(error_col) != int:
+            raise RelaxNoneIntError, ('error column', error_col)
 
         # Column separator.
         if sep != None and type(sep) != str:
