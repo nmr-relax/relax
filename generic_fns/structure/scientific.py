@@ -381,21 +381,25 @@ class Scientific_data(Base_struct_API):
         return bonded_num, bonded_name, element, pos_array
 
 
-    def bond_vectors(self, atom_id=None, attached_atom=None, struct_index=None):
+    def bond_vectors(self, atom_id=None, attached_atom=None, struct_index=None, return_name=False, return_warnings=False):
         """Find the bond vectors between the atoms of 'attached_atom' and 'atom_id'.
 
-        @keyword atom_id:       The molecule, residue, and atom identifier string.  This must
-                                correspond to a single atom in the system.
-        @type atom_id:          str
-        @keyword attached_atom: The name of the bonded atom.
-        @type attached_atom:    str
-        @keyword struct_index:  The index of the structure to return the vectors from.  If not
-                                supplied and multiple structures/models exist, then vectors from all
-                                structures will be returned.
-        @type struct_index:     None or int
-        @type struct_index:     None or int.
-        @return:                The list of bond vectors for each structure.
-        @rtype:                 list of numpy arrays
+        @keyword atom_id:           The molecule, residue, and atom identifier string.  This must
+                                    correspond to a single atom in the system.
+        @type atom_id:              str
+        @keyword attached_atom:     The name of the bonded atom.
+        @type attached_atom:        str
+        @keyword struct_index:      The index of the structure to return the vectors from.  If not
+                                    supplied and multiple structures/models exist, then vectors from
+                                    all structures will be returned.
+        @type struct_index:         None or int
+        @keyword return_name:       A flag which if True will cause the name of the attached atom to
+                                    be returned together with the bond vectors.
+        @type return_name:          bool
+        @keyword return_warnings:   A flag which if True will cause warning messages to be returned.
+        @type return_warnings:      bool
+        @return:                    The list of bond vectors for each structure.
+        @rtype:                     list of numpy arrays
         """
 
         # Generate the selection object.
