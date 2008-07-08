@@ -72,6 +72,7 @@ from palmer import Palmer
 from residue import Residue
 from structure import Structure
 from pymol import Pymol
+from rdc import RDC
 from relax_data import Relax_data
 from relax_fit import Relax_fit
 from results import Results
@@ -152,6 +153,7 @@ class Interpreter:
         self._Residue = Residue(relax)
         self._Structure = Structure(relax)
         self._Pymol = Pymol(relax)
+        self._RDC = RDC(relax)
         self._Relax_data = Relax_data(relax)
         self._Relax_fit = Relax_fit(relax)
         self._Results = Results(relax)
@@ -216,6 +218,7 @@ class Interpreter:
         palmer = self._Palmer
         structure = self._Structure
         pymol = self._Pymol
+        rdc = self._RDC
         relax_data = self._Relax_data
         relax_fit = self._Relax_fit
         residue = self._Residue
