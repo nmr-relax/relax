@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""User functions involved with RDCs."""
+
 # Python module imports.
 import sys
 
@@ -42,82 +45,63 @@ class RDC:
         self.__relax__ = relax
 
 
-    def back_calc(self, id=None, frq_label=None, frq=None):
-        """Function for back calculating relaxation data.
+    def back_calc(self, id=None):
+        """Back calculate RDCs.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-
-        frq_label:  The field strength label.
-
-        frq:  The spectrometer frequency in Hz.
-
+        id:  The RDC identification string.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "rdc.back_calc("
-            text = text + "id=" + `id`
-            text = text + ", frq_label=" + `frq_label`
-            text = text + ", frq=" + `frq` + ")"
+            text = text + "id=" + `id` + ")"
             print text
 
-        # Relaxation data type.
+        # Identification string.
         if type(id) != str:
-            raise RelaxStrError, ('relaxation label', id)
-
-        # Frequency label.
-        if type(frq_label) != str:
-            raise RelaxStrError, ('frequency label', frq_label)
-
-        # Frequency.
-        if type(frq) != float:
-            raise RelaxFloatError, ('frequency', frq)
+            raise RelaxStrError, ('identification string', id)
 
         # Execute the functional code.
-        rdc.back_calc(id=id, frq_label=frq_label, frq=frq)
+        rdc.back_calc(id=id)
 
 
-    def copy(self, pipe_from=None, pipe_to=None, id=None, frq_label=None):
-        """Function for copying relaxation data from pipe_from to pipe_to.
+    def copy(self, pipe_from=None, pipe_to=None, id=None):
+        """Copy RDC data from pipe_from to pipe_to.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        pipe_from:  The name of the pipe to copy the relaxation data from.
+        pipe_from:  The name of the pipe to copy the RDC data from.
 
-        pipe_to:  The name of the pipe to copy the relaxation data to.
+        pipe_to:  The name of the pipe to copy the RDC data to.
 
-        id:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-
-        frq_label:  The field strength label.
+        id:  The RDC identification string.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function will copy relaxation data from 'pipe_from' to 'pipe_to'.  If id and frq_label
-        are not given then all relaxation data will be copied, otherwise only a specific data set
-        will be copied.
+        This function will copy RDC data from 'pipe_from' to 'pipe_to'.  If id is not given then all
+        RDC data will be copied, otherwise only a specific data set will be.
 
 
         Examples
         ~~~~~~~~
 
-        To copy all relaxation data from pipe 'm1' to pipe 'm9', type one of:
+        To copy all RDC data from pipe 'm1' to pipe 'm9', type one of:
 
         relax> rdc.copy('m1', 'm9')
         relax> rdc.copy(pipe_from='m1', pipe_to='m9')
-        relax> rdc.copy('m1', 'm9', None, None)
-        relax> rdc.copy(pipe_from='m1', pipe_to='m9', id=None, frq_label=None)
+        relax> rdc.copy('m1', 'm9', None)
+        relax> rdc.copy(pipe_from='m1', pipe_to='m9', id=None)
 
-        To copy only the NOE relaxation data with the frq_label of '800' from 'm3' to 'm6', type one
-        of:
+        To copy only the 'Th' RDC data from 'm3' to 'm6', type one of:
 
-        relax> rdc.copy('m3', 'm6', 'NOE', '800')
-        relax> rdc.copy(pipe_from='m3', pipe_to='m6', id='NOE', frq_label='800')
+        relax> rdc.copy('m3', 'm6', 'Th')
+        relax> rdc.copy(pipe_from='m3', pipe_to='m6', id='Th')
         """
 
         # Function intro text.
@@ -125,8 +109,7 @@ class RDC:
             text = sys.ps3 + "rdc.copy("
             text = text + "pipe_from=" + `pipe_from`
             text = text + ", pipe_to=" + `pipe_to`
-            text = text + ", id=" + `id`
-            text = text + ", frq_label=" + `frq_label` + ")"
+            text = text + ", id=" + `id` + ")"
             print text
 
         # The pipe_from argument.
@@ -141,103 +124,85 @@ class RDC:
         if pipe_from == None and pipe_to == None:
             raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
 
-        # Relaxation data type.
+        # Id string.
         if id != None and type(id) != str:
-            raise RelaxNoneStrError, ('relaxation label', id)
-
-        # Frequency label.
-        if frq_label != None and type(frq_label) != str:
-            raise RelaxNoneStrError, ('frequency label', frq_label)
+            raise RelaxNoneStrError, ('identification string', id)
 
         # Execute the functional code.
-        rdc.copy(pipe_from=pipe_from, pipe_to=pipe_to, id=id, frq_label=frq_label)
+        rdc.copy(pipe_from=pipe_from, pipe_to=pipe_to, id=id)
 
 
-    def delete(self, id=None, frq_label=None):
-        """Function for deleting the relaxation data corresponding to id and frq_label.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        id:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-
-        frq_label:  The field strength label.
-
-
-        Examples
-        ~~~~~~~~
-
-        To delete the relaxation data corresponding to id='NOE', frq_label='600', type:
-
-        relax> rdc.delete('NOE', '600')
-        """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "rdc.delete("
-            text = text + "id=" + `id`
-            text = text + ", frq_label=" + `frq_label` + ")"
-            print text
-
-        # Relaxation data type.
-        if type(id) != str:
-            raise RelaxStrError, ('relaxation label', id)
-
-        # Frequency label.
-        if type(frq_label) != str:
-            raise RelaxStrError, ('frequency label', frq_label)
-
-        # Execute the functional code.
-        rdc.delete(id=id, frq_label=frq_label)
-
-
-    def display(self, id=None, frq_label=None):
-        """Function for displaying the relaxation data corresponding to id and frq_label.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        id:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-
-        frq_label:  The field strength label.
-
-
-        Examples
-        ~~~~~~~~
-
-        To display the NOE relaxation data at 600 MHz, type:
-
-        relax> rdc.display('NOE', '600')
-        """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "rdc.display("
-            text = text + "id=" + `id`
-            text = text + ", frq_label=" + `frq_label` + ")"
-            print text
-
-        # Relaxation data type.
-        if type(id) != str:
-            raise RelaxStrError, ('relaxation label', id)
-
-        # Frequency label.
-        if type(frq_label) != str:
-            raise RelaxStrError, ('frequency label', frq_label)
-
-        # Execute the functional code.
-        rdc.display(id=id, frq_label=frq_label)
-
-
-    def read(self, id=None, file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None):
-        """Function for reading R1, R2, or NOE relaxation data from a file.
+    def delete(self, id=None):
+        """Delete the RDC data corresponding to id.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         id:  The RDC identification string.
 
-        file:  The name of the file containing the relaxation data.
+
+        Examples
+        ~~~~~~~~
+
+        To delete the RDC data corresponding to id='PH_gel', type:
+
+        relax> rdc.delete('PH_gel')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "rdc.delete("
+            text = text + "id=" + `id` + ")"
+            print text
+
+        # Id string.
+        if type(id) != str:
+            raise RelaxStrError, ('identification string', id)
+
+        # Execute the functional code.
+        rdc.delete(id=id)
+
+
+    def display(self, id=None):
+        """Display the RDC data corresponding to id.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        id:  The RDC identification string.
+
+
+        Examples
+        ~~~~~~~~
+
+        To display the 'phage' RDC data, type:
+
+        relax> rdc.display('phage')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "rdc.display("
+            text = text + "id=" + `id` + ")"
+            print text
+
+        # Id string.
+        if type(id) != str:
+            raise RelaxStrError, ('identification string', id)
+
+        # Execute the functional code.
+        rdc.display(id=id)
+
+
+    def read(self, id=None, file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None):
+        """Read the RDC data from file.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        id:  The RDC identification string.
+
+        file:  The name of the file containing the RDC data.
 
         dir:  The directory where the file is located.
 
@@ -251,7 +216,7 @@ class RDC:
 
         spin_name_col:  The spin name column (this defaults to no column).
 
-        data_col:  The relaxation data column (the default is 2).
+        data_col:  The RDC data column (the default is 2).
 
         error_col:  The experimental error column (the default is 3).
 
@@ -331,15 +296,13 @@ class RDC:
         rdc.read(id=id, file=file, dir=dir, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep)
 
 
-    def write(self, id=None, frq_label=None, file=None, dir=None, force=False):
-        """Function for writing R1, R2, or NOE relaxation data to a file.
+    def write(self, id=None, file=None, dir=None, force=False):
+        """Write the RDC data to file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The relaxation data type, ie 'R1', 'R2', or 'NOE'.
-
-        frq_label:  The field strength label.
+        id:  The RDC identification string.
 
         file:  The name of the file.
 
@@ -352,27 +315,21 @@ class RDC:
         ~~~~~~~~~~~
 
         If no directory name is given, the file will be placed in the current working directory.
-        The 'id' and 'frq_label' arguments are required for selecting which relaxation data
-        to write to file.
+        The 'id' argument are required for selecting which RDC data set will be written to file.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "rdc.write("
             text = text + "id=" + `id`
-            text = text + ", frq_label=" + `frq_label`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force` + ")"
             print text
 
-        # Relaxation data type.
+        # Id string.
         if type(id) != str:
-            raise RelaxStrError, ('relaxation label', id)
-
-        # Frequency label.
-        if type(frq_label) != str:
-            raise RelaxStrError, ('frequency label', frq_label)
+            raise RelaxStrError, ('identification string', id)
 
         # File.
         if type(file) != str:
@@ -387,4 +344,4 @@ class RDC:
             raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
-        rdc.write(id=id, frq_label=frq_label, file=file, dir=dir, force=force)
+        rdc.write(id=id, file=file, dir=dir, force=force)
