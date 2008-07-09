@@ -683,6 +683,17 @@ class RelaxFuncSetupError(BaseError):
         if Debug:
             self.save_state()
 
+# The model already exists.
+class RelaxModelError(BaseError):
+    def __init__(self, name=None):
+        if name != None:
+            self.text = "The " + name + " model already exists."
+        else:
+            self.text = "The model already exists."
+        if Debug:
+            self.save_state()
+
+
 # The model has not been setup.
 class RelaxNoModelError(BaseError):
     def __init__(self, name=None):
