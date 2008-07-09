@@ -124,7 +124,7 @@ class N_state_model(Common_functions):
                 break
 
         # RDCs are present, so it is assumed that the alignment tensors tensor will be optimised.
-        if tensor_flag and rdc_flag:
+        if rdc_flag:
             return 'rdc'
 
         # No RDCs are present, so the tensors are the base data.
