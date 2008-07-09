@@ -790,7 +790,7 @@ class N_state_model(Common_functions):
         full_in_ref_frame = array(full_in_ref_frame, float64)
 
         # Set up the class instance containing the target function.
-        model = N_state_opt(N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
 
         # Return the instantiated class.
         return model
