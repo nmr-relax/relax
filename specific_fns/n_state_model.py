@@ -536,8 +536,18 @@ class N_state_model(Common_functions):
         cdp = ds[ds.current_pipe]
 
         # Test if the N-state model has been set up.
-        if not hasattr(cdp, 'N') or not hasattr(cdp, 'ref_domain'):
+        if not hasattr(cdp, 'model'):
             raise RelaxNoModelError, 'N-state'
+
+        # '2-domain' model setup tests.
+        if cdp.model == '2-domain':
+            # The number of states.
+            if not hasattr(cdp, 'N'):
+                raise RelaxError, "The number of states has not been set."
+
+            # The reference domain.
+            if not hasattr(cdp, 'ref_domain'):
+                raise RelaxError, "The reference domain has not been set."
 
         # Create the initial parameter vector.
         param_vector = self.assemble_param_vector(sim_index=sim_index)
