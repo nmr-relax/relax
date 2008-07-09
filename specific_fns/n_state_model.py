@@ -621,6 +621,10 @@ class N_state_model(Common_functions):
         if tensor_flag:
             model = self.minimise_setup_tensors(param_vector=param_vector)
 
+        # Set up minimisation using RDCs.
+        elif rdc_flag:
+            model = self.minimise_setup_rdcs(param_vector=param_vector)
+
         # Minimisation.
         if constraints:
             results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=verbosity)
@@ -682,6 +686,43 @@ class N_state_model(Common_functions):
 
             # Warning.
             cdp.warning = warning
+
+
+    def minimise_setup_rdcs(self, param_vector=None):
+        """Set up minimisation for the N-state model using RDCs.
+
+        @keyword param_vector:  The parameter vector.
+        @type param_vector:     list of str
+        @return:                The initialised N_state_opt class for minimisation.
+        @rteyp:                 N_state_opt instance
+        """
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
+        # Initialise.
+        rdcs = []
+        xh_vectors = []
+
+        # Spin loop.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Skip spins without RDC data or unit XH bond vectors.
+            if not hasattr(spin, 'rdc') or not hasattr(spin, 'xh_vect'):
+                continue
+
+            # Append the RDC and XH vectors to the lists.
+            rdcs.append(spin.rdc)
+            xh_vectors.append(spin.xh_vect)
+
+        # Set up the class instance containing the target function.
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, rdcs=rdcs, xh_vect=xh_vectors)
+
+        # Return the instantiated class.
+        return model
 
 
     def minimise_setup_tensors(self, param_vector=None):
