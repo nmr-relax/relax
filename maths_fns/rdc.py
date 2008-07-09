@@ -27,7 +27,7 @@
 from numpy.linalg import eigvals
 
 
-def average_rdc_5D(vect, K, Axx, Ayy, Axy, Axz, Ayz):
+def average_rdc_5D(vect, K, A):
     """Calculate the average RDC for an ensemble set of XH bond vectors, using the 5D notation.
 
     This function calculates the average RDC for a set of XH bond vectors from a structural
@@ -54,16 +54,8 @@ def average_rdc_5D(vect, K, Axx, Ayy, Axy, Axz, Ayz):
     @type vect:         numpy matrix
     @param K:           The total number of structures.
     @type K:            int
-    @param Axx:         The xx component of the alignment tensor.
-    @type Axx:          float
-    @param Ayy:         The yy component of the alignment tensor.
-    @type Ayy:          float
-    @param Axy:         The xy component of the alignment tensor.
-    @type Axy:          float
-    @param Axz:         The xz component of the alignment tensor.
-    @type Axz:          float
-    @param Ayz:         The yz component of the alignment tensor.
-    @type Ayz:          float
+    @param vector_5D:   The 5D vector object.  The vector format is {Axx, Ayy, Axy, Axz, Ayz}.
+    @type vector_5D:    numpy 5D vector
     """
 
     # Initial back-calculated RDC value.
@@ -72,7 +64,7 @@ def average_rdc_5D(vect, K, Axx, Ayy, Axy, Axz, Ayz):
     # Loop over the structures k.
     for k in xrange(K):
         # Back-calculate the RDC.
-        val = val + (vect[k,0]**2 - vect[k,2]**2)*Axx + (vect[k,1]**2 - vect[k,2]**2)*Ayy + 2.0*vect[k,0]*vect[k,1]*Axy + 2.0*vect[k,0]*vect[k,2]*Axz + 2.0*vect[k,1]*vect[k,2]*Ayz
+        val = val + (vect[k,0]**2 - vect[k,2]**2)*A[0] + (vect[k,1]**2 - vect[k,2]**2)*A[1] + 2.0*vect[k,0]*vect[k,1]*A[2] + 2.0*vect[k,0]*vect[k,2]*A[3] + 2.0*vect[k,1]*vect[k,2]*A[4]
 
     # Return the average RDC.
     return val / K
