@@ -795,6 +795,9 @@ class N_state_model(Common_functions):
         # Set the reference domain.
         cdp.ref_domain = ref
 
+        # Update the model.
+        self.__update_model()
+
 
     def param_num(self):
         """Function for determining the number of parameters in the model.
