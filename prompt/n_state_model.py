@@ -313,12 +313,12 @@ class N_state_model:
 
         To analyse populations of states, type:
 
-        relax> n_state_model.select_model(model='populations')
+        relax> n_state_model.setup_model(model='populations')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "n_state_model.select_model("
+            text = sys.ps3 + "n_state_model.setup_model("
             text = text + "model=" + `model` + ")"
             print text
 
