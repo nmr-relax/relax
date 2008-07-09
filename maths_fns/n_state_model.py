@@ -25,7 +25,7 @@ from numpy import array, dot, float64, transpose, zeros
 
 # relax module imports.
 from chi2 import chi2
-from rdc import average_rdc_tensor, to_tensor
+from rdc import average_rdc_5D, to_tensor
 from rotation_matrix import R_euler_zyz
 
 
@@ -105,8 +105,13 @@ class N_state_opt:
             if xh_vect == None and not len(xh_vect):
                 raise RelaxError, "The xh_vect argument " + `xh_vect` + " must be supplied."
 
-            # RDC set up.
+            # The total number of spins.
             self.num_spins = len(rdcs)
+
+            # The total number of alignments.
+            self.num_align = len(rdcs[0])
+
+            # RDC set up.
             self.rdcs = []
             self.xh_vect = []
             for i in xrange(self.num_spins):
@@ -190,3 +195,27 @@ class N_state_opt:
         @rtype:         float
         """
 
+        # Initial chi-squared (or SSE) value.
+        chi2_sum = 0.0
+
+        # Loop over each alignment.
+        for n in xrange(self.num_align):
+            # Chi-squared value for alignment n.
+            chi2_n_sum = 0.0
+
+            # Extract tensor n from the parameters.
+            tensor_5D = params[5*n:5*n + 5]
+
+            # Loop over the spin systems i.
+            for i in xrange(self.num_spins):
+                # Calculate the average RDC.
+                ave_rdc = average_rdc_5D(self.xh_vect[i], self.N, tensor_5D[0], tensor_5D[1], tensor_5D[2], tensor_5D[3], tensor_5D[4])
+
+                # Calculate and sum the single spin chi-squared value.
+                chi2_n_sum  = chi2_n_sum + chi2(self.rdcs[n], ave_rdc, self.rdc_errors[n])
+
+            # Calculate and sum the single alignment chi-squared value.
+            chi2_sum = chi2_sum +  chi2_n_sum / self.num_spins
+
+        # Calculate and return the chi-squared value.
+        return chi2 / self.num_align
