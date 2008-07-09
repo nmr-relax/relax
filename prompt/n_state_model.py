@@ -200,24 +200,62 @@ class N_state_model:
         n_state_model_obj.cone_pdb(cone_type=cone_type, scale=scale, file=file, dir=dir, force=force)
 
 
-    def model(self, N=None, ref=None):
-        """Set up the N-state model by specifying the number of states N and the reference domain.
+    def number_of_states(self, N=None):
+        """Set the number of states in the N-state model.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         N:  The number of states.
 
-        ref:  The domain which will act as the frame of reference.
+
+        Description
+        ~~~~~~~~~~~
+
+        Prior to optimisation, the number of states in the N-state model can be specified.  If the
+        number of states is not set, then this parameter will be equal to the number of loaded
+        structures.
+
+
+        Examples
+        ~~~~~~~~
+
+        To set up an 8-state model, type:
+
+        relax> n_state_model.number_of_states(N=8)
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "n_state_model.number_of_states("
+            text = text + "N=" + `N` + ")"
+            print text
+
+        # Number of states argument.
+        if type(N) != int:
+            raise RelaxIntError, ('the number of states N', N)
+
+        # Execute the functional code.
+        n_state_model_obj.number_of_states(N=N)
+
+
+    def ref_domain(self, ref=None):
+        """Set the reference domain for the '2-domain' N-state model.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        ref:  The domain which will act as the frame of reference.  This is only valid for the
+        '2-domain' N-state model.
 
 
         Description
         ~~~~~~~~~~~
 
-        Prior to optimisation, the N-state model must be set up.  This simply involves the setting
-        of the number of states N and which of the two domains will act as the frame of reference.
-        The N-states will be rotations of the other domain.  To switch the frame of reference to the
-        other domain, transpose the rotation matrices.
+        Prior to optimisation of the '2-domain' N-state model, which of the two domains will act as
+        the frame of reference must be specified.  The N-states will be rotations of the other
+        domain, so to switch the frame of reference to the other domain simply transpose the
+        rotation matrices.
 
 
         Examples
@@ -225,26 +263,71 @@ class N_state_model:
 
         To set up a 5-state model with 'C' domain being the frame of reference, type:
 
-        relax> n_state_model.model(N=5, ref='C')
+        relax> n_state_model.ref_domain(ref='C')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "n_state_model.model("
-            text = text + "N=" + `N`
-            text = text + ", ref=" + `ref` + ")"
+            text = sys.ps3 + "n_state_model.ref_domain("
+            text = text + "ref=" + `ref` + ")"
             print text
-
-        # Number of states argument.
-        if type(N) != int:
-            raise RelaxIntError, ('the number of states N', N)
 
         # Ref frame argument.
         if type(ref) != str:
             raise RelaxStrError, ('reference frame', ref)
 
         # Execute the functional code.
-        n_state_model_obj.model_setup(N=N, ref=ref)
+        n_state_model_obj.ref_domain(ref=ref)
+
+
+    def setup_model(self, model=None):
+        """Select the N-state model type and set up the model.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        model:  The name of the preset N-state model.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        Prior to optimisation, the N-state model type should be selected.  The preset models are:
+
+        '2-domain' - The N-state model for a system of two domains, where one domain experiences a
+        a reduced tensor.
+
+        'population' - The N-state model whereby only populations are optimised.  The structures
+        loaded into relax are assumed to be fixed.  I.e. if two domains are present, the Euler
+        angles for each state are fixed.  The parameters of the model include the weight or
+        probability for each state and the alignment tensor - {p0, p1, ..., pN, Axx, Ayy, Axy, Axz,
+        Ayz}.
+
+        'fixed' - The N-state model whereby all motions are fixed and all populations are fixed to
+        the set probabilities.  The parameters of the model are simply the alignment tensor, {Axx,
+        Ayy, Axy, Axz, Ayz}.
+
+
+        Examples
+        ~~~~~~~~
+
+        To analyse populations of states, type:
+
+        relax> n_state_model.select_model(model='populations')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "n_state_model.select_model("
+            text = text + "model=" + `model` + ")"
+            print text
+
+        # Model argument.
+        if type(model) != str:
+            raise RelaxStrError, ('model', model)
+
+        # Execute the functional code.
+        n_state_model_obj.select_model(model=model)
 
 
     def set_domain(self, tensor=None, domain=None):
