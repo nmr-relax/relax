@@ -31,26 +31,36 @@ from rotation_matrix import R_euler_zyz
 class N_state_opt:
     """Class containing the target function of the optimisation of the N-state model."""
 
-    def __init__(self, N=None, init_params=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None):
+    def __init__(self, model=None, N=None, init_params=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, rdcs=None, xh_vect=None):
         """Set up the class instance for optimisation.
 
         All constant data required for the N-state model are initialised here.
 
 
-        @param N:               The number of states.
+        @keyword model:         The N-state model type.  This can be one of '2-domain', 'population'
+                                or 'fixed'.
+        @type model:            str
+        @keyword N:             The number of states.
         @type N:                int
-        @param init_params:     The initial parameter values.  Optimisation must start at some
+        @keyword init_params:   The initial parameter values.  Optimisation must start at some
                                 point!
         @type init_params:      numpy float64 array
-        @param full_tensors:    A list of the full alignment tensors in matrix form.
+        @keyword full_tensors:  A list of the full alignment tensors in matrix form.
         @type full_tensors:     list of 3x3 numpy matricies
-        @param red_data:        An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all reduced
+        @keyword red_data:      An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all reduced
                                 tensors.  The format is [Sxx1, Syy1, Sxy1, Sxz1, Syz1, Sxx2, Syy2,
                                 Sxy2, Sxz2, Syz2, ..., Sxxn, Syyn, Sxyn, Sxzn, Syzn]
         @type red_data:         numpy float64 array
-        @param red_errors:      An array of the {Sxx, Syy, Sxy, Sxz, Syz} errors for all reduced
+        @keyword red_errors:    An array of the {Sxx, Syy, Sxy, Sxz, Syz} errors for all reduced
                                 tensors.  The array format is the same as for red_data.
         @type red_errors:       numpy float64 array
+        @keyword rdcs:          The RDC lists.  The first index must correspond to the spin systems
+                                and the second index correspond to the RDCs of different alignment
+                                media.
+        @type rdcs:             list of lists of float
+        @keyword xh_vect:       The unit XH vector lists.  The dimensions of this argument are the
+                                same as for 'rdcs'.
+        @type xh_vect:          list of lists of float
         """
 
         # Store the data inside the class instance namespace.
