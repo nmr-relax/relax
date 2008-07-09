@@ -68,8 +68,8 @@ class N_state_opt:
         self.params = 1.0 * init_params    # Force a copy of the data to be stored.
         self.total_num_params = len(init_params)
 
-        # Using alignment tensors.
-        if full_tensors:
+        # The 2-domain N-state model.
+        if model == '2-domain':
             # Some checks.
             if red_data == None and not len(red_data):
                 raise RelaxError, "The red_data argument " + `red_data` + " must be supplied."
@@ -96,10 +96,10 @@ class N_state_opt:
             self.red_bc_vector = zeros(self.num_tensors*5, float64)
 
             # Set the target function.
-            self.func = self.func_tensors
+            self.func = self.func_2domain
 
-        # Using RDCs.
-        elif rdcs:
+        # The flexible population N-state model.
+        elif model == 'population':
             # Some checks.
             if xh_vect == None and not len(xh_vect):
                 raise RelaxError, "The xh_vect argument " + `xh_vect` + " must be supplied."
@@ -113,27 +113,11 @@ class N_state_opt:
                 self.xh_vect.append(array(xh_vect[i], float64))
 
             # Set the target function.
-            self.func = self.func_rdcs
+            self.func = self.func_population
 
 
-    def func_rdcs(self, params):
-        """The target function for optimisation using RDCs.
-
-        This function should be passed to the optimisation algorithm.  It accepts, as an array, a
-        vector of parameter values and, using these, returns the single chi-squared value
-        corresponding to that coordinate in the parameter space.  If no RDC errors are supplied,
-        then the SSE (the sum of squares error) value is returned instead.  The chi-squared is
-        simply the SSE normalised to unit variance (the SSE divided by the error squared).
-
-        @param params:  The vector of parameter values.
-        @type params:   list of float
-        @return:        The chi-squared or SSE value.
-        @rtype:         float
-        """
-
-
-    def func_tensors(self, params):
-        """The target function for optimisation using alignment tensors.
+    def func_2domain(self, params):
+        """The target function for optimisation of the 2-domain N-state model.
 
         This function should be passed to the optimisation algorithm.  It accepts, as an array, a
         vector of parameter values and, using these, returns the single chi-squared value
@@ -188,3 +172,20 @@ class N_state_opt:
 
         # Return the chi-squared value.
         return chi2(self.red_data, self.red_bc_vector, self.red_errors)
+
+
+    def func_population(self, params):
+        """The target function for optimisation of the flexible population N-state model.
+
+        This function should be passed to the optimisation algorithm.  It accepts, as an array, a
+        vector of parameter values and, using these, returns the single chi-squared value
+        corresponding to that coordinate in the parameter space.  If no RDC errors are supplied,
+        then the SSE (the sum of squares error) value is returned instead.  The chi-squared is
+        simply the SSE normalised to unit variance (the SSE divided by the error squared).
+
+        @param params:  The vector of parameter values.
+        @type params:   list of float
+        @return:        The chi-squared or SSE value.
+        @rtype:         float
+        """
+
