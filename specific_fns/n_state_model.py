@@ -878,6 +878,10 @@ class N_state_model(Common_functions):
         if hasattr(cdp, 'model'):
             raise RelaxModelError, 'N-state'
 
+        # Test if the model name exists.
+        if not model in ['2-domain', 'population', 'fixed']:
+            raise RelaxError, "The model name " + `model` + " is invalid."
+
         # Set the model
         cdp.model = model
 
