@@ -138,28 +138,52 @@ class N_state_model(Common_functions):
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
 
+        # Determine the data type.
+        data_type = self.__determine_data_type()
+
+        # Initialise the parameter vector.
+        param_vector = []
+
+        # A RDC data type requires the alignment tensors to be at the start of the parameter vector.
+        if data_type == 'rdc':
+            # Loop over the alignments, adding the alignment tensor parameters to the parameter vector.
+            for i in xrange(len(cdp.rdc_ids)):
+                param_vector = param_vector + cdp.align_tensors[i]
+
         # Monte Carlo simulation data structures.
         if sim_index != None:
-            probs = cdp.probs_sim[sim_index]
-            alpha = cdp.alpha_sim[sim_index]
-            beta = cdp.beta_sim[sim_index]
-            gamma = cdp.gamma_sim[sim_index]
+            # Populations.
+            if cdp.model in ['2-domain', 'population']:
+                probs = cdp.probs_sim[sim_index]
+
+            # Euler angles.
+            if cdp.model == '2-domain':
+                alpha = cdp.alpha_sim[sim_index]
+                beta = cdp.beta_sim[sim_index]
+                gamma = cdp.gamma_sim[sim_index]
 
         # Normal data structures.
         else:
-            probs = cdp.probs
-            alpha = cdp.alpha
-            beta = cdp.beta
-            gamma = cdp.gamma
+            # Populations.
+            if cdp.model in ['2-domain', 'population']:
+                probs = cdp.probs
+
+            # Euler angles.
+            if cdp.model == '2-domain':
+                alpha = cdp.alpha
+                beta = cdp.beta
+                gamma = cdp.gamma
 
         # The probabilities (exclude that of state N).
-        param_vector = probs[0:-1]
+        if cdp.model in ['2-domain', 'population']:
+            param_vector = param_vector + probs[0:-1]
 
         # The Euler angles.
-        for i in xrange(cdp.N):
-            param_vector.append(alpha[i])
-            param_vector.append(beta[i])
-            param_vector.append(gamma[i])
+        if cdp.model == '2-domain':
+            for i in xrange(cdp.N):
+                param_vector.append(alpha[i])
+                param_vector.append(beta[i])
+                param_vector.append(gamma[i])
 
         # Convert all None values to zero (to avoid conversion to NaN).
         for i in xrange(len(param_vector)):
