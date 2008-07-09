@@ -72,3 +72,47 @@ def average_rdc_5D(vect, K, Axx, Ayy, Axy, Axz, Ayz):
 
     # Return the average RDC.
     return val / K
+
+
+def average_rdc_tensor(vect, K, A):
+    """Calculate the average RDC for an ensemble set of XH bond vectors, using the 3D tensor.
+
+    This function calculates the average RDC for a set of XH bond vectors from a structural
+    ensemble, using the 3D tensorial form of the alignment tensor.  The formula for this ensemble
+    average RDC value is::
+
+                    _K_
+                  1 \ 
+        <RDC_i> = -  >  RDC_ik (theta),
+                  K /__
+                    k=1
+
+    where K is the total number of structures,  k is the index over the multiple structures, RDC_ik
+    is the back-calculated RDC value for spin system i and structure k, and theta is the parameter
+    vector consisting of the alignment tensor.  The back-calculated RDC is given by the formula::
+
+        RDC_ik(theta) = muT . A . mu,
+
+    where mu is the unit XH bond vector, T is the transpose, and A is the alignment tensor matrix.
+
+
+    @param vect:        The unit XH bond vector matrix.  The first dimension corresponds to the
+                        structural index, the second dimension is the coordinates of the unit
+                        vector.
+    @type vect:         numpy matrix
+    @param K:           The total number of structures.
+    @type K:            int
+    @param A:           The alignment tensor.
+    @type A:            numpy rank-2 3D tensor
+    """
+
+    # Initial back-calculated RDC value.
+    val = 0.0
+
+    # Loop over the structures k.
+    for k in xrange(K):
+        # Back-calculate the RDC.
+        val = val + dot(vect[k], dot(A, vect[k]))
+
+    # Return the average RDC.
+    return val / K
