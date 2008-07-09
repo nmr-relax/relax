@@ -784,8 +784,24 @@ class N_state_model(Common_functions):
             rdcs.append(spin.rdc)
             xh_vectors.append(spin.xh_vect)
 
+        # Initialise the numpy objects (the rdc matrix is transposed!).
+        rdcs_numpy = zeros((len(rdcs[0]), len(rdcs)), float64)
+        xh_vect_numpy = zeros((len(xh_vectors), len(xh_vectors[0]), 3), float64)
+
+        # Loop over the spins.
+        for i in xrange(len(rdcs)):
+            # Loop over the alignments.
+            for j in xrange(len(rdcs[i])):
+                # Transpose and store the RDC value.
+                rdcs_numpy[j, i] = rdcs[i][j]
+
+            # Loop over the N states.
+            for j in xrange(len(xh_vectors[i])):
+                # Store the unit vector.
+                xh_vect_numpy[i,j] = xh_vectors[i][j]
+
         # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, rdcs=rdcs, xh_vect=xh_vectors)
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, rdcs=rdcs_numpy, xh_vect=xh_vect_numpy)
 
         # Return the instantiated class.
         return model
