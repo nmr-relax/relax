@@ -327,7 +327,7 @@ class N_state_model:
             raise RelaxStrError, ('model', model)
 
         # Execute the functional code.
-        n_state_model_obj.select_model(model=model)
+        n_state_model_obj.setup_model(model=model)
 
 
     def set_domain(self, tensor=None, domain=None):
