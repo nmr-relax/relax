@@ -955,6 +955,9 @@ class N_state_model(Common_functions):
         # Initialise the list of model parameters.
         cdp.params = []
 
+        # Update the model.
+        self.__update_model()
+
 
     def set_doc(self):
         """
