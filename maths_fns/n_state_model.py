@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+from copy import deepcopy
 from numpy import array, dot, float64, ones, transpose, zeros
 
 # relax module imports.
