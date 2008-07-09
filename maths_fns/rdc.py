@@ -140,9 +140,9 @@ def to_tensor(tensor, Axx, Ayy, Axy, Axz, Ayz):
     A[0, 0] = Axx
     A[0, 1] = Axy
     A[0, 2] = Axz
-    A[1, 0] = Ayx
+    A[1, 0] = Axy
     A[1, 1] = Ayy
     A[1, 2] = Ayz
-    A[2, 0] = Azx
-    A[2, 1] = Azy
+    A[2, 0] = Axz
+    A[2, 1] = Ayz
     A[2, 2] = Azz
