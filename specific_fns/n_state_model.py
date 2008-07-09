@@ -159,7 +159,7 @@ class N_state_model(Common_functions):
         if data_type == 'rdc':
             # Loop over the alignments, adding the alignment tensor parameters to the parameter vector.
             for i in xrange(len(cdp.rdc_ids)):
-                param_vector = param_vector + cdp.align_tensors[i]
+                param_vector = param_vector + list(cdp.align_tensors[i].tensor_5D)
 
         # Monte Carlo simulation data structures.
         if sim_index != None:
