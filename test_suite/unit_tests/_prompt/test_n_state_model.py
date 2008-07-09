@@ -157,8 +157,8 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
             self.assertRaises(RelaxBoolError, self.n_state_model_fns.cone_pdb, cone_type='', force=data[1])
 
 
-    def test_model_argfail_N(self):
-        """Failure of the N arg of the n_state_model.model() user function."""
+    def test_number_of_states_argfail_N(self):
+        """Failure of the N arg of the n_state_model.number_of_states() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -167,11 +167,11 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.n_state_model_fns.model, N=data[1])
+            self.assertRaises(RelaxIntError, self.n_state_model_fns.number_of_states, N=data[1])
 
 
-    def test_model_argfail_ref(self):
-        """Failure of the ref arg of the n_state_model.model() user function."""
+    def test_ref_domain_argfail_ref(self):
+        """Failure of the ref arg of the n_state_model.ref_domain() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -180,7 +180,7 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.n_state_model_fns.model, N=5, ref=data[1])
+            self.assertRaises(RelaxStrError, self.n_state_model_fns.ref_domain, ref=data[1])
 
 
     def test_set_domain_argfail_tensor(self):
