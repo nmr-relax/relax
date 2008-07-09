@@ -51,22 +51,19 @@ class N_state_model(Common_functions):
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
 
-        # Determine the number of states, if not already set.
-        if not hasattr(cdp, 'N'):
-            # No structures.
-            if not hasattr(cdp, 'structure'):
-                raise RelaxError, "The number of states cannot be determined as no structures are loaded."
-
-            # Set the number.
-            cdp.N = cdp.structure.num_structures()
-
-        # No states?
-        if not cdp.N > 0:
-            raise RelaxError, "The number of states " + `cdp.N` + " is invalid."
-
         # Initialise the list of model parameters.
         if not hasattr(cdp, 'params'):
             cdp.params = []
+
+        # Determine the number of states, if not already set.
+        if not hasattr(cdp, 'N'):
+            # Set the number.
+            if hasattr(cdp, 'structure'):
+                cdp.N = cdp.structure.num_structures()
+
+            # Otherwise return as the rest cannot be updated without N.
+            else:
+                return
 
         # Add the probability or population weight parameters.
         for i in xrange(cdp.N-1):
