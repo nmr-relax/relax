@@ -549,6 +549,9 @@ class N_state_model(Common_functions):
             if not hasattr(cdp, 'ref_domain'):
                 raise RelaxError, "The reference domain has not been set."
 
+        # Set up the model parameters if necessary.
+        self.setup_model()
+
         # Create the initial parameter vector.
         param_vector = self.assemble_param_vector(sim_index=sim_index)
 
@@ -686,26 +689,8 @@ class N_state_model(Common_functions):
         # Set the value of N.
         cdp.N = N
 
-        # Initialise the list of model parameters.
-        if not hasattr(cdp, 'params'):
-            cdp.params = []
-
-        # Add the probability or population weight parameters.
-        for i in xrange(N-1):
-            cdp.params.append('p' + `i`)
-
-        # Add the Euler angle parameters.
-        for i in xrange(N):
-            cdp.params.append('alpha' + `i`)
-            cdp.params.append('beta' + `i`)
-            cdp.params.append('gamma' + `i`)
-
-        # Initialise the probability and Euler angle arrays.
-        cdp.probs = [None] * cdp.N
-        cdp.alpha = [None] * cdp.N
-        cdp.beta = [None] * cdp.N
-        cdp.gamma = [None] * cdp.N
-
+        # Set up the model.
+        self.setup_model
 
     def ref_domain(self, ref=None):
         """Set the reference domain for the '2-domain' N-state model.
@@ -1011,3 +996,43 @@ class N_state_model(Common_functions):
         # The tensor label doesn't exist.
         if not match:
             raise RelaxNoTensorError, ('alignment', tensor)
+
+
+    def setup_model(self):
+        """Set up the model parameters as necessary."""
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
+        # Determine the number of states, if not already set.
+        if not hasattr(cdp, 'N'):
+            # No structures.
+            if not hasattr(cdp, 'structure'):
+                raise RelaxError, "The number of states cannot be determined as no structures are loaded."
+
+            # Set the number.
+            cdp.N = cdp.structure.num_structures()
+
+        # No states?
+        if not cdp.N > 0:
+            raise RelaxError, "The number of states " + `cdp.N` + " is invalid."
+
+        # Initialise the list of model parameters.
+        if not hasattr(cdp, 'params'):
+            cdp.params = []
+
+        # Add the probability or population weight parameters.
+        for i in xrange(cdp.N-1):
+            cdp.params.append('p' + `i`)
+
+        # Add the Euler angle parameters.
+        for i in xrange(cdp.N):
+            cdp.params.append('alpha' + `i`)
+            cdp.params.append('beta' + `i`)
+            cdp.params.append('gamma' + `i`)
+
+        # Initialise the probability and Euler angle arrays.
+        cdp.probs = [None] * cdp.N
+        cdp.alpha = [None] * cdp.N
+        cdp.beta = [None] * cdp.N
+        cdp.gamma = [None] * cdp.N
