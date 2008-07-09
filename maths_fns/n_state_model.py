@@ -126,6 +126,9 @@ class N_state_opt:
             else:
                 self.rdc_errors = rdc_errors
 
+            # Back calculated RDC array.
+            self.rdc_back_calc = 0.0 * deepcopy(rdcs)
+
             # Set the target function.
             self.func = self.func_population
 
