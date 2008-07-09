@@ -119,6 +119,24 @@ def average_rdc_tensor(vect, K, A):
     return val / K
 
 
+def to_5D(5D_vector, tensor):
+    """Convert the rank-2 3D alignment tensor matrix to the 5D vector format.
+
+    @param 5D_vector:   The 5D vector object to populate.  The vector format is {Axx, Ayy, Axy, Axz,
+                        Ayz}.
+    @type 5D_vector:    numpy 5D vector
+    @param tensor:      The alignment tensor object.
+    @type tensor:       numpy rank-2 3D tensor
+    """
+
+    # Convert the matrix form to the vector form.
+    5D_vector[0] = tensor[0, 0]
+    5D_vector[1] = tensor[1, 1]
+    5D_vector[2] = tensor[0, 1]
+    5D_vector[3] = tensor[0, 2]
+    5D_vector[4] = tensor[1, 2]
+
+
 def to_tensor(tensor, Axx, Ayy, Axy, Axz, Ayz):
     """Create the rank-2 3D alignment tensor matrix from the 5D vector elements.
 
