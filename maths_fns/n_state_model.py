@@ -25,6 +25,7 @@ from numpy import array, dot, float64, transpose, zeros
 
 # relax module imports.
 from chi2 import chi2
+from rdc import average_rdc_tensor, to_tensor
 from rotation_matrix import R_euler_zyz
 
 
