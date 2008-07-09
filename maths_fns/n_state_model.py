@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, dot, float64, transpose, zeros
+from numpy import array, dot, float64, ones, transpose, zeros
 
 # relax module imports.
 from chi2 import chi2
@@ -32,7 +32,7 @@ from rotation_matrix import R_euler_zyz
 class N_state_opt:
     """Class containing the target function of the optimisation of the N-state model."""
 
-    def __init__(self, model=None, N=None, init_params=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, rdcs=None, xh_vect=None):
+    def __init__(self, model=None, N=None, init_params=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, xh_vect=None):
         """Set up the class instance for optimisation.
 
         All constant data required for the N-state model are initialised here.
@@ -59,6 +59,10 @@ class N_state_opt:
                                 and the second index correspond to the RDCs of different alignment
                                 media.
         @type rdcs:             list of lists of float
+        @keyword rdc_errors:    The RDC error lists.  The first index must correspond to the spin
+                                systems and the second index correspond to the RDCs of different
+                                alignment media.
+        @type rdc_errors:       list of lists of float
         @keyword xh_vect:       The unit XH vector lists.  The dimensions of this argument are the
                                 same as for 'rdcs'.
         @type xh_vect:          list of lists of float
@@ -111,11 +115,16 @@ class N_state_opt:
             # The total number of alignments.
             self.num_align = len(rdcs[0])
 
-            # RDC set up.
+            # Convert to lists of numpy arrays.
             self.rdcs = []
+            self.rdc_errors = []
             self.xh_vect = []
             for i in xrange(self.num_spins):
                 self.rdcs.append(array(rdcs[i], float64))
+                if rdc_errors:
+                    self.rdc_errors.append(array(rdc_errors[i], float64))
+                else:
+                    self.rdc_errors.append(ones(self.num_align, float64))
                 self.xh_vect.append(array(xh_vect[i], float64))
 
             # Set the target function.
