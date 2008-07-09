@@ -711,7 +711,12 @@ class N_state_model(Common_functions):
                 continue
 
             # Skip spins without RDC data or unit XH bond vectors.
-            if not hasattr(spin, 'rdc') or not hasattr(spin, 'xh_vect'):
+            if not hasattr(spin, 'rdc'):
+                continue
+
+            # RDC data exists but the XH bond vectors are missing?
+            if not hasattr(spin, 'xh_vect'):
+                warn(RelaxWarning("RDC data exists but the XH bond vectors are missing, skipping spin " + spin_id))
                 continue
 
             # Append the RDC and XH vectors to the lists.
