@@ -1866,21 +1866,29 @@ def spin_index_loop(selection=None, pipe=None):
                 yield mol_index, res_index, spin_index
 
 
-def spin_loop(selection=None, pipe=None, full_info=False):
+def spin_loop(selection=None, pipe=None, full_info=False, return_id=False):
     """Generator function for looping over all the spin systems of the given selection.
 
-    @param selection:   The spin system selection identifier.
+    @keyword selection: The spin system selection identifier.
     @type selection:    str
-    @param pipe:        The data pipe containing the spin.  Defaults to the current data pipe.
+    @keyword pipe:      The data pipe containing the spin.  Defaults to the current data pipe.
     @type pipe:         str
-    @param full_info:   A flag specifying if the amount of information to be returned.  If false,
-                        only the data container is returned.  If true, the molecule name, residue
-                        number, and residue name is additionally returned.
-    @type full_info:    boolean
-    @return:            The spin system specific data container and, if full_info=True, the molecule
-                        name, residue number, and residue name.
-    @rtype:             instance of the SpinContainer class.  If full_info=True, the type is the
-                        tuple (SpinContainer, str, int, str).
+    @keyword full_info: A flag which if True will cause the the molecule name, residue number, and
+                        residue name to be returned in addition to the spin container.
+    @type full_info:    bool
+    @keyword return_id: A flag which if True will cause the spin identification string of the
+                        current spin to be returned in addition to the spin container.
+    @type return_id:    bool
+    @return:            The spin system specific data container.  If full_info is True, a tuple of
+                        the spin container, the molecule name, residue number, and residue name.  If
+                        return_id is True, a tuple of the spin container and spin id.  If both flags
+                        are True, then a tuple of the spin container, the molecule name, residue
+                        number, residue name, and spin id.
+    @rtype:             If full_info and return_id are False, SpinContainer instance.  If full_info
+                        is True and return_id is false, a tuple of (SpinContainer instance, str,
+                        int, str).  If full_info is False and return_id is True, a tuple of
+                        (SpinContainer instance, str).  If full_info and return_id are False, a
+                        tuple of (SpinContainer instance, str, int, str, str)
     """
 
     # The data pipe.
@@ -1907,9 +1915,17 @@ def spin_loop(selection=None, pipe=None, full_info=False):
                 if (mol, res, spin) not in select_obj:
                     continue
 
-                # Yield the spin system data container.
-                if full_info:
+                # Generate the spin id.
+                if return_id:
+                    spin_id = generate_spin_id(mol.name, res.num, res.name, spin.num, spin.name)
+
+                # Yield the data.
+                if full_info and return_id:
+                    yield spin, mol.name, res.num, res.name, spin_id
+                elif full_info:
                     yield spin, mol.name, res.num, res.name
+                elif return_id:
+                    yield spin, spin_id
                 else:
                     yield spin
 
