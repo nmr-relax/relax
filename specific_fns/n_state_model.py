@@ -114,15 +114,17 @@ class N_state_model(Common_functions):
                 rdc_flag = True
                 break
 
-        # Ok, have no idea what to do, so complain.
+        # RDCs are present, so it is assumed that the alignment tensors tensor will be optimised.
         if tensor_flag and rdc_flag:
-            raise RelaxError, "Both RDCs and alignment tensors are present.  Cannot determine the data type to be used for the analysis." 
+            return 'rdc'
 
-        # Return the data type.
+        # No RDCs are present, so the tensors are the base data.
         if tensor_flag:
             return 'tensor'
+
+        # No data is present.
         else:
-            return 'rdc'
+            raise RelaxError, "Neither RDC nor alignment tensor data is present." 
 
 
     def assemble_param_vector(self, sim_index=None):
