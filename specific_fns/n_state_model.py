@@ -94,6 +94,37 @@ class N_state_model(Common_functions):
                 cdp.gamma = [None] * cdp.N
 
 
+    def __determine_data_type(self):
+        """Determine if the data type is alignment tensors or RDCs.
+
+        @return:    The data type being one of 'tensor' or 'rdc'.
+        @rtype:     str
+        """
+
+
+        # Alignment tensor search.
+        tensor_flag = False
+        if hasattr(cdp, 'align_tensors'):
+            tensor_flag = True
+
+        # RDC search.
+        rdc_flag = False
+        for spin in spin_loop():
+            if hasattr(spin, 'rdc'):
+                rdc_flag = True
+                break
+
+        # Ok, have no idea what to do, so complain.
+        if tensor_flag and rdc_flag:
+            raise RelaxError, "Both RDCs and alignment tensors are present.  Cannot determine the data type to be used for the analysis." 
+
+        # Return the data type.
+        if tensor_flag:
+            return 'tensor'
+        else:
+            return 'rdc'
+
+
     def assemble_param_vector(self, sim_index=None):
         """Assemble all the parameters of the model into a single array.
 
@@ -610,25 +641,14 @@ class N_state_model(Common_functions):
             A, b = self.linear_constraints()
 
         # Determine if alignment tensors or RDCs are to be used.
-        tensor_flag = False
-        rdc_flag = False
-        if hasattr(cdp, 'align_tensors'):
-            tensor_flag = True
-        for spin in spin_loop():
-            if hasattr(spin, 'rdc'):
-                rdc_flag = True
-                break
-
-        # Ok, have no idea what to do, so complain.
-        if tensor_flag and rdc_flag:
-            raise RelaxError, "Both RDCs and alignment tensors are present.  Cannot determine which will be used for optimisation." 
+        data_type = self.__determine_data_type()
 
         # Set up minimisation using alignment tensors.
-        if tensor_flag:
+        if data_type == 'tensor':
             model = self.minimise_setup_tensors(param_vector=param_vector)
 
         # Set up minimisation using RDCs.
-        elif rdc_flag:
+        elif data_type == 'rdc':
             model = self.minimise_setup_rdcs(param_vector=param_vector)
 
         # Minimisation.
