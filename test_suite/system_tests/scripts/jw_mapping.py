@@ -3,6 +3,8 @@
 # Python module imports.
 from os import devnull
 import sys
+# relax module imports.
+from relax_io import open_write_file
 
 # Create the run.
 name = 'jw_mapping'
@@ -37,10 +39,10 @@ calc()
 monte_carlo.error_analysis()
 
 # Create grace files.
-grace.write(y_data_type='j0', file=devnull, force=True)
-grace.write(y_data_type='jwx', file=devnull, force=True)
-grace.write(y_data_type='jwh', file=devnull, force=True)
+grace.write(y_data_type='j0', file='devnull', force=True)
+grace.write(y_data_type='jwx', file='devnull', force=True)
+grace.write(y_data_type='jwh', file='devnull', force=True)
 
 # Finish.
-results.write(file=devnull, force=True)
-state.save(devnull, force=True)
+results.write(file='devnull', force=True)
+state.save('devnull', force=True)
