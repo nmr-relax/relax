@@ -148,7 +148,11 @@ def to_tensor(tensor, 5D_vector):
 
     # Convert the vector form to the matrix form.
     tensor[0, 0] = 5D_vector[0]
-    tensor[1, 1] = 5D_vector[1]
     tensor[0, 1] = 5D_vector[2]
     tensor[0, 2] = 5D_vector[3]
+    tensor[1, 0] = 5D_vector[2]
+    tensor[1, 1] = 5D_vector[1]
     tensor[1, 2] = 5D_vector[4]
+    tensor[2, 0] = 5D_vector[3]
+    tensor[2, 1] = 5D_vector[4]
+    tensor[2, 2] = -5D_vector[0] -5D_vector[1]
