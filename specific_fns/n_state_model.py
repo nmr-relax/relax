@@ -685,6 +685,9 @@ class N_state_model(Common_functions):
         @rteyp:         N_state_opt instance
         """
 
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
         # Initialise.
         full_tensors = []
         red_tensor_elem = []
