@@ -127,7 +127,7 @@ class N_state_opt:
                 self.rdc_errors = rdc_errors
 
             # Back calculated RDC array.
-            self.rdc_back_calc = 0.0 * deepcopy(rdcs)
+            self.rdcs_back_calc = 0.0 * deepcopy(rdcs)
 
             # Set the target function.
             self.func = self.func_population
@@ -220,7 +220,7 @@ class N_state_opt:
                 self.rdcs_back_calc[n, i] = average_rdc_5D(self.xh_vect[i], self.N, tensor_5D[0], tensor_5D[1], tensor_5D[2], tensor_5D[3], tensor_5D[4])
 
             # Calculate and sum the single alignment chi-squared value.
-            chi2_sum = chi2_sum + chi2(self.rdcs[n], ave_rdc, self.rdc_errors[n])
+            chi2_sum = chi2_sum + chi2(self.rdcs[n], self.rdcs_back_calc[n], self.rdc_errors[n])
 
         # Return the chi-squared value.
         return chi2_sum
