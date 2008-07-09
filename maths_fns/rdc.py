@@ -72,7 +72,7 @@ def average_rdc_5D(vect, K, Axx, Ayy, Axy, Axz, Ayz):
     # Loop over the structures k.
     for k in xrange(K):
         # Back-calculate the RDC.
-        val = val + (vect[k, 1]**2 - vect[k, 3]**2)*Axx + (vect[k, 2]**2 - vect[k, 3]**2)*Ayy + 2*vect[k, 1]*vect[k, 2]*Axy + 2*vect[k, 1]*vect[k, 3]*Axz + 2*vect[k, 2]*vect[k, 3]*Ayz
+        val = val + (vect[k,0]**2 - vect[k,2]**2)*Axx + (vect[k,1]**2 - vect[k,2]**2)*Ayy + 2.0*vect[k,0]*vect[k,1]*Axy + 2.0*vect[k,0]*vect[k,2]*Axz + 2.0*vect[k,1]*vect[k,2]*Ayz
 
     # Return the average RDC.
     return val / K
