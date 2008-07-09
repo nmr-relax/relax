@@ -67,31 +67,79 @@ class N_state_opt:
         self.N = N
         self.params = 1.0 * init_params    # Force a copy of the data to be stored.
         self.total_num_params = len(init_params)
-        self.full_tensors = array(full_tensors, float64)
-        self.num_tensors = len(self.full_tensors)
-        self.red_data = red_data
-        self.red_errors = red_errors
-        self.full_in_ref_frame = full_in_ref_frame
 
-        # Initialise some empty numpy objects for storage of:
-        # R:  the transient rotation matricies.
-        # RT:  the transposes of the rotation matricies.
-        # red_bc:  the back-calculated reduced alignment tensors.
-        # red_bc_vector:  the back-calculated reduced alignment tensors in vector form {Sxx, Syy, Sxy, Sxz, Syz}.
-        self.R = zeros((self.N,3,3), float64)
-        self.RT = zeros((self.N,3,3), float64)
-        self.red_bc = zeros((self.num_tensors,3,3), float64)
-        self.red_bc_vector = zeros(self.num_tensors*5, float64)
+        # Using alignment tensors.
+        if full_tensors:
+            # Some checks.
+            if red_data == None and not len(red_data):
+                raise RelaxError, "The red_data argument " + `red_data` + " must be supplied."
+            if red_errors == None and not len(red_errors):
+                raise RelaxError, "The red_errors argument " + `red_errors` + " must be supplied."
+            if full_in_ref_frame == None and not len(full_in_ref_frame):
+                raise RelaxError, "The full_in_ref_frame argument " + `full_in_ref_frame` + " must be supplied."
+
+            # Tensor set up.
+            self.full_tensors = array(full_tensors, float64)
+            self.num_tensors = len(self.full_tensors)
+            self.red_data = red_data
+            self.red_errors = red_errors
+            self.full_in_ref_frame = full_in_ref_frame
+
+            # Initialise some empty numpy objects for storage of:
+            # R:  the transient rotation matricies.
+            # RT:  the transposes of the rotation matricies.
+            # red_bc:  the back-calculated reduced alignment tensors.
+            # red_bc_vector:  the back-calculated reduced alignment tensors in vector form {Sxx, Syy, Sxy, Sxz, Syz}.
+            self.R = zeros((self.N,3,3), float64)
+            self.RT = zeros((self.N,3,3), float64)
+            self.red_bc = zeros((self.num_tensors,3,3), float64)
+            self.red_bc_vector = zeros(self.num_tensors*5, float64)
+
+            # Set the target function.
+            self.func = self.func_tensors
+
+        # Using RDCs.
+        elif rdcs:
+            # Some checks.
+            if xh_vect == None and not len(xh_vect):
+                raise RelaxError, "The xh_vect argument " + `xh_vect` + " must be supplied."
+
+            # RDC set up.
+            self.num_spins = len(rdcs)
+            self.rdcs = []
+            self.xh_vect = []
+            for i in xrange(self.num_spins):
+                self.rdcs.append(array(rdcs[i], float64))
+                self.xh_vect.append(array(xh_vect[i], float64))
+
+            # Set the target function.
+            self.func = self.func_rdcs
 
 
-    def func(self, params):
-        """The target function for optimisation.
+    def func_rdcs(self, params):
+        """The target function for optimisation using RDCs.
+
+        This function should be passed to the optimisation algorithm.  It accepts, as an array, a
+        vector of parameter values and, using these, returns the single chi-squared value
+        corresponding to that coordinate in the parameter space.  If no RDC errors are supplied,
+        then the SSE (the sum of squares error) value is returned instead.  The chi-squared is
+        simply the SSE normalised to unit variance (the SSE divided by the error squared).
+
+        @param params:  The vector of parameter values.
+        @type params:   list of float
+        @return:        The chi-squared or SSE value.
+        @rtype:         float
+        """
+
+
+    def func_tensors(self, params):
+        """The target function for optimisation using alignment tensors.
 
         This function should be passed to the optimisation algorithm.  It accepts, as an array, a
         vector of parameter values and, using these, returns the single chi-squared value
         corresponding to that coordinate in the parameter space.  If no tensor errors are supplied,
         then the SSE (the sum of squares error) value is returned instead.  The chi-squared is
-        simply the SSE normalised to unit variance (the SS divided by the error squared).
+        simply the SSE normalised to unit variance (the SSE divided by the error squared).
 
         @param params:  The vector of parameter values.
         @type params:   list of float
