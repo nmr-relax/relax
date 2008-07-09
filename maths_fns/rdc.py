@@ -24,10 +24,11 @@
 """Module containing functions for the calculation of RDCs."""
 
 # Python imports.
+from numpy import sum
 from numpy.linalg import eigvals
 
 
-def average_rdc_5D(vect, K, A):
+def average_rdc_5D(vect, K, A, weights=None):
     """Calculate the average RDC for an ensemble set of XH bond vectors, using the 5D notation.
 
     This function calculates the average RDC for a set of XH bond vectors from a structural
@@ -56,18 +57,33 @@ def average_rdc_5D(vect, K, A):
     @type K:            int
     @param vector_5D:   The 5D vector object.  The vector format is {Axx, Ayy, Axy, Axz, Ayz}.
     @type vector_5D:    numpy 5D vector
+    @param weights:     The weights for each member of the ensemble.  The last weight is assumed to
+                        be missing, and is calculated by this function.  Hence the length should be
+                        one less than K.
+    @type weights:      numpy rank-1 array
     """
 
     # Initial back-calculated RDC value.
     val = 0.0
 
+    # Averaging factor.
+    if weights == None:
+        c = 1.0 / K
+
     # Loop over the structures k.
     for k in xrange(K):
+        # The weights.
+        if weights != None:
+            if k == K-1: 
+                c = 1.0 - sum(weights, axis=0)
+            else:
+                c = weights[k]
+
         # Back-calculate the RDC.
-        val = val + (vect[k,0]**2 - vect[k,2]**2)*A[0] + (vect[k,1]**2 - vect[k,2]**2)*A[1] + 2.0*vect[k,0]*vect[k,1]*A[2] + 2.0*vect[k,0]*vect[k,2]*A[3] + 2.0*vect[k,1]*vect[k,2]*A[4]
+        val = val + c * (vect[k,0]**2 - vect[k,2]**2)*A[0] + (vect[k,1]**2 - vect[k,2]**2)*A[1] + 2.0*vect[k,0]*vect[k,1]*A[2] + 2.0*vect[k,0]*vect[k,2]*A[3] + 2.0*vect[k,1]*vect[k,2]*A[4]
 
     # Return the average RDC.
-    return val / K
+    return val
 
 
 def average_rdc_tensor(vect, K, A):
