@@ -122,7 +122,7 @@ class N_state_opt:
             # RDC errors.
             if rdc_errors == None:
                 # Missing errors.
-                self.rdc_errors = 1.0 * deepcopy(rdcs)
+                self.rdc_errors = ones((len(rdcs), len(rdcs[0])), float64)
             else:
                 self.rdc_errors = rdc_errors
 
