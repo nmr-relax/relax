@@ -759,7 +759,8 @@ class N_state_model(Common_functions):
         cdp.N = N
 
         # Update the model.
-        self.__update_model
+        self.__update_model()
+
 
     def ref_domain(self, ref=None):
         """Set the reference domain for the '2-domain' N-state model.
