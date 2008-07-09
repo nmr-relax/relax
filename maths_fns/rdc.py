@@ -45,8 +45,9 @@ def average_rdc_5D(vect, K, Axx, Ayy, Axy, Axz, Ayz):
         RDC_ik(theta) = (x**2 - z**2)Axx + (y**2 - z**2)Ayy + 2x.y.Axy + 2x.z.Axz + 2y.z.Ayz.
 
 
-    @param vect:        The XH bond vector matrix.  The first dimension corresponds to the
-                        structural index, the second dimension is the coordinates of the vector.
+    @param vect:        The unit XH bond vector matrix.  The first dimension corresponds to the
+                        structural index, the second dimension is the coordinates of the unit
+                        vector.
     @type vect:         numpy matrix
     @param K:           The total number of structures.
     @type K:            int
