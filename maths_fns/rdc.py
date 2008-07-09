@@ -137,30 +137,18 @@ def to_5D(5D_vector, tensor):
     5D_vector[4] = tensor[1, 2]
 
 
-def to_tensor(tensor, Axx, Ayy, Axy, Axz, Ayz):
-    """Create the rank-2 3D alignment tensor matrix from the 5D vector elements.
+def to_tensor(tensor, 5D_vector):
+    """Convert the 5D vector alignment tensor form to the rank-2 3D matrix from.
 
-    @param tensor:  The alignment tensor object, in matrix format, to populate.
-    @type tensor:   numpy rank-2 3D tensor
-    @param Axx:     The xx component of the alignment tensor.
-    @type Axx:      float
-    @param Ayy:     The yy component of the alignment tensor.
-    @type Ayy:      float
-    @param Axy:     The xy component of the alignment tensor.
-    @type Axy:      float
-    @param Axz:     The xz component of the alignment tensor.
-    @type Axz:      float
-    @param Ayz:     The yz component of the alignment tensor.
-    @type Ayz:      float
+    @param tensor:      The alignment tensor object, in matrix format, to populate.
+    @type tensor:       numpy rank-2 3D tensor
+    @param 5D_vector:   The 5D vector object.  The vector format is {Axx, Ayy, Axy, Axz, Ayz}.
+    @type 5D_vector:    numpy 5D vector
     """
 
-    # Repackage the matrix.
-    A[0, 0] = Axx
-    A[0, 1] = Axy
-    A[0, 2] = Axz
-    A[1, 0] = Axy
-    A[1, 1] = Ayy
-    A[1, 2] = Ayz
-    A[2, 0] = Axz
-    A[2, 1] = Ayz
-    A[2, 2] = Azz
+    # Convert the vector form to the matrix form.
+    tensor[0, 0] = 5D_vector[0]
+    tensor[1, 1] = 5D_vector[1]
+    tensor[0, 1] = 5D_vector[2]
+    tensor[0, 2] = 5D_vector[3]
+    tensor[1, 2] = 5D_vector[4]
