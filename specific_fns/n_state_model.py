@@ -860,6 +860,31 @@ class N_state_model(Common_functions):
             return None
 
 
+    def select_model(self, model=None):
+        """Select the N-state model type.
+
+        @param model:   The N-state model type.  Can be one of '2-domain', 'population', or 'fixed'.
+        @type model:    str
+        """
+
+        # Test if the current data pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
+        # Test if the model is setup.
+        if hasattr(cdp, 'model'):
+            raise RelaxModelError, 'N-state'
+
+        # Set the model
+        cdp.model = model
+
+        # Initialise the list of model parameters.
+        cdp.params = []
+
+
     def set_doc(self):
         """
         N-state model set details
@@ -972,28 +997,3 @@ class N_state_model(Common_functions):
         # The tensor label doesn't exist.
         if not match:
             raise RelaxNoTensorError, ('alignment', tensor)
-
-
-    def setup_model(self, model=None):
-        """Select the N-state model type.
-
-        @param model:   The N-state model type.  Can be one of '2-domain', 'population', or 'fixed'.
-        @type model:    str
-        """
-
-        # Test if the current data pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
-
-        # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
-
-        # Test if the model is setup.
-        if hasattr(cdp, 'model'):
-            raise RelaxModelError, 'N-state'
-
-        # Set the model
-        cdp.model = model
-
-        # Initialise the list of model parameters.
-        cdp.params = []

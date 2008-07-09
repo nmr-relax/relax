@@ -280,7 +280,7 @@ class N_state_model:
         n_state_model_obj.ref_domain(ref=ref)
 
 
-    def setup_model(self, model=None):
+    def select_model(self, model=None):
         """Select the N-state model type and set up the model.
 
         Keyword Arguments
@@ -313,12 +313,12 @@ class N_state_model:
 
         To analyse populations of states, type:
 
-        relax> n_state_model.setup_model(model='populations')
+        relax> n_state_model.select_model(model='populations')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "n_state_model.setup_model("
+            text = sys.ps3 + "n_state_model.select_model("
             text = text + "model=" + `model` + ")"
             print text
 
@@ -327,7 +327,7 @@ class N_state_model:
             raise RelaxStrError, ('model', model)
 
         # Execute the functional code.
-        n_state_model_obj.setup_model(model=model)
+        n_state_model_obj.select_model(model=model)
 
 
     def set_domain(self, tensor=None, domain=None):
