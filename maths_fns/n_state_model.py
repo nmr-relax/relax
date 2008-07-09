@@ -119,7 +119,7 @@ class N_state_opt:
             self.xh_vect = xh_vect
 
             # RDC errors.
-            if not len(self.rdc_errors):
+            if rdc_errors == None:
                 # Missing errors.
                 self.rdc_errors = 0.0 * deepcopy(rdcs)
             else:
