@@ -613,7 +613,7 @@ class N_state_model(Common_functions):
 
         # Set up minimisation using alignment tensors.
         if tensor_flag:
-            results = self.minimise_setup_tensors()
+            model = self.minimise_setup_tensors(param_vector=param_vector)
 
         # Minimisation.
         if constraints:
@@ -678,11 +678,13 @@ class N_state_model(Common_functions):
             cdp.warning = warning
 
 
-    def minimise_setup_tensors(self):
+    def minimise_setup_tensors(self, param_vector=None):
         """Set up minimisation for the N-state model using alignment tensors.
 
-        @return:        The initialised N_state_opt class for minimisation.
-        @rteyp:         N_state_opt instance
+        @keyword param_vector:  The parameter vector.
+        @type param_vector:     list of str
+        @return:                The initialised N_state_opt class for minimisation.
+        @rteyp:                 N_state_opt instance
         """
 
         # Alias the current data pipe.
