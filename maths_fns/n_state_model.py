@@ -110,10 +110,10 @@ class N_state_opt:
                 raise RelaxError, "The xh_vect argument " + `xh_vect` + " must be supplied."
 
             # The total number of spins.
-            self.num_spins = len(rdcs)
+            self.num_spins = len(rdcs[0])
 
             # The total number of alignments.
-            self.num_align = len(rdcs[0])
+            self.num_align = len(rdcs)
 
             # Store the data.
             self.rdcs = rdcs
