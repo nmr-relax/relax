@@ -23,6 +23,9 @@
 # Module docstring.
 """Module containing functions for the calculation of RDCs."""
 
+# Python imports.
+from numpy.linalg import eigvals
+
 
 def average_rdc_5D(vect, K, Axx, Ayy, Axy, Axz, Ayz):
     """Calculate the average RDC for an ensemble set of XH bond vectors, using the 5D notation.
@@ -117,6 +120,18 @@ def average_rdc_tensor(vect, K, A):
 
     # Return the average RDC.
     return val / K
+
+
+def maxA(tensor):
+    """Find the maximal alignment - the Azz component in the alignment frame.
+
+    @param tensor:      The alignment tensor object.
+    @type tensor:       numpy rank-2 3D tensor
+    @return:            The Azz component in the alignment frame.
+    """
+
+    # Return the value.
+    return max(abs(eigvals(tensor)))
 
 
 def to_5D(5D_vector, tensor):
