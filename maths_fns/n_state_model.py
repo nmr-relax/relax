@@ -209,7 +209,7 @@ class N_state_opt:
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
 
-        # Unpack the probabilities.
+        # Unpack the probabilities (located at the end of the parameter array).
         probs = params[-(self.N-1):]
 
         # Loop over each alignment.
