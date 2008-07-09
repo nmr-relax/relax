@@ -36,7 +36,7 @@ from generic_fns.structure.internal import Internal
 from maths_fns.n_state_model import N_state_opt
 from maths_fns.rotation_matrix import R_2vect, R_euler_zyz
 from minfx.generic import generic_minimise
-from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
+from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
 from relax_io import open_write_file
 from specific_fns.base_class import Common_functions
 
@@ -655,13 +655,11 @@ class N_state_model(Common_functions):
             cdp.warning = warning
 
 
-    def model_setup(self, N=None, ref=None):
-        """Function for setting up the N-state model.
+    def number_of_states(self, N=None):
+        """Set the number of states in the N-state model.
 
         @param N:   The number of states.
         @type N:    int
-        @param ref: The reference domain.
-        @type ref:  str
         """
 
         # Test if the current data pipe exists.
@@ -671,22 +669,18 @@ class N_state_model(Common_functions):
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
 
-        # Test if the reference domain exists.
-        exists = 0
-        for tensor_cont in cdp.align_tensors:
-            if tensor_cont.domain == ref:
-                exists = 1
-        if not exists:
-            raise RelaxError, "The reference domain cannot be found within any of the loaded tensors."
-            
-        # Set the value of N and reference domain.
+        # Test if the model is setup.
+        if not hasattr(cdp, 'model'):
+            raise RelaxNoModelError, 'N-state'
+
+        # Set the value of N.
         cdp.N = N
-        cdp.ref_domain = ref
 
         # Initialise the list of model parameters.
-        cdp.params = []
+        if not hasattr(cdp, 'params'):
+            cdp.params = []
 
-        # Add the probability parameters.
+        # Add the probability or population weight parameters.
         for i in xrange(N-1):
             cdp.params.append('p' + `i`)
 
@@ -701,6 +695,40 @@ class N_state_model(Common_functions):
         cdp.alpha = [None] * cdp.N
         cdp.beta = [None] * cdp.N
         cdp.gamma = [None] * cdp.N
+
+
+    def ref_domain(self, ref=None):
+        """Set the reference domain for the '2-domain' N-state model.
+
+        @param ref: The reference domain.
+        @type ref:  str
+        """
+
+        # Test if the current data pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
+        # Test if the model is setup.
+        if not hasattr(cdp, 'model'):
+            raise RelaxNoModelError, 'N-state'
+
+        # Test that the correct model is set.
+        if cdp.model != '2-domain':
+            raise RelaxError, "Setting the reference domain is only possible for the '2-domain' N-state model."
+
+        # Test if the reference domain exists.
+        exists = False
+        for tensor_cont in cdp.align_tensors:
+            if tensor_cont.domain == ref:
+                exists = True
+        if not exists:
+            raise RelaxError, "The reference domain cannot be found within any of the loaded tensors."
+            
+        # Set the reference domain.
+        cdp.ref_domain = ref
 
 
     def param_num(self):
@@ -944,3 +972,28 @@ class N_state_model(Common_functions):
         # The tensor label doesn't exist.
         if not match:
             raise RelaxNoTensorError, ('alignment', tensor)
+
+
+    def setup_model(self, model=None):
+        """Select the N-state model type.
+
+        @param model:   The N-state model type.  Can be one of '2-domain', 'population', or 'fixed'.
+        @type model:    str
+        """
+
+        # Test if the current data pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
+        # Test if the model is setup.
+        if hasattr(cdp, 'model'):
+            raise RelaxModelError, 'N-state'
+
+        # Set the model
+        cdp.model = model
+
+        # Initialise the list of model parameters.
+        cdp.params = []
