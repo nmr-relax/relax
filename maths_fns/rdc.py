@@ -86,7 +86,7 @@ def average_rdc_5D(vect, K, A, weights=None):
     return val
 
 
-def average_rdc_tensor(vect, K, A):
+def average_rdc_tensor(vect, K, A, weights=None):
     """Calculate the average RDC for an ensemble set of XH bond vectors, using the 3D tensor.
 
     This function calculates the average RDC for a set of XH bond vectors from a structural
@@ -116,18 +116,33 @@ def average_rdc_tensor(vect, K, A):
     @type K:            int
     @param A:           The alignment tensor.
     @type A:            numpy rank-2 3D tensor
+    @param weights:     The weights for each member of the ensemble.  The last weight is assumed to
+                        be missing, and is calculated by this function.  Hence the length should be
+                        one less than K.
+    @type weights:      numpy rank-1 array
     """
 
     # Initial back-calculated RDC value.
     val = 0.0
 
+    # Averaging factor.
+    if weights == None:
+        c = 1.0 / K
+
     # Loop over the structures k.
     for k in xrange(K):
+        # The weights.
+        if weights != None:
+            if k == K-1: 
+                c = 1.0 - sum(weights, axis=0)
+            else:
+                c = weights[k]
+
         # Back-calculate the RDC.
-        val = val + dot(vect[k], dot(A, vect[k]))
+        val = val + c * dot(vect[k], dot(A, vect[k]))
 
     # Return the average RDC.
-    return val / K
+    return val
 
 
 def maxA(tensor):
