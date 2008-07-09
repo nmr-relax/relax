@@ -220,7 +220,7 @@ class N_state_opt:
             # Loop over the spin systems i.
             for i in xrange(self.num_spins):
                 # Calculate the average RDC.
-                self.rdcs_back_calc[n, i] = average_rdc_5D(self.xh_vect[i], self.N, tensor_5D[0], tensor_5D[1], tensor_5D[2], tensor_5D[3], tensor_5D[4], weights=probs)
+                self.rdcs_back_calc[n, i] = average_rdc_5D(self.xh_vect[i], self.N, tensor_5D, weights=probs)
 
             # Calculate and sum the single alignment chi-squared value.
             chi2_sum = chi2_sum + chi2(self.rdcs[n], self.rdcs_back_calc[n], self.rdc_errors[n])
