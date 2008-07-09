@@ -117,3 +117,32 @@ def average_rdc_tensor(vect, K, A):
 
     # Return the average RDC.
     return val / K
+
+
+def to_tensor(tensor, Axx, Ayy, Axy, Axz, Ayz):
+    """Create the rank-2 3D alignment tensor matrix from the 5D vector elements.
+
+    @param tensor:  The alignment tensor object, in matrix format, to populate.
+    @type tensor:   numpy rank-2 3D tensor
+    @param Axx:     The xx component of the alignment tensor.
+    @type Axx:      float
+    @param Ayy:     The yy component of the alignment tensor.
+    @type Ayy:      float
+    @param Axy:     The xy component of the alignment tensor.
+    @type Axy:      float
+    @param Axz:     The xz component of the alignment tensor.
+    @type Axz:      float
+    @param Ayz:     The yz component of the alignment tensor.
+    @type Ayz:      float
+    """
+
+    # Repackage the matrix.
+    A[0, 0] = Axx
+    A[0, 1] = Axy
+    A[0, 2] = Axz
+    A[1, 0] = Ayx
+    A[1, 1] = Ayy
+    A[1, 2] = Ayz
+    A[2, 0] = Azx
+    A[2, 1] = Azy
+    A[2, 2] = Azz
