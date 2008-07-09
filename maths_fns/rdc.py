@@ -55,12 +55,14 @@ def average_rdc_5D(vect, K, A, weights=None):
     @type vect:         numpy matrix
     @param K:           The total number of structures.
     @type K:            int
-    @param vector_5D:   The 5D vector object.  The vector format is {Axx, Ayy, Axy, Axz, Ayz}.
-    @type vector_5D:    numpy 5D vector
+    @param A:           The 5D vector object.  The vector format is {Axx, Ayy, Axy, Axz, Ayz}.
+    @type A:            numpy 5D vector
     @param weights:     The weights for each member of the ensemble.  The last weight is assumed to
                         be missing, and is calculated by this function.  Hence the length should be
                         one less than K.
     @type weights:      numpy rank-1 array
+    @return:            The average RDC value.
+    @rtype:             float
     """
 
     # Initial back-calculated RDC value.
@@ -120,6 +122,8 @@ def average_rdc_tensor(vect, K, A, weights=None):
                         be missing, and is calculated by this function.  Hence the length should be
                         one less than K.
     @type weights:      numpy rank-1 array
+    @return:            The average RDC value.
+    @rtype:             float
     """
 
     # Initial back-calculated RDC value.
