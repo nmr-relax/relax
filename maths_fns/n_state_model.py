@@ -55,17 +55,16 @@ class N_state_opt:
         @keyword red_errors:    An array of the {Sxx, Syy, Sxy, Sxz, Syz} errors for all reduced
                                 tensors.  The array format is the same as for red_data.
         @type red_errors:       numpy float64 array
-        @keyword rdcs:          The RDC lists.  The first index must correspond to the spin systems
-                                and the second index correspond to the RDCs of different alignment
-                                media.
-        @type rdcs:             list of lists of float
-        @keyword rdc_errors:    The RDC error lists.  The first index must correspond to the spin
-                                systems and the second index correspond to the RDCs of different
-                                alignment media.
-        @type rdc_errors:       list of lists of float
-        @keyword xh_vect:       The unit XH vector lists.  The dimensions of this argument are the
-                                same as for 'rdcs'.
-        @type xh_vect:          list of lists of float
+        @keyword rdcs:          The RDC lists.  The first index must correspond to the different
+                                alignment media and the second index to the spin systems.
+        @type rdcs:             numpy matrix
+        @keyword rdc_errors:    The RDC error lists.  The dimensions of this argument are the same
+                                as for 'rdcs'.
+        @type rdc_errors:       numpy matrix
+        @keyword xh_vect:       The unit XH vector lists.  The first index must correspond to the
+                                spin systems and the second index to each structure (its size being
+                                equal to the number of states).
+        @type xh_vect:          numpy matrix
         """
 
         # Store the data inside the class instance namespace.
@@ -115,17 +114,16 @@ class N_state_opt:
             # The total number of alignments.
             self.num_align = len(rdcs[0])
 
-            # Convert to lists of numpy arrays.
-            self.rdcs = []
-            self.rdc_errors = []
-            self.xh_vect = []
-            for i in xrange(self.num_spins):
-                self.rdcs.append(array(rdcs[i], float64))
-                if rdc_errors:
-                    self.rdc_errors.append(array(rdc_errors[i], float64))
-                else:
-                    self.rdc_errors.append(ones(self.num_align, float64))
-                self.xh_vect.append(array(xh_vect[i], float64))
+            # Store the data.
+            self.rdcs = rdcs
+            self.xh_vect = xh_vect
+
+            # RDC errors.
+            if not len(self.rdc_errors):
+                # Missing errors.
+                self.rdc_errors = 0.0 * deepcopy(rdcs)
+            else:
+                self.rdc_errors = rdc_errors
 
             # Set the target function.
             self.func = self.func_population
