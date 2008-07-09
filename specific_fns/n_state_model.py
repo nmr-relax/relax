@@ -25,6 +25,7 @@ from math import acos, cos, pi
 from numpy import array, dot, float64, zeros
 from numpy.linalg import norm
 from re import search
+from warnings import warn
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
@@ -39,6 +40,7 @@ from maths_fns.rotation_matrix import R_2vect, R_euler_zyz
 from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
 from relax_io import open_write_file
+from relax_warnings import RelaxWarning
 from specific_fns.base_class import Common_functions
 
 
@@ -705,7 +707,7 @@ class N_state_model(Common_functions):
         xh_vectors = []
 
         # Spin loop.
-        for spin in spin_loop():
+        for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
