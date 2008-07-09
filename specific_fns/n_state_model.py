@@ -65,21 +65,27 @@ class N_state_model(Common_functions):
             else:
                 return
 
-        # Add the probability or population weight parameters.
-        for i in xrange(cdp.N-1):
-            cdp.params.append('p' + `i`)
+        # Set up the parameter array.
+        if not cdp.params:
+            # Add the probability or population weight parameters.
+            for i in xrange(cdp.N-1):
+                cdp.params.append('p' + `i`)
 
-        # Add the Euler angle parameters.
-        for i in xrange(cdp.N):
-            cdp.params.append('alpha' + `i`)
-            cdp.params.append('beta' + `i`)
-            cdp.params.append('gamma' + `i`)
+            # Add the Euler angle parameters.
+            for i in xrange(cdp.N):
+                cdp.params.append('alpha' + `i`)
+                cdp.params.append('beta' + `i`)
+                cdp.params.append('gamma' + `i`)
 
         # Initialise the probability and Euler angle arrays.
-        cdp.probs = [None] * cdp.N
-        cdp.alpha = [None] * cdp.N
-        cdp.beta = [None] * cdp.N
-        cdp.gamma = [None] * cdp.N
+        if not hasattr(cdp, 'probs'):
+            cdp.probs = [None] * cdp.N
+        if not hasattr(cdp, 'alpha'):
+            cdp.alpha = [None] * cdp.N
+        if not hasattr(cdp, 'beta'):
+            cdp.beta = [None] * cdp.N
+        if not hasattr(cdp, 'gamma'):
+            cdp.gamma = [None] * cdp.N
 
 
     def assemble_param_vector(self, sim_index=None):
