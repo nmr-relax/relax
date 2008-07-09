@@ -104,7 +104,7 @@ class N_state_model(Common_functions):
 
         # Alignment tensor search.
         tensor_flag = False
-        if hasattr(cdp, 'align_tensors'):
+        if hasattr(ds[ds.current_pipe], 'align_tensors'):
             tensor_flag = True
 
         # RDC search.
