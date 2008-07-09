@@ -93,6 +93,15 @@ class N_state_model(Common_functions):
             if not hasattr(cdp, 'gamma'):
                 cdp.gamma = [None] * cdp.N
 
+        # Determine the data type.
+        data_type = self.__determine_data_type()
+
+        # Set up alignment tensors for each alignment.
+        if data_type == 'rdc' and not hasattr(cdp, 'align_tensors'):
+            # Loop over the alignments.
+            for align in cdp.rdc_ids:
+                generic_fns.align_tensor.init(tensor=align, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+
 
     def __determine_data_type(self):
         """Determine if the data type is alignment tensors or RDCs.
