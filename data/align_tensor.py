@@ -472,6 +472,39 @@ def calc_tensor(Sxx, Syy, Szz, Sxy, Sxz, Syz):
     return tensor
 
 
+def calc_tensor_5D(Sxx, Syy, Szz, Sxy, Sxz, Syz):
+    """Function for calculating the alignment tensor in the 5D vector notation.
+
+    @param Sxx:     The Sxx tensor element.
+    @type Sxx:      float
+    @param Syy:     The Syy tensor element.
+    @type Syy:      float
+    @param Szz:     The Szz tensor element.
+    @type Szz:      float
+    @param Sxy:     The Sxy tensor element.
+    @type Sxy:      float
+    @param Sxz:     The Sxz tensor element.
+    @type Sxz:      float
+    @param Syz:     The Syz tensor element.
+    @type Syz:      float
+    @return:        The alignment 5D tensor (within the structural frame).
+    @rtype:         numpy rank-1 5D tensor
+    """
+
+    # Initialise the tensor.
+    tensor = zeros(5, float64)
+
+    # Populate the tensor.
+    tensor[0] = Sxx
+    tensor[1] = Syy
+    tensor[2] = Sxy
+    tensor[3] = Sxz
+    tensor[4] = Syz
+
+    # Return the tensor.
+    return tensor
+
+
 def calc_tensor_diag(rotation, tensor):
     """Function for calculating the diagonalised alignment tensor.
 
@@ -530,6 +563,7 @@ def dependency_generator():
     yield ('tensor_diag',   ['Sxx', 'Syy', 'Sxy', 'Sxz', 'Syz'],            ['tensor', 'rotation'])
     yield ('rotation',      ['alpha', 'beta', 'gamma'],                     ['Sxx_unit', 'Syy_unit', 'Szz_unit'])
     yield ('tensor',        ['Sxx', 'Syy', 'Sxy', 'Sxz', 'Syz'],            ['Sxx', 'Syy', 'Szz', 'Sxy', 'Sxz', 'Syz'])
+    yield ('tensor_5D',     ['Sxx', 'Syy', 'Sxy', 'Sxz', 'Syz'],            ['Sxx', 'Syy', 'Szz', 'Sxy', 'Sxz', 'Syz'])
 
 
 
