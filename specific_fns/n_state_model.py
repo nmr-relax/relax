@@ -413,13 +413,15 @@ class N_state_model(Common_functions):
 
 
     def disassemble_param_vector(self, param_vector=None, sim_index=None):
-        """Function for disassembling the parameter vector used in the minimisation.
+        """Disassemble the parameter vector and place the values into the relevant variables.
 
-        The parameters are stored in the probability and Euler angle data structures.
+        For the 2-domain N-state model, the parameters are stored in the probability and Euler angle
+        data structures.  For the population N-state model, only the probabilities are stored.  If
+        RDCs are present and alignment tensors are optimised, then these are stored as well.
 
-        @param param_vector:    The parameter vector returned from optimisation.
+        @keyword param_vector:  The parameter vector returned from optimisation.
         @type param_vector:     numpy array
-        @param sim_index:       The index of the simulation to optimise.  This should be None if
+        @keyword sim_index:     The index of the simulation to optimise.  This should be None if
                                 normal optimisation is desired.
         @type sim_index:        None or int
         """
@@ -427,32 +429,60 @@ class N_state_model(Common_functions):
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
 
+        # Determine the data type.
+        data_type = self.__determine_data_type()
+
+        # Unpack and strip off the alignment tensor parameters.
+        if data_type == 'rdc':
+            # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
+            for i in xrange(len(cdp.rdc_ids)):
+                cdp.align_tensors[i].Sxx = param_vector[5*i]
+                cdp.align_tensors[i].Syy = param_vector[5*i+1]
+                cdp.align_tensors[i].Sxy = param_vector[5*i+2]
+                cdp.align_tensors[i].Sxz = param_vector[5*i+3]
+                cdp.align_tensors[i].Syz = param_vector[5*i+4]
+
+            # Create a new parameter vector without the tensors.
+            param_vector = param_vector[len(cdp.rdc_ids):]
+
         # Monte Carlo simulation data structures.
         if sim_index != None:
-            probs = cdp.probs_sim[sim_index]
-            alpha = cdp.alpha_sim[sim_index]
-            beta = cdp.beta_sim[sim_index]
-            gamma = cdp.gamma_sim[sim_index]
+            # Populations.
+            if cdp.model in ['2-domain', 'population']:
+                probs = cdp.probs_sim[sim_index]
+
+            # Euler angles.
+            if cdp.model == '2-domain':
+                alpha = cdp.alpha_sim[sim_index]
+                beta = cdp.beta_sim[sim_index]
+                gamma = cdp.gamma_sim[sim_index]
 
         # Normal data structures.
         else:
-            probs = cdp.probs
-            alpha = cdp.alpha
-            beta = cdp.beta
-            gamma = cdp.gamma
+            # Populations.
+            if cdp.model in ['2-domain', 'population']:
+                probs = cdp.probs
+
+            # Euler angles.
+            if cdp.model == '2-domain':
+                alpha = cdp.alpha
+                beta = cdp.beta
+                gamma = cdp.gamma
 
         # The probabilities for states 0 to N-1.
-        for i in xrange(cdp.N-1):
-            probs[i] = param_vector[i]
+        if cdp.model in ['2-domain', 'population']:
+            for i in xrange(cdp.N-1):
+                probs[i] = param_vector[i]
 
         # The probability for state N.
         probs[-1] = 1 - sum(probs[0:-1])
 
         # The Euler angles.
-        for i in xrange(cdp.N):
-            alpha[i] = param_vector[cdp.N-1 + 3*i]
-            beta[i] = param_vector[cdp.N-1 + 3*i + 1]
-            gamma[i] = param_vector[cdp.N-1 + 3*i + 2]
+        if cdp.model == '2-domain':
+            for i in xrange(cdp.N):
+                alpha[i] = param_vector[cdp.N-1 + 3*i]
+                beta[i] = param_vector[cdp.N-1 + 3*i + 1]
+                gamma[i] = param_vector[cdp.N-1 + 3*i + 2]
 
 
     def grid_search(self, lower, upper, inc, constraints=False, verbosity=0, sim_index=None):
