@@ -964,7 +964,7 @@ class N_state_model(Common_functions):
 
 
     def param_num(self):
-        """Function for determining the number of parameters in the model.
+        """Determine the number of parameters in the model.
 
         @return:    The number of model parameters.
         @rtype:     int
@@ -973,8 +973,26 @@ class N_state_model(Common_functions):
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
 
+        # Determine the data type.
+        data_type = self.__determine_data_type()
+
+        # Init.
+        num = 0
+
+        # Alignment tensor params.
+        if data_type == 'rdc':
+            num = num + 5*len(cdp.rdc_ids)
+
+        # Populations.
+        if cdp.model in ['2-domain', 'population']:
+            num = num + (cdp.N - 1)
+
+        # Euler angles.
+        if cdp.model == '2-domain':
+            num = num + 3*cdp.N
+
         # Return the param number.
-        return (cdp.N - 1) + cdp.N*3
+        return num
 
 
     def return_data_name(self, name, index=False):
