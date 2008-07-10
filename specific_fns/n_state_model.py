@@ -736,23 +736,24 @@ class N_state_model(Common_functions):
         # Create the initial parameter vector.
         param_vector = self.assemble_param_vector(sim_index=sim_index)
 
-        # Linear constraints.
-        if constraints:
-            A, b = self.linear_constraints()
-
         # Determine if alignment tensors or RDCs are to be used.
         data_type = self.__determine_data_type()
 
         # Diagonal scaling.
         scaling_matrix = self.__assemble_scaling_matrix(data_type=data_type, scaling=scaling)
+        param_vector = dot(inv(scaling_matrix), param_vector)
+
+        # Linear constraints.
+        if constraints:
+            A, b = self.linear_constraints(data_type=data_type, scaling_matrix=scaling_matrix)
 
         # Set up minimisation using alignment tensors.
         if data_type == 'tensor':
-            model = self.minimise_setup_tensors(param_vector=param_vector)
+            model = self.minimise_setup_tensors(param_vector=param_vector, scaling_matrix=scaling_matrix)
 
         # Set up minimisation using RDCs.
         elif data_type == 'rdc':
-            model = self.minimise_setup_rdcs(param_vector=param_vector)
+            model = self.minimise_setup_rdcs(param_vector=param_vector, scaling_matrix=scaling_matrix)
 
         # Minimisation.
         if constraints:
@@ -817,11 +818,13 @@ class N_state_model(Common_functions):
             cdp.warning = warning
 
 
-    def minimise_setup_rdcs(self, param_vector=None):
+    def minimise_setup_rdcs(self, param_vector=None, scaling_matrix=None):
         """Set up minimisation for the N-state model using RDCs.
 
         @keyword param_vector:  The parameter vector.
         @type param_vector:     list of str
+        @scaling_matrix:        The square and diagonal scaling matrix.
+        @scaling_matrix:        numpy rank-2 array
         @return:                The initialised N_state_opt class for minimisation.
         @rteyp:                 N_state_opt instance
         """
@@ -869,17 +872,19 @@ class N_state_model(Common_functions):
                 xh_vect_numpy[i,j] = xh_vectors[i][j]
 
         # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, rdcs=rdcs_numpy, xh_vect=xh_vect_numpy)
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, rdcs=rdcs_numpy, xh_vect=xh_vect_numpy, scaling_matrix=scaling_matrix)
 
         # Return the instantiated class.
         return model
 
 
-    def minimise_setup_tensors(self, param_vector=None):
+    def minimise_setup_tensors(self, param_vector=None, scaling_matrix=None):
         """Set up minimisation for the N-state model using alignment tensors.
 
         @keyword param_vector:  The parameter vector.
         @type param_vector:     list of str
+        @scaling_matrix:        The square and diagonal scaling matrix.
+        @scaling_matrix:        numpy rank-2 array
         @return:                The initialised N_state_opt class for minimisation.
         @rteyp:                 N_state_opt instance
         """
@@ -933,7 +938,7 @@ class N_state_model(Common_functions):
         full_in_ref_frame = array(full_in_ref_frame, float64)
 
         # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, scaling_matrix=scaling_matrix)
 
         # Return the instantiated class.
         return model
