@@ -47,11 +47,13 @@ from specific_fns.base_class import Common_functions
 class N_state_model(Common_functions):
     """Class containing functions for the N-state model."""
 
-    def __assemble_scaling_matrix(self, data_type=None):
+    def __assemble_scaling_matrix(self, data_type=None, scaling=True):
         """Create and return the scaling matrix.
 
         @keyword data_type: The type of data used in the optimisation - either 'rdc' or 'tensor'.
         @type data_type:    str
+        @keyword scaling:   If False, then the identity matrix will be returned.
+        @type scaling:      bool
         @return:            The square and diagonal scaling matrix.
         @rtype:             numpy rank-2 array
         """
@@ -61,6 +63,10 @@ class N_state_model(Common_functions):
 
         # Initialise.
         scaling_matrix = identity(self.param_num(), float64)
+
+        # Return the identity matrix.
+        if not scaling:
+            return scaling_matrix
 
         # Starting point of the populations.
         pop_start = 0
@@ -737,8 +743,8 @@ class N_state_model(Common_functions):
         # Determine if alignment tensors or RDCs are to be used.
         data_type = self.__determine_data_type()
 
-        # Get the scaling matrix.
-        scaling_matrix = self.__assemble_scaling_matrix(data_type=data_type)
+        # Diagonal scaling.
+        scaling_matrix = self.__assemble_scaling_matrix(data_type=data_type, scaling=scaling)
 
         # Set up minimisation using alignment tensors.
         if data_type == 'tensor':
