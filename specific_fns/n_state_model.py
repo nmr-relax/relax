@@ -774,6 +774,10 @@ class N_state_model(Common_functions):
         if isNaN(func):
             raise RelaxNaNError, 'chi-squared'
 
+        # Scaling.
+        if scaling:
+            param_vector = dot(scaling_matrix, param_vector)
+
         # Disassemble the parameter vector.
         self.disassemble_param_vector(param_vector=param_vector, sim_index=sim_index)
 
