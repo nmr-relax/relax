@@ -581,10 +581,9 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
 
         # Count the number of header lines.
         header_lines = 0
-        num_col = max(res_num_col, spin_num_col)
         for i in xrange(len(file_data)):
             try:
-                int(file_data[i][num_col])
+                float(file_data[i][data_col])
             except:
                 header_lines = header_lines + 1
             else:
