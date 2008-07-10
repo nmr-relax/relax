@@ -74,7 +74,7 @@ class N_state_model(Common_functions):
             pop_start = pop_start + 5*len(cdp.rdc_ids)
 
         # Loop over the populations, and set the scaling factor.
-        factor = 100.0
+        factor = 1/100.0
         for i in xrange(pop_start, pop_start + (cdp.N-1)):
             scaling_matrix[i, i] = factor
 
