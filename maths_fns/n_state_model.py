@@ -33,7 +33,7 @@ from rotation_matrix import R_euler_zyz
 class N_state_opt:
     """Class containing the target function of the optimisation of the N-state model."""
 
-    def __init__(self, model=None, N=None, init_params=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, xh_vect=None):
+    def __init__(self, model=None, N=None, init_params=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, xh_vect=None, scaling_matrix=None):
         """Set up the class instance for optimisation.
 
         All constant data required for the N-state model are initialised here.
@@ -66,12 +66,21 @@ class N_state_opt:
                                 spin systems and the second index to each structure (its size being
                                 equal to the number of states).
         @type xh_vect:          numpy matrix
+        @scaling_matrix:        The square and diagonal scaling matrix.
+        @scaling_matrix:        numpy rank-2 array
         """
 
         # Store the data inside the class instance namespace.
         self.N = N
         self.params = 1.0 * init_params    # Force a copy of the data to be stored.
         self.total_num_params = len(init_params)
+
+        # Scaling initialisation.
+        self.scaling_matrix = scaling_matrix
+        if self.scaling_matrix != None:
+            self.scaling_flag = True
+        else:
+            self.scaling_flag = False
 
         # The 2-domain N-state model.
         if model == '2-domain':
@@ -148,6 +157,10 @@ class N_state_opt:
         @rtype:         float
         """
 
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
         # Reset the back-calculated the reduced tensor structure.
         self.red_bc = self.red_bc * 0.0
 
@@ -205,6 +218,10 @@ class N_state_opt:
         @return:        The chi-squared or SSE value.
         @rtype:         float
         """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
