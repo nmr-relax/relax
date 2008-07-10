@@ -22,7 +22,7 @@
 
 # Python module imports.
 from math import acos, cos, pi
-from numpy import array, dot, float64, zeros
+from numpy import array, dot, float64, identity, zeros
 from numpy.linalg import norm
 from re import search
 from warnings import warn
@@ -46,6 +46,35 @@ from specific_fns.base_class import Common_functions
 
 class N_state_model(Common_functions):
     """Class containing functions for the N-state model."""
+
+    def __assemble_scaling_matrix(self, data_type=None):
+        """Create and return the scaling matrix.
+
+        @keyword data_type: The type of data used in the optimisation - either 'rdc' or 'tensor'.
+        @type data_type:    str
+        @return:            The square and diagonal scaling matrix.
+        @rtype:             numpy rank-2 array
+        """
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
+        # Initialise.
+        scaling_matrix = identity(self.param_num(), float64)
+
+        # Starting point of the populations.
+        pop_start = 0
+        if data_type == 'rdc':
+            pop_start = pop_start + 5*len(cdp.rdc_ids)
+
+        # Loop over the populations, and set the scaling factor.
+        factor = 100.0
+        for i in xrange(pop_start, pop_start + (cdp.N-1)):
+            scaling_matrix[i, i] = factor
+
+        # Return the matrix.
+        return scaling_matrix
+
 
     def __update_model(self):
         """Update the model parameters as necessary."""
@@ -707,6 +736,9 @@ class N_state_model(Common_functions):
 
         # Determine if alignment tensors or RDCs are to be used.
         data_type = self.__determine_data_type()
+
+        # Get the scaling matrix.
+        scaling_matrix = self.__assemble_scaling_matrix(data_type=data_type)
 
         # Set up minimisation using alignment tensors.
         if data_type == 'tensor':
