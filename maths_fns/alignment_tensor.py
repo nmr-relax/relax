@@ -27,6 +27,106 @@
 from numpy.linalg import eigvals
 
 
+def dAi_dAxx(A):
+    """The dAi/dAxx gradient.
+
+    This function will modify the A matrix to be equal to::
+
+      dAi   | 1  0  0 |
+     ---- = | 0  0  0 |
+     dAxx   | 0  0 -1 |
+
+
+    @param A:   The alignment tensor object.
+    @type A:    numpy rank-2 3D tensor
+    """
+
+    # Set all elements.
+    A[0,0] = 1.0,  A[0,1] = 0.0,  A[0,2] = 0.0
+    A[1,0] = 0.0,  A[1,1] = 0.0,  A[1,2] = 0.0
+    A[2,0] = 0.0,  A[2,1] = 0.0,  A[2,2] = -1.0
+
+
+def dAi_dAyy(A):
+    """The dAi/dAyy gradient.
+
+    This function will modify the A matrix to be equal to::
+
+      dAi   | 0  0  0 |
+     ---- = | 0  1  0 |
+     dAyy   | 0  0 -1 |
+
+
+    @param A:   The alignment tensor object.
+    @type A:    numpy rank-2 3D tensor
+    """
+
+    # Set all elements.
+    A[0,0] = 0.0,  A[0,1] = 0.0,  A[0,2] = 0.0
+    A[1,0] = 0.0,  A[1,1] = 1.0,  A[1,2] = 0.0
+    A[2,0] = 0.0,  A[2,1] = 0.0,  A[2,2] = -1.0
+
+
+def dAi_dAxy(A):
+    """The dAi/dAxy gradient.
+
+    This function will modify the A matrix to be equal to::
+
+      dAi   | 0  1  0 |
+     ---- = | 1  0  0 |
+     dAxy   | 0  0  0 |
+
+
+    @param A:   The alignment tensor object.
+    @type A:    numpy rank-2 3D tensor
+    """
+
+    # Set all elements.
+    A[0,0] = 0.0,  A[0,1] = 1.0,  A[0,2] = 0.0
+    A[1,0] = 1.0,  A[1,1] = 0.0,  A[1,2] = 0.0
+    A[2,0] = 0.0,  A[2,1] = 0.0,  A[2,2] = 0.0
+
+
+def dAi_dAxz(A):
+    """The dAi/dAxz gradient.
+
+    This function will modify the A matrix to be equal to::
+
+      dAi   | 0  0  1 |
+     ---- = | 0  0  0 |
+     dAxz   | 1  0  0 |
+
+
+    @param A:   The alignment tensor object.
+    @type A:    numpy rank-2 3D tensor
+    """
+
+    # Set all elements.
+    A[0,0] = 0.0,  A[0,1] = 0.0,  A[0,2] = 1.0
+    A[1,0] = 0.0,  A[1,1] = 0.0,  A[1,2] = 0.0
+    A[2,0] = 1.0,  A[2,1] = 0.0,  A[2,2] = 0.0
+
+
+def dAi_dAyz(A):
+    """The dAi/dAyz gradient.
+
+    This function will modify the A matrix to be equal to::
+
+      dAi   | 0  0  0 |
+     ---- = | 0  0  1 |
+     dAyz   | 0  1  0 |
+
+
+    @param A:   The alignment tensor object.
+    @type A:    numpy rank-2 3D tensor
+    """
+
+    # Set all elements.
+    A[0,0] = 0.0,  A[0,1] = 0.0,  A[0,2] = 0.0
+    A[1,0] = 0.0,  A[1,1] = 0.0,  A[1,2] = 1.0
+    A[2,0] = 0.0,  A[2,1] = 1.0,  A[2,2] = 0.0
+
+
 def maxA(tensor):
     """Find the maximal alignment - the Azz component in the alignment frame.
 
