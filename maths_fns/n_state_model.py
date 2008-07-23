@@ -25,8 +25,9 @@ from copy import deepcopy
 from numpy import array, dot, float64, ones, transpose, zeros
 
 # relax module imports.
-from chi2 import chi2
-from rdc import average_rdc_5D, to_tensor
+from alignment_tensor import to_tensor
+from chi2 import chi2, dchi2, d2chi2
+from rdc import average_rdc_5D
 from rotation_matrix import R_euler_zyz
 
 
