@@ -21,11 +21,10 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing functions for the calculation of RDCs."""
+"""Module for the calculation of RDCs."""
 
 # Python imports.
 from numpy import sum
-from numpy.linalg import eigvals
 
 
 def average_rdc_5D(vect, K, A, weights=None):
@@ -147,54 +146,3 @@ def average_rdc_tensor(vect, K, A, weights=None):
 
     # Return the average RDC.
     return val
-
-
-def maxA(tensor):
-    """Find the maximal alignment - the Azz component in the alignment frame.
-
-    @param tensor:      The alignment tensor object.
-    @type tensor:       numpy rank-2 3D tensor
-    @return:            The Azz component in the alignment frame.
-    """
-
-    # Return the value.
-    return max(abs(eigvals(tensor)))
-
-
-def to_5D(vector_5D, tensor):
-    """Convert the rank-2 3D alignment tensor matrix to the 5D vector format.
-
-    @param vector_5D:   The 5D vector object to populate.  The vector format is {Axx, Ayy, Axy, Axz,
-                        Ayz}.
-    @type vector_5D:    numpy 5D vector
-    @param tensor:      The alignment tensor object.
-    @type tensor:       numpy rank-2 3D tensor
-    """
-
-    # Convert the matrix form to the vector form.
-    vector_5D[0] = tensor[0, 0]
-    vector_5D[1] = tensor[1, 1]
-    vector_5D[2] = tensor[0, 1]
-    vector_5D[3] = tensor[0, 2]
-    vector_5D[4] = tensor[1, 2]
-
-
-def to_tensor(tensor, vector_5D):
-    """Convert the 5D vector alignment tensor form to the rank-2 3D matrix from.
-
-    @param tensor:      The alignment tensor object, in matrix format, to populate.
-    @type tensor:       numpy rank-2 3D tensor
-    @param vector_5D:   The 5D vector object.  The vector format is {Axx, Ayy, Axy, Axz, Ayz}.
-    @type vector_5D:    numpy 5D vector
-    """
-
-    # Convert the vector form to the matrix form.
-    tensor[0, 0] = vector_5D[0]
-    tensor[0, 1] = vector_5D[2]
-    tensor[0, 2] = vector_5D[3]
-    tensor[1, 0] = vector_5D[2]
-    tensor[1, 1] = vector_5D[1]
-    tensor[1, 2] = vector_5D[4]
-    tensor[2, 0] = vector_5D[3]
-    tensor[2, 1] = vector_5D[4]
-    tensor[2, 2] = -vector_5D[0] -vector_5D[1]
