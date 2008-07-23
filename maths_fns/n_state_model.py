@@ -75,6 +75,11 @@ class N_state_opt:
         self.params = 1.0 * init_params    # Force a copy of the data to be stored.
         self.total_num_params = len(init_params)
 
+        # Initialise the function value, gradient, and Hessian.
+        self.chi2 = 0.0
+        self.dchi2 = zeros((self.total_num_params), float64)
+        self.d2chi2 = zeros((self.total_num_params, self.total_num_params), float64)
+
         # Scaling initialisation.
         self.scaling_matrix = scaling_matrix
         if self.scaling_matrix != None:
@@ -127,6 +132,8 @@ class N_state_opt:
             # Store the data.
             self.rdcs = rdcs
             self.xh_vect = xh_vect
+            self.num_align = len(self.rdcs)
+            self.num_align_params = len(self.rdcs)*5
 
             # RDC errors.
             if rdc_errors == None:
@@ -138,8 +145,10 @@ class N_state_opt:
             # Back calculated RDC array.
             self.rdcs_back_calc = 0.0 * deepcopy(rdcs)
 
-            # Set the target function.
+            # Set the target function, gradient, and Hessian.
             self.func = self.func_population
+            self.dfunc = self.dfunc_population
+            self.d2func = self.d2func_population
 
 
     def func_2domain(self, params):
@@ -214,7 +223,7 @@ class N_state_opt:
         simply the SSE normalised to unit variance (the SSE divided by the error squared).
 
         @param params:  The vector of parameter values.
-        @type params:   list of float
+        @type params:   numpy rank-1 array
         @return:        The chi-squared or SSE value.
         @rtype:         float
         """
@@ -244,3 +253,77 @@ class N_state_opt:
 
         # Return the chi-squared value.
         return chi2_sum
+
+
+    def dfunc_population(self, params):
+        """The gradient function for optimisation of the flexible population N-state model.
+
+        This function should be passed to the optimisation algorithm.  It accepts, as an array, a
+        vector of parameter values and, using these, returns the chi-squared gradient corresponding
+        to that coordinate in the parameter space.  If no RDC errors are supplied, then the SSE (the
+        sum of squares error) gradient is returned instead.  The chi-squared gradient is simply the
+        SSE gradient normalised to unit variance (the SSE divided by the error squared).
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 array
+        @return:        The chi-squared or SSE gradient.
+        @rtype:         numpy rank-1 array
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Initial chi-squared (or SSE) gradient.
+        chi2_sum = 0.0
+
+        # Unpack the probabilities (located at the end of the parameter array).
+        probs = params[-(self.N-1):]
+
+        # Loop over the gradient.
+        for i in xrange(self.total_num_params):
+            # Alignment tensor parameter.
+            if i < self.num_align_params:
+                print "Anm: " + `i` + ", " + `params[i]`
+
+            # Probability parameter.
+            else:
+                print "pc: " + `i` + ", " + `params[i]`
+
+        # Loop over each alignment.
+        for n in xrange(self.num_align):
+            # Extract tensor n from the parameters.
+            tensor_5D = params[5*n:5*n + 5]
+
+            # Loop over the spin systems i.
+            for i in xrange(self.num_spins):
+                # Calculate the average RDC.
+                self.rdcs_back_calc[n, i] = average_rdc_5D(self.xh_vect[i], self.N, tensor_5D, weights=probs)
+
+            # Calculate and sum the single alignment chi-squared value.
+            chi2_sum = chi2_sum + chi2(self.rdcs[n], self.rdcs_back_calc[n], self.rdc_errors[n])
+
+        # Diagonal scaling.
+        if self.scaling_flag:
+            self.dchi2 = dot(self.dchi2, self.scaling_matrix)
+
+        # Return a copy of the gradient.
+        return self.dchi2 * 1.0
+
+
+    def d2func_population(self, params):
+        """The Hessian function for optimisation of the flexible population N-state model.
+
+        This function should be passed to the optimisation algorithm.  It accepts, as an array, a
+        vector of parameter values and, using these, returns the chi-squared Hessian corresponding
+        to that coordinate in the parameter space.  If no RDC errors are supplied, then the SSE (the
+        sum of squares error) Hessian is returned instead.  The chi-squared Hessian is simply the
+        SSE Hessian normalised to unit variance (the SSE divided by the error squared).
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 array
+        @return:        The chi-squared or SSE Hessian.
+        @rtype:         numpy rank-2 array
+        """
+
+
