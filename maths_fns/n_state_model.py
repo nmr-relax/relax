@@ -362,11 +362,136 @@ class N_state_opt:
     def dfunc_population(self, params):
         """The gradient function for optimisation of the flexible population N-state model.
 
+        Description
+        ===========
+
         This function should be passed to the optimisation algorithm.  It accepts, as an array, a
         vector of parameter values and, using these, returns the chi-squared gradient corresponding
         to that coordinate in the parameter space.  If no RDC errors are supplied, then the SSE (the
         sum of squares error) gradient is returned instead.  The chi-squared gradient is simply the
         SSE gradient normalised to unit variance (the SSE divided by the error squared).
+
+
+        Indices
+        =======
+
+        For this calculation, six indices are looped over and used in the various data structures.
+        These include:
+            - k, the index over all parameters,
+            - i, the index over alignments,
+            - j, the index over spin systems,
+            - c, the index over the N-states (or over the structures),
+            - n, the index over the first dimension of the alignment tensor n = {x, y, z},
+            - m, the index over the second dimension of the alignment tensor m = {x, y, z}.
+
+
+        Equations
+        =========
+
+        To calculate the chi-squared gradient, a chain of equations are used.  This includes the
+        chi-squared gradient, the RDC gradient and the alignment tensor gradient.
+
+
+        The chi-squared gradient
+        ------------------------
+
+        The equation is::
+                              ___
+         dchi^2(theta)        \   / Dij - Dij(theta)     dDij(theta) \ 
+         -------------  =  -2  >  | ----------------  .  ----------- |
+            dthetak           /__ \   sigma_ij**2         dthetak    /
+                              ij
+
+        where:
+            - theta is the parameter vector,
+            - Dij are the measured RDCs,
+            - Dij(theta) are the back calculated RDCs,
+            - sigma_ij are the RDC errors,
+            - dDij(theta)/dthetak is the RDC gradient for parameter k.
+
+
+        The RDC gradient
+        ----------------
+
+        This gradient is different for the various parameter types.
+
+        pc partial derivative
+        ~~~~~~~~~~~~~~~~~~~~~
+
+        The population parameter partial derivative is::
+
+         dDij(theta)               T
+         -----------  =  dj . mu_jc . Ai . mu_jc,
+             dpc
+
+        where:
+            - dj is the dipolar constant for spin j,
+            - mu_jc is the unit vector corresponding to spin j and state c,
+            - Ai is the alignment tensor.
+
+        Anm partial derivative
+        ~~~~~~~~~~~~~~~~~~~~~~
+
+        The alignment tensor element partial derivative is::
+
+                            _N_
+         dDij(theta)        \              T   dAi
+         -----------  =  dj  >   pc . mu_jc . ---- . mu_jc,
+            dAnm            /__               dAnm
+                            c=1
+
+        where:
+            - dj is the dipolar constant for spin j,
+            - pc is the weight or probability associated with state c,
+            - mu_jc is the unit vector corresponding to spin j and state c,
+            - dAi/dAnm is the partial derivative of the alignment tensor with respect to element
+            Anm.
+
+
+        The alignment tensor gradient
+        -----------------------------
+
+        The five unique elements of the tensor {Axx, Ayy, Axy, Axz, Ayz} give five different partial
+        derivatives.  These are::
+
+          dAi   | 1  0  0 |
+         ---- = | 0  0  0 |,
+         dAxx   | 0  0 -1 |
+
+          dAi   | 0  0  0 |
+         ---- = | 0  1  0 |,
+         dAyy   | 0  0 -1 |
+
+          dAi   | 0  1  0 |
+         ---- = | 1  0  0 |,
+         dAxy   | 0  0  0 |
+
+          dAi   | 0  0  1 |
+         ---- = | 0  0  0 |,
+         dAxz   | 1  0  0 |
+
+          dAi   | 0  0  0 |
+         ---- = | 0  0  1 |.
+         dAyz   | 0  1  0 |
+
+
+        Stored data structures
+        ======================
+
+        There are a number of data structures calculated by this function and stored for subsequent
+        use in the Hessian function.  This include the back calculated RDC gradient and the
+        alignment tensor gradients.
+
+        dDij(theta)/dthetak
+        -------------------
+
+        The back calculated RDC gradient.  This is a rank-3 tensor with indices {k, i, j}.
+
+        dAi/dAnm
+        --------
+
+        The alignment tensor gradients.  This is a rank-4 tensor with indices {k, i, n, m}.
+
 
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 array
