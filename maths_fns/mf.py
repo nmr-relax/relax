@@ -655,7 +655,7 @@ class Mf:
                     data.create_dri[m](data, m, data.remap_table[m], data.get_dr1, params, j)
 
             # Calculate the chi-squared gradient.
-            data.dchi2[j] = dchi2(data.relax_data, data.ri, data.dri[j], data.errors)
+            data.dchi2[j] = dchi2_element(data.relax_data, data.ri, data.dri[j], data.errors)
 
         # Diagonal scaling.
         if self.scaling_flag:
@@ -716,7 +716,7 @@ class Mf:
                     data.create_dri[m](data, m, data.remap_table[m], data.get_dr1, params, j)
 
             # Calculate the chi-squared gradient.
-            data.dchi2[j] = dchi2(data.relax_data, data.ri, data.dri[j], data.errors)
+            data.dchi2[j] = dchi2_element(data.relax_data, data.ri, data.dri[j], data.errors)
 
         # Diagonal scaling.
         if self.scaling_flag:
@@ -792,7 +792,7 @@ class Mf:
                         data.create_dri[m](data, m, data.remap_table[m], data.get_dr1, params, j)
 
                 # Calculate the chi-squared gradient.
-                data.dchi2[j] = dchi2(data.relax_data, data.ri, data.dri[j], data.errors)
+                data.dchi2[j] = dchi2_element(data.relax_data, data.ri, data.dri[j], data.errors)
 
             # Index for the construction of the global generic model-free gradient.
             index = self.diff_data.num_params
@@ -873,7 +873,7 @@ class Mf:
                         data.create_dri[m](data, m, data.remap_table[m], data.get_dr1, params, j)
 
                 # Calculate the chi-squared gradient.
-                data.dchi2[j] = dchi2(data.relax_data, data.ri, data.dri[j], data.errors)
+                data.dchi2[j] = dchi2_element(data.relax_data, data.ri, data.dri[j], data.errors)
 
             # Index for the construction of the global generic model-free gradient.
             index = self.diff_data.num_params
@@ -932,7 +932,7 @@ class Mf:
                         data.create_d2ri[m](data, m, data.remap_table[m], data.get_d2r1, params, j, k)
 
                 # Calculate the chi-squared Hessian.
-                data.d2chi2[j, k] = data.d2chi2[k, j] = d2chi2(data.relax_data, data.ri, data.dri[j], data.dri[k], data.d2ri[j, k], data.errors)
+                data.d2chi2[j, k] = data.d2chi2[k, j] = d2chi2_element(data.relax_data, data.ri, data.dri[j], data.dri[k], data.d2ri[j, k], data.errors)
 
         # Diagonal scaling.
         if self.scaling_flag:
@@ -985,7 +985,7 @@ class Mf:
                         data.create_d2ri[m](data, m, data.remap_table[m], data.get_d2r1, params, j, k)
 
                 # Calculate the chi-squared Hessian.
-                data.d2chi2[j, k] = data.d2chi2[k, j] = d2chi2(data.relax_data, data.ri, data.dri[j], data.dri[k], data.d2ri[j, k], data.errors)
+                data.d2chi2[j, k] = data.d2chi2[k, j] = d2chi2_element(data.relax_data, data.ri, data.dri[j], data.dri[k], data.d2ri[j, k], data.errors)
 
         # Diagonal scaling.
         if self.scaling_flag:
@@ -1056,7 +1056,7 @@ class Mf:
                             data.create_d2ri[m](data, m, data.remap_table[m], data.get_d2r1, params, j, k)
 
                     # Calculate the chi-squared Hessian.
-                    data.d2chi2[j, k] = data.d2chi2[k, j] = d2chi2(data.relax_data, data.ri, data.dri[j], data.dri[k], data.d2ri[j, k], data.errors)
+                    data.d2chi2[j, k] = data.d2chi2[k, j] = d2chi2_element(data.relax_data, data.ri, data.dri[j], data.dri[k], data.d2ri[j, k], data.errors)
 
             # Pure diffusion parameter part of the global generic model-free Hessian.
             self.total_d2chi2 = self.total_d2chi2 + data.d2chi2
@@ -1130,7 +1130,7 @@ class Mf:
                             data.create_d2ri[m](data, m, data.remap_table[m], data.get_d2r1, params, j, k)
 
                     # Calculate the chi-squared Hessian.
-                    data.d2chi2[j, k] = data.d2chi2[k, j] = d2chi2(data.relax_data, data.ri, data.dri[j], data.dri[k], data.d2ri[j, k], data.errors)
+                    data.d2chi2[j, k] = data.d2chi2[k, j] = d2chi2_element(data.relax_data, data.ri, data.dri[j], data.dri[k], data.d2ri[j, k], data.errors)
 
             # Index for the construction of the global generic model-free Hessian.
             index = self.diff_data.num_params

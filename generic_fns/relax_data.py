@@ -139,12 +139,6 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
 def back_calc(ri_label=None, frq_label=None, frq=None):
     """Function for back calculating relaxation data."""
 
-    # Arguments.
-    self.run = run
-    self.ri_label = ri_label
-    self.frq_label = frq_label
-    self.frq = frq
-
     # Test if the run exists.
     if not self.run in ds.run_names:
         raise RelaxNoPipeError, self.run
