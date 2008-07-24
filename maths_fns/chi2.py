@@ -45,6 +45,7 @@ def chi2(data, back_calc_vals, errors):
                         i=1
 
     where
+        - i is the index over data sets.
         - theta is the parameter vector.
         - yi are the values of the measured data set.
         - yi(theta) are the values of the back calculated data set.
@@ -52,11 +53,11 @@ def chi2(data, back_calc_vals, errors):
 
 
     @param data:            The vector of yi values.
-    @type data:             numpy array
+    @type data:             numpy rank-1 size N array
     @param back_calc_vals:  The vector of yi(theta) values.
-    @type back_calc_vals:   numpy array
+    @type back_calc_vals:   numpy rank-1 size N array
     @param errors:          The vector of sigma_i values.
-    @type errors:           numpy array
+    @type errors:           numpy rank-1 size N array
     @return:                The chi-squared value.
     @rtype:                 float
     """
@@ -84,22 +85,25 @@ def dchi2(data, back_calc_vals, back_calc_grad, errors):
                              i=1
 
     where
+        - i is the index over data sets.
+        - j is the parameter index of the gradient.
         - theta is the parameter vector.
         - yi are the values of the measured data set.
         - yi(theta) are the values of the back calculated data set.
-        - dyi(theta)/dthetaj are the values of the back calculated gradient.
+        - dyi(theta)/dthetaj are the values of the back calculated gradient for parameter j.
         - sigma_i are the values of the error set.
 
+
     @param data:            The vector of yi values.
-    @type data:             numpy array
+    @type data:             numpy rank-1 size N array
     @param back_calc_vals:  The vector of yi(theta) values.
-    @type back_calc_vals:   numpy array
-    @param back_calc_grad:  The matrix of dyi(theta)/dthetaj values.
-    @type back_calc_grad:   numpy matrix
+    @type back_calc_vals:   numpy rank-1 size N array
+    @param back_calc_grad:  The vector of dyi(theta)/dthetaj values for parameter j.
+    @type back_calc_grad:   numpy rank-1 size N array
     @param errors:          The vector of sigma_i values.
-    @type errors:           numpy array
-    @return:                The chi-squared gradient.
-    @rtype:                 numpy array
+    @type errors:           numpy rank-1 size N array
+    @return:                The chi-squared gradient element j.
+    @rtype:                 float
     """
 
     # Calculate the chi-squared gradient.
@@ -125,28 +129,32 @@ def d2chi2(data, back_calc_vals, back_calc_grad_j, back_calc_grad_k, back_calc_h
                               i=1
 
     where
+        - i is the index over data sets.
+        - j is the parameter index for the first dimension of the Hessian.
+        - k is the parameter index for the second dimension of the Hessian.
         - theta is the parameter vector.
-        - yi are the values of the measured relaxation data set.
-        - yi(theta) are the values of the back calculated relaxation data set.
-        - dyi(theta)/dthetaj are the values of the back calculated gradient.
-        - d2yi(theta)/dthetaj.dthetak are the values of the back calculated Hessian.
+        - yi are the values of the measured data set.
+        - yi(theta) are the values of the back calculated data set.
+        - dyi(theta)/dthetaj are the values of the back calculated gradient for parameter j.
+        - d2yi(theta)/dthetaj.dthetak are the values of the back calculated Hessian for the
+        parameters j and k.
         - sigma_i are the values of the error set.
 
 
     @param data:                The vector of yi values.
-    @type data:                 numpy array
+    @type data:                 numpy rank-1 size N array
     @param back_calc_vals:      The vector of yi(theta) values.
-    @type back_calc_vals:       numpy array
-    @param back_calc_grad_j:    The matrix of dyi(theta)/dthetaj values.
-    @type back_calc_grad_j:     numpy matrix
-    @param back_calc_grad_k:    The matrix of dyi(theta)/dthetak values.
-    @type back_calc_grad_k:     numpy matrix
-    @param back_calc_hess:      The 3rd rank tensor of d2yi(theta)/dthetaj.dthetak values.
-    @type back_calc_hess:       numpy matrix
+    @type back_calc_vals:       numpy rank-1 size N array
+    @param back_calc_grad_j:    The vector of dyi(theta)/dthetaj values for parameter j.
+    @type back_calc_grad_j:     numpy rank-1 size N array
+    @param back_calc_grad_k:    The vector of dyi(theta)/dthetak values for parameter k.
+    @type back_calc_grad_k:     numpy rank-1 size N array
+    @param back_calc_hess:      The vector of d2yi(theta)/dthetaj.dthetak values at {j, k}.
+    @type back_calc_hess:       numpy rank-1 size N array
     @param errors:              The vector of sigma_i values.
-    @type errors:               numpy array
-    @return:                    The chi-squared Hessian.
-    @rtype:                     numpy 3rd rank tensor
+    @type errors:               numpy rank-1 size N array
+    @return:                    The chi-squared Hessian element {j,k}.
+    @rtype:                     float
     """
 
     # Calculate the chi-squared Hessian.
