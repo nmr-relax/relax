@@ -327,7 +327,7 @@ class N_state_opt:
         # Loop over each alignment.
         for i in xrange(self.num_align):
             # Create tensor i from the parameters.
-            self.A[i] = to_tensor(params[5*i:5*i + 5])
+            to_tensor(self.A[i], params[5*i:5*i + 5])
 
             # Loop over the spin systems j.
             for j in xrange(self.num_spins):
