@@ -134,12 +134,12 @@ class N_state_opt:
 
             # The total number of alignments.
             self.num_align = len(rdcs)
-            self.num_align_params = len(self.rdcs)*5
+            self.num_align_params = self.num_align * 5
 
             # RDC errors.
             if rdc_errors == None:
                 # Missing errors.
-                self.sigma_ij = ones((self.num_align, self.num_spins)), float64)
+                self.sigma_ij = ones((self.num_align, self.num_spins), float64)
             else:
                 self.sigma_ij = rdc_errors
 
@@ -148,9 +148,9 @@ class N_state_opt:
             self.dA = zeros((self.total_num_params, self.num_align, 3, 3), float64)
 
             # RDC function, gradient, and Hessian matrices.
-            self.Dij_theta = zeros((self.num_align, self.num_spins)), float64)
-            self.dDij_theta = zeros((self.total_num_params, self.num_align, self.num_spins)), float64)
-            self.d2Dij_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_spins)), float64)
+            self.Dij_theta = zeros((self.num_align, self.num_spins), float64)
+            self.dDij_theta = zeros((self.total_num_params, self.num_align, self.num_spins), float64)
+            self.d2Dij_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_spins), float64)
 
             # Set the target function, gradient, and Hessian.
             self.func = self.func_population
