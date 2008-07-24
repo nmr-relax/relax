@@ -74,15 +74,15 @@ class Results:
 
 
     def __read_col_numbers(self, header):
-        """Determine the column indecies from the header line.
+        """Determine the column indices from the header line.
 
         @param header:      The header line.
         @type header:       list of str
-        @return:            The column indecies.
+        @return:            The column indices.
         @rtype:             dictionary of int
         """
 
-        # Initialise the dictionary of column indecies.
+        # Initialise the dictionary of column indices.
         col = {}
 
         # Loop over the columns.
@@ -191,7 +191,7 @@ class Results:
             elif header[i] == 'Frequencies':
                 col['frq'] = i
 
-        # Return the column indecies.
+        # Return the column indices.
         return col
 
 
@@ -200,7 +200,7 @@ class Results:
 
         @param spin_line:   The line of data for a single spin.
         @type spin_line:    list of str
-        @param col:         The column indecies.
+        @param col:         The column indices.
         @type col:          dict of int
         @param data_set:    The data set type, one of 'value', 'error', or 'sim_xxx' (where xxx is
                             a number).
@@ -369,7 +369,7 @@ class Results:
 
         @param spin_line:   The line of data for a single spin.
         @type spin_line:    list of str
-        @param col:         The column indecies.
+        @param col:         The column indices.
         @type col:          dict of int
         @keyword verbosity: A variable specifying the amount of information to print.  The higher
                             the value, the greater the verbosity.
@@ -401,7 +401,7 @@ class Results:
 
         @param spin_line:   The line of data for a single spin.
         @type spin_line:    list of str
-        @param col:         The column indecies.
+        @param col:         The column indices.
         @type col:          dict of int
         @param data_set:    The data set type, one of 'value', 'error', or 'sim_xxx' (where xxx is
                             a number).
@@ -709,7 +709,7 @@ class Results:
 
         @param spin_line:   The line of data for a single spin.
         @type spin_line:    list of str
-        @param col:         The column indecies.
+        @param col:         The column indices.
         @type col:          dict of int
         @keyword verbosity: A variable specifying the amount of information to print.  The higher
                             the value, the greater the verbosity.
@@ -765,7 +765,7 @@ class Results:
 
         @param spin_line:   The line of data for a single spin.
         @type spin_line:    list of str
-        @param col:         The column indecies.
+        @param col:         The column indices.
         @type col:          dict of int
         @keyword verbosity: A variable specifying the amount of information to print.  The higher
                             the value, the greater the verbosity.
@@ -793,7 +793,7 @@ class Results:
 
         @param spin_line:   The line of data for a single spin.
         @type spin_line:    list of str
-        @param col:         The column indecies.
+        @param col:         The column indices.
         @type col:          dict of int
         @param data_set:    The data set type, one of 'value', 'error', or 'sim_xxx' (where xxx is
                             a number).
@@ -1009,7 +1009,7 @@ class Results:
 
         @param spin_line:   The line of data for a single spin.
         @type spin_line:    list of str
-        @param col:         The column indecies.
+        @param col:         The column indices.
         @type col:          dict of int
         @keyword verbosity: A variable specifying the amount of information to print.  The higher
                             the value, the greater the verbosity.
@@ -1051,7 +1051,7 @@ class Results:
 
         @param spin_line:   The line of data for a single spin.
         @type spin_line:    list of str
-        @param col:         The column indecies.
+        @param col:         The column indices.
         @type col:          dict of int
         @param spin:        The spin container.
         @type spin:         SpinContainer instance

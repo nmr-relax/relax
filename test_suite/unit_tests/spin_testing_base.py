@@ -49,7 +49,7 @@ class Spin_base_class:
         1,1,0   New mol         6               Thr             None            None
         1,1,1   New mol         6               Thr             3239            NH
 
-        The IDs correspond to the molecule, residue and spin indecies.
+        The IDs correspond to the molecule, residue and spin indices.
         """
 
         # Reset the relax data storage object.
