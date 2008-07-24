@@ -25,9 +25,9 @@ from copy import deepcopy
 from numpy import array, dot, float64, ones, transpose, zeros
 
 # relax module imports.
-from alignment_tensor import to_tensor
+from alignment_tensor import dAi_dAxx, dAi_dAyy, dAi_dAxy, dAi_dAxz, dAi_dAyz, to_tensor
 from chi2 import chi2, dchi2, d2chi2
-from rdc import average_rdc_5D
+from rdc import average_rdc_tensor
 from rotation_matrix import R_euler_zyz
 
 
@@ -146,10 +146,18 @@ class N_state_opt:
             # Back calculated RDC array.
             self.rdcs_back_calc = 0.0 * deepcopy(rdcs)
 
+            # Alignment tensor function, gradient, and Hessian matrices.
+            self.A = zeros((3, 3), float64)
+            self.dA = zeros((3, 3), float64)
+            self.d2A = zeros((3, 3), float64)
+
             # Set the target function, gradient, and Hessian.
             self.func = self.func_population
             self.dfunc = self.dfunc_population
             self.d2func = self.d2func_population
+
+            # Parameter specific functions.
+            self.setup_population_eqi()
 
 
     def func_2domain(self, params):
@@ -217,11 +225,87 @@ class N_state_opt:
     def func_population(self, params):
         """The target function for optimisation of the flexible population N-state model.
 
+        Description
+        ===========
+
         This function should be passed to the optimisation algorithm.  It accepts, as an array, a
         vector of parameter values and, using these, returns the single chi-squared value
         corresponding to that coordinate in the parameter space.  If no RDC errors are supplied,
         then the SSE (the sum of squares error) value is returned instead.  The chi-squared is
         simply the SSE normalised to unit variance (the SSE divided by the error squared).
+
+
+        Indecies
+        ========
+
+        For this calculation, five indecies are looped over and used in the various data structures.
+        These include:
+            - i, the index over alignments,
+            - j, the index over spin systems,
+            - c, the index over the N-states (or over the structures),
+            - n, the index over the first dimension of the alignment tensor n = {x, y, z},
+            - m, the index over the second dimension of the alignment tensor m = {x, y, z}.
+
+
+        Equations
+        =========
+
+        To calculate the function value, a chain of equations are used.  This includes the
+        chi-squared equation and the RDC equation.
+
+
+        The chi-squared equation
+        ------------------------
+
+        The equation is::
+
+                         ___
+                         \    (Dij - Dij(theta)) ** 2
+         chi^2(theta)  =  >   ----------------------- ,
+                         /__       sigma_ij ** 2
+                          ij
+
+        where:
+            - theta is the parameter vector,
+            - Dij are the measured RDCs,
+            - Dij(theta) are the back calculated RDCs,
+            - sigma_ij are the RDC errors.
+
+
+        The RDC equation
+        ----------------
+
+        The RDC equation is::
+
+                           _N_
+                           \              T
+         Dij(theta)  =  dj  >   pc . mu_jc . Ai . mu_jc,
+                           /__
+                           c=1
+
+        where:
+            - dj is the dipolar constant for spin j,
+            - pc is the weight or probability associated with state c,
+            - mu_jc is the unit vector corresponding to spin j and state c,
+            - Ai is the alignment tensor.
+
+        The dipolar constant is henceforth defined as::
+
+            dj = 3 / (2pi) d',
+
+        where the factor of 2pi is to convert from units of rad.s^-1 to Hertz, the factor of 3 is
+        associated with the alignment tensor and the pure dipolar constant in SI units is::
+
+                   mu0 gI.gS.h_bar
+            d' = - --- ----------- ,
+                   4pi    r**3
+
+        where:
+            - mu0 is the permeability of free space,
+            - gI and gS are the gyromagnetic ratios of the I and S spins,
+            - h_bar is Dirac's constant which is equal to Planck's constant divided by 2pi,
+            - r is the distance between the two spins.
+
 
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 array
@@ -240,17 +324,17 @@ class N_state_opt:
         probs = params[-(self.N-1):]
 
         # Loop over each alignment.
-        for n in xrange(self.num_align):
-            # Extract tensor n from the parameters.
-            tensor_5D = params[5*n:5*n + 5]
+        for i in xrange(self.num_align):
+            # Create tensor i from the parameters.
+            self.A[i] = to_tensor(params[5*i:5*i + 5])
 
-            # Loop over the spin systems i.
-            for i in xrange(self.num_spins):
+            # Loop over the spin systems j.
+            for j in xrange(self.num_spins):
                 # Calculate the average RDC.
-                self.rdcs_back_calc[n, i] = average_rdc_5D(self.xh_vect[i], self.N, tensor_5D, weights=probs)
+                self.rdcs_back_calc[i, j] = average_rdc_tensor(self.xh_vect[j], self.N, self.A[i], weights=probs)
 
             # Calculate and sum the single alignment chi-squared value.
-            chi2_sum = chi2_sum + chi2(self.rdcs[n], self.rdcs_back_calc[n], self.rdc_errors[n])
+            chi2_sum = chi2_sum + chi2(self.rdcs[i], self.rdcs_back_calc[i], self.rdc_errors[i])
 
         # Return the chi-squared value.
         return chi2_sum
@@ -271,6 +355,7 @@ class N_state_opt:
         @rtype:         numpy rank-1 array
         """
 
+        print "\nGrad call"
         # Scaling.
         if self.scaling_flag:
             params = dot(params, self.scaling_matrix)
@@ -281,15 +366,23 @@ class N_state_opt:
         # Unpack the probabilities (located at the end of the parameter array).
         probs = params[-(self.N-1):]
 
-        # Loop over the gradient.
-        for i in xrange(self.total_num_params):
-            # Alignment tensor parameter.
-            if i < self.num_align_params:
-                print "Anm: " + `i` + ", " + `params[i]`
+        # Loop over each alignment.
+        for i in xrange(self.num_align):
+            # Loop over the gradient.
+            for k in xrange(self.total_num_params):
+                print "\nParam: " + `k`
+                # The alignment tensor gradient.
+                if self.calc_dA[k]:
+                    self.calc_dA[k](self.dA)
+                else:
+                    self.dA = self.dA * 0.0
 
-            # Probability parameter.
-            else:
-                print "pc: " + `i` + ", " + `params[i]`
+                # The RDC gradient.
+                # Loop over spins.
+                for j in xrange(self.num_spins):
+                    # The RDC index.
+                    rdc_index = i*self.num_spins + j
+                    print rdc_index
 
         # Loop over each alignment.
         for n in xrange(self.num_align):
@@ -328,3 +421,29 @@ class N_state_opt:
         """
 
 
+    def setup_population_eqi(self):
+        """Set up all the functions for the population N-state model."""
+
+        # Empty gradient and Hessian data structures.
+        self.calc_dA = []
+        for i in xrange(self.total_num_params):
+            self.calc_dA.append(None)
+
+        # The alignment tensor gradients.
+        for i in xrange(self.num_align):
+            self.calc_dA[i*5] =   dAi_dAxx
+            self.calc_dA[i*5+1] = dAi_dAyy
+            self.calc_dA[i*5+2] = dAi_dAxy
+            self.calc_dA[i*5+3] = dAi_dAxz
+            self.calc_dA[i*5+4] = dAi_dAyz
+
+        for i in xrange(self.total_num_params):
+            # Alignment tensor parameter.
+            if i < self.num_align_params:
+                print "Anm: " + `i`
+
+            # Probability parameter.
+            else:
+                print "pc: " + `i`
+
+        print self.calc_dA
