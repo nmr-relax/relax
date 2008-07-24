@@ -308,6 +308,24 @@ class N_state_opt:
             - r is the distance between the two spins.
 
 
+        Stored data structures
+        ======================
+
+        There are a number of data structures calculated by this function and stored for subsequent
+        use in the gradient and Hessian functions.  This include the back calculated RDCs and the
+        alignment tensors.
+
+        Dij(theta)
+        ----------
+
+        The back calculated RDCs.  This is a rank-2 tensor with indices {i, j}.
+
+        Ai
+        --
+
+        The alignment tensors.  This is a rank-3 tensor with indices {i, n, m}.
+
+
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 array
         @return:        The chi-squared or SSE value.
@@ -332,10 +350,10 @@ class N_state_opt:
             # Loop over the spin systems j.
             for j in xrange(self.num_spins):
                 # Calculate the average RDC.
-                self.rdcs_back_calc[i, j] = average_rdc_tensor(self.xh_vect[j], self.N, self.A[i], weights=probs)
+                self.Dij_theta[i, j] = average_rdc_tensor(self.mu[j], self.N, self.A[i], weights=probs)
 
             # Calculate and sum the single alignment chi-squared value.
-            chi2_sum = chi2_sum + chi2(self.rdcs[i], self.rdcs_back_calc[i], self.rdc_errors[i])
+            chi2_sum = chi2_sum + chi2_element(self.Dij[i], self.Dij_theta[i], self.sigma_ij[i])
 
         # Return the chi-squared value.
         return chi2_sum
