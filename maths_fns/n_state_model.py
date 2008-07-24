@@ -26,7 +26,7 @@ from numpy import array, dot, float64, ones, transpose, zeros
 
 # relax module imports.
 from alignment_tensor import dAi_dAxx, dAi_dAyy, dAi_dAxy, dAi_dAxz, dAi_dAyz, to_tensor
-from chi2 import chi2, dchi2, d2chi2
+from chi2 import chi2, dchi2_element, d2chi2_element
 from rdc import average_rdc_tensor
 from rotation_matrix import R_euler_zyz
 
@@ -353,7 +353,7 @@ class N_state_opt:
                 self.Dij_theta[i, j] = average_rdc_tensor(self.mu[j], self.N, self.A[i], weights=probs)
 
             # Calculate and sum the single alignment chi-squared value.
-            chi2_sum = chi2_sum + chi2_element(self.Dij[i], self.Dij_theta[i], self.sigma_ij[i])
+            chi2_sum = chi2_sum + chi2(self.Dij[i], self.Dij_theta[i], self.sigma_ij[i])
 
         # Return the chi-squared value.
         return chi2_sum
