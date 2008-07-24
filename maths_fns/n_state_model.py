@@ -445,7 +445,7 @@ class N_state_opt:
 
         # Empty gradient and Hessian data structures.
         self.calc_dA = []
-        for i in xrange(self.total_num_params):
+        for k in xrange(self.total_num_params):
             self.calc_dA.append(None)
 
         # The alignment tensor gradients.
@@ -456,9 +456,9 @@ class N_state_opt:
             self.calc_dA[i*5+3] = dAi_dAxz
             self.calc_dA[i*5+4] = dAi_dAyz
 
-        for i in xrange(self.total_num_params):
+        for k in xrange(self.total_num_params):
             # Alignment tensor parameter.
-            if i < self.num_align_params:
+            if k < self.num_align_params:
                 print "Anm: " + `i`
 
             # Probability parameter.
