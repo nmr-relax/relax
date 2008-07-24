@@ -23,7 +23,7 @@
 """Module containing functions for calculating the chi-squared value, gradient, and Hessian."""
 
 # Python module imports.
-from numpy import sum
+from numpy import dot, sum, transpose
 
 
 # Chi-squared value.
