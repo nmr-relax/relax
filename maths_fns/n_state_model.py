@@ -34,7 +34,7 @@ from rotation_matrix import R_euler_zyz
 class N_state_opt:
     """Class containing the target function of the optimisation of the N-state model."""
 
-    def __init__(self, model=None, N=None, init_params=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, xh_vect=None, scaling_matrix=None):
+    def __init__(self, model=None, N=None, init_params=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, xh_vect=None, dip_const=None, scaling_matrix=None):
         """Set up the class instance for optimisation.
 
         All constant data required for the N-state model are initialised here.
@@ -58,7 +58,7 @@ class N_state_opt:
                                 tensors.  The array format is the same as for red_data.
         @type red_errors:       numpy float64 array
         @keyword rdcs:          The RDC lists.  The first index must correspond to the different
-                                alignment media and the second index to the spin systems.
+                                alignment media i and the second index to the spin systems j.
         @type rdcs:             numpy matrix
         @keyword rdc_errors:    The RDC error lists.  The dimensions of this argument are the same
                                 as for 'rdcs'.
@@ -67,6 +67,8 @@ class N_state_opt:
                                 spin systems and the second index to each structure (its size being
                                 equal to the number of states).
         @type xh_vect:          numpy matrix
+        @keyword dip_const:     The dipolar constants for each XH vector.  The indices correspond to
+                                the spin systems j.
         @scaling_matrix:        The square and diagonal scaling matrix.
         @scaling_matrix:        numpy rank-2 array
         """
@@ -74,6 +76,9 @@ class N_state_opt:
         # Store the data inside the class instance namespace.
         self.N = N
         self.params = 1.0 * init_params    # Force a copy of the data to be stored.
+        self.Dij = rdcs
+        self.mu = xh_vect
+        self.dip_const = dip_const
         self.total_num_params = len(init_params)
 
         # Initialise the function value, gradient, and Hessian.
@@ -129,27 +134,23 @@ class N_state_opt:
 
             # The total number of alignments.
             self.num_align = len(rdcs)
-
-            # Store the data.
-            self.rdcs = rdcs
-            self.xh_vect = xh_vect
-            self.num_align = len(self.rdcs)
             self.num_align_params = len(self.rdcs)*5
 
             # RDC errors.
             if rdc_errors == None:
                 # Missing errors.
-                self.rdc_errors = ones((len(rdcs), len(rdcs[0])), float64)
+                self.sigma_ij = ones((self.num_align, self.num_spins)), float64)
             else:
-                self.rdc_errors = rdc_errors
-
-            # Back calculated RDC array.
-            self.rdcs_back_calc = 0.0 * deepcopy(rdcs)
+                self.sigma_ij = rdc_errors
 
             # Alignment tensor function, gradient, and Hessian matrices.
-            self.A = zeros((3, 3), float64)
-            self.dA = zeros((3, 3), float64)
-            self.d2A = zeros((3, 3), float64)
+            self.A = zeros((self.num_align, 3, 3), float64)
+            self.dA = zeros((self.total_num_params, self.num_align, 3, 3), float64)
+
+            # RDC function, gradient, and Hessian matrices.
+            self.Dij_theta = zeros((self.num_align, self.num_spins)), float64)
+            self.dDij_theta = zeros((self.total_num_params, self.num_align, self.num_spins)), float64)
+            self.d2Dij_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_spins)), float64)
 
             # Set the target function, gradient, and Hessian.
             self.func = self.func_population
