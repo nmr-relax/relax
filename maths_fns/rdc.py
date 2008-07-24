@@ -24,7 +24,7 @@
 """Module for the calculation of RDCs."""
 
 # Python imports.
-from numpy import sum
+from numpy import dot, sum
 
 
 def average_rdc_5D(vect, K, A, weights=None):
