@@ -840,14 +840,14 @@ def create_spin(spin_num=None, spin_name=None, res_id=None):
 
 
 def convert_from_global_index(global_index=None, pipe=None):
-    """Convert the global index into the molecule, residue, and spin indecies.
+    """Convert the global index into the molecule, residue, and spin indices.
 
     @param global_index:        The global spin index, spanning the molecule and residue containers.
     @type global_index:         int
     @param pipe:                The data pipe containing the spin.  Defaults to the current data
                                 pipe.
     @type pipe:                 str
-    @return:                    The corresponding molecule, residue, and spin indecies.
+    @return:                    The corresponding molecule, residue, and spin indices.
     @rtype:                     tuple of int
     """
 
@@ -893,20 +893,20 @@ def delete_molecule(mol_id=None):
     # Alias the current data pipe.
     cdp = ds[ds.current_pipe]
 
-    # List of indecies to delete.
-    indecies = []
+    # List of indices to delete.
+    indices = []
 
     # Loop over the molecules.
     for i in xrange(len(cdp.mol)):
         # Remove the residue is there is a match.
         if cdp.mol[i].name in molecules:
-            indecies.append(i)
+            indices.append(i)
 
-    # Reverse the indecies.
-    indecies.reverse()
+    # Reverse the indices.
+    indices.reverse()
 
     # Delete the molecules.
-    for index in indecies:
+    for index in indices:
         cdp.mol.pop(index)
 
     # Create an empty residue container if no residues remain.
@@ -933,20 +933,20 @@ def delete_residue(res_id=None):
 
     # Molecule loop.
     for mol in molecule_loop(mol_token):
-        # List of indecies to delete.
-        indecies = []
+        # List of indices to delete.
+        indices = []
 
         # Loop over the residues of the molecule.
         for i in xrange(len(mol.res)):
             # Remove the residue is there is a match.
             if mol.res[i].num in residues or mol.res[i].name in residues:
-                indecies.append(i)
+                indices.append(i)
 
-        # Reverse the indecies.
-        indecies.reverse()
+        # Reverse the indices.
+        indices.reverse()
 
         # Delete the residues.
-        for index in indecies:
+        for index in indices:
             mol.res.pop(index)
 
         # Create an empty residue container if no residues remain.
@@ -969,20 +969,20 @@ def delete_spin(spin_id=None):
 
     # Residue loop.
     for res in residue_loop(spin_id):
-        # List of indecies to delete.
-        indecies = []
+        # List of indices to delete.
+        indices = []
 
         # Loop over the spins of the residue.
         for i in xrange(len(res.spin)):
-            # Store the spin indecies for deletion.
+            # Store the spin indices for deletion.
             if res.spin[i].num in spins or res.spin[i].name in spins:
-                indecies.append(i)
+                indices.append(i)
 
-        # Reverse the indecies.
-        indecies.reverse()
+        # Reverse the indices.
+        indices.reverse()
 
         # Delete the spins.
-        for index in indecies:
+        for index in indices:
             res.spin.pop(index)
 
         # Create an empty spin container if no spins remain.
@@ -1351,21 +1351,21 @@ def parse_token(token):
         element = strip(element)
 
         # Find all '-' characters (ignoring the first character, i.e. a negative number).
-        indecies= []
+        indices= []
         for i in xrange(1,len(element)):
             if element[i] == '-':
-                indecies.append(i)
+                indices.append(i)
 
         # Range.
-        if indecies:
+        if indices:
             # Invalid range element, only one range char '-' and one negative sign is allowed.
-            if len(indecies) > 2:
+            if len(indices) > 2:
                 raise RelaxError, "The range element " + `element` + " is invalid."
 
             # Convert the two numbers to integers.
             try:
-                start = int(element[:indecies[0]])
-                end = int(element[indecies[0]+1:])
+                start = int(element[:indices[0]])
+                end = int(element[indices[0]+1:])
             except ValueError:
                 raise RelaxError, "The range element " + `element` + " is invalid as either the start or end of the range are not integers."
 
@@ -1819,7 +1819,7 @@ def spin_in_list(spin_list, mol_name_col=None, res_num_col=None, res_name_col=No
 
 
 def spin_index_loop(selection=None, pipe=None):
-    """Generator function for looping over all selected spins, returning the mol-res-spin indecies.
+    """Generator function for looping over all selected spins, returning the mol-res-spin indices.
 
     @param selection:   The spin system selection identifier.
     @type selection:    str
@@ -1862,7 +1862,7 @@ def spin_index_loop(selection=None, pipe=None):
                 if (mol, res, spin) not in select_obj:
                     continue
 
-                # Yield the spin system specific indecies.
+                # Yield the spin system specific indices.
                 yield mol_index, res_index, spin_index
 
 

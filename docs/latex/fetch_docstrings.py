@@ -137,7 +137,7 @@ class Fetch_docstrings:
         else:
             end_string = '}'
 
-        # Loop over the indecies.
+        # Loop over the indices.
         for i in xrange(len(self.entries)):
             # Find triple word entries.
             if index+2 < len(self.words) and self.entries[i][2] == 3 and search(self.entries[i][0], self.words[index] + ' ' + self.words[index+1] + ' ' + self.words[index+2]):
@@ -432,8 +432,8 @@ class Fetch_docstrings:
         string = self.safe_replacement(string, 'dz', '$\\delta_z$')
 
 
-        # Indecies.
-        ###########
+        # Indices.
+        ##########
 
         # i, j, k, l, m, n, x, y, z, A, b, u.
         string = self.safe_replacement(string, 'i', '$i$')

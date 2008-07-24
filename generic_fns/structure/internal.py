@@ -1083,7 +1083,7 @@ class Internal(Base_struct_API):
 
                     # Generate the CONECT record and increment the counter.
                     if flush:
-                        # Convert the atom indecies to atom numbers.
+                        # Convert the atom indices to atom numbers.
                         for k in range(4):
                             if bonded[k] != '':
                                 bonded[k] = struct.atom_num[bonded[k]]
@@ -1129,7 +1129,7 @@ class Structure_container:
 
         - atom_num:  The atom name.
         - atom_name:  The atom name.
-        - bonded:  Each element an array of bonded atom indecies.
+        - bonded:  Each element an array of bonded atom indices.
         - chain_id:  The chain ID.
         - element:  The element symbol.
         - pdb_record:  The optional PDB record name (one of ATOM, HETATM, or TER).
@@ -1157,7 +1157,7 @@ class Structure_container:
         # The atom name (array of str).
         self.atom_name = []
 
-        # The bonded atom indecies (array of arrays of int).
+        # The bonded atom indices (array of arrays of int).
         self.bonded = []
 
         # The chain ID (array of str).

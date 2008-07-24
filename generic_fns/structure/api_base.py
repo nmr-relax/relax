@@ -89,7 +89,7 @@ class Base_struct_API:
     def atom_connect(self, index1=None, index2=None, struct_index=None):
         """Prototype method stub for connecting two atoms within the data structure object.
 
-        This method should connect the atoms corresponding to the indecies.
+        This method should connect the atoms corresponding to the indices.
 
 
         @keyword index1:        The index of the first atom.

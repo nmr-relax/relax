@@ -242,13 +242,13 @@ class Mf:
             # Append the class instance Data to the data array.
             self.data.append(Data())
 
-            # Number of indecies.
-            self.data[i].num_indecies = self.diff_data.num_indecies
+            # Number of indices.
+            self.data[i].num_indices = self.diff_data.num_indices
 
             # Calculate the five frequencies per field strength which cause R1, R2, and NOE relaxation.
             self.data[i].frq_list = zeros((num_frq[i], 5), float64)
-            self.data[i].frq_list_ext = zeros((num_frq[i], 5, self.diff_data.num_indecies), float64)
-            self.data[i].frq_sqrd_list_ext = zeros((num_frq[i], 5, self.diff_data.num_indecies), float64)
+            self.data[i].frq_list_ext = zeros((num_frq[i], 5, self.diff_data.num_indices), float64)
+            self.data[i].frq_sqrd_list_ext = zeros((num_frq[i], 5, self.diff_data.num_indices), float64)
             for j in xrange(num_frq[i]):
                 frqH = 2.0 * pi * frq[i][j]
                 frqX = frqH / g_ratio
@@ -257,7 +257,7 @@ class Mf:
                 self.data[i].frq_list[j, 3] = frqH
                 self.data[i].frq_list[j, 4] = frqH + frqX
             self.data[i].frq_sqrd_list = self.data[i].frq_list ** 2
-            for j in xrange(self.diff_data.num_indecies):
+            for j in xrange(self.diff_data.num_indices):
                 self.data[i].frq_list_ext[:, :, j] = self.data[i].frq_list
                 self.data[i].frq_sqrd_list_ext[:, :, j] = self.data[i].frq_sqrd_list
 
@@ -286,7 +286,7 @@ class Mf:
             if self.model_type == 'diff':
                 self.data[i].param_values = param_values[i]
 
-            # Indecies for constructing the global generic model-free gradient and Hessian kite.
+            # Indices for constructing the global generic model-free gradient and Hessian kite.
             if i == 0:
                 self.data[i].start_index = self.diff_data.num_params
             else:
@@ -1171,8 +1171,8 @@ class Mf:
             # Number of diffusion parameters.
             diff_data.num_params = 1
 
-            # Number of indecies in the generic equations.
-            diff_data.num_indecies = 1
+            # Number of indices in the generic equations.
+            diff_data.num_indices = 1
 
             # Direction cosine function, gradient, and Hessian.
             diff_data.calc_di = None
@@ -1195,8 +1195,8 @@ class Mf:
             # Number of diffusion parameters.
             diff_data.num_params = 4
 
-            # Number of indecies in the generic equations.
-            diff_data.num_indecies = 3
+            # Number of indices in the generic equations.
+            diff_data.num_indices = 3
 
             # Direction cosine function, gradient, and Hessian.
             diff_data.calc_di = calc_spheroid_di
@@ -1230,8 +1230,8 @@ class Mf:
             # Number of diffusion parameters.
             diff_data.num_params = 6
 
-            # Number of indecies in the generic equations.
-            diff_data.num_indecies = 5
+            # Number of indices in the generic equations.
+            diff_data.num_indices = 5
 
             # Direction cosine function, gradient, and Hessian.
             diff_data.calc_di = calc_ellipsoid_di
@@ -1293,31 +1293,31 @@ class Mf:
         """Function for the initialisation of the residue specific data."""
 
         # Correlation times.
-        data.ci = zeros(diff_data.num_indecies, float64)
-        data.ci_comps = zeros(diff_data.num_indecies, float64)
+        data.ci = zeros(diff_data.num_indices, float64)
+        data.ci_comps = zeros(diff_data.num_indices, float64)
 
         # Weights.
-        data.ti = zeros(diff_data.num_indecies, float64)
-        data.tau_comps = zeros(diff_data.num_indecies, float64)
-        data.tau_comps_sqrd = zeros(diff_data.num_indecies, float64)
-        data.tau_comps_cubed = zeros(diff_data.num_indecies, float64)
-        data.tau_scale = zeros(diff_data.num_indecies, float64)
+        data.ti = zeros(diff_data.num_indices, float64)
+        data.tau_comps = zeros(diff_data.num_indices, float64)
+        data.tau_comps_sqrd = zeros(diff_data.num_indices, float64)
+        data.tau_comps_cubed = zeros(diff_data.num_indices, float64)
+        data.tau_scale = zeros(diff_data.num_indices, float64)
 
         # Diffusion as a sphere.
         if self.diff_data.type == 'sphere':
             # Global correlation time gradient and Hessian.
-            data.dti = zeros((1, diff_data.num_indecies), float64)
-            data.d2ti = zeros((1, 1, diff_data.num_indecies), float64)
+            data.dti = zeros((1, diff_data.num_indices), float64)
+            data.d2ti = zeros((1, 1, diff_data.num_indices), float64)
 
         # Diffusion as a spheroid.
         elif self.diff_data.type == 'spheroid':
             # Weight gradient and Hessian.
-            data.dci = zeros((4, diff_data.num_indecies), float64)
-            data.d2ci = zeros((4, 4, diff_data.num_indecies), float64)
+            data.dci = zeros((4, diff_data.num_indices), float64)
+            data.d2ci = zeros((4, 4, diff_data.num_indices), float64)
 
             # Global correlation time gradient and Hessian.
-            data.dti = zeros((2, diff_data.num_indecies), float64)
-            data.d2ti = zeros((2, 2, diff_data.num_indecies), float64)
+            data.dti = zeros((2, diff_data.num_indices), float64)
+            data.d2ti = zeros((2, 2, diff_data.num_indices), float64)
 
             # Dot product.
             data.dz = 0
@@ -1331,12 +1331,12 @@ class Mf:
         # Diffusion as an ellipsoid.
         elif self.diff_data.type == 'ellipsoid':
             # Weight gradient and Hessian.
-            data.dci = zeros((6, diff_data.num_indecies), float64)
-            data.d2ci = zeros((6, 6, diff_data.num_indecies), float64)
+            data.dci = zeros((6, diff_data.num_indices), float64)
+            data.d2ci = zeros((6, 6, diff_data.num_indices), float64)
 
             # Global correlation time gradient and Hessian.
-            data.dti = zeros((3, diff_data.num_indecies), float64)
-            data.d2ti = zeros((3, 3, diff_data.num_indecies), float64)
+            data.dti = zeros((3, diff_data.num_indices), float64)
+            data.d2ti = zeros((3, 3, diff_data.num_indices), float64)
 
             # Dot products.
             data.dx = 0.0
@@ -1354,14 +1354,14 @@ class Mf:
             data.d2dz_dO2 = zeros((3, 3), float64)
 
         # Empty spectral density components.
-        data.w_ti_sqrd = zeros((data.num_frq, 5, diff_data.num_indecies), float64)
-        data.fact_ti = zeros((data.num_frq, 5, diff_data.num_indecies), float64)
-        data.w_te_ti_sqrd = zeros((data.num_frq, 5, diff_data.num_indecies), float64)
-        data.w_tf_ti_sqrd = zeros((data.num_frq, 5, diff_data.num_indecies), float64)
-        data.w_ts_ti_sqrd = zeros((data.num_frq, 5, diff_data.num_indecies), float64)
-        data.inv_te_denom = zeros((data.num_frq, 5, diff_data.num_indecies), float64)
-        data.inv_tf_denom = zeros((data.num_frq, 5, diff_data.num_indecies), float64)
-        data.inv_ts_denom = zeros((data.num_frq, 5, diff_data.num_indecies), float64)
+        data.w_ti_sqrd = zeros((data.num_frq, 5, diff_data.num_indices), float64)
+        data.fact_ti = zeros((data.num_frq, 5, diff_data.num_indices), float64)
+        data.w_te_ti_sqrd = zeros((data.num_frq, 5, diff_data.num_indices), float64)
+        data.w_tf_ti_sqrd = zeros((data.num_frq, 5, diff_data.num_indices), float64)
+        data.w_ts_ti_sqrd = zeros((data.num_frq, 5, diff_data.num_indices), float64)
+        data.inv_te_denom = zeros((data.num_frq, 5, diff_data.num_indices), float64)
+        data.inv_tf_denom = zeros((data.num_frq, 5, diff_data.num_indices), float64)
+        data.inv_ts_denom = zeros((data.num_frq, 5, diff_data.num_indices), float64)
 
         # Empty spectral density values, gradients, and Hessians.
         data.jw = zeros((data.num_frq, 5), float64)
@@ -1468,7 +1468,7 @@ class Mf:
         r1_data.create_dri_prime = data.create_dri_prime
         r1_data.create_d2ri_prime = data.create_d2ri_prime
 
-        # CSA, bond length, and Rex indecies.
+        # CSA, bond length, and Rex indices.
         r1_data.csa_i = data.csa_i
         r1_data.r_i = data.r_i
         r1_data.rex_i = data.rex_i
@@ -1487,7 +1487,7 @@ class Mf:
             # Set the total dri gradient to zero.
             self.total_dri = self.total_dri * 0.0
 
-            # Ri indecies.
+            # Ri indices.
             ri_start_index = 0
             ri_end_index = 0
 
@@ -1512,7 +1512,7 @@ class Mf:
             # Set the total dri gradient to zero.
             self.total_dri = self.total_dri * 0.0
 
-            # Ri indecies.
+            # Ri indices.
             ri_start_index = 0
             ri_end_index = 0
 
@@ -1563,7 +1563,7 @@ class Mf:
         elif self.diff_data.type == 'ellipsoid':
             num_diff_params = 6
 
-        # Indecies.
+        # Indices.
         data.tm_i,  data.tm_li  = None, None
         data.s2_i,  data.s2_li  = None, None
         data.s2f_i, data.s2f_li = None, None
@@ -1592,7 +1592,7 @@ class Mf:
         ##########################################################
 
         if data.equations == 'mf_orig':
-            # Find the indecies of the model-free parameters.
+            # Find the indices of the model-free parameters.
             for i in xrange(data.num_params):
                 if data.param_types[i] == 'S2':
                     data.s2_li = num_diff_params + i
@@ -1935,7 +1935,7 @@ class Mf:
         ###################################################################
 
         elif data.equations == 'mf_ext':
-            # Find the indecies of the model-free parameters.
+            # Find the indices of the model-free parameters.
             for i in xrange(data.num_params):
                 if data.param_types[i] == 'S2f':
                     data.s2f_li = num_diff_params + i
@@ -2282,7 +2282,7 @@ class Mf:
         #########################################################################
 
         elif data.equations == 'mf_ext2':
-            # Find the indecies of the model-free parameters.
+            # Find the indices of the model-free parameters.
             for i in xrange(data.num_params):
                 if data.param_types[i] == 'S2f':
                     data.s2f_li = num_diff_params + i

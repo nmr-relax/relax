@@ -154,8 +154,8 @@ def error_analysis(prune=0.0):
         # Get the selected simulation array.
         select_sim = return_selected_sim(instance)
 
-        # Initialise an array of indecies to prune (an empty array means no pruning).
-        indecies_to_skip = []
+        # Initialise an array of indices to prune (an empty array means no pruning).
+        indices_to_skip = []
 
         # Pruning.
         if prune > 0.0:
@@ -169,16 +169,16 @@ def error_analysis(prune=0.0):
             chi2_sorted = deepcopy(chi2_array)
             chi2_sorted.sort()
 
-            # Number of indecies to remove from one side of the chi2 distribution.
+            # Number of indices to remove from one side of the chi2 distribution.
             num = int(float(n) * 0.5 * prune)
 
             # Remove the lower tail.
             for i in xrange(num):
-                indecies_to_skip.append(chi2_array.index(chi2_sorted[i]))
+                indices_to_skip.append(chi2_array.index(chi2_sorted[i]))
 
             # Remove the upper tail.
             for i in xrange(n-num, n):
-                indecies_to_skip.append(chi2_array.index(chi2_sorted[i]))
+                indices_to_skip.append(chi2_array.index(chi2_sorted[i]))
 
         # Loop over the parameters.
         index = 0
@@ -200,7 +200,7 @@ def error_analysis(prune=0.0):
                         continue
 
                     # Prune.
-                    if i in indecies_to_skip:
+                    if i in indices_to_skip:
                         continue
 
                     # Increment n.
@@ -214,7 +214,7 @@ def error_analysis(prune=0.0):
                         continue
 
                     # Prune.
-                    if i in indecies_to_skip:
+                    if i in indices_to_skip:
                         continue
 
                     # Sum.
@@ -234,7 +234,7 @@ def error_analysis(prune=0.0):
                         continue
 
                     # Prune.
-                    if i in indecies_to_skip:
+                    if i in indices_to_skip:
                         continue
 
                     # Sum.

@@ -1035,7 +1035,7 @@ class Model_free_main:
             if ds[pipe_to].mol.is_empty():
                 sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to)
 
-            # Get the spin container indecies.
+            # Get the spin container indices.
             mol_index, res_index, spin_index = convert_from_global_index(global_index=model_index, pipe=pipe_from)
 
             # Duplicate the spin specific data.
@@ -1119,7 +1119,7 @@ class Model_free_main:
 
         @keyword model_index:   The model index.  This is zero for the global models or equal to the
                                 global spin index (which covers the molecule, residue, and spin
-                                indecies).
+                                indices).
         @type model_index:      int
         @return:                The vector of parameter names.
         @rtype:                 list of str
@@ -1144,7 +1144,7 @@ class Model_free_main:
 
         @keyword model_index:   The model index.  This is zero for the global models or equal to the
                                 global spin index (which covers the molecule, residue, and spin
-                                indecies).
+                                indices).
         @type model_index:      int
         @keyword sim_index:     The Monte Carlo simulation index.
         @type sim_index:        int
