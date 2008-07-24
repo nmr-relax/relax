@@ -235,10 +235,10 @@ class N_state_opt:
         simply the SSE normalised to unit variance (the SSE divided by the error squared).
 
 
-        Indecies
-        ========
+        Indices
+        =======
 
-        For this calculation, five indecies are looped over and used in the various data structures.
+        For this calculation, five indices are looped over and used in the various data structures.
         These include:
             - i, the index over alignments,
             - j, the index over spin systems,
