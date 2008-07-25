@@ -388,8 +388,8 @@ class N_state_opt:
             - i, the index over alignments,
             - j, the index over spin systems,
             - c, the index over the N-states (or over the structures),
-            - n, the index over the first dimension of the alignment tensor n = {x, y, z},
-            - m, the index over the second dimension of the alignment tensor m = {x, y, z}.
+            - m, the index over the first dimension of the alignment tensor m = {x, y, z}.
+            - n, the index over the second dimension of the alignment tensor n = {x, y, z},
 
 
         Equations

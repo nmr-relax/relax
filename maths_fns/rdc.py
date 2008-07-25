@@ -27,7 +27,7 @@
 from numpy import dot, sum
 
 
-def average_rdc_5D(vect, K, A, weights=None):
+def ave_rdc_5D(vect, K, A, weights=None):
     """Calculate the average RDC for an ensemble set of XH bond vectors, using the 5D notation.
 
     This function calculates the average RDC for a set of XH bond vectors from a structural
@@ -87,7 +87,7 @@ def average_rdc_5D(vect, K, A, weights=None):
     return val
 
 
-def average_rdc_tensor(vect, K, A, weights=None):
+def ave_rdc_tensor(vect, K, A, weights=None):
     """Calculate the average RDC for an ensemble set of XH bond vectors, using the 3D tensor.
 
     This function calculates the average RDC for a set of XH bond vectors from a structural
@@ -146,3 +146,67 @@ def average_rdc_tensor(vect, K, A, weights=None):
 
     # Return the average RDC.
     return val
+
+
+def ave_rdc_tensor_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
+    """Calculate the ensemble average RDC gradient element for Amn, using the 3D tensor.
+
+    This function calculates the average RDC gradient for a set of XH bond vectors from a structural
+    ensemble, using the 3D tensorial form of the alignment tensor.  The formula for this ensemble
+    average RDC gradient element is::
+
+                          _N_
+        dDij(theta)       \             T   dAi
+        -----------  = dj  >  pc . mu_jc . ---- . mu_jc,
+           dAmn           /__              dAmn
+                          c=1
+
+    where:
+        - i is the alignment tensor index,
+        - j is the index over spins,
+        - m, the index over the first dimension of the alignment tensor m = {x, y, z}.
+        - n, the index over the second dimension of the alignment tensor n = {x, y, z},
+        - c is the index over the states or multiple structures,
+        - theta is the parameter vector,
+        - Amn is the matrix element of the alignment tensor,
+        - dj is the dipolar constant for spin j,
+        - N is the total number of states or structures,
+        - pc is the population probability or weight associated with state c (equally weighted to
+        1/N if weights are not provided),
+        - mu_jc is the unit vector corresponding to spin j and state c,
+        - dAi/dAmn is the partial derivative of the alignment tensor with respect to element Amn.
+
+
+    @param dj:          The dipolar constant for spin j.
+    @type dj:           float
+    @param vect:        The unit XH bond vector matrix.  The first dimension corresponds to the
+                        structural index, the second dimension is the coordinates of the unit
+                        vector.
+    @type vect:         numpy matrix
+    @param N:           The total number of structures.
+    @type N:            int
+    @param dAi_dAmn:    The alignment tensor derivative with respect to parameter Amn.
+    @type dAi_dAmn:     numpy rank-2 3D tensor
+    @param weights:     The weights for each member of the ensemble.  The last weight is assumed to
+                        be missing, and is calculated by this function.  Hence the length should be
+                        one less than N.
+    @type weights:      numpy rank-1 array
+    @return:            The average RDC gradient element.
+    @rtype:             float
+    """
+
+    # Initial back-calculated RDC gradient.
+    grad = 0.0
+
+    # The populations.
+    if weights == None:
+        pc = 1.0 / N
+    else:
+        weights.append(1.0 - sum(weights, axis=0))
+
+    # Back-calculate the RDC gradient element.
+    for c in xrange(N):
+        grad = grad + pc * dot(vect[c], dot(dAi_dAmn, vect[c]))
+
+    # Return the average RDC gradient element.
+    return dj * grad
