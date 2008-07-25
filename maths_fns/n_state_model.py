@@ -27,7 +27,7 @@ from numpy import array, dot, float64, ones, transpose, zeros
 # relax module imports.
 from alignment_tensor import dAi_dAxx, dAi_dAyy, dAi_dAxy, dAi_dAxz, dAi_dAyz, to_tensor
 from chi2 import chi2, dchi2_element, d2chi2_element
-from rdc import average_rdc_tensor
+from rdc import ave_rdc_tensor
 from rotation_matrix import R_euler_zyz
 
 
@@ -357,7 +357,7 @@ class N_state_opt:
             # Loop over the spin systems j.
             for j in xrange(self.num_spins):
                 # Calculate the average RDC.
-                self.Dij_theta[i, j] = average_rdc_tensor(self.mu[j], self.N, self.A[i], weights=self.probs)
+                self.Dij_theta[i, j] = ave_rdc_tensor(self.mu[j], self.N, self.A[i], weights=self.probs)
 
             # Calculate and sum the single alignment chi-squared value.
             chi2_sum = chi2_sum + chi2(self.Dij[i], self.Dij_theta[i], self.sigma_ij[i])
@@ -523,11 +523,11 @@ class N_state_opt:
         for i in xrange(self.num_align):
             # Construct the Amn partial derivative part of the RDC gradient.
             for j in xrange(self.num_spins):
-                self.dDij_theta[i*5, i, j] =   average_rdc_grad(self.dip_const[j], self.mu[j], self.N, self.dA[0], weights=self.probs)
-                self.dDij_theta[i*5+1, i, j] = average_rdc_grad(self.dip_const[j], self.mu[j], self.N, self.dA[1], weights=self.probs)
-                self.dDij_theta[i*5+2, i, j] = average_rdc_grad(self.dip_const[j], self.mu[j], self.N, self.dA[2], weights=self.probs)
-                self.dDij_theta[i*5+3, i, j] = average_rdc_grad(self.dip_const[j], self.mu[j], self.N, self.dA[3], weights=self.probs)
-                self.dDij_theta[i*5+4, i, j] = average_rdc_grad(self.dip_const[j], self.mu[j], self.N, self.dA[4], weights=self.probs)
+                self.dDij_theta[i*5, i, j] =   ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[0], weights=self.probs)
+                self.dDij_theta[i*5+1, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[1], weights=self.probs)
+                self.dDij_theta[i*5+2, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[2], weights=self.probs)
+                self.dDij_theta[i*5+3, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[3], weights=self.probs)
+                self.dDij_theta[i*5+4, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[4], weights=self.probs)
 
         print self.dDij_theta
         # Diagonal scaling.
