@@ -27,7 +27,7 @@ from numpy import array, dot, float64, ones, transpose, zeros
 # relax module imports.
 from alignment_tensor import dAi_dAxx, dAi_dAyy, dAi_dAxy, dAi_dAxz, dAi_dAyz, to_tensor
 from chi2 import chi2, dchi2_element, d2chi2_element
-from rdc import ave_rdc_tensor, ave_rdc_tensor_dDij_dAmn
+from rdc import ave_rdc_tensor, ave_rdc_tensor_dDij_dAmn, rdc_tensor
 from rotation_matrix import R_euler_zyz
 
 
@@ -509,7 +509,6 @@ class N_state_opt:
         @rtype:         numpy rank-1 array
         """
 
-        print "\nGrad call"
         # Scaling.
         if self.scaling_flag:
             params = dot(params, self.scaling_matrix)
@@ -529,7 +528,21 @@ class N_state_opt:
                 self.dDij_theta[i*5+3, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[3], weights=self.probs)
                 self.dDij_theta[i*5+4, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[4], weights=self.probs)
 
-        print self.dDij_theta
+            # Construct the pc partial derivative part of the RDC gradient, looping over each state.
+            for c in xrange(self.N - 1):
+                # Index in the parameter array.
+                param_index = self.num_align_params + c
+
+                # Loop over the spins.
+                for j in xrange(self.num_spins):
+                    # Calculate the RDC for state c (this is the pc partial derivative).
+                    self.dDij_theta[param_index, i, j] = rdc_tensor(self.dip_const[j], self.mu[j, c], self.A[i])
+
+        # Debugging print out.
+        for k in xrange(self.total_num_params):
+            print "\nParam: " + `k`
+            print self.dDij_theta[k]
+
         # Diagonal scaling.
         if self.scaling_flag:
             self.dchi2 = dot(self.dchi2, self.scaling_matrix)
