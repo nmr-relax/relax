@@ -143,9 +143,16 @@ class N_state_opt:
             else:
                 self.sigma_ij = rdc_errors
 
-            # Alignment tensor function, gradient, and Hessian matrices.
+            # Alignment tensor function and gradient matrices.
             self.A = zeros((self.num_align, 3, 3), float64)
-            self.dA = zeros((self.total_num_params, self.num_align, 3, 3), float64)
+            self.dA = zeros((5, 3, 3), float64)
+
+            # The alignment tensor gradients don't change, so pre-calculate them.
+            dAi_dAxx(self.dA[0])
+            dAi_dAyy(self.dA[1])
+            dAi_dAxy(self.dA[2])
+            dAi_dAxz(self.dA[3])
+            dAi_dAyz(self.dA[4])
 
             # RDC function, gradient, and Hessian matrices.
             self.Dij_theta = zeros((self.num_align, self.num_spins), float64)
@@ -340,7 +347,7 @@ class N_state_opt:
         chi2_sum = 0.0
 
         # Unpack the probabilities (located at the end of the parameter array).
-        probs = params[-(self.N-1):]
+        self.probs = params[-(self.N-1):]
 
         # Loop over each alignment.
         for i in xrange(self.num_align):
@@ -350,7 +357,7 @@ class N_state_opt:
             # Loop over the spin systems j.
             for j in xrange(self.num_spins):
                 # Calculate the average RDC.
-                self.Dij_theta[i, j] = average_rdc_tensor(self.mu[j], self.N, self.A[i], weights=probs)
+                self.Dij_theta[i, j] = average_rdc_tensor(self.mu[j], self.N, self.A[i], weights=self.probs)
 
             # Calculate and sum the single alignment chi-squared value.
             chi2_sum = chi2_sum + chi2(self.Dij[i], self.Dij_theta[i], self.sigma_ij[i])
@@ -429,7 +436,7 @@ class N_state_opt:
             - mu_jc is the unit vector corresponding to spin j and state c,
             - Ai is the alignment tensor.
 
-        Anm partial derivative
+        Amn partial derivative
         ~~~~~~~~~~~~~~~~~~~~~~
 
         The alignment tensor element partial derivative is::
@@ -437,15 +444,15 @@ class N_state_opt:
                             _N_
          dDij(theta)        \              T   dAi
          -----------  =  dj  >   pc . mu_jc . ---- . mu_jc,
-            dAnm            /__               dAnm
+            dAmn            /__               dAmn
                             c=1
 
         where:
             - dj is the dipolar constant for spin j,
             - pc is the weight or probability associated with state c,
             - mu_jc is the unit vector corresponding to spin j and state c,
-            - dAi/dAnm is the partial derivative of the alignment tensor with respect to element
-            Anm.
+            - dAi/dAmn is the partial derivative of the alignment tensor with respect to element
+            Amn.
 
 
         The alignment tensor gradient
@@ -474,6 +481,8 @@ class N_state_opt:
          ---- = | 0  0  1 |.
          dAyz   | 0  1  0 |
 
+        As these are invariant, they can be pre-calculated.
+
 
         Stored data structures
         ======================
@@ -487,13 +496,14 @@ class N_state_opt:
 
         The back calculated RDC gradient.  This is a rank-3 tensor with indices {k, i, j}.
 
-        dAi/dAnm
+        dAi/dAmn
         --------
 
-        The alignment tensor gradients.  This is a rank-4 tensor with indices {k, i, n, m}.
+        The alignment tensor gradients.  This is a rank-3 tensor with indices {5, n, m}.
 
 
-        @param params:  The vector of parameter values.
+        @param params:  The vector of parameter values.  This is unused as it is assumed that
+                        func_population() was called first.
         @type params:   numpy rank-1 array
         @return:        The chi-squared or SSE gradient.
         @rtype:         numpy rank-1 array
@@ -505,42 +515,21 @@ class N_state_opt:
             params = dot(params, self.scaling_matrix)
 
         # Initial chi-squared (or SSE) gradient.
-        chi2_sum = 0.0
+        self.dchi2 = self.dchi2 * 0.0
 
-        # Unpack the probabilities (located at the end of the parameter array).
-        probs = params[-(self.N-1):]
+        # Construct the Amn partial derivative part of the RDC gradient (this is alignment independent).
 
         # Loop over each alignment.
         for i in xrange(self.num_align):
-            # Loop over the gradient.
-            for k in xrange(self.total_num_params):
-                print "\nParam: " + `k`
-                # The alignment tensor gradient.
-                if self.calc_dA[k]:
-                    self.calc_dA[k](self.dA)
-                else:
-                    self.dA = self.dA * 0.0
+            # Construct the Amn partial derivative part of the RDC gradient.
+            for j in xrange(self.num_spins):
+                self.dDij_theta[i*5, i, j] =   average_rdc_grad(self.dip_const[j], self.mu[j], self.N, self.dA[0], weights=self.probs)
+                self.dDij_theta[i*5+1, i, j] = average_rdc_grad(self.dip_const[j], self.mu[j], self.N, self.dA[1], weights=self.probs)
+                self.dDij_theta[i*5+2, i, j] = average_rdc_grad(self.dip_const[j], self.mu[j], self.N, self.dA[2], weights=self.probs)
+                self.dDij_theta[i*5+3, i, j] = average_rdc_grad(self.dip_const[j], self.mu[j], self.N, self.dA[3], weights=self.probs)
+                self.dDij_theta[i*5+4, i, j] = average_rdc_grad(self.dip_const[j], self.mu[j], self.N, self.dA[4], weights=self.probs)
 
-                # The RDC gradient.
-                # Loop over spins.
-                for j in xrange(self.num_spins):
-                    # The RDC index.
-                    rdc_index = i*self.num_spins + j
-                    print rdc_index
-
-        # Loop over each alignment.
-        for n in xrange(self.num_align):
-            # Extract tensor n from the parameters.
-            tensor_5D = params[5*n:5*n + 5]
-
-            # Loop over the spin systems i.
-            for i in xrange(self.num_spins):
-                # Calculate the average RDC.
-                self.rdcs_back_calc[n, i] = average_rdc_5D(self.xh_vect[i], self.N, tensor_5D, weights=probs)
-
-            # Calculate and sum the single alignment chi-squared value.
-            chi2_sum = chi2_sum + chi2(self.rdcs[n], self.rdcs_back_calc[n], self.rdc_errors[n])
-
+        print self.dDij_theta
         # Diagonal scaling.
         if self.scaling_flag:
             self.dchi2 = dot(self.dchi2, self.scaling_matrix)
@@ -568,26 +557,11 @@ class N_state_opt:
     def setup_population_eqi(self):
         """Set up all the functions for the population N-state model."""
 
-        # Empty gradient and Hessian data structures.
-        self.calc_dA = []
-        for k in xrange(self.total_num_params):
-            self.calc_dA.append(None)
-
-        # The alignment tensor gradients.
-        for i in xrange(self.num_align):
-            self.calc_dA[i*5] =   dAi_dAxx
-            self.calc_dA[i*5+1] = dAi_dAyy
-            self.calc_dA[i*5+2] = dAi_dAxy
-            self.calc_dA[i*5+3] = dAi_dAxz
-            self.calc_dA[i*5+4] = dAi_dAyz
-
         for k in xrange(self.total_num_params):
             # Alignment tensor parameter.
             if k < self.num_align_params:
-                print "Anm: " + `i`
+                print "Amn: " + `k`
 
             # Probability parameter.
             else:
-                print "pc: " + `i`
-
-        print self.calc_dA
+                print "pc: " + `k`
