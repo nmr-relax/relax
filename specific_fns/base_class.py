@@ -33,6 +33,14 @@ from relax_errors import RelaxError
 class Common_functions:
     """Base class containing simple methods used by some a number of the specific analysis types."""
 
+    def data_init(self, spin):
+        """Dummy method for initialising the spin specific data structures.
+
+        @param spin:    The spin data container.
+        @type spin:     SpinContainer instance
+        """
+
+
     def has_errors(self):
         """Function for testing if errors exist for the run.
 
