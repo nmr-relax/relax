@@ -164,9 +164,6 @@ class N_state_opt:
             self.dfunc = self.dfunc_population
             self.d2func = self.d2func_population
 
-            # Parameter specific functions.
-            self.setup_population_eqi()
-
 
     def func_2domain(self, params):
         """The target function for optimisation of the 2-domain N-state model.
@@ -567,16 +564,3 @@ class N_state_opt:
         @return:        The chi-squared or SSE Hessian.
         @rtype:         numpy rank-2 array
         """
-
-
-    def setup_population_eqi(self):
-        """Set up all the functions for the population N-state model."""
-
-        for k in xrange(self.total_num_params):
-            # Alignment tensor parameter.
-            if k < self.num_align_params:
-                print "Amn: " + `k`
-
-            # Probability parameter.
-            else:
-                print "pc: " + `k`
