@@ -516,8 +516,6 @@ class N_state_opt:
         # Initial chi-squared (or SSE) gradient.
         self.dchi2 = self.dchi2 * 0.0
 
-        # Construct the Amn partial derivative part of the RDC gradient (this is alignment independent).
-
         # Loop over each alignment.
         for i in xrange(self.num_align):
             # Construct the Amn partial derivative part of the RDC gradient.
