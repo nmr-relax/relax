@@ -88,25 +88,46 @@ def ave_rdc_5D(vect, K, A, weights=None):
 
 
 def ave_rdc_tensor(vect, K, A, weights=None):
-    """Calculate the average RDC for an ensemble set of XH bond vectors, using the 3D tensor.
+    """Calculate the ensemble average RDC, using the 3D tensor.
 
     This function calculates the average RDC for a set of XH bond vectors from a structural
     ensemble, using the 3D tensorial form of the alignment tensor.  The formula for this ensemble
     average RDC value is::
 
-                    _K_
-                  1 \ 
-        <RDC_i> = -  >  RDC_ik (theta),
-                  K /__
-                    k=1
+                         _N_
+                         \             T
+        Dij(theta)  = dj  >  pc . mu_jc . Ai . mu_jc,
+                         /__
+                         c=1
 
-    where K is the total number of structures,  k is the index over the multiple structures, RDC_ik
-    is the back-calculated RDC value for spin system i and structure k, and theta is the parameter
-    vector consisting of the alignment tensor.  The back-calculated RDC is given by the formula::
+    where:
+        - i is the alignment tensor index,
+        - j is the index over spins,
+        - c is the index over the states or multiple structures,
+        - theta is the parameter vector,
+        - dj is the dipolar constant for spin j,
+        - N is the total number of states or structures,
+        - pc is the population probability or weight associated with state c (equally weighted to
+        1/N if weights are not provided),
+        - mu_jc is the unit vector corresponding to spin j and state c,
+        - Ai is the alignment tensor.
 
-        RDC_ik(theta) = muT . A . mu,
+    The dipolar constant is henceforth defined as::
 
-    where mu is the unit XH bond vector, T is the transpose, and A is the alignment tensor matrix.
+        dj = 3 / (2pi) d',
+
+    where the factor of 2pi is to convert from units of rad.s^-1 to Hertz, the factor of 3 is
+    associated with the alignment tensor and the pure dipolar constant in SI units is::
+
+               mu0 gI.gS.h_bar
+        d' = - --- ----------- ,
+               4pi    r**3
+
+    where:
+        - mu0 is the permeability of free space,
+        - gI and gS are the gyromagnetic ratios of the I and S spins,
+        - h_bar is Dirac's constant which is equal to Planck's constant divided by 2pi,
+        - r is the distance between the two spins.
 
 
     @param vect:        The unit XH bond vector matrix.  The first dimension corresponds to the
