@@ -600,16 +600,17 @@ class N_state_model(Common_functions):
     def is_spin_param(self, name):
         """Determine whether the given parameter is spin specific.
 
-        This method always returns false as there are no spin specific parameters in this type of
-        analysis.
-
         @param name:    The name of the parameter.
         @type name:     str
         @return:        False
         @rtype:         bool
         """
 
-        # Return false.
+        # Spin specific parameters.
+        if name in ['bond_length', 'heteronucleus', 'proton']:
+            return True
+
+        # All other parameters are global.
         return False
 
 
