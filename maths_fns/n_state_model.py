@@ -357,7 +357,7 @@ class N_state_opt:
             # Loop over the spin systems j.
             for j in xrange(self.num_spins):
                 # Calculate the average RDC.
-                self.Dij_theta[i, j] = ave_rdc_tensor(self.mu[j], self.N, self.A[i], weights=self.probs)
+                self.Dij_theta[i, j] = ave_rdc_tensor(self.dip_const[j], self.mu[j], self.N, self.A[i], weights=self.probs)
 
             # Calculate and sum the single alignment chi-squared value.
             chi2_sum = chi2_sum + chi2(self.Dij[i], self.Dij_theta[i], self.sigma_ij[i])
