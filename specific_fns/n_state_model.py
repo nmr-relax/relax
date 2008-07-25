@@ -867,7 +867,7 @@ class N_state_model(Common_functions):
             gh = return_gyromagnetic_ratio(spin.proton_type)
 
             # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
-            dj.append(3.0/(2.0*pi) * diploar_constant(gx, gh, spin.r))
+            dj.append(3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r))
 
         # Initialise the numpy objects (the rdc matrix is transposed!).
         rdcs_numpy = zeros((len(rdcs[0]), len(rdcs)), float64)
