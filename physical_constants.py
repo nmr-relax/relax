@@ -54,6 +54,37 @@ NH_BOND_LENGTH = 1.02 * 1e-10
 """The length of the NH bond (default value)."""
 
 
+# The dipolar constant.
+#######################
+
+def dipolar_constant(gx, gh, r):
+    """Calculate the dipolar constant.
+
+    The dipolar constant is defined as::
+
+              mu0 gI.gS.h_bar
+        d = - --- ----------- ,
+              4pi    r**3
+
+    where:
+        - mu0 is the permeability of free space,
+        - gI and gS are the gyromagnetic ratios of the I and S spins,
+        - h_bar is Dirac's constant which is equal to Planck's constant divided by 2pi,
+        - r is the distance between the two spins.
+
+
+    @param gx:  The gyromagnetic ratio of the heteronucleus (or first spin).
+    @type gx:   float
+    @param gh:  The gyromagnetic ratio of the proton (or second spin).
+    @type gh:   float
+    @param r:   The distance between the two nuclei.
+    @type r:    float
+    """
+
+    # Calculate and return the value.
+    return - mu0 / (4.0*pi) * gx * gh * h_bar / r**3
+
+
 # Gyromagnetic ratios.
 ######################
 
