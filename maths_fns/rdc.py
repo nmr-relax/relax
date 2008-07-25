@@ -201,11 +201,16 @@ def ave_rdc_tensor_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
     # The populations.
     if weights == None:
         pc = 1.0 / N
-    else:
-        weights.append(1.0 - sum(weights, axis=0))
 
     # Back-calculate the RDC gradient element.
     for c in xrange(N):
+        # The weights.
+        if weights != None:
+            if c == N-1: 
+                pc = 1.0 - sum(weights, axis=0)
+            else:
+                pc = weights[c]
+
         grad = grad + pc * dot(vect[c], dot(dAi_dAmn, vect[c]))
 
     # Return the average RDC gradient element.
