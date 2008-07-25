@@ -536,10 +536,14 @@ class N_state_opt:
                     # Calculate the RDC for state c (this is the pc partial derivative).
                     self.dDij_theta[param_index, i, j] = rdc_tensor(self.dip_const[j], self.mu[j, c], self.A[i])
 
+            # Construct the chi-squared gradient element for parameter k, alignment i.
+            for k in xrange(self.total_num_params):
+                self.dchi2[k] = self.dchi2[k] + dchi2_element(self.Dij[i], self.Dij_theta[i], self.dDij_theta[k, i], self.sigma_ij[i])
+
         # Debugging print out.
         for k in xrange(self.total_num_params):
             print "\nParam: " + `k`
-            print self.dDij_theta[k]
+            print self.dchi2[k]
 
         # Diagonal scaling.
         if self.scaling_flag:
