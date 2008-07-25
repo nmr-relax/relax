@@ -27,7 +27,7 @@
 from numpy import dot, sum
 
 
-def ave_rdc_5D(vect, K, A, weights=None):
+def ave_rdc_5D(dj, vect, K, A, weights=None):
     """Calculate the average RDC for an ensemble set of XH bond vectors, using the 5D notation.
 
     This function calculates the average RDC for a set of XH bond vectors from a structural
@@ -48,6 +48,8 @@ def ave_rdc_5D(vect, K, A, weights=None):
         RDC_ik(theta) = (x**2 - z**2)Axx + (y**2 - z**2)Ayy + 2x.y.Axy + 2x.z.Axz + 2y.z.Ayz.
 
 
+    @param dj:          The dipolar constant for spin j.
+    @type dj:           float
     @param vect:        The unit XH bond vector matrix.  The first dimension corresponds to the
                         structural index, the second dimension is the coordinates of the unit
                         vector.
@@ -84,10 +86,10 @@ def ave_rdc_5D(vect, K, A, weights=None):
         val = val + c * (vect[k,0]**2 - vect[k,2]**2)*A[0] + (vect[k,1]**2 - vect[k,2]**2)*A[1] + 2.0*vect[k,0]*vect[k,1]*A[2] + 2.0*vect[k,0]*vect[k,2]*A[3] + 2.0*vect[k,1]*vect[k,2]*A[4]
 
     # Return the average RDC.
-    return val
+    return dj * val
 
 
-def ave_rdc_tensor(vect, K, A, weights=None):
+def ave_rdc_tensor(dj, vect, K, A, weights=None):
     """Calculate the ensemble average RDC, using the 3D tensor.
 
     This function calculates the average RDC for a set of XH bond vectors from a structural
@@ -130,6 +132,8 @@ def ave_rdc_tensor(vect, K, A, weights=None):
         - r is the distance between the two spins.
 
 
+    @param dj:          The dipolar constant for spin j.
+    @type dj:           float
     @param vect:        The unit XH bond vector matrix.  The first dimension corresponds to the
                         structural index, the second dimension is the coordinates of the unit
                         vector.
@@ -166,7 +170,7 @@ def ave_rdc_tensor(vect, K, A, weights=None):
         val = val + c * dot(vect[k], dot(A, vect[k]))
 
     # Return the average RDC.
-    return val
+    return dj * val
 
 
 def ave_rdc_tensor_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
