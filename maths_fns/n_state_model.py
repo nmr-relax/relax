@@ -537,17 +537,12 @@ class N_state_opt:
             for k in xrange(self.total_num_params):
                 self.dchi2[k] = self.dchi2[k] + dchi2_element(self.Dij[i], self.Dij_theta[i], self.dDij_theta[k, i], self.sigma_ij[i])
 
-        # Debugging print out.
-        for k in xrange(self.total_num_params):
-            print "\nParam: " + `k`
-            print self.dchi2[k]
-
         # Diagonal scaling.
         if self.scaling_flag:
             self.dchi2 = dot(self.dchi2, self.scaling_matrix)
 
         # Return a copy of the gradient.
-        return self.dchi2 * 1.0
+        return self.dchi2
 
 
     def d2func_population(self, params):
