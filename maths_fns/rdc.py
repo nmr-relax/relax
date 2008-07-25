@@ -112,7 +112,7 @@ def ave_rdc_tensor(vect, K, A, weights=None):
         - mu_jc is the unit vector corresponding to spin j and state c,
         - Ai is the alignment tensor.
 
-    The dipolar constant is henceforth defined as::
+    The dipolar constant is defined as::
 
         dj = 3 / (2pi) d',
 
@@ -236,3 +236,51 @@ def ave_rdc_tensor_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
 
     # Return the average RDC gradient element.
     return dj * grad
+
+
+def rdc_tensor(dj, mu, A):
+    """Calculate the RDC, using the 3D alignment tensor.
+
+    The RDC value is::
+
+                               T
+        Dij(theta)  = dj . mu_j . Ai . mu_j,
+
+    where:
+        - i is the alignment tensor index,
+        - j is the index over spins,
+        - theta is the parameter vector,
+        - dj is the dipolar constant for spin j,
+        - mu_jc i the unit vector corresponding to spin j,
+        - Ai is the alignment tensor.
+
+    The dipolar constant is defined as::
+
+        dj = 3 / (2pi) d',
+
+    where the factor of 2pi is to convert from units of rad.s^-1 to Hertz, the factor of 3 is
+    associated with the alignment tensor and the pure dipolar constant in SI units is::
+
+               mu0 gI.gS.h_bar
+        d' = - --- ----------- ,
+               4pi    r**3
+
+    where:
+        - mu0 is the permeability of free space,
+        - gI and gS are the gyromagnetic ratios of the I and S spins,
+        - h_bar is Dirac's constant which is equal to Planck's constant divided by 2pi,
+        - r is the distance between the two spins.
+
+
+    @param dj:          The dipolar constant for spin j.
+    @type dj:           float
+    @param mu:          The unit XH bond vector.
+    @type mu:           numpy rank-1 3D array
+    @param A:           The alignment tensor.
+    @type A:            numpy rank-2 3D tensor
+    @return:            The RDC value.
+    @rtype:             float
+    """
+
+    # Return the RDC.
+    return dj * dot(mu, dot(A, mu))
