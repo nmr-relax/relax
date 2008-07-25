@@ -22,6 +22,7 @@
 
 # Python module imports.
 from math import acos, cos, pi
+from minfx.generic import generic_minimise
 from numpy import array, dot, float64, identity, zeros
 from numpy.linalg import inv, norm
 from re import search
@@ -37,7 +38,7 @@ from generic_fns.mol_res_spin import spin_loop
 from generic_fns.structure.internal import Internal
 from maths_fns.n_state_model import N_state_opt
 from maths_fns.rotation_matrix import R_2vect, R_euler_zyz
-from minfx.generic import generic_minimise
+from physical_constants import dipolar_constant, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning
@@ -839,6 +840,7 @@ class N_state_model(Common_functions):
         # Initialise.
         rdcs = []
         xh_vectors = []
+        dj = []
 
         # Spin loop.
         for spin, spin_id in spin_loop(return_id=True):
@@ -859,24 +861,31 @@ class N_state_model(Common_functions):
             rdcs.append(spin.rdc)
             xh_vectors.append(spin.xh_vect)
 
+            # Gyromagnetic ratios.
+            gx = return_gyromagnetic_ratio(spin.heteronuc_type)
+            gh = return_gyromagnetic_ratio(spin.proton_type)
+
+            # Calculate the dipolar constant, and append it to the list.
+            dj.append(3.0/(2.0*pi) * diploar_constant(gx, gh, spin.r))
+
         # Initialise the numpy objects (the rdc matrix is transposed!).
         rdcs_numpy = zeros((len(rdcs[0]), len(rdcs)), float64)
         xh_vect_numpy = zeros((len(xh_vectors), len(xh_vectors[0]), 3), float64)
 
         # Loop over the spins.
-        for i in xrange(len(rdcs)):
+        for spin_index in xrange(len(rdcs)):
             # Loop over the alignments.
-            for j in xrange(len(rdcs[i])):
+            for align_index in xrange(len(rdcs[spin_index])):
                 # Transpose and store the RDC value.
-                rdcs_numpy[j, i] = rdcs[i][j]
+                rdcs_numpy[align_index, spin_index] = rdcs[spin_index][align_index]
 
             # Loop over the N states.
-            for j in xrange(len(xh_vectors[i])):
+            for state_index in xrange(len(xh_vectors[spin_index])):
                 # Store the unit vector.
-                xh_vect_numpy[i,j] = xh_vectors[i][j]
+                xh_vect_numpy[spin_index, state_index] = xh_vectors[spin_index][state_index]
 
         # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, rdcs=rdcs_numpy, xh_vect=xh_vect_numpy, scaling_matrix=scaling_matrix)
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, rdcs=rdcs_numpy, xh_vect=xh_vect_numpy, dip_const=dj, scaling_matrix=scaling_matrix)
 
         # Return the instantiated class.
         return model
