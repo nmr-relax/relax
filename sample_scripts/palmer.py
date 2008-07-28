@@ -49,13 +49,13 @@ def exec_stage_1(runs):
         model_free.select_model(model=name)
 
         # Create the Modelfree4 files.
-        palmer.create(force=0, sims=0)
+        palmer.create(force=False, sims=0)
 
         # Run Modelfree4.
-        palmer.execute(force=1)
+        palmer.execute(force=True)
 
     # Save the program state.
-    state.save('stage1.save', force=1)
+    state.save('stage1.save', force=True)
 
 
 def exec_stage_2(runs):
@@ -85,10 +85,10 @@ def exec_stage_2(runs):
     model_selection(method='AIC', modsel_run=name)
 
     # Write the results.
-    results.write(file='results', force=1)
+    results.write(file='results', force=True)
 
     # Save the program state.
-    state.save('stage2.save', force=1)
+    state.save('stage2.save', force=True)
 
 
 def exec_stage_3():
@@ -107,16 +107,16 @@ def exec_stage_3():
     fix(name, 'diff', 0)
 
     # Create the Modelfree4 files (change sims as needed, see below).
-    palmer.create(dir='final', force=1, sims=0)
+    palmer.create(dir='final', force=True, sims=0)
 
     # Run Modelfree4.
-    palmer.execute(dir='final', force=1)
+    palmer.execute(dir='final', force=True)
 
     # Extract the Modelfree4 data from the 'mfout' file.
     palmer.extract(dir='final')
 
     # Save the program state.
-    state.save('stage3.save', force=1)
+    state.save('stage3.save', force=True)
 
 
 # Main section of the script.
