@@ -48,6 +48,75 @@ from specific_fns.base_class import Common_functions
 class N_state_model(Common_functions):
     """Class containing functions for the N-state model."""
 
+    def __assemble_param_vector(self, sim_index=None):
+        """Assemble all the parameters of the model into a single array.
+
+        @param sim_index:       The index of the simulation to optimise.  This should be None if
+                                normal optimisation is desired.
+        @type sim_index:        None or int
+        @return:                The parameter vector used for optimisation.
+        @rtype:                 numpy array
+        """
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
+        # Determine the data type.
+        data_type = self.__determine_data_type()
+
+        # Initialise the parameter vector.
+        param_vector = []
+
+        # A RDC data type requires the alignment tensors to be at the start of the parameter vector.
+        if data_type == 'rdc':
+            # Loop over the alignments, adding the alignment tensor parameters to the parameter vector.
+            for i in xrange(len(cdp.rdc_ids)):
+                param_vector = param_vector + list(cdp.align_tensors[i].tensor_5D)
+
+        # Monte Carlo simulation data structures.
+        if sim_index != None:
+            # Populations.
+            if cdp.model in ['2-domain', 'population']:
+                probs = cdp.probs_sim[sim_index]
+
+            # Euler angles.
+            if cdp.model == '2-domain':
+                alpha = cdp.alpha_sim[sim_index]
+                beta = cdp.beta_sim[sim_index]
+                gamma = cdp.gamma_sim[sim_index]
+
+        # Normal data structures.
+        else:
+            # Populations.
+            if cdp.model in ['2-domain', 'population']:
+                probs = cdp.probs
+
+            # Euler angles.
+            if cdp.model == '2-domain':
+                alpha = cdp.alpha
+                beta = cdp.beta
+                gamma = cdp.gamma
+
+        # The probabilities (exclude that of state N).
+        if cdp.model in ['2-domain', 'population']:
+            param_vector = param_vector + probs[0:-1]
+
+        # The Euler angles.
+        if cdp.model == '2-domain':
+            for i in xrange(cdp.N):
+                param_vector.append(alpha[i])
+                param_vector.append(beta[i])
+                param_vector.append(gamma[i])
+
+        # Convert all None values to zero (to avoid conversion to NaN).
+        for i in xrange(len(param_vector)):
+            if param_vector[i] == None:
+                param_vector[i] = 0.0
+
+        # Return a numpy arrary.
+        return array(param_vector, float64)
+
+
     def __assemble_scaling_matrix(self, data_type=None, scaling=True):
         """Create and return the scaling matrix.
 
@@ -81,6 +150,79 @@ class N_state_model(Common_functions):
 
         # Return the matrix.
         return scaling_matrix
+
+
+    def __disassemble_param_vector(self, param_vector=None, sim_index=None):
+        """Disassemble the parameter vector and place the values into the relevant variables.
+
+        For the 2-domain N-state model, the parameters are stored in the probability and Euler angle
+        data structures.  For the population N-state model, only the probabilities are stored.  If
+        RDCs are present and alignment tensors are optimised, then these are stored as well.
+
+        @keyword param_vector:  The parameter vector returned from optimisation.
+        @type param_vector:     numpy array
+        @keyword sim_index:     The index of the simulation to optimise.  This should be None if
+                                normal optimisation is desired.
+        @type sim_index:        None or int
+        """
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
+        # Determine the data type.
+        data_type = self.__determine_data_type()
+
+        # Unpack and strip off the alignment tensor parameters.
+        if data_type == 'rdc':
+            # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
+            for i in xrange(len(cdp.rdc_ids)):
+                cdp.align_tensors[i].Sxx = param_vector[5*i]
+                cdp.align_tensors[i].Syy = param_vector[5*i+1]
+                cdp.align_tensors[i].Sxy = param_vector[5*i+2]
+                cdp.align_tensors[i].Sxz = param_vector[5*i+3]
+                cdp.align_tensors[i].Syz = param_vector[5*i+4]
+
+            # Create a new parameter vector without the tensors.
+            param_vector = param_vector[len(cdp.rdc_ids):]
+
+        # Monte Carlo simulation data structures.
+        if sim_index != None:
+            # Populations.
+            if cdp.model in ['2-domain', 'population']:
+                probs = cdp.probs_sim[sim_index]
+
+            # Euler angles.
+            if cdp.model == '2-domain':
+                alpha = cdp.alpha_sim[sim_index]
+                beta = cdp.beta_sim[sim_index]
+                gamma = cdp.gamma_sim[sim_index]
+
+        # Normal data structures.
+        else:
+            # Populations.
+            if cdp.model in ['2-domain', 'population']:
+                probs = cdp.probs
+
+            # Euler angles.
+            if cdp.model == '2-domain':
+                alpha = cdp.alpha
+                beta = cdp.beta
+                gamma = cdp.gamma
+
+        # The probabilities for states 0 to N-1.
+        if cdp.model in ['2-domain', 'population']:
+            for i in xrange(cdp.N-1):
+                probs[i] = param_vector[i]
+
+        # The probability for state N.
+        probs[-1] = 1 - sum(probs[0:-1])
+
+        # The Euler angles.
+        if cdp.model == '2-domain':
+            for i in xrange(cdp.N):
+                alpha[i] = param_vector[cdp.N-1 + 3*i]
+                beta[i] = param_vector[cdp.N-1 + 3*i + 1]
+                gamma[i] = param_vector[cdp.N-1 + 3*i + 2]
 
 
     def __update_model(self):
@@ -254,75 +396,6 @@ class N_state_model(Common_functions):
 
         # Return the contraint objects.
         return A, b
-
-
-    def assemble_param_vector(self, sim_index=None):
-        """Assemble all the parameters of the model into a single array.
-
-        @param sim_index:       The index of the simulation to optimise.  This should be None if
-                                normal optimisation is desired.
-        @type sim_index:        None or int
-        @return:                The parameter vector used for optimisation.
-        @rtype:                 numpy array
-        """
-
-        # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
-
-        # Determine the data type.
-        data_type = self.__determine_data_type()
-
-        # Initialise the parameter vector.
-        param_vector = []
-
-        # A RDC data type requires the alignment tensors to be at the start of the parameter vector.
-        if data_type == 'rdc':
-            # Loop over the alignments, adding the alignment tensor parameters to the parameter vector.
-            for i in xrange(len(cdp.rdc_ids)):
-                param_vector = param_vector + list(cdp.align_tensors[i].tensor_5D)
-
-        # Monte Carlo simulation data structures.
-        if sim_index != None:
-            # Populations.
-            if cdp.model in ['2-domain', 'population']:
-                probs = cdp.probs_sim[sim_index]
-
-            # Euler angles.
-            if cdp.model == '2-domain':
-                alpha = cdp.alpha_sim[sim_index]
-                beta = cdp.beta_sim[sim_index]
-                gamma = cdp.gamma_sim[sim_index]
-
-        # Normal data structures.
-        else:
-            # Populations.
-            if cdp.model in ['2-domain', 'population']:
-                probs = cdp.probs
-
-            # Euler angles.
-            if cdp.model == '2-domain':
-                alpha = cdp.alpha
-                beta = cdp.beta
-                gamma = cdp.gamma
-
-        # The probabilities (exclude that of state N).
-        if cdp.model in ['2-domain', 'population']:
-            param_vector = param_vector + probs[0:-1]
-
-        # The Euler angles.
-        if cdp.model == '2-domain':
-            for i in xrange(cdp.N):
-                param_vector.append(alpha[i])
-                param_vector.append(beta[i])
-                param_vector.append(gamma[i])
-
-        # Convert all None values to zero (to avoid conversion to NaN).
-        for i in xrange(len(param_vector)):
-            if param_vector[i] == None:
-                param_vector[i] = 0.0
-
-        # Return a numpy arrary.
-        return array(param_vector, float64)
 
 
     def CoM(self, pivot_point=None, centre=None):
@@ -532,79 +605,6 @@ class N_state_model(Common_functions):
             return (float(index)+1) * pi / (N+1.0)
 
 
-    def disassemble_param_vector(self, param_vector=None, sim_index=None):
-        """Disassemble the parameter vector and place the values into the relevant variables.
-
-        For the 2-domain N-state model, the parameters are stored in the probability and Euler angle
-        data structures.  For the population N-state model, only the probabilities are stored.  If
-        RDCs are present and alignment tensors are optimised, then these are stored as well.
-
-        @keyword param_vector:  The parameter vector returned from optimisation.
-        @type param_vector:     numpy array
-        @keyword sim_index:     The index of the simulation to optimise.  This should be None if
-                                normal optimisation is desired.
-        @type sim_index:        None or int
-        """
-
-        # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
-
-        # Determine the data type.
-        data_type = self.__determine_data_type()
-
-        # Unpack and strip off the alignment tensor parameters.
-        if data_type == 'rdc':
-            # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
-            for i in xrange(len(cdp.rdc_ids)):
-                cdp.align_tensors[i].Sxx = param_vector[5*i]
-                cdp.align_tensors[i].Syy = param_vector[5*i+1]
-                cdp.align_tensors[i].Sxy = param_vector[5*i+2]
-                cdp.align_tensors[i].Sxz = param_vector[5*i+3]
-                cdp.align_tensors[i].Syz = param_vector[5*i+4]
-
-            # Create a new parameter vector without the tensors.
-            param_vector = param_vector[len(cdp.rdc_ids):]
-
-        # Monte Carlo simulation data structures.
-        if sim_index != None:
-            # Populations.
-            if cdp.model in ['2-domain', 'population']:
-                probs = cdp.probs_sim[sim_index]
-
-            # Euler angles.
-            if cdp.model == '2-domain':
-                alpha = cdp.alpha_sim[sim_index]
-                beta = cdp.beta_sim[sim_index]
-                gamma = cdp.gamma_sim[sim_index]
-
-        # Normal data structures.
-        else:
-            # Populations.
-            if cdp.model in ['2-domain', 'population']:
-                probs = cdp.probs
-
-            # Euler angles.
-            if cdp.model == '2-domain':
-                alpha = cdp.alpha
-                beta = cdp.beta
-                gamma = cdp.gamma
-
-        # The probabilities for states 0 to N-1.
-        if cdp.model in ['2-domain', 'population']:
-            for i in xrange(cdp.N-1):
-                probs[i] = param_vector[i]
-
-        # The probability for state N.
-        probs[-1] = 1 - sum(probs[0:-1])
-
-        # The Euler angles.
-        if cdp.model == '2-domain':
-            for i in xrange(cdp.N):
-                alpha[i] = param_vector[cdp.N-1 + 3*i]
-                beta[i] = param_vector[cdp.N-1 + 3*i + 1]
-                gamma[i] = param_vector[cdp.N-1 + 3*i + 2]
-
-
     def grid_search(self, lower, upper, inc, constraints=False, verbosity=0, sim_index=None):
         """The grid search function.
 
@@ -747,7 +747,7 @@ class N_state_model(Common_functions):
         self.__update_model()
 
         # Create the initial parameter vector.
-        param_vector = self.assemble_param_vector(sim_index=sim_index)
+        param_vector = self.__assemble_param_vector(sim_index=sim_index)
 
         # Determine if alignment tensors or RDCs are to be used.
         data_type = self.__determine_data_type()
@@ -792,7 +792,7 @@ class N_state_model(Common_functions):
             param_vector = dot(scaling_matrix, param_vector)
 
         # Disassemble the parameter vector.
-        self.disassemble_param_vector(param_vector=param_vector, sim_index=sim_index)
+        self.__disassemble_param_vector(param_vector=param_vector, sim_index=sim_index)
 
         # Monte Carlo minimisation statistics.
         if sim_index != None:
