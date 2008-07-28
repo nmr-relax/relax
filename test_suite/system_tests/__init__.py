@@ -91,13 +91,13 @@ class System_test_runner:
         suite_array.append(TestLoader().loadTestsFromTestCase(Load_spins))
         suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
         suite_array.append(TestLoader().loadTestsFromTestCase(Modsel))
+        suite_array.append(TestLoader().loadTestsFromTestCase(N_state_model))
+        suite_array.append(TestLoader().loadTestsFromTestCase(NMRView))
         suite_array.append(TestLoader().loadTestsFromTestCase(Palmer))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Pipe_create))
         suite_array.append(TestLoader().loadTestsFromTestCase(Relax_fit))
         suite_array.append(TestLoader().loadTestsFromTestCase(Results))
         suite_array.append(TestLoader().loadTestsFromTestCase(Sequence))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Pipe_create))
-        suite_array.append(TestLoader().loadTestsFromTestCase(N_state_model))
-        suite_array.append(TestLoader().loadTestsFromTestCase(NMRView))
 
         # Add the relax namespace to each TestCase object.
         for i in xrange(len(suite_array)):
