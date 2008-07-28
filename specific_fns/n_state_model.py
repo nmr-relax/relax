@@ -222,11 +222,16 @@ class N_state_model(Common_functions):
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
 
+        # Starting point of the populations.
+        pop_start = 0
+        if data_type == 'rdc':
+            pop_start = pop_start + 5*len(cdp.rdc_ids)
+
         # Initialisation (0..j..m).
         A = []
         b = []
         zero_array = zeros(self.param_num(), float64)
-        i = 0
+        i = pop_start
         j = 0
 
         # Loop over the prob parameters (N - 1, because the sum of pc is 1).
