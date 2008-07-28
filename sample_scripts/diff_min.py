@@ -67,7 +67,7 @@ for name in pipes:
     minimise('newton', max_iter=5000)
 
     # Write the results.
-    results.write(file='results', force=1)
+    results.write(file='results', force=True)
 
 # Save the program state.
-state.save('save', force=1)
+state.save('save', force=True)
