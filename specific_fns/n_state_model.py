@@ -159,6 +159,8 @@ class N_state_model(Common_functions):
         data structures.  For the population N-state model, only the probabilities are stored.  If
         RDCs are present and alignment tensors are optimised, then these are stored as well.
 
+        @keyword data_type: The type of data used in the optimisation - either 'rdc' or 'tensor'.
+        @type data_type:    str
         @keyword param_vector:  The parameter vector returned from optimisation.
         @type param_vector:     numpy array
         @keyword sim_index:     The index of the simulation to optimise.  This should be None if
@@ -168,9 +170,6 @@ class N_state_model(Common_functions):
 
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
-
-        # Determine the data type.
-        data_type = self.__determine_data_type()
 
         # Unpack and strip off the alignment tensor parameters.
         if data_type == 'rdc':
@@ -792,7 +791,7 @@ class N_state_model(Common_functions):
             param_vector = dot(scaling_matrix, param_vector)
 
         # Disassemble the parameter vector.
-        self.__disassemble_param_vector(param_vector=param_vector, sim_index=sim_index)
+        self.__disassemble_param_vector(param_vector=param_vector, data_type=data_type, sim_index=sim_index)
 
         # Monte Carlo minimisation statistics.
         if sim_index != None:
