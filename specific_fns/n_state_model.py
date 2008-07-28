@@ -172,6 +172,85 @@ class N_state_model(Common_functions):
             raise RelaxError, "Neither RDC nor alignment tensor data is present." 
 
 
+    def __linear_constraints(self, data_type=None, scaling_matrix=None):
+        """Function for setting up the linear constraint matrices A and b.
+
+        Standard notation
+        =================
+
+        The N-state model constraints are:
+
+            0 <= pc <= 1,
+
+        where p is the probability and c corresponds to state c.
+
+
+        Matrix notation
+        ===============
+
+        In the notation A.x >= b, where A is an matrix of coefficients, x is an array of parameter
+        values, and b is a vector of scalars, these inequality constraints are:
+
+            | 1  0  0 |                   |    0    |
+            |         |                   |         |
+            |-1  0  0 |                   |   -1    |
+            |         |     |  p0  |      |         |
+            | 0  1  0 |     |      |      |    0    |
+            |         |  .  |  p1  |  >=  |         |
+            | 0 -1  0 |     |      |      |   -1    |
+            |         |     |  p2  |      |         |
+            | 0  0  1 |                   |    0    |
+            |         |                   |         |
+            | 0  0 -1 |                   |   -1    |
+
+        This example is for a 4-state model, the last probability pn is not included as this
+        parameter does not exist (because the sum of pc is equal to 1).  The Euler angle parameters
+        have been excluded here but will be included in the returned A and b objects.  These
+        parameters simply add columns of zero to the A matrix and have no effect on b.
+
+
+        @keyword data_type:         The type of data used in the optimisation - either 'rdc' or
+                                    'tensor'.
+        @type data_type:            str
+        @keyword scaling_matrix:    The diagonal scaling matrix.
+        @type scaling_matrx:        numpy rank-2 square matrix
+        @return:                    The matrices A and b.
+        @rtype:                     tuple of len 2 of a numpy rank-2, size NxM matrix and numpy
+                                    rank-1, size N array
+        """
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
+        # Initialisation (0..j..m).
+        A = []
+        b = []
+        zero_array = zeros(self.param_num(), float64)
+        i = 0
+        j = 0
+
+        # Loop over the prob parameters (N - 1, because the sum of pc is 1).
+        for k in xrange(cdp.N - 1):
+            # 0 <= pc <= 1.
+            A.append(zero_array * 0.0)
+            A.append(zero_array * 0.0)
+            A[j][i] = 1.0
+            A[j+1][i] = -1.0
+            b.append(0.0)
+            b.append(-1.0)
+            j = j + 2
+
+            # Increment i.
+            i = i + 1
+
+        # Convert to numpy data structures.
+        A = array(A, float64)
+        b = array(b, float64)
+
+        # Return the contraint objects.
+        return A, b
+
+
     def assemble_param_vector(self, sim_index=None):
         """Assemble all the parameters of the model into a single array.
 
@@ -614,79 +693,6 @@ class N_state_model(Common_functions):
         return False
 
 
-    def linear_constraints(self):
-        """Function for setting up the linear constraint matrices A and b.
-
-        Standard notation
-        =================
-
-        The N-state model constraints are:
-
-            0 <= pc <= 1,
-
-        where p is the probability and c corresponds to state c.
-
-
-        Matrix notation
-        ===============
-
-        In the notation A.x >= b, where A is an matrix of coefficients, x is an array of parameter
-        values, and b is a vector of scalars, these inequality constraints are:
-
-            | 1  0  0 |                   |    0    |
-            |         |                   |         |
-            |-1  0  0 |                   |   -1    |
-            |         |     |  p0  |      |         |
-            | 0  1  0 |     |      |      |    0    |
-            |         |  .  |  p1  |  >=  |         |
-            | 0 -1  0 |     |      |      |   -1    |
-            |         |     |  p2  |      |         |
-            | 0  0  1 |                   |    0    |
-            |         |                   |         |
-            | 0  0 -1 |                   |   -1    |
-
-        This example is for a 4-state model, the last probability pn is not included as this
-        parameter does not exist (because the sum of pc is equal to 1).  The Euler angle parameters
-        have been excluded here but will be included in the returned A and b objects.  These
-        parameters simply add columns of zero to the A matrix and have no effect on b.
-
-
-        @return:                The matrices A and b.
-        @rtype:                 tuple of len 2 of a numpy matrix and numpy array
-        """
-
-        # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
-
-        # Initialisation (0..j..m).
-        A = []
-        b = []
-        zero_array = zeros(self.param_num(), float64)
-        i = 0
-        j = 0
-
-        # Loop over the prob parameters (N - 1, because the sum of pc is 1).
-        for k in xrange(cdp.N - 1):
-            # 0 <= pc <= 1.
-            A.append(zero_array * 0.0)
-            A.append(zero_array * 0.0)
-            A[j][i] = 1.0
-            A[j+1][i] = -1.0
-            b.append(0.0)
-            b.append(-1.0)
-            j = j + 2
-
-            # Increment i.
-            i = i + 1
-
-        # Convert to numpy data structures.
-        A = array(A, float64)
-        b = array(b, float64)
-
-        # Return the contraint objects.
-        return A, b
-
-
     def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None):
         """Minimisation function.
 
@@ -747,7 +753,7 @@ class N_state_model(Common_functions):
 
         # Linear constraints.
         if constraints:
-            A, b = self.linear_constraints(data_type=data_type, scaling_matrix=scaling_matrix)
+            A, b = self.__linear_constraints(data_type=data_type, scaling_matrix=scaling_matrix)
 
         # Set up minimisation using alignment tensors.
         if data_type == 'tensor':
