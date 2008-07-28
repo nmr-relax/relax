@@ -8,7 +8,7 @@ pipe.create(name, 'mf')
 results.read(name)
 
 # Grace plot.
-grace.write(name, x_data_type='s2', y_data_type='te', plot_data='sim', file='s2_te.agr', force=1)
+grace.write(name, x_data_type='s2', y_data_type='te', plot_data='sim', file='s2_te.agr', force=True)
 
 # View the plot.
 grace.view(file='s2_te.agr')
