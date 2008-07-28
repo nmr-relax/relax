@@ -25,7 +25,7 @@ value.set(name, -172 * 1e-6, 'csa')
 value.set(name, 2048.0e-12, 'te')
 
 # Select the model-free model.
-model_free.select_model(run=name, model=name)
+model_free.select_model(model=name)
 #model_free.create_model(name, name, 'mf_ext2', ['S2f', 'S2s', 'ts'])
 
 # Map data.

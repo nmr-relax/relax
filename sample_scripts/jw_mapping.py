@@ -42,5 +42,5 @@ grace.view(file='jwx.agr')
 grace.view(file='jwh.agr')
 
 # Finish.
-results.write(run=name, file='results', force=True)
+results.write(file='results', force=True)
 state.save('save', force=True)
