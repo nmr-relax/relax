@@ -580,7 +580,7 @@ class IO:
         """Function for turning logging on."""
 
         # Tee file.
-        self.tee_file, file_path = self.open_write_file(file_name=file_name, dir=dir, force=1, compress_type=compress_type, verbosity=verbosity, return_path=1)
+        self.tee_file, file_path = self.open_write_file(file_name=file_name, dir=dir, force=True, compress_type=compress_type, verbosity=verbosity, return_path=1)
 
         # Print out.
         if verbosity:
