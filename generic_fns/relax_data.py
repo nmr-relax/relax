@@ -904,7 +904,7 @@ def update_noe_r1_table(cont):
                     cont.noe_r1_table[j] = i
 
 
-def write(ri_label=None, frq_label=None, file=None, dir=None, force=0):
+def write(ri_label=None, frq_label=None, file=None, dir=None, force=False):
     """Function for writing relaxation data."""
 
     # Arguments.
