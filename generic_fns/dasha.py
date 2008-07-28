@@ -44,7 +44,7 @@ class Dasha:
         self.relax = relax
 
 
-    def create(self, run=None, algor='LM', dir=None, force=0):
+    def create(self, run=None, algor='LM', dir=None, force=False):
         """Function for creating the Dasha script file 'dir/dasha_script'."""
 
         # Arguments.
