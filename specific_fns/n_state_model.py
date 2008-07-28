@@ -182,7 +182,7 @@ class N_state_model(Common_functions):
                 cdp.align_tensors[i].Syz = param_vector[5*i+4]
 
             # Create a new parameter vector without the tensors.
-            param_vector = param_vector[len(cdp.rdc_ids):]
+            param_vector = param_vector[5*len(cdp.rdc_ids):]
 
         # Monte Carlo simulation data structures.
         if sim_index != None:
