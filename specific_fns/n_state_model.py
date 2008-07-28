@@ -152,7 +152,7 @@ class N_state_model(Common_functions):
         return scaling_matrix
 
 
-    def __disassemble_param_vector(self, param_vector=None, sim_index=None):
+    def __disassemble_param_vector(self, param_vector=None, data_type=None, sim_index=None):
         """Disassemble the parameter vector and place the values into the relevant variables.
 
         For the 2-domain N-state model, the parameters are stored in the probability and Euler angle
