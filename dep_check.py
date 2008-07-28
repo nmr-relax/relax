@@ -28,7 +28,7 @@ If essential dependencies are missing, then an error message is printed and the 
 
 # Python modules.
 import platform
-from os import F_OK, access, sep
+from os import F_OK, access, popen, sep
 import sys
 
 
@@ -106,6 +106,9 @@ try:
 except ImportError:
     scientific_pdb_module = False
 
+# Modelfree4.
+modelfree4 = popen("which modelfree4")
+del modelfree4
 
 # Compiled C modules.
 #####################
