@@ -5,7 +5,7 @@
 pipes = ['m1', 'm2', 'm3', 'm4', 'm5']
 
 # Nuclei type
-nuclei('N')
+value.set('15N', 'heteronucleus')
 
 # Loop over the pipes.
 for name in pipes:

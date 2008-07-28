@@ -53,7 +53,7 @@ def write():
 pipe.create('test', 'mf')
 
 # Set the nucleus type to nitrogen.
-nuclei('N')
+value.set('15N', 'heteronucleus')
 
 # Set the diffusion tensor to isotropic with tm set to 10 ns.
 diffusion_tensor.init(10e-9)

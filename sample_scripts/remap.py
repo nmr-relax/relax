@@ -26,7 +26,7 @@ def remap(values):
 name = 'm5'
 
 # Nuclei type
-nuclei('N')
+value.set('15N', 'heteronucleus')
 
 # Create the run 'name'.
 pipe.create(name, 'mf')

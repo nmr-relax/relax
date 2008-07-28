@@ -123,7 +123,7 @@ def exec_stage_3():
 #############################
 
 # Nuclei type.
-nuclei('N')
+value.set('15N', 'heteronucleus')
 
 # Set the run name (also the name of a preset model-free model).
 runs = ['m1', 'm2', 'm3', 'm4', 'm5']

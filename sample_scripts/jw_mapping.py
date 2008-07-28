@@ -5,7 +5,7 @@ name = 'jw'
 pipe.create(name, 'jw')
 
 # Nuclei type
-nuclei('N')
+value.set('15N', 'heteronucleus')
 
 # Load the sequence.
 sequence.read(name, 'noe.600.out')
