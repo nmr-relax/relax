@@ -377,7 +377,7 @@ class Noe:
                 data.sat_err = float(error)
 
 
-    def write(self, run=None, file=None, dir=None, force=0):
+    def write(self, run=None, file=None, dir=None, force=False):
         """Function for writing NOE values and errors to a file."""
 
         # Arguments
