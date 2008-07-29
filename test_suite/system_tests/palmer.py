@@ -24,6 +24,9 @@
 import sys
 from unittest import TestCase
 
+# relax module imports.
+from relax_io import test_binary
+
 
 class Palmer(TestCase):
     """Class for testing various aspects specific to model-free analysis using the program
@@ -32,6 +35,12 @@ class Palmer(TestCase):
 
     def test_palmer_stage_1(self):
         """Test a complete model-free analysis using the program 'Modelfree4'."""
+
+        # Test for the presence of the Modelfree4 binary (skip the test if not present).
+        try:
+            test_binary('modelfree4')
+        except:
+            return
 
         # Execute the script.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/palmer.py')
