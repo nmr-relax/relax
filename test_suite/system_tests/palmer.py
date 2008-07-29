@@ -22,6 +22,7 @@
 
 # Python module imports.
 import sys
+from shutil import rmtree
 from unittest import TestCase
 
 # relax module imports.
@@ -46,6 +47,9 @@ class Palmer(TestCase):
         """Reset the relax data storage object."""
 
         ds.__reset__()
+
+        # Remove the temporary directory created during the execution of the test_palmer() function.
+        rmtree(sys.path[-1] + '/test_suite/system_tests/data/temp_palmer/')
 
 
     def test_palmer(self):
