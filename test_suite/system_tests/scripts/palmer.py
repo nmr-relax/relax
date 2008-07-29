@@ -43,10 +43,10 @@ def exec_stage_1(runs):
         model_free.select_model(model=name)
 
         # Create the Modelfree4 files.
-        palmer.create(force=True, sims=0)
+        #palmer.create(dir=name, force=True, sims=0)
 
         # Run Modelfree4.
-        palmer.execute(force=True)
+        palmer.execute(dir=name, force=True)
 
     # Save the program state.
     state.save('stage1.save', force=True)
@@ -66,7 +66,7 @@ def exec_stage_2(runs):
 
     # Extract the Modelfree4 data from the 'mfout' files.
     for name in runs:
-        palmer.extract()
+        palmer.extract(dir=name)
 
     # Print out.
     print "\n\nModel selection."
