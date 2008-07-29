@@ -53,7 +53,7 @@ for i in xrange(len(pipes)):
         minimise('newton', 'chol')
 
         # Write the results.
-        results.write(force=1)
+        results.write(force=True)
 
 
 print "\n\n\n\n"
@@ -106,5 +106,5 @@ for i in xrange(len(ri_labels)):
 minimise('newton')
 
 # Finish.
-results.write(file='results', force=1)
-state.save('save', force=1)
+results.write(file='results', force=True)
+state.save('save', force=True)

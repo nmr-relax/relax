@@ -561,7 +561,7 @@ class Value:
             self.relax.generic.minimise.reset_min_stats(self.run)
 
 
-    def write(self, run=None, param=None, file=None, dir=None, force=0, return_value=None):
+    def write(self, run=None, param=None, file=None, dir=None, force=False, return_value=None):
         """Function for writing data to a file."""
 
         # Arguments.

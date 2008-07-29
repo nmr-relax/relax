@@ -116,7 +116,7 @@ class Molmol:
         ~~~~~~~~~~~
 
         This function allows residues specific values to be mapped to a structure through Molmol
-        macros.  Currently only the 'classic' style, which is described below, is availible.
+        macros.  Currently only the 'classic' style, which is described below, is available.
 
 
         Colour
@@ -334,7 +334,7 @@ class Molmol:
         This function allows residues specific values to be mapped to a structure through the
         creation of a Molmol '*.mac' macro which can be executed in Molmol by clicking on 'File,
         Macro, Execute User...'.  Currently only the 'classic' style, which is described below, is
-        availible.
+        available.
 
 
         Colour

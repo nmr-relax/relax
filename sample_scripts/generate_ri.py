@@ -41,19 +41,19 @@ def errors():
 def write():
     """Function for writing the relaxation data to file."""
 
-    relax_data.write(ri_label='NOE', frq_label='600', file='noe.600.out', force=1)
-    relax_data.write(ri_label='R1', frq_label='600', file='r1.600.out', force=1)
-    relax_data.write(ri_label='R2', frq_label='600', file='r2.600.out', force=1)
-    relax_data.write(ri_label='NOE', frq_label='500', file='noe.500.out', force=1)
-    relax_data.write(ri_label='R1', frq_label='500', file='r1.500.out', force=1)
-    relax_data.write(ri_label='R2', frq_label='500', file='r2.500.out', force=1)
+    relax_data.write(ri_label='NOE', frq_label='600', file='noe.600.out', force=True)
+    relax_data.write(ri_label='R1', frq_label='600', file='r1.600.out', force=True)
+    relax_data.write(ri_label='R2', frq_label='600', file='r2.600.out', force=True)
+    relax_data.write(ri_label='NOE', frq_label='500', file='noe.500.out', force=True)
+    relax_data.write(ri_label='R1', frq_label='500', file='r1.500.out', force=True)
+    relax_data.write(ri_label='R2', frq_label='500', file='r2.500.out', force=True)
 
 
 # Create the run
 pipe.create('test', 'mf')
 
 # Set the nucleus type to nitrogen.
-nuclei('N')
+value.set('15N', 'heteronucleus')
 
 # Set the diffusion tensor to isotropic with tm set to 10 ns.
 diffusion_tensor.init(10e-9)

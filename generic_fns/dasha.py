@@ -39,12 +39,12 @@ from relax_errors import RelaxDirError, RelaxError, RelaxFileError, RelaxNoPdbEr
 
 class Dasha:
     def __init__(self, relax):
-        """Class used to create and process input and output for the program Modelfree 4."""
+        """Class used to create and process input and output for the program Dasha."""
 
         self.relax = relax
 
 
-    def create(self, run=None, algor='LM', dir=None, force=0):
+    def create(self, run=None, algor='LM', dir=None, force=False):
         """Function for creating the Dasha script file 'dir/dasha_script'."""
 
         # Arguments.
