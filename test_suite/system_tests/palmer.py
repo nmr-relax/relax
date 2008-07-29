@@ -25,6 +25,7 @@ import sys
 from unittest import TestCase
 
 # relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
 from relax_io import test_binary
 
 
@@ -32,6 +33,20 @@ class Palmer(TestCase):
     """Class for testing various aspects specific to model-free analysis using the program
     'Modelfree4'.
     """
+
+
+    def setUp(self):
+        """Set up for all the functional tests."""
+
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create('palmer', 'mf')
+
+
+    def tearDown(self):
+        """Reset the relax data storage object."""
+
+        ds.__reset__()
+
 
     def test_palmer(self):
         """Test a complete model-free analysis using the program 'Modelfree4'."""
