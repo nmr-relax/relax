@@ -33,7 +33,7 @@ class Palmer(TestCase):
     'Modelfree4'.
     """
 
-    def test_palmer_stage_1(self):
+    def test_palmer(self):
         """Test a complete model-free analysis using the program 'Modelfree4'."""
 
         # Test for the presence of the Modelfree4 binary (skip the test if not present).
@@ -44,5 +44,3 @@ class Palmer(TestCase):
 
         # Execute the script.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/palmer.py')
-
-
