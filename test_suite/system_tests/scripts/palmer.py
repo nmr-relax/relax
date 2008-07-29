@@ -3,9 +3,6 @@
 # Python module imports.
 import sys
 
-# The RelaxError system.
-from relax_errors import RelaxError
-
 # Set the stage of analysis.
 #
 # The three stages in this script are:
