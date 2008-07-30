@@ -851,8 +851,8 @@ class Model_free_main:
             raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 
         # Test if the sequence data is loaded.
-        if not ds.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Get all data structure names.
         names = self.data_names()

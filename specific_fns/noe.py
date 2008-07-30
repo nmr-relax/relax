@@ -388,8 +388,8 @@ class Noe:
             raise RelaxNoPipeError
 
         # Test if the sequence data is loaded.
-        if not ds.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Open the file for writing.
         noe_file = self.relax.IO.open_write_file(file, dir, force)
@@ -435,8 +435,8 @@ class Noe:
             raise RelaxNoPipeError
 
         # Test if sequence data is loaded.
-        if not ds.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
 
         # Header.
