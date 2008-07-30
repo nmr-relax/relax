@@ -845,10 +845,10 @@ class Model_free_main:
         if not ds.current_pipe:
             raise RelaxNoPipeError
 
-        # Test if the run type is set to 'mf'.
-        function_type = ds.run_types[ds.run_names.index(self.run)]
+        # Test if the pipe type is set to 'mf'.
+        function_type = ds[ds.current_pipe].pipe_type
         if function_type != 'mf':
-            raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
+            raise RelaxFuncSetupError, specific_fns.setup.get_string(function_type)
 
         # Test if the sequence data is loaded.
         if not exists_mol_res_spin_data():
