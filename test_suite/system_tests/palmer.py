@@ -27,7 +27,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from relax_io import test_binary
+from relax_io import mkdir_nofail, test_binary
 
 
 class Palmer(TestCase):
@@ -41,6 +41,9 @@ class Palmer(TestCase):
 
         # Create the data pipe.
         self.relax.interpreter._Pipe.create('palmer', 'mf')
+
+        # Create a temporary directory for ModelFree4 outputs.
+        mkdir_nofail(sys.path[-1] + '/test_suite/system_tests/data/temp_palmer')
 
 
     def tearDown(self):

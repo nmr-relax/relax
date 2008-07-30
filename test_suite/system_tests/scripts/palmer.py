@@ -4,8 +4,6 @@
 from os import chdir
 import sys
 
-# relax module imports.
-from relax_io import mkdir_nofail
 
 # Set the stage of analysis.
 #
@@ -123,8 +121,7 @@ def exec_stage_3():
 # Set the run name (also the name of a preset model-free model).
 runs = ['m1', 'm2', 'm3']
 
-# Create a temporary directory for ModelFree4 outputs and move into it.
-mkdir_nofail(sys.path[-1] + '/test_suite/system_tests/data/temp_palmer')
+# Move to the temporary directory.
 chdir(sys.path[-1] + '/test_suite/system_tests/data/temp_palmer')
 
 # Run the stages.
