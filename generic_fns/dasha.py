@@ -353,10 +353,10 @@ class Dasha:
         orig_dir = getcwd()
 
         # The directory.
-        if self.dir == None:
-            self.dir = self.run
-        if not access(self.dir, F_OK):
-            raise RelaxDirError, ('Dasha', self.dir)
+        if dir == None:
+            dir = pipe
+        if not access(dir, F_OK):
+            raise RelaxDirError, ('Dasha', dir)
 
         # Change to this directory.
         chdir(self.dir)
