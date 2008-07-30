@@ -53,9 +53,9 @@ class Dasha:
         self.dir = dir
         self.force = force
 
-        # Test if the run exists.
-        if not self.run in ds.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
 
         # Test if sequence data is loaded.
         if not ds.res.has_key(self.run):

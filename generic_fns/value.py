@@ -394,9 +394,9 @@ class Value:
         self.run = run
         self.param = param
 
-        # Test if the run exists.
-        if not self.run in ds.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
 
         # Test if the sequence data is loaded.
         if not ds.res.has_key(self.run):
@@ -414,9 +414,9 @@ class Value:
         self.param = param
         self.scaling = scaling
 
-        # Test if the run exists.
-        if not self.run in ds.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
 
         # Test if sequence data is loaded.
         if not ds.res.has_key(self.run):
@@ -568,9 +568,9 @@ class Value:
         self.run = run
         self.param = param
 
-        # Test if the run exists.
-        if not self.run in ds.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
 
         # Test if the sequence data is loaded.
         if not ds.res.has_key(self.run):

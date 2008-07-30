@@ -841,9 +841,9 @@ class Model_free_main:
         # Arguments.
         self.run = run
 
-        # Test if the run exists.
-        if not self.run in ds.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
 
         # Test if the run type is set to 'mf'.
         function_type = ds.run_types[ds.run_names.index(self.run)]

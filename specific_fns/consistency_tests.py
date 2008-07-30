@@ -584,9 +584,9 @@ class Consistency_tests(Common_functions):
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
 
-        # Test if the run exists.
-        if not self.run in ds.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():

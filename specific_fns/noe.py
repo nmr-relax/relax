@@ -57,9 +57,9 @@ class Noe:
         # Arguments.
         self.run = run
 
-        # Test if the run exists.
-        if not self.run in ds.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
 
         # Loop over the sequence.
         for i in xrange(len(ds.res[self.run])):
@@ -329,9 +329,9 @@ class Noe:
         self.res_num = res_num
         self.res_name = res_name
 
-        # Test if the run exists.
-        if not run in ds.run_names:
-            raise RelaxNoPipeError, run
+        # Test if the current pipe exists
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
 
         # Test if the sequence data is loaded.
         if not ds.res.has_key(run):
@@ -383,9 +383,9 @@ class Noe:
         # Arguments
         self.run = run
 
-        # Test if the run exists.
-        if not self.run in ds.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
 
         # Test if the sequence data is loaded.
         if not ds.res.has_key(self.run):
@@ -430,9 +430,9 @@ class Noe:
         # Arguments.
         self.run = run
 
-        # Test if the run exists.
-        if not self.run in ds.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
 
         # Test if sequence data is loaded.
         if not ds.res.has_key(self.run):

@@ -61,9 +61,9 @@ class Hybrid:
 
         # Loop over the runs to be hybridised.
         for run in runs:
-            # Test if the run exists.
-            if not run in ds.run_names:
-                raise RelaxNoPipeError, run
+            # Test if the current pipe exists.
+            if not ds.current_pipe:
+                raise RelaxNoPipeError
 
             # Test if sequence data is loaded.
             if not ds.res.has_key(run):

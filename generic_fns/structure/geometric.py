@@ -322,9 +322,9 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     # Arguments.
     run = run
 
-    # Test if the run exists.
-    if not run in ds.run_names:
-        raise RelaxNoPipeError, run
+    # Test if the current pipe exists.
+    if not ds.current_pipe:
+        raise RelaxNoPipeError
 
     # Test if the PDB file of the macromolecule has been loaded.
     if not ds.pdb.has_key(run):
