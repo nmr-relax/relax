@@ -80,9 +80,9 @@ class Dasha:
             raise RelaxError, "The Dasha optimisation algorithm " + `algor` + " is unknown, it should either be 'LM' or 'NR'."
 
         # Directory creation.
-        if self.dir == None:
-            self.dir = self.run
-        self.relax.IO.mkdir(self.dir, verbosity=0)
+        if dir == None:
+            dir = pipe
+        mkdir_nofail(dir, verbosity=0)
 
         # Number of field strengths and values.
         self.num_frq = 0
