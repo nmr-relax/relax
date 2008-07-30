@@ -44,11 +44,10 @@ class Dasha:
         self.relax = relax
 
 
-    def create(self, run=None, algor='LM', dir=None, force=False):
+    def create(self, algor='LM', dir=None, force=False):
         """Function for creating the Dasha script file 'dir/dasha_script'."""
 
         # Arguments.
-        self.run = run
         self.algor = algor
         self.dir = dir
         self.force = force
@@ -339,11 +338,10 @@ class Dasha:
             raise RelaxError, 'Optimisation of the parameter set ' + `model_type` + ' currently not supported.'
 
 
-    def execute(self, run, dir, force, binary):
+    def execute(self, dir, force, binary):
         """Function for executing Dasha."""
 
         # Arguments.
-        self.run = run
         self.dir = dir
         self.force = force
         self.binary = binary
@@ -387,11 +385,8 @@ class Dasha:
         sys.stdout.write('\n\n')
 
 
-    def extract(self, run, dir):
+    def extract(self, dir):
         """Function for extracting the Dasha results out of the 'dasha_results' file."""
-
-        # Arguments.
-        self.run = run
 
         # Test if sequence data is loaded.
         if not ds.res.has_key(self.run):
