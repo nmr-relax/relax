@@ -1,7 +1,6 @@
 # Script for model-free analysis using the program 'Modelfree4'.
 
 # Python module imports.
-from os import chdir
 import sys
 
 
@@ -120,9 +119,6 @@ def exec_stage_3():
 
 # Set the run name (also the name of a preset model-free model).
 runs = ['m1', 'm2', 'm3']
-
-# Move to the temporary directory.
-chdir(sys.path[-1] + '/test_suite/system_tests/data/temp_palmer')
 
 # Run the stages.
 exec_stage_1(runs)
