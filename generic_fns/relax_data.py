@@ -144,8 +144,8 @@ def back_calc(ri_label=None, frq_label=None, frq=None):
         raise RelaxNoPipeError
 
     # Test if sequence data is loaded.
-    if not ds.res.has_key(self.run):
-        raise RelaxNoSequenceError, self.run
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
     # Test if relaxation data corresponding to 'self.ri_label' and 'self.frq_label' already exists.
     if self.test_labels():
@@ -412,8 +412,8 @@ def delete(ri_label=None, frq_label=None):
         raise RelaxNoPipeError
 
     # Test if the sequence data is loaded.
-    if not ds.res.has_key(self.run):
-        raise RelaxNoSequenceError, self.run
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
     # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
     if not self.test_labels():
@@ -482,8 +482,8 @@ def display(ri_label=None, frq_label=None):
         raise RelaxNoPipeError
 
     # Test if the sequence data is loaded.
-    if not ds.res.has_key(self.run):
-        raise RelaxNoSequenceError, self.run
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
     # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
     if not self.test_labels():
@@ -917,8 +917,8 @@ def write(ri_label=None, frq_label=None, file=None, dir=None, force=False):
         raise RelaxNoPipeError
 
     # Test if the sequence data is loaded.
-    if not ds.res.has_key(self.run):
-        raise RelaxNoSequenceError, self.run
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
     # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
     if not self.test_labels():

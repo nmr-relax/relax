@@ -57,8 +57,8 @@ class Dasha:
             raise RelaxNoPipeError
 
         # Test if sequence data is loaded.
-        if not ds.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Determine the parameter set.
         model_type = self.relax.specific.model_free.determine_model_type(self.run)
@@ -389,8 +389,8 @@ class Dasha:
         """Function for extracting the Dasha results out of the 'dasha_results' file."""
 
         # Test if sequence data is loaded.
-        if not ds.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # The directory.
         if dir == None:

@@ -387,11 +387,10 @@ class Value:
         self.relax.generic.minimise.reset_min_stats(run2)
 
 
-    def display(self, run=None, param=None):
+    def display(self, param=None):
         """Function for displaying residue specific data values."""
 
         # Arguments.
-        self.run = run
         self.param = param
 
         # Test if the current pipe exists.
@@ -399,18 +398,17 @@ class Value:
             raise RelaxNoPipeError
 
         # Test if the sequence data is loaded.
-        if not ds.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Print the data.
         self.write_data(sys.stdout)
 
 
-    def read(self, run=None, param=None, scaling=1.0, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
+    def read(self, param=None, scaling=1.0, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
         """Function for reading residue specific data values from a file."""
 
         # Arguments.
-        self.run = run
         self.param = param
         self.scaling = scaling
 
@@ -419,8 +417,8 @@ class Value:
             raise RelaxNoPipeError
 
         # Test if sequence data is loaded.
-        if not ds.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Function type.
         self.function_type = ds.run_types[ds.run_names.index(self.run)]
@@ -561,11 +559,10 @@ class Value:
             self.relax.generic.minimise.reset_min_stats(self.run)
 
 
-    def write(self, run=None, param=None, file=None, dir=None, force=False, return_value=None):
+    def write(self, param=None, file=None, dir=None, force=False, return_value=None):
         """Function for writing data to a file."""
 
         # Arguments.
-        self.run = run
         self.param = param
 
         # Test if the current pipe exists.
@@ -573,8 +570,8 @@ class Value:
             raise RelaxNoPipeError
 
         # Test if the sequence data is loaded.
-        if not ds.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Open the file for writing.
         file = self.relax.IO.open_write_file(file, dir, force)

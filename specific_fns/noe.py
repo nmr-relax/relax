@@ -334,8 +334,8 @@ class Noe:
             raise RelaxNoPipeError
 
         # Test if the sequence data is loaded.
-        if not ds.res.has_key(run):
-            raise RelaxNoSequenceError, run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Test if the residue number is a valid regular expression.
         if type(res_num) == str:
