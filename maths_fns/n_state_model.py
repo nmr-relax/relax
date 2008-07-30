@@ -27,6 +27,7 @@ from numpy import array, dot, float64, ones, transpose, zeros
 # relax module imports.
 from alignment_tensor import dAi_dAxx, dAi_dAyy, dAi_dAxy, dAi_dAxz, dAi_dAyz, to_tensor
 from chi2 import chi2, dchi2_element, d2chi2_element
+from float import isNaN
 from rdc import ave_rdc_tensor, ave_rdc_tensor_dDij_dAmn, rdc_tensor
 from rotation_matrix import R_euler_zyz
 
@@ -153,6 +154,13 @@ class N_state_opt:
             dAi_dAxy(self.dA[2])
             dAi_dAxz(self.dA[3])
             dAi_dAyz(self.dA[4])
+
+            # Missing data matrix.
+            self.missing_Dij = zeros((self.num_align, self.num_spins), float64)
+            for i in xrange(self.num_align):
+                for j in xrange(self.num_spins):
+                    if isNaN(self.Dij[i, j]):
+                        self.missing_Dij[i, j] = 1
 
             # RDC function, gradient, and Hessian matrices.
             self.Dij_theta = zeros((self.num_align, self.num_spins), float64)
@@ -355,6 +363,10 @@ class N_state_opt:
             for j in xrange(self.num_spins):
                 # Calculate the average RDC.
                 self.Dij_theta[i, j] = ave_rdc_tensor(self.dip_const[j], self.mu[j], self.N, self.A[i], weights=self.probs)
+
+                # Replace missing data with the back calculated value (to give a zero chi-squared for the missing element).
+                if self.missing_Dij[i, j]:
+                    self.Dij[i, j] = self.Dij_theta[i, j]
 
             # Calculate and sum the single alignment chi-squared value.
             chi2_sum = chi2_sum + chi2(self.Dij[i], self.Dij_theta[i], self.sigma_ij[i])

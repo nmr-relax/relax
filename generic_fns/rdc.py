@@ -646,10 +646,6 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
         if error_col:
             error = eval(file_data[i][error_col])
 
-        # Skip all rows where the value or error is None.
-        if value == None or (error_col and error == None):
-            continue
-
         # Get the corresponding spin container.
         spin = return_spin(id)
         if spin == None:
