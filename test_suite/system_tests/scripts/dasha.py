@@ -3,6 +3,9 @@
 # Python module imports.
 import sys
 
+# relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
+
 
 # Set the data pipe names (also the names of preset model-free models).
 pipes = ['m1', 'm2', 'm3']
@@ -42,4 +45,4 @@ for name in pipes:
     dasha.extract()
 
     # Write the results.
-    results.write(file='results_dasha', force=True)
+    results.write(file=ds.tmpdir + '/' + 'results_dasha', force=True)

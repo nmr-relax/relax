@@ -22,7 +22,6 @@
 
 # Python module imports.
 import sys
-from os import chdir
 from shutil import rmtree
 from tempfile import mkdtemp
 from unittest import TestCase
@@ -45,16 +44,18 @@ class Dasha(TestCase):
         self.relax.interpreter._Pipe.create('dasha', 'mf')
 
         # Create a temporary directory for Dasha outputs.
-        self.temp_Dasha_dir = mkdtemp()
+        ds.tmpdir = mkdtemp()
 
 
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        ds.__reset__()
+        # Remove the temporary directory.
+        rmtree(ds.tmpdir)
 
-        # Remove the temporary directory created during the execution of the test_dasha() function.
-        rmtree(self.temp_Dasha_dir)
+
+        # Reset the relax data storage object.
+        ds.__reset__()
 
 
     def test_dasha(self):
@@ -66,11 +67,5 @@ class Dasha(TestCase):
         except:
             return
 
-        # Move to the temporary directory for Dasha outputs.
-        chdir(self.temp_Dasha_dir)
-
         # Execute the script.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/dasha.py')
-
-        # Move back to the base relax directory.
-        chdir(sys.path[-1])
