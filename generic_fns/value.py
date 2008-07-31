@@ -34,6 +34,7 @@ from generic_fns import diffusion_tensor
 from generic_fns.minimise import reset_min_stats
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxParamSetError, RelaxRegExpError, RelaxUnknownParamError, RelaxValueError
+from relax_io import extract_data, open_write_file, strip
 from specific_fns.setup import get_specific_fn
 
 
@@ -459,7 +460,7 @@ class Value:
                 raise RelaxValueError, (self.param, self.run)
 
         # Extract the data from the file.
-        file_data = self.relax.IO.extract_data(file)
+        file_data = extract_data(file)
 
         # Count the number of header lines.
         header_lines = 0
@@ -475,7 +476,7 @@ class Value:
         file_data = file_data[header_lines:]
 
         # Strip the data.
-        file_data = self.relax.IO.strip(file_data)
+        file_data = strip(file_data)
 
         # Do nothing if the file does not exist.
         if not file_data:
@@ -574,7 +575,7 @@ class Value:
             raise RelaxNoSequenceError
 
         # Open the file for writing.
-        file = self.relax.IO.open_write_file(file, dir, force)
+        file = open_write_file(file, dir, force)
 
         # Write the data.
         self.write_data(file, return_value)
