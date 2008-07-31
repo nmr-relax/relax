@@ -33,7 +33,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import diffusion_tensor
 from generic_fns.minimise import reset_min_stats
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
-from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxParamSetError, RelaxRegExpError, RelaxUnknownParamError, RelaxValueError
+from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxParamSetError, RelaxValueError
 from relax_io import extract_data, open_write_file, strip
 from specific_fns.setup import get_specific_fn
 

@@ -36,7 +36,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from data.align_tensor import AlignTensorList
 from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
 import pipes
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
+from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
 
 def align_data_exists(tensor, pipe=None):
