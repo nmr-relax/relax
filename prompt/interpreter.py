@@ -56,7 +56,8 @@ from minimisation import Minimisation
 from model_selection import Modsel
 
 # User classes.
-from align_tensor import Align_tensor
+from bmrb import Align_tensor
+from bmrb import BMRB
 from consistency_tests import Consistency_tests
 from dasha import Dasha
 from diffusion_tensor import Diffusion_tensor
@@ -136,6 +137,7 @@ class Interpreter:
 
         # Place the user classes into the interpreter class namespace.
         self._Align_tensor = Align_tensor(relax)
+        self._BMRB = BMRB(relax)
         self._Consistency_tests = Consistency_tests(relax)
         self._Dasha = Dasha(relax)
         self._Diffusion_tensor = Diffusion_tensor(relax)
@@ -201,6 +203,7 @@ class Interpreter:
 
         # Place the user classes in the local namespace.
         align_tensor = self._Align_tensor
+        bmrb = self._BMRB
         consistency_tests = self._Consistency_tests
         dasha = self._Dasha
         diffusion_tensor = self._Diffusion_tensor
