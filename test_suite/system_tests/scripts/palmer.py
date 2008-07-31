@@ -3,8 +3,6 @@
 # Python module imports.
 import sys
 
-# The RelaxError system.
-from relax_errors import RelaxError
 
 # Set the stage of analysis.
 #
@@ -31,9 +29,6 @@ def exec_stage_1(runs):
         # Load the sequence.
         sequence.read(sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/noe.dat')
 
-        # PDB.
-        #structure.read_pdb(name, 'Ap4Aase_new_3.pdb')
-
         # Load the relaxation data.
         relax_data.read('R1', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/R1.dat')
         relax_data.read('R2', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/R2.dat')
@@ -41,7 +36,7 @@ def exec_stage_1(runs):
 
         # Setup other values.
         diffusion_tensor.init(1e-8)
-        value.set(NUCLEI, 'heteronucleus')
+        value.set('15N', 'heteronucleus')
         value.set(1.02 * 1e-10, 'bond_length')
         value.set(-172 * 1e-6, 'csa')
 
@@ -49,10 +44,10 @@ def exec_stage_1(runs):
         model_free.select_model(model=name)
 
         # Create the Modelfree4 files.
-        palmer.create(force=True, sims=0)
+        palmer.create(dir=name, force=True, sims=0)
 
         # Run Modelfree4.
-        palmer.execute(force=True)
+        palmer.execute(dir=name, force=True)
 
     # Save the program state.
     state.save('stage1.save', force=True)
@@ -72,7 +67,7 @@ def exec_stage_2(runs):
 
     # Extract the Modelfree4 data from the 'mfout' files.
     for name in runs:
-        palmer.extract()
+        palmer.extract(dir=name)
 
     # Print out.
     print "\n\nModel selection."
@@ -104,7 +99,7 @@ def exec_stage_3():
     name = 'aic'
 
     # Let the diffusion tensor parameters be optimised.
-    fix(name, 'diff', 0)
+    fix(name, 'diff', False)
 
     # Create the Modelfree4 files (change sims as needed, see below).
     palmer.create(dir='final', force=True, sims=0)
@@ -122,9 +117,6 @@ def exec_stage_3():
 # Main section of the script.
 #############################
 
-# Nuclei type.
-NUCLEI = '15N'
-
 # Set the run name (also the name of a preset model-free model).
 runs = ['m1', 'm2', 'm3']
 
@@ -132,5 +124,3 @@ runs = ['m1', 'm2', 'm3']
 exec_stage_1(runs)
 exec_stage_2(runs)
 exec_stage_3()
-
-# Either repeat all the above with the optimised diffusion tensor or run Monte Carlo simulations on the final results.

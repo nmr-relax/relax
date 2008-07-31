@@ -186,11 +186,10 @@ class Grace:
         system(grace_exe + " " + self.file_path + " &")
 
 
-    def write(self, run=None, x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot_data='value', norm=1, file=None, dir=None, force=False):
+    def write(self, x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot_data='value', norm=1, file=None, dir=None, force=False):
         """Function for writing data to a file."""
 
         # Arguments.
-        self.run = run
         self.x_data_type = x_data_type
         self.y_data_type = y_data_type
         self.res_num = res_num
@@ -198,9 +197,9 @@ class Grace:
         self.plot_data = plot_data
         self.norm = norm
 
-        # Test if the run exists.
-        if not self.run in ds.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
 
         # Test if the sequence data is loaded.
         if not exists_mol_res_spin_data():

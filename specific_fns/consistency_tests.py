@@ -449,7 +449,7 @@ class Consistency_tests(Common_functions):
         if not ds.current_pipe:
             raise RelaxNoPipeError
 
-        # Test if the run type is set to 'ct'.
+        # Test if the pipe type is set to 'ct'.
         function_type = ds[ds.current_pipe].pipe_type
         if function_type != 'ct':
             raise RelaxFuncSetupError, specific_fns.setup.get_string(function_type)
@@ -584,9 +584,9 @@ class Consistency_tests(Common_functions):
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
 
-        # Test if the run exists.
-        if not self.run in ds.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():

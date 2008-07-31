@@ -44,22 +44,21 @@ class Dasha:
         self.relax = relax
 
 
-    def create(self, run=None, algor='LM', dir=None, force=False):
+    def create(self, algor='LM', dir=None, force=False):
         """Function for creating the Dasha script file 'dir/dasha_script'."""
 
         # Arguments.
-        self.run = run
         self.algor = algor
         self.dir = dir
         self.force = force
 
-        # Test if the run exists.
-        if not self.run in ds.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
 
         # Test if sequence data is loaded.
-        if not ds.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Determine the parameter set.
         model_type = self.relax.specific.model_free.determine_model_type(self.run)
@@ -81,9 +80,9 @@ class Dasha:
             raise RelaxError, "The Dasha optimisation algorithm " + `algor` + " is unknown, it should either be 'LM' or 'NR'."
 
         # Directory creation.
-        if self.dir == None:
-            self.dir = self.run
-        self.relax.IO.mkdir(self.dir, verbosity=0)
+        if dir == None:
+            dir = pipe
+        mkdir_nofail(dir, verbosity=0)
 
         # Number of field strengths and values.
         self.num_frq = 0
@@ -339,11 +338,10 @@ class Dasha:
             raise RelaxError, 'Optimisation of the parameter set ' + `model_type` + ' currently not supported.'
 
 
-    def execute(self, run, dir, force, binary):
+    def execute(self, dir, force, binary):
         """Function for executing Dasha."""
 
         # Arguments.
-        self.run = run
         self.dir = dir
         self.force = force
         self.binary = binary
@@ -355,10 +353,10 @@ class Dasha:
         orig_dir = getcwd()
 
         # The directory.
-        if self.dir == None:
-            self.dir = self.run
-        if not access(self.dir, F_OK):
-            raise RelaxDirError, ('Dasha', self.dir)
+        if dir == None:
+            dir = pipe
+        if not access(dir, F_OK):
+            raise RelaxDirError, ('Dasha', dir)
 
         # Change to this directory.
         chdir(self.dir)
@@ -387,15 +385,12 @@ class Dasha:
         sys.stdout.write('\n\n')
 
 
-    def extract(self, run, dir):
+    def extract(self, dir):
         """Function for extracting the Dasha results out of the 'dasha_results' file."""
 
-        # Arguments.
-        self.run = run
-
         # Test if sequence data is loaded.
-        if not ds.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # The directory.
         if dir == None:

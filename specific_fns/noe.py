@@ -57,9 +57,9 @@ class Noe:
         # Arguments.
         self.run = run
 
-        # Test if the run exists.
-        if not self.run in ds.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
 
         # Loop over the sequence.
         for i in xrange(len(ds.res[self.run])):
@@ -329,13 +329,13 @@ class Noe:
         self.res_num = res_num
         self.res_name = res_name
 
-        # Test if the run exists.
-        if not run in ds.run_names:
-            raise RelaxNoPipeError, run
+        # Test if the current pipe exists
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
 
         # Test if the sequence data is loaded.
-        if not ds.res.has_key(run):
-            raise RelaxNoSequenceError, run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Test if the residue number is a valid regular expression.
         if type(res_num) == str:
@@ -383,13 +383,13 @@ class Noe:
         # Arguments
         self.run = run
 
-        # Test if the run exists.
-        if not self.run in ds.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
 
         # Test if the sequence data is loaded.
-        if not ds.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Open the file for writing.
         noe_file = self.relax.IO.open_write_file(file, dir, force)
@@ -430,13 +430,13 @@ class Noe:
         # Arguments.
         self.run = run
 
-        # Test if the run exists.
-        if not self.run in ds.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
 
         # Test if sequence data is loaded.
-        if not ds.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
 
         # Header.

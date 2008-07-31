@@ -22,9 +22,13 @@
 
 # Python module imports.
 import sys
+from os import chdir
+from shutil import rmtree
+from tempfile import mkdtemp
 from unittest import TestCase
 
 # relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
 from relax_io import test_binary
 
 
@@ -32,6 +36,26 @@ class Palmer(TestCase):
     """Class for testing various aspects specific to model-free analysis using the program
     'Modelfree4'.
     """
+
+
+    def setUp(self):
+        """Set up for all the functional tests."""
+
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create('palmer', 'mf')
+
+        # Create a temporary directory for ModelFree4 outputs.
+        self.temp_MF_dir = mkdtemp()
+
+
+    def tearDown(self):
+        """Reset the relax data storage object."""
+
+        ds.__reset__()
+
+        # Remove the temporary directory created during the execution of the test_palmer() function.
+        rmtree(self.temp_MF_dir)
+
 
     def test_palmer(self):
         """Test a complete model-free analysis using the program 'Modelfree4'."""
@@ -42,5 +66,11 @@ class Palmer(TestCase):
         except:
             return
 
+        # Move to the temporary directory for ModelFree4 outputs.
+        chdir(self.temp_MF_dir)
+
         # Execute the script.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/palmer.py')
+
+        # Move back to the base relax directory.
+        chdir(sys.path[-1])
