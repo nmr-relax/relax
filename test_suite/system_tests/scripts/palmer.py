@@ -53,7 +53,7 @@ def exec_stage_1(runs):
         palmer.execute(dir=ds.tmpdir + '/' + name, force=True)
 
     # Save the program state.
-    state.save('stage1.save', force=True)
+    state.save(state='stage1.save', dir_name=ds.tmpdir, force=True)
 
 
 def exec_stage_2(runs):
@@ -86,7 +86,7 @@ def exec_stage_2(runs):
     results.write(file='results', force=True)
 
     # Save the program state.
-    state.save('stage2.save', force=True)
+    state.save(state='stage2.save', dir_name=ds.tmpdir, force=True)
 
 
 def exec_stage_3():
@@ -114,7 +114,7 @@ def exec_stage_3():
     palmer.extract(dir='final')
 
     # Save the program state.
-    state.save('stage3.save', force=True)
+    state.save(state='stage3.save', dir_name=ds.tmpdir, force=True)
 
 
 # Main section of the script.
