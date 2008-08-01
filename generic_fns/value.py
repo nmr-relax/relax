@@ -33,6 +33,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import diffusion_tensor
 from generic_fns.minimise import reset_min_stats
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
+from generic_fns.sequence import write_header, write_line
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxParamSetError, RelaxValueError
 from relax_io import extract_data, open_write_file, strip
 from specific_fns.setup import get_specific_fn
@@ -445,16 +446,19 @@ def write_data(param=None, file=None, return_value=None):
     if not return_value:
         return_value = get_specific_fn('return_value', ds[ds.current_pipe].pipe_type)
 
+    # Format string.
+    format = "%-30s%-30s"
+
     # Write a header line.
-    file.write("%-5s%-6s%-30s%-30s\n" % ('Num', 'Name', 'Value', 'Error'))
+    write_header(extra_format=format, extra_values=('Value', 'Error'), mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
 
     # Loop over the sequence.
-    for spin in spin_loop():
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # Get the value and error.
         value, error = return_value(spin, param)
 
         # Write the data.
-        file.write("%-5i%-6s%-30s%-30s\n" % (spin.num, spin.name, `value`, `error`))
+        write_line(file, mol_name, res_num, res_name, spin.num, spin.name, extra_format=format, extra_values=(`value`, `error`), mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
 
 
 class Value:
