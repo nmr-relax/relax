@@ -440,7 +440,7 @@ def write_header(file, sep=None, mol_name_flag=False, res_num_flag=False, res_na
     file.write('\n')
 
 
-def write_line(file, mol_name, res_num, res_name, spin_num, spin_name, sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
+def write_line(file, mol_name, res_num, res_name, spin_num, spin_name, sep=None, extra_format=None, extra_values=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
     """Write to the given file object a single line of molecule, residue, and spin data.
 
     @param file:                The file to write the data to.
@@ -457,6 +457,11 @@ def write_line(file, mol_name, res_num, res_name, spin_num, spin_name, sep=None,
     @type spin_name:            anything
     @keyword sep:               The column seperator which, if None, defaults to whitespace.
     @type sep:                  str or None
+    @keyword extra_format:      The formatting string for any extra columns.  This should match the
+                                extra_values argument.
+    @type extra_format:         str
+    @keyword extra_values:      The values to place into the extra columns, corresponding to extra_format.
+    @type extra_values:         tuple of str
     @keyword mol_name_flag:     A flag which if True will cause the molecule name column to be
                                 written.
     @type mol_name_flag:        bool
@@ -477,7 +482,7 @@ def write_line(file, mol_name, res_num, res_name, spin_num, spin_name, sep=None,
     if sep == None:
         sep = ''
 
-    # Write the header.
+    # Write the start of the line.
     if mol_name_flag:
         file.write("%-10s " % (str(mol_name)+sep))
     if res_num_flag:
@@ -488,4 +493,10 @@ def write_line(file, mol_name, res_num, res_name, spin_num, spin_name, sep=None,
         file.write("%-10s " % (str(spin_num)+sep))
     if spin_name_flag:
         file.write("%-10s " % (str(spin_name)+sep))
+
+    # Extra columns.
+    if extra_format:
+        file.write(extra_format % extra_values)
+
+    # Line termination.
     file.write('\n')
