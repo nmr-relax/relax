@@ -181,10 +181,10 @@ class Grace:
         test_binary(grace_exe)
 
         # File path.
-        self.get_file_path = get_file_path(file, dir)
+        self.file_path = get_file_path(file, dir)
 
         # Run Grace.
-        system(grace_exe + " " + self.get_file_path + " &")
+        system(grace_exe + " " + self.file_path + " &")
 
 
     def write(self, x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot_data='value', norm=1, file=None, dir=None, force=False):
