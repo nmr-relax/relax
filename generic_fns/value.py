@@ -32,10 +32,70 @@ import sys
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import diffusion_tensor
 from generic_fns.minimise import reset_min_stats
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxParamSetError, RelaxValueError
 from relax_io import extract_data, open_write_file, strip
 from specific_fns.setup import get_specific_fn
+
+
+def copy(pipe_from=None, pipe_to=None, param=None):
+    """Copy spin specific data values from pipe_from to pipe_to.
+
+    @param pipe_from:   The data pipe to copy the value from.  This defaults to the current data
+                        pipe.
+    @type pipe_from:    str
+    @param pipe_to:     The data pipe to copy the value to.  This defaults to the current data pipe.
+    @type pipe_to:      str
+    @param param:       The name of the parameter to copy the values of.
+    @type param:        str
+    """
+
+    # The current data pipe.
+    if pipe_from == None:
+        pipe_from = ds.current_pipe
+    if pipe_to == None:
+        pipe_to = ds.current_pipe
+
+    # The second pipe does not exist.
+    if pipe_to not in ds.keys():
+        raise RelaxNoPipeError, pipe_to
+
+    # Test if the sequence data for pipe_from is loaded.
+    if not exists_mol_res_spin_data(pipe_from):
+        raise RelaxNoSequenceError, pipe_from
+
+    # Test if the sequence data for pipe_to is loaded.
+    if not exists_mol_res_spin_data(pipe_to):
+        raise RelaxNoSequenceError, pipe_to
+
+    # Specific value and error returning function.
+    return_value = get_specific_fn('return_value', ds[pipe_from].pipe_type)
+
+    # Specific set function.
+    set = get_specific_fn('set', ds[pipe_from].pipe_type)
+
+    # Test if the data exists for pipe_to.
+    for spin in spin_loop(pipe_to):
+        # Get the value and error for pipe_to.
+        value, error = return_value(spin, param)
+
+        # Data exists.
+        if value != None or error != None:
+            raise RelaxValueError, (param, pipe_to)
+
+    # Copy the values.
+    for spin, spin_id in spin_loop(pipe_from, return_id=True):
+        # Get the value and error from pipe_from.
+        value, error = return_value(spin, param)
+
+        # Get the equivalent spin in pipe_to.
+        spin_to = return_spin(spin_id, pipe_to)
+
+        # Set the values of pipe_to.
+        set(spin_to, value=value, error=error, param=param)
+
+    # Reset all minimisation statistics.
+    reset_min_stats(pipe_to)
 
 
 def partition_params(val, param):
@@ -331,61 +391,6 @@ class Value:
         """Class containing functions for the setting up of data structures."""
 
         self.relax = relax
-
-
-    def copy(self, run1=None, run2=None, param=None):
-        """Function for copying residue specific data values from run1 to run2."""
-
-        # Arguments.
-        self.param = param
-
-        # Test if run1 exists.
-        if not run1 in ds.run_names:
-            raise RelaxNoPipeError, run1
-
-        # Test if run2 exists.
-        if not run2 in ds.run_names:
-            raise RelaxNoPipeError, run2
-
-        # Test if the sequence data for run1 is loaded.
-        if not ds.res.has_key(run1):
-            raise RelaxNoSequenceError, run1
-
-        # Test if the sequence data for run2 is loaded.
-        if not ds.res.has_key(run2):
-            raise RelaxNoSequenceError, run2
-
-        # Function type.
-        self.function_type = ds.run_types[ds.run_names.index(run1)]
-
-        # Specific value and error returning function.
-        return_value = self.relax.specific_setup.setup('return_value', self.function_type)
-
-        # Specific set function.
-        set = self.relax.specific_setup.setup('set', self.function_type)
-
-        # Test if the data exists for run2.
-        for i in xrange(len(ds.res[run2])):
-            # Get the value and error for run2.
-            value, error = return_value(run2, i, param)
-
-            # Data exists.
-            if value != None or error != None:
-                raise RelaxValueError, (param, run2)
-
-        # Copy the values.
-        for i in xrange(len(ds.res[run1])):
-            # Get the value and error for run1.
-            value, error = return_value(run1, i, param)
-
-            # Set the values of run2.
-            set(run=run2, value=value, error=error, param=param, index=i)
-
-            # Reset the residue specific minimisation statistics.
-            self.relax.generic.minimise.reset_min_stats(run2, i)
-
-        # Reset the global minimisation statistics.
-        self.relax.generic.minimise.reset_min_stats(run2)
 
 
     def display(self, param=None):
