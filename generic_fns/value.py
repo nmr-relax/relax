@@ -350,7 +350,7 @@ def read(param=None, scaling=1.0, file=None, dir=None, mol_name_col=None, res_nu
 
     # Reset the minimisation statistics.
     if not min_stat:
-        reset_min_stats()
+        minimise.reset_min_stats()
 
 
 def set(val=None, param=None, spin_id=None, force=False):
