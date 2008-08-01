@@ -35,35 +35,24 @@ from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxNoPdbError
 
 
-# The relax data storage object.
+def view(self, run):
+    """Function for viewing the collection of molecules using VMD."""
 
+    # Test if the module is available.
+    if not module_avail:
+        print "VMD is not available (cannot import Scientific.Visualization.VMD due to missing Numeric dependency)."
+        return
 
+    # Test if the PDB file has been loaded.
+    if not ds.pdb.has_key(run):
+        raise RelaxNoPdbError, run
 
-class Vmd:
-    def __init__(self, relax):
-        """Class containing the functions for viewing molecules."""
+    # Create an empty scene.
+    ds.vmd_scene = VMD.Scene()
 
-        self.relax = relax
+    # Add the molecules to the scene.
+    for i in xrange(len(ds.pdb[run].structures)):
+        ds.vmd_scene.addObject(VMD.Molecules(ds.pdb[run].structures[i]))
 
-
-    def view(self, run):
-        """Function for viewing the collection of molecules using VMD."""
-
-        # Test if the module is available.
-        if not module_avail:
-            print "VMD is not available (cannot import Scientific.Visualization.VMD due to missing Numeric dependency)."
-            return
-
-        # Test if the PDB file has been loaded.
-        if not ds.pdb.has_key(run):
-            raise RelaxNoPdbError, run
-
-        # Create an empty scene.
-        ds.vmd_scene = VMD.Scene()
-
-        # Add the molecules to the scene.
-        for i in xrange(len(ds.pdb[run].structures)):
-            ds.vmd_scene.addObject(VMD.Molecules(ds.pdb[run].structures[i]))
-
-        # View the scene.
-        ds.vmd_scene.view()
+    # View the scene.
+    ds.vmd_scene.view()
