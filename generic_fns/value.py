@@ -269,7 +269,7 @@ def read(param=None, scaling=1.0, file=None, dir=None, mol_name_col=None, res_nu
 
         # Data exists.
         if value != None or error != None:
-            raise RelaxValueError, self.param
+            raise RelaxValueError, param
 
     # Extract the data from the file.
     file_data = extract_data(file)
