@@ -23,15 +23,9 @@
 # Module docstring.
 """Module for interfacing with VMD."""
 
-# Python module imports.
-module_avail = False
-try:
-    from Scientific.Visualization import VMD    # This requires Numeric to be installed (at least in Scientific 2.7.8).
-except ImportError:
-    module_avail = False
-
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+import dep_check
 from relax_errors import RelaxNoPdbError
 
 
@@ -39,9 +33,8 @@ def view():
     """Function for viewing the collection of molecules using VMD."""
 
     # Test if the module is available.
-    if not module_avail:
-        print "VMD is not available (cannot import Scientific.Visualization.VMD due to missing Numeric dependency)."
-        return
+    if not dep_check.vmd_module:
+        raise RelaxError, "VMD is not available (cannot import Scientific.Visualization.VMD due to missing Numeric dependency)."
 
     # Alias the current data pipe.
     cdp = ds[ds.current_pipe]
