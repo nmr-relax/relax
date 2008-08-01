@@ -30,9 +30,8 @@ import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import diffusion_tensor
-from generic_fns.minimise import reset_min_stats
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
+from generic_fns import diffusion_tensor, minimise
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
 from generic_fns.sequence import write_header, write_line
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxParamSetError, RelaxValueError
 from relax_io import extract_data, open_write_file, strip
@@ -96,7 +95,7 @@ def copy(pipe_from=None, pipe_to=None, param=None):
         set(spin_to, value=value, error=error, param=param)
 
     # Reset all minimisation statistics.
-    reset_min_stats(pipe_to)
+    minimise.reset_min_stats(pipe_to)
 
 
 def display(param=None):
@@ -199,12 +198,35 @@ def partition_params(val, param):
     return spin_params, spin_values, other_params, other_values
 
 
-def read(param=None, scaling=1.0, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
-    """Function for reading residue specific data values from a file."""
+def read(param=None, scaling=1.0, file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None):
+    """Read spin specific data values from a file.
 
-    # Arguments.
-    self.param = param
-    self.scaling = scaling
+    @keyword param:         The name of the parameter to read.
+    @type param:            str
+    @keyword scaling:       A scaling factor by which all read values are multiplied by.
+    @type scaling:          float
+    @keyword file:          The name of the file to open.
+    @type file:             str
+    @keyword dir:           The directory containing the file (defaults to the current directory if
+                            None).
+    @type dir:              str or None
+    @keyword mol_name_col:  The column containing the molecule name information.
+    @type mol_name_col:     int or None
+    @keyword res_name_col:  The column containing the residue name information.
+    @type res_name_col:     int or None
+    @keyword res_num_col:   The column containing the residue number information.
+    @type res_num_col:      int or None
+    @keyword spin_name_col  The column containing the spin name information.
+    @type spin_name_col:    int or None
+    @keyword spin_num_col:  The column containing the spin number information.
+    @type spin_num_col:     int or None
+    @keyword data_col:      The column containing the values.
+    @type data_col:         int
+    @keyword error_col:     The column containing the errors.
+    @type error_col:        int or None
+    @keyword sep:           The column separator which, if None, defaults to whitespace.
+    @type sep:              str or None
+    """
 
     # Test if the current pipe exists.
     if not ds.current_pipe:
@@ -214,49 +236,47 @@ def read(param=None, scaling=1.0, file=None, num_col=0, name_col=1, data_col=2, 
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Function type.
-    self.function_type = ds.run_types[ds.run_names.index(self.run)]
-
     # Minimisation parameter.
-    if self.relax.generic.minimise.return_data_name(param):
+    if minimise.return_data_name(param):
         # Minimisation statistic flag.
-        min_stat = 1
+        min_stat = True
 
         # Specific value and error returning function.
-        return_value = self.relax.generic.minimise.return_value
+        return_value = minimise.return_value
 
         # Specific set function.
-        set = self.relax.generic.minimise.set
+        set = minimise.set
 
     # Normal parameter.
     else:
         # Minimisation statistic flag.
-        min_stat = 0
+        min_stat = False
 
-        # Specific value and error returning function.
-        return_value = self.relax.specific_setup.setup('return_value', self.function_type)
+        # Specific v
+        return_value = get_specific_fn('return_value', ds[ds.current_pipe].pipe_type)
 
         # Specific set function.
-        set = self.relax.specific_setup.setup('set', self.function_type)
+        set = get_specific_fn('set', ds[ds.current_pipe].pipe_type)
 
     # Test data corresponding to param already exists.
-    for i in xrange(len(ds.res[self.run])):
-        # Skip deselected residues.
-        if not ds.res[self.run][i].select:
+    for spin in spin_loop():
+        # Skip deselected spins.
+        if not spin.select:
             continue
 
         # Get the value and error.
-        value, error = return_value(self.run, i, self.param)
+        value, error = return_value(spin, param)
 
         # Data exists.
         if value != None or error != None:
-            raise RelaxValueError, (self.param, self.run)
+            raise RelaxValueError, self.param
 
     # Extract the data from the file.
     file_data = extract_data(file)
 
     # Count the number of header lines.
     header_lines = 0
+    num_col = max(res_num_col, spin_num_col)
     for i in xrange(len(file_data)):
         try:
             int(file_data[i][num_col])
@@ -275,16 +295,16 @@ def read(param=None, scaling=1.0, file=None, num_col=0, name_col=1, data_col=2, 
     if not file_data:
         raise RelaxFileEmptyError
 
+    # Minimum number of columns.
+    min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col)
+
     # Test the validity of the data.
     for i in xrange(len(file_data)):
         # Skip missing data.
-        if len(file_data[i]) <= data_col or len(file_data[i]) <= error_col:
+        if len(file_data[i]) <= min_col_num:
             continue
 
         try:
-            # Number column.
-            int(file_data[i][num_col])
-
             # Value column.
             if file_data[i][data_col] != 'None':
                 float(file_data[i][data_col])
@@ -295,30 +315,18 @@ def read(param=None, scaling=1.0, file=None, num_col=0, name_col=1, data_col=2, 
 
         except ValueError:
             if error_col != None:
-                if name_col != None:
-                    raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
-                else:
-                    raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
+                raise RelaxError, "The data is invalid (data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
             else:
-                if name_col != None:
-                    raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ")."
-                else:
-                    raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", data=" + file_data[i][data_col] + ")."
+                raise RelaxError, "The data is invalid (data=" + file_data[i][data_col] + ")."
 
     # Loop over the data.
     for i in xrange(len(file_data)):
         # Skip missing data.
-        if len(file_data[i]) <= data_col or len(file_data[i]) <= error_col:
+        if len(file_data[i]) <= min_col_num:
             continue
 
-        # Residue number.
-        spin_num = int(file_data[i][num_col])
-
-        # Residue name.
-        if name_col == None:
-            spin_name = None
-        else:
-            spin_name = file_data[i][name_col]
+        # Generate the spin identification string.
+        id = generate_spin_id_data_array(data=file_data[i], mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
 
         # Value.
         if file_data[i][data_col] != 'None':
@@ -332,25 +340,17 @@ def read(param=None, scaling=1.0, file=None, num_col=0, name_col=1, data_col=2, 
         else:
             error = None
 
-        # Find the index of ds.res[self.run] which corresponds to the relaxation data set i.
-        index = None
-        for j in xrange(len(ds.res[self.run])):
-            if ds.res[self.run][j].num == spin_num and (spin_name == None or ds.res[self.run][j].name == spin_name):
-                index = j
-                break
-        if index == None:
-            raise RelaxNoResError, (spin_num, spin_name)
+        # Get the corresponding spin container.
+        spin = return_spin(id)
+        if spin == None:
+            raise RelaxNoSpinError, id
 
         # Set the value.
-        set(run=run, value=value, error=error, param=self.param, scaling=scaling, index=index)
+        set(value=value, error=error, param=param, scaling=scaling, spin=spin)
 
-        # Reset the residue specific minimisation statistics.
-        if not min_stat:
-            self.relax.generic.minimise.reset_min_stats(self.run, index)
-
-    # Reset the global minimisation statistics.
+    # Reset the minimisation statistics.
     if not min_stat:
-        self.relax.generic.minimise.reset_min_stats(self.run)
+        reset_min_stats()
 
 
 def set(val=None, param=None, spin_id=None, force=False):
@@ -440,7 +440,7 @@ def set(val=None, param=None, spin_id=None, force=False):
         set_non_spin_params(value=val, param=param)
 
     # Reset all minimisation statistics.
-    reset_min_stats()
+    minimise.reset_min_stats()
 
 
 def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
