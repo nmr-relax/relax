@@ -403,6 +403,58 @@ def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
         set_update(param=param, spin=spin)
 
 
+def write(param=None, file=None, dir=None, force=False, return_value=None):
+    """Write data to a file.
+
+    @keyword param:         The name of the parameter to write to file.
+    @type param:            str
+    @keyword file:          The file to write the data to.
+    @type file:             str
+    @keyword dir:           The name of the directory to place the file into (defaults to the
+                            current directory).
+    @type dir:              str
+    @keyword force:         A flag which if True will cause any pre-existing file to be overwritten.
+    @type force:            bool
+    @keyword return_value:  An optional function which if supplied will override the default value
+                            returning function.
+    @type return_value:     None or func
+    """
+
+    # Test if the current pipe exists.
+    if not ds.current_pipe:
+        raise RelaxNoPipeError
+
+    # Test if the sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Open the file for writing.
+    file = open_write_file(file, dir, force)
+
+    # Write the data.
+    write_data(param, file, return_value)
+
+    # Close the file.
+    file.close()
+
+
+def write_data(param=None, file=None, return_value=None):
+    """Function for writing data."""
+
+    # Get the value and error returning function if required.
+    if not return_value:
+        return_value = get_specific_fn('return_value', ds[ds.current_pipe].pipe_type)
+
+    # Write a header line.
+    file.write("%-5s%-6s%-30s%-30s\n" % ('Num', 'Name', 'Value', 'Error'))
+
+    # Loop over the sequence.
+    for spin in spin_loop():
+        # Get the value and error.
+        value, error = return_value(spin, param)
+
+        # Write the data.
+        file.write("%-5i%-6s%-30s%-30s\n" % (spin.num, spin.name, `value`, `error`))
 
 
 class Value:
@@ -564,53 +616,3 @@ class Value:
         # Reset the global minimisation statistics.
         if not min_stat:
             self.relax.generic.minimise.reset_min_stats(self.run)
-
-
-    def write(self, param=None, file=None, dir=None, force=False, return_value=None):
-        """Function for writing data to a file."""
-
-        # Arguments.
-        self.param = param
-
-        # Test if the current pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
-
-        # Test if the sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # Open the file for writing.
-        file = open_write_file(file, dir, force)
-
-        # Write the data.
-        self.write_data(file, return_value)
-
-        # Close the file.
-        file.close()
-
-
-    def write_data(self, run=None, param=None, file=None, return_value=None):
-        """Function for writing data."""
-
-        # Get the value and error returning function if required.
-        if not return_value:
-            # Function type.
-            self.function_type = ds.run_types[ds.run_names.index(run)]
-
-            # Specific value and error returning function.
-            return_value = self.relax.specific_setup.setup('return_value', self.function_type)
-
-        # Write a header line.
-        file.write("%-5s%-6s%-30s%-30s\n" % ('Num', 'Name', 'Value', 'Error'))
-
-        # Loop over the sequence.
-        for i in xrange(len(ds.res[run])):
-            # Remap the data structure 'ds.res[run][i]'.
-            data = ds.res[run][i]
-
-            # Get the value and error.
-            value, error = return_value(run, i, param)
-
-            # Write the data.
-            file.write("%-5i%-6s%-30s%-30s\n" % (data.num, data.name, `value`, `error`))
