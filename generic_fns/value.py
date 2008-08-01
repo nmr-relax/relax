@@ -98,6 +98,25 @@ def copy(pipe_from=None, pipe_to=None, param=None):
     reset_min_stats(pipe_to)
 
 
+def display(param=None):
+    """Function for displaying residue specific data values.
+
+    @param param:       The name of the parameter to display.
+    @type param:        str
+    """
+
+    # Test if the current pipe exists.
+    if not ds.current_pipe:
+        raise RelaxNoPipeError
+
+    # Test if the sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Print the data.
+    write_data(param, sys.stdout)
+
+
 def partition_params(val, param):
     """Function for sorting and partitioning the parameters and their values.
 
@@ -391,24 +410,6 @@ class Value:
         """Class containing functions for the setting up of data structures."""
 
         self.relax = relax
-
-
-    def display(self, param=None):
-        """Function for displaying residue specific data values."""
-
-        # Arguments.
-        self.param = param
-
-        # Test if the current pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
-
-        # Test if the sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # Print the data.
-        self.write_data(sys.stdout)
 
 
     def read(self, param=None, scaling=1.0, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
