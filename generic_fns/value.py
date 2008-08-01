@@ -199,6 +199,160 @@ def partition_params(val, param):
     return spin_params, spin_values, other_params, other_values
 
 
+def read(param=None, scaling=1.0, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
+    """Function for reading residue specific data values from a file."""
+
+    # Arguments.
+    self.param = param
+    self.scaling = scaling
+
+    # Test if the current pipe exists.
+    if not ds.current_pipe:
+        raise RelaxNoPipeError
+
+    # Test if sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Function type.
+    self.function_type = ds.run_types[ds.run_names.index(self.run)]
+
+    # Minimisation parameter.
+    if self.relax.generic.minimise.return_data_name(param):
+        # Minimisation statistic flag.
+        min_stat = 1
+
+        # Specific value and error returning function.
+        return_value = self.relax.generic.minimise.return_value
+
+        # Specific set function.
+        set = self.relax.generic.minimise.set
+
+    # Normal parameter.
+    else:
+        # Minimisation statistic flag.
+        min_stat = 0
+
+        # Specific value and error returning function.
+        return_value = self.relax.specific_setup.setup('return_value', self.function_type)
+
+        # Specific set function.
+        set = self.relax.specific_setup.setup('set', self.function_type)
+
+    # Test data corresponding to param already exists.
+    for i in xrange(len(ds.res[self.run])):
+        # Skip deselected residues.
+        if not ds.res[self.run][i].select:
+            continue
+
+        # Get the value and error.
+        value, error = return_value(self.run, i, self.param)
+
+        # Data exists.
+        if value != None or error != None:
+            raise RelaxValueError, (self.param, self.run)
+
+    # Extract the data from the file.
+    file_data = extract_data(file)
+
+    # Count the number of header lines.
+    header_lines = 0
+    for i in xrange(len(file_data)):
+        try:
+            int(file_data[i][num_col])
+        except:
+            header_lines = header_lines + 1
+        else:
+            break
+
+    # Remove the header.
+    file_data = file_data[header_lines:]
+
+    # Strip the data.
+    file_data = strip(file_data)
+
+    # Do nothing if the file does not exist.
+    if not file_data:
+        raise RelaxFileEmptyError
+
+    # Test the validity of the data.
+    for i in xrange(len(file_data)):
+        # Skip missing data.
+        if len(file_data[i]) <= data_col or len(file_data[i]) <= error_col:
+            continue
+
+        try:
+            # Number column.
+            int(file_data[i][num_col])
+
+            # Value column.
+            if file_data[i][data_col] != 'None':
+                float(file_data[i][data_col])
+
+            # Error column.
+            if error_col != None and file_data[i][error_col] != 'None':
+                float(file_data[i][error_col])
+
+        except ValueError:
+            if error_col != None:
+                if name_col != None:
+                    raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
+                else:
+                    raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
+            else:
+                if name_col != None:
+                    raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ")."
+                else:
+                    raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", data=" + file_data[i][data_col] + ")."
+
+    # Loop over the data.
+    for i in xrange(len(file_data)):
+        # Skip missing data.
+        if len(file_data[i]) <= data_col or len(file_data[i]) <= error_col:
+            continue
+
+        # Residue number.
+        spin_num = int(file_data[i][num_col])
+
+        # Residue name.
+        if name_col == None:
+            spin_name = None
+        else:
+            spin_name = file_data[i][name_col]
+
+        # Value.
+        if file_data[i][data_col] != 'None':
+            value = float(file_data[i][data_col])
+        else:
+            value = None
+
+        # Error.
+        if error_col != None and file_data[i][error_col] != 'None':
+            error = float(file_data[i][error_col])
+        else:
+            error = None
+
+        # Find the index of ds.res[self.run] which corresponds to the relaxation data set i.
+        index = None
+        for j in xrange(len(ds.res[self.run])):
+            if ds.res[self.run][j].num == spin_num and (spin_name == None or ds.res[self.run][j].name == spin_name):
+                index = j
+                break
+        if index == None:
+            raise RelaxNoResError, (spin_num, spin_name)
+
+        # Set the value.
+        set(run=run, value=value, error=error, param=self.param, scaling=scaling, index=index)
+
+        # Reset the residue specific minimisation statistics.
+        if not min_stat:
+            self.relax.generic.minimise.reset_min_stats(self.run, index)
+
+    # Reset the global minimisation statistics.
+    if not min_stat:
+        self.relax.generic.minimise.reset_min_stats(self.run)
+
+
 def set(val=None, param=None, spin_id=None, force=False):
     """Function for setting residue specific data values.
 
@@ -459,164 +613,3 @@ def write_data(param=None, file=None, return_value=None):
 
         # Write the data.
         write_line(file, mol_name, res_num, res_name, spin.num, spin.name, extra_format=format, extra_values=(`value`, `error`), mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
-
-
-class Value:
-    def __init__(self, relax):
-        """Class containing functions for the setting up of data structures."""
-
-        self.relax = relax
-
-
-    def read(self, param=None, scaling=1.0, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
-        """Function for reading residue specific data values from a file."""
-
-        # Arguments.
-        self.param = param
-        self.scaling = scaling
-
-        # Test if the current pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
-
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # Function type.
-        self.function_type = ds.run_types[ds.run_names.index(self.run)]
-
-        # Minimisation parameter.
-        if self.relax.generic.minimise.return_data_name(param):
-            # Minimisation statistic flag.
-            min_stat = 1
-
-            # Specific value and error returning function.
-            return_value = self.relax.generic.minimise.return_value
-
-            # Specific set function.
-            set = self.relax.generic.minimise.set
-
-        # Normal parameter.
-        else:
-            # Minimisation statistic flag.
-            min_stat = 0
-
-            # Specific value and error returning function.
-            return_value = self.relax.specific_setup.setup('return_value', self.function_type)
-
-            # Specific set function.
-            set = self.relax.specific_setup.setup('set', self.function_type)
-
-        # Test data corresponding to param already exists.
-        for i in xrange(len(ds.res[self.run])):
-            # Skip deselected residues.
-            if not ds.res[self.run][i].select:
-                continue
-
-            # Get the value and error.
-            value, error = return_value(self.run, i, self.param)
-
-            # Data exists.
-            if value != None or error != None:
-                raise RelaxValueError, (self.param, self.run)
-
-        # Extract the data from the file.
-        file_data = extract_data(file)
-
-        # Count the number of header lines.
-        header_lines = 0
-        for i in xrange(len(file_data)):
-            try:
-                int(file_data[i][num_col])
-            except:
-                header_lines = header_lines + 1
-            else:
-                break
-
-        # Remove the header.
-        file_data = file_data[header_lines:]
-
-        # Strip the data.
-        file_data = strip(file_data)
-
-        # Do nothing if the file does not exist.
-        if not file_data:
-            raise RelaxFileEmptyError
-
-        # Test the validity of the data.
-        for i in xrange(len(file_data)):
-            # Skip missing data.
-            if len(file_data[i]) <= data_col or len(file_data[i]) <= error_col:
-                continue
-
-            try:
-                # Number column.
-                int(file_data[i][num_col])
-
-                # Value column.
-                if file_data[i][data_col] != 'None':
-                    float(file_data[i][data_col])
-
-                # Error column.
-                if error_col != None and file_data[i][error_col] != 'None':
-                    float(file_data[i][error_col])
-
-            except ValueError:
-                if error_col != None:
-                    if name_col != None:
-                        raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
-                    else:
-                        raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
-                else:
-                    if name_col != None:
-                        raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ")."
-                    else:
-                        raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", data=" + file_data[i][data_col] + ")."
-
-        # Loop over the data.
-        for i in xrange(len(file_data)):
-            # Skip missing data.
-            if len(file_data[i]) <= data_col or len(file_data[i]) <= error_col:
-                continue
-
-            # Residue number.
-            spin_num = int(file_data[i][num_col])
-
-            # Residue name.
-            if name_col == None:
-                spin_name = None
-            else:
-                spin_name = file_data[i][name_col]
-
-            # Value.
-            if file_data[i][data_col] != 'None':
-                value = float(file_data[i][data_col])
-            else:
-                value = None
-
-            # Error.
-            if error_col != None and file_data[i][error_col] != 'None':
-                error = float(file_data[i][error_col])
-            else:
-                error = None
-
-            # Find the index of ds.res[self.run] which corresponds to the relaxation data set i.
-            index = None
-            for j in xrange(len(ds.res[self.run])):
-                if ds.res[self.run][j].num == spin_num and (spin_name == None or ds.res[self.run][j].name == spin_name):
-                    index = j
-                    break
-            if index == None:
-                raise RelaxNoResError, (spin_num, spin_name)
-
-            # Set the value.
-            set(run=run, value=value, error=error, param=self.param, scaling=scaling, index=index)
-
-            # Reset the residue specific minimisation statistics.
-            if not min_stat:
-                self.relax.generic.minimise.reset_min_stats(self.run, index)
-
-        # Reset the global minimisation statistics.
-        if not min_stat:
-            self.relax.generic.minimise.reset_min_stats(self.run)
