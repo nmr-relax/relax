@@ -451,8 +451,14 @@ class Jw_mapping(Common_functions):
         return spin.select_sim
 
 
-    def set_selected_sim(self, select_sim, spin):
-        """Function for returning the array of selected simulation flags."""
+    def set_selected_sim(self, spin, select_sim):
+        """Set the array of selected simulation flags.
+
+        @param spin:        The spin container object.
+        @type spin:         SpinContainer instance
+        @param select_sim:  The selection flags.
+        @type select_sim:   bool
+        """
 
         # Multiple spins.
         spin.select_sim = select_sim
