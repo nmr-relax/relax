@@ -451,16 +451,20 @@ class Jw_mapping(Common_functions):
         return spin.select_sim
 
 
-    def set_selected_sim(self, spin, select_sim):
+    def set_selected_sim(self, model_index, select_sim):
         """Set the array of selected simulation flags.
 
-        @param spin:        The spin container object.
-        @type spin:         SpinContainer instance
+        @param model_index: The global spin index, covering the molecule, residue, and spin
+                            indices).
+        @type model_index:  int
         @param select_sim:  The selection flags.
         @type select_sim:   bool
         """
 
-        # Multiple spins.
+        # Get the spin container.
+        spin = return_spin_from_index(model_index)
+
+        # Set the simulation flags.
         spin.select_sim = select_sim
 
 
