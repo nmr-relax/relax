@@ -27,7 +27,7 @@ from string import replace
 # relax module imports.
 from base_class import Common_functions
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.jw_mapping import Mapping
 from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError, RelaxNucleusError, RelaxParamSetError, RelaxProtonTypeError, RelaxSpinTypeError
