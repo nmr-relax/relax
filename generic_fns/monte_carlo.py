@@ -64,27 +64,25 @@ def create_data(method=None):
         raise RelaxError, "The simulation creation method " + `method` + " is not valid."
 
     # Specific Monte Carlo data creation, data return, and error return function setup.
-    create_mc_data = get_specific_fn('create_mc_data', cdp.pipe_type)
+    num_models = get_specific_fn('num_instances', cdp.pipe_type)
+    if method == 'back_calc':
+        create_mc_data = get_specific_fn('create_mc_data', cdp.pipe_type)
     return_data = get_specific_fn('return_data', cdp.pipe_type)
     return_error = get_specific_fn('return_error', cdp.pipe_type)
     pack_sim_data = get_specific_fn('pack_sim_data', cdp.pipe_type)
 
-    # Loop over the sequence.
-    for spin in spin_loop():
-        # Skip deselected residues.
-        if not spin.select:
-            continue
-
+    # Loop over the models.
+    for model_index in xrange(num_models()):
         # Create the Monte Carlo data.
         if method == 'back_calc':
-            data = create_mc_data(spin)
+            data = create_mc_data(model_index)
 
         # Get the original data.
         else:
-            data = return_data(spin)
+            data = return_data(model_index)
 
         # Get the errors.
-        error = return_error(spin)
+        error = return_error(model_index)
 
         # Loop over the Monte Carlo simulations.
         random = []
@@ -101,7 +99,7 @@ def create_data(method=None):
                 random[j].append(gauss(data[k], error[k]))
 
         # Pack the simulation data.
-        pack_sim_data(spin, random)
+        pack_sim_data(model_index, random)
 
 
 def error_analysis(prune=0.0):
