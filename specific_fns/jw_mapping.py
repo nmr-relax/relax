@@ -140,7 +140,7 @@ class Jw_mapping(Common_functions):
             # Monte Carlo simulated reduced spectral density values.
             else:
                 # Initialise the simulation data structures.
-                self.spin_init(spin, sim=1)
+                self.data_init(spin, sim=1)
                 if spin.j0_sim == None:
                     spin.j0_sim = []
                     spin.jwx_sim = []
