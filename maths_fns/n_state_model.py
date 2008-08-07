@@ -134,18 +134,30 @@ class N_state_opt:
 
         # The flexible population N-state model.
         elif model == 'population':
+            # Set the RDC and PCS flags (indicating the presence of data).
+            self.rdc_flag = True
+            self.pcs_flag = True
+            if rdcs == None:
+                self.rdc_flag = False
+            if pcs == None:
+                self.pcs_flag = False
+
             # Some checks.
             if xh_vect == None and not len(xh_vect):
                 raise RelaxError, "The xh_vect argument " + `xh_vect` + " must be supplied."
 
+            # No data?
+            if not self.rdc_flag and not self.pcs_flag:
+                raise RelaxError, "No RDC or PCS data has been supplied."
+
             # The total number of spins.
-            if rdcs != None:
+            if self.rdc_flag:
                 self.num_spins = len(rdcs[0])
             else:
                 self.num_spins = len(pcs[0])
 
             # The total number of alignments.
-            if rdcs != None:
+            if self.rdc_flag:
                 self.num_align = len(rdcs)
             else:
                 self.num_align = len(pcs)
