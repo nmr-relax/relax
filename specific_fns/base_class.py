@@ -33,6 +33,33 @@ from relax_errors import RelaxError
 class Common_functions:
     """Base class containing simple methods used by some a number of the specific analysis types."""
 
+    def base_data_loop(self):
+        """Generator method for looping over the base data of the specific analysis type.
+
+        This default method simply loops over the spins, returning the spin identification string.
+
+        Specific implementations of this generator method are free to yield any type of data.  The
+        data which is yielded is then passed into the specific functions such as return_data(),
+        return_error(), create_mc_data(), pack_sim_data(), etc., so these methods should handle the
+        data thrown at them.  If multiple data is yielded, this is caught as a tuple and passed into
+        the dependent methods as a tuple.
+
+        @return:    Information concerning the base data of the analysis.  For this base class
+                    method, the loop is over the spins and the yielded value is the spin
+                    identification string.
+        @rtype:     anything
+        """
+
+        # Loop over the spins.
+        for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Yield the spin id string.
+            yield spin_id
+
+
     def has_errors(self):
         """Function for testing if errors exist for the run.
 
