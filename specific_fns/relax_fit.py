@@ -1042,11 +1042,12 @@ class Relax_fit(Common_functions):
         return spin.intensities
 
 
-    def return_error(self, spin):
+    def return_error(self, spin_id):
         """Return the standard deviation data structure.
 
-        @param spin:    The spin container.
-        @type spin:     SpinContainer instance
+        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
+                        method.
+        @type spin_id:  str
         @return:        The standard deviation data structure.
         @rtype:         list of float
         """
