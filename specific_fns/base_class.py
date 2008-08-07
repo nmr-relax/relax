@@ -25,7 +25,7 @@ from copy import deepcopy
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
+from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
 from relax_errors import RelaxError
 
 
@@ -150,15 +150,20 @@ class Common_functions:
         return spin.relax_data
 
 
-    def return_error(self, spin):
-        """Function for returning the Ri error structure for the given spin.
+    def return_error(self, spin_id):
+        """Return the Ri error structure for the corresponding spin.
 
-        @param spin:    The SpinContainer object.
-        @type spin:     SpinContainer instance
+        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
+                        method.
+        @type spin_id:  str
         @return:        The array of relaxation data error values.
         @rtype:         list of float
         """
 
+        # Get the spin container.
+        spin = return_spin(spin_id)
+
+        # Return the data.
         return spin.relax_error
 
 
