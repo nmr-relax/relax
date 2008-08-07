@@ -188,17 +188,21 @@ class N_state_opt:
             dAi_dAxz(self.dA[3])
             dAi_dAyz(self.dA[4])
 
-            # Missing data matrices.
-            self.missing_Dij = zeros((self.num_align, self.num_spins), float64)
-            for i in xrange(self.num_align):
-                for j in xrange(self.num_spins):
-                    if isNaN(self.Dij[i, j]):
-                        self.missing_Dij[i, j] = 1
-            self.missing_deltaij = zeros((self.num_align, self.num_spins), float64)
-            for i in xrange(self.num_align):
-                for j in xrange(self.num_spins):
-                    if isNaN(self.deltaij[i, j]):
-                        self.missing_deltaij[i, j] = 1
+            # Missing data matrices (RDC).
+            if self.rdc_flag:
+                self.missing_Dij = zeros((self.num_align, self.num_spins), float64)
+                for i in xrange(self.num_align):
+                    for j in xrange(self.num_spins):
+                        if isNaN(self.Dij[i, j]):
+                            self.missing_Dij[i, j] = 1
+
+            # Missing data matrices (PCS).
+            if self.pcs_flag:
+                self.missing_deltaij = zeros((self.num_align, self.num_spins), float64)
+                for i in xrange(self.num_align):
+                    for j in xrange(self.num_spins):
+                        if isNaN(self.deltaij[i, j]):
+                            self.missing_deltaij[i, j] = 1
 
 
             # PCS function, gradient, and Hessian matrices.
