@@ -28,7 +28,7 @@ from numpy import array, dot, float64, ones, transpose, zeros
 from alignment_tensor import dAi_dAxx, dAi_dAyy, dAi_dAxy, dAi_dAxz, dAi_dAyz, to_tensor
 from chi2 import chi2, dchi2_element, d2chi2_element
 from float import isNaN
-from pcs import ave_pcs_tensor, ave_pcs_tensor_dDij_dAmn, pcs_tensor
+from pcs import ave_pcs_tensor, ave_pcs_tensor_ddeltaij_dAmn, pcs_tensor
 from rdc import ave_rdc_tensor, ave_rdc_tensor_dDij_dAmn, rdc_tensor
 from rotation_matrix import R_euler_zyz
 
