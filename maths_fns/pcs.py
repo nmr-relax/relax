@@ -109,7 +109,7 @@ def ave_pcs_tensor(dj, vect, N, A, weights=None):
     return val
 
 
-def ave_pcs_tensor_ddelta_ij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
+def ave_pcs_tensor_ddeltaij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
     """Calculate the ensemble average PCS gradient element for Amn, using the 3D tensor.
 
     This function calculates the average PCS gradient for a set of electron-nuclear spin unit
