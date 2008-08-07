@@ -152,6 +152,23 @@ class Jw_mapping(Common_functions):
                 spin.jwh_sim.append(jwh)
 
 
+    def create_mc_data(spin_id):
+        """Return the Ri data structure for the corresponding spin.
+
+        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
+                        method.
+        @type spin_id:  str
+        @return:        The Monte Carlo simulation data.
+        @rtype:         list of floats
+        """
+
+        # Get the spin container.
+        spin = return_spin(spin_id)
+
+        # Return the data.
+        return spin.relax_data
+
+
     def data_init(self, data, sim=0):
         """Function for initialising the data structures."""
 
