@@ -152,7 +152,7 @@ class Jw_mapping(Common_functions):
                 spin.jwh_sim.append(jwh)
 
 
-    def create_mc_data(spin_id):
+    def create_mc_data(self, spin_id):
         """Return the Ri data structure for the corresponding spin.
 
         @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
