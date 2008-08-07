@@ -255,7 +255,7 @@ def rdc_tensor(dj, mu, A):
         - j is the index over spins,
         - theta is the parameter vector,
         - dj is the dipolar constant for spin j,
-        - mu_jc i the unit vector corresponding to spin j,
+        - mu_j i the unit vector corresponding to spin j,
         - Ai is the alignment tensor.
 
     The dipolar constant is defined as::
