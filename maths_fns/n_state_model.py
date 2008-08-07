@@ -302,7 +302,7 @@ class N_state_opt:
         The chi-squared equation
         ------------------------
 
-        The equation is::
+        The equations are::
 
                          ___
                          \    (Dij - Dij(theta)) ** 2
@@ -310,11 +310,21 @@ class N_state_opt:
                          /__       sigma_ij ** 2
                           ij
 
+                         ___
+                         \    (delta_ij - delta_ij(theta)) ** 2
+         chi^2(theta)  =  >   --------------------------------- ,
+                         /__             sigma_ij ** 2
+                          ij
+
         where:
             - theta is the parameter vector,
-            - Dij are the measured RDCs,
-            - Dij(theta) are the back calculated RDCs,
-            - sigma_ij are the RDC errors.
+            - Dij are the measured RDCs for alignment i, spin j,
+            - Dij(theta) are the back calculated RDCs for alignment i, spin j,
+            - delta_ij are the measured PCSs for alignment i, spin j,
+            - delta_ij(theta) are the back calculated PCSs for alignment i, spin j,
+            - sigma_ij are the RDC or PCS errors.
+
+        Both chi-squared values sum.
 
 
         The RDC equation
@@ -330,6 +340,7 @@ class N_state_opt:
 
         where:
             - dj is the dipolar constant for spin j,
+            - N is the total number of states or structures,
             - pc is the weight or probability associated with state c,
             - mu_jc is the unit vector corresponding to spin j and state c,
             - Ai is the alignment tensor.
@@ -352,6 +363,38 @@ class N_state_opt:
             - r is the distance between the two spins.
 
 
+        The PCS equation
+        ----------------
+
+        The PCS equation is::
+
+                               _N_
+                               \                   T
+            delta_ij(theta)  =  >  pc . djc . mu_jc . Ai . mu_jc,
+                               /__
+                               c=1
+
+        where:
+            - djc is the PCS constant for spin j and state c,
+            - N is the total number of states or structures,
+            - pc is the weight or probability associated with state c,
+            - mu_jc is the unit vector corresponding to spin j and state c,
+            - Ai is the alignment tensor.
+
+        The PCS constant is defined as::
+
+                 mu0 15kT   1
+            dj = --- ----- ---- ,
+                 4pi Bo**2 r**3
+
+        where:
+            - mu0 is the permeability of free space,
+            - k is Boltzmann's constant,
+            - T is the absolute temperature,
+            - Bo is the magnetic field strength,
+            - r is the distance between the paramagnetic centre (electron spin) and the nuclear spin.
+
+
         Stored data structures
         ======================
 
@@ -363,6 +406,11 @@ class N_state_opt:
         ----------
 
         The back calculated RDCs.  This is a rank-2 tensor with indices {i, j}.
+
+        delta_ij(theta)
+        ---------------
+
+        The back calculated PCS.  This is a rank-2 tensor with indices {i, j}.
 
         Ai
         --
@@ -393,15 +441,31 @@ class N_state_opt:
 
             # Loop over the spin systems j.
             for j in xrange(self.num_spins):
-                # Calculate the average RDC.
-                self.Dij_theta[i, j] = ave_rdc_tensor(self.dip_const[j], self.mu[j], self.N, self.A[i], weights=self.probs)
+                # The back calculated RDC.
+                if self.rdc_flag:
+                    # Calculate the average RDC.
+                    self.Dij_theta[i, j] = ave_rdc_tensor(self.dip_const[j], self.mu[j], self.N, self.A[i], weights=self.probs)
 
-                # Replace missing data with the back calculated value (to give a zero chi-squared for the missing element).
-                if self.missing_Dij[i, j]:
-                    self.Dij[i, j] = self.Dij_theta[i, j]
+                    # Replace missing data with the back calculated value (to give a zero chi-squared for the missing element).
+                    if self.missing_Dij[i, j]:
+                        self.Dij[i, j] = self.Dij_theta[i, j]
 
-            # Calculate and sum the single alignment chi-squared value.
-            chi2_sum = chi2_sum + chi2(self.Dij[i], self.Dij_theta[i], self.rdc_sigma_ij[i])
+                # The back calculated PCS.
+                if self.pcs_flag:
+                    # Calculate the average PCS.
+                    self.deltaij_theta[i, j] = ave_pcs_tensor(self.pcs_const[j], self.mu[j], self.N, self.A[i], weights=self.probs)
+
+                    # Replace missing data with the back calculated value (to give a zero chi-squared for the missing element).
+                    if self.missing_deltaij[i, j]:
+                        self.deltaij[i, j] = self.deltaij_theta[i, j]
+
+            # Calculate and sum the single alignment chi-squared value (for the RDC).
+            if self.rdc_flag:
+                chi2_sum = chi2_sum + chi2(self.Dij[i], self.Dij_theta[i], self.rdc_sigma_ij[i])
+
+            # Calculate and sum the single alignment chi-squared value (for the PCS).
+            if self.pcs_flag:
+                chi2_sum = chi2_sum + chi2(self.deltaij[i], self.deltaij_theta[i], self.pcs_sigma_ij[i])
 
         # Return the chi-squared value.
         return chi2_sum
