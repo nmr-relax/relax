@@ -485,15 +485,25 @@ class Jw_mapping(Common_functions):
         spin.select_sim = select_sim
 
 
-    def sim_pack_data(self, spin, sim_data):
-        """Function for packing Monte Carlo simulation data."""
+    def sim_pack_data(self, spin_id, sim_data):
+        """Pack the Monte Carlo simulation data.
+
+        @param spin_id:     The spin identification string, as yielded by the base_data_loop()
+                            generator method.
+        @type spin_id:      str
+        @param sim_data:    The Monte Carlo simulation data.
+        @type sim_data:     list of float
+        """
+
+        # Get the spin container.
+        spin = return_spin(spin_id)
 
         # Test if the simulation data already exists.
-        if hasattr(ds.res[run][i], 'relax_sim_data'):
+        if hasattr(spin, 'relax_sim_data'):
             raise RelaxError, "Monte Carlo simulation data already exists."
 
         # Create the data structure.
-        ds.res[run][i].relax_sim_data = sim_data
+        spin.relax_sim_data = sim_data
 
 
     def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, heteronuc_type=None, wH=None, j0=None, jwx=None, jwh=None, r=None, csa=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
