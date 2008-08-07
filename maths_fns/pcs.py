@@ -60,7 +60,7 @@ def ave_pcs_tensor(dj, vect, N, A, weights=None):
 
     where:
         - mu0 is the permeability of free space,
-        - k is Boltmann's constant,
+        - k is Boltzmann's constant,
         - T is the absolute temperature,
         - Bo is the magnetic field strength,
         - r is the distance between the paramagnetic centre (electron spin) and the nuclear spin.
@@ -204,7 +204,7 @@ def pcs_tensor(dj, mu, A):
 
     where:
         - mu0 is the permeability of free space,
-        - k is Boltmann's constant,
+        - k is Boltzmann's constant,
         - T is the absolute temperature,
         - Bo is the magnetic field strength,
         - r is the distance between the paramagnetic centre (electron spin) and the nuclear spin.
