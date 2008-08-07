@@ -28,6 +28,7 @@ from numpy import array, dot, float64, ones, transpose, zeros
 from alignment_tensor import dAi_dAxx, dAi_dAyy, dAi_dAxy, dAi_dAxz, dAi_dAyz, to_tensor
 from chi2 import chi2, dchi2_element, d2chi2_element
 from float import isNaN
+from pcs import ave_pcs_tensor, ave_pcs_tensor_dDij_dAmn, pcs_tensor
 from rdc import ave_rdc_tensor, ave_rdc_tensor_dDij_dAmn, rdc_tensor
 from rotation_matrix import R_euler_zyz
 
@@ -35,7 +36,7 @@ from rotation_matrix import R_euler_zyz
 class N_state_opt:
     """Class containing the target function of the optimisation of the N-state model."""
 
-    def __init__(self, model=None, N=None, init_params=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, xh_vect=None, dip_const=None, scaling_matrix=None):
+    def __init__(self, model=None, N=None, init_params=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, pcs=None, pcs_errors=None, rdcs=None, rdc_errors=None, xh_vect=None, dip_const=None, scaling_matrix=None):
         """Set up the class instance for optimisation.
 
         All constant data required for the N-state model are initialised here.
@@ -58,6 +59,12 @@ class N_state_opt:
         @keyword red_errors:    An array of the {Sxx, Syy, Sxy, Sxz, Syz} errors for all reduced
                                 tensors.  The array format is the same as for red_data.
         @type red_errors:       numpy float64 array
+        @keyword pcs:           The PCS lists.  The first index must correspond to the different
+                                alignment media i and the second index to the spin systems j.
+        @type pcs:              numpy matrix
+        @keyword pcs_errors:    The PCS error lists.  The dimensions of this argument are the same
+                                as for 'pcs'.
+        @type pcs_errors:       numpy matrix
         @keyword rdcs:          The RDC lists.  The first index must correspond to the different
                                 alignment media i and the second index to the spin systems j.
         @type rdcs:             numpy matrix
@@ -77,6 +84,7 @@ class N_state_opt:
         # Store the data inside the class instance namespace.
         self.N = N
         self.params = 1.0 * init_params    # Force a copy of the data to be stored.
+        self.deltaij = pcs
         self.Dij = rdcs
         self.mu = xh_vect
         self.dip_const = dip_const
@@ -131,18 +139,31 @@ class N_state_opt:
                 raise RelaxError, "The xh_vect argument " + `xh_vect` + " must be supplied."
 
             # The total number of spins.
-            self.num_spins = len(rdcs[0])
+            if rdcs != None:
+                self.num_spins = len(rdcs[0])
+            else:
+                self.num_spins = len(pcs[0])
 
             # The total number of alignments.
-            self.num_align = len(rdcs)
+            if rdcs != None:
+                self.num_align = len(rdcs)
+            else:
+                self.num_align = len(pcs)
             self.num_align_params = self.num_align * 5
+
+            # PCS errors.
+            if pcs_errors == None:
+                # Missing errors.
+                self.pcs_sigma_ij = ones((self.num_align, self.num_spins), float64)
+            else:
+                self.pcs_sigma_ij = pcs_errors
 
             # RDC errors.
             if rdc_errors == None:
                 # Missing errors.
-                self.sigma_ij = ones((self.num_align, self.num_spins), float64)
+                self.rdc_sigma_ij = ones((self.num_align, self.num_spins), float64)
             else:
-                self.sigma_ij = rdc_errors
+                self.rdc_sigma_ij = rdc_errors
 
             # Alignment tensor function and gradient matrices.
             self.A = zeros((self.num_align, 3, 3), float64)
@@ -155,12 +176,23 @@ class N_state_opt:
             dAi_dAxz(self.dA[3])
             dAi_dAyz(self.dA[4])
 
-            # Missing data matrix.
+            # Missing data matrices.
             self.missing_Dij = zeros((self.num_align, self.num_spins), float64)
             for i in xrange(self.num_align):
                 for j in xrange(self.num_spins):
                     if isNaN(self.Dij[i, j]):
                         self.missing_Dij[i, j] = 1
+            self.missing_deltaij = zeros((self.num_align, self.num_spins), float64)
+            for i in xrange(self.num_align):
+                for j in xrange(self.num_spins):
+                    if isNaN(self.deltaij[i, j]):
+                        self.missing_deltaij[i, j] = 1
+
+
+            # PCS function, gradient, and Hessian matrices.
+            self.detaij_theta = zeros((self.num_align, self.num_spins), float64)
+            self.ddetaij_theta = zeros((self.total_num_params, self.num_align, self.num_spins), float64)
+            self.d2detaij_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_spins), float64)
 
             # RDC function, gradient, and Hessian matrices.
             self.Dij_theta = zeros((self.num_align, self.num_spins), float64)
@@ -369,7 +401,7 @@ class N_state_opt:
                     self.Dij[i, j] = self.Dij_theta[i, j]
 
             # Calculate and sum the single alignment chi-squared value.
-            chi2_sum = chi2_sum + chi2(self.Dij[i], self.Dij_theta[i], self.sigma_ij[i])
+            chi2_sum = chi2_sum + chi2(self.Dij[i], self.Dij_theta[i], self.rdc_sigma_ij[i])
 
         # Return the chi-squared value.
         return chi2_sum
@@ -547,7 +579,7 @@ class N_state_opt:
 
             # Construct the chi-squared gradient element for parameter k, alignment i.
             for k in xrange(self.total_num_params):
-                self.dchi2[k] = self.dchi2[k] + dchi2_element(self.Dij[i], self.Dij_theta[i], self.dDij_theta[k, i], self.sigma_ij[i])
+                self.dchi2[k] = self.dchi2[k] + dchi2_element(self.Dij[i], self.Dij_theta[i], self.dDij_theta[k, i], self.rdc_sigma_ij[i])
 
         # Diagonal scaling.
         if self.scaling_flag:
