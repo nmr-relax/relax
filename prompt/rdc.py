@@ -51,7 +51,7 @@ class RDC:
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The RDC identification string.
+        id:  The alignment identification string.
         """
 
         # Function intro text.
@@ -78,7 +78,7 @@ class RDC:
 
         pipe_to:  The name of the pipe to copy the RDC data to.
 
-        id:  The RDC identification string.
+        id:  The alignment identification string.
 
 
         Description
@@ -126,19 +126,19 @@ class RDC:
 
         # Id string.
         if id != None and type(id) != str:
-            raise RelaxNoneStrError, ('identification string', id)
+            raise RelaxNoneStrError, ('alignment identification string', id)
 
         # Execute the functional code.
         rdc.copy(pipe_from=pipe_from, pipe_to=pipe_to, id=id)
 
 
     def delete(self, id=None):
-        """Delete the RDC data corresponding to id.
+        """Delete the RDC data corresponding to the alignment id.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The RDC identification string.
+        id:  The alignment identification string.
 
 
         Examples
@@ -157,19 +157,19 @@ class RDC:
 
         # Id string.
         if type(id) != str:
-            raise RelaxStrError, ('identification string', id)
+            raise RelaxStrError, ('alignment identification string', id)
 
         # Execute the functional code.
         rdc.delete(id=id)
 
 
     def display(self, id=None):
-        """Display the RDC data corresponding to id.
+        """Display the RDC data corresponding to the alignment id.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The RDC identification string.
+        id:  The alignment identification string.
 
 
         Examples
@@ -188,7 +188,7 @@ class RDC:
 
         # Id string.
         if type(id) != str:
-            raise RelaxStrError, ('identification string', id)
+            raise RelaxStrError, ('alignment identification string', id)
 
         # Execute the functional code.
         rdc.display(id=id)
@@ -200,7 +200,7 @@ class RDC:
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The RDC identification string.
+        id:  The alignment identification string.
 
         file:  The name of the file containing the RDC data.
 
@@ -250,7 +250,7 @@ class RDC:
 
         # Id string.
         if type(id) != str:
-            raise RelaxStrError, ('identification string', id)
+            raise RelaxStrError, ('alignment identification string', id)
 
         # The file name.
         if type(file) != str:
@@ -302,7 +302,7 @@ class RDC:
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The RDC identification string.
+        id:  The alignment identification string.
 
         file:  The name of the file.
 
@@ -329,7 +329,7 @@ class RDC:
 
         # Id string.
         if type(id) != str:
-            raise RelaxStrError, ('identification string', id)
+            raise RelaxStrError, ('alignment identification string', id)
 
         # File.
         if type(file) != str:

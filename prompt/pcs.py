@@ -188,7 +188,7 @@ class PCS:
 
         # Id string.
         if type(id) != str:
-            raise RelaxStrError, ('identification string', id)
+            raise RelaxStrError, ('alignment identification string', id)
 
         # Execute the functional code.
         pcs.display(id=id)
@@ -200,7 +200,7 @@ class PCS:
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The PCS identification string.
+        id:  The alignment identification string.
 
         file:  The name of the file containing the PCS data.
 
@@ -250,7 +250,7 @@ class PCS:
 
         # Id string.
         if type(id) != str:
-            raise RelaxStrError, ('identification string', id)
+            raise RelaxStrError, ('alignment identification string', id)
 
         # The file name.
         if type(file) != str:
@@ -302,7 +302,7 @@ class PCS:
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The PCS identification string.
+        id:  The alignment identification string.
 
         file:  The name of the file.
 
@@ -329,7 +329,7 @@ class PCS:
 
         # Id string.
         if type(id) != str:
-            raise RelaxStrError, ('identification string', id)
+            raise RelaxStrError, ('alignment identification string', id)
 
         # File.
         if type(file) != str:
