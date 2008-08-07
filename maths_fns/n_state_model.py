@@ -516,10 +516,10 @@ class N_state_opt:
 
         where:
             - theta is the parameter vector,
-            - Dij are the measured RDCs,
-            - Dij(theta) are the back calculated RDCs,
-            - sigma_ij are the RDC errors,
-            - dDij(theta)/dthetak is the RDC gradient for parameter k.
+            - Dij are the measured RDCs or PCSs,
+            - Dij(theta) are the back calculated RDCs or PCSs,
+            - sigma_ij are the RDC or PCS errors,
+            - dDij(theta)/dthetak is the RDC or PCS gradient for parameter k.
 
 
         The RDC gradient
@@ -560,6 +560,44 @@ class N_state_opt:
             Amn.
 
 
+        The PCS gradient
+        ----------------
+
+        This gradient is also different for the various parameter types.
+
+        pc partial derivative
+        ~~~~~~~~~~~~~~~~~~~~~
+
+        The population parameter partial derivative is::
+
+         ddeltaij(theta)                T
+         ---------------  =  djc . mu_jc . Ai . mu_jc,
+              dpc
+
+        where:
+            - djc is the pseudocontact shift constant for spin j and state c,
+            - mu_jc is the unit vector corresponding to spin j and state c,
+            - Ai is the alignment tensor.
+
+        Amn partial derivative
+        ~~~~~~~~~~~~~~~~~~~~~~
+
+        The alignment tensor element partial derivative is::
+
+                            _N_
+        ddelta_ij(theta)    \                   T   dAi
+        ----------------  =  >  pc . djc . mu_jc . ---- . mu_jc,
+              dAmn          /__                    dAmn
+                            c=1
+
+        where:
+            - djc is the pseudocontact shift constant for spin j and state c,
+            - pc is the weight or probability associated with state c,
+            - mu_jc is the unit vector corresponding to spin j and state c,
+            - dAi/dAmn is the partial derivative of the alignment tensor with respect to element
+            Amn.
+
+
         The alignment tensor gradient
         -----------------------------
 
@@ -593,13 +631,18 @@ class N_state_opt:
         ======================
 
         There are a number of data structures calculated by this function and stored for subsequent
-        use in the Hessian function.  This include the back calculated RDC gradient and the
+        use in the Hessian function.  This include the back calculated RDC and PCS gradients and the
         alignment tensor gradients.
 
         dDij(theta)/dthetak
         -------------------
 
         The back calculated RDC gradient.  This is a rank-3 tensor with indices {k, i, j}.
+
+        ddeltaij(theta)/dthetak
+        -------------------
+
+        The back calculated PCS gradient.  This is a rank-3 tensor with indices {k, i, j}.
 
         dAi/dAmn
         --------
@@ -623,15 +666,25 @@ class N_state_opt:
 
         # Loop over each alignment.
         for i in xrange(self.num_align):
-            # Construct the Amn partial derivative part of the RDC gradient.
+            # Construct the Amn partial derivative components.
             for j in xrange(self.num_spins):
-                self.dDij_theta[i*5, i, j] =   ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[0], weights=self.probs)
-                self.dDij_theta[i*5+1, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[1], weights=self.probs)
-                self.dDij_theta[i*5+2, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[2], weights=self.probs)
-                self.dDij_theta[i*5+3, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[3], weights=self.probs)
-                self.dDij_theta[i*5+4, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[4], weights=self.probs)
+                # RDC.
+                if self.rdc_flag:
+                    self.dDij_theta[i*5, i, j] =   ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[0], weights=self.probs)
+                    self.dDij_theta[i*5+1, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[1], weights=self.probs)
+                    self.dDij_theta[i*5+2, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[2], weights=self.probs)
+                    self.dDij_theta[i*5+3, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[3], weights=self.probs)
+                    self.dDij_theta[i*5+4, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[4], weights=self.probs)
 
-            # Construct the pc partial derivative part of the RDC gradient, looping over each state.
+                # PCS.
+                if self.pcs_flag:
+                    self.ddeltaij_theta[i*5, i, j] =   ave_pcs_tensor_ddeltaij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[0], weights=self.probs)
+                    self.ddeltaij_theta[i*5+1, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[1], weights=self.probs)
+                    self.ddeltaij_theta[i*5+2, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[2], weights=self.probs)
+                    self.ddeltaij_theta[i*5+3, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[3], weights=self.probs)
+                    self.ddeltaij_theta[i*5+4, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[4], weights=self.probs)
+
+            # Construct the pc partial derivative gradient components, looping over each state.
             for c in xrange(self.N - 1):
                 # Index in the parameter array.
                 param_index = self.num_align_params + c
@@ -639,17 +692,28 @@ class N_state_opt:
                 # Loop over the spins.
                 for j in xrange(self.num_spins):
                     # Calculate the RDC for state c (this is the pc partial derivative).
-                    self.dDij_theta[param_index, i, j] = rdc_tensor(self.dip_const[j], self.mu[j, c], self.A[i])
+                    if self.rdc_flag:
+                        self.dDij_theta[param_index, i, j] = rdc_tensor(self.dip_const[j], self.mu[j, c], self.A[i])
+
+                    # Calculate the PCS for state c (this is the pc partial derivative).
+                    if self.pcs_flag:
+                        self.ddeltaij_theta[param_index, i, j] = pcs_tensor(self.dip_const[j], self.mu[j, c], self.A[i])
 
             # Construct the chi-squared gradient element for parameter k, alignment i.
             for k in xrange(self.total_num_params):
-                self.dchi2[k] = self.dchi2[k] + dchi2_element(self.Dij[i], self.Dij_theta[i], self.dDij_theta[k, i], self.rdc_sigma_ij[i])
+                # RDC part of the chi-squared gradient.
+                if self.rdc_flag:
+                    self.dchi2[k] = self.dchi2[k] + dchi2_element(self.Dij[i], self.Dij_theta[i], self.dDij_theta[k, i], self.rdc_sigma_ij[i])
+
+                # PCS part of the chi-squared gradient.
+                if self.pcs_flag:
+                    self.dchi2[k] = self.dchi2[k] + dchi2_element(self.deltaij[i], self.deltaij_theta[i], self.ddeltaij_theta[k, i], self.pcs_sigma_ij[i])
 
         # Diagonal scaling.
         if self.scaling_flag:
             self.dchi2 = dot(self.dchi2, self.scaling_matrix)
 
-        # Return a copy of the gradient.
+        # The gradient.
         return self.dchi2
 
 
