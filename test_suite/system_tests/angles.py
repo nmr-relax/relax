@@ -22,10 +22,11 @@
 
 # Python module imports.
 from numpy import fromstring
+import sys
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 
 
 class Angles(TestCase):
@@ -41,23 +42,23 @@ class Angles(TestCase):
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        relax_data_store.__reset__()
+        ds.__reset__()
 
 
     def test_angles(self):
         """The user function angles()."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/angles.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/angles.py')
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Res info.
         res_name = ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY', 'TYR', 'ARG', 'ARG'] 
         spin_num = [1, 11, 28, 51, 59, 71, 91, 104, 116, 133, 150, 167, None, None, None]
         spin_name = ['N']*12 + [None]*3
-        attached_protons = [None, None, 'H', 'H', 'H', 'H', 'H', 'H', None, None, 'H', 'H', None, None, None]
+        attached_atoms = [None, None, 'H', 'H', 'H', 'H', 'H', 'H', None, None, 'H', 'H', None, None, None]
         xh_vects = [
             None,
             None,
@@ -84,6 +85,7 @@ class Angles(TestCase):
 
         # Checks for the first 15 residues.
         for i in xrange(15):
+            print cdp.mol[0].res[i].spin[0]
             # Check the residue and spin info.
             self.assertEqual(cdp.mol[0].res[i].num, i+1)
             self.assertEqual(cdp.mol[0].res[i].name, res_name[i])
@@ -92,9 +94,9 @@ class Angles(TestCase):
             self.assertEqual(cdp.mol[0].res[i].spin[0].name, spin_name[i])
 
             # Angles have been calculated.
-            if hasattr(cdp.mol[0].res[i].spin[0], 'attached_proton'):
+            if hasattr(cdp.mol[0].res[i].spin[0], 'attached_atom'):
                 # The attached proton.
-                self.assertEqual(cdp.mol[0].res[i].spin[0].attached_proton, attached_protons[i])
+                self.assertEqual(cdp.mol[0].res[i].spin[0].attached_atom, attached_atoms[i])
 
                 # The XH vector.
                 for j in xrange(3):
@@ -105,6 +107,6 @@ class Angles(TestCase):
 
             # No angles calculated.
             else:
-                self.assertEqual(attached_protons[i], None)
+                self.assertEqual(attached_atoms[i], None)
                 self.assert_(not hasattr(cdp.mol[0].res[i].spin[0], 'xh_vect'))
                 self.assert_(not hasattr(cdp.mol[0].res[i].spin[0], 'alpha'))

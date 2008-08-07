@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2005,2008 Edward d'Auvergne                              #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,7 +26,7 @@ import sys
 # relax module imports.
 import help
 from generic_fns import results
-from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxStrError, RelaxStrFileError
 
 
 class Results:
@@ -42,7 +42,7 @@ class Results:
         self.__relax__ = relax
 
 
-    def display(self, format='columnar'):
+    def display(self, format='xml'):
         """Function for displaying the results.
 
         Keyword Arguments
@@ -58,10 +58,10 @@ class Results:
             print text
 
         # Execute the functional code.
-        results.display()
+        results.display(format=format)
 
 
-    def read(self, file='results', dir='dir', format='columnar'):
+    def read(self, file='results', dir=None):
         """Function for reading results from a file.
 
         Keyword Arguments
@@ -87,8 +87,7 @@ class Results:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "results.read("
             text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", format=" + `format` + ")"
+            text = text + ", dir=" + `dir` + ")"
             print text
 
         # File.
@@ -99,21 +98,18 @@ class Results:
         if dir != None and type(dir) != str:
             raise RelaxNoneStrError, ('directory name', dir)
 
-        # Format.
-        if type(format) != str:
-            raise RelaxStrError, ('format', format)
-
         # Execute the functional code.
-        results.read(file=file, directory=dir, format=format)
+        results.read(file=file, directory=dir)
 
 
-    def write(self, file='results', dir='dir', force=False, format='columnar', compress_type=1):
+    def write(self, file='results', dir='pipe_name', force=False, format='xml', compress_type=1):
         """Function for writing results to a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        file:  The name of the file to output results to.  The default is 'results'.
+        file:  The name of the file to output results to.  The default is 'results'.  Optionally
+        this can be a file object, or any object with a write() method.
 
         dir:  The directory name.
 
@@ -127,7 +123,9 @@ class Results:
         Description
         ~~~~~~~~~~~
 
-        To place the results file in the current working directory, set dir to None.
+        To place the results file in the current working directory, set dir to None.  If dir is set
+        to the special name 'pipe_name', then the results file will be placed into a directory with
+        the same name as the current data pipe.
 
         The default behaviour of this function is to compress the file using bzip2 compression.  If
         the extension '.bz2' is not included in the file name, it will be added.  The compression
@@ -152,8 +150,8 @@ class Results:
             print text
 
         # File.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+        if type(file) != str and not hasattr(file, 'write'):
+            raise RelaxStrFileError, ('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:

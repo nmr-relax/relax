@@ -34,7 +34,11 @@
 ###############################################################################
 
 
+# Dependency checks.
+import dep_check
+
 # Python modules.
+from optparse import Option, OptionParser
 from os import F_OK, access, getpid, putenv
 import platform
 import profile
@@ -42,20 +46,6 @@ import pstats
 from re import match
 from string import split, strip
 import sys
-
-# Numeric.
-try:
-    import Numeric
-except ImportError:
-    sys.stderr.write("The dependency 'Numeric' has not been installed.\n")
-    sys.exit()
-
-# Command line option parser.
-try:
-    from optparse import Option, OptionParser
-except ImportError:
-    sys.stderr.write("The dependency 'Optik' has not been installed.\n")
-    sys.exit()
 
 # relax modules.
 import generic_fns
@@ -348,6 +338,10 @@ class Relax:
             intro_string = intro_string + "GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL\n"
             intro_string = intro_string + "and comes with absolutely no warranty.  For details type 'GPL'.  Assistance in using this program\n"
             intro_string = intro_string + "can be accessed by typing 'help'.\n"
+
+        # ImportErrors, if any.
+        if not dep_check.C_module_exp_fn:
+            intro_string = intro_string + "\n" + dep_check.C_module_exp_fn_mesg + "\n"
 
         # Return the string.
         return intro_string

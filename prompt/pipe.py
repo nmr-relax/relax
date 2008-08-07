@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -78,7 +78,7 @@ class Pipe:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pipe.copy("
             text = text + "pipe_from=" + `pipe_from`
-            text = text + "pipe_to=" + `pipe_to` + ")"
+            text = text + ", pipe_to=" + `pipe_to` + ")"
             print text
 
         # The source data pipe argument.

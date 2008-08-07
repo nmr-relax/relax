@@ -5,7 +5,7 @@ name = 'jw'
 pipe.create(name, 'jw')
 
 # Nuclei type
-nuclei('N')
+value.set('15N', 'heteronucleus')
 
 # Load the sequence.
 sequence.read(name, 'noe.600.out')
@@ -32,9 +32,9 @@ calc(name)
 monte_carlo.error_analysis(name)
 
 # Create grace files.
-grace.write(name, y_data_type='j0', file='j0.agr', force=1)
-grace.write(name, y_data_type='jwx', file='jwx.agr', force=1)
-grace.write(name, y_data_type='jwh', file='jwh.agr', force=1)
+grace.write(name, y_data_type='j0', file='j0.agr', force=True)
+grace.write(name, y_data_type='jwx', file='jwx.agr', force=True)
+grace.write(name, y_data_type='jwh', file='jwh.agr', force=True)
 
 # View the grace files.
 grace.view(file='j0.agr')
@@ -42,5 +42,5 @@ grace.view(file='jwx.agr')
 grace.view(file='jwh.agr')
 
 # Finish.
-results.write(run=name, file='results', force=1)
-state.save('save', force=1)
+results.write(file='results', force=True)
+state.save('save', force=True)

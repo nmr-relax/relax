@@ -25,7 +25,7 @@ import sys
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 
 
 class Sequence(TestCase):
@@ -41,7 +41,7 @@ class Sequence(TestCase):
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        relax_data_store.__reset__()
+        ds.__reset__()
 
 
     def test_load_protein_asp_atoms_from_pdb(self):
@@ -54,7 +54,7 @@ class Sequence(TestCase):
         self.relax.interpreter._Structure.load_spins(spin_id=':ASP')
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)
@@ -104,7 +104,7 @@ class Sequence(TestCase):
         self.relax.interpreter._Structure.load_spins(spin_id=':GLY@CA')
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)
@@ -149,7 +149,7 @@ class Sequence(TestCase):
         self.relax.interpreter._Structure.load_spins(spin_id=':GLY@N')
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)
@@ -188,7 +188,7 @@ class Sequence(TestCase):
         self.relax.interpreter._Structure.load_spins(spin_id='@N')
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)

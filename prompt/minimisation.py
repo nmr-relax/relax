@@ -25,7 +25,7 @@ from string import split
 import sys
 
 # relax module imports.
-from minimise.generic import generic_minimise
+from minfx.generic import generic_minimise
 from generic_fns import minimise
 from relax_errors import RelaxBoolError, RelaxError, RelaxIntError, RelaxIntListIntError, RelaxListError, RelaxListNumError, RelaxNoneError, RelaxNoneNumError, RelaxNumError, RelaxStrError
 
@@ -159,13 +159,13 @@ class Minimisation:
         ~~~~~~~~~
 
         The arguments, which should all be strings, specify the minimiser as well as its options.  A
-        minimum of one argument is required.  As this calls the function 'generic_minimise' the full
-        list of allowed arguments is shown below in the reproduced 'generic_minimise' docstring.
-        Ignore all sections except those labelled as minimisation algorithms and minimisation
-        options.  Also do not select the Method of Multipliers constraint algorithm as this is used
-        in combination with the given minimisation algorithm if the keyword argument 'constraints'
-        is set to 1.  The grid search algorithm should also not be selected as this is accessed
-        using the 'grid' function instead.  The first argument passed will be set to the
+        minimum of one argument is required.  As this calls the minfx function 'generic_minimise'
+        the full list of allowed arguments is shown below in the reproduced 'generic_minimise'
+        docstring.  Ignore all sections except those labelled as minimisation algorithms and
+        minimisation options.  Also do not select the Method of Multipliers constraint algorithm as
+        this is used in combination with the given minimisation algorithm if the keyword argument
+        'constraints' is set to 1.  The grid search algorithm should also not be selected as this is
+        accessed using the 'grid' function instead.  The first argument passed will be set to the
         minimisation algorithm while all other arguments will be set to the minimisation options.
 
         Keyword arguments differ from normal arguments having the form 'keyword = value'.  All
@@ -243,9 +243,10 @@ class Minimisation:
         --------------------------------------------------------------------------------------------
 
         All the text which follows is a reproduction of the docstring of the generic_minimise
-        function.  Only take note of the minimisation algorithms and minimisation options sections,
-        the other sections are not relevant for this function.  The Grid search and Method of
-        Multipliers algorithms CANNOT be selected as minimisation algorithms for this function.
+        function from the minfx python package.  Only take note of the minimisation algorithms and
+        minimisation options sections, the other sections are not relevant for this function.  The
+        Grid search and Method of Multipliers algorithms CANNOT be selected as minimisation
+        algorithms for this function.
 
         The section entitled Keyword Arguments is also completely inaccessible therefore please
         ignore that text.

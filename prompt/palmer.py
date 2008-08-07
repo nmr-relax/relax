@@ -42,7 +42,7 @@ class Palmer:
         self.__relax__ = relax
 
 
-    def create(self, dir=None, force=0, binary='modelfree4', diff_search='none', sims=0, sim_type='pred', trim=0, steps=20, constraints=1, heteronuc_type='15N', atom1='N', atom2='H'):
+    def create(self, dir=None, force=False, binary='modelfree4', diff_search='none', sims=0, sim_type='pred', trim=0, steps=20, constraints=1, heteronuc_type='15N', atom1='N', atom2='H', spin_id=None):
         """Function for creating the Modelfree4 input files.
 
         Keyword Arguments
@@ -50,8 +50,8 @@ class Palmer:
 
         dir:  The directory to place the files.
 
-        force:  A flag which if set to 1 will cause the results file to be overwritten if it already
-        exists.
+        force:  A flag which if set to True will cause the results file to be overwritten if it
+        already exists.
 
         binary:  The name of the executable Modelfree program file.
 
@@ -73,6 +73,8 @@ class Palmer:
         atom1:  The symbol of the X heteronucleus in the pdb file.
 
         atom2:  The symbol of the H nucleus in the pdb file.
+
+        spin_id:  The spin identification string.
 
 
         Description
@@ -111,7 +113,8 @@ class Palmer:
             text = text + ", constraints=" + `constraints`
             text = text + ", heteronucleus=" + `heteronuc_type`
             text = text + ", atom1=" + `atom1`
-            text = text + ", atom2=" + `atom2` + ")"
+            text = text + ", atom2=" + `atom2`
+            text = text + ", spin_id" + `spin_id` + ")"
             print text
 
         # Directory.
@@ -120,8 +123,8 @@ class Palmer:
                 raise RelaxNoneStrError, ('directory name', dir)
 
         # The force flag.
-        if type(force) != int or (force != 0 and force != 1):
-            raise RelaxBinError, ('force flag', force)
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
 
         # The Modelfree executable file.
         if type(binary) != str:
@@ -164,10 +167,10 @@ class Palmer:
             raise RelaxStrError, ('atom2', atom2)
 
         # Execute the functional code.
-        palmer.create(dir=dir, force=force, binary=binary, diff_search=diff_search, sims=sims, sim_type=sim_type, trim=trim, steps=steps, constraints=constraints, heteronuc_type=heteronuc_type, atom1=atom1, atom2=atom2)
+        palmer.create(dir=dir, force=force, binary=binary, diff_search=diff_search, sims=sims, sim_type=sim_type, trim=trim, steps=steps, constraints=constraints, heteronuc_type=heteronuc_type, atom1=atom1, atom2=atom2, spin_id=spin_id)
 
 
-    def execute(self, dir=None, force=0, binary='modelfree4'):
+    def execute(self, dir=None, force=False, binary='modelfree4'):
         """Function for executing Modelfree4.
 
         Keyword Arguments
@@ -175,8 +178,8 @@ class Palmer:
 
         dir:  The directory to place the files.
 
-        force:  A flag which if set to 1 will cause the results file to be overwritten if it already
-        exists.
+        force:  A flag which if set to True will cause the results file to be overwritten if it
+        already exists.
 
         binary:  The name of the executable Modelfree program file.
 
@@ -211,8 +214,8 @@ class Palmer:
                 raise RelaxNoneStrError, ('directory name', dir)
 
         # The force flag.
-        if type(force) != int or (force != 0 and force != 1):
-            raise RelaxBinError, ('force flag', force)
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
 
         # The Modelfree executable file.
         if type(binary) != str:

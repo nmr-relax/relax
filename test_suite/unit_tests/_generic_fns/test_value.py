@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import value
 from test_suite.unit_tests.value_testing_base import Value_base_class
 
@@ -41,7 +41,7 @@ class Test_value(Value_base_class, TestCase):
         """First test of the generic_fns.value.partition_params() function."""
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # The parameters and values.
         param = ['S2']
@@ -61,7 +61,7 @@ class Test_value(Value_base_class, TestCase):
         """Second test of the generic_fns.value.partition_params() function."""
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # The parameters and values.
         param = ['Dx']
@@ -81,7 +81,7 @@ class Test_value(Value_base_class, TestCase):
         """Third test of the generic_fns.value.partition_params() function."""
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # The parameters and values.
         param = ['Dx', 'S2']
@@ -101,7 +101,7 @@ class Test_value(Value_base_class, TestCase):
         """Forth test of the generic_fns.value.partition_params() function."""
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # The parameters and values.
         param = ['Dx', 'S2', 'CSA']
@@ -121,7 +121,7 @@ class Test_value(Value_base_class, TestCase):
         """Fifth test of the generic_fns.value.partition_params() function."""
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # The parameters and values.
         param = ['Dpar', 'S2', 'Dper', 'CSA', 'theta']
@@ -141,7 +141,7 @@ class Test_value(Value_base_class, TestCase):
         """Sixth test of the generic_fns.value.partition_params() function."""
 
         # Set the current data pipe to 'mf'.
-        relax_data_store.current_pipe = 'mf'
+        ds.current_pipe = 'mf'
 
         # The parameters and values.
         param = []

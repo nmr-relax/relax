@@ -153,7 +153,10 @@ def get_module_relative_path(package_path, module_name, root_paths=None):
         root_paths = sys.path
     for root_path in root_paths:
         root_path = segment_path(os.path.abspath(root_path))
-        package_path = segment_path(os.path.abspath(package_path))
+
+        # Catch if the package path has already been converted to a segment list.
+        if type(package_path) != list:
+            package_path = segment_path(os.path.abspath(package_path))
 
         common_prefix = get_common_prefix(root_path, package_path)
         if common_prefix == root_path:
@@ -271,22 +274,21 @@ class ImportErrorTestCase(unittest.TestCase):
 
 
 def load_test_case(package_path,  module_name, class_name):
-    ''' load a testCase from the file system using a package path, file name
-        and class name
+    '''Load a testCase from the file system using a package path, file name and class name.
 
-        @type package_path: string with . separated fields
-        @param package_path: path to the module as a list of package names
-                             separated by dots
+    @type package_path: string with . separated fields
+    @param package_path: path to the module as a list of package names
+                         separated by dots
 
-        @type module_name: string
-        @param module_name: name of the module to load the class from
+    @type module_name: string
+    @param module_name: name of the module to load the class from
 
-        @type class_name: string
-        @param class_name: name of the class to load
+    @type class_name: string
+    @param class_name: name of the class to load
 
-        @rtype:
-        @return:
-        '''
+    @rtype:
+    @return:
+    '''
 
     result = None
     packages = None

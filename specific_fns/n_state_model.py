@@ -27,7 +27,7 @@ from numpy.linalg import norm
 from re import search
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from float import isNaN, isInf
 import generic_fns
 import generic_fns.structure.geometric
@@ -55,7 +55,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Monte Carlo simulation data structures.
         if sim_index != None:
@@ -105,11 +105,11 @@ class N_state_model(Common_functions):
         """
 
         # Test if the current data pipe exists.
-        if not relax_data_store.current_pipe:
+        if not ds.current_pipe:
             raise RelaxNoPipeError
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Set the pivot point.
         cdp.pivot_point = pivot_point
@@ -200,7 +200,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test if the cone models have been determined.
         if cone_type == 'diff in cone':
@@ -246,9 +246,6 @@ class N_state_model(Common_functions):
             generic_fns.structure.geometric.generate_vector_dist(structure=structure, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=inc)
             generic_fns.structure.geometric.stitch_cap_to_cone(structure=structure, max_angle=angle, inc=inc)
 
-        # Terminate the chain.
-        structure.terminate(res_num=res_num)
-
         # Create the PDB file.
         print "\nGenerating the PDB file."
         pdb_file = open_write_file(file, dir, force=force)
@@ -288,7 +285,7 @@ class N_state_model(Common_functions):
         name, index = self.return_data_name(param, index=True)
 
         # The number of states as a float.
-        N = float(relax_data_store[relax_data_store.current_pipe].N)
+        N = float(ds[ds.current_pipe].N)
 
         # Probability.
         if name == 'probs':
@@ -312,7 +309,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Monte Carlo simulation data structures.
         if sim_index != None:
@@ -364,7 +361,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test if the N-state model has been set up.
         if not hasattr(cdp, 'N'):
@@ -476,7 +473,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialisation (0..j..m).
         A = []
@@ -536,7 +533,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test if the N-state model has been set up.
         if not hasattr(cdp, 'N') or not hasattr(cdp, 'ref_domain'):
@@ -668,11 +665,11 @@ class N_state_model(Common_functions):
         """
 
         # Test if the current data pipe exists.
-        if not relax_data_store.current_pipe:
+        if not ds.current_pipe:
             raise RelaxNoPipeError
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test if the reference domain exists.
         exists = 0
@@ -714,7 +711,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Return the param number.
         return (cdp.N - 1) + cdp.N*3
@@ -825,7 +822,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Loop over the tensors.
         match = False
@@ -850,7 +847,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test if the N-state model has been set up.
         if not hasattr(cdp, 'N'):
@@ -898,7 +895,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Loop over the tensors.
         match = False

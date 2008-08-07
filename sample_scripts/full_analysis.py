@@ -20,20 +20,6 @@
 #                                                                             #
 ###############################################################################
 
-# Script for complete model-free analysis.
-##########################################
-
-
-# Python module imports.
-from os import getcwd, listdir
-from re import search
-from string import lower
-
-# relax module imports.
-from data import Data as relax_data_store
-from generic.selection import spin_index_loop, spin_loop
-from relax_errors import RelaxError
-
 """Script for black-box model-free analysis.
 
 The model-free optimisation methodology herein is that of:
@@ -41,7 +27,7 @@ The model-free optimisation methodology herein is that of:
 d'Auvergne, E. J. and Gooley, P. R. (2008). Optimisation of NMR dynamic models II. A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor. J. Biomol. NMR, 40(2), 121-133
 
 
-This script is designed for those who appreciate black-boxes or those who appreciate complex code.  Importantly data at multiple magnetic field strengths is essential for this analysis.  The script will need to be heavily tailored to the protein in question by changing the variables just below this documentation.  If you would like to change how model-free analysis is performed, the code in the class Main can be changed as needed.  For a description of object-oriented coding in python using classes, functions/methods, self, etc, see the python tutorial.
+This script is designed for those who appreciate black-boxes or those who appreciate complex code.  Importantly data at multiple magnetic field strengths is essential for this analysis.  The script will need to be heavily tailored to the molecule in question by changing the variables just below this documentation.  If you would like to change how model-free analysis is performed, the code in the class Main can be changed as needed.  For a description of object-oriented coding in python using classes, functions/methods, self, etc., see the python tutorial.
 
 The value of the variable DIFF_MODEL will determine the behaviour of this script.  The five diffusion models used in this script are:
 
@@ -61,23 +47,23 @@ Model I must be optimised prior to any of the other diffusion models, while the 
 
 This approach has the advantage of eliminating the need for an initial estimate of a global diffusion tensor and removing all the problems associated with the initial estimate.
 
-It is important that the number of parameters in a model does not excede the number of relaxation data sets for that residue.  If this is the case, the list of models in the MF_MODELS and LOCAL_TM_MODELS variables will need to be trimmed.
+It is important that the number of parameters in a model does not exceed the number of relaxation data sets for that spin.  If this is the case, the list of models in the MF_MODELS and LOCAL_TM_MODELS variables will need to be trimmed.
 
 
 Model I - Local tm
-~~~~~~~~~~~~~~~~~~
+==================
 
-This will optimise the diffusion model whereby all residues of the protein have a local tm value, i.e. there is no global diffusion tensor.  This model needs to be optimised prior to optimising any of the other diffusion models.  Each residue is fitted to the multiple model-free models separately, where the parameter tm is included in each model.
+This will optimise the diffusion model whereby all spin of the molecule have a local tm value, i.e. there is no global diffusion tensor.  This model needs to be optimised prior to optimising any of the other diffusion models.  Each spin is fitted to the multiple model-free models separately, where the parameter tm is included in each model.
 
-AIC model selection is used to select the models for each residue.
+AIC model selection is used to select the models for each spin.
 
 
 Model II - Sphere
-~~~~~~~~~~~~~~~~~
+=================
 
 This will optimise the isotropic diffusion model.  Multiple steps are required, an initial optimisation of the diffusion tensor, followed by a repetitive optimisation until convergence of the diffusion tensor.  Each of these steps requires this script to be rerun. For the initial optimisation, which will be placed in the directory './sphere/init/', the following steps are used:
 
-The model-free models and parameter values for each residue are set to those of diffusion model MI.
+The model-free models and parameter values for each spin are set to those of diffusion model MI.
 
 The local tm parameter is removed from the models.
 
@@ -86,39 +72,50 @@ The model-free parameters are fixed and a global spherical diffusion tensor is m
 
 For the repetitive optimisation, each minimisation is named from 'round_1' onwards.  The initial 'round_1' optimisation will extract the diffusion tensor from the results file in './sphere/init/', and the results will be placed in the directory './sphere/round_1/'.  Each successive round will take the diffusion tensor from the previous round.  The following steps are used:
 
-The global diffusion tensor is fixed and the multiple model-free models are fitted to each residue.
+The global diffusion tensor is fixed and the multiple model-free models are fitted to each spin.
 
-AIC model selection is used to select the models for each residue.
+AIC model selection is used to select the models for each spin.
 
 All model-free and diffusion parameters are allowed to vary and a global optimisation of all parameters is carried out.
 
 
 Model III - Prolate spheroid
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+============================
 
 The methods used are identical to those of diffusion model MII, except that an axially symmetric diffusion tensor with Da >= 0 is used.  The base directory containing all the results is './prolate/'.
 
 
 Model IV - Oblate spheroid
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+==========================
 
 The methods used are identical to those of diffusion model MII, except that an axially symmetric diffusion tensor with Da <= 0 is used.  The base directory containing all the results is './oblate/'.
 
 
 Model V - Ellipsoid
-~~~~~~~~~~~~~~~~~~~
+===================
 
 The methods used are identical to those of diffusion model MII, except that a fully anisotropic diffusion tensor is used (also known as rhombic or asymmetric diffusion).  The base directory is './ellipsoid/'.
 
 
 
 Final run
-~~~~~~~~~
+=========
 
-Once all the diffusion models have converged, the final run can be executed.  This is done by setting the variable DIFF_MODEL to 'final'.  This consists of two steps, diffusion tensor model selection, and Monte Carlo simulations.  Firstly AIC model selection is used to select between the diffusion tensor models.  Monte Carlo simulations are then run soley on this selected diffusion model.  Minimisation of the model is bypassed as it is assumed that the model is already fully optimised (if this is not the case the final run is not yet appropriate).
+Once all the diffusion models have converged, the final run can be executed.  This is done by setting the variable DIFF_MODEL to 'final'.  This consists of two steps, diffusion tensor model selection, and Monte Carlo simulations.  Firstly AIC model selection is used to select between the diffusion tensor models.  Monte Carlo simulations are then run solely on this selected diffusion model.  Minimisation of the model is bypassed as it is assumed that the model is already fully optimised (if this is not the case the final run is not yet appropriate).
 
 The final black-box model-free results will be placed in the file 'final/results'.
 """
+
+# Python module imports.
+from os import getcwd, listdir
+from re import search
+from string import lower
+
+# relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
+from float import floatAsByteArray
+from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
+from relax_errors import RelaxError
 
 
 # User variables.
@@ -137,25 +134,29 @@ HETNUC = 'N'
 # The PDB file (set this to None if no structure is available).
 PDB_FILE = '1f3y.pdb'
 
-# The file containing the sequence.
-SEQUENCE = 'noe.600.out'
+# The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
+SEQ_ARGS = ['noe.600.out', None, None, 0, 1, None, None, None]
 
-# The relaxation data (Data type, frequency label, frequency, file name).
-# These are the arguments 'ri_label', 'frq_label', 'frq', and 'file' to the relax_data.read() user function.  Please read the user function documentation for more information.
-RELAX_DATA = [['R1', '600', 599.719 * 1e6, 'r1.600.out'],
-              ['R2', '600', 599.719 * 1e6, 'r2.600.out'],
-              ['NOE', '600', 599.719 * 1e6, 'noe.600.out'],
-              ['R1', '500', 500.208 * 1e6, 'r1.500.out'],
-              ['R2', '500', 500.208 * 1e6, 'r2.500.out'],
-              ['NOE', '500', 500.208 * 1e6, 'noe.500.out']
+# The relaxation data (data type, frequency label, frequency, file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the relax_data.read() user function, please see the documentation for that function for more information.
+RELAX_DATA = [['R1',  '600', 599.719 * 1e6, 'r1.600.out',  None, None, 0, 1, None, None, 2, 3, None],
+              ['R2',  '600', 599.719 * 1e6, 'r2.600.out',  None, None, 0, 1, None, None, 2, 3, None],
+              ['NOE', '600', 599.719 * 1e6, 'noe.600.out', None, None, 0, 1, None, None, 2, 3, None],
+              ['R1',  '500', 500.208 * 1e6, 'r1.500.out',  None, None, 0, 1, None, None, 2, 3, None],
+              ['R2',  '500', 500.208 * 1e6, 'r2.500.out',  None, None, 0, 1, None, None, 2, 3, None],
+              ['NOE', '500', 500.208 * 1e6, 'noe.500.out', None, None, 0, 1, None, None, 2, 3, None]
 ]
 
-# The file containing the list of unresolved residues to exclude from the analysis (set this to None if no residue is to be excluded).
+# The file containing the list of unresolved spins to exclude from the analysis (set this to None if no spin is to be excluded).
 UNRES = 'unresolved'
 
-# The bond length and CSA values.
+# A file containing a list of spins which can be dynamically excluded at any point within the analysis (when set to None, this variable is not used).
+EXCLUDE = None
+
+# The bond length, CSA values, heteronucleus type, and proton type.
 BOND_LENGTH = 1.02 * 1e-10
 CSA = -172 * 1e-6
+HETNUC = '15N'
+PROTON = '1H'
 
 # The grid search size (the number of increments per dimension).
 GRID_INC = 11
@@ -166,8 +167,8 @@ MIN_ALGOR = 'newton'
 # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
 MC_NUM = 200
 
-# Automatic looping over all rounds until convergence.
-CONV_LOOP = 0
+# Automatic looping over all rounds until convergence (must be a boolean value of True or False).
+CONV_LOOP = False
 
 
 class Main:
@@ -186,13 +187,10 @@ class Main:
             self.base_dir = 'local_tm/'
 
             # Sequential optimisation of all model-free models (function must be modified to suit).
-            self.multi_model(local_tm=1)
-
-            # Model selection data pipe.
-            pipe.create('aic', 'mf')
+            self.multi_model(local_tm=True)
 
             # Model selection.
-            self.model_selection(pipe='aic', dir=self.base_dir + 'aic')
+            self.model_selection(modsel_pipe='aic', dir=self.base_dir + 'aic')
 
 
         # Diffusion models MII to MV.
@@ -222,32 +220,36 @@ class Main:
                     # Remove the tm parameter.
                     model_free.remove_tm()
 
+                    # Deselect the spins in the EXCLUDE list.
+                    if EXCLUDE:
+                        deselect.read(file=EXCLUDE)
+
                     # Load the PDB file and calculate the unit vectors parallel to the XH bond.
                     if PDB_FILE:
                         structure.read_pdb(PDB_FILE)
-                        structure.vectors(heteronuc='N', proton='H')
+                        structure.vectors(attached='H')
 
                     # Add an arbitrary diffusion tensor which will be optimised.
                     if DIFF_MODEL == 'sphere':
-                        diffusion_tensor.init(10e-9, fixed=0)
+                        diffusion_tensor.init(10e-9, fixed=False)
                         inc = 11
                     elif DIFF_MODEL == 'prolate':
-                        diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='prolate', fixed=0)
+                        diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='prolate', fixed=False)
                         inc = 11
                     elif DIFF_MODEL == 'oblate':
-                        diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='oblate', fixed=0)
+                        diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='oblate', fixed=False)
                         inc = 11
                     elif DIFF_MODEL == 'ellipsoid':
-                        diffusion_tensor.init((10e-09, 0, 0, 0, 0, 0), fixed=0)
+                        diffusion_tensor.init((10e-09, 0, 0, 0, 0, 0), fixed=False)
                         inc = 6
 
                     # Minimise just the diffusion tensor.
-                    fix('all_res')
+                    fix('all_spins')
                     grid_search(inc=inc)
                     minimise(MIN_ALGOR)
 
                     # Write the results.
-                    results.write(file='results', dir=self.base_dir, force=1)
+                    results.write(file='results', dir=self.base_dir, force=True)
 
 
                 # Normal round of optimisation for diffusion models MII to MV.
@@ -261,24 +263,18 @@ class Main:
                     # Sequential optimisation of all model-free models (function must be modified to suit).
                     self.multi_model()
 
-                    # Create the final data pipe (for model selection and final optimisation).
-                    name = 'final'
-                    if relax_data_store.has_key(name):
-                        pipe.delete(name)
-                    pipe.create(name, 'mf')
-
                     # Model selection.
-                    self.model_selection(dir=self.base_dir + 'aic')
+                    self.model_selection(modsel_pipe='final', dir=self.base_dir + 'aic')
 
                     # Final optimisation of all diffusion and model-free parameters.
-                    fix('all', fixed=0)
+                    fix('all', fixed=False)
 
                     # Minimise all parameters.
                     minimise(MIN_ALGOR)
 
                     # Write the results.
                     dir = self.base_dir + 'opt'
-                    results.write(file='results', dir=dir, force=1)
+                    results.write(file='results', dir=dir, force=True)
 
                     # Test for convergence.
                     converged = self.convergence()
@@ -325,18 +321,15 @@ class Main:
                 # Load the diffusion model results.
                 results.read(file='results', dir=model + '/round_' + `self.round` + '/opt')
 
-            # Create the data pipe for model selection (which will be a copy of the selected diffusion model or data pipe).
-            pipe.create('final', 'mf')
-
             # Model selection between MI to MV.
-            self.model_selection(pipe='final', write_flag=0)
+            self.model_selection(modsel_pipe='final', write_flag=False)
 
 
             # Monte Carlo simulations.
             ##########################
 
-            # Fix the diffusion tensor (if it exists!).
-            if relax_data_store.diff.has_key('final'):
+            # Fix the diffusion tensor, if it exists.
+            if hasattr(ds['final'], 'diff_tensor'):
                 fix('diff')
 
             # Simulations.
@@ -351,7 +344,7 @@ class Main:
             # Write the final results.
             ##########################
 
-            results.write(file='results', dir='final', force=1)
+            results.write(file='results', dir='final', force=True)
 
 
         # Unknown script behaviour.
@@ -365,8 +358,8 @@ class Main:
         """Test for the convergence of the global model."""
 
         # Alias the data pipes.
-        cdp = relax_data_store[relax_data_store.current_pipe]
-        prev_pipe = relax_data_store['previous']
+        cdp = ds[ds.current_pipe]
+        prev_pipe = ds['previous']
 
         # Print out.
         print "\n\n\n"
@@ -384,8 +377,11 @@ class Main:
         ###################
 
         print "Chi-squared test:"
-        print "    chi2 (k-1): " + `prev_pipe.chi2`
-        print "    chi2 (k):   " + `cdp.chi2`
+        print "    chi2 (k-1):          " + `prev_pipe.chi2`
+        print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_pipe.chi2)` + ')'
+        print "    chi2 (k):            " + `cdp.chi2`
+        print "        (as an IEEE-754 byte array: " + `floatAsByteArray(cdp.chi2)` + ')'
+        print "    chi2 (difference):   " + `prev_pipe.chi2 - cdp.chi2`
         if prev_pipe.chi2 == cdp.chi2:
             print "    The chi-squared value has converged.\n"
         else:
@@ -400,14 +396,14 @@ class Main:
 
         # Create a string representation of the model-free models of the previous data pipe.
         prev_models = ''
-        for spin in spin_loop(pipe='previous')
+        for spin in spin_loop(pipe='previous'):
             if hasattr(spin, 'model'):
                 if not spin.model == 'None':
                     prev_models = prev_models + spin.model
 
         # Create a string representation of the model-free models of the current data pipe.
         curr_models = ''
-        for spin in spin_loop()
+        for spin in spin_loop():
             if hasattr(spin, 'model'):
                 if not spin.model == 'None':
                     curr_models = curr_models + spin.model
@@ -438,14 +434,16 @@ class Main:
             # Tests.
             for param in params:
                 # Get the parameter values.
-                prev_val = getattr(prev_pipe.diff, param)
-                curr_val = getattr(cdp.diff, param)
+                prev_val = getattr(prev_pipe.diff_tensor, param)
+                curr_val = getattr(cdp.diff_tensor, param)
 
                 # Test if not identical.
                 if prev_val != curr_val:
                     print "    Parameter:   " + param
                     print "    Value (k-1): " + `prev_val`
+                    print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
                     print "    Value (k):   " + `curr_val`
+                    print "        (as an IEEE-754 byte array: " + `floatAsByteArray(curr_val)` + ')'
                     print "    The diffusion parameters have not converged.\n"
                     params_converged = False
 
@@ -465,6 +463,9 @@ class Main:
                     if not hasattr(prev_spin, 'params') or not hasattr(curr_spin, 'params'):
                         continue
 
+                    # The spin ID string.
+                    spin_id = generate_spin_id(mol_name=cdp.mol[mol_index].name, res_num=cdp.mol[mol_index].res[res_index].num, res_name=cdp.mol[mol_index].res[res_index].name, spin_num=cdp.mol[mol_index].res[res_index].spin[spin_index].num, spin_name=cdp.mol[mol_index].res[res_index].spin[spin_index].name)
+
                     # Loop over the parameters.
                     for j in xrange(len(curr_spin.params)):
                         # Get the parameter values.
@@ -473,10 +474,12 @@ class Main:
 
                         # Test if not identical.
                         if prev_val != curr_val:
-                            print "    Spin system: " + `curr_spin.num` + ' ' + curr_spin.name
+                            print "    Spin ID:     " + `spin_id`
                             print "    Parameter:   " + curr_spin.params[j]
                             print "    Value (k-1): " + `prev_val`
+                            print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
                             print "    Value (k):   " + `curr_val`
+                            print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
                             print "    The model-free parameters have not converged.\n"
                             params_converged = False
                             break
@@ -543,7 +546,7 @@ class Main:
         """Function for loading the optimised diffusion tensor."""
 
         # Create the data pipe for the previous data (deleting the old data pipe first if necessary).
-        if relax_data_store.has_key('previous'):
+        if ds.has_key('previous'):
             pipe.delete('previous')
         pipe.create('previous', 'mf')
 
@@ -556,21 +559,23 @@ class Main:
             results.read('results', DIFF_MODEL + '/round_' + `self.round - 1` + '/opt')
 
 
-    def model_selection(self, dir=None, write_flag=1):
+    def model_selection(self, modsel_pipe=None, dir=None, write_flag=True):
         """Model selection function."""
 
         # Model elimination.
         eliminate()
 
-        # Model selection.
-        model_selection('AIC', pipes=self.pipes)
+        # Model selection (delete the model selection pipe if it already exists).
+        if ds.has_key(modsel_pipe):
+            pipe.delete(modsel_pipe)
+        model_selection(method='AIC', modsel_pipe=modsel_pipe, pipes=self.pipes)
 
         # Write the results.
         if write_flag:
-            results.write(file='results', dir=dir, force=1)
+            results.write(file='results', dir=dir, force=True)
 
 
-    def multi_model(self, local_tm=0):
+    def multi_model(self, local_tm=False):
         """Function for optimisation of all model-free models."""
 
         # Set the data pipe names (also the names of preset model-free models).
@@ -579,39 +584,41 @@ class Main:
         else:
             self.pipes = MF_MODELS
 
-        # Nuclei type
-        nuclei(HETNUC)
-
+        # Loop over the data pipes.
         for name in self.pipes:
             # Create the data pipe.
-            if relax_data_store.has_key(name):
+            if ds.has_key(name):
                 pipe.delete(name)
             pipe.create(name, 'mf')
 
             # Load the sequence.
-            sequence.read(SEQUENCE)
+            sequence.read(SEQ_ARGS[0], SEQ_ARGS[1], SEQ_ARGS[2], SEQ_ARGS[3], SEQ_ARGS[4], SEQ_ARGS[5], SEQ_ARGS[6], SEQ_ARGS[7])
 
             # Load the PDB file and calculate the unit vectors parallel to the XH bond.
             if not local_tm and PDB_FILE:
                 structure.read_pdb(PDB_FILE)
-                structure.vectors(heteronuc='N', proton='H')
+                structure.vectors(attached='H')
 
             # Load the relaxation data.
             for data in RELAX_DATA:
-                relax_data.read(data[0], data[1], data[2], data[3])
+                relax_data.read(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12])
 
-            # Deselect unresolved residues.
+            # Deselect spins to be excluded (including unresolved and specifically excluded spins).
             if UNRES:
                 deselect.read(file=UNRES)
+            if EXCLUDE:
+                deselect.read(file=EXCLUDE)
 
             # Copy the diffusion tensor from the 'opt' data pipe and prevent it from being minimised.
             if not local_tm:
                 diffusion_tensor.copy('previous')
                 fix('diff')
 
-            # Set the bond length and CSA values.
+            # Set all the necessary values.
             value.set(BOND_LENGTH, 'bond_length')
             value.set(CSA, 'csa')
+            value.set(HETNUC, 'heteronucleus')
+            value.set(PROTON, 'proton')
 
             # Select the model-free model.
             model_free.select_model(model=name)
@@ -622,7 +629,7 @@ class Main:
 
             # Write the results.
             dir = self.base_dir + name
-            results.write(file='results', dir=dir, force=1)
+            results.write(file='results', dir=dir, force=True)
 
 
 # The main class.

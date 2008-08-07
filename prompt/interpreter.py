@@ -20,23 +20,30 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""The prompt based relax user interface (UI)."""
+
+# Dependency check module.
+import dep_check
+
 # Python module imports.
 from code import InteractiveConsole, softspace
 from os import F_OK, access
-import readline
-#import signal
+if dep_check.readline_module:
+    import readline
 import sys
-
-# RelaxError system.
-from relax_errors import AllRelaxErrors, RelaxBinError, RelaxError, RelaxNoneError, RelaxStrError
 
 # Python modules accessible on the command prompt.
 from math import pi
 
+# RelaxError system.
+from relax_errors import AllRelaxErrors, RelaxBinError, RelaxError, RelaxNoneError, RelaxStrError
+
 # Auxiliary modules.
 from help import _Helper, _Helper_python
 from command import Ls, Lh, Ll, system
-from tab_completion import Tab_completion
+if dep_check.readline_module:
+    from tab_completion import Tab_completion
 
 # User functions.
 from angles import Angles
@@ -236,10 +243,11 @@ class Interpreter:
         self.local = locals()
 
         # Setup tab completion.
-        readline.set_completer(Tab_completion(name_space=self.local).finish)
-        readline.set_completer_delims(' \t\n`~!@#$%^&*()=+{}\\|;:",<>/?')
-        #readline.set_completer_delims(' \t\n`~!@#$%^&*()=+{}\\|;:\'",<>/?')
-        readline.parse_and_bind("tab: complete")
+        if dep_check.readline_module:
+            readline.set_completer(Tab_completion(name_space=self.local).finish)
+            readline.set_completer_delims(' \t\n`~!@#$%^&*()=+{}\\|;:",<>/?')
+            #readline.set_completer_delims(' \t\n`~!@#$%^&*()=+{}\\|;:\'",<>/?')
+            readline.parse_and_bind("tab: complete")
 
         # Execute the script file if given.
         if script_file:

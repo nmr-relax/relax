@@ -46,16 +46,16 @@ def exec_stage_1(runs):
         value.set(name, -172 * 1e-6, 'csa')
 
         # Select the model-free model.
-        model_free.select_model(run=name, model=name)
+        model_free.select_model(model=name)
 
         # Create the Modelfree4 files.
-        palmer.create(run=name, force=0, sims=0)
+        palmer.create(force=False, sims=0)
 
         # Run Modelfree4.
-        palmer.execute(run=name, force=1)
+        palmer.execute(force=True)
 
     # Save the program state.
-    state.save('stage1.save', force=1)
+    state.save('stage1.save', force=True)
 
 
 def exec_stage_2(runs):
@@ -72,7 +72,7 @@ def exec_stage_2(runs):
 
     # Extract the Modelfree4 data from the 'mfout' files.
     for name in runs:
-        palmer.extract(run=name)
+        palmer.extract()
 
     # Print out.
     print "\n\nModel selection."
@@ -85,10 +85,10 @@ def exec_stage_2(runs):
     model_selection(method='AIC', modsel_run=name)
 
     # Write the results.
-    results.write(run=name, file='results', force=1)
+    results.write(file='results', force=True)
 
     # Save the program state.
-    state.save('stage2.save', force=1)
+    state.save('stage2.save', force=True)
 
 
 def exec_stage_3():
@@ -107,23 +107,23 @@ def exec_stage_3():
     fix(name, 'diff', 0)
 
     # Create the Modelfree4 files (change sims as needed, see below).
-    palmer.create(run=name, dir='final', force=1, sims=0)
+    palmer.create(dir='final', force=True, sims=0)
 
     # Run Modelfree4.
-    palmer.execute(run=name, dir='final', force=1)
+    palmer.execute(dir='final', force=True)
 
     # Extract the Modelfree4 data from the 'mfout' file.
-    palmer.extract(run=name, dir='final')
+    palmer.extract(dir='final')
 
     # Save the program state.
-    state.save('stage3.save', force=1)
+    state.save('stage3.save', force=True)
 
 
 # Main section of the script.
 #############################
 
 # Nuclei type.
-nuclei('N')
+value.set('15N', 'heteronucleus')
 
 # Set the run name (also the name of a preset model-free model).
 runs = ['m1', 'm2', 'm3', 'm4', 'm5']

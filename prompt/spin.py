@@ -157,8 +157,8 @@ class Spin:
             raise RelaxIntError, ('spin number', spin_num)
 
         # Spin name.
-        if type(spin_name) != str:
-            raise RelaxStrError, ('spin name', spin_name)
+        if spin_name != None and type(spin_name) != str:
+            raise RelaxNoneStrError, ('spin name', spin_name)
 
         # The residue ID.
         if res_id != None and type(res_id) != str:

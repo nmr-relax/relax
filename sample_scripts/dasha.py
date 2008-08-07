@@ -5,7 +5,7 @@
 pipes = ['m1', 'm2', 'm3', 'm4', 'm5']
 
 # Nuclei type
-nuclei('N')
+value.set('15N', 'heteronucleus')
 
 # Loop over the pipes.
 for name in pipes:
@@ -36,7 +36,7 @@ for name in pipes:
     model_free.select_model(model=name)
 
     # Create the Dasha script.
-    dasha.create(algor='NR', force=1)
+    dasha.create(algor='NR', force=True)
 
     # Execute Dasha.
     dasha.execute()
@@ -45,4 +45,4 @@ for name in pipes:
     dasha.extract()
 
     # Write the results.
-    results.write(file='results_dasha', force=1)
+    results.write(file='results_dasha', force=True)

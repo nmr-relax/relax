@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2007 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2006-2008 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,12 +23,13 @@
 # Python module imports.
 from re import search
 from math import cos, sin
-from Numeric import Float64, dot, identity, transpose, zeros
+from numpy import dot, float64, identity, transpose, zeros
 from types import ListType
 
 # relax module imports.
 from data_classes import Element
 from relax_errors import RelaxError
+from relax_xml import fill_object_contents
 
 
 
@@ -284,11 +285,11 @@ def calc_Sxx_unit(alpha, beta, gamma):
     @param gamma:   The Euler angle gamma in radians using the z-y-z convention.
     @type gamma:    float
     @return:        The Sxx unit vector.
-    @rtype:         Numeric array (Float64)
+    @rtype:         numpy array (float64)
     """
 
     # Initilise the vector.
-    Sxx_unit = zeros(3, Float64)
+    Sxx_unit = zeros(3, float64)
 
     # Calculate the x, y, and z components.
     Sxx_unit[0] = -sin(alpha) * sin(gamma)  +  cos(alpha) * cos(beta) * cos(gamma)
@@ -315,11 +316,11 @@ def calc_Syy_unit(alpha, beta, gamma):
     @param gamma:   The Euler angle gamma in radians using the z-y-z convention.
     @type gamma:    float
     @return:        The Syy unit vector.
-    @rtype:         Numeric array (Float64)
+    @rtype:         numpy array (float64)
     """
 
     # Initilise the vector.
-    Syy_unit = zeros(3, Float64)
+    Syy_unit = zeros(3, float64)
 
     # Calculate the x, y, and z components.
     Syy_unit[0] = cos(alpha) * sin(gamma)  +  sin(alpha) * cos(beta) * cos(gamma)
@@ -344,11 +345,11 @@ def calc_Szz_unit(beta, gamma):
     @param gamma:   The Euler angle gamma in radians using the z-y-z convention.
     @type gamma:    float
     @return:        The Szz unit vector.
-    @rtype:         Numeric array (Float64)
+    @rtype:         numpy array (float64)
     """
 
     # Initilise the vector.
-    Szz_unit = zeros(3, Float64)
+    Szz_unit = zeros(3, float64)
 
     # Calculate the x, y, and z components.
     Szz_unit[0] = -sin(beta) * cos(gamma)
@@ -410,17 +411,17 @@ def calc_rotation(Sxx_unit, Syy_unit, Szz_unit):
               | Sxx_unit[2]  Syy_unit[2]  Szz_unit[2] |
 
     @param Sxx_unit:    The Sxx unit vector.
-    @type Sxx_unit:     Numeric array (Float64)
+    @type Sxx_unit:     numpy array (float64)
     @param Syy_unit:    The Syy unit vector.
-    @type Syy_unit:     Numeric array (Float64)
+    @type Syy_unit:     numpy array (float64)
     @param Szz_unit:    The Szz unit vector.
-    @type Szz_unit:     Numeric array (Float64)
+    @type Szz_unit:     numpy array (float64)
     @return:            The rotation matrix.
-    @rtype:             Numeric array ((3, 3), Float64)
+    @rtype:             numpy array ((3, 3), float64)
     """
 
     # Initialise the rotation matrix.
-    rotation = identity(3, Float64)
+    rotation = identity(3, float64)
 
     # First column of the rotation matrix.
     rotation[:, 0] = Sxx_unit
@@ -455,7 +456,7 @@ def calc_tensor(Sxx, Syy, Szz, Sxy, Sxz, Syz):
     """
 
     # Initialise the tensor.
-    tensor = zeros((3, 3), Float64)
+    tensor = zeros((3, 3), float64)
 
     # Populate the diagonal elements.
     tensor[0, 0] = Sxx
@@ -486,11 +487,11 @@ def calc_tensor_diag(rotation, tensor):
         R^T . tensor_diag . R.
 
     @param rotation:    The rotation matrix.
-    @type rotation:     Numeric array ((3, 3), Float64)
+    @type rotation:     numpy array ((3, 3), float64)
     @param tensor:      The full alignment tensor.
-    @type tensor:       Numeric array ((3, 3), Float64)
+    @type tensor:       numpy array ((3, 3), float64)
     @return:        The diagonalised alignment tensor.
-    @rtype:         Numeric array ((3, 3), Float64)
+    @rtype:         numpy array ((3, 3), float64)
     """
 
     # Rotation (R^T . tensor_diag . R).
@@ -548,7 +549,7 @@ class AlignTensorList(ListType):
         text = text + "%-8s%-20s\n" % ("Index", "Name")
         for i in xrange(len(self)):
             text = text + "%-8i%-20s\n" % (i, self[i].name)
-        text = text + "\nThese can be accessed by typing 'relax_data_store.align_tensor[index]'.\n"
+        text = text + "\nThese can be accessed by typing 'ds.align_tensor[index]'.\n"
         return text
 
 
@@ -558,9 +559,46 @@ class AlignTensorList(ListType):
         self.append(AlignTensorData(name))
 
 
+    def to_xml(self, doc, element):
+        """Create an XML element for the alignment tensors.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the alignment tensors XML element to.
+        @type element:  XML element object
+        """
+
+        # Create the alignment tensors element and add it to the higher level element.
+        tensor_list_element = doc.createElement('align_tensors')
+        element.appendChild(tensor_list_element)
+
+        # Set the alignment tensor attributes.
+        tensor_list_element.setAttribute('desc', 'Alignment tensor list')
+
+        # Loop over the tensors.
+        for i in xrange(len(self)):
+            # Create an XML element for a single tensor.
+            tensor_element = doc.createElement('align_tensor')
+            tensor_list_element.appendChild(tensor_element)
+            tensor_element.setAttribute('index', `i`)
+            tensor_element.setAttribute('desc', 'Alignment tensor')
+
+            # Add all simple python objects within the PipeContainer to the pipe element.
+            fill_object_contents(doc, tensor_element, object=self[i], blacklist=self[i].__class__.__dict__.keys())
+
 
 class AlignTensorData(Element):
     """An empty data container for the alignment tensor elements."""
+
+    # List of modifiable attributes.
+    __mod_attr__ = ['name',
+                    'Sxx',
+                    'Syy',
+                    'Sxy',
+                    'Sxz',
+                    'Syz',
+                    'domain',
+                    'red']
 
     def __init__(self, name):
         """Function for placing the tensor name in the class namespace."""
@@ -588,24 +626,8 @@ class AlignTensorData(Element):
             category = 'val'
             param_name = name
 
-        # List of modifiable attributes.
-        mod_attr = ['name',
-                    'Sxx',
-                    'Syy',
-                    'Sxy',
-                    'Sxz',
-                    'Syz',
-                    'alpha',
-                    'beta',
-                    'gamma',
-                    'tensor',
-                    'tensor_diag',
-                    'rotation',
-                    'domain',
-                    'red']
-
         # Test if the attribute that is trying to be set is modifiable.
-        if not param_name in mod_attr:
+        if not param_name in self.__mod_attr__:
             raise RelaxError, "The object " + `name` + " is not modifiable."
 
         # Set the attribute normally.

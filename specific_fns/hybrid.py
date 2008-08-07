@@ -21,7 +21,7 @@
 ###############################################################################
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxPipeError, RelaxSequenceError
 
 
@@ -34,61 +34,61 @@ class Hybrid:
         """Function for duplicating data."""
 
         # Test that the new run exists.
-        if not new_run in relax_data_store.run_names:
+        if not new_run in ds.run_names:
             raise RelaxNoPipeError, new_run
 
         # Test that the old run exists.
-        if not old_run in relax_data_store.run_names:
+        if not old_run in ds.run_names:
             raise RelaxNoPipeError, old_run
 
         # Test that the new run has no sequence loaded.
-        if relax_data_store.res.has_key(new_run):
+        if ds.res.has_key(new_run):
             raise RelaxSequenceError, new_run
 
         # Reset the new run type to hybrid!
-        relax_data_store.run_types[relax_data_store.run_names.index(new_run)] = 'hybrid'
+        ds.run_types[ds.run_names.index(new_run)] = 'hybrid'
 
         # Duplicate the hybrid run data structure.
-        relax_data_store.hybrid_runs[new_run] = relax_data_store.hybrid_runs[old_run]
+        ds.hybrid_pipes[new_run] = ds.hybrid_pipes[old_run]
 
 
     def hybridise(self, hybrid=None, runs=None):
         """Function for creating the hybrid run."""
 
         # Test if the hybrid run already exists.
-        if hybrid in relax_data_store.run_names:
+        if hybrid in ds.run_names:
             raise RelaxPipeError, hybrid
 
         # Loop over the runs to be hybridised.
         for run in runs:
-            # Test if the run exists.
-            if not run in relax_data_store.run_names:
-                raise RelaxNoPipeError, run
+            # Test if the current pipe exists.
+            if not ds.current_pipe:
+                raise RelaxNoPipeError
 
             # Test if sequence data is loaded.
-            if not relax_data_store.res.has_key(run):
+            if not ds.res.has_key(run):
                 raise RelaxNoSequenceError, run
 
         # Check the sequence.
-        for i in xrange(len(relax_data_store.res[runs[0]])):
+        for i in xrange(len(ds.res[runs[0]])):
             # Reassign the data structure.
-            data1 = relax_data_store.res[runs[0]][i]
+            data1 = ds.res[runs[0]][i]
 
             # Loop over the rest of the runs.
             for run in runs[1:]:
                 # Reassign the data structure.
-                data2 = relax_data_store.res[run][i]
+                data2 = ds.res[run][i]
 
                 # Test if the sequence is the same.
                 if data1.name != data2.name or data1.num != data2.num:
                     raise RelaxError, "The residues '" + data1.name + " " + `data1.num` + "' of the run " + `runs[0]` + " and '" + data2.name + " " + `data2.num` + "' of the run " + `run` + " are not the same."
 
         # Add the run and type to the runs list.
-        relax_data_store.run_names.append(hybrid)
-        relax_data_store.run_types.append('hybrid')
+        ds.run_names.append(hybrid)
+        ds.run_types.append('hybrid')
 
         # Create the data structure of the runs which form the hybrid.
-        relax_data_store.hybrid_runs[hybrid] = runs
+        ds.hybrid_pipes[hybrid] = runs
 
 
     def model_statistics(self, run=None, instance=None, global_stats=None):
@@ -108,9 +108,9 @@ class Hybrid:
         chi2_total = 0.0
 
         # Specific setup.
-        for run in relax_data_store.hybrid_runs[self.run]:
+        for run in ds.hybrid_pipes[self.run]:
             # Function type.
-            function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
+            function_type = ds.run_types[ds.run_names.index(run)]
 
             # Specific model statistics and number of instances functions.
             model_statistics = self.relax.specific_setup.setup('model_stats', function_type)

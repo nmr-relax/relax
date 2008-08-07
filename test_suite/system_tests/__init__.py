@@ -33,6 +33,7 @@ from test_suite.relax_test_runner import RelaxTestRunner
 # relax system/functional test module imports.
 from angles import Angles
 from consistency_tests import Ct
+from dasha import Dasha
 from diffusion_tensor import Diffusion_tensor
 from generic import Generic
 from jw_mapping import Jw
@@ -40,13 +41,17 @@ from load_spins import Load_spins
 from model_free import Mf
 from model_selection import Modsel
 from n_state_model import N_state_model
+from nmrview import NMRView
+from palmer import Palmer
 from pipe_create import Pipe_create
 from relax_fit import Relax_fit
+from results import Results
 from sequence import Sequence
 
 
 __all__ = ['angles',
            'consistency_tests',
+           'dasha'
            'diffusion_tensor',
            'generic',
            'jw_mapping',
@@ -54,8 +59,11 @@ __all__ = ['angles',
            'model_free',
            'model_selection',
            'n_state_model',
+           'nmrview',
+           'palmer',
            'pipe_create',
            'relax_fit',
+           'results',
            'sequence']
 
 
@@ -79,16 +87,20 @@ class System_test_runner:
         suite_array = []
         suite_array.append(TestLoader().loadTestsFromTestCase(Angles))
         suite_array.append(TestLoader().loadTestsFromTestCase(Ct))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Dasha))
         suite_array.append(TestLoader().loadTestsFromTestCase(Diffusion_tensor))
         suite_array.append(TestLoader().loadTestsFromTestCase(Generic))
         suite_array.append(TestLoader().loadTestsFromTestCase(Jw))
         suite_array.append(TestLoader().loadTestsFromTestCase(Load_spins))
         suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
         suite_array.append(TestLoader().loadTestsFromTestCase(Modsel))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Relax_fit))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Sequence))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Pipe_create))
         suite_array.append(TestLoader().loadTestsFromTestCase(N_state_model))
+        suite_array.append(TestLoader().loadTestsFromTestCase(NMRView))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Palmer))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Pipe_create))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Relax_fit))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Results))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Sequence))
 
         # Add the relax namespace to each TestCase object.
         for i in xrange(len(suite_array)):

@@ -25,11 +25,15 @@
 
 
 # Python module imports.
-from re import match
+from re import search
+from string import split
+from time import asctime
+import xml.dom.minidom
 
 # relax module imports.
 from pipe_container import PipeContainer
 from relax_errors import RelaxPipeError
+from version import version
 
 
 __all__ = [ 'data_classes',
@@ -38,12 +42,26 @@ __all__ = [ 'data_classes',
             'main' ]
 
 
-class Data2(dict):
+class Relax_data_store(dict):
     """The relax data storage object."""
 
     # The current data pipe.
     current_pipe = None
 
+    # Class variable for storing the class instance.
+    instance = None
+
+    def __new__(self, *args, **kargs): 
+        """Replacement function for implementing the singleton design pattern."""
+
+        # First initialisation.
+        if self.instance is None:
+            self.instance = dict.__new__(self, *args, **kargs)
+
+        # Already initialised, so return the instance.
+        return self.instance
+
+    
     def __repr__(self):
         """The string representation of the object.
 
@@ -64,28 +82,40 @@ class Data2(dict):
         else:
             text = text + "  None\n"
 
-        # Objects.
+        # Data store objects.
         text = text + "\n"
-        text = text + "Objects:\n"
-        for name in dir(self):
-            if match("^_", name) or name in dict.__dict__ or name == 'add':
-                continue
-            text = text + "  %s: %s\n" % (name, `getattr(self, name)`)
+        text = text + "Data store objects:\n"
+        names = self.__class__.__dict__.keys()
+        names.sort()
+        for name in names:
+            # The object.
+            obj = getattr(self, name)
 
-        # Methods.
-        text = text + "\n"
-        text = text + "Methods:\n"
-        text = text + "  __reset__, Reset the relax data storage object back to its initial state\n"
-        text = text + "  add, Add a new data pipe container.\n"
-
+            # The text.
+            if obj == None or type(obj) == str:
+                text = text + "  %s %s: %s\n" % (name, type(obj), obj)
+            else:
+                text = text + "  %s %s: %s\n" % (name, type(obj), split(obj.__doc__, '\n')[0])
 
         # dict methods.
         text = text + "\n"
         text = text + "Inherited dictionary methods:\n"
         for name in dir(dict):
-            if match("^_", name):
+            # Skip special methods.
+            if search("^_", name):
                 continue
-            text = text + "  %s\n" % name
+
+            # Skip overwritten methods.
+            if name in self.__class__.__dict__.keys():
+                continue
+
+            # The object.
+            obj = getattr(self, name)
+
+            # The text.
+            text = text + "  %s %s: %s\n" % (name, type(obj), split(obj.__doc__, '\n')[0])
+
+        # Return the text.
         return text
 
 
@@ -129,6 +159,65 @@ class Data2(dict):
         # Change the current data pipe.
         self.current_pipe = pipe_name
 
-# Rebind the name Data with an instance to prevent accidental creation
-# of multiple instances of the Data class
-Data = Data2()
+
+    def from_xml(self, file, verbosity=1):
+        """Parse a XML document representation of a data pipe, and load it into the relax data store.
+
+        @param file:        The open file object.
+        @type file:         file
+        @keyword verbosity: A flag specifying the amount of information to print.  The higher the value,
+                            the greater the verbosity.
+        @type verbosity:    int
+        """
+
+        # Create the XML document from the file.
+        doc = xml.dom.minidom.parse(file)
+
+        # Get the relax node.
+        relax_node = doc.childNodes[0]
+
+        # Get the relax version of the XML file.
+        relax_version = str(relax_node.getAttribute('version'))
+
+        # Fill the pipe.
+        self[self.current_pipe].from_xml(relax_node)
+
+
+    def to_xml(self, file):
+        """Create a XML document representation of the current data pipe.
+
+        This method creates the top level XML document including all the information needed
+        about relax, calls the PipeContainer.xml_write() method to fill in the document contents,
+        and writes the XML into the file object.
+
+        @param file:        The open file object.
+        @type file:         file
+        """
+
+        # Create the XML document object.
+        self.xmldoc = xml.dom.minidom.Document()
+
+        # Create the top level element, including the relax URL.
+        top_element = self.xmldoc.createElementNS('http://nmr-relax.com', 'relax')
+
+        # Append the element.
+        self.xmldoc.appendChild(top_element)
+
+        # Set the relax version number, and add a creation time.
+        top_element.setAttribute('version', version)
+        top_element.setAttribute('time', asctime())
+
+        # Create the pipe XML element and add it to the top level XML element.
+        pipe_element = self.xmldoc.createElement('pipe')
+        top_element.appendChild(pipe_element)
+
+        # Set the data pipe attributes.
+        pipe_element.setAttribute('desc', 'The contents of a relax data pipe')
+        pipe_element.setAttribute('name', self.current_pipe)
+        pipe_element.setAttribute('type', self[self.current_pipe].pipe_type)
+
+        # Fill the data pipe XML element.
+        self[self.current_pipe].to_xml(self.xmldoc, pipe_element)
+
+        # Write out the XML file.
+        file.write(self.xmldoc.toprettyxml(indent='    '))

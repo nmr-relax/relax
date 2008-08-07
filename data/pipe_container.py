@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,9 +26,11 @@ from re import match
 # relax module imports.
 from data_classes import Element
 from diff_tensor import DiffTensorData
+import generic_fns
 from mol_res_spin import MoleculeList
 from prototype import Prototype
-
+from relax_errors import RelaxFromXMLNotEmptyError
+from relax_xml import fill_object_contents, node_value_to_python, xml_to_object
 
 
 class PipeContainer(Prototype):
@@ -37,9 +39,6 @@ class PipeContainer(Prototype):
     def __init__(self):
         """Set up all the PipeContainer data structures."""
 
-        # Molecular structure data.
-        self.structure = Element()
-
         # The molecule-residue-spin object.
         self.mol = MoleculeList()
 
@@ -47,15 +46,7 @@ class PipeContainer(Prototype):
         self.pipe_type = None
 
         # Hybrid models.
-        self.hybrid_runs = {}
-
-        # Global minimisation statistics.
-        self.chi2 = None
-        self.iter = None
-        self.f_count = None
-        self.g_count = None
-        self.h_count = None
-        self.warning = None
+        self.hybrid_pipes = []
 
 
     def __repr__(self):
@@ -88,7 +79,7 @@ class PipeContainer(Prototype):
                 text = text + "  structure: The 3D molecular data object\n"
 
             # Skip the PipeContainer methods.
-            if name == 'is_empty':
+            if name in self.__class__.__dict__.keys():
                 continue
 
             # Skip certain objects.
@@ -102,6 +93,40 @@ class PipeContainer(Prototype):
         return text
 
 
+    def from_xml(self, relax_node):
+        """Read a pipe container XML element and place the contents into this pipe.
+
+        @param relax_node:  The relax XML node.
+        @type relax_node:   xml.dom.minidom.Element instance
+        """
+
+        # Test if empty.
+        if not self.is_empty():
+            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
+
+        # Get the global data node, and fill the contents of the pipe.
+        global_node = relax_node.getElementsByTagName('global')[0]
+        xml_to_object(global_node, self)
+
+        # Get the hybrid node (and its sub-node), and recreate the hybrid object.
+        hybrid_node = relax_node.getElementsByTagName('hybrid')[0]
+        pipes_node = hybrid_node.getElementsByTagName('pipes')[0]
+        setattr(self, 'hybrid_pipes', node_value_to_python(pipes_node.childNodes[0]))
+
+        # Get the diffusion tensor data nodes and, if they exist, fill the contents.
+        diff_tensor_nodes = relax_node.getElementsByTagName('diff_tensor')
+        if diff_tensor_nodes:
+            # Create the diffusion tensor object.
+            self.diff_tensor = DiffTensorData()
+
+            # Fill its contents.
+            self.diff_tensor.from_xml(diff_tensor_nodes[0])
+
+        # Recreate the molecule, residue, and spin data structure.
+        mol_nodes = relax_node.getElementsByTagName('mol')
+        self.mol.from_xml(mol_nodes)
+
+
     def is_empty(self):
         """Method for testing if the data pipe is empty.
 
@@ -110,7 +135,7 @@ class PipeContainer(Prototype):
         """
 
         # Is the molecule structure data object empty?
-        if not self.structure.is_empty():
+        if hasattr(self, 'structure') and not self.structure.is_empty():
             return False
 
         # Is the molecule/residue/spin data object empty?
@@ -118,29 +143,17 @@ class PipeContainer(Prototype):
             return False
 
         # Tests for the initialised data (the pipe type can be set in an empty data pipe, so this isn't checked).
-        if self.hybrid_runs != {}:
-            return False
-        if self.chi2 != None:
-            return False
-        if self.iter != None:
-            return False
-        if self.f_count != None:
-            return False
-        if self.g_count != None:
-            return False
-        if self.h_count != None:
-            return False
-        if self.warning != None:
+        if self.hybrid_pipes:
             return False
 
         # An object has been added to the container.
         for name in dir(self):
             # Skip the objects initialised in __init__().
-            if name == 'structure' or name == 'mol' or name == 'pipe_type' or name == 'hybrid_runs' or name == 'chi2' or name == 'iter' or name == 'f_count' or name == 'g_count' or name == 'h_count' or name == 'warning':
+            if name == 'mol' or name == 'pipe_type' or name == 'hybrid_pipes':
                 continue
 
             # Skip the PipeContainer methods.
-            if name == 'is_empty':
+            if name in self.__class__.__dict__.keys():
                 continue
 
             # Skip special objects.
@@ -152,3 +165,80 @@ class PipeContainer(Prototype):
 
         # The data pipe is empty.
         return True
+
+
+    def to_xml(self, doc, element):
+        """Create a XML element for the current data pipe.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The XML element to add the pipe XML element to.
+        @type element:  XML element object
+        """
+
+        # Add all simple python objects within the PipeContainer to the global element.
+        global_element = doc.createElement('global')
+        element.appendChild(global_element)
+        global_element.setAttribute('desc', 'Global data located in the top level of the data pipe')
+        fill_object_contents(doc, global_element, object=self, blacklist=['align_tensors', 'diff_tensor', 'hybrid_pipes', 'mol', 'pipe_type', 'structure'] + self.__class__.__dict__.keys())
+
+        # Hybrid info.
+        self.xml_create_hybrid_element(doc, element)
+
+        # Add the diffusion tensor data.
+        if hasattr(self, 'diff_tensor'):
+            self.diff_tensor.to_xml(doc, element)
+
+        # Add the alignment tensor data.
+        if hasattr(self, 'align_tensors'):
+            self.align_tensors.to_xml(doc, element)
+
+        # Add the structural data, if it exists.
+        if hasattr(self, 'structure'):
+            self.xml_create_str_element(doc, element)
+
+        # Add the molecule-residue-spin data.
+        self.mol.to_xml(doc, element)
+
+
+    def xml_create_hybrid_element(self, doc, element):
+        """Create an XML element for the data pipe hybridisation information.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the hybridisation info to.
+        @type element:  XML element object
+        """
+
+        # Create the hybrid element and add it to the higher level element.
+        hybrid_element = doc.createElement('hybrid')
+        element.appendChild(hybrid_element)
+
+        # Set the hybridisation attributes.
+        hybrid_element.setAttribute('desc', 'Data pipe hybridisation information')
+
+        # Create an element to store the pipes list.
+        list_element = doc.createElement('pipes')
+        hybrid_element.appendChild(list_element)
+
+        # Add the pipes list.
+        text_val = doc.createTextNode(str(self.hybrid_pipes))
+        list_element.appendChild(text_val)
+
+
+    def xml_create_str_element(self, doc, element):
+        """Create an XML element for the structural information.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the structural info to.
+        @type element:  XML element object
+        """
+
+        # Create the structural element and add it to the higher level element.
+        str_element = doc.createElement('structure')
+        element.appendChild(str_element)
+
+        # Set the structural attributes.
+        str_element.setAttribute('desc', 'Structural information')
+        str_element.setAttribute('id', self.structure.id)

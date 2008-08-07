@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError
 
@@ -36,28 +36,28 @@ class Test_pipes(TestCase):
         """Set up for all the data pipe unit tests."""
 
         # Reset the relax data storage object.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Add a data pipe to the data store.
-        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+        ds.add(pipe_name='orig', pipe_type='mf')
 
         # Add a single object to the 'orig' data pipe.
-        relax_data_store['orig'].x = 1
+        ds['orig'].x = 1
 
         # Add a single object to the single spin system of the 'orig' data pipe.
-        relax_data_store['orig'].mol[0].res[0].spin[0].num = 1
+        ds['orig'].mol[0].res[0].spin[0].num = 1
 
         # Add an empty data pipe (for the 'eliminate_unused_pipes' test).
-        relax_data_store.add(pipe_name='empty', pipe_type='mf')
+        ds.add(pipe_name='empty', pipe_type='mf')
 
         # Set the current pipe to the 'orig' data pipe.
-        relax_data_store.current_pipe = 'orig'
+        ds.current_pipe = 'orig'
 
 
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        relax_data_store.__reset__()
+        ds.__reset__()
 
 
     def test_copy(self):
@@ -70,25 +70,25 @@ class Test_pipes(TestCase):
         pipes.copy('orig', 'new')
 
         # Test that the new data pipe exists.
-        self.assert_(relax_data_store.has_key('new'))
+        self.assert_(ds.has_key('new'))
 
         # Test that the new data pipe has the object 'x' and that its value is 1.
-        self.assertEqual(relax_data_store['new'].x, 1)
+        self.assertEqual(ds['new'].x, 1)
 
         # Change the value of x.
-        relax_data_store['new'].x = 2
+        ds['new'].x = 2
 
         # Test that the two values are different.
-        self.assert_(relax_data_store['orig'].x != relax_data_store['new'].x)
+        self.assert_(ds['orig'].x != ds['new'].x)
 
         # Test that the new data pipe has the object 'mol[0].res[0].spin[0].num' and that its value is 1.
-        self.assertEqual(relax_data_store['new'].mol[0].res[0].spin[0].num, 1)
+        self.assertEqual(ds['new'].mol[0].res[0].spin[0].num, 1)
 
         # Change the spin system number.
-        relax_data_store['new'].mol[0].res[0].spin[0].num = 2
+        ds['new'].mol[0].res[0].spin[0].num = 2
 
         # Test that the original spin system number hasn't changed.
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 1)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].num, 1)
 
 
     def test_copy_current(self):
@@ -101,25 +101,25 @@ class Test_pipes(TestCase):
         pipes.copy(pipe_to='new')
 
         # Test that the new data pipe exists.
-        self.assert_(relax_data_store.has_key('new'))
+        self.assert_(ds.has_key('new'))
 
         # Test that the new data pipe has the object 'x' and that its value is 1.
-        self.assertEqual(relax_data_store['new'].x, 1)
+        self.assertEqual(ds['new'].x, 1)
 
         # Change the value of x.
-        relax_data_store['new'].x = 2
+        ds['new'].x = 2
 
         # Test that the two values are different.
-        self.assert_(relax_data_store['orig'].x != relax_data_store['new'].x)
+        self.assert_(ds['orig'].x != ds['new'].x)
 
         # Test that the new data pipe has the object 'mol[0].res[0].spin[0].num' and that its value is 1.
-        self.assertEqual(relax_data_store['new'].mol[0].res[0].spin[0].num, 1)
+        self.assertEqual(ds['new'].mol[0].res[0].spin[0].num, 1)
 
         # Change the spin system number.
-        relax_data_store['new'].mol[0].res[0].spin[0].num = 2
+        ds['new'].mol[0].res[0].spin[0].num = 2
 
         # Test that the original spin system number hasn't changed.
-        self.assertEqual(relax_data_store['orig'].mol[0].res[0].spin[0].num, 1)
+        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].num, 1)
 
 
     def test_copy_fail(self):
@@ -143,10 +143,10 @@ class Test_pipes(TestCase):
         pipes.create(name, 'mf')
 
         # Test that the data pipe exists.
-        self.assert_(relax_data_store.has_key(name))
+        self.assert_(ds.has_key(name))
 
         # Test that the current pipe is the new pipe.
-        self.assertEqual(relax_data_store.current_pipe, name)
+        self.assertEqual(ds.current_pipe, name)
 
 
     def test_creation_fail(self):
@@ -177,16 +177,16 @@ class Test_pipes(TestCase):
 
         # Set the current pipe to the 'orig' data pipe.
         name = 'orig'
-        relax_data_store.current_pipe = name
+        ds.current_pipe = name
 
         # Delete the 'orig' data pipe.
         pipes.delete(name)
 
         # Test that the data pipe no longer exists.
-        self.assert_(not relax_data_store.has_key(name))
+        self.assert_(not ds.has_key(name))
 
         # Test that the current pipe is None (as the current pipe was deleted).
-        self.assertEqual(relax_data_store.current_pipe, None)
+        self.assertEqual(ds.current_pipe, None)
 
 
     def test_deletion_fail(self):
@@ -209,13 +209,13 @@ class Test_pipes(TestCase):
         pipes.switch('orig')
 
         # Test the current data pipe.
-        self.assertEqual(relax_data_store.current_pipe, 'orig')
+        self.assertEqual(ds.current_pipe, 'orig')
 
         # Switch to the 'empty' data pipe.
         pipes.switch('empty')
 
         # Test the current data pipe.
-        self.assertEqual(relax_data_store.current_pipe, 'empty')
+        self.assertEqual(ds.current_pipe, 'empty')
 
 
     def test_switch_fail(self):
@@ -243,7 +243,7 @@ class Test_pipes(TestCase):
         self.assertRaises(RelaxNoPipeError, pipes.test, 'x')
 
         # Reset the relax data storage object.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Now none of the following pipes exist, hence errors should be thrown.
         self.assertRaises(RelaxNoPipeError, pipes.test)

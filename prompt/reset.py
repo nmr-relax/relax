@@ -21,7 +21,7 @@
 ###############################################################################
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 
 
 # The relax data storage object.
@@ -42,4 +42,4 @@ class Reset:
         """
 
         # Run the relax data storage object reset method.
-        relax_data_store.__reset__()
+        ds.__reset__()

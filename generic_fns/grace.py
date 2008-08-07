@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,15 +20,19 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for interfacing with Grace (also known as Xmgrace, Xmgr, and ace)."""
+
 # Python module imports.
 from numpy import array
 from os import system
 from re import match
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSimError, RelaxRegExpError
+from relax_io import get_file_path, open_write_file, test_binary
 
 
 
@@ -100,7 +104,7 @@ class Grace:
         """Function for getting all the xy data."""
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Loop over the residues.
         for spin in spin_loop(spin_id):
@@ -174,20 +178,19 @@ class Grace:
         """Function for running Grace."""
 
         # Test the binary file string corresponds to a valid executable.
-        self.relax.IO.test_binary(grace_exe)
+        test_binary(grace_exe)
 
         # File path.
-        self.file_path = self.relax.IO.file_path(file, dir)
+        self.file_path = get_file_path(file, dir)
 
         # Run Grace.
         system(grace_exe + " " + self.file_path + " &")
 
 
-    def write(self, run=None, x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot_data='value', norm=1, file=None, dir=None, force=0):
+    def write(self, x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot_data='value', norm=1, file=None, dir=None, force=False):
         """Function for writing data to a file."""
 
         # Arguments.
-        self.run = run
         self.x_data_type = x_data_type
         self.y_data_type = y_data_type
         self.res_num = res_num
@@ -195,9 +198,9 @@ class Grace:
         self.plot_data = plot_data
         self.norm = norm
 
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
 
         # Test if the sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -222,14 +225,14 @@ class Grace:
             raise RelaxError, "The plot data argument " + `self.plot_data` + " must be set to either 'value', 'error', 'sim'."
 
         # Test if the simulations exist.
-        if self.plot_data == 'sim' and (not hasattr(relax_data_store, 'sim_number') or not relax_data_store.sim_number.has_key(self.run)):
+        if self.plot_data == 'sim' and (not hasattr(ds, 'sim_number') or not ds.sim_number.has_key(self.run)):
             raise RelaxNoSimError, self.run
 
         # Open the file for writing.
-        self.file = self.relax.IO.open_write_file(file, dir, force)
+        self.file = open_write_file(file, dir, force)
 
         # Function type.
-        function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
+        function_type = ds.run_types[ds.run_names.index(run)]
 
         # Specific value and error, conversion factor, and units returning functions.
         self.x_return_value =             self.y_return_value =             self.relax.specific_setup.setup('return_value', function_type)

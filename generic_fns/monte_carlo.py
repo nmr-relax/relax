@@ -30,7 +30,7 @@ from numpy import ones
 from random import gauss
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
 from specific_fns.setup import get_specific_fn
@@ -44,11 +44,11 @@ def create_data(method=None):
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Test if simulations have been set up.
     if not hasattr(cdp, 'sim_state'):
@@ -64,27 +64,25 @@ def create_data(method=None):
         raise RelaxError, "The simulation creation method " + `method` + " is not valid."
 
     # Specific Monte Carlo data creation, data return, and error return function setup.
-    create_mc_data = get_specific_fn('create_mc_data', cdp.pipe_type)
+    num_models = get_specific_fn('num_instances', cdp.pipe_type)
+    if method == 'back_calc':
+        create_mc_data = get_specific_fn('create_mc_data', cdp.pipe_type)
     return_data = get_specific_fn('return_data', cdp.pipe_type)
     return_error = get_specific_fn('return_error', cdp.pipe_type)
     pack_sim_data = get_specific_fn('pack_sim_data', cdp.pipe_type)
 
-    # Loop over the sequence.
-    for spin in spin_loop():
-        # Skip deselected residues.
-        if not spin.select:
-            continue
-
+    # Loop over the models.
+    for model_index in xrange(num_models()):
         # Create the Monte Carlo data.
         if method == 'back_calc':
-            data = create_mc_data(spin)
+            data = create_mc_data(model_index)
 
         # Get the original data.
         else:
-            data = return_data(spin)
+            data = return_data(model_index)
 
         # Get the errors.
-        error = return_error(spin)
+        error = return_error(model_index)
 
         # Loop over the Monte Carlo simulations.
         random = []
@@ -101,7 +99,7 @@ def create_data(method=None):
                 random[j].append(gauss(data[k], error[k]))
 
         # Pack the simulation data.
-        pack_sim_data(spin, random)
+        pack_sim_data(model_index, random)
 
 
 def error_analysis(prune=0.0):
@@ -128,11 +126,11 @@ def error_analysis(prune=0.0):
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Test if simulations have been set up.
     if not hasattr(cdp, 'sim_state'):
@@ -154,8 +152,8 @@ def error_analysis(prune=0.0):
         # Get the selected simulation array.
         select_sim = return_selected_sim(instance)
 
-        # Initialise an array of indecies to prune (an empty array means no pruning).
-        indecies_to_skip = []
+        # Initialise an array of indices to prune (an empty array means no pruning).
+        indices_to_skip = []
 
         # Pruning.
         if prune > 0.0:
@@ -169,16 +167,16 @@ def error_analysis(prune=0.0):
             chi2_sorted = deepcopy(chi2_array)
             chi2_sorted.sort()
 
-            # Number of indecies to remove from one side of the chi2 distribution.
+            # Number of indices to remove from one side of the chi2 distribution.
             num = int(float(n) * 0.5 * prune)
 
             # Remove the lower tail.
             for i in xrange(num):
-                indecies_to_skip.append(chi2_array.index(chi2_sorted[i]))
+                indices_to_skip.append(chi2_array.index(chi2_sorted[i]))
 
             # Remove the upper tail.
             for i in xrange(n-num, n):
-                indecies_to_skip.append(chi2_array.index(chi2_sorted[i]))
+                indices_to_skip.append(chi2_array.index(chi2_sorted[i]))
 
         # Loop over the parameters.
         index = 0
@@ -200,7 +198,7 @@ def error_analysis(prune=0.0):
                         continue
 
                     # Prune.
-                    if i in indecies_to_skip:
+                    if i in indices_to_skip:
                         continue
 
                     # Increment n.
@@ -214,7 +212,7 @@ def error_analysis(prune=0.0):
                         continue
 
                     # Prune.
-                    if i in indecies_to_skip:
+                    if i in indices_to_skip:
                         continue
 
                     # Sum.
@@ -234,7 +232,7 @@ def error_analysis(prune=0.0):
                         continue
 
                     # Prune.
-                    if i in indecies_to_skip:
+                    if i in indices_to_skip:
                         continue
 
                     # Sum.
@@ -261,11 +259,11 @@ def initial_values():
     """Set the initial simulation parameter values."""
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Test if simulations have been set up.
     if not hasattr(cdp, 'sim_state'):
@@ -282,11 +280,11 @@ def off():
     """Turn simulations off."""
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Test if simulations have been set up.
     if not hasattr(cdp, 'sim_state'):
@@ -300,11 +298,11 @@ def on():
     """Turn simulations on."""
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Test if simulations have been set up.
     if not hasattr(cdp, 'sim_state'):
@@ -326,7 +324,7 @@ def select_all_sims(number=None, all_select_sim=None):
     """
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Specific number of instances and set the selected simulation array functions.
     count_num_instances = get_specific_fn('num_instances', cdp.pipe_type)
@@ -361,11 +359,11 @@ def setup(number=None, all_select_sim=None):
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Test if Monte Carlo simulations have already been set up.
     if hasattr(cdp, 'sim_number'):

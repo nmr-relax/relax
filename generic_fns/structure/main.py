@@ -24,31 +24,35 @@
 from math import sqrt
 from numpy import dot, float64, ndarray, zeros
 from os import F_OK, access
+from re import search
 import sys
 from warnings import warn
 
 # relax module imports.
-from data import Data as relax_data_store
-from generic_fns import molmol
+from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import molmol, relax_re
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_loop
 from generic_fns.sequence import write_header, write_line
 from generic_fns.structure.internal import Internal
 from generic_fns.structure.scientific import Scientific_data
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPipeError, RelaxNoSequenceError, RelaxPdbError
-from relax_io import get_file_path
+from relax_io import get_file_path, open_write_file
 from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
 
 
 
-def load_spins(spin_id=None):
+def load_spins(spin_id=None, str_id=None):
     """Load the spins from the structural object into the relax data store.
 
     @keyword spin_id:   The molecule, residue, and spin identifier string.
     @type spin_id:      str
+    @keyword str_id:    The structure identifier.  This can be the file name, model number, or
+                        structure number.
+    @type str_id:       int or str
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Print out.
@@ -56,10 +60,10 @@ def load_spins(spin_id=None):
     write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Loop over all atoms of the spin_id selection.
-    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
+    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, str_id=str_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
         # Initialise the identification string.
         id = ''
 
@@ -76,7 +80,7 @@ def load_spins(spin_id=None):
             mol_cont = cdp.mol[0]
 
         # Add the molecule if it doesn't exist.
-        if mol_name and mol_cont == None:
+        if mol_cont == None:
             # Add the molecule.
             cdp.mol.add_item(mol_name=mol_name)
 
@@ -90,7 +94,7 @@ def load_spins(spin_id=None):
         res_cont = return_residue(id)
 
         # Add the residue if it doesn't exist.
-        if res_num and res_name and res_cont == None:
+        if res_cont == None:
             # Add the residue.
             mol_cont.res.add_item(res_name=res_name, res_num=res_num)
 
@@ -104,7 +108,7 @@ def load_spins(spin_id=None):
         spin_cont = return_spin(id)
 
         # Add the spin if it doesn't exist.
-        if atom_name and spin_cont == None:
+        if spin_cont == None:
             # Add the spin.
             res_cont.spin.add_item(spin_name=atom_name, spin_num=atom_num)
 
@@ -154,18 +158,18 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', fail=True, ve
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
-
-    # Test if structural data already exists.
-    if hasattr(cdp, 'struct'):
-        raise RelaxPdbError
+    cdp = ds[ds.current_pipe]
 
     # The file path.
     file_path = get_file_path(file, dir)
+
+    # Try adding '.pdb' to the end of the file path, if the file can't be found.
+    if not access(file_path, F_OK):
+        file_path = file_path + '.pdb'
 
     # Test if the file exists.
     if not access(file_path, F_OK):
@@ -175,11 +179,16 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', fail=True, ve
             warn(RelaxNoPDBFileWarning(file_path))
             return
 
+    # Check that the parser is the same as the currently loaded PDB files.
+    if hasattr(cdp, 'structure') and cdp.structure.id != parser:
+        raise RelaxError, "The " + `parser` + " parser does not match the " + `cdp.structure.id` + " parser of the PDB loaded into the current pipe."
+
     # Place the parser specific structural object into the relax data store.
-    if parser == 'scientific':
-        cdp.structure = Scientific_data()
-    elif parser == 'internal':
-        cdp.structure = Internal()
+    if not hasattr(cdp, 'structure'):
+        if parser == 'scientific':
+            cdp.structure = Scientific_data()
+        elif parser == 'internal':
+            cdp.structure = Internal()
 
     # Load the structures.
     cdp.structure.load_pdb(file_path, model, verbosity)
@@ -201,23 +210,30 @@ def set_vector(spin=None, xh_vect=None):
     spin.xh_vect = xh_vect
 
 
-def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
-    """Function for calculating/extracting the XH unit vector from the loaded structure.
+def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=True, unit=True):
+    """Extract the bond vectors from the loaded structures.
 
-    @param proton:      The name of the proton attached to the spin, as given in the structural
-                        file.
-    @type proton:       str
-    @param spin_id:     The molecule, residue, and spin identifier string.
-    @type spin_id:      str
-    @param verbosity:   The higher the value, the more information is printed to screen.
-    @type verbosity:    int
-    @keyword unit:      A flag which if set will cause the function to return the unit XH vector
-                        rather than the full vector.
-    @type unit:         bool
+    @keyword attached:      The name of the atom attached to the spin, as given in the structural
+                            file.  Regular expression can be used, for example 'H*'.  This uses
+                            relax rather than Python regular expression (i.e. shell like syntax).
+    @type attached:         str
+    @keyword spin_id:       The spin identifier string.
+    @type spin_id:          str
+    @keyword struct_index:  The index of the structure to extract the vector from.  If None, all
+                            vectors will be extracted.
+    @type struct_index:     str
+    @keyword verbosity:     The higher the value, the more information is printed to screen.
+    @type verbosity:        int
+    @keyword ave:           A flag which if True will cause the average of all vectors to be
+                            extracted.
+    @type ave:              bool
+    @keyword unit:          A flag which if True will cause the function to calculate the unit
+                            vectors.
+    @type unit:             bool
     """
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Test if the PDB file has been loaded.
     if not hasattr(cdp, 'structure'):
@@ -229,13 +245,42 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
 
     # Print out.
     if verbosity:
-        if cdp.structure.num_models() > 1:
-            print "\nCalculating and averaging the following unit XH vectors from all models:"
-        else:
-            print "\nCalculating the following unit XH vectors from the structure:"
+        # Number of structures.
+        num = cdp.structure.num_structures()
 
-    # Header print out.
-    write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+        # Multiple structures loaded.
+        if num > 1:
+            if struct_index:
+                print "Extracting vectors for structure " + `struct_index` + "."
+            else:
+                print "Extracting vectors for all " + `num` + " structures."
+                if ave:
+                    print "Averaging all vectors."
+
+        # Single structure loaded.
+        else:
+            print "Extracting vectors from the single structure."
+
+        # Unit vectors.
+        if unit:
+            print "Calculating the unit vectors."
+
+    # Determine if the attached atom is a proton.
+    proton = False
+    if relax_re.search('.*H.*', attached) or relax_re.search(attached, 'H'):
+        proton = True
+    if verbosity:
+        if proton:
+            print "The attached atom is a proton."
+        else:
+            print "The attached atom is not a proton."
+        print
+
+    # Set the variable name in which the vectors will be stored.
+    if proton:
+        object_name = 'xh_vect'
+    else:
+        object_name = 'bond_vect'
 
     # Loop over the spins.
     for spin, mol_name, res_num, res_name in spin_loop(selection=spin_id, full_info=True):
@@ -246,36 +291,46 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
         # The spin identification string.
         id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
 
-        # Test that the spin number and name are set (essential for the single atom identification).
+        # Test that the spin number or name are set (one or both are essential for the identification of the atom).
         if spin.num == None and spin.name == None:
-            warn(RelaxWarning("The spin num and name are not set for the spin " + `id` + "."))
+            warn(RelaxWarning("Either the spin number or name must be set for the spin " + `id` + " to identify the corresponding atom in the structure."))
             continue
 
-        # The XH vector already exists.
-        if hasattr(spin, 'xh_vect'):
-            warn(RelaxWarning("The XH vector for the spin " + `id` + " already exists."))
-            continue
+        # The bond vector already exists.
+        if hasattr(spin, object_name):
+            obj = getattr(spin, object_name)
+            if obj:
+                warn(RelaxWarning("The bond vector for the spin " + `id` + " already exists."))
+                continue
 
         # Get the bond info.
-        bond_vectors = cdp.structure.bond_vectors(atom_id=id, attached_atom=proton)
+        bond_vectors, attached_name, warnings = cdp.structure.bond_vectors(atom_id=id, attached_atom=attached, struct_index=struct_index, return_name=True, return_warnings=True)
 
-        # No attached proton.
+        # No attached atom.
         if not bond_vectors:
+            # Warning messages.
+            if warnings:
+                warn(RelaxWarning(warnings + "  (for " + `id` + ")."))
+
+            # Skip the spin.
             continue
 
-        # Set the attached proton name.
-        if not hasattr(spin, 'attached_proton'):
-            spin.attached_proton = proton
-        elif spin.attached_proton != proton:
-            raise RelaxError, "The attached proton " + `spin.attached_proton` + " does not match the proton argument " + `proton` + "."
+        # Set the attached atom name.
+        if not hasattr(spin, 'attached_atom'):
+            spin.attached_atom = attached_name
+        elif spin.attached_atom != attached_name:
+            raise RelaxError, "The " + `spin.attached_atom` + " atom already attached to the spin does not match the attached atom " + `attached_name` + "."
+
+        # Initialise the average vector.
+        if ave:
+            ave_vector = zeros(3, float64)
 
         # Loop over the individual vectors.
-        ave_vector = zeros(3, float64)
-        for vector in bond_vectors:
+        for i in xrange(len(bond_vectors)):
             # Unit vector.
             if unit:
                 # Normalisation factor.
-                norm_factor = sqrt(dot(vector, vector))
+                norm_factor = sqrt(dot(bond_vectors[i], bond_vectors[i]))
 
                 # Test for zero length.
                 if norm_factor == 0.0:
@@ -283,16 +338,65 @@ def vectors(proton=None, spin_id=None, verbosity=1, unit=True):
 
                 # Calculate the normalised vector.
                 else:
-                    vector = vector / norm_factor
+                    bond_vectors[i] = bond_vectors[i] / norm_factor
 
             # Sum the vectors.
-            ave_vector = ave_vector + vector
+            if ave:
+                ave_vector = ave_vector + bond_vectors[i]
 
         # Average.
-        ave_vector = ave_vector / float(len(bond_vectors))
+        if ave:
+            vector = ave_vector / float(len(bond_vectors))
+        else:
+            vector = bond_vectors
 
         # Set the vector.
-        spin.xh_vect = ave_vector
+        setattr(spin, object_name, vector)
 
         # Print out of modified spins.
-        write_line(sys.stdout, mol_name, res_num, res_name, spin.num, spin.name, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+        if verbosity:
+            print "Extracted " + spin.name + "-" + attached_name + " vectors for " + `id` + '.'
+
+
+def write_pdb(file=None, dir=None, struct_index=None, force=False):
+    """The PDB writing function.
+
+    @keyword file:          The name of the PDB file to write.
+    @type file:             str
+    @keyword dir:           The directory where the PDB file will be placed.  If set to None, then
+                            the file will be placed in the current directory.
+    @type dir:              str or None
+    @keyword stuct_index:   The index of the structure to write.  If set to None, then all
+                            structures will be written.
+    @type stuct_index:      int or None
+    @keyword force:         The force flag which if True will cause the file to be overwritten.
+    @type force:            bool
+    """
+
+    # Test if the current data pipe exists.
+    if not ds.current_pipe:
+        raise RelaxNoPipeError
+
+    # Alias the current data pipe.
+    cdp = ds[ds.current_pipe]
+
+    # Check if the structural object exists.
+    if not hasattr(cdp, 'structure'):
+        raise RelaxError, "No structural data is present in the current data pipe."
+
+    # Check if the structural object is writable.
+    if cdp.structure.id in ['scientific']:
+        raise RelaxError, "The structures from the " + cdp.structure.id + " parser are not writable."
+
+    # The file path.
+    file_path = get_file_path(file, dir)
+
+    # Add '.pdb' to the end of the file path if it isn't there yet.
+    if not search(".pdb$", file_path):
+        file_path = file_path + '.pdb'
+
+    # Open the file for writing.
+    file = open_write_file(file_path, force=force)
+
+    # Write the structures.
+    cdp.structure.write_pdb(file, struct_index=struct_index)

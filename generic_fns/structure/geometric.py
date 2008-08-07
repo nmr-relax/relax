@@ -27,8 +27,9 @@ from string import ascii_uppercase
 from warnings import warn
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
+from generic_fns.structure.mass import centre_of_mass
 from internal import Internal
 from maths_fns.rotation_matrix import R_2vect
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
@@ -89,7 +90,7 @@ def cone_edge(structure=None, res_name='CON', res_num=None, apex=None, axis=None
     """
 
     # Add an atom for the cone apex.
-    structure.atom_add(atom_id='Apex', record_name='HETATM', atom_name='APX', res_name=res_name, res_num=res_num, pos=apex, element='H')
+    structure.atom_add(pdb_record='HETATM', atom_num=Apex, atom_name='APX', res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=apex, segment_id=None, element='H', struct_index=None)
 
     # Initialise the rotation matrix, atom number, etc.
     if R == None:
@@ -127,20 +128,20 @@ def cone_edge(structure=None, res_name='CON', res_num=None, apex=None, axis=None
         pos = apex+vector*length
 
         # Add the vector as a H atom of the cone residue.
-        structure.atom_add(atom_id=atom_id, record_name='HETATM', atom_name='H'+`atom_num`, res_name=res_name, res_num=res_num, pos=pos, element='H')
+        structure.atom_add(pdb_record='HETATM', atom_num=atom_id, atom_name='H'+`atom_num`, res_name=res_name, chain_id=chain_id, res_num=res_num, pos=pos, segment_id=None, element='H', struct_index=None)
 
         # Connect across the radial array (to generate the circular cone edge).
         if i != 0:
             neighbour_id = 'T' + `i-1`
-            structure.atom_connect(atom_id=atom_id, bonded_id=neighbour_id)
+            structure.atom_connect(index1=atom_id, index2=neighbour_id)
 
         # Connect the last radial array to the first (to zip up the circle).
         if i == inc-1:
             neighbour_id = 'T' + `0`
-            structure.atom_connect(atom_id=atom_id, bonded_id=neighbour_id)
+            structure.atom_connect(index1=atom_id, index2=neighbour_id)
 
         # Join the atom to the cone apex.
-        structure.atom_connect(atom_id=atom_id, bonded_id='Apex')
+        structure.atom_connect(index1=atom_id, index2='Apex')
 
         # Increment the atom number.
         atom_num = atom_num + 1
@@ -164,17 +165,17 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         scale = autoscale_tensor(scale)
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Create an array of data pipes to loop over (hybrid support).
     if cdp.pipe_type == 'hybrid':
         pipes = cdp.hybrid_pipes
     else:
-        pipes = [relax_data_store.current_pipe]
+        pipes = [ds.current_pipe]
 
     # Create the structural object.
     structure = Internal()
@@ -182,18 +183,18 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     # Loop over the pipes.
     for pipe_index in xrange(len(pipes)):
         # Alias the pipe container.
-        pipe = relax_data_store[pipes[pipe_index]]
+        pipe = ds[pipes[pipe_index]]
 
 
         # Tests.
         ########
 
         # Test if the diffusion tensor data is loaded.
-        if not hasattr(pipe, 'diff'):
+        if not hasattr(pipe, 'diff_tensor'):
             raise RelaxNoTensorError, 'diffusion'
 
         # Test if a structure has been loaded.
-        if not hasattr(cdp.structure, 'structures'):
+        if not hasattr(cdp, 'structure'):
             raise RelaxNoPdbError
 
         # Test if sequence data is loaded.
@@ -224,7 +225,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         CoM = centre_of_mass()
 
         # Add the central atom.
-        structure.atom_add(atom_id='R'+atom_id_ext, record_name='HETATM', atom_name='R', res_name='COM', chain_id=chain_id, res_num=res_num, pos=CoM, element='C')
+        structure.atom_add(pdb_record='HETATM', atom_num=None, atom_name='R'+atom_id_ext, res_name='COM', chain_id=chain_id, res_num=res_num, pos=CoM, segment_id=None, element='C', struct_index=None)
 
         # Increment the residue number.
         res_num = res_num + 1
@@ -237,7 +238,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         print "\nGenerating the geometric object."
 
         # The distribution.
-        generate_vector_dist(structure=structure, atom_id_ext=atom_id_ext, res_name='TNS', res_num=res_num, chain_id=chain_id, centre=CoM, R=pipe.diff.rotation, warp=pipe.diff.tensor, scale=scale, inc=20)
+        generate_vector_dist(structure=structure, atom_id_ext=atom_id_ext, res_name='TNS', res_num=res_num, chain_id=chain_id, centre=CoM, R=pipe.diff_tensor.rotation, warp=pipe.diff_tensor.tensor, scale=scale, inc=20)
 
         # Increment the residue number.
         res_num = res_num + 1
@@ -247,47 +248,41 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         #####################
 
         # Create the unique axis of the spheroid.
-        if pipe.diff.type == 'spheroid':
+        if pipe.diff_tensor.type == 'spheroid':
             # Print out.
             print "\nGenerating the unique axis of the diffusion tensor."
             print "    Scaling factor:                      " + `scale`
 
             # Simulations.
-            if hasattr(pipe.diff, 'tm_sim'):
-                sim_vectors = pipe.diff.Dpar_sim * pipe.diff.Dpar_unit_sim
+            if hasattr(pipe.diff_tensor, 'tm_sim'):
+                sim_vectors = pipe.diff_tensor.Dpar_sim * pipe.diff_tensor.Dpar_unit_sim
             else:
                 sim_vectors = None
                 
             # Generate the axes representation.
-            res_num = generate_vector_residues(structure=structure, vector=pipe.diff.Dpar*pipe.diff.Dpar_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
+            res_num = generate_vector_residues(structure=structure, vector=pipe.diff_tensor.Dpar*pipe.diff_tensor.Dpar_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
 
 
         # Create the three axes of the ellipsoid.
-        if pipe.diff.type == 'ellipsoid':
+        if pipe.diff_tensor.type == 'ellipsoid':
             # Print out.
             print "Generating the three axes of the ellipsoid."
             print "    Scaling factor:                      " + `scale`
 
             # Simulations.
-            if hasattr(pipe.diff, 'tm_sim'):
-                sim_Dx_vectors = pipe.diff.Dx_sim * pipe.diff.Dx_unit_sim
-                sim_Dy_vectors = pipe.diff.Dy_sim * pipe.diff.Dy_unit_sim
-                sim_Dz_vectors = pipe.diff.Dz_sim * pipe.diff.Dz_unit_sim
+            if hasattr(pipe.diff_tensor, 'tm_sim'):
+                sim_Dx_vectors = pipe.diff_tensor.Dx_sim * pipe.diff_tensor.Dx_unit_sim
+                sim_Dy_vectors = pipe.diff_tensor.Dy_sim * pipe.diff_tensor.Dy_unit_sim
+                sim_Dz_vectors = pipe.diff_tensor.Dz_sim * pipe.diff_tensor.Dz_unit_sim
             else:
                 sim_Dx_vectors = None
                 sim_Dy_vectors = None
                 sim_Dz_vectors = None
                 
             # Generate the axes representation.
-            res_num = generate_vector_residues(structure=structure, vector=pipe.diff.Dx*pipe.diff.Dx_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dx_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
-            res_num = generate_vector_residues(structure=structure, vector=pipe.diff.Dy*pipe.diff.Dy_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dy_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
-            res_num = generate_vector_residues(structure=structure, vector=pipe.diff.Dz*pipe.diff.Dz_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dz_vectors, chain_id=chain_id, res_num=res_num, origin=R, scale=scale, neg=True)
-
-
-        # Terminate the chain (the TER record).
-        #######################################
-
-        structure.terminate(atom_id_ext=atom_id_ext, res_num=res_num)
+            res_num = generate_vector_residues(structure=structure, vector=pipe.diff_tensor.Dx*pipe.diff_tensor.Dx_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dx_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
+            res_num = generate_vector_residues(structure=structure, vector=pipe.diff_tensor.Dy*pipe.diff_tensor.Dy_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dy_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
+            res_num = generate_vector_residues(structure=structure, vector=pipe.diff_tensor.Dz*pipe.diff_tensor.Dz_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dz_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
 
 
     # Create the PDB file.
@@ -300,13 +295,13 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     tensor_pdb_file = open_write_file(file, dir, force=force)
 
     # Write the data.
-    write_pdb_file(tensor_pdb_file)
+    structure.write_pdb(tensor_pdb_file)
 
     # Close the file.
     tensor_pdb_file.close()
 
 
-def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, force=0):
+def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, force=False):
     """Create a PDB representation of the XH vector distribution.
 
     @param run:         The run.
@@ -327,22 +322,22 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     # Arguments.
     run = run
 
-    # Test if the run exists.
-    if not run in relax_data_store.run_names:
-        raise RelaxNoPipeError, run
+    # Test if the current pipe exists.
+    if not ds.current_pipe:
+        raise RelaxNoPipeError
 
     # Test if the PDB file of the macromolecule has been loaded.
-    if not relax_data_store.pdb.has_key(run):
+    if not ds.pdb.has_key(run):
         raise RelaxNoPdbError, run
 
     # Test if sequence data is loaded.
-    if not len(relax_data_store.res[run]):
+    if not len(ds.res[run]):
         raise RelaxNoSequenceError, run
 
     # Test if unit vectors exist.
     vectors = 0
-    for i in xrange(len(relax_data_store.res[run])):
-        if hasattr(relax_data_store.res[run][i], 'xh_vect'):
+    for i in xrange(len(ds.res[run])):
+        if hasattr(ds.res[run][i], 'xh_vect'):
             vectors = 1
             break
     if not vectors:
@@ -373,9 +368,9 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     #################
 
     # Loop over the spin systems.
-    for i in xrange(len(relax_data_store.res[run])):
+    for i in xrange(len(ds.res[run])):
         # Alias the spin system data.
-        data = relax_data_store.res[run][i]
+        data = ds.res[run][i]
 
         # Skip deselected spin systems.
         if not data.select:
@@ -394,27 +389,27 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
         H_id = data.proton + end
 
         # Add the central X atom.
-        structure.atom_add(atom_id=X_id, record_name='ATOM', atom_name=data.heteronuc, res_name=data.name, chain_id='A', res_num=data.num, pos=R, element=data.heteronuc)
+        structure.atom_add(pdb_record='ATOM', atom_num=X_id, atom_name=data.heteronuc, res_name=data.name, chain_id='A', res_num=data.num, pos=R, segment_id=None, element=data.heteronuc, struct_index=None)
 
         # Add the H atom.
-        structure.atom_add(atom_id=H_id, record_name='ATOM', atom_name=data.proton, res_name=data.name, chain_id='A', res_num=data.num, pos=R+vector, element=data.proton)
+        structure.atom_add(pdb_record='ATOM', atom_num=H_id, atom_name=data.proton, res_name=data.name, chain_id='A', res_num=data.num, pos=R+vector, segment_id=None, element=data.proton, struct_index=None)
 
         # Connect the two atoms.
-        structure.atom_connect(atom_id=X_id, bonded_id=H_id)
+        structure.atom_connect(index1=X_id, index2=H_id)
 
         # Store the terminate residue number for the TER record.
         last_res = data.num
         last_name = data.name
 
     # The TER record.
-    structure.atom_add(atom_id='TER' + '_A', record_name='TER', res_name=last_name, chain_id='A', res_num=last_res)
+    structure.atom_add(pdb_record='TER', atom_num=None, atom_name='TER' + '_A', res_name=last_name, chain_id='A', res_num=last.res, pos=R, segment_id=None, element=None, struct_index=None)
 
     # Symmetry chain.
     if symmetry:
         # Loop over the spin systems.
-        for i in xrange(len(relax_data_store.res[run])):
+        for i in xrange(len(ds.res[run])):
             # Alias the spin system data.
-            data = relax_data_store.res[run][i]
+            data = ds.res[run][i]
 
             # Skip deselected spin systems.
             if not data.select:
@@ -433,20 +428,20 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
             H_id = data.proton + end
 
             # Add the central X atom.
-            structure.atom_add(atom_id=X_id + '_B', record_name='ATOM', atom_name=data.heteronuc, res_name=data.name, chain_id='B', res_num=data.num, pos=R, element=data.heteronuc)
+            structure.atom_add(pdb_record='ATOM', atom_num=X_id + 'B', atom_name=data.heteronuc, res_name=data.name, chain_id='B', res_num=data.num, pos=R, segment_id=None, element=data.heteronuc, struct_index=None)
 
             # Add the H atom.
-            structure.atom_add(atom_id=H_id + '_B', record_name='ATOM', atom_name=data.proton, res_name=data.name, chain_id='B', res_num=data.num, pos=R-vector, element=data.proton)
+            structure.atom_add(pdb_record='ATOM', atom_num=H_id + 'B', atom_name=data.proton, res_name=data.name, chain_id='B', res_num=data.num, pos=R+vector, segment_id=None, element=data.proton, struct_index=None)
 
             # Connect the two atoms.
-            structure.atom_connect(atom_id=X_id + '_B', bonded_id=H_id + '_B')
+            structure.atom_connect(index1=X_id + '_B', index2=H_id + '_B')
 
             # Store the terminate residue number for the TER record.
             last_res = data.num
             last_name = data.name
 
         # The TER record.
-        structure.atom_add(atom_id='TER' + '_B', record_name='TER', res_name=last_name, chain_id='B', res_num=last_res)
+        structure.atom_add(pdb_record='TER', atom_num=None, atom_name='TER' + '_B', res_name=last_name, chain_id='B', res_num=last.res, pos=R, segment_id=None, element=None, struct_index=None)
 
 
 
@@ -460,7 +455,7 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     tensor_pdb_file = open_write_file(file, dir, force=force)
 
     # Write the data.
-    write_pdb_file(tensor_pdb_file)
+    structure.write_pdb(tensor_pdb_file)
 
     # Close the file.
     tensor_pdb_file.close()
@@ -549,22 +544,22 @@ def generate_vector_dist(structure=None, atom_id_ext='', res_name=None, res_num=
             pos = centre + vector
 
             # Add the vector as a H atom of the TNS residue.
-            structure.atom_add(atom_id=atom_id, record_name='HETATM', atom_name='H'+`atom_num`, res_name=res_name, chain_id=chain_id, res_num=res_num, pos=pos, element='H')
+            structure.atom_add(pdb_record='HETATM', atom_num=None, atom_name='H'+atom_id_ext, res_name=res_name, chain_id=chain_id, res_num=res_num, pos=pos, segment_id=None, element='H', struct_index=None)
 
             # Connect to the previous atom (to generate the longitudinal lines).
             if j > j_min:
                 prev_id = 'T' + `i` + 'P' + `j-1` + atom_id_ext
-                structure.atom_connect(atom_id=atom_id, bonded_id=prev_id)
+                structure.atom_connect(index1=atom_id, index2=prev_id)
 
             # Connect across the radial arrays (to generate the latitudinal lines).
             if i != 0:
                 neighbour_id = 'T' + `i-1` + 'P' + `j` + atom_id_ext
-                structure.atom_connect(atom_id=atom_id, bonded_id=neighbour_id)
+                structure.atom_connect(index1=atom_id, index2=neighbour_id)
 
             # Connect the last radial array to the first (to zip up the geometric object and close the latitudinal lines).
             if i == inc-1:
                 neighbour_id = 'T' + `0` + 'P' + `j` + atom_id_ext
-                structure.atom_connect(atom_id=atom_id, bonded_id=neighbour_id)
+                structure.atom_connect(index1=atom_id, index2=neighbour_id)
 
             # Increment the atom number.
             atom_num = atom_num + 1
@@ -616,19 +611,19 @@ def generate_vector_residues(structure=None, vector=None, atom_name=None, res_na
         atom_id_ext = ''
 
     # The origin atom.
-    structure.atom_add(atom_id='R_vect'+atom_id_ext, record_name='HETATM', atom_name='R', res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin, element='C')
+    structure.atom_add(pdb_record='HETATM', atom_num='R_vect'+atom_id_ext, atom_name='R', res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin, segment_id=None, element='C', struct_index=None)
 
     # Create the PDB residue representing the vector.
-    structure.atom_add(atom_id=atom_name+atom_id_ext, record_name='HETATM', atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+vector*scale, element='C')
-    structure.atom_connect(atom_id=atom_name+atom_id_ext, bonded_id='R_vect'+atom_id_ext)
+    structure.atom_add(pdb_record='HETATM', atom_num=atom_name+atom_id_ext, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+vector*scale, segment_id=None, element='C', struct_index=None)
+    structure.atom_connect(index1=atom_name+atom_id_ext, index2='R_vect'+atom_id_ext)
     if neg:
-        structure.atom_add(atom_id=atom_name+'_neg'+atom_id_ext, record_name='HETATM', atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-vector*scale, element='C')
-        structure.atom_connect(atom_id=atom_name+'_neg'+atom_id_ext, bonded_id='R_vect'+atom_id_ext)
+        structure.atom_add(pdb_record='HETATM', atom_num=atom_name+'_neg'+atom_id_ext, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+vector*scale, segment_id=None, element='C', struct_index=None)
+        structure.atom_connect(index1=atom_name+'_neg'+atom_id_ext, index2='R_vect'+atom_id_ext)
 
     # Add another atom to allow the axis labels to be shifted just outside of the vector itself.
-    structure.atom_add(atom_id='vect label'+atom_id_ext, record_name='HETATM', atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+label_placement*vector*scale, element='N')
+    structure.atom_add(pdb_record='HETATM', atom_num='vect label'+atom_id_ext, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+label_placement*vector*scale, segment_id=None, element='N', struct_index=None)
     if neg:
-        structure.atom_add(atom_id='vect neg label'+atom_id_ext, record_name='HETATM', atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, element='N')
+        structure.atom_add(pdb_record='HETATM', atom_num='vect neg label'+atom_id_ext, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, segment_id=None, element='N', struct_index=None)
 
     # Print out.
     print "    " + atom_name + " vector (scaled + shifted to origin): " + `origin+vector*scale`
@@ -644,11 +639,11 @@ def generate_vector_residues(structure=None, vector=None, atom_name=None, res_na
             atom_id_ext_sim = atom_id_ext + '_sim' + `i`
 
             # Create the PDB residue representing the vector.
-            structure.atom_add(atom_id=atom_name+atom_id_ext_sim, record_name='HETATM', atom_name=atom_name, res_name=res_name_sim, chain_id=chain_id, res_num=res_num, pos=origin+sim_vectors[i]*scale, element='C')
-            structure.atom_connect(atom_id=atom_name+atom_id_ext_sim, bonded_id='R_vect'+atom_id_ext_sim)
+            structure.atom_add(pdb_record='HETATM', atom_num=atom_name+atom_id_ext_sim, atom_name=atom_name, res_name=res_name_sim, chain_id=chain_id, res_num=res_num, pos=origin+sim_vectors[i]*scale, segment_id=None, element='C', struct_index=None)
+            structure.atom_connect(index1=atom_name+atom_id_ext_sim, index2='R_vect'+atom_id_ext_sim)
             if neg:
-                structure.atom_add(atom_id=atom_name+'_neg'+atom_id_ext_sim, record_name='HETATM', atom_name=atom_name, res_name=res_name_sim, chain_id=chain_id, res_num=res_num, pos=origin-sim_vectors[i]*scale, element='C')
-                structure.atom_connect(atom_id=atom_name+'_neg'+atom_id_ext_sim, bonded_id='R_vect'+atom_id_ext_sim)
+                structure.atom_add(pdb_record='HETATM', atom_num=atom_name+'_neg'+atom_id_ext_sim, atom_name=atom_name, res_name=res_name_sim, chain_id=chain_id, res_num=res_num, pos=origin-sim_vectors[i]*scale, segment_id=None, element='C', struct_index=None)
+                structure.atom_connect(index1=atom_name+'_neg'+atom_id_ext_sim, index2='R_vect'+atom_id_ext_sim)
 
     # Return the new residue number.
     return res_num
@@ -692,7 +687,7 @@ def stitch_cap_to_cone(structure=None, atom_id_ext='', max_angle=None, inc=None)
         edge_atom_id = 'T' + `i` + atom_id_ext
 
         # Connect the two atoms (to stitch up the 2 objects).
-        structure.atom_connect(atom_id=edge_atom_id, bonded_id=cap_atom_id)
+        structure.atom_connect(index1=edge_atom_id, index2=cap_atom_id)
 
 
 def uniform_vect_dist_spherical_angles(inc=20):

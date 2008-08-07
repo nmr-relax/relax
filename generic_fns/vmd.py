@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007 Edward d'Auvergne                             #
+# Copyright (C) 2003-2004, 2007-2008 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,38 +20,35 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from Scientific.Visualization import VMD
+# Module docstring.
+"""Module for interfacing with VMD."""
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
+import dep_check
 from relax_errors import RelaxNoPdbError
 
 
-# The relax data storage object.
+def view():
+    """Function for viewing the collection of molecules using VMD."""
 
+    # Test if the module is available.
+    if not dep_check.vmd_module:
+        raise RelaxError, "VMD is not available (cannot import Scientific.Visualization.VMD due to missing Numeric dependency)."
 
+    # Alias the current data pipe.
+    cdp = ds[ds.current_pipe]
 
-class Vmd:
-    def __init__(self, relax):
-        """Class containing the functions for viewing molecules."""
+    # Test if the PDB file has been loaded.
+    if not hasattr(cdp, 'structure'):
+        raise RelaxNoPdbError
 
-        self.relax = relax
+    # Create an empty scene.
+    cdp.vmd_scene = VMD.Scene()
 
+    # Add the molecules to the scene.
+    for i in xrange(len(cdp.structure.structures)):
+        cdp.vmd_scene.addObject(VMD.Molecules(cdp.structure.structures[i]))
 
-    def view(self, run):
-        """Function for viewing the collection of molecules using VMD."""
-
-        # Test if the PDB file has been loaded.
-        if not relax_data_store.pdb.has_key(run):
-            raise RelaxNoPdbError, run
-
-        # Create an empty scene.
-        relax_data_store.vmd_scene = VMD.Scene()
-
-        # Add the molecules to the scene.
-        for i in xrange(len(relax_data_store.pdb[run].structures)):
-            relax_data_store.vmd_scene.addObject(VMD.Molecules(relax_data_store.pdb[run].structures[i]))
-
-        # View the scene.
-        relax_data_store.vmd_scene.view()
+    # View the scene.
+    cdp.vmd_scene.view()

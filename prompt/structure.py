@@ -362,37 +362,56 @@ class Structure:
         generic_fns.structure.main.read_pdb(file=file, dir=dir, model=model, parser=parser)
 
 
-    def vectors(self, proton='H', spin_id=None, verbosity=1):
-        """Function for calculating/extracting XH vectors from the structure.
+    def vectors(self, attached='H', spin_id=None, struct_index=None, verbosity=1, ave=True, unit=True):
+        """Extract unit bond vectors from the structure.
 
         Keyword arguments
         ~~~~~~~~~~~~~~~~~
 
-        proton:  The name of the proton attached to the spin, as specified in the structural file.
+        attached:  The type of atom attached to the spin.  Regular expression is allowed, for
+        example 'H*'.
 
         spin_id:  The spin identification string.
 
+        struct_index:  The index of the structure to extract bond vectors from (which if set to None
+        will cause all vectors to be extracted).
+
         verbosity:  The amount of information to print to screen.  Zero corresponds to minimal
         output while higher values increase the amount of output.  The default value is 1.
+
+        ave:  A flag which if True will cause all extracted bond vectors to be averaged.  If only
+        one vector is extracted, this argument will have no effect.
+
+        unit:  A flag which if True will cause the unit vector to calculated rather than the full
+        length bond vector.
 
 
         Description
         ~~~~~~~~~~~
 
-        Once the structures have been loaded, the unit XH bond vectors must be extracted for the
-        non-spherical diffusion models.  The vectors are calculated using the atomic coordinates
-        of the atoms specified by spin itself and its singly attached proton.
+        For a number of types of analysis, bond vectors or unit bond vectors are required for the
+        calculations.  This user function allows these vectors to be extracted from a loaded
+        structure.  The bond vector will be that from the spin system loaded in relax to the bonded
+        atom specified by the 'attached' argument.  For example if 'attached' is set to 'H', all
+        attached protons will be searched for.  If set to 'CA', all atoms named 'CA' in the
+        structure will be searched for.
 
-        If more than one model structure is loaded, the unit XH vectors for each model will be
-        calculated and the final unit XH vector will be taken as the average.
+        The extraction of vectors can occur in a number of ways.  For example if an NMR structure
+        with N models is loaded (or if multiple structures from any source of the same compound are
+        loaded), there are three options for extracting the bond vector.  Firstly the bond vector of
+        a single model or structure can be extracted by specifying the structural index
+        'struct_index', where 0 corresponds to the first structure/model.  Secondly the bond vectors
+        from all structures/models can be extracted if 'struct_index' is None and 'ave' is set to
+        False.  Thirdly, if 'struct_index' is None and 'ave' is set to True, then a single vector
+        which is the average of all structures/models will be calculated.
 
 
         Example
         ~~~~~~~
 
-        To calculate the XH vectors of the backbone amide nitrogens where in the PDB file the
-        backbone nitrogen is called 'N' and the attached proton is called 'H', assuming multiple
-        types of spin have already been loaded, type one of:
+        To extract the XH vectors of the backbone amide nitrogens where in the PDB file the backbone
+        nitrogen is called 'N' and the attached proton is called 'H', assuming multiple types of
+        spin have already been loaded, type one of:
 
         relax> structure.vectors(spin_id='@N')
         relax> structure.vectors('H', spin_id='@N')
@@ -402,7 +421,7 @@ class Structure:
 
         relax> structure.vectors(proton='HN', spin_id='@N')
 
-        For the Ca, type:
+        For the 'CA' spin bonded to the 'HA' proton, type:
 
         relax> structure.vectors(proton='HA', spin_id='@CA')
 
@@ -429,22 +448,105 @@ class Structure:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "structure.vectors("
-            text = text + "proton=" + `proton`
+            text = text + "attached=" + `attached`
             text = text + ", spin_id=" + `spin_id`
-            text = text + ", verbosity=" + `verbosity` + ")"
+            text = text + ", struct_index=" + `struct_index`
+            text = text + ", verbosity=" + `verbosity`
+            text = text + ", ave=" + `ave`
+            text = text + ", unit=" + `unit` + ")"
             print text
 
-        # The attached proton argument.
-        if type(proton) != str:
-            raise RelaxStrError, ('the attached proton', proton)
+        # The attached atom argument.
+        if type(attached) != str:
+            raise RelaxStrError, ('the attached atom', attached)
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:
             raise RelaxNoneStrError, ('Spin identification string', spin_id)
 
+        # The struct_index argument.
+        if struct_index != None and type(struct_index) != int:
+            raise RelaxNoneIntError, ('structure index', struct_index)
+
         # The verbosity level.
         if type(verbosity) != int:
             raise RelaxIntError, ('verbosity level', verbosity)
 
+        # The average vector flag.
+        if type(ave) != bool:
+            raise RelaxBoolError, ('average vector flag', ave)
+
+        # The unit vector flag.
+        if type(unit) != bool:
+            raise RelaxBoolError, ('unit vector flag', unit)
+
         # Execute the functional code.
-        generic_fns.structure.main.vectors(proton=proton, spin_id=spin_id, verbosity=verbosity)
+        generic_fns.structure.main.vectors(attached=attached, spin_id=spin_id, struct_index=struct_index, verbosity=verbosity, ave=ave, unit=unit)
+
+
+    def write_pdb(self, file=None, dir=None, struct_index=None, force=False):
+        """The PDB writing function.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        file:  The name of the PDB file.
+
+        dir:  The directory where the file is located.
+
+        struct_index:  The index of the structure to write.
+
+        force:  A flag which, if set to True, will overwrite the any pre-existing file.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        If the struct_index argument is None, then each loaded structure will be written to a single
+        file as different models.  This index covers all the structures loaded from individual files
+        and all the structures present as different models within each file.
+
+
+        Example
+        ~~~~~~~
+
+        To write all structures to the PDB file 'ensemble.pdb' within the directory '~/pdb', type
+        one of:
+
+        relax> structure.write_pdb('ensemble.pdb', '~/pdb')
+        relax> structure.write_pdb(file='ensemble.pdb', dir='pdb')
+
+
+        To write the 4th model loaded from a PDB file into the new file 'test.pdb', use one of:
+
+        relax> structure.write_pdb('test.pdb', struct_index=3)
+        relax> structure.write_pdb(file='test.pdb', struct_index=3)
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "structure.write_pdb("
+            text = text + "file=" + `file`
+            text = text + ", dir=" + `dir`
+            text = text + ", struct_index=" + `struct_index`
+            text = text + ", force=" + `force` + ")"
+            print text
+
+        # File name.
+        if type(file) != str:
+            raise RelaxStrError, ('file name', file)
+
+        # Directory.
+        if dir != None and type(dir) != str:
+            raise RelaxNoneStrError, ('directory name', dir)
+
+        # The struct_index argument.
+        if struct_index != None and type(struct_index) != int:
+            raise RelaxNoneIntError, ('structure index', struct_index)
+
+        # The force flag.
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
+
+        # Execute the functional code.
+        generic_fns.structure.main.write_pdb(file=file, dir=dir, struct_index=struct_index, force=force)

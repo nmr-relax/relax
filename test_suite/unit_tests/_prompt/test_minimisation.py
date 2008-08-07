@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from prompt.minimisation import Minimisation
 from relax_errors import RelaxError, RelaxBoolError, RelaxIntError, RelaxIntListIntError, RelaxListError, RelaxListNumError, RelaxNoneError, RelaxNoneNumError, RelaxStrError
 from test_suite.unit_tests.minimisation_testing_base import Minimisation_base_class

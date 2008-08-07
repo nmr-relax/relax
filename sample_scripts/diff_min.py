@@ -5,7 +5,7 @@
 pipes = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
 
 # Nuclei type
-nuclei('N')
+value.set('15N', 'heteronucleus')
 
 # Minimise the model-free parameters.
 print "\n\n\n\n\n"
@@ -67,7 +67,7 @@ for name in pipes:
     minimise('newton', max_iter=5000)
 
     # Write the results.
-    results.write(file='results', force=1)
+    results.write(file='results', force=True)
 
 # Save the program state.
-state.save('save', force=1)
+state.save('save', force=True)

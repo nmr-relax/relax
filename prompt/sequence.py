@@ -26,7 +26,7 @@ import sys
 # relax module imports.
 import help
 from generic_fns import sequence
-from relax_errors import RelaxBinError, RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxError, RelaxBinError, RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 
 
 class Sequence:
@@ -40,6 +40,69 @@ class Sequence:
 
         # Place relax in the class namespace.
         self.__relax__ = relax
+
+
+    def copy(self, pipe_from=None, pipe_to=None):
+        """Copy the molecule, residue, and spin sequence data from one data pipe to another.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        pipe_from:  The name of the data pipe to copy the sequence data from.
+
+        pipe_to:  The name of the data pipe to copy the sequence data to.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function will copy the sequence data between data pipes.  The destination data pipe
+        must not contain any sequence data.  If the pipe_from or pipe_to arguments are not
+        supplied, then both will default to the current data pipe (hence giving one argument is
+        essential).
+
+
+        Examples
+        ~~~~~~~~
+
+        To copy the sequence from the data pipe 'm1' to the current data pipe, type:
+
+        relax> sequence.copy('m1')
+        relax> sequence.copy(pipe_from='m1')
+
+
+        To copy the sequence from the current data pipe to the data pipe 'm9', type:
+
+        relax> sequence.copy(pipe_to='m9')
+
+
+        To copy the sequence from the data pipe 'm1' to 'm2', type:
+
+        relax> sequence.copy('m1', 'm2')
+        relax> sequence.copy(pipe_from='m1', pipe_to='m2')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "sequence.copy("
+            text = text + "pipe_from=" + `pipe_from`
+            text = text + ", pipe_to=" + `pipe_to` + ")"
+            print text
+
+        # The pipe_from argument.
+        if pipe_from != None and type(pipe_from) != str:
+            raise RelaxNoneStrError, ('pipe from', pipe_from)
+
+        # The pipe_to argument.
+        if pipe_to != None and type(pipe_to) != str:
+            raise RelaxNoneStrError, ('pipe to', pipe_to)
+
+        # Both pipe arguments cannot be None.
+        if pipe_from == None and pipe_to == None:
+            raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+
+        # Execute the functional code.
+        sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to)
 
 
     def display(self, sep=None, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True):

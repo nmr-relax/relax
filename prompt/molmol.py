@@ -116,7 +116,7 @@ class Molmol:
         ~~~~~~~~~~~
 
         This function allows residues specific values to be mapped to a structure through Molmol
-        macros.  Currently only the 'classic' style, which is described below, is availible.
+        macros.  Currently only the 'classic' style, which is described below, is available.
 
 
         Colour
@@ -304,7 +304,7 @@ class Molmol:
         molmol.view()
 
 
-    def write(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir='molmol', force=0):
+    def write(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir='molmol', force=False):
         """Function for creating Molmol macros.
 
         Keyword Arguments
@@ -325,7 +325,7 @@ class Molmol:
 
         dir:  The directory name.
 
-        force:  A flag which, if set to 1, will cause the file to be overwritten.
+        force:  A flag which, if set to True, will cause the file to be overwritten.
 
 
         Description
@@ -334,7 +334,7 @@ class Molmol:
         This function allows residues specific values to be mapped to a structure through the
         creation of a Molmol '*.mac' macro which can be executed in Molmol by clicking on 'File,
         Macro, Execute User...'.  Currently only the 'classic' style, which is described below, is
-        availible.
+        available.
 
 
         Colour
@@ -412,8 +412,8 @@ class Molmol:
             raise RelaxNoneStrError, ('directory name', dir)
 
         # The force flag.
-        if type(force) != int or (force != 0 and force != 1):
-            raise RelaxBinError, ('force flag', force)
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
         molmol.write(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)

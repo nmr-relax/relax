@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,7 @@ from os import remove, tmpfile
 import sys
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 
 
 
@@ -40,7 +40,7 @@ class State_base_class:
         """Set up for all the data pipe unit tests."""
 
         # Reset the relax data storage object.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
 
     def tearDown(self):
@@ -53,7 +53,7 @@ class State_base_class:
             pass
 
         # Reset the relax data store.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
 
     def test_load(self):
@@ -63,9 +63,9 @@ class State_base_class:
         """
 
         # Test the contents of the empty singleton.
-        self.assertEqual(relax_data_store.keys(), [])
-        self.assertEqual(relax_data_store.current_pipe, None)
-        self.assert_(not hasattr(relax_data_store, 'y'))
+        self.assertEqual(ds.keys(), [])
+        self.assertEqual(ds.current_pipe, None)
+        self.assert_(not hasattr(ds, 'y'))
 
         # Get the relative path of relax.
         path = sys.path[0]
@@ -76,10 +76,10 @@ class State_base_class:
         self.state.load_state(state='basic_single_pipe', dir_name=path+'/test_suite/shared_data/saved_states')
 
         # Test the contents of the restored singleton.
-        self.assertEqual(relax_data_store.keys(), ['orig'])
-        self.assertEqual(relax_data_store.current_pipe, 'orig')
-        self.assertEqual(relax_data_store['orig'].x, 1)
-        self.assertEqual(relax_data_store.y, 'Hello')
+        self.assertEqual(ds.keys(), ['orig'])
+        self.assertEqual(ds.current_pipe, 'orig')
+        self.assertEqual(ds['orig'].x, 1)
+        self.assertEqual(ds.y, 'Hello')
 
 
     def test_load_and_modify(self):
@@ -89,9 +89,9 @@ class State_base_class:
         """
 
         # Test the contents of the empty singleton.
-        self.assertEqual(relax_data_store.keys(), [])
-        self.assertEqual(relax_data_store.current_pipe, None)
-        self.assert_(not hasattr(relax_data_store, 'y'))
+        self.assertEqual(ds.keys(), [])
+        self.assertEqual(ds.current_pipe, None)
+        self.assert_(not hasattr(ds, 'y'))
 
         # Get the relative path of relax.
         path = sys.path[0]
@@ -102,16 +102,16 @@ class State_base_class:
         self.state.load_state(state='basic_single_pipe', dir_name=path+'/test_suite/shared_data/saved_states')
 
         # Add a new data pipe and some data to it.
-        relax_data_store.add('new', 'jw_mapping')
-        relax_data_store[relax_data_store.current_pipe].z = [None, None]
+        ds.add('new', 'jw_mapping')
+        ds[ds.current_pipe].z = [None, None]
 
 
         # Test the contents of the restored singleton (with subsequent data added).
-        self.assertEqual(relax_data_store.keys(), ['orig', 'new'])
-        self.assertEqual(relax_data_store.current_pipe, 'new')
-        self.assertEqual(relax_data_store['orig'].x, 1)
-        self.assertEqual(relax_data_store.y, 'Hello')
-        self.assertEqual(relax_data_store['new'].z, [None, None])
+        self.assertEqual(ds.keys().sort(), ['orig', 'new'].sort())
+        self.assertEqual(ds.current_pipe, 'new')
+        self.assertEqual(ds['orig'].x, 1)
+        self.assertEqual(ds.y, 'Hello')
+        self.assertEqual(ds['new'].z, [None, None])
 
 
     def test_load_and_reset(self):
@@ -121,9 +121,9 @@ class State_base_class:
         """
 
         # Test the contents of the empty singleton.
-        self.assertEqual(relax_data_store.keys(), [])
-        self.assertEqual(relax_data_store.current_pipe, None)
-        self.assert_(not hasattr(relax_data_store, 'y'))
+        self.assertEqual(ds.keys(), [])
+        self.assertEqual(ds.current_pipe, None)
+        self.assert_(not hasattr(ds, 'y'))
 
         # Get the relative path of relax.
         path = sys.path[0]
@@ -134,12 +134,12 @@ class State_base_class:
         self.state.load_state(state='basic_single_pipe', dir_name=path+'/test_suite/shared_data/saved_states')
 
         # Reset.
-        relax_data_store.__reset__()
+        ds.__reset__()
 
         # Test that there are no contents in the reset singleton.
-        self.assertEqual(relax_data_store.keys(), [])
-        self.assertEqual(relax_data_store.current_pipe, None)
-        self.assert_(not hasattr(relax_data_store, 'y'))
+        self.assertEqual(ds.keys(), [])
+        self.assertEqual(ds.current_pipe, None)
+        self.assert_(not hasattr(ds, 'y'))
 
 
     def test_save(self):
@@ -152,13 +152,13 @@ class State_base_class:
         self.tmp_file = tmpfile()
 
         # Add a data pipe to the data store.
-        relax_data_store.add(pipe_name='orig', pipe_type='mf')
+        ds.add(pipe_name='orig', pipe_type='mf')
 
         # Add a single object to the 'orig' data pipe.
-        relax_data_store['orig'].x = 1
+        ds['orig'].x = 1
 
         # Add a single object to the storage object.
-        relax_data_store.y = 'Hello'
+        ds.y = 'Hello'
 
         # Save the state.
         self.state.save_state(state=self.tmp_file)

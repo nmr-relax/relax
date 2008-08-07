@@ -29,6 +29,7 @@ from types import ListType
 # relax module imports.
 from data_classes import Element
 from relax_errors import RelaxError
+from relax_xml import fill_object_contents, node_value_to_python, xml_to_object
 
 
 
@@ -553,8 +554,24 @@ def dependency_generator(diff_type):
 class DiffTensorData(Element):
     """An empty data container for the diffusion tensor elements."""
 
-    # Set the initial diffusion type to None.
-    type = None
+    # List of modifiable attributes.
+    __mod_attr__ = ['type',
+                    'fixed',
+                    'spheroid_type',
+                    'tm',
+                    'Da',
+                    'Dr',
+                    'theta',
+                    'phi',
+                    'alpha',
+                    'beta',
+                    'gamma']
+
+    def __init__(self):
+        """Initialise a few instance variables."""
+
+        # Set the initial diffusion type to None.
+        self.type = None
 
 
     def __setattr__(self, name, value):
@@ -576,22 +593,9 @@ class DiffTensorData(Element):
             category = 'val'
             param_name = name
 
-        # List of modifiable attributes.
-        mod_attr = ['type',
-                    'fixed',
-                    'spheroid_type',
-                    'tm',
-                    'Da',
-                    'Dr',
-                    'theta',
-                    'phi',
-                    'alpha',
-                    'beta',
-                    'gamma']
-
         # Test if the attribute that is trying to be set is modifiable.
-        if not param_name in mod_attr:
-            raise RelaxError, "The object " + `name` + " is not modifiable."
+        if not param_name in self.__mod_attr__:
+            raise RelaxError, "The object " + `name` + " is not a modifiable attribute."
 
         # Set the attribute normally.
         self.__dict__[name] = value
@@ -820,6 +824,41 @@ class DiffTensorData(Element):
                 # Initialise an empty array to store the MC simulation object elements (if it doesn't already exist).
                 if not target+'_sim' in self.__dict__:
                     self.__dict__[target+'_sim'] = DiffTensorSimList(target, self)
+
+
+    def from_xml(self, diff_tensor_node):
+        """Recreate the diffusion tensor data structure from the XML diffusion tensor node.
+
+        @param diff_tensor_node:    The diffusion tensor XML node.
+        @type diff_tensor_node:     xml.dom.minicompat.Element instance
+        """
+
+        # First set the diffusion type.  Doing this first is essential for the proper reconstruction of the object.
+        setattr(self, 'type', str(diff_tensor_node.getAttribute('type')))
+
+        # Recreate all the other data structures.
+        xml_to_object(diff_tensor_node, self)
+
+
+    def to_xml(self, doc, element):
+        """Create an XML element for the diffusion tensor.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the diffusion tensor element to.
+        @type element:  XML element object
+        """
+
+        # Create the diffusion tensor element and add it to the higher level element.
+        tensor_element = doc.createElement('diff_tensor')
+        element.appendChild(tensor_element)
+
+        # Set the diffusion tensor attributes.
+        tensor_element.setAttribute('desc', 'Diffusion tensor')
+        tensor_element.setAttribute('type', self.type)
+
+        # Add all simple python objects within the PipeContainer to the pipe element.
+        fill_object_contents(doc, tensor_element, object=self, blacklist=['type'] + self.__class__.__dict__.keys())
 
 
 

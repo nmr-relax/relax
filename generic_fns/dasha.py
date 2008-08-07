@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2005-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2005-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for interfacing with Dasha."""
+
 # Python module imports.
 from math import pi
 from os import F_OK, access, chdir, getcwd, system
@@ -28,49 +31,48 @@ from string import lower, split
 import sys
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxDirError, RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNucleusError
-
+from relax_io import mkdir_nofail, open_write_file, test_binary
 
 
 
 class Dasha:
     def __init__(self, relax):
-        """Class used to create and process input and output for the program Modelfree 4."""
+        """Class used to create and process input and output for the program Dasha."""
 
         self.relax = relax
 
 
-    def create(self, run=None, algor='LM', dir=None, force=0):
+    def create(self, algor='LM', dir=None, force=False):
         """Function for creating the Dasha script file 'dir/dasha_script'."""
 
         # Arguments.
-        self.run = run
         self.algor = algor
         self.dir = dir
         self.force = force
 
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
+        # Test if the current pipe exists.
+        if not ds.current_pipe:
+            raise RelaxNoPipeError
 
         # Test if sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # Determine the parameter set.
-        self.param_set = self.relax.specific.model_free.determine_param_set_type(self.run)
+        model_type = self.relax.specific.model_free.determine_model_type(self.run)
 
         # Test if diffusion tensor data for the run exists.
-        if self.param_set != 'local_tm' and not relax_data_store.diff.has_key(self.run):
+        if model_type != 'local_tm' and not ds.diff.has_key(self.run):
             raise RelaxNoTensorError, 'diffusion'
 
         # Test if the PDB file has been loaded (for the spheroid and ellipsoid).
-        if self.param_set != 'local_tm' and relax_data_store.diff[self.run].type != 'sphere' and not relax_data_store.pdb.has_key(self.run):
+        if model_type != 'local_tm' and ds.diff[self.run].type != 'sphere' and not ds.pdb.has_key(self.run):
             raise RelaxNoPdbError, self.run
 
         # Test if the nucleus type has been set.
-        if not hasattr(relax_data_store, 'gx'):
+        if not hasattr(ds, 'gx'):
             raise RelaxNucleusError
 
         # Test the optimisation algorithm.
@@ -78,34 +80,34 @@ class Dasha:
             raise RelaxError, "The Dasha optimisation algorithm " + `algor` + " is unknown, it should either be 'LM' or 'NR'."
 
         # Directory creation.
-        if self.dir == None:
-            self.dir = self.run
-        self.relax.IO.mkdir(self.dir, verbosity=0)
+        if dir == None:
+            dir = pipe
+        mkdir_nofail(dir, verbosity=0)
 
         # Number of field strengths and values.
         self.num_frq = 0
         self.frq = []
-        for i in xrange(len(relax_data_store.res[self.run])):
-            if hasattr(relax_data_store.res[self.run][i], 'num_frq'):
-                if relax_data_store.res[self.run][i].num_frq > self.num_frq:
+        for i in xrange(len(ds.res[self.run])):
+            if hasattr(ds.res[self.run][i], 'num_frq'):
+                if ds.res[self.run][i].num_frq > self.num_frq:
                     # Number of field strengths.
-                    self.num_frq = relax_data_store.res[self.run][i].num_frq
+                    self.num_frq = ds.res[self.run][i].num_frq
 
                     # Field strength values.
-                    for frq in relax_data_store.res[self.run][i].frq:
+                    for frq in ds.res[self.run][i].frq:
                         if frq not in self.frq:
                             self.frq.append(frq)
 
         # Calculate the angle alpha of the XH vector in the spheroid diffusion frame.
-        if relax_data_store.diff[self.run].type == 'spheroid':
+        if ds.diff[self.run].type == 'spheroid':
             self.relax.generic.angles.spheroid_frame(self.run)
 
         # Calculate the angles theta and phi of the XH vector in the ellipsoid diffusion frame.
-        elif relax_data_store.diff[self.run].type == 'ellipsoid':
+        elif ds.diff[self.run].type == 'ellipsoid':
             self.relax.generic.angles.ellipsoid_frame(self.run)
 
         # The 'dasha_script' file.
-        script = self.relax.IO.open_write_file(file_name='dasha_script', dir=self.dir, force=self.force)
+        script = open_write_file(file_name='dasha_script', dir=self.dir, force=self.force)
         self.create_script(script)
         script.close()
 
@@ -130,38 +132,38 @@ class Dasha:
 
         # Number of frequencies.
         file.write('\n# Number of frequencies.\n')
-        file.write('set n_freq ' + `relax_data_store.num_frq[self.run]` + '\n')
+        file.write('set n_freq ' + `ds.num_frq[self.run]` + '\n')
 
         # Frequency values.
         file.write('\n# Frequency values.\n')
-        for i in xrange(relax_data_store.num_frq[self.run]):
-            file.write('set H1_freq ' + `relax_data_store.frq[self.run][i] / 1e6` + ' ' + `i+1` + '\n')
+        for i in xrange(ds.num_frq[self.run]):
+            file.write('set H1_freq ' + `ds.frq[self.run][i] / 1e6` + ' ' + `i+1` + '\n')
 
         # Set the diffusion tensor.
         file.write('\n# Set the diffusion tensor.\n')
-        if self.param_set != 'local_tm':
+        if model_type != 'local_tm':
             # Sphere.
-            if relax_data_store.diff[self.run].type == 'sphere':
-                file.write('set tr ' + `relax_data_store.diff[self.run].tm / 1e-9` + '\n')
+            if ds.diff[self.run].type == 'sphere':
+                file.write('set tr ' + `ds.diff[self.run].tm / 1e-9` + '\n')
 
             # Spheroid.
-            elif relax_data_store.diff[self.run].type == 'spheroid':
-                file.write('set tr ' + `relax_data_store.diff[self.run].tm / 1e-9` + '\n')
+            elif ds.diff[self.run].type == 'spheroid':
+                file.write('set tr ' + `ds.diff[self.run].tm / 1e-9` + '\n')
 
             # Ellipsoid.
-            elif relax_data_store.diff[self.run].type == 'ellipsoid':
+            elif ds.diff[self.run].type == 'ellipsoid':
                 # Get the eigenvales.
                 Dx, Dy, Dz = self.relax.generic.diffusion_tensor.return_eigenvalues(self.run)
 
                 # Geometric parameters.
-                file.write('set tr ' + `relax_data_store.diff[self.run].tm / 1e-9` + '\n')
+                file.write('set tr ' + `ds.diff[self.run].tm / 1e-9` + '\n')
                 file.write('set D1/D3 ' + `Dx / Dz` + '\n')
                 file.write('set D2/D3 ' + `Dy / Dz` + '\n')
 
                 # Orientational parameters.
-                file.write('set alfa ' + `relax_data_store.diff[self.run].alpha / (2.0 * pi) * 360.0` + '\n')
-                file.write('set betta ' + `relax_data_store.diff[self.run].beta / (2.0 * pi) * 360.0` + '\n')
-                file.write('set gamma ' + `relax_data_store.diff[self.run].gamma / (2.0 * pi) * 360.0` + '\n')
+                file.write('set alfa ' + `ds.diff[self.run].alpha / (2.0 * pi) * 360.0` + '\n')
+                file.write('set betta ' + `ds.diff[self.run].beta / (2.0 * pi) * 360.0` + '\n')
+                file.write('set gamma ' + `ds.diff[self.run].gamma / (2.0 * pi) * 360.0` + '\n')
 
         # Reading the relaxation data.
         file.write('\n# Reading the relaxation data.\n')
@@ -169,9 +171,9 @@ class Dasha:
         noe_index = 1
         r1_index = 1
         r2_index = 1
-        for i in xrange(relax_data_store.num_ri[self.run]):
+        for i in xrange(ds.num_ri[self.run]):
             # NOE.
-            if relax_data_store.ri_labels[self.run][i] == 'NOE':
+            if ds.ri_labels[self.run][i] == 'NOE':
                 # Data set number.
                 number = noe_index
 
@@ -182,7 +184,7 @@ class Dasha:
                 noe_index = noe_index + 1
 
             # R1.
-            elif relax_data_store.ri_labels[self.run][i] == 'R1':
+            elif ds.ri_labels[self.run][i] == 'R1':
                 # Data set number.
                 number = r1_index
 
@@ -193,7 +195,7 @@ class Dasha:
                 r1_index = r1_index + 1
 
             # R2.
-            elif relax_data_store.ri_labels[self.run][i] == 'R2':
+            elif ds.ri_labels[self.run][i] == 'R2':
                 # Data set number.
                 number = r2_index
 
@@ -210,9 +212,9 @@ class Dasha:
                 file.write('\nread < ' + data_type + ' ' + `number` + '\n')
 
             # The relaxation data.
-            for j in xrange(len(relax_data_store.res[self.run])):
+            for j in xrange(len(ds.res[self.run])):
                 # Reassign the data.
-                data = relax_data_store.res[self.run][j]
+                data = ds.res[self.run][j]
 
                 # Skip deselected residues.
                 if not data.select:
@@ -225,11 +227,11 @@ class Dasha:
             file.write('exit\n')
 
         # Individual residue optimisation.
-        if self.param_set == 'mf':
+        if model_type == 'mf':
             # Loop over the residues.
-            for i in xrange(len(relax_data_store.res[self.run])):
+            for i in xrange(len(ds.res[self.run])):
                 # Reassign the data.
-                data = relax_data_store.res[self.run][i]
+                data = ds.res[self.run][i]
 
                 # Skip deselected residues.
                 if not data.select:
@@ -246,11 +248,11 @@ class Dasha:
                 file.write('set cres ' + `data.num` + '\n')
 
                 # The angle alpha of the XH vector in the spheroid diffusion frame.
-                if relax_data_store.diff[self.run].type == 'spheroid':
+                if ds.diff[self.run].type == 'spheroid':
                     file.write('set teta ' + `data.alpha` + '\n')
 
                 # The angles theta and phi of the XH vector in the ellipsoid diffusion frame.
-                elif relax_data_store.diff[self.run].type == 'ellipsoid':
+                elif ds.diff[self.run].type == 'ellipsoid':
                     file.write('\n# Setting the spherical angles of the XH vector in the ellipsoid diffusion frame.\n')
                     file.write('set teta ' + `data.theta` + '\n')
                     file.write('set fi ' + `data.phi` + '\n')
@@ -270,13 +272,13 @@ class Dasha:
                     exch = 0
 
                 # Anisotropic diffusion.
-                if relax_data_store.diff[self.run].type == 'sphere':
+                if ds.diff[self.run].type == 'sphere':
                     anis = 0
                 else:
                     anis = 1
 
                 # Axial symmetry.
-                if relax_data_store.diff[self.run].type == 'spheroid':
+                if ds.diff[self.run].type == 'spheroid':
                     sym = 1
                 else:
                     sym = 0
@@ -312,9 +314,9 @@ class Dasha:
             # Optimisation of all residues.
             file.write('\n\n\n# Optimisation of all residues.\n')
             if self.algor == 'LM':
-                file.write('lmin ' + `relax_data_store.res[self.run][0].num` + ' ' + `relax_data_store.res[self.run][-1].num`)
+                file.write('lmin ' + `ds.res[self.run][0].num` + ' ' + `ds.res[self.run][-1].num`)
             elif self.algor == 'NR':
-                file.write('min ' + `relax_data_store.res[self.run][0].num` + ' ' + `relax_data_store.res[self.run][-1].num`)
+                file.write('min ' + `ds.res[self.run][0].num` + ' ' + `ds.res[self.run][-1].num`)
 
             # Show the results.
             file.write('\n# Show the results.\n')
@@ -333,29 +335,28 @@ class Dasha:
             file.write('write chi2.out F\n')
 
         else:
-            raise RelaxError, 'Optimisation of the parameter set ' + `self.param_set` + ' currently not supported.'
+            raise RelaxError, 'Optimisation of the parameter set ' + `model_type` + ' currently not supported.'
 
 
-    def execute(self, run, dir, force, binary):
+    def execute(self, dir, force, binary):
         """Function for executing Dasha."""
 
         # Arguments.
-        self.run = run
         self.dir = dir
         self.force = force
         self.binary = binary
 
         # Test the binary file string corresponds to a valid executable.
-        self.relax.IO.test_binary(self.binary)
+        test_binary(self.binary)
 
         # The current directory.
         orig_dir = getcwd()
 
         # The directory.
-        if self.dir == None:
-            self.dir = self.run
-        if not access(self.dir, F_OK):
-            raise RelaxDirError, ('Dasha', self.dir)
+        if dir == None:
+            dir = pipe
+        if not access(dir, F_OK):
+            raise RelaxDirError, ('Dasha', dir)
 
         # Change to this directory.
         chdir(self.dir)
@@ -384,15 +385,12 @@ class Dasha:
         sys.stdout.write('\n\n')
 
 
-    def extract(self, run, dir):
+    def extract(self, dir):
         """Function for extracting the Dasha results out of the 'dasha_results' file."""
 
-        # Arguments.
-        self.run = run
-
         # Test if sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
         # The directory.
         if dir == None:
@@ -413,7 +411,7 @@ class Dasha:
             if param in ['te', 'tf', 'ts']:
                 scaling = 1e-9
             elif param == 'Rex':
-                scaling = 1.0 / (2.0 * pi * relax_data_store.frq[self.run][0]) ** 2
+                scaling = 1.0 / (2.0 * pi * ds.frq[self.run][0]) ** 2
             else:
                 scaling = 1.0
 
@@ -421,17 +419,17 @@ class Dasha:
             self.relax.generic.value.read(self.run, param=param, scaling=scaling, file=file_name, num_col=0, name_col=None, data_col=1, error_col=2)
 
             # Clean up of non-existant parameters (set the parameter to None!).
-            for i in xrange(len(relax_data_store.res[self.run])):
+            for i in xrange(len(ds.res[self.run])):
                 # Skip deselected residues.
-                if not relax_data_store.res[self.run][i].select:
+                if not ds.res[self.run][i].select:
                     continue
 
                 # Skip the residue (don't set the parameter to None) if the parameter exists in the model.
-                if param in relax_data_store.res[self.run][i].params:
+                if param in ds.res[self.run][i].params:
                     continue
 
                 # Set the parameter to None.
-                setattr(relax_data_store.res[self.run][i], lower(param), None)
+                setattr(ds.res[self.run][i], lower(param), None)
 
         # Extract the chi-squared values.
         file_name = dir + '/chi2.out'

@@ -22,10 +22,11 @@
 
 # Python module imports.
 from math import pi, sqrt
+import sys
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 
 
 class N_state_model(TestCase):
@@ -34,7 +35,7 @@ class N_state_model(TestCase):
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        relax_data_store.__reset__()
+        ds.__reset__()
 
 
 
@@ -50,10 +51,10 @@ class N_state_model(TestCase):
         """
 
         # Execute the script.
-        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/5_state_xz.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/5_state_xz.py')
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test the optimised probabilities.
         self.assertAlmostEqual(cdp.probs[0], 0.2)

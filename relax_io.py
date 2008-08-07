@@ -27,27 +27,16 @@ This includes IO redirection, automatic loading and writing of compressed files 
 compression), reading and writing of files, processing of the contents of files, etc.
 """
 
-
-# BZ2 compression module.
-try:
-    from bz2 import BZ2File
-    bz2_module = 1
-except ImportError, message:
-    bz2_module = 0
-    bz2_module_message = message.args[0]
-
-# Gzip compression module.
-from gzip import GzipFile
-
-# Devnull.
-try:
-    from os import devnull
-    devnull_import = True
-except ImportError, message:
-    devnull_import = False
-    devnull_import_message = message.args[0]
+# Dependency check module.
+import dep_check
 
 # Python module imports.
+if dep_check.bz2_module:
+    from bz2 import BZ2File
+if dep_check.gzip_module:
+    from gzip import GzipFile
+if dep_check.devnull_import:
+    from os import devnull
 from os import F_OK, X_OK, access, altsep, getenv, makedirs, pathsep, remove, sep, stat
 from os.path import expanduser, basename, splitext
 from re import match, search
@@ -97,14 +86,14 @@ def determine_compression(file_path):
     return compress_type, file_path
 
 
-def extract_data(file_name=None, dir=None, file_data=None, sep=None):
-    """Open the file 'file' and return all the data.
+def extract_data(file=None, dir=None, file_data=None, sep=None):
+    """Return all data in the file as a list of lines where each line is a list of line elements.
 
-    @param file_name:       The name of the file to extract the data from.
-    @type file_name:        str
-    @param dir:             The path where the file is located.  If None, then the current
-                            directory is assumed.
-    @type dir:              str
+    @param file:            The file to extract the data from.
+    @type file:             str or file object
+    @param dir:             The path where the file is located.  If None and the file argument is a
+                            string, then the current directory is assumed.
+    @type dir:              str or None
     @param file_data:       If the file data has already been extracted from the file, it can be
                             passed into this function using this argument.  If data is supplied
                             here, then the file_name and dir args are ignored.
@@ -119,7 +108,8 @@ def extract_data(file_name=None, dir=None, file_data=None, sep=None):
     # Data not already extracted from the file.
     if not file_data:
         # Open the file.
-        file = open_read_file(file_name=file_name, dir=dir)
+        if type(file) == str:
+            file = open_read_file(file_name=file, dir=dir)
 
         # Read lines.
         file_data = file.readlines()
@@ -172,7 +162,8 @@ def get_file_path(file_name=None, dir=None):
         file_path = dir + '/' + file_path
 
     # Expand any ~ characters.
-    file_path = expanduser(file_path)
+    if file_path:    # Catch a file path of None, as expanduser can't handle this.
+        file_path = expanduser(file_path)
 
     # Return the file path.
     return file_path
@@ -249,6 +240,10 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
         # Nothing to do here!
         return file_name
 
+    # Invalid file name.
+    if not file_name and type(file_name) != str:
+        raise RelaxError, "The file name " + `file_name` + " " + `type(file_name)` + " is invalid and cannot be opened."
+
     # File path.
     file_path = get_file_path(file_name, dir)
 
@@ -262,10 +257,10 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
         if compress_type == 0:
             file_obj = open(file_path, 'r')
         elif compress_type == 1:
-            if bz2_module:
+            if dep_check.bz2_module:
                 file_obj = BZ2File(file_path, 'r')
             else:
-                raise RelaxError, "Cannot open the file " + `file_path` + ", try uncompressing first.  " + bz2_module_message + "."
+                raise RelaxError, "Cannot open the file " + `file_path` + ", try uncompressing first.  " + dep_check.bz2_module_message + "."
         elif compress_type == 2:
             file_obj = GzipFile(file_path, 'r')
     except IOError, message:
@@ -305,11 +300,16 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
         # Nothing to do here!
         return file_name
 
+    # Something pretending to be a file object.
+    if hasattr(file_name, 'write'):
+        # Nothing to do here!
+        return file_name
+
     # The null device.
     if search('devnull', file_name):
         # Devnull could not be imported!
-        if not devnull_import:
-            raise RelaxError, devnull_import_message + ".  To use devnull, please upgrade to Python >= 2.4."
+        if not dep_check.devnull_import:
+            raise RelaxError, dep_check.devnull_import_message + ".  To use devnull, please upgrade to Python >= 2.4."
 
         # Print out.
         if verbosity:
@@ -333,12 +333,12 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
     # Bzip2 compression.
     if compress_type == 1 and not search('.bz2$', file_path):
         # Bz2 module exists.
-        if bz2_module:
+        if dep_check.bz2_module:
             file_path = file_path + '.bz2'
 
         # Switch to gzip compression.
         else:
-            warn(RelaxWarning("Cannot use Bzip2 compression, using gzip compression instead.  " + bz2_module_message + "."))
+            warn(RelaxWarning("Cannot use Bzip2 compression, using gzip compression instead.  " + dep_check.bz2_module_message + "."))
             compress_type = 2
 
     # Gzip compression.
@@ -442,6 +442,61 @@ def test_binary(binary):
 
 
 
+class DummyFileObject:
+    def __init__(self):
+        """Set up the dummy object to act as a file object."""
+
+        # Initialise an object for adding the string from all write calls to.
+        self.data = ''
+
+        # Set the closed flag.
+        self.closed = False
+
+
+    def close(self):
+        """A method for 'closing' this object."""
+
+        # Set the closed flag.
+        self.closed = True
+
+
+    def write(self, str):
+        """Mimic the file object write() method so that this class can be used as a file object.
+
+        @param str:     The string to be written.
+        @type str:      str
+        """
+
+        # Check if the file is closed.
+        if self.closed:
+            raise ValueError, 'I/O operation on closed file'
+
+        # Append the string to the data object.
+        self.data = self.data + str
+
+
+    def readlines(self):
+        """Mimic the file object readlines() method.
+        
+        This method works even if this dummy file object is closed!
+
+
+        @return:    The contents of the file object separated by newline characters.
+        @rtype:     list of str
+        """
+
+        # Split up the string.
+        lines = split(self.data, '\n')
+
+        # Loop over the lines, re-adding the newline character to match the file object readlines() method.
+        for i in xrange(len(lines)):
+            lines[i] = lines[i] + '\n'
+
+        # Return the file lines (except the last as it is empty).
+        return lines[:-1]
+
+
+
 class IO:
     def __init__(self, relax):
         """Class containing the file operations.
@@ -525,7 +580,7 @@ class IO:
         """Function for turning logging on."""
 
         # Tee file.
-        self.tee_file, file_path = self.open_write_file(file_name=file_name, dir=dir, force=1, compress_type=compress_type, verbosity=verbosity, return_path=1)
+        self.tee_file, file_path = self.open_write_file(file_name=file_name, dir=dir, force=True, compress_type=compress_type, verbosity=verbosity, return_path=1)
 
         # Print out.
         if verbosity:

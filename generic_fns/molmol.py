@@ -20,14 +20,17 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for interfacing with Molmol."""
+
 # Python module imports.
 from os import popen
 from string import split
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
+from relax_errors import RelaxError, RelaxNoSequenceError
 from relax_io import open_write_file, test_binary
 from specific_fns.setup import get_specific_fn
 
@@ -72,7 +75,7 @@ def create_macro(data_type=None, style=None, colour_start=None, colour_end=None,
     """
 
     # Specific Molmol macro creation function.
-    molmol_macro = get_specific_fn('molmol_macro', relax_data_store[relax_data_store.current_pipe].pipe_type)
+    molmol_macro = get_specific_fn('molmol_macro', ds[ds.current_pipe].pipe_type)
 
     # Get the macro.
     commands = molmol_macro(data_type, style, colour_start, colour_end, colour_list)
@@ -122,7 +125,7 @@ def open_pdb():
     pipe_write("InitAll yes")
 
     # Open the PDB.
-    pipe_write("ReadPdb " + relax_data_store[relax_data_store.current_pipe].structure.file_name)
+    pipe_write("ReadPdb " + ds[ds.current_pipe].structure.file_name)
 
 
 def pipe_open():
@@ -132,7 +135,7 @@ def pipe_open():
     test_binary('molmol')
 
     # Alias the data pipe container.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Open and store the Molmol pipe.
     cdp.molmol = popen("molmol -f -", 'w', 0)
@@ -159,7 +162,7 @@ def pipe_open_test():
     """
 
     # Alias the data pipe container.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Test if a pipe has been opened.
     if not hasattr(cdp, 'molmol'):
@@ -193,7 +196,7 @@ def pipe_write(command=None, store_command=True):
         pipe_open()
 
     # Write the command to the pipe.
-    relax_data_store[relax_data_store.current_pipe].molmol.write(command + '\n')
+    ds[ds.current_pipe].molmol.write(command + '\n')
 
     # Place the command in the command history.
     if store_command:

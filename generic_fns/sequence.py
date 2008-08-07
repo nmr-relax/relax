@@ -20,13 +20,57 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for handling the molecule, residue, and spin sequence."""
+
+# Python module imports.
+from copy import deepcopy
+
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_loop
-from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError
+import pipes
+from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError
 from relax_io import extract_data, open_write_file, strip
 import sys
 
+
+
+def copy(pipe_from=None, pipe_to=None):
+    """Copy the molecule, residue, and spin sequence data from one data pipe to another.
+
+    @param pipe_from:   The data pipe to copy the sequence data from.  This defaults to the current
+                        data pipe.
+    @type pipe_from:    str
+    @param pipe_to:     The data pipe to copy the sequence data to.  This defaults to the current
+                        data pipe.
+    @type pipe_to:      str
+    """
+
+    # Defaults.
+    if pipe_from == None and pipe_to == None:
+        raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+    elif pipe_from == None:
+        pipe_from = ds.current_pipe
+    elif pipe_to == None:
+        pipe_to = ds.current_pipe
+
+    # Test if the pipe_from and pipe_to data pipes exist.
+    pipes.test(pipe_from)
+    pipes.test(pipe_to)
+
+    # Test if pipe_from contains sequence data.
+    if not exists_mol_res_spin_data(pipe_from):
+        raise RelaxNoSequenceError
+
+    # Test if pipe_to contains sequence data.
+    if exists_mol_res_spin_data(pipe_to):
+        raise RelaxSequenceError
+
+    # Loop over the spins of the pipe_from data pipe.
+    for spin, mol_name, res_num, res_name in spin_loop(pipe=pipe_from, full_info=True):
+        # Generate the new sequence.
+        generate(mol_name, res_num, res_name, spin.num, spin.name, pipe_to)
 
 
 def display(sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
@@ -62,35 +106,39 @@ def display(sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=Fal
     write_body(file=sys.stdout, sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag)
 
 
-def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
+def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None, pipe=None):
     """Generate the sequence item-by-item by adding a single molecule/residue/spin container as necessary.
 
-    @keyword mol_name:          The molecule name.
-    @type mol_name:             bool
-    @keyword res_num:           The residue number.
-    @type res_num:              bool
-    @keyword res_name:          The residue name.
-    @type res_name:             bool
-    @keyword spin_num:          The spin number.
-    @type spin_num:             bool
-    @keyword spin_name:         The spin name.
-    @type spin_name:            bool
+    @keyword mol_name:  The molecule name.
+    @type mol_name:     bool
+    @keyword res_num:   The residue number.
+    @type res_num:      bool
+    @keyword res_name:  The residue name.
+    @type res_name:     bool
+    @keyword spin_num:  The spin number.
+    @type spin_num:     bool
+    @keyword spin_name: The spin name.
+    @type spin_name:    bool
+    @param pipe:        The data pipe in which to generate the sequence.  This defaults to the
+                        current data pipe.
+    @type pipe:         str
     """
 
-    # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    # The current data pipe.
+    if pipe == None:
+        pipe = ds.current_pipe
 
     # Get the molecule.
-    curr_mol = return_molecule(generate_spin_id(mol_name=mol_name))
+    curr_mol = return_molecule(generate_spin_id(mol_name=mol_name), pipe=pipe)
 
     # A new molecule.
     if not curr_mol:
         # Add the molecule (and store it in the 'curr_mol' object).
-        cdp.mol.add_item(mol_name=mol_name)
-        curr_mol = cdp.mol[-1]
+        ds[pipe].mol.add_item(mol_name=mol_name)
+        curr_mol = ds[pipe].mol[-1]
 
     # Get the residue.
-    curr_res = return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name))
+    curr_res = return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name), pipe=pipe)
 
     # A new residue.
     if not curr_res:
@@ -99,7 +147,7 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
         curr_res = curr_mol.res[-1]
 
     # Get the spin.
-    curr_spin = return_spin(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name))
+    curr_spin = return_spin(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name), pipe=pipe)
 
     # A new spin.
     if not curr_spin:
@@ -351,13 +399,18 @@ def write_body(file=None, sep=None, mol_name_flag=False, res_num_flag=False, res
         write_line(file, mol_name, res_num, res_name, spin.num, spin.name, sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag)
 
 
-def write_header(file, sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
-    """Function for writing to the given file object the molecule, residue, and/or sequence data.
+def write_header(file, sep=None, extra_format=None, extra_values=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
+    """Write to the file object the molecule, residue, and spin data, as well as any extra columns.
 
     @param file:                The file to write the data to.
     @type file:                 writable file object
     @keyword sep:               The column seperator which, if None, defaults to whitespace.
     @type sep:                  str or None
+    @keyword extra_format:      The formatting string for any extra columns.  This should match the
+                                extra_values argument.
+    @type extra_format:         str
+    @keyword extra_values:      The values to place into the extra columns, corresponding to extra_format.
+    @type extra_values:         tuple of str
     @keyword mol_name_flag:     A flag which if True will cause the molecule name column to be
                                 written.
     @type mol_name_flag:        bool
@@ -378,7 +431,7 @@ def write_header(file, sep=None, mol_name_flag=False, res_num_flag=False, res_na
     if sep == None:
         sep = ''
 
-    # Write the header.
+    # Write the start of the header line.
     if mol_name_flag:
         file.write("%-10s " % ("Mol_name"+sep))
     if res_num_flag:
@@ -389,10 +442,16 @@ def write_header(file, sep=None, mol_name_flag=False, res_num_flag=False, res_na
         file.write("%-10s " % ("Spin_num"+sep))
     if spin_name_flag:
         file.write("%-10s " % ("Spin_name"+sep))
+
+    # Extra columns.
+    if extra_format:
+        file.write(extra_format % extra_values)
+
+    # Line termination.
     file.write('\n')
 
 
-def write_line(file, mol_name, res_num, res_name, spin_num, spin_name, sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
+def write_line(file, mol_name, res_num, res_name, spin_num, spin_name, sep=None, extra_format=None, extra_values=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
     """Write to the given file object a single line of molecule, residue, and spin data.
 
     @param file:                The file to write the data to.
@@ -409,6 +468,11 @@ def write_line(file, mol_name, res_num, res_name, spin_num, spin_name, sep=None,
     @type spin_name:            anything
     @keyword sep:               The column seperator which, if None, defaults to whitespace.
     @type sep:                  str or None
+    @keyword extra_format:      The formatting string for any extra columns.  This should match the
+                                extra_values argument.
+    @type extra_format:         str
+    @keyword extra_values:      The values to place into the extra columns, corresponding to extra_format.
+    @type extra_values:         tuple of str
     @keyword mol_name_flag:     A flag which if True will cause the molecule name column to be
                                 written.
     @type mol_name_flag:        bool
@@ -429,7 +493,7 @@ def write_line(file, mol_name, res_num, res_name, spin_num, spin_name, sep=None,
     if sep == None:
         sep = ''
 
-    # Write the header.
+    # Write the start of the line.
     if mol_name_flag:
         file.write("%-10s " % (str(mol_name)+sep))
     if res_num_flag:
@@ -440,4 +504,10 @@ def write_line(file, mol_name, res_num, res_name, spin_num, spin_name, sep=None,
         file.write("%-10s " % (str(spin_num)+sep))
     if spin_name_flag:
         file.write("%-10s " % (str(spin_name)+sep))
+
+    # Extra columns.
+    if extra_format:
+        file.write(extra_format % extra_values)
+
+    # Line termination.
     file.write('\n')

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from data import Data
+from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxError
 
 
@@ -33,67 +33,62 @@ class Empty_container:
 
 
 class Test___init__(TestCase):
-    """Unit tests for the data.Data class."""
+    """Unit tests for the data.Relax_data_store class."""
 
     def setUp(self):
         """Set up a complex relax data store."""
 
-        # Get an instance of the relax data object fot testing. This is a deliberate breach of 
-        # the Singleton design of this class for testing purposes only. Dont try this at home!
-        self.data_store = Data.__class__()
-
         # Add an empty data container as a new pipe.
-        self.data_store['empty'] = Empty_container()
+        ds['empty'] = Empty_container()
 
         # Add an object to the empty data container.
-        self.data_store['empty'].x = 1
+        ds['empty'].x = 1
 
         # Add an object to the data store object.
-        self.data_store.test = 1
+        ds.test = 1
 
 
     def tearDown(self):
-        """Destroy the subclassed data store."""
+        """Reset the data store."""
 
-        # Delete all references.
-        if hasattr(self, 'data_store'):
-            del self.data_store
+        # Execute the reset method.
+        ds.__reset__()
 
 
     def test_add(self):
         """Unit test for testing the addition of a new data pipe by the 'add()' method."""
 
         # Add a new data pipe.
-        self.data_store.add(pipe_name='new', pipe_type='mf')
+        ds.add(pipe_name='new', pipe_type='mf')
 
         # Test that the new data pipe exists.
-        self.assert_(self.data_store.has_key('new'))
+        self.assert_(ds.has_key('new'))
 
 
     def test_repr(self):
         """Unit test for the validity of the __repr__() method."""
 
         # Test that __repr__() returns a string.
-        self.assert_(type(self.data_store.__repr__()), str)
+        self.assert_(type(ds.__repr__()), str)
 
 
     def test_reset(self):
         """Unit test for the __reset__() class method."""
 
         # Execute the reset method.
-        self.data_store.__reset__()
+        ds.__reset__()
 
         # Test that there are no keys.
-        self.assertEqual(self.data_store.keys(), [])
+        self.assertEqual(ds.keys(), [])
 
-        # Test that the object self.data_store.test is deleted.
-        self.assert_(not hasattr(self.data_store, 'test'))
+        # Test that the object ds.test is deleted.
+        self.assert_(not hasattr(ds, 'test'))
 
         # Test that the object methods still exist.
-        self.assert_(hasattr(self.data_store, '__new__'))
-        self.assert_(hasattr(self.data_store, '__repr__'))
-        self.assert_(hasattr(self.data_store, '__reset__'))
-        self.assert_(hasattr(self.data_store, 'add'))
+        self.assert_(hasattr(ds, '__new__'))
+        self.assert_(hasattr(ds, '__repr__'))
+        self.assert_(hasattr(ds, '__reset__'))
+        self.assert_(hasattr(ds, 'add'))
 
         # Test that the object's initial objects still exist.
-        self.assert_(hasattr(self.data_store, 'current_pipe'))
+        self.assert_(hasattr(ds, 'current_pipe'))

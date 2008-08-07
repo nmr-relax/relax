@@ -20,11 +20,14 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for reading and writing the relax program state."""
+
 # Python module imports.
 from cPickle import dump, load
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxError
 from relax_io import open_read_file, open_write_file
 
@@ -51,10 +54,10 @@ def load_state(state=None, dir_name=None):
     file.close()
 
     # Reset the relax data storage object.
-    relax_data_store.__reset__()
+    ds.__reset__()
 
-    # Black list of objects.
-    black_list = ['__weakref__']
+    # Black list of objects (all dict objects, non-modifiable objects, data store specific methods, and other special objects).
+    black_list = dir(dict) + ['__weakref__', '__dict__', '__module__', '__reset__', 'add']
 
     # Loop over the objects in the saved state, and dump them into the relax data store.
     for name in dir(state):
@@ -66,12 +69,12 @@ def load_state(state=None, dir_name=None):
         obj = getattr(state, name)
 
         # Place ALL objects into the singleton!
-        setattr(relax_data_store, name, obj)
+        setattr(ds, name, obj)
  
     # Loop over the keys of the dictionary.
     for key in state.keys():
         # Shift the PipeContainer.
-        relax_data_store[key] = state[key]
+        ds[key] = state[key]
 
     # Delete the state object.
     del state
@@ -96,7 +99,7 @@ def save_state(state=None, dir_name=None, force=False, compress_type=1):
     file = open_write_file(file_name=state, dir=dir_name, force=force, compress_type=compress_type)
 
     # Pickle the data class and write it to file
-    dump(relax_data_store, file, 1)
+    dump(ds, file, 1)
 
     # Close the file.
     file.close()

@@ -44,8 +44,8 @@ class Prototype(object):
             if search('^__', name):
                 continue
 
-            # Skip the 'is_empty' method.
-            if name == 'is_empty':
+            # Skip the class methods.
+            if name in self.__class__.__dict__.keys():
                 continue
 
             # Get the object.

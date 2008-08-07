@@ -20,17 +20,21 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""The molecule-residue-spin containers."""
+
 # Python module imports.
 from copy import deepcopy
+import numpy
 from re import match
 
 # relax module imports.
+import data
+from float import floatAsByteArray
 from prototype import Prototype
-from relax_errors import RelaxError
-
-
-"""The molecule-residue-spin containers."""
-
+from relax_errors import RelaxError, RelaxFromXMLNotEmptyError
+from relax_xml import fill_object_contents, xml_to_object
+import specific_fns
 
 
 # The spin system data.
@@ -181,6 +185,103 @@ class SpinList(list):
         return False
 
 
+    def from_xml(self, spin_nodes):
+        """Recreate a spin list data structure from the XML spin nodes.
+
+        @param spin_nodes:  The spin XML nodes.
+        @type spin_nodes:   xml.dom.minicompat.NodeList instance
+        """
+
+        # Test if empty.
+        if not self.is_empty():
+            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
+
+        # Loop over the spins.
+        for spin_node in spin_nodes:
+            # Get the spin details and add the spin to the SpinList structure.
+            name = str(spin_node.getAttribute('name'))
+            if name == 'None':
+                name = None
+            num = eval(spin_node.getAttribute('num'))
+            self.add_item(spin_name=name, spin_num=num)
+
+            # Recreate the current spin container.
+            xml_to_object(spin_node, self[-1])
+
+
+    def to_xml(self, doc, element):
+        """Create XML elements for each spin.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the spin XML elements to.
+        @type element:  XML element object
+        """
+
+        # The relax data store.
+        ds = data.Relax_data_store()
+
+        # Get the specific functions.
+        data_names = specific_fns.setup.get_specific_fn('data_names', ds[ds.current_pipe].pipe_type, raise_error=False)
+        return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', ds[ds.current_pipe].pipe_type, raise_error=False)
+
+        # Loop over the spins.
+        for i in xrange(len(self)):
+            # Create an XML element for this spin and add it to the higher level element.
+            spin_element = doc.createElement('spin')
+            element.appendChild(spin_element)
+
+            # Set the spin attributes.
+            spin_element.setAttribute('desc', 'Spin container')
+            spin_element.setAttribute('name', str(self[i].name))
+            spin_element.setAttribute('num', str(self[i].num))
+
+            # Get the spin specific object names and loop over them to get their descriptions.
+            object_info = []
+            if data_names:
+                for name in data_names(error_names=True, sim_names=True):
+                    # Get the description.
+                    if return_data_desc:
+                        desc = return_data_desc(name, spin=self[i])
+                    else:
+                        desc = None
+
+                    # Append the two.
+                    object_info.append([name, desc])
+
+            # Add the ordered objects.
+            blacklist = []
+            for name, desc in object_info:
+                # Add the name to the blacklist.
+                blacklist.append(name)
+
+                # Skip the object if it is missing from the SpinContainer.
+                if not hasattr(self[i], name):
+                    continue
+
+                # Create a new element for this object, and add it to the main element.
+                sub_element = doc.createElement(name)
+                spin_element.appendChild(sub_element)
+
+                # Add the object description.
+                if desc:
+                    sub_element.setAttribute('desc', desc)
+
+                # Get the object.
+                object = getattr(self[i], name)
+
+                # Store floats as IEEE-754 byte arrays (for full precision storage).
+                if type(object) == float or type(object) == numpy.float64:
+                    sub_element.setAttribute('ieee_754_byte_array', `floatAsByteArray(object)`)
+
+                # Add the text value to the sub element.
+                text_val = doc.createTextNode(`object`)
+                sub_element.appendChild(text_val)
+
+            # Add all simple python objects within the SpinContainer to the XML element.
+            fill_object_contents(doc, spin_element, object=self[i], blacklist=['name', 'num', 'spin'] + blacklist + self[i].__class__.__dict__.keys())
+
+
 
 # The residue data.
 ###################
@@ -188,13 +289,12 @@ class SpinList(list):
 class ResidueContainer(Prototype):
     """Class containing all the residue specific data."""
 
-    def __init__(self, res_name=None, res_num=None, select=True):
+    def __init__(self, res_name=None, res_num=None):
         """Set up the default objects of the residue data container."""
 
         # The residue name and number.
         self.name = res_name
         self.num = res_num
-        self.select = select
 
         # The empty spin system list.
         self.spin = SpinList()
@@ -248,7 +348,7 @@ class ResidueContainer(Prototype):
         # An object has been added to the container.
         for name in dir(self):
             # Skip the objects initialised in __init__().
-            if name == 'num' or name == 'name' or name == 'select' or name == 'spin':
+            if name == 'num' or name == 'name' or name == 'spin':
                 continue
 
             # Skip the ResidueContainer methods.
@@ -291,22 +391,21 @@ class ResidueList(list):
         text = "Residues.\n\n"
 
         # Residue data.
-        text = text + "%-8s%-8s%-8s%-10s" % ("Index", "Number", "Name", "Selected") + "\n"
+        text = text + "%-8s%-8s%-8s" % ("Index", "Number", "Name") + "\n"
         for i in xrange(len(self)):
-            text = text + "%-8i%-8s%-8s%-10s" % (i, `self[i].num`, self[i].name, self[i].select) + "\n"
+            text = text + "%-8i%-8s%-8s" % (i, `self[i].num`, self[i].name) + "\n"
         text = text + "\nThese can be accessed by typing 'D.mol[i].res[j]', where D is the relax data storage object.\n"
 
         return text
 
 
-    def add_item(self, res_name=None, res_num=None, select=True):
+    def add_item(self, res_name=None, res_num=None):
         """Append an empty ResidueContainer to the ResidueList."""
 
         # If no residue data exists, replace the empty first residue with this residue.
         if self.is_empty():
             self[0].num = res_num
             self[0].name = res_name
-            self[0].select = select
 
         # Otherwise append a new ResidueContainer.
         else:
@@ -323,7 +422,7 @@ class ResidueList(list):
                         raise RelaxError, "The unnumbered residue name '" + `res_name` + "' already exists."
 
             # Append a new ResidueContainer.
-            self.append(ResidueContainer(res_name, res_num, select))
+            self.append(ResidueContainer(res_name, res_num))
 
 
     def is_empty(self):
@@ -342,6 +441,60 @@ class ResidueList(list):
         return False
 
 
+    def from_xml(self, res_nodes):
+        """Recreate a residue list data structure from the XML residue nodes.
+
+        @param res_nodes:   The residue XML nodes.
+        @type res_nodes:    xml.dom.minicompat.NodeList instance
+        """
+
+        # Test if empty.
+        if not self.is_empty():
+            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
+
+        # Loop over the residues.
+        for res_node in res_nodes:
+            # Get the residue details and add the residue to the ResidueList structure.
+            name = str(res_node.getAttribute('name'))
+            if name == 'None':
+                name = None
+            num = eval(res_node.getAttribute('num'))
+            self.add_item(res_name=name, res_num=num)
+
+            # Get the spin nodes.
+            spin_nodes = res_node.getElementsByTagName('spin')
+
+            # Recreate the spin data structures for the current residue.
+            self[-1].spin.from_xml(spin_nodes)
+
+
+    def to_xml(self, doc, element):
+        """Create XML elements for each residue.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the residue XML elements to.
+        @type element:  XML element object
+        """
+
+        # Loop over the residues.
+        for i in xrange(len(self)):
+            # Create an XML element for this residue and add it to the higher level element.
+            res_element = doc.createElement('res')
+            element.appendChild(res_element)
+
+            # Set the residue attributes.
+            res_element.setAttribute('desc', 'Residue container')
+            res_element.setAttribute('name', str(self[i].name))
+            res_element.setAttribute('num', str(self[i].num))
+
+            # Add all simple python objects within the ResidueContainer to the XML element.
+            fill_object_contents(doc, res_element, object=self[i], blacklist=['name', 'num', 'spin'] + self[i].__class__.__dict__.keys())
+
+            # Add the residue data.
+            self[i].spin.to_xml(doc, res_element)
+
+
 
 # The molecule data.
 ###################
@@ -349,12 +502,11 @@ class ResidueList(list):
 class MoleculeContainer(Prototype):
     """Class containing all the molecule specific data."""
 
-    def __init__(self, mol_name=None, select=True):
+    def __init__(self, mol_name=None):
         """Set up the default objects of the molecule data container."""
 
         # The name of the molecule, corresponding to that of the structure file if specified.
         self.name = mol_name
-        self.select = select
 
         # The empty residue list.
         self.res = ResidueList()
@@ -408,7 +560,7 @@ class MoleculeContainer(Prototype):
         # An object has been added to the container.
         for name in dir(self):
             # Skip the objects initialised in __init__().
-            if name == 'name' or name == 'select' or name == 'res':
+            if name == 'name' or name == 'res':
                 continue
 
             # Skip the MoleculeContainer methods.
@@ -448,20 +600,19 @@ class MoleculeList(list):
         """
 
         text = "Molecules.\n\n"
-        text = text + "%-8s%-8s%-10s" % ("Index", "Name", "Selected") + "\n"
+        text = text + "%-8s%-8s" % ("Index", "Name") + "\n"
         for i in xrange(len(self)):
-            text = text + "%-8i%-8s%-10s" % (i, self[i].name, self[i].select) + "\n"
+            text = text + "%-8i%-8s" % (i, self[i].name) + "\n"
         text = text + "\nThese can be accessed by typing 'D.mol[i]', where D is the relax data storage object.\n"
         return text
 
 
-    def add_item(self, mol_name=None, select=True):
+    def add_item(self, mol_name=None):
         """Append an empty MoleculeContainer to the MoleculeList."""
 
         # If no molecule data exists, replace the empty first molecule with this molecule (just a renaming).
         if self.is_empty():
             self[0].name = mol_name
-            self[0].select = select
 
         # Otherwise append an empty MoleculeContainer.
         else:
@@ -471,7 +622,7 @@ class MoleculeList(list):
                     raise RelaxError, "The molecule '" + `mol_name` + "' already exists in the sequence."
 
             # Append an empty MoleculeContainer.
-            self.append(MoleculeContainer(mol_name, select))
+            self.append(MoleculeContainer(mol_name))
 
 
     def is_empty(self):
@@ -488,3 +639,55 @@ class MoleculeList(list):
 
         # Otherwise.
         return False
+
+
+    def from_xml(self, mol_nodes):
+        """Recreate a molecule list data structure from the XML molecule nodes.
+
+        @param mol_nodes:   The molecule XML nodes.
+        @type mol_nodes:    xml.dom.minicompat.NodeList instance
+        """
+
+        # Test if empty.
+        if not self.is_empty():
+            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
+
+        # Loop over the molecules.
+        for mol_node in mol_nodes:
+            # Get the molecule details and add the molecule to the MoleculeList structure.
+            name = eval(mol_node.getAttribute('name'))
+            if name == 'None':
+                name = None
+            self.add_item(mol_name=name)
+
+            # Get the residue nodes.
+            res_nodes = mol_node.getElementsByTagName('res')
+
+            # Recreate the residue data structures for the current molecule.
+            self[-1].res.from_xml(res_nodes)
+
+
+    def to_xml(self, doc, element):
+        """Create XML elements for each molecule.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the molecule XML elements to.
+        @type element:  XML element object
+        """
+
+        # Loop over the molecules.
+        for i in xrange(len(self)):
+            # Create an XML element for this molecule and add it to the higher level element.
+            mol_element = doc.createElement('mol')
+            element.appendChild(mol_element)
+
+            # Set the molecule attributes.
+            mol_element.setAttribute('desc', 'Molecule container')
+            mol_element.setAttribute('name', str(self[i].name))
+
+            # Add all simple python objects within the MoleculeContainer to the XML element.
+            fill_object_contents(doc, mol_element, object=self[i], blacklist=['name', 'res'] + self[i].__class__.__dict__.keys())
+
+            # Add the residue data.
+            self[i].res.to_xml(doc, mol_element)

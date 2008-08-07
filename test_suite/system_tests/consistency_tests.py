@@ -26,7 +26,7 @@ import sys
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import residue_loop
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 
@@ -45,7 +45,7 @@ class Ct(TestCase):
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        relax_data_store.__reset__()
+        ds.__reset__()
 
 
     def test_calc(self):
@@ -66,8 +66,8 @@ class Ct(TestCase):
 
         # Correct consistency functions values:
         j0 = [4.0703318681008998e-09, 3.7739393907014834e-09]
-        f_eta = [0.35164988964635652, 0.32556427866911447]
-        f_r2 = [2.0611470814962761e-09, 1.9117396355237641e-09]
+        f_eta = [0.20413244790407614, 0.18898977395296815]
+        f_r2 = [2.0482909381655862e-09, 1.8998154021753067e-09]
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + '/test_suite/system_tests/data')
@@ -95,6 +95,7 @@ class Ct(TestCase):
         self.relax.interpreter._Minimisation.calc()
 
         # Loop over residues.
+        index = 0
         for res in residue_loop():
             # Residues -2 and -1 have data.
             if res.num == -2 or res.num == -1:
@@ -102,6 +103,7 @@ class Ct(TestCase):
                 self.assertAlmostEqual(res.spin[0].j0, j0[index])
                 self.assertAlmostEqual(res.spin[0].f_eta, f_eta[index])
                 self.assertAlmostEqual(res.spin[0].f_r2, f_r2[index])
+                index = index + 1
 
             # Other residues have insufficient data.
             else:
@@ -124,3 +126,10 @@ class Ct(TestCase):
         for res in residue_loop():
             self.assertEqual(res.spin[0].r, NH_BOND_LENGTH)
             self.assertEqual(res.spin[0].csa, N15_CSA)
+
+
+    def test_consistency(self):
+        """Test a complete consistency tests run using a script."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/consistency_tests.py')

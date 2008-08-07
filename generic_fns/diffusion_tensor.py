@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for the support of diffusion tensors."""
+
 # Python module imports.
 from copy import deepcopy
 from math import cos, pi, sin
@@ -27,7 +30,7 @@ from re import search
 
 # relax module imports.
 from angles import wrap_angles
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from data.diff_tensor import DiffTensorData
 import pipes
 from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
@@ -48,9 +51,9 @@ def copy(pipe_from=None, pipe_to=None):
     if pipe_from == None and pipe_to == None:
         raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
     elif pipe_from == None:
-        pipe_from = relax_data_store.current_pipe
+        pipe_from = ds.current_pipe
     elif pipe_to == None:
-        pipe_to = relax_data_store.current_pipe
+        pipe_to = ds.current_pipe
 
     # Test if the pipe_from and pipe_to data pipes exist.
     pipes.test(pipe_from)
@@ -65,7 +68,7 @@ def copy(pipe_from=None, pipe_to=None):
         raise RelaxTensorError, 'diffusion'
 
     # Copy the data.
-    relax_data_store[pipe_to].diff_tensor = deepcopy(relax_data_store[pipe_from].diff_tensor)
+    ds[pipe_to].diff_tensor = deepcopy(ds[pipe_from].diff_tensor)
 
 
 def data_names():
@@ -145,14 +148,14 @@ def delete():
     """Function for deleting diffusion tensor data."""
 
     # Test if the current data pipe exists.
-    pipes.test(relax_data_store.current_pipe)
+    pipes.test(ds.current_pipe)
 
     # Test if diffusion tensor data exists.
     if not diff_data_exists():
         raise RelaxNoTensorError, 'diffusion'
 
     # Delete the diffusion data.
-    del(relax_data_store[relax_data_store.current_pipe].diff_tensor)
+    del(ds[ds.current_pipe].diff_tensor)
 
 
 def diff_data_exists(pipe=None):
@@ -166,10 +169,10 @@ def diff_data_exists(pipe=None):
 
     # The data pipe to check.
     if pipe == None:
-        pipe = relax_data_store.current_pipe
+        pipe = ds.current_pipe
 
     # Test if the data structure exists.
-    if hasattr(relax_data_store[pipe], 'diff_tensor'):
+    if hasattr(ds[pipe], 'diff_tensor'):
         return True
     else:
         return False
@@ -179,14 +182,14 @@ def display():
     """Function for displaying the diffusion tensor."""
 
     # Test if the current data pipe exists.
-    pipes.test(relax_data_store.current_pipe)
+    pipes.test(ds.current_pipe)
 
     # Test if diffusion tensor data exists.
     if not diff_data_exists():
         raise RelaxNoTensorError, 'diffusion'
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Spherical diffusion.
     if cdp.diff_tensor.type == 'sphere':
@@ -294,7 +297,7 @@ def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, para
     """
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # The diffusion type.
     cdp.diff_tensor.type = 'ellipsoid'
@@ -383,7 +386,7 @@ def fold_angles(sim_index=None):
     """
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
 
     # Wrap the angles.
@@ -531,10 +534,10 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     """
 
     # Test if the current data pipe exists.
-    pipes.test(relax_data_store.current_pipe)
+    pipes.test(ds.current_pipe)
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Test if diffusion tensor data already exists.
     if diff_data_exists():
@@ -626,7 +629,7 @@ def map_bounds(param, spin_id=None):
         return [0, 2*pi]
 
 
-def map_labels(run, index, params, bounds, swap, inc):
+def map_labels(index, params, bounds, swap, inc):
     """Function for creating labels, tick locations, and tick values for an OpenDX map."""
 
     # Initialise.
@@ -832,12 +835,8 @@ def return_data_name(name):
         return 'phi'
 
 
-def return_eigenvalues(run=None):
+def return_eigenvalues():
     """Function for returning Dx, Dy, and Dz."""
-
-    # Argument.
-    if run:
-        run = run
 
     # Reassign the data.
     data = cdp.diff_tensor
@@ -934,7 +933,7 @@ def set(value=None, param=None):
     """    # This docstring is to be joined onto those of the user functions, hence the 8 whitespace characters.
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Set up the diffusion tensor data if it doesn't exist.
     if not diff_data_exists():
@@ -1350,7 +1349,7 @@ def sphere(params=None, time_scale=None, param_types=None):
     """
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # The diffusion type.
     cdp.diff_tensor.type = 'sphere'
@@ -1397,7 +1396,7 @@ def spheroid(params=None, time_scale=None, d_scale=None, angle_units=None, param
     """
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # The diffusion type.
     cdp.diff_tensor.type = 'spheroid'
@@ -1483,7 +1482,7 @@ def test_params(num_params):
     """Function for testing the validity of the input parameters."""
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # An allowable error to account for machine precision, optimisation quality, etc.
     error = 1e-4

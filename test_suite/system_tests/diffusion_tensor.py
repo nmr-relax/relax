@@ -21,10 +21,13 @@
 ###############################################################################
 
 # Python module imports.
+from os import remove
 from unittest import TestCase
+import sys
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
+from tempfile import mktemp
 
 
 class Diffusion_tensor(TestCase):
@@ -38,19 +41,41 @@ class Diffusion_tensor(TestCase):
         self.relax.interpreter._Pipe.create('spheroid', 'mf')
         self.relax.interpreter._Pipe.create('ellipsoid', 'mf')
 
-        # Initialise some data.
+        # Sphere tensor initialization.
         self.relax.interpreter._Pipe.switch('sphere')
+        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1)
+        self.relax.interpreter._Sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + '/test_suite/system_tests/data/')
         self.relax.interpreter._Diffusion_tensor.init(10e-9, fixed=True)
+        self.tmpfile_sphere = mktemp()
+        
+        # Spheroid tensor initialization.
         self.relax.interpreter._Pipe.switch('spheroid')
+        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1)
+        self.relax.interpreter._Sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + '/test_suite/system_tests/data/')
         self.relax.interpreter._Diffusion_tensor.init((2e-8, 1.3, 60-360, 290), param_types=2, spheroid_type='prolate', fixed=True)
+        self.tmpfile_spheroid = mktemp()
+
+        # Ellipsoid tensor initialization.
         self.relax.interpreter._Pipe.switch('ellipsoid')
+        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1)
+        self.relax.interpreter._Sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + '/test_suite/system_tests/data/')
         self.relax.interpreter._Diffusion_tensor.init((9e-8, 5e6, 0.3, 60+360, 290, 100), fixed=False)
+        self.tmpfile_ellipsoid = mktemp()
 
 
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        relax_data_store.__reset__()
+        # Reset the relax data storage object.
+        ds.__reset__()
+
+        # Delete the temporary files.
+        try:
+            remove(self.tmpfile_sphere)
+            remove(self.tmpfile_spheroid)
+            remove(self.tmpfile_ellipsoid)
+        except OSError:
+            pass
 
 
     def test_copy(self):
@@ -89,3 +114,20 @@ class Diffusion_tensor(TestCase):
         self.relax.interpreter._Diffusion_tensor.display()
         self.relax.interpreter._Pipe.switch('ellipsoid')
         self.relax.interpreter._Diffusion_tensor.display()
+
+
+    def test_createDiffTensor(self):
+        """The user function structure.create_diff_tensor_pdb()."""
+
+        # Create the diffusion tensor objects.
+        self.relax.interpreter._Pipe.switch('sphere')
+        self.relax.interpreter._Structure.create_diff_tensor_pdb(file=self.tmpfile_sphere)
+        self.relax.interpreter._Pipe.switch('spheroid')
+        self.relax.interpreter._Structure.create_diff_tensor_pdb(file=self.tmpfile_spheroid)
+        self.relax.interpreter._Pipe.switch('ellipsoid')
+        self.relax.interpreter._Structure.create_diff_tensor_pdb(file=self.tmpfile_ellipsoid)
+
+        # Open the temp files.
+        file_sphere = open(self.tmpfile_sphere)
+        file_spheroid = open(self.tmpfile_spheroid)
+        file_ellipsoid = open(self.tmpfile_ellipsoid)

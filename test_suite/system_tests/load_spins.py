@@ -22,10 +22,11 @@
 
 
 # Python module imports.
+import sys
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 
 
 class Load_spins(TestCase):
@@ -41,17 +42,17 @@ class Load_spins(TestCase):
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        relax_data_store.__reset__()
+        ds.__reset__()
 
 
     def test_load_spins_from_small_molecule(self):
         """Test the loading of spins from a small molecule using the Scientific Python PDB data object."""
 
         # Execute a relax script.
-        self.relax.interpreter.run(script_file='test_suite/system_tests/scripts/load_spins_from_small_molecule.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/load_spins_from_small_molecule.py')
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test the molecule and residue data.
         self.assertEqual(len(cdp.mol), 1)

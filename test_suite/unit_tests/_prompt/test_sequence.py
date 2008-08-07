@@ -24,9 +24,9 @@
 from unittest import TestCase
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from prompt.sequence import Sequence
-from relax_errors import RelaxBinError, RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxError, RelaxBinError, RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.sequence_testing_base import Sequence_base_class
 
 # Unit test imports.
@@ -39,6 +39,39 @@ class Test_sequence(Sequence_base_class, TestCase):
 
     # Instantiate the user function class.
     sequence_fns = Sequence(fake_relax.fake_instance())
+
+
+    def test_copy_argfail_pipe_from(self):
+        """The pipe_from arg test of the sequence.copy() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.sequence_fns.copy, pipe_from=data[1])
+
+
+    def test_copy_argfail_pipe_to(self):
+        """The pipe_to arg test of the sequence.copy() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.sequence_fns.copy, pipe_to=data[1])
+
+
+    def test_copy_argfail_both_pipes(self):
+        """The pipe_from and pipe_to arg test of the sequence.copy() user function."""
+
+        # Test that both cannot be None (the default)!
+        self.assertRaises(RelaxError, self.sequence_fns.copy)
 
 
     def test_display_argfail_sep(self):

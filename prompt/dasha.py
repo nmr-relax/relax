@@ -41,20 +41,18 @@ class Dasha:
         self.__relax__ = relax
 
 
-    def create(self, run=None, algor='LM', dir=None, force=0):
+    def create(self, algor='LM', dir=None, force=False):
         """Function for creating the Dasha script.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
-
         algor:  The minimisation algorithm.
 
-        dir:  The directory to place the files.  The default is the value of 'run'.
+        dir:  The directory to place the files.
 
-        force:  A flag which if set to 1 will cause the results file to be overwritten if it already
-        exists.
+        force:  A flag which if set to True will cause the results file to be overwritten if it
+        already exists.
 
 
         Description
@@ -79,15 +77,10 @@ class Dasha:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "dasha.create("
-            text = text + "run=" + `run`
             text = text + ", algor=" + `algor`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The algor argument.
         if type(algor) != str:
@@ -99,25 +92,23 @@ class Dasha:
                 raise RelaxNoneStrError, ('directory name', dir)
 
         # The force flag.
-        if type(force) != int or (force != 0 and force != 1):
-            raise RelaxBinError, ('force flag', force)
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
-        self.__relax__.generic.dasha.create(run=run, algor=algor, dir=dir, force=force)
+        self.__relax__.generic.dasha.create(algor=algor, dir=dir, force=force)
 
 
-    def execute(self, run=None, dir=None, force=0, binary='dasha'):
+    def execute(self, dir=None, force=False, binary='dasha'):
         """Function for executing Dasha.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
+        dir:  The directory to place the files.
 
-        dir:  The directory to place the files.  The default is the value of 'run'.
-
-        force:  A flag which if set to 1 will cause the results file to be overwritten if it already
-        exists.
+        force:  A flag which if set to True will cause the results file to be overwritten if it
+        already exists.
 
         binary:  The name of the executable Dasha program file.
 
@@ -138,15 +129,10 @@ class Dasha:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "dasha.execute("
-            text = text + "run=" + `run`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force`
             text = text + ", binary=" + `binary` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # Directory.
         if dir != None:
@@ -154,38 +140,31 @@ class Dasha:
                 raise RelaxNoneStrError, ('directory name', dir)
 
         # The force flag.
-        if type(force) != int or (force != 0 and force != 1):
-            raise RelaxBinError, ('force flag', force)
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
 
         # The Dasha executable file.
         if type(binary) != str:
             raise RelaxStrError, ('Dasha binary', binary)
 
         # Execute the functional code.
-        self.__relax__.generic.dasha.execute(run=run, dir=dir, force=force, binary=binary)
+        self.__relax__.generic.dasha.execute(dir=dir, force=force, binary=binary)
 
 
-    def extract(self, run=None, dir=None):
+    def extract(self, dir=None):
         """Function for extracting data from the Dasha results file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run:  The name of the run.
-
-        dir:  The directory where the file 'dasha_results' is found.  The default is the value of 'run'.
+        dir:  The directory where the file 'dasha_results' is found. 
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "dasha.extract("
-            text = text + "run=" + `run`
             text = text + ", dir=" + `dir` + ")"
             print text
-
-        # The run argument.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # Directory.
         if dir != None:
@@ -193,4 +172,4 @@ class Dasha:
                 raise RelaxNoneStrError, ('directory name', dir)
 
         # Execute the functional code.
-        self.__relax__.generic.dasha.extract(run=run, dir=dir)
+        self.__relax__.generic.dasha.extract(dir=dir)

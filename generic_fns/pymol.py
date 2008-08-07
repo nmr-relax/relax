@@ -20,14 +20,17 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for interfacing with PyMOL."""
+
 # Python module imports.
 from os import popen
 from string import split
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
-from relax_errors import RelaxError, RelaxImplementError, RelaxNoPipeError, RelaxNoSequenceError
+from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
 from relax_io import file_root, open_write_file, test_binary
 from specific_fns.setup import get_specific_fn
 
@@ -66,7 +69,7 @@ class Pymol:
         self.pipe_write("reinitialize")
 
         # Open the PDB file.
-        self.pipe_write("load " + relax_data_store[relax_data_store.current_pipe].structure.file_name)
+        self.pipe_write("load " + ds[ds.current_pipe].structure.file_name)
 
 
     def pipe_open(self):
@@ -84,7 +87,7 @@ class Pymol:
             return
 
         # Test if the PDB file has been loaded.
-        if hasattr(relax_data_store[relax_data_store.current_pipe], 'structure'):
+        if hasattr(ds[ds.current_pipe], 'structure'):
             self.open_pdb()
 
 
@@ -134,11 +137,11 @@ def cartoon():
     """Apply the PyMOL cartoon style and colour by secondary structure."""
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Identifier.
-    pdb_file = relax_data_store[relax_data_store.current_pipe].structure.file_name
+    pdb_file = ds[ds.current_pipe].structure.file_name
     id = file_root(pdb_file)
 
     # Hide everything.
@@ -159,7 +162,7 @@ def command(command):
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Pass the command to PyMOL.
@@ -174,7 +177,7 @@ def cone_pdb(file=None):
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # The file root.
@@ -251,7 +254,7 @@ def create_macro(data_type=None, style="classic", colour_start=None, colour_end=
     """
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Specific PyMOL macro creation function.
     pymol_macro = get_specific_fn('pymol_macro', cdp.pipe_type)
@@ -280,7 +283,7 @@ def macro_exec(data_type=None, style="classic", colour_start=None, colour_end=No
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Test if sequence data exists.
@@ -303,7 +306,7 @@ def tensor_pdb(file=None):
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # The file root.
@@ -374,7 +377,7 @@ def vector_dist(file=None):
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # The file root.
@@ -425,7 +428,7 @@ def write(data_type=None, style="classic", colour_start=None, colour_end=None, c
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Test if sequence data exists.

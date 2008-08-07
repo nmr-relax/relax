@@ -20,18 +20,101 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for the manipulation of parameter and constant values."""
+
 # Python module imports.
 from numpy import ndarray, zeros
 from re import compile, match
 import sys
 
 # relax module imports.
-from data import Data as relax_data_store
-from generic_fns import diffusion_tensor
-from generic_fns.minimise import reset_min_stats
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
-from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxParamSetError, RelaxRegExpError, RelaxUnknownParamError, RelaxValueError
+from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import diffusion_tensor, minimise
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
+from generic_fns.sequence import write_header, write_line
+from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxParamSetError, RelaxValueError
+from relax_io import extract_data, open_write_file, strip
 from specific_fns.setup import get_specific_fn
+
+
+def copy(pipe_from=None, pipe_to=None, param=None):
+    """Copy spin specific data values from pipe_from to pipe_to.
+
+    @param pipe_from:   The data pipe to copy the value from.  This defaults to the current data
+                        pipe.
+    @type pipe_from:    str
+    @param pipe_to:     The data pipe to copy the value to.  This defaults to the current data pipe.
+    @type pipe_to:      str
+    @param param:       The name of the parameter to copy the values of.
+    @type param:        str
+    """
+
+    # The current data pipe.
+    if pipe_from == None:
+        pipe_from = ds.current_pipe
+    if pipe_to == None:
+        pipe_to = ds.current_pipe
+
+    # The second pipe does not exist.
+    if pipe_to not in ds.keys():
+        raise RelaxNoPipeError, pipe_to
+
+    # Test if the sequence data for pipe_from is loaded.
+    if not exists_mol_res_spin_data(pipe_from):
+        raise RelaxNoSequenceError, pipe_from
+
+    # Test if the sequence data for pipe_to is loaded.
+    if not exists_mol_res_spin_data(pipe_to):
+        raise RelaxNoSequenceError, pipe_to
+
+    # Specific value and error returning function.
+    return_value = get_specific_fn('return_value', ds[pipe_from].pipe_type)
+
+    # Specific set function.
+    set = get_specific_fn('set', ds[pipe_from].pipe_type)
+
+    # Test if the data exists for pipe_to.
+    for spin in spin_loop(pipe_to):
+        # Get the value and error for pipe_to.
+        value, error = return_value(spin, param)
+
+        # Data exists.
+        if value != None or error != None:
+            raise RelaxValueError, (param, pipe_to)
+
+    # Copy the values.
+    for spin, spin_id in spin_loop(pipe_from, return_id=True):
+        # Get the value and error from pipe_from.
+        value, error = return_value(spin, param)
+
+        # Get the equivalent spin in pipe_to.
+        spin_to = return_spin(spin_id, pipe_to)
+
+        # Set the values of pipe_to.
+        set(spin_to, value=value, error=error, param=param)
+
+    # Reset all minimisation statistics.
+    minimise.reset_min_stats(pipe_to)
+
+
+def display(param=None):
+    """Function for displaying residue specific data values.
+
+    @param param:       The name of the parameter to display.
+    @type param:        str
+    """
+
+    # Test if the current pipe exists.
+    if not ds.current_pipe:
+        raise RelaxNoPipeError
+
+    # Test if the sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Print the data.
+    write_data(param, sys.stdout)
 
 
 def partition_params(val, param):
@@ -50,7 +133,7 @@ def partition_params(val, param):
     """
 
     # Specific functions.
-    is_spin_param = get_specific_fn('is_spin_param', relax_data_store[relax_data_store.current_pipe].pipe_type)
+    is_spin_param = get_specific_fn('is_spin_param', ds[ds.current_pipe].pipe_type)
 
     # Initialise.
     spin_params = []
@@ -115,6 +198,161 @@ def partition_params(val, param):
     return spin_params, spin_values, other_params, other_values
 
 
+def read(param=None, scaling=1.0, file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None):
+    """Read spin specific data values from a file.
+
+    @keyword param:         The name of the parameter to read.
+    @type param:            str
+    @keyword scaling:       A scaling factor by which all read values are multiplied by.
+    @type scaling:          float
+    @keyword file:          The name of the file to open.
+    @type file:             str
+    @keyword dir:           The directory containing the file (defaults to the current directory if
+                            None).
+    @type dir:              str or None
+    @keyword mol_name_col:  The column containing the molecule name information.
+    @type mol_name_col:     int or None
+    @keyword res_name_col:  The column containing the residue name information.
+    @type res_name_col:     int or None
+    @keyword res_num_col:   The column containing the residue number information.
+    @type res_num_col:      int or None
+    @keyword spin_name_col  The column containing the spin name information.
+    @type spin_name_col:    int or None
+    @keyword spin_num_col:  The column containing the spin number information.
+    @type spin_num_col:     int or None
+    @keyword data_col:      The column containing the values.
+    @type data_col:         int
+    @keyword error_col:     The column containing the errors.
+    @type error_col:        int or None
+    @keyword sep:           The column separator which, if None, defaults to whitespace.
+    @type sep:              str or None
+    """
+
+    # Test if the current pipe exists.
+    if not ds.current_pipe:
+        raise RelaxNoPipeError
+
+    # Test if sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Minimisation parameter.
+    if minimise.return_data_name(param):
+        # Minimisation statistic flag.
+        min_stat = True
+
+        # Specific value and error returning function.
+        return_value = minimise.return_value
+
+        # Specific set function.
+        set = minimise.set
+
+    # Normal parameter.
+    else:
+        # Minimisation statistic flag.
+        min_stat = False
+
+        # Specific v
+        return_value = get_specific_fn('return_value', ds[ds.current_pipe].pipe_type)
+
+        # Specific set function.
+        set = get_specific_fn('set', ds[ds.current_pipe].pipe_type)
+
+    # Test data corresponding to param already exists.
+    for spin in spin_loop():
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
+        # Get the value and error.
+        value, error = return_value(spin, param)
+
+        # Data exists.
+        if value != None or error != None:
+            raise RelaxValueError, param
+
+    # Extract the data from the file.
+    file_data = extract_data(file)
+
+    # Count the number of header lines.
+    header_lines = 0
+    num_col = max(res_num_col, spin_num_col)
+    for i in xrange(len(file_data)):
+        try:
+            int(file_data[i][num_col])
+        except:
+            header_lines = header_lines + 1
+        else:
+            break
+
+    # Remove the header.
+    file_data = file_data[header_lines:]
+
+    # Strip the data.
+    file_data = strip(file_data)
+
+    # Do nothing if the file does not exist.
+    if not file_data:
+        raise RelaxFileEmptyError
+
+    # Minimum number of columns.
+    min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col)
+
+    # Test the validity of the data.
+    for i in xrange(len(file_data)):
+        # Skip missing data.
+        if len(file_data[i]) <= min_col_num:
+            continue
+
+        try:
+            # Value column.
+            if file_data[i][data_col] != 'None':
+                float(file_data[i][data_col])
+
+            # Error column.
+            if error_col != None and file_data[i][error_col] != 'None':
+                float(file_data[i][error_col])
+
+        except ValueError:
+            if error_col != None:
+                raise RelaxError, "The data is invalid (data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
+            else:
+                raise RelaxError, "The data is invalid (data=" + file_data[i][data_col] + ")."
+
+    # Loop over the data.
+    for i in xrange(len(file_data)):
+        # Skip missing data.
+        if len(file_data[i]) <= min_col_num:
+            continue
+
+        # Generate the spin identification string.
+        id = generate_spin_id_data_array(data=file_data[i], mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
+
+        # Value.
+        if file_data[i][data_col] != 'None':
+            value = float(file_data[i][data_col])
+        else:
+            value = None
+
+        # Error.
+        if error_col != None and file_data[i][error_col] != 'None':
+            error = float(file_data[i][error_col])
+        else:
+            error = None
+
+        # Get the corresponding spin container.
+        spin = return_spin(id)
+        if spin == None:
+            raise RelaxNoSpinError, id
+
+        # Set the value.
+        set(value=value, error=error, param=param, scaling=scaling, spin=spin)
+
+    # Reset the minimisation statistics.
+    if not min_stat:
+        minimise.reset_min_stats()
+
+
 def set(val=None, param=None, spin_id=None, force=False):
     """Function for setting residue specific data values.
 
@@ -129,12 +367,12 @@ def set(val=None, param=None, spin_id=None, force=False):
     """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Specific functions.
-    return_value = get_specific_fn('return_value', relax_data_store[relax_data_store.current_pipe].pipe_type)
-    set_non_spin_params = get_specific_fn('set_non_spin_params', relax_data_store[relax_data_store.current_pipe].pipe_type)
+    return_value = get_specific_fn('return_value', ds[ds.current_pipe].pipe_type)
+    set_non_spin_params = get_specific_fn('set_non_spin_params', ds[ds.current_pipe].pipe_type)
 
     # The parameters have been specified.
     if param:
@@ -202,7 +440,7 @@ def set(val=None, param=None, spin_id=None, force=False):
         set_non_spin_params(value=val, param=param)
 
     # Reset all minimisation statistics.
-    reset_min_stats()
+    minimise.reset_min_stats()
 
 
 def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
@@ -221,10 +459,10 @@ def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
     """
 
     # Specific functions.
-    data_init = get_specific_fn('data_init', relax_data_store[relax_data_store.current_pipe].pipe_type)
-    default_value = get_specific_fn('default_value', relax_data_store[relax_data_store.current_pipe].pipe_type)
-    return_data_name = get_specific_fn('return_data_name', relax_data_store[relax_data_store.current_pipe].pipe_type)
-    set_update = get_specific_fn('set_update', relax_data_store[relax_data_store.current_pipe].pipe_type)
+    data_init = get_specific_fn('data_init', ds[ds.current_pipe].pipe_type)
+    default_value = get_specific_fn('default_value', ds[ds.current_pipe].pipe_type)
+    return_data_name = get_specific_fn('return_data_name', ds[ds.current_pipe].pipe_type)
+    set_update = get_specific_fn('set_update', ds[ds.current_pipe].pipe_type)
 
 
     # Setting the model parameters prior to minimisation.
@@ -320,290 +558,58 @@ def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
         set_update(param=param, spin=spin)
 
 
-
-
-class Value:
-    def __init__(self, relax):
-        """Class containing functions for the setting up of data structures."""
-
-        self.relax = relax
-
-
-    def copy(self, run1=None, run2=None, param=None):
-        """Function for copying residue specific data values from run1 to run2."""
-
-        # Arguments.
-        self.param = param
-
-        # Test if run1 exists.
-        if not run1 in relax_data_store.run_names:
-            raise RelaxNoPipeError, run1
-
-        # Test if run2 exists.
-        if not run2 in relax_data_store.run_names:
-            raise RelaxNoPipeError, run2
-
-        # Test if the sequence data for run1 is loaded.
-        if not relax_data_store.res.has_key(run1):
-            raise RelaxNoSequenceError, run1
-
-        # Test if the sequence data for run2 is loaded.
-        if not relax_data_store.res.has_key(run2):
-            raise RelaxNoSequenceError, run2
-
-        # Function type.
-        self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(run1)]
-
-        # Specific value and error returning function.
-        return_value = self.relax.specific_setup.setup('return_value', self.function_type)
-
-        # Specific set function.
-        set = self.relax.specific_setup.setup('set', self.function_type)
-
-        # Test if the data exists for run2.
-        for i in xrange(len(relax_data_store.res[run2])):
-            # Get the value and error for run2.
-            value, error = return_value(run2, i, param)
-
-            # Data exists.
-            if value != None or error != None:
-                raise RelaxValueError, (param, run2)
-
-        # Copy the values.
-        for i in xrange(len(relax_data_store.res[run1])):
-            # Get the value and error for run1.
-            value, error = return_value(run1, i, param)
-
-            # Set the values of run2.
-            set(run=run2, value=value, error=error, param=param, index=i)
-
-            # Reset the residue specific minimisation statistics.
-            self.relax.generic.minimise.reset_min_stats(run2, i)
-
-        # Reset the global minimisation statistics.
-        self.relax.generic.minimise.reset_min_stats(run2)
-
-
-    def display(self, run=None, param=None):
-        """Function for displaying residue specific data values."""
-
-        # Arguments.
-        self.run = run
-        self.param = param
-
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
-
-        # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
-
-        # Print the data.
-        self.write_data(sys.stdout)
-
-
-    def read(self, run=None, param=None, scaling=1.0, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
-        """Function for reading residue specific data values from a file."""
-
-        # Arguments.
-        self.run = run
-        self.param = param
-        self.scaling = scaling
-
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
-
-        # Test if sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
-
-        # Function type.
-        self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(self.run)]
-
-        # Minimisation parameter.
-        if self.relax.generic.minimise.return_data_name(param):
-            # Minimisation statistic flag.
-            min_stat = 1
-
-            # Specific value and error returning function.
-            return_value = self.relax.generic.minimise.return_value
-
-            # Specific set function.
-            set = self.relax.generic.minimise.set
-
-        # Normal parameter.
-        else:
-            # Minimisation statistic flag.
-            min_stat = 0
-
-            # Specific value and error returning function.
-            return_value = self.relax.specific_setup.setup('return_value', self.function_type)
-
-            # Specific set function.
-            set = self.relax.specific_setup.setup('set', self.function_type)
-
-        # Test data corresponding to param already exists.
-        for i in xrange(len(relax_data_store.res[self.run])):
-            # Skip deselected residues.
-            if not relax_data_store.res[self.run][i].select:
-                continue
-
-            # Get the value and error.
-            value, error = return_value(self.run, i, self.param)
-
-            # Data exists.
-            if value != None or error != None:
-                raise RelaxValueError, (self.param, self.run)
-
-        # Extract the data from the file.
-        file_data = self.relax.IO.extract_data(file)
-
-        # Count the number of header lines.
-        header_lines = 0
-        for i in xrange(len(file_data)):
-            try:
-                int(file_data[i][num_col])
-            except:
-                header_lines = header_lines + 1
-            else:
-                break
-
-        # Remove the header.
-        file_data = file_data[header_lines:]
-
-        # Strip the data.
-        file_data = self.relax.IO.strip(file_data)
-
-        # Do nothing if the file does not exist.
-        if not file_data:
-            raise RelaxFileEmptyError
-
-        # Test the validity of the data.
-        for i in xrange(len(file_data)):
-            # Skip missing data.
-            if len(file_data[i]) <= data_col or len(file_data[i]) <= error_col:
-                continue
-
-            try:
-                # Number column.
-                int(file_data[i][num_col])
-
-                # Value column.
-                if file_data[i][data_col] != 'None':
-                    float(file_data[i][data_col])
-
-                # Error column.
-                if error_col != None and file_data[i][error_col] != 'None':
-                    float(file_data[i][error_col])
-
-            except ValueError:
-                if error_col != None:
-                    if name_col != None:
-                        raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
-                    else:
-                        raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
-                else:
-                    if name_col != None:
-                        raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", name=" + file_data[i][name_col] + ", data=" + file_data[i][data_col] + ")."
-                    else:
-                        raise RelaxError, "The data is invalid (num=" + file_data[i][num_col] + ", data=" + file_data[i][data_col] + ")."
-
-        # Loop over the data.
-        for i in xrange(len(file_data)):
-            # Skip missing data.
-            if len(file_data[i]) <= data_col or len(file_data[i]) <= error_col:
-                continue
-
-            # Residue number.
-            spin_num = int(file_data[i][num_col])
-
-            # Residue name.
-            if name_col == None:
-                spin_name = None
-            else:
-                spin_name = file_data[i][name_col]
-
-            # Value.
-            if file_data[i][data_col] != 'None':
-                value = float(file_data[i][data_col])
-            else:
-                value = None
-
-            # Error.
-            if error_col != None and file_data[i][error_col] != 'None':
-                error = float(file_data[i][error_col])
-            else:
-                error = None
-
-            # Find the index of relax_data_store.res[self.run] which corresponds to the relaxation data set i.
-            index = None
-            for j in xrange(len(relax_data_store.res[self.run])):
-                if relax_data_store.res[self.run][j].num == spin_num and (spin_name == None or relax_data_store.res[self.run][j].name == spin_name):
-                    index = j
-                    break
-            if index == None:
-                raise RelaxNoResError, (spin_num, spin_name)
-
-            # Set the value.
-            set(run=run, value=value, error=error, param=self.param, scaling=scaling, index=index)
-
-            # Reset the residue specific minimisation statistics.
-            if not min_stat:
-                self.relax.generic.minimise.reset_min_stats(self.run, index)
-
-        # Reset the global minimisation statistics.
-        if not min_stat:
-            self.relax.generic.minimise.reset_min_stats(self.run)
-
-
-    def write(self, run=None, param=None, file=None, dir=None, force=0, return_value=None):
-        """Function for writing data to a file."""
-
-        # Arguments.
-        self.run = run
-        self.param = param
-
-        # Test if the run exists.
-        if not self.run in relax_data_store.run_names:
-            raise RelaxNoPipeError, self.run
-
-        # Test if the sequence data is loaded.
-        if not relax_data_store.res.has_key(self.run):
-            raise RelaxNoSequenceError, self.run
-
-        # Open the file for writing.
-        file = self.relax.IO.open_write_file(file, dir, force)
+def write(param=None, file=None, dir=None, force=False, return_value=None):
+    """Write data to a file.
+
+    @keyword param:         The name of the parameter to write to file.
+    @type param:            str
+    @keyword file:          The file to write the data to.
+    @type file:             str
+    @keyword dir:           The name of the directory to place the file into (defaults to the
+                            current directory).
+    @type dir:              str
+    @keyword force:         A flag which if True will cause any pre-existing file to be overwritten.
+    @type force:            bool
+    @keyword return_value:  An optional function which if supplied will override the default value
+                            returning function.
+    @type return_value:     None or func
+    """
+
+    # Test if the current pipe exists.
+    if not ds.current_pipe:
+        raise RelaxNoPipeError
+
+    # Test if the sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Open the file for writing.
+    file = open_write_file(file, dir, force)
+
+    # Write the data.
+    write_data(param, file, return_value)
+
+    # Close the file.
+    file.close()
+
+
+def write_data(param=None, file=None, return_value=None):
+    """Function for writing data."""
+
+    # Get the value and error returning function if required.
+    if not return_value:
+        return_value = get_specific_fn('return_value', ds[ds.current_pipe].pipe_type)
+
+    # Format string.
+    format = "%-30s%-30s"
+
+    # Write a header line.
+    write_header(extra_format=format, extra_values=('Value', 'Error'), mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+
+    # Loop over the sequence.
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+        # Get the value and error.
+        value, error = return_value(spin, param)
 
         # Write the data.
-        self.write_data(file, return_value)
-
-        # Close the file.
-        file.close()
-
-
-    def write_data(self, run=None, param=None, file=None, return_value=None):
-        """Function for writing data."""
-
-        # Get the value and error returning function if required.
-        if not return_value:
-            # Function type.
-            self.function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
-
-            # Specific value and error returning function.
-            return_value = self.relax.specific_setup.setup('return_value', self.function_type)
-
-        # Write a header line.
-        file.write("%-5s%-6s%-30s%-30s\n" % ('Num', 'Name', 'Value', 'Error'))
-
-        # Loop over the sequence.
-        for i in xrange(len(relax_data_store.res[run])):
-            # Remap the data structure 'relax_data_store.res[run][i]'.
-            data = relax_data_store.res[run][i]
-
-            # Get the value and error.
-            value, error = return_value(run, i, param)
-
-            # Write the data.
-            file.write("%-5i%-6s%-30s%-30s\n" % (data.num, data.name, `value`, `error`))
+        write_line(file, mol_name, res_num, res_name, spin.num, spin.name, extra_format=format, extra_values=(`value`, `error`), mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)

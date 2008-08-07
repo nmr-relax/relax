@@ -20,13 +20,18 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for reading/writing/displaying the results in a data pipe."""
+
 # Python module imports.
+from re import search
+from string import split
 import sys
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPipeError
-from relax_io import extract_data, open_write_file, strip
+from relax_io import extract_data, get_file_path, open_read_file, open_write_file, strip
 from specific_fns.setup import get_specific_fn, get_string
 
 
@@ -34,15 +39,15 @@ def copy(run1=None, run2=None, sim=None):
     """Function for copying all results from run1 to run2."""
 
     # Test if run1 exists.
-    if not run1 in relax_data_store.run_names:
+    if not run1 in ds.run_names:
         raise RelaxNoPipeError, run1
 
     # Test if run2 exists.
-    if not run2 in relax_data_store.run_names:
+    if not run2 in ds.run_names:
         raise RelaxNoPipeError, run2
 
     # Function type.
-    function_type = relax_data_store.run_types[relax_data_store.run_names.index(run1)]
+    function_type = ds.run_types[ds.run_names.index(run1)]
 
     # Copy function.
     copy = self.relax.specific_setup.setup('copy', function_type, raise_error=0)
@@ -51,90 +56,126 @@ def copy(run1=None, run2=None, sim=None):
     copy(run1=run1, run2=run2, sim=sim)
 
 
-def display(run=None, format='columnar'):
-    """Function for displaying the results."""
+def determine_format(file):
+    """Determine the format of the results file.
 
-    # Test if the run exists.
-    if not run in relax_data_store.run_names:
-        raise RelaxNoPipeError, run
+    @keyword file:  The file object representing the results file.
+    @type file:     file object
+    @return:        The results file format.  This can be 'xml' or 'columnar'.
+    @rtype:         str or None
+    """
 
-    # Function type.
-    function_type = relax_data_store.run_types[relax_data_store.run_names.index(run)]
+    # Header line.
+    header = file.readline()
+    header = header[:-1]    # Strip the trailing newline.
 
-    # Specific results writing function.
-    if format == 'xml':
-        format = 'XML'
-        self.write_function = self.relax.specific_setup.setup('write_xml_results', function_type, raise_error=0)
-    elif format == 'columnar':
-        self.write_function = self.relax.specific_setup.setup('write_columnar_results', function_type, raise_error=0)
-    else:
-        raise RelaxError, "Unknown format " + `format` + "."
+    # Be nice and go back to the start of the file.
+    file.seek(0)
 
-    # No function.
-    if not self.write_function:
-        raise RelaxError, "The " + format + " format is not currently supported for " + self.relax.specific_setup.get_string(function_type) + "."
+    # XML.
+    if search("<\?xml", header):
+        return 'xml'
 
-    # Write the results.
-    self.write_function(sys.stdout, run)
+    # Columnar.
+    if split(header)[0:3] == ['Num', 'Name', 'Selected']:
+        return 'columnar'
 
 
-def read(file='results', directory=None, file_data=None, format='columnar', verbosity=1):
-    """Function for reading the data out of a file."""
+def display(format='xml'):
+    """Displaying the results/contents of the current data pipe.
+
+    @keyword format:    The format of the displayed results.
+    @type format:       str
+    """
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
 
     # Specific results writing function.
     if format == 'xml':
-        format = 'XML'
-        read_function = get_specific_fn('read_xml_results', relax_data_store[relax_data_store.current_pipe].pipe_type, raise_error=False)
+        write_function = ds.to_xml
     elif format == 'columnar':
-        read_function = get_specific_fn('read_columnar_results', relax_data_store[relax_data_store.current_pipe].pipe_type, raise_error=False)
+        write_function = get_specific_fn('write_columnar_results', ds[ds.current_pipe].pipe_type, raise_error=False)
     else:
         raise RelaxError, "Unknown format " + `format` + "."
 
     # No function.
-    if not read_function:
-        raise RelaxError, "The " + format + " format is not currently supported for " + self.relax.specific_setup.get_string(function_type) + "."
+    if not write_function:
+        raise RelaxError, "The " + format + " format is not currently supported for " + get_string(ds[ds.current_pipe].pipe_type) + "."
+
+    # Write the results.
+    write_function(sys.stdout)
+
+
+def read(file='results', directory=None):
+    """Function for reading the data out of a file."""
+
+    # Test if the current data pipe exists.
+    if not ds.current_pipe:
+        raise RelaxNoPipeError
 
     # Make sure that the data pipe is empty.
-    if not relax_data_store[relax_data_store.current_pipe].is_empty():
+    if not ds[ds.current_pipe].is_empty():
         raise RelaxError, "The current data pipe is not empty."
 
-    # Extract the data from the file.
-    file_data = extract_data(file_name=file, dir=directory, file_data=file_data)
+    # Get the full file path, for later use.
+    file_path = get_file_path(file_name=file, dir=directory)
 
-    # Strip data.
-    file_data = strip(file_data)
+    # Open the file.
+    file = open_read_file(file_name=file, dir=directory)
 
-    # Do nothing if the file does not exist.
-    if not file_data:
-        raise RelaxFileEmptyError
+    # Determine the format of the file.
+    format = determine_format(file)
 
-    # Read the results.
-    read_function(file_data, verbosity)
+    # XML results.
+    if format == 'xml':
+        read_function = ds.from_xml(file)
+
+    # Columnar results.
+    elif format == 'columnar':
+        read_function = get_specific_fn('read_columnar_results', ds[ds.current_pipe].pipe_type, raise_error=False)
+
+        # Extract the data from the file.
+        file_data = extract_data(file=file)
+
+        # Strip data.
+        file_data = strip(file_data)
+
+        # Do nothing if the file does not exist.
+        if not file_data:
+            raise RelaxFileEmptyError
+
+        # Read the results.
+        read_function(file_data)
+
+    # Unknown results file.
+    else:
+        raise RelaxError, "The format of the results file " + `file_path` + " cannot be determined."
 
 
 def write(file="results", directory=None, force=False, format='columnar', compress_type=1, verbosity=1):
     """Create the results file."""
 
     # Test if the current data pipe exists.
-    if not relax_data_store.current_pipe:
+    if not ds.current_pipe:
         raise RelaxNoPipeError
+
+    # The special data pipe name directory.
+    if directory == 'pipe_name':
+        directory = ds.current_pipe
 
     # Specific results writing function.
     if format == 'xml':
-        format = 'XML'
-        write_function = get_specific_fn('write_xml_results', relax_data_store[relax_data_store.current_pipe].pipe_type, raise_error=False)
+        write_function = ds.to_xml
     elif format == 'columnar':
-        write_function = get_specific_fn('write_columnar_results', relax_data_store[relax_data_store.current_pipe].pipe_type, raise_error=False)
+        write_function = get_specific_fn('write_columnar_results', ds[ds.current_pipe].pipe_type, raise_error=False)
     else:
         raise RelaxError, "Unknown format " + `format` + "."
 
     # No function.
     if not write_function:
-        raise RelaxError, "The " + format + " format is not currently supported for " + get_string(relax_data_store[relax_data_store.current_pipe].pipe_type) + "."
+        raise RelaxError, "The " + format + " format is not currently supported for " + get_string(ds[ds.current_pipe].pipe_type) + "."
 
     # Open the file for writing.
     results_file = open_write_file(file_name=file, dir=directory, force=force, compress_type=compress_type, verbosity=verbosity)

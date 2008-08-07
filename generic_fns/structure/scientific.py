@@ -23,25 +23,23 @@
 # Module docstring.
 """Module containing the Scientific Python PDB specific structural object class."""
 
+# Dependency check module.
+import dep_check
 
 # Python module imports.
 from math import sqrt
 from numpy import array, dot, float64, zeros
-from warnings import warn
-
-# Scientific Python import.
-module_avail = True
-try:
+if dep_check.scientific_pdb_module:
     import Scientific.IO.PDB
-except ImportError:
-    module_avail = False
+from warnings import warn
 
 # relax module imports.
 from api_base import Base_struct_API
-from data import Data as relax_data_store
-from generic_fns.mol_res_spin import Selection, parse_token, tokenise, wildcard_match
-from relax_errors import RelaxError, RelaxNoPdbChainError, RelaxNoResError, RelaxPdbLoadError
-from relax_warnings import RelaxNoAtomWarning, RelaxZeroVectorWarning
+from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import relax_re
+from generic_fns.mol_res_spin import Selection, parse_token, tokenise
+from relax_errors import RelaxError, RelaxPdbLoadError
+from relax_warnings import RelaxWarning, RelaxNoAtomWarning, RelaxZeroVectorWarning
 
 
 class Scientific_data(Base_struct_API):
@@ -49,6 +47,16 @@ class Scientific_data(Base_struct_API):
 
     # Identification string.
     id = 'scientific'
+
+    def __init__(self):
+        """Initialise the class."""
+
+        # Test for the PDB parser availability.
+        if not dep_check.scientific_pdb_module:
+            raise RelaxError, "The Scientific python PDB module Scientific.IO.PDB could not be imported."
+
+        # The parser specific data object.
+        self.structural_data = []
 
 
     def __find_bonded_atom(self, attached_atom, mol_type, res):
@@ -69,25 +77,33 @@ class Scientific_data(Base_struct_API):
         # Init.
         bonded_found = False
 
-        # The attached atom is in the residue.
-        if attached_atom in res.atoms:
-            # The bonded atom object.
-            bonded = res[attached_atom]
+        # The find the attached atom in the residue (FIXME).
+        matching_list = []
+        for atom in res.atoms.keys():
+            if relax_re.search(atom, attached_atom):
+                matching_list.append(atom)
+        num_attached = len(matching_list)
 
-            # The bonded atom info.
-            bonded_num = bonded.properties['serial_number']
-            bonded_name = bonded.name
-            element = bonded.properties['element']
-            pos = bonded.position.array
+        # Problem.
+        if num_attached > 1:
+            return None, None, None, None, None, 'More than one attached atom found: ' + `matching_list`
 
-            # The bonded atom has been found.
-            bonded_found = True
+        # No attached atoms.
+        if num_attached == 0:
+            return None, None, None, None, None, "No attached atom could be found"
+
+        # The bonded atom object.
+        bonded = res[attached_atom]
+
+        # The bonded atom info.
+        bonded_num = bonded.properties['serial_number']
+        bonded_name = bonded.name
+        element = bonded.properties['element']
+        pos = bonded.position.array
+        attached_name = matching_list[0]
 
         # Return the information.
-        if bonded_found:
-            return bonded_num, bonded_name, element, pos
-        else:
-            return None, None, None, None
+        return bonded_num, bonded_name, element, pos, attached_name, None
 
 
     def __molecule_loop(self, struct, sel_obj=None):
@@ -192,12 +208,16 @@ class Scientific_data(Base_struct_API):
                 yield res, res.number, res.name
 
 
-    def atom_loop(self, atom_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False):
+    def atom_loop(self, atom_id=None, str_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
         """Generator function for looping over all atoms in the Scientific Python data objects.
 
         @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms
                                     matching this selection will be yielded.
         @type atom_id:              str
+        @keyword str_id:            The structure identifier.  This can be the file name, model
+                                    number, or structure number.  If None, then all structures will
+                                    be looped over.
+        @type str_id:               str, int, or None
         @keyword model_num_flag:    A flag which if True will cause the model number to be yielded.
         @type model_num_flag:       bool
         @keyword mol_name_flag:     A flag which if True will cause the molecule name to be yielded.
@@ -216,6 +236,9 @@ class Scientific_data(Base_struct_API):
         @keyword pos_flag:          A flag which if True will cause the atomic position to be
                                     yielded.
         @type pos_flag:             bool
+                                    average atom properties across all loaded structures.
+        @type ave:                  bool
+        @return:                    A tuple of atomic information, as described in the docstring.
         @return:                    A tuple of atomic information, as described in the docstring.
         @rtype:                     tuple consisting of optional molecule name (str), residue number
                                     (int), residue name (str), atom number (int), atom name(str),
@@ -242,6 +265,18 @@ class Scientific_data(Base_struct_API):
                         # Skip non-matching atoms.
                         if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol_name):
                             continue
+
+                        # Replace empty variables with None.
+                        if not mol_name:
+                            mol_name = None
+                        if not res_num:
+                            res_num = None
+                        if not res_name:
+                            res_name = None
+                        if not atom_num:
+                            atom_num = None
+                        if not atom_name:
+                            atom_name = None
 
                         # Build the tuple to be yielded.
                         atomic_tuple = ()
@@ -339,20 +374,25 @@ class Scientific_data(Base_struct_API):
         return bonded_num, bonded_name, element, pos_array
 
 
-    def bond_vectors(self, atom_id=None, attached_atom=None, model=None):
+    def bond_vectors(self, atom_id=None, attached_atom=None, struct_index=None, return_name=False, return_warnings=False):
         """Find the bond vectors between the atoms of 'attached_atom' and 'atom_id'.
 
-        @keyword atom_id:       The molecule, residue, and atom identifier string.  This must
-                                correspond to a single atom in the system.
-        @type atom_id:          str
-        @keyword attached_atom: The name of the bonded atom.
-        @type attached_atom:    str
-        @keyword model:         The model to return the vectors information from.  If not
-                                supplied and multiple models exist, then the returned data will
-                                contain the vectors for all models.
-        @type model:            None or int
-        @return:                The list of bond vectors for each model.
-        @rtype:                 list of numpy arrays
+        @keyword atom_id:           The molecule, residue, and atom identifier string.  This must
+                                    correspond to a single atom in the system.
+        @type atom_id:              str
+        @keyword attached_atom:     The name of the bonded atom.
+        @type attached_atom:        str
+        @keyword struct_index:      The index of the structure to return the vectors from.  If not
+                                    supplied and multiple structures/models exist, then vectors from
+                                    all structures will be returned.
+        @type struct_index:         None or int
+        @keyword return_name:       A flag which if True will cause the name of the attached atom to
+                                    be returned together with the bond vectors.
+        @type return_name:          bool
+        @keyword return_warnings:   A flag which if True will cause warning messages to be returned.
+        @type return_warnings:      bool
+        @return:                    The list of bond vectors for each structure.
+        @rtype:                     list of numpy arrays
         """
 
         # Generate the selection object.
@@ -360,20 +400,22 @@ class Scientific_data(Base_struct_API):
 
         # Initialise some objects.
         vectors = []
+        attached_name = None
+        warnings = None
 
-        # Loop over the models.
-        for struct in self.structural_data:
+        # Loop over the structures.
+        for i in xrange(len(self.structural_data)):
+            # Single structure.
+            if struct_index and struct_index != i:
+                continue
+
             # Init.
             atom_found = False
 
-            # Skip non-matching models.
-            if model != None and model != struct.model:
-                continue
-
             # Loop over each individual molecule.
-            for mol, mol_name, mol_type in self.__molecule_loop(struct, sel_obj):
+            for mol, mol_name, mol_type in self.__molecule_loop(self.structural_data[i], sel_obj):
                 # Loop over the residues of the protein in the PDB file.
-                for res, res_num, res_name in self.__residue_loop(mol, mol_type, sel_obj):
+                for res, res_num, res_name in self.__residue_loop(mol, mol_name, mol_type, sel_obj):
                     # Loop over the atoms of the residue.
                     for atom in res:
                         # Atom number, name, and position.
@@ -396,8 +438,8 @@ class Scientific_data(Base_struct_API):
 
             # Found the atom.
             if atom_found:
-                # Find the atom bonded to this model/molecule/residue/atom.
-                bonded_num, bonded_name, element, pos = self.__find_bonded_atom(attached_atom, mol_type_match, res_match)
+                # Find the atom bonded to this structure/molecule/residue/atom.
+                bonded_num, bonded_name, element, pos, attached_name, warnings = self.__find_bonded_atom(attached_atom, mol_type_match, res_match)
 
                 # No bonded atom.
                 if (bonded_num, bonded_name, element) == (None, None, None):
@@ -409,8 +451,15 @@ class Scientific_data(Base_struct_API):
                 # Append the vector to the vectors array (converting from a Numeric array to a numpy array).
                 vectors.append(array(vector, float64))
 
-        # Return the bond vectors.
-        return vectors
+        # Build the tuple to be yielded.
+        data = (vectors,)
+        if return_name:
+            data = data + (attached_name,)
+        if return_warnings:
+            data = data + (warnings,)
+
+        # Return the data.
+        return data
 
 
     def load_pdb(self, file_path, model=None, verbosity=False):
@@ -435,7 +484,7 @@ class Scientific_data(Base_struct_API):
         self.model = model
 
         # Use pointers (references) if the PDB data exists in another run.
-        for data_pipe in relax_data_store:
+        for data_pipe in ds:
             if hasattr(data_pipe, 'structure') and data_pipe.structure.file_name == file_path and data_pipe.structure.model == model:
                 # Make a pointer to the data.
                 self.structural_data = data_pipe.structure.structural_data

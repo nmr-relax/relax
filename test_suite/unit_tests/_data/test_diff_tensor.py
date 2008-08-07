@@ -120,6 +120,12 @@ class Test_diff_tensor(TestCase):
         self.assertEqual(self.diff_data.tensor_sim[0].tostring(), tensor.tostring())
 
 
+    def test_display(self):
+        """Test that the contents of the diffusion tensor object can be displayed."""
+
+        print self.diff_data
+
+
     def test_set_Diso(self):
         """Test that the Diso parameter cannot be set."""
 

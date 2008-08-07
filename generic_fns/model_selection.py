@@ -20,15 +20,16 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for selecting the best model."""
+
 # Python module imports.
-from copy import deepcopy
 from math import log
 
 # relax module imports.
-from data import Data as relax_data_store
-from generic_fns.mol_res_spin import same_sequence
-from pipes import copy, switch
-from relax_errors import RelaxDiffSeqError, RelaxError, RelaxNoPipeError, RelaxNoSequenceError
+from data import Relax_data_store; ds = Relax_data_store()
+from pipes import switch
+from relax_errors import RelaxError, RelaxPipeError
 from specific_fns.setup import get_specific_fn
 
 
@@ -114,10 +115,14 @@ def select(method=None, modsel_pipe=None, pipes=None):
     @type pipes:            list of str
     """
 
-    # Use all pipes (but the current).
+    # Test if the pipe already exists.
+    if ds.has_key(modsel_pipe):
+        raise RelaxPipeError, modsel_pipe
+
+    # Use all pipes.
     if pipes == None:
         # Get all data pipe names from the relax data store.
-        pipes = relax_data_store.keys()
+        pipes = ds.keys()
 
     # Select the model selection technique.
     if method == 'AIC':
@@ -140,9 +145,9 @@ def select(method=None, modsel_pipe=None, pipes=None):
         raise RelaxError, "No data pipes are available for use in model selection."
 
     # Initialise.
-    first_run = None
     function_type = {}
     count_num_instances = {}
+    duplicate_data = {}
     model_statistics = {}
     skip_function = {}
 
@@ -159,12 +164,10 @@ def select(method=None, modsel_pipe=None, pipes=None):
                 pipe = pipes[i][j]
 
                 # Specific duplicate data, number of instances, and model statistics functions.
-                count_num_instances[pipe] = get_specific_fn('num_instances', relax_data_store[pipe].pipe_type)
-                model_statistics[pipe] = get_specific_fn('model_stats', relax_data_store[pipe].pipe_type)
-                skip_function[pipe] = get_specific_fn('skip_function', relax_data_store[pipe].pipe_type)
-
-                # Check that the sequence is the same in all data pipes.
-                same_sequence(pipes[0][0], pipe)
+                count_num_instances[pipe] = get_specific_fn('num_instances', ds[pipe].pipe_type)
+                duplicate_data[pipe] = get_specific_fn('duplicate_data', ds[pipe].pipe_type)
+                model_statistics[pipe] = get_specific_fn('model_stats', ds[pipe].pipe_type)
+                skip_function[pipe] = get_specific_fn('skip_function', ds[pipe].pipe_type)
 
     # All other model selection setup.
     else:
@@ -174,12 +177,10 @@ def select(method=None, modsel_pipe=None, pipes=None):
             pipe = pipes[i]
 
             # Specific duplicate data, number of instances, and model statistics functions.
-            count_num_instances[pipe] = get_specific_fn('num_instances', relax_data_store[pipe].pipe_type)
-            model_statistics[pipe] = get_specific_fn('model_stats', relax_data_store[pipe].pipe_type)
-            skip_function[pipe] = get_specific_fn('skip_function', relax_data_store[pipe].pipe_type)
-
-            # Check that the sequence is the same in all data pipes.
-            same_sequence(pipes[0], pipe)
+            count_num_instances[pipe] = get_specific_fn('num_instances', ds[pipe].pipe_type)
+            duplicate_data[pipe] = get_specific_fn('duplicate_data', ds[pipe].pipe_type)
+            model_statistics[pipe] = get_specific_fn('model_stats', ds[pipe].pipe_type)
+            skip_function[pipe] = get_specific_fn('skip_function', ds[pipe].pipe_type)
 
 
     # Number of instances.  If the number is not the same for each data pipe, then the minimum
@@ -222,8 +223,8 @@ def select(method=None, modsel_pipe=None, pipes=None):
     # Loop over the number of instances.
     for i in xrange(min_instances):
         # Print out.
-        print "\nInstance " + `i` + ".\n"
-        print "%-20s %-20s %-20s %-20s %-20s" % ("Run", "Num_params_(k)", "Num_data_sets_(n)", "Chi2", "Criterion")
+        print "\nModel index " + `i` + ".\n"
+        print "%-20s %-20s %-20s %-20s %-20s" % ("Data pipe", "Num_params_(k)", "Num_data_sets_(n)", "Chi2", "Criterion")
 
         # Initial model.
         best_model = None
@@ -302,4 +303,12 @@ def select(method=None, modsel_pipe=None, pipes=None):
 
         # Duplicate the data from the 'best_model' to the model selection data pipe.
         if best_model != None:
-            copy(best_model, modsel_pipe)
+            # Switch to the selected data pipe.
+            switch(best_model)
+
+            # Duplicate.
+            duplicate_data[best_model](pipe_from=best_model, pipe_to=modsel_pipe, model_index=i, global_stats=global_stats)
+
+    # Switch to the model selection pipe.
+    switch(modsel_pipe)
+

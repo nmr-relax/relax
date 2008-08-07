@@ -31,22 +31,17 @@ from re import match, search
 import sys
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
+from dep_check import C_module_exp_fn
 from base_class import Common_functions
 from generic_fns import intensity
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_spin_from_index, spin_loop
-from minimise.generic import generic_minimise
+from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoPipeError, RelaxNoSequenceError
 
 # C modules.
-try:
+if C_module_exp_fn:
     from maths_fns.relax_fit import setup, func, dfunc, d2func, back_calc_I
-except ImportError:
-    sys.stderr.write("\nImportError: relaxation curve fitting is unavailable, try compiling the C modules.\n")
-    C_module_exp_fn = 0
-else:
-    C_module_exp_fn = 1
-
 
 
 class Relax_fit(Common_functions):
@@ -119,7 +114,7 @@ class Relax_fit(Common_functions):
             return scaling_matrix
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Loop over the parameters.
         for i in xrange(len(spin.params)):
@@ -154,7 +149,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Initialise.
         index = None
@@ -187,7 +182,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Create the initial parameter vector.
         param_vector = self.assemble_param_vector(spin=spin)
@@ -233,7 +228,7 @@ class Relax_fit(Common_functions):
             raise RelaxNoModelError
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Loop over the spectral time points.
         for j in xrange(len(cdp.relax_times)):
@@ -270,33 +265,38 @@ class Relax_fit(Common_functions):
                 setattr(spin, name, init_data)
 
 
-    def data_names(self, set='all'):
+    def data_names(self, set='all', error_names=False, sim_names=False):
         """Function for returning a list of names of data structures.
 
         Description
-        ~~~~~~~~~~~
+        ===========
 
         The names are as follows:
 
-        params:  An array of the parameter names associated with the model.
+            params:  An array of the parameter names associated with the model.
+            rx:  Either the R1 or R2 relaxation rate.
+            i0:  The initial intensity.
+            iinf:  The intensity at infinity.
+            chi2:  Chi-squared value.
+            iter:  Iterations.
+            f_count:  Function count.
+            g_count:  Gradient count.
+            h_count:  Hessian count.
+            warning:  Minimisation warning.
 
-        rx:  Either the R1 or R2 relaxation rate.
 
-        i0:  The initial intensity.
-
-        iinf:  The intensity at infinity.
-
-        chi2:  Chi-squared value.
-
-        iter:  Iterations.
-
-        f_count:  Function count.
-
-        g_count:  Gradient count.
-
-        h_count:  Hessian count.
-
-        warning:  Minimisation warning.
+        @keyword set:           The set of object names to return.  This can be set to 'all' for all
+                                names, to 'generic' for generic object names, 'params' for
+                                model-free parameter names, or to 'min' for minimisation specific
+                                object names.
+        @type set:              str
+        @keyword error_names:   A flag which if True will add the error object names as well.
+        @type error_names:      bool
+        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object
+                                names as well.
+        @type sim_names:        bool
+        @return:                The list of object names.
+        @rtype:                 list of str
         """
 
         # Initialise.
@@ -321,6 +321,19 @@ class Relax_fit(Common_functions):
             names.append('h_count')
             names.append('warning')
 
+        # Parameter errors.
+        if error_names and (set == 'all' or set == 'params'):
+            names.append('rx_err')
+            names.append('i0_err')
+            names.append('iinf_err')
+
+        # Parameter simulation values.
+        if sim_names and (set == 'all' or set == 'params'):
+            names.append('rx_sim')
+            names.append('i0_sim')
+            names.append('iinf_sim')
+
+        # Return the names.
         return names
 
 
@@ -371,7 +384,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Monte Carlo simulations.
         if sim_index != None:
@@ -484,7 +497,7 @@ class Relax_fit(Common_functions):
             inc = temp
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Minimisation options initialisation.
         min_options = []
@@ -612,7 +625,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test if the standard deviation has already been calculated.
         if hasattr(cdp, 'sd'):
@@ -761,7 +774,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -915,7 +928,7 @@ class Relax_fit(Common_functions):
         """
 
         # Set the model.
-        relax_data_store[relax_data_store.current_pipe].curve_type = model
+        ds[ds.current_pipe].curve_type = model
 
         # Loop over the sequence.
         for spin in spin_loop():
@@ -978,7 +991,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
+        cdp = ds[ds.current_pipe]
 
         # Store the relaxation time in the class instance.
         self.__relax_time = relax_time
@@ -1034,7 +1047,7 @@ class Relax_fit(Common_functions):
         @rtype:         list of float
         """
 
-        return relax_data_store[relax_data_store.current_pipe].sd
+        return ds[ds.current_pipe].sd
 
 
     def return_data_name(self, name):
@@ -1125,11 +1138,11 @@ class Relax_fit(Common_functions):
         """
 
         # Test if the current pipe exists.
-        if not relax_data_store.current_pipe:
+        if not ds.current_pipe:
             raise RelaxNoPipeError
 
         # Test if the pipe type is set to 'relax_fit'.
-        function_type = relax_data_store[relax_data_store.current_pipe].pipe_type
+        function_type = ds[ds.current_pipe].pipe_type
         if function_type != 'relax_fit':
             raise RelaxFuncSetupError, specific_setup.get_string(function_type)
 

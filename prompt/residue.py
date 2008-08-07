@@ -161,8 +161,8 @@ class Residue:
             raise RelaxIntError, ('residue number', res_num)
 
         # Residue name.
-        if type(res_name) != str:
-            raise RelaxStrError, ('residue name', res_name)
+        if res_name != None and type(res_name) != str:
+            raise RelaxNoneStrError, ('residue name', res_name)
 
         # The molecule ID.
         if mol_id != None and type(mol_id) != str:

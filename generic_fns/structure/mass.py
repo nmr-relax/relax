@@ -24,7 +24,7 @@
 from numpy import float64, zeros
 
 # relax module imports.
-from data import Data as relax_data_store
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import return_molecule, return_residue, return_spin
 from physical_constants import return_atomic_mass
 from relax_errors import RelaxNoPdbError
@@ -43,7 +43,7 @@ def centre_of_mass(return_mass=False):
     """
 
     # Alias the current data pipe.
-    cdp = relax_data_store[relax_data_store.current_pipe]
+    cdp = ds[ds.current_pipe]
 
     # Test if a structure has been loaded.
     if not hasattr(cdp, 'structure'):
@@ -66,19 +66,11 @@ def centre_of_mass(return_mass=False):
         else:
             mol_cont = return_molecule('#' + mol_name)
 
-        # Deselected molecules.
-        if mol_cont and not mol_cont.select:
-            continue
-
         # Get the corresponding residue container.
         if res_name == None and res_num == None:
             res_cont = mol_cont.res[0]
         else:
             res_cont = return_residue(':' + `res_num`)
-
-        # Deselected residues.
-        if res_cont and not res_cont.select:
-            continue
 
         # Get the corresponding spin container.
         if atom_name == None and atom_num == None:

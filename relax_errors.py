@@ -450,8 +450,11 @@ class RelaxStrListStrError(BaseError):
 
 # No sequence loaded.
 class RelaxNoSequenceError(BaseError):
-    def __init__(self):
-        self.text = "The sequence data does not exist."
+    def __init__(self, pipe=None):
+        if pipe == None:
+            self.text = "The sequence data does not exist."
+        else:
+            self.text = "The sequence data for the data pipe " + `pipe` + " does not exist."
         if Debug:
             self.save_state()
 
@@ -589,7 +592,7 @@ class RelaxFileEmptyError(BaseError):
 # Overwrite file.
 class RelaxFileOverwriteError(BaseError):
     def __init__(self, file_name, flag):
-        self.text = "The file " + `file_name` + " already exists.  Set the " + flag + " to 1 to overwrite."
+        self.text = "The file " + `file_name` + " already exists.  Set the " + flag + " to True to overwrite."
         if Debug:
             self.save_state()
 
@@ -646,6 +649,14 @@ class RelaxSpinSelectDisallowError(BaseError):
         if Debug:
             self.save_state()
 
+# The spin must be specified.
+class RelaxNoSpinSpecError(BaseError):
+    def __init__(self):
+        self.text = "The spin system must be specified."
+        if Debug:
+            self.save_state()
+
+
 
 # Setup errors.
 ###############
@@ -694,8 +705,11 @@ class RelaxParamSetError(BaseError):
 
 # Value already exists.
 class RelaxValueError(BaseError):
-    def __init__(self, data_type, pipe):
-        self.text = "The data type " + `data_type` + " already exists for the data pipe " + `pipe` + "."
+    def __init__(self, data_type, pipe=None):
+        if pipe != None:
+            self.text = "The data type " + `data_type` + " already exists for the data pipe " + `pipe` + "."
+        else:
+            self.text = "The data type " + `data_type` + " already exists."
         if Debug:
             self.save_state()
 
@@ -778,6 +792,17 @@ class RelaxInfError(BaseError):
 class RelaxNaNError(BaseError):
     def __init__(self, name):
         self.text = "The invalid " + name + " floating point value of NaN (Not a Number) has occurred."
+        if Debug:
+            self.save_state()
+
+
+# XML errors.
+#############
+
+# Cannot recreate from the XML - the structure is not empty.
+class RelaxFromXMLNotEmptyError(BaseError):
+    def __init__(self, name):
+        self.text = "The " + name + " data structure cannot be recreated from the XML elements as the structure is not empty."
         if Debug:
             self.save_state()
 
