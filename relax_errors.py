@@ -527,8 +527,8 @@ class RelaxRiError(BaseError):
             self.save_state()
 
 
-# RDC data errors.
-##################
+# RDC and PCS data errors.
+##########################
 
 # No RDC data.
 class RelaxNoRDCError(BaseError):
@@ -541,6 +541,20 @@ class RelaxNoRDCError(BaseError):
 class RelaxRDCError(BaseError):
     def __init__(self, id):
         self.text = "RDC data corresponding to the identification string " + `id` + " already exists."
+        if Debug:
+            self.save_state()
+
+# No PCS data.
+class RelaxNoPCSError(BaseError):
+    def __init__(self, id):
+        self.text = "PCS data corresponding to the identification string " + `id` + " does not exist."
+        if Debug:
+            self.save_state()
+
+# PCS data already exists.
+class RelaxPCSError(BaseError):
+    def __init__(self, id):
+        self.text = "PCS data corresponding to the identification string " + `id` + " already exists."
         if Debug:
             self.save_state()
 
