@@ -62,13 +62,13 @@ class N_state_model(Common_functions):
         cdp = ds[ds.current_pipe]
 
         # Determine the data type.
-        data_type = self.__base_data_types()
+        data_types = self.__base_data_types()
 
         # Initialise the parameter vector.
         param_vector = []
 
-        # A RDC data type requires the alignment tensors to be at the start of the parameter vector.
-        if data_type == 'rdc':
+        # A RDC or PCS data type requires the alignment tensors to be at the start of the parameter vector.
+        if 'rdc' in data_types or 'pcs' in data_types:
             # Loop over the alignments, adding the alignment tensor parameters to the parameter vector.
             for i in xrange(len(cdp.align_tensors)):
                 param_vector = param_vector + list(cdp.align_tensors[i].tensor_5D)
@@ -117,15 +117,16 @@ class N_state_model(Common_functions):
         return array(param_vector, float64)
 
 
-    def __assemble_scaling_matrix(self, data_type=None, scaling=True):
+    def __assemble_scaling_matrix(self, data_types=None, scaling=True):
         """Create and return the scaling matrix.
 
-        @keyword data_type: The type of data used in the optimisation - either 'rdc' or 'tensor'.
-        @type data_type:    str
-        @keyword scaling:   If False, then the identity matrix will be returned.
-        @type scaling:      bool
-        @return:            The square and diagonal scaling matrix.
-        @rtype:             numpy rank-2 array
+        @keyword data_types:    The base data types used in the optimisation.  This list can contain
+                                the elements 'rdc', 'pcs' or 'tensor'.
+        @type data_types:       list of str
+        @keyword scaling:       If False, then the identity matrix will be returned.
+        @type scaling:          bool
+        @return:                The square and diagonal scaling matrix.
+        @rtype:                 numpy rank-2 array
         """
 
         # Alias the current data pipe.
@@ -140,7 +141,7 @@ class N_state_model(Common_functions):
 
         # Starting point of the populations.
         pop_start = 0
-        if data_type == 'rdc':
+        if 'rdc' in data_types or 'pcs' in data_types:
             pop_start = pop_start + 5*len(cdp.align_tensors)
 
         # Loop over the populations, and set the scaling factor.
@@ -186,15 +187,16 @@ class N_state_model(Common_functions):
         return list
 
 
-    def __disassemble_param_vector(self, param_vector=None, data_type=None, sim_index=None):
+    def __disassemble_param_vector(self, param_vector=None, data_types=None, sim_index=None):
         """Disassemble the parameter vector and place the values into the relevant variables.
 
         For the 2-domain N-state model, the parameters are stored in the probability and Euler angle
         data structures.  For the population N-state model, only the probabilities are stored.  If
         RDCs are present and alignment tensors are optimised, then these are stored as well.
 
-        @keyword data_type: The type of data used in the optimisation - either 'rdc' or 'tensor'.
-        @type data_type:    str
+        @keyword data_types:    The base data types used in the optimisation.  This list can contain
+                                the elements 'rdc', 'pcs' or 'tensor'.
+        @type data_types:       list of str
         @keyword param_vector:  The parameter vector returned from optimisation.
         @type param_vector:     numpy array
         @keyword sim_index:     The index of the simulation to optimise.  This should be None if
@@ -206,7 +208,7 @@ class N_state_model(Common_functions):
         cdp = ds[ds.current_pipe]
 
         # Unpack and strip off the alignment tensor parameters.
-        if data_type == 'rdc':
+        if 'rdc' in data_types or 'pcs' in data_types:
             # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
             for i in xrange(len(cdp.align_tensors)):
                 cdp.align_tensors[i].Sxx = param_vector[5*i]
@@ -326,7 +328,7 @@ class N_state_model(Common_functions):
                     generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
 
-    def __linear_constraints(self, data_type=None, scaling_matrix=None):
+    def __linear_constraints(self, data_types=None, scaling_matrix=None):
         """Function for setting up the linear constraint matrices A and b.
 
         Standard notation
@@ -363,9 +365,9 @@ class N_state_model(Common_functions):
         parameters simply add columns of zero to the A matrix and have no effect on b.
 
 
-        @keyword data_type:         The type of data used in the optimisation - either 'rdc' or
-                                    'tensor'.
-        @type data_type:            str
+        @keyword data_types:        The base data types used in the optimisation.  This list can
+                                    contain the elements 'rdc', 'pcs' or 'tensor'.
+        @type data_types:           list of str
         @keyword scaling_matrix:    The diagonal scaling matrix.
         @type scaling_matrx:        numpy rank-2 square matrix
         @return:                    The matrices A and b.
@@ -378,7 +380,7 @@ class N_state_model(Common_functions):
 
         # Starting point of the populations.
         pop_start = 0
-        if data_type == 'rdc':
+        if 'rdc' in data_types or 'pcs' in data_types:
             pop_start = pop_start + 5*len(cdp.align_tensors)
 
         # Initialisation (0..j..m).
@@ -762,22 +764,22 @@ class N_state_model(Common_functions):
         param_vector = self.__assemble_param_vector(sim_index=sim_index)
 
         # Determine if alignment tensors or RDCs are to be used.
-        data_type = self.__base_data_types()
+        data_types = self.__base_data_types()
 
         # Diagonal scaling.
-        scaling_matrix = self.__assemble_scaling_matrix(data_type=data_type, scaling=scaling)
+        scaling_matrix = self.__assemble_scaling_matrix(data_types=data_types, scaling=scaling)
         param_vector = dot(inv(scaling_matrix), param_vector)
 
         # Linear constraints.
         if constraints:
-            A, b = self.__linear_constraints(data_type=data_type, scaling_matrix=scaling_matrix)
+            A, b = self.__linear_constraints(data_types=data_types, scaling_matrix=scaling_matrix)
 
         # Set up minimisation using alignment tensors.
-        if data_type == 'tensor':
+        if 'tensor' in data_types:
             model = self.minimise_setup_tensors(param_vector=param_vector, scaling_matrix=scaling_matrix)
 
-        # Set up minimisation using RDCs.
-        elif data_type == 'rdc':
+        # Set up minimisation using RDCs or PCSs.
+        elif 'rdc' in data_types or 'pcs' in data_types:
             model = self.minimise_setup_rdcs(param_vector=param_vector, scaling_matrix=scaling_matrix)
 
         # Minimisation.
@@ -804,7 +806,7 @@ class N_state_model(Common_functions):
             param_vector = dot(scaling_matrix, param_vector)
 
         # Disassemble the parameter vector.
-        self.__disassemble_param_vector(param_vector=param_vector, data_type=data_type, sim_index=sim_index)
+        self.__disassemble_param_vector(param_vector=param_vector, data_types=data_types, sim_index=sim_index)
 
         # Monte Carlo minimisation statistics.
         if sim_index != None:
@@ -1054,13 +1056,13 @@ class N_state_model(Common_functions):
         cdp = ds[ds.current_pipe]
 
         # Determine the data type.
-        data_type = self.__base_data_types()
+        data_types = self.__base_data_types()
 
         # Init.
         num = 0
 
         # Alignment tensor params.
-        if data_type == 'rdc':
+        if 'rdc' in data_types or 'pcs' in data_types:
             num = num + 5*len(cdp.align_tensors)
 
         # Populations.
