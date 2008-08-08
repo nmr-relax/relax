@@ -777,13 +777,18 @@ class N_state_model(Common_functions):
         if constraints:
             A, b = self.__linear_constraints(data_types=data_types, scaling_matrix=scaling_matrix)
 
-        # Set up minimisation using alignment tensors.
+        # Get the data structures for optimisation using the tensors as base data sets.
+        full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = None, None, None, None
         if 'tensor' in data_types:
-            model = self.minimise_setup_tensors(param_vector=param_vector, scaling_matrix=scaling_matrix)
+            full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self.minimise_setup_tensors()
 
-        # Set up minimisation using RDCs or PCSs.
-        elif 'rdc' in data_types or 'pcs' in data_types:
-            model = self.minimise_setup_rdcs(param_vector=param_vector, scaling_matrix=scaling_matrix)
+        # Get the data structures for optimisation using RDCs as base data sets.
+        rdcs, xh_vect, rdc_dj = None, None, None
+        if 'rdc' in data_types:
+            rdcs, xh_vect, rdc_dj = self.minimise_setup_rdcs()
+
+        # Set up the class instance containing the target function.
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, xh_vect=xh_vect, dip_const=rdc_dj, scaling_matrix=scaling_matrix)
 
         # Minimisation.
         if constraints:
@@ -853,14 +858,14 @@ class N_state_model(Common_functions):
 
 
     def minimise_setup_rdcs(self, param_vector=None, scaling_matrix=None):
-        """Set up minimisation for the N-state model using RDCs.
+        """Set up the data structures for optimisation using RDCs as base data sets.
 
-        @keyword param_vector:  The parameter vector.
-        @type param_vector:     list of str
-        @scaling_matrix:        The square and diagonal scaling matrix.
-        @scaling_matrix:        numpy rank-2 array
-        @return:                The initialised N_state_opt class for minimisation.
-        @rteyp:                 N_state_opt instance
+        @return:    The assembled data structures for using RDCs as the base data for optimisation.
+                    These include:
+                        - rdcs, the RDC values.
+                        - xh_vectors, the heteronucleus to proton vectors.
+                        - dj, the dipolar constants.
+        @rtype:     tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array)
         """
 
         # Alias the current data pipe.
@@ -913,22 +918,21 @@ class N_state_model(Common_functions):
                 # Store the unit vector.
                 xh_vect_numpy[spin_index, state_index] = xh_vectors[spin_index][state_index]
 
-        # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, rdcs=rdcs_numpy, xh_vect=xh_vect_numpy, dip_const=dj, scaling_matrix=scaling_matrix)
-
-        # Return the instantiated class.
-        return model
+        # Return the data structures.
+        return rdcs_numpy, xh_vect_numpy, dj
 
 
-    def minimise_setup_tensors(self, param_vector=None, scaling_matrix=None):
-        """Set up minimisation for the N-state model using alignment tensors.
+    def minimise_setup_tensors(self):
+        """Set up the data structures for optimisation using alignment tensors as base data sets.
 
-        @keyword param_vector:  The parameter vector.
-        @type param_vector:     list of str
-        @scaling_matrix:        The square and diagonal scaling matrix.
-        @scaling_matrix:        numpy rank-2 array
-        @return:                The initialised N_state_opt class for minimisation.
-        @rteyp:                 N_state_opt instance
+        @return:    The assembled data structures for using alignment tensors as the base data for
+                    optimisation.  These include:
+                        - full_tensors, the data of the full alignment tensors.
+                        - red_tensor_elem, the tensors as concatenated rank-1 5D arrays.
+                        - red_tensor_err, the tensor errors as concatenated rank-1 5D arrays.
+                        - full_in_ref_frame, flags specifying if the tensor in the reference frame
+                        is the full or reduced tensor.
+        @rtype:     tuple of (list, numpy rank-1 array, numpy rank-1 array, numpy rank-1 array)
         """
 
         # Alias the current data pipe.
@@ -950,7 +954,7 @@ class N_state_model(Common_functions):
                 else:
                     full_in_ref_frame.append(0)
 
-                # Create a list of matricies consisting of all the full alignment tensors.
+                # Create a list of matrices consisting of all the full alignment tensors.
                 full_tensors.append(tensor.tensor)
 
             # Create a list of all the reduced alignment tensor elements and their errors (for the chi-squared function).
@@ -979,11 +983,8 @@ class N_state_model(Common_functions):
         red_tensor_err = array(red_tensor_err, float64)
         full_in_ref_frame = array(full_in_ref_frame, float64)
 
-        # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, scaling_matrix=scaling_matrix)
-
-        # Return the instantiated class.
-        return model
+        # Return the data structures.
+        return full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame
 
 
     def number_of_states(self, N=None):
