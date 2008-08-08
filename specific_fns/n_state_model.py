@@ -313,22 +313,27 @@ class N_state_model(Common_functions):
         data_types = self.__base_data_types()
 
         # Set up alignment tensors for each alignment.
-        if 'rdc' in data_types or 'pcs' in data_types:
-            # Loop over the RDC and PCS ids.
-            for id in cdp.rdc_ids+cdp.pcs_ids:
-                # No tensors initialised.
-                if not hasattr(cdp, 'align_tensors'):
-                    generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+        ids = []
+        if 'rdc' in data_types:
+            ids = ids+cdp.rdc_ids
+        if 'pcs' in data_types:
+            ids = ids+cdp.pcs_ids
 
-                # Find if the tensor corresponding to the id exists.
-                exists = False
-                for tensor in cdp.align_tensors:
-                    if id == tensor.name:
-                        exists = True
+        # Set up tensors for each alignment.
+        for id in ids:
+            # No tensors initialised.
+            if not hasattr(cdp, 'align_tensors'):
+                generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
-                # Initialise the tensor.
-                if not exists:
-                    generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+            # Find if the tensor corresponding to the id exists.
+            exists = False
+            for tensor in cdp.align_tensors:
+                if id == tensor.name:
+                    exists = True
+
+            # Initialise the tensor.
+            if not exists:
+                generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
 
     def __linear_constraints(self, data_types=None, scaling_matrix=None):
