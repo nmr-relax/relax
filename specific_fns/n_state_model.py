@@ -62,7 +62,7 @@ class N_state_model(Common_functions):
         cdp = ds[ds.current_pipe]
 
         # Determine the data type.
-        data_type = self.__determine_data_type()
+        data_type = self.__base_data_type()
 
         # Initialise the parameter vector.
         param_vector = []
@@ -150,6 +150,39 @@ class N_state_model(Common_functions):
 
         # Return the matrix.
         return scaling_matrix
+
+
+    def __base_data_type(self):
+        """Determine if the data type is alignment tensors or RDCs.
+
+        @return:    The data type being one of 'tensor' or 'rdc'.
+        @rtype:     str
+        """
+
+
+        # Alignment tensor search.
+        tensor_flag = False
+        if hasattr(ds[ds.current_pipe], 'align_tensors'):
+            tensor_flag = True
+
+        # RDC search.
+        rdc_flag = False
+        for spin in spin_loop():
+            if hasattr(spin, 'rdc'):
+                rdc_flag = True
+                break
+
+        # RDCs are present, so it is assumed that the alignment tensors tensor will be optimised.
+        if rdc_flag:
+            return 'rdc'
+
+        # No RDCs are present, so the tensors are the base data.
+        if tensor_flag:
+            return 'tensor'
+
+        # No data is present.
+        else:
+            raise RelaxError, "Neither RDC nor alignment tensor data is present." 
 
 
     def __disassemble_param_vector(self, param_vector=None, data_type=None, sim_index=None):
@@ -271,46 +304,13 @@ class N_state_model(Common_functions):
                 cdp.gamma = [None] * cdp.N
 
         # Determine the data type.
-        data_type = self.__determine_data_type()
+        data_type = self.__base_data_type()
 
         # Set up alignment tensors for each alignment.
         if data_type == 'rdc' and not hasattr(cdp, 'align_tensors'):
             # Loop over the alignments.
             for align in cdp.rdc_ids:
                 generic_fns.align_tensor.init(tensor=align, params=[0.0, 0.0, 0.0, 0.0, 0.0])
-
-
-    def __determine_data_type(self):
-        """Determine if the data type is alignment tensors or RDCs.
-
-        @return:    The data type being one of 'tensor' or 'rdc'.
-        @rtype:     str
-        """
-
-
-        # Alignment tensor search.
-        tensor_flag = False
-        if hasattr(ds[ds.current_pipe], 'align_tensors'):
-            tensor_flag = True
-
-        # RDC search.
-        rdc_flag = False
-        for spin in spin_loop():
-            if hasattr(spin, 'rdc'):
-                rdc_flag = True
-                break
-
-        # RDCs are present, so it is assumed that the alignment tensors tensor will be optimised.
-        if rdc_flag:
-            return 'rdc'
-
-        # No RDCs are present, so the tensors are the base data.
-        if tensor_flag:
-            return 'tensor'
-
-        # No data is present.
-        else:
-            raise RelaxError, "Neither RDC nor alignment tensor data is present." 
 
 
     def __linear_constraints(self, data_type=None, scaling_matrix=None):
@@ -749,7 +749,7 @@ class N_state_model(Common_functions):
         param_vector = self.__assemble_param_vector(sim_index=sim_index)
 
         # Determine if alignment tensors or RDCs are to be used.
-        data_type = self.__determine_data_type()
+        data_type = self.__base_data_type()
 
         # Diagonal scaling.
         scaling_matrix = self.__assemble_scaling_matrix(data_type=data_type, scaling=scaling)
@@ -1041,7 +1041,7 @@ class N_state_model(Common_functions):
         cdp = ds[ds.current_pipe]
 
         # Determine the data type.
-        data_type = self.__determine_data_type()
+        data_type = self.__base_data_type()
 
         # Init.
         num = 0
