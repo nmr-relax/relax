@@ -175,12 +175,8 @@ class N_state_model(Common_functions):
                 break
 
         # Alignment tensor search.
-        if hasattr(ds[ds.current_pipe], 'align_tensors'):
+        if not ('rdc' in list or 'pcs' in list) and hasattr(ds[ds.current_pipe], 'align_tensors'):
             list.append('tensor')
-
-        # Can't have RDC or PCS data together with tensors as the base data.
-        if ('rdc' in list or 'pcs' in list) and 'tensor' in list:
-            raise RelaxError, "Cannot have RDC or PCS data together with tensors as the base data."
 
         # No data is present.
         if not list:
