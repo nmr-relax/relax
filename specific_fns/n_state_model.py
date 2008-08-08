@@ -347,6 +347,100 @@ class N_state_model(Common_functions):
         return A, b
 
 
+    def __minimise_setup_pcs(self):
+        """Set up the data structures for optimisation using PCSs as base data sets.
+
+        @return:    The assembled data structures for using PCSs as the base data for optimisation.
+                    These include:
+                        - the PCS values.
+                        - the unit vectors connecting the paramagnetic centre (the electron spin) to
+                        the nuclear spin.
+                        - the pseudocontact shift constants.
+                        - the temperatures.
+                        - the spectrometer frequencies.
+        @rtype:     tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array, numpy
+                    rank-1 array, numpy rank-1 array)
+        """
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
+        # Initialise.
+        pcs = []
+        unit_vect = []
+        pcs_dj = []
+        temp = []
+        frq = []
+
+        # Spin loop.
+        for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Skip spins without PCS data.
+            if not hasattr(spin, 'pcs'):
+                continue
+
+            # Append the PCSs to the list.
+            pcs.append(spin.pcs)
+
+            # Gyromagnetic ratios.
+            gx = return_gyromagnetic_ratio(spin.heteronuc_type)
+            gh = return_gyromagnetic_ratio(spin.proton_type)
+
+            # Loop over the states, and calculate the PCS constant for each (the distance changes each time).
+            pcs_dj.append([])
+            for c in range(cdp.N):
+                # Get the paramagnetic coordinates.
+                i = 0
+                for R in cdp.structure.atom_loop(atom_id=cdp.para_id, pos_flag=True):
+                    i = i + 1
+
+                # Can only be one paramagnetic centre (for now).
+                if i > 1:
+                    raise RelaxError, "More than one paramagnetic centre found."
+
+                # Calculate the electron spin to nuclear spin vector.
+                vect = spin.pos[c] - R
+
+                # The length.
+                r = norm(vect)
+
+                # Append the unit vector.
+                unit_vect.append(vect/r)
+
+                # Calculate the PCS dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
+                pcs_dj[-1].append(pcs_constant(gx, gh, r))
+
+        # Loop over alignments.
+        for align in cdp.align_tensors:
+            # Append the temperature.
+            temp.append(cdp.temp[align.name])
+
+            # Append the frequency.
+            frq.append(cdp.frq[align.name])
+
+        # Initialise the numpy objects (the pcs matrix is transposed!).
+        pcs_numpy = zeros((len(pcs[0]), len(pcs)), float64)
+        unit_vect_numpy = zeros((len(unit_vect), len(unit_vect[0]), 3), float64)
+
+        # Loop over the spins.
+        for spin_index in xrange(len(pcs)):
+            # Loop over the alignments.
+            for align_index in xrange(len(pcs[spin_index])):
+                # Transpose and store the PCS value.
+                pcs_numpy[align_index, spin_index] = pcs[spin_index][align_index]
+
+            # Loop over the N states.
+            for state_index in xrange(len(unit_vect[spin_index])):
+                # Store the unit vector.
+                unit_vect_numpy[spin_index, state_index] = unit_vect[spin_index][state_index]
+
+        # Return the data structures.
+        return pcs_numpy, unit_vect_numpy, pcs_dj, temp, frq
+
+
     def __minimise_setup_rdcs(self, param_vector=None, scaling_matrix=None):
         """Set up the data structures for optimisation using RDCs as base data sets.
 
