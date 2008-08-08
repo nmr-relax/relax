@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for the specific analysis of the N-state dynamic model."""
+
 # Python module imports.
 from math import acos, cos, pi
 from minfx.generic import generic_minimise
