@@ -36,49 +36,101 @@ from rotation_matrix import R_euler_zyz
 class N_state_opt:
     """Class containing the target function of the optimisation of the N-state model."""
 
-    def __init__(self, model=None, N=None, init_params=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, pcs=None, pcs_errors=None, rdcs=None, rdc_errors=None, xh_vect=None, dip_const=None, scaling_matrix=None):
+    def __init__(self, model=None, N=None, init_params=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, pcs=None, pcs_errors=None, rdcs=None, rdc_errors=None, pcs_vect=None, xh_vect=None, pcs_const=None, dip_const=None, scaling_matrix=None):
         """Set up the class instance for optimisation.
 
-        All constant data required for the N-state model are initialised here.
+        The N-state models
+        ==================
+
+        All constant data required for the N-state model are initialised here.  Depending on the
+        base data used for optimisation, different data structures can be supplied.  However a
+        number of structures must be provided for the N-state model.  These are:
+
+            - model, the type of N-state model.  This can be '2-domain', 'population', or 'fixed'.
+            - N, the number of states (or structures).
+            - init_params, the initial parameter values.
+            - scaling_matrix, the matrix used for parameter scaling during optimisation.
 
 
-        @keyword model:         The N-state model type.  This can be one of '2-domain', 'population'
-                                or 'fixed'.
-        @type model:            str
-        @keyword N:             The number of states.
-        @type N:                int
-        @keyword init_params:   The initial parameter values.  Optimisation must start at some
-                                point!
-        @type init_params:      numpy float64 array
-        @keyword full_tensors:  A list of the full alignment tensors in matrix form.
-        @type full_tensors:     list of 3x3 numpy matricies
-        @keyword red_data:      An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all reduced
-                                tensors.  The format is [Sxx1, Syy1, Sxy1, Sxz1, Syz1, Sxx2, Syy2,
-                                Sxy2, Sxz2, Syz2, ..., Sxxn, Syyn, Sxyn, Sxzn, Syzn]
-        @type red_data:         numpy float64 array
-        @keyword red_errors:    An array of the {Sxx, Syy, Sxy, Sxz, Syz} errors for all reduced
-                                tensors.  The array format is the same as for red_data.
-        @type red_errors:       numpy float64 array
-        @keyword pcs:           The PCS lists.  The first index must correspond to the different
-                                alignment media i and the second index to the spin systems j.
-        @type pcs:              numpy matrix
-        @keyword pcs_errors:    The PCS error lists.  The dimensions of this argument are the same
-                                as for 'pcs'.
-        @type pcs_errors:       numpy matrix
-        @keyword rdcs:          The RDC lists.  The first index must correspond to the different
-                                alignment media i and the second index to the spin systems j.
-        @type rdcs:             numpy matrix
-        @keyword rdc_errors:    The RDC error lists.  The dimensions of this argument are the same
-                                as for 'rdcs'.
-        @type rdc_errors:       numpy matrix
-        @keyword xh_vect:       The unit XH vector lists.  The first index must correspond to the
-                                spin systems and the second index to each structure (its size being
-                                equal to the number of states).
-        @type xh_vect:          numpy matrix
-        @keyword dip_const:     The dipolar constants for each XH vector.  The indices correspond to
-                                the spin systems j.
-        @scaling_matrix:        The square and diagonal scaling matrix.
-        @scaling_matrix:        numpy rank-2 array
+        2-domain N-state model
+        ----------------------
+
+        If the model type is set to '2-domain', then the following data structures should be
+        supplied:
+
+            - full_tensors, the alignment tensors in matrix form.
+            - red_data, the alignment tensors in 5D form in a rank-1 array.
+            - red_errors, the alignment tensor errors in 5D form in a rank-1 array.  This data is
+            not obligatory.
+            - full_in_ref_frame, an array of flags specifying if the tensor in the reference frame
+            is the full or reduced tensor.
+
+
+        PCS base data
+        -------------
+
+        If pseudocontact shift data is to be used for optimisation, then the following should be
+        supplied:
+
+            - pcs, the pseudocontact shifts.
+            - pcs_errors, the optional pseudocontact shift error values.
+            - pcs_vect, the unit vectors connecting the paramagnetic centre (the electron magnetic
+            dipole) to the nuclear spin centre.
+            - pcs_const, the pseudocontact shift constants.
+
+
+        RDC base data
+        -------------
+
+        If residual dipolar coupling data is to be used for optimisation, then the following should
+        be supplied:
+
+            - rdcs, the residual dipolar couplings.
+            - rdc_errors, the optional residual dipolar coupling errors.
+            - xh_vect, the heteronucleus to proton unit vectors.
+            - dip_const, the dipolar contants.
+
+
+        @keyword model:             The N-state model type.  This can be one of '2-domain',
+                                    'population' or 'fixed'.
+        @type model:                str
+        @keyword N:                 The number of states.
+        @type N:                    int
+        @keyword init_params:       The initial parameter values.  Optimisation must start at some
+                                    point!
+        @type init_params:          numpy float64 array
+        @keyword full_tensors:      A list of the full alignment tensors in matrix form.
+        @type full_tensors:         list of 3x3 numpy matricies
+        @keyword red_data:          An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all reduced
+                                    tensors.  The format is [Sxx1, Syy1, Sxy1, Sxz1, Syz1, Sxx2,
+                                    Syy2, Sxy2, Sxz2, Syz2, ..., Sxxn, Syyn, Sxyn, Sxzn, Syzn]
+        @type red_data:             numpy float64 array
+        @keyword red_errors:        An array of the {Sxx, Syy, Sxy, Sxz, Syz} errors for all reduced
+                                    tensors.  The array format is the same as for red_data.
+        @type red_errors:           numpy float64 array
+        @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference
+                                    frame is the full or reduced tensor.
+        @type full_in_ref_frame:    numpy rank-1 array
+        @keyword pcs:               The PCS lists.  The first index must correspond to the different
+                                    alignment media i and the second index to the spin systems j.
+        @type pcs:                  numpy matrix
+        @keyword pcs_errors:        The PCS error lists.  The dimensions of this argument are the
+                                    same as for 'pcs'.
+        @type pcs_errors:           numpy matrix
+        @keyword rdcs:              The RDC lists.  The first index must correspond to the different
+                                    alignment media i and the second index to the spin systems j.
+        @type rdcs:                 numpy matrix
+        @keyword rdc_errors:        The RDC error lists.  The dimensions of this argument are the
+                                    same as for 'rdcs'.
+        @type rdc_errors:           numpy matrix
+        @keyword xh_vect:           The unit XH vector lists.  The first index must correspond to
+                                    the spin systems and the second index to each structure (its
+                                    size being equal to the number of states).
+        @type xh_vect:              numpy matrix
+        @keyword dip_const:         The dipolar constants for each XH vector.  The indices
+                                    correspond to the spin systems j.
+        @scaling_matrix:            The square and diagonal scaling matrix.
+        @scaling_matrix:            numpy rank-2 array
         """
 
         # Store the data inside the class instance namespace.
