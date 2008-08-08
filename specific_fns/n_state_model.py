@@ -347,6 +347,136 @@ class N_state_model(Common_functions):
         return A, b
 
 
+    def __minimise_setup_rdcs(self, param_vector=None, scaling_matrix=None):
+        """Set up the data structures for optimisation using RDCs as base data sets.
+
+        @return:    The assembled data structures for using RDCs as the base data for optimisation.
+                    These include:
+                        - rdcs, the RDC values.
+                        - xh_vectors, the heteronucleus to proton vectors.
+                        - dj, the dipolar constants.
+        @rtype:     tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array)
+        """
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
+        # Initialise.
+        rdcs = []
+        xh_vectors = []
+        dj = []
+
+        # Spin loop.
+        for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Skip spins without RDC data or unit XH bond vectors.
+            if not hasattr(spin, 'rdc'):
+                continue
+
+            # RDC data exists but the XH bond vectors are missing?
+            if not hasattr(spin, 'xh_vect'):
+                warn(RelaxWarning("RDC data exists but the XH bond vectors are missing, skipping spin " + spin_id))
+                continue
+
+            # Append the RDC and XH vectors to the lists.
+            rdcs.append(spin.rdc)
+            xh_vectors.append(spin.xh_vect)
+
+            # Gyromagnetic ratios.
+            gx = return_gyromagnetic_ratio(spin.heteronuc_type)
+            gh = return_gyromagnetic_ratio(spin.proton_type)
+
+            # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
+            dj.append(3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r))
+
+        # Initialise the numpy objects (the rdc matrix is transposed!).
+        rdcs_numpy = zeros((len(rdcs[0]), len(rdcs)), float64)
+        xh_vect_numpy = zeros((len(xh_vectors), len(xh_vectors[0]), 3), float64)
+
+        # Loop over the spins.
+        for spin_index in xrange(len(rdcs)):
+            # Loop over the alignments.
+            for align_index in xrange(len(rdcs[spin_index])):
+                # Transpose and store the RDC value.
+                rdcs_numpy[align_index, spin_index] = rdcs[spin_index][align_index]
+
+            # Loop over the N states.
+            for state_index in xrange(len(xh_vectors[spin_index])):
+                # Store the unit vector.
+                xh_vect_numpy[spin_index, state_index] = xh_vectors[spin_index][state_index]
+
+        # Return the data structures.
+        return rdcs_numpy, xh_vect_numpy, dj
+
+
+    def __minimise_setup_tensors(self):
+        """Set up the data structures for optimisation using alignment tensors as base data sets.
+
+        @return:    The assembled data structures for using alignment tensors as the base data for
+                    optimisation.  These include:
+                        - full_tensors, the data of the full alignment tensors.
+                        - red_tensor_elem, the tensors as concatenated rank-1 5D arrays.
+                        - red_tensor_err, the tensor errors as concatenated rank-1 5D arrays.
+                        - full_in_ref_frame, flags specifying if the tensor in the reference frame
+                        is the full or reduced tensor.
+        @rtype:     tuple of (list, numpy rank-1 array, numpy rank-1 array, numpy rank-1 array)
+        """
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
+        # Initialise.
+        full_tensors = []
+        red_tensor_elem = []
+        red_tensor_err = []
+        full_in_ref_frame = []
+
+        # Loop over all tensors.
+        for tensor in cdp.align_tensors:
+            # The full tensor.
+            if not tensor.red:
+                # The full tensor corresponds to the frame of reference.
+                if cdp.ref_domain == tensor.domain:
+                    full_in_ref_frame.append(1)
+                else:
+                    full_in_ref_frame.append(0)
+
+                # Create a list of matrices consisting of all the full alignment tensors.
+                full_tensors.append(tensor.tensor)
+
+            # Create a list of all the reduced alignment tensor elements and their errors (for the chi-squared function).
+            elif tensor.red:
+                # Append the 5 unique elements.
+                red_tensor_elem.append(tensor.Sxx)
+                red_tensor_elem.append(tensor.Syy)
+                red_tensor_elem.append(tensor.Sxy)
+                red_tensor_elem.append(tensor.Sxz)
+                red_tensor_elem.append(tensor.Syz)
+
+                # Append the 5 unique error elements (if they exist).
+                if hasattr(tensor, 'Sxx_err'):
+                    red_tensor_err.append(tensor.Sxx_err)
+                    red_tensor_err.append(tensor.Syy_err)
+                    red_tensor_err.append(tensor.Sxy_err)
+                    red_tensor_err.append(tensor.Sxz_err)
+                    red_tensor_err.append(tensor.Syz_err)
+
+                # Otherwise append errors of 1.0 to convert the chi-squared equation to the SSE equation (for the tensors without errors).
+                else:
+                    red_tensor_err = red_tensor_err + [1.0, 1.0, 1.0, 1.0, 1.0]
+
+        # Convert the reduced alignment tensor element lists into numpy arrays (for the chi-squared function maths).
+        red_tensor_elem = array(red_tensor_elem, float64)
+        red_tensor_err = array(red_tensor_err, float64)
+        full_in_ref_frame = array(full_in_ref_frame, float64)
+
+        # Return the data structures.
+        return full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame
+
+
     def __update_model(self):
         """Update the model parameters as necessary."""
 
@@ -785,17 +915,17 @@ class N_state_model(Common_functions):
         # Get the data structures for optimisation using the tensors as base data sets.
         full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = None, None, None, None
         if 'tensor' in data_types:
-            full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self.minimise_setup_tensors()
+            full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors()
 
         # Get the data structures for optimisation using PCSs as base data sets.
         pcs, pcs_vect, pcs_dj, temp, frq = None, None, None, None, None
         if 'pcs' in data_types:
-            pcs, pcs_vect, pcs_dj, temp, frq = self.minimise_setup_pcs()
+            pcs, pcs_vect, pcs_dj, temp, frq = self.__minimise_setup_pcs()
 
         # Get the data structures for optimisation using RDCs as base data sets.
         rdcs, xh_vect, rdc_dj = None, None, None
         if 'rdc' in data_types:
-            rdcs, xh_vect, rdc_dj = self.minimise_setup_rdcs()
+            rdcs, xh_vect, rdc_dj = self.__minimise_setup_rdcs()
 
         # Set up the class instance containing the target function.
         model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_vect=pcs_vect, xh_vect=xh_vect, pcs_const=pcs_dj, dip_const=rdc_dj, scaling_matrix=scaling_matrix)
@@ -865,136 +995,6 @@ class N_state_model(Common_functions):
 
             # Warning.
             cdp.warning = warning
-
-
-    def minimise_setup_rdcs(self, param_vector=None, scaling_matrix=None):
-        """Set up the data structures for optimisation using RDCs as base data sets.
-
-        @return:    The assembled data structures for using RDCs as the base data for optimisation.
-                    These include:
-                        - rdcs, the RDC values.
-                        - xh_vectors, the heteronucleus to proton vectors.
-                        - dj, the dipolar constants.
-        @rtype:     tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array)
-        """
-
-        # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
-
-        # Initialise.
-        rdcs = []
-        xh_vectors = []
-        dj = []
-
-        # Spin loop.
-        for spin, spin_id in spin_loop(return_id=True):
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
-            # Skip spins without RDC data or unit XH bond vectors.
-            if not hasattr(spin, 'rdc'):
-                continue
-
-            # RDC data exists but the XH bond vectors are missing?
-            if not hasattr(spin, 'xh_vect'):
-                warn(RelaxWarning("RDC data exists but the XH bond vectors are missing, skipping spin " + spin_id))
-                continue
-
-            # Append the RDC and XH vectors to the lists.
-            rdcs.append(spin.rdc)
-            xh_vectors.append(spin.xh_vect)
-
-            # Gyromagnetic ratios.
-            gx = return_gyromagnetic_ratio(spin.heteronuc_type)
-            gh = return_gyromagnetic_ratio(spin.proton_type)
-
-            # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
-            dj.append(3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r))
-
-        # Initialise the numpy objects (the rdc matrix is transposed!).
-        rdcs_numpy = zeros((len(rdcs[0]), len(rdcs)), float64)
-        xh_vect_numpy = zeros((len(xh_vectors), len(xh_vectors[0]), 3), float64)
-
-        # Loop over the spins.
-        for spin_index in xrange(len(rdcs)):
-            # Loop over the alignments.
-            for align_index in xrange(len(rdcs[spin_index])):
-                # Transpose and store the RDC value.
-                rdcs_numpy[align_index, spin_index] = rdcs[spin_index][align_index]
-
-            # Loop over the N states.
-            for state_index in xrange(len(xh_vectors[spin_index])):
-                # Store the unit vector.
-                xh_vect_numpy[spin_index, state_index] = xh_vectors[spin_index][state_index]
-
-        # Return the data structures.
-        return rdcs_numpy, xh_vect_numpy, dj
-
-
-    def minimise_setup_tensors(self):
-        """Set up the data structures for optimisation using alignment tensors as base data sets.
-
-        @return:    The assembled data structures for using alignment tensors as the base data for
-                    optimisation.  These include:
-                        - full_tensors, the data of the full alignment tensors.
-                        - red_tensor_elem, the tensors as concatenated rank-1 5D arrays.
-                        - red_tensor_err, the tensor errors as concatenated rank-1 5D arrays.
-                        - full_in_ref_frame, flags specifying if the tensor in the reference frame
-                        is the full or reduced tensor.
-        @rtype:     tuple of (list, numpy rank-1 array, numpy rank-1 array, numpy rank-1 array)
-        """
-
-        # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
-
-        # Initialise.
-        full_tensors = []
-        red_tensor_elem = []
-        red_tensor_err = []
-        full_in_ref_frame = []
-
-        # Loop over all tensors.
-        for tensor in cdp.align_tensors:
-            # The full tensor.
-            if not tensor.red:
-                # The full tensor corresponds to the frame of reference.
-                if cdp.ref_domain == tensor.domain:
-                    full_in_ref_frame.append(1)
-                else:
-                    full_in_ref_frame.append(0)
-
-                # Create a list of matrices consisting of all the full alignment tensors.
-                full_tensors.append(tensor.tensor)
-
-            # Create a list of all the reduced alignment tensor elements and their errors (for the chi-squared function).
-            elif tensor.red:
-                # Append the 5 unique elements.
-                red_tensor_elem.append(tensor.Sxx)
-                red_tensor_elem.append(tensor.Syy)
-                red_tensor_elem.append(tensor.Sxy)
-                red_tensor_elem.append(tensor.Sxz)
-                red_tensor_elem.append(tensor.Syz)
-
-                # Append the 5 unique error elements (if they exist).
-                if hasattr(tensor, 'Sxx_err'):
-                    red_tensor_err.append(tensor.Sxx_err)
-                    red_tensor_err.append(tensor.Syy_err)
-                    red_tensor_err.append(tensor.Sxy_err)
-                    red_tensor_err.append(tensor.Sxz_err)
-                    red_tensor_err.append(tensor.Syz_err)
-
-                # Otherwise append errors of 1.0 to convert the chi-squared equation to the SSE equation (for the tensors without errors).
-                else:
-                    red_tensor_err = red_tensor_err + [1.0, 1.0, 1.0, 1.0, 1.0]
-
-        # Convert the reduced alignment tensor element lists into numpy arrays (for the chi-squared function maths).
-        red_tensor_elem = array(red_tensor_elem, float64)
-        red_tensor_err = array(red_tensor_err, float64)
-        full_in_ref_frame = array(full_in_ref_frame, float64)
-
-        # Return the data structures.
-        return full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame
 
 
     def number_of_states(self, N=None):
