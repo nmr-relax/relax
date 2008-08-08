@@ -106,6 +106,14 @@ try:
 except ImportError:
     scientific_pdb_module = False
 
+# VMD module imports.
+try:
+    from Scientific.Visualization import VMD    # This requires Numeric to be installed (at least in Scientific 2.7.8).
+    del VMD
+    vmd_module = True
+except ImportError:
+    vmd_module = False
+
 
 # Compiled C modules.
 #####################

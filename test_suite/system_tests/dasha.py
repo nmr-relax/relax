@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007-2008 Edward d'Auvergne                        #
+# Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,35 +20,52 @@
 #                                                                             #
 ###############################################################################
 
-# Module docstring.
-"""Module for interfacing with VMD."""
+# Python module imports.
+import sys
+from shutil import rmtree
+from tempfile import mkdtemp
+from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-import dep_check
-from relax_errors import RelaxNoPdbError
+from relax_io import test_binary
 
 
-def view():
-    """Function for viewing the collection of molecules using VMD."""
+class Dasha(TestCase):
+    """Class for testing various aspects specific to model-free analysis using the program
+    'Dasha'.
+    """
 
-    # Test if the module is available.
-    if not dep_check.vmd_module:
-        raise RelaxError, "VMD is not available (cannot import Scientific.Visualization.VMD due to missing Numeric dependency)."
 
-    # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    def setUp(self):
+        """Set up for all the functional tests."""
 
-    # Test if the PDB file has been loaded.
-    if not hasattr(cdp, 'structure'):
-        raise RelaxNoPdbError
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create('dasha', 'mf')
 
-    # Create an empty scene.
-    cdp.vmd_scene = VMD.Scene()
+        # Create a temporary directory for Dasha outputs.
+        ds.tmpdir = mkdtemp()
 
-    # Add the molecules to the scene.
-    for i in xrange(len(cdp.structure.structures)):
-        cdp.vmd_scene.addObject(VMD.Molecules(cdp.structure.structures[i]))
 
-    # View the scene.
-    cdp.vmd_scene.view()
+    def tearDown(self):
+        """Reset the relax data storage object."""
+
+        # Remove the temporary directory.
+        rmtree(ds.tmpdir)
+
+
+        # Reset the relax data storage object.
+        ds.__reset__()
+
+
+    def test_dasha(self):
+        """Test a complete model-free analysis using the program 'Dasha'."""
+
+        # Test for the presence of the Dasha binary (skip the test if not present).
+        try:
+            test_binary('dasha')
+        except:
+            return
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/dasha.py')

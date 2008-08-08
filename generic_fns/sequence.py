@@ -30,7 +30,7 @@ from copy import deepcopy
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_loop
 import pipes
-from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPdbChainError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError
+from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError
 from relax_io import extract_data, open_write_file, strip
 import sys
 
@@ -399,13 +399,18 @@ def write_body(file=None, sep=None, mol_name_flag=False, res_num_flag=False, res
         write_line(file, mol_name, res_num, res_name, spin.num, spin.name, sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag)
 
 
-def write_header(file, sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
-    """Function for writing to the given file object the molecule, residue, and/or sequence data.
+def write_header(file, sep=None, extra_format=None, extra_values=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
+    """Write to the file object the molecule, residue, and spin data, as well as any extra columns.
 
     @param file:                The file to write the data to.
     @type file:                 writable file object
     @keyword sep:               The column seperator which, if None, defaults to whitespace.
     @type sep:                  str or None
+    @keyword extra_format:      The formatting string for any extra columns.  This should match the
+                                extra_values argument.
+    @type extra_format:         str
+    @keyword extra_values:      The values to place into the extra columns, corresponding to extra_format.
+    @type extra_values:         tuple of str
     @keyword mol_name_flag:     A flag which if True will cause the molecule name column to be
                                 written.
     @type mol_name_flag:        bool
@@ -426,7 +431,7 @@ def write_header(file, sep=None, mol_name_flag=False, res_num_flag=False, res_na
     if sep == None:
         sep = ''
 
-    # Write the header.
+    # Write the start of the header line.
     if mol_name_flag:
         file.write("%-10s " % ("Mol_name"+sep))
     if res_num_flag:
@@ -437,10 +442,16 @@ def write_header(file, sep=None, mol_name_flag=False, res_num_flag=False, res_na
         file.write("%-10s " % ("Spin_num"+sep))
     if spin_name_flag:
         file.write("%-10s " % ("Spin_name"+sep))
+
+    # Extra columns.
+    if extra_format:
+        file.write(extra_format % extra_values)
+
+    # Line termination.
     file.write('\n')
 
 
-def write_line(file, mol_name, res_num, res_name, spin_num, spin_name, sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
+def write_line(file, mol_name, res_num, res_name, spin_num, spin_name, sep=None, extra_format=None, extra_values=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
     """Write to the given file object a single line of molecule, residue, and spin data.
 
     @param file:                The file to write the data to.
@@ -457,6 +468,11 @@ def write_line(file, mol_name, res_num, res_name, spin_num, spin_name, sep=None,
     @type spin_name:            anything
     @keyword sep:               The column seperator which, if None, defaults to whitespace.
     @type sep:                  str or None
+    @keyword extra_format:      The formatting string for any extra columns.  This should match the
+                                extra_values argument.
+    @type extra_format:         str
+    @keyword extra_values:      The values to place into the extra columns, corresponding to extra_format.
+    @type extra_values:         tuple of str
     @keyword mol_name_flag:     A flag which if True will cause the molecule name column to be
                                 written.
     @type mol_name_flag:        bool
@@ -477,7 +493,7 @@ def write_line(file, mol_name, res_num, res_name, spin_num, spin_name, sep=None,
     if sep == None:
         sep = ''
 
-    # Write the header.
+    # Write the start of the line.
     if mol_name_flag:
         file.write("%-10s " % (str(mol_name)+sep))
     if res_num_flag:
@@ -488,4 +504,10 @@ def write_line(file, mol_name, res_num, res_name, spin_num, spin_name, sep=None,
         file.write("%-10s " % (str(spin_num)+sep))
     if spin_name_flag:
         file.write("%-10s " % (str(spin_name)+sep))
+
+    # Extra columns.
+    if extra_format:
+        file.write(extra_format % extra_values)
+
+    # Line termination.
     file.write('\n')

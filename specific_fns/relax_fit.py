@@ -35,7 +35,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from dep_check import C_module_exp_fn
 from base_class import Common_functions
 from generic_fns import intensity
-from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_spin_from_index, spin_loop
+from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_spin, return_spin_from_index, spin_loop
 from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoPipeError, RelaxNoSequenceError
 
@@ -203,17 +203,21 @@ class Relax_fit(Common_functions):
         return results[relax_time_index]
 
 
-    def create_mc_data(self, spin):
+    def create_mc_data(self, spin_id):
         """Create the Monte Carlo peak intensity data.
 
-        @param spin:    The spin container.
-        @type spin:     SpinContainer instance
+        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
+                        method.
+        @type spin_id:  str
         @return:        The Monte Carlo simulation data.
         @rtype:         list of floats
         """
 
         # Initialise the MC data data structure.
         mc_data = []
+
+        # Get the spin container.
+        spin = return_spin(spin_id)
 
         # Skip deselected spins.
         if not spin.select:
@@ -1038,11 +1042,12 @@ class Relax_fit(Common_functions):
         return spin.intensities
 
 
-    def return_error(self, spin):
+    def return_error(self, spin_id):
         """Return the standard deviation data structure.
 
-        @param spin:    The spin container.
-        @type spin:     SpinContainer instance
+        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
+                        method.
+        @type spin_id:  str
         @return:        The standard deviation data structure.
         @rtype:         list of float
         """
@@ -1195,14 +1200,18 @@ class Relax_fit(Common_functions):
         spin.select_sim = select_sim
 
 
-    def sim_pack_data(self, spin, sim_data):
+    def sim_pack_data(self, spin_id, sim_data):
         """Pack the Monte Carlo simulation data.
 
-        @param spin:        The spin container.
-        @type spin:         SpinContainer instance
+        @param spin_id:     The spin identification string, as yielded by the base_data_loop()
+                            generator method.
+        @type spin_id:      str
         @param sim_data:    The Monte Carlo simulation data.
         @type sim_data:     list of float
         """
+
+        # Get the spin container.
+        spin = return_spin(spin_id)
 
         # Test if the simulation data already exists.
         if hasattr(spin, 'sim_intensities'):

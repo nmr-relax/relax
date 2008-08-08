@@ -2568,11 +2568,13 @@ class Model_free_main:
         diffusion_tensor.set(value=value, param=param)
 
 
-    def set_selected_sim(self, instance, select_sim):
+    def set_selected_sim(self, model_index, select_sim):
         """Set all simulation selection flags.
 
-        @param instance:    Either the spin container or data pipe container object.
-        @type instance:     SpinContainer or PipeContainer instance
+        @param model_index: The model index.  This is zero for the global models or equal to the
+                            global spin index (which covers the molecule, residue, and spin
+                            indices).
+        @type model_index:  int
         @param select_sim:  The selection flags.
         @type select_sim:   bool
         """
@@ -2580,14 +2582,14 @@ class Model_free_main:
         # Determine the model type.
         model_type = self.determine_model_type()
 
-        # Single instance.
+        # Global model.
         if model_type == 'all' or model_type == 'diff':
             ds[ds.current_pipe].select_sim = select_sim
 
-        # Multiple instances.
+        # Spin specific model.
         else:
             # Get the spin container.
-            spin = return_spin_from_index(instance)
+            spin = return_spin_from_index(model_index)
 
             # Set the simulation flags.
             spin.select_sim = select_sim

@@ -28,7 +28,7 @@ from string import replace
 # relax module imports.
 from base_class import Common_functions
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.consistency_tests import Consistency
 from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
@@ -509,10 +509,20 @@ class Consistency_tests(Common_functions):
         return spin.select_sim
 
 
-    def set_selected_sim(self, select_sim, spin):
-        """Function for returning the array of selected simulation flags."""
+    def set_selected_sim(self, model_index, select_sim):
+        """Set the array of selected simulation flags.
 
-        # Multiple spins.
+        @param model_index: The global spin index, covering the molecule, residue, and spin
+                            indices).
+        @type model_index:  int
+        @param select_sim:  The selection flags.
+        @type select_sim:   bool
+        """
+
+        # Get the spin container.
+        spin = return_spin_from_index(model_index)
+
+        # Set the simulation flags.
         spin.select_sim = select_sim
 
 

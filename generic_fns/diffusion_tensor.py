@@ -629,7 +629,7 @@ def map_bounds(param, spin_id=None):
         return [0, 2*pi]
 
 
-def map_labels(run, index, params, bounds, swap, inc):
+def map_labels(index, params, bounds, swap, inc):
     """Function for creating labels, tick locations, and tick values for an OpenDX map."""
 
     # Initialise.
@@ -835,12 +835,8 @@ def return_data_name(name):
         return 'phi'
 
 
-def return_eigenvalues(run=None):
+def return_eigenvalues():
     """Function for returning Dx, Dy, and Dz."""
-
-    # Argument.
-    if run:
-        run = run
 
     # Reassign the data.
     data = cdp.diff_tensor

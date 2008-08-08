@@ -33,7 +33,7 @@ import sys
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxDirError, RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNucleusError
-
+from relax_io import mkdir_nofail, open_write_file, test_binary
 
 
 
@@ -107,7 +107,7 @@ class Dasha:
             self.relax.generic.angles.ellipsoid_frame(self.run)
 
         # The 'dasha_script' file.
-        script = self.relax.IO.open_write_file(file_name='dasha_script', dir=self.dir, force=self.force)
+        script = open_write_file(file_name='dasha_script', dir=self.dir, force=self.force)
         self.create_script(script)
         script.close()
 
@@ -347,7 +347,7 @@ class Dasha:
         self.binary = binary
 
         # Test the binary file string corresponds to a valid executable.
-        self.relax.IO.test_binary(self.binary)
+        test_binary(self.binary)
 
         # The current directory.
         orig_dir = getcwd()

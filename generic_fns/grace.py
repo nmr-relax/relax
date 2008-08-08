@@ -32,6 +32,7 @@ from re import match
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSimError, RelaxRegExpError
+from relax_io import get_file_path, open_write_file, test_binary
 
 
 
@@ -177,10 +178,10 @@ class Grace:
         """Function for running Grace."""
 
         # Test the binary file string corresponds to a valid executable.
-        self.relax.IO.test_binary(grace_exe)
+        test_binary(grace_exe)
 
         # File path.
-        self.file_path = self.relax.IO.file_path(file, dir)
+        self.file_path = get_file_path(file, dir)
 
         # Run Grace.
         system(grace_exe + " " + self.file_path + " &")
@@ -228,7 +229,7 @@ class Grace:
             raise RelaxNoSimError, self.run
 
         # Open the file for writing.
-        self.file = self.relax.IO.open_write_file(file, dir, force)
+        self.file = open_write_file(file, dir, force)
 
         # Function type.
         function_type = ds.run_types[ds.run_names.index(run)]
