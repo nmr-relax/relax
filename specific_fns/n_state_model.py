@@ -263,79 +263,6 @@ class N_state_model(Common_functions):
                 gamma[i] = param_vector[cdp.N-1 + 3*i + 2]
 
 
-    def __update_model(self):
-        """Update the model parameters as necessary."""
-
-        # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
-
-        # Initialise the list of model parameters.
-        if not hasattr(cdp, 'params'):
-            cdp.params = []
-
-        # Determine the number of states, if not already set.
-        if not hasattr(cdp, 'N'):
-            # Set the number.
-            if hasattr(cdp, 'structure'):
-                cdp.N = cdp.structure.num_structures()
-
-            # Otherwise return as the rest cannot be updated without N.
-            else:
-                return
-
-        # Set up the parameter arrays.
-        if not cdp.params:
-            # Add the probability or population weight parameters.
-            if cdp.model in ['2-domain', 'population']:
-                for i in xrange(cdp.N-1):
-                    cdp.params.append('p' + `i`)
-
-            # Add the Euler angle parameters.
-            if cdp.model == '2-domain':
-                for i in xrange(cdp.N):
-                    cdp.params.append('alpha' + `i`)
-                    cdp.params.append('beta' + `i`)
-                    cdp.params.append('gamma' + `i`)
-
-        # Initialise the probability and Euler angle arrays.
-        if cdp.model in ['2-domain', 'population']:
-            if not hasattr(cdp, 'probs'):
-                cdp.probs = [None] * cdp.N
-        if cdp.model == '2-domain':
-            if not hasattr(cdp, 'alpha'):
-                cdp.alpha = [None] * cdp.N
-            if not hasattr(cdp, 'beta'):
-                cdp.beta = [None] * cdp.N
-            if not hasattr(cdp, 'gamma'):
-                cdp.gamma = [None] * cdp.N
-
-        # Determine the data type.
-        data_types = self.__base_data_types()
-
-        # Set up alignment tensors for each alignment.
-        ids = []
-        if 'rdc' in data_types:
-            ids = ids+cdp.rdc_ids
-        if 'pcs' in data_types:
-            ids = ids+cdp.pcs_ids
-
-        # Set up tensors for each alignment.
-        for id in ids:
-            # No tensors initialised.
-            if not hasattr(cdp, 'align_tensors'):
-                generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
-
-            # Find if the tensor corresponding to the id exists.
-            exists = False
-            for tensor in cdp.align_tensors:
-                if id == tensor.name:
-                    exists = True
-
-            # Initialise the tensor.
-            if not exists:
-                generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
-
-
     def __linear_constraints(self, data_types=None, scaling_matrix=None):
         """Function for setting up the linear constraint matrices A and b.
 
@@ -418,6 +345,79 @@ class N_state_model(Common_functions):
 
         # Return the contraint objects.
         return A, b
+
+
+    def __update_model(self):
+        """Update the model parameters as necessary."""
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
+        # Initialise the list of model parameters.
+        if not hasattr(cdp, 'params'):
+            cdp.params = []
+
+        # Determine the number of states, if not already set.
+        if not hasattr(cdp, 'N'):
+            # Set the number.
+            if hasattr(cdp, 'structure'):
+                cdp.N = cdp.structure.num_structures()
+
+            # Otherwise return as the rest cannot be updated without N.
+            else:
+                return
+
+        # Set up the parameter arrays.
+        if not cdp.params:
+            # Add the probability or population weight parameters.
+            if cdp.model in ['2-domain', 'population']:
+                for i in xrange(cdp.N-1):
+                    cdp.params.append('p' + `i`)
+
+            # Add the Euler angle parameters.
+            if cdp.model == '2-domain':
+                for i in xrange(cdp.N):
+                    cdp.params.append('alpha' + `i`)
+                    cdp.params.append('beta' + `i`)
+                    cdp.params.append('gamma' + `i`)
+
+        # Initialise the probability and Euler angle arrays.
+        if cdp.model in ['2-domain', 'population']:
+            if not hasattr(cdp, 'probs'):
+                cdp.probs = [None] * cdp.N
+        if cdp.model == '2-domain':
+            if not hasattr(cdp, 'alpha'):
+                cdp.alpha = [None] * cdp.N
+            if not hasattr(cdp, 'beta'):
+                cdp.beta = [None] * cdp.N
+            if not hasattr(cdp, 'gamma'):
+                cdp.gamma = [None] * cdp.N
+
+        # Determine the data type.
+        data_types = self.__base_data_types()
+
+        # Set up alignment tensors for each alignment.
+        ids = []
+        if 'rdc' in data_types:
+            ids = ids+cdp.rdc_ids
+        if 'pcs' in data_types:
+            ids = ids+cdp.pcs_ids
+
+        # Set up tensors for each alignment.
+        for id in ids:
+            # No tensors initialised.
+            if not hasattr(cdp, 'align_tensors'):
+                generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+
+            # Find if the tensor corresponding to the id exists.
+            exists = False
+            for tensor in cdp.align_tensors:
+                if id == tensor.name:
+                    exists = True
+
+            # Initialise the tensor.
+            if not exists:
+                generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
 
     def CoM(self, pivot_point=None, centre=None):
