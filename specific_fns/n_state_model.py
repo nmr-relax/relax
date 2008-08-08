@@ -70,7 +70,7 @@ class N_state_model(Common_functions):
         # A RDC data type requires the alignment tensors to be at the start of the parameter vector.
         if data_type == 'rdc':
             # Loop over the alignments, adding the alignment tensor parameters to the parameter vector.
-            for i in xrange(len(cdp.rdc_ids)):
+            for i in xrange(len(cdp.align_tensors)):
                 param_vector = param_vector + list(cdp.align_tensors[i].tensor_5D)
 
         # Monte Carlo simulation data structures.
@@ -141,7 +141,7 @@ class N_state_model(Common_functions):
         # Starting point of the populations.
         pop_start = 0
         if data_type == 'rdc':
-            pop_start = pop_start + 5*len(cdp.rdc_ids)
+            pop_start = pop_start + 5*len(cdp.align_tensors)
 
         # Loop over the populations, and set the scaling factor.
         factor = 100.0
@@ -174,7 +174,7 @@ class N_state_model(Common_functions):
         # Unpack and strip off the alignment tensor parameters.
         if data_type == 'rdc':
             # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
-            for i in xrange(len(cdp.rdc_ids)):
+            for i in xrange(len(cdp.align_tensors)):
                 cdp.align_tensors[i].Sxx = param_vector[5*i]
                 cdp.align_tensors[i].Syy = param_vector[5*i+1]
                 cdp.align_tensors[i].Sxy = param_vector[5*i+2]
@@ -182,7 +182,7 @@ class N_state_model(Common_functions):
                 cdp.align_tensors[i].Syz = param_vector[5*i+4]
 
             # Create a new parameter vector without the tensors.
-            param_vector = param_vector[5*len(cdp.rdc_ids):]
+            param_vector = param_vector[5*len(cdp.align_tensors):]
 
         # Monte Carlo simulation data structures.
         if sim_index != None:
@@ -366,7 +366,7 @@ class N_state_model(Common_functions):
         # Starting point of the populations.
         pop_start = 0
         if data_type == 'rdc':
-            pop_start = pop_start + 5*len(cdp.rdc_ids)
+            pop_start = pop_start + 5*len(cdp.align_tensors)
 
         # Initialisation (0..j..m).
         A = []
@@ -1048,7 +1048,7 @@ class N_state_model(Common_functions):
 
         # Alignment tensor params.
         if data_type == 'rdc':
-            num = num + 5*len(cdp.rdc_ids)
+            num = num + 5*len(cdp.align_tensors)
 
         # Populations.
         if cdp.model in ['2-domain', 'population']:
