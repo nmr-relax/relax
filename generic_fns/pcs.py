@@ -31,7 +31,7 @@ import sys
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
-from relax_errors import RelaxError, RelaxNoResError, RelaxNoRDCError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRDCError
+from relax_errors import RelaxError, RelaxNoResError, RelaxNoPCSError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSpinError, RelaxPCSError
 from relax_io import extract_data, strip
 
 
@@ -530,9 +530,9 @@ def find_index(data, ri_label, frq_label):
 
 
 def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None):
-    """Read the RDC data from file.
+    """Read the PCS data from file.
 
-    @param id:              The RDC identification string.
+    @param id:              The alignment identification string.
     @type id:               str
     @param file:            The name of the file to open.
     @type file:             str
@@ -567,9 +567,9 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
     # Alias the current data pipe.
     cdp = ds[ds.current_pipe]
 
-    # Test if RDC data corresponding to 'id' already exists.
-    if hasattr(cdp, 'rdc_ids') and id in cdp.rdc_ids:
-        raise RelaxRDCError, id
+    # Test if PCS data corresponding to 'id' already exists.
+    if hasattr(cdp, 'pcs_ids') and id in cdp.pcs_ids:
+        raise RelaxPCSError, id
 
     # Minimum number of columns.
     min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col)
@@ -595,7 +595,7 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
         # Strip the data of all comments and empty lines.
         file_data = strip(file_data)
 
-        # Test the validity of the RDC data.
+        # Test the validity of the PCS data.
         for i in xrange(len(file_data)):
             # Skip missing data.
             if len(file_data[i]) <= min_col_num:
@@ -615,24 +615,24 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
                 if error_col:
                     float(file_data[i][error_col])
             except ValueError:
-                raise RelaxError, "The RDC data in the line " + `file_data[i]` + " is invalid."
+                raise RelaxError, "The PCS data in the line " + `file_data[i]` + " is invalid."
 
 
     # Global (non-spin specific) data.
     ##################################
 
     # Initialise.
-    if not hasattr(cdp, 'rdc_ids'):
-        cdp.rdc_ids = []
+    if not hasattr(cdp, 'pcs_ids'):
+        cdp.pcs_ids = []
 
-    # Add the RDC id string.
-    cdp.rdc_ids.append(id)
+    # Add the PCS id string.
+    cdp.pcs_ids.append(id)
 
 
     # Spin specific data.
     #####################
 
-    # Loop over the RDC data.
+    # Loop over the PCS data.
     for i in xrange(len(file_data)):
         # Skip missing data.
         if len(file_data[i]) <= min_col_num:
@@ -652,13 +652,13 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
             raise RelaxNoSpinError, id
 
         # Add the data.
-        if not hasattr(spin, 'rdc'):
-            spin.rdc = []
-        spin.rdc.append(value)
+        if not hasattr(spin, 'pcs'):
+            spin.pcs = []
+        spin.pcs.append(value)
         if error_col:
-            if not hasattr(spin, 'rdc_err'):
-                spin.rdc_err = []
-            spin.rdc_err.append(error)
+            if not hasattr(spin, 'pcs_err'):
+                spin.pcs_err = []
+            spin.pcs_err.append(error)
 
 
 def return_data_desc(name):
