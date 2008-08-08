@@ -782,13 +782,18 @@ class N_state_model(Common_functions):
         if 'tensor' in data_types:
             full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self.minimise_setup_tensors()
 
+        # Get the data structures for optimisation using PCSs as base data sets.
+        pcs, pcs_vect, pcs_dj, temp, frq = None, None, None, None, None
+        if 'pcs' in data_types:
+            pcs, pcs_vect, pcs_dj, temp, frq = self.minimise_setup_pcs()
+
         # Get the data structures for optimisation using RDCs as base data sets.
         rdcs, xh_vect, rdc_dj = None, None, None
         if 'rdc' in data_types:
             rdcs, xh_vect, rdc_dj = self.minimise_setup_rdcs()
 
         # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, xh_vect=xh_vect, dip_const=rdc_dj, scaling_matrix=scaling_matrix)
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_vect=pcs_vect, xh_vect=xh_vect, pcs_const=pcs_dj, dip_const=rdc_dj, scaling_matrix=scaling_matrix)
 
         # Minimisation.
         if constraints:
