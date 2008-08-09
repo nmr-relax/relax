@@ -62,6 +62,45 @@
 
  \newpage 
 
+ \subsection{consistency\_tests.set\_frq} 
+
+  
+ \subsubsection{Synopsis} 
+
+ Function for selecting which relaxation\index{relaxation} data to use in the consistency tests. 
+  
+
+  
+ \subsubsection{Defaults} 
+
+ \textsf{\textbf{consistency\_tests.set\_frq}(self, run=None, frq=None)} 
+
+  
+ \subsubsection{Keyword Arguments} 
+
+ \keyword{run:}  The name of the run.   
+
+ \keyword{ frq:}  The spectrometer frequency in Hz.  
+
+  
+
+  
+ \subsubsection{Description} 
+
+ This function will select the relaxation\index{relaxation} data to use in the consistency tests corresponding to the given frequencies. 
+  
+
+  
+ \subsubsection{Examples} 
+
+ \example{relax> consistency\_tests.set\_frq(`test', 600.0 * 1e6)} 
+
+ \example{relax> consistency\_tests.set\_frq(run=`test', frq=600.0 * 1e6)} 
+
+  
+
+ \newpage 
+
  \subsection{dasha.create\index{computer programs!Dasha|textbf}} 
 
   
@@ -558,22 +597,22 @@
  To select axially\index{diffusion!spheroid (axially symmetric)} symmetric diffusion with a $\tau_m$ value of 8.5 ns, $\Diff_{ratio}$ of 1.1, $\theta$ value of 20 degrees, and $\phi$ value of 20 degrees, and assign it to the run \quotecmd{m8}, type: 
   
 
- \example{relax> diffusion\_tensor(`m8', (8.5e-9, 1.1, 20.0, 20.0), param\_types=1)} 
+ \example{relax> diffusion\_tensor(`m8', (8.5e-9, 1.1, 20.0, 20.0), param\_types=2)} 
 
  To select a spheroid\index{diffusion!spheroid (axially symmetric)} diffusion\index{diffusion!tensor} tensor with a $\Diff_\Par$ value of 1.698e7, $\Diff_\Per$ value of 1.417e7, $\theta$ value of 67.174 degrees, and $\phi$ value of -83.718 degrees, and assign it to the run \quotecmd{spheroid}, type one of: 
   
 
- \example{relax> diffusion\_tensor(`spheroid', (1.698e7, 1.417e7, 67.174, -83.718), param\_types=1)} 
+ \example{relax> diffusion\_tensor(`spheroid', (1.698e7, 1.417e7, 67.174, -83.718), param\_types=3)} 
 
- \example{relax> diffusion\_tensor(run=`spheroid', params=(1.698e7, 1.417e7, 67.174, -83.718), param\_types=1)} 
+ \example{relax> diffusion\_tensor(run=`spheroid', params=(1.698e7, 1.417e7, 67.174, -83.718), param\_types=3)} 
 
- \example{relax> diffusion\_tensor(`spheroid', (1.698e-1, 1.417e-1, 67.174, -83.718), param\_types=1, d\_scale=1e8)} 
+ \example{relax> diffusion\_tensor(`spheroid', (1.698e-1, 1.417e-1, 67.174, -83.718), param\_types=3, d\_scale=1e8)} 
 
- \example{relax> diffusion\_tensor(run=`spheroid', params=(1.698e-1, 1.417e-1, 67.174, -83.718), param\_types=1, d\_scale=1e8)} 
+ \example{relax> diffusion\_tensor(run=`spheroid', params=(1.698e-1, 1.417e-1, 67.174, -83.718), param\_types=3, d\_scale=1e8)} 
 
- \example{relax> diffusion\_tensor(`spheroid', (1.698e-1, 1.417e-1, 1.1724, -1.4612), param\_types=1, d\_scale=1e8, angle\_units=`rad')} 
+ \example{relax> diffusion\_tensor(`spheroid', (1.698e-1, 1.417e-1, 1.1724, -1.4612), param\_types=3, d\_scale=1e8, angle\_units=`rad')} 
 
- \example{relax> diffusion\_tensor(run=`spheroid', params=(1.698e-1, 1.417e-1, 1.1724, -1.4612), param\_types=1, d\_scale=1e8, angle\_units=`rad', fixed=1)} 
+ \example{relax> diffusion\_tensor(run=`spheroid', params=(1.698e-1, 1.417e-1, 1.1724, -1.4612), param\_types=3, d\_scale=1e8, angle\_units=`rad', fixed=1)} 
 
  To select ellipsoidal\index{diffusion!ellipsoid (asymmetric)} diffusion, type: 
   
@@ -1003,7 +1042,7 @@
   
  \subsubsection{Defaults} 
 
- \textsf{\textbf{grace.write}(self, run=None, x\_data\_type=`res', y\_data\_type=None, res\_num=None, res\_name=None, plot\_data=`value', file=None, dir=`grace', force=0)} 
+ \textsf{\textbf{grace.write}(self, run=None, x\_data\_type=`res', y\_data\_type=None, res\_num=None, res\_name=None, plot\_data=`value', norm=0, file=None, dir=`grace', force=0)} 
 
   
  \subsubsection{Keyword Arguments} 
@@ -1019,6 +1058,8 @@
  \keyword{ res\_name:}  The residue name (regular expression is allowed).   
 
  \keyword{ plot\_data:}\index{plot}  The data to use for the plot.\index{plot}   
+
+ \keyword{ norm:}  Flag for the normalisation of series type data.   
 
  \keyword{ file:}  The name of the file.   
 
@@ -1048,6 +1089,9 @@
  \item[\quotecmd{error} --]  Plot\index{plot} errors.  
  \item[\quotecmd{sims} --]   Plot\index{plot} the simulation values.  
  \end{description} 
+  
+
+ Normalisation is only allowed for series type data, for example the R$_1$ exponential curves, and will be ignored for all other data types.  If the norm flag is set to one then the y-value of the first point of the series will be set to 1.  This normalisation is useful for emphasising errors in the data sets. 
   
 
   
@@ -1080,6 +1124,11 @@
 
  \example{relax> grace.write(run=`m4', x\_data\_type=`Rex', y\_data\_type=`te', res\_num=123, plot\_data=`sims', file=`s2\_te.agr')} 
 
+ By plotting\index{plot} the peak intensities, the integrity of exponential relaxation\index{relaxation} curves can be checked and anomalies searched for prior to model-free analysis or reduced spectral density mapping.\index{map}  For example the normalised average peak intensities can be plotted\index{plot} verses the relaxation\index{relaxation} time periods for the relaxation\index{relaxation} curves of all residues of a protein.  The normalisation, whereby the initial peak intensity of each residue I(0) is set to 1, emphasises any problems.  To produce this Grace\index{computer programs!Grace}\index{computer programs!Grace} file, type: 
+  
+
+ \example{relax> grace.write(name, x\_data\_type=`relax\_times', y\_data\_type=`ave\_int', norm=1, file=`intensities\_norm.agr', force=1)} 
+
   
  \subsubsection{Regular\index{regular expression|textbf} expression} 
 
@@ -1103,6 +1152,32 @@
   
 
   
+ \subsubsection{Consistency testing data type string matching patterns} 
+
+ \begin{center} 
+ \begin{tabular}{lll} 
+ \toprule 
+  Data type & Object name & Patterns  \\ 
+ \midrule 
+  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj]$\backslash$(0$\backslash$)}  \\
+   &  &   \\
+  F\_eta & \quotecmd{f\_eta} & \quotecmd{\^{}[Ff]\_[Ee][Tt][Aa]\$}  \\
+   &  &   \\
+  F\_R2 & \quotecmd{f\_r2} & \quotecmd{\^{}[Ff]\_[Rr]2\$}  \\
+   &  &   \\
+  Bond\index{bond length} length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength}  \\
+   &  &   \\
+  CSA & \quotecmd{csa} & \quotecmd{\^{}[Cc][Ss][Aa]\$}  \\
+   &  &   \\
+  Angle\index{angles} Theta & \quotecmd{orientation} & \quotecmd{\^{}[Oo][Rr][Ii][Ee][Nn][Tt][Aa][Tt][Ii][Oo][Nn]\$}  \\
+   &  &   \\
+  Correlation\index{correlation time} time & \quotecmd{tc} & \quotecmd{\^{}[Tt]c\$}  \\
+ \bottomrule 
+ \end{tabular} 
+ \end{center} 
+  
+
+  
  \subsubsection{Minimisation\index{minimisation|textbf} statistic data type string matching patterns} 
 
  \begin{center} 
@@ -1119,6 +1194,68 @@
   Gradient call count & \quotecmd{g\_count} & \quotecmd{\^{}[Gg].*[ -\_][Cc]ount}  \\
    &  &   \\
   Hessian call count & \quotecmd{h\_count} & \quotecmd{\^{}[Hh].*[ -\_][Cc]ount}  \\
+ \bottomrule 
+ \end{tabular} 
+ \end{center} 
+  
+
+  
+ \subsubsection{NOE calculation data type string matching patterns} 
+
+ \begin{center} 
+ \begin{tabular}{lll} 
+ \toprule 
+  Data type & Object name & Patterns  \\ 
+ \midrule 
+  Reference intensity & \quotecmd{ref} & \quotecmd{\^{}[Rr]ef\$} or \quotecmd{[Rr]ef[ -\_][Ii]nt}  \\
+   &  &   \\
+  Saturated intensity & \quotecmd{sat} & \quotecmd{\^{}[Ss]at\$} or \quotecmd{[Ss]at[ -\_][Ii]nt}  \\
+   &  &   \\
+  NOE & \quotecmd{noe} & \quotecmd{\^{}[Nn][Oo][Ee]\$}  \\
+ \bottomrule 
+ \end{tabular} 
+ \end{center} 
+  
+
+  
+ \subsubsection{Relaxation\index{relaxation|textbf} curve fitting data type string matching patterns} 
+
+ \begin{center} 
+ \begin{tabular}{lll} 
+ \toprule 
+  Data type & Object name & Patterns  \\ 
+ \midrule 
+  Relaxation\index{relaxation} rate & \quotecmd{rx} & \quotecmd{\^{}[Rr]x\$}  \\
+   &  &   \\
+  Average peak intensities (series) & \quotecmd{ave\_intensities} & \quotecmd{\^{}[Aa]ve[ -\_][Ii]nt\$}  \\
+   &  &   \\
+  Initial intensity & \quotecmd{i0} & \quotecmd{\^{}[Ii]0\$}  \\
+   &  &   \\
+  Intensity at infinity & \quotecmd{iinf} & \quotecmd{\^{}[Ii]inf\$}  \\
+   &  &   \\
+  Relaxation\index{relaxation} period times (series) & \quotecmd{relax\_times} & \quotecmd{\^{}[Rr]elax[ -\_][Tt]imes\$}  \\
+ \bottomrule 
+ \end{tabular} 
+ \end{center} 
+  
+
+  
+ \subsubsection{Reduced spectral density mapping\index{map|textbf} data type string matching patterns} 
+
+ \begin{center} 
+ \begin{tabular}{lll} 
+ \toprule 
+  Data type & Object name & Patterns  \\ 
+ \midrule 
+  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj]$\backslash$(0$\backslash$)}  \\
+   &  &   \\
+  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj]$\backslash$(w[Xx]$\backslash$)}  \\
+   &  &   \\
+  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj]$\backslash$(w[Hh]$\backslash$)}  \\
+   &  &   \\
+  Bond\index{bond length} length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength}  \\
+   &  &   \\
+  CSA & \quotecmd{csa} & \quotecmd{\^{}[Cc][Ss][Aa]\$}  \\
  \bottomrule 
  \end{tabular} 
  \end{center} 
@@ -1151,46 +1288,6 @@
   Bond\index{bond length} length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength}  \\
    &  &   \\
   CSA & \quotecmd{csa} & \quotecmd{\^{}[Cc][Ss][Aa]\$}  \\
- \bottomrule 
- \end{tabular} 
- \end{center} 
-  
-
-  
- \subsubsection{Reduced spectral density mapping\index{map|textbf} data type string matching patterns} 
-
- \begin{center} 
- \begin{tabular}{lll} 
- \toprule 
-  Data type & Object name & Patterns  \\ 
- \midrule 
-  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj]$\backslash$(0$\backslash$)}  \\
-   &  &   \\
-  $J(\omega_X)$ & \quotecmd{jwx} & \quotecmd{\^{}[Jj]w[Xx]\$} or \quotecmd{[Jj]$\backslash$(w[Xx]$\backslash$)}  \\
-   &  &   \\
-  $J(\omega_H)$ & \quotecmd{jwh} & \quotecmd{\^{}[Jj]w[Hh]\$} or \quotecmd{[Jj]$\backslash$(w[Hh]$\backslash$)}  \\
-   &  &   \\
-  Bond\index{bond length} length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength}  \\
-   &  &   \\
-  CSA & \quotecmd{csa} & \quotecmd{\^{}[Cc][Ss][Aa]\$}  \\
- \bottomrule 
- \end{tabular} 
- \end{center} 
-  
-
-  
- \subsubsection{NOE calculation data type string matching patterns} 
-
- \begin{center} 
- \begin{tabular}{lll} 
- \toprule 
-  Data type & Object name & Patterns  \\ 
- \midrule 
-  Reference intensity & \quotecmd{ref} & \quotecmd{\^{}[Rr]ef\$} or \quotecmd{[Rr]ef[ -\_][Ii]nt}  \\
-   &  &   \\
-  Saturated intensity & \quotecmd{sat} & \quotecmd{\^{}[Ss]at\$} or \quotecmd{[Ss]at[ -\_][Ii]nt}  \\
-   &  &   \\
-  NOE & \quotecmd{noe} & \quotecmd{\^{}[Nn][Oo][Ee]\$}  \\
  \bottomrule 
  \end{tabular} 
  \end{center} 
@@ -1648,7 +1745,7 @@
    &   \\
   More and Thuente line search & \quotecmd{\^{}[Mm][Tt]} or \quotecmd{\^{}[Mm]ore[ \_][Tt]huente\$}  \\
    &   \\
-  No line search & \quotecmd{\^{}[Nn]o [Ll]ine [Ss]earch\$}  \\
+  No line search & \quotecmd{\^{}[Nn]one\$}  \\
  \bottomrule 
  \end{tabular} 
  \end{center} 
@@ -1662,7 +1759,7 @@
  \toprule 
   Hessian modification & Patterns  \\ 
  \midrule 
-  Unmodified Hessian & \quotecmd{\^{}[Nn]o [Hh]essian [Mm]od}  \\
+  Unmodified Hessian & \quotecmd{[Nn]one}  \\
    &   \\
   Eigenvalue\index{eigenvalues} modification & \quotecmd{\^{}[Ee]igen}  \\
    &   \\
@@ -1677,6 +1774,9 @@
  \bottomrule 
  \end{tabular} 
  \end{center} 
+  
+
+ As both the line search algorithm and Hessian modification can be specified for Newton\index{minimisation techniques!Newton} optimisation, supplying the option \quotecmd{None} may appear to be ambiguous.  In fact, the Hessian takes precedence over the line search.  Hence supplying the option \quotecmd{None} with the Newton\index{minimisation techniques!Newton} algorithm selects the unmodified Hessian.  Supplying \quotecmd{None} twice will turn off the Hessian modification and no step length selection (or line search) will be performed. 
   
 
  Hessian type, these are used in a few of the trust region methods including the Dogleg\index{minimisation techniques!dogleg} and Exact\index{minimisation techniques!exact trust region} trust region algorithms.  In these cases, when the Hessian type is set to Newton,\index{minimisation techniques!Newton} a Hessian modification can also be supplied as above.  The default Hessian type is Newton,\index{minimisation techniques!Newton} and the default Hessian modification when Newton\index{minimisation techniques!Newton} is selected is the GMW algorithm. 
@@ -2436,15 +2536,15 @@
    &  & on the timescale of the motions.  This is because these  \\
    &  & single timescale models can, at times, be perfect  \\
    &  & approximations to the more complex two timescale models.  \\
-   &  & Hence if $\tau_e$ is less than 100 ps, $S^2$ is plotted.\index{plot} Otherwise  \\
+   &  & Hence if $\tau_e$ is less than 200 ps, $S^2$ is plotted.\index{plot} Otherwise  \\
    &  & the peptide bond is coloured white.  The default colour  \\
    &  & gradient  is the same as that for $S^2$.  \\
    &  &   \\
   Amplitude of & \quotecmd{amp\_slow} & Model independent display\index{display} of the amplite of slow motions,  \\
-  slow motions. &  & arbitrarily defined as motions slower than 100 ps.  For  \\
+  slow motions. &  & arbitrarily defined as motions slower than 200 ps.  For  \\
    &  & residues described by model-free models m5 to m8, the  \\
-   &  & order\index{order parameter} parameter $S^2$ is plotted\index{plot} if $\tau_s$ $>$ 100 ps.  For models  \\
-   &  & m1 to m4, $S^2$ is plotted\index{plot} if $\tau_e$ $>$ 100 ps.  The default  \\
+   &  & order\index{order parameter} parameter $S^2$ is plotted\index{plot} if $\tau_s$ $>$ 200 ps.  For models  \\
+   &  & m1 to m4, $S^2$ is plotted\index{plot} if $\tau_e$ $>$ 200 ps.  The default  \\
    &  & colour gradient is the same as that for $S^2$.  \\
    &  &   \\
   $\tau_e$. & \quotecmd{te} & The correlation\index{correlation time} time, $\tau_e$.  The default colour gradient  \\
@@ -2459,14 +2559,14 @@
   Timescale of & \quotecmd{time\_fast} & Model independent display\index{display} of the timescale of fast  \\
   fast motions &  & motions.  For models m5 to m8, only the parameter $\tau_f$ is  \\
    &  & plotted.\index{plot}  For models m2 and m4, the parameter $\tau_e$ is  \\
-   &  & plotted\index{plot} only if it is less than 100 ps.  All other  \\
+   &  & plotted\index{plot} only if it is less than 200 ps.  All other  \\
    &  & residues are assumed to have a correlation\index{correlation time} time of zero.  \\
    &  & The default colour gradient is the same as that of $\tau_e$.  \\
    &  &   \\
   Timescale of & \quotecmd{time\_slow} & Model independent display\index{display} of the timescale of slow  \\
   slow motions &  & motions.  For models m5 to m8, only the parameter $\tau_s$ is  \\
    &  & plotted.\index{plot}  For models m2 and m4, the parameter $\tau_e$ is  \\
-   &  & plotted\index{plot} only if it is greater than 100 ps.  All other  \\
+   &  & plotted\index{plot} only if it is greater than 200 ps.  All other  \\
    &  & residues are coloured white.  The default colour gradient  \\
    &  & is the same as that of $\tau_s$.  \\
    &  &   \\
@@ -3991,7 +4091,7 @@
 
  \newpage 
 
- \subsection{pdb.read} 
+ \subsection{pdb} 
 
   
  \subsubsection{Synopsis} 
@@ -4002,7 +4102,7 @@
   
  \subsubsection{Defaults} 
 
- \textsf{\textbf{pdb.read}(self, run=None, file=None, dir=None, model=None, load\_seq=1)} 
+ \textsf{\textbf{pdb}(self, run=None, file=None, dir=None, model=None, heteronuc=`N', proton=`H', load\_seq=1)} 
 
   
  \subsubsection{Keyword Arguments} 
@@ -4014,6 +4114,10 @@
  \keyword{ dir:}  The directory where the file is located.   
 
  \keyword{ model:}  The PDB\index{PDB} model number.   
+
+ \keyword{ heteronuc:}  The name of the heteronucleus as specified in the PDB\index{PDB} file.   
+
+ \keyword{ proton:}  The name of the proton as specified in the PDB\index{PDB} file.   
 
  \keyword{ load\_seq:}  A flag specifying whether the sequence\index{sequence} should be loaded from the PDB\index{PDB} file.  
 
@@ -4028,86 +4132,25 @@
  To load the sequence\index{sequence} from the PDB\index{PDB} file, set the \quotecmd{load\_seq} flag to 1.  If the sequence\index{sequence} has previously been loaded, then this flag will be ignored. 
   
 
+ Once the PDB\index{PDB} structures are loaded, unit XH bond vectors will be calculated.  The vectors are calculated using the atomic coordinates of the atoms specified by the arguments heteronuc and proton.  If more than one model structure is loaded, the unit XH vectors for each model will be calculated and the final unit XH vector will be taken as the average. 
+  
+
   
  \subsubsection{Example} 
 
- To load all structures from the PDB\index{PDB} file \quotecmd{test.pdb} in the directory \quotecmd{\~{}/pdb} for use in the model-free analysis run \quotecmd{m8}, type: 
+ To load all structures from the PDB\index{PDB} file \quotecmd{test.pdb} in the directory \quotecmd{\~{}/pdb} for use in the model-free analysis run \quotecmd{m8} where the heteronucleus in the PDB\index{PDB} file is \quotecmd{N} and the proton is \quotecmd{H}, type: 
   
 
- \example{relax> pdb.read(`m8', `test.pdb', `\~{}/pdb', 1)} 
+ \example{relax> pdb(`m8', `test.pdb', `\~{}/pdb', 1, `N', `H')} 
 
- \example{relax> pdb.read(run=`m8', file=`test.pdb', dir=`pdb', model=1)} 
+ \example{relax> pdb(run=`m8', file=`test.pdb', dir=`pdb', model=1, heteronuc=`N', proton=`H')} 
 
  To load the 10$^\mathrm{th}$ model from the file \quotecmd{test.pdb}, use: 
   
 
- \example{relax> pdb.read(`m1', `test.pdb', model=10)} 
+ \example{relax> pdb(`m1', `test.pdb', model=10)} 
 
- \example{relax> pdb.read(run=`m1', file=`test.pdb', model=10)} 
-
-  
-
- \newpage 
-
- \subsection{pdb.vectors} 
-
-  
- \subsubsection{Synopsis} 
-
- Function for calculating/extracting XH vectors from the structure. 
-  
-
-  
- \subsubsection{Defaults} 
-
- \textsf{\textbf{pdb.vectors}(self, run=None, heteronuc=`N', proton=`H', res\_num=None, res\_name=None)} 
-
-  
- \subsubsection{Keyword arguments} 
-
- \keyword{run:}  The run to assign the vectors to.   
-
- \keyword{ heteronuc:}  The heteronucleus name as specified in the PDB\index{PDB} file.   
-
- \keyword{ proton:}  The name of the proton as specified in the PDB\index{PDB} file.   
-
- \keyword{ res\_num:}  The residue number.   
-
- \keyword{ res\_name:}  The name of the residue.  
-
-  
-
-  
- \subsubsection{Description} 
-
- Once the PDB\index{PDB} structures have been loaded, the unit XH bond vectors must be calculated for the non-spherical diffusion models.  The vectors are calculated using the atomic coordinates of the atoms specified by the arguments heteronuc and proton.  If more than one model structure is loaded, the unit XH vectors for each model will be calculated and the final unit XH vector will be taken as the average. 
-  
-
-  
- \subsubsection{Example} 
-
- To calculate the XH vectors of the backbone amide nitrogens where in the PDB\index{PDB} file the backbone nitrogen is called \quotecmd{N} and the attached proton is called \quotecmd{H}, assuming the run \quotecmd{test}, type: 
-  
-
- \example{relax> pdb.vectors(`test')} 
-
- \example{relax> pdb.vectors(`test', `N')} 
-
- \example{relax> pdb.vectors(`test', `N', `H')} 
-
- \example{relax> pdb.vectors(`test', heteronuc=`N', proton=`H')} 
-
- If the attached proton is called \quotecmd{HN}, type: 
-  
-
- \example{relax> pdb.vectors(`test', proton=`HN')} 
-
- If you are working with RNA, you can use the residue name identifier to calculate the vectors for each residue separately.  For example: 
-  
-
- \example{relax> pdb.vectors(`m1', `N1', `H1', res\_name=`G')} 
-
- \example{relax> pdb.vectors(`m1', `N3', `H3', res\_name=`U')} 
+ \example{relax> pdb(run=`m1', file=`test.pdb', model=10)} 
 
   
 
@@ -4687,6 +4730,7 @@
   
 
  \begin{description} 
+ \item[\quotecmd{ct} --]  Consistency tests.  
  \item[\quotecmd{jw} --]  Reduced spectral density mapping,\index{map}  
  \item[\quotecmd{mf} --]  Model-free analysis,  
  \item[\quotecmd{noe} --]  Steady state NOE calculation,  
@@ -4829,7 +4873,7 @@
   
  \subsubsection{Defaults} 
 
- \textsf{\textbf{select.read}(self, run=None, file=None, dir=None, change\_all=0)} 
+ \textsf{\textbf{select.read}(self, run=None, file=None, dir=None, boolean=`OR', change\_all=0, column=0)} 
 
   
  \subsubsection{Keyword Arguments} 
@@ -4840,14 +4884,18 @@
 
  \keyword{ dir:}  The directory where the file is located.   
 
- \keyword{ change\_all:}  A flag specifying if all other residues should be changed.  
+ \keyword{ boolean:}  The boolean operator specifying how residues should be selected.   
+
+ \keyword{ change\_all:}  A flag specifying if all other residues should be changed.   
+
+ \keyword{ column:}  The column containing the residue numbers (defaulting to 0, the first column).  
 
   
 
   
  \subsubsection{Description} 
 
- The file must contain one residue number per line.  The number is taken as the first column of the file and all other columns are ignored.  Empty lines and lines beginning with a hash are ignored. 
+ Empty lines and lines beginning with a hash are ignored. 
   
 
  The \quotecmd{change\_all} flag argument default is zero meaning that all residues currently either selected or unselected will remain that way.  Setting the argument to 1 will cause all residues not specified in the file to be unselected. 
@@ -4856,12 +4904,41 @@
   
  \subsubsection{Examples} 
 
- To select all residues in the file \quotecmd{isolated\_peaks}, type: 
+ To select all residues in the file \quotecmd{isolated\_peaks}, type one of: 
   
 
  \example{relax> select.read(`noe', `isolated\_peaks')} 
 
  \example{relax> select.read(run=`noe', file=`isolated\_peaks')} 
+
+ To select the residues in the second column of the relaxation\index{relaxation} data file \quotecmd{r1.600} while deselecting all other residues, type one of:  
+  
+
+ \example{relax> select.read(`test', `r1.600', change\_all=1, column=1)} 
+
+ \example{relax> select.read(run=`test', file=`r1.600', change\_all=1, column=1)} 
+
+  
+ \subsubsection{Boolean operators} 
+
+ The \quotecmd{boolean} keyword argument can be used to change how spin systems are selected.  The allowed values are: \quotecmd{OR}, \quotecmd{NOR}, \quotecmd{AND}, \quotecmd{NAND}, \quotecmd{XOR}, \quotecmd{XNOR}.  The following table details how the selections will occur for the different boolean operators. 
+  
+
+ \begin{center} 
+ \begin{tabular}{llllllllll} 
+ \toprule 
+  Spin system & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9  \\ 
+ \midrule 
+  Original selection & 0 & 1 & 1 & 1 & 1 & 0 & 1 & 0 & 1  \\
+   &  &  &  &  &  &  &  &  &   \\
+  New selection & 0 & 1 & 1 & 1 & 1 & 1 & 0 & 0 & 0  \\
+ \bottomrule 
+ \end{tabular} 
+ \end{center} 
+  
+
+ | OR                 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 1 | |                    |   |   |   |   |   |   |   |   |   | | NOR                | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | |                    |   |   |   |   |   |   |   |   |   | | AND                | 0 | 1 | 1 | 1 | 1 | 0 | 0 | 0 | 0 | |                    |   |   |   |   |   |   |   |   |   | | NAND               | 1 | 0 | 0 | 0 | 0 | 1 | 1 | 1 | 1 | |                    |   |   |   |   |   |   |   |   |   | | XOR                | 0 | 0 | 0 | 0 | 0 | 1 | 1 | 0 | 1 | |                    |   |   |   |   |   |   |   |   |   | | XNOR               | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 1 | 0 | |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|\_\_\_|\_\_\_|\_\_\_|\_\_\_|\_\_\_|\_\_\_|\_\_\_|\_\_\_|\_\_\_| 
+  
 
   
 
@@ -4878,7 +4955,7 @@
   
  \subsubsection{Defaults} 
 
- \textsf{\textbf{select.res}(self, run=None, num=None, name=None, change\_all=0)} 
+ \textsf{\textbf{select.res}(self, run=None, num=None, name=None, boolean=`OR', change\_all=0)} 
 
   
  \subsubsection{Keyword Arguments} 
@@ -4888,6 +4965,8 @@
  \keyword{ num:}  The residue number.   
 
  \keyword{ name:}  The residue name.   
+
+ \keyword{ boolean:}  The boolean operator specifying how residues should be selected.   
 
  \keyword{ change\_all:}  A flag specifying if all other residues should be changed.  
 
@@ -5552,7 +5631,7 @@
   
  \subsubsection{Defaults} 
 
- \textsf{\textbf{unselect.read}(self, run=None, file=None, dir=None, change\_all=0)} 
+ \textsf{\textbf{unselect.read}(self, run=None, file=None, dir=None, change\_all=0, column=0)} 
 
   
  \subsubsection{Keyword Arguments} 
@@ -5563,14 +5642,16 @@
 
  \keyword{ dir:}  The directory where the file is located.   
 
- \keyword{ change\_all:}  A flag specifying if all other residues should be changed.  
+ \keyword{ change\_all:}  A flag specifying if all other residues should be changed.   
+
+ \keyword{ column:}  The column containing the residue numbers (defaulting to 0, the first column).  
 
   
 
   
  \subsubsection{Description} 
 
- The file must contain one residue number per line.  The number is taken as the first column of the file and all other columns are ignored.  Empty lines and lines beginning with a hash are ignored. 
+ Empty lines and lines beginning with a hash are ignored. 
   
 
  The \quotecmd{change\_all} flag argument default is zero meaning that all residues currently either selected or unselected will remain that way.  Setting the argument to 1 will cause all residues not specified in the file to be selected. 
@@ -5585,6 +5666,13 @@
  \example{relax> unselect.read(`noe', `unresolved')} 
 
  \example{relax> unselect.read(run=`noe', file=`unresolved')} 
+
+ To unselect the residues in the second column of the relaxation\index{relaxation} data file \quotecmd{r1.600} while selecting all other residues, type one of:  
+  
+
+ \example{relax> unselect.read(`test', `r1.600', change\_all=1, column=1)} 
+
+ \example{relax> unselect.read(run=`test', file=`r1.600', change\_all=1, column=1)} 
 
   
 
@@ -5751,6 +5839,38 @@
   
 
   
+ \subsubsection{Consistency testing set details} 
+
+ In consistency testing, only four values can be set, the bond\index{bond length} length, CSA, angle\index{angles} Theta (\quotecmd{orientation}) and correlation\index{correlation time} time values. These must be set prior to the calculation of consistency functions. 
+  
+
+  
+ \subsubsection{Consistency testing data type string matching patterns} 
+
+ \begin{center} 
+ \begin{tabular}{lll} 
+ \toprule 
+  Data type & Object name & Patterns  \\ 
+ \midrule 
+  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj]$\backslash$(0$\backslash$)}  \\
+   &  &   \\
+  F\_eta & \quotecmd{f\_eta} & \quotecmd{\^{}[Ff]\_[Ee][Tt][Aa]\$}  \\
+   &  &   \\
+  F\_R2 & \quotecmd{f\_r2} & \quotecmd{\^{}[Ff]\_[Rr]2\$}  \\
+   &  &   \\
+  Bond\index{bond length} length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength}  \\
+   &  &   \\
+  CSA & \quotecmd{csa} & \quotecmd{\^{}[Cc][Ss][Aa]\$}  \\
+   &  &   \\
+  Angle\index{angles} Theta & \quotecmd{orientation} & \quotecmd{\^{}[Oo][Rr][Ii][Ee][Nn][Tt][Aa][Tt][Ii][Oo][Nn]\$}  \\
+   &  &   \\
+  Correlation\index{correlation time} time & \quotecmd{tc} & \quotecmd{\^{}[Tt]c\$}  \\
+ \bottomrule 
+ \end{tabular} 
+ \end{center} 
+  
+
+  
  \subsubsection{Model-free set details} 
 
  Setting a parameter value may have no effect depending on which model-free model is chosen, for example if $S^2_f$ values and $S^2_s$ values are set but the run corresponds to model-free model \quotecmd{m4} then, because these data values are not parameters of the model, they will have no effect. 
@@ -5852,9 +5972,13 @@
  \midrule 
   Relaxation\index{relaxation} rate & \quotecmd{rx} & \quotecmd{\^{}[Rr]x\$}  \\
    &  &   \\
+  Average peak intensities (series) & \quotecmd{ave\_intensities} & \quotecmd{\^{}[Aa]ve[ -\_][Ii]nt\$}  \\
+   &  &   \\
   Initial intensity & \quotecmd{i0} & \quotecmd{\^{}[Ii]0\$}  \\
    &  &   \\
   Intensity at infinity & \quotecmd{iinf} & \quotecmd{\^{}[Ii]inf\$}  \\
+   &  &   \\
+  Relaxation\index{relaxation} period times (series) & \quotecmd{relax\_times} & \quotecmd{\^{}[Rr]elax[ -\_][Tt]imes\$}  \\
  \bottomrule 
  \end{tabular} 
  \end{center} 
@@ -5923,6 +6047,32 @@
   
 
   
+ \subsubsection{Consistency testing data type string matching patterns} 
+
+ \begin{center} 
+ \begin{tabular}{lll} 
+ \toprule 
+  Data type & Object name & Patterns  \\ 
+ \midrule 
+  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj]$\backslash$(0$\backslash$)}  \\
+   &  &   \\
+  F\_eta & \quotecmd{f\_eta} & \quotecmd{\^{}[Ff]\_[Ee][Tt][Aa]\$}  \\
+   &  &   \\
+  F\_R2 & \quotecmd{f\_r2} & \quotecmd{\^{}[Ff]\_[Rr]2\$}  \\
+   &  &   \\
+  Bond\index{bond length} length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength}  \\
+   &  &   \\
+  CSA & \quotecmd{csa} & \quotecmd{\^{}[Cc][Ss][Aa]\$}  \\
+   &  &   \\
+  Angle\index{angles} Theta & \quotecmd{orientation} & \quotecmd{\^{}[Oo][Rr][Ii][Ee][Nn][Tt][Aa][Tt][Ii][Oo][Nn]\$}  \\
+   &  &   \\
+  Correlation\index{correlation time} time & \quotecmd{tc} & \quotecmd{\^{}[Tt]c\$}  \\
+ \bottomrule 
+ \end{tabular} 
+ \end{center} 
+  
+
+  
  \subsubsection{Model-free data type string matching patterns} 
 
  \begin{center} 
@@ -5986,9 +6136,13 @@
  \midrule 
   Relaxation\index{relaxation} rate & \quotecmd{rx} & \quotecmd{\^{}[Rr]x\$}  \\
    &  &   \\
+  Average peak intensities (series) & \quotecmd{ave\_intensities} & \quotecmd{\^{}[Aa]ve[ -\_][Ii]nt\$}  \\
+   &  &   \\
   Initial intensity & \quotecmd{i0} & \quotecmd{\^{}[Ii]0\$}  \\
    &  &   \\
   Intensity at infinity & \quotecmd{iinf} & \quotecmd{\^{}[Ii]inf\$}  \\
+   &  &   \\
+  Relaxation\index{relaxation} period times (series) & \quotecmd{relax\_times} & \quotecmd{\^{}[Rr]elax[ -\_][Tt]imes\$}  \\
  \bottomrule 
  \end{tabular} 
  \end{center} 
@@ -6078,6 +6232,38 @@
   
 
   
+ \subsubsection{Consistency testing set details} 
+
+ In consistency testing, only four values can be set, the bond\index{bond length} length, CSA, angle\index{angles} Theta (\quotecmd{orientation}) and correlation\index{correlation time} time values. These must be set prior to the calculation of consistency functions. 
+  
+
+  
+ \subsubsection{Consistency testing data type string matching patterns} 
+
+ \begin{center} 
+ \begin{tabular}{lll} 
+ \toprule 
+  Data type & Object name & Patterns  \\ 
+ \midrule 
+  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj]$\backslash$(0$\backslash$)}  \\
+   &  &   \\
+  F\_eta & \quotecmd{f\_eta} & \quotecmd{\^{}[Ff]\_[Ee][Tt][Aa]\$}  \\
+   &  &   \\
+  F\_R2 & \quotecmd{f\_r2} & \quotecmd{\^{}[Ff]\_[Rr]2\$}  \\
+   &  &   \\
+  Bond\index{bond length} length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength}  \\
+   &  &   \\
+  CSA & \quotecmd{csa} & \quotecmd{\^{}[Cc][Ss][Aa]\$}  \\
+   &  &   \\
+  Angle\index{angles} Theta & \quotecmd{orientation} & \quotecmd{\^{}[Oo][Rr][Ii][Ee][Nn][Tt][Aa][Tt][Ii][Oo][Nn]\$}  \\
+   &  &   \\
+  Correlation\index{correlation time} time & \quotecmd{tc} & \quotecmd{\^{}[Tt]c\$}  \\
+ \bottomrule 
+ \end{tabular} 
+ \end{center} 
+  
+
+  
  \subsubsection{Model-free set details} 
 
  Setting a parameter value may have no effect depending on which model-free model is chosen, for example if $S^2_f$ values and $S^2_s$ values are set but the run corresponds to model-free model \quotecmd{m4} then, because these data values are not parameters of the model, they will have no effect. 
@@ -6179,9 +6365,13 @@
  \midrule 
   Relaxation\index{relaxation} rate & \quotecmd{rx} & \quotecmd{\^{}[Rr]x\$}  \\
    &  &   \\
+  Average peak intensities (series) & \quotecmd{ave\_intensities} & \quotecmd{\^{}[Aa]ve[ -\_][Ii]nt\$}  \\
+   &  &   \\
   Initial intensity & \quotecmd{i0} & \quotecmd{\^{}[Ii]0\$}  \\
    &  &   \\
   Intensity at infinity & \quotecmd{iinf} & \quotecmd{\^{}[Ii]inf\$}  \\
+   &  &   \\
+  Relaxation\index{relaxation} period times (series) & \quotecmd{relax\_times} & \quotecmd{\^{}[Rr]elax[ -\_][Tt]imes\$}  \\
  \bottomrule 
  \end{tabular} 
  \end{center} 
@@ -6286,12 +6476,12 @@
 
  \example{relax> value.set(`tm3', param=`csa')} 
 
- To set the CSA value of all residues in the reduced spectral density mapping\index{map} run \quotecmd{600MHz} to -170 ppm, type: 
+ To set the CSA value of all residues in the reduced spectral density mapping\index{map} run \quotecmd{600MHz} to -172 ppm, type: 
   
 
- \example{relax> value.set(`600MHz', -170 * 1e-6, `csa')} 
+ \example{relax> value.set(`600MHz', -172 * 1e-6, `csa')} 
 
- \example{relax> value.set(`600MHz', value=-170 * 1e-6, param=`csa')} 
+ \example{relax> value.set(`600MHz', value=-172 * 1e-6, param=`csa')} 
 
  To set the NH bond\index{bond length} length of all residues in the model-free run \quotecmd{m5} to 1.02 \AA, type: 
   
@@ -6341,6 +6531,58 @@
   
 
  Importantly, do not supply a string for the data type containing regular\index{regular expression} expression.  The regular\index{regular expression} expression is implemented so that various strings can be supplied which all match the same data type. 
+  
+
+  
+ \subsubsection{Consistency testing set details} 
+
+ In consistency testing, only four values can be set, the bond\index{bond length} length, CSA, angle\index{angles} Theta (\quotecmd{orientation}) and correlation\index{correlation time} time values. These must be set prior to the calculation of consistency functions. 
+  
+
+  
+ \subsubsection{Consistency testing data type string matching patterns} 
+
+ \begin{center} 
+ \begin{tabular}{lll} 
+ \toprule 
+  Data type & Object name & Patterns  \\ 
+ \midrule 
+  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj]$\backslash$(0$\backslash$)}  \\
+   &  &   \\
+  F\_eta & \quotecmd{f\_eta} & \quotecmd{\^{}[Ff]\_[Ee][Tt][Aa]\$}  \\
+   &  &   \\
+  F\_R2 & \quotecmd{f\_r2} & \quotecmd{\^{}[Ff]\_[Rr]2\$}  \\
+   &  &   \\
+  Bond\index{bond length} length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength}  \\
+   &  &   \\
+  CSA & \quotecmd{csa} & \quotecmd{\^{}[Cc][Ss][Aa]\$}  \\
+   &  &   \\
+  Angle\index{angles} Theta & \quotecmd{orientation} & \quotecmd{\^{}[Oo][Rr][Ii][Ee][Nn][Tt][Aa][Tt][Ii][Oo][Nn]\$}  \\
+   &  &   \\
+  Correlation\index{correlation time} time & \quotecmd{tc} & \quotecmd{\^{}[Tt]c\$}  \\
+ \bottomrule 
+ \end{tabular} 
+ \end{center} 
+  
+
+  
+ \subsubsection{Consistency testing default values} 
+
+ \begin{center} 
+ \begin{tabular}{lll} 
+ \toprule 
+  Data type & Object name & Value  \\ 
+ \midrule 
+  Bond\index{bond length} length & \quotecmd{r} & 1.02 * 1e-10  \\
+   &  &   \\
+  CSA & \quotecmd{csa} & -172 * 1e-6  \\
+   &  &   \\
+  Angle\index{angles} Theta & \quotecmd{orientation} & 15.7  \\
+   &  &   \\
+  Correlation\index{correlation time} time & \quotecmd{tc} & 13 * 1e-9  \\
+ \bottomrule 
+ \end{tabular} 
+ \end{center} 
   
 
   
@@ -6423,7 +6665,7 @@
    &  &   \\
   Bond\index{bond length} length & \quotecmd{r} & 1.02 * 1e-10  \\
    &  &   \\
-  CSA & \quotecmd{csa} & -170 * 1e-6  \\
+  CSA & \quotecmd{csa} & -172 * 1e-6  \\
  \bottomrule 
  \end{tabular} 
  \end{center} 
@@ -6467,7 +6709,7 @@
  \midrule 
   Bond\index{bond length} length & \quotecmd{r} & 1.02 * 1e-10  \\
    &  &   \\
-  CSA & \quotecmd{csa} & -170 * 1e-6  \\
+  CSA & \quotecmd{csa} & -172 * 1e-6  \\
  \bottomrule 
  \end{tabular} 
  \end{center} 
@@ -6629,9 +6871,13 @@
  \midrule 
   Relaxation\index{relaxation} rate & \quotecmd{rx} & \quotecmd{\^{}[Rr]x\$}  \\
    &  &   \\
+  Average peak intensities (series) & \quotecmd{ave\_intensities} & \quotecmd{\^{}[Aa]ve[ -\_][Ii]nt\$}  \\
+   &  &   \\
   Initial intensity & \quotecmd{i0} & \quotecmd{\^{}[Ii]0\$}  \\
    &  &   \\
   Intensity at infinity & \quotecmd{iinf} & \quotecmd{\^{}[Ii]inf\$}  \\
+   &  &   \\
+  Relaxation\index{relaxation} period times (series) & \quotecmd{relax\_times} & \quotecmd{\^{}[Rr]elax[ -\_][Tt]imes\$}  \\
  \bottomrule 
  \end{tabular} 
  \end{center} 
@@ -6744,6 +6990,32 @@
   
 
   
+ \subsubsection{Consistency testing data type string matching patterns} 
+
+ \begin{center} 
+ \begin{tabular}{lll} 
+ \toprule 
+  Data type & Object name & Patterns  \\ 
+ \midrule 
+  $J(0)$ & \quotecmd{j0} & \quotecmd{\^{}[Jj]0\$} or \quotecmd{[Jj]$\backslash$(0$\backslash$)}  \\
+   &  &   \\
+  F\_eta & \quotecmd{f\_eta} & \quotecmd{\^{}[Ff]\_[Ee][Tt][Aa]\$}  \\
+   &  &   \\
+  F\_R2 & \quotecmd{f\_r2} & \quotecmd{\^{}[Ff]\_[Rr]2\$}  \\
+   &  &   \\
+  Bond\index{bond length} length & \quotecmd{r} & \quotecmd{\^{}r\$} or \quotecmd{[Bb]ond[ -\_][Ll]ength}  \\
+   &  &   \\
+  CSA & \quotecmd{csa} & \quotecmd{\^{}[Cc][Ss][Aa]\$}  \\
+   &  &   \\
+  Angle\index{angles} Theta & \quotecmd{orientation} & \quotecmd{\^{}[Oo][Rr][Ii][Ee][Nn][Tt][Aa][Tt][Ii][Oo][Nn]\$}  \\
+   &  &   \\
+  Correlation\index{correlation time} time & \quotecmd{tc} & \quotecmd{\^{}[Tt]c\$}  \\
+ \bottomrule 
+ \end{tabular} 
+ \end{center} 
+  
+
+  
  \subsubsection{Model-free data type string matching patterns} 
 
  \begin{center} 
@@ -6825,9 +7097,13 @@
  \midrule 
   Relaxation\index{relaxation} rate & \quotecmd{rx} & \quotecmd{\^{}[Rr]x\$}  \\
    &  &   \\
+  Average peak intensities (series) & \quotecmd{ave\_intensities} & \quotecmd{\^{}[Aa]ve[ -\_][Ii]nt\$}  \\
+   &  &   \\
   Initial intensity & \quotecmd{i0} & \quotecmd{\^{}[Ii]0\$}  \\
    &  &   \\
   Intensity at infinity & \quotecmd{iinf} & \quotecmd{\^{}[Ii]inf\$}  \\
+   &  &   \\
+  Relaxation\index{relaxation} period times (series) & \quotecmd{relax\_times} & \quotecmd{\^{}[Rr]elax[ -\_][Tt]imes\$}  \\
  \bottomrule 
  \end{tabular} 
  \end{center} 
