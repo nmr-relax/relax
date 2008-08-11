@@ -233,7 +233,7 @@ class Structure:
         generic_fns.structure.geometric.create_vector_dist(length=length, symmetry=symmetry, file=file, dir=dir, force=force)
 
 
-    def load_spins(self, spin_id=None, ave=True):
+    def load_spins(self, spin_id=None, ave_pos=True):
         """Load spins from the structure into the relax data store.
 
         Keyword Arguments
@@ -241,7 +241,7 @@ class Structure:
 
         spin_id:  The spin identification string.
 
-        ave:  A flag specifying if the position of the atom is to be averaged.
+        ave_pos:  A flag specifying if the position of the atom is to be averaged.
 
 
         Description
@@ -253,7 +253,7 @@ class Structure:
         spin systems within relax.  If spin_id is left as None, then all molecules, residues, and
         atoms will be placed within the data store.
 
-        If the ave flag is True, the average position of all structures will be loaded into the spin
+        If the ave_pos flag is True, the average position of all structures will be loaded into the spin
         container.  If False, then the positions from all structures will be loaded.
 
 
@@ -282,19 +282,19 @@ class Structure:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "structure.load_spins("
             text = text + "spin_id=" + `spin_id`
-            text = text + ", ave=" + `ave` + ")"
+            text = text + ", ave_pos=" + `ave_pos` + ")"
             print text
 
         # Spin identifier.
         if spin_id != None and type(spin_id) != str:
             raise RelaxNoneStrError, ('spin identifier', spin_id)
 
-        # The average vector flag.
-        if type(ave) != bool:
-            raise RelaxBoolError, ('average vector flag', ave)
+        # The average position flag.
+        if type(ave_pos) != bool:
+            raise RelaxBoolError, ('average position flag', ave_pos)
 
         # Execute the functional code.
-        generic_fns.structure.main.load_spins(spin_id=spin_id, ave=ave)
+        generic_fns.structure.main.load_spins(spin_id=spin_id, ave_pos=ave_pos)
 
 
     def read_pdb(self, file=None, dir=None, model=None, parser='scientific'):
