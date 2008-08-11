@@ -25,6 +25,7 @@
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from relax_errors import RelaxError
 
 
 def set(id=None, temp=None):
@@ -36,3 +37,21 @@ def set(id=None, temp=None):
     @keyword temp:  The temperature in kelvin.
     @type temp:     float
     """
+
+    # Test if the current data pipe exists.
+    if not ds.current_pipe:
+        raise RelaxNoPipeError
+
+    # Alias the current data pipe.
+    cdp = ds[ds.current_pipe]
+
+    # Set up the dictionary data structure if it doesn't exist yet.
+    if not hasattr(cdp, 'temperature'):
+        cdp.temperature = {}
+
+    # Test the temperature has not already been set.
+    if cdp.temperature.has_key(id):
+        raise RelaxError, "The temperature for the experiment " + `id` + " has already been set."
+
+    # Set the temperature.
+    cdp.temperature[id] = temp
