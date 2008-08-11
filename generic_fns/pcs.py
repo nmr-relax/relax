@@ -31,7 +31,7 @@ import sys
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
-from relax_errors import RelaxError, RelaxNoResError, RelaxNoPCSError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSpinError, RelaxPCSError
+from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoResError, RelaxNoPCSError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSpinError, RelaxPCSError
 from relax_io import extract_data, strip
 
 
@@ -209,6 +209,32 @@ def back_calc(ri_label=None, frq_label=None, frq=None):
 
         # Update all data structures.
         self.update_data_structures_spin(data, ri_label, frq_label, frq, value)
+
+
+def centre(atom_id=None):
+    """Specify the atom in the loaded structure corresponding to the paramagnetic centre.
+
+    @keyword atom_id:   The atom identification string.
+    @type atom_id:      str
+    """
+
+    # Test if the current data pipe exists.
+    if not ds.current_pipe:
+        raise RelaxNoPipeError
+
+    # Alias the current data pipe.
+    cdp = ds[ds.current_pipe]
+
+    # Test if the structure has been loaded.
+    if not hasattr(cdp, 'structure'):
+        raise RelaxNoPdbError
+
+    # Test the centre has already been set.
+    if hasattr(cdp, 'paramagnetic_centre'):
+        raise RelaxError, "The paramagnetic centre has already been set to the atom " + `cdp.paramagnetic_centre` + "."
+
+    # Set the centre.
+    cdp.paramagnetic_centre = atom_id
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
