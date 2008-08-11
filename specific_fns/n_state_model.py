@@ -41,7 +41,7 @@ from generic_fns.mol_res_spin import spin_loop
 from generic_fns.structure.internal import Internal
 from maths_fns.n_state_model import N_state_opt
 from maths_fns.rotation_matrix import R_2vect, R_euler_zyz
-from physical_constants import dipolar_constant, return_gyromagnetic_ratio
+from physical_constants import dipolar_constant, g1H, pcs_constant, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning
@@ -356,8 +356,6 @@ class N_state_model(Common_functions):
                         - the unit vectors connecting the paramagnetic centre (the electron spin) to
                         the nuclear spin.
                         - the pseudocontact shift constants.
-                        - the temperatures.
-                        - the spectrometer frequencies.
         @rtype:     tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array, numpy
                     rank-1 array, numpy rank-1 array)
         """
@@ -368,9 +366,8 @@ class N_state_model(Common_functions):
         # Initialise.
         pcs = []
         unit_vect = []
-        pcs_dj = []
-        temp = []
-        frq = []
+        r = []
+        pcs_const = []
 
         # Spin loop.
         for spin, spin_id in spin_loop(return_id=True):
@@ -385,12 +382,11 @@ class N_state_model(Common_functions):
             # Append the PCSs to the list.
             pcs.append(spin.pcs)
 
-            # Gyromagnetic ratios.
-            gx = return_gyromagnetic_ratio(spin.heteronuc_type)
-            gh = return_gyromagnetic_ratio(spin.proton_type)
+            # Add empty lists to the r and unit_vector lists.
+            unit_vect.append([])
+            r.append([])
 
-            # Loop over the states, and calculate the PCS constant for each (the distance changes each time).
-            pcs_dj.append([])
+            # Loop over the states, and calculate the paramagnetic centre to nucleus unit vectors.
             for c in range(cdp.N):
                 # Get the paramagnetic coordinates.
                 i = 0
@@ -402,24 +398,49 @@ class N_state_model(Common_functions):
                     raise RelaxError, "More than one paramagnetic centre found."
 
                 # Calculate the electron spin to nuclear spin vector.
+                print c
+                print spin.pos
                 vect = spin.pos[c] - R
 
                 # The length.
-                r = norm(vect)
+                r.append(norm(vect))
 
                 # Append the unit vector.
-                unit_vect.append(vect/r)
+                unit_vect.append(vect/norm(vect))
 
-                # Calculate the PCS dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
-                pcs_dj[-1].append(pcs_constant(gx, gh, r))
+        # Loop over experiments.
+        for i in xrange(len(cdp.align_tensors)):
+            # Append an empty array to the PCS constant structure.
+            pcs_const.append([])
 
-        # Loop over alignments.
-        for align in cdp.align_tensors:
-            # Append the temperature.
-            temp.append(cdp.temp[align.name])
+            # Get the temperature and spectrometer frequency for the PCS constant.
+            id = cdp.align_tensors[i].name
+            temp = cdp.temperature[id]
+            frq = cdp.frq[id]
 
-            # Append the frequency.
-            frq.append(cdp.frq[align.name])
+            # Convert the frequency of Hertz into a field strength in Tesla units.
+            frq = frq * 2.0 * pi / g1H
+
+            # Spin loop.
+            j = 0
+            for spin, spin_id in spin_loop(return_id=True):
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
+
+                # Skip spins without PCS data.
+                if not hasattr(spin, 'pcs'):
+                    continue
+
+                # Append an empty array to the PCS constant structure.
+                pcs_const[i].append([])
+
+                # Loop over the states, and calculate the PCS constant for each (the distance changes each time).
+                for c in range(cdp.N):
+                    pcs_const[i][-1].append(pcs_constant(temp[i], frq[i], r[j][c]))
+
+                # Spin index.
+                j = j + 1
 
         # Initialise the numpy objects (the pcs matrix is transposed!).
         pcs_numpy = zeros((len(pcs[0]), len(pcs)), float64)
@@ -438,7 +459,7 @@ class N_state_model(Common_functions):
                 unit_vect_numpy[spin_index, state_index] = unit_vect[spin_index][state_index]
 
         # Return the data structures.
-        return pcs_numpy, unit_vect_numpy, pcs_dj, temp, frq
+        return pcs_numpy, unit_vect_numpy, pcs_const
 
 
     def __minimise_setup_rdcs(self, param_vector=None, scaling_matrix=None):
