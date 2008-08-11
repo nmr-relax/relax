@@ -207,7 +207,7 @@ class Main:
         binary_dist_env.Depends('binary_dist', self.relax_fit_object)     # Compile the C code.
         binary_dist_env.Depends('binary_dist', 'user_manual_pdf')         # Compile the PDF version of the user manual.
         binary_dist_env.Depends('binary_dist', 'manual_clean_nodeps')     # Clean up the temporary manual files.
-        binary_dist_env.Depends('binary_dist', 'clean_temp')              # Then clean up all other temporary files.
+        binary_dist_env.Depends('binary_dist', 'clean')                   # Then clean up all other temporary files.
         binary_dist_env.Depends('binary_dist', 'package_bin')             # Package the binary distribution.
         binary_dist_env.Depends('binary_dist', 'gpg_bin')                 # GPG sign the binary distribution file.
 
@@ -217,7 +217,7 @@ class Main:
         source_dist_env.Depends('source_dist', 'version_check')           # First check the program version number.
         source_dist_env.Depends('source_dist', 'user_manual_pdf')         # Compile the PDF version of the user manual.
         source_dist_env.Depends('source_dist', 'manual_clean_nodeps')     # Clean up the temporary manual files.
-        source_dist_env.Depends('source_dist', 'clean')                   # Then clean up the sources.
+        source_dist_env.Depends('source_dist', 'clean_all')               # Then clean up the sources.
         source_dist_env.Depends('source_dist', 'package_src')             # Package the source distribution.
         source_dist_env.Depends('source_dist', 'gpg_src')                 # GPG sign the source distribution file.
 
@@ -264,14 +264,14 @@ class Main:
         ##############
 
         # Clean target.
-        clean_env = Environment(BUILDERS={'clean' : Builder(action=self.clean_files)})
-        clean_env.clean(target='clean', source=None)
-        clean_env.Depends('clean', 'clean_temp')       # Run the 'clean_temp' target.
-        clean_env.Depends('clean', 'manual_clean')     # Run the 'manual_clean' target.
+        clean_all_env = Environment(BUILDERS={'clean' : Builder(action=self.clean_all_files)})
+        clean_all_env.clean(target='clean_all', source=None)
+        clean_all_env.Depends('clean_all', 'clean')            # Run the 'clean' target.
+        clean_all_env.Depends('clean_all', 'manual_clean')     # Run the 'manual_clean' target.
 
         # Target for removing temporary files.
-        clean_temp_env = Environment(BUILDERS={'clean' : Builder(action=self.clean_temp_files)})
-        clean_temp_env.clean(target='clean_temp', source=None)
+        clean_env = Environment(BUILDERS={'clean' : Builder(action=self.clean_files)})
+        clean_env.clean(target='clean', source=None)
 
 
 
@@ -348,14 +348,14 @@ class Main:
         manual_env.Clean(target='manual_clean_nodeps', source=None)
 
 
-    def clean_files(self, target, source, env):
+    def clean_all_files(self, target, source, env):
         """Builder action for cleaning up."""
 
         # Print out.
         print
-        print "###############"
-        print "# Cleaning up #"
-        print "###############\n\n"
+        print "#########################"
+        print "# Cleaning up all files #"
+        print "#########################\n\n"
 
         # Extensions of files to remove.
         temp_extns = ['so', 'sconsign', 'dll', 'pyd']
@@ -376,7 +376,7 @@ class Main:
         print "\n\n\n"
 
 
-    def clean_temp_files(self, target, source, env):
+    def clean_files(self, target, source, env):
         """Builder action for removing temporary files."""
 
         # Print out.
@@ -429,7 +429,8 @@ class Main:
         string = string + '  %-25s%-40s\n' % ('uninstall', 'uninstall relax')
         string = string + '  %-25s%-40s\n' % ('binary_dist', 'create the binary distribution packages')
         string = string + '  %-25s%-40s\n' % ('source_dist', 'create the source distribution packages')
-        string = string + '  %-25s%-40s\n' % ('clean', 'remove the compiled and temporary files')
+        string = string + '  %-25s%-40s\n' % ('clean', 'remove the temporary files')
+        string = string + '  %-25s%-40s\n' % ('clean_all', 'remove the compiled and temporary files')
         string = string + '  %-25s%-40s\n' % ('user_manual_pdf', 'create the user manual (PDF version)')
         string = string + '  %-25s%-40s\n' % ('user_manual_pdf_nofetch', 'create the user manual (PDF version, without fetching the docstrings)')
         string = string + '  %-25s%-40s\n' % ('user_manual_html', 'create the user manual (HTML version)')
@@ -443,7 +444,6 @@ class Main:
         string = string + '  %-25s%-40s\n' % ('gpg_bin', 'GPG sign the binary distribution file')
         string = string + '  %-25s%-40s\n' % ('gpg_src', 'GPG sign the source distribution file')
         string = string + '  %-25s%-40s\n' % ('version_check', 'check the relax version number')
-        string = string + '  %-25s%-40s\n' % ('clean_temp', 'remove the temporary files')
         string = string + '  %-25s%-40s\n' % ('manual_version_file', 'create the relax version number LaTeX file')
         string = string + '  %-25s%-40s\n' % ('fetch_docstrings', 'fetch and LaTeX format the docstrings')
         string = string + '  %-25s%-40s\n' % ('compile_user_manual_pdf', 'compile the PDF version of the user manual from the LaTeX sources')
