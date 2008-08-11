@@ -437,13 +437,13 @@ class N_state_opt:
         The PCS equation is::
 
                                _N_
-                               \                   T
-            delta_ij(theta)  =  >  pc . djc . mu_jc . Ai . mu_jc,
+                               \                    T
+            delta_ij(theta)  =  >  pc . dijc . mu_jc . Ai . mu_jc,
                                /__
                                c=1
 
         where:
-            - djc is the PCS constant for spin j and state c,
+            - djci is the PCS constant for spin j, state c and experiment or alignment i,
             - N is the total number of states or structures,
             - pc is the weight or probability associated with state c,
             - mu_jc is the unit vector corresponding to spin j and state c,
@@ -451,16 +451,17 @@ class N_state_opt:
 
         The PCS constant is defined as::
 
-                 mu0 15kT   1
-            dj = --- ----- ---- ,
-                 4pi Bo**2 r**3
+                   mu0 15kT   1
+            dijc = --- ----- ---- ,
+                   4pi Bo**2 r**3
 
         where:
             - mu0 is the permeability of free space,
             - k is Boltzmann's constant,
-            - T is the absolute temperature,
-            - Bo is the magnetic field strength,
-            - r is the distance between the paramagnetic centre (electron spin) and the nuclear spin.
+            - T is the absolute temperature (different for each experiment),
+            - Bo is the magnetic field strength (different for each experiment),
+            - r is the distance between the paramagnetic centre (electron spin) and the nuclear spin
+            (different for each spin and state).
 
 
         Stored data structures
@@ -521,7 +522,7 @@ class N_state_opt:
                 # The back calculated PCS.
                 if self.pcs_flag:
                     # Calculate the average PCS.
-                    self.deltaij_theta[i, j] = ave_pcs_tensor(self.pcs_const[j], self.mu[j], self.N, self.A[i], weights=self.probs)
+                    self.deltaij_theta[i, j] = ave_pcs_tensor(self.pcs_const[i, j], self.mu[j], self.N, self.A[i], weights=self.probs)
 
                     # Replace missing data with the back calculated value (to give a zero chi-squared for the missing element).
                     if self.missing_deltaij[i, j]:
@@ -638,8 +639,8 @@ class N_state_opt:
 
         The population parameter partial derivative is::
 
-         ddeltaij(theta)                T
-         ---------------  =  djc . mu_jc . Ai . mu_jc,
+         ddeltaij(theta)                 T
+         ---------------  =  dijc . mu_jc . Ai . mu_jc,
               dpc
 
         where:
@@ -746,11 +747,11 @@ class N_state_opt:
 
                 # PCS.
                 if self.pcs_flag:
-                    self.ddeltaij_theta[i*5, i, j] =   ave_pcs_tensor_ddeltaij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[0], weights=self.probs)
-                    self.ddeltaij_theta[i*5+1, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[1], weights=self.probs)
-                    self.ddeltaij_theta[i*5+2, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[2], weights=self.probs)
-                    self.ddeltaij_theta[i*5+3, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[3], weights=self.probs)
-                    self.ddeltaij_theta[i*5+4, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.dip_const[j], self.mu[j], self.N, self.dA[4], weights=self.probs)
+                    self.ddeltaij_theta[i*5, i, j] =   ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[i, j], self.mu[j], self.N, self.dA[0], weights=self.probs)
+                    self.ddeltaij_theta[i*5+1, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[i, j], self.mu[j], self.N, self.dA[1], weights=self.probs)
+                    self.ddeltaij_theta[i*5+2, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[i, j], self.mu[j], self.N, self.dA[2], weights=self.probs)
+                    self.ddeltaij_theta[i*5+3, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[i, j], self.mu[j], self.N, self.dA[3], weights=self.probs)
+                    self.ddeltaij_theta[i*5+4, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[i, j], self.mu[j], self.N, self.dA[4], weights=self.probs)
 
             # Construct the pc partial derivative gradient components, looping over each state.
             for c in xrange(self.N - 1):
