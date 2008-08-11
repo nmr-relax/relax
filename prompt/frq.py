@@ -29,7 +29,7 @@ import sys
 # relax module imports.
 import help
 from relax_errors import RelaxNumError, RelaxStrError
-from generic_fns import frq
+import generic_fns.frq
 
 
 class Frq:
@@ -63,7 +63,7 @@ class Frq:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "frq("
             text = text + "id=" + `id`
             text = text + ", frq=" + `frq` + ")"
@@ -78,4 +78,4 @@ class Frq:
             raise RelaxNumError, ('spectrometer frequency', frq)
 
         # Execute the functional code.
-        frq.set(id=id, frq=frq)
+        generic_fns.frq.set(id=id, frq=frq)
