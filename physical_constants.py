@@ -85,6 +85,39 @@ def dipolar_constant(gx, gh, r):
     return - mu0 / (4.0*pi) * gx * gh * h_bar / r**3
 
 
+# The pseudocontact shift constant.
+###################################
+
+def pcs_constant(T, Bo, r):
+    """Calculate the pseudocontact shift constant.
+
+    The pseudocontact shift constant is defined as::
+
+            mu0 15kT   1
+        d = --- ----- ---- ,
+            4pi Bo**2 r**3
+
+    where:
+        - mu0 is the permeability of free space,
+        - k is Boltzmann's constant,
+        - T is the absolute temperature,
+        - Bo is the magnetic field strength,
+        - r is the distance between the paramagnetic centre (electron spin) and the nuclear spin.
+
+
+    @param T:   The temperature in kelvin.
+    @type T:    float
+    @param Bo:  The magnetic field strength.
+    @type Bo:   float
+    @param r:   The distance between the two nuclei.
+    @type r:    float
+    """
+
+    # Calculate and return the value.
+    return mu0 / (4.0*pi) * 15.0 * k * T / Bo**2 / r**3
+
+
+
 # Gyromagnetic ratios.
 ######################
 
