@@ -28,7 +28,7 @@ import sys
 
 # relax module imports.
 from generic_fns import temperature
-from relax_errors import RelaxNoneStrError, RelaxNumError
+from relax_errors import RelaxNumError, RelaxStrError
 
 
 class Temp:
@@ -64,8 +64,8 @@ class Temp:
             print text
 
         # Id string.
-        if id != None and type(id) != str:
-            raise RelaxNoneStrError, ('experiment identification string', id)
+        if type(id) != str:
+            raise RelaxStrError, ('experiment identification string', id)
 
         # The temperature.
         if type(temp) != float and type(temp) != int:
