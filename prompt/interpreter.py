@@ -61,6 +61,7 @@ from align_tensor import Align_tensor
 from consistency_tests import Consistency_tests
 from dasha import Dasha
 from diffusion_tensor import Diffusion_tensor
+from frq import Frq
 from grace import Grace
 from jw_mapping import Jw_mapping
 from model_free import Model_free
@@ -144,6 +145,7 @@ class Interpreter:
         self._Dasha = Dasha(relax)
         self._Diffusion_tensor = Diffusion_tensor(relax)
         self._OpenDX = OpenDX(relax)
+        self._Frq = Frq(relax)
         self._Grace = Grace(relax)
         self._Jw_mapping = Jw_mapping(relax)
         self._Model_free = Model_free(relax)
@@ -212,6 +214,7 @@ class Interpreter:
         dasha = self._Dasha
         diffusion_tensor = self._Diffusion_tensor
         dx = self._OpenDX
+        frq = self._Frq
         grace = self._Grace
         jw_mapping = self._Jw_mapping
         model_free = self._Model_free
