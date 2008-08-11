@@ -54,6 +54,7 @@ from gpl import GPL
 from reset import Reset
 from minimisation import Minimisation
 from model_selection import Modsel
+from temperature import Temp
 
 # User classes.
 from align_tensor import Align_tensor
@@ -133,6 +134,7 @@ class Interpreter:
         self._Reset = Reset(relax)
         self._Minimisation = Minimisation(relax)
         self._Modsel = Modsel(relax)
+        self._Temp = Temp(relax)
         self._OpenDX = OpenDX(relax)
         self._system = system
 
@@ -202,6 +204,7 @@ class Interpreter:
         reset = self._Reset.reset
         minimise = self._Minimisation.minimise
         model_selection = self._Modsel.model_selection
+        temperature = self._Temp.temperature
 
         # Place the user classes in the local namespace.
         align_tensor = self._Align_tensor
