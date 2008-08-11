@@ -68,6 +68,51 @@ class PCS:
         pcs.back_calc(id=id)
 
 
+    def centre(self, atom_id=None):
+        """Specify which atom is the paramagnetic centre.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        atom_id:  The atom identification string.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function is required for specifying where the paramagnetic centre is located in the
+        loaded structure file.
+
+
+        Examples
+        ~~~~~~~~
+
+        If the paramagnetic centre is the lanthanide Dysprosium which is labelled as Dy in a loaded
+        PDB file, then type one of:
+
+        relax> pcs.centre('Dy')
+        relax> pcs.centre(atom_id='Dy')
+
+        If the carbon atom 'C1' of residue '4' in the PDB file is to be used as the paramagnetic
+        centre, then type:
+
+        relax> pcs.centre(':4@C1')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "pcs.centre("
+            text = text + "atom_id=" + `atom_id` + ")"
+            print text
+
+        # The atom identifier argument.
+        if type(atom_id) != str:
+            raise RelaxStrError, ('atom identification string', atom_id)
+
+        # Execute the functional code.
+        pcs.centre(atom_id=atom_id)
+
+
     def copy(self, pipe_from=None, pipe_to=None, id=None):
         """Copy PCS data from pipe_from to pipe_to.
 
