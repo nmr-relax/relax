@@ -607,7 +607,15 @@ class Internal(Base_struct_API):
         # Individual structure mode.
         else:
             # Loop over the models.
-            for struct in self.structural_data:
+            for c in xrange(len(self.structural_data)):
+                # Explicit structure identifier.
+                if type(str_id) == int:
+                    if str_id != c:
+                        continue
+
+                # Alias the structural data.
+                struct = self.structural_data[c]
+
                 # Loop over all atoms.
                 for i in xrange(len(struct.atom_name)):
                     # Skip non-matching atoms.
