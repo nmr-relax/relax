@@ -398,15 +398,13 @@ class N_state_model(Common_functions):
                     raise RelaxError, "More than one paramagnetic centre found."
 
                 # Calculate the electron spin to nuclear spin vector.
-                print c
-                print spin.pos
                 vect = spin.pos[c] - R
 
                 # The length.
-                r.append(norm(vect))
+                r[-1].append(norm(vect))
 
                 # Append the unit vector.
-                unit_vect.append(vect/norm(vect))
+                unit_vect[-1].append(vect/norm(vect))
 
         # Loop over experiments.
         for i in xrange(len(cdp.align_tensors)):
@@ -437,7 +435,7 @@ class N_state_model(Common_functions):
 
                 # Loop over the states, and calculate the PCS constant for each (the distance changes each time).
                 for c in range(cdp.N):
-                    pcs_const[i][-1].append(pcs_constant(temp[i], frq[i], r[j][c]))
+                    pcs_const[i][-1].append(pcs_constant(temp, frq, r[j][c]))
 
                 # Spin index.
                 j = j + 1
