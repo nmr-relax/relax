@@ -204,7 +204,7 @@ class Interpreter:
         reset = self._Reset.reset
         minimise = self._Minimisation.minimise
         model_selection = self._Modsel.model_selection
-        temperature = self._Temp.temperature
+        temperature = self._Temp.set
 
         # Place the user classes in the local namespace.
         align_tensor = self._Align_tensor
