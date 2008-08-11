@@ -43,6 +43,9 @@ h_bar = h / (2.0 * pi)
 mu0 = 4.0 * pi * 1e-7
 """The magnetic constant or the permeability of vacuum."""
 
+kB = 1.380650424 * 1e-23
+"""Boltzmann's constant in SI units of J.K^-1 (the last 2 digits of '24' are within the measured error limits)."""
+
 
 # CSA and bond lengths.
 #######################
@@ -114,7 +117,7 @@ def pcs_constant(T, Bo, r):
     """
 
     # Calculate and return the value.
-    return mu0 / (4.0*pi) * 15.0 * k * T / Bo**2 / r**3
+    return mu0 / (4.0*pi) * 15.0 * kB * T / Bo**2 / r**3
 
 
 
