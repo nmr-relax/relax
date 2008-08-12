@@ -78,12 +78,13 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
         cdp.alpha = [None]*3
         cdp.beta = [None]*3
         cdp.gamma = [None]*3
+        cdp.model = '2-domain'
 
         # The parameter vector.
         param_vector = [0.1, 0.3, 0.0, pi/2, 1.0, pi/2, pi, 3*pi/2, pi, 3*pi/2, 2*pi]
 
         # Disassemble the parameter vector.
-        self.n_state_model_fns._N_state_model__disassemble_param_vector(param_vector)
+        self.n_state_model_fns._N_state_model__disassemble_param_vector(param_vector, data_types=['tensor'])
 
         # Check the probabilities.
         self.assertEqual(cdp.probs, [0.1, 0.3, 0.6])
