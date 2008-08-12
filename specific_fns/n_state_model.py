@@ -406,6 +406,9 @@ class N_state_model(Common_functions):
                 # Append the unit vector.
                 unit_vect[-1].append(vect/norm(vect))
 
+        # Convert the distances from Angstrom to meters.
+        r = array(r, float64) * 1e-10
+
         # Loop over experiments.
         for i in xrange(len(cdp.align_tensors)):
             # Append an empty array to the PCS constant structure.
