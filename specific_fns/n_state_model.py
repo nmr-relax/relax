@@ -1031,7 +1031,7 @@ class N_state_model(Common_functions):
             full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors()
 
         # Get the data structures for optimisation using PCSs as base data sets.
-        pcs, pcs_vect, pcs_dj = None, None, None, None, None
+        pcs, pcs_vect, pcs_dj = None, None, None
         if 'pcs' in data_types:
             pcs, pcs_vect, pcs_dj = self.__minimise_setup_pcs()
 
