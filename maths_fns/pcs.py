@@ -103,7 +103,7 @@ def ave_pcs_tensor(dj, vect, N, A, weights=None):
                 pc = weights[c]
 
         # Back-calculate the PCS.
-        val = val + pc * dj[c] * dot(vect[k], dot(A, vect[k]))
+        val = val + pc * dj[c] * dot(vect[c], dot(A, vect[c]))
 
     # Return the average PCS.
     return val
