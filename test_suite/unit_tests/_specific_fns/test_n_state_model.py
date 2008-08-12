@@ -49,6 +49,10 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
         cdp.alpha = [0.0, pi/2, pi]
         cdp.beta = [pi/2, pi, 3*pi/2]
         cdp.gamma = [1.0, 3*pi/2, 2*pi]
+        cdp.model = '2-domain'
+
+        # Set up a dummy alignment tensor variable to allow the test to pass.
+        cdp.align_tensors = None
 
         # Get the parameter vector.
         param_vector = self.n_state_model_fns._N_state_model__assemble_param_vector()
