@@ -457,7 +457,7 @@ class N_state_model(Common_functions):
                 unit_vect_numpy[spin_index, state_index] = unit_vect[spin_index][state_index]
 
         # Return the data structures.
-        return pcs_numpy, unit_vect_numpy, pcs_const
+        return pcs_numpy, unit_vect_numpy, array(pcs_const)
 
 
     def __minimise_setup_rdcs(self, param_vector=None, scaling_matrix=None):
