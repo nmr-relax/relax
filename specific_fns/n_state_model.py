@@ -491,6 +491,7 @@ class N_state_model(Common_functions):
                 if hasattr(spin, 'pcs'):
                     rdcs.append([None]*len(cdp.align_tensors))
                     xh_vectors.append([None]*3)
+                    dj.append(None)
 
                 # Jump to the next spin.
                 continue
@@ -504,6 +505,7 @@ class N_state_model(Common_functions):
                 if hasattr(spin, 'pcs'):
                     rdcs.append([None]*len(cdp.align_tensors))
                     xh_vectors.append([None]*3)
+                    dj.append(None)
 
                 # Jump to the next spin.
                 continue
@@ -536,7 +538,7 @@ class N_state_model(Common_functions):
                 xh_vect_numpy[spin_index, state_index] = xh_vectors[spin_index][state_index]
 
         # Return the data structures.
-        return rdcs_numpy, xh_vect_numpy, array(dj)
+        return rdcs_numpy, xh_vect_numpy, array(dj, float64)
 
 
     def __minimise_setup_tensors(self):
