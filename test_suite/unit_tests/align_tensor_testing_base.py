@@ -79,7 +79,7 @@ class Align_tensor_base_class:
         self.assertEqual(ds['test'].align_tensors[0].Syy, 6.13037)
         self.assertEqual(ds['test'].align_tensors[0].Sxy, 7.65639)
         self.assertEqual(ds['test'].align_tensors[0].Sxz, -1.89157)
-        self.assertEqual(ds['test'].align_tensors[0].Syz, 19.2561)
+        self.assertAlmostEqual(ds['test'].align_tensors[0].Syz, 19.2561)
 
 
     def test_copy_push(self):
@@ -100,7 +100,7 @@ class Align_tensor_base_class:
         self.assertEqual(ds['test'].align_tensors[0].Syy, 6.13037)
         self.assertEqual(ds['test'].align_tensors[0].Sxy, 7.65639)
         self.assertEqual(ds['test'].align_tensors[0].Sxz, -1.89157)
-        self.assertEqual(ds['test'].align_tensors[0].Syz, 19.2561)
+        self.assertAlmostEqual(ds['test'].align_tensors[0].Syz, 19.2561)
 
 
     def test_copy_fail(self):
@@ -224,7 +224,7 @@ class Align_tensor_base_class:
         self.assertEqual(ds['orig'].align_tensors[0].Syy, 6.13037)
         self.assertEqual(ds['orig'].align_tensors[0].Sxy, 7.65639)
         self.assertEqual(ds['orig'].align_tensors[0].Sxz, -1.89157)
-        self.assertEqual(ds['orig'].align_tensors[0].Syz, 19.2561)
+        self.assertAlmostEqual(ds['orig'].align_tensors[0].Syz, 19.2561)
 
 
     def test_matrix_angles_identity(self):
