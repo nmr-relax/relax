@@ -206,8 +206,10 @@ class N_state_opt:
                 self.pcs_flag = False
 
             # Some checks.
-            if xh_vect == None and not len(xh_vect):
+            if self.rdc_flag and (xh_vect == None or not len(xh_vect)):
                 raise RelaxError, "The xh_vect argument " + `xh_vect` + " must be supplied."
+            if self.pcs_flag and (pcs_vect == None or not len(pcs_vect)):
+                raise RelaxError, "The pcs_vect argument " + `pcs_vect` + " must be supplied."
 
             # No data?
             if not self.rdc_flag and not self.pcs_flag:
