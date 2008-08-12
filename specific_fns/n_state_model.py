@@ -222,11 +222,11 @@ class N_state_model(Common_functions):
         if 'rdc' in data_types or 'pcs' in data_types:
             # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
             for i in xrange(len(cdp.align_tensors)):
-                cdp.align_tensors[i].Sxx = param_vector[5*i]
-                cdp.align_tensors[i].Syy = param_vector[5*i+1]
-                cdp.align_tensors[i].Sxy = param_vector[5*i+2]
-                cdp.align_tensors[i].Sxz = param_vector[5*i+3]
-                cdp.align_tensors[i].Syz = param_vector[5*i+4]
+                cdp.align_tensors[i].Axx = param_vector[5*i]
+                cdp.align_tensors[i].Ayy = param_vector[5*i+1]
+                cdp.align_tensors[i].Axy = param_vector[5*i+2]
+                cdp.align_tensors[i].Axz = param_vector[5*i+3]
+                cdp.align_tensors[i].Ayz = param_vector[5*i+4]
 
             # Create a new parameter vector without the tensors.
             param_vector = param_vector[5*len(cdp.align_tensors):]
@@ -593,21 +593,21 @@ class N_state_model(Common_functions):
             # Create a list of all the reduced alignment tensor elements and their errors (for the chi-squared function).
             elif tensor.red:
                 # Append the 5 unique elements.
-                red_tensor_elem.append(tensor.Sxx)
-                red_tensor_elem.append(tensor.Syy)
-                red_tensor_elem.append(tensor.Sxy)
-                red_tensor_elem.append(tensor.Sxz)
-                red_tensor_elem.append(tensor.Syz)
+                red_tensor_elem.append(tensor.Axx)
+                red_tensor_elem.append(tensor.Ayy)
+                red_tensor_elem.append(tensor.Axy)
+                red_tensor_elem.append(tensor.Axz)
+                red_tensor_elem.append(tensor.Ayz)
 
                 # Append the 5 unique error elements (if they exist).
-                if hasattr(tensor, 'Sxx_err'):
-                    red_tensor_err.append(tensor.Sxx_err)
-                    red_tensor_err.append(tensor.Syy_err)
-                    red_tensor_err.append(tensor.Sxy_err)
-                    red_tensor_err.append(tensor.Sxz_err)
-                    red_tensor_err.append(tensor.Syz_err)
+                if hasattr(tensor, 'Axx_err'):
+                    red_tensor_err.append(tensor.Axx_err)
+                    red_tensor_err.append(tensor.Ayy_err)
+                    red_tensor_err.append(tensor.Axy_err)
+                    red_tensor_err.append(tensor.Axz_err)
+                    red_tensor_err.append(tensor.Ayz_err)
 
-                # Otherwise append errors of 1.0 to convert the chi-squared equation to the SSE equation (for the tensors without errors).
+                # Otherwise append errors of 1.0 to convert the chi-squared equation to the ASE equation (for the tensors without errors).
                 else:
                     red_tensor_err = red_tensor_err + [1.0, 1.0, 1.0, 1.0, 1.0]
 
