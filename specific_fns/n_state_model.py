@@ -487,11 +487,25 @@ class N_state_model(Common_functions):
 
             # Skip spins without RDC data or unit XH bond vectors.
             if not hasattr(spin, 'rdc'):
+                # Add rows of None if other data exists.
+                if hasattr(spin, 'pcs'):
+                    rdcs.append([None]*len(cdp.align_tensors))
+                    xh_vectors.append([None]*3)
+
+                # Jump to the next spin.
                 continue
 
             # RDC data exists but the XH bond vectors are missing?
             if not hasattr(spin, 'xh_vect'):
+                # Throw a warning.
                 warn(RelaxWarning("RDC data exists but the XH bond vectors are missing, skipping spin " + spin_id))
+
+                # Add rows of None if other data exists.
+                if hasattr(spin, 'pcs'):
+                    rdcs.append([None]*len(cdp.align_tensors))
+                    xh_vectors.append([None]*3)
+
+                # Jump to the next spin.
                 continue
 
             # Append the RDC and XH vectors to the lists.
