@@ -88,7 +88,7 @@ class N_state_opt:
             - rdcs, the residual dipolar couplings.
             - rdc_errors, the optional residual dipolar coupling errors.
             - xh_vect, the heteronucleus to proton unit vectors.
-            - dip_const, the dipolar contants.
+            - dip_const, the dipolar constants.
 
 
         @keyword model:             The N-state model type.  This can be one of '2-domain',
@@ -100,7 +100,7 @@ class N_state_opt:
                                     point!
         @type init_params:          numpy float64 array
         @keyword full_tensors:      A list of the full alignment tensors in matrix form.
-        @type full_tensors:         list of 3x3 numpy matricies
+        @type full_tensors:         list of rank-2, 3D numpy arrays
         @keyword red_data:          An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all reduced
                                     tensors.  The format is [Sxx1, Syy1, Sxy1, Sxz1, Syz1, Sxx2,
                                     Syy2, Sxy2, Sxz2, Syz2, ..., Sxxn, Syyn, Sxyn, Sxzn, Syzn]
@@ -113,24 +113,33 @@ class N_state_opt:
         @type full_in_ref_frame:    numpy rank-1 array
         @keyword pcs:               The PCS lists.  The first index must correspond to the different
                                     alignment media i and the second index to the spin systems j.
-        @type pcs:                  numpy matrix
+        @type pcs:                  numpy rank-2 array
         @keyword pcs_errors:        The PCS error lists.  The dimensions of this argument are the
                                     same as for 'pcs'.
-        @type pcs_errors:           numpy matrix
+        @type pcs_errors:           numpy rank-2 array
         @keyword rdcs:              The RDC lists.  The first index must correspond to the different
                                     alignment media i and the second index to the spin systems j.
-        @type rdcs:                 numpy matrix
+        @type rdcs:                 numpy rank-2 array
         @keyword rdc_errors:        The RDC error lists.  The dimensions of this argument are the
                                     same as for 'rdcs'.
-        @type rdc_errors:           numpy matrix
+        @type rdc_errors:           numpy rank-2 array
+        @keyword pcs_vect:          The unit vectors between the paramagnetic centre and the
+                                    nucleus.  The first index is the spin systems j and the second
+                                    is the structure or state c.
+        @type pcs_vect:             numpy rank-2 array
         @keyword xh_vect:           The unit XH vector lists.  The first index must correspond to
                                     the spin systems and the second index to each structure (its
                                     size being equal to the number of states).
-        @type xh_vect:              numpy matrix
+        @type xh_vect:              numpy rank-2 array
+        @keyword pcs_const:         The pseudocontact shift constants for each XH vector.  The
+                                    indices correspond to the experiments or alignment media i and
+                                    the spin systems j.
+        @type pcs_const:            numpy rank-1 array
         @keyword dip_const:         The dipolar constants for each XH vector.  The indices
                                     correspond to the spin systems j.
-        @scaling_matrix:            The square and diagonal scaling matrix.
-        @scaling_matrix:            numpy rank-2 array
+        @type dip_const:            numpy rank-1 array
+        @keyword scaling_matrix:    The square and diagonal scaling matrix.
+        @type scaling_matrix:       numpy rank-2 array
         """
 
         # Store the data inside the class instance namespace.
