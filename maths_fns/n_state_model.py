@@ -131,10 +131,10 @@ class N_state_opt:
                                     the spin systems and the second index to each structure (its
                                     size being equal to the number of states).
         @type xh_vect:              numpy rank-2 array
-        @keyword pcs_const:         The pseudocontact shift constants for each XH vector.  The
-                                    indices correspond to the experiments or alignment media i and
-                                    the spin systems j.
-        @type pcs_const:            numpy rank-1 array
+        @keyword pcs_const:         The pseudocontact shift constants for each nucleus.  The indices
+                                    correspond to the experiments or alignment media i, the spin
+                                    systems j, and the state or structure c.
+        @type pcs_const:            numpy rank-3 array
         @keyword dip_const:         The dipolar constants for each XH vector.  The indices
                                     correspond to the spin systems j.
         @type dip_const:            numpy rank-1 array
@@ -265,7 +265,6 @@ class N_state_opt:
                     for j in xrange(self.num_spins):
                         if isNaN(self.deltaij[i, j]):
                             self.missing_deltaij[i, j] = 1
-
 
             # PCS function, gradient, and Hessian matrices.
             self.deltaij_theta = zeros((self.num_align, self.num_spins), float64)
