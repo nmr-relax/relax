@@ -190,11 +190,29 @@ def display(tensor):
     """Function for displaying the alignment tensor.
 
     @param tensor:          The alignment tensor identification string.
-    @type tensor:           str
+    @type tensor:           str or None
     """
 
     # Test if the current data pipe exists.
     pipes.test(ds.current_pipe)
+
+    # All tensors.
+    if tensor == None:
+        # Loop over the tensors.
+        for tensor in ds[ds.current_pipe].align_tensors:
+            # Header.
+            print "Tensor: " + tensor.name + "\n"
+
+            # The parameter set {Axx, Ayy, Axy, Axz, Ayz}.
+            print "Parameters {Axx, Ayy, Axy, Axz, Ayz}."
+            print "%-15s%15.8f" % ("Axx:  ", tensor.Axx)
+            print "%-15s%15.8f" % ("Ayy:  ", tensor.Ayy)
+            print "%-15s%15.8f" % ("Axy:  ", tensor.Axy)
+            print "%-15s%15.8f" % ("Axz:  ", tensor.Axz)
+            print "%-15s%15.8f" % ("Ayz:  ", tensor.Ayz)
+
+        # Leave this function.
+        return
 
     # Test if alignment tensor data exists.
     if not align_data_exists(tensor):
