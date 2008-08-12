@@ -536,19 +536,11 @@ class N_state_opt:
                     if not self.missing_Dij[i, j]:
                         self.Dij_theta[i, j] = ave_rdc_tensor(self.dip_const[j], self.dip_vect[j], self.N, self.A[i], weights=self.probs)
 
-                    # Replace missing data with the back calculated value (to give a zero chi-squared for the missing element).
-                    #if self.missing_Dij[i, j]:
-                    #    self.Dij[i, j] = self.Dij_theta[i, j]
-
                 # The back calculated PCS.
                 if self.pcs_flag:
                     # Calculate the average PCS.
                     if not self.missing_deltaij[i, j]:
                         self.deltaij_theta[i, j] = ave_pcs_tensor(self.pcs_const[i, j], self.pcs_vect[j], self.N, self.A[i], weights=self.probs)
-
-                    # Replace missing data with the back calculated value (to give a zero chi-squared for the missing element).
-                    #if self.missing_deltaij[i, j]:
-                    #    self.deltaij[i, j] = self.deltaij_theta[i, j]
 
             # Calculate and sum the single alignment chi-squared value (for the RDC).
             if self.rdc_flag:
