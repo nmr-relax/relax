@@ -536,7 +536,7 @@ class N_state_model(Common_functions):
                 xh_vect_numpy[spin_index, state_index] = xh_vectors[spin_index][state_index]
 
         # Return the data structures.
-        return rdcs_numpy, xh_vect_numpy, dj
+        return rdcs_numpy, xh_vect_numpy, array(dj)
 
 
     def __minimise_setup_tensors(self):
