@@ -268,9 +268,9 @@ class N_state_opt:
 
 
             # PCS function, gradient, and Hessian matrices.
-            self.detaij_theta = zeros((self.num_align, self.num_spins), float64)
-            self.ddetaij_theta = zeros((self.total_num_params, self.num_align, self.num_spins), float64)
-            self.d2detaij_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_spins), float64)
+            self.deltaij_theta = zeros((self.num_align, self.num_spins), float64)
+            self.ddeltaij_theta = zeros((self.total_num_params, self.num_align, self.num_spins), float64)
+            self.d2deltaij_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_spins), float64)
 
             # RDC function, gradient, and Hessian matrices.
             self.Dij_theta = zeros((self.num_align, self.num_spins), float64)
