@@ -64,6 +64,10 @@ class N_state_model(Common_functions):
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
 
+        # Test if the model is selected.
+        if not hasattr(cdp, 'model') or type(cdp.model) != str:
+            raise RelaxNoModelError
+        
         # Determine the data type.
         data_types = self.__base_data_types()
 
