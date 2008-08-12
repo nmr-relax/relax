@@ -148,6 +148,7 @@ class N_state_opt:
         self.deltaij = pcs
         self.Dij = rdcs
         self.mu = xh_vect
+        self.pcs_const = pcs_const
         self.dip_const = dip_const
         self.total_num_params = len(init_params)
 
