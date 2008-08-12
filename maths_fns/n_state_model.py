@@ -230,8 +230,8 @@ class N_state_opt:
 
             # PCS errors.
             if pcs_errors == None:
-                # Missing errors.
-                self.pcs_sigma_ij = ones((self.num_align, self.num_spins), float64)
+                # Missing errors (the values need to be small, close to ppm units, so the chi-squared value is comparable to the RDC).
+                self.pcs_sigma_ij = 0.1 * 1e-6 * ones((self.num_align, self.num_spins), float64)
             else:
                 self.pcs_sigma_ij = pcs_errors
 
