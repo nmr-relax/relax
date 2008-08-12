@@ -456,6 +456,9 @@ class N_state_model(Common_functions):
                 # Store the unit vector.
                 unit_vect_numpy[spin_index, state_index] = unit_vect[spin_index][state_index]
 
+        # Convert the PCS from ppm to no units.
+        pcs_numpy = pcs_numpy * 1e-6
+
         # Return the data structures.
         return pcs_numpy, unit_vect_numpy, array(pcs_const)
 
