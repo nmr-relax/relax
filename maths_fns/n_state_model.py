@@ -194,6 +194,8 @@ class N_state_opt:
 
             # Set the target function.
             self.func = self.func_2domain
+            self.dfunc = None
+            self.d2func = None
 
         # The flexible population N-state model.
         elif model == 'population':
