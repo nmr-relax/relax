@@ -24,6 +24,7 @@
 from re import match
 
 # relax module imports.
+from align_tensor import AlignTensorList
 from data_classes import Element
 from diff_tensor import DiffTensorData
 import generic_fns
@@ -121,6 +122,16 @@ class PipeContainer(Prototype):
 
             # Fill its contents.
             self.diff_tensor.from_xml(diff_tensor_nodes[0])
+
+        # Get the alignment tensor data nodes and, if they exist, fill the contents.
+        align_tensor_super_node = relax_node.getElementsByTagName('align_tensors')
+        align_tensor_nodes = align_tensor_super_node[0].getElementsByTagName('align_tensor')
+        if align_tensor_nodes:
+            # Create the diffusion tensor object.
+            self.align_tensors = AlignTensorList()
+
+            # Fill its contents.
+            self.align_tensors.from_xml(align_tensor_nodes)
 
         # Recreate the molecule, residue, and spin data structure.
         mol_nodes = relax_node.getElementsByTagName('mol')

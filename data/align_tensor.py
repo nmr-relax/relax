@@ -29,7 +29,7 @@ from types import ListType
 # relax module imports.
 from data_classes import Element
 from relax_errors import RelaxError
-from relax_xml import fill_object_contents
+from relax_xml import fill_object_contents, xml_to_object
 
 
 
@@ -592,6 +592,22 @@ class AlignTensorList(ListType):
         """Function for appending a new AlignTensorData instance to the list."""
 
         self.append(AlignTensorData(name))
+
+
+    def from_xml(self, align_tensor_nodes):
+        """Recreate the alignment tensor data structure from the XML alignment tensor node.
+
+        @param align_tensor_nodes:  The alignment tensor XML nodes.
+        @type align_tensor_nodes:   list of xml.dom.minicompat.Element instances
+        """
+
+        # Loop over the child nodes.
+        for align_tensor_node in align_tensor_nodes:
+            # Add the alignment tensor data container.
+            self.add_item(align_tensor_node.getAttribute('name'))
+
+            # Recreate all the other data structures.
+            xml_to_object(align_tensor_node, self[-1])
 
 
     def to_xml(self, doc, element):
