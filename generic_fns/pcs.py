@@ -25,6 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
+from numpy import float64, zeros
 import sys
 
 # relax module imports.
@@ -239,7 +240,7 @@ def centre(atom_id=None, pipe=None):
     # Get the positions.
     pos = zeros(3, float64)
     i = 0
-    for R in cdp.structure.atom_loop(atom_id=atom_id, pos_flag=True):
+    for R in dp.structure.atom_loop(atom_id=atom_id, pos_flag=True):
         pos = pos + R
         i = i + 1
 
