@@ -1197,6 +1197,47 @@ class N_state_model(Common_functions):
         return self.param_num(), self.num_data_points(), ds[ds.current_pipe].chi2
 
 
+    def num_data_points(self):
+        """Determine the number of data points used in the model.
+
+        @return:    The number, n, of data points in the model.
+        @rtype:     int
+        """
+
+        # Determine the data type.
+        data_types = self.__base_data_types()
+
+        # Init.
+        n = 0
+
+        # Spin loop.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # RDC data (skipping array elements set to None).
+            if 'rdc' in data_types:
+                if hasattr(spin, 'rdc'):
+                    for rdc in spin.rdc:
+                        if type(rdc) == float:
+                            n = n + 1
+        
+            # PCS data (skipping array elements set to None).
+            if 'pcs' in data_types:
+                if hasattr(spin, 'pcs'):
+                    for pcs in spin.pcs:
+                        if type(pcs) == float:
+                            n = n + 1
+
+        # Alignment tensors.
+        if 'tensor' in data_types:
+            n = n + 5*len(ds[ds.current_pipe].align_tensors)
+
+        # Return the value.
+        return n
+
+
     def number_of_states(self, N=None):
         """Set the number of states in the N-state model.
 
