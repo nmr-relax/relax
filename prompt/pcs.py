@@ -68,7 +68,7 @@ class PCS:
         pcs.back_calc(id=id)
 
 
-    def centre(self, atom_id=None):
+    def centre(self, atom_id=None, pipe=None):
         """Specify which atom is the paramagnetic centre.
 
         Keyword Arguments
@@ -76,12 +76,19 @@ class PCS:
 
         atom_id:  The atom identification string.
 
+        pipe:  The data pipe containing the structures to extract the centre from.
+
 
         Description
         ~~~~~~~~~~~
 
         This function is required for specifying where the paramagnetic centre is located in the
-        loaded structure file.
+        loaded structure file.  If no structure number is given, then the average atom position will
+        be calculated if multiple structures are loaded.
+
+        A different set of structures than those loaded into the current data pipe can also be used
+        to determine the position, or its average.  This can be achieved by loading the alternative
+        structures into another data pipe, and then specifying that pipe through the pipe argument.
 
 
         Examples
@@ -102,15 +109,20 @@ class PCS:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pcs.centre("
-            text = text + "atom_id=" + `atom_id` + ")"
+            text = text + "atom_id=" + `atom_id`
+            text = text + ", pipe=" + `pipe` + ")"
             print text
 
         # The atom identifier argument.
         if type(atom_id) != str:
             raise RelaxStrError, ('atom identification string', atom_id)
 
+        # The data pipe argument.
+        if pipe != None and type(pipe) != str:
+            raise RelaxNoneStrError, ('data pipe', pipe)
+
         # Execute the functional code.
-        pcs.centre(atom_id=atom_id)
+        pcs.centre(atom_id=atom_id, pipe=pipe)
 
 
     def copy(self, pipe_from=None, pipe_to=None, id=None):
