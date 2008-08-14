@@ -425,17 +425,8 @@ class N_state_model(Common_functions):
 
             # Loop over the states, and calculate the paramagnetic centre to nucleus unit vectors.
             for c in range(cdp.N):
-                # Get the paramagnetic coordinates.
-                i = 0
-                for R in cdp.structure.atom_loop(atom_id=cdp.paramagnetic_centre, str_id=c, pos_flag=True):
-                    i = i + 1
-
-                # Can only be one paramagnetic centre (for now).
-                if i > 1:
-                    raise RelaxError, "More than one paramagnetic centre found."
-
                 # Calculate the electron spin to nuclear spin vector.
-                vect = spin.pos[c] - R
+                vect = spin.pos[c] - cdp.paramagnetic_centre
 
                 # The length.
                 r[-1].append(norm(vect))

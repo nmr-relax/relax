@@ -234,10 +234,20 @@ def centre(atom_id=None, pipe=None):
 
     # Test the centre has already been set.
     if hasattr(dp, 'paramagnetic_centre'):
-        raise RelaxError, "The paramagnetic centre has already been set to the atom " + `dp.paramagnetic_centre` + "."
+        raise RelaxError, "The paramagnetic centre has already been set to the coordinates " + `dp.paramagnetic_centre` + "."
+
+    # Get the positions.
+    pos = zeros(3, float64)
+    i = 0
+    for R in cdp.structure.atom_loop(atom_id=atom_id, pos_flag=True):
+        pos = pos + R
+        i = i + 1
+
+    # Averaging.
+    pos = pos / float(i)
 
     # Set the centre.
-    dp.paramagnetic_centre = atom_id
+    dp.paramagnetic_centre = pos
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
