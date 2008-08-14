@@ -26,7 +26,7 @@
 # Python module imports.
 from math import acos, cos, pi
 from minfx.generic import generic_minimise
-from numpy import array, dot, float64, identity, zeros
+from numpy import array, dot, float64, identity, ones, zeros
 from numpy.linalg import inv, norm
 from re import search
 from warnings import warn
@@ -277,7 +277,7 @@ class N_state_model(Common_functions):
         Standard notation
         =================
 
-        The N-state model constraints are:
+        The N-state model constraints are::
 
             0 <= pc <= 1,
 
@@ -288,24 +288,44 @@ class N_state_model(Common_functions):
         ===============
 
         In the notation A.x >= b, where A is an matrix of coefficients, x is an array of parameter
-        values, and b is a vector of scalars, these inequality constraints are:
+        values, and b is a vector of scalars, these inequality constraints are::
 
             | 1  0  0 |                   |    0    |
             |         |                   |         |
             |-1  0  0 |                   |   -1    |
-            |         |     |  p0  |      |         |
-            | 0  1  0 |     |      |      |    0    |
-            |         |  .  |  p1  |  >=  |         |
-            | 0 -1  0 |     |      |      |   -1    |
-            |         |     |  p2  |      |         |
-            | 0  0  1 |                   |    0    |
             |         |                   |         |
+            | 0  1  0 |                   |    0    |
+            |         |     |  p0  |      |         |
+            | 0 -1  0 |     |      |      |   -1    |
+            |         |  .  |  p1  |  >=  |         |
+            | 0  0  1 |     |      |      |    0    |
+            |         |     |  p2  |      |         |
             | 0  0 -1 |                   |   -1    |
+            |         |                   |         |
+            |-1 -1 -1 |                   |   -1    |
+            |         |                   |         |
+            | 1  1  1 |                   |    0    |
 
         This example is for a 4-state model, the last probability pn is not included as this
         parameter does not exist (because the sum of pc is equal to 1).  The Euler angle parameters
         have been excluded here but will be included in the returned A and b objects.  These
-        parameters simply add columns of zero to the A matrix and have no effect on b.
+        parameters simply add columns of zero to the A matrix and have no effect on b.  The last two
+        rows correspond to the inequality::
+
+            0 <= pN <= 1.
+
+        As::
+                    N-1
+                    \ 
+            pN = 1 - >  pc,
+                    /__
+                    c=1
+
+        then::
+
+            -p1 - p2 - ... - p(N-1) >= -1,
+
+             p1 + p2 + ... + p(N-1) >= 0.
 
 
         @keyword data_types:        The base data types used in the optimisation.  This list can
@@ -341,17 +361,26 @@ class N_state_model(Common_functions):
             A[j][i] = 1.0
             A[j+1][i] = -1.0
             b.append(0.0)
-            b.append(-1.0)
+            b.append(-1.0 / scaling_matrix[i, i])
             j = j + 2
 
             # Increment i.
             i = i + 1
 
+        # Add the inequalities for pN.
+        A.append(zero_array * 0.0)
+        A.append(zero_array * 0.0)
+        for i in xrange(pop_start, self.param_num()):
+            A[-2][i] = -1.0
+            A[-1][i] = 1.0
+        b.append(-1.0 / scaling_matrix[i, i])
+        b.append(0.0)
+
         # Convert to numpy data structures.
         A = array(A, float64)
         b = array(b, float64)
 
-        # Return the contraint objects.
+        # Return the constraint objects.
         return A, b
 
 
