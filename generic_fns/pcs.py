@@ -211,30 +211,33 @@ def back_calc(ri_label=None, frq_label=None, frq=None):
         self.update_data_structures_spin(data, ri_label, frq_label, frq, value)
 
 
-def centre(atom_id=None):
+def centre(atom_id=None, pipe=None):
     """Specify the atom in the loaded structure corresponding to the paramagnetic centre.
 
     @keyword atom_id:   The atom identification string.
     @type atom_id:      str
     """
 
-    # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    # The data pipe.
+    if pipe == None:
+        pipe = ds.current_pipe
 
-    # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Alias the data pipe.
+    dp = ds[pipe]
 
     # Test if the structure has been loaded.
-    if not hasattr(cdp, 'structure'):
+    if not hasattr(dp, 'structure'):
         raise RelaxNoPdbError
 
     # Test the centre has already been set.
-    if hasattr(cdp, 'paramagnetic_centre'):
-        raise RelaxError, "The paramagnetic centre has already been set to the atom " + `cdp.paramagnetic_centre` + "."
+    if hasattr(dp, 'paramagnetic_centre'):
+        raise RelaxError, "The paramagnetic centre has already been set to the atom " + `dp.paramagnetic_centre` + "."
 
     # Set the centre.
-    cdp.paramagnetic_centre = atom_id
+    dp.paramagnetic_centre = atom_id
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
