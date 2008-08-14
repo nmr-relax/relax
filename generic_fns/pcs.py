@@ -247,8 +247,8 @@ def centre(atom_id=None, pipe=None):
     # Averaging.
     pos = pos / float(i)
 
-    # Set the centre.
-    dp.paramagnetic_centre = pos
+    # Set the centre (place it into the current data pipe).
+    ds[ds.current_pipe].paramagnetic_centre = pos
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
