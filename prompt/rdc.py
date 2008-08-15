@@ -230,6 +230,13 @@ class RDC:
         separated by the symbol ',', and store the RDCs under the identifier 'Tb'.
 
         relax> rdc.read('Tb', 'Tb.txt', sep=',')
+
+
+        If the individual spin RDC errors are located in the file 'rdc_err.txt' in column number 5,
+        then to read these values into relax, type one of:
+
+        relax> rdc.read('phage', 'rdc_err.txt', error_col=4)
+        relax> rdc.read(id='phage', file='rdc_err.txt', error_col=4)
         """
 
         # Function intro text.
@@ -281,8 +288,8 @@ class RDC:
             raise RelaxNoneIntError, ('spin name column', spin_name_col)
 
         # The data column.
-        if type(data_col) != int:
-            raise RelaxIntError, ('data column', data_col)
+        if data_col != None and type(data_col) != int:
+            raise RelaxNoneIntError, ('data column', data_col)
 
         # The error column.
         if error_col != None and type(error_col) != int:
