@@ -568,8 +568,12 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
     cdp = ds[ds.current_pipe]
 
     # Test if RDC data corresponding to 'id' already exists.
-    if hasattr(cdp, 'rdc_ids') and id in cdp.rdc_ids:
+    if data_col != None and hasattr(cdp, 'rdc_ids') and id in cdp.rdc_ids:
         raise RelaxRDCError, id
+
+    # Either the data or error column must be supplied.
+    if data_col == None and error_col == None:
+        raise RelaxError, "One of either the data or error column must be supplied."
 
     # Minimum number of columns.
     min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col)
@@ -583,7 +587,10 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
         header_lines = 0
         for i in xrange(len(file_data)):
             try:
-                float(file_data[i][data_col])
+                if data_col != None:
+                    float(file_data[i][data_col])
+                else:
+                    float(file_data[i][error_col])
             except:
                 header_lines = header_lines + 1
             else:
@@ -600,9 +607,9 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
             # Skip missing data.
             if len(file_data[i]) <= min_col_num:
                 continue
-            elif file_data[i][data_col] == 'None':
+            elif data_col != None and file_data[i][data_col] == 'None':
                 continue
-            elif error_col and file_data[i][error_col] == 'None':
+            elif error_col != None and file_data[i][error_col] == 'None':
                 continue
 
             # Test that the data are numbers.
@@ -611,8 +618,9 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
                     int(file_data[i][res_num_col])
                 if spin_num_col != None:
                     int(file_data[i][spin_num_col])
-                float(file_data[i][data_col])
-                if error_col:
+                if data_col != None:
+                    float(file_data[i][data_col])
+                if error_col != None:
                     float(file_data[i][error_col])
             except ValueError:
                 raise RelaxError, "The RDC data in the line " + `file_data[i]` + " is invalid."
@@ -642,9 +650,16 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
         id = generate_spin_id_data_array(data=file_data[i], mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
 
         # Convert the data.
-        value = eval(file_data[i][data_col])
-        if error_col:
+        value = None
+        if data_col != None:
+            value = eval(file_data[i][data_col])
+        error = None
+        if error_col != None:
             error = eval(file_data[i][error_col])
+
+        # Test the error value (cannot be 0.0).
+        if error == 0.0:
+            raise RelaxError, "An invalid error value of zero has been encountered."
 
         # Get the corresponding spin container.
         spin = return_spin(id)
@@ -652,12 +667,21 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
             raise RelaxNoSpinError, id
 
         # Add the data.
-        if not hasattr(spin, 'rdc'):
-            spin.rdc = []
-        spin.rdc.append(value)
-        if error_col:
+        if data_col != None:
+            # Initialise.
+            if not hasattr(spin, 'rdc'):
+                spin.rdc = []
+
+            # Append the value.
+            spin.rdc.append(value)
+
+        # Add the error.
+        if error_col != None:
+            # Initialise.
             if not hasattr(spin, 'rdc_err'):
                 spin.rdc_err = []
+
+            # Append the error.
             spin.rdc_err.append(error)
 
 
