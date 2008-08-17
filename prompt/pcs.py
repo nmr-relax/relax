@@ -338,8 +338,8 @@ class PCS:
             raise RelaxNoneIntError, ('spin name column', spin_name_col)
 
         # The data column.
-        if type(data_col) != int:
-            raise RelaxIntError, ('data column', data_col)
+        if data_col != None and type(data_col) != int:
+            raise RelaxNoneIntError, ('data column', data_col)
 
         # The error column.
         if error_col != None and type(error_col) != int:
