@@ -402,7 +402,6 @@ class N_state_model(Common_functions):
 
         # Initialise.
         pcs = []
-        pcs_err = []
         unit_vect = []
         r = []
         pcs_const = []
@@ -419,12 +418,6 @@ class N_state_model(Common_functions):
 
             # Append the PCSs to the list.
             pcs.append(spin.pcs)
-
-            # Append the PCS errors (or a list of None).
-            if hasattr(spin, 'pcs_err'):
-                pcs_err.append(spin.pcs_err)
-            else:
-                pcs_err.append([None]*len(spin.pcs))
 
             # Add empty lists to the r and unit_vector lists.
             unit_vect.append([])
@@ -480,16 +473,14 @@ class N_state_model(Common_functions):
 
         # Initialise the numpy objects (the pcs matrix is transposed!).
         pcs_numpy = zeros((len(pcs[0]), len(pcs)), float64)
-        pcs_err_numpy = zeros((len(pcs[0]), len(pcs)), float64)
         unit_vect_numpy = zeros((len(unit_vect), len(unit_vect[0]), 3), float64)
 
         # Loop over the spins.
         for spin_index in xrange(len(pcs)):
             # Loop over the alignments.
             for align_index in xrange(len(pcs[spin_index])):
-                # Transpose and store the PCS value and error.
+                # Transpose and store the PCS value.
                 pcs_numpy[align_index, spin_index] = pcs[spin_index][align_index]
-                pcs_err_numpy[align_index, spin_index] = pcs_err[spin_index][align_index]
 
             # Loop over the N states.
             for state_index in xrange(len(unit_vect[spin_index])):
@@ -498,10 +489,9 @@ class N_state_model(Common_functions):
 
         # Convert the PCS from ppm to no units.
         pcs_numpy = pcs_numpy * 1e-6
-        pcs_err_numpy = pcs_err_numpy * 1e-6
 
         # Return the data structures.
-        return pcs_numpy, pcs_err_numpy, unit_vect_numpy, array(pcs_const)
+        return pcs_numpy, unit_vect_numpy, array(pcs_const)
 
 
     def __minimise_setup_rdcs(self, param_vector=None, scaling_matrix=None):
@@ -520,7 +510,6 @@ class N_state_model(Common_functions):
 
         # Initialise.
         rdcs = []
-        rdc_err = []
         xh_vectors = []
         dj = []
 
@@ -535,7 +524,6 @@ class N_state_model(Common_functions):
                 # Add rows of None if other data exists.
                 if hasattr(spin, 'pcs'):
                     rdcs.append([None]*len(cdp.align_tensors))
-                    rdc_err.append([None]*len(cdp.align_tensors))
                     xh_vectors.append([None]*3)
                     dj.append(None)
 
@@ -550,7 +538,6 @@ class N_state_model(Common_functions):
                 # Add rows of None if other data exists.
                 if hasattr(spin, 'pcs'):
                     rdcs.append([None]*len(cdp.align_tensors))
-                    rdc_err.append([None]*len(cdp.align_tensors))
                     xh_vectors.append([None]*3)
                     dj.append(None)
 
@@ -561,12 +548,6 @@ class N_state_model(Common_functions):
             rdcs.append(spin.rdc)
             xh_vectors.append(spin.xh_vect)
 
-            # Append the PCS errors (or a list of None).
-            if hasattr(spin, 'rdc_err'):
-                rdc_err.append(spin.rdc_err)
-            else:
-                rdc_err.append([None]*len(cdp.align_tensors))
-
             # Gyromagnetic ratios.
             gx = return_gyromagnetic_ratio(spin.heteronuc_type)
             gh = return_gyromagnetic_ratio(spin.proton_type)
@@ -576,16 +557,14 @@ class N_state_model(Common_functions):
 
         # Initialise the numpy objects (the rdc matrix is transposed!).
         rdcs_numpy = zeros((len(rdcs[0]), len(rdcs)), float64)
-        rdc_err_numpy = zeros((len(rdcs[0]), len(rdcs)), float64)
         xh_vect_numpy = zeros((len(xh_vectors), len(xh_vectors[0]), 3), float64)
 
         # Loop over the spins.
         for spin_index in xrange(len(rdcs)):
             # Loop over the alignments.
             for align_index in xrange(len(rdcs[spin_index])):
-                # Transpose and store the RDC value and error.
+                # Transpose and store the RDC value.
                 rdcs_numpy[align_index, spin_index] = rdcs[spin_index][align_index]
-                rdc_err_numpy[align_index, spin_index] = rdc_err[spin_index][align_index]
 
             # Loop over the N states.
             for state_index in xrange(len(xh_vectors[spin_index])):
@@ -593,7 +572,7 @@ class N_state_model(Common_functions):
                 xh_vect_numpy[spin_index, state_index] = xh_vectors[spin_index][state_index]
 
         # Return the data structures.
-        return rdcs_numpy, rdc_err_numpy, xh_vect_numpy, array(dj, float64)
+        return rdcs_numpy, xh_vect_numpy, array(dj, float64)
 
 
     def __minimise_setup_tensors(self):
@@ -1102,17 +1081,17 @@ class N_state_model(Common_functions):
             full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors()
 
         # Get the data structures for optimisation using PCSs as base data sets.
-        pcs, pcs_err, pcs_vect, pcs_dj = None, None, None, None
+        pcs, pcs_vect, pcs_dj = None, None, None
         if 'pcs' in data_types:
-            pcs, pcs_err, pcs_vect, pcs_dj = self.__minimise_setup_pcs()
+            pcs, pcs_vect, pcs_dj = self.__minimise_setup_pcs()
 
         # Get the data structures for optimisation using RDCs as base data sets.
-        rdcs, rdc_err, xh_vect, rdc_dj = None, None, None, None
+        rdcs, xh_vect, rdc_dj = None, None, None
         if 'rdc' in data_types:
-            rdcs, rdc_err, xh_vect, rdc_dj = self.__minimise_setup_rdcs()
+            rdcs, xh_vect, rdc_dj = self.__minimise_setup_rdcs()
 
         # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_vect=pcs_vect, xh_vect=xh_vect, pcs_const=pcs_dj, dip_const=rdc_dj, scaling_matrix=scaling_matrix)
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_vect=pcs_vect, xh_vect=xh_vect, pcs_const=pcs_dj, dip_const=rdc_dj, scaling_matrix=scaling_matrix)
 
         # Minimisation.
         if constraints:
