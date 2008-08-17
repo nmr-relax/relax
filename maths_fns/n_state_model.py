@@ -231,18 +231,30 @@ class N_state_opt:
             self.num_align_params = self.num_align * 5
 
             # PCS errors.
-            if pcs_errors == None:
-                # Missing errors (the values need to be small, close to ppm units, so the chi-squared value is comparable to the RDC).
-                self.pcs_sigma_ij = 0.03 * 1e-6 * ones((self.num_align, self.num_spins), float64)
-            else:
-                self.pcs_sigma_ij = pcs_errors
+            if self.pcs_flag:
+                err = False
+                for i in xrange(len(pcs_errors)):
+                    for j in xrange(len(pcs_errors[i])):
+                        if not isNaN(pcs_errors[i, j]):
+                            err = True
+                if err:
+                    self.pcs_sigma_ij = pcs_errors
+                else:
+                    # Missing errors (the values need to be small, close to ppm units, so the chi-squared value is comparable to the RDC).
+                    self.pcs_sigma_ij = 0.03 * 1e-6 * ones((self.num_align, self.num_spins), float64)
 
             # RDC errors.
-            if rdc_errors == None:
-                # Missing errors.
-                self.rdc_sigma_ij = ones((self.num_align, self.num_spins), float64)
-            else:
-                self.rdc_sigma_ij = rdc_errors
+            if self.rdc_flag:
+                err = False
+                for i in xrange(len(rdc_errors)):
+                    for j in xrange(len(rdc_errors[i])):
+                        if not isNaN(rdc_errors[i, j]):
+                            err = True
+                if err:
+                    self.rdc_sigma_ij = rdc_errors
+                else:
+                    # Missing errors.
+                    self.rdc_sigma_ij = ones((self.num_align, self.num_spins), float64)
 
             # Alignment tensor function and gradient matrices.
             self.A = zeros((self.num_align, 3, 3), float64)
@@ -267,6 +279,9 @@ class N_state_opt:
                             # Change the NaN to zero.
                             self.Dij[i, j] = 0.0
 
+                            # Change the error to one (to avoid zero division).
+                            self.rdc_sigma_ij[i, j] = 1.0
+
             # Missing data matrices (PCS).
             if self.pcs_flag:
                 self.missing_deltaij = zeros((self.num_align, self.num_spins), float64)
@@ -278,6 +293,9 @@ class N_state_opt:
 
                             # Change the NaN to zero.
                             self.deltaij[i, j] = 0.0
+
+                            # Change the error to one (to avoid zero division).
+                            self.pcs_sigma_ij[i, j] = 1.0
 
             # PCS function, gradient, and Hessian matrices.
             self.deltaij_theta = zeros((self.num_align, self.num_spins), float64)
