@@ -249,7 +249,7 @@ class N_state_model(Common_functions):
         # Create the PDB file.
         print "\nGenerating the PDB file."
         pdb_file = open_write_file(file, dir, force=force)
-        structure.write_pdb_file(pdb_file)
+        structure.write_pdb(pdb_file)
         pdb_file.close()
 
 
