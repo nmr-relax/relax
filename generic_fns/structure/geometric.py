@@ -133,15 +133,15 @@ def cone_edge(structure=None, res_name='CON', res_num=None, apex=None, axis=None
         # Connect across the radial array (to generate the circular cone edge).
         if i != 0:
             neighbour_id = 'T' + `i-1`
-            structure.atom_connect(index1=atom_id, index2=neighbour_id)
+            #structure.atom_connect(index1=atom_id, index2=neighbour_id)
 
         # Connect the last radial array to the first (to zip up the circle).
         if i == inc-1:
             neighbour_id = 'T' + `0`
-            structure.atom_connect(index1=atom_id, index2=neighbour_id)
+            #structure.atom_connect(index1=atom_id, index2=neighbour_id)
 
         # Join the atom to the cone apex.
-        structure.atom_connect(index1=atom_id, index2='Apex')
+        #structure.atom_connect(index1=atom_id, index2='Apex')
 
         # Increment the atom number.
         atom_num = atom_num + 1
@@ -610,20 +610,25 @@ def generate_vector_residues(structure=None, vector=None, atom_name=None, res_na
     else:
         atom_id_ext = ''
 
+    # The atom numbers (and indices).
+    origin_num = structure.structural_data[0].atom_num[-1]+1
+    atom_num = structure.structural_data[0].atom_num[-1]+2
+    atom_neg_num = structure.structural_data[0].atom_num[-1]+3
+
     # The origin atom.
-    structure.atom_add(pdb_record='HETATM', atom_num='R_vect'+atom_id_ext, atom_name='R', res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin, segment_id=None, element='C', struct_index=None)
+    structure.atom_add(pdb_record='HETATM', atom_num=origin_num, atom_name='R', res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin, segment_id=None, element='C', struct_index=None)
 
     # Create the PDB residue representing the vector.
-    structure.atom_add(pdb_record='HETATM', atom_num=atom_name+atom_id_ext, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+vector*scale, segment_id=None, element='C', struct_index=None)
-    structure.atom_connect(index1=atom_name+atom_id_ext, index2='R_vect'+atom_id_ext)
+    structure.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+vector*scale, segment_id=None, element='C', struct_index=None)
+    structure.atom_connect(index1=atom_num-1, index2=origin_num-1)
     if neg:
-        structure.atom_add(pdb_record='HETATM', atom_num=atom_name+'_neg'+atom_id_ext, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+vector*scale, segment_id=None, element='C', struct_index=None)
-        structure.atom_connect(index1=atom_name+'_neg'+atom_id_ext, index2='R_vect'+atom_id_ext)
+        structure.atom_add(pdb_record='HETATM', atom_num=atom_neg_num, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+vector*scale, segment_id=None, element='C', struct_index=None)
+        structure.atom_connect(index1=atom_neg_num-1, index2=origin_num-1)
 
     # Add another atom to allow the axis labels to be shifted just outside of the vector itself.
-    structure.atom_add(pdb_record='HETATM', atom_num='vect label'+atom_id_ext, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+label_placement*vector*scale, segment_id=None, element='N', struct_index=None)
+    structure.atom_add(pdb_record='HETATM', atom_num=atom_neg_num, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+label_placement*vector*scale, segment_id=None, element='N', struct_index=None)
     if neg:
-        structure.atom_add(pdb_record='HETATM', atom_num='vect neg label'+atom_id_ext, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, segment_id=None, element='N', struct_index=None)
+        structure.atom_add(pdb_record='HETATM', atom_num=atom_neg_num_ext, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, segment_id=None, element='N', struct_index=None)
 
     # Print out.
     print "    " + atom_name + " vector (scaled + shifted to origin): " + `origin+vector*scale`
@@ -634,16 +639,17 @@ def generate_vector_residues(structure=None, vector=None, atom_name=None, res_na
         for i in xrange(sim_vectors):
             # Increment the residue number, so each simulation is a new residue.
             res_num = res_num + 1
-
-            # Modify the atom_id for each simulation.
-            atom_id_ext_sim = atom_id_ext + '_sim' + `i`
+    
+            # The atom numbers (and indices).
+            atom_num = structure.structural_data[0].atom_num[-1]+1
+            atom_neg_num = structure.structural_data[0].atom_num[-1]+2
 
             # Create the PDB residue representing the vector.
-            structure.atom_add(pdb_record='HETATM', atom_num=atom_name+atom_id_ext_sim, atom_name=atom_name, res_name=res_name_sim, chain_id=chain_id, res_num=res_num, pos=origin+sim_vectors[i]*scale, segment_id=None, element='C', struct_index=None)
-            structure.atom_connect(index1=atom_name+atom_id_ext_sim, index2='R_vect'+atom_id_ext_sim)
+            structure.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name=atom_name, res_name=res_name_sim, chain_id=chain_id, res_num=res_num, pos=origin+sim_vectors[i]*scale, segment_id=None, element='C', struct_index=None)
+            structure.atom_connect(index1=atom_num-1, index2=origin_num-1)
             if neg:
-                structure.atom_add(pdb_record='HETATM', atom_num=atom_name+'_neg'+atom_id_ext_sim, atom_name=atom_name, res_name=res_name_sim, chain_id=chain_id, res_num=res_num, pos=origin-sim_vectors[i]*scale, segment_id=None, element='C', struct_index=None)
-                structure.atom_connect(index1=atom_name+'_neg'+atom_id_ext_sim, index2='R_vect'+atom_id_ext_sim)
+                structure.atom_add(pdb_record='HETATM', atom_num=atom_num+1, atom_name=atom_name, res_name=res_name_sim, chain_id=chain_id, res_num=res_num, pos=origin-sim_vectors[i]*scale, segment_id=None, element='C', struct_index=None)
+                structure.atom_connect(index1=atom_neg_num-1, index2=origin_num-1)
 
     # Return the new residue number.
     return res_num

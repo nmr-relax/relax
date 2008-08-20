@@ -226,7 +226,7 @@ class N_state_model(Common_functions):
         structure.structural_data.append(Structure_container())
 
         # Add the pivot point.
-        structure.atom_add(pdb_record='HETATM', atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot_point, element='C')
+        structure.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot_point, element='C')
 
         # Generate the average pivot-CoM vectors.
         print "\nGenerating the average pivot-CoM vectors."
