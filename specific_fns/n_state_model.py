@@ -32,7 +32,7 @@ from float import isNaN, isInf
 import generic_fns
 import generic_fns.structure.geometric
 import generic_fns.structure.mass
-from generic_fns.structure.internal import Internal
+from generic_fns.structure.internal import Internal, Structure_container
 from maths_fns.n_state_model import N_state_opt
 from maths_fns.rotation_matrix import R_2vect, R_euler_zyz
 from minfx.generic import generic_minimise
@@ -221,6 +221,9 @@ class N_state_model(Common_functions):
 
         # Create the structural object.
         structure = Internal()
+
+        # Add a structure.
+        structure.structural_data.append(Structure_container())
 
         # Add the pivot point.
         structure.atom_add(pdb_record='HETATM', atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot_point, element='C')
