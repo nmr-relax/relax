@@ -90,7 +90,7 @@ def cone_edge(structure=None, res_name='CON', res_num=None, apex=None, axis=None
     """
 
     # Add an atom for the cone apex.
-    structure.atom_add(pdb_record='HETATM', atom_num=Apex, atom_name='APX', res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=apex, segment_id=None, element='H', struct_index=None)
+    structure.atom_add(pdb_record='HETATM', atom_num=apex, atom_name='APX', res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=apex, segment_id=None, element='H', struct_index=None)
 
     # Initialise the rotation matrix, atom number, etc.
     if R == None:
