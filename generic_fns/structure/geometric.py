@@ -644,45 +644,26 @@ def generate_vector_residues(structure=None, vector=None, atom_name=None, res_na
     return res_num
 
 
-def stitch_cap_to_cone(structure=None, atom_id_ext='', max_angle=None, inc=None):
+def stitch_cap_to_cone(structure=None, cone_start=None, cap_start=None, max_angle=None, inc=None):
     """Function for stitching the cap of a cone to the cone edge, in the PDB representations.
 
-    @param structure:       The structural data object.
+    @keyword structure:     The structural data object.
     @type structure:        instance of class derived from Base_struct_API
-    @param atom_id_ext:     The atom identifier extension.
-    @type atom_id_ext:      str
-    @param max_angle:       The maximal polar angle, in rad, after which all vectors are skipped.
+    @keyword cone_start:    The starting atom number of the cone residue.
+    @type cone_start:       int
+    @keyword cap_start:     The starting atom number of the cap residue.
+    @type cap_start:        int
+    @keyword max_angle:     The maximal polar angle, in rad, after which all vectors are skipped.
     @type max_angle:        float
-    @param inc:             The number of increments or number of vectors used to generate the outer
+    @keyword inc:           The number of increments or number of vectors used to generate the outer
                             edge of the cone.
     @type inc:              int
     """
 
-    # Generate the increment values of v.
-    v = zeros(inc/2+2, float64)
-    val = 1.0 / float(inc/2)
-    for i in xrange(1, inc/2+1):
-        v[i] = float(i-1) * val + val/2.0
-    v[-1] = 1.0
-
-    # Generate the distribution of spherical angles phi.
-    phi = arccos(2.0 * v - 1.0)
-
-    # Loop over the angles and find the minimum latitudinal index.
-    for j_min in xrange(len(phi)):
-        if phi[j_min] < max_angle:
-            break
-
     # Loop over the radial array of vectors (change in longitude).
     for i in range(inc):
-        # Cap atom id.
-        cap_atom_id = 'T' + `i` + 'P' + `j_min` + atom_id_ext
-
-        # Cone edge atom id.
-        edge_atom_id = 'T' + `i` + atom_id_ext
-
         # Connect the two atoms (to stitch up the 2 objects).
-        structure.atom_connect(index1=edge_atom_id, index2=cap_atom_id)
+        structure.atom_connect(index1=cone_start-1+i, index2=cap_start-1+i)
 
 
 def uniform_vect_dist_spherical_angles(inc=20):

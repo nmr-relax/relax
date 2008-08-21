@@ -241,13 +241,15 @@ class N_state_model(Common_functions):
             angle = cdp.theta_diff_in_cone
         elif cone_type == 'diff on cone':
             angle = cdp.theta_diff_on_cone
+        cap_start_atom = structure.structural_data[0].atom_num[-1]+1
         generic_fns.structure.geometric.cone_edge(structure=structure, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, angle=angle, length=norm(cdp.pivot_CoM), inc=inc)
 
         # Generate the cone cap, and stitch it to the cone edge.
         if cone_type == 'diff in cone':
             print "\nGenerating the cone cap."
+            cone_start_atom = structure.structural_data[0].atom_num[-1]+1
             generic_fns.structure.geometric.generate_vector_dist(structure=structure, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=inc)
-            generic_fns.structure.geometric.stitch_cap_to_cone(structure=structure, max_angle=angle, inc=inc)
+            generic_fns.structure.geometric.stitch_cap_to_cone(structure=structure, cone_start=cone_start_atom, cap_start=cap_start_atom, max_angle=angle, inc=inc)
 
         # Create the PDB file.
         print "\nGenerating the PDB file."
