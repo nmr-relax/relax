@@ -467,7 +467,7 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     tensor_pdb_file.close()
 
 
-def generate_vector_dist(structure=None, atom_id_ext='', res_name=None, res_num=None, chain_id='', centre=zeros(3, float64), R=eye(3), warp=eye(3), max_angle=None, scale=1.0, inc=20):
+def generate_vector_dist(structure=None, res_name=None, res_num=None, chain_id='', centre=zeros(3, float64), R=eye(3), warp=eye(3), max_angle=None, scale=1.0, inc=20):
     """Generate a uniformly distributed distribution of atoms on a warped sphere.
 
     The vectors from the function uniform_vect_dist_spherical_angles() are used to generate the
@@ -478,8 +478,6 @@ def generate_vector_dist(structure=None, atom_id_ext='', res_name=None, res_num=
 
     @param structure:       The structural data object.
     @type structure:        instance of class derived from Base_struct_API
-    @param atom_id_ext:     The atom identifier extension.
-    @type atom_id_ext:      str
     @param res_name:        The residue name.
     @type res_name:         str
     @param res_num:         The residue number.
@@ -502,7 +500,8 @@ def generate_vector_dist(structure=None, atom_id_ext='', res_name=None, res_num=
     """
 
     # Initial atom number.
-    atom_num = 1
+    origin_num = structure.structural_data[0].atom_num[-1]+1
+    atom_num = origin_num
 
     # Get the uniform vector distribution.
     print "    Creating the uniform vector distribution."
@@ -534,9 +533,6 @@ def generate_vector_dist(structure=None, atom_id_ext='', res_name=None, res_num=
             # Index.
             index = i + j*inc
 
-            # Atom id.
-            atom_id = 'T' + `i` + 'P' + `j` + atom_id_ext
-
             # Rotate the vector into the diffusion frame.
             vector = dot(R, vectors[index])
 
@@ -550,22 +546,19 @@ def generate_vector_dist(structure=None, atom_id_ext='', res_name=None, res_num=
             pos = centre + vector
 
             # Add the vector as a H atom of the TNS residue.
-            structure.atom_add(pdb_record='HETATM', atom_num=None, atom_name='H'+atom_id_ext, res_name=res_name, chain_id=chain_id, res_num=res_num, pos=pos, segment_id=None, element='H', struct_index=None)
+            structure.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name='H'+`atom_num`, res_name=res_name, chain_id=chain_id, res_num=res_num, pos=pos, segment_id=None, element='H', struct_index=None)
 
             # Connect to the previous atom (to generate the longitudinal lines).
             if j > j_min:
-                prev_id = 'T' + `i` + 'P' + `j-1` + atom_id_ext
-                structure.atom_connect(index1=atom_id, index2=prev_id)
+                structure.atom_connect(index1=atom_num, index2=atom_num-1)
 
             # Connect across the radial arrays (to generate the latitudinal lines).
             if i != 0:
-                neighbour_id = 'T' + `i-1` + 'P' + `j` + atom_id_ext
-                structure.atom_connect(index1=atom_id, index2=neighbour_id)
+                structure.atom_connect(index1=atom_num, index2=atom_num-j_min)
 
             # Connect the last radial array to the first (to zip up the geometric object and close the latitudinal lines).
             if i == inc-1:
-                neighbour_id = 'T' + `0` + 'P' + `j` + atom_id_ext
-                structure.atom_connect(index1=atom_id, index2=neighbour_id)
+                structure.atom_connect(index1=atom_num, index2=origin_num+j)
 
             # Increment the atom number.
             atom_num = atom_num + 1
