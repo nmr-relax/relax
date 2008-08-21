@@ -471,25 +471,25 @@ def generate_vector_dist(structure=None, res_name=None, res_num=None, chain_id='
     centred and at the head of the vector, a proton is placed.
 
 
-    @param structure:       The structural data object.
+    @keyword structure:     The structural data object.
     @type structure:        instance of class derived from Base_struct_API
-    @param res_name:        The residue name.
+    @keyword res_name:      The residue name.
     @type res_name:         str
-    @param res_num:         The residue number.
+    @keyword res_num:       The residue number.
     @type res_num:          int
-    @param chain_id:        The chain identifier.
+    @keyword chain_id:      The chain identifier.
     @type chain_id:         str
-    @param centre:          The centre of the distribution.
+    @keyword centre:        The centre of the distribution.
     @type centre:           numpy array, len 3
-    @param R:               The optional 3x3 rotation matrix.
+    @keyword R:             The optional 3x3 rotation matrix.
     @type R:                3x3 numpy array
-    @param warp:            The optional 3x3 warping matrix.
+    @keyword warp:          The optional 3x3 warping matrix.
     @type warp:             3x3 numpy array
-    @param max_angle:       The maximal polar angle, in rad, after which all vectors are skipped.
+    @keyword max_angle:     The maximal polar angle, in rad, after which all vectors are skipped.
     @type max_angle:        float
-    @param scale:           The scaling factor to stretch all rotated and warped vectors by.
+    @keyword scale:         The scaling factor to stretch all rotated and warped vectors by.
     @type scale:            float
-    @param inc:             The number of increments or number of vectors used to generate the outer
+    @keyword inc:           The number of increments or number of vectors used to generate the outer
                             edge of the cone.
     @type inc:              int
     """
@@ -549,11 +549,11 @@ def generate_vector_dist(structure=None, res_name=None, res_num=None, chain_id='
 
             # Connect across the radial arrays (to generate the latitudinal lines).
             if i != 0:
-                structure.atom_connect(index1=atom_num-1, index2=atom_num-1-j_min)
+                structure.atom_connect(index1=atom_num-1, index2=atom_num-1-j_min-2)
 
             # Connect the last radial array to the first (to zip up the geometric object and close the latitudinal lines).
             if i == inc-1:
-                structure.atom_connect(index1=atom_num-1, index2=origin_num-1+j)
+                structure.atom_connect(index1=atom_num-1, index2=origin_num-1+j+2)
 
             # Increment the atom number.
             atom_num = atom_num + 1
@@ -659,10 +659,34 @@ def stitch_cap_to_cone(structure=None, cone_start=None, cap_start=None, max_angl
     @type inc:              int
     """
 
+    # Generate the increment values of v.
+    v = zeros(inc/2+2, float64)
+    val = 1.0 / float(inc/2)
+    for i in xrange(1, inc/2+1):
+        v[i] = float(i-1) * val + val/2.0
+    v[-1] = 1.0
+
+    # Generate the distribution of spherical angles phi.
+    phi = arccos(2.0 * v - 1.0)
+
+    # Loop over the angles and find the minimum latitudinal index.
+    for j_min in xrange(len(phi)):
+        if phi[j_min] < max_angle:
+            break
+
+    print "j_min " + `j_min`
     # Loop over the radial array of vectors (change in longitude).
     for i in range(inc):
+        # Cap atom.
+        cap_atom = cap_start + i
+
+        # Dome edge atom.
+        dome_edge = cone_start + i + i*(j_min+1)
+
+        print "dome edge: " + `dome_edge` + ", cap atom: " + `cap_atom`
+
         # Connect the two atoms (to stitch up the 2 objects).
-        structure.atom_connect(index1=cone_start-1+i, index2=cap_start-1+i)
+        structure.atom_connect(index1=dome_edge-1, index2=cap_atom-1)
 
 
 def uniform_vect_dist_spherical_angles(inc=20):
