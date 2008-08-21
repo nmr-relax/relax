@@ -95,10 +95,9 @@ def cone_edge(structure=None, res_name='CON', res_num=None, apex=None, axis=None
     # Add an atom for the cone apex.
     structure.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name='APX', res_name=res_name, res_num=res_num, pos=apex, segment_id=None, element='H', struct_index=None)
 
-    # Initialise the rotation matrix, atom number, etc.
+    # Initialise the rotation matrix.
     if R == None:
         R = eye(3)
-    atom_num = 1
 
     # Get the rotation matrix.
     if axis != None:
@@ -148,9 +147,6 @@ def cone_edge(structure=None, res_name='CON', res_num=None, apex=None, axis=None
 
         # Join the atom to the cone apex.
         #structure.atom_connect(index1=atom_id, index2='Apex')
-
-        # Increment the atom number.
-        atom_num = atom_num + 1
 
 
 def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
