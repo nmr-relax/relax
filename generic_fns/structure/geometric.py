@@ -89,8 +89,11 @@ def cone_edge(structure=None, res_name='CON', res_num=None, apex=None, axis=None
     @type inc:              int
     """
 
+    # The atom numbers (and indices).
+    atom_num = structure.structural_data[0].atom_num[-1]+1
+    
     # Add an atom for the cone apex.
-    structure.atom_add(pdb_record='HETATM', atom_num=apex, atom_name='APX', res_name=res_name, res_num=res_num, pos=apex, segment_id=None, element='H', struct_index=None)
+    structure.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name='APX', res_name=res_name, res_num=res_num, pos=apex, segment_id=None, element='H', struct_index=None)
 
     # Initialise the rotation matrix, atom number, etc.
     if R == None:
@@ -103,6 +106,9 @@ def cone_edge(structure=None, res_name='CON', res_num=None, apex=None, axis=None
 
     # Loop over each vector.
     for i in xrange(inc):
+        # Increment the atom number.
+        atom_num = atom_num + 1
+
         # The azimuthal angle theta.
         theta = 2.0 * pi * float(i) / float(inc)
 
@@ -128,7 +134,7 @@ def cone_edge(structure=None, res_name='CON', res_num=None, apex=None, axis=None
         pos = apex+vector*length
 
         # Add the vector as a H atom of the cone residue.
-        structure.atom_add(pdb_record='HETATM', atom_num=atom_id, atom_name='H'+`atom_num`, res_name=res_name, res_num=res_num, pos=pos, segment_id=None, element='H', struct_index=None)
+        structure.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name='H'+`atom_num`, res_name=res_name, res_num=res_num, pos=pos, segment_id=None, element='H', struct_index=None)
 
         # Connect across the radial array (to generate the circular cone edge).
         if i != 0:
