@@ -546,15 +546,15 @@ def generate_vector_dist(structure=None, res_name=None, res_num=None, chain_id='
 
             # Connect to the previous atom (to generate the longitudinal lines).
             if j > j_min:
-                structure.atom_connect(index1=atom_num, index2=atom_num-1)
+                structure.atom_connect(index1=atom_num-1, index2=atom_num-2)
 
             # Connect across the radial arrays (to generate the latitudinal lines).
             if i != 0:
-                structure.atom_connect(index1=atom_num, index2=atom_num-j_min)
+                structure.atom_connect(index1=atom_num-1, index2=atom_num-1-j_min)
 
             # Connect the last radial array to the first (to zip up the geometric object and close the latitudinal lines).
             if i == inc-1:
-                structure.atom_connect(index1=atom_num, index2=origin_num+j)
+                structure.atom_connect(index1=atom_num-1, index2=origin_num-1+j)
 
             # Increment the atom number.
             atom_num = atom_num + 1
