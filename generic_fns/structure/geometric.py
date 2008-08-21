@@ -610,12 +610,6 @@ def generate_vector_residues(structure=None, vector=None, atom_name=None, res_na
     @rtype:                 int
     """
 
-    # The atom ID extension.
-    if chain_id:
-        atom_id_ext = '_' + chain_id
-    else:
-        atom_id_ext = ''
-
     # The atom numbers (and indices).
     origin_num = structure.structural_data[0].atom_num[-1]+1
     atom_num = structure.structural_data[0].atom_num[-1]+2
