@@ -674,7 +674,6 @@ def stitch_cap_to_cone(structure=None, cone_start=None, cap_start=None, max_angl
         if phi[j_min] < max_angle:
             break
 
-    print "j_min " + `j_min`
     # Loop over the radial array of vectors (change in longitude).
     for i in range(inc):
         # Cap atom.
@@ -682,8 +681,6 @@ def stitch_cap_to_cone(structure=None, cone_start=None, cap_start=None, max_angl
 
         # Dome edge atom.
         dome_edge = cone_start + i + i*(j_min+1)
-
-        print "dome edge: " + `dome_edge` + ", cap atom: " + `cap_atom`
 
         # Connect the two atoms (to stitch up the 2 objects).
         structure.atom_connect(index1=dome_edge-1, index2=cap_atom-1)
