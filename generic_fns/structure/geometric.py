@@ -66,34 +66,35 @@ def cone_edge(structure=None, res_name='CON', res_num=None, apex=None, axis=None
     bonded together.  This will generate an object representing the outer edge of a cone.
 
 
-    @param structure:       The structural data object.
+    @keyword structure:     The structural data object.
     @type structure:        instance of class derived from Base_struct_API
-    @param res_name:        The residue name.
+    @keyword res_name:      The residue name.
     @type res_name:         str
-    @param res_num:         The residue number.
+    @keyword res_num:       The residue number.
     @type res_num:          int
-    @param apex:            The apex of the cone.
+    @keyword apex:          The apex of the cone.
     @type apex:             numpy array, len 3
-    @param axis:            The central axis of the cone.  If supplied, then this arg will be used
+    @keyword axis:          The central axis of the cone.  If supplied, then this arg will be used
                             to construct the rotation matrix.
     @type axis:             numpy array, len 3
-    @param R:               A 3x3 rotation matrix.  If the axis arg supplied, then this matrix will
+    @keyword R:             A 3x3 rotation matrix.  If the axis arg supplied, then this matrix will
                             be ignored.
     @type R:                3x3 numpy array
-    @param angle:           The cone angle in radians.
+    @keyword angle:         The cone angle in radians.
     @type angle:            float
-    @param length:          The cone length in meters.
+    @keyword length:        The cone length in meters.
     @type length:           float
-    @param inc:             The number of increments or number of vectors used to generate the outer
+    @keyword inc:           The number of increments or number of vectors used to generate the outer
                             edge of the cone.
     @type inc:              int
     """
 
     # The atom numbers (and indices).
     atom_num = structure.structural_data[0].atom_num[-1]+1
-    
+
     # Add an atom for the cone apex.
     structure.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name='APX', res_name=res_name, res_num=res_num, pos=apex, segment_id=None, element='H', struct_index=None)
+    origin_atom = atom_num
 
     # Initialise the rotation matrix.
     if R == None:
@@ -137,16 +138,14 @@ def cone_edge(structure=None, res_name='CON', res_num=None, apex=None, axis=None
 
         # Connect across the radial array (to generate the circular cone edge).
         if i != 0:
-            neighbour_id = 'T' + `i-1`
-            #structure.atom_connect(index1=atom_id, index2=neighbour_id)
+            structure.atom_connect(index1=atom_num-1, index2=atom_num-2)
 
         # Connect the last radial array to the first (to zip up the circle).
         if i == inc-1:
-            neighbour_id = 'T' + `0`
-            #structure.atom_connect(index1=atom_id, index2=neighbour_id)
+            structure.atom_connect(index1=atom_num-1, index2=origin_atom)
 
         # Join the atom to the cone apex.
-        #structure.atom_connect(index1=atom_id, index2='Apex')
+        structure.atom_connect(index1=origin_atom-1, index2=atom_num-1)
 
 
 def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
