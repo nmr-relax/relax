@@ -24,7 +24,7 @@
 """Module for the specific analysis of the N-state dynamic model."""
 
 # Python module imports.
-from math import acos, cos, pi
+from math import acos, cos, pi, sqrt
 from minfx.generic import generic_minimise
 from numpy import array, dot, float64, identity, ones, zeros
 from numpy.linalg import inv, norm
@@ -705,6 +705,42 @@ class N_state_model(Common_functions):
         return full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame
 
 
+    def __q_factors_rdc(self):
+        """Calculate the Q-factors for the RDC data."""
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
+        # Q-factor list.
+        cdp.q_factors = []
+
+        # Loop over the alignments.
+        for i in xrange(len(ds[ds.current_pipe].align_tensors)):
+            # Init.
+            D2_sum = 0.0
+            sse = 0.0
+
+            # Spin loop.
+            for spin in spin_loop():
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
+
+                # Skip spins without RDC data.
+                if not hasattr(spin, 'rdc') or not hasattr(spin, 'rdc_bc') or spin.rdc[i] == None:
+                    continue
+
+                # Sum of squares.
+                sse = sse + (spin.rdc[i] - spin.rdc_bc[i])**2
+
+                # Sum the RDCs squared (for normalisation).
+                D2_sum = D2_sum + spin.rdc[i]**2
+
+            # The Q-factor for the alignment.
+            Q = sqrt(sse / D2_sum)
+            cdp.q_factors.append(Q)
+
+
     def __update_model(self):
         """Update the model parameters as necessary."""
 
@@ -1228,6 +1264,9 @@ class N_state_model(Common_functions):
         if 'rdc' in data_types or 'pcs' in data_types:
             # Get the final back calculated data (for the Q-factor and
             self.__minimise_bc_data(model)
+
+            # Calculate the RDC Q-factors.
+            self.__q_factors_rdc()
 
 
     def model_statistics(self, instance=None, spin_id=None, global_stats=None):
