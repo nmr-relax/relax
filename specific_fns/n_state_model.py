@@ -384,6 +384,50 @@ class N_state_model(Common_functions):
         return A, b
 
 
+    def __minimise_bc_data(self, model):
+        """Extract and unpack the back calculated data.
+
+        @param model:   The instantiated class containing the target function.
+        @type model:    class instance
+        """
+
+        # Loop over each alignment.
+        for i in xrange(model.num_align):
+            # Indices.
+            pcs_index = 0
+            rdc_index = 0
+
+            # Spin loop.
+            for spin in spin_loop():
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
+
+                # Spins with PCS data.
+                if hasattr(spin, 'pcs'):
+                    # Initialise the data structure if necessary.
+                    if not hasattr(spin, 'pcs_bc'):
+                        spin.pcs_bc = []
+
+                    # Append the back calculated PCS.
+                    spin.pcs_bc.append(model.deltaij_theta[i, pcs_index])
+
+                    # Increment the RDC index.
+                    pcs_index = pcs_index + 1
+
+                # Spins with RDC data.
+                if hasattr(spin, 'rdc'):
+                    # Initialise the data structure if necessary.
+                    if not hasattr(spin, 'rdc_bc'):
+                        spin.rdc_bc = []
+
+                    # Append the back calculated PCS.
+                    spin.rdc_bc.append(model.Dij_theta[i, rdc_index])
+
+                    # Increment the RDC index.
+                    rdc_index = rdc_index + 1
+
+
     def __minimise_setup_pcs(self):
         """Set up the data structures for optimisation using PCSs as base data sets.
 
@@ -1179,6 +1223,11 @@ class N_state_model(Common_functions):
 
             # Warning.
             cdp.warning = warning
+
+        # Statistical analysis.
+        if 'rdc' in data_types or 'pcs' in data_types:
+            # Get the final back calculated data (for the Q-factor and
+            self.__minimise_bc_data(model)
 
 
     def model_statistics(self, instance=None, spin_id=None, global_stats=None):
