@@ -258,24 +258,24 @@ def write(x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot
         raise RelaxNoSimError, self.run
 
     # Open the file for writing.
-    self.file = open_write_file(file, dir, force)
+    file = open_write_file(file, dir, force)
 
     # Function type.
     function_type = ds.run_types[ds.run_names.index(run)]
 
     # Specific value and error, conversion factor, and units returning functions.
-    self.x_return_units =             self.y_return_units =             self.relax.specific_setup.setup('return_units', function_type)
-    self.x_return_grace_string =      self.y_return_grace_string =      self.relax.specific_setup.setup('return_grace_string', function_type)
+    x_return_units =             y_return_units =             get_specific_fn('return_units', ds[ds.current_pipe].pipe_type)
+    x_return_grace_string =      y_return_grace_string =      get_specific_fn('return_grace_string', ds[ds.current_pipe].pipe_type)
 
     # Test if the X-axis data type is a minimisation statistic.
-    if self.x_data_type != 'res' and self.relax.generic.minimise.return_data_name(self.x_data_type):
-        self.x_return_units = self.relax.generic.minimise.return_units
-        self.x_return_grace_string = self.relax.generic.minimise.return_grace_string
+    if x_data_type != 'res' and generic_fns.minimise.return_data_name(x_data_type):
+        x_return_units = generic_fns.minimise.return_units
+        x_return_grace_string = generic_fns.minimise.return_grace_string
 
     # Test if the Y-axis data type is a minimisation statistic.
-    if self.relax.generic.minimise.return_data_name(self.y_data_type):
-        self.y_return_units = self.relax.generic.minimise.return_units
-        self.y_return_grace_string = self.relax.generic.minimise.return_grace_string
+    if generic_fns.minimise.return_data_name(y_data_type):
+        y_return_units = generic_fns.minimise.return_units
+        y_return_grace_string = generic_fns.minimise.return_grace_string
 
     # Get the data.
     data = get_data(spin_id)
@@ -307,226 +307,290 @@ def write(x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot
         self.write_data()
 
     # Close the file.
-    self.file.close()
+    file.close()
 
 
-def write_data():
-    """Write the data into the grace file."""
+def write_data(data, file=None, graph_type=None):
+    """Write the data into the Grace file.
+
+    @param data:            The graph numerical data.
+    @type data:             list of lists of float
+    @keyword file:          The file object to write the data to.
+    @type file:             file object
+    @keyword graph_type:    The graph type which can be one of xy, xydy, xydx, or xydxdy.
+    @type graph_type:       str
+    """
 
     # First graph and data set (graph 0, set 0).
-    self.file.write("@target G0.S0\n")
-    self.file.write("@type " + self.graph_type + "\n")
+    file.write("@target G0.S0\n")
+    file.write("@type " + graph_type + "\n")
 
     # Loop over the data.
-    for i in xrange(len(self.data)):
+    for i in xrange(len(data)):
         # Graph type xy.
-        if self.graph_type == 'xy':
+        if graph_type == 'xy':
             # Write the data.
-            self.file.write("%-30s%-30s\n" % (self.data[i][2], self.data[i][4]))
+            file.write("%-30s%-30s\n" % (data[i][2], data[i][4]))
 
         # Graph type xydy.
-        elif self.graph_type == 'xydy':
+        elif graph_type == 'xydy':
             # Catch y-axis errors of None.
-            y_error = self.data[i][5]
+            y_error = data[i][5]
             if y_error == None:
                 y_error = 0.0
 
             # Write the data.
-            self.file.write("%-30s%-30s%-30s\n" % (self.data[i][2], self.data[i][4], y_error))
+            file.write("%-30s%-30s%-30s\n" % (data[i][2], data[i][4], y_error))
 
         # Graph type xydxdy.
-        elif self.graph_type == 'xydxdy':
+        elif graph_type == 'xydxdy':
             # Catch x-axis errors of None.
-            x_error = self.data[i][3]
+            x_error = data[i][3]
             if x_error == None:
                 x_error = 0.0
 
             # Catch y-axis errors of None.
-            y_error = self.data[i][5]
+            y_error = data[i][5]
             if y_error == None:
                 y_error = 0.0
 
             # Write the data.
-            self.file.write("%-30s%-30s%-30s%-30s\n" % (self.data[i][2], self.data[i][4], x_error, y_error))
+            file.write("%-30s%-30s%-30s%-30s\n" % (data[i][2], data[i][4], x_error, y_error))
 
     # End of graph and data set.
-    self.file.write("&\n")
+    file.write("&\n")
 
 
-def write_header():
-    """Write the grace header."""
+def write_header(file=None, x_data_type=None, y_data_type=None, x_return_units=None, y_return_units=None, x_return_grace_string=None, y_return_grace_string=None):
+    """Write the grace header.
+
+    @keyword file:                  The file object to write the data to.
+    @type file:                     file object
+    @keyword x_data_type:           The category of the X-axis data.
+    @type x_data_type:              str
+    @keyword y_data_type:           The category of the Y-axis data.
+    @type y_data_type:              str
+    @keyword x_return_units:        The analysis specific function for returning the Grace formatted
+                                    units string for the X-axis.
+    @type x_return_units:           function
+    @keyword y_return_units:        The analysis specific function for returning the Grace formatted
+                                    units string for the Y-axis.
+    @type y_return_units:           function
+    @keyword x_return_grace_string: The analysis specific function for returning the Grace X-axis
+                                    string.
+    @type x_return_grace_string:    function
+    @keyword y_return_grace_string: The analysis specific function for returning the Grace Y-axis
+                                    string.
+    @type y_return_grace_string:    function
+    """
 
     # Graph G0.
-    self.file.write("@with g0\n")
+    file.write("@with g0\n")
 
     # X axis start and end.
-    if self.x_data_type == 'res':
-        self.file.write("@    world xmin " + `cdp.res[0].num - 1` + "\n")
-        self.file.write("@    world xmax " + `cdp.res[-1].num + 1` + "\n")
+    if x_data_type == 'res':
+        file.write("@    world xmin " + `cdp.res[0].num - 1` + "\n")
+        file.write("@    world xmax " + `cdp.res[-1].num + 1` + "\n")
 
     # X-axis label.
-    if self.x_data_type == 'res':
-        self.file.write("@    xaxis  label \"Residue number\"\n")
+    if x_data_type == 'res':
+        file.write("@    xaxis  label \"Residue number\"\n")
     else:
         # Get the units.
-        units = self.x_return_units(self.x_data_type)
+        units = x_return_units(x_data_type)
 
         # Label.
         if units:
-            self.file.write("@    xaxis  label \"" + self.x_return_grace_string(self.x_data_type) + "\\N (" + units + ")\"\n")
+            file.write("@    xaxis  label \"" + x_return_grace_string(x_data_type) + "\\N (" + units + ")\"\n")
         else:
-            self.file.write("@    xaxis  label \"" + self.x_return_grace_string(self.x_data_type) + "\"\n")
+            file.write("@    xaxis  label \"" + x_return_grace_string(x_data_type) + "\"\n")
 
     # X-axis specific settings.
-    self.file.write("@    xaxis  label char size 1.48\n")
-    self.file.write("@    xaxis  tick major size 0.75\n")
-    self.file.write("@    xaxis  tick major linewidth 0.5\n")
-    self.file.write("@    xaxis  tick minor linewidth 0.5\n")
-    self.file.write("@    xaxis  tick minor size 0.45\n")
-    self.file.write("@    xaxis  ticklabel char size 1.00\n")
+    file.write("@    xaxis  label char size 1.48\n")
+    file.write("@    xaxis  tick major size 0.75\n")
+    file.write("@    xaxis  tick major linewidth 0.5\n")
+    file.write("@    xaxis  tick minor linewidth 0.5\n")
+    file.write("@    xaxis  tick minor size 0.45\n")
+    file.write("@    xaxis  ticklabel char size 1.00\n")
 
     # Y-axis label.
-    units = self.y_return_units(self.y_data_type)
+    units = y_return_units(y_data_type)
     if units:
-        self.file.write("@    yaxis  label \"" + self.y_return_grace_string(self.y_data_type) + "\\N (" + units + ")\"\n")
+        file.write("@    yaxis  label \"" + y_return_grace_string(y_data_type) + "\\N (" + units + ")\"\n")
     else:
-        self.file.write("@    yaxis  label \"" + self.y_return_grace_string(self.y_data_type) + "\"\n")
+        file.write("@    yaxis  label \"" + y_return_grace_string(y_data_type) + "\"\n")
 
     # Y-axis specific settings.
-    self.file.write("@    yaxis  label char size 1.48\n")
-    self.file.write("@    yaxis  tick major size 0.75\n")
-    self.file.write("@    yaxis  tick major linewidth 0.5\n")
-    self.file.write("@    yaxis  tick minor linewidth 0.5\n")
-    self.file.write("@    yaxis  tick minor size 0.45\n")
-    self.file.write("@    yaxis  ticklabel char size 1.00\n")
+    file.write("@    yaxis  label char size 1.48\n")
+    file.write("@    yaxis  tick major size 0.75\n")
+    file.write("@    yaxis  tick major linewidth 0.5\n")
+    file.write("@    yaxis  tick minor linewidth 0.5\n")
+    file.write("@    yaxis  tick minor size 0.45\n")
+    file.write("@    yaxis  ticklabel char size 1.00\n")
 
     # Frame.
-    self.file.write("@    frame linewidth 0.5\n")
+    file.write("@    frame linewidth 0.5\n")
 
     # Symbols.
-    self.file.write("@    s0 symbol 1\n")
-    self.file.write("@    s0 symbol size 0.45\n")
-    self.file.write("@    s0 symbol fill pattern 1\n")
-    self.file.write("@    s0 symbol linewidth 0.5\n")
-    self.file.write("@    s0 line linestyle 0\n")
+    file.write("@    s0 symbol 1\n")
+    file.write("@    s0 symbol size 0.45\n")
+    file.write("@    s0 symbol fill pattern 1\n")
+    file.write("@    s0 symbol linewidth 0.5\n")
+    file.write("@    s0 line linestyle 0\n")
 
     # Error bars.
-    self.file.write("@    s0 errorbar size 0.5\n")
-    self.file.write("@    s0 errorbar linewidth 0.5\n")
-    self.file.write("@    s0 errorbar riser linewidth 0.5\n")
+    file.write("@    s0 errorbar size 0.5\n")
+    file.write("@    s0 errorbar linewidth 0.5\n")
+    file.write("@    s0 errorbar riser linewidth 0.5\n")
 
 
-def write_multi_data():
-    """Write the data into the grace file."""
+def write_multi_data(data, file=None, graph_type=None, norm=False):
+    """Write the data into the Grace file.
+
+    @param data:            The graph numerical data.
+    @type data:             list of lists of float
+    @keyword file:          The file object to write the data to.
+    @type file:             file object
+    @keyword graph_type:    The graph type which can be one of xy, xydy, xydx, or xydxdy.
+    @type graph_type:       str
+    @keyword norm:          The normalisation flag which if set to True will cause all graphs to be
+                            normalised to 1.
+    @type norm:             bool
+    """
 
     # Loop over the data.
-    for i in xrange(len(self.data)):
+    for i in xrange(len(data)):
         # Multi data set (graph 0, set i).
-        self.file.write("@target G0.S" + `i` + "\n")
-        self.file.write("@type " + self.graph_type + "\n")
+        file.write("@target G0.S" + `i` + "\n")
+        file.write("@type " + graph_type + "\n")
 
         # Normalisation.
         norm_fact = 1.0
-        if self.norm:
-            norm_fact = self.data[i][4][0]
+        if norm:
+            norm_fact = data[i][4][0]
 
         # Loop over the data of the set.
-        for j in xrange(len(self.data[i][2])):
+        for j in xrange(len(data[i][2])):
             # Graph type xy.
-            if self.graph_type == 'xy':
+            if graph_type == 'xy':
                 # Write the data.
-                self.file.write("%-30s%-30s\n" % (self.data[i][2][j], self.data[i][4][j]/norm_fact))
+                file.write("%-30s%-30s\n" % (data[i][2][j], data[i][4][j]/norm_fact))
 
             # Graph type xydy.
-            elif self.graph_type == 'xydy':
+            elif graph_type == 'xydy':
                 # Catch y-axis errors of None.
-                y_error = self.data[i][5][j]
+                y_error = data[i][5][j]
                 if y_error == None:
                     y_error = 0.0
 
                 # Write the data.
-                self.file.write("%-30s%-30s%-30s\n" % (self.data[i][2][j], self.data[i][4][j]/norm_fact, y_error/norm_fact))
+                file.write("%-30s%-30s%-30s\n" % (data[i][2][j], data[i][4][j]/norm_fact, y_error/norm_fact))
 
             # Graph type xydxdy.
-            elif self.graph_type == 'xydxdy':
+            elif graph_type == 'xydxdy':
                 # Catch x-axis errors of None.
-                x_error = self.data[i][3][j]
+                x_error = data[i][3][j]
                 if x_error == None:
                     x_error = 0.0
 
                 # Catch y-axis errors of None.
-                y_error = self.data[i][5][j]
+                y_error = data[i][5][j]
                 if y_error == None:
                     y_error = 0.0
 
                 # Write the data.
-                self.file.write("%-30s%-30s%-30s%-30s\n" % (self.data[i][2][j], self.data[i][4][j]/norm_fact, x_error, y_error/norm_fact))
+                file.write("%-30s%-30s%-30s%-30s\n" % (data[i][2][j], data[i][4][j]/norm_fact, x_error, y_error/norm_fact))
 
         # End of the data set i.
-        self.file.write("&\n")
+        file.write("&\n")
 
 
-def write_multi_header():
-    """Write the grace header."""
+def write_multi_header(data, file=None, x_data_type=None, y_data_type=None, x_return_units=None, y_return_units=None, x_return_grace_string=None, y_return_grace_string=None, norm=False):
+    """Write the grace header.
+
+    @param data:                    The graph numerical data.
+    @type data:                     list of lists of float
+    @keyword file:                  The file object to write the data to.
+    @type file:                     file object
+    @keyword x_data_type:           The category of the X-axis data.
+    @type x_data_type:              str
+    @keyword y_data_type:           The category of the Y-axis data.
+    @type y_data_type:              str
+    @keyword x_return_units:        The analysis specific function for returning the Grace formatted
+                                    units string for the X-axis.
+    @type x_return_units:           function
+    @keyword y_return_units:        The analysis specific function for returning the Grace formatted
+                                    units string for the Y-axis.
+    @type y_return_units:           function
+    @keyword x_return_grace_string: The analysis specific function for returning the Grace X-axis
+                                    string.
+    @type x_return_grace_string:    function
+    @keyword y_return_grace_string: The analysis specific function for returning the Grace Y-axis
+                                    string.
+    @type y_return_grace_string:    function
+    @keyword norm:                  The normalisation flag which if set to True will cause all
+                                    graphs to be normalised to 1.
+    @type norm:                     bool
+    """
 
     # Graph G0.
-    self.file.write("@with g0\n")
+    file.write("@with g0\n")
 
     # X axis start and end.
-    if self.x_data_type == 'res':
-        self.file.write("@    world xmin " + `cdp.res[0].num - 1` + "\n")
-        self.file.write("@    world xmax " + `cdp.res[-1].num + 1` + "\n")
+    if x_data_type == 'res':
+        file.write("@    world xmin " + `cdp.res[0].num - 1` + "\n")
+        file.write("@    world xmax " + `cdp.res[-1].num + 1` + "\n")
 
     # X-axis label.
-    if self.x_data_type == 'res':
-        self.file.write("@    xaxis  label \"Residue number\"\n")
+    if x_data_type == 'res':
+        file.write("@    xaxis  label \"Residue number\"\n")
     else:
         # Get the units.
-        units = self.x_return_units(self.x_data_type)
+        units = x_return_units(x_data_type)
 
         # Label.
         if units:
-            self.file.write("@    xaxis  label \"" + self.x_return_grace_string(self.x_data_type) + "\\N (" + units + ")\"\n")
+            file.write("@    xaxis  label \"" + x_return_grace_string(x_data_type) + "\\N (" + units + ")\"\n")
         else:
-            self.file.write("@    xaxis  label \"" + self.x_return_grace_string(self.x_data_type) + "\"\n")
+            file.write("@    xaxis  label \"" + x_return_grace_string(x_data_type) + "\"\n")
 
     # X-axis specific settings.
-    self.file.write("@    xaxis  label char size 1.48\n")
-    self.file.write("@    xaxis  tick major size 0.75\n")
-    self.file.write("@    xaxis  tick major linewidth 0.5\n")
-    self.file.write("@    xaxis  tick minor linewidth 0.5\n")
-    self.file.write("@    xaxis  tick minor size 0.45\n")
-    self.file.write("@    xaxis  ticklabel char size 1.00\n")
+    file.write("@    xaxis  label char size 1.48\n")
+    file.write("@    xaxis  tick major size 0.75\n")
+    file.write("@    xaxis  tick major linewidth 0.5\n")
+    file.write("@    xaxis  tick minor linewidth 0.5\n")
+    file.write("@    xaxis  tick minor size 0.45\n")
+    file.write("@    xaxis  ticklabel char size 1.00\n")
 
     # Y-axis label.
-    units = self.y_return_units(self.y_data_type)
-    string = "@    yaxis  label \"" + self.y_return_grace_string(self.y_data_type)
+    units = y_return_units(y_data_type)
+    string = "@    yaxis  label \"" + y_return_grace_string(y_data_type)
     if units:
         string = string + "\\N (" + units + ")"
-    if self.norm:
+    if norm:
         string = string + " \\q(normalised)\\Q"
-    self.file.write(string + "\"\n")
+    file.write(string + "\"\n")
 
     # Y-axis specific settings.
-    self.file.write("@    yaxis  label char size 1.48\n")
-    self.file.write("@    yaxis  tick major size 0.75\n")
-    self.file.write("@    yaxis  tick major linewidth 0.5\n")
-    self.file.write("@    yaxis  tick minor linewidth 0.5\n")
-    self.file.write("@    yaxis  tick minor size 0.45\n")
-    self.file.write("@    yaxis  ticklabel char size 1.00\n")
+    file.write("@    yaxis  label char size 1.48\n")
+    file.write("@    yaxis  tick major size 0.75\n")
+    file.write("@    yaxis  tick major linewidth 0.5\n")
+    file.write("@    yaxis  tick minor linewidth 0.5\n")
+    file.write("@    yaxis  tick minor size 0.45\n")
+    file.write("@    yaxis  ticklabel char size 1.00\n")
 
     # Legend box.
-    self.file.write("@    legend off\n")
+    file.write("@    legend off\n")
 
     # Frame.
-    self.file.write("@    frame linewidth 0.5\n")
+    file.write("@    frame linewidth 0.5\n")
 
     # Loop over the data sets.
-    for i in xrange(len(self.data)):
+    for i in xrange(len(data)):
         # Error bars.
-        self.file.write("@    s%i errorbar size 0.5\n" % i)
-        self.file.write("@    s%i errorbar linewidth 0.5\n" % i)
-        self.file.write("@    s%i errorbar riser linewidth 0.5\n" % i)
+        file.write("@    s%i errorbar size 0.5\n" % i)
+        file.write("@    s%i errorbar linewidth 0.5\n" % i)
+        file.write("@    s%i errorbar riser linewidth 0.5\n" % i)
 
         # Legend.
-        self.file.write("@    s%i legend \"Residue %s\"\n" % (i, self.data[i][1] + " " + `self.data[i][0]`))
+        file.write("@    s%i legend \"Residue %s\"\n" % (i, data[i][1] + " " + `data[i][0]`))
