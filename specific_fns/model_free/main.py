@@ -1603,7 +1603,7 @@ class Model_free_main:
                 global_index = global_index + 1
 
                 # Yield the spin index.
-                yield index
+                yield global_index
 
 
     def model_setup(self, model=None, equation=None, params=None, spin_id=None):
