@@ -634,7 +634,8 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
         cdp.rdc_ids = []
 
     # Add the RDC id string.
-    cdp.rdc_ids.append(id)
+    if id not in cdp.rdc_ids:
+        cdp.rdc_ids.append(id)
 
 
     # Spin specific data.

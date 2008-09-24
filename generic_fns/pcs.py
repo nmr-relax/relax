@@ -677,7 +677,8 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
         cdp.pcs_ids = []
 
     # Add the PCS id string.
-    cdp.pcs_ids.append(id)
+    if id not in cdp.pcs_ids:
+        cdp.pcs_ids.append(id)
 
 
     # Spin specific data.
