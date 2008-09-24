@@ -487,7 +487,8 @@ class Test_mol_res_spin(TestCase):
         """
 
         # Test the number of spins counted.
-        self.assertEqual(mol_res_spin.count_spins(), 7)
+        self.assertEqual(mol_res_spin.count_spins(), 3)
+        self.assertEqual(mol_res_spin.count_spins(skip_desel=False), 7)
         self.assertEqual(mol_res_spin.count_spins(selection='@N5'), 2)
 
 
