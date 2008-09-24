@@ -620,9 +620,9 @@ def generate_vector_residues(structure=None, vector=None, atom_name=None, res_na
         structure.atom_connect(index1=atom_neg_num-1, index2=origin_num-1)
 
     # Add another atom to allow the axis labels to be shifted just outside of the vector itself.
-    structure.atom_add(pdb_record='HETATM', atom_num=atom_neg_num, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+label_placement*vector*scale, segment_id=None, element='N', struct_index=None)
+    structure.atom_add(pdb_record='HETATM', atom_num=atom_num+2, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+label_placement*vector*scale, segment_id=None, element='N', struct_index=None)
     if neg:
-        structure.atom_add(pdb_record='HETATM', atom_num=atom_neg_num_ext, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, segment_id=None, element='N', struct_index=None)
+        structure.atom_add(pdb_record='HETATM', atom_num=atom_neg_num+2, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, segment_id=None, element='N', struct_index=None)
 
     # Print out.
     print "    " + atom_name + " vector (scaled + shifted to origin): " + `origin+vector*scale`
