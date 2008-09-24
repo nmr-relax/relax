@@ -1593,16 +1593,18 @@ class Model_free_main:
         # Spin specific models.
         else:
             # Loop over the spins.
-            for index in spin_index_loop():
-                # Get the spin container.
-                spin = return_spin_from_index(index)
-
+            global_index = -1
+            for spin in spin_loop():
                 # Skip deselected spins.
                 if not spin.select:
                     continue
 
+                # Increment the global spin index.
+                global_index = global_index + 1
+
                 # Yield the spin index.
                 yield index
+
 
     def model_setup(self, model=None, equation=None, params=None, spin_id=None):
         """Function for updating various data structures depending on the model selected.
