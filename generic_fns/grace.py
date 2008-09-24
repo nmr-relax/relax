@@ -57,11 +57,11 @@ def determine_graph_type(data, x_data_type=None, plot_data=None):
     # Loop over the data.
     for i in xrange(len(data)):
         # X-axis errors.
-        if x_data_type != 'res' and data[i][3] != None:
+        if x_data_type != 'spin' and data[i][-3] != None:
             x_errors = 1
 
         # Y-axis errors.
-        if data[i][5] != None:
+        if data[i][-1] != None:
             y_errors = 1
 
     # Plot of values.
@@ -84,8 +84,8 @@ def determine_graph_type(data, x_data_type=None, plot_data=None):
 
     # Plot of errors.
     elif plot_data == 'error':
-        # xy plot of residue number vs error.
-        if x_data_type == 'res' and y_errors:
+        # xy plot of spin vs error.
+        if x_data_type == 'spin' and y_errors:
             graph_type = 'xy'
 
         # xy plot of error vs error.
@@ -128,17 +128,17 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
     x_return_conversion_factor = y_return_conversion_factor = get_specific_fn('return_conversion_factor', ds[ds.current_pipe].pipe_type)
 
     # Test if the X-axis data type is a minimisation statistic.
-    if x_data_type != 'res' and generic_fns.minimise.return_data_name(x_data_type):
+    if x_data_type != 'spin' and generic_fns.minimise.return_data_name(x_data_type):
         x_return_value = generic_fns.minimise.return_value
         x_return_conversion_factor = generic_fns.minimise.return_conversion_factor
 
     # Test if the Y-axis data type is a minimisation statistic.
-    if y_data_type != 'res' and generic_fns.minimise.return_data_name(y_data_type):
+    if y_data_type != 'spin' and generic_fns.minimise.return_data_name(y_data_type):
         y_return_value = generic_fns.minimise.return_value
         y_return_conversion_factor = generic_fns.minimise.return_conversion_factor
 
-    # Loop over the residues.
-    for spin in spin_loop(spin_id):
+    # Loop over the spins.
+    for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
         # Skip deselected spins.
         if not spin.select:
             continue
@@ -151,41 +151,41 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
 
         # Loop over the data points.
         for j in xrange(points):
-            # Initialise an empty array for the individual residue data.
-            spin_data = [spin.num, spin.name, None, None, None, None]
+            # Initialise an empty array for the individual spin data.
+            spin_data = [mol_name, res_num, res_name, spin.num, spin.name, None, None, None, None]
 
-            # Residue number on the x-axis.
-            if x_data_type == 'res':
-                spin_data[2] = spin.num
+            # Spin ID string on the x-axis.
+            if x_data_type == 'spin':
+                spin_data[-4] = spin_id
 
             # Parameter value for the x-axis.
             else:
                 # Get the x-axis values and errors.
                 if plot_data == 'sim':
-                    spin_data[2], spin_data[3] = x_return_value(spin, x_data_type, sim=j)
+                    spin_data[-4], spin_data[-3] = x_return_value(spin, x_data_type, sim=j)
                 else:
-                    spin_data[2], spin_data[3] = x_return_value(spin, x_data_type)
+                    spin_data[-4], spin_data[-3] = x_return_value(spin, x_data_type)
 
             # Get the y-axis values and errors.
             if plot_data == 'sim':
-                spin_data[4], spin_data[5] = y_return_value(spin, y_data_type, sim=j)
+                spin_data[-2], spin_data[-1] = y_return_value(spin, y_data_type, sim=j)
             else:
-                spin_data[4], spin_data[5] = y_return_value(spin, y_data_type)
+                spin_data[-2], spin_data[-1] = y_return_value(spin, y_data_type)
 
-            # Go to the next residue if there is missing data.
-            if spin_data[2] == None or spin_data[4] == None:
+            # Go to the next spin if there is missing data.
+            if spin_data[-4] == None or spin_data[-2] == None:
                 continue
 
             # X-axis conversion factors.
-            if x_data_type != 'res':
-                spin_data[2] = array(spin_data[2]) / x_return_conversion_factor(x_data_type)
-                if spin_data[3]:
-                    spin_data[3] = array(spin_data[3]) / x_return_conversion_factor(x_data_type)
+            if x_data_type != 'spin':
+                spin_data[-4] = array(spin_data[-4]) / x_return_conversion_factor(x_data_type)
+                if spin_data[-3]:
+                    spin_data[-3] = array(spin_data[-3]) / x_return_conversion_factor(x_data_type)
 
             # Y-axis conversion factors.
-            spin_data[4] = array(spin_data[4]) / y_return_conversion_factor(y_data_type)
-            if spin_data[5]:
-                spin_data[5] = array(spin_data[5]) / y_return_conversion_factor(y_data_type)
+            spin_data[-2] = array(spin_data[-2]) / y_return_conversion_factor(y_data_type)
+            if spin_data[-1]:
+                spin_data[-1] = array(spin_data[-1]) / y_return_conversion_factor(y_data_type)
 
             # Append the array to the full data structure.
             data.append(spin_data)
@@ -216,7 +216,7 @@ def view(file=None, dir=None, grace_exe='xmgrace'):
     system(grace_exe + " " + file_path + " &")
 
 
-def write(x_data_type='res', y_data_type=None, spin_id=None, plot_data='value', file=None, dir=None, force=False, norm=True):
+def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value', file=None, dir=None, force=False, norm=True):
     """Writing data to a file.
 
     @keyword x_data_type:   The category of the X-axis data.
@@ -263,7 +263,7 @@ def write(x_data_type='res', y_data_type=None, spin_id=None, plot_data='value', 
     x_return_grace_string =      y_return_grace_string =      get_specific_fn('return_grace_string', ds[ds.current_pipe].pipe_type)
 
     # Test if the X-axis data type is a minimisation statistic.
-    if x_data_type != 'res' and generic_fns.minimise.return_data_name(x_data_type):
+    if x_data_type != 'spin' and generic_fns.minimise.return_data_name(x_data_type):
         x_return_units = generic_fns.minimise.return_units
         x_return_grace_string = generic_fns.minimise.return_grace_string
 
@@ -281,7 +281,7 @@ def write(x_data_type='res', y_data_type=None, spin_id=None, plot_data='value', 
     # Test for multiple data sets.
     multi = True
     try:
-        len(data[0][2])
+        len(data[0][-4])
     except TypeError:
         multi = False
 
@@ -325,32 +325,32 @@ def write_data(data, file=None, graph_type=None):
         # Graph type xy.
         if graph_type == 'xy':
             # Write the data.
-            file.write("%-30s%-30s\n" % (data[i][2], data[i][4]))
+            file.write("%-30s%-30s\n" % (data[i][-4], data[i][-2]))
 
         # Graph type xydy.
         elif graph_type == 'xydy':
             # Catch y-axis errors of None.
-            y_error = data[i][5]
+            y_error = data[i][-1]
             if y_error == None:
                 y_error = 0.0
 
             # Write the data.
-            file.write("%-30s%-30s%-30s\n" % (data[i][2], data[i][4], y_error))
+            file.write("%-30s%-30s%-30s\n" % (data[i][-4], data[i][-2], y_error))
 
         # Graph type xydxdy.
         elif graph_type == 'xydxdy':
             # Catch x-axis errors of None.
-            x_error = data[i][3]
+            x_error = data[i][-3]
             if x_error == None:
                 x_error = 0.0
 
             # Catch y-axis errors of None.
-            y_error = data[i][5]
+            y_error = data[i][-1]
             if y_error == None:
                 y_error = 0.0
 
             # Write the data.
-            file.write("%-30s%-30s%-30s%-30s\n" % (data[i][2], data[i][4], x_error, y_error))
+            file.write("%-30s%-30s%-30s%-30s\n" % (data[i][-4], data[i][-2], x_error, y_error))
 
     # End of graph and data set.
     file.write("&\n")
@@ -382,15 +382,35 @@ def write_header(file=None, x_data_type=None, y_data_type=None, x_return_units=N
     # Graph G0.
     file.write("@with g0\n")
 
-    # X axis start and end.
-    if x_data_type == 'res':
-        file.write("@    world xmin " + `cdp.res[0].num - 1` + "\n")
-        file.write("@    world xmax " + `cdp.res[-1].num + 1` + "\n")
+    # X-axis set up.
+    if x_data_type == 'spin':
+        # Determine the sequence data type.
+        seq_type = determine_seq_type(data)
 
-    # X-axis label.
-    if x_data_type == 'res':
-        file.write("@    xaxis  label \"Residue number\"\n")
-    else:
+        # Residue only data.
+        if seq_type == 'res':
+            # Axis limits.
+            file.write("@    world xmin " + `ds[ds.current_pipe].mol[0].res[0].num - 1` + "\n")
+            file.write("@    world xmax " + `ds[ds.current_pipe].mol[0].res[-1].num + 1` + "\n")
+
+            # X-axis label.
+            file.write("@    xaxis  label \"Residue number\"\n")
+
+        # Spin only data.
+        if seq_type == 'spin':
+            # Axis limits.
+            file.write("@    world xmin " + `ds[ds.current_pipe].mol[0].res[0].spin[0].num - 1` + "\n")
+            file.write("@    world xmax " + `ds[ds.current_pipe].mol[0].res[0].spin[-1].num + 1` + "\n")
+
+            # X-axis label.
+            file.write("@    xaxis  label \"Spin number\"\n")
+
+        # Mixed data.
+        if seq_type == 'mixed':
+            # X-axis label.
+            file.write("@    xaxis  label \"Spin identification string\"\n")
+
+     else:
         # Get the units.
         units = x_return_units(x_data_type)
 
@@ -462,39 +482,39 @@ def write_multi_data(data, file=None, graph_type=None, norm=False):
         # Normalisation.
         norm_fact = 1.0
         if norm:
-            norm_fact = data[i][4][0]
+            norm_fact = data[i][-2][0]
 
         # Loop over the data of the set.
-        for j in xrange(len(data[i][2])):
+        for j in xrange(len(data[i][-4])):
             # Graph type xy.
             if graph_type == 'xy':
                 # Write the data.
-                file.write("%-30s%-30s\n" % (data[i][2][j], data[i][4][j]/norm_fact))
+                file.write("%-30s%-30s\n" % (data[i][-4][j], data[i][-2][j]/norm_fact))
 
             # Graph type xydy.
             elif graph_type == 'xydy':
                 # Catch y-axis errors of None.
-                y_error = data[i][5][j]
+                y_error = data[i][-1][j]
                 if y_error == None:
                     y_error = 0.0
 
                 # Write the data.
-                file.write("%-30s%-30s%-30s\n" % (data[i][2][j], data[i][4][j]/norm_fact, y_error/norm_fact))
+                file.write("%-30s%-30s%-30s\n" % (data[i][-4][j], data[i][-2][j]/norm_fact, y_error/norm_fact))
 
             # Graph type xydxdy.
             elif graph_type == 'xydxdy':
                 # Catch x-axis errors of None.
-                x_error = data[i][3][j]
+                x_error = data[i][-3][j]
                 if x_error == None:
                     x_error = 0.0
 
                 # Catch y-axis errors of None.
-                y_error = data[i][5][j]
+                y_error = data[i][-1][j]
                 if y_error == None:
                     y_error = 0.0
 
                 # Write the data.
-                file.write("%-30s%-30s%-30s%-30s\n" % (data[i][2][j], data[i][4][j]/norm_fact, x_error, y_error/norm_fact))
+                file.write("%-30s%-30s%-30s%-30s\n" % (data[i][-4][j], data[i][-2][j]/norm_fact, x_error, y_error/norm_fact))
 
         # End of the data set i.
         file.write("&\n")
@@ -531,14 +551,34 @@ def write_multi_header(data, file=None, x_data_type=None, y_data_type=None, x_re
     # Graph G0.
     file.write("@with g0\n")
 
-    # X axis start and end.
-    if x_data_type == 'res':
-        file.write("@    world xmin " + `cdp.res[0].num - 1` + "\n")
-        file.write("@    world xmax " + `cdp.res[-1].num + 1` + "\n")
+    # X-axis set up.
+    if x_data_type == 'spin':
+        # Determine the sequence data type.
+        seq_type = determine_seq_type(data)
 
-    # X-axis label.
-    if x_data_type == 'res':
-        file.write("@    xaxis  label \"Residue number\"\n")
+        # Residue only data.
+        if seq_type == 'res':
+            # Axis limits.
+            file.write("@    world xmin " + `ds[ds.current_pipe].mol[0].res[0].num - 1` + "\n")
+            file.write("@    world xmax " + `ds[ds.current_pipe].mol[0].res[-1].num + 1` + "\n")
+
+            # X-axis label.
+            file.write("@    xaxis  label \"Residue number\"\n")
+
+        # Spin only data.
+        if seq_type == 'spin':
+            # Axis limits.
+            file.write("@    world xmin " + `ds[ds.current_pipe].mol[0].res[0].spin[0].num - 1` + "\n")
+            file.write("@    world xmax " + `ds[ds.current_pipe].mol[0].res[0].spin[-1].num + 1` + "\n")
+
+            # X-axis label.
+            file.write("@    xaxis  label \"Spin number\"\n")
+
+        # Mixed data.
+        if seq_type == 'mixed':
+            # X-axis label.
+            file.write("@    xaxis  label \"Spin identification string\"\n")
+
     else:
         # Get the units.
         units = x_return_units(x_data_type)
@@ -588,4 +628,4 @@ def write_multi_header(data, file=None, x_data_type=None, y_data_type=None, x_re
         file.write("@    s%i errorbar riser linewidth 0.5\n" % i)
 
         # Legend.
-        file.write("@    s%i legend \"Residue %s\"\n" % (i, data[i][1] + " " + `data[i][0]`))
+        file.write("@    s%i legend \"Spin %s\"\n" % (i, data[i][5]))
