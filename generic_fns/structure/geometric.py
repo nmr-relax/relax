@@ -229,7 +229,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         CoM = centre_of_mass()
 
         # Add the central atom.
-        structure.atom_add(pdb_record='HETATM', atom_num=None, atom_name='R'+atom_id_ext, res_name='COM', chain_id=chain_id, res_num=res_num, pos=CoM, segment_id=None, element='C', struct_index=None)
+        structure.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R'+atom_id_ext, res_name='COM', chain_id=chain_id, res_num=res_num, pos=CoM, segment_id=None, element='C', struct_index=None)
 
         # Increment the residue number.
         res_num = res_num + 1
