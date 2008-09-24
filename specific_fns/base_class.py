@@ -382,6 +382,27 @@ class Common_functions:
                     sim_object.append(deepcopy(getattr(spin, object_name)))
 
 
+    def sim_return_chi2(self, spin, index=None):
+        """Return the simulation chi-squared values.
+
+        @param spin:    The spin container.
+        @type spin:     SpinContainer instance
+        @keyword index: The optional simulation index.
+        @type index:    int
+        @return:        The list of simulation chi-squared values.  If the index is supplied, only
+                        a single value will be returned.
+        @rtype:         list of float or float
+        """
+
+        # Index.
+        if index != None:
+            return spin.chi2_sim[index]
+
+        # List of vals.
+        else:
+            return spin.chi2_sim
+
+
     def sim_return_param(self, instance, index):
         """Return the array of simulation parameter values.
  
