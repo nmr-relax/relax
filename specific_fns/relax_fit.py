@@ -1184,17 +1184,14 @@ class Relax_fit(Common_functions):
         """
 
 
-    def set_selected_sim(self, instance, select_sim):
+    def set_selected_sim(self, spin, select_sim):
         """Set the simulation selection flag for the spin.
 
-        @param instance:    The optimisation instance index.
-        @type instance:     int
+        @param spin:        The spin container.
+        @type spin:         SpinContainer instance
         @param select_sim:  The selection flag for the simulations.
         @type select_sim:   bool
         """
-
-        # Get the SpinContainer.
-        spin = return_spin_from_index(instance)
 
         # Multiple spins.
         spin.select_sim = select_sim
