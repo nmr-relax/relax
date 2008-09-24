@@ -30,7 +30,7 @@ from warnings import warn
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns.structure.mass import centre_of_mass
-from internal import Internal
+from internal import Internal, Structure_container
 from maths_fns.rotation_matrix import R_2vect
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
 from relax_io import open_write_file
@@ -180,6 +180,9 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
 
     # Create the structural object.
     structure = Internal()
+
+    # Add a structure.
+    structure.structural_data.append(Structure_container())
 
     # Loop over the pipes.
     for pipe_index in xrange(len(pipes)):
