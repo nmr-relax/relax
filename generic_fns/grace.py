@@ -162,15 +162,15 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
             else:
                 # Get the x-axis values and errors.
                 if plot_data == 'sim':
-                    spin_data[2], spin_data[3] = x_return_value(i, x_data_type, sim=j)
+                    spin_data[2], spin_data[3] = x_return_value(spin, x_data_type, sim=j)
                 else:
-                    spin_data[2], spin_data[3] = x_return_value(i, x_data_type)
+                    spin_data[2], spin_data[3] = x_return_value(spin, x_data_type)
 
             # Get the y-axis values and errors.
             if plot_data == 'sim':
-                spin_data[4], spin_data[5] = y_return_value(i, y_data_type, sim=j)
+                spin_data[4], spin_data[5] = y_return_value(spin, y_data_type, sim=j)
             else:
-                spin_data[4], spin_data[5] = y_return_value(i, y_data_type)
+                spin_data[4], spin_data[5] = y_return_value(spin, y_data_type)
 
             # Go to the next residue if there is missing data.
             if spin_data[2] == None or spin_data[4] == None:
