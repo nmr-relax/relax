@@ -281,7 +281,7 @@ def write(x_data_type='res', y_data_type=None, spin_id=None, plot_data='value', 
     # Test for multiple data sets.
     multi = True
     try:
-        len(self.data[0][2])
+        len(data[0][2])
     except TypeError:
         multi = False
 
