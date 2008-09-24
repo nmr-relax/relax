@@ -289,6 +289,19 @@ class Common_functions:
             raise RelaxError, "Do not know how to handle the non-spin specific parameters " + `param` + " with the values " + `value`
 
 
+    def set_selected_sim(self, spin, select_sim):
+        """Set the simulation selection flag for the spin.
+
+        @param spin:        The spin container.
+        @type spin:         SpinContainer instance
+        @param select_sim:  The selection flag for the simulations.
+        @type select_sim:   bool
+        """
+
+        # Set the array.
+        spin.select_sim = select_sim
+
+
     def set_update(self, param, spin):
         """Dummy function to do nothing!
 

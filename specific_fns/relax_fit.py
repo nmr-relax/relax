@@ -1184,19 +1184,6 @@ class Relax_fit(Common_functions):
         """
 
 
-    def set_selected_sim(self, spin, select_sim):
-        """Set the simulation selection flag for the spin.
-
-        @param spin:        The spin container.
-        @type spin:         SpinContainer instance
-        @param select_sim:  The selection flag for the simulations.
-        @type select_sim:   bool
-        """
-
-        # Multiple spins.
-        spin.select_sim = select_sim
-
-
     def sim_pack_data(self, spin_id, sim_data):
         """Pack the Monte Carlo simulation data.
 
