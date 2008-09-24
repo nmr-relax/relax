@@ -374,7 +374,7 @@ class Selection(object):
 
         # The selection object is an intersection.
         elif self._intersect:
-            return self._intersect[0].contains_spin(spin_num, spin_name, res_num, res_name, mol) and self._intersect[1].contains_spin(spin_num, spin_name, res_num, res_name, mol)
+            return self._intersect[0].contains_spin(spin_num, spin_name, res_num, res_name, mol) or self._intersect[1].contains_spin(spin_num, spin_name, res_num, res_name, mol)
 
         # Does it contain the molecule.
         select_mol = self.contains_mol(mol)
