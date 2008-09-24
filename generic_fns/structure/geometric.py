@@ -66,36 +66,39 @@ def cone_edge(structure=None, res_name='CON', res_num=None, apex=None, axis=None
     bonded together.  This will generate an object representing the outer edge of a cone.
 
 
-    @param structure:       The structural data object.
+    @keyword structure:     The structural data object.
     @type structure:        instance of class derived from Base_struct_API
-    @param res_name:        The residue name.
+    @keyword res_name:      The residue name.
     @type res_name:         str
-    @param res_num:         The residue number.
+    @keyword res_num:       The residue number.
     @type res_num:          int
-    @param apex:            The apex of the cone.
+    @keyword apex:          The apex of the cone.
     @type apex:             numpy array, len 3
-    @param axis:            The central axis of the cone.  If supplied, then this arg will be used
+    @keyword axis:          The central axis of the cone.  If supplied, then this arg will be used
                             to construct the rotation matrix.
     @type axis:             numpy array, len 3
-    @param R:               A 3x3 rotation matrix.  If the axis arg supplied, then this matrix will
+    @keyword R:             A 3x3 rotation matrix.  If the axis arg supplied, then this matrix will
                             be ignored.
     @type R:                3x3 numpy array
-    @param angle:           The cone angle in radians.
+    @keyword angle:         The cone angle in radians.
     @type angle:            float
-    @param length:          The cone length in meters.
+    @keyword length:        The cone length in meters.
     @type length:           float
-    @param inc:             The number of increments or number of vectors used to generate the outer
+    @keyword inc:           The number of increments or number of vectors used to generate the outer
                             edge of the cone.
     @type inc:              int
     """
 
-    # Add an atom for the cone apex.
-    structure.atom_add(pdb_record='HETATM', atom_num=Apex, atom_name='APX', res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=apex, segment_id=None, element='H', struct_index=None)
+    # The atom numbers (and indices).
+    atom_num = structure.structural_data[0].atom_num[-1]+1
 
-    # Initialise the rotation matrix, atom number, etc.
+    # Add an atom for the cone apex.
+    structure.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name='APX', res_name=res_name, res_num=res_num, pos=apex, segment_id=None, element='H', struct_index=None)
+    origin_atom = atom_num
+
+    # Initialise the rotation matrix.
     if R == None:
         R = eye(3)
-    atom_num = 1
 
     # Get the rotation matrix.
     if axis != None:
@@ -103,6 +106,9 @@ def cone_edge(structure=None, res_name='CON', res_num=None, apex=None, axis=None
 
     # Loop over each vector.
     for i in xrange(inc):
+        # Increment the atom number.
+        atom_num = atom_num + 1
+
         # The azimuthal angle theta.
         theta = 2.0 * pi * float(i) / float(inc)
 
@@ -128,23 +134,18 @@ def cone_edge(structure=None, res_name='CON', res_num=None, apex=None, axis=None
         pos = apex+vector*length
 
         # Add the vector as a H atom of the cone residue.
-        structure.atom_add(pdb_record='HETATM', atom_num=atom_id, atom_name='H'+`atom_num`, res_name=res_name, chain_id=chain_id, res_num=res_num, pos=pos, segment_id=None, element='H', struct_index=None)
+        structure.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name='H'+`atom_num`, res_name=res_name, res_num=res_num, pos=pos, segment_id=None, element='H', struct_index=None)
 
         # Connect across the radial array (to generate the circular cone edge).
         if i != 0:
-            neighbour_id = 'T' + `i-1`
-            structure.atom_connect(index1=atom_id, index2=neighbour_id)
+            structure.atom_connect(index1=atom_num-1, index2=atom_num-2)
 
         # Connect the last radial array to the first (to zip up the circle).
         if i == inc-1:
-            neighbour_id = 'T' + `0`
-            structure.atom_connect(index1=atom_id, index2=neighbour_id)
+            structure.atom_connect(index1=atom_num-1, index2=origin_atom)
 
         # Join the atom to the cone apex.
-        structure.atom_connect(index1=atom_id, index2='Apex')
-
-        # Increment the atom number.
-        atom_num = atom_num + 1
+        structure.atom_connect(index1=origin_atom-1, index2=atom_num-1)
 
 
 def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
@@ -461,7 +462,7 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     tensor_pdb_file.close()
 
 
-def generate_vector_dist(structure=None, atom_id_ext='', res_name=None, res_num=None, chain_id='', centre=zeros(3, float64), R=eye(3), warp=eye(3), max_angle=None, scale=1.0, inc=20):
+def generate_vector_dist(structure=None, res_name=None, res_num=None, chain_id='', centre=zeros(3, float64), R=eye(3), warp=eye(3), max_angle=None, scale=1.0, inc=20):
     """Generate a uniformly distributed distribution of atoms on a warped sphere.
 
     The vectors from the function uniform_vect_dist_spherical_angles() are used to generate the
@@ -470,33 +471,32 @@ def generate_vector_dist(structure=None, atom_id_ext='', res_name=None, res_num=
     centred and at the head of the vector, a proton is placed.
 
 
-    @param structure:       The structural data object.
+    @keyword structure:     The structural data object.
     @type structure:        instance of class derived from Base_struct_API
-    @param atom_id_ext:     The atom identifier extension.
-    @type atom_id_ext:      str
-    @param res_name:        The residue name.
+    @keyword res_name:      The residue name.
     @type res_name:         str
-    @param res_num:         The residue number.
+    @keyword res_num:       The residue number.
     @type res_num:          int
-    @param chain_id:        The chain identifier.
+    @keyword chain_id:      The chain identifier.
     @type chain_id:         str
-    @param centre:          The centre of the distribution.
+    @keyword centre:        The centre of the distribution.
     @type centre:           numpy array, len 3
-    @param R:               The optional 3x3 rotation matrix.
+    @keyword R:             The optional 3x3 rotation matrix.
     @type R:                3x3 numpy array
-    @param warp:            The optional 3x3 warping matrix.
+    @keyword warp:          The optional 3x3 warping matrix.
     @type warp:             3x3 numpy array
-    @param max_angle:       The maximal polar angle, in rad, after which all vectors are skipped.
+    @keyword max_angle:     The maximal polar angle, in rad, after which all vectors are skipped.
     @type max_angle:        float
-    @param scale:           The scaling factor to stretch all rotated and warped vectors by.
+    @keyword scale:         The scaling factor to stretch all rotated and warped vectors by.
     @type scale:            float
-    @param inc:             The number of increments or number of vectors used to generate the outer
+    @keyword inc:           The number of increments or number of vectors used to generate the outer
                             edge of the cone.
     @type inc:              int
     """
 
     # Initial atom number.
-    atom_num = 1
+    origin_num = structure.structural_data[0].atom_num[-1]+1
+    atom_num = origin_num
 
     # Get the uniform vector distribution.
     print "    Creating the uniform vector distribution."
@@ -528,9 +528,6 @@ def generate_vector_dist(structure=None, atom_id_ext='', res_name=None, res_num=
             # Index.
             index = i + j*inc
 
-            # Atom id.
-            atom_id = 'T' + `i` + 'P' + `j` + atom_id_ext
-
             # Rotate the vector into the diffusion frame.
             vector = dot(R, vectors[index])
 
@@ -544,22 +541,19 @@ def generate_vector_dist(structure=None, atom_id_ext='', res_name=None, res_num=
             pos = centre + vector
 
             # Add the vector as a H atom of the TNS residue.
-            structure.atom_add(pdb_record='HETATM', atom_num=None, atom_name='H'+atom_id_ext, res_name=res_name, chain_id=chain_id, res_num=res_num, pos=pos, segment_id=None, element='H', struct_index=None)
+            structure.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name='H'+`atom_num`, res_name=res_name, chain_id=chain_id, res_num=res_num, pos=pos, segment_id=None, element='H', struct_index=None)
 
             # Connect to the previous atom (to generate the longitudinal lines).
             if j > j_min:
-                prev_id = 'T' + `i` + 'P' + `j-1` + atom_id_ext
-                structure.atom_connect(index1=atom_id, index2=prev_id)
+                structure.atom_connect(index1=atom_num-1, index2=atom_num-2)
 
             # Connect across the radial arrays (to generate the latitudinal lines).
             if i != 0:
-                neighbour_id = 'T' + `i-1` + 'P' + `j` + atom_id_ext
-                structure.atom_connect(index1=atom_id, index2=neighbour_id)
+                structure.atom_connect(index1=atom_num-1, index2=atom_num-1-j_min-2)
 
             # Connect the last radial array to the first (to zip up the geometric object and close the latitudinal lines).
             if i == inc-1:
-                neighbour_id = 'T' + `0` + 'P' + `j` + atom_id_ext
-                structure.atom_connect(index1=atom_id, index2=neighbour_id)
+                structure.atom_connect(index1=atom_num-1, index2=origin_num-1+j+2)
 
             # Increment the atom number.
             atom_num = atom_num + 1
@@ -604,26 +598,25 @@ def generate_vector_residues(structure=None, vector=None, atom_name=None, res_na
     @rtype:                 int
     """
 
-    # The atom ID extension.
-    if chain_id:
-        atom_id_ext = '_' + chain_id
-    else:
-        atom_id_ext = ''
+    # The atom numbers (and indices).
+    origin_num = structure.structural_data[0].atom_num[-1]+1
+    atom_num = structure.structural_data[0].atom_num[-1]+2
+    atom_neg_num = structure.structural_data[0].atom_num[-1]+3
 
     # The origin atom.
-    structure.atom_add(pdb_record='HETATM', atom_num='R_vect'+atom_id_ext, atom_name='R', res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin, segment_id=None, element='C', struct_index=None)
+    structure.atom_add(pdb_record='HETATM', atom_num=origin_num, atom_name='R', res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin, segment_id=None, element='C', struct_index=None)
 
     # Create the PDB residue representing the vector.
-    structure.atom_add(pdb_record='HETATM', atom_num=atom_name+atom_id_ext, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+vector*scale, segment_id=None, element='C', struct_index=None)
-    structure.atom_connect(index1=atom_name+atom_id_ext, index2='R_vect'+atom_id_ext)
+    structure.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+vector*scale, segment_id=None, element='C', struct_index=None)
+    structure.atom_connect(index1=atom_num-1, index2=origin_num-1)
     if neg:
-        structure.atom_add(pdb_record='HETATM', atom_num=atom_name+'_neg'+atom_id_ext, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+vector*scale, segment_id=None, element='C', struct_index=None)
-        structure.atom_connect(index1=atom_name+'_neg'+atom_id_ext, index2='R_vect'+atom_id_ext)
+        structure.atom_add(pdb_record='HETATM', atom_num=atom_neg_num, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+vector*scale, segment_id=None, element='C', struct_index=None)
+        structure.atom_connect(index1=atom_neg_num-1, index2=origin_num-1)
 
     # Add another atom to allow the axis labels to be shifted just outside of the vector itself.
-    structure.atom_add(pdb_record='HETATM', atom_num='vect label'+atom_id_ext, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+label_placement*vector*scale, segment_id=None, element='N', struct_index=None)
+    structure.atom_add(pdb_record='HETATM', atom_num=atom_neg_num, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+label_placement*vector*scale, segment_id=None, element='N', struct_index=None)
     if neg:
-        structure.atom_add(pdb_record='HETATM', atom_num='vect neg label'+atom_id_ext, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, segment_id=None, element='N', struct_index=None)
+        structure.atom_add(pdb_record='HETATM', atom_num=atom_neg_num_ext, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, segment_id=None, element='N', struct_index=None)
 
     # Print out.
     print "    " + atom_name + " vector (scaled + shifted to origin): " + `origin+vector*scale`
@@ -634,31 +627,34 @@ def generate_vector_residues(structure=None, vector=None, atom_name=None, res_na
         for i in xrange(sim_vectors):
             # Increment the residue number, so each simulation is a new residue.
             res_num = res_num + 1
-
-            # Modify the atom_id for each simulation.
-            atom_id_ext_sim = atom_id_ext + '_sim' + `i`
+    
+            # The atom numbers (and indices).
+            atom_num = structure.structural_data[0].atom_num[-1]+1
+            atom_neg_num = structure.structural_data[0].atom_num[-1]+2
 
             # Create the PDB residue representing the vector.
-            structure.atom_add(pdb_record='HETATM', atom_num=atom_name+atom_id_ext_sim, atom_name=atom_name, res_name=res_name_sim, chain_id=chain_id, res_num=res_num, pos=origin+sim_vectors[i]*scale, segment_id=None, element='C', struct_index=None)
-            structure.atom_connect(index1=atom_name+atom_id_ext_sim, index2='R_vect'+atom_id_ext_sim)
+            structure.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name=atom_name, res_name=res_name_sim, chain_id=chain_id, res_num=res_num, pos=origin+sim_vectors[i]*scale, segment_id=None, element='C', struct_index=None)
+            structure.atom_connect(index1=atom_num-1, index2=origin_num-1)
             if neg:
-                structure.atom_add(pdb_record='HETATM', atom_num=atom_name+'_neg'+atom_id_ext_sim, atom_name=atom_name, res_name=res_name_sim, chain_id=chain_id, res_num=res_num, pos=origin-sim_vectors[i]*scale, segment_id=None, element='C', struct_index=None)
-                structure.atom_connect(index1=atom_name+'_neg'+atom_id_ext_sim, index2='R_vect'+atom_id_ext_sim)
+                structure.atom_add(pdb_record='HETATM', atom_num=atom_num+1, atom_name=atom_name, res_name=res_name_sim, chain_id=chain_id, res_num=res_num, pos=origin-sim_vectors[i]*scale, segment_id=None, element='C', struct_index=None)
+                structure.atom_connect(index1=atom_neg_num-1, index2=origin_num-1)
 
     # Return the new residue number.
     return res_num
 
 
-def stitch_cap_to_cone(structure=None, atom_id_ext='', max_angle=None, inc=None):
+def stitch_cap_to_cone(structure=None, cone_start=None, cap_start=None, max_angle=None, inc=None):
     """Function for stitching the cap of a cone to the cone edge, in the PDB representations.
 
-    @param structure:       The structural data object.
+    @keyword structure:     The structural data object.
     @type structure:        instance of class derived from Base_struct_API
-    @param atom_id_ext:     The atom identifier extension.
-    @type atom_id_ext:      str
-    @param max_angle:       The maximal polar angle, in rad, after which all vectors are skipped.
+    @keyword cone_start:    The starting atom number of the cone residue.
+    @type cone_start:       int
+    @keyword cap_start:     The starting atom number of the cap residue.
+    @type cap_start:        int
+    @keyword max_angle:     The maximal polar angle, in rad, after which all vectors are skipped.
     @type max_angle:        float
-    @param inc:             The number of increments or number of vectors used to generate the outer
+    @keyword inc:           The number of increments or number of vectors used to generate the outer
                             edge of the cone.
     @type inc:              int
     """
@@ -680,14 +676,14 @@ def stitch_cap_to_cone(structure=None, atom_id_ext='', max_angle=None, inc=None)
 
     # Loop over the radial array of vectors (change in longitude).
     for i in range(inc):
-        # Cap atom id.
-        cap_atom_id = 'T' + `i` + 'P' + `j_min` + atom_id_ext
+        # Cap atom.
+        cap_atom = cap_start + i
 
-        # Cone edge atom id.
-        edge_atom_id = 'T' + `i` + atom_id_ext
+        # Dome edge atom.
+        dome_edge = cone_start + i + i*(j_min+1)
 
         # Connect the two atoms (to stitch up the 2 objects).
-        structure.atom_connect(index1=edge_atom_id, index2=cap_atom_id)
+        structure.atom_connect(index1=dome_edge-1, index2=cap_atom-1)
 
 
 def uniform_vect_dist_spherical_angles(inc=20):

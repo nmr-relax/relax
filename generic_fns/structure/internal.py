@@ -236,7 +236,10 @@ class Internal(Base_struct_API):
         for i in xrange(len(lines)):
             # A new model record.
             if search('^MODEL', lines[i]):
-                model = int(split(lines[i])[1])
+                try:
+                    model = int(split(lines[i])[1])
+                except:
+                    raise RelaxError, "The MODEL record " + `lines[i]` + " is corrupt, cannot read the PDB file."
 
             # Skip all records prior to the first ATOM or HETATM record.
             if not (search('^ATOM', lines[i]) or search('^HETATM', lines[i])) and not len(records):
