@@ -489,7 +489,7 @@ class Consistency_tests(Common_functions):
         cdp.ct_frq = frq
 
 
-    def set_error(self, error, index, spin):
+    def set_error(self, spin, index, error):
         """Function for setting parameter errors."""
 
         # Return J(0) sim data.
