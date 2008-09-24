@@ -238,7 +238,7 @@ class Grace:
             raise RelaxBoolError, ('normalisation flag', norm)
 
         # Execute the functional code.
-        grace.write(x_data_type=x_data_type, y_data_type=y_data_type, res_num=res_num, res_name=res_name, plot_data=plot_data, file=file, dir=dir, force=force, norm=norm)
+        grace.write(x_data_type=x_data_type, y_data_type=y_data_type, spin_id=spin_id, plot_data=plot_data, file=file, dir=dir, force=force, norm=norm)
 
 
 
