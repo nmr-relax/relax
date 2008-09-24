@@ -516,9 +516,12 @@ def generate_vector_dist(structure=None, res_name=None, res_num=None, chain_id='
     phi = arccos(2.0 * v - 1.0)
 
     # Loop over the angles and find the minimum latitudinal index.
-    for j_min in xrange(len(phi)):
-        if phi[j_min] < max_angle:
-            break
+    if max_angle == None:
+        j_min = -1
+    else:
+        for j_min in xrange(len(phi)):
+            if phi[j_min] < max_angle:
+                break
 
     # Loop over the radial array of vectors (change in longitude).
     for i in range(inc):
