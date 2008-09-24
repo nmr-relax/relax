@@ -309,11 +309,9 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
     graph_type = determine_graph_type(data, x_data_type=x_data_type, plot_data=plot_data)
 
     # Test for multiple data sets.
-    multi = True
-    try:
-        len(data[0][-4])
-    except TypeError:
-        multi = False
+    multi = False
+    if type(data[0][-4]) == list:
+        multi = True
 
     # Multiple data sets.
     if multi:
