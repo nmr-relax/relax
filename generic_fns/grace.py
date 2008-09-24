@@ -195,16 +195,25 @@ def get_data(spin_id=None, plot_data=None):
 
 
 def view(file=None, dir=None, grace_exe='xmgrace'):
-    """Function for running Grace."""
+    """Execute Grace.
+
+    @keyword file:      The name of the file to open in Grace.
+    @type file:         str
+    @keyword dir:       The optional directory containing the file.
+    @type dir:          str
+    @keyword grace_exe: The name of the Grace executable file.  This should be located within the
+                        system path.
+    @type grace_exe:    str
+    """
 
     # Test the binary file string corresponds to a valid executable.
     test_binary(grace_exe)
 
     # File path.
-    self.file_path = get_file_path(file, dir)
+    file_path = get_file_path(file, dir)
 
     # Run Grace.
-    system(grace_exe + " " + self.file_path + " &")
+    system(grace_exe + " " + file_path + " &")
 
 
 def write(x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot_data='value', norm=1, file=None, dir=None, force=False):
