@@ -115,22 +115,21 @@ class Common_functions:
         """Default generator method for looping over the models.
 
         In this case only a single model per spin system is assumed.  Hence the yielded data is the
-        spin ID string.
+        spin container object.
 
 
-        @return:    Information about the model which for this analysis is the spin identification
-                    string.
-        @rtype:     str
+        @return:    Information about the model which for this analysis is the spin container.
+        @rtype:     SpinContainer instance
         """
 
         # Loop over the sequence.
-        for spin, spin_id in spin_loop(return_id=True):
+        for spin in spin_loop():
             # Skip deselected spins.
             if not spin.select:
                 continue
 
-            # Yield the spin ID string.
-            yield spin_id
+            # Yield the spin container.
+            yield spin
 
 
     def num_instances(self):
