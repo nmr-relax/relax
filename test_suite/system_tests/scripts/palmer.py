@@ -3,6 +3,9 @@
 # Python module imports.
 import sys
 
+# relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
+
 
 # Set the stage of analysis.
 #
@@ -44,13 +47,13 @@ def exec_stage_1(runs):
         model_free.select_model(model=name)
 
         # Create the Modelfree4 files.
-        palmer.create(dir=name, force=True, sims=0)
+        palmer.create(dir=ds.tmpdir + '/' + name, force=True, sims=0)
 
         # Run Modelfree4.
-        palmer.execute(dir=name, force=True)
+        palmer.execute(dir=ds.tmpdir + '/' + name, force=True)
 
     # Save the program state.
-    state.save('stage1.save', force=True)
+    state.save(state='stage1.save', dir_name=ds.tmpdir, force=True)
 
 
 def exec_stage_2(runs):
@@ -83,7 +86,7 @@ def exec_stage_2(runs):
     results.write(file='results', force=True)
 
     # Save the program state.
-    state.save('stage2.save', force=True)
+    state.save(state='stage2.save', dir_name=ds.tmpdir, force=True)
 
 
 def exec_stage_3():
@@ -111,7 +114,7 @@ def exec_stage_3():
     palmer.extract(dir='final')
 
     # Save the program state.
-    state.save('stage3.save', force=True)
+    state.save(state='stage3.save', dir_name=ds.tmpdir, force=True)
 
 
 # Main section of the script.

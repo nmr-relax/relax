@@ -27,6 +27,7 @@ from re import match
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxArgNotInListError, RelaxError, RelaxInvalidDataError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRegExpError
+from relax_io import open_write_file
 
 
 class Noe:
@@ -392,7 +393,7 @@ class Noe:
             raise RelaxNoSequenceError
 
         # Open the file for writing.
-        noe_file = self.relax.IO.open_write_file(file, dir, force)
+        noe_file = open_write_file(file, dir, force)
 
         # Write the data.
         self.relax.generic.value.write_data(self.run, None, noe_file, return_value=self.return_value)

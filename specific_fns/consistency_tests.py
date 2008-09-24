@@ -28,7 +28,7 @@ from string import replace
 # relax module imports.
 from base_class import Common_functions
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
 from maths_fns.consistency_tests import Consistency
 from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
@@ -148,7 +148,7 @@ class Consistency_tests(Common_functions):
             # Monte Carlo simulated consistency tests values.
             else:
                 # Initialise the simulation data structures.
-                self.spin_init(spin, sim=1)
+                self.data_init(spin, sim=1)
                 if spin.j0_sim == None:
                     spin.j0_sim = []
                     spin.f_eta_sim = []
@@ -158,6 +158,23 @@ class Consistency_tests(Common_functions):
                 spin.j0_sim.append(j0)
                 spin.f_eta_sim.append(f_eta)
                 spin.f_r2_sim.append(f_r2)
+
+
+    def create_mc_data(self, spin_id):
+        """Return the Ri data structure for the corresponding spin.
+
+        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
+                        method.
+        @type spin_id:  str
+        @return:        The Monte Carlo simulation data.
+        @rtype:         list of floats
+        """
+
+        # Get the spin container.
+        spin = return_spin(spin_id)
+
+        # Return the data.
+        return spin.relax_data
 
 
     def data_init(self, data, sim=0):
@@ -509,22 +526,42 @@ class Consistency_tests(Common_functions):
         return spin.select_sim
 
 
-    def set_selected_sim(self, select_sim, spin):
-        """Function for returning the array of selected simulation flags."""
+    def set_selected_sim(self, model_index, select_sim):
+        """Set the array of selected simulation flags.
 
-        # Multiple spins.
+        @param model_index: The global spin index, covering the molecule, residue, and spin
+                            indices).
+        @type model_index:  int
+        @param select_sim:  The selection flags.
+        @type select_sim:   bool
+        """
+
+        # Get the spin container.
+        spin = return_spin_from_index(model_index)
+
+        # Set the simulation flags.
         spin.select_sim = select_sim
 
 
-    def sim_pack_data(self, spin, sim_data):
-        """Function for packing Monte Carlo simulation data."""
+    def sim_pack_data(self, spin_id, sim_data):
+        """Pack the Monte Carlo simulation data.
+
+        @param spin_id:     The spin identification string, as yielded by the base_data_loop()
+                            generator method.
+        @type spin_id:      str
+        @param sim_data:    The Monte Carlo simulation data.
+        @type sim_data:     list of float
+        """
+
+        # Get the spin container.
+        spin = return_spin(spin_id)
 
         # Test if the simulation data already exists.
-        if hasattr(ds.res[run][i], 'relax_sim_data'):
+        if hasattr(spin, 'relax_sim_data'):
             raise RelaxError, "Monte Carlo simulation data already exists."
 
         # Create the data structure.
-        ds.res[run][i].relax_sim_data = sim_data
+        spin.relax_sim_data = sim_data
 
 
     def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, heteronuc_type=None, wH=None, j0=None, f_eta=None, f_r2=None, r=None, csa=None, orientation=None, tc=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):

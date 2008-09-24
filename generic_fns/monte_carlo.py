@@ -64,27 +64,25 @@ def create_data(method=None):
         raise RelaxError, "The simulation creation method " + `method` + " is not valid."
 
     # Specific Monte Carlo data creation, data return, and error return function setup.
-    create_mc_data = get_specific_fn('create_mc_data', cdp.pipe_type)
+    base_data_loop = get_specific_fn('base_data_loop', cdp.pipe_type)
+    if method == 'back_calc':
+        create_mc_data = get_specific_fn('create_mc_data', cdp.pipe_type)
     return_data = get_specific_fn('return_data', cdp.pipe_type)
     return_error = get_specific_fn('return_error', cdp.pipe_type)
     pack_sim_data = get_specific_fn('pack_sim_data', cdp.pipe_type)
 
-    # Loop over the sequence.
-    for spin in spin_loop():
-        # Skip deselected residues.
-        if not spin.select:
-            continue
-
+    # Loop over the models.
+    for data_index in base_data_loop():
         # Create the Monte Carlo data.
         if method == 'back_calc':
-            data = create_mc_data(spin)
+            data = create_mc_data(data_index)
 
         # Get the original data.
         else:
-            data = return_data(spin)
+            data = return_data(data_index)
 
         # Get the errors.
-        error = return_error(spin)
+        error = return_error(data_index)
 
         # Loop over the Monte Carlo simulations.
         random = []
@@ -101,7 +99,7 @@ def create_data(method=None):
                 random[j].append(gauss(data[k], error[k]))
 
         # Pack the simulation data.
-        pack_sim_data(spin, random)
+        pack_sim_data(data_index, random)
 
 
 def error_analysis(prune=0.0):
@@ -138,21 +136,18 @@ def error_analysis(prune=0.0):
     if not hasattr(cdp, 'sim_state'):
         raise RelaxError, "Monte Carlo simulations have not been set up."
 
-    # Specific number of instances, return simulation chi2 array, return selected simulation array, return simulation parameter array, and set error functions.
-    count_num_instances = get_specific_fn('num_instances', cdp.pipe_type)
+    # Model loop, return simulation chi2 array, return selected simulation array, return simulation parameter array, and set error functions.
+    model_loop = get_specific_fn('model_loop', cdp.pipe_type)
     if prune > 0.0:
         return_sim_chi2 = get_specific_fn('return_sim_chi2', cdp.pipe_type)
     return_selected_sim = get_specific_fn('return_selected_sim', cdp.pipe_type)
     return_sim_param = get_specific_fn('return_sim_param', cdp.pipe_type)
     set_error = get_specific_fn('set_error', cdp.pipe_type)
 
-    # Count the number of instances.
-    num_instances = count_num_instances()
-
-    # Loop over the instances.
-    for instance in xrange(num_instances):
+    # Loop over the models.
+    for model_info in model_loop():
         # Get the selected simulation array.
-        select_sim = return_selected_sim(instance)
+        select_sim = return_selected_sim(model_info)
 
         # Initialise an array of indices to prune (an empty array means no pruning).
         indices_to_skip = []
@@ -160,7 +155,7 @@ def error_analysis(prune=0.0):
         # Pruning.
         if prune > 0.0:
             # Get the array of simulation chi-squared values.
-            chi2_array = return_sim_chi2(instance)
+            chi2_array = return_sim_chi2(model_info)
 
             # The total number of simulations.
             n = len(chi2_array)
@@ -184,7 +179,7 @@ def error_analysis(prune=0.0):
         index = 0
         while 1:
             # Get the array of simulation parameters for the index.
-            param_array = return_sim_param(instance, index)
+            param_array = return_sim_param(model_info, index)
 
             # Break (no more parameters).
             if param_array == None:
@@ -251,7 +246,7 @@ def error_analysis(prune=0.0):
                 sd = None
 
             # Set the parameter error.
-            set_error(instance, index, sd)
+            set_error(model_info, index, sd)
 
             # Increment the parameter index.
             index = index + 1

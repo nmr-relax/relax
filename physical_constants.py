@@ -26,6 +26,7 @@
 
 # Python module imports.
 from math import pi
+from string import upper
 
 # relax module imports.
 from relax_errors import RelaxError
@@ -116,6 +117,9 @@ ArO = 15.9994
 ArS = 32.065
 """Sulphur atomic mass."""
 
+ArCa = 40.078
+"""Calcium atomic mass."""
+
 
 # Function for returning the desired atomic mass.
 def return_atomic_mass(element=None):
@@ -163,6 +167,10 @@ def return_atomic_mass(element=None):
     # Sulphurs.
     if element == 'S':
         return ArS
+
+    # Calcium.
+    if upper(element) == 'CA':
+        return ArCa
 
     # Unknown mass.
     raise RelaxError, "The mass of the element " + `element` + " has not yet been programmed into relax."
