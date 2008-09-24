@@ -196,29 +196,34 @@ class Consistency_tests(Common_functions):
                 setattr(data, name, None)
 
 
-    def data_names(self):
-        """Function for returning a list of names of data structures.
+    def data_names(self, set=None, error_names=False, sim_names=False):
+        """Return a list of all spin container specific consistency testing object names.
 
         Description
-        ~~~~~~~~~~~
+        ===========
 
-        r:  Bond length.
+        The names are as follows:
 
-        csa:  CSA value.
+            r:  Bond length.
+            csa:  CSA value.
+            heteronuc_type:  The heteronucleus type.
+            orientation:  Angle between the 15N-1H vector and the principal axis of the 15N chemical
+                          shift tensor.
+            tc:  Correlation time.
+            j0:  Spectral density value at 0 MHz.
+            f_eta:  Eta-test (from Fushman D. et al. (1998) JACS, 120: 10947-10952).
+            f_r2:  R2-test (from Fushman D. et al. (1998) JACS, 120: 10947-10952).
 
-        heteronuc_type:  The heteronucleus type.
 
-        orientation:  Angle between the 15N-1H vector and the principal axis of the 15N chemical
-                      shift tensor.
-
-        tc:  Correlation time.
-
-        j0:  Spectral density value at 0 MHz.
-
-        f_eta:  Eta-test (from Fushman D. et al. (1998) JACS, 120: 10947-10952).
-
-        f_r2:  R2-test (from Fushman D. et al. (1998) JACS, 120: 10947-10952).
-
+        @keyword set:           An unused variable.
+        @type set:              ignored
+        @keyword error_names:   A flag which if True will add the error object names as well.
+        @type error_names:      bool
+        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object
+                                names as well.
+        @type sim_names:        bool
+        @return:                The list of object names.
+        @rtype:                 list of str
         """
 
         # Initialise.
@@ -236,6 +241,7 @@ class Consistency_tests(Common_functions):
         names.append('f_eta')
         names.append('f_r2')
 
+        # Return the names.
         return names
 
 

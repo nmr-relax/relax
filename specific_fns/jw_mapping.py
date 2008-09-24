@@ -188,23 +188,31 @@ class Jw_mapping(Common_functions):
                 setattr(data, name, None)
 
 
-    def data_names(self):
-        """Function for returning a list of names of data structures.
+    def data_names(self, set=None, error_names=False, sim_names=False):
+        """Return a list of all spin container specific J(w) mapping object names.
 
         Description
-        ~~~~~~~~~~~
+        ===========
 
-        r:  Bond length.
+        The names are as follows:
 
-        csa:  CSA value.
+            r:  Bond length.
+            csa:  CSA value.
+            heteronuc_type:  The heteronucleus type.
+            j0:  Spectral density value at 0 MHz.
+            jwx:  Spectral density value at the frequency of the heteronucleus.
+            jwh:  Spectral density value at the frequency of the heteronucleus.
 
-        heteronuc_type:  The heteronucleus type.
 
-        j0:  Spectral density value at 0 MHz.
-
-        jwx:  Spectral density value at the frequency of the heteronucleus.
-
-        jwh:  Spectral density value at the frequency of the heteronucleus.
+        @keyword set:           An unused variable.
+        @type set:              ignored
+        @keyword error_names:   A flag which if True will add the error object names as well.
+        @type error_names:      bool
+        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object
+                                names as well.
+        @type sim_names:        bool
+        @return:                The list of object names.
+        @rtype:                 list of str
         """
 
         # Initialise.
@@ -220,6 +228,7 @@ class Jw_mapping(Common_functions):
         names.append('jwx')
         names.append('jwh')
 
+        # Return the names.
         return names
 
 
