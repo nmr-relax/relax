@@ -696,35 +696,6 @@ def copy_spin(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
         res_to_cont.spin[-1].name = spin_name_to
 
 
-def count_selected_spins(selection=None):
-    """Function for counting the number of spins for which there is data and which are selected.
-
-    @param selection:   The selection string.
-    @type selection:    str
-    @return:            The number of non-empty selected spins.
-    @rtype:             int
-    """
-
-    # No data, hence no spins.
-    if not exists_mol_res_spin_data():
-        return 0
-
-    # Init.
-    spin_num = 0
-
-    # Spin loop.
-    for spin in spin_loop(selection):
-        # Skip deselected spins.
-        if not spin.select:
-            continue
-
-        # Increment the spin number.
-        spin_num = spin_num + 1
-
-    # Return the number of spins.
-    return spin_num
-
-
 def count_molecules(selection=None):
     """Count the number of molecules for which there is data.
 
@@ -773,7 +744,7 @@ def count_residues(selection=None):
     return res_num
 
 
-def count_spins(selection=None):
+def count_spins(selection=None, skip_desel=True):
     """Function for counting the number of spins for which there is data.
 
     @param selection:   The selection string.
@@ -791,6 +762,10 @@ def count_spins(selection=None):
 
     # Spin loop.
     for spin in spin_loop(selection):
+        # Skip deselected spins.
+        if skip_desel and not spin.select:
+            continue
+
         spin_num = spin_num + 1
 
     # Return the number of spins.
