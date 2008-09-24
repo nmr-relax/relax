@@ -51,6 +51,9 @@ class Base_struct_API:
         # Initialise the file name list.
         self.file_name = []
 
+        # Initialise the empty structural data object by adding a structure container.
+        self.structural_data.append(Structure_container())
+
 
     def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, struct_index=None):
         """Prototype method stub for adding an atom to the structural data object.
