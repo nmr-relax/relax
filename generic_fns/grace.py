@@ -324,7 +324,7 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
     # Single data set.
     else:
         # Write the header.
-        write_header(file=file, spin_id=spin_id, x_data_type=x_data_type, y_data_type=y_data_type, x_return_units=x_return_units, y_return_units=y_return_units, x_return_grace_string=x_return_grace_string, y_return_grace_string=y_return_grace_string)
+        write_header(data, file=file, spin_id=spin_id, x_data_type=x_data_type, y_data_type=y_data_type, x_return_units=x_return_units, y_return_units=y_return_units, x_return_grace_string=x_return_grace_string, y_return_grace_string=y_return_grace_string)
 
         # Write the data.
         write_data(data, file=file, graph_type=graph_type)
@@ -384,9 +384,11 @@ def write_data(data, file=None, graph_type=None):
     file.write("&\n")
 
 
-def write_header(file=None, spin_id=None, x_data_type=None, y_data_type=None, x_return_units=None, y_return_units=None, x_return_grace_string=None, y_return_grace_string=None):
+def write_header(data, file=None, spin_id=None, x_data_type=None, y_data_type=None, x_return_units=None, y_return_units=None, x_return_grace_string=None, y_return_grace_string=None):
     """Write the grace header.
 
+    @param data:                    The graph numerical data.
+    @type data:                     list of lists of float
     @keyword file:                  The file object to write the data to.
     @type file:                     file object
     @keyword spin_id:               The spin identification string.
