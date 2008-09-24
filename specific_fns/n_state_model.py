@@ -409,17 +409,22 @@ class N_state_model(Common_functions):
                     if not hasattr(spin, 'pcs_bc'):
                         spin.pcs_bc = []
 
-                    # Append the back calculated PCS.
-                    spin.pcs_bc.append(model.deltaij_theta[i, pcs_index])
+                    # Append the back calculated PCS (in ppm).
+                    spin.pcs_bc.append(model.deltaij_theta[i, pcs_index]*1e6)
 
                     # Increment the RDC index.
                     pcs_index = pcs_index + 1
 
                 # Spins with RDC data.
-                if hasattr(spin, 'rdc'):
+                if hasattr(spin, 'rdc') and hasattr(spin, 'xh_vect'):
                     # Initialise the data structure if necessary.
                     if not hasattr(spin, 'rdc_bc'):
                         spin.rdc_bc = []
+
+                    # No RDC.
+                    if spin.rdc[i] == None:
+                        spin.rdc_bc.append(None)
+                        continue
 
                     # Append the back calculated PCS.
                     spin.rdc_bc.append(model.Dij_theta[i, rdc_index])
@@ -712,7 +717,7 @@ class N_state_model(Common_functions):
         cdp = ds[ds.current_pipe]
 
         # Q-factor list.
-        cdp.q_factors = []
+        cdp.q_factors_rdc = []
 
         # Loop over the alignments.
         for i in xrange(len(ds[ds.current_pipe].align_tensors)):
@@ -738,7 +743,57 @@ class N_state_model(Common_functions):
 
             # The Q-factor for the alignment.
             Q = sqrt(sse / D2_sum)
-            cdp.q_factors.append(Q)
+            cdp.q_factors_rdc.append(Q)
+
+        # The total Q-factor.
+        cdp.q_rdc = 0.0
+        for Q in cdp.q_factors_rdc:
+            cdp.q_rdc = cdp.q_rdc + Q**2
+        cdp.q_rdc = cdp.q_rdc / len(cdp.q_factors_rdc)
+        cdp.q_rdc = sqrt(cdp.q_rdc)
+
+
+    def __q_factors_pcs(self):
+        """Calculate the Q-factors for the PCS data."""
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
+        # Q-factor list.
+        cdp.q_factors_pcs = []
+
+        # Loop over the alignments.
+        for i in xrange(len(ds[ds.current_pipe].align_tensors)):
+            # Init.
+            pcs2_sum = 0.0
+            sse = 0.0
+
+            # Spin loop.
+            for spin in spin_loop():
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
+
+                # Skip spins without PCS data.
+                if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or spin.pcs[i] == None:
+                    continue
+
+                # Sum of squares.
+                sse = sse + (spin.pcs[i] - spin.pcs_bc[i])**2
+
+                # Sum the PCSs squared (for normalisation).
+                pcs2_sum = pcs2_sum + spin.pcs[i]**2
+
+            # The Q-factor for the alignment.
+            Q = sqrt(sse / pcs2_sum)
+            cdp.q_factors_pcs.append(Q)
+
+        # The total Q-factor.
+        cdp.q_pcs = 0.0
+        for Q in cdp.q_factors_pcs:
+            cdp.q_pcs = cdp.q_pcs + Q**2
+        cdp.q_pcs = cdp.q_pcs / len(cdp.q_factors_pcs)
+        cdp.q_pcs = sqrt(cdp.q_pcs)
 
 
     def __update_model(self):
@@ -1266,7 +1321,12 @@ class N_state_model(Common_functions):
             self.__minimise_bc_data(model)
 
             # Calculate the RDC Q-factors.
-            self.__q_factors_rdc()
+            if 'rdc' in data_types:
+                self.__q_factors_rdc()
+
+            # Calculate the PCS Q-factors.
+            if 'pcs' in data_types:
+                self.__q_factors_pcs()
 
 
     def model_statistics(self, instance=None, spin_id=None, global_stats=None):
