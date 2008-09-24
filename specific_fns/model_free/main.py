@@ -1571,7 +1571,7 @@ class Model_free_main:
             return [-100 * 1e-6, -300 * 1e-6]
 
 
-    def model_loop(self, model_index, select_sim):
+    def model_loop(self):
         """Generator method for looping over the models (global or local).
 
         If the model type is 'all' or 'diff', then this yields the single value of zero.  Otherwise
