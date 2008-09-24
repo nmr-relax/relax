@@ -410,7 +410,7 @@ def write_header(file=None, x_data_type=None, y_data_type=None, x_return_units=N
             # X-axis label.
             file.write("@    xaxis  label \"Spin identification string\"\n")
 
-     else:
+    else:
         # Get the units.
         units = x_return_units(x_data_type)
 
