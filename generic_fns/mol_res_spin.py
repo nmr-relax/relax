@@ -725,6 +725,54 @@ def count_selected_spins(selection=None):
     return spin_num
 
 
+def count_molecules(selection=None):
+    """Count the number of molecules for which there is data.
+
+    @param selection:   The selection string.
+    @type selection:    str
+    @return:            The number of non-empty molecules.
+    @rtype:             int
+    """
+
+    # No data, hence no molecules.
+    if not exists_mol_res_spin_data():
+        return 0
+
+    # Init.
+    mol_num = 0
+
+    # Spin loop.
+    for mol in molecule_loop(selection):
+        mol_num = mol_num + 1
+
+    # Return the number of molecules.
+    return mol_num
+
+
+def count_residues(selection=None):
+    """Count the number of residues for which there is data.
+
+    @param selection:   The selection string.
+    @type selection:    str
+    @return:            The number of non-empty residues.
+    @rtype:             int
+    """
+
+    # No data, hence no residues.
+    if not exists_mol_res_spin_data():
+        return 0
+
+    # Init.
+    res_num = 0
+
+    # Spin loop.
+    for res in residue_loop(selection):
+        res_num = res_num + 1
+
+    # Return the number of residues.
+    return res_num
+
+
 def count_spins(selection=None):
     """Function for counting the number of spins for which there is data.
 
