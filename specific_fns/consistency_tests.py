@@ -505,7 +505,7 @@ class Consistency_tests(Common_functions):
             spin.f_r2_err = error
 
 
-    def sim_return_param(self, index, spin):
+    def sim_return_param(self, spin, index):
         """Function for returning the array of simulation parameter values."""
 
         # Skip deselected residues.
