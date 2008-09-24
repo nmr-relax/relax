@@ -33,7 +33,7 @@ import sys
 from data import Relax_data_store; ds = Relax_data_store()
 from float import isNaN,isInf
 from generic_fns import diffusion_tensor, pipes, relax_data, sequence
-from generic_fns.mol_res_spin import convert_from_global_index, count_spins, exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
+from generic_fns.mol_res_spin import convert_from_global_index, count_spins, exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_index_loop, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
 from physical_constants import N15_CSA, NH_BOND_LENGTH
@@ -1570,6 +1570,39 @@ class Model_free_main:
         elif param == 'csa':
             return [-100 * 1e-6, -300 * 1e-6]
 
+
+    def model_loop(self, model_index, select_sim):
+        """Generator method for looping over the models (global or local).
+
+        If the model type is 'all' or 'diff', then this yields the single value of zero.  Otherwise
+        the global spin index is yielded.
+
+
+        @return:    The model index.  This is zero for the global models or equal to the global spin
+                    index (which covers the molecule, residue, and spin indices).
+        @rtype:     int
+        """
+
+        # Determine the model type.
+        model_type = self.determine_model_type()
+
+        # Global model.
+        if model_type == 'all' or model_type == 'diff':
+            yield 0
+
+        # Spin specific models.
+        else:
+            # Loop over the spins.
+            for index in spin_index_loop():
+                # Get the spin container.
+                spin = return_spin_from_index(index)
+
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
+
+                # Yield the spin index.
+                yield index
 
     def model_setup(self, model=None, equation=None, params=None, spin_id=None):
         """Function for updating various data structures depending on the model selected.
