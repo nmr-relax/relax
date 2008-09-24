@@ -847,7 +847,7 @@ class Mf_minimise:
 
         # Number of spins, minimisation instances, and data sets for each model type.
         if model_type == 'mf' or model_type == 'local_tm':
-            num_instances = count_spins()
+            num_instances = count_spins(skip_desel=False)
             num_data_sets = 1
             num_spins = 1
         elif model_type == 'diff' or model_type == 'all':
