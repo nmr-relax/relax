@@ -25,7 +25,7 @@ from copy import deepcopy
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
+from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, spin_loop
 from relax_errors import RelaxError
 
 
