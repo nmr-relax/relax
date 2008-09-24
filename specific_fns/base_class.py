@@ -432,17 +432,14 @@ class Common_functions:
             inc = inc + 1
 
 
-    def sim_return_selected(self, instance):
+    def sim_return_selected(self, spin):
         """Return the array of selected simulation flags for the spin.
 
-        @param instance:    The spin index.
-        @type instance:     int
+        @param spin:        The spin container.
+        @type spin:         SpinContainer instance
         @return:            The array of selected simulation flags.
         @rtype:             list of int
         """
-
-        # Get the SpinContainer.
-        spin = return_spin_from_index(instance)
 
         # Return the array.
         return spin.select_sim
