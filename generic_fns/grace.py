@@ -31,7 +31,7 @@ from re import match
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 import generic_fns
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
+from generic_fns.mol_res_spin import count_molecules, count_residues, count_spins, exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSimError, RelaxRegExpError
 from relax_io import get_file_path, open_write_file, test_binary
 from specific_fns.setup import get_specific_fn
@@ -103,6 +103,36 @@ def determine_graph_type(data, x_data_type=None, plot_data=None):
 
     # Return the graph type.
     return graph_type
+
+
+def determine_seq_type(data, spin_id=None):
+    """Determine the spin sequence data type.
+
+    The purpose is to identify systems whereby only spins or only residues exist.
+
+    @param data:        The graph numerical data.
+    @type data:         list of lists of float
+    @keyword spin_id:   The spin identification string.
+    @type spin_id:      str
+    @return:            The spin sequence data type.  This can be one of 'spin', 'res,' or 'mixed'.
+    @rtype:             str
+    """
+
+    # Count the molecules, residues, and spins.
+    num_mol = count_molecules(spin_id)
+    num_res = count_residues(spin_id)
+    num_spin = count_spins(spin_id)
+
+    # Only residues.
+    if num_mol == 1 and num_spin == 1:
+        return 'res'
+
+    # Only spins.
+    if num_mol == 1 and num_res == 1:
+        return 'spin'
+
+    # Mixed.
+    return 'mixed'
 
 
 def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
