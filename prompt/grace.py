@@ -101,7 +101,7 @@ class Grace:
         self.__relax__.generic.grace.view(file=file, dir=dir, grace_exe=grace_exe)
 
 
-    def write(self, x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot_data='value', norm=0, file=None, dir='grace', force=False):
+    def write(self, x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value', file=None, dir='grace', force=False, norm=False):
         """Function for creating a grace '.agr' file.
 
         Keyword Arguments
@@ -111,9 +111,7 @@ class Grace:
 
         y_data_type:  The data type for the Y-axis (no regular expression is allowed).
 
-        res_num:  The residue number (regular expression is allowed).
-
-        res_name:  The residue name (regular expression is allowed).
+        spin_id:  The spin identification string.
 
         plot_data:  The data to use for the plot.
 
@@ -133,20 +131,17 @@ class Grace:
         be plotted.  The output is in the format of a Grace plot (also known as ACE/gr, Xmgr, and
         xmgrace) which only supports two dimensional plots.  Three types of keyword arguments can
         be used to create various types of plot.  These include the X-axis and Y-axis data types,
-        the residue number and name selection arguments, and an argument for selecting what to
-        actually plot.
+        the spin identification string, and an argument for selecting what to actually plot.
 
         The X-axis and Y-axis data type arguments should be plain strings, regular expression is not
         allowed.  If the X-axis data type argument is not given, the plot will default to having the
-        residue number along the x-axis.  The two axes of the Grace plot can be absolutely any of
+        spin sequence along the x-axis.  The two axes of the Grace plot can be absolutely any of
         the data types listed in the tables below.  The only limitation, currently anyway, is that
-        the data must belong to the same run.
+        the data must belong to the same data pipe.
 
-        The residue number and name arguments can be used to limit the residues used in the plot.
-        The default is that all residues will be used, however, these arguments can be used to
-        select a subset of all residues, or a single residue for plots of Monte Carlo simulations,
-        etc.  Regular expression is allowed for both the residue number and name, and the number can
-        either be an integer or a string.
+        The spin identification string can be used to limit which spins are used in the plot.  The
+        default is that all spins will be used, however, these arguments can be used to select a
+        subset of all spins, or a single spin for plots of Monte Carlo simulations, etc.
 
         The property which is actually plotted can be controlled by the 'plot_data' argument.  It
         can be one of the following:
@@ -155,24 +150,23 @@ class Grace:
             'sims':   Plot the simulation values.
 
         Normalisation is only allowed for series type data, for example the R2 exponential curves,
-        and will be ignored for all other data types.  If the norm flag is set to one then the
+        and will be ignored for all other data types.  If the norm flag is set to True then the
         y-value of the first point of the series will be set to 1.  This normalisation is useful for
-        emphasising errors in the data sets.
+        highlighting errors in the data sets.
 
 
         Examples
         ~~~~~~~~
 
-        To write the NOE values for all residues to the Grace file 'noe.agr',
-        type:
+        To write the NOE values for all spins to the Grace file 'noe.agr', type one of:
 
-        relax> grace.write('res', 'noe', file='noe.agr')
+        relax> grace.write('spin', 'noe', file='noe.agr')
         relax> grace.write(y_data_type='noe', file='noe.agr')
-        relax> grace.write(x_data_type='res', y_data_type='noe', file='noe.agr')
+        relax> grace.write(x_data_type='spin', y_data_type='noe', file='noe.agr')
         relax> grace.write(y_data_type='noe', file='noe.agr', force=True)
 
 
-        To create a Grace file of 'S2' vs. 'te' for all residues, type:
+        To create a Grace file of 'S2' vs. 'te' for all spins, type one of:
 
         relax> grace.write('S2', 'te', file='s2_te.agr')
         relax> grace.write(x_data_type='S2', y_data_type='te', file='s2_te.agr')
@@ -180,10 +174,10 @@ class Grace:
 
 
         To create a Grace file of the Monte Carlo simulation values of 'Rex' vs. 'te' for residue
-        123, type:
+        123, type one of:
 
-        relax> grace.write('Rex', 'te', res_num=123, plot_data='sims', file='s2_te.agr')
-        relax> grace.write(x_data_type='Rex', y_data_type='te', res_num=123,
+        relax> grace.write('Rex', 'te', spin_id=':123', plot_data='sims', file='s2_te.agr')
+        relax> grace.write(x_data_type='Rex', y_data_type='te', spin_id=':123',
                            plot_data='sims', file='s2_te.agr')
 
 
@@ -194,8 +188,8 @@ class Grace:
         normalisation, whereby the initial peak intensity of each residue I(0) is set to 1,
         emphasises any problems.  To produce this Grace file, type:
 
-        relax> grace.write(name, x_data_type='relax_times', y_data_type='ave_int',
-                           norm=1, file='intensities_norm.agr', force=True)
+        relax> grace.write(x_data_type='relax_times', y_data_type='ave_int',
+                           file='intensities_norm.agr', force=True, norm=True)
         """
 
         # Function intro text.
@@ -203,13 +197,12 @@ class Grace:
             text = sys.ps3 + "grace.write("
             text = text + "x_data_type=" + `x_data_type`
             text = text + ", y_data_type=" + `y_data_type`
-            text = text + ", res_num=" + `res_num`
-            text = text + ", res_name=" + `res_name`
+            text = text + ", spin_id=" + `spin_id`
             text = text + ", plot_data=" + `plot_data`
-            text = text + ", norm=" + `norm`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force` + ")"
+            text = text + ", force=" + `force`
+            text = text + ", norm=" + `norm` + ")"
             print text
 
         # Data type for x-axis.
@@ -220,13 +213,9 @@ class Grace:
         if type(y_data_type) != str:
             raise RelaxStrError, ('y data type', y_data_type)
 
-        # Residue number.
-        if res_num != None and type(res_num) != int and type(res_num) != str:
-            raise RelaxNoneIntStrError, ('residue number', res_num)
-
-        # Residue name.
-        if res_name != None and type(res_name) != str:
-            raise RelaxNoneStrError, ('residue name', res_name)
+        # Spin ID string.
+        if spin_id != None and type(spin_id) != str:
+            raise RelaxNoneStrError, ('spin identification string', spin_id)
 
         # The plot data.
         if type(plot_data) != str:
@@ -244,8 +233,12 @@ class Grace:
         if type(force) != bool:
             raise RelaxBoolError, ('force flag', force)
 
+        # The normalisation flag.
+        if type(norm) != bool:
+            raise RelaxBoolError, ('normalisation flag', norm)
+
         # Execute the functional code.
-        grace.write(x_data_type=x_data_type, y_data_type=y_data_type, res_num=res_num, res_name=res_name, plot_data=plot_data, norm=norm, file=file, dir=dir, force=force)
+        grace.write(x_data_type=x_data_type, y_data_type=y_data_type, res_num=res_num, res_name=res_name, plot_data=plot_data, file=file, dir=dir, force=force, norm=norm)
 
 
 
