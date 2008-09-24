@@ -403,21 +403,14 @@ class Common_functions:
             return spin.chi2_sim
 
 
-    def sim_return_param(self, instance, index):
+    def sim_return_param(self, spin, index):
         """Return the array of simulation parameter values.
  
-        @param instance:    The optimisation instance index.
-        @type instance:     int
+        @param spin:        The spin container.
+        @type spin:         SpinContainer instance
         @param index:       The index of the parameter to return the array of values for.
         @type index:        int
         """
-
-        # Get the SpinContainer.
-        spin = return_spin_from_index(instance)
-
-        # Skip deselected spins.
-        if not spin.select:
-            return
 
         # Parameter increment counter.
         inc = 0
