@@ -30,10 +30,11 @@ from re import match
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+import generic_fns
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSimError, RelaxRegExpError
 from relax_io import get_file_path, open_write_file, test_binary
-
+from specific_fns.setup import get_specific_fn
 
 
 def determine_graph_type(data, x_data_type=None, plot_data=None):
@@ -41,9 +42,9 @@ def determine_graph_type(data, x_data_type=None, plot_data=None):
 
     @param data:            The graph numerical data.
     @type data:             list of lists of float
-    @keyword x_data_type:   The type of the X-axis data.
+    @keyword x_data_type:   The category of the X-axis data.
     @type x_data_type:      str
-    @keyword plot_data:     The type of the plotted data, either 'value' or 'error'.
+    @keyword plot_data:     The type of the plotted data, one of 'value', 'error', or 'sim'.
     @type plot_data:        str
     @return:                The graph type, which can be one of xy, xydy, xydx, or xydxdy.
     @rtype:                 str
@@ -104,78 +105,93 @@ def determine_graph_type(data, x_data_type=None, plot_data=None):
     return graph_type
 
 
-def get_data():
-    """Function for getting all the xy data."""
+def get_data(spin_id=None, plot_data=None):
+    """Get all the xy data.
 
-    # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    @keyword spin_id:       The spin identification string.
+    @type spin_id:          str
+    @keyword x_data_type:   The category of the X-axis data.
+    @type x_data_type:      str
+    @keyword y_data_type:   The category of the Y-axis data.
+    @type y_data_type:      str
+    @keyword plot_data:     The type of the plotted data, one of 'value', 'error', or 'sim'.
+    @type plot_data:        str
+    @return:                The graph numerical data.
+    @rtype:                 list of lists of float
+    """
+
+    # Initialise the data structure.
+    data = []
+
+    # Specific x and y value returning functions.
+    x_return_value = y_return_value = get_specific_fn('return_value', ds[ds.current_pipe].pipe_type)
+    x_return_conversion_factor = y_return_conversion_factor = get_specific_fn('return_conversion_factor', ds[ds.current_pipe].pipe_type)
+
+    # Test if the X-axis data type is a minimisation statistic.
+    if x_data_type != 'res' and generic_fns.minimise.return_data_name(x_data_type):
+        x_return_value = generic_fns.minimise.return_value
+        x_return_conversion_factor = generic_fns.minimise.return_conversion_factor
+
+    # Test if the Y-axis data type is a minimisation statistic.
+    if y_data_type != 'res' and generic_fns.minimise.return_data_name(y_data_type):
+        y_return_value = generic_fns.minimise.return_value
+        y_return_conversion_factor = generic_fns.minimise.return_conversion_factor
 
     # Loop over the residues.
     for spin in spin_loop(spin_id):
-
-        # Skip the residue if there is no match to 'self.res_num' (unless it is None).
-        if type(self.res_num) == int:
-            if not spin.num == self.res_num:
-                continue
-        elif type(self.res_num) == str:
-            if not match(self.res_num, `spin.num`):
-                continue
-
-        # Skip the residue if there is no match to 'self.res_name' (unless it is None).
-        if self.res_name != None:
-            if not match(self.res_name, spin.name):
-                continue
-
-        # Skip deselected residues.
+        # Skip deselected spins.
         if not spin.select:
             continue
 
-        # Number of data points per residue.
-        if self.plot_data == 'sim':
-            points = cdp.sim_number
+        # Number of data points per spin.
+        if plot_data == 'sim':
+            points = ds[ds.current_pipe].sim_number
         else:
             points = 1
 
         # Loop over the data points.
         for j in xrange(points):
             # Initialise an empty array for the individual residue data.
-            res_data = [spin.num, spin.name, None, None, None, None]
+            spin_data = [spin.num, spin.name, None, None, None, None]
 
             # Residue number on the x-axis.
-            if self.x_data_type == 'res':
-                res_data[2] = spin.num
+            if x_data_type == 'res':
+                spin_data[2] = spin.num
 
             # Parameter value for the x-axis.
             else:
                 # Get the x-axis values and errors.
-                if self.plot_data == 'sim':
-                    res_data[2], res_data[3] = self.x_return_value(self.run, i, self.x_data_type, sim=j)
+                if plot_data == 'sim':
+                    spin_data[2], spin_data[3] = x_return_value(i, x_data_type, sim=j)
                 else:
-                    res_data[2], res_data[3] = self.x_return_value(self.run, i, self.x_data_type)
+                    spin_data[2], spin_data[3] = x_return_value(i, x_data_type)
 
             # Get the y-axis values and errors.
-            if self.plot_data == 'sim':
-                res_data[4], res_data[5] = self.y_return_value(self.run, i, self.y_data_type, sim=j)
+            if plot_data == 'sim':
+                spin_data[4], spin_data[5] = y_return_value(i, y_data_type, sim=j)
             else:
-                res_data[4], res_data[5] = self.y_return_value(self.run, i, self.y_data_type)
+                spin_data[4], spin_data[5] = y_return_value(i, y_data_type)
 
             # Go to the next residue if there is missing data.
-            if res_data[2] == None or res_data[4] == None:
+            if spin_data[2] == None or spin_data[4] == None:
                 continue
 
             # X-axis conversion factors.
-            if self.x_data_type != 'res':
-                res_data[2] = array(res_data[2]) / self.x_return_conversion_factor(self.x_data_type)
-                if res_data[3]:
-                    res_data[3] = array(res_data[3]) / self.x_return_conversion_factor(self.x_data_type)
+            if x_data_type != 'res':
+                spin_data[2] = array(spin_data[2]) / x_return_conversion_factor(x_data_type)
+                if spin_data[3]:
+                    spin_data[3] = array(spin_data[3]) / x_return_conversion_factor(x_data_type)
 
             # Y-axis conversion factors.
-            res_data[4] = array(res_data[4]) / self.y_return_conversion_factor(self.y_data_type)
-            if res_data[5]:
-                res_data[5] = array(res_data[5]) / self.y_return_conversion_factor(self.y_data_type)
+            spin_data[4] = array(spin_data[4]) / y_return_conversion_factor(y_data_type)
+            if spin_data[5]:
+                spin_data[5] = array(spin_data[5]) / y_return_conversion_factor(y_data_type)
 
             # Append the array to the full data structure.
-            self.spin.append(res_data)
+            data.append(spin_data)
+
+    # Return the data.
+    return data
 
 
 def view(file=None, dir=None, grace_exe='xmgrace'):
@@ -239,30 +255,24 @@ def write(x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot
     function_type = ds.run_types[ds.run_names.index(run)]
 
     # Specific value and error, conversion factor, and units returning functions.
-    self.x_return_value =             self.y_return_value =             self.relax.specific_setup.setup('return_value', function_type)
-    self.x_return_conversion_factor = self.y_return_conversion_factor = self.relax.specific_setup.setup('return_conversion_factor', function_type)
     self.x_return_units =             self.y_return_units =             self.relax.specific_setup.setup('return_units', function_type)
     self.x_return_grace_string =      self.y_return_grace_string =      self.relax.specific_setup.setup('return_grace_string', function_type)
 
     # Test if the X-axis data type is a minimisation statistic.
     if self.x_data_type != 'res' and self.relax.generic.minimise.return_data_name(self.x_data_type):
-        self.x_return_value = self.relax.generic.minimise.return_value
-        self.x_return_conversion_factor = self.relax.generic.minimise.return_conversion_factor
         self.x_return_units = self.relax.generic.minimise.return_units
         self.x_return_grace_string = self.relax.generic.minimise.return_grace_string
 
     # Test if the Y-axis data type is a minimisation statistic.
     if self.relax.generic.minimise.return_data_name(self.y_data_type):
-        self.y_return_value = self.relax.generic.minimise.return_value
-        self.y_return_conversion_factor = self.relax.generic.minimise.return_conversion_factor
         self.y_return_units = self.relax.generic.minimise.return_units
         self.y_return_grace_string = self.relax.generic.minimise.return_grace_string
 
     # Get the data.
-    self.get_data()
+    data = get_data(spin_id)
 
     # Determine the graph type (ie xy, xydy, xydx, or xydxdy).
-    determine_graph_type(data, x_data_type=x_data_type, plot_data=plot_data)
+    graph_type = determine_graph_type(data, x_data_type=x_data_type, plot_data=plot_data)
 
     # Test for multiple data sets.
     self.multi = 1
