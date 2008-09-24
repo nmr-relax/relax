@@ -251,23 +251,16 @@ class Common_functions:
         return value, error
 
 
-    def set_error(self, instance, index, error):
+    def set_error(self, spin, index, error):
         """Set the parameter errors.
 
-        @param instance:    The spin index.
-        @type instance:     int
-        @param index:       The index of the parameter to set the errors for.
-        @type index:        int
-        @param error:       The error value.
-        @type error:        float
+        @param spin:    The SpinContainer object.
+        @type spin:     SpinContainer
+        @param index:   The index of the parameter to set the errors for.
+        @type index:    int
+        @param error:   The error value.
+        @type error:    float
         """
-
-        # Get the SpinContainer.
-        spin = return_spin_from_index(instance)
-
-        # Skip deselected spins.
-        if not spin.select:
-            return
 
         # Parameter increment counter.
         inc = 0
