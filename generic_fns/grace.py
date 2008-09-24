@@ -105,7 +105,7 @@ def determine_graph_type(data, x_data_type=None, plot_data=None):
     return graph_type
 
 
-def get_data(spin_id=None, plot_data=None):
+def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
     """Get all the xy data.
 
     @keyword spin_id:       The spin identification string.
@@ -273,7 +273,7 @@ def write(x_data_type='res', y_data_type=None, spin_id=None, plot_data='value', 
         y_return_grace_string = generic_fns.minimise.return_grace_string
 
     # Get the data.
-    data = get_data(spin_id)
+    data = get_data(spin_id, x_data_type=x_data_type, y_data_type=y_data_type, plot_data=plot_data)
 
     # Determine the graph type (ie xy, xydy, xydx, or xydxdy).
     graph_type = determine_graph_type(data, x_data_type=x_data_type, plot_data=plot_data)
