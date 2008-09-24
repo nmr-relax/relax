@@ -36,50 +36,60 @@ from relax_io import get_file_path, open_write_file, test_binary
 
 
 
-def determine_graph_type():
-    """Function for determining if the graph is of type xy, xydy, xydx, or xydxdy."""
+def determine_graph_type(data, x_data_type=None, plot_data=None):
+    """Determine if the graph is of type xy, xydy, xydx, or xydxdy.
+
+    @param data:            The graph numerical data.
+    @type data:             list of lists of float
+    @keyword x_data_type:   The type of the X-axis data.
+    @type x_data_type:      str
+    @keyword plot_data:     The type of the plotted data, either 'value' or 'error'.
+    @type plot_data:        str
+    @return:                The graph type, which can be one of xy, xydy, xydx, or xydxdy.
+    @rtype:                 str
+    """
 
     # Initial flags.
     x_errors = 0
     y_errors = 0
 
     # Loop over the data.
-    for i in xrange(len(self.data)):
+    for i in xrange(len(data)):
         # X-axis errors.
-        if self.x_data_type != 'res' and self.data[i][3] != None:
+        if x_data_type != 'res' and data[i][3] != None:
             x_errors = 1
 
         # Y-axis errors.
-        if self.data[i][5] != None:
+        if data[i][5] != None:
             y_errors = 1
 
     # Plot of values.
-    if self.plot_data == 'value':
+    if plot_data == 'value':
         # xy plot with errors along both axes.
         if x_errors and y_errors:
-            self.graph_type = 'xydxdy'
+            graph_type = 'xydxdy'
 
         # xy plot with errors along the Y-axis.
         elif y_errors:
-            self.graph_type = 'xydy'
+            graph_type = 'xydy'
 
         # xy plot with errors along the X-axis.
         elif x_errors:
-            self.graph_type = 'xydx'
+            graph_type = 'xydx'
 
         # xy plot with no errors.
         else:
-            self.graph_type = 'xy'
+            graph_type = 'xy'
 
     # Plot of errors.
-    elif self.plot_data == 'error':
+    elif plot_data == 'error':
         # xy plot of residue number vs error.
-        if self.x_data_type == 'res' and y_errors:
-            self.graph_type = 'xy'
+        if x_data_type == 'res' and y_errors:
+            graph_type = 'xy'
 
         # xy plot of error vs error.
         elif x_errors and y_errors:
-            self.graph_type = 'xy'
+            graph_type = 'xy'
 
         # Invalid argument combination.
         else:
@@ -88,7 +98,10 @@ def determine_graph_type():
     # Plot of simulation values.
     else:
         # xy plot with no errors.
-        self.graph_type = 'xy'
+        graph_type = 'xy'
+
+    # Return the graph type.
+    return graph_type
 
 
 def get_data():
@@ -249,7 +262,7 @@ def write(x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot
     self.get_data()
 
     # Determine the graph type (ie xy, xydy, xydx, or xydxdy).
-    self.determine_graph_type()
+    determine_graph_type(data, x_data_type=x_data_type, plot_data=plot_data)
 
     # Test for multiple data sets.
     self.multi = 1
