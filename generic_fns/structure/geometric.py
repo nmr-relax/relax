@@ -239,7 +239,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         print "\nGenerating the geometric object."
 
         # The distribution.
-        generate_vector_dist(structure=structure, atom_id_ext=atom_id_ext, res_name='TNS', res_num=res_num, chain_id=chain_id, centre=CoM, R=pipe.diff_tensor.rotation, warp=pipe.diff_tensor.tensor, scale=scale, inc=20)
+        generate_vector_dist(structure=structure, res_name='TNS', res_num=res_num, chain_id=chain_id, centre=CoM, R=pipe.diff_tensor.rotation, warp=pipe.diff_tensor.tensor, scale=scale, inc=20)
 
         # Increment the residue number.
         res_num = res_num + 1
