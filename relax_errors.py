@@ -750,8 +750,11 @@ class RelaxUnknownParamCombError(BaseError):
 
 # No simulations.
 class RelaxNoSimError(BaseError):
-    def __init__(self, pipe):
-        self.text = "Simulations for the data pipe " + `pipe` + " have not been setup."
+    def __init__(self, pipe=None):
+        if pipe:
+            self.text = "Simulations for the data pipe " + `pipe` + " have not been setup."
+        else:
+            self.text = "Simulations have not been setup."
         if Debug:
             self.save_state()
 
