@@ -216,7 +216,7 @@ def view(file=None, dir=None, grace_exe='xmgrace'):
     system(grace_exe + " " + file_path + " &")
 
 
-def write(x_data_type='res', y_data_type=None, spin_id=None, plot_data='value', norm=True, file=None, dir=None, force=False):
+def write(x_data_type='res', y_data_type=None, spin_id=None, plot_data='value', file=None, dir=None, force=False, norm=True):
     """Writing data to a file.
 
     @keyword x_data_type:   The category of the X-axis data.
@@ -227,9 +227,6 @@ def write(x_data_type='res', y_data_type=None, spin_id=None, plot_data='value', 
     @type spin_id:          str
     @keyword plot_data:     The type of the plotted data, one of 'value', 'error', or 'sim'.
     @type plot_data:        str
-    @keyword norm:          The normalisation flag which if set to True will cause all graphs to be
-                            normalised to 1.
-    @type norm:             bool
     @keyword file:          The name of the Grace file to create.
     @type file:             str
     @keyword dir:           The optional directory to place the file into.
@@ -237,6 +234,9 @@ def write(x_data_type='res', y_data_type=None, spin_id=None, plot_data='value', 
     @param force:           Boolean argument which if True causes the file to be overwritten if it
                             already exists.
     @type force:            bool
+    @keyword norm:          The normalisation flag which if set to True will cause all graphs to be
+                            normalised to a starting value of 1.
+    @type norm:             bool
     """
 
     # Test if the current pipe exists.
