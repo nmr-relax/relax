@@ -27,7 +27,7 @@ from string import replace
 # relax module imports.
 from base_class import Common_functions
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin_from_index, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
 from maths_fns.jw_mapping import Mapping
 from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError, RelaxNucleusError, RelaxParamSetError, RelaxProtonTypeError, RelaxSpinTypeError
@@ -140,7 +140,7 @@ class Jw_mapping(Common_functions):
             # Monte Carlo simulated reduced spectral density values.
             else:
                 # Initialise the simulation data structures.
-                self.spin_init(spin, sim=1)
+                self.data_init(spin, sim=1)
                 if spin.j0_sim == None:
                     spin.j0_sim = []
                     spin.jwx_sim = []
@@ -150,6 +150,23 @@ class Jw_mapping(Common_functions):
                 spin.j0_sim.append(j0)
                 spin.jwx_sim.append(jwx)
                 spin.jwh_sim.append(jwh)
+
+
+    def create_mc_data(self, spin_id):
+        """Return the Ri data structure for the corresponding spin.
+
+        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
+                        method.
+        @type spin_id:  str
+        @return:        The Monte Carlo simulation data.
+        @rtype:         list of floats
+        """
+
+        # Get the spin container.
+        spin = return_spin(spin_id)
+
+        # Return the data.
+        return spin.relax_data
 
 
     def data_init(self, data, sim=0):
@@ -468,15 +485,25 @@ class Jw_mapping(Common_functions):
         spin.select_sim = select_sim
 
 
-    def sim_pack_data(self, spin, sim_data):
-        """Function for packing Monte Carlo simulation data."""
+    def sim_pack_data(self, spin_id, sim_data):
+        """Pack the Monte Carlo simulation data.
+
+        @param spin_id:     The spin identification string, as yielded by the base_data_loop()
+                            generator method.
+        @type spin_id:      str
+        @param sim_data:    The Monte Carlo simulation data.
+        @type sim_data:     list of float
+        """
+
+        # Get the spin container.
+        spin = return_spin(spin_id)
 
         # Test if the simulation data already exists.
-        if hasattr(ds.res[run][i], 'relax_sim_data'):
+        if hasattr(spin, 'relax_sim_data'):
             raise RelaxError, "Monte Carlo simulation data already exists."
 
         # Create the data structure.
-        ds.res[run][i].relax_sim_data = sim_data
+        spin.relax_sim_data = sim_data
 
 
     def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, heteronuc_type=None, wH=None, j0=None, jwx=None, jwh=None, r=None, csa=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):

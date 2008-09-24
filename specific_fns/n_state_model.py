@@ -32,7 +32,7 @@ from float import isNaN, isInf
 import generic_fns
 import generic_fns.structure.geometric
 import generic_fns.structure.mass
-from generic_fns.structure.internal import Internal
+from generic_fns.structure.internal import Internal, Structure_container
 from maths_fns.n_state_model import N_state_opt
 from maths_fns.rotation_matrix import R_2vect, R_euler_zyz
 from minfx.generic import generic_minimise
@@ -222,8 +222,11 @@ class N_state_model(Common_functions):
         # Create the structural object.
         structure = Internal()
 
+        # Add a structure.
+        structure.structural_data.append(Structure_container())
+
         # Add the pivot point.
-        structure.atom_add(atom_id='R', record_name='HETATM', atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot_point, element='C')
+        structure.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot_point, element='C')
 
         # Generate the average pivot-CoM vectors.
         print "\nGenerating the average pivot-CoM vectors."
@@ -238,18 +241,20 @@ class N_state_model(Common_functions):
             angle = cdp.theta_diff_in_cone
         elif cone_type == 'diff on cone':
             angle = cdp.theta_diff_on_cone
+        cap_start_atom = structure.structural_data[0].atom_num[-1]+1
         generic_fns.structure.geometric.cone_edge(structure=structure, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, angle=angle, length=norm(cdp.pivot_CoM), inc=inc)
 
         # Generate the cone cap, and stitch it to the cone edge.
         if cone_type == 'diff in cone':
             print "\nGenerating the cone cap."
+            cone_start_atom = structure.structural_data[0].atom_num[-1]+1
             generic_fns.structure.geometric.generate_vector_dist(structure=structure, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=inc)
-            generic_fns.structure.geometric.stitch_cap_to_cone(structure=structure, max_angle=angle, inc=inc)
+            generic_fns.structure.geometric.stitch_cap_to_cone(structure=structure, cone_start=cone_start_atom, cap_start=cap_start_atom+1, max_angle=angle, inc=inc)
 
         # Create the PDB file.
         print "\nGenerating the PDB file."
         pdb_file = open_write_file(file, dir, force=force)
-        structure.write_pdb_file(pdb_file)
+        structure.write_pdb(pdb_file)
         pdb_file.close()
 
 
