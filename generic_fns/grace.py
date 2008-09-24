@@ -216,16 +216,28 @@ def view(file=None, dir=None, grace_exe='xmgrace'):
     system(grace_exe + " " + file_path + " &")
 
 
-def write(x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot_data='value', norm=1, file=None, dir=None, force=False):
-    """Function for writing data to a file."""
+def write(x_data_type='res', y_data_type=None, spin_id=None, plot_data='value', norm=True, file=None, dir=None, force=False):
+    """Writing data to a file.
 
-    # Arguments.
-    self.x_data_type = x_data_type
-    self.y_data_type = y_data_type
-    self.res_num = res_num
-    self.res_name = res_name
-    self.plot_data = plot_data
-    self.norm = norm
+    @keyword x_data_type:   The category of the X-axis data.
+    @type x_data_type:      str
+    @keyword y_data_type:   The category of the Y-axis data.
+    @type y_data_type:      str
+    @keyword spin_id:       The spin identification string.
+    @type spin_id:          str
+    @keyword plot_data:     The type of the plotted data, one of 'value', 'error', or 'sim'.
+    @type plot_data:        str
+    @keyword norm:          The normalisation flag which if set to True will cause all graphs to be
+                            normalised to 1.
+    @type norm:             bool
+    @keyword file:          The name of the Grace file to create.
+    @type file:             str
+    @keyword dir:           The optional directory to place the file into.
+    @type dir:              str
+    @param force:           Boolean argument which if True causes the file to be overwritten if it
+                            already exists.
+    @type force:            bool
+    """
 
     # Test if the current pipe exists.
     if not ds.current_pipe:
@@ -235,33 +247,16 @@ def write(x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Test if the residue number is a valid regular expression.
-    if type(self.res_num) == str:
-        try:
-            compile(self.res_num)
-        except:
-            raise RelaxRegExpError, ('residue number', self.res_num)
-
-    # Test if the residue name is a valid regular expression.
-    if self.res_name:
-        try:
-            compile(self.res_name)
-        except:
-            raise RelaxRegExpError, ('residue name', self.res_name)
-
     # Test if the plot_data argument is one of 'value', 'error', or 'sim'.
-    if self.plot_data not in ['value', 'error', 'sim']:
-        raise RelaxError, "The plot data argument " + `self.plot_data` + " must be set to either 'value', 'error', 'sim'."
+    if plot_data not in ['value', 'error', 'sim']:
+        raise RelaxError, "The plot data argument " + `plot_data` + " must be set to either 'value', 'error', 'sim'."
 
     # Test if the simulations exist.
-    if self.plot_data == 'sim' and (not hasattr(ds, 'sim_number') or not ds.sim_number.has_key(self.run)):
-        raise RelaxNoSimError, self.run
+    if plot_data == 'sim' and not hasattr(ds[ds.current_pipe], 'sim_number'):
+        raise RelaxNoSimError
 
     # Open the file for writing.
     file = open_write_file(file, dir, force)
-
-    # Function type.
-    function_type = ds.run_types[ds.run_names.index(run)]
 
     # Specific value and error, conversion factor, and units returning functions.
     x_return_units =             y_return_units =             get_specific_fn('return_units', ds[ds.current_pipe].pipe_type)
@@ -284,27 +279,27 @@ def write(x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot
     graph_type = determine_graph_type(data, x_data_type=x_data_type, plot_data=plot_data)
 
     # Test for multiple data sets.
-    self.multi = 1
+    multi = True
     try:
         len(self.data[0][2])
     except TypeError:
-        self.multi = 0
+        multi = False
 
     # Multiple data sets.
-    if self.multi:
+    if multi:
         # Write the header.
-        self.write_multi_header()
+        write_multi_header(data, file=file, x_data_type=x_data_type, y_data_type=y_data_type, x_return_units=x_return_units, y_return_units=y_return_units, x_return_grace_string=x_return_grace_string, y_return_grace_string=y_return_grace_string, norm=norm)
 
         # Write the data.
-        self.write_multi_data()
+        write_multi_data(data, file=file, graph_type=graph_type, norm=norm)
 
     # Single data set.
     else:
         # Write the header.
-        self.write_header()
+        write_header(file=file, x_data_type=x_data_type, y_data_type=y_data_type, x_return_units=x_return_units, y_return_units=y_return_units, x_return_grace_string=x_return_grace_string, y_return_grace_string=y_return_grace_string)
 
         # Write the data.
-        self.write_data()
+        write_data(data, file=file, graph_type=graph_type)
 
     # Close the file.
     file.close()
