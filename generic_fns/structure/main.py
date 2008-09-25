@@ -297,7 +297,7 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
             continue
 
         # The spin identification string.
-        id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
+        id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=None, spin_num=spin.num, spin_name=spin.name)
 
         # Test that the spin number or name are set (one or both are essential for the identification of the atom).
         if spin.num == None and spin.name == None:
