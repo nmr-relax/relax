@@ -169,8 +169,8 @@ class Align_tensor:
             print text
 
         # Label argument.
-        if type(tensor) != str:
-            raise RelaxStrError, ('tensor', tensor)
+        if tensor != None and type(tensor) != str:
+            raise RelaxNoneStrError, ('tensor', tensor)
 
         # Execute the functional code.
         align_tensor.display(tensor=tensor)

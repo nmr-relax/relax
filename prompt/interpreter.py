@@ -54,12 +54,14 @@ from gpl import GPL
 from reset import Reset
 from minimisation import Minimisation
 from model_selection import Modsel
+from temperature import Temp
 
 # User classes.
 from align_tensor import Align_tensor
 from consistency_tests import Consistency_tests
 from dasha import Dasha
 from diffusion_tensor import Diffusion_tensor
+from frq import Frq
 from grace import Grace
 from jw_mapping import Jw_mapping
 from model_free import Model_free
@@ -71,7 +73,9 @@ from noe import Noe
 from palmer import Palmer
 from residue import Residue
 from structure import Structure
+from pcs import PCS
 from pymol import Pymol
+from rdc import RDC
 from relax_data import Relax_data
 from relax_fit import Relax_fit
 from results import Results
@@ -131,6 +135,7 @@ class Interpreter:
         self._Reset = Reset(relax)
         self._Minimisation = Minimisation(relax)
         self._Modsel = Modsel(relax)
+        self._Temp = Temp(relax)
         self._OpenDX = OpenDX(relax)
         self._system = system
 
@@ -140,6 +145,7 @@ class Interpreter:
         self._Dasha = Dasha(relax)
         self._Diffusion_tensor = Diffusion_tensor(relax)
         self._OpenDX = OpenDX(relax)
+        self._Frq = Frq(relax)
         self._Grace = Grace(relax)
         self._Jw_mapping = Jw_mapping(relax)
         self._Model_free = Model_free(relax)
@@ -151,7 +157,9 @@ class Interpreter:
         self._Palmer = Palmer(relax)
         self._Residue = Residue(relax)
         self._Structure = Structure(relax)
+        self._PCS = PCS(relax)
         self._Pymol = Pymol(relax)
+        self._RDC = RDC(relax)
         self._Relax_data = Relax_data(relax)
         self._Relax_fit = Relax_fit(relax)
         self._Results = Results(relax)
@@ -198,6 +206,7 @@ class Interpreter:
         reset = self._Reset.reset
         minimise = self._Minimisation.minimise
         model_selection = self._Modsel.model_selection
+        temperature = self._Temp.set
 
         # Place the user classes in the local namespace.
         align_tensor = self._Align_tensor
@@ -205,6 +214,7 @@ class Interpreter:
         dasha = self._Dasha
         diffusion_tensor = self._Diffusion_tensor
         dx = self._OpenDX
+        frq = self._Frq
         grace = self._Grace
         jw_mapping = self._Jw_mapping
         model_free = self._Model_free
@@ -215,7 +225,9 @@ class Interpreter:
         noe = self._Noe
         palmer = self._Palmer
         structure = self._Structure
+        pcs = self._PCS
         pymol = self._Pymol
+        rdc = self._RDC
         relax_data = self._Relax_data
         relax_fit = self._Relax_fit
         residue = self._Residue

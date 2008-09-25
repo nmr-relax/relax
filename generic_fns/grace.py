@@ -30,480 +30,636 @@ from re import match
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
+import generic_fns
+from generic_fns.mol_res_spin import count_molecules, count_residues, count_spins, exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSimError, RelaxRegExpError
 from relax_io import get_file_path, open_write_file, test_binary
+from specific_fns.setup import get_specific_fn
 
 
+def determine_graph_type(data, x_data_type=None, plot_data=None):
+    """Determine if the graph is of type xy, xydy, xydx, or xydxdy.
 
+    @param data:            The graph numerical data.
+    @type data:             list of lists of float
+    @keyword x_data_type:   The category of the X-axis data.
+    @type x_data_type:      str
+    @keyword plot_data:     The type of the plotted data, one of 'value', 'error', or 'sim'.
+    @type plot_data:        str
+    @return:                The graph type, which can be one of xy, xydy, xydx, or xydxdy.
+    @rtype:                 str
+    """
 
+    # Initial flags.
+    x_errors = 0
+    y_errors = 0
 
-class Grace:
-    def __init__(self, relax):
-        """Operations, functions, etc common to the different model-free analysis methods."""
+    # Loop over the data.
+    for i in xrange(len(data)):
+        # X-axis errors.
+        if x_data_type != 'spin' and data[i][-3] != None:
+            x_errors = 1
 
-        self.relax = relax
+        # Y-axis errors.
+        if data[i][-1] != None:
+            y_errors = 1
 
+    # Plot of values.
+    if plot_data == 'value':
+        # xy plot with errors along both axes.
+        if x_errors and y_errors:
+            graph_type = 'xydxdy'
 
-    def determine_graph_type(self):
-        """Function for determining if the graph is of type xy, xydy, xydx, or xydxdy."""
+        # xy plot with errors along the Y-axis.
+        elif y_errors:
+            graph_type = 'xydy'
 
-        # Initial flags.
-        x_errors = 0
-        y_errors = 0
+        # xy plot with errors along the X-axis.
+        elif x_errors:
+            graph_type = 'xydx'
 
-        # Loop over the data.
-        for i in xrange(len(self.data)):
-            # X-axis errors.
-            if self.x_data_type != 'res' and self.data[i][3] != None:
-                x_errors = 1
-
-            # Y-axis errors.
-            if self.data[i][5] != None:
-                y_errors = 1
-
-        # Plot of values.
-        if self.plot_data == 'value':
-            # xy plot with errors along both axes.
-            if x_errors and y_errors:
-                self.graph_type = 'xydxdy'
-
-            # xy plot with errors along the Y-axis.
-            elif y_errors:
-                self.graph_type = 'xydy'
-
-            # xy plot with errors along the X-axis.
-            elif x_errors:
-                self.graph_type = 'xydx'
-
-            # xy plot with no errors.
-            else:
-                self.graph_type = 'xy'
-
-        # Plot of errors.
-        elif self.plot_data == 'error':
-            # xy plot of residue number vs error.
-            if self.x_data_type == 'res' and y_errors:
-                self.graph_type = 'xy'
-
-            # xy plot of error vs error.
-            elif x_errors and y_errors:
-                self.graph_type = 'xy'
-
-            # Invalid argument combination.
-            else:
-                raise RelaxError, "When plotting errors, the errors must exist."
-
-        # Plot of simulation values.
+        # xy plot with no errors.
         else:
-            # xy plot with no errors.
-            self.graph_type = 'xy'
+            graph_type = 'xy'
+
+    # Plot of errors.
+    elif plot_data == 'error':
+        # xy plot of spin vs error.
+        if x_data_type == 'spin' and y_errors:
+            graph_type = 'xy'
+
+        # xy plot of error vs error.
+        elif x_errors and y_errors:
+            graph_type = 'xy'
+
+        # Invalid argument combination.
+        else:
+            raise RelaxError, "When plotting errors, the errors must exist."
+
+    # Plot of simulation values.
+    else:
+        # xy plot with no errors.
+        graph_type = 'xy'
+
+    # Return the graph type.
+    return graph_type
 
 
-    def get_data(self):
-        """Function for getting all the xy data."""
+def determine_seq_type(data, spin_id=None):
+    """Determine the spin sequence data type.
 
-        # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+    The purpose is to identify systems whereby only spins or only residues exist.
 
-        # Loop over the residues.
-        for spin in spin_loop(spin_id):
+    @param data:        The graph numerical data.
+    @type data:         list of lists of float
+    @keyword spin_id:   The spin identification string.
+    @type spin_id:      str
+    @return:            The spin sequence data type.  This can be one of 'spin', 'res,' or 'mixed'.
+    @rtype:             str
+    """
 
-            # Skip the residue if there is no match to 'self.res_num' (unless it is None).
-            if type(self.res_num) == int:
-                if not spin.num == self.res_num:
-                    continue
-            elif type(self.res_num) == str:
-                if not match(self.res_num, `spin.num`):
-                    continue
+    # Count the molecules, residues, and spins.
+    num_mol = count_molecules(spin_id)
+    num_res = count_residues(spin_id)
+    num_spin = count_spins(spin_id)
 
-            # Skip the residue if there is no match to 'self.res_name' (unless it is None).
-            if self.res_name != None:
-                if not match(self.res_name, spin.name):
-                    continue
+    # Only residues.
+    if num_mol == 1 and num_spin == 1:
+        return 'res'
 
-            # Skip deselected residues.
-            if not spin.select:
+    # Only spins.
+    if num_mol == 1 and num_res == 1:
+        return 'spin'
+
+    # Mixed.
+    return 'mixed'
+
+
+def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
+    """Get all the xy data.
+
+    @keyword spin_id:       The spin identification string.
+    @type spin_id:          str
+    @keyword x_data_type:   The category of the X-axis data.
+    @type x_data_type:      str
+    @keyword y_data_type:   The category of the Y-axis data.
+    @type y_data_type:      str
+    @keyword plot_data:     The type of the plotted data, one of 'value', 'error', or 'sim'.
+    @type plot_data:        str
+    @return:                The graph numerical data.
+    @rtype:                 list of lists of float
+    """
+
+    # Initialise the data structure.
+    data = []
+
+    # Specific x and y value returning functions.
+    x_return_value = y_return_value = get_specific_fn('return_value', ds[ds.current_pipe].pipe_type)
+    x_return_conversion_factor = y_return_conversion_factor = get_specific_fn('return_conversion_factor', ds[ds.current_pipe].pipe_type)
+
+    # Test if the X-axis data type is a minimisation statistic.
+    if x_data_type != 'spin' and generic_fns.minimise.return_data_name(x_data_type):
+        x_return_value = generic_fns.minimise.return_value
+        x_return_conversion_factor = generic_fns.minimise.return_conversion_factor
+
+    # Test if the Y-axis data type is a minimisation statistic.
+    if y_data_type != 'spin' and generic_fns.minimise.return_data_name(y_data_type):
+        y_return_value = generic_fns.minimise.return_value
+        y_return_conversion_factor = generic_fns.minimise.return_conversion_factor
+
+    # Loop over the spins.
+    for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
+        # Number of data points per spin.
+        if plot_data == 'sim':
+            points = ds[ds.current_pipe].sim_number
+        else:
+            points = 1
+
+        # Loop over the data points.
+        for j in xrange(points):
+            # Initialise an empty array for the individual spin data.
+            spin_data = [mol_name, res_num, res_name, spin.num, spin.name, None, None, None, None]
+
+            # Spin ID string on the x-axis.
+            if x_data_type == 'spin':
+                spin_data[-4] = spin_id
+
+            # Parameter value for the x-axis.
+            else:
+                # Get the x-axis values and errors.
+                if plot_data == 'sim':
+                    spin_data[-4], spin_data[-3] = x_return_value(spin, x_data_type, sim=j)
+                else:
+                    spin_data[-4], spin_data[-3] = x_return_value(spin, x_data_type)
+
+            # Get the y-axis values and errors.
+            if plot_data == 'sim':
+                spin_data[-2], spin_data[-1] = y_return_value(spin, y_data_type, sim=j)
+            else:
+                spin_data[-2], spin_data[-1] = y_return_value(spin, y_data_type)
+
+            # Go to the next spin if there is missing data.
+            if spin_data[-4] == None or spin_data[-2] == None:
                 continue
 
-            # Number of data points per residue.
-            if self.plot_data == 'sim':
-                points = cdp.sim_number
-            else:
-                points = 1
+            # X-axis conversion factors.
+            if x_data_type != 'spin':
+                spin_data[-4] = array(spin_data[-4]) / x_return_conversion_factor(x_data_type)
+                if spin_data[-3]:
+                    spin_data[-3] = array(spin_data[-3]) / x_return_conversion_factor(x_data_type)
 
-            # Loop over the data points.
-            for j in xrange(points):
-                # Initialise an empty array for the individual residue data.
-                res_data = [spin.num, spin.name, None, None, None, None]
+            # Y-axis conversion factors.
+            spin_data[-2] = array(spin_data[-2]) / y_return_conversion_factor(y_data_type)
+            if spin_data[-1]:
+                spin_data[-1] = array(spin_data[-1]) / y_return_conversion_factor(y_data_type)
 
-                # Residue number on the x-axis.
-                if self.x_data_type == 'res':
-                    res_data[2] = spin.num
+            # Append the array to the full data structure.
+            data.append(spin_data)
 
-                # Parameter value for the x-axis.
-                else:
-                    # Get the x-axis values and errors.
-                    if self.plot_data == 'sim':
-                        res_data[2], res_data[3] = self.x_return_value(self.run, i, self.x_data_type, sim=j)
-                    else:
-                        res_data[2], res_data[3] = self.x_return_value(self.run, i, self.x_data_type)
-
-                # Get the y-axis values and errors.
-                if self.plot_data == 'sim':
-                    res_data[4], res_data[5] = self.y_return_value(self.run, i, self.y_data_type, sim=j)
-                else:
-                    res_data[4], res_data[5] = self.y_return_value(self.run, i, self.y_data_type)
-
-                # Go to the next residue if there is missing data.
-                if res_data[2] == None or res_data[4] == None:
-                    continue
-
-                # X-axis conversion factors.
-                if self.x_data_type != 'res':
-                    res_data[2] = array(res_data[2]) / self.x_return_conversion_factor(self.x_data_type)
-                    if res_data[3]:
-                        res_data[3] = array(res_data[3]) / self.x_return_conversion_factor(self.x_data_type)
-
-                # Y-axis conversion factors.
-                res_data[4] = array(res_data[4]) / self.y_return_conversion_factor(self.y_data_type)
-                if res_data[5]:
-                    res_data[5] = array(res_data[5]) / self.y_return_conversion_factor(self.y_data_type)
-
-                # Append the array to the full data structure.
-                self.spin.append(res_data)
+    # Return the data.
+    return data
 
 
-    def view(self, file=None, dir=None, grace_exe='xmgrace'):
-        """Function for running Grace."""
+def view(file=None, dir=None, grace_exe='xmgrace'):
+    """Execute Grace.
 
-        # Test the binary file string corresponds to a valid executable.
-        test_binary(grace_exe)
+    @keyword file:      The name of the file to open in Grace.
+    @type file:         str
+    @keyword dir:       The optional directory containing the file.
+    @type dir:          str
+    @keyword grace_exe: The name of the Grace executable file.  This should be located within the
+                        system path.
+    @type grace_exe:    str
+    """
 
-        # File path.
-        self.file_path = get_file_path(file, dir)
+    # Test the binary file string corresponds to a valid executable.
+    test_binary(grace_exe)
 
-        # Run Grace.
-        system(grace_exe + " " + self.file_path + " &")
+    # File path.
+    file_path = get_file_path(file, dir)
+
+    # Run Grace.
+    system(grace_exe + " " + file_path + " &")
 
 
-    def write(self, x_data_type='res', y_data_type=None, res_num=None, res_name=None, plot_data='value', norm=1, file=None, dir=None, force=False):
-        """Function for writing data to a file."""
+def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value', file=None, dir=None, force=False, norm=True):
+    """Writing data to a file.
 
-        # Arguments.
-        self.x_data_type = x_data_type
-        self.y_data_type = y_data_type
-        self.res_num = res_num
-        self.res_name = res_name
-        self.plot_data = plot_data
-        self.norm = norm
+    @keyword x_data_type:   The category of the X-axis data.
+    @type x_data_type:      str
+    @keyword y_data_type:   The category of the Y-axis data.
+    @type y_data_type:      str
+    @keyword spin_id:       The spin identification string.
+    @type spin_id:          str
+    @keyword plot_data:     The type of the plotted data, one of 'value', 'error', or 'sim'.
+    @type plot_data:        str
+    @keyword file:          The name of the Grace file to create.
+    @type file:             str
+    @keyword dir:           The optional directory to place the file into.
+    @type dir:              str
+    @param force:           Boolean argument which if True causes the file to be overwritten if it
+                            already exists.
+    @type force:            bool
+    @keyword norm:          The normalisation flag which if set to True will cause all graphs to be
+                            normalised to a starting value of 1.
+    @type norm:             bool
+    """
 
-        # Test if the current pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+    # Test if the current pipe exists.
+    if not ds.current_pipe:
+        raise RelaxNoPipeError
 
-        # Test if the sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
+    # Test if the sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
-        # Test if the residue number is a valid regular expression.
-        if type(self.res_num) == str:
-            try:
-                compile(self.res_num)
-            except:
-                raise RelaxRegExpError, ('residue number', self.res_num)
+    # Test if the plot_data argument is one of 'value', 'error', or 'sim'.
+    if plot_data not in ['value', 'error', 'sim']:
+        raise RelaxError, "The plot data argument " + `plot_data` + " must be set to either 'value', 'error', 'sim'."
 
-        # Test if the residue name is a valid regular expression.
-        if self.res_name:
-            try:
-                compile(self.res_name)
-            except:
-                raise RelaxRegExpError, ('residue name', self.res_name)
+    # Test if the simulations exist.
+    if plot_data == 'sim' and not hasattr(ds[ds.current_pipe], 'sim_number'):
+        raise RelaxNoSimError
 
-        # Test if the plot_data argument is one of 'value', 'error', or 'sim'.
-        if self.plot_data not in ['value', 'error', 'sim']:
-            raise RelaxError, "The plot data argument " + `self.plot_data` + " must be set to either 'value', 'error', 'sim'."
+    # Open the file for writing.
+    file = open_write_file(file, dir, force)
 
-        # Test if the simulations exist.
-        if self.plot_data == 'sim' and (not hasattr(ds, 'sim_number') or not ds.sim_number.has_key(self.run)):
-            raise RelaxNoSimError, self.run
+    # Specific value and error, conversion factor, and units returning functions.
+    x_return_units =             y_return_units =             get_specific_fn('return_units', ds[ds.current_pipe].pipe_type)
+    x_return_grace_string =      y_return_grace_string =      get_specific_fn('return_grace_string', ds[ds.current_pipe].pipe_type)
 
-        # Open the file for writing.
-        self.file = open_write_file(file, dir, force)
+    # Test if the X-axis data type is a minimisation statistic.
+    if x_data_type != 'spin' and generic_fns.minimise.return_data_name(x_data_type):
+        x_return_units = generic_fns.minimise.return_units
+        x_return_grace_string = generic_fns.minimise.return_grace_string
 
-        # Function type.
-        function_type = ds.run_types[ds.run_names.index(run)]
+    # Test if the Y-axis data type is a minimisation statistic.
+    if generic_fns.minimise.return_data_name(y_data_type):
+        y_return_units = generic_fns.minimise.return_units
+        y_return_grace_string = generic_fns.minimise.return_grace_string
 
-        # Specific value and error, conversion factor, and units returning functions.
-        self.x_return_value =             self.y_return_value =             self.relax.specific_setup.setup('return_value', function_type)
-        self.x_return_conversion_factor = self.y_return_conversion_factor = self.relax.specific_setup.setup('return_conversion_factor', function_type)
-        self.x_return_units =             self.y_return_units =             self.relax.specific_setup.setup('return_units', function_type)
-        self.x_return_grace_string =      self.y_return_grace_string =      self.relax.specific_setup.setup('return_grace_string', function_type)
+    # Get the data.
+    data = get_data(spin_id, x_data_type=x_data_type, y_data_type=y_data_type, plot_data=plot_data)
 
-        # Test if the X-axis data type is a minimisation statistic.
-        if self.x_data_type != 'res' and self.relax.generic.minimise.return_data_name(self.x_data_type):
-            self.x_return_value = self.relax.generic.minimise.return_value
-            self.x_return_conversion_factor = self.relax.generic.minimise.return_conversion_factor
-            self.x_return_units = self.relax.generic.minimise.return_units
-            self.x_return_grace_string = self.relax.generic.minimise.return_grace_string
+    # Determine the graph type (ie xy, xydy, xydx, or xydxdy).
+    graph_type = determine_graph_type(data, x_data_type=x_data_type, plot_data=plot_data)
 
-        # Test if the Y-axis data type is a minimisation statistic.
-        if self.relax.generic.minimise.return_data_name(self.y_data_type):
-            self.y_return_value = self.relax.generic.minimise.return_value
-            self.y_return_conversion_factor = self.relax.generic.minimise.return_conversion_factor
-            self.y_return_units = self.relax.generic.minimise.return_units
-            self.y_return_grace_string = self.relax.generic.minimise.return_grace_string
+    # Test for multiple data sets.
+    multi = False
+    if type(data[0][-4]) == list:
+        multi = True
 
-        # Get the data.
-        self.get_data()
+    # Multiple data sets.
+    if multi:
+        # Write the header.
+        write_multi_header(data, file=file, spin_id=spin_id, x_data_type=x_data_type, y_data_type=y_data_type, x_return_units=x_return_units, y_return_units=y_return_units, x_return_grace_string=x_return_grace_string, y_return_grace_string=y_return_grace_string, norm=norm)
 
-        # Determine the graph type (ie xy, xydy, xydx, or xydxdy).
-        self.determine_graph_type()
+        # Write the data.
+        write_multi_data(data, file=file, graph_type=graph_type, norm=norm)
 
-        # Test for multiple data sets.
-        self.multi = 1
-        try:
-            len(self.data[0][2])
-        except TypeError:
-            self.multi = 0
+    # Single data set.
+    else:
+        # Write the header.
+        write_header(data, file=file, spin_id=spin_id, x_data_type=x_data_type, y_data_type=y_data_type, x_return_units=x_return_units, y_return_units=y_return_units, x_return_grace_string=x_return_grace_string, y_return_grace_string=y_return_grace_string)
 
-        # Multiple data sets.
-        if self.multi:
-            # Write the header.
-            self.write_multi_header()
+        # Write the data.
+        write_data(data, file=file, graph_type=graph_type)
+
+    # Close the file.
+    file.close()
+
+
+def write_data(data, file=None, graph_type=None):
+    """Write the data into the Grace file.
+
+    @param data:            The graph numerical data.
+    @type data:             list of lists of float
+    @keyword file:          The file object to write the data to.
+    @type file:             file object
+    @keyword graph_type:    The graph type which can be one of xy, xydy, xydx, or xydxdy.
+    @type graph_type:       str
+    """
+
+    # First graph and data set (graph 0, set 0).
+    file.write("@target G0.S0\n")
+    file.write("@type " + graph_type + "\n")
+
+    # Loop over the data.
+    for i in xrange(len(data)):
+        # Graph type xy.
+        if graph_type == 'xy':
+            # Write the data.
+            file.write("%-30s%-30s\n" % (data[i][-4], data[i][-2]))
+
+        # Graph type xydy.
+        elif graph_type == 'xydy':
+            # Catch y-axis errors of None.
+            y_error = data[i][-1]
+            if y_error == None:
+                y_error = 0.0
 
             # Write the data.
-            self.write_multi_data()
+            file.write("%-30s%-30s%-30s\n" % (data[i][-4], data[i][-2], y_error))
 
-        # Single data set.
+        # Graph type xydxdy.
+        elif graph_type == 'xydxdy':
+            # Catch x-axis errors of None.
+            x_error = data[i][-3]
+            if x_error == None:
+                x_error = 0.0
+
+            # Catch y-axis errors of None.
+            y_error = data[i][-1]
+            if y_error == None:
+                y_error = 0.0
+
+            # Write the data.
+            file.write("%-30s%-30s%-30s%-30s\n" % (data[i][-4], data[i][-2], x_error, y_error))
+
+    # End of graph and data set.
+    file.write("&\n")
+
+
+def write_header(data, file=None, spin_id=None, x_data_type=None, y_data_type=None, x_return_units=None, y_return_units=None, x_return_grace_string=None, y_return_grace_string=None):
+    """Write the grace header.
+
+    @param data:                    The graph numerical data.
+    @type data:                     list of lists of float
+    @keyword file:                  The file object to write the data to.
+    @type file:                     file object
+    @keyword spin_id:               The spin identification string.
+    @type spin_id:                  str
+    @keyword x_data_type:           The category of the X-axis data.
+    @type x_data_type:              str
+    @keyword y_data_type:           The category of the Y-axis data.
+    @type y_data_type:              str
+    @keyword x_return_units:        The analysis specific function for returning the Grace formatted
+                                    units string for the X-axis.
+    @type x_return_units:           function
+    @keyword y_return_units:        The analysis specific function for returning the Grace formatted
+                                    units string for the Y-axis.
+    @type y_return_units:           function
+    @keyword x_return_grace_string: The analysis specific function for returning the Grace X-axis
+                                    string.
+    @type x_return_grace_string:    function
+    @keyword y_return_grace_string: The analysis specific function for returning the Grace Y-axis
+                                    string.
+    @type y_return_grace_string:    function
+    """
+
+    # Graph G0.
+    file.write("@with g0\n")
+
+    # X-axis set up.
+    if x_data_type == 'spin':
+        # Determine the sequence data type.
+        seq_type = determine_seq_type(data, spin_id=spin_id)
+
+        # Residue only data.
+        if seq_type == 'res':
+            # Axis limits.
+            file.write("@    world xmin " + `ds[ds.current_pipe].mol[0].res[0].num - 1` + "\n")
+            file.write("@    world xmax " + `ds[ds.current_pipe].mol[0].res[-1].num + 1` + "\n")
+
+            # X-axis label.
+            file.write("@    xaxis  label \"Residue number\"\n")
+
+        # Spin only data.
+        if seq_type == 'spin':
+            # Axis limits.
+            file.write("@    world xmin " + `ds[ds.current_pipe].mol[0].res[0].spin[0].num - 1` + "\n")
+            file.write("@    world xmax " + `ds[ds.current_pipe].mol[0].res[0].spin[-1].num + 1` + "\n")
+
+            # X-axis label.
+            file.write("@    xaxis  label \"Spin number\"\n")
+
+        # Mixed data.
+        if seq_type == 'mixed':
+            # X-axis label.
+            file.write("@    xaxis  label \"Spin identification string\"\n")
+
+    else:
+        # Get the units.
+        units = x_return_units(x_data_type)
+
+        # Label.
+        if units:
+            file.write("@    xaxis  label \"" + x_return_grace_string(x_data_type) + "\\N (" + units + ")\"\n")
         else:
-            # Write the header.
-            self.write_header()
+            file.write("@    xaxis  label \"" + x_return_grace_string(x_data_type) + "\"\n")
 
-            # Write the data.
-            self.write_data()
+    # X-axis specific settings.
+    file.write("@    xaxis  label char size 1.48\n")
+    file.write("@    xaxis  tick major size 0.75\n")
+    file.write("@    xaxis  tick major linewidth 0.5\n")
+    file.write("@    xaxis  tick minor linewidth 0.5\n")
+    file.write("@    xaxis  tick minor size 0.45\n")
+    file.write("@    xaxis  ticklabel char size 1.00\n")
 
-        # Close the file.
-        self.file.close()
+    # Y-axis label.
+    units = y_return_units(y_data_type)
+    if units:
+        file.write("@    yaxis  label \"" + y_return_grace_string(y_data_type) + "\\N (" + units + ")\"\n")
+    else:
+        file.write("@    yaxis  label \"" + y_return_grace_string(y_data_type) + "\"\n")
+
+    # Y-axis specific settings.
+    file.write("@    yaxis  label char size 1.48\n")
+    file.write("@    yaxis  tick major size 0.75\n")
+    file.write("@    yaxis  tick major linewidth 0.5\n")
+    file.write("@    yaxis  tick minor linewidth 0.5\n")
+    file.write("@    yaxis  tick minor size 0.45\n")
+    file.write("@    yaxis  ticklabel char size 1.00\n")
+
+    # Frame.
+    file.write("@    frame linewidth 0.5\n")
+
+    # Symbols.
+    file.write("@    s0 symbol 1\n")
+    file.write("@    s0 symbol size 0.45\n")
+    file.write("@    s0 symbol fill pattern 1\n")
+    file.write("@    s0 symbol linewidth 0.5\n")
+    file.write("@    s0 line linestyle 0\n")
+
+    # Error bars.
+    file.write("@    s0 errorbar size 0.5\n")
+    file.write("@    s0 errorbar linewidth 0.5\n")
+    file.write("@    s0 errorbar riser linewidth 0.5\n")
 
 
-    def write_data(self):
-        """Write the data into the grace file."""
+def write_multi_data(data, file=None, graph_type=None, norm=False):
+    """Write the data into the Grace file.
 
-        # First graph and data set (graph 0, set 0).
-        self.file.write("@target G0.S0\n")
-        self.file.write("@type " + self.graph_type + "\n")
+    @param data:            The graph numerical data.
+    @type data:             list of lists of float
+    @keyword file:          The file object to write the data to.
+    @type file:             file object
+    @keyword graph_type:    The graph type which can be one of xy, xydy, xydx, or xydxdy.
+    @type graph_type:       str
+    @keyword norm:          The normalisation flag which if set to True will cause all graphs to be
+                            normalised to 1.
+    @type norm:             bool
+    """
 
-        # Loop over the data.
-        for i in xrange(len(self.data)):
+    # Loop over the data.
+    for i in xrange(len(data)):
+        # Multi data set (graph 0, set i).
+        file.write("@target G0.S" + `i` + "\n")
+        file.write("@type " + graph_type + "\n")
+
+        # Normalisation.
+        norm_fact = 1.0
+        if norm:
+            norm_fact = data[i][-2][0]
+
+        # Loop over the data of the set.
+        for j in xrange(len(data[i][-4])):
             # Graph type xy.
-            if self.graph_type == 'xy':
+            if graph_type == 'xy':
                 # Write the data.
-                self.file.write("%-30s%-30s\n" % (self.data[i][2], self.data[i][4]))
+                file.write("%-30s%-30s\n" % (data[i][-4][j], data[i][-2][j]/norm_fact))
 
             # Graph type xydy.
-            elif self.graph_type == 'xydy':
+            elif graph_type == 'xydy':
                 # Catch y-axis errors of None.
-                y_error = self.data[i][5]
+                y_error = data[i][-1][j]
                 if y_error == None:
                     y_error = 0.0
 
                 # Write the data.
-                self.file.write("%-30s%-30s%-30s\n" % (self.data[i][2], self.data[i][4], y_error))
+                file.write("%-30s%-30s%-30s\n" % (data[i][-4][j], data[i][-2][j]/norm_fact, y_error/norm_fact))
 
             # Graph type xydxdy.
-            elif self.graph_type == 'xydxdy':
+            elif graph_type == 'xydxdy':
                 # Catch x-axis errors of None.
-                x_error = self.data[i][3]
+                x_error = data[i][-3][j]
                 if x_error == None:
                     x_error = 0.0
 
                 # Catch y-axis errors of None.
-                y_error = self.data[i][5]
+                y_error = data[i][-1][j]
                 if y_error == None:
                     y_error = 0.0
 
                 # Write the data.
-                self.file.write("%-30s%-30s%-30s%-30s\n" % (self.data[i][2], self.data[i][4], x_error, y_error))
+                file.write("%-30s%-30s%-30s%-30s\n" % (data[i][-4][j], data[i][-2][j]/norm_fact, x_error, y_error/norm_fact))
 
-        # End of graph and data set.
-        self.file.write("&\n")
+        # End of the data set i.
+        file.write("&\n")
 
 
-    def write_header(self):
-        """Write the grace header."""
+def write_multi_header(data, file=None, spin_id=None, x_data_type=None, y_data_type=None, x_return_units=None, y_return_units=None, x_return_grace_string=None, y_return_grace_string=None, norm=False):
+    """Write the grace header.
 
-        # Graph G0.
-        self.file.write("@with g0\n")
+    @param data:                    The graph numerical data.
+    @type data:                     list of lists of float
+    @keyword file:                  The file object to write the data to.
+    @type file:                     file object
+    @keyword spin_id:               The spin identification string.
+    @type spin_id:                  str
+    @keyword x_data_type:           The category of the X-axis data.
+    @type x_data_type:              str
+    @keyword y_data_type:           The category of the Y-axis data.
+    @type y_data_type:              str
+    @keyword x_return_units:        The analysis specific function for returning the Grace formatted
+                                    units string for the X-axis.
+    @type x_return_units:           function
+    @keyword y_return_units:        The analysis specific function for returning the Grace formatted
+                                    units string for the Y-axis.
+    @type y_return_units:           function
+    @keyword x_return_grace_string: The analysis specific function for returning the Grace X-axis
+                                    string.
+    @type x_return_grace_string:    function
+    @keyword y_return_grace_string: The analysis specific function for returning the Grace Y-axis
+                                    string.
+    @type y_return_grace_string:    function
+    @keyword norm:                  The normalisation flag which if set to True will cause all
+                                    graphs to be normalised to 1.
+    @type norm:                     bool
+    """
 
-        # X axis start and end.
-        if self.x_data_type == 'res':
-            self.file.write("@    world xmin " + `cdp.res[0].num - 1` + "\n")
-            self.file.write("@    world xmax " + `cdp.res[-1].num + 1` + "\n")
+    # Graph G0.
+    file.write("@with g0\n")
 
-        # X-axis label.
-        if self.x_data_type == 'res':
-            self.file.write("@    xaxis  label \"Residue number\"\n")
-        else:
-            # Get the units.
-            units = self.x_return_units(self.x_data_type)
+    # X-axis set up.
+    if x_data_type == 'spin':
+        # Determine the sequence data type.
+        seq_type = determine_seq_type(data, spin_id=spin_id)
 
-            # Label.
-            if units:
-                self.file.write("@    xaxis  label \"" + self.x_return_grace_string(self.x_data_type) + "\\N (" + units + ")\"\n")
-            else:
-                self.file.write("@    xaxis  label \"" + self.x_return_grace_string(self.x_data_type) + "\"\n")
+        # Residue only data.
+        if seq_type == 'res':
+            # Axis limits.
+            file.write("@    world xmin " + `ds[ds.current_pipe].mol[0].res[0].num - 1` + "\n")
+            file.write("@    world xmax " + `ds[ds.current_pipe].mol[0].res[-1].num + 1` + "\n")
 
-        # X-axis specific settings.
-        self.file.write("@    xaxis  label char size 1.48\n")
-        self.file.write("@    xaxis  tick major size 0.75\n")
-        self.file.write("@    xaxis  tick major linewidth 0.5\n")
-        self.file.write("@    xaxis  tick minor linewidth 0.5\n")
-        self.file.write("@    xaxis  tick minor size 0.45\n")
-        self.file.write("@    xaxis  ticklabel char size 1.00\n")
+            # X-axis label.
+            file.write("@    xaxis  label \"Residue number\"\n")
 
-        # Y-axis label.
-        units = self.y_return_units(self.y_data_type)
+        # Spin only data.
+        if seq_type == 'spin':
+            # Axis limits.
+            file.write("@    world xmin " + `ds[ds.current_pipe].mol[0].res[0].spin[0].num - 1` + "\n")
+            file.write("@    world xmax " + `ds[ds.current_pipe].mol[0].res[0].spin[-1].num + 1` + "\n")
+
+            # X-axis label.
+            file.write("@    xaxis  label \"Spin number\"\n")
+
+        # Mixed data.
+        if seq_type == 'mixed':
+            # X-axis label.
+            file.write("@    xaxis  label \"Spin identification string\"\n")
+
+    else:
+        # Get the units.
+        units = x_return_units(x_data_type)
+
+        # Label.
         if units:
-            self.file.write("@    yaxis  label \"" + self.y_return_grace_string(self.y_data_type) + "\\N (" + units + ")\"\n")
+            file.write("@    xaxis  label \"" + x_return_grace_string(x_data_type) + "\\N (" + units + ")\"\n")
         else:
-            self.file.write("@    yaxis  label \"" + self.y_return_grace_string(self.y_data_type) + "\"\n")
+            file.write("@    xaxis  label \"" + x_return_grace_string(x_data_type) + "\"\n")
 
-        # Y-axis specific settings.
-        self.file.write("@    yaxis  label char size 1.48\n")
-        self.file.write("@    yaxis  tick major size 0.75\n")
-        self.file.write("@    yaxis  tick major linewidth 0.5\n")
-        self.file.write("@    yaxis  tick minor linewidth 0.5\n")
-        self.file.write("@    yaxis  tick minor size 0.45\n")
-        self.file.write("@    yaxis  ticklabel char size 1.00\n")
+    # X-axis specific settings.
+    file.write("@    xaxis  label char size 1.48\n")
+    file.write("@    xaxis  tick major size 0.75\n")
+    file.write("@    xaxis  tick major linewidth 0.5\n")
+    file.write("@    xaxis  tick minor linewidth 0.5\n")
+    file.write("@    xaxis  tick minor size 0.45\n")
+    file.write("@    xaxis  ticklabel char size 1.00\n")
 
-        # Frame.
-        self.file.write("@    frame linewidth 0.5\n")
+    # Y-axis label.
+    units = y_return_units(y_data_type)
+    string = "@    yaxis  label \"" + y_return_grace_string(y_data_type)
+    if units:
+        string = string + "\\N (" + units + ")"
+    if norm:
+        string = string + " \\q(normalised)\\Q"
+    file.write(string + "\"\n")
 
-        # Symbols.
-        self.file.write("@    s0 symbol 1\n")
-        self.file.write("@    s0 symbol size 0.45\n")
-        self.file.write("@    s0 symbol fill pattern 1\n")
-        self.file.write("@    s0 symbol linewidth 0.5\n")
-        self.file.write("@    s0 line linestyle 0\n")
+    # Y-axis specific settings.
+    file.write("@    yaxis  label char size 1.48\n")
+    file.write("@    yaxis  tick major size 0.75\n")
+    file.write("@    yaxis  tick major linewidth 0.5\n")
+    file.write("@    yaxis  tick minor linewidth 0.5\n")
+    file.write("@    yaxis  tick minor size 0.45\n")
+    file.write("@    yaxis  ticklabel char size 1.00\n")
 
+    # Legend box.
+    file.write("@    legend off\n")
+
+    # Frame.
+    file.write("@    frame linewidth 0.5\n")
+
+    # Loop over the data sets.
+    for i in xrange(len(data)):
         # Error bars.
-        self.file.write("@    s0 errorbar size 0.5\n")
-        self.file.write("@    s0 errorbar linewidth 0.5\n")
-        self.file.write("@    s0 errorbar riser linewidth 0.5\n")
+        file.write("@    s%i errorbar size 0.5\n" % i)
+        file.write("@    s%i errorbar linewidth 0.5\n" % i)
+        file.write("@    s%i errorbar riser linewidth 0.5\n" % i)
 
-
-    def write_multi_data(self):
-        """Write the data into the grace file."""
-
-        # Loop over the data.
-        for i in xrange(len(self.data)):
-            # Multi data set (graph 0, set i).
-            self.file.write("@target G0.S" + `i` + "\n")
-            self.file.write("@type " + self.graph_type + "\n")
-
-            # Normalisation.
-            norm_fact = 1.0
-            if self.norm:
-                norm_fact = self.data[i][4][0]
-
-            # Loop over the data of the set.
-            for j in xrange(len(self.data[i][2])):
-                # Graph type xy.
-                if self.graph_type == 'xy':
-                    # Write the data.
-                    self.file.write("%-30s%-30s\n" % (self.data[i][2][j], self.data[i][4][j]/norm_fact))
-
-                # Graph type xydy.
-                elif self.graph_type == 'xydy':
-                    # Catch y-axis errors of None.
-                    y_error = self.data[i][5][j]
-                    if y_error == None:
-                        y_error = 0.0
-
-                    # Write the data.
-                    self.file.write("%-30s%-30s%-30s\n" % (self.data[i][2][j], self.data[i][4][j]/norm_fact, y_error/norm_fact))
-
-                # Graph type xydxdy.
-                elif self.graph_type == 'xydxdy':
-                    # Catch x-axis errors of None.
-                    x_error = self.data[i][3][j]
-                    if x_error == None:
-                        x_error = 0.0
-
-                    # Catch y-axis errors of None.
-                    y_error = self.data[i][5][j]
-                    if y_error == None:
-                        y_error = 0.0
-
-                    # Write the data.
-                    self.file.write("%-30s%-30s%-30s%-30s\n" % (self.data[i][2][j], self.data[i][4][j]/norm_fact, x_error, y_error/norm_fact))
-
-            # End of the data set i.
-            self.file.write("&\n")
-
-
-    def write_multi_header(self):
-        """Write the grace header."""
-
-        # Graph G0.
-        self.file.write("@with g0\n")
-
-        # X axis start and end.
-        if self.x_data_type == 'res':
-            self.file.write("@    world xmin " + `cdp.res[0].num - 1` + "\n")
-            self.file.write("@    world xmax " + `cdp.res[-1].num + 1` + "\n")
-
-        # X-axis label.
-        if self.x_data_type == 'res':
-            self.file.write("@    xaxis  label \"Residue number\"\n")
-        else:
-            # Get the units.
-            units = self.x_return_units(self.x_data_type)
-
-            # Label.
-            if units:
-                self.file.write("@    xaxis  label \"" + self.x_return_grace_string(self.x_data_type) + "\\N (" + units + ")\"\n")
-            else:
-                self.file.write("@    xaxis  label \"" + self.x_return_grace_string(self.x_data_type) + "\"\n")
-
-        # X-axis specific settings.
-        self.file.write("@    xaxis  label char size 1.48\n")
-        self.file.write("@    xaxis  tick major size 0.75\n")
-        self.file.write("@    xaxis  tick major linewidth 0.5\n")
-        self.file.write("@    xaxis  tick minor linewidth 0.5\n")
-        self.file.write("@    xaxis  tick minor size 0.45\n")
-        self.file.write("@    xaxis  ticklabel char size 1.00\n")
-
-        # Y-axis label.
-        units = self.y_return_units(self.y_data_type)
-        string = "@    yaxis  label \"" + self.y_return_grace_string(self.y_data_type)
-        if units:
-            string = string + "\\N (" + units + ")"
-        if self.norm:
-            string = string + " \\q(normalised)\\Q"
-        self.file.write(string + "\"\n")
-
-        # Y-axis specific settings.
-        self.file.write("@    yaxis  label char size 1.48\n")
-        self.file.write("@    yaxis  tick major size 0.75\n")
-        self.file.write("@    yaxis  tick major linewidth 0.5\n")
-        self.file.write("@    yaxis  tick minor linewidth 0.5\n")
-        self.file.write("@    yaxis  tick minor size 0.45\n")
-        self.file.write("@    yaxis  ticklabel char size 1.00\n")
-
-        # Legend box.
-        self.file.write("@    legend off\n")
-
-        # Frame.
-        self.file.write("@    frame linewidth 0.5\n")
-
-        # Loop over the data sets.
-        for i in xrange(len(self.data)):
-            # Error bars.
-            self.file.write("@    s%i errorbar size 0.5\n" % i)
-            self.file.write("@    s%i errorbar linewidth 0.5\n" % i)
-            self.file.write("@    s%i errorbar riser linewidth 0.5\n" % i)
-
-            # Legend.
-            self.file.write("@    s%i legend \"Residue %s\"\n" % (i, self.data[i][1] + " " + `self.data[i][0]`))
+        # Legend.
+        file.write("@    s%i legend \"Spin %s\"\n" % (i, data[i][5]))
