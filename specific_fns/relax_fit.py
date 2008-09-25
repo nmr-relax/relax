@@ -35,7 +35,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from dep_check import C_module_exp_fn
 from base_class import Common_functions
 from generic_fns import intensity
-from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_spin, return_spin_from_index, spin_loop
+from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
 from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoPipeError, RelaxNoSequenceError
 
@@ -1182,22 +1182,6 @@ class Relax_fit(Common_functions):
         the intensity at infinity (Iinf).  Setting the parameter Iinf has no effect if the chosen
         model is that of the exponential curve which decays to zero.
         """
-
-
-    def set_selected_sim(self, instance, select_sim):
-        """Set the simulation selection flag for the spin.
-
-        @param instance:    The optimisation instance index.
-        @type instance:     int
-        @param select_sim:  The selection flag for the simulations.
-        @type select_sim:   bool
-        """
-
-        # Get the SpinContainer.
-        spin = return_spin_from_index(instance)
-
-        # Multiple spins.
-        spin.select_sim = select_sim
 
 
     def sim_pack_data(self, spin_id, sim_data):

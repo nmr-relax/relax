@@ -310,38 +310,39 @@ def on():
 
 
 def select_all_sims(number=None, all_select_sim=None):
-    """Set the select flag of all simulations of all instances to one.
+    """Set the select flag of all simulations of all models to one.
 
     @keyword number:            The number of Monte Carlo simulations to set up.
     @type number:               int
     @keyword all_select_sim:    The selection status of the Monte Carlo simulations.  The first
                                 dimension of this matrix corresponds to the simulation and the
-                                second corresponds to the instance.
+                                second corresponds to the models.
     @type all_select_sim:       numpy matrix (int)
     """
 
     # Alias the current data pipe.
     cdp = ds[ds.current_pipe]
 
-    # Specific number of instances and set the selected simulation array functions.
-    count_num_instances = get_specific_fn('num_instances', cdp.pipe_type)
+    # Model loop and set the selected simulation array functions.
+    model_loop = get_specific_fn('model_loop', cdp.pipe_type)
     set_selected_sim = get_specific_fn('set_selected_sim', cdp.pipe_type)
-
-    # Count the number of instances.
-    num_instances = count_num_instances()
 
     # Create the selected simulation array with all simulations selected.
     if all_select_sim == None:
         select_sim = ones(number, int)
 
-    # Loop over the instances.
-    for instance in xrange(num_instances):
+    # Loop over the models.
+    i = 0
+    for model_info in model_loop():
         # Set up the selected simulation array.
         if all_select_sim != None:
-            select_sim = all_select_sim[instance].tolist()
+            select_sim = all_select_sim[i].tolist()
 
         # Set the selected simulation array.
-        set_selected_sim(instance, select_sim)
+        set_selected_sim(model_info, select_sim)
+
+        # Model index.
+        i = i + 1
 
 
 def setup(number=None, all_select_sim=None):

@@ -27,7 +27,7 @@ from string import replace
 # relax module imports.
 from base_class import Common_functions
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from maths_fns.jw_mapping import Mapping
 from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError, RelaxNucleusError, RelaxParamSetError, RelaxProtonTypeError, RelaxSpinTypeError
@@ -188,23 +188,31 @@ class Jw_mapping(Common_functions):
                 setattr(data, name, None)
 
 
-    def data_names(self):
-        """Function for returning a list of names of data structures.
+    def data_names(self, set=None, error_names=False, sim_names=False):
+        """Return a list of all spin container specific J(w) mapping object names.
 
         Description
-        ~~~~~~~~~~~
+        ===========
 
-        r:  Bond length.
+        The names are as follows:
 
-        csa:  CSA value.
+            r:  Bond length.
+            csa:  CSA value.
+            heteronuc_type:  The heteronucleus type.
+            j0:  Spectral density value at 0 MHz.
+            jwx:  Spectral density value at the frequency of the heteronucleus.
+            jwh:  Spectral density value at the frequency of the heteronucleus.
 
-        heteronuc_type:  The heteronucleus type.
 
-        j0:  Spectral density value at 0 MHz.
-
-        jwx:  Spectral density value at the frequency of the heteronucleus.
-
-        jwh:  Spectral density value at the frequency of the heteronucleus.
+        @keyword set:           An unused variable.
+        @type set:              ignored
+        @keyword error_names:   A flag which if True will add the error object names as well.
+        @type error_names:      bool
+        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object
+                                names as well.
+        @type sim_names:        bool
+        @return:                The list of object names.
+        @rtype:                 list of str
         """
 
         # Initialise.
@@ -220,6 +228,7 @@ class Jw_mapping(Common_functions):
         names.append('jwx')
         names.append('jwh')
 
+        # Return the names.
         return names
 
 
@@ -466,23 +475,6 @@ class Jw_mapping(Common_functions):
 
         # Multiple spins.
         return spin.select_sim
-
-
-    def set_selected_sim(self, model_index, select_sim):
-        """Set the array of selected simulation flags.
-
-        @param model_index: The global spin index, covering the molecule, residue, and spin
-                            indices).
-        @type model_index:  int
-        @param select_sim:  The selection flags.
-        @type select_sim:   bool
-        """
-
-        # Get the spin container.
-        spin = return_spin_from_index(model_index)
-
-        # Set the simulation flags.
-        spin.select_sim = select_sim
 
 
     def sim_pack_data(self, spin_id, sim_data):

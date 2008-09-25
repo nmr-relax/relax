@@ -26,7 +26,7 @@ import sys
 # relax module imports.
 import help
 from generic_fns.mol_res_spin import copy_spin, create_spin, delete_spin, display_spin, id_string_doc, name_spin, number_spin
-from relax_errors import RelaxIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 
 
 class Spin:
@@ -310,8 +310,8 @@ class Spin:
             raise RelaxNoneStrError, ('spin identification string', spin_id)
 
         # New spin number.
-        if type(number) != int:
-            raise RelaxIntError, ('new spin number', number)
+        if number != None and  type(number) != int:
+            raise RelaxNoneIntError, ('new spin number', number)
 
         # Execute the functional code.
         number_spin(spin_id=spin_id, number=number)

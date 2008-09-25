@@ -527,6 +527,38 @@ class RelaxRiError(BaseError):
             self.save_state()
 
 
+# RDC and PCS data errors.
+##########################
+
+# No RDC data.
+class RelaxNoRDCError(BaseError):
+    def __init__(self, id):
+        self.text = "RDC data corresponding to the identification string " + `id` + " does not exist."
+        if Debug:
+            self.save_state()
+
+# RDC data already exists.
+class RelaxRDCError(BaseError):
+    def __init__(self, id):
+        self.text = "RDC data corresponding to the identification string " + `id` + " already exists."
+        if Debug:
+            self.save_state()
+
+# No PCS data.
+class RelaxNoPCSError(BaseError):
+    def __init__(self, id):
+        self.text = "PCS data corresponding to the identification string " + `id` + " does not exist."
+        if Debug:
+            self.save_state()
+
+# PCS data already exists.
+class RelaxPCSError(BaseError):
+    def __init__(self, id):
+        self.text = "PCS data corresponding to the identification string " + `id` + " already exists."
+        if Debug:
+            self.save_state()
+
+
 # Model-free errors.
 ####################
 
@@ -668,6 +700,17 @@ class RelaxFuncSetupError(BaseError):
         if Debug:
             self.save_state()
 
+# The model already exists.
+class RelaxModelError(BaseError):
+    def __init__(self, name=None):
+        if name != None:
+            self.text = "The " + name + " model already exists."
+        else:
+            self.text = "The model already exists."
+        if Debug:
+            self.save_state()
+
+
 # The model has not been setup.
 class RelaxNoModelError(BaseError):
     def __init__(self, name=None):
@@ -750,8 +793,11 @@ class RelaxUnknownParamCombError(BaseError):
 
 # No simulations.
 class RelaxNoSimError(BaseError):
-    def __init__(self, pipe):
-        self.text = "Simulations for the data pipe " + `pipe` + " have not been setup."
+    def __init__(self, pipe=None):
+        if pipe:
+            self.text = "Simulations for the data pipe " + `pipe` + " have not been setup."
+        else:
+            self.text = "Simulations have not been setup."
         if Debug:
             self.save_state()
 

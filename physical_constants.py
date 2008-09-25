@@ -44,6 +44,9 @@ h_bar = h / (2.0 * pi)
 mu0 = 4.0 * pi * 1e-7
 """The magnetic constant or the permeability of vacuum."""
 
+kB = 1.380650424 * 1e-23
+"""Boltzmann's constant in SI units of J.K^-1 (the last 2 digits of '24' are within the measured error limits)."""
+
 
 # CSA and bond lengths.
 #######################
@@ -53,6 +56,70 @@ N15_CSA = -172 * 1e-6
 
 NH_BOND_LENGTH = 1.02 * 1e-10
 """The length of the NH bond (default value)."""
+
+
+# The dipolar constant.
+#######################
+
+def dipolar_constant(gx, gh, r):
+    """Calculate the dipolar constant.
+
+    The dipolar constant is defined as::
+
+              mu0 gI.gS.h_bar
+        d = - --- ----------- ,
+              4pi    r**3
+
+    where:
+        - mu0 is the permeability of free space,
+        - gI and gS are the gyromagnetic ratios of the I and S spins,
+        - h_bar is Dirac's constant which is equal to Planck's constant divided by 2pi,
+        - r is the distance between the two spins.
+
+
+    @param gx:  The gyromagnetic ratio of the heteronucleus (or first spin).
+    @type gx:   float
+    @param gh:  The gyromagnetic ratio of the proton (or second spin).
+    @type gh:   float
+    @param r:   The distance between the two nuclei.
+    @type r:    float
+    """
+
+    # Calculate and return the value.
+    return - mu0 / (4.0*pi) * gx * gh * h_bar / r**3
+
+
+# The pseudocontact shift constant.
+###################################
+
+def pcs_constant(T, Bo, r):
+    """Calculate the pseudocontact shift constant.
+
+    The pseudocontact shift constant is defined as::
+
+            mu0 15kT   1
+        d = --- ----- ---- ,
+            4pi Bo**2 r**3
+
+    where:
+        - mu0 is the permeability of free space,
+        - k is Boltzmann's constant,
+        - T is the absolute temperature,
+        - Bo is the magnetic field strength,
+        - r is the distance between the paramagnetic centre (electron spin) and the nuclear spin.
+
+
+    @param T:   The temperature in kelvin.
+    @type T:    float
+    @param Bo:  The magnetic field strength.
+    @type Bo:   float
+    @param r:   The distance between the two nuclei.
+    @type r:    float
+    """
+
+    # Calculate and return the value.
+    return mu0 / (4.0*pi) * 15.0 * kB * T / Bo**2 / r**3
+
 
 
 # Gyromagnetic ratios.
