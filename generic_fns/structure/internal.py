@@ -754,6 +754,10 @@ class Internal(Base_struct_API):
                 # Append the vector to the vectors array.
                 vectors.append(vector)
 
+            # Not found.
+            else:
+                warnings = "Cannot find the atom in the structure"
+
         # Build the tuple to be yielded.
         data = (vectors,)
         if return_name:
