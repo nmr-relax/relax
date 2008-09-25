@@ -1337,7 +1337,7 @@ def number_spin(spin_id=None, number=None):
         i = i + 1
 
     # Fail if multiple spins are numbered.
-    if i > 1:
+    if number != None and i > 1:
         raise RelaxError, "The numbering of multiple spins is disallowed, as each spin requires a unique number."
 
     # Rename the spin.
