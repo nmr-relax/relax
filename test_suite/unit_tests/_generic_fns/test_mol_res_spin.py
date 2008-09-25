@@ -410,16 +410,6 @@ class Test_mol_res_spin(TestCase):
         self.assert_(not obj.contains_spin(mol='RNA'))
 
 
-    def test_Selection_contains_spin8(self):
-        """The Selection object ":9&:Gln@N" contains the spin 'N' of residue 9 Gln."""
-
-        # The Selection object.
-        obj = mol_res_spin.Selection(":9&:Gln@N")
-
-        # Check if the molecule is in the selection.
-        self.assert_(obj.contains_spin(spin_name='N', res_name='Gln', res_num='9'))
-
-
     def test_Selection_contains_spin_re1(self):
         """The Selection object "#Ap4Aase:Glu | #RNA@C8" contains the spin 'C*' of the mol 'RNA'."""
 
