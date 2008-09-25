@@ -296,7 +296,7 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
         if not spin.select:
             continue
 
-        # The spin identification string.
+        # The spin identification string.  The residue name is not included to allow structures with point mutations to be used.
         id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=None, spin_num=spin.num, spin_name=spin.name)
 
         # Test that the spin number or name are set (one or both are essential for the identification of the atom).
