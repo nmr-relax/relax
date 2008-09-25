@@ -44,11 +44,11 @@ class Unit_vectors(TestCase):
         ds.__reset__()
 
 
-    def test_calc_unit_vectors(self):
-        """Load the PDB file and calculate the XH unit vectors from it."""
+    def test_calc_unit_vectors1(self):
+        """Load the PDB file using the Scientific parser and calculate the XH unit vectors."""
 
         # Read the PDB file.
-        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1)
+        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1, parser='scientific')
 
         # Load the spins.
         self.relax.interpreter._Structure.load_spins(spin_id='@N')
@@ -70,10 +70,63 @@ class Unit_vectors(TestCase):
 
 
     def test_calc_unit_vectors2(self):
-        """Load the PDB file and calculate the XH unit vectors from it (with spin numbers removed)."""
+        """Load the PDB file using the Scientific parser and calculate the XH unit vectors (with spin numbers removed)."""
 
         # Read the PDB file.
-        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1)
+        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1, parser='scientific')
+
+        # Load the spins.
+        self.relax.interpreter._Structure.load_spins(spin_id='@N')
+        
+        # Remove the spin numbers.
+        self.relax.interpreter._Spin.number()
+
+        # Calculate the unit vectors.
+        self.relax.interpreter._Structure.vectors(attached='H')
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
+        # Leu 3.
+        self.assert_(hasattr(cdp.mol[0].res[2].spin[0], 'xh_vect'))
+        self.assertEqual(cdp.mol[0].res[2].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].name, 'N')
+        self.assertNotEqual(cdp.mol[0].res[2].spin[0].xh_vect, None)
+        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[0], 0.40899187)
+        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[1], -0.80574458)
+        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[2], 0.42837054)
+
+
+    def test_calc_unit_vectors3(self):
+        """Load the PDB file using the internal parser and calculate the XH unit vectors."""
+
+        # Read the PDB file.
+        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1, parser='internal')
+
+        # Load the spins.
+        self.relax.interpreter._Structure.load_spins(spin_id='@N')
+        
+        # Calculate the unit vectors.
+        self.relax.interpreter._Structure.vectors(attached='H')
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
+        # Leu 3.
+        self.assert_(hasattr(cdp.mol[0].res[2].spin[0], 'xh_vect'))
+        self.assertEqual(cdp.mol[0].res[2].spin[0].num, 28)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].name, 'N')
+        self.assertNotEqual(cdp.mol[0].res[2].spin[0].xh_vect, None)
+        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[0], 0.40899187)
+        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[1], -0.80574458)
+        self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[2], 0.42837054)
+
+
+    def test_calc_unit_vectors4(self):
+        """Load the PDB file using the internal parser and calculate the XH unit vectors from it (with spin numbers removed)."""
+
+        # Read the PDB file.
+        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1, parser='internal')
 
         # Load the spins.
         self.relax.interpreter._Structure.load_spins(spin_id='@N')
