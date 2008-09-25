@@ -61,6 +61,8 @@ class Unit_vectors(TestCase):
 
         # Leu 3.
         self.assert_(hasattr(cdp.mol[0].res[2].spin[0], 'xh_vect'))
+        self.assertEqual(cdp.mol[0].res[2].spin[0].num, 28)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].name, 'N')
         self.assertNotEqual(cdp.mol[0].res[2].spin[0].xh_vect, None)
         self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[0], 0.40899187)
         self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[1], -0.80574458)
@@ -87,6 +89,8 @@ class Unit_vectors(TestCase):
 
         # Leu 3.
         self.assert_(hasattr(cdp.mol[0].res[2].spin[0], 'xh_vect'))
+        self.assertEqual(cdp.mol[0].res[2].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].name, 'N')
         self.assertNotEqual(cdp.mol[0].res[2].spin[0].xh_vect, None)
         self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[0], 0.40899187)
         self.assertAlmostEqual(cdp.mol[0].res[2].spin[0].xh_vect[1], -0.80574458)
