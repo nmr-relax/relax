@@ -307,7 +307,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
             switch(best_model)
 
             # Duplicate.
-            duplicate_data[best_model](pipe_from=best_model, pipe_to=modsel_pipe, model_index=i, global_stats=global_stats)
+            duplicate_data[best_model](pipe_from=best_model, pipe_to=modsel_pipe, model_index=i, global_stats=global_stats, verbose=False)
 
     # Switch to the model selection pipe.
     switch(modsel_pipe)

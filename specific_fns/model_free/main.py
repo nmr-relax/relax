@@ -951,7 +951,7 @@ class Model_free_main:
             return 'all'
 
 
-    def duplicate_data(self, pipe_from=None, pipe_to=None, model_index=None, global_stats=False):
+    def duplicate_data(self, pipe_from=None, pipe_to=None, model_index=None, global_stats=False, verbose=True):
         """Duplicate the data specific to a single model-free model.
 
         @keyword pipe_from:     The data pipe to copy the data from.
@@ -963,6 +963,9 @@ class Model_free_main:
         @type model_index:      int
         @keyword global_stats:  The global statistics flag
         @type global_stats:     bool
+        @keyword verbose:       A flag which if True will cause info about each spin to be printed
+                                out as the sequence is generated.
+        @type verbose:          bool
         """
 
         # First create the pipe_to data pipe, if it doesn't exist (restoring the current pipe at the end).
@@ -1033,7 +1036,7 @@ class Model_free_main:
         if model_type == 'mf' or (model_type == 'local_tm' and not global_stats):
             # Duplicate the sequence data if it doesn't exist.
             if ds[pipe_to].mol.is_empty():
-                sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to)
+                sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to, verbose=verbose)
 
             # Get the spin container indices.
             mol_index, res_index, spin_index = convert_from_global_index(global_index=model_index, pipe=pipe_from)

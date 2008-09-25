@@ -36,15 +36,18 @@ import sys
 
 
 
-def copy(pipe_from=None, pipe_to=None):
+def copy(pipe_from=None, pipe_to=None, verbose=True):
     """Copy the molecule, residue, and spin sequence data from one data pipe to another.
 
-    @param pipe_from:   The data pipe to copy the sequence data from.  This defaults to the current
+    @keyword pipe_from: The data pipe to copy the sequence data from.  This defaults to the current
                         data pipe.
     @type pipe_from:    str
-    @param pipe_to:     The data pipe to copy the sequence data to.  This defaults to the current
+    @keyword pipe_to:   The data pipe to copy the sequence data to.  This defaults to the current
                         data pipe.
     @type pipe_to:      str
+    @keyword verbose:   A flag which if True will cause info about each spin to be printed out as
+                        the sequence is generated.
+    @type verbose:      bool
     """
 
     # Defaults.
@@ -70,7 +73,7 @@ def copy(pipe_from=None, pipe_to=None):
     # Loop over the spins of the pipe_from data pipe.
     for spin, mol_name, res_num, res_name in spin_loop(pipe=pipe_from, full_info=True):
         # Generate the new sequence.
-        generate(mol_name, res_num, res_name, spin.num, spin.name, pipe_to)
+        generate(mol_name, res_num, res_name, spin.num, spin.name, pipe_to, verbose)
 
 
 def display(sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
@@ -106,7 +109,7 @@ def display(sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=Fal
     write_body(file=sys.stdout, sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag)
 
 
-def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None, pipe=None):
+def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None, pipe=None, verbose=True):
     """Generate the sequence item-by-item by adding a single molecule/residue/spin container as necessary.
 
     @keyword mol_name:  The molecule name.
@@ -119,9 +122,12 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
     @type spin_num:     bool
     @keyword spin_name: The spin name.
     @type spin_name:    bool
-    @param pipe:        The data pipe in which to generate the sequence.  This defaults to the
+    @keyword pipe:      The data pipe in which to generate the sequence.  This defaults to the
                         current data pipe.
     @type pipe:         str
+    @keyword verbose:   A flag which if True will cause info about each spin to be printed out as
+                        the sequence is generated.
+    @type verbose:      bool
     """
 
     # The current data pipe.
@@ -155,7 +161,8 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
         curr_res.spin.add_item(spin_name=spin_name, spin_num=spin_num)
 
     # Print out of all the spins.
-    write_line(sys.stdout, mol_name, res_num, res_name, spin_num, spin_name, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+    if verbose:
+        write_line(sys.stdout, mol_name, res_num, res_name, spin_num, spin_name, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
 
 
 def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, sep=None):
