@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2008 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,29 +20,56 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""User functions for specifying experimental temperatures."""
 
-__all__ = [ 'angles',
-            'dasha',
-            'diffusion_tensor',
-            'eliminate',
-            'fix',
-            'frq',
-            'grace',
-            'intensity',
-            'main',
-            'minimise',
-            'model_selection',
-            'molmol',
-            'monte_carlo',
-            'nuclei',
-            'palmer',
-            'relax_data',
-            'results',
-            'runs',
-            'selection',
-            'sequence',
-            'state',
-            'structure',
-            'temperature',
-            'value',
-            'vmd' ]
+# Python module imports.
+import sys
+
+# relax module imports.
+from generic_fns import temperature
+from relax_errors import RelaxNumError, RelaxStrError
+
+
+class Temp:
+    def __init__(self, relax):
+        """Class containing the function for setting the experimental temperature."""
+
+        self.relax = relax
+
+
+    def set(self, id=None, temp=None):
+        """Specify the temperature of an experiment.
+
+        Keyword arguments
+        ~~~~~~~~~~~~~~~~~
+
+        id:  The experiment identification string.
+
+        temp:  The temperature of the experiment.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function allows the temperature of an experiment to be set.  In certain analyses, for
+        example those which use pseudocontact shift data, knowledge of the temperature is essential.
+        """
+
+        # Function intro text.
+        if self.relax.interpreter.intro:
+            text = sys.ps3 + "temperature("
+            text = text + "id=" + `id`
+            text = text + ", temp=" + `temp` + ")"
+            print text
+
+        # Id string.
+        if type(id) != str:
+            raise RelaxStrError, ('experiment identification string', id)
+
+        # The temperature.
+        if type(temp) != float and type(temp) != int:
+            raise RelaxNumError, ('temp', temp)
+
+        # Execute the functional code.
+        temperature.set(id=id, temp=temp)

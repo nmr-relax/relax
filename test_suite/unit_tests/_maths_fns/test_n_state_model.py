@@ -51,12 +51,12 @@ class Test_n_state_model(TestCase):
         full_in_ref_frame = [1, 1, 1]
 
         # Set up the class.
-        model = N_state_opt(N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err, full_in_ref_frame=full_in_ref_frame)
+        model = N_state_opt(model='2-domain', N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err, full_in_ref_frame=full_in_ref_frame)
 
         # Call the target function 3 times.
         for i in xrange(3):
             # Target function.
-            chi2 = model.func(init_params)
+            chi2 = model.func_2domain(init_params)
 
             # Test that the chi2 value is zero each time!
             self.assertEqual(chi2, 0.0)
@@ -81,12 +81,12 @@ class Test_n_state_model(TestCase):
         full_in_ref_frame = [1, 1, 1]
 
         # Set up the class.
-        model = N_state_opt(N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err, full_in_ref_frame=full_in_ref_frame)
+        model = N_state_opt(model='2-domain', N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err, full_in_ref_frame=full_in_ref_frame)
 
         # Call the target function 3 times.
         for i in xrange(3):
             # Target function.
-            chi2 = model.func(init_params)
+            chi2 = model.func_2domain(init_params)
 
             # Test that the chi2 value is zero each time!
             self.assertEqual(chi2, 1.0)
@@ -111,12 +111,12 @@ class Test_n_state_model(TestCase):
         full_in_ref_frame = [1, 1, 1]
 
         # Set up the class.
-        model = N_state_opt(N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err, full_in_ref_frame=full_in_ref_frame)
+        model = N_state_opt(model='2-domain', N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err, full_in_ref_frame=full_in_ref_frame)
 
         # Call the target function 3 times.
         for i in xrange(3):
             # Target function.
-            chi2 = model.func(init_params)
+            chi2 = model.func_2domain(init_params)
 
             # Test that the chi2 value is zero each time!
             self.assertAlmostEqual(chi2, 0.0)
@@ -141,12 +141,12 @@ class Test_n_state_model(TestCase):
         full_in_ref_frame = [1, 1, 1]
 
         # Set up the class.
-        model = N_state_opt(N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err, full_in_ref_frame=full_in_ref_frame)
+        model = N_state_opt(model='2-domain', N=2, init_params=init_params, full_tensors=full_tensors, red_data=red_data, red_errors=err, full_in_ref_frame=full_in_ref_frame)
 
         # Call the target function 3 times.
         for i in xrange(3):
             # Target function.
-            chi2 = model.func(init_params)
+            chi2 = model.func_2domain(init_params)
 
             # Test that the chi2 value is zero each time!
             self.assertAlmostEqual(chi2, 0.0)

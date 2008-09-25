@@ -37,8 +37,8 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
     n_state_model_fns = n_state_model.N_state_model()
 
 
-    def test_assemble_param_vector(self):
-        """Test the operation of the specific_fns.n_state_model.assemble_param_vector() method."""
+    def test___assemble_param_vector(self):
+        """Test the operation of the specific_fns.n_state_model.__assemble_param_vector() method."""
 
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
@@ -49,9 +49,13 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
         cdp.alpha = [0.0, pi/2, pi]
         cdp.beta = [pi/2, pi, 3*pi/2]
         cdp.gamma = [1.0, 3*pi/2, 2*pi]
+        cdp.model = '2-domain'
+
+        # Set up a dummy alignment tensor variable to allow the test to pass.
+        cdp.align_tensors = None
 
         # Get the parameter vector.
-        param_vector = self.n_state_model_fns.assemble_param_vector()
+        param_vector = self.n_state_model_fns._N_state_model__assemble_param_vector()
 
         # The correct result.
         vector_true = [0.1, 0.3, 0.0, pi/2, 1.0, pi/2, pi, 3*pi/2, pi, 3*pi/2, 2*pi]
@@ -62,8 +66,8 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
             self.assertEqual(param_vector[i], vector_true[i])
 
 
-    def test_disassemble_param_vector(self):
-        """Test the operation of the specific_fns.n_state_model.disassemble_param_vector() method."""
+    def test___disassemble_param_vector(self):
+        """Test the operation of the specific_fns.n_state_model.__disassemble_param_vector() method."""
 
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
@@ -74,12 +78,13 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
         cdp.alpha = [None]*3
         cdp.beta = [None]*3
         cdp.gamma = [None]*3
+        cdp.model = '2-domain'
 
         # The parameter vector.
         param_vector = [0.1, 0.3, 0.0, pi/2, 1.0, pi/2, pi, 3*pi/2, pi, 3*pi/2, 2*pi]
 
         # Disassemble the parameter vector.
-        self.n_state_model_fns.disassemble_param_vector(param_vector)
+        self.n_state_model_fns._N_state_model__disassemble_param_vector(param_vector, data_types=['tensor'])
 
         # Check the probabilities.
         self.assertEqual(cdp.probs, [0.1, 0.3, 0.6])

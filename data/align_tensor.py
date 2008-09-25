@@ -29,94 +29,94 @@ from types import ListType
 # relax module imports.
 from data_classes import Element
 from relax_errors import RelaxError
-from relax_xml import fill_object_contents
+from relax_xml import fill_object_contents, xml_to_object
 
 
 
-def calc_Axx(Sxx):
+def calc_Sxx(Axx):
     """Function for calculating the Axx value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
-        Axx  =  2/3 Sxx.
+        Sxx  =  3/2 Axx.
 
-    @param Sxx:     The Sxx component of the Saupe order matrix.
-    @type Sxx:      float
+    @param Axx:     The Axx component of the alignment tensor.
+    @type Axx:      float
     @rtype:         float
     """
 
     # Calculate and return the Axx value.
-    return 2.0/3.0 * Sxx
+    return 3.0/2.0 * Axx
 
 
-def calc_Ayy(Syy):
+def calc_Syy(Ayy):
     """Function for calculating the Ayy value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
-        Ayy  =  2/3 Syy.
+        Syy  =  3/2 Ayy.
 
-    @param Syy:     The Syy component of the Saupe order matrix.
-    @type Syy:      float
+    @param Ayy:     The Ayy component of the alignment tensor.
+    @type Ayy:      float
     @rtype:         float
     """
 
     # Calculate and return the Ayy value.
-    return 2.0/3.0 * Syy
+    return 3.0/2.0 * Ayy
 
 
-def calc_Axy(Sxy):
+def calc_Sxy(Axy):
     """Function for calculating the Axy value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
-        Axy  =  2/3 Sxy.
+        Sxy  =  3/2 Axy.
 
-    @param Sxy:     The Sxy component of the Saupe order matrix.
-    @type Sxy:      float
+    @param Axy:     The Axy component of the alignment tensor.
+    @type Axy:      float
     @rtype:         float
     """
 
     # Calculate and return the Axy value.
-    return 2.0/3.0 * Sxy
+    return 3.0/2.0 * Axy
 
 
-def calc_Axz(Sxz):
+def calc_Sxz(Axz):
     """Function for calculating the Axz value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
-        Axz  =  2/3 Sxz.
+        Sxz  =  3/2 Axz.
 
-    @param Sxz:     The Sxz component of the Saupe order matrix.
-    @type Sxz:      float
+    @param Axz:     The Axz component of the alignment tensor.
+    @type Axz:      float
     @rtype:         float
     """
 
     # Calculate and return the Axz value.
-    return 2.0/3.0 * Sxz
+    return 3.0/2.0 * Axz
 
 
-def calc_Ayz(Syz):
+def calc_Syz(Ayz):
     """Function for calculating the Ayz value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
-        Ayz  =  2/3 Syz.
+        Syz  =  3/2 Ayz.
 
-    @param Syz:     The Syz component of the Saupe order matrix.
-    @type Syz:      float
+    @param Ayz:     The Ayz component of the alignment tensor.
+    @type Ayz:      float
     @rtype:         float
     """
 
     # Calculate and return the Ayz value.
-    return 2.0/3.0 * Syz
+    return 3.0/2.0 * Ayz
 
 
 def calc_Axxyy(Axx, Ayy):
     """Function for calculating the Axx-yy value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
         Axx-yy  =  Axx - Ayy.
 
@@ -135,7 +135,7 @@ def calc_Axxyy(Axx, Ayy):
 def calc_Azz(Axx, Ayy):
     """Function for calculating the Azz value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
         Azz  =  - Axx - Ayy.
 
@@ -151,90 +151,90 @@ def calc_Azz(Axx, Ayy):
     return - Axx - Ayy
 
 
-def calc_Pxx(Sxx):
+def calc_Pxx(Axx):
     """Function for calculating the Pxx value.
 
     The equation for calculating the parameter is
 
-        Pxx  =  2/3 Sxx + 1/3.
+        Pxx  =  Axx + 1/3.
 
-    @param Sxx:     The Sxx component of the Saupe order matrix.
-    @type Sxx:      float
+    @param Axx:     The Axx component of the alignment tensor.
+    @type Axx:      float
     @rtype:         float
     """
 
     # Calculate and return the Pxx value.
-    return 2.0/3.0 * Sxx + 1.0/3.0
+    return Axx + 1.0/3.0
 
 
-def calc_Pyy(Syy):
+def calc_Pyy(Ayy):
     """Function for calculating the Pyy value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
-        Pyy  =  2/3 Syy + 1/3.
+        Pyy  =  Ayy + 1/3.
 
-    @param Syy:     The Syy component of the Saupe order matrix.
-    @type Syy:      float
+    @param Ayy:     The Ayy component of the alignment tensor.
+    @type Ayy:      float
     @rtype:         float
     """
 
     # Calculate and return the Pyy value.
-    return 2.0/3.0 * Syy + 1.0/3.0
+    return Ayy + 1.0/3.0
 
 
-def calc_Pxy(Sxy):
+def calc_Pxy(Axy):
     """Function for calculating the Pxy value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
-        Pxy  =  2/3 Sxy.
+        Pxy  =  Axy.
 
-    @param Sxy:     The Sxy component of the Saupe order matrix.
-    @type Sxy:      float
+    @param Axy:     The Axy component of the alignment tensor.
+    @type Axy:      float
     @rtype:         float
     """
 
     # Calculate and return the Pxy value.
-    return 2.0/3.0 * Sxy
+    return Axy
 
 
-def calc_Pxz(Sxz):
+def calc_Pxz(Axz):
     """Function for calculating the Pxz value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
-        Pxz  =  2/3 Sxz.
+        Pxz  =  Axz.
 
-    @param Sxz:     The Sxz component of the Saupe order matrix.
-    @type Sxz:      float
+    @param Axz:     The Axz component of the alignment tensor.
+    @type Axz:      float
     @rtype:         float
     """
 
     # Calculate and return the Pxz value.
-    return 2.0/3.0 * Sxz
+    return Axz
 
 
-def calc_Pyz(Syz):
+def calc_Pyz(Ayz):
     """Function for calculating the Pyz value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
-        Pyz  =  2/3 Syz.
+        Pyz  =  Ayz.
 
-    @param Syz:     The Syz component of the Saupe order matrix.
-    @type Syz:      float
+    @param Ayz:     The Ayz component of the alignment tensor.
+    @type Ayz:      float
     @rtype:         float
     """
 
     # Calculate and return the Pyz value.
-    return 2.0/3.0 * Syz
+    return Ayz
 
 
 def calc_Pxxyy(Pxx, Pyy):
     """Function for calculating the Pxx-yy value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
         Pxx-yy  =  Pxx - Pyy.
 
@@ -253,7 +253,7 @@ def calc_Pxxyy(Pxx, Pyy):
 def calc_Pzz(Pxx, Pyy):
     """Function for calculating the Pzz value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
         Pzz  =  1 - Pxx - Pyy.
 
@@ -269,13 +269,13 @@ def calc_Pzz(Pxx, Pyy):
     return 1.0 - Pxx - Pyy
 
 
-def calc_Sxx_unit(alpha, beta, gamma):
-    """Function for calculating the Sxx unit vector.
+def calc_Axx_unit(alpha, beta, gamma):
+    """Function for calculating the Axx unit vector.
 
-    The unit Sxx vector is
+    The unit Axx vector is::
 
                      | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
-        Sxx_unit  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |.
+        Axx_unit  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |.
                      |                    cos(alpha) * sin(beta)                      |
 
     @param alpha:   The Euler angle alpha in radians using the z-y-z convention.
@@ -284,29 +284,29 @@ def calc_Sxx_unit(alpha, beta, gamma):
     @type beta:     float
     @param gamma:   The Euler angle gamma in radians using the z-y-z convention.
     @type gamma:    float
-    @return:        The Sxx unit vector.
+    @return:        The Axx unit vector.
     @rtype:         numpy array (float64)
     """
 
     # Initilise the vector.
-    Sxx_unit = zeros(3, float64)
+    Axx_unit = zeros(3, float64)
 
     # Calculate the x, y, and z components.
-    Sxx_unit[0] = -sin(alpha) * sin(gamma)  +  cos(alpha) * cos(beta) * cos(gamma)
-    Sxx_unit[1] = -sin(alpha) * cos(gamma)  -  cos(alpha) * cos(beta) * sin(gamma)
-    Sxx_unit[2] = cos(alpha) * sin(beta)
+    Axx_unit[0] = -sin(alpha) * sin(gamma)  +  cos(alpha) * cos(beta) * cos(gamma)
+    Axx_unit[1] = -sin(alpha) * cos(gamma)  -  cos(alpha) * cos(beta) * sin(gamma)
+    Axx_unit[2] = cos(alpha) * sin(beta)
 
     # Return the unit vector.
-    return Sxx_unit
+    return Axx_unit
 
 
-def calc_Syy_unit(alpha, beta, gamma):
-    """Function for calculating the Syy unit vector.
+def calc_Ayy_unit(alpha, beta, gamma):
+    """Function for calculating the Ayy unit vector.
 
-    The unit Syy vector is
+    The unit Ayy vector is::
 
                      | cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
-        Syy_unit  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |.
+        Ayy_unit  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |.
                      |                   sin(alpha) * sin(beta)                      |
 
     @param alpha:   The Euler angle alpha in radians using the z-y-z convention.
@@ -315,55 +315,55 @@ def calc_Syy_unit(alpha, beta, gamma):
     @type beta:     float
     @param gamma:   The Euler angle gamma in radians using the z-y-z convention.
     @type gamma:    float
-    @return:        The Syy unit vector.
+    @return:        The Ayy unit vector.
     @rtype:         numpy array (float64)
     """
 
     # Initilise the vector.
-    Syy_unit = zeros(3, float64)
+    Ayy_unit = zeros(3, float64)
 
     # Calculate the x, y, and z components.
-    Syy_unit[0] = cos(alpha) * sin(gamma)  +  sin(alpha) * cos(beta) * cos(gamma)
-    Syy_unit[1] = cos(alpha) * cos(gamma)  -  sin(alpha) * cos(beta) * sin(gamma)
-    Syy_unit[2] = sin(alpha) * sin(beta)
+    Ayy_unit[0] = cos(alpha) * sin(gamma)  +  sin(alpha) * cos(beta) * cos(gamma)
+    Ayy_unit[1] = cos(alpha) * cos(gamma)  -  sin(alpha) * cos(beta) * sin(gamma)
+    Ayy_unit[2] = sin(alpha) * sin(beta)
 
     # Return the unit vector.
-    return Syy_unit
+    return Ayy_unit
 
 
-def calc_Szz_unit(beta, gamma):
-    """Function for calculating the Szz unit vector.
+def calc_Azz_unit(beta, gamma):
+    """Function for calculating the Azz unit vector.
 
-    The unit Szz vector is
+    The unit Azz vector is::
 
                      | -sin(beta) * cos(gamma) |
-        Szz_unit  =  |  sin(beta) * sin(gamma) |.
+        Azz_unit  =  |  sin(beta) * sin(gamma) |.
                      |        cos(beta)        |
 
     @param beta:    The Euler angle beta in radians using the z-y-z convention.
     @type beta:     float
     @param gamma:   The Euler angle gamma in radians using the z-y-z convention.
     @type gamma:    float
-    @return:        The Szz unit vector.
+    @return:        The Azz unit vector.
     @rtype:         numpy array (float64)
     """
 
     # Initilise the vector.
-    Szz_unit = zeros(3, float64)
+    Azz_unit = zeros(3, float64)
 
     # Calculate the x, y, and z components.
-    Szz_unit[0] = -sin(beta) * cos(gamma)
-    Szz_unit[1] = sin(beta) * sin(gamma)
-    Szz_unit[2] = cos(beta)
+    Azz_unit[0] = -sin(beta) * cos(gamma)
+    Azz_unit[1] = sin(beta) * sin(gamma)
+    Azz_unit[2] = cos(beta)
 
     # Return the unit vector.
-    return Szz_unit
+    return Azz_unit
 
 
 def calc_Sxxyy(Sxx, Syy):
     """Function for calculating the Sxx-yy value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
         Sxx-yy  =  Sxx - Syy.
 
@@ -382,7 +382,7 @@ def calc_Sxxyy(Sxx, Syy):
 def calc_Szz(Sxx, Syy):
     """Function for calculating the Szz value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
         Szz  =  - Sxx - Syy.
 
@@ -398,24 +398,24 @@ def calc_Szz(Sxx, Syy):
     return - Sxx - Syy
 
 
-def calc_rotation(Sxx_unit, Syy_unit, Szz_unit):
+def calc_rotation(Axx_unit, Ayy_unit, Azz_unit):
     """Function for calculating the rotation matrix.
 
     The rotation matrix required to shift from the align tensor frame to the structural
-    frame is equal to
+    frame is equal to::
 
-        R  =  | Sxx_unit  Syy_unit  Szz_unit |,
+        R  =  | Axx_unit  Ayy_unit  Azz_unit |,
 
-              | Sxx_unit[0]  Syy_unit[0]  Szz_unit[0] |
-           =  | Sxx_unit[1]  Syy_unit[1]  Szz_unit[1] |.
-              | Sxx_unit[2]  Syy_unit[2]  Szz_unit[2] |
+              | Axx_unit[0]  Ayy_unit[0]  Azz_unit[0] |
+           =  | Axx_unit[1]  Ayy_unit[1]  Azz_unit[1] |.
+              | Axx_unit[2]  Ayy_unit[2]  Azz_unit[2] |
 
-    @param Sxx_unit:    The Sxx unit vector.
-    @type Sxx_unit:     numpy array (float64)
-    @param Syy_unit:    The Syy unit vector.
-    @type Syy_unit:     numpy array (float64)
-    @param Szz_unit:    The Szz unit vector.
-    @type Szz_unit:     numpy array (float64)
+    @param Axx_unit:    The Axx unit vector.
+    @type Axx_unit:     numpy array (float64)
+    @param Ayy_unit:    The Ayy unit vector.
+    @type Ayy_unit:     numpy array (float64)
+    @param Azz_unit:    The Azz unit vector.
+    @type Azz_unit:     numpy array (float64)
     @return:            The rotation matrix.
     @rtype:             numpy array ((3, 3), float64)
     """
@@ -424,33 +424,33 @@ def calc_rotation(Sxx_unit, Syy_unit, Szz_unit):
     rotation = identity(3, float64)
 
     # First column of the rotation matrix.
-    rotation[:, 0] = Sxx_unit
+    rotation[:, 0] = Axx_unit
 
     # Second column of the rotation matrix.
-    rotation[:, 1] = Syy_unit
+    rotation[:, 1] = Ayy_unit
 
     # Third column of the rotation matrix.
-    rotation[:, 2] = Szz_unit
+    rotation[:, 2] = Azz_unit
 
     # Return the tensor.
     return rotation
 
 
-def calc_tensor(Sxx, Syy, Szz, Sxy, Sxz, Syz):
+def calc_tensor(Axx, Ayy, Azz, Axy, Axz, Ayz):
     """Function for calculating the alignment tensor (in the structural frame).
 
-    @param Sxx:     The Sxx tensor element.
-    @type Sxx:      float
-    @param Syy:     The Syy tensor element.
-    @type Syy:      float
-    @param Szz:     The Szz tensor element.
-    @type Szz:      float
-    @param Sxy:     The Sxy tensor element.
-    @type Sxy:      float
-    @param Sxz:     The Sxz tensor element.
-    @type Sxz:      float
-    @param Syz:     The Syz tensor element.
-    @type Syz:      float
+    @param Axx:     The Axx tensor element.
+    @type Axx:      float
+    @param Ayy:     The Ayy tensor element.
+    @type Ayy:      float
+    @param Azz:     The Azz tensor element.
+    @type Azz:      float
+    @param Axy:     The Axy tensor element.
+    @type Axy:      float
+    @param Axz:     The Axz tensor element.
+    @type Axz:      float
+    @param Ayz:     The Ayz tensor element.
+    @type Ayz:      float
     @return:        The alignment tensor (within the structural frame).
     @rtype:         3x3 numpy float64 array
     """
@@ -459,14 +459,47 @@ def calc_tensor(Sxx, Syy, Szz, Sxy, Sxz, Syz):
     tensor = zeros((3, 3), float64)
 
     # Populate the diagonal elements.
-    tensor[0, 0] = Sxx
-    tensor[1, 1] = Syy
-    tensor[2, 2] = Szz
+    tensor[0, 0] = Axx
+    tensor[1, 1] = Ayy
+    tensor[2, 2] = Azz
 
     # Populate the off diagonal elements.
-    tensor[0, 1] = tensor[1, 0] = Sxy
-    tensor[0, 2] = tensor[2, 0] = Sxz
-    tensor[1, 2] = tensor[2, 1] = Syz
+    tensor[0, 1] = tensor[1, 0] = Axy
+    tensor[0, 2] = tensor[2, 0] = Axz
+    tensor[1, 2] = tensor[2, 1] = Ayz
+
+    # Return the tensor.
+    return tensor
+
+
+def calc_tensor_5D(Axx, Ayy, Azz, Axy, Axz, Ayz):
+    """Function for calculating the alignment tensor in the 5D vector notation.
+
+    @param Axx:     The Axx tensor element.
+    @type Axx:      float
+    @param Ayy:     The Ayy tensor element.
+    @type Ayy:      float
+    @param Azz:     The Azz tensor element.
+    @type Azz:      float
+    @param Axy:     The Axy tensor element.
+    @type Axy:      float
+    @param Axz:     The Axz tensor element.
+    @type Axz:      float
+    @param Ayz:     The Ayz tensor element.
+    @type Ayz:      float
+    @return:        The alignment 5D tensor (within the structural frame).
+    @rtype:         numpy rank-1 5D tensor
+    """
+
+    # Initialise the tensor.
+    tensor = zeros(5, float64)
+
+    # Populate the tensor.
+    tensor[0] = Axx
+    tensor[1] = Ayy
+    tensor[2] = Axy
+    tensor[3] = Axz
+    tensor[4] = Ayz
 
     # Return the tensor.
     return tensor
@@ -475,14 +508,14 @@ def calc_tensor(Sxx, Syy, Szz, Sxy, Sxz, Syz):
 def calc_tensor_diag(rotation, tensor):
     """Function for calculating the diagonalised alignment tensor.
 
-    The diagonalised alignment tensor is defined as
+    The diagonalised alignment tensor is defined as::
 
-                   | Sxx'  0    0  |
-        tensor  =  |  0   Syy'  0  |.
-                   |  0    0   Szz'|
+                   | Axx'  0    0  |
+        tensor  =  |  0   Ayy'  0  |.
+                   |  0    0   Azz'|
 
     The diagonalised alignment tensor is calculated using the tensor and the rotation matrix
-    through the equation
+    through the equation::
 
         R^T . tensor_diag . R.
 
@@ -490,8 +523,8 @@ def calc_tensor_diag(rotation, tensor):
     @type rotation:     numpy array ((3, 3), float64)
     @param tensor:      The full alignment tensor.
     @type tensor:       numpy array ((3, 3), float64)
-    @return:        The diagonalised alignment tensor.
-    @rtype:         numpy array ((3, 3), float64)
+    @return:            The diagonalised alignment tensor.
+    @rtype:             numpy array ((3, 3), float64)
     """
 
     # Rotation (R^T . tensor_diag . R).
@@ -508,28 +541,30 @@ def dependency_generator():
                         updated, and the list of parameters that the target depends upon.
     """
 
-    yield ('Axx',           ['Sxx'],                                        ['Sxx'])
-    yield ('Ayy',           ['Syy'],                                        ['Syy'])
-    yield ('Axy',           ['Sxy'],                                        ['Sxy'])
-    yield ('Axz',           ['Sxz'],                                        ['Sxz'])
-    yield ('Ayz',           ['Syz'],                                        ['Syz'])
-    yield ('Azz',           ['Sxx', 'Syy'],                                 ['Axx', 'Ayy'])
-    yield ('Axxyy',         ['Sxx', 'Syy'],                                 ['Axx', 'Ayy'])
-    yield ('Pxx',           ['Sxx'],                                        ['Sxx'])
-    yield ('Pyy',           ['Syy'],                                        ['Syy'])
-    yield ('Pxy',           ['Sxy'],                                        ['Sxy'])
-    yield ('Pxz',           ['Sxz'],                                        ['Sxz'])
-    yield ('Pyz',           ['Syz'],                                        ['Syz'])
-    yield ('Pzz',           ['Sxx', 'Syy'],                                 ['Pxx', 'Pyy'])
-    yield ('Pxxyy',         ['Sxx', 'Syy'],                                 ['Pxx', 'Pyy'])
-    yield ('Szz',           ['Sxx', 'Syy'],                                 ['Sxx', 'Syy'])
-    yield ('Sxxyy',         ['Sxx', 'Syy'],                                 ['Sxx', 'Syy'])
-    yield ('Sxx_unit',      ['alpha', 'beta', 'gamma'],                     ['alpha', 'beta', 'gamma'])
-    yield ('Syy_unit',      ['alpha', 'beta', 'gamma'],                     ['alpha', 'beta', 'gamma'])
-    yield ('Szz_unit',      ['alpha', 'beta'],                              ['alpha', 'beta'])
-    yield ('tensor_diag',   ['Sxx', 'Syy', 'Sxy', 'Sxz', 'Syz'],            ['tensor', 'rotation'])
-    yield ('rotation',      ['alpha', 'beta', 'gamma'],                     ['Sxx_unit', 'Syy_unit', 'Szz_unit'])
-    yield ('tensor',        ['Sxx', 'Syy', 'Sxy', 'Sxz', 'Syz'],            ['Sxx', 'Syy', 'Szz', 'Sxy', 'Sxz', 'Syz'])
+    yield ('Sxx',           ['Axx'],                                        ['Axx'])
+    yield ('Syy',           ['Ayy'],                                        ['Ayy'])
+    yield ('Sxy',           ['Axy'],                                        ['Axy'])
+    yield ('Sxz',           ['Axz'],                                        ['Axz'])
+    yield ('Syz',           ['Ayz'],                                        ['Ayz'])
+    yield ('Szz',           ['Axx', 'Ayy'],                                 ['Sxx', 'Syy'])
+    yield ('Axxyy',         ['Axx', 'Ayy'],                                 ['Axx', 'Ayy'])
+    yield ('Azz',           ['Axx', 'Ayy'],                                 ['Axx', 'Ayy'])
+    yield ('Pxx',           ['Axx'],                                        ['Axx'])
+    yield ('Pyy',           ['Ayy'],                                        ['Ayy'])
+    yield ('Pxy',           ['Axy'],                                        ['Axy'])
+    yield ('Pxz',           ['Axz'],                                        ['Axz'])
+    yield ('Pyz',           ['Ayz'],                                        ['Ayz'])
+    yield ('Pzz',           ['Axx', 'Ayy'],                                 ['Pxx', 'Pyy'])
+    yield ('Pxxyy',         ['Axx', 'Ayy'],                                 ['Pxx', 'Pyy'])
+    yield ('Szz',           ['Axx', 'Ayy'],                                 ['Sxx', 'Syy'])
+    yield ('Sxxyy',         ['Axx', 'Ayy'],                                 ['Sxx', 'Syy'])
+    yield ('Axx_unit',      ['alpha', 'beta', 'gamma'],                     ['alpha', 'beta', 'gamma'])
+    yield ('Ayy_unit',      ['alpha', 'beta', 'gamma'],                     ['alpha', 'beta', 'gamma'])
+    yield ('Azz_unit',      ['alpha', 'beta'],                              ['alpha', 'beta'])
+    yield ('tensor_diag',   ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['tensor', 'rotation'])
+    yield ('rotation',      ['alpha', 'beta', 'gamma'],                     ['Axx_unit', 'Ayy_unit', 'Azz_unit'])
+    yield ('tensor',        ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['Axx', 'Ayy', 'Azz', 'Axy', 'Axz', 'Ayz'])
+    yield ('tensor_5D',     ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['Axx', 'Ayy', 'Azz', 'Axy', 'Axz', 'Ayz'])
 
 
 
@@ -557,6 +592,22 @@ class AlignTensorList(ListType):
         """Function for appending a new AlignTensorData instance to the list."""
 
         self.append(AlignTensorData(name))
+
+
+    def from_xml(self, align_tensor_nodes):
+        """Recreate the alignment tensor data structure from the XML alignment tensor node.
+
+        @param align_tensor_nodes:  The alignment tensor XML nodes.
+        @type align_tensor_nodes:   list of xml.dom.minicompat.Element instances
+        """
+
+        # Loop over the child nodes.
+        for align_tensor_node in align_tensor_nodes:
+            # Add the alignment tensor data container.
+            self.add_item(align_tensor_node.getAttribute('name'))
+
+            # Recreate all the other data structures.
+            xml_to_object(align_tensor_node, self[-1])
 
 
     def to_xml(self, doc, element):
@@ -592,11 +643,11 @@ class AlignTensorData(Element):
 
     # List of modifiable attributes.
     __mod_attr__ = ['name',
-                    'Sxx',
-                    'Syy',
-                    'Sxy',
-                    'Sxz',
-                    'Syz',
+                    'Axx',
+                    'Ayy',
+                    'Axy',
+                    'Axz',
+                    'Ayz',
                     'domain',
                     'red']
 

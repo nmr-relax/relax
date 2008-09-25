@@ -60,6 +60,14 @@ class Common_functions:
             yield spin_id
 
 
+    def data_init(self, spin):
+        """Dummy method for initialising the spin specific data structures.
+
+        @param spin:    The spin data container.
+        @type spin:     SpinContainer instance
+        """
+
+
     def has_errors(self):
         """Function for testing if errors exist for the run.
 

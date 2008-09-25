@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2008 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,29 +20,39 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for manipulating the spectrometer frequency of experiments."""
 
-__all__ = [ 'angles',
-            'dasha',
-            'diffusion_tensor',
-            'eliminate',
-            'fix',
-            'frq',
-            'grace',
-            'intensity',
-            'main',
-            'minimise',
-            'model_selection',
-            'molmol',
-            'monte_carlo',
-            'nuclei',
-            'palmer',
-            'relax_data',
-            'results',
-            'runs',
-            'selection',
-            'sequence',
-            'state',
-            'structure',
-            'temperature',
-            'value',
-            'vmd' ]
+# relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
+from relax_errors import RelaxError
+
+
+def set(id=None, frq=None):
+    """Set the spectrometer frequency of the experiment.
+
+    @keyword id:    The experimental identification string (allowing for multiple experiments per
+                    data pipe).
+    @type id:       str
+    @keyword frq:   The spectrometer frequency in Hertz.
+    @type frq:      float
+    """
+
+    # Test if the current data pipe exists.
+    if not ds.current_pipe:
+        raise RelaxNoPipeError
+
+    # Alias the current data pipe.
+    cdp = ds[ds.current_pipe]
+
+    # Set up the dictionary data structure if it doesn't exist yet.
+    if not hasattr(cdp, 'frq'):
+        cdp.frq = {}
+
+    # Test the frequency has not already been set.
+    if cdp.frq.has_key(id):
+        raise RelaxError, "The frequency for the experiment " + `id` + " has already been set."
+
+    # Set the frequency.
+    cdp.frq[id] = frq
+
