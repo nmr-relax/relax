@@ -318,7 +318,7 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
         if not bond_vectors:
             # Warning messages.
             if warnings:
-                warn(RelaxWarning(warnings + "  (for " + `id` + ")."))
+                warn(RelaxWarning(warnings + " (atom ID " + `id` + ")."))
 
             # Skip the spin.
             continue
