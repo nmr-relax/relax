@@ -26,7 +26,7 @@
 # Python module imports.
 from numpy import array, float64, linalg, zeros
 from re import search
-from string import split, strip
+from string import split, strip, upper
 from warnings import warn
 
 # relax module imports.
@@ -705,8 +705,8 @@ class Internal(Base_struct_API):
                                     return_warnings are set)
         """
 
-        # Generate the selection object.
-        sel_obj = Selection(atom_id)
+        # Generate the selection object, using upper case to avoid PDB file issues.
+        sel_obj = Selection(upper(atom_id))
 
         # Initialise some objects.
         vectors = []
