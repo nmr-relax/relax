@@ -28,7 +28,7 @@ from string import replace
 # relax module imports.
 from base_class import Common_functions
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from maths_fns.consistency_tests import Consistency
 from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
@@ -196,29 +196,34 @@ class Consistency_tests(Common_functions):
                 setattr(data, name, None)
 
 
-    def data_names(self):
-        """Function for returning a list of names of data structures.
+    def data_names(self, set=None, error_names=False, sim_names=False):
+        """Return a list of all spin container specific consistency testing object names.
 
         Description
-        ~~~~~~~~~~~
+        ===========
 
-        r:  Bond length.
+        The names are as follows:
 
-        csa:  CSA value.
+            r:  Bond length.
+            csa:  CSA value.
+            heteronuc_type:  The heteronucleus type.
+            orientation:  Angle between the 15N-1H vector and the principal axis of the 15N chemical
+                          shift tensor.
+            tc:  Correlation time.
+            j0:  Spectral density value at 0 MHz.
+            f_eta:  Eta-test (from Fushman D. et al. (1998) JACS, 120: 10947-10952).
+            f_r2:  R2-test (from Fushman D. et al. (1998) JACS, 120: 10947-10952).
 
-        heteronuc_type:  The heteronucleus type.
 
-        orientation:  Angle between the 15N-1H vector and the principal axis of the 15N chemical
-                      shift tensor.
-
-        tc:  Correlation time.
-
-        j0:  Spectral density value at 0 MHz.
-
-        f_eta:  Eta-test (from Fushman D. et al. (1998) JACS, 120: 10947-10952).
-
-        f_r2:  R2-test (from Fushman D. et al. (1998) JACS, 120: 10947-10952).
-
+        @keyword set:           An unused variable.
+        @type set:              ignored
+        @keyword error_names:   A flag which if True will add the error object names as well.
+        @type error_names:      bool
+        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object
+                                names as well.
+        @type sim_names:        bool
+        @return:                The list of object names.
+        @rtype:                 list of str
         """
 
         # Initialise.
@@ -236,6 +241,7 @@ class Consistency_tests(Common_functions):
         names.append('f_eta')
         names.append('f_r2')
 
+        # Return the names.
         return names
 
 
@@ -483,7 +489,7 @@ class Consistency_tests(Common_functions):
         cdp.ct_frq = frq
 
 
-    def set_error(self, error, index, spin):
+    def set_error(self, spin, index, error):
         """Function for setting parameter errors."""
 
         # Return J(0) sim data.
@@ -499,7 +505,7 @@ class Consistency_tests(Common_functions):
             spin.f_r2_err = error
 
 
-    def sim_return_param(self, index, spin):
+    def sim_return_param(self, spin, index):
         """Function for returning the array of simulation parameter values."""
 
         # Skip deselected residues.
@@ -524,23 +530,6 @@ class Consistency_tests(Common_functions):
 
         # Multiple spins.
         return spin.select_sim
-
-
-    def set_selected_sim(self, model_index, select_sim):
-        """Set the array of selected simulation flags.
-
-        @param model_index: The global spin index, covering the molecule, residue, and spin
-                            indices).
-        @type model_index:  int
-        @param select_sim:  The selection flags.
-        @type select_sim:   bool
-        """
-
-        # Get the spin container.
-        spin = return_spin_from_index(model_index)
-
-        # Set the simulation flags.
-        spin.select_sim = select_sim
 
 
     def sim_pack_data(self, spin_id, sim_data):

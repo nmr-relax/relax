@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from prompt.spin import Spin
-from relax_errors import RelaxError, RelaxIntError, RelaxNoPipeError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxError, RelaxIntError, RelaxNoneIntError, RelaxNoPipeError, RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.spin_testing_base import Spin_base_class
 
 # Unit test imports.
@@ -202,9 +202,9 @@ class Test_spin(Spin_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the int and bin arguments, and skip them.
-            if data[0] == 'int' or data[0] == 'bin':
+            # Catch the None, int and bin arguments, and skip them.
+            if data[0] == 'None' or  data[0] == 'int' or data[0] == 'bin':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.spin_fns.number, spin_id='@111', number=data[1])
+            self.assertRaises(RelaxNoneIntError, self.spin_fns.number, spin_id='@111', number=data[1])

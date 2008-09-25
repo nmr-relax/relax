@@ -31,7 +31,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from float import isNaN, isInf
 from generic_fns import diffusion_tensor
 from generic_fns.diffusion_tensor import diff_data_exists
-from generic_fns.mol_res_spin import count_selected_spins, count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
+from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
 from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
@@ -847,13 +847,13 @@ class Mf_minimise:
 
         # Number of spins, minimisation instances, and data sets for each model type.
         if model_type == 'mf' or model_type == 'local_tm':
-            num_instances = count_spins()
+            num_instances = count_spins(skip_desel=False)
             num_data_sets = 1
             num_spins = 1
         elif model_type == 'diff' or model_type == 'all':
             num_instances = 1
-            num_data_sets = count_spins()
-            num_spins = count_selected_spins()
+            num_data_sets = count_spins(skip_desel=False)
+            num_spins = count_spins()
 
         # Number of spins, minimisation instances, and data sets for the back-calculate function.
         if min_algor == 'back_calc':

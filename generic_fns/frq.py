@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2008 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,50 +20,39 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for manipulating the spectrometer frequency of experiments."""
 
-__all__ = ['angles',
-           'bmrb',
-           'command',
-           'consistency_tests',
-           'dasha',
-           'deselect',
-           'diffusion_tensor',
-           'dx',
-           'eliminate',
-           'fix',
-           'frq',
-           'gpl',
-           'grace',
-           'help',
-           'interpreter',
-           'jw_mapping',
-           'minimisation',
-           'model_free',
-           'model_selection',
-           'molmol',
-           'monte_carlo',
-           'noe',
-           'nuclei',
-           'palmer',
-           'pymol',
-           'relax_data',
-           'relax_fit',
-           'reset',
-           'pipe',
-           'rw',
-           'select',
-           'sequence',
-           'state',
-           'structure',
-           'tab_completion',
-           'temperature',
-           'value',
-           'view',
-           'vmd']
+# relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
+from relax_errors import RelaxError
 
-__doc__ = \
-"""Package for the prompt based interface.
 
-The functions should only contain code for checking the validity of arguments.  If any other code is
-required, this should be placed elsewhere.
-"""
+def set(id=None, frq=None):
+    """Set the spectrometer frequency of the experiment.
+
+    @keyword id:    The experimental identification string (allowing for multiple experiments per
+                    data pipe).
+    @type id:       str
+    @keyword frq:   The spectrometer frequency in Hertz.
+    @type frq:      float
+    """
+
+    # Test if the current data pipe exists.
+    if not ds.current_pipe:
+        raise RelaxNoPipeError
+
+    # Alias the current data pipe.
+    cdp = ds[ds.current_pipe]
+
+    # Set up the dictionary data structure if it doesn't exist yet.
+    if not hasattr(cdp, 'frq'):
+        cdp.frq = {}
+
+    # Test the frequency has not already been set.
+    if cdp.frq.has_key(id):
+        raise RelaxError, "The frequency for the experiment " + `id` + " has already been set."
+
+    # Set the frequency.
+    cdp.frq[id] = frq
+

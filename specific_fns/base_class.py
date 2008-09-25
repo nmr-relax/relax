@@ -25,7 +25,7 @@ from copy import deepcopy
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
+from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, spin_loop
 from relax_errors import RelaxError
 
 
@@ -58,6 +58,14 @@ class Common_functions:
 
             # Yield the spin id string.
             yield spin_id
+
+
+    def data_init(self, spin):
+        """Dummy method for initialising the spin specific data structures.
+
+        @param spin:    The spin data container.
+        @type spin:     SpinContainer instance
+        """
 
 
     def has_errors(self):
@@ -109,6 +117,27 @@ class Common_functions:
 
         # Return the default of True.
         return True
+
+
+    def model_loop(self):
+        """Default generator method for looping over the models.
+
+        In this case only a single model per spin system is assumed.  Hence the yielded data is the
+        spin container object.
+
+
+        @return:    Information about the model which for this analysis is the spin container.
+        @rtype:     SpinContainer instance
+        """
+
+        # Loop over the sequence.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Yield the spin container.
+            yield spin
 
 
     def num_instances(self):
@@ -230,23 +259,16 @@ class Common_functions:
         return value, error
 
 
-    def set_error(self, instance, index, error):
+    def set_error(self, spin, index, error):
         """Set the parameter errors.
 
-        @param instance:    The spin index.
-        @type instance:     int
-        @param index:       The index of the parameter to set the errors for.
-        @type index:        int
-        @param error:       The error value.
-        @type error:        float
+        @param spin:    The SpinContainer object.
+        @type spin:     SpinContainer
+        @param index:   The index of the parameter to set the errors for.
+        @type index:    int
+        @param error:   The error value.
+        @type error:    float
         """
-
-        # Get the SpinContainer.
-        spin = return_spin_from_index(instance)
-
-        # Skip deselected spins.
-        if not spin.select:
-            return
 
         # Parameter increment counter.
         inc = 0
@@ -273,6 +295,19 @@ class Common_functions:
         # Throw a RelaxError.
         if value or param:
             raise RelaxError, "Do not know how to handle the non-spin specific parameters " + `param` + " with the values " + `value`
+
+
+    def set_selected_sim(self, spin, select_sim):
+        """Set the simulation selection flag for the spin.
+
+        @param spin:        The spin container.
+        @type spin:         SpinContainer instance
+        @param select_sim:  The selection flag for the simulations.
+        @type select_sim:   bool
+        """
+
+        # Set the array.
+        spin.select_sim = select_sim
 
 
     def set_update(self, param, spin):
@@ -361,21 +396,35 @@ class Common_functions:
                     sim_object.append(deepcopy(getattr(spin, object_name)))
 
 
-    def sim_return_param(self, instance, index):
+    def sim_return_chi2(self, spin, index=None):
+        """Return the simulation chi-squared values.
+
+        @param spin:    The spin container.
+        @type spin:     SpinContainer instance
+        @keyword index: The optional simulation index.
+        @type index:    int
+        @return:        The list of simulation chi-squared values.  If the index is supplied, only
+                        a single value will be returned.
+        @rtype:         list of float or float
+        """
+
+        # Index.
+        if index != None:
+            return spin.chi2_sim[index]
+
+        # List of vals.
+        else:
+            return spin.chi2_sim
+
+
+    def sim_return_param(self, spin, index):
         """Return the array of simulation parameter values.
  
-        @param instance:    The optimisation instance index.
-        @type instance:     int
+        @param spin:        The spin container.
+        @type spin:         SpinContainer instance
         @param index:       The index of the parameter to return the array of values for.
         @type index:        int
         """
-
-        # Get the SpinContainer.
-        spin = return_spin_from_index(instance)
-
-        # Skip deselected spins.
-        if not spin.select:
-            return
 
         # Parameter increment counter.
         inc = 0
@@ -390,17 +439,14 @@ class Common_functions:
             inc = inc + 1
 
 
-    def sim_return_selected(self, instance):
+    def sim_return_selected(self, spin):
         """Return the array of selected simulation flags for the spin.
 
-        @param instance:    The spin index.
-        @type instance:     int
+        @param spin:        The spin container.
+        @type spin:         SpinContainer instance
         @return:            The array of selected simulation flags.
         @rtype:             list of int
         """
-
-        # Get the SpinContainer.
-        spin = return_spin_from_index(instance)
 
         # Return the array.
         return spin.select_sim

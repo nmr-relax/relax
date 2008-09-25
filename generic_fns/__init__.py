@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -27,6 +27,7 @@ __all__ = [ 'angles',
             'diffusion_tensor',
             'eliminate',
             'fix',
+            'frq',
             'grace',
             'intensity',
             'main',
@@ -43,5 +44,6 @@ __all__ = [ 'angles',
             'sequence',
             'state',
             'structure',
+            'temperature',
             'value',
             'vmd' ]

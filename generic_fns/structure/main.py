@@ -41,7 +41,7 @@ from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorW
 
 
 
-def load_spins(spin_id=None, str_id=None):
+def load_spins(spin_id=None, str_id=None, ave_pos=False):
     """Load the spins from the structural object into the relax data store.
 
     @keyword spin_id:   The molecule, residue, and spin identifier string.
@@ -49,6 +49,9 @@ def load_spins(spin_id=None, str_id=None):
     @keyword str_id:    The structure identifier.  This can be the file name, model number, or
                         structure number.
     @type str_id:       int or str
+    @keyword ave_pos:   A flag specifying if the average atom position or the atom position from all
+                        loaded structures is loaded into the SpinContainer.
+    @type ave_pos:      bool
     """
 
     # Test if the current data pipe exists.
@@ -63,7 +66,7 @@ def load_spins(spin_id=None, str_id=None):
     cdp = ds[ds.current_pipe]
 
     # Loop over all atoms of the spin_id selection.
-    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, str_id=str_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
+    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, str_id=str_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
         # Initialise the identification string.
         id = ''
 
@@ -119,7 +122,12 @@ def load_spins(spin_id=None, str_id=None):
             write_line(sys.stdout, mol_name, res_num, res_name, atom_num, atom_name, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
 
         # Add the position vector and element type to the spin container.
-        spin_cont.pos = pos
+        if ave_pos:
+            spin_cont.pos = pos
+        else:
+            if not hasattr(spin_cont, 'pos'):
+                spin_cont.pos = []
+            spin_cont.pos.append(pos)
         spin_cont.element = element
 
 
