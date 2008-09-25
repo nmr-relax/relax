@@ -977,7 +977,7 @@ class Model_free_main:
         # Duplicate all non-sequence specific data.
         for data_name in dir(ds[pipe_from]):
             # Skip the container objects.
-            if data_name in ['mol', 'diff_tensor']:
+            if data_name in ['align_tensors', 'diff_tensor', 'mol', 'structure']:
                 continue
 
             # Skip special objects.
