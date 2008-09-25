@@ -30,7 +30,7 @@ from warnings import warn
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns.structure.mass import centre_of_mass
-from internal import Internal
+from internal import Internal, Structure_container
 from maths_fns.rotation_matrix import R_2vect
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
 from relax_io import open_write_file
@@ -181,6 +181,9 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     # Create the structural object.
     structure = Internal()
 
+    # Add a structure.
+    structure.structural_data.append(Structure_container())
+
     # Loop over the pipes.
     for pipe_index in xrange(len(pipes)):
         # Alias the pipe container.
@@ -226,7 +229,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         CoM = centre_of_mass()
 
         # Add the central atom.
-        structure.atom_add(pdb_record='HETATM', atom_num=None, atom_name='R'+atom_id_ext, res_name='COM', chain_id=chain_id, res_num=res_num, pos=CoM, segment_id=None, element='C', struct_index=None)
+        structure.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R'+atom_id_ext, res_name='COM', chain_id=chain_id, res_num=res_num, pos=CoM, segment_id=None, element='C', struct_index=None)
 
         # Increment the residue number.
         res_num = res_num + 1
@@ -239,7 +242,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         print "\nGenerating the geometric object."
 
         # The distribution.
-        generate_vector_dist(structure=structure, atom_id_ext=atom_id_ext, res_name='TNS', res_num=res_num, chain_id=chain_id, centre=CoM, R=pipe.diff_tensor.rotation, warp=pipe.diff_tensor.tensor, scale=scale, inc=20)
+        generate_vector_dist(structure=structure, res_name='TNS', res_num=res_num, chain_id=chain_id, centre=CoM, R=pipe.diff_tensor.rotation, warp=pipe.diff_tensor.tensor, scale=scale, inc=20)
 
         # Increment the residue number.
         res_num = res_num + 1
@@ -513,9 +516,12 @@ def generate_vector_dist(structure=None, res_name=None, res_num=None, chain_id='
     phi = arccos(2.0 * v - 1.0)
 
     # Loop over the angles and find the minimum latitudinal index.
-    for j_min in xrange(len(phi)):
-        if phi[j_min] < max_angle:
-            break
+    if max_angle == None:
+        j_min = -1
+    else:
+        for j_min in xrange(len(phi)):
+            if phi[j_min] < max_angle:
+                break
 
     # Loop over the radial array of vectors (change in longitude).
     for i in range(inc):
@@ -614,9 +620,9 @@ def generate_vector_residues(structure=None, vector=None, atom_name=None, res_na
         structure.atom_connect(index1=atom_neg_num-1, index2=origin_num-1)
 
     # Add another atom to allow the axis labels to be shifted just outside of the vector itself.
-    structure.atom_add(pdb_record='HETATM', atom_num=atom_neg_num, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+label_placement*vector*scale, segment_id=None, element='N', struct_index=None)
+    structure.atom_add(pdb_record='HETATM', atom_num=atom_num+2, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+label_placement*vector*scale, segment_id=None, element='N', struct_index=None)
     if neg:
-        structure.atom_add(pdb_record='HETATM', atom_num=atom_neg_num_ext, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, segment_id=None, element='N', struct_index=None)
+        structure.atom_add(pdb_record='HETATM', atom_num=atom_neg_num+2, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, segment_id=None, element='N', struct_index=None)
 
     # Print out.
     print "    " + atom_name + " vector (scaled + shifted to origin): " + `origin+vector*scale`

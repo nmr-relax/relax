@@ -24,7 +24,7 @@
 """Module containing the internal relax structural object."""
 
 # Python module imports.
-from numpy import array, float64, zeros
+from numpy import array, float64, linalg, zeros
 from re import search
 from string import split, strip
 from warnings import warn
@@ -74,6 +74,61 @@ class Internal(Base_struct_API):
         warn(RelaxWarning("The atom number " + `atom_num` + " from the CONECT record cannot be found within the ATOM and HETATM records."))
 
 
+    def __bonded_atom(self, attached_atom, index, struct_index):
+        """Find the atom named attached_atom directly bonded to the atom located at the index.
+
+        @param attached_atom:   The name of the attached atom to return.
+        @type attached_atom:    str
+        @param index:           The index of the atom which the attached atom is attached to. 
+        @type index:            int
+        @param struct_index:    The index of the structure.
+        @type struct_index:     int
+        @return:                A tuple of information about the bonded atom.
+        @rtype:                 tuple consisting of the atom number (int), atom name (str), element
+                                name (str), and atomic position (Numeric array of len 3)
+        """
+
+        # Init.
+        bonded_found = False
+        struct = self.structural_data[struct_index]
+
+        # No bonded atoms, so go find everything within 1.2 Angstroms and say they are bonded.
+        if not struct.bonded[index]:
+            self.__find_bonded_atoms(index, struct_index)
+
+        # Loop over the bonded atoms.
+        matching_list = []
+        for bonded_index in struct.bonded[index]:
+            if relax_re.search(struct.atom_name[bonded_index], attached_atom):
+                matching_list.append(bonded_index)
+        num_attached = len(matching_list)
+
+        # Problem.
+        if num_attached > 1:
+            # Get the atom names.
+            matching_names = []
+            for i in matching_list:
+                matching_names.append(struct.atom_name[i])
+
+            # Return nothing but a warning.
+            return None, None, None, None, None, 'More than one attached atom found: ' + `matching_names`
+
+        # No attached atoms.
+        if num_attached == 0:
+            return None, None, None, None, None, "No attached atom could be found"
+
+        # The bonded atom info.
+        index = matching_list[0]
+        bonded_num = struct.atom_num[index]
+        bonded_name = struct.atom_name[index]
+        element = struct.element[index]
+        pos = [struct.x[index], struct.y[index], struct.z[index]]
+        attached_name = struct.atom_name[index]
+
+        # Return the information.
+        return bonded_num, bonded_name, element, pos, attached_name, None
+
+
     def __fill_object_from_pdb(self, records, struct_index):
         """Method for generating a complete Structure_container object from the given PDB records.
 
@@ -108,55 +163,35 @@ class Internal(Base_struct_API):
                     self.atom_connect(index1=self.__atom_index(record[1], struct_index), index2=self.__atom_index(record[i+2], struct_index), struct_index=struct_index)
 
 
-    def __find_bonded_atom(self, attached_atom, index, struct_index):
-        """Find the atom named attached_atom directly bonded to the atom located at the index.
+    def __find_bonded_atoms(self, index, struct_index, radius=1.2):
+        """Find all atoms within a sphere and say that they are attached to the central atom.
 
-        @param attached_atom:   The name of the attached atom to return.
-        @type attached_atom:    str
-        @param index:           The index of the atom which the attached atom is attached to. 
+        The found atoms will be added to the 'bonded' data structure.
+
+
+        @param index:           The index of the central atom.
         @type index:            int
         @param struct_index:    The index of the structure.
         @type struct_index:     int
-        @return:                A tuple of information about the bonded atom.
-        @rtype:                 tuple consisting of the atom number (int), atom name (str), element
-                                name (str), and atomic position (Numeric array of len 3)
         """
 
         # Init.
-        bonded_found = False
         struct = self.structural_data[struct_index]
 
-        # Loop over the bonded atoms.
-        matching_list = []
-        for bonded_index in struct.bonded[index]:
-            if relax_re.search(struct.atom_name[bonded_index], attached_atom):
-                matching_list.append(bonded_index)
-        num_attached = len(matching_list)
+        # Central atom info.
+        centre = array([struct.x[index], struct.y[index], struct.z[index]], float64)
 
-        # Problem.
-        if num_attached > 1:
-            # Get the atom names.
-            matching_names = []
-            for i in matching_list:
-                matching_names.append(struct.atom_name[i])
+        # Atom loop.
+        for i in xrange(len(struct.atom_num)):
+            # The atom's position.
+            pos = array([struct.x[i], struct.y[i], struct.z[i]], float64)
 
-            # Return nothing but a warning.
-            return None, None, None, None, None, 'More than one attached atom found: ' + `matching_names`
+            # The distance from the centre.
+            dist = linalg.norm(centre-pos)
 
-        # No attached atoms.
-        if num_attached == 0:
-            return None, None, None, None, None, "No attached atom could be found"
-
-        # The bonded atom info.
-        index = matching_list[0]
-        bonded_num = struct.atom_num[index]
-        bonded_name = struct.atom_name[index]
-        element = struct.element[index]
-        pos = [struct.x[index], struct.y[index], struct.z[index]]
-        attached_name = struct.atom_name[index]
-
-        # Return the information.
-        return bonded_num, bonded_name, element, pos, attached_name, None
+            # Connect the atoms if within the radius value.
+            if dist < radius:
+                self.atom_connect(index, i)
 
 
     def __get_chemical_name(self, hetID):
@@ -706,8 +741,8 @@ class Internal(Base_struct_API):
 
             # Found the atom.
             if atom_found:
-                # Find the atom bonded to this structure/molecule/residue/atom.
-                bonded_num, bonded_name, element, pos, attached_name, warnings = self.__find_bonded_atom(attached_atom, index, i)
+                # Get the atom bonded to this structure/molecule/residue/atom.
+                bonded_num, bonded_name, element, pos, attached_name, warnings = self.__bonded_atom(attached_atom, index, i)
 
                 # No bonded atom.
                 if (bonded_num, bonded_name, element) == (None, None, None):

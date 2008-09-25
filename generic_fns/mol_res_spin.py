@@ -696,36 +696,55 @@ def copy_spin(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
         res_to_cont.spin[-1].name = spin_name_to
 
 
-def count_selected_spins(selection=None):
-    """Function for counting the number of spins for which there is data and which are selected.
+def count_molecules(selection=None):
+    """Count the number of molecules for which there is data.
 
     @param selection:   The selection string.
     @type selection:    str
-    @return:            The number of non-empty selected spins.
+    @return:            The number of non-empty molecules.
     @rtype:             int
     """
 
-    # No data, hence no spins.
+    # No data, hence no molecules.
     if not exists_mol_res_spin_data():
         return 0
 
     # Init.
-    spin_num = 0
+    mol_num = 0
 
     # Spin loop.
-    for spin in spin_loop(selection):
-        # Skip deselected spins.
-        if not spin.select:
-            continue
+    for mol in molecule_loop(selection):
+        mol_num = mol_num + 1
 
-        # Increment the spin number.
-        spin_num = spin_num + 1
-
-    # Return the number of spins.
-    return spin_num
+    # Return the number of molecules.
+    return mol_num
 
 
-def count_spins(selection=None):
+def count_residues(selection=None):
+    """Count the number of residues for which there is data.
+
+    @param selection:   The selection string.
+    @type selection:    str
+    @return:            The number of non-empty residues.
+    @rtype:             int
+    """
+
+    # No data, hence no residues.
+    if not exists_mol_res_spin_data():
+        return 0
+
+    # Init.
+    res_num = 0
+
+    # Spin loop.
+    for res in residue_loop(selection):
+        res_num = res_num + 1
+
+    # Return the number of residues.
+    return res_num
+
+
+def count_spins(selection=None, skip_desel=True):
     """Function for counting the number of spins for which there is data.
 
     @param selection:   The selection string.
@@ -743,6 +762,10 @@ def count_spins(selection=None):
 
     # Spin loop.
     for spin in spin_loop(selection):
+        # Skip deselected spins.
+        if skip_desel and not spin.select:
+            continue
+
         spin_num = spin_num + 1
 
     # Return the number of spins.
@@ -1314,7 +1337,7 @@ def number_spin(spin_id=None, number=None):
         i = i + 1
 
     # Fail if multiple spins are numbered.
-    if i > 1:
+    if number != None and i > 1:
         raise RelaxError, "The numbering of multiple spins is disallowed, as each spin requires a unique number."
 
     # Rename the spin.
