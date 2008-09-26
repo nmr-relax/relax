@@ -2898,14 +2898,22 @@ class Model_free_main:
             return ds.res[self.run][instance].chi2_sim
 
 
-    def sim_return_param(self, run, instance, index):
-        """Function for returning the array of simulation parameter values."""
-
-        # Arguments.
-        self.run = run
+    def sim_return_param(self, model_index, index):
+        """Return the array of simulation parameter values.
+ 
+        @param model_index: The model index.  This is zero for the global models or equal to the
+                            global spin index (which covers the molecule, residue, and spin
+                            indices).
+        @type model_index:  int
+        @param index:       The index of the parameter to return the array of values for.
+        @type index:        int
+        """
 
         # Parameter increment counter.
         inc = 0
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
 
         # Get the parameter object names.
         param_names = self.data_names(set='params')
@@ -2916,44 +2924,44 @@ class Model_free_main:
 
         if model_type == 'diff' or model_type == 'all':
             # Spherical diffusion.
-            if ds.diff[self.run].type == 'sphere':
+            if cdp.diff_tensor.type == 'sphere':
                 # Return the parameter array.
                 if index == 0:
-                    return ds.diff[self.run].tm_sim
+                    return cdp.diff_tensor.tm_sim
 
                 # Increment.
                 inc = inc + 1
 
             # Spheroidal diffusion.
-            elif ds.diff[self.run].type == 'spheroid':
+            elif cdp.diff_tensor.type == 'spheroid':
                 # Return the parameter array.
                 if index == 0:
-                    return ds.diff[self.run].tm_sim
+                    return cdp.diff_tensor.tm_sim
                 elif index == 1:
-                    return ds.diff[self.run].Da_sim
+                    return cdp.diff_tensor.Da_sim
                 elif index == 2:
-                    return ds.diff[self.run].theta_sim
+                    return cdp.diff_tensor.theta_sim
                 elif index == 3:
-                    return ds.diff[self.run].phi_sim
+                    return cdp.diff_tensor.phi_sim
 
                 # Increment.
                 inc = inc + 4
 
             # Ellipsoidal diffusion.
-            elif ds.diff[self.run].type == 'ellipsoid':
+            elif cdp.diff_tensor.type == 'ellipsoid':
                 # Return the parameter array.
                 if index == 0:
-                    return ds.diff[self.run].tm_sim
+                    return cdp.diff_tensor.tm_sim
                 elif index == 1:
-                    return ds.diff[self.run].Da_sim
+                    return cdp.diff_tensor.Da_sim
                 elif index == 2:
-                    return ds.diff[self.run].Dr_sim
+                    return cdp.diff_tensor.Dr_sim
                 elif index == 3:
-                    return ds.diff[self.run].alpha_sim
+                    return cdp.diff_tensor.alpha_sim
                 elif index == 4:
-                    return ds.diff[self.run].beta_sim
+                    return cdp.diff_tensor.beta_sim
                 elif index == 5:
-                    return ds.diff[self.run].gamma_sim
+                    return cdp.diff_tensor.gamma_sim
 
                 # Increment.
                 inc = inc + 6
@@ -2963,17 +2971,17 @@ class Model_free_main:
         #################################################
 
         if model_type == 'all':
-            # Loop over the sequence.
-            for i in xrange(len(ds.res[self.run])):
-                # Skip deselected residues.
-                if not ds.res[self.run][i].select:
+            # Loop over the spins.
+            for spin in spin_loop():
+                # Skip deselected spins.
+                if not spin.select:
                     continue
 
-                # Loop over the residue specific parameters.
+                # Loop over the spin specific parameters.
                 for param in param_names:
                     # Return the parameter array.
                     if index == inc:
-                        return getattr(ds.res[self.run][i], param + "_sim")
+                        return getattr(spin, param + "_sim")
 
                     # Increment.
                     inc = inc + 1
@@ -2983,15 +2991,18 @@ class Model_free_main:
         ################################################################
 
         if model_type == 'mf' or model_type == 'local_tm':
-            # Skip deselected residues.
-            if not ds.res[self.run][instance].select:
+            # Get the spin container.
+            spin = return_spin_from_index(model_index)
+
+            # Skip deselected spins.
+            if not spin.select:
                 return
 
-            # Loop over the residue specific parameters.
+            # Loop over the spin specific parameters.
             for param in param_names:
                 # Return the parameter array.
                 if index == inc:
-                    return getattr(ds.res[self.run][instance], param + "_sim")
+                    return getattr(spin, param + "_sim")
 
                 # Increment.
                 inc = inc + 1
