@@ -1033,7 +1033,7 @@ class Results:
             spin_name = spin_line[col['spin_name']]
 
         # Generate the sequence.
-        generic_fns.sequence.generate(mol_name, res_num, res_name, spin_num, spin_name)
+        generic_fns.sequence.generate(mol_name, res_num, res_name, spin_num, spin_name, verbose=False)
 
         # Get the spin identification string.
         spin_id = generate_spin_id(mol_name, res_num, res_name, spin_num, spin_name)
