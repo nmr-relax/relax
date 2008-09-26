@@ -21,8 +21,9 @@
 ###############################################################################
 
 # Python module imports.
-import sys
 from numpy import fromstring
+from os import path
+import sys
 from unittest import TestCase
 
 # relax module imports.
@@ -44,6 +45,10 @@ class Test_internal(TestCase):
 
         # The path to a PDB file.
         self.test_pdb_path = self.path+'/test_suite/shared_data/structures/Ap4Aase_res1-12.pdb'
+        expanded = path.split(self.test_pdb_path)
+        self.test_pdb_dir = expanded[0]
+        self.test_pdb_file_name = expanded[1]
+
 
         # Instantiate the structural data object.
         self.data = Internal()
@@ -205,8 +210,9 @@ class Test_internal(TestCase):
         self.data.load_pdb(self.test_pdb_path)
 
         # Test the structural data.
-        self.assertEqual(len(self.data.file_name), 1)
-        self.assertEqual(self.data.file_name[0], self.test_pdb_path)
+        self.assertEqual(len(self.data.file), 1)
+        self.assertEqual(self.data.file[0], self.test_pdb_file_name)
+        self.assertEqual(self.data.path[0], self.test_pdb_dir)
         self.assertEqual(len(self.data.structural_data), 1)
         self.assertEqual(type(self.data.structural_data), list)
         self.assertEqual(self.data.structural_data[0].model, 1)
