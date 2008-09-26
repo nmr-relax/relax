@@ -2997,14 +2997,18 @@ class Model_free_main:
                 inc = inc + 1
 
 
-    def sim_return_selected(self, spin):
+    def sim_return_selected(self, spin_id):
         """Return the array of selected simulation flags for the spin.
 
-        @param spin:        The spin container.
-        @type spin:         SpinContainer instance
+        @param spin_id:     The spin identification string, as yielded by the base_data_loop()
+                            generator method.
+        @type spin_id:      str
         @return:            The array of selected simulation flags.
         @rtype:             list of int
         """
+
+        # Get the spin container.
+        spin = return_spin(spin_id)
 
         # Determine the model type.
         model_type = self.determine_model_type()
