@@ -27,6 +27,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import results, structure
+from relax_errors import RelaxError
 from specific_fns.model_free import main
 
 
@@ -84,3 +85,25 @@ class Test_main(TestCase):
 
         # Check the duplication.
         self.assert_(hasattr(ds['new'], 'structure'))
+
+
+    def test_duplicate_data_fail1(self):
+        """Test the failure of the model-free duplicate_data() method when the structures are not consistent."""
+
+        # Read a model-free results file.
+        results.read(file='final_results_trunc_1.3', directory=sys.path[-1] + '/test_suite/shared_data/model_free/OMP')
+
+        # Load a structure.
+        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1, parser='internal')
+
+        # Create a new model-free data pipe.
+        ds.add(pipe_name='new', pipe_type='mf')
+
+        # Load the structure for the second pipe.
+        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1, parser='internal')
+
+        # Modify the structure.
+        ds['new'].structure.model = 3
+
+        # Duplicate the data and catch the error.
+        self.assertRaises(RelaxError, self.inst.duplicate_data, 'orig', 'new', model_index=0)
