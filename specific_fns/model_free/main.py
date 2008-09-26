@@ -2868,15 +2868,25 @@ class Model_free_main:
                         sim_object.append(deepcopy(getattr(ds.res[self.run][i], object_name)))
 
 
-    def sim_pack_data(self, run, i, sim_data):
-        """Function for packing Monte Carlo simulation data."""
+    def sim_pack_data(self, spin_id, sim_data):
+        """Pack the Monte Carlo simulation data.
+
+        @param spin_id:     The spin identification string, as yielded by the base_data_loop()
+                            generator method.
+        @type spin_id:      str
+        @param sim_data:    The Monte Carlo simulation data.
+        @type sim_data:     list of float
+        """
+
+        # Get the spin container.
+        spin = return_spin(spin_id)
 
         # Test if the simulation data already exists.
-        if hasattr(ds.res[run][i], 'relax_sim_data'):
+        if hasattr(spin, 'relax_sim_data'):
             raise RelaxError, "Monte Carlo simulation data already exists."
 
         # Create the data structure.
-        ds.res[run][i].relax_sim_data = sim_data
+        spin.relax_sim_data = sim_data
 
 
     def sim_return_chi2(self, run, instance):
