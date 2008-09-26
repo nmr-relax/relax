@@ -103,7 +103,7 @@ class Test_main(TestCase):
         structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1, parser='internal')
 
         # Modify the structure.
-        ds['new'].structure.model = 3
+        ds['new'].structure.file_name = 'test'
 
         # Duplicate the data and catch the error.
         self.assertRaises(RelaxError, self.inst.duplicate_data, 'orig', 'new', model_index=0)
