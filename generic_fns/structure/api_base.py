@@ -238,7 +238,7 @@ class Base_struct_API:
         if failed:
             failed = False
             try:
-                self.load_pdb(file_path=self.path[0] + sep + self.file[0], model=None)
+                self.load_pdb(file_path=self.file[0], model=None)
             except RelaxFileError:
                 failed = True
 
