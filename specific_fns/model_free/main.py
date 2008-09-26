@@ -1029,6 +1029,10 @@ class Model_free_main:
                     if data_from != data_to:
                         raise RelaxError, "The object " + `data_name` + "." + `data_name` + " is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
 
+        # No sequence data, so skip the rest.
+        if not exists_mol_res_spin_data():
+            return
+
         # Determine the model type.
         model_type = self.determine_model_type()
 
