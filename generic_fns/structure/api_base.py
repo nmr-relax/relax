@@ -225,7 +225,7 @@ class Base_struct_API:
         xml_to_object(str_node, self)
 
         # Now load the structure from file again.
-        self.load_pdb(file_path=self.file, model=None)
+        self.load_pdb(file_path=self.file[0], model=None)
 
 
     def load_pdb(self, file_path, model=None, verbosity=False):
