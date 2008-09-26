@@ -2915,6 +2915,9 @@ class Model_free_main:
         # Alias the current data pipe.
         cdp = ds[ds.current_pipe]
 
+        # Determine the model type.
+        model_type = self.determine_model_type()
+
         # Get the parameter object names.
         param_names = self.data_names(set='params')
 
