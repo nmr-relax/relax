@@ -2711,11 +2711,11 @@ class Model_free_main:
                 spin.s2 = spin.s2f * spin.s2s
 
 
-    def sim_init_values(self, run):
-        """Function for initialising Monte Carlo parameter values."""
+    def sim_init_values(self):
+        """Initialise the Monte Carlo parameter values."""
 
-        # Arguments.
-        self.run = run
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
 
         # Determine the model type.
         model_type = self.determine_model_type()
@@ -2729,22 +2729,22 @@ class Model_free_main:
         # List of diffusion tensor parameters.
         if model_type == 'diff' or model_type == 'all':
             # Spherical diffusion.
-            if ds.diff[self.run].type == 'sphere':
+            if cdp.diff_tensor.type == 'sphere':
                 diff_params = ['tm']
 
             # Spheroidal diffusion.
-            elif ds.diff[self.run].type == 'spheroid':
+            elif cdp.diff_tensor.type == 'spheroid':
                 diff_params = ['tm', 'Da', 'theta', 'phi']
 
             # Ellipsoidal diffusion.
-            elif ds.diff[self.run].type == 'ellipsoid':
+            elif cdp.diff_tensor.type == 'ellipsoid':
                 diff_params = ['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma']
 
 
         # Test if Monte Carlo parameter values have already been set.
         #############################################################
 
-        # Diffusion tensor parameters and non residue specific minimisation statistics.
+        # Diffusion tensor parameters and non spin specific minimisation statistics.
         if model_type == 'diff' or model_type == 'all':
             # Loop over the parameters.
             for object_name in diff_params:
@@ -2752,7 +2752,7 @@ class Model_free_main:
                 sim_object_name = object_name + '_sim'
 
                 # Test if the simulation object already exists.
-                if hasattr(ds.diff[self.run], sim_object_name):
+                if hasattr(cdp.diff_tensor, sim_object_name):
                     raise RelaxError, "Monte Carlo parameter values have already been set."
 
             # Loop over the minimisation stats objects.
@@ -2761,14 +2761,14 @@ class Model_free_main:
                 sim_object_name = object_name + '_sim'
 
                 # Test if the simulation object already exists.
-                if hasattr(ds, sim_object_name):
+                if hasattr(cdp, sim_object_name):
                     raise RelaxError, "Monte Carlo parameter values have already been set."
 
-        # Residue specific parameters.
+        # Spin specific parameters.
         if model_type != 'diff':
-            for i in xrange(len(ds.res[self.run])):
-                # Skip deselected residues.
-                if not ds.res[self.run][i].select:
+            for spin in spin_loop():
+                # Skip deselected spins.
+                if not spin.select:
                     continue
 
                 # Loop over all the parameter names.
@@ -2777,7 +2777,7 @@ class Model_free_main:
                     sim_object_name = object_name + '_sim'
 
                     # Test if the simulation object already exists.
-                    if hasattr(ds.res[self.run][i], sim_object_name):
+                    if hasattr(spin, sim_object_name):
                         raise RelaxError, "Monte Carlo parameter values have already been set."
 
 
@@ -2790,27 +2790,20 @@ class Model_free_main:
             sim_object_name = object_name + '_sim'
 
             # Create the simulation object.
-            setattr(ds, sim_object_name, {})
+            setattr(cdp, sim_object_name, [])
 
             # Get the simulation object.
-            sim_object = getattr(ds, sim_object_name)
-
-            # Add the run.
-            sim_object[self.run] = []
+            sim_object = getattr(cdp, sim_object_name)
 
             # Loop over the simulations.
-            for j in xrange(ds.sim_number[self.run]):
+            for j in xrange(cdp.sim_number):
                 # Get the object.
-                object = getattr(ds, object_name)
-
-                # Test if the object has the key self.run.
-                if not object.has_key(self.run):
-                    continue
+                object = getattr(cdp, object_name)
 
                 # Copy and append the data.
-                sim_object[self.run].append(deepcopy(object[self.run]))
+                sim_object.append(deepcopy(object))
 
-        # Diffusion tensor parameters and non residue specific minimisation statistics.
+        # Diffusion tensor parameters and non spin specific minimisation statistics.
         if model_type == 'diff' or model_type == 'all':
             # Loop over the parameters.
             for object_name in diff_params:
@@ -2818,21 +2811,21 @@ class Model_free_main:
                 sim_object_name = object_name + '_sim'
 
                 # Create the simulation object.
-                setattr(ds.diff[self.run], sim_object_name, [])
+                setattr(cdp.diff_tensor, sim_object_name, [])
 
                 # Get the simulation object.
-                sim_object = getattr(ds.diff[self.run], sim_object_name)
+                sim_object = getattr(cdp.diff_tensor, sim_object_name)
 
                 # Loop over the simulations.
-                for j in xrange(ds.sim_number[self.run]):
+                for j in xrange(cdp.sim_number):
                     # Copy and append the data.
-                    sim_object.append(deepcopy(getattr(ds.diff[self.run], object_name)))
+                    sim_object.append(deepcopy(getattr(cdp.diff_tensor, object_name)))
 
-        # Residue specific parameters.
+        # Spin specific parameters.
         if model_type != 'diff':
-            for i in xrange(len(ds.res[self.run])):
-                # Skip deselected residues.
-                if not ds.res[self.run][i].select:
+            for spin in spin_loop():
+                # Skip deselected spins.
+                if not spin.select:
                     continue
 
                 # Loop over all the data names.
@@ -2841,15 +2834,15 @@ class Model_free_main:
                     sim_object_name = object_name + '_sim'
 
                     # Create the simulation object.
-                    setattr(ds.res[self.run][i], sim_object_name, [])
+                    setattr(spin, sim_object_name, [])
 
                     # Get the simulation object.
-                    sim_object = getattr(ds.res[self.run][i], sim_object_name)
+                    sim_object = getattr(spin, sim_object_name)
 
                     # Loop over the simulations.
-                    for j in xrange(ds.sim_number[self.run]):
+                    for j in xrange(cdp.sim_number):
                         # Copy and append the data.
-                        sim_object.append(deepcopy(getattr(ds.res[self.run][i], object_name)))
+                        sim_object.append(deepcopy(getattr(spin, object_name)))
 
                 # Loop over all the minimisation object names.
                 for object_name in min_names:
@@ -2857,15 +2850,15 @@ class Model_free_main:
                     sim_object_name = object_name + '_sim'
 
                     # Create the simulation object.
-                    setattr(ds.res[self.run][i], sim_object_name, [])
+                    setattr(spin, sim_object_name, [])
 
                     # Get the simulation object.
-                    sim_object = getattr(ds.res[self.run][i], sim_object_name)
+                    sim_object = getattr(spin, sim_object_name)
 
                     # Loop over the simulations.
-                    for j in xrange(ds.sim_number[self.run]):
+                    for j in xrange(cdp.sim_number):
                         # Copy and append the data.
-                        sim_object.append(deepcopy(getattr(ds.res[self.run][i], object_name)))
+                        sim_object.append(deepcopy(getattr(spin, object_name)))
 
 
     def sim_pack_data(self, spin_id, sim_data):
