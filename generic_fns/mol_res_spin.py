@@ -1131,8 +1131,8 @@ def find_index(selection=None, pipe=None, global_index=True):
     select_obj = Selection(selection)
 
     # Init the mol and global index.
-    global_i = 0
-    mol_index = 0
+    global_i = -1
+    mol_index = -1
 
     # Loop over the molecules.
     for mol in ds[pipe].mol:
@@ -1140,7 +1140,7 @@ def find_index(selection=None, pipe=None, global_index=True):
         mol_index = mol_index + 1
 
         # Init the residue index.
-        res_index = 0
+        res_index = -1
 
         # Loop over the residues.
         for res in mol.res:
@@ -1148,7 +1148,7 @@ def find_index(selection=None, pipe=None, global_index=True):
             res_index = res_index + 1
 
             # Init the residue index.
-            spin_index = 0
+            spin_index = -1
 
             # Loop over the spins.
             for spin in res.spin:
