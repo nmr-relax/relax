@@ -2880,22 +2880,34 @@ class Model_free_main:
         spin.relax_sim_data = sim_data
 
 
-    def sim_return_chi2(self, run, instance):
-        """Function for returning the array of simulation chi-squared values."""
+    def sim_return_chi2(self, model_index, index=None):
+        """Return the simulation chi-squared values.
 
-        # Arguments.
-        self.run = run
+        @param model_index: The model index.  This is zero for the global models or equal to the
+                            global spin index (which covers the molecule, residue, and spin
+                            indices).
+        @type model_index:  int
+        @keyword index:     The optional simulation index.
+        @type index:        int
+        @return:            The list of simulation chi-squared values.  If the index is supplied,
+                            only a single value will be returned.
+        @rtype:             list of float or float
+        """
 
         # Determine the model type.
         model_type = self.determine_model_type()
 
         # Single instance.
         if model_type == 'all' or model_type == 'diff':
-            return ds.chi2_sim[self.run]
+            return ds[ds.current_pipe].chi2_sim
 
         # Multiple instances.
         else:
-            return ds.res[self.run][instance].chi2_sim
+            # Get the spin container.
+            spin = return_spin_from_index(model_index)
+
+            # Return the list.
+            return spin.chi2_sim
 
 
     def sim_return_param(self, model_index, index):
