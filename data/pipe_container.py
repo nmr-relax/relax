@@ -22,6 +22,7 @@
 
 # Python module imports.
 from re import match
+from warnings import warn
 
 # relax module imports.
 from align_tensor import AlignTensorList
@@ -32,6 +33,7 @@ from mol_res_spin import MoleculeList
 from prototype import Prototype
 from relax_errors import RelaxFromXMLNotEmptyError
 from relax_xml import fill_object_contents, node_value_to_python, xml_to_object
+from relax_warnings import RelaxWarning
 
 
 class PipeContainer(Prototype):
