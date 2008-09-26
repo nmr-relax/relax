@@ -32,7 +32,7 @@ documented.
 from types import MethodType
 
 # relax module import.
-from data.relax_xml import fill_object_contents
+from data.relax_xml import fill_object_contents, xml_to_object
 from relax_errors import RelaxImplementError
 
 
@@ -211,6 +211,20 @@ class Base_struct_API:
 
         # Raise the error.
         raise RelaxImplementError
+
+
+    def from_xml(self, str_node):
+        """Recreate the structural object from the XML structural object node.
+
+        @param str_node:    The structural object XML node.
+        @type str_node:     xml.dom.minicompat.Element instance
+        """
+
+        # Recreate all the data structures.
+        xml_to_object(str_node, self)
+
+        # Now load the structure from file again.
+        self.load_pdb(file_path=self.file_name, model=None)
 
 
     def load_pdb(self, file_path, model=None, verbosity=False):
