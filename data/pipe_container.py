@@ -206,12 +206,12 @@ class PipeContainer(Prototype):
         if hasattr(self, 'align_tensors'):
             self.align_tensors.to_xml(doc, element)
 
+        # Add the molecule-residue-spin data.
+        self.mol.to_xml(doc, element)
+
         # Add the structural data, if it exists.
         if hasattr(self, 'structure'):
             self.structure.to_xml(doc, element)
-
-        # Add the molecule-residue-spin data.
-        self.mol.to_xml(doc, element)
 
 
     def xml_create_hybrid_element(self, doc, element):
