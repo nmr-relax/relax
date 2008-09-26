@@ -228,22 +228,14 @@ class Base_struct_API:
         xml_to_object(str_node, self)
 
         # Now load the structure from file again.
-        failed = False
-        try:
-            self.load_pdb(file_path=self.path[0] + sep + self.file[0], model=None)
-        except RelaxFileError:
-            failed = True
+        loaded = self.load_pdb(file_path=self.path[0] + sep + self.file[0], model=None)
 
-        # Now load the structure from file again.
-        if failed:
-            failed = False
-            try:
-                self.load_pdb(file_path=self.file[0], model=None)
-            except RelaxFileError:
-                failed = True
+        # Try without the path to search for the file in the current directory.
+        if not loaded:
+            loaded = self.load_pdb(file_path=self.file[0], model=None)
 
         # Can't load the file.
-        if failed:
+        if not loaded:
             warn(RelaxWarning("The structure file " + `self.file[0]` + " cannot be found in the current directory or in " + `self.path[0]` + ".  No data will be loaded."))
 
 
