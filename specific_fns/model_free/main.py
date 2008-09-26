@@ -1031,7 +1031,7 @@ class Model_free_main:
 
                     # The data must match!
                     if data_from != data_to:
-                        raise RelaxError, "The object " + `data_name` + "." + `data_name` + " is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
+                        raise RelaxError, "The object " + `data_name` + " is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
 
         # Structure comparison.
         if hasattr(ds[pipe_from], 'structure'):
@@ -1062,7 +1062,7 @@ class Model_free_main:
 
                     # The data must match!
                     if data_from != data_to:
-                        raise RelaxError, "The object " + `data_name` + "." + `data_name` + " is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
+                        raise RelaxError, "The object " + `data_name` + " is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
 
         # No sequence data, so skip the rest.
         if not exists_mol_res_spin_data():
