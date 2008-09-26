@@ -369,7 +369,7 @@ def setup(number=None, all_select_sim=None):
 
     # Create a number of MC sim data structures.
     cdp.sim_number = number
-    cdp.sim_state = 1
+    cdp.sim_state = True
 
     # Select all simulations.
     select_all_sims(number=number, all_select_sim=all_select_sim)
