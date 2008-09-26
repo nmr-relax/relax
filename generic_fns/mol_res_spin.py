@@ -1106,11 +1106,13 @@ def exists_mol_res_spin_data(pipe=None):
     return True
 
 
-def find_index(selection=None, global_index=True):
+def find_index(selection=None, pipe=None, global_index=True):
     """Find and return the spin index or indices for the selection string.
 
     @keyword selection:     The spin selection identifier.
     @type selection:        str
+    @keyword pipe:          The data pipe containing the spin.  Defaults to the current data pipe.
+    @type pipe:             str
     @keyword global_index:  A flag which if True will cause the global index to be returned.  If
                             False, then the molecule, residue, and spin indices will be returned.
     @type global_index:     bool
