@@ -25,7 +25,7 @@
 
 # Python module imports.
 from numpy import array, float64, linalg, zeros
-from os import path
+from os import F_OK, access, path
 from re import search
 from string import split, strip, upper
 from warnings import warn
@@ -37,7 +37,7 @@ from generic_fns import relax_re
 from generic_fns.mol_res_spin import Selection
 from relax_errors import RelaxError
 from relax_io import open_read_file
-from relax_warnings import RelaxWarning
+from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning
 
 
 
@@ -784,6 +784,11 @@ class Internal(Base_struct_API):
         # Initial print out.
         if verbosity:
             print "Internal relax PDB parser.\n"
+
+        # Test if the file exists.
+        if not access(file_path, F_OK):
+            warn(RelaxNoPDBFileWarning(file_path))
+            return
 
         # Set the file name and path.
         expanded = path.split(file_path)

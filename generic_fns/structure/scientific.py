@@ -29,7 +29,7 @@ import dep_check
 # Python module imports.
 from math import sqrt
 from numpy import array, dot, float64, zeros
-from os import path
+from os import F_OK, access, path
 if dep_check.scientific_pdb_module:
     import Scientific.IO.PDB
 from warnings import warn
@@ -40,7 +40,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import relax_re
 from generic_fns.mol_res_spin import Selection, parse_token, tokenise
 from relax_errors import RelaxError, RelaxPdbLoadError
-from relax_warnings import RelaxWarning, RelaxNoAtomWarning, RelaxZeroVectorWarning
+from relax_warnings import RelaxWarning, RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
 
 
 class Scientific_data(Base_struct_API):
@@ -477,6 +477,11 @@ class Scientific_data(Base_struct_API):
         # Initial print out.
         if verbosity:
             print "Scientific Python PDB parser.\n"
+
+        # Test if the file exists.
+        if not access(file_path, F_OK):
+            warn(RelaxNoPDBFileWarning(file_path))
+            return
 
         # Set the file name and path.
         expanded = path.split(file_path)
