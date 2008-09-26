@@ -708,6 +708,7 @@ class Model_free_main:
             names.append('model')
             names.append('equation')
             names.append('params')
+            names.append('xh_vect')
 
         # Parameters.
         if set == 'all' or set == 'params':
@@ -730,9 +731,6 @@ class Model_free_main:
             names.append('g_count')
             names.append('h_count')
             names.append('warning')
-
-        # Structural data.
-        names.append('xh_vect')
 
         # Relaxation data.
         if set == 'all':
