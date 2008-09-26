@@ -238,6 +238,24 @@ class Base_struct_API:
         return len(self.structural_data)
 
 
+    def to_xml(self, doc, element):
+        """Prototype method for converting the structural object to an XML representation.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the alignment tensors XML element to.
+        @type element:  XML element object
+        """
+
+        # Create the structural element and add it to the higher level element.
+        str_element = doc.createElement('structure')
+        element.appendChild(str_element)
+
+        # Set the structural attributes.
+        str_element.setAttribute('desc', 'Structural information')
+        str_element.setAttribute('id', self.id)
+
+
     def write_pdb(self, file, struct_index=None):
         """Prototype method stub for the creation of a PDB file from the structural data.
 

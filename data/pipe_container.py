@@ -208,7 +208,7 @@ class PipeContainer(Prototype):
 
         # Add the structural data, if it exists.
         if hasattr(self, 'structure'):
-            self.xml_create_str_element(doc, element)
+            self.structure.to_xml(doc, element)
 
         # Add the molecule-residue-spin data.
         self.mol.to_xml(doc, element)
@@ -237,21 +237,3 @@ class PipeContainer(Prototype):
         # Add the pipes list.
         text_val = doc.createTextNode(str(self.hybrid_pipes))
         list_element.appendChild(text_val)
-
-
-    def xml_create_str_element(self, doc, element):
-        """Create an XML element for the structural information.
-
-        @param doc:     The XML document object.
-        @type doc:      xml.dom.minidom.Document instance
-        @param element: The element to add the structural info to.
-        @type element:  XML element object
-        """
-
-        # Create the structural element and add it to the higher level element.
-        str_element = doc.createElement('structure')
-        element.appendChild(str_element)
-
-        # Set the structural attributes.
-        str_element.setAttribute('desc', 'Structural information')
-        str_element.setAttribute('id', self.structure.id)
