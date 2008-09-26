@@ -58,6 +58,5 @@ class Structure(TestCase):
 
         # Test the structure.
         self.assert_(hasattr(cdp, 'structure'))
-        self.assertEqual(cdp.structure.file, '[Ap4Aase_res1-12.pdb]')
-        self.assert_(cdp.structure.path, '[../structures]')
-
+        self.assertEqual(cdp.structure.file, ['Ap4Aase_res1-12.pdb'])
+        self.assertEqual(cdp.structure.path, ['../structures'])
