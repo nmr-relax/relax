@@ -48,7 +48,7 @@ class Structure(TestCase):
         """Load the PDB file using the information in a results file."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/results_files'
+        path = sys.path[-1] + '/test_suite/shared_data/structures'
 
         # Read the results file.
         self.relax.interpreter._Results.read(file='str', dir=path)
@@ -59,7 +59,7 @@ class Structure(TestCase):
         # Test the structure metadata.
         self.assert_(hasattr(cdp, 'structure'))
         self.assertEqual(cdp.structure.file, ['Ap4Aase_res1-12.pdb'])
-        self.assertEqual(cdp.structure.path, ['../structures'])
+        self.assertEqual(cdp.structure.path, [''])
         self.assert_(hasattr(cdp.structure, 'structural_data'))
         self.assert_(len(cdp.structure.structural_data))
 
