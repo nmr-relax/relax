@@ -28,7 +28,11 @@ prototype method stub (or functional method) with all arguments, raised errors, 
 documented.
 """
 
+# Python module imports.
+from types import MethodType
+
 # relax module import.
+from data.relax_xml import fill_object_contents
 from relax_errors import RelaxImplementError
 
 
@@ -254,6 +258,19 @@ class Base_struct_API:
         # Set the structural attributes.
         str_element.setAttribute('desc', 'Structural information')
         str_element.setAttribute('id', self.id)
+
+        # Blacklist methods.
+        blacklist = []
+        for name in dir(self):
+            # Get the object.
+            obj = getattr(self, name)
+
+            # Add methods to the list.
+            if isinstance(obj, MethodType):
+                blacklist.append(name)
+
+        # Add all simple python objects within the PipeContainer to the pipe element.
+        fill_object_contents(doc, str_element, object=self, blacklist=blacklist + ['structural_data'] + self.__class__.__dict__.keys())
 
 
     def write_pdb(self, file, struct_index=None):
