@@ -21,10 +21,12 @@
 ###############################################################################
 
 # Python module imports.
+import sys
 from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import results
 from specific_fns.model_free import main
 
 
@@ -48,8 +50,18 @@ class Test_main(TestCase):
         ds.__reset__()
 
 
-    def test_duplicate_data(self):
+    def test_duplicate_data1(self):
         """Test the model-free duplicate_data() method."""
+
+        # Duplicate the data.
+        self.inst.duplicate_data('orig', 'new')
+
+
+    def test_duplicate_data2(self):
+        """Test the model-free duplicate_data() method."""
+
+        # Read a model-free results file.
+        results.read(file='final_results_trunc_1.3', directory=sys.path[-1] + '/test_suite/shared_data/model_free/OMP')
 
         # Duplicate the data.
         self.inst.duplicate_data('orig', 'new')
