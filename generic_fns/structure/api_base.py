@@ -217,11 +217,13 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def from_xml(self, str_node):
+    def from_xml(self, str_node, dir=None):
         """Recreate the structural object from the XML structural object node.
 
         @param str_node:    The structural object XML node.
         @type str_node:     xml.dom.minicompat.Element instance
+        @keyword dir:       The name of the directory containing the results file.
+        @type dir:          str
         """
 
         # Recreate all the data structures.
@@ -233,6 +235,10 @@ class Base_struct_API:
         # Try without the path to search for the file in the current directory.
         if not loaded:
             loaded = self.load_pdb(file_path=self.file[0], model=None)
+
+        # Try in the path of the results file.
+        if not loaded:
+            loaded = self.load_pdb(file_path=dir + sep + self.file[0], model=None)
 
         # Can't load the file.
         if not loaded:

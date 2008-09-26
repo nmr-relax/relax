@@ -130,7 +130,7 @@ def read(file='results', directory=None):
 
     # XML results.
     if format == 'xml':
-        read_function = ds.from_xml(file)
+        read_function = ds.from_xml(file, dir=directory)
 
     # Columnar results.
     elif format == 'columnar':

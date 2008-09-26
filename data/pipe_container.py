@@ -96,11 +96,13 @@ class PipeContainer(Prototype):
         return text
 
 
-    def from_xml(self, relax_node):
+    def from_xml(self, relax_node, dir=None):
         """Read a pipe container XML element and place the contents into this pipe.
 
         @param relax_node:  The relax XML node.
         @type relax_node:   xml.dom.minidom.Element instance
+        @keyword dir:       The name of the directory containing the results file.
+        @type dir:          str
         """
 
         # Test if empty.
@@ -159,7 +161,7 @@ class PipeContainer(Prototype):
 
             # Fill its contents.
             if not fail:
-                self.structure.from_xml(str_nodes[0])
+                self.structure.from_xml(str_nodes[0], dir=dir)
 
 
     def is_empty(self):
