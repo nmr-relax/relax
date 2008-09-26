@@ -353,17 +353,19 @@ def read(param=None, scaling=1.0, file=None, dir=None, mol_name_col=None, res_nu
         minimise.reset_min_stats()
 
 
-def set(val=None, param=None, spin_id=None, force=False):
+def set(val=None, param=None, spin_id=None, force=False, reset=True):
     """Function for setting residue specific data values.
 
-    @param val:     The parameter values.
-    @type val:      None, number, or list of numbers
-    @param param:   The parameter names.
-    @type param:    None, str, or list of str
-    @param spin_id: The spin identification string.
-    @type spin_id:  str
-    @param force:   A flag forcing the overwriting of current values.
-    @type force:    bool
+    @keyword val:       The parameter values.
+    @type val:          None, number, or list of numbers
+    @keyword param:     The parameter names.
+    @type param:        None, str, or list of str
+    @keyword spin_id:   The spin identification string.
+    @type spin_id:      str
+    @keyword force:     A flag forcing the overwriting of current values.
+    @type force:        bool
+    @keyword reset:     A flag which if True will cause all minimisation statistics to be reset.
+    @type reset:        bool
     """
 
     # Test if the current data pipe exists.
@@ -440,7 +442,8 @@ def set(val=None, param=None, spin_id=None, force=False):
         set_non_spin_params(value=val, param=param)
 
     # Reset all minimisation statistics.
-    minimise.reset_min_stats()
+    if reset:
+        minimise.reset_min_stats()
 
 
 def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):

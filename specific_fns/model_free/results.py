@@ -928,10 +928,10 @@ class Results:
             if data_set == 'value':
                 if file_line[col['nucleus']] != 'None':
                     if search('N', file_line[col['nucleus']]):
-                        generic_fns.value.set(val='15N', param='heteronucleus', spin_id=spin_id)
+                        generic_fns.value.set(val='15N', param='heteronucleus', spin_id=spin_id, reset=False)
                     elif search('C', file_line[col['nucleus']]):
-                        generic_fns.value.set(val='13C', param='heteronucleus', spin_id=spin_id)
-                    generic_fns.value.set(val='1H', param='proton', spin_id=spin_id)
+                        generic_fns.value.set(val='13C', param='heteronucleus', spin_id=spin_id, reset=False)
+                    generic_fns.value.set(val='1H', param='proton', spin_id=spin_id, reset=False)
 
             # Simulation number.
             if data_set != 'value' and data_set != 'error':
