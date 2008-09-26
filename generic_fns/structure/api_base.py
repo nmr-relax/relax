@@ -29,11 +29,14 @@ documented.
 """
 
 # Python module imports.
+from os import sep
 from types import MethodType
+from warnings import warn
 
 # relax module import.
 from data.relax_xml import fill_object_contents, xml_to_object
-from relax_errors import RelaxImplementError
+from relax_errors import RelaxFileError, RelaxImplementError
+from relax_warnings import RelaxWarning
 
 
 class Base_struct_API:
@@ -225,7 +228,23 @@ class Base_struct_API:
         xml_to_object(str_node, self)
 
         # Now load the structure from file again.
-        self.load_pdb(file_path=self.file[0], model=None)
+        failed = False
+        try:
+            self.load_pdb(file_path=self.path[0] + sep + self.file[0], model=None)
+        except RelaxFileError:
+            failed = True
+
+        # Now load the structure from file again.
+        if failed:
+            failed = False
+            try:
+                self.load_pdb(file_path=self.path[0] + sep + self.file[0], model=None)
+            except RelaxFileError:
+                failed = True
+
+        # Can't load the file.
+        if failed:
+            warn(RelaxWarning("The structure file " + `self.file[0]` + " cannot be found in the current directory or in " + `self.path[0]` + ".  No data will be loaded."))
 
 
     def load_pdb(self, file_path, model=None, verbosity=False):
