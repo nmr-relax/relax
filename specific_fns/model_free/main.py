@@ -2547,14 +2547,27 @@ class Model_free_main:
         __docformat__ = "plaintext"
 
 
-    def set_error(self, run, instance, index, error):
-        """Function for setting parameter errors."""
+    def set_error(self, model_index, index, error):
+        """Set the parameter errors.
 
-        # Arguments.
-        self.run = run
+        @param model_index: The model index.  This is zero for the global models or equal to the
+                            global spin index (which covers the molecule, residue, and spin
+                            indices).
+        @type model_index:  int
+        @param index:       The index of the parameter to set the errors for.
+        @type index:        int
+        @param error:       The error value.
+        @type error:        float
+        """
 
         # Parameter increment counter.
         inc = 0
+
+        # Alias the current data pipe.
+        cdp = ds[ds.current_pipe]
+
+        # Determine the model type.
+        model_type = self.determine_model_type()
 
         # Get the parameter object names.
         param_names = self.data_names(set='params')
@@ -2565,44 +2578,44 @@ class Model_free_main:
 
         if model_type == 'diff' or model_type == 'all':
             # Spherical diffusion.
-            if ds.diff[self.run].type == 'sphere':
+            if cdp.diff_tensor.type == 'sphere':
                 # Return the parameter array.
                 if index == 0:
-                    ds.diff[self.run].tm_err = error
+                    cdp.diff_tensor.tm_err = error
 
                 # Increment.
                 inc = inc + 1
 
             # Spheroidal diffusion.
-            elif ds.diff[self.run].type == 'spheroid':
+            elif cdp.diff_tensor.type == 'spheroid':
                 # Return the parameter array.
                 if index == 0:
-                    ds.diff[self.run].tm_err = error
+                    cdp.diff_tensor.tm_err = error
                 elif index == 1:
-                    ds.diff[self.run].Da_err = error
+                    cdp.diff_tensor.Da_err = error
                 elif index == 2:
-                    ds.diff[self.run].theta_err = error
+                    cdp.diff_tensor.theta_err = error
                 elif index == 3:
-                    ds.diff[self.run].phi_err = error
+                    cdp.diff_tensor.phi_err = error
 
                 # Increment.
                 inc = inc + 4
 
             # Ellipsoidal diffusion.
-            elif ds.diff[self.run].type == 'ellipsoid':
+            elif cdp.diff_tensor.type == 'ellipsoid':
                 # Return the parameter array.
                 if index == 0:
-                    ds.diff[self.run].tm_err = error
+                    cdp.diff_tensor.tm_err = error
                 elif index == 1:
-                    ds.diff[self.run].Da_err = error
+                    cdp.diff_tensor.Da_err = error
                 elif index == 2:
-                    ds.diff[self.run].Dr_err = error
+                    cdp.diff_tensor.Dr_err = error
                 elif index == 3:
-                    ds.diff[self.run].alpha_err = error
+                    cdp.diff_tensor.alpha_err = error
                 elif index == 4:
-                    ds.diff[self.run].beta_err = error
+                    cdp.diff_tensor.beta_err = error
                 elif index == 5:
-                    ds.diff[self.run].gamma_err = error
+                    cdp.diff_tensor.gamma_err = error
 
                 # Increment.
                 inc = inc + 6
@@ -2612,17 +2625,17 @@ class Model_free_main:
         #######################################################
 
         if model_type == 'all':
-            # Loop over the sequence.
-            for i in xrange(len(ds.res[self.run])):
-                # Skip deselected residues.
-                if not ds.res[self.run][i].select:
+            # Loop over the spins.
+            for spin in spin_loop():
+                # Skip deselected spins.
+                if not spin.select:
                     continue
 
                 # Loop over the residue specific parameters.
                 for param in param_names:
                     # Return the parameter array.
                     if index == inc:
-                        setattr(ds.res[self.run][i], param + "_err", error)
+                        setattr(spin, param + "_err", error)
 
                     # Increment.
                     inc = inc + 1
@@ -2632,15 +2645,18 @@ class Model_free_main:
         ################################################################
 
         if model_type == 'mf' or model_type == 'local_tm':
+            # Get the spin container.
+            spin = return_spin_from_index(model_index)
+
             # Skip deselected residues.
-            if not ds.res[self.run][instance].select:
+            if not spin.select:
                 return
 
             # Loop over the residue specific parameters.
             for param in param_names:
                 # Return the parameter array.
                 if index == inc:
-                    setattr(ds.res[self.run][instance], param + "_err", error)
+                    setattr(spin, param + "_err", error)
 
                 # Increment.
                 inc = inc + 1
