@@ -52,3 +52,11 @@ class Structure(TestCase):
 
         # Read the results file.
         self.relax.interpreter._Results.read(file='str', dir=path)
+
+        # Aliases.
+        cdp = ds[ds.current_pipe]
+
+        # Test the structure.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assertEqual(cdp.structure.file_name, 'Ap4Aase_res1-12.pdb')
+
