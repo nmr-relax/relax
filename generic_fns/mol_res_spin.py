@@ -1158,13 +1158,11 @@ def find_index(selection=None, pipe=None, global_index=True):
 
                 # Stop if the spin matches the selection.
                 if (mol, res, spin) in select_obj:
-                    break
-
-    # Return the indices.
-    if global_index:
-        return global_i
-    else:
-        return mol_index, res_index, spin_index
+                    # Return the indices.
+                    if global_index:
+                        return global_i
+                    else:
+                        return mol_index, res_index, spin_index
 
 
 def generate_spin_id(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
