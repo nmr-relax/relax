@@ -476,7 +476,7 @@ class Scientific_data(Base_struct_API):
 
         # Initial print out.
         if verbosity:
-            print "\nScientific Python PDB parser.\n"
+            print "\nScientific Python PDB parser."
 
         # Test if the file exists.
         if not access(file_path, F_OK):
