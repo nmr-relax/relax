@@ -23,7 +23,7 @@
 # Python module imports.
 from math import sqrt
 from numpy import dot, float64, ndarray, zeros
-from os import F_OK, access, path
+from os import F_OK, access
 from re import search
 import sys
 from warnings import warn
@@ -197,11 +197,6 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', fail=True, ve
             cdp.structure = Scientific_data()
         elif parser == 'internal':
             cdp.structure = Internal()
-
-    # Set the file name and path.
-    expanded = path.split(file_path)
-    cdp.structure.path.append(expanded[0])
-    cdp.structure.file.append(expanded[1])
 
     # Load the structures.
     cdp.structure.load_pdb(file_path, model, verbosity)

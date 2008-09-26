@@ -25,6 +25,7 @@
 
 # Python module imports.
 from numpy import array, float64, linalg, zeros
+from os import path
 from re import search
 from string import split, strip, upper
 from warnings import warn
@@ -783,6 +784,14 @@ class Internal(Base_struct_API):
         # Initial print out.
         if verbosity:
             print "Internal relax PDB parser.\n"
+
+        # Set the file name and path.
+        expanded = path.split(file_path)
+        self.path.append(expanded[0])
+        self.file.append(expanded[1])
+
+        # Store the model number.
+        self.model = model
 
         # Use pointers (references) if the PDB data exists in another pipe.
         for data_pipe in ds:

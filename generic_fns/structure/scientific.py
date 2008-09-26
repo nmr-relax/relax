@@ -29,6 +29,7 @@ import dep_check
 # Python module imports.
 from math import sqrt
 from numpy import array, dot, float64, zeros
+from os import path
 if dep_check.scientific_pdb_module:
     import Scientific.IO.PDB
 from warnings import warn
@@ -476,6 +477,11 @@ class Scientific_data(Base_struct_API):
         # Initial print out.
         if verbosity:
             print "Scientific Python PDB parser.\n"
+
+        # Set the file name and path.
+        expanded = path.split(file_path)
+        self.path.append(expanded[0])
+        self.file.append(expanded[1])
 
         # Store the model number.
         self.model = model
