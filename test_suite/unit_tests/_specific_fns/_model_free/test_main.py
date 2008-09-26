@@ -54,7 +54,7 @@ class Test_main(TestCase):
         """Test the model-free duplicate_data() method."""
 
         # Duplicate the data.
-        self.inst.duplicate_data('orig', 'new')
+        self.inst.duplicate_data('orig', 'new', model_index=0)
 
 
     def test_duplicate_data2(self):
@@ -64,4 +64,4 @@ class Test_main(TestCase):
         results.read(file='final_results_trunc_1.3', directory=sys.path[-1] + '/test_suite/shared_data/model_free/OMP')
 
         # Duplicate the data.
-        self.inst.duplicate_data('orig', 'new')
+        self.inst.duplicate_data('orig', 'new', model_index=0)
