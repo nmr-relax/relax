@@ -139,6 +139,24 @@ class PipeContainer(Prototype):
         mol_nodes = relax_node.getElementsByTagName('mol')
         self.mol.from_xml(mol_nodes)
 
+        # Get the structural object nodes and, if they exist, fill the contents.
+        str_tensor_nodes = relax_node.getElementsByTagName('structure')
+        if str_tensor_nodes:
+            # Get the object type.
+            parser = str(str_tensor_nodes[0].getAttribute('id'))
+
+            # Create the structural object.
+            if parser == 'scientific':
+                self.structure = generic_fns.structure.scientific.Scientific_data()
+            elif parser == 'intrnal':
+                self.structure = generic_fns.structure.internal.Internal()
+            else:
+                warn(RelaxWarning("The structural file parser " + `parser` + " is unknown.  The structure will not be loaded."))
+                pass
+
+            # Fill its contents.
+            self.structure.from_xml(str_tensor_nodes[0])
+
 
     def is_empty(self):
         """Method for testing if the data pipe is empty.
