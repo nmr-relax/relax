@@ -228,8 +228,8 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
         minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity, sim_index=sim_index)
 
     # Monte Carlo simulation minimisation.
-    elif hasattr(ds, 'sim_state') and ds.sim_state == 1:
-        for i in xrange(ds.sim_number):
+    elif hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
+        for i in xrange(cdp.sim_number):
             if verbosity:
                 print "Simulation " + `i+1`
             minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity-1, sim_index=i)
