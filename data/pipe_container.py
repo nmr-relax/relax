@@ -140,10 +140,10 @@ class PipeContainer(Prototype):
         self.mol.from_xml(mol_nodes)
 
         # Get the structural object nodes and, if they exist, fill the contents.
-        str_tensor_nodes = relax_node.getElementsByTagName('structure')
-        if str_tensor_nodes:
+        str_nodes = relax_node.getElementsByTagName('structure')
+        if str_nodes:
             # Get the object type.
-            parser = str(str_tensor_nodes[0].getAttribute('id'))
+            parser = str(str_nodes[0].getAttribute('id'))
 
             # Create the structural object.
             if parser == 'scientific':
@@ -155,7 +155,7 @@ class PipeContainer(Prototype):
                 pass
 
             # Fill its contents.
-            self.structure.from_xml(str_tensor_nodes[0])
+            self.structure.from_xml(str_nodes[0])
 
 
     def is_empty(self):
