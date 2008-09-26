@@ -488,7 +488,7 @@ class Scientific_data(Base_struct_API):
 
         # Use pointers (references) if the PDB data exists in another run.
         for data_pipe in ds:
-            if hasattr(data_pipe, 'structure') and data_pipe.structure.file[0] == file_path and data_pipe.structure.model == model:
+            if hasattr(data_pipe, 'structure') and data_pipe.structure.file[0] == expanded[1] and data_pipe.structure.model == model:
                 # Make a pointer to the data.
                 self.structural_data = data_pipe.structure.structural_data
 
