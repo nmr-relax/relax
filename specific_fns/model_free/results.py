@@ -898,7 +898,6 @@ class Results:
         # Generate the sequence.
         if verbosity:
             print "\nGenerating the sequence."
-            generic_fns.sequence.write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
         for file_line in file_data:
             # The data set.
             data_set = file_line[col['data_set']]
