@@ -26,7 +26,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import results
+from generic_fns import results, structure
 from specific_fns.model_free import main
 
 
@@ -62,6 +62,19 @@ class Test_main(TestCase):
 
         # Read a model-free results file.
         results.read(file='final_results_trunc_1.3', directory=sys.path[-1] + '/test_suite/shared_data/model_free/OMP')
+
+        # Duplicate the data.
+        self.inst.duplicate_data('orig', 'new', model_index=0)
+
+
+    def test_duplicate_data3(self):
+        """Test the model-free duplicate_data() method."""
+
+        # Read a model-free results file.
+        results.read(file='final_results_trunc_1.3', directory=sys.path[-1] + '/test_suite/shared_data/model_free/OMP')
+
+        # Load a structure.
+        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1, parser='internal')
 
         # Duplicate the data.
         self.inst.duplicate_data('orig', 'new', model_index=0)
