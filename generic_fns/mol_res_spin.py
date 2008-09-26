@@ -1106,6 +1106,65 @@ def exists_mol_res_spin_data(pipe=None):
     return True
 
 
+def find_index(selection=None, global_index=True):
+    """Find and return the spin index or indices for the selection string.
+
+    @keyword selection:     The spin selection identifier.
+    @type selection:        str
+    @keyword global_index:  A flag which if True will cause the global index to be returned.  If
+                            False, then the molecule, residue, and spin indices will be returned.
+    @type global_index:     bool
+    @return:                The global spin index or the molecule, residue, and spin indices.
+    @rtype:                 int or tuple of 3 int
+    """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = ds.current_pipe
+
+    # Test the data pipe.
+    pipes.test(pipe)
+
+    # Parse the selection string.
+    select_obj = Selection(selection)
+
+    # Init the mol and global index.
+    global_i = 0
+    mol_index = 0
+
+    # Loop over the molecules.
+    for mol in ds[pipe].mol:
+        # Increment the molecule index.
+        mol_index = mol_index + 1
+
+        # Init the residue index.
+        res_index = 0
+
+        # Loop over the residues.
+        for res in mol.res:
+            # Increment the residue index.
+            res_index = res_index + 1
+
+            # Init the residue index.
+            spin_index = 0
+
+            # Loop over the spins.
+            for spin in res.spin:
+                # Increment the spin and global index.
+                spin_index = spin_index + 1
+                global_i = global_i + 1
+
+                # Stop if the spin matches the selection.
+                if (mol, res, spin) in select_obj:
+                    break
+
+    # Return the indices.
+    if global_index:
+        return global_i
+    else:
+        return mol_index, res_index, spin_index
+
+
 def generate_spin_id(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
     """Generate the spin selection string.
 
