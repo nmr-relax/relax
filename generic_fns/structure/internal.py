@@ -798,7 +798,7 @@ class Internal(Base_struct_API):
             if hasattr(data_pipe, 'structure'):
                 # Loop over the structures.
                 for i in xrange(len(data_pipe.structure)):
-                    if data_pipe.structure.file[i] == file_path and data_pipe.structure[i].model == model and data_pipe.structure.id == 'internal':
+                    if data_pipe.structure.file[i] == expanded[1] and data_pipe.structure[i].model == model and data_pipe.structure.id == 'internal':
                         # Make a pointer to the data.
                         self.structural_data = data_pipe.structure.structural_data[i]
 
