@@ -40,7 +40,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import relax_re
 from generic_fns.mol_res_spin import Selection, parse_token, tokenise
 from relax_errors import RelaxError, RelaxPdbLoadError
-from relax_warnings import RelaxWarning, RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
+from relax_warnings import RelaxWarning, RelaxNoAtomWarning, RelaxZeroVectorWarning
 
 
 class Scientific_data(Base_struct_API):
@@ -480,7 +480,6 @@ class Scientific_data(Base_struct_API):
 
         # Test if the file exists.
         if not access(file_path, F_OK):
-            warn(RelaxNoPDBFileWarning(file_path))
             return
 
         # Set the file name and path.

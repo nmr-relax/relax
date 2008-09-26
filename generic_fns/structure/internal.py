@@ -37,7 +37,7 @@ from generic_fns import relax_re
 from generic_fns.mol_res_spin import Selection
 from relax_errors import RelaxError
 from relax_io import open_read_file
-from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning
+from relax_warnings import RelaxWarning
 
 
 
@@ -787,7 +787,6 @@ class Internal(Base_struct_API):
 
         # Test if the file exists.
         if not access(file_path, F_OK):
-            warn(RelaxNoPDBFileWarning(file_path))
             return
 
         # Set the file name and path.
