@@ -936,7 +936,7 @@ class Mf_minimise:
             h_count = 0
 
             # Get the data for minimisation.
-            relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params = self.minimise_data_setup(model_type, min_algor, num_data_sets, spin=spin, sim_index=sim_index)
+            relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params = self.minimise_data_setup(model_type, min_algor, num_data_sets, min_options, spin=spin, sim_index=sim_index)
 
 
             # Initialise the function to minimise.
@@ -1100,7 +1100,7 @@ class Mf_minimise:
                     cdp.warning = warning
 
 
-    def minimise_data_setup(self, model_type, min_algor, num_data_sets, spin=None, sim_index=None):
+    def minimise_data_setup(self, model_type, min_algor, num_data_sets, min_options, spin=None, sim_index=None):
         """Set up all the data required for minimisation.
 
         @param model_type:      The model type, one of 'all', 'diff', 'mf', or 'local_tm'.
@@ -1109,6 +1109,8 @@ class Mf_minimise:
         @type min_algor:        str
         @param num_data_sets:   The number of data sets.
         @type num_data_sets:    int
+        @param min_options:     The minimisation options array.
+        @type min_options:      list
         @keyword spin:          The spin data container.
         @type spin:             SpinContainer instance
         @keyword sim_index:     The optional MC simulation index.
