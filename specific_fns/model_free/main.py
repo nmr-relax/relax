@@ -33,7 +33,7 @@ import sys
 from data import Relax_data_store; ds = Relax_data_store()
 from float import isNaN,isInf
 from generic_fns import diffusion_tensor, pipes, relax_data, sequence
-from generic_fns.mol_res_spin import convert_from_global_index, count_spins, exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_index_loop, spin_loop
+from generic_fns.mol_res_spin import convert_from_global_index, count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, spin_index_loop, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
 from physical_constants import N15_CSA, NH_BOND_LENGTH
@@ -434,23 +434,35 @@ class Model_free_main:
         return scaling_matrix
 
 
-    def create_mc_data(self, run, i):
-        """Function for creating the Monte Carlo Ri data."""
+    def create_mc_data(self, spin_id):
+        """Create the Monte Carlo Ri data.
 
-        # Arguments
-        self.run = run
+        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
+                        method.
+        @type spin_id:  str
+        @return:        The Monte Carlo simulation data.
+        @rtype:         list of floats
+        """
 
-        # Initialise the data data structure.
-        data = []
+        # Initialise the MC data structure.
+        mc_data = []
+
+        # Get the spin container and global spin index.
+        spin = return_spin(spin_id)
+        global_index = find_index(spin_id)
+
+        # Skip deselected spins.
+        if not spin.select:
+            return
 
         # Test if the model is set.
-        if not hasattr(ds.res[self.run][i], 'model') or not ds.res[self.run][i].model:
-            raise RelaxNoModelError, self.run
+        if not hasattr(spin, 'model') or not spin.model:
+            raise RelaxNoModelError
 
         # Loop over the relaxation data.
-        for j in xrange(len(ds.res[run][i].relax_data)):
+        for j in xrange(len(spin.relax_data)):
             # Back calculate the value.
-            value = self.back_calc(run=run, index=i, ri_label=ds.res[run][i].ri_labels[j], frq_label=ds.res[run][i].frq_labels[ds.res[run][i].remap_table[j]], frq=ds.res[run][i].frq[ds.res[run][i].remap_table[j]])
+            value = self.back_calc(index=global_index, ri_label=spin.ri_labels[j], frq_label=spin.frq_labels[spin.remap_table[j]], frq=spin.frq[spin.remap_table[j]])
 
             # Append the value.
             data.append(value)
