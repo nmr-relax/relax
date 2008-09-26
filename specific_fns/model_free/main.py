@@ -1042,7 +1042,11 @@ class Model_free_main:
             # Otherwise compare the objects inside the container.
             else:
                 # Loop over the modifiable objects.
-                for data_name in ds[pipe_from].structure.__mod_attr__:
+                for data_name in dir(ds[pipe_from].structure):
+                    # Skip special objects.
+                    if search('^_', data_name) or data_name in ds[pipe_from].__class__.__dict__.keys():
+                        continue
+
                     # Get the original object.
                     data_from = None
                     if hasattr(ds[pipe_from].structure, data_name):
