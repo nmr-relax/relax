@@ -1047,6 +1047,10 @@ class Model_free_main:
                     if search('^_', data_name) or data_name in ds[pipe_from].structure.__class__.__dict__.keys() or data_name in ds[pipe_from].structure.__class__.__bases__[0].__dict__.keys():
                         continue
 
+                    # Skip some more special objects.
+                    if data_name in ['structural_data']:
+                        continue
+
                     # Get the original object.
                     data_from = None
                     if hasattr(ds[pipe_from].structure, data_name):
