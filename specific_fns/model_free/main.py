@@ -968,6 +968,10 @@ class Model_free_main:
         @type verbose:          bool
         """
 
+        # Arg tests.
+        if model_index == None:
+            raise RelaxError, "The model_index argument cannot be None."
+
         # First create the pipe_to data pipe, if it doesn't exist (restoring the current pipe at the end).
         current_pipe = ds.current_pipe
         if not ds.has_key(pipe_to):
