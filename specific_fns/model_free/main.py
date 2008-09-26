@@ -1044,7 +1044,7 @@ class Model_free_main:
                 # Loop over the modifiable objects.
                 for data_name in dir(ds[pipe_from].structure):
                     # Skip special objects.
-                    if search('^_', data_name) or data_name in ds[pipe_from].__class__.__dict__.keys():
+                    if search('^_', data_name) or data_name in ds[pipe_from].structure.__class__.__dict__.keys():
                         continue
 
                     # Get the original object.
