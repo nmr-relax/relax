@@ -2997,22 +2997,25 @@ class Model_free_main:
                 inc = inc + 1
 
 
-    def sim_return_selected(self, run, instance):
-        """Function for returning the array of selected simulation flags."""
+    def sim_return_selected(self, spin):
+        """Return the array of selected simulation flags for the spin.
 
-        # Arguments.
-        self.run = run
+        @param spin:        The spin container.
+        @type spin:         SpinContainer instance
+        @return:            The array of selected simulation flags.
+        @rtype:             list of int
+        """
 
         # Determine the model type.
         model_type = self.determine_model_type()
 
         # Single instance.
         if model_type == 'all' or model_type == 'diff':
-            return ds.select_sim[self.run]
+            return ds[ds.current_pipe].select_sim
 
         # Multiple instances.
         else:
-            return ds.res[self.run][instance].select_sim
+            return spin.select_sim
 
 
     def skip_function(self, instance=None, min_instances=None, num_instances=None):
