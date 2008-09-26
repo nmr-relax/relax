@@ -2997,18 +2997,16 @@ class Model_free_main:
                 inc = inc + 1
 
 
-    def sim_return_selected(self, spin_id):
+    def sim_return_selected(self, model_index):
         """Return the array of selected simulation flags for the spin.
 
-        @param spin_id:     The spin identification string, as yielded by the base_data_loop()
-                            generator method.
-        @type spin_id:      str
+        @param model_index: The model index.  This is zero for the global models or equal to the
+                            global spin index (which covers the molecule, residue, and spin
+                            indices).
+        @type model_index:  int
         @return:            The array of selected simulation flags.
         @rtype:             list of int
         """
-
-        # Get the spin container.
-        spin = return_spin(spin_id)
 
         # Determine the model type.
         model_type = self.determine_model_type()
@@ -3019,6 +3017,10 @@ class Model_free_main:
 
         # Multiple instances.
         else:
+            # Get the spin container.
+            spin = return_spin_from_index(model_index)
+
+            # Return the list.
             return spin.select_sim
 
 
