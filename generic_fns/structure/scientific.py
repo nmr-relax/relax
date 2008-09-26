@@ -476,7 +476,7 @@ class Scientific_data(Base_struct_API):
 
         # Initial print out.
         if verbosity:
-            print "Scientific Python PDB parser.\n"
+            print "\nScientific Python PDB parser.\n"
 
         # Test if the file exists.
         if not access(file_path, F_OK):
@@ -491,15 +491,23 @@ class Scientific_data(Base_struct_API):
         # Store the model number.
         self.model = model
 
-        # Use pointers (references) if the PDB data exists in another run.
-        for data_pipe in ds:
+        # Use pointers (references) if the PDB data exists in another data pipe.
+        for key in ds:
+            # Skip the current pipe.
+            if key == ds.current_pipe:
+                continue
+
+            # Get the data pipe.
+            data_pipe = ds[key]
+
+            # Structure already exists.
             if hasattr(data_pipe, 'structure') and data_pipe.structure.file[0] == expanded[1] and data_pipe.structure.model == model:
                 # Make a pointer to the data.
                 self.structural_data = data_pipe.structure.structural_data
 
                 # Print out.
                 if verbosity:
-                    print "Using the structures from the data pipe " + `data_pipe.pipe_name` + "."
+                    print "Using the structures from the data pipe " + `key` + "."
                     for i in xrange(len(self.structural_data)):
                         print self.structural_data[i]
 
