@@ -477,15 +477,12 @@ class Scientific_data(Base_struct_API):
         if verbosity:
             print "Scientific Python PDB parser.\n"
 
-        # Store the file name (with full path).
-        self.file_name = file_path
-
         # Store the model number.
         self.model = model
 
         # Use pointers (references) if the PDB data exists in another run.
         for data_pipe in ds:
-            if hasattr(data_pipe, 'structure') and data_pipe.structure.file_name == file_path and data_pipe.structure.model == model:
+            if hasattr(data_pipe, 'structure') and data_pipe.structure.file[0] == file_path and data_pipe.structure.model == model:
                 # Make a pointer to the data.
                 self.structural_data = data_pipe.structure.structural_data
 

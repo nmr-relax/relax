@@ -784,15 +784,12 @@ class Internal(Base_struct_API):
         if verbosity:
             print "Internal relax PDB parser.\n"
 
-        # Store the file name (with full path).
-        self.file_name.append(file_path)
-
         # Use pointers (references) if the PDB data exists in another pipe.
         for data_pipe in ds:
             if hasattr(data_pipe, 'structure'):
                 # Loop over the structures.
                 for i in xrange(len(data_pipe.structure)):
-                    if data_pipe.structure.file_name[i] == file_path and data_pipe.structure[i].model == model and data_pipe.structure.id == 'internal':
+                    if data_pipe.structure.file[i] == file_path and data_pipe.structure[i].model == model and data_pipe.structure.id == 'internal':
                         # Make a pointer to the data.
                         self.structural_data = data_pipe.structure.structural_data[i]
 

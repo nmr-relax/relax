@@ -52,8 +52,9 @@ class Base_struct_API:
         # The parser specific data object.
         self.structural_data = []
 
-        # Initialise the file name list.
-        self.file_name = []
+        # Initialise the file name and path list.
+        self.file = []
+        self.path = []
 
 
     def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, struct_index=None):
@@ -224,7 +225,7 @@ class Base_struct_API:
         xml_to_object(str_node, self)
 
         # Now load the structure from file again.
-        self.load_pdb(file_path=self.file_name, model=None)
+        self.load_pdb(file_path=self.file, model=None)
 
 
     def load_pdb(self, file_path, model=None, verbosity=False):
