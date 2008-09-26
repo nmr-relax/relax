@@ -78,3 +78,9 @@ class Test_main(TestCase):
 
         # Duplicate the data.
         self.inst.duplicate_data('orig', 'new', model_index=0)
+
+        # Check the original data.
+        self.assert_(hasattr(ds['orig'], 'structure'))
+
+        # Check the duplication.
+        self.assert_(hasattr(ds['new'], 'structure'))
