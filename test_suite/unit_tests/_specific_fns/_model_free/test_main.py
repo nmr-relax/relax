@@ -87,6 +87,22 @@ class Test_main(TestCase):
         self.assert_(hasattr(ds['new'], 'structure'))
 
 
+    def test_duplicate_data_single_mf_model(self):
+        """Test the model-free duplicate_data() method."""
+
+        # Read a model-free results file.
+        results.read(file='final_results_trunc_1.3', directory=sys.path[-1] + '/test_suite/shared_data/model_free/OMP')
+
+        # Load a structure.
+        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1, parser='internal')
+
+        # Duplicate the data, model by model.
+        self.inst.duplicate_data('orig', 'new', model_index=0)
+        self.inst.duplicate_data('orig', 'new', model_index=1)
+        self.inst.duplicate_data('orig', 'new', model_index=2)
+        self.inst.duplicate_data('orig', 'new', model_index=3)
+
+
     def test_duplicate_data_fail1(self):
         """Test the failure of the model-free duplicate_data() method when the structures are not consistent."""
 
