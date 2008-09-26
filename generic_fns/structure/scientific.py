@@ -55,8 +55,8 @@ class Scientific_data(Base_struct_API):
         if not dep_check.scientific_pdb_module:
             raise RelaxError, "The Scientific python PDB module Scientific.IO.PDB could not be imported."
 
-        # The parser specific data object.
-        self.structural_data = []
+        # Execute the base class __init__() method.
+        Base_struct_API.__init__(self)
 
 
     def __find_bonded_atom(self, attached_atom, mol_type, res):
