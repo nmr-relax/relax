@@ -779,6 +779,8 @@ class Internal(Base_struct_API):
         @type model:        int
         @keyword verbosity: A flag which if True will cause messages to be printed.
         @type verbosity:    bool
+        @return:            The status of the loading of the PDB file.
+        @rtype:             bool
         """
 
         # Initial print out.
@@ -787,7 +789,7 @@ class Internal(Base_struct_API):
 
         # Test if the file exists.
         if not access(file_path, F_OK):
-            return
+            return False
 
         # Set the file name and path.
         expanded = path.split(file_path)
@@ -832,6 +834,9 @@ class Internal(Base_struct_API):
             self.structural_data.append(Structure_container())
             self.structural_data[-1].model = model_num
             self.__fill_object_from_pdb(records, len(self.structural_data)-1)
+
+        # Loading worked.
+        return True
 
 
     def write_pdb(self, file, struct_index=None):
