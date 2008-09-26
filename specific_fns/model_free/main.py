@@ -465,10 +465,10 @@ class Model_free_main:
             value = self.back_calc(index=global_index, ri_label=spin.ri_labels[j], frq_label=spin.frq_labels[spin.remap_table[j]], frq=spin.frq[spin.remap_table[j]])
 
             # Append the value.
-            data.append(value)
+            mc_data.append(value)
 
         # Return the data.
-        return data
+        return mc_data
 
 
     def create_model(self, model=None, equation=None, params=None, spin_id=None):
