@@ -30,7 +30,7 @@ from warnings import warn
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns.structure.mass import centre_of_mass
-from internal import Internal, Structure_container
+from internal import Internal
 from maths_fns.rotation_matrix import R_2vect
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
 from relax_io import open_write_file
