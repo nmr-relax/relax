@@ -199,7 +199,7 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', fail=True, ve
             cdp.structure = Internal()
 
     # Load the structures.
-    cdp.structure.load_pdb(file_path, model, verbosity)
+    cdp.structure.load_pdb(file_path, model, verbosity=verbosity)
 
     # Load into Molmol (if running).
     molmol.open_pdb()
