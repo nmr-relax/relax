@@ -25,7 +25,8 @@
 
 # Python module imports.
 from numpy import array, float64, linalg, zeros
-from os import F_OK, access, path
+import os
+from os import F_OK, access
 from re import search
 from string import split, strip, upper
 from warnings import warn
@@ -846,7 +847,7 @@ class Internal(Base_struct_API):
             return False
 
         # Separate the file name and path.
-        path, file = path.split(file_path)
+        path, file = os.path.split(file_path)
 
         # The ID name.
         name = file

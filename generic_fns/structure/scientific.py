@@ -29,7 +29,8 @@ import dep_check
 # Python module imports.
 from math import sqrt
 from numpy import array, dot, float64, zeros
-from os import F_OK, access, path
+import os
+from os import F_OK, access
 if dep_check.scientific_pdb_module:
     import Scientific.IO.PDB
 from warnings import warn
@@ -539,7 +540,7 @@ class Scientific_data(Base_struct_API):
             return False
 
         # Separate the file name and path.
-        path, file = path.split(file_path)
+        path, file = os.path.split(file_path)
 
         # The ID name.
         name = file
