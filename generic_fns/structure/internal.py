@@ -90,10 +90,6 @@ class Internal(Base_struct_API):
             if file != self.file[struct_index]:
                 raise RelaxError, "The file names of " + `file` + " and " + `self.file[struct_index]` + " do not match."
 
-            # Path.
-            if path != self.path[struct_index]:
-                raise RelaxError, "The paths of " + `path` + " and " + `self.path[struct_index]` + " do not match."
-
         # Initialise.
         else:
             self.num = self.num + 1
@@ -896,7 +892,7 @@ class Internal(Base_struct_API):
             self.__add_struct(name=name, model=model_num, file=file, path=path, str=Structure_container(), struct_index=struct_index)
 
             # Fill the structural data object.
-            self.__fill_object_from_pdb(records, len(self.structural_data)-1)
+            self.__fill_object_from_pdb(records, struct_index=struct_index)
 
         # Loading worked.
         return True
