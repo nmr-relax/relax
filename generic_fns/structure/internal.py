@@ -770,17 +770,20 @@ class Internal(Base_struct_API):
         return data
 
 
-    def load_pdb(self, file_path, model=None, verbosity=False):
+    def load_pdb(self, file_path, model=None, struct_index=None, verbosity=False):
         """Method for loading structures from a PDB file.
 
-        @param file_path:   The full path of the PDB file.
-        @type file_path:    str
-        @param model:       The structural model to use.
-        @type model:        int
-        @keyword verbosity: A flag which if True will cause messages to be printed.
-        @type verbosity:    bool
-        @return:            The status of the loading of the PDB file.
-        @rtype:             bool
+        @param file_path:       The full path of the PDB file.
+        @type file_path:        str
+        @param model:           The structural model to use.
+        @type model:            int
+        @param struct_index:    The index of the structure.  This optional argument can be useful
+                                for reloading a structure.
+        @type struct_index:     int
+        @keyword verbosity:     A flag which if True will cause messages to be printed.
+        @type verbosity:        bool
+        @return:                The status of the loading of the PDB file.
+        @rtype:                 bool
         """
 
         # Initial print out.

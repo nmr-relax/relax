@@ -232,15 +232,15 @@ class Base_struct_API:
         # Loop over the structures and load them.
         for i in xrange(self.num):
             # Now load the structure from file again.
-            loaded = self.load_pdb(file_path=self.path[i] + sep + self.file[i], model=None)
+            loaded = self.load_pdb(file_path=self.path[i] + sep + self.file[i], model=None, struct_index=i)
 
             # Try without the path to search for the file in the current directory.
             if not loaded:
-                loaded = self.load_pdb(file_path=self.file[i], model=None)
+                loaded = self.load_pdb(file_path=self.file[i], model=None, struct_index=i)
 
             # Try in the path of the results file.
             if not loaded:
-                loaded = self.load_pdb(file_path=dir + sep + self.file[i], model=None)
+                loaded = self.load_pdb(file_path=dir + sep + self.file[i], model=None, struct_index=i)
 
             # Can't load the file.
             if not loaded:
@@ -250,19 +250,24 @@ class Base_struct_API:
                     warn(RelaxWarning("The structure file " + `self.file[i]` + " cannot be found in the current directory or the directory of the results file."))
 
 
-    def load_pdb(self, file_path, model=None, verbosity=False):
+    def load_pdb(self, file_path, model=None, struct_index=None, verbosity=False):
         """Prototype method stub for loading structures from a PDB file.
 
         This inherited prototype method is a stub which, if the functionality is desired, should be
         overwritten by the derived class.
 
 
-        @param file_path:   The full path of the PDB file.
-        @type file_path:    str
-        @param model:       The structural model to use.
-        @type model:        int
-        @keyword verbosity: A flag which if True will cause messages to be printed.
-        @type verbosity:    bool
+        @param file_path:       The full path of the PDB file.
+        @type file_path:        str
+        @param model:           The structural model to use.
+        @type model:            int
+        @param struct_index:    The index of the structure.  This optional argument can be useful
+                                for reloading a structure.
+        @type struct_index:     int
+        @keyword verbosity:     A flag which if True will cause messages to be printed.
+        @type verbosity:        bool
+        @return:                The status of the loading of the PDB file.
+        @rtype:                 bool
         """
 
         # Raise the error.
