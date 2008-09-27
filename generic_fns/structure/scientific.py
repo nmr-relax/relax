@@ -513,7 +513,7 @@ class Scientific_data(Base_struct_API):
         return data
 
 
-    def load_pdb(self, file_path, model=None, verbosity=False):
+    def load_pdb(self, file_path, model=None, struct_index=None, verbosity=False):
         """Function for loading the structures from the PDB file.
 
         @param file_path:       The full path of the file.
