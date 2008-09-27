@@ -61,7 +61,7 @@ class Scientific_data(Base_struct_API):
         Base_struct_API.__init__(self)
 
 
-    def __add_struct(self, name=None, model=None, file=None, path=None, str=None, struct_index=None):
+    def add_struct(self, name=None, model=None, file=None, path=None, str=None, struct_index=None):
         """Add the given structure to the store.
 
         @keyword name:          The structural identifier.
@@ -562,7 +562,7 @@ class Scientific_data(Base_struct_API):
                 for i in xrange(data_pipe.structure.num):
                     if data_pipe.structure.name[i] == name and data_pipe.structure.id == 'scientific':
                         # Add the structure.
-                        self.__add_struct(name=name, model=model, file=file, path=path, str=data_pipe.structure.structural_data[i], struct_index=struct_index)
+                        self.add_struct(name=name, model=model, file=file, path=path, str=data_pipe.structure.structural_data[i], struct_index=struct_index)
 
                         # Print out.
                         if verbosity:
@@ -590,7 +590,7 @@ class Scientific_data(Base_struct_API):
                 print str
 
             # Add the structure.
-            self.__add_struct(name=name, model=model, file=file, path=path, str=str, struct_index=struct_index)
+            self.add_struct(name=name, model=model, file=file, path=path, str=str, struct_index=struct_index)
 
 
         # Load all structures.
@@ -623,7 +623,7 @@ class Scientific_data(Base_struct_API):
                     print str
 
                 # Place the structure in 'self.structural_data'.
-                self.__add_struct(name=name, model=i, file=file, path=path, str=str, struct_index=struct_index)
+                self.add_struct(name=name, model=i, file=file, path=path, str=str, struct_index=struct_index)
 
                 # Increment i.
                 i = i + 1

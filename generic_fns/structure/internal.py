@@ -54,7 +54,7 @@ class Internal(Base_struct_API):
     id = 'internal'
 
 
-    def __add_struct(self, name=None, model=None, file=None, path=None, str=None, struct_index=None):
+    def add_struct(self, name=None, model=None, file=None, path=None, str=None, struct_index=None):
         """Add the given structure to the store.
 
         @keyword name:          The structural identifier.
@@ -875,7 +875,7 @@ class Internal(Base_struct_API):
                 for i in xrange(data_pipe.structure.num):
                     if data_pipe.structure.name[i] == name and data_pipe.structure.id == 'internal':
                         # Add the structure.
-                        self.__add_struct(name=name, model=model, file=file, path=path, str=data_pipe.structure.structural_data[i], struct_index=struct_index)
+                        self.add_struct(name=name, model=model, file=file, path=path, str=data_pipe.structure.structural_data[i], struct_index=struct_index)
 
                         # Print out.
                         if verbosity:
@@ -899,7 +899,7 @@ class Internal(Base_struct_API):
                 continue
 
             # Add an empty structure.
-            self.__add_struct(name=name, model=model_num, file=file, path=path, str=Structure_container(), struct_index=struct_index)
+            self.add_struct(name=name, model=model_num, file=file, path=path, str=Structure_container(), struct_index=struct_index)
 
             # Fill the structural data object.
             self.__fill_object_from_pdb(records, struct_index=struct_index)
