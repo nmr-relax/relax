@@ -52,12 +52,12 @@ class Base_struct_API:
     def __init__(self):
         """Initialise the structural object."""
 
-        # The parser specific data object.
-        self.structural_data = []
-
-        # Initialise the file name and path list.
+        # Initialise the variables used to keep track of multiple structures.
+        self.num = 0
+        self.name = []
         self.file = []
         self.path = []
+        self.structural_data = []
 
 
     def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, struct_index=None):
