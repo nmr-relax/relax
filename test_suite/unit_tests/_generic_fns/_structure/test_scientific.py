@@ -312,7 +312,7 @@ class Test_scientific(TestCase):
         # Test the structural data.
         self.assertEqual(self.data.file[0], self.test_pdb_file_name)
         self.assertEqual(self.data.path[0], self.test_pdb_dir)
-        self.assertEqual(self.data.model, None)
+        self.assertEqual(self.data.model[0], 1)
         self.assertEqual(len(self.data.structural_data), 1)
         self.assertEqual(type(self.data.structural_data), list)
         self.assertEqual(self.data.structural_data[0].filename, self.test_pdb_path)
