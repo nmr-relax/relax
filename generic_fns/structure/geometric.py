@@ -182,7 +182,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     structure = Internal()
 
     # Add a structure.
-    structure.structural_data.append(Structure_container())
+    structure.__add_struct(name='diff_tensor')
 
     # Loop over the pipes.
     for pipe_index in xrange(len(pipes)):
