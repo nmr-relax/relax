@@ -697,7 +697,7 @@ class Internal(Base_struct_API):
         # Individual structure mode.
         else:
             # Loop over the models.
-            for c in xrange(len(self.structural_data)):
+            for c in xrange(self.num):
                 # Explicit structure identifier.
                 if type(str_id) == int:
                     if str_id != c:
@@ -715,9 +715,9 @@ class Internal(Base_struct_API):
                     # Build the tuple to be yielded.
                     atomic_tuple = ()
                     if model_num_flag:
-                        atomic_tuple = atomic_tuple + (struct.model,)
+                        atomic_tuple = atomic_tuple + (self.model[c],)
                     if mol_name_flag:
-                        atomic_tuple = atomic_tuple + (None,)
+                        atomic_tuple = atomic_tuple + (self.name[c],)
                     if res_num_flag:
                         atomic_tuple = atomic_tuple + (struct.res_num[i],)
                     if res_name_flag:
