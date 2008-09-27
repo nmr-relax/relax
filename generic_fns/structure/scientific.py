@@ -60,6 +60,56 @@ class Scientific_data(Base_struct_API):
         Base_struct_API.__init__(self)
 
 
+    def __add_struct(self, name=None, model=None, file=None, path=None, str=None, struct_index=None):
+        """Add the given structure to the store.
+
+        @keyword name:          The structural identifier.
+        @type name:             str
+        @keyword model:         The structural model.
+        @type model:            int or None
+        @keyword file:          The name of the file containing the structure.
+        @type file:             str
+        @keyword path:          The optional path where the file is located.
+        @type path:             str
+        @keyword str:           The object containing the structural data.
+        @type str:              Structure_container instance
+        @keyword struct_index:  The index of the structural container, used for replacing the
+                                structure.
+        @type struct_index:     int or None.
+        """
+
+        # Some checks.
+        if struct_index != None:
+            # Index check.
+            if struct_index >= self.num:
+                raise RelaxError, "The structure index of " + `struct_index` + " cannot be more than the total number of structures of " + `self.num` + "."
+
+            # ID check.
+            if name != self.name[struct_index]:
+                raise RelaxError, "The ID names " + `name` + " and " + `self.name[struct_index]` + " do not match."
+
+            # Model.
+            if model != self.model[struct_index]:
+                raise RelaxError, "The models " + `model` + " and " + `self.model[struct_index]` + " do not match."
+
+            # File name.
+            if file != self.file[struct_index]:
+                raise RelaxError, "The file names of " + `file` + " and " + `self.file[struct_index]` + " do not match."
+
+            # Path.
+            if path != self.path[struct_index]:
+                raise RelaxError, "The paths of " + `path` + " and " + `self.path[struct_index]` + " do not match."
+
+        # Initialise.
+        else:
+            self.num = self.num + 1
+            self.name.append(name)
+            self.model.append(model)
+            self.file.append(file)
+            self.path.append(path)
+            self.structural_data.append(str)
+
+
     def __find_bonded_atom(self, attached_atom, mol_type, res):
         """Find the atom named attached_atom directly bonded to the desired atom.
 
@@ -466,12 +516,17 @@ class Scientific_data(Base_struct_API):
     def load_pdb(self, file_path, model=None, verbosity=False):
         """Function for loading the structures from the PDB file.
 
-        @param file_path:   The full path of the file.
-        @type file_path:    str
-        @param model:       The PDB model to use.
-        @type model:        None or int
-        @keyword verbosity: A flag which if True will cause messages to be printed.
-        @type verbosity:    bool
+        @param file_path:       The full path of the file.
+        @type file_path:        str
+        @param model:           The PDB model to use.  If None, all models will be loaded.
+        @type model:            int or None
+        @param struct_index:    The index of the structure.  This optional argument can be useful
+                                for reloading a structure.
+        @type struct_index:     int
+        @keyword verbosity:     A flag which if True will cause messages to be printed.
+        @type verbosity:        bool
+        @return:                The status of the loading of the PDB file.
+        @rtype:                 bool
         """
 
         # Initial print out.
@@ -480,15 +535,16 @@ class Scientific_data(Base_struct_API):
 
         # Test if the file exists.
         if not access(file_path, F_OK):
-            return
+            # Exit indicating failure.
+            return False
 
-        # Set the file name and path.
-        expanded = path.split(file_path)
-        self.path.append(expanded[0])
-        self.file.append(expanded[1])
+        # Separate the file name and path.
+        path, file = path.split(file_path)
 
-        # Store the model number.
-        self.model = model
+        # The ID name.
+        name = file
+        if model != None:
+            name = name + "_" + `model`
 
         # Use pointers (references) if the PDB data exists in another data pipe.
         for key in ds:
@@ -499,19 +555,18 @@ class Scientific_data(Base_struct_API):
             # Get the data pipe.
             data_pipe = ds[key]
 
-            # Structure already exists.
-            if hasattr(data_pipe, 'structure') and data_pipe.structure.file[0] == expanded[1] and data_pipe.structure.model == model:
-                # Make a pointer to the data.
-                self.structural_data = data_pipe.structure.structural_data
+            # Structure exists.
+            if hasattr(data_pipe, 'structure'):
+                # Loop over the structures.
+                for i in xrange(data_pipe.structure.num):
+                    if data_pipe.structure.name[i] == name and data_pipe.structure.id == 'scientific':
+                        # Print out.
+                        if verbosity:
+                            print "Using the structures from the data pipe " + `key` + "."
+                            print self.structural_data[i]
 
-                # Print out.
-                if verbosity:
-                    print "Using the structures from the data pipe " + `key` + "."
-                    for i in xrange(len(self.structural_data)):
-                        print self.structural_data[i]
-
-                # Exit this function.
-                return
+                        # Exit this function.
+                        return True
 
         # Load the structure i from the PDB file.
         if type(model) == int:
@@ -530,8 +585,8 @@ class Scientific_data(Base_struct_API):
             if verbosity:
                 print str
 
-            # Place the structure in 'self.structural_data'.
-            self.structural_data.append(str)
+            # Add the structure.
+            self.__add_struct(name=name, model=model, file=file, path=path, str=str, struct_index=struct_index)
 
 
         # Load all structures.
@@ -564,7 +619,10 @@ class Scientific_data(Base_struct_API):
                     print str
 
                 # Place the structure in 'self.structural_data'.
-                self.structural_data.append(str)
+                self.__add_struct(name=name, model=i, file=file, path=path, str=str, struct_index=struct_index)
 
                 # Increment i.
                 i = i + 1
+
+        # Loading worked.
+        return True

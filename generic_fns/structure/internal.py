@@ -53,6 +53,56 @@ class Internal(Base_struct_API):
     id = 'internal'
 
 
+    def __add_struct(self, name=None, model=None, file=None, path=None, str=None, struct_index=None):
+        """Add the given structure to the store.
+
+        @keyword name:          The structural identifier.
+        @type name:             str
+        @keyword model:         The structural model.
+        @type model:            int or None
+        @keyword file:          The name of the file containing the structure.
+        @type file:             str
+        @keyword path:          The optional path where the file is located.
+        @type path:             str
+        @keyword str:           The object containing the structural data.
+        @type str:              Structure_container instance
+        @keyword struct_index:  The index of the structural container, used for replacing the
+                                structure.
+        @type struct_index:     int or None.
+        """
+
+        # Some checks.
+        if struct_index != None:
+            # Index check.
+            if struct_index >= self.num:
+                raise RelaxError, "The structure index of " + `struct_index` + " cannot be more than the total number of structures of " + `self.num` + "."
+
+            # ID check.
+            if name != self.name[struct_index]:
+                raise RelaxError, "The ID names " + `name` + " and " + `self.name[struct_index]` + " do not match."
+
+            # Model.
+            if model != self.model[struct_index]:
+                raise RelaxError, "The models " + `model` + " and " + `self.model[struct_index]` + " do not match."
+
+            # File name.
+            if file != self.file[struct_index]:
+                raise RelaxError, "The file names of " + `file` + " and " + `self.file[struct_index]` + " do not match."
+
+            # Path.
+            if path != self.path[struct_index]:
+                raise RelaxError, "The paths of " + `path` + " and " + `self.path[struct_index]` + " do not match."
+
+        # Initialise.
+        else:
+            self.num = self.num + 1
+            self.name.append(name)
+            self.model.append(model)
+            self.file.append(file)
+            self.path.append(path)
+            self.structural_data.append(str)
+
+
     def __atom_index(self, atom_num, struct_index):
         """Find the atom index corresponding to the given atom number.
 
@@ -775,8 +825,8 @@ class Internal(Base_struct_API):
 
         @param file_path:       The full path of the PDB file.
         @type file_path:        str
-        @param model:           The structural model to use.
-        @type model:            int
+        @param model:           The PDB model to use.  If None, all models will be loaded.
+        @type model:            int or None
         @param struct_index:    The index of the structure.  This optional argument can be useful
                                 for reloading a structure.
         @type struct_index:     int
@@ -788,37 +838,45 @@ class Internal(Base_struct_API):
 
         # Initial print out.
         if verbosity:
-            print "Internal relax PDB parser.\n"
+            print "\nInternal relax PDB parser."
 
         # Test if the file exists.
         if not access(file_path, F_OK):
+            # Exit indicating failure.
             return False
 
-        # Set the file name and path.
-        expanded = path.split(file_path)
-        self.path.append(expanded[0])
-        self.file.append(expanded[1])
+        # Separate the file name and path.
+        path, file = path.split(file_path)
 
-        # Store the model number.
-        self.model = model
+        # The ID name.
+        name = file
+        if model != None:
+            name = name + "_" + `model`
 
         # Use pointers (references) if the PDB data exists in another pipe.
-        for data_pipe in ds:
+        for key in ds:
+            # Skip the current pipe.
+            if key == ds.current_pipe:
+                continue
+
+            # Get the data pipe.
+            data_pipe = ds[key]
+
+            # Structure exists.
             if hasattr(data_pipe, 'structure'):
                 # Loop over the structures.
-                for i in xrange(len(data_pipe.structure)):
-                    if data_pipe.structure.file[i] == expanded[1] and data_pipe.structure[i].model == model and data_pipe.structure.id == 'internal':
-                        # Make a pointer to the data.
-                        self.structural_data = data_pipe.structure.structural_data[i]
-
+                for i in xrange(data_pipe.structure.num):
+                    if data_pipe.structure.name[i] == name and data_pipe.structure.id == 'internal':
                         # Print out.
                         if verbosity:
-                            print "Using the structures from the data pipe " + `data_pipe.pipe_name` + "."
-                            for i in xrange(len(self.structural_data)):
-                                print self.structural_data[i]
+                            print "Using the structures from the data pipe " + `key` + "."
+                            print self.structural_data[i]
+
+                        # Add the structure.
+                        self.__add_struct(name=name, model=model, file=file, path=path, str=data_pipe.structure.structural_data[i], struct_index=struct_index)
 
                         # Exit this function.
-                        return
+                        return True
 
         # Print out.
         if verbosity:
@@ -833,9 +891,10 @@ class Internal(Base_struct_API):
             if model != None and model != model_num:
                 continue
 
-            # Initialise and fill the structural data object.
-            self.structural_data.append(Structure_container())
-            self.structural_data[-1].model = model_num
+            # Add an empty structure.
+            self.__add_struct(name=name, model=model_num, file=file, path=path, str=Structure_container(), struct_index=struct_index)
+
+            # Fill the structural data object.
             self.__fill_object_from_pdb(records, len(self.structural_data)-1)
 
         # Loading worked.
