@@ -61,6 +61,28 @@ class Base_struct_API:
         self.structural_data = []
 
 
+    def add_struct(self, name=None, model=None, file=None, path=None, str=None, struct_index=None):
+        """Prototype method stub for adding the given structure to the store.
+
+        @keyword name:          The structural identifier.
+        @type name:             str
+        @keyword model:         The structural model.
+        @type model:            int or None
+        @keyword file:          The name of the file containing the structure.
+        @type file:             str
+        @keyword path:          The optional path where the file is located.
+        @type path:             str
+        @keyword str:           The object containing the structural data.
+        @type str:              Structure_container instance
+        @keyword struct_index:  The index of the structural container, used for replacing the
+                                structure.
+        @type struct_index:     int or None.
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
+
+
     def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, struct_index=None):
         """Prototype method stub for adding an atom to the structural data object.
 
