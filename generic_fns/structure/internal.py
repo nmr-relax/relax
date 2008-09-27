@@ -555,9 +555,8 @@ class Internal(Base_struct_API):
         @type struct_index:     None or int
         """
 
-
         # Loop over the structures.
-        for i in xrange(len(self.structural_data)):
+        for i in xrange(self.num):
             # Skip non-matching structures.
             if struct_index != None and struct_index != i:
                 continue
@@ -594,7 +593,7 @@ class Internal(Base_struct_API):
         """
 
         # Loop over the structures.
-        for i in xrange(len(self.structural_data)):
+        for i in xrange(self.num):
             # Skip non-matching structures.
             if struct_index != None and struct_index != i:
                 continue
@@ -770,7 +769,7 @@ class Internal(Base_struct_API):
         warnings = None
 
         # Loop over the structures.
-        for i in xrange(len(self.structural_data)):
+        for i in xrange(self.num):
             # Single structure.
             if struct_index and struct_index != i:
                 continue
@@ -954,7 +953,7 @@ class Internal(Base_struct_API):
         het_data_coll = []
 
         # Loop over the structures.
-        for index in xrange(len(self.structural_data)):
+        for index in xrange(self.num):
             # Skip non-matching structures.
             if struct_index != None and struct_index != index:
                 continue
@@ -1095,7 +1094,7 @@ class Internal(Base_struct_API):
         ######################
 
         # Loop over the structures.
-        for index in xrange(len(self.structural_data)):
+        for index in xrange(self.num):
             # Skip non-matching structures.
             if struct_index != None and struct_index != index:
                 continue
