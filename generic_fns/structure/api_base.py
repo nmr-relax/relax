@@ -35,7 +35,7 @@ from warnings import warn
 
 # relax module import.
 from data.relax_xml import fill_object_contents, xml_to_object
-from relax_errors import RelaxFileError, RelaxImplementError
+from relax_errors import RelaxError, RelaxFileError, RelaxImplementError
 from relax_warnings import RelaxWarning
 
 
@@ -232,16 +232,28 @@ class Base_struct_API:
 
         # Loop over the structures and load them.
         for i in xrange(self.num):
-            # Now load the structure from file again.
-            loaded = self.load_pdb(file_path=self.path[i] + sep + self.file[i], model=None, struct_index=i)
+            # Load the structure from file and path.
+            if self.path[i]:
+                try:
+                    loaded = self.load_pdb(file_path=self.path[i] + sep + self.file[i], model=None, struct_index=i)
+                except RelaxError:
+                    loaded = False
+            else:
+                loaded = False
 
             # Try without the path to search for the file in the current directory.
             if not loaded:
-                loaded = self.load_pdb(file_path=self.file[i], model=None, struct_index=i)
+                try:
+                    loaded = self.load_pdb(file_path=self.file[i], model=None, struct_index=i)
+                except RelaxError:
+                    loaded = False
 
             # Try in the path of the results file.
             if not loaded:
-                loaded = self.load_pdb(file_path=dir + sep + self.file[i], model=None, struct_index=i)
+                try:
+                    loaded = self.load_pdb(file_path=dir + sep + self.file[i], model=None, struct_index=i)
+                except RelaxError:
+                    loaded = False
 
             # Can't load the file.
             if not loaded:
