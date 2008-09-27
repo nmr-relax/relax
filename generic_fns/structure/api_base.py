@@ -55,6 +55,7 @@ class Base_struct_API:
         # Initialise the variables used to keep track of multiple structures.
         self.num = 0
         self.name = []
+        self.model = []
         self.file = []
         self.path = []
         self.structural_data = []
