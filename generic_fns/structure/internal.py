@@ -868,13 +868,13 @@ class Internal(Base_struct_API):
                 # Loop over the structures.
                 for i in xrange(data_pipe.structure.num):
                     if data_pipe.structure.name[i] == name and data_pipe.structure.id == 'internal':
+                        # Add the structure.
+                        self.__add_struct(name=name, model=model, file=file, path=path, str=data_pipe.structure.structural_data[i], struct_index=struct_index)
+
                         # Print out.
                         if verbosity:
                             print "Using the structures from the data pipe " + `key` + "."
                             print self.structural_data[i]
-
-                        # Add the structure.
-                        self.__add_struct(name=name, model=model, file=file, path=path, str=data_pipe.structure.structural_data[i], struct_index=struct_index)
 
                         # Exit this function.
                         return True
