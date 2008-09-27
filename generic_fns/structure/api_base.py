@@ -229,20 +229,25 @@ class Base_struct_API:
         # Recreate all the data structures.
         xml_to_object(str_node, self)
 
-        # Now load the structure from file again.
-        loaded = self.load_pdb(file_path=self.path[0] + sep + self.file[0], model=None)
+        # Loop over the structures and load them.
+        for i in xrange(self.num):
+            # Now load the structure from file again.
+            loaded = self.load_pdb(file_path=self.path[i] + sep + self.file[i], model=None)
 
-        # Try without the path to search for the file in the current directory.
-        if not loaded:
-            loaded = self.load_pdb(file_path=self.file[0], model=None)
+            # Try without the path to search for the file in the current directory.
+            if not loaded:
+                loaded = self.load_pdb(file_path=self.file[i], model=None)
 
-        # Try in the path of the results file.
-        if not loaded:
-            loaded = self.load_pdb(file_path=dir + sep + self.file[0], model=None)
+            # Try in the path of the results file.
+            if not loaded:
+                loaded = self.load_pdb(file_path=dir + sep + self.file[i], model=None)
 
-        # Can't load the file.
-        if not loaded:
-            warn(RelaxWarning("The structure file " + `self.file[0]` + " cannot be found in the current directory or in " + `self.path[0]` + ".  No data will be loaded."))
+            # Can't load the file.
+            if not loaded:
+                if self.path[i]:
+                    warn(RelaxWarning("The structure file " + `self.file[i]` + " cannot be found in the current directory, the directory of the results file or in the directory" + `self.path[i]` + "."))
+                else:
+                    warn(RelaxWarning("The structure file " + `self.file[i]` + " cannot be found in the current directory or the directory of the results file."))
 
 
     def load_pdb(self, file_path, model=None, verbosity=False):
