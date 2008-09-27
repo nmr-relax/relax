@@ -97,6 +97,14 @@ class Internal(Base_struct_API):
             self.model.append(model)
             self.file.append(file)
             self.path.append(path)
+
+        # Add the structural data.
+        if struct_index != None:
+            if struct_index >= len(self.structural_data):
+                self.structural_data.append(str)
+            else:
+                self.structural_data[struct_index] = str
+        else:
             self.structural_data.append(str)
 
 
