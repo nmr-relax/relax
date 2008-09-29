@@ -34,7 +34,7 @@ from warnings import warn
 # relax module imports.
 from api_base import Base_struct_API
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import relax_re
+from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import Selection
 from relax_errors import RelaxError
 from relax_io import open_read_file
@@ -863,7 +863,7 @@ class Internal(Base_struct_API):
         # Use pointers (references) if the PDB data exists in another pipe.
         for key in ds:
             # Skip the current pipe.
-            if key == ds.current_pipe:
+            if key == pipes.cdp_name():
                 continue
 
             # Get the data pipe.

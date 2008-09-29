@@ -45,8 +45,7 @@ def create_data(method=None):
     """
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
@@ -127,8 +126,7 @@ def error_analysis(prune=0.0):
     """
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
@@ -257,8 +255,7 @@ def initial_values():
     """Set the initial simulation parameter values."""
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
@@ -278,8 +275,7 @@ def off():
     """Turn simulations off."""
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
@@ -296,8 +292,7 @@ def on():
     """Turn simulations on."""
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
@@ -358,8 +353,7 @@ def setup(number=None, all_select_sim=None):
     """
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()

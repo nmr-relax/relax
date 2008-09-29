@@ -64,7 +64,7 @@ class State_base_class:
 
         # Test the contents of the empty singleton.
         self.assertEqual(ds.keys(), [])
-        self.assertEqual(ds.current_pipe, None)
+        self.assertEqual(pipes.cdp_name(), None)
         self.assert_(not hasattr(ds, 'y'))
 
         # Get the relative path of relax.
@@ -77,7 +77,7 @@ class State_base_class:
 
         # Test the contents of the restored singleton.
         self.assertEqual(ds.keys(), ['orig'])
-        self.assertEqual(ds.current_pipe, 'orig')
+        self.assertEqual(pipes.cdp_name(), 'orig')
         self.assertEqual(ds['orig'].x, 1)
         self.assertEqual(ds.y, 'Hello')
 
@@ -90,7 +90,7 @@ class State_base_class:
 
         # Test the contents of the empty singleton.
         self.assertEqual(ds.keys(), [])
-        self.assertEqual(ds.current_pipe, None)
+        self.assertEqual(pipes.cdp_name(), None)
         self.assert_(not hasattr(ds, 'y'))
 
         # Get the relative path of relax.
@@ -109,7 +109,7 @@ class State_base_class:
 
         # Test the contents of the restored singleton (with subsequent data added).
         self.assertEqual(ds.keys().sort(), ['orig', 'new'].sort())
-        self.assertEqual(ds.current_pipe, 'new')
+        self.assertEqual(pipes.cdp_name(), 'new')
         self.assertEqual(ds['orig'].x, 1)
         self.assertEqual(ds.y, 'Hello')
         self.assertEqual(ds['new'].z, [None, None])
@@ -123,7 +123,7 @@ class State_base_class:
 
         # Test the contents of the empty singleton.
         self.assertEqual(ds.keys(), [])
-        self.assertEqual(ds.current_pipe, None)
+        self.assertEqual(pipes.cdp_name(), None)
         self.assert_(not hasattr(ds, 'y'))
 
         # Get the relative path of relax.
@@ -139,7 +139,7 @@ class State_base_class:
 
         # Test that there are no contents in the reset singleton.
         self.assertEqual(ds.keys(), [])
-        self.assertEqual(ds.current_pipe, None)
+        self.assertEqual(pipes.cdp_name(), None)
         self.assert_(not hasattr(ds, 'y'))
 
 

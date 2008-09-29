@@ -889,8 +889,7 @@ class N_state_model(Common_functions):
         """
 
         # Test if the current data pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
@@ -1424,8 +1423,7 @@ class N_state_model(Common_functions):
         """
 
         # Test if the current data pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
@@ -1449,8 +1447,7 @@ class N_state_model(Common_functions):
         """
 
         # Test if the current data pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
@@ -1633,8 +1630,7 @@ class N_state_model(Common_functions):
         """
 
         # Test if the current data pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()

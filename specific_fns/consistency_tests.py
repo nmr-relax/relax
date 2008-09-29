@@ -470,8 +470,7 @@ class Consistency_tests(Common_functions):
         cdp = pipes.get_pipe()
 
         # Test if the current pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Test if the pipe type is set to 'ct'.
         function_type = cdp.pipe_type
@@ -612,8 +611,7 @@ class Consistency_tests(Common_functions):
         cdp = pipes.get_pipe()
 
         # Test if the current pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():

@@ -51,9 +51,9 @@ def copy(pipe_from=None, pipe_to=None):
     if pipe_from == None and pipe_to == None:
         raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
     elif pipe_from == None:
-        pipe_from = ds.current_pipe
+        pipe_from = pipes.cdp_name()
     elif pipe_to == None:
-        pipe_to = ds.current_pipe
+        pipe_to = pipes.cdp_name()
 
     # Test if the pipe_from and pipe_to data pipes exist.
     pipes.test(pipe_from)
@@ -148,7 +148,7 @@ def delete():
     """Function for deleting diffusion tensor data."""
 
     # Test if the current data pipe exists.
-    pipes.test(ds.current_pipe)
+    pipes.test()
 
     # Get the current data pipe.
     cdp = pipes.get_pipe()
@@ -172,7 +172,7 @@ def diff_data_exists(pipe=None):
 
     # The data pipe to check.
     if pipe == None:
-        pipe = ds.current_pipe
+        pipe = pipes.cdp_name()
 
     # Test if the data structure exists.
     if hasattr(ds[pipe], 'diff_tensor'):
@@ -185,7 +185,7 @@ def display():
     """Function for displaying the diffusion tensor."""
 
     # Test if the current data pipe exists.
-    pipes.test(ds.current_pipe)
+    pipes.test()
 
     # Test if diffusion tensor data exists.
     if not diff_data_exists():
@@ -537,7 +537,7 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     """
 
     # Test if the current data pipe exists.
-    pipes.test(ds.current_pipe)
+    pipes.test()
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()

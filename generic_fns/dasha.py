@@ -53,8 +53,7 @@ class Dasha:
         self.force = force
 
         # Test if the current pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():

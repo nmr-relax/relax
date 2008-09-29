@@ -22,6 +22,7 @@
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxSpinSelectDisallowError
 
 
@@ -45,7 +46,7 @@ class Residue_base_class:
         ds.add(pipe_name='test', pipe_type='mf')
 
         # Set the current data pipe to 'orig'.
-        ds.current_pipe = 'orig'
+        pipes.switch('orig')
 
 
     def tearDown(self):

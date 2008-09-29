@@ -54,9 +54,9 @@ def copy(pipe_from=None, pipe_to=None, verbose=True):
     if pipe_from == None and pipe_to == None:
         raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
     elif pipe_from == None:
-        pipe_from = ds.current_pipe
+        pipe_from = pipes.cdp_name()
     elif pipe_to == None:
-        pipe_to = ds.current_pipe
+        pipe_to = pipes.cdp_name()
 
     # Test if the pipe_from and pipe_to data pipes exist.
     pipes.test(pipe_from)
@@ -132,7 +132,7 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
 
     # The current data pipe.
     if pipe == None:
-        pipe = ds.current_pipe
+        pipe = pipes.cdp_name()
 
     # Get the molecule.
     curr_mol = return_molecule(generate_spin_id(mol_name=mol_name), pipe=pipe)

@@ -49,8 +49,7 @@ def eliminate(function=None, args=None):
     """
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()

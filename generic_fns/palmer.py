@@ -56,8 +56,7 @@ def create(dir, force, binary, diff_search, sims, sim_type, trim, steps, constra
     """
 
     # Test if the current pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()

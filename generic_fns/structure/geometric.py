@@ -167,8 +167,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         scale = autoscale_tensor(scale)
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
@@ -177,7 +176,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     if cdp.pipe_type == 'hybrid':
         pipe_list = cdp.hybrid_pipes
     else:
-        pipe_list = [ds.current_pipe]
+        pipe_list = [pipes.cdp_name()]
 
     # Create the structural object.
     structure = Internal()
@@ -328,8 +327,7 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     run = run
 
     # Test if the current pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Test if the PDB file of the macromolecule has been loaded.
     if not ds.pdb.has_key(run):

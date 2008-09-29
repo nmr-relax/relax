@@ -25,6 +25,7 @@ from math import pi
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError
 
 
@@ -49,7 +50,7 @@ class Align_tensor_base_class:
         ds.add(pipe_name='test', pipe_type='mf')
 
         # Set the current data pipe to 'orig'.
-        ds.current_pipe = 'orig'
+        pipes.switch('orig')
 
 
     def tearDown(self):
@@ -69,7 +70,7 @@ class Align_tensor_base_class:
         self.align_tensor_fns.init(tensor='Pf1', params=(-16.6278, 6.13037, 7.65639, -1.89157, 19.2561), scale=1.0, angle_units='rad', param_types=0)
 
         # Change the current data pipe.
-        ds.current_pipe = 'test'
+        pipes.switch('test')
 
         # Copy the tensor to the test pipe.
         self.align_tensor_fns.copy(tensor_from='Pf1', pipe_from='orig', tensor_to='Pf1')

@@ -46,7 +46,7 @@ def reset_min_stats(data_pipe=None, spin=None):
 
     # The data pipe.
     if data_pipe == None:
-        data_pipe = ds.current_pipe
+        data_pipe = pipes.cdp_name()
 
     # Alias the current data pipe.
     cdp = ds[data_pipe]

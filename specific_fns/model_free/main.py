@@ -491,8 +491,7 @@ class Model_free_main:
         """
 
         # Test if the current data pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Test if the pipe type is 'mf'.
         function_type = pipes.get_type()
@@ -852,8 +851,7 @@ class Model_free_main:
         self.run = run
 
         # Test if the current pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Test if the pipe type is set to 'mf'.
         function_type = pipes.get_type()
@@ -983,10 +981,10 @@ class Model_free_main:
             raise RelaxError, "The model_index argument cannot be None."
 
         # First create the pipe_to data pipe, if it doesn't exist (restoring the current pipe at the end).
-        current_pipe = ds.current_pipe
+        current_pipe = pipes.cdp_name()
         if not ds.has_key(pipe_to):
             pipes.create(pipe_to, pipe_type='mf')
-        ds.current_pipe = current_pipe
+        pipes.switch(current_pipe)
 
         # Duplicate all non-sequence specific data.
         for data_name in dir(ds[pipe_from]):
@@ -1870,8 +1868,7 @@ class Model_free_main:
         """
 
         # Test if the current data pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Get the current data pipe.
         cdp = pipes.get_pipe()
@@ -2246,8 +2243,7 @@ class Model_free_main:
         """
 
         # Test if the current data pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Test if the pipe type is 'mf'.
         function_type = pipes.get_type()

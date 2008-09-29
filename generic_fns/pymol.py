@@ -144,8 +144,7 @@ def cartoon():
     """Apply the PyMOL cartoon style and colour by secondary structure."""
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Get the current data pipe.
     cdp = pipes.get_pipe()
@@ -172,8 +171,7 @@ def command(command):
     """
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Pass the command to PyMOL.
     pymol.pipe_write(command)
@@ -187,8 +185,7 @@ def cone_pdb(file=None):
     """
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # The file root.
     id = file_root(file)
@@ -293,8 +290,7 @@ def macro_exec(data_type=None, style="classic", colour_start=None, colour_end=No
     """
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Test if sequence data exists.
     if not exists_mol_res_spin_data():
@@ -316,8 +312,7 @@ def tensor_pdb(file=None):
     """
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # The file root.
     id = file_root(file)
@@ -387,8 +382,7 @@ def vector_dist(file=None):
     """
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # The file root.
     id = file_root(file)
@@ -438,8 +432,7 @@ def write(data_type=None, style="classic", colour_start=None, colour_end=None, c
     """
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Test if sequence data exists.
     if not exists_mol_res_spin_data():

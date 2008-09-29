@@ -1149,8 +1149,7 @@ class Relax_fit(Common_functions):
         """
 
         # Test if the current pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Get the current data pipe.
         cdp = pipes.get_pipe()

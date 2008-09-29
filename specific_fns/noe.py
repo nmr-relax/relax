@@ -59,8 +59,7 @@ class Noe:
         self.run = run
 
         # Test if the current pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Loop over the sequence.
         for i in xrange(len(ds.res[self.run])):
@@ -331,8 +330,7 @@ class Noe:
         self.res_name = res_name
 
         # Test if the current pipe exists
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Test if the sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -385,8 +383,7 @@ class Noe:
         self.run = run
 
         # Test if the current pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Test if the sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -432,8 +429,7 @@ class Noe:
         self.run = run
 
         # Test if the current pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():

@@ -60,7 +60,7 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
     """
 
     # Test if the current data pipe exists.
-    pipes.test(ds.current_pipe)
+    pipes.test()
 
     # Get the current data pipe.
     cdp = pipes.get_pipe()
@@ -233,9 +233,9 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
     if pipe_from == None and pipe_to == None:
         raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
     elif pipe_from == None:
-        pipe_from = ds.current_pipe
+        pipe_from = pipes.cdp_name()
     elif pipe_to == None:
-        pipe_to = ds.current_pipe
+        pipe_to = pipes.cdp_name()
 
     # Test if the pipe_from and pipe_to data pipes exist.
     pipes.test(pipe_from)
@@ -561,7 +561,7 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
     """
 
     # Test if the current data pipe exists.
-    pipes.test(ds.current_pipe)
+    pipes.test()
 
     # Test if sequence data exists.
     if not exists_mol_res_spin_data():

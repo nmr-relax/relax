@@ -40,7 +40,7 @@ def angle_diff_frame():
     """Function for calculating the angle defining the XH vector in the diffusion frame."""
 
     # Test if the current data pipe exists.
-    pipes.test(ds.current_pipe)
+    pipes.test()
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()

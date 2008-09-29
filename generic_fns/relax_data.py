@@ -60,7 +60,7 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
     """
 
     # Test if the current data pipe exists.
-    pipes.test(ds.current_pipe)
+    pipes.test()
 
     # Test if sequence data exists.
     if not exists_mol_res_spin_data():
@@ -143,8 +143,7 @@ def back_calc(ri_label=None, frq_label=None, frq=None):
     """Function for back calculating relaxation data."""
 
     # Test if the current pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -227,9 +226,9 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
     if pipe_from == None and pipe_to == None:
         raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
     elif pipe_from == None:
-        pipe_from = ds.current_pipe
+        pipe_from = pipes.cdp_name()
     elif pipe_to == None:
-        pipe_to = ds.current_pipe
+        pipe_to = pipes.cdp_name()
 
     # Test if the pipe_from and pipe_to data pipes exist.
     pipes.test(pipe_from)
@@ -411,8 +410,7 @@ def delete(ri_label=None, frq_label=None):
     self.frq_label = frq_label
 
     # Test if the current pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Test if the sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -481,8 +479,7 @@ def display(ri_label=None, frq_label=None):
     self.frq_label = frq_label
 
     # Test if the current pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Test if the sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -559,7 +556,7 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
     """
 
     # Test if the current data pipe exists.
-    pipes.test(ds.current_pipe)
+    pipes.test()
 
     # Get the current data pipe.
     cdp = pipes.get_pipe()
@@ -919,8 +916,7 @@ def write(ri_label=None, frq_label=None, file=None, dir=None, force=False):
     self.frq_label = frq_label
 
     # Test if the current pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Test if the sequence data is loaded.
     if not exists_mol_res_spin_data():

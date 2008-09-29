@@ -23,6 +23,7 @@
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import copy_residue, create_residue
+from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 
 
@@ -47,7 +48,7 @@ class Molecule_base_class:
         ds.add(pipe_name='test', pipe_type='mf')
 
         # Set the current data pipe to 'orig'.
-        ds.current_pipe = 'orig'
+        pipes.switch('orig')
 
 
     def tearDown(self):

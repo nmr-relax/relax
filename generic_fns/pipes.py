@@ -54,7 +54,7 @@ def copy(pipe_from=None, pipe_to=None):
 
     # The current data pipe.
     if pipe_from == None:
-        pipe_from = ds.current_pipe
+        pipe_from = cdp_name()
 
     # Copy the data.
     ds[pipe_to] = ds[pipe_from].__clone__()
@@ -135,7 +135,7 @@ def get_pipe(name=None):
 
     # The name of the data pipe.
     if name == None:
-        name = ds.current_pipe
+        name = cdp_name()
 
     return ds[name]
 
@@ -151,7 +151,7 @@ def get_type(name=None):
 
     # The name of the data pipe.
     if name == None:
-        name = ds.current_pipe
+        name = cdp_name()
 
     return ds[name].pipe_type
 

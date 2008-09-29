@@ -511,9 +511,9 @@ def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
 
     # The current data pipe.
     if pipe_from == None:
-        pipe_from = ds.current_pipe
+        pipe_from = pipes.cdp_name()
     if pipe_to == None:
-        pipe_to = ds.current_pipe
+        pipe_to = pipes.cdp_name()
 
     # The second pipe does not exist.
     if pipe_to not in ds.keys():
@@ -577,9 +577,9 @@ def copy_residue(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
 
     # The current data pipe.
     if pipe_from == None:
-        pipe_from = ds.current_pipe
+        pipe_from = pipes.cdp_name()
     if pipe_to == None:
-        pipe_to = ds.current_pipe
+        pipe_to = pipes.cdp_name()
 
     # The second pipe does not exist.
     if pipe_to not in ds.keys():
@@ -646,9 +646,9 @@ def copy_spin(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
 
     # The current data pipe.
     if pipe_from == None:
-        pipe_from = ds.current_pipe
+        pipe_from = pipes.cdp_name()
     if pipe_to == None:
-        pipe_to = ds.current_pipe
+        pipe_to = pipes.cdp_name()
 
     # The second pipe does not exist.
     if pipe_to not in ds.keys():
@@ -776,8 +776,7 @@ def create_molecule(mol_name=None):
     """Function for adding a molecule into the relax data store."""
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
@@ -816,8 +815,7 @@ def create_residue(res_num=None, res_name=None, mol_id=None):
         raise RelaxSpinSelectDisallowError
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Get the molecule container to add the residue to.
     if mol_id:
@@ -853,8 +851,7 @@ def create_spin(spin_num=None, spin_name=None, res_id=None):
         raise RelaxSpinSelectDisallowError
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Get the residue container to add the spin to.
     if res_id:
@@ -882,7 +879,7 @@ def convert_from_global_index(global_index=None, pipe=None):
 
     # The data pipe.
     if pipe == None:
-        pipe = ds.current_pipe
+        pipe = pipes.cdp_name()
 
     # Test the data pipe.
     pipes.test(pipe)
@@ -1099,7 +1096,7 @@ def exists_mol_res_spin_data(pipe=None):
 
     # The current data pipe.
     if pipe == None:
-        pipe = ds.current_pipe
+        pipe = pipes.cdp_name()
 
     # Test the data pipe.
     pipes.test(pipe)
@@ -1128,7 +1125,7 @@ def find_index(selection=None, pipe=None, global_index=True):
 
     # The data pipe.
     if pipe == None:
-        pipe = ds.current_pipe
+        pipe = pipes.cdp_name()
 
     # Test the data pipe.
     pipes.test(pipe)
@@ -1274,7 +1271,7 @@ def molecule_loop(selection=None, pipe=None):
 
     # The data pipe.
     if pipe == None:
-        pipe = ds.current_pipe
+        pipe = pipes.cdp_name()
 
     # Test the data pipe.
     pipes.test(pipe)
@@ -1502,7 +1499,7 @@ def residue_loop(selection=None, pipe=None, full_info=False):
 
     # The data pipe.
     if pipe == None:
-        pipe = ds.current_pipe
+        pipe = pipes.cdp_name()
 
     # Test the data pipe.
     pipes.test(pipe)
@@ -1542,7 +1539,7 @@ def return_molecule(selection=None, pipe=None):
 
     # The data pipe.
     if pipe == None:
-        pipe = ds.current_pipe
+        pipe = pipes.cdp_name()
 
     # Test the data pipe.
     pipes.test(pipe)
@@ -1585,7 +1582,7 @@ def return_residue(selection=None, pipe=None):
 
     # The data pipe.
     if pipe == None:
-        pipe = ds.current_pipe
+        pipe = pipes.cdp_name()
 
     # Test the data pipe.
     pipes.test(pipe)
@@ -1637,7 +1634,7 @@ def return_spin(selection=None, pipe=None, full_info=False):
 
     # The data pipe.
     if pipe == None:
-        pipe = ds.current_pipe
+        pipe = pipes.cdp_name()
 
     # Test the data pipe.
     pipes.test(pipe)
@@ -1696,7 +1693,7 @@ def return_spin_from_index(global_index=None, pipe=None, return_spin_id=False):
 
     # The data pipe.
     if pipe == None:
-        pipe = ds.current_pipe
+        pipe = pipes.cdp_name()
 
     # Test the data pipe.
     pipes.test(pipe)
@@ -1919,7 +1916,7 @@ def spin_index_loop(selection=None, pipe=None):
 
     # The data pipe.
     if pipe == None:
-        pipe = ds.current_pipe
+        pipe = pipes.cdp_name()
 
     # Test the data pipe.
     pipes.test(pipe)
@@ -1981,7 +1978,7 @@ def spin_loop(selection=None, pipe=None, full_info=False, return_id=False):
 
     # The data pipe.
     if pipe == None:
-        pipe = ds.current_pipe
+        pipe = pipes.cdp_name()
 
     # Test the data pipe.
     pipes.test(pipe)

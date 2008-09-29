@@ -90,8 +90,7 @@ def display(format='xml'):
     """
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Specific results writing function.
     if format == 'xml':
@@ -113,8 +112,7 @@ def read(file='results', directory=None):
     """Function for reading the data out of a file."""
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Get the current data pipe.
     cdp = pipes.get_pipe()
@@ -162,12 +160,11 @@ def write(file="results", directory=None, force=False, format='columnar', compre
     """Create the results file."""
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # The special data pipe name directory.
     if directory == 'pipe_name':
-        directory = ds.current_pipe
+        directory = pipes.cdp_name()
 
     # Specific results writing function.
     if format == 'xml':

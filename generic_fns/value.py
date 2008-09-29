@@ -52,9 +52,9 @@ def copy(pipe_from=None, pipe_to=None, param=None):
 
     # The current data pipe.
     if pipe_from == None:
-        pipe_from = ds.current_pipe
+        pipe_from = pipes.cdp_name()
     if pipe_to == None:
-        pipe_to = ds.current_pipe
+        pipe_to = pipes.cdp_name()
 
     # The second pipe does not exist.
     if pipe_to not in ds.keys():
@@ -106,8 +106,7 @@ def display(param=None):
     """
 
     # Test if the current pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Test if the sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -229,8 +228,7 @@ def read(param=None, scaling=1.0, file=None, dir=None, mol_name_col=None, res_nu
     """
 
     # Test if the current pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -369,8 +367,7 @@ def set(val=None, param=None, spin_id=None, force=False, reset=True):
     """
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Specific functions.
     return_value = get_specific_fn('return_value', pipes.get_type())
@@ -579,8 +576,7 @@ def write(param=None, file=None, dir=None, force=False, return_value=None):
     """
 
     # Test if the current pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Test if the sequence data is loaded.
     if not exists_mol_res_spin_data():

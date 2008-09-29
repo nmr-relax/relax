@@ -274,8 +274,7 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
     """
 
     # Test if the current pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Test if the sequence data is loaded.
     if not exists_mol_res_spin_data():

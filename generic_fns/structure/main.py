@@ -56,8 +56,7 @@ def load_spins(spin_id=None, str_id=None, ave_pos=False):
     """
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Print out.
     print "Adding the following spins to the relax data store.\n"
@@ -167,8 +166,7 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', fail=True, ve
     """
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
@@ -383,8 +381,7 @@ def write_pdb(file=None, dir=None, struct_index=None, force=False):
     """
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()

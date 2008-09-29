@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,6 +22,7 @@
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError, RelaxTensorError
 
 
@@ -47,7 +48,7 @@ class Diffusion_tensor_base_class:
         ds.add(pipe_name='test', pipe_type='mf')
 
         # Set the current data pipe to 'orig'.
-        ds.current_pipe = 'orig'
+        pipes.switch('orig')
 
 
     def tearDown(self):
@@ -67,7 +68,7 @@ class Diffusion_tensor_base_class:
         self.diffusion_tensor_fns.init(params=(13.9, 1.8, 0.7, 10.6, -23.3, 0.34), time_scale=1e-9, d_scale=1e7, angle_units='rad', param_types=0, fixed=True)
 
         # Change the current data pipe.
-        ds.current_pipe = 'test'
+        pipes.switch('test')
 
         # Copy the tensor to the test pipe.
         self.diffusion_tensor_fns.copy(pipe_from='orig')
@@ -94,7 +95,7 @@ class Diffusion_tensor_base_class:
         self.diffusion_tensor_fns.init(params=1e-9)
 
         # Change the current data pipe.
-        ds.current_pipe = 'test'
+        pipes.switch('test')
 
         # Copy the tensor to the test pipe.
         self.diffusion_tensor_fns.copy(pipe_from='orig')
@@ -116,7 +117,7 @@ class Diffusion_tensor_base_class:
         self.diffusion_tensor_fns.init(params=(8.6, 1.3, 600, -20), time_scale=1e-9, d_scale=1e7, angle_units='deg', param_types=2, spheroid_type='prolate', fixed=False)
 
         # Change the current data pipe.
-        ds.current_pipe = 'test'
+        pipes.switch('test')
 
         # Copy the tensor to the test pipe.
         self.diffusion_tensor_fns.copy(pipe_from='orig', pipe_to='test')
