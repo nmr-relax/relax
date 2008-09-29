@@ -24,6 +24,7 @@
 # Import statements.
 from os import getcwd, path, sep, system, walk
 from re import search
+import sys
 from tarfile import TarFile
 from zipfile import ZipFile
 
@@ -45,6 +46,12 @@ def gpg_sign(target, source, env):
     if type_list[0] == 'ALL':
         type_list = ['zip', 'tar']
 
+    # GPG key.
+    key = env['GPG_KEY']
+    if key == None:
+        sys.stderr.write("The GPG key needs to be supplied on the command line as key=xxxxx, where xxxxx is the name of your key.\n\n")
+        return
+
     # Loop over the distribution files.
     for dist_type in type_list:
         # The file name.
@@ -57,7 +64,7 @@ def gpg_sign(target, source, env):
         print "\n\nSigning the distribution package " + `file` + ".\n"
 
         # Run the 'gpg' command.
-        system("gpg --detach-sign --default-key relax " + path.pardir + path.sep + file)
+        system("gpg --detach-sign --default-key " + key + " " + path.pardir + path.sep + file)
 
     # Final print out.
     print "\n\n\n"
