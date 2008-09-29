@@ -178,7 +178,7 @@ def test(pipe_name=None):
     # No supplied data pipe and no current data pipe.
     if pipe_name == None:
         # Get the current pipe.
-        pipe_name = current()
+        pipe_name = cdp_name()
 
         # Still no luck.
         if pipe_name == None:
