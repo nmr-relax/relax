@@ -94,16 +94,6 @@ def create(pipe_name=None, pipe_type=None):
     ds.add(pipe_name=pipe_name, pipe_type=pipe_type)
 
 
-def cdp():
-    """Return the current data pipe.
-    
-    @return:        The current data pipe.
-    @rtype:         PipeContainer instance
-    """
-
-    return ds[ds.current_pipe]
-
-
 def cdp_name():
     """Return the name of the current data pipe.
     
@@ -131,6 +121,23 @@ def delete(pipe_name=None):
     # Set the current data pipe to None if it is the deleted data pipe.
     if ds.current_pipe == pipe_name:
         ds.current_pipe = None
+
+
+def get_pipe(name=None):
+    """Return a data pipe.
+
+    @keyword name:  The name of the data pipe to return.  If None, the current data pipe is
+                    returned.
+    @type name:     str or None
+    @return:        The current data pipe.
+    @rtype:         PipeContainer instance
+    """
+
+    # The name of the data pipe.
+    if name == None:
+        name = ds.current_pipe
+
+    return ds[name]
 
 
 def list():
