@@ -162,11 +162,11 @@ class Test_pipes(TestCase):
     def test_current(self):
         """Get the current data pipe.
 
-        The function used is generic_fns.pipes.current().
+        The function used is generic_fns.pipes.cdp_name().
         """
 
         # Test the current pipe.
-        self.assertEqual(pipes.current(), 'orig')
+        self.assertEqual(pipes.cdp_name(), 'orig')
 
 
     def test_deletion(self):
