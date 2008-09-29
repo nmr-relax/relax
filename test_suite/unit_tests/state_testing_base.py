@@ -26,7 +26,7 @@ import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-
+from generic_fns import pipes
 
 
 class State_base_class:
@@ -103,7 +103,8 @@ class State_base_class:
 
         # Add a new data pipe and some data to it.
         ds.add('new', 'jw_mapping')
-        ds[ds.current_pipe].z = [None, None]
+        cdp = pipes.get_pipe()
+        cdp.z = [None, None]
 
 
         # Test the contents of the restored singleton (with subsequent data added).

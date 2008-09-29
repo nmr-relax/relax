@@ -495,7 +495,7 @@ class Model_free_main:
             raise RelaxNoPipeError
 
         # Test if the pipe type is 'mf'.
-        function_type = ds[ds.current_pipe].pipe_type
+        function_type = pipes.get_type()
         if function_type != 'mf':
             raise RelaxFuncSetupError, specific_fns.get_string(function_type)
 
@@ -856,7 +856,7 @@ class Model_free_main:
             raise RelaxNoPipeError
 
         # Test if the pipe type is set to 'mf'.
-        function_type = ds[ds.current_pipe].pipe_type
+        function_type = pipes.get_type()
         if function_type != 'mf':
             raise RelaxFuncSetupError, specific_fns.setup.get_string(function_type)
 
@@ -1727,6 +1727,9 @@ class Model_free_main:
         elif instance != None and spin_id != None:
             raise RelaxError, "The instance arg " + `instance` + " and spin_id arg " + `spin_id` + " clash.  Only one should be supplied."
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Determine if local or global statistics will be returned.
         if global_stats == None:
             global_stats = 1
@@ -1790,7 +1793,7 @@ class Model_free_main:
 
             # The chi2 value.
             if model_type != 'local_tm':
-                chi2 = ds[ds.current_pipe].chi2
+                chi2 = cdp.chi2
 
         # Return the data.
         return k, n, chi2
@@ -1870,8 +1873,11 @@ class Model_free_main:
         if not ds.current_pipe:
             raise RelaxNoPipeError
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Test if the pipe type is 'mf'.
-        function_type = ds[ds.current_pipe].pipe_type
+        function_type = pipes.get_type()
         if function_type != 'mf':
             raise RelaxFuncSetupError, specific_fns.get_string(function_type)
 
@@ -1908,12 +1914,12 @@ class Model_free_main:
             spin.warning = None
 
         # Set the global minimisation stats to None.
-        ds[ds.current_pipe].chi2 = None
-        ds[ds.current_pipe].iter = None
-        ds[ds.current_pipe].f_count = None
-        ds[ds.current_pipe].g_count = None
-        ds[ds.current_pipe].h_count = None
-        ds[ds.current_pipe].warning = None
+        cdp.chi2 = None
+        cdp.iter = None
+        cdp.f_count = None
+        cdp.g_count = None
+        cdp.h_count = None
+        cdp.warning = None
 
 
     def return_conversion_factor(self, param, spin=None, spin_id=None):
@@ -2244,7 +2250,7 @@ class Model_free_main:
             raise RelaxNoPipeError
 
         # Test if the pipe type is 'mf'.
-        function_type = ds[ds.current_pipe].pipe_type
+        function_type = pipes.get_type()
         if function_type != 'mf':
             raise RelaxFuncSetupError, specific_fns.get_string(function_type)
 
@@ -2689,9 +2695,12 @@ class Model_free_main:
         # Determine the model type.
         model_type = self.determine_model_type()
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Global model.
         if model_type == 'all' or model_type == 'diff':
-            ds[ds.current_pipe].select_sim = select_sim
+            cdp.select_sim = select_sim
 
         # Spin specific model.
         else:
@@ -2913,9 +2922,12 @@ class Model_free_main:
         # Determine the model type.
         model_type = self.determine_model_type()
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Single instance.
         if model_type == 'all' or model_type == 'diff':
-            return ds[ds.current_pipe].chi2_sim
+            return cdp.chi2_sim
 
         # Multiple instances.
         else:
@@ -3053,9 +3065,12 @@ class Model_free_main:
         # Determine the model type.
         model_type = self.determine_model_type()
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Single instance.
         if model_type == 'all' or model_type == 'diff':
-            return ds[ds.current_pipe].select_sim
+            return cdp.select_sim
 
         # Multiple instances.
         else:

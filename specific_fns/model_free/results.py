@@ -35,6 +35,7 @@ import sys
 from data import Relax_data_store; ds = Relax_data_store()
 import generic_fns
 from generic_fns.mol_res_spin import generate_spin_id, return_spin, spin_loop
+from generic_fns import pipes
 from generic_fns.relax_data import add_data_to_spin
 from relax_errors import RelaxError, RelaxInvalidDataError
 
@@ -210,6 +211,9 @@ class Results:
         @type verbosity:    int
         """
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # The diffusion tensor type.
         diff_type = spin_line[col['diff_type']]
         if diff_type == 'None':
@@ -239,16 +243,16 @@ class Results:
 
             # Errors.
             elif data_set == 'error':
-                ds[ds.current_pipe].diff.tm_err = tm
+                cdp.diff.tm_err = tm
 
             # Simulation values.
             else:
                 # Create the data structure if it doesn't exist.
                 if not hasattr(ds.diff, 'tm_sim'):
-                    ds[ds.current_pipe].diff.tm_sim = DiffTensorSimList('tm', ds[ds.current_pipe].diff)
+                    cdp.diff.tm_sim = DiffTensorSimList('tm', cdp.diff)
 
                 # Append the value.
-                ds[ds.current_pipe].diff.tm_sim.append(tm)
+                cdp.diff.tm_sim.append(tm)
 
 
         # Spheroid.
@@ -273,28 +277,28 @@ class Results:
 
             # Errors.
             elif data_set == 'error':
-                ds[ds.current_pipe].diff.tm_err = tm
-                ds[ds.current_pipe].diff.Da_err = Da
-                ds[ds.current_pipe].diff.theta_err = theta
-                ds[ds.current_pipe].diff.phi_err = phi
+                cdp.diff.tm_err = tm
+                cdp.diff.Da_err = Da
+                cdp.diff.theta_err = theta
+                cdp.diff.phi_err = phi
 
             # Simulation values.
             else:
                 # Create the data structure if it doesn't exist.
-                if not hasattr(ds[ds.current_pipe].diff, 'tm_sim'):
-                    ds[ds.current_pipe].diff.tm_sim = DiffTensorSimList('tm', ds[ds.current_pipe].diff)
-                if not hasattr(ds[ds.current_pipe].diff, 'Da_sim'):
-                    ds[ds.current_pipe].diff.Da_sim = DiffTensorSimList('Da', ds[ds.current_pipe].diff)
-                if not hasattr(ds[ds.current_pipe].diff, 'theta_sim'):
-                    ds[ds.current_pipe].diff.theta_sim = DiffTensorSimList('theta', ds[ds.current_pipe].diff)
-                if not hasattr(ds[ds.current_pipe].diff, 'phi_sim'):
-                    ds[ds.current_pipe].diff.phi_sim = DiffTensorSimList('phi', ds[ds.current_pipe].diff)
+                if not hasattr(cdp.diff, 'tm_sim'):
+                    cdp.diff.tm_sim = DiffTensorSimList('tm', cdp.diff)
+                if not hasattr(cdp.diff, 'Da_sim'):
+                    cdp.diff.Da_sim = DiffTensorSimList('Da', cdp.diff)
+                if not hasattr(cdp.diff, 'theta_sim'):
+                    cdp.diff.theta_sim = DiffTensorSimList('theta', cdp.diff)
+                if not hasattr(cdp.diff, 'phi_sim'):
+                    cdp.diff.phi_sim = DiffTensorSimList('phi', cdp.diff)
 
                 # Append the value.
-                ds[ds.current_pipe].diff.tm_sim.append(tm)
-                ds[ds.current_pipe].diff.Da_sim.append(Da)
-                ds[ds.current_pipe].diff.theta_sim.append(theta)
-                ds[ds.current_pipe].diff.phi_sim.append(phi)
+                cdp.diff.tm_sim.append(tm)
+                cdp.diff.Da_sim.append(Da)
+                cdp.diff.theta_sim.append(theta)
+                cdp.diff.phi_sim.append(phi)
 
 
         # Ellipsoid.
@@ -321,36 +325,36 @@ class Results:
 
             # Errors.
             elif data_set == 'error':
-                ds[ds.current_pipe].diff.tm_err = tm
-                ds[ds.current_pipe].diff.Da_err = Da
-                ds[ds.current_pipe].diff.Dr_err = Dr
-                ds[ds.current_pipe].diff.alpha_err = alpha
-                ds[ds.current_pipe].diff.beta_err = beta
-                ds[ds.current_pipe].diff.gamma_err = gamma
+                cdp.diff.tm_err = tm
+                cdp.diff.Da_err = Da
+                cdp.diff.Dr_err = Dr
+                cdp.diff.alpha_err = alpha
+                cdp.diff.beta_err = beta
+                cdp.diff.gamma_err = gamma
 
             # Simulation values.
             else:
                 # Create the data structure if it doesn't exist.
-                if not hasattr(ds[ds.current_pipe].diff, 'tm_sim'):
-                    ds[ds.current_pipe].diff.tm_sim = DiffTensorSimList('tm', ds[ds.current_pipe].diff)
-                if not hasattr(ds[ds.current_pipe].diff, 'Da_sim'):
-                    ds[ds.current_pipe].diff.Da_sim = DiffTensorSimList('Da', ds[ds.current_pipe].diff)
-                if not hasattr(ds[ds.current_pipe].diff, 'Dr_sim'):
-                    ds[ds.current_pipe].diff.Dr_sim = DiffTensorSimList('Dr', ds[ds.current_pipe].diff)
-                if not hasattr(ds[ds.current_pipe].diff, 'alpha_sim'):
-                    ds[ds.current_pipe].diff.alpha_sim = DiffTensorSimList('alpha', ds[ds.current_pipe].diff)
-                if not hasattr(ds[ds.current_pipe].diff, 'beta_sim'):
-                    ds[ds.current_pipe].diff.beta_sim = DiffTensorSimList('beta', ds[ds.current_pipe].diff)
-                if not hasattr(ds[ds.current_pipe].diff, 'gamma_sim'):
-                    ds[ds.current_pipe].diff.gamma_sim = DiffTensorSimList('gamma', ds[ds.current_pipe].diff)
+                if not hasattr(cdp.diff, 'tm_sim'):
+                    cdp.diff.tm_sim = DiffTensorSimList('tm', cdp.diff)
+                if not hasattr(cdp.diff, 'Da_sim'):
+                    cdp.diff.Da_sim = DiffTensorSimList('Da', cdp.diff)
+                if not hasattr(cdp.diff, 'Dr_sim'):
+                    cdp.diff.Dr_sim = DiffTensorSimList('Dr', cdp.diff)
+                if not hasattr(cdp.diff, 'alpha_sim'):
+                    cdp.diff.alpha_sim = DiffTensorSimList('alpha', cdp.diff)
+                if not hasattr(cdp.diff, 'beta_sim'):
+                    cdp.diff.beta_sim = DiffTensorSimList('beta', cdp.diff)
+                if not hasattr(cdp.diff, 'gamma_sim'):
+                    cdp.diff.gamma_sim = DiffTensorSimList('gamma', cdp.diff)
 
                 # Append the value.
-                ds[ds.current_pipe].diff.tm_sim.append(tm)
-                ds[ds.current_pipe].diff.Da_sim.append(Da)
-                ds[ds.current_pipe].diff.Dr_sim.append(Dr)
-                ds[ds.current_pipe].diff.alpha_sim.append(alpha)
-                ds[ds.current_pipe].diff.beta_sim.append(beta)
-                ds[ds.current_pipe].diff.gamma_sim.append(gamma)
+                cdp.diff.tm_sim.append(tm)
+                cdp.diff.Da_sim.append(Da)
+                cdp.diff.Dr_sim.append(Dr)
+                cdp.diff.alpha_sim.append(alpha)
+                cdp.diff.beta_sim.append(beta)
+                cdp.diff.gamma_sim.append(gamma)
 
 
         # Set the diffusion tensor.
@@ -414,6 +418,9 @@ class Results:
                             the value, the greater the verbosity.
         @type verbosity:    int
         """
+
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
 
         # Set up the model-free models.
         if data_set == 'value':
@@ -503,15 +510,15 @@ class Results:
 
             # Minimisation details (global minimisation results).
             if model_type == 'diff' or model_type == 'all':
-                ds[ds.current_pipe].chi2 = eval(spin_line[col['chi2']])
-                ds[ds.current_pipe].iter = eval(spin_line[col['iter']])
-                ds[ds.current_pipe].f_count = eval(spin_line[col['f_count']])
-                ds[ds.current_pipe].g_count = eval(spin_line[col['g_count']])
-                ds[ds.current_pipe].h_count = eval(spin_line[col['h_count']])
+                cdp.chi2 = eval(spin_line[col['chi2']])
+                cdp.iter = eval(spin_line[col['iter']])
+                cdp.f_count = eval(spin_line[col['f_count']])
+                cdp.g_count = eval(spin_line[col['g_count']])
+                cdp.h_count = eval(spin_line[col['h_count']])
                 if spin_line[col['warn']] == 'None':
-                    ds[ds.current_pipe].warning = None
+                    cdp.warning = None
                 else:
-                    ds[ds.current_pipe].warning = replace(spin_line[col['warn']], '_', ' ')
+                    cdp.warning = replace(spin_line[col['warn']], '_', ' ')
 
             # Minimisation details (individual residue results).
             else:
@@ -611,8 +618,8 @@ class Results:
 
                 # Create the simulation object.
                 if model_type == 'diff' or model_type == 'all':
-                    setattr(ds[ds.current_pipe], sim_object_name, {})
-                    object = getattr(ds[ds.current_pipe], sim_object_name)
+                    setattr(cdp, sim_object_name, {})
+                    object = getattr(cdp, sim_object_name)
                     object = []
                 else:
                     setattr(spin, sim_object_name, [])
@@ -681,15 +688,15 @@ class Results:
 
             # Minimisation details (global minimisation results).
             if model_type == 'diff' or model_type == 'all':
-                ds[ds.current_pipe].chi2_sim.append(eval(spin_line[col['chi2']]))
-                ds[ds.current_pipe].iter_sim.append(eval(spin_line[col['iter']]))
-                ds[ds.current_pipe].f_count_sim.append(eval(spin_line[col['f_count']]))
-                ds[ds.current_pipe].g_count_sim.append(eval(spin_line[col['g_count']]))
-                ds[ds.current_pipe].h_count_sim.append(eval(spin_line[col['h_count']]))
+                cdp.chi2_sim.append(eval(spin_line[col['chi2']]))
+                cdp.iter_sim.append(eval(spin_line[col['iter']]))
+                cdp.f_count_sim.append(eval(spin_line[col['f_count']]))
+                cdp.g_count_sim.append(eval(spin_line[col['g_count']]))
+                cdp.h_count_sim.append(eval(spin_line[col['h_count']]))
                 if spin_line[col['warn']] == 'None':
-                    ds[ds.current_pipe].warning_sim.append(None)
+                    cdp.warning_sim.append(None)
                 else:
-                    ds[ds.current_pipe].warning_sim.append(replace(spin_line[col['warn']], '_', ' '))
+                    cdp.warning_sim.append(replace(spin_line[col['warn']], '_', ' '))
 
             # Minimisation details (individual residue results).
             else:
@@ -715,6 +722,9 @@ class Results:
                             the value, the greater the verbosity.
         @type verbosity:    int
         """
+
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
 
         # Extract the model type if it exists, otherwise return.
         if spin_line[col['param_set']] != 'None':
@@ -752,7 +762,7 @@ class Results:
 
         # Set the diffusion tensor fixed flag.
         if model_type != 'local_tm' and diff_fixed != None:
-            ds[ds.current_pipe].diff_tensor.fixed = diff_fixed
+            cdp.diff_tensor.fixed = diff_fixed
 
         # Set the spin specific fixed flags.
         for spin in spin_loop():
@@ -869,6 +879,9 @@ class Results:
                             the value, the greater the verbosity.
         @type verbosity:    int
         """
+
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
 
         # Extract and remove the header.
         header = file_data[0]
@@ -1000,7 +1013,7 @@ class Results:
             generic_fns.monte_carlo.setup(number=len(sims), all_select_sim=all_select_sim)
 
             # Turn the simulation state to off!
-            ds[ds.current_pipe].sim_state = False
+            cdp.sim_state = False
 
 
     def __generate_sequence(self, spin_line, col, verbosity=1):

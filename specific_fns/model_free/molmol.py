@@ -27,6 +27,7 @@ from re import search
 # relax module imports.
 from colour import linear_gradient
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import pipes
 from relax_errors import RelaxStyleError, RelaxUnknownDataTypeError
 
 
@@ -525,8 +526,11 @@ class Molmol:
     def molmol_classic_rex(self, res_num, rex, colour_start, colour_end, colour_list):
         """Function for generating the bond width and colours for correlation times."""
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # The Rex value at the first field strength.
-        rex = rex * (2.0 * pi * ds[ds.current_pipe].frq[0])**2
+        rex = rex * (2.0 * pi * cdp.frq[0])**2
 
         # The bond width (aiming for a width range of 2 to 0 for Rex values of 0 to 25 s^-1).
         width = 2.0 - 2.0 / (rex/5.0 + 1.0)

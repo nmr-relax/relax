@@ -196,10 +196,13 @@ def display(tensor):
     # Test if the current data pipe exists.
     pipes.test(ds.current_pipe)
 
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
     # All tensors.
     if tensor == None:
         # Loop over the tensors.
-        for tensor in ds[ds.current_pipe].align_tensors:
+        for tensor in cdp.align_tensors:
             # Header.
             print "Tensor: " + tensor.name + "\n"
 

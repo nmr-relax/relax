@@ -66,15 +66,21 @@ class Pymol:
         if not self.pipe_open_test():
             return
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Reinitialise PyMOL.
         self.pipe_write("reinitialize")
 
         # Open the PDB file.
-        self.pipe_write("load " + ds[ds.current_pipe].structure.file_name)
+        self.pipe_write("load " + cdp.structure.file_name)
 
 
     def pipe_open(self):
         """Function for opening a PyMOL pipe."""
+
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
 
         # Test that the PyMOL binary exists.
         test_binary('pymol')
@@ -88,7 +94,7 @@ class Pymol:
             return
 
         # Test if the PDB file has been loaded.
-        if hasattr(ds[ds.current_pipe], 'structure'):
+        if hasattr(cdp, 'structure'):
             self.open_pdb()
 
 
@@ -141,8 +147,11 @@ def cartoon():
     if not ds.current_pipe:
         raise RelaxNoPipeError
 
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
     # Identifier.
-    pdb_file = ds[ds.current_pipe].structure.file_name
+    pdb_file = cdp.structure.file_name
     id = file_root(pdb_file)
 
     # Hide everything.

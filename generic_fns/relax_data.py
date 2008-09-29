@@ -66,23 +66,26 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
 
     # Global (non-spin specific) data.
     #####################################
 
     # Initialise the global data if necessary.
-    data_init(ds[ds.current_pipe], global_flag=True)
+    data_init(cdp, global_flag=True)
 
     # Add the data structures.
-    ds[ds.current_pipe].ri_labels = deepcopy(ri_labels)
-    ds[ds.current_pipe].remap_table = deepcopy(remap_table)
-    ds[ds.current_pipe].frq_labels = deepcopy(frq_labels)
-    ds[ds.current_pipe].frq = deepcopy(frq)
-    ds[ds.current_pipe].num_ri = len(ri_labels)
-    ds[ds.current_pipe].num_frq = len(frq)
+    cdp.ri_labels = deepcopy(ri_labels)
+    cdp.remap_table = deepcopy(remap_table)
+    cdp.frq_labels = deepcopy(frq_labels)
+    cdp.frq = deepcopy(frq)
+    cdp.num_ri = len(ri_labels)
+    cdp.num_frq = len(frq)
 
     # Update the NOE R1 translation table.
-    update_noe_r1_table(ds[ds.current_pipe])
+    update_noe_r1_table(cdp)
 
 
     # Spin specific data.
@@ -558,6 +561,9 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
     # Test if the current data pipe exists.
     pipes.test(ds.current_pipe)
 
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
     # Test if sequence data exists.
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
@@ -615,7 +621,7 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
     #####################################
 
     # Initialise the global data for the current pipe if necessary.
-    data_init(ds[ds.current_pipe], global_flag=True)
+    data_init(cdp, global_flag=True)
 
     # Update the global data.
     update_data_structures_pipe(ri_label, frq_label, frq)

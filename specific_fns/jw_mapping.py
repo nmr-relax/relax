@@ -411,7 +411,7 @@ class Jw_mapping(Common_functions):
     def set_frq(self, frq=None):
         """Function for selecting which relaxation data to use in the J(w) mapping."""
 
-        # Alias the current data pipe.
+        # Get the current data pipe.
         cdp = pipes.get_pipe()
 
         # Test if the current pipe exists.
@@ -419,7 +419,7 @@ class Jw_mapping(Common_functions):
             raise RelaxNoPipeError
 
         # Test if the pipe type is set to 'jw'.
-        function_type = ds[ds.current_pipe].pipe_type
+        function_type = cdp.pipe_type
         if function_type != 'jw':
             raise RelaxFuncSetupError, specific_fns.setup.get_string(function_type)
 

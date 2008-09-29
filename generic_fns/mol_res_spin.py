@@ -803,6 +803,9 @@ def create_residue(res_num=None, res_name=None, mol_id=None):
     @type mol_id:       str
     """
 
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
     # Split up the selection string.
     mol_token, res_token, spin_token = tokenise(mol_id)
 
@@ -822,7 +825,7 @@ def create_residue(res_num=None, res_name=None, mol_id=None):
         if mol_to_cont == None:
             raise RelaxError, "The molecule in " + `mol_id` + " does not exist in the current data pipe."
     else:
-        mol_to_cont = ds[ds.current_pipe].mol[0]
+        mol_to_cont = cdp.mol[0]
 
     # Add the residue.
     mol_to_cont.res.add_item(res_num=res_num, res_name=res_name)
@@ -838,6 +841,9 @@ def create_spin(spin_num=None, spin_name=None, res_id=None):
     @param res_id:      The molecule and residue identification string.
     @type res_id:       str
     """
+
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
 
     # Split up the selection string.
     mol_token, res_token, spin_token = tokenise(res_id)
@@ -856,7 +862,7 @@ def create_spin(spin_num=None, spin_name=None, res_id=None):
         if res_to_cont == None:
             raise RelaxError, "The residue in " + `res_id` + " does not exist in the current data pipe."
     else:
-        res_to_cont = ds[ds.current_pipe].mol[0].res[0]
+        res_to_cont = cdp.mol[0].res[0]
 
     # Add the spin.
     res_to_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)

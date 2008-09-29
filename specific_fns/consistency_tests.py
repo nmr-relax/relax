@@ -474,7 +474,7 @@ class Consistency_tests(Common_functions):
             raise RelaxNoPipeError
 
         # Test if the pipe type is set to 'ct'.
-        function_type = ds[ds.current_pipe].pipe_type
+        function_type = cdp.pipe_type
         if function_type != 'ct':
             raise RelaxFuncSetupError, specific_fns.setup.get_string(function_type)
 

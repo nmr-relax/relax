@@ -168,6 +168,9 @@ class N_state_model(Common_functions):
         @rtype:     list of str
         """
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Array of data types.
         list = []
 
@@ -184,7 +187,7 @@ class N_state_model(Common_functions):
                 break
 
         # Alignment tensor search.
-        if not ('rdc' in list or 'pcs' in list) and hasattr(ds[ds.current_pipe], 'align_tensors'):
+        if not ('rdc' in list or 'pcs' in list) and hasattr(cdp, 'align_tensors'):
             list.append('tensor')
 
         # No data is present.
@@ -714,14 +717,14 @@ class N_state_model(Common_functions):
     def __q_factors_rdc(self):
         """Calculate the Q-factors for the RDC data."""
 
-        # Alias the current data pipe.
+        # Get the current data pipe.
         cdp = pipes.get_pipe()
 
         # Q-factor list.
         cdp.q_factors_rdc = []
 
         # Loop over the alignments.
-        for i in xrange(len(ds[ds.current_pipe].align_tensors)):
+        for i in xrange(len(cdp.align_tensors)):
             # Init.
             D2_sum = 0.0
             sse = 0.0
@@ -757,14 +760,14 @@ class N_state_model(Common_functions):
     def __q_factors_pcs(self):
         """Calculate the Q-factors for the PCS data."""
 
-        # Alias the current data pipe.
+        # Get the current data pipe.
         cdp = pipes.get_pipe()
 
         # Q-factor list.
         cdp.q_factors_pcs = []
 
         # Loop over the alignments.
-        for i in xrange(len(ds[ds.current_pipe].align_tensors)):
+        for i in xrange(len(cdp.align_tensors)):
             # Init.
             pcs2_sum = 0.0
             sse = 0.0
@@ -1067,11 +1070,14 @@ class N_state_model(Common_functions):
         """
         __docformat__ = "plaintext"
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Split the parameter into its base name and index.
         name, index = self.return_data_name(param, index=True)
 
         # The number of states as a float.
-        N = float(ds[ds.current_pipe].N)
+        N = float(cdp.N)
 
         # Probability.
         if name == 'probs':
@@ -1359,8 +1365,11 @@ class N_state_model(Common_functions):
         @rtype:                 tuple of (int, int, float)
         """
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Return the values.
-        return self.param_num(), self.num_data_points(), ds[ds.current_pipe].chi2
+        return self.param_num(), self.num_data_points(), cdp.chi2
 
 
     def num_data_points(self):
@@ -1369,6 +1378,9 @@ class N_state_model(Common_functions):
         @return:    The number, n, of data points in the model.
         @rtype:     int
         """
+
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
 
         # Determine the data type.
         data_types = self.__base_data_types()
@@ -1398,7 +1410,7 @@ class N_state_model(Common_functions):
 
         # Alignment tensors.
         if 'tensor' in data_types:
-            n = n + 5*len(ds[ds.current_pipe].align_tensors)
+            n = n + 5*len(cdp.align_tensors)
 
         # Return the value.
         return n

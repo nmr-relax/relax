@@ -76,7 +76,7 @@ def create_macro(data_type=None, style=None, colour_start=None, colour_end=None,
     """
 
     # Specific Molmol macro creation function.
-    molmol_macro = get_specific_fn('molmol_macro', ds[ds.current_pipe].pipe_type)
+    molmol_macro = get_specific_fn('molmol_macro', pipes.get_pipe())
 
     # Get the macro.
     commands = molmol_macro(data_type, style, colour_start, colour_end, colour_list)
@@ -122,11 +122,14 @@ def open_pdb():
     if not pipe_open_test():
         return
 
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
     # Run InitAll to remove everything from molmol.
     pipe_write("InitAll yes")
 
     # Open the PDB.
-    pipe_write("ReadPdb " + ds[ds.current_pipe].structure.file_name)
+    pipe_write("ReadPdb " + cdp.structure.file_name)
 
 
 def pipe_open():
@@ -196,8 +199,11 @@ def pipe_write(command=None, store_command=True):
     if not pipe_open_test():
         pipe_open()
 
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
     # Write the command to the pipe.
-    ds[ds.current_pipe].molmol.write(command + '\n')
+    cdp.molmol.write(command + '\n')
 
     # Place the command in the command history.
     if store_command:

@@ -30,6 +30,7 @@ import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import pipes
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPipeError
 from relax_io import extract_data, get_file_path, open_read_file, open_write_file, strip
 from specific_fns.setup import get_specific_fn, get_string
@@ -96,13 +97,13 @@ def display(format='xml'):
     if format == 'xml':
         write_function = ds.to_xml
     elif format == 'columnar':
-        write_function = get_specific_fn('write_columnar_results', ds[ds.current_pipe].pipe_type, raise_error=False)
+        write_function = get_specific_fn('write_columnar_results', pipes.get_type(), raise_error=False)
     else:
         raise RelaxError, "Unknown format " + `format` + "."
 
     # No function.
     if not write_function:
-        raise RelaxError, "The " + format + " format is not currently supported for " + get_string(ds[ds.current_pipe].pipe_type) + "."
+        raise RelaxError, "The " + format + " format is not currently supported for " + get_string(pipes.get_type()) + "."
 
     # Write the results.
     write_function(sys.stdout)
@@ -115,8 +116,11 @@ def read(file='results', directory=None):
     if not ds.current_pipe:
         raise RelaxNoPipeError
 
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
     # Make sure that the data pipe is empty.
-    if not ds[ds.current_pipe].is_empty():
+    if not cdp.is_empty():
         raise RelaxError, "The current data pipe is not empty."
 
     # Get the full file path, for later use.
@@ -134,7 +138,7 @@ def read(file='results', directory=None):
 
     # Columnar results.
     elif format == 'columnar':
-        read_function = get_specific_fn('read_columnar_results', ds[ds.current_pipe].pipe_type, raise_error=False)
+        read_function = get_specific_fn('read_columnar_results', pipes.get_type(), raise_error=False)
 
         # Extract the data from the file.
         file_data = extract_data(file=file)
@@ -169,13 +173,13 @@ def write(file="results", directory=None, force=False, format='columnar', compre
     if format == 'xml':
         write_function = ds.to_xml
     elif format == 'columnar':
-        write_function = get_specific_fn('write_columnar_results', ds[ds.current_pipe].pipe_type, raise_error=False)
+        write_function = get_specific_fn('write_columnar_results', pipes.get_type(), raise_error=False)
     else:
         raise RelaxError, "Unknown format " + `format` + "."
 
     # No function.
     if not write_function:
-        raise RelaxError, "The " + format + " format is not currently supported for " + get_string(ds[ds.current_pipe].pipe_type) + "."
+        raise RelaxError, "The " + format + " format is not currently supported for " + get_string(pipes.get_type()) + "."
 
     # Open the file for writing.
     results_file = open_write_file(file_name=file, dir=directory, force=force, compress_type=compress_type, verbosity=verbosity)

@@ -30,7 +30,7 @@ import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import diffusion_tensor, minimise
+from generic_fns import diffusion_tensor, minimise, pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
 from generic_fns.sequence import write_header, write_line
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxParamSetError, RelaxValueError
@@ -133,7 +133,7 @@ def partition_params(val, param):
     """
 
     # Specific functions.
-    is_spin_param = get_specific_fn('is_spin_param', ds[ds.current_pipe].pipe_type)
+    is_spin_param = get_specific_fn('is_spin_param', pipes.get_type())
 
     # Initialise.
     spin_params = []
@@ -253,10 +253,10 @@ def read(param=None, scaling=1.0, file=None, dir=None, mol_name_col=None, res_nu
         min_stat = False
 
         # Specific v
-        return_value = get_specific_fn('return_value', ds[ds.current_pipe].pipe_type)
+        return_value = get_specific_fn('return_value', pipes.get_type())
 
         # Specific set function.
-        set = get_specific_fn('set', ds[ds.current_pipe].pipe_type)
+        set = get_specific_fn('set', pipes.get_type())
 
     # Test data corresponding to param already exists.
     for spin in spin_loop():
@@ -373,8 +373,8 @@ def set(val=None, param=None, spin_id=None, force=False, reset=True):
         raise RelaxNoPipeError
 
     # Specific functions.
-    return_value = get_specific_fn('return_value', ds[ds.current_pipe].pipe_type)
-    set_non_spin_params = get_specific_fn('set_non_spin_params', ds[ds.current_pipe].pipe_type)
+    return_value = get_specific_fn('return_value', pipes.get_type())
+    set_non_spin_params = get_specific_fn('set_non_spin_params', pipes.get_type())
 
     # The parameters have been specified.
     if param:
@@ -462,10 +462,10 @@ def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
     """
 
     # Specific functions.
-    data_init = get_specific_fn('data_init', ds[ds.current_pipe].pipe_type)
-    default_value = get_specific_fn('default_value', ds[ds.current_pipe].pipe_type)
-    return_data_name = get_specific_fn('return_data_name', ds[ds.current_pipe].pipe_type)
-    set_update = get_specific_fn('set_update', ds[ds.current_pipe].pipe_type)
+    data_init = get_specific_fn('data_init', pipes.get_type())
+    default_value = get_specific_fn('default_value', pipes.get_type())
+    return_data_name = get_specific_fn('return_data_name', pipes.get_type())
+    set_update = get_specific_fn('set_update', pipes.get_type())
 
 
     # Setting the model parameters prior to minimisation.
@@ -601,7 +601,7 @@ def write_data(param=None, file=None, return_value=None):
 
     # Get the value and error returning function if required.
     if not return_value:
-        return_value = get_specific_fn('return_value', ds[ds.current_pipe].pipe_type)
+        return_value = get_specific_fn('return_value', pipes.get_type())
 
     # Format string.
     format = "%-30s%-30s"

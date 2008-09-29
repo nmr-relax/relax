@@ -291,7 +291,7 @@ class Base_Map:
             name = self.return_data_name(self.params[i])
 
             # Diffusion tensor parameter.
-            if ds[ds.current_pipe].pipe_type == 'mf':
+            if pipes.get_type() == 'mf':
                 # The diffusion tensor parameter name.
                 diff_name = diffusion_tensor.return_data_name(self.params[i])
 

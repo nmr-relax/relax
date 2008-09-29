@@ -250,6 +250,9 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Setup the data pipe for optimisation.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
@@ -260,7 +263,7 @@ class Mf(TestCase):
         self.relax.interpreter._Minimisation.minimise('bfgs', 'back')
 
         # Alias the relevent spin container.
-        spin = ds[ds.current_pipe].mol[0].res[1].spin[0]
+        spin = cdp.mol[0].res[1].spin[0]
 
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
@@ -285,7 +288,7 @@ class Mf(TestCase):
             g_count = 163
 
         # Test the values.
-        self.assertEqual(ds[ds.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
         self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
@@ -303,6 +306,9 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Setup the data pipe for optimisation.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
@@ -313,7 +319,7 @@ class Mf(TestCase):
         self.relax.interpreter._Minimisation.minimise('bfgs', 'mt')
 
         # Alias the relevent spin container.
-        spin = ds[ds.current_pipe].mol[0].res[1].spin[0]
+        spin = cdp.mol[0].res[1].spin[0]
 
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
@@ -333,7 +339,10 @@ class Mf(TestCase):
             g_count = 384
 
         # Test the values.
-        self.assertEqual(ds[ds.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
@@ -351,6 +360,9 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Setup the data pipe for optimisation.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
@@ -361,7 +373,7 @@ class Mf(TestCase):
         self.relax.interpreter._Minimisation.minimise('cd', 'back', max_iter=50)
 
         # Alias the relevent spin container.
-        spin = ds[ds.current_pipe].mol[0].res[1].spin[0]
+        spin = cdp.mol[0].res[1].spin[0]
 
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
@@ -376,7 +388,7 @@ class Mf(TestCase):
         warning = 'Maximum number of iterations reached'
 
         # Test the values.
-        self.assertEqual(ds[ds.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
         self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
@@ -394,6 +406,9 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Setup the data pipe for optimisation.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
@@ -404,7 +419,7 @@ class Mf(TestCase):
         self.relax.interpreter._Minimisation.minimise('cd', 'mt')
 
         # Alias the relevent spin container.
-        spin = ds[ds.current_pipe].mol[0].res[1].spin[0]
+        spin = cdp.mol[0].res[1].spin[0]
 
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
@@ -424,7 +439,7 @@ class Mf(TestCase):
             g_count = 757
 
         # Test the values.
-        self.assertEqual(ds[ds.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
         self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
@@ -443,6 +458,9 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Setup the data pipe for optimisation.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
@@ -453,7 +471,7 @@ class Mf(TestCase):
         self.relax.interpreter._Minimisation.minimise('newton', 'gmw', 'back')
 
         # Alias the relevent spin container.
-        spin = ds[ds.current_pipe].mol[0].res[1].spin[0]
+        spin = cdp.mol[0].res[1].spin[0]
 
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
@@ -468,7 +486,7 @@ class Mf(TestCase):
         warning = None
 
         # Test the values.
-        self.assertEqual(ds[ds.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
         self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
@@ -487,6 +505,9 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Setup the data pipe for optimisation.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
@@ -497,7 +518,7 @@ class Mf(TestCase):
         self.relax.interpreter._Minimisation.minimise('newton', 'gmw', 'mt')
 
         # Alias the relevent spin container.
-        spin = ds[ds.current_pipe].mol[0].res[1].spin[0]
+        spin = cdp.mol[0].res[1].spin[0]
 
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
@@ -520,7 +541,7 @@ class Mf(TestCase):
             g_count = 165
 
         # Test the values.
-        self.assertEqual(ds[ds.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
         self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
@@ -538,6 +559,9 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Setup the data pipe for optimisation.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
@@ -548,7 +572,7 @@ class Mf(TestCase):
         self.relax.interpreter._Minimisation.minimise('sd', 'back', max_iter=50)
 
         # Alias the relevent spin container.
-        spin = ds[ds.current_pipe].mol[0].res[1].spin[0]
+        spin = cdp.mol[0].res[1].spin[0]
 
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
@@ -563,7 +587,7 @@ class Mf(TestCase):
         warning = 'Maximum number of iterations reached'
 
         # Test the values.
-        self.assertEqual(ds[ds.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
         self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
@@ -581,6 +605,9 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Setup the data pipe for optimisation.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
@@ -591,13 +618,13 @@ class Mf(TestCase):
         self.relax.interpreter._Minimisation.minimise('sd', 'mt', max_iter=50)
 
         # Alias the relevent spin container.
-        spin = ds[ds.current_pipe].mol[0].res[1].spin[0]
+        spin = cdp.mol[0].res[1].spin[0]
 
         # Get the debugging message.
         mesg = self.mesg_opt_debug(spin)
 
         # Test the values.
-        self.assertEqual(ds[ds.current_pipe].mol[0].res[0].spin[0].select, False, msg=mesg)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].select, False, msg=mesg)
         self.assertEqual(spin.select, True, msg=mesg)
         self.assertAlmostEqual(spin.s2, 0.91619994957822126, msg=mesg)
         self.assertAlmostEqual(spin.te, 1.2319687570987945e-13, msg=mesg)
@@ -622,6 +649,9 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Setup the data pipe for optimisation.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
@@ -629,7 +659,7 @@ class Mf(TestCase):
         self.relax.interpreter._Minimisation.grid_search(inc=11)
 
         # Alias the relevent spin container.
-        spin = ds[ds.current_pipe].mol[0].res[1].spin[0]
+        spin = cdp.mol[0].res[1].spin[0]
 
         # Optimisation values (from 32 bit Linux as the standard).
         select = True
@@ -644,7 +674,7 @@ class Mf(TestCase):
         warning = None
 
         # Test the values.
-        self.assertEqual(ds[ds.current_pipe].mol[0].res[0].spin[0].select, False)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
         self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 

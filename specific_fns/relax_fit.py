@@ -34,9 +34,8 @@ import sys
 from data import Relax_data_store; ds = Relax_data_store()
 from dep_check import C_module_exp_fn
 from base_class import Common_functions
-from generic_fns import intensity
+from generic_fns import intensity, pipes
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
-from generic_fns import pipes
 from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoPipeError, RelaxNoSequenceError
 
@@ -932,8 +931,11 @@ class Relax_fit(Common_functions):
         @type params:   list of str
         """
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Set the model.
-        ds[ds.current_pipe].curve_type = model
+        cdp.curve_type = model
 
         # Loop over the sequence.
         for spin in spin_loop():
@@ -1053,7 +1055,10 @@ class Relax_fit(Common_functions):
         @rtype:         list of float
         """
 
-        return ds[ds.current_pipe].sd
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
+        return cdp.sd
 
 
     def return_data_name(self, name):
@@ -1147,8 +1152,11 @@ class Relax_fit(Common_functions):
         if not ds.current_pipe:
             raise RelaxNoPipeError
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Test if the pipe type is set to 'relax_fit'.
-        function_type = ds[ds.current_pipe].pipe_type
+        function_type = cdp.pipe_type
         if function_type != 'relax_fit':
             raise RelaxFuncSetupError, specific_setup.get_string(function_type)
 

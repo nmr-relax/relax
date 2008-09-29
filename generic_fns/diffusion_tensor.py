@@ -150,12 +150,15 @@ def delete():
     # Test if the current data pipe exists.
     pipes.test(ds.current_pipe)
 
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
     # Test if diffusion tensor data exists.
     if not diff_data_exists():
         raise RelaxNoTensorError, 'diffusion'
 
     # Delete the diffusion data.
-    del(ds[ds.current_pipe].diff_tensor)
+    del(cdp.diff_tensor)
 
 
 def diff_data_exists(pipe=None):

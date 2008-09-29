@@ -31,6 +31,7 @@ from re import match
 # relax module imports.
 import data
 from float import floatAsByteArray
+import generic_fns
 from prototype import Prototype
 from relax_errors import RelaxError, RelaxFromXMLNotEmptyError
 from relax_xml import fill_object_contents, xml_to_object
@@ -222,8 +223,8 @@ class SpinList(list):
         ds = data.Relax_data_store()
 
         # Get the specific functions.
-        data_names = specific_fns.setup.get_specific_fn('data_names', ds[ds.current_pipe].pipe_type, raise_error=False)
-        return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', ds[ds.current_pipe].pipe_type, raise_error=False)
+        data_names = specific_fns.setup.get_specific_fn('data_names', generic_fns.pipes.get_type(), raise_error=False)
+        return_data_desc = specific_fns.setup.get_specific_fn('return_data_desc', generic_fns.pipes.get_type(), raise_error=False)
 
         # Loop over the spins.
         for i in xrange(len(self)):

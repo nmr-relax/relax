@@ -32,6 +32,7 @@ from re import match
 from data import Relax_data_store; ds = Relax_data_store()
 import generic_fns
 from generic_fns.mol_res_spin import count_molecules, count_residues, count_spins, exists_mol_res_spin_data, spin_loop
+from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSimError, RelaxRegExpError
 from relax_io import get_file_path, open_write_file, test_binary
 from specific_fns.setup import get_specific_fn
@@ -150,12 +151,15 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
     @rtype:                 list of lists of float
     """
 
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
     # Initialise the data structure.
     data = []
 
     # Specific x and y value returning functions.
-    x_return_value = y_return_value = get_specific_fn('return_value', ds[ds.current_pipe].pipe_type)
-    x_return_conversion_factor = y_return_conversion_factor = get_specific_fn('return_conversion_factor', ds[ds.current_pipe].pipe_type)
+    x_return_value = y_return_value = get_specific_fn('return_value', pipes.get_type())
+    x_return_conversion_factor = y_return_conversion_factor = get_specific_fn('return_conversion_factor', pipes.get_type())
 
     # Test if the X-axis data type is a minimisation statistic.
     if x_data_type != 'spin' and generic_fns.minimise.return_data_name(x_data_type):
@@ -175,7 +179,7 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
 
         # Number of data points per spin.
         if plot_data == 'sim':
-            points = ds[ds.current_pipe].sim_number
+            points = cdp.sim_number
         else:
             points = 1
 
@@ -282,15 +286,15 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
         raise RelaxError, "The plot data argument " + `plot_data` + " must be set to either 'value', 'error', 'sim'."
 
     # Test if the simulations exist.
-    if plot_data == 'sim' and not hasattr(ds[ds.current_pipe], 'sim_number'):
+    if plot_data == 'sim' and not hasattr(cdp, 'sim_number'):
         raise RelaxNoSimError
 
     # Open the file for writing.
     file = open_write_file(file, dir, force)
 
     # Specific value and error, conversion factor, and units returning functions.
-    x_return_units =             y_return_units =             get_specific_fn('return_units', ds[ds.current_pipe].pipe_type)
-    x_return_grace_string =      y_return_grace_string =      get_specific_fn('return_grace_string', ds[ds.current_pipe].pipe_type)
+    x_return_units =             y_return_units =             get_specific_fn('return_units', pipes.get_type())
+    x_return_grace_string =      y_return_grace_string =      get_specific_fn('return_grace_string', pipes.get_type())
 
     # Test if the X-axis data type is a minimisation statistic.
     if x_data_type != 'spin' and generic_fns.minimise.return_data_name(x_data_type):
@@ -422,8 +426,8 @@ def write_header(data, file=None, spin_id=None, x_data_type=None, y_data_type=No
         # Residue only data.
         if seq_type == 'res':
             # Axis limits.
-            file.write("@    world xmin " + `ds[ds.current_pipe].mol[0].res[0].num - 1` + "\n")
-            file.write("@    world xmax " + `ds[ds.current_pipe].mol[0].res[-1].num + 1` + "\n")
+            file.write("@    world xmin " + `cdp.mol[0].res[0].num - 1` + "\n")
+            file.write("@    world xmax " + `cdp.mol[0].res[-1].num + 1` + "\n")
 
             # X-axis label.
             file.write("@    xaxis  label \"Residue number\"\n")
@@ -431,8 +435,8 @@ def write_header(data, file=None, spin_id=None, x_data_type=None, y_data_type=No
         # Spin only data.
         if seq_type == 'spin':
             # Axis limits.
-            file.write("@    world xmin " + `ds[ds.current_pipe].mol[0].res[0].spin[0].num - 1` + "\n")
-            file.write("@    world xmax " + `ds[ds.current_pipe].mol[0].res[0].spin[-1].num + 1` + "\n")
+            file.write("@    world xmin " + `cdp.mol[0].res[0].spin[0].num - 1` + "\n")
+            file.write("@    world xmax " + `cdp.mol[0].res[0].spin[-1].num + 1` + "\n")
 
             # X-axis label.
             file.write("@    xaxis  label \"Spin number\"\n")
@@ -593,8 +597,8 @@ def write_multi_header(data, file=None, spin_id=None, x_data_type=None, y_data_t
         # Residue only data.
         if seq_type == 'res':
             # Axis limits.
-            file.write("@    world xmin " + `ds[ds.current_pipe].mol[0].res[0].num - 1` + "\n")
-            file.write("@    world xmax " + `ds[ds.current_pipe].mol[0].res[-1].num + 1` + "\n")
+            file.write("@    world xmin " + `cdp.mol[0].res[0].num - 1` + "\n")
+            file.write("@    world xmax " + `cdp.mol[0].res[-1].num + 1` + "\n")
 
             # X-axis label.
             file.write("@    xaxis  label \"Residue number\"\n")
@@ -602,8 +606,8 @@ def write_multi_header(data, file=None, spin_id=None, x_data_type=None, y_data_t
         # Spin only data.
         if seq_type == 'spin':
             # Axis limits.
-            file.write("@    world xmin " + `ds[ds.current_pipe].mol[0].res[0].spin[0].num - 1` + "\n")
-            file.write("@    world xmax " + `ds[ds.current_pipe].mol[0].res[0].spin[-1].num + 1` + "\n")
+            file.write("@    world xmin " + `cdp.mol[0].res[0].spin[0].num - 1` + "\n")
+            file.write("@    world xmax " + `cdp.mol[0].res[0].spin[-1].num + 1` + "\n")
 
             # X-axis label.
             file.write("@    xaxis  label \"Spin number\"\n")
