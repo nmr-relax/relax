@@ -94,7 +94,17 @@ def create(pipe_name=None, pipe_type=None):
     ds.add(pipe_name=pipe_name, pipe_type=pipe_type)
 
 
-def current():
+def cdp():
+    """Return the current data pipe.
+    
+    @return:        The current data pipe.
+    @rtype:         PipeContainer instance
+    """
+
+    return ds[ds.current_pipe]
+
+
+def cdp_name():
     """Return the name of the current data pipe.
     
     @return:        The name of the current data pipe.
