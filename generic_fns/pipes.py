@@ -140,6 +140,22 @@ def get_pipe(name=None):
     return ds[name]
 
 
+def get_type(name=None):
+    """Return the type of the data pipe.
+
+    @keyword name:  The name of the data pipe.  If None, the current data pipe is used.
+    @type name:     str or None
+    @return:        The current data pipe type.
+    @rtype:         str
+    """
+
+    # The name of the data pipe.
+    if name == None:
+        name = ds.current_pipe
+
+    return ds[name].pipe_type
+
+
 def list():
     """Print the details of all the data pipes."""
 
