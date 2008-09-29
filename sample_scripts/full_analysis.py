@@ -115,6 +115,7 @@ from string import lower
 from data import Relax_data_store; ds = Relax_data_store()
 from float import floatAsByteArray
 from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
+from generic_fns import pipes
 from relax_errors import RelaxError
 
 
@@ -358,7 +359,7 @@ class Main:
         """Test for the convergence of the global model."""
 
         # Alias the data pipes.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
         prev_pipe = ds['previous']
 
         # Print out.

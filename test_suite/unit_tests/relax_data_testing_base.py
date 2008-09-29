@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,7 +22,7 @@
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import sequence
+from generic_fns import pipes, sequence
 from relax_errors import RelaxError
 import sys
 
@@ -79,7 +79,7 @@ class Relax_data_base_class:
         self.relax_data_fns.read(ri_label='NOE', frq_label='600', frq=600e6, file='Ap4Aase.Noe.600.bz2', dir=path+'/test_suite/shared_data/relaxation_data')
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test the pipe data structures.
         self.assertEqual(cdp.frq, [600e6])

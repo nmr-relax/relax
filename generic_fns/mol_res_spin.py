@@ -780,7 +780,7 @@ def create_molecule(mol_name=None):
         raise RelaxNoPipeError
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test if the molecule name already exists.
     for i in xrange(len(cdp.mol)):
@@ -914,7 +914,7 @@ def delete_molecule(mol_id=None):
     molecules = parse_token(mol_token)
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # List of indices to delete.
     indices = []

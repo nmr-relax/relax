@@ -36,6 +36,7 @@ from dep_check import C_module_exp_fn
 from base_class import Common_functions
 from generic_fns import intensity
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
+from generic_fns import pipes
 from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoPipeError, RelaxNoSequenceError
 
@@ -114,7 +115,7 @@ class Relax_fit(Common_functions):
             return scaling_matrix
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Loop over the parameters.
         for i in xrange(len(spin.params)):
@@ -149,7 +150,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Initialise.
         index = None
@@ -182,7 +183,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Create the initial parameter vector.
         param_vector = self.assemble_param_vector(spin=spin)
@@ -232,7 +233,7 @@ class Relax_fit(Common_functions):
             raise RelaxNoModelError
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Loop over the spectral time points.
         for j in xrange(len(cdp.relax_times)):
@@ -388,7 +389,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Monte Carlo simulations.
         if sim_index != None:
@@ -501,7 +502,7 @@ class Relax_fit(Common_functions):
             inc = temp
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Minimisation options initialisation.
         min_options = []
@@ -629,7 +630,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if the standard deviation has already been calculated.
         if hasattr(cdp, 'sd'):
@@ -778,7 +779,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -995,7 +996,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Store the relaxation time in the class instance.
         self.__relax_time = relax_time

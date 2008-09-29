@@ -30,8 +30,8 @@ import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
+from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoResError, RelaxNoPCSError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSpinError, RelaxPCSError
 from relax_io import extract_data, strip
 
@@ -608,7 +608,7 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
         raise RelaxNoSequenceError
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test if PCS data corresponding to 'id' already exists.
     if data_col != None and hasattr(cdp, 'pcs_ids') and id in cdp.pcs_ids:

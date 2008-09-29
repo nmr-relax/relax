@@ -31,6 +31,7 @@ from time import asctime, localtime
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import diffusion_tensor
+from generic_fns import pipes
 from relax_errors import RelaxError, RelaxUnknownParamError
 from relax_io import open_write_file
 from specific_fns.setup import get_specific_fn
@@ -59,7 +60,7 @@ class Base_Map:
         self.remap = remap
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Specific function setup.
         self.calculate = get_specific_fn('calculate', cdp.pipe_type)

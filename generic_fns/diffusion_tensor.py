@@ -32,7 +32,7 @@ from re import search
 from angles import wrap_angles
 from data import Relax_data_store; ds = Relax_data_store()
 from data.diff_tensor import DiffTensorData
-import pipes
+from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
 
@@ -189,7 +189,7 @@ def display():
         raise RelaxNoTensorError, 'diffusion'
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Spherical diffusion.
     if cdp.diff_tensor.type == 'sphere':
@@ -297,7 +297,7 @@ def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, para
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # The diffusion type.
     cdp.diff_tensor.type = 'ellipsoid'
@@ -386,7 +386,7 @@ def fold_angles(sim_index=None):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
 
     # Wrap the angles.
@@ -537,7 +537,7 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     pipes.test(ds.current_pipe)
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test if diffusion tensor data already exists.
     if diff_data_exists():
@@ -933,7 +933,7 @@ def set(value=None, param=None):
     """    # This docstring is to be joined onto those of the user functions, hence the 8 whitespace characters.
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Set up the diffusion tensor data if it doesn't exist.
     if not diff_data_exists():
@@ -1349,7 +1349,7 @@ def sphere(params=None, time_scale=None, param_types=None):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # The diffusion type.
     cdp.diff_tensor.type = 'sphere'
@@ -1396,7 +1396,7 @@ def spheroid(params=None, time_scale=None, d_scale=None, angle_units=None, param
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # The diffusion type.
     cdp.diff_tensor.type = 'spheroid'
@@ -1482,7 +1482,7 @@ def test_params(num_params):
     """Function for testing the validity of the input parameters."""
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # An allowable error to account for machine precision, optimisation quality, etc.
     error = 1e-4

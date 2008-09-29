@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import mol_res_spin
+from generic_fns import mol_res_spin, pipes
 from relax_errors import RelaxError, RelaxNoPipeError
 
 
@@ -39,7 +39,7 @@ class Test_mol_res_spin(TestCase):
         ds.add(pipe_name='orig', pipe_type='mf')
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Name the first molecule.
         cdp.mol[0].name = 'Ap4Aase'
@@ -437,7 +437,7 @@ class Test_mol_res_spin(TestCase):
         obj = mol_res_spin.Selection("#Ap4Aase:2&:Glu@63&@NH")
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if various spins are in the selection.
         self.assert_((cdp.mol[0], cdp.mol[0].res[0], cdp.mol[0].res[0].spin[0]) not in obj)

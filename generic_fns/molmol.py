@@ -30,6 +30,7 @@ from string import split
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
+from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoSequenceError
 from relax_io import open_write_file, test_binary
 from specific_fns.setup import get_specific_fn
@@ -135,7 +136,7 @@ def pipe_open():
     test_binary('molmol')
 
     # Alias the data pipe container.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Open and store the Molmol pipe.
     cdp.molmol = popen("molmol -f -", 'w', 0)
@@ -162,7 +163,7 @@ def pipe_open_test():
     """
 
     # Alias the data pipe container.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test if a pipe has been opened.
     if not hasattr(cdp, 'molmol'):

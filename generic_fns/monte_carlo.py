@@ -32,6 +32,7 @@ from random import gauss
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
+from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
 from specific_fns.setup import get_specific_fn
 
@@ -48,7 +49,7 @@ def create_data(method=None):
         raise RelaxNoPipeError
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test if simulations have been set up.
     if not hasattr(cdp, 'sim_state'):
@@ -130,7 +131,7 @@ def error_analysis(prune=0.0):
         raise RelaxNoPipeError
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test if simulations have been set up.
     if not hasattr(cdp, 'sim_state'):
@@ -260,7 +261,7 @@ def initial_values():
         raise RelaxNoPipeError
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test if simulations have been set up.
     if not hasattr(cdp, 'sim_state'):
@@ -281,7 +282,7 @@ def off():
         raise RelaxNoPipeError
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test if simulations have been set up.
     if not hasattr(cdp, 'sim_state'):
@@ -299,7 +300,7 @@ def on():
         raise RelaxNoPipeError
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test if simulations have been set up.
     if not hasattr(cdp, 'sim_state'):
@@ -321,7 +322,7 @@ def select_all_sims(number=None, all_select_sim=None):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Model loop and set the selected simulation array functions.
     model_loop = get_specific_fn('model_loop', cdp.pipe_type)
@@ -361,7 +362,7 @@ def setup(number=None, all_select_sim=None):
         raise RelaxNoPipeError
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test if Monte Carlo simulations have already been set up.
     if hasattr(cdp, 'sim_number'):

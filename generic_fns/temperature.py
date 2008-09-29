@@ -25,6 +25,7 @@
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import pipes
 from relax_errors import RelaxError
 
 
@@ -43,7 +44,7 @@ def set(id=None, temp=None):
         raise RelaxNoPipeError
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Set up the dictionary data structure if it doesn't exist yet.
     if not hasattr(cdp, 'temperature'):

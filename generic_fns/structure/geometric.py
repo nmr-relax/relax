@@ -29,6 +29,7 @@ from warnings import warn
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
+from generic_fns import pipes
 from generic_fns.structure.mass import centre_of_mass
 from internal import Internal
 from maths_fns.rotation_matrix import R_2vect
@@ -170,13 +171,13 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         raise RelaxNoPipeError
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Create an array of data pipes to loop over (hybrid support).
     if cdp.pipe_type == 'hybrid':
-        pipes = cdp.hybrid_pipes
+        pipe_list = cdp.hybrid_pipes
     else:
-        pipes = [ds.current_pipe]
+        pipe_list = [ds.current_pipe]
 
     # Create the structural object.
     structure = Internal()
@@ -185,9 +186,9 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     structure.add_struct(name='diff_tensor')
 
     # Loop over the pipes.
-    for pipe_index in xrange(len(pipes)):
+    for pipe_index in xrange(len(pipe_list)):
         # Alias the pipe container.
-        pipe = ds[pipes[pipe_index]]
+        pipe = ds[pipe_list[pipe_index]]
 
 
         # Tests.

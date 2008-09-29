@@ -30,6 +30,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import pipes
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 from relax_io import DummyFileObject, open_read_file
 
@@ -149,7 +150,7 @@ class Mf(TestCase):
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/create_m4.py')
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test the model.
         self.assertEqual(cdp.mol[0].res[1].spin[0].model, 'm4')
@@ -660,7 +661,7 @@ class Mf(TestCase):
         self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test the data and error.
         self.assertEqual(cdp.mol[0].res[1].spin[0].relax_data[0], 1.3874977659397683)
@@ -674,7 +675,7 @@ class Mf(TestCase):
         self.relax.interpreter._Results.read(file='results_1.2', dir=sys.path[-1] + '/test_suite/shared_data/model_free')
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Debugging print out.
         print cdp
@@ -877,7 +878,7 @@ class Mf(TestCase):
         self.relax.interpreter._Model_free.select_model(model='m4')
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test the model.
         self.assertEqual(cdp.mol[0].res[1].spin[0].model, 'm4')
@@ -897,7 +898,7 @@ class Mf(TestCase):
         self.relax.interpreter._Value.set(NH_BOND_LENGTH, 'bond_length')
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test the value.
         self.assertEqual(cdp.mol[0].res[1].spin[0].r, NH_BOND_LENGTH)
@@ -916,7 +917,7 @@ class Mf(TestCase):
         self.relax.interpreter._Value.set(N15_CSA, 'csa')
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test the value.
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, N15_CSA)
@@ -935,7 +936,7 @@ class Mf(TestCase):
         self.relax.interpreter._Value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, N15_CSA)

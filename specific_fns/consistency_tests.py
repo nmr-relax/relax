@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
 # Copyright (C) 2007-2008 Sebastien Morin                                     #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -29,6 +29,7 @@ from string import replace
 from base_class import Common_functions
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
+from generic_fns import pipes
 from maths_fns.consistency_tests import Consistency
 from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
@@ -43,7 +44,7 @@ class Consistency_tests(Common_functions):
         """Calculation of the consistency functions."""
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if the frequency has been set.
         if not hasattr(cdp, 'ct_frq') or type(cdp.ct_frq) != float:
@@ -466,7 +467,7 @@ class Consistency_tests(Common_functions):
         """Function for selecting which relaxation data to use in the consistency tests."""
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if the current pipe exists.
         if not ds.current_pipe:
@@ -608,7 +609,7 @@ class Consistency_tests(Common_functions):
         """Function for printing the results into a file."""
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if the current pipe exists.
         if not ds.current_pipe:

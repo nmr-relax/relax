@@ -30,6 +30,7 @@ from string import split
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
+from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
 from relax_io import file_root, open_write_file, test_binary
 from specific_fns.setup import get_specific_fn
@@ -254,7 +255,7 @@ def create_macro(data_type=None, style="classic", colour_start=None, colour_end=
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Specific PyMOL macro creation function.
     pymol_macro = get_specific_fn('pymol_macro', cdp.pipe_type)

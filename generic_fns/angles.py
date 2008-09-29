@@ -43,7 +43,7 @@ def angle_diff_frame():
     pipes.test(ds.current_pipe)
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test if the PDB file has been loaded.
     if not hasattr(cdp, 'structure'):
@@ -74,7 +74,7 @@ def ellipsoid_frame():
     """Calculate the spherical angles of the bond vector in the ellipsoid frame."""
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Get the unit vectors Dx, Dy, and Dz of the diffusion tensor axes.
     Dx, Dy, Dz = diffusion_tensor.unit_axes()
@@ -107,7 +107,7 @@ def spheroid_frame():
     """Function for calculating the angle alpha of the XH vector within the spheroid frame."""
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Loop over the sequence.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):

@@ -34,8 +34,8 @@ import sys
 from angles import wrap_angles
 from data import Relax_data_store; ds = Relax_data_store()
 from data.align_tensor import AlignTensorList
+from generic_fns import pipes
 from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
-import pipes
 from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
 
@@ -176,7 +176,7 @@ def delete(tensor):
     index = get_tensor_index(tensor)
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Delete the alignment data.
     cdp.align_tensors.pop(index)
@@ -296,7 +296,7 @@ def fold_angles(sim_index=None):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
 
     # Wrap the angles.
@@ -430,7 +430,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
     pipes.test(ds.current_pipe)
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test if alignment tensor data already exists.
     if align_data_exists(tensor):
@@ -721,7 +721,7 @@ def matrix_angles(basis_set=0, tensors=None):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test that alignment tensor data exists.
     if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0:
@@ -1044,7 +1044,7 @@ def set(tensor=None, value=None, param=None):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Initialise.
     geo_params = []
@@ -1366,7 +1366,7 @@ def svd(basis_set=0, tensors=None):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test that alignment tensor data exists.
     if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0:

@@ -29,6 +29,7 @@ from re import search
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import spin_loop
+from generic_fns import pipes
 from relax_errors import RelaxError
 from specific_fns.setup import get_specific_fn
 
@@ -119,7 +120,7 @@ def calc(verbosity=1):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Specific calculate function setup.
     calculate = get_specific_fn('calculate', cdp.pipe_type)
@@ -163,7 +164,7 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Specific grid search function.
     grid_search = get_specific_fn('grid_search', cdp.pipe_type)
@@ -214,7 +215,7 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Specific minimisation function.
     minimise = get_specific_fn('minimise', cdp.pipe_type)
@@ -357,7 +358,7 @@ def return_value(spin=None, stat_type=None, sim=None):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Get the object name.
     object_name = return_data_name(stat_type)
@@ -414,7 +415,7 @@ def set(value=None, error=None, param=None, scaling=None, spin=None):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Get the parameter name.
     param_name = return_data_name(param)

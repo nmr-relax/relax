@@ -29,8 +29,8 @@ import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
+from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoRiError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
 from relax_io import extract_data, strip
 
@@ -738,7 +738,7 @@ def update_data_structures_pipe(ri_label=None, frq_label=None, frq=None):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Initialise the relaxation data structures (if needed).
     data_init(cdp, global_flag=True)

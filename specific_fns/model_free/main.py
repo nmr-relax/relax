@@ -119,7 +119,7 @@ class Model_free_main:
         param_names = []
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Diffusion tensor parameters.
         if model_type == 'diff' or model_type == 'all':
@@ -180,7 +180,7 @@ class Model_free_main:
             model_type = self.determine_model_type()
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Diffusion tensor parameters.
         if model_type == 'diff' or model_type == 'all':
@@ -345,7 +345,7 @@ class Model_free_main:
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Initialise.
         if num_params == 0:
@@ -894,7 +894,7 @@ class Model_free_main:
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -1366,7 +1366,7 @@ class Model_free_main:
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Upper limit flag for correlation times.
         upper_time_limit = 1
@@ -1833,7 +1833,7 @@ class Model_free_main:
             raise RelaxNoSequenceError
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Is structural data required?
         need_vect = False
@@ -2564,7 +2564,7 @@ class Model_free_main:
         inc = 0
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Determine the model type.
         model_type = self.determine_model_type()
@@ -2729,7 +2729,7 @@ class Model_free_main:
         """Initialise the Monte Carlo parameter values."""
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Determine the model type.
         model_type = self.determine_model_type()
@@ -2941,7 +2941,7 @@ class Model_free_main:
         inc = 0
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Determine the model type.
         model_type = self.determine_model_type()

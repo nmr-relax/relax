@@ -28,6 +28,7 @@ from copy import deepcopy
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPipeError
 from specific_fns.setup import get_specific_fn
 
@@ -52,7 +53,7 @@ def eliminate(function=None, args=None):
         raise RelaxNoPipeError
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Specific eliminate, parameter names, parameter values, number of instances, and deselect function setup.
     eliminate = get_specific_fn('eliminate', cdp.pipe_type)
