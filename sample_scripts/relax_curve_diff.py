@@ -33,11 +33,10 @@
 #
 # To use this script, R1 or R2 exponential curve fitting must have previously have been carried out
 # and the program state saved to the file 'rx.save' (either with or without the .gz or .bz2
-# extensions).  The file name of the saved state can be changed at the bottom of this script.  It is
+# extensions).  The file name of the saved state can be changed at the top of this script.  It is
 # important to note that the same version of relax should be used for creating the saved state as
-# reading the program state, these files are neither backwards nor forwards compatible.  The name of
-# the data pipe using in the curve fitting is expected to be 'rx' but this can also be changed at
-# bottom of the script.  Only the two parameter exponential fit is currently supported.
+# reading the program state, these files are neither backwards nor forwards compatible.  Only the
+# two parameter exponential fit is currently supported.
 
 
 # Python module imports.
