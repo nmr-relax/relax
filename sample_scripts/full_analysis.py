@@ -112,7 +112,6 @@ from re import search
 from string import lower
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from float import floatAsByteArray
 from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
 from generic_fns import pipes
@@ -547,7 +546,7 @@ class Main:
         """Function for loading the optimised diffusion tensor."""
 
         # Create the data pipe for the previous data (deleting the old data pipe first if necessary).
-        if ds.has_key('previous'):
+        if pipes.has_pipe('previous'):
             pipe.delete('previous')
         pipe.create('previous', 'mf')
 
@@ -567,7 +566,7 @@ class Main:
         eliminate()
 
         # Model selection (delete the model selection pipe if it already exists).
-        if ds.has_key(modsel_pipe):
+        if pipes.has_pipe(modsel_pipe):
             pipe.delete(modsel_pipe)
         model_selection(method='AIC', modsel_pipe=modsel_pipe, pipes=self.pipes)
 
@@ -588,7 +587,7 @@ class Main:
         # Loop over the data pipes.
         for name in self.pipes:
             # Create the data pipe.
-            if ds.has_key(name):
+            if pipes.has_pipe(name):
                 pipe.delete(name)
             pipe.create(name, 'mf')
 
