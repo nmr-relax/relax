@@ -33,7 +33,7 @@ from random import gauss
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
+from relax_errors import RelaxError, RelaxNoSequenceError
 from specific_fns.setup import get_specific_fn
 
 
