@@ -248,11 +248,11 @@ class Results:
             # Simulation values.
             else:
                 # Create the data structure if it doesn't exist.
-                if not hasattr(ds.diff, 'tm_sim'):
-                    cdp.diff.tm_sim = DiffTensorSimList('tm', cdp.diff)
+                if not hasattr(cdp.diff_tensor, 'tm_sim'):
+                    cdp.diff.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor)
 
                 # Append the value.
-                cdp.diff.tm_sim.append(tm)
+                cdp.diff_tensor.tm_sim.append(tm)
 
 
         # Spheroid.
@@ -277,28 +277,28 @@ class Results:
 
             # Errors.
             elif data_set == 'error':
-                cdp.diff.tm_err = tm
-                cdp.diff.Da_err = Da
-                cdp.diff.theta_err = theta
-                cdp.diff.phi_err = phi
+                cdp.diff_tensor.tm_err = tm
+                cdp.diff_tensor.Da_err = Da
+                cdp.diff_tensor.theta_err = theta
+                cdp.diff_tensor.phi_err = phi
 
             # Simulation values.
             else:
                 # Create the data structure if it doesn't exist.
                 if not hasattr(cdp.diff, 'tm_sim'):
-                    cdp.diff.tm_sim = DiffTensorSimList('tm', cdp.diff)
+                    cdp.diff_tensor.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor)
                 if not hasattr(cdp.diff, 'Da_sim'):
-                    cdp.diff.Da_sim = DiffTensorSimList('Da', cdp.diff)
+                    cdp.diff_tensor.Da_sim = DiffTensorSimList('Da', cdp.diff_tensor)
                 if not hasattr(cdp.diff, 'theta_sim'):
-                    cdp.diff.theta_sim = DiffTensorSimList('theta', cdp.diff)
+                    cdp.diff_tensor.theta_sim = DiffTensorSimList('theta', cdp.diff_tensor)
                 if not hasattr(cdp.diff, 'phi_sim'):
-                    cdp.diff.phi_sim = DiffTensorSimList('phi', cdp.diff)
+                    cdp.diff_tensor.phi_sim = DiffTensorSimList('phi', cdp.diff_tensor)
 
                 # Append the value.
-                cdp.diff.tm_sim.append(tm)
-                cdp.diff.Da_sim.append(Da)
-                cdp.diff.theta_sim.append(theta)
-                cdp.diff.phi_sim.append(phi)
+                cdp.diff_tensor.tm_sim.append(tm)
+                cdp.diff_tensor.Da_sim.append(Da)
+                cdp.diff_tensor.theta_sim.append(theta)
+                cdp.diff_tensor.phi_sim.append(phi)
 
 
         # Ellipsoid.
@@ -325,36 +325,36 @@ class Results:
 
             # Errors.
             elif data_set == 'error':
-                cdp.diff.tm_err = tm
-                cdp.diff.Da_err = Da
-                cdp.diff.Dr_err = Dr
-                cdp.diff.alpha_err = alpha
-                cdp.diff.beta_err = beta
-                cdp.diff.gamma_err = gamma
+                cdp.diff_tensor.tm_err = tm
+                cdp.diff_tensor.Da_err = Da
+                cdp.diff_tensor.Dr_err = Dr
+                cdp.diff_tensor.alpha_err = alpha
+                cdp.diff_tensor.beta_err = beta
+                cdp.diff_tensor.gamma_err = gamma
 
             # Simulation values.
             else:
                 # Create the data structure if it doesn't exist.
-                if not hasattr(cdp.diff, 'tm_sim'):
-                    cdp.diff.tm_sim = DiffTensorSimList('tm', cdp.diff)
-                if not hasattr(cdp.diff, 'Da_sim'):
-                    cdp.diff.Da_sim = DiffTensorSimList('Da', cdp.diff)
-                if not hasattr(cdp.diff, 'Dr_sim'):
-                    cdp.diff.Dr_sim = DiffTensorSimList('Dr', cdp.diff)
-                if not hasattr(cdp.diff, 'alpha_sim'):
-                    cdp.diff.alpha_sim = DiffTensorSimList('alpha', cdp.diff)
-                if not hasattr(cdp.diff, 'beta_sim'):
-                    cdp.diff.beta_sim = DiffTensorSimList('beta', cdp.diff)
-                if not hasattr(cdp.diff, 'gamma_sim'):
-                    cdp.diff.gamma_sim = DiffTensorSimList('gamma', cdp.diff)
+                if not hasattr(cdp.diff_tensor, 'tm_sim'):
+                    cdp.diff_tensor.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor)
+                if not hasattr(cdp.diff_tensor, 'Da_sim'):
+                    cdp.diff_tensor.Da_sim = DiffTensorSimList('Da', cdp.diff_tensor)
+                if not hasattr(cdp.diff_tensor, 'Dr_sim'):
+                    cdp.diff_tensor.Dr_sim = DiffTensorSimList('Dr', cdp.diff_tensor)
+                if not hasattr(cdp.diff_tensor, 'alpha_sim'):
+                    cdp.diff_tensor.alpha_sim = DiffTensorSimList('alpha', cdp.diff_tensor)
+                if not hasattr(cdp.diff_tensor, 'beta_sim'):
+                    cdp.diff_tensor.beta_sim = DiffTensorSimList('beta', cdp.diff_tensor)
+                if not hasattr(cdp.diff_tensor, 'gamma_sim'):
+                    cdp.diff_tensor.gamma_sim = DiffTensorSimList('gamma', cdp.diff_tensor)
 
                 # Append the value.
-                cdp.diff.tm_sim.append(tm)
-                cdp.diff.Da_sim.append(Da)
-                cdp.diff.Dr_sim.append(Dr)
-                cdp.diff.alpha_sim.append(alpha)
-                cdp.diff.beta_sim.append(beta)
-                cdp.diff.gamma_sim.append(gamma)
+                cdp.diff_tensor.tm_sim.append(tm)
+                cdp.diff_tensor.Da_sim.append(Da)
+                cdp.diff_tensor.Dr_sim.append(Dr)
+                cdp.diff_tensor.alpha_sim.append(alpha)
+                cdp.diff_tensor.beta_sim.append(beta)
+                cdp.diff_tensor.gamma_sim.append(gamma)
 
 
         # Set the diffusion tensor.
