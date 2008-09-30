@@ -30,7 +30,7 @@ from warnings import warn
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError
+from relax_errors import RelaxError, RelaxNoSequenceError
 from relax_io import extract_data, strip
 from relax_warnings import RelaxNoSpinWarning
 
@@ -38,7 +38,6 @@ from relax_warnings import RelaxNoSpinWarning
 def desel_all():
     """Deselect all spins.
 
-    @raises RelaxNoPipeError:       If the current data pipe does not exist.
     @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
     """
 
@@ -87,7 +86,6 @@ def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_nam
                                     compatible with this flag set to True (all others will be
                                     ignored).
     @type change_all:               bool
-    @raises RelaxNoPipeError:       If the current data pipe does not exist.
     @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
     @raises RelaxError:             If the boolean operator is unknown.
     """
@@ -180,7 +178,6 @@ def desel_spin(spin_id=None, boolean='AND', change_all=False):
                                     compatible with this flag set to True (all others will be
                                     ignored).
     @type change_all:               bool
-    @raises RelaxNoPipeError:       If the current data pipe does not exist.
     @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
     @raises RelaxError:             If the boolean operator is unknown.
     """
@@ -226,7 +223,6 @@ def reverse(spin_id=None):
 
     @keyword spin_id:               The spin identification string.
     @type spin_id:                  str or None
-    @raises RelaxNoPipeError:       If the current data pipe does not exist.
     @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
     """
 
@@ -249,7 +245,6 @@ def reverse(spin_id=None):
 def sel_all():
     """Select all residues.
 
-    @raises RelaxNoPipeError:       If the current data pipe does not exist.
     @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
     """
 
@@ -298,7 +293,6 @@ def sel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_
                                     compatible with this flag set to True (all others will be
                                     ignored).
     @type change_all:               bool
-    @raises RelaxNoPipeError:       If the current data pipe does not exist.
     @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
     @raises RelaxError:             If the boolean operator is unknown.
     """
@@ -392,7 +386,6 @@ def sel_spin(spin_id=None, boolean='OR', change_all=False):
                                     compatible with this flag set to True (all others will be
                                     ignored).
     @type change_all:               bool
-    @raises RelaxNoPipeError:       If the current data pipe does not exist.
     @raises RelaxNoSequenceError:   If no molecule/residue/spins sequence data exists.
     @raises RelaxError:             If the boolean operator is unknown.
     """

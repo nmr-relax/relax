@@ -33,7 +33,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import diffusion_tensor, minimise, pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
 from generic_fns.sequence import write_header, write_line
-from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxParamSetError, RelaxValueError
+from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoSequenceError, RelaxParamSetError, RelaxValueError
 from relax_io import extract_data, open_write_file, strip
 from specific_fns.setup import get_specific_fn
 
@@ -57,8 +57,7 @@ def copy(pipe_from=None, pipe_to=None, param=None):
         pipe_to = pipes.cdp_name()
 
     # The second pipe does not exist.
-    if pipe_to not in ds.keys():
-        raise RelaxNoPipeError, pipe_to
+    pipes.test(pipe_to)
 
     # Test if the sequence data for pipe_from is loaded.
     if not exists_mol_res_spin_data(pipe_from):

@@ -33,7 +33,7 @@ from generic_fns import pipes
 from generic_fns.structure.mass import centre_of_mass
 from internal import Internal
 from maths_fns.rotation_matrix import R_2vect
-from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
+from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning
 

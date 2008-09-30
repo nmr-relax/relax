@@ -112,8 +112,8 @@ def delete(pipe_name=None):
     """
 
     # Test if the data pipe exists.
-    if pipe_name != None and not ds.has_key(pipe_name):
-        raise RelaxNoPipeError, pipe_name
+    if pipe_name != None:
+        test(pipe_name)
 
     # Delete the data pipe.
     del ds[pipe_name]
@@ -178,8 +178,7 @@ def switch(pipe_name=None):
     """
 
     # Test if the data pipe exists.
-    if not ds.has_key(pipe_name):
-        raise RelaxNoPipeError, pipe_name
+    test(pipe_name)
 
     # Switch the current data pipe.
     ds.current_pipe = pipe_name

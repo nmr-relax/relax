@@ -31,30 +31,9 @@ import sys
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPipeError
+from relax_errors import RelaxError, RelaxFileEmptyError
 from relax_io import extract_data, get_file_path, open_read_file, open_write_file, strip
 from specific_fns.setup import get_specific_fn, get_string
-
-
-def copy(run1=None, run2=None, sim=None):
-    """Function for copying all results from run1 to run2."""
-
-    # Test if run1 exists.
-    if not run1 in ds.run_names:
-        raise RelaxNoPipeError, run1
-
-    # Test if run2 exists.
-    if not run2 in ds.run_names:
-        raise RelaxNoPipeError, run2
-
-    # Function type.
-    function_type = ds.run_types[ds.run_names.index(run1)]
-
-    # Copy function.
-    copy = self.relax.specific_setup.setup('copy', function_type, raise_error=0)
-
-    # Copy the results.
-    copy(run1=run1, run2=run2, sim=sim)
 
 
 def determine_format(file):
