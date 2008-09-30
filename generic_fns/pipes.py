@@ -186,6 +186,16 @@ def list():
         print "%-20s%-20s" % (pipe_name, get_type(pipe_name))
 
 
+def pipe_names():
+    """Return the list of all data pipes.
+
+    @return:        The list of data pipes.
+    @rtype:         list of str
+    """
+
+    return ds.keys()
+
+
 def switch(pipe_name=None):
     """Switch the current data pipe to the given data pipe.
 
