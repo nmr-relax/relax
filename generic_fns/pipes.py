@@ -159,6 +159,22 @@ def get_type(name=None):
     return pipe.pipe_type
 
 
+def has_pipe(name):
+    """Determine if the relax data store contains the data pipe.
+
+    @param name:    The name of the data pipe.
+    @type name:     str
+    @return:        True if the data pipe exists, False otherwise.
+    @rtype:         bool
+    """
+
+    # Check.
+    if ds.has_key(name):
+        return True
+    else:
+        return False
+
+
 def list():
     """Print the details of all the data pipes."""
 
