@@ -24,7 +24,6 @@
 from numpy import float64, zeros
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import return_molecule, return_residue, return_spin
 from generic_fns import pipes
 from physical_constants import return_atomic_mass

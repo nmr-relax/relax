@@ -29,7 +29,6 @@ from numpy import float64, array, zeros
 from time import asctime, localtime
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import diffusion_tensor
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxUnknownParamError

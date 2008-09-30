@@ -29,7 +29,6 @@ import numpy
 from re import match
 
 # relax module imports.
-import data
 from float import floatAsByteArray
 import generic_fns
 from prototype import Prototype
@@ -218,9 +217,6 @@ class SpinList(list):
         @param element: The element to add the spin XML elements to.
         @type element:  XML element object
         """
-
-        # The relax data store.
-        ds = data.Relax_data_store()
 
         # Get the specific functions.
         data_names = specific_fns.setup.get_specific_fn('data_names', generic_fns.pipes.get_type(), raise_error=False)

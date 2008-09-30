@@ -32,7 +32,6 @@ import sys
 
 # relax module imports.
 from angles import wrap_angles
-from data import Relax_data_store; ds = Relax_data_store()
 from data.align_tensor import AlignTensorList
 from generic_fns import pipes
 from physical_constants import h_bar, mu0, return_gyromagnetic_ratio

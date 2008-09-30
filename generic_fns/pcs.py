@@ -29,7 +29,6 @@ from numpy import float64, zeros
 import sys
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoResError, RelaxNoPCSError, RelaxNoSequenceError, RelaxNoSpinError, RelaxPCSError

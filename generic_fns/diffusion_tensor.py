@@ -30,7 +30,6 @@ from re import search
 
 # relax module imports.
 from angles import wrap_angles
-from data import Relax_data_store; ds = Relax_data_store()
 from data.diff_tensor import DiffTensorData
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError

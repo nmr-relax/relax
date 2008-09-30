@@ -43,7 +43,6 @@ from textwrap import fill
 from warnings import warn
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from data.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
 from generic_fns import pipes
 from generic_fns import relax_re

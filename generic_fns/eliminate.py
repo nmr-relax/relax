@@ -27,7 +27,6 @@
 from copy import deepcopy
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 from relax_errors import RelaxError
 from specific_fns.setup import get_specific_fn

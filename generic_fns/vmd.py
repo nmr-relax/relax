@@ -24,7 +24,6 @@
 """Module for interfacing with VMD."""
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from generic_fns import pipes
 from relax_errors import RelaxNoPdbError

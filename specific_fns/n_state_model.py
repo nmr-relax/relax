@@ -32,7 +32,6 @@ from re import search
 from warnings import warn
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from float import isNaN, isInf
 import generic_fns
 from generic_fns.mol_res_spin import spin_loop

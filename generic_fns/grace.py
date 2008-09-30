@@ -29,7 +29,6 @@ from os import system
 from re import match
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 import generic_fns
 from generic_fns.mol_res_spin import count_molecules, count_residues, count_spins, exists_mol_res_spin_data, spin_loop
 from generic_fns import pipes

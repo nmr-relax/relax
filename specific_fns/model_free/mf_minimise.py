@@ -27,7 +27,6 @@ from numpy.linalg import inv
 from re import match
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from float import isNaN, isInf
 from generic_fns import diffusion_tensor, pipes
 from generic_fns.diffusion_tensor import diff_data_exists

@@ -31,7 +31,6 @@ from re import match, search
 import sys
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from dep_check import C_module_exp_fn
 from base_class import Common_functions
 from generic_fns import intensity, pipes
