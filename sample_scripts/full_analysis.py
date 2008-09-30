@@ -330,7 +330,7 @@ class Main:
             ##########################
 
             # Fix the diffusion tensor, if it exists.
-            if hasattr(ds['final'], 'diff_tensor'):
+            if hasattr(pipes.get_pipe('final'), 'diff_tensor'):
                 fix('diff')
 
             # Simulations.
@@ -360,7 +360,7 @@ class Main:
 
         # Alias the data pipes.
         cdp = pipes.get_pipe()
-        prev_pipe = ds['previous']
+        prev_pipe = pipes.get_pipe('previous')
 
         # Print out.
         print "\n\n\n"

@@ -554,7 +554,7 @@ class Scientific_data(Base_struct_API):
                 continue
 
             # Get the data pipe.
-            data_pipe = ds[key]
+            data_pipe = pipes.get_pipe(key)
 
             # Structure exists.
             if hasattr(data_pipe, 'structure'):

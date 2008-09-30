@@ -48,36 +48,36 @@ def reset_min_stats(data_pipe=None, spin=None):
     if data_pipe == None:
         data_pipe = pipes.cdp_name()
 
-    # Alias the current data pipe.
-    cdp = ds[data_pipe]
+    # Get the data pipe.
+    dp = pipes.get_pipe(data_pipe)
 
 
     # Global minimisation statistics.
     #################################
 
     # Chi-squared.
-    if hasattr(cdp, 'chi2'):
-        cdp.chi2 = None
+    if hasattr(dp, 'chi2'):
+        dp.chi2 = None
 
     # Iteration count.
-    if hasattr(cdp, 'iter'):
-        cdp.iter = None
+    if hasattr(dp, 'iter'):
+        dp.iter = None
 
     # Function count.
-    if hasattr(cdp, 'f_count'):
-        cdp.f_count = None
+    if hasattr(dp, 'f_count'):
+        dp.f_count = None
 
     # Gradient count.
-    if hasattr(cdp, 'g_count'):
-        cdp.g_count = None
+    if hasattr(dp, 'g_count'):
+        dp.g_count = None
 
     # Hessian count.
-    if hasattr(cdp, 'h_count'):
-        cdp.h_count = None
+    if hasattr(dp, 'h_count'):
+        dp.h_count = None
 
     # Warning.
-    if hasattr(cdp, 'warning'):
-        cdp.warning = None
+    if hasattr(dp, 'warning'):
+        dp.warning = None
 
 
     # Sequence specific minimisation statistics.

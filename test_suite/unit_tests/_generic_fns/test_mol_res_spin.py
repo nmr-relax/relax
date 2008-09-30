@@ -543,9 +543,10 @@ class Test_mol_res_spin(TestCase):
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
+        dp = pipes.get_pipe('orig')
 
         # Name the first molecule.
-        ds['orig'].mol[0].name = 'TOM40'
+        dp.mol[0].name = 'TOM40'
 
         # This should be True.
         self.failUnless(mol_res_spin.exists_mol_res_spin_data())
@@ -562,9 +563,10 @@ class Test_mol_res_spin(TestCase):
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
+        dp = pipes.get_pipe('orig')
 
         # Name the first residue.
-        ds['orig'].mol[0].res[0].name = 'Lys'
+        dp.mol[0].res[0].name = 'Lys'
 
         # This should be True.
         self.failUnless(mol_res_spin.exists_mol_res_spin_data())
@@ -581,9 +583,10 @@ class Test_mol_res_spin(TestCase):
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
+        dp = pipes.get_pipe('orig')
 
         # Number the first residue.
-        ds['orig'].mol[0].res[0].num = 1
+        dp.mol[0].res[0].num = 1
 
         # This should be True.
         self.failUnless(mol_res_spin.exists_mol_res_spin_data())
@@ -600,9 +603,10 @@ class Test_mol_res_spin(TestCase):
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
+        dp = pipes.get_pipe('orig')
 
         # Name the first spin.
-        ds['orig'].mol[0].res[0].spin[0].name = 'NH'
+        dp.mol[0].res[0].spin[0].name = 'NH'
 
         # This should be True.
         self.failUnless(mol_res_spin.exists_mol_res_spin_data())
@@ -619,9 +623,10 @@ class Test_mol_res_spin(TestCase):
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
+        dp = pipes.get_pipe('orig')
 
         # Number the first spin.
-        ds['orig'].mol[0].res[0].spin[0].num = 234
+        dp.mol[0].res[0].spin[0].num = 234
 
         # This should be True.
         self.failUnless(mol_res_spin.exists_mol_res_spin_data())

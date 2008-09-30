@@ -186,8 +186,8 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
 
     # Loop over the pipes.
     for pipe_index in xrange(len(pipe_list)):
-        # Alias the pipe container.
-        pipe = ds[pipe_list[pipe_index]]
+        # Get the pipe container.
+        pipe = pipes.get_pipe(pipe_list[pipe_index])
 
 
         # Tests.

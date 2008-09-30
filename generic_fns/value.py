@@ -69,10 +69,10 @@ def copy(pipe_from=None, pipe_to=None, param=None):
         raise RelaxNoSequenceError, pipe_to
 
     # Specific value and error returning function.
-    return_value = get_specific_fn('return_value', ds[pipe_from].pipe_type)
+    return_value = get_specific_fn('return_value', pipes.get_type(pipe_from))
 
     # Specific set function.
-    set = get_specific_fn('set', ds[pipe_from].pipe_type)
+    set = get_specific_fn('set', pipes.get_type(pipe_from))
 
     # Test if the data exists for pipe_to.
     for spin in spin_loop(pipe_to):

@@ -986,23 +986,27 @@ class Model_free_main:
             pipes.create(pipe_to, pipe_type='mf')
         pipes.switch(current_pipe)
 
+        # Get the data pipes.
+        dp_from = pipes.get_pipe(pipe_from)
+        dp_to = pipes.get_pipe(pipe_to)
+
         # Duplicate all non-sequence specific data.
-        for data_name in dir(ds[pipe_from]):
+        for data_name in dir(dp_from):
             # Skip the container objects.
             if data_name in ['diff_tensor', 'mol', 'structure']:
                 continue
 
             # Skip special objects.
-            if search('^_', data_name) or data_name in ds[pipe_from].__class__.__dict__.keys():
+            if search('^_', data_name) or data_name in dp_from.__class__.__dict__.keys():
                 continue
 
             # Get the original object.
-            data_from = getattr(ds[pipe_from], data_name)
+            data_from = getattr(dp_from, data_name)
 
             # The data already exists.
-            if hasattr(ds[pipe_to], data_name):
+            if hasattr(dp_to, data_name):
                 # Get the object in the target pipe.
-                data_to = getattr(ds[pipe_to], data_name)
+                data_to = getattr(dp_to, data_name)
 
                 # The data must match!
                 if data_from != data_to:
@@ -1012,28 +1016,28 @@ class Model_free_main:
                 continue
 
             # Duplicate the data.
-            setattr(ds[pipe_to], data_name, deepcopy(data_from))
+            setattr(dp_to, data_name, deepcopy(data_from))
 
         # Diffusion tensor comparison.
-        if hasattr(ds[pipe_from], 'diff_tensor'):
+        if hasattr(dp_from, 'diff_tensor'):
             # Duplicate the tensor if it doesn't exist.
-            if not hasattr(ds[pipe_to], 'diff_tensor'):
-                setattr(ds[pipe_to], 'diff_tensor', deepcopy(ds[pipe_from].diff_tensor))
+            if not hasattr(dp_to, 'diff_tensor'):
+                setattr(dp_to, 'diff_tensor', deepcopy(dp_from.diff_tensor))
 
             # Otherwise compare the objects inside the container.
             else:
                 # Loop over the modifiable objects.
-                for data_name in ds[pipe_from].diff_tensor.__mod_attr__:
+                for data_name in dp_from.diff_tensor.__mod_attr__:
                     # Get the original object.
                     data_from = None
-                    if hasattr(ds[pipe_from].diff_tensor, data_name):
-                        data_from = getattr(ds[pipe_from].diff_tensor, data_name)
+                    if hasattr(dp_from.diff_tensor, data_name):
+                        data_from = getattr(dp_from.diff_tensor, data_name)
 
                     # Get the target object.
-                    if data_from and not hasattr(ds[pipe_to].diff_tensor, data_name):
+                    if data_from and not hasattr(dp_to.diff_tensor, data_name):
                         raise RelaxError, "The diffusion tensor object " + `data_name` + " of the " + `pipe_from` + " data pipe is not located in the " + `pipe_to` + " data pipe."
                     elif data_from:
-                        data_to = getattr(ds[pipe_to].diff_tensor, data_name)
+                        data_to = getattr(dp_to.diff_tensor, data_name)
                     else:
                         continue
 
@@ -1042,17 +1046,17 @@ class Model_free_main:
                         raise RelaxError, "The object " + `data_name` + " is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
 
         # Structure comparison.
-        if hasattr(ds[pipe_from], 'structure'):
+        if hasattr(dp_from, 'structure'):
             # Duplicate the tensor if it doesn't exist.
-            if not hasattr(ds[pipe_to], 'structure'):
-                setattr(ds[pipe_to], 'structure', deepcopy(ds[pipe_from].structure))
+            if not hasattr(dp_to, 'structure'):
+                setattr(dp_to, 'structure', deepcopy(dp_from.structure))
 
             # Otherwise compare the objects inside the container.
             else:
                 # Loop over the modifiable objects.
-                for data_name in dir(ds[pipe_from].structure):
+                for data_name in dir(dp_from.structure):
                     # Skip special objects (starting with _, or in the original class and base class namespaces).
-                    if search('^_', data_name) or data_name in ds[pipe_from].structure.__class__.__dict__.keys() or data_name in ds[pipe_from].structure.__class__.__bases__[0].__dict__.keys():
+                    if search('^_', data_name) or data_name in dp_from.structure.__class__.__dict__.keys() or data_name in dp_from.structure.__class__.__bases__[0].__dict__.keys():
                         continue
 
                     # Skip some more special objects.
@@ -1061,14 +1065,14 @@ class Model_free_main:
 
                     # Get the original object.
                     data_from = None
-                    if hasattr(ds[pipe_from].structure, data_name):
-                        data_from = getattr(ds[pipe_from].structure, data_name)
+                    if hasattr(dp_from.structure, data_name):
+                        data_from = getattr(dp_from.structure, data_name)
 
                     # Get the target object.
-                    if data_from and not hasattr(ds[pipe_to].structure, data_name):
+                    if data_from and not hasattr(dp_to.structure, data_name):
                         raise RelaxError, "The structural object " + `data_name` + " of the " + `pipe_from` + " data pipe is not located in the " + `pipe_to` + " data pipe."
                     elif data_from:
-                        data_to = getattr(ds[pipe_to].structure, data_name)
+                        data_to = getattr(dp_to.structure, data_name)
                     else:
                         continue
 
@@ -1086,19 +1090,19 @@ class Model_free_main:
         # Sequence specific data.
         if model_type == 'mf' or (model_type == 'local_tm' and not global_stats):
             # Duplicate the sequence data if it doesn't exist.
-            if ds[pipe_to].mol.is_empty():
+            if dp_to.mol.is_empty():
                 sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to, verbose=verbose)
 
             # Get the spin container indices.
             mol_index, res_index, spin_index = convert_from_global_index(global_index=model_index, pipe=pipe_from)
 
             # Duplicate the spin specific data.
-            ds[pipe_to].mol[mol_index].res[res_index].spin[spin_index] = deepcopy(ds[pipe_from].mol[mol_index].res[res_index].spin[spin_index])
+            dp_to.mol[mol_index].res[res_index].spin[spin_index] = deepcopy(dp_from.mol[mol_index].res[res_index].spin[spin_index])
 
         # Other data types.
         else:
             # Duplicate all the spin specific data.
-            ds[pipe_to].mol = deepcopy(ds[pipe_from].mol)
+            dp_to.mol = deepcopy(dp_from.mol)
 
 
     def eliminate(self, name, value, run, i, args):

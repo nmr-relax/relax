@@ -850,9 +850,9 @@ class Mf(TestCase):
         self.relax.interpreter._Pipe.create('1.2', 'mf')
         self.relax.interpreter._Results.read(file='final_results_trunc_1.2', dir=path)
 
-        # Alias the two data pipes.
-        pipe_12 = ds['1.2']
-        pipe_13 = ds['1.3']
+        # Get the two data pipes.
+        pipe_12 = pipes.get_pipe('1.2')
+        pipe_13 = pipes.get_pipe('1.3')
 
         # Test that the objects in the base pipes are the same.
         print "Comparison of the objects of the base data pipe:"

@@ -134,14 +134,17 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
     if pipe == None:
         pipe = pipes.cdp_name()
 
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
+
     # Get the molecule.
     curr_mol = return_molecule(generate_spin_id(mol_name=mol_name), pipe=pipe)
 
     # A new molecule.
     if not curr_mol:
         # Add the molecule (and store it in the 'curr_mol' object).
-        ds[pipe].mol.add_item(mol_name=mol_name)
-        curr_mol = ds[pipe].mol[-1]
+        dp.mol.add_item(mol_name=mol_name)
+        curr_mol = dp.mol[-1]
 
     # Get the residue.
     curr_res = return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name), pipe=pipe)

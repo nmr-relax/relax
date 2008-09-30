@@ -153,7 +153,10 @@ def get_type(name=None):
     if name == None:
         name = cdp_name()
 
-    return ds[name].pipe_type
+    # Get the data pipe.
+    pipe = get_pipe(name)
+
+    return pipe.pipe_type
 
 
 def list():
@@ -164,7 +167,7 @@ def list():
 
     # Loop over the data pipes.
     for pipe_name in ds:
-        print "%-20s%-20s" % (pipe_name, ds[pipe_name].pipe_type)
+        print "%-20s%-20s" % (pipe_name, get_type(pipe_name))
 
 
 def switch(pipe_name=None):

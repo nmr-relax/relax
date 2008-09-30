@@ -54,9 +54,12 @@ def align_data_exists(tensor, pipe=None):
     if pipe == None:
         pipe = pipes.cdp_name()
 
+    # Get the data pipe.
+    pipe = pipes.get_pipe(pipe)
+
     # Test if an alignment tensor corresponding to the arg 'tensor' exists.
-    if hasattr(ds[pipe], 'align_tensors'):
-        for data in ds[pipe].align_tensors:
+    if hasattr(pipe, 'align_tensors'):
+        for data in pipe.align_tensors:
             if data.name == tensor:
                 return True
     else:
@@ -90,6 +93,10 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
     pipes.test(pipe_from)
     pipes.test(pipe_to)
 
+    # Get the data pipes.
+    dp_from = pipes.get_pipe(pipe_from)
+    dp_to = pipes.get_pipe(pipe_to)
+
     # Test if pipe_from contains alignment tensor data.
     if not align_data_exists(tensor_from, pipe_from):
         raise RelaxNoTensorError, 'alignment'
@@ -99,8 +106,8 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
         raise RelaxTensorError, 'alignment'
 
     # Create the align_tensors dictionary if it doesn't yet exist.
-    if not hasattr(ds[pipe_to], 'align_tensors'):
-        ds[pipe_to].align_tensors = AlignTensorList()
+    if not hasattr(dp_to, 'align_tensors'):
+        dp_to.align_tensors = AlignTensorList()
 
     # Find the tensor index.
     index_from = get_tensor_index(tensor_from, pipe_from)
@@ -108,9 +115,9 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
 
     # Copy the data.
     if index_to == None:
-        ds[pipe_to].align_tensors.append(deepcopy(ds[pipe_from].align_tensors[index_from]))
+        dp_to.align_tensors.append(deepcopy(dp_from.align_tensors[index_from]))
     else:
-        ds[pipe_to].align_tensors[index_to] = deepcopy(ds[pipe_from].align_tensors[index_from])
+        dp_to.align_tensors[index_to] = deepcopy(dp_from.align_tensors[index_from])
 
 
 def data_names():
@@ -365,15 +372,15 @@ def get_tensor_index(tensor, pipe=None):
     if pipe == None:
         pipe = pipes.cdp_name()
 
-    # Alias the current data pipe.
-    cdp = ds[pipe]
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
 
     # Init.
     index = None
 
     # Loop over the tensors.
-    for i in xrange(len(cdp.align_tensors)):
-        if cdp.align_tensors[i].name == tensor:
+    for i in xrange(len(dp.align_tensors)):
+        if dp.align_tensors[i].name == tensor:
             index = i
 
     # Return the index.
@@ -395,8 +402,8 @@ def get_tensor_object(tensor, pipe=None):
     if pipe == None:
         pipe = pipes.cdp_name()
 
-    # Alias the current data pipe.
-    cdp = ds[pipe]
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
 
     # Init.
     data = None

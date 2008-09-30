@@ -75,10 +75,13 @@ class State_base_class:
         # Load the state.
         self.state.load_state(state='basic_single_pipe', dir_name=path+'/test_suite/shared_data/saved_states')
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
         # Test the contents of the restored singleton.
         self.assertEqual(ds.keys(), ['orig'])
         self.assertEqual(pipes.cdp_name(), 'orig')
-        self.assertEqual(ds['orig'].x, 1)
+        self.assertEqual(dp.x, 1)
         self.assertEqual(ds.y, 'Hello')
 
 
@@ -106,13 +109,16 @@ class State_base_class:
         cdp = pipes.get_pipe()
         cdp.z = [None, None]
 
+        # Get the data pipes.
+        dp_orig = pipes.get_pipe('orig')
+        dp_new = pipes.get_pipe('new')
 
         # Test the contents of the restored singleton (with subsequent data added).
         self.assertEqual(ds.keys().sort(), ['orig', 'new'].sort())
         self.assertEqual(pipes.cdp_name(), 'new')
-        self.assertEqual(ds['orig'].x, 1)
+        self.assertEqual(dp_orig.x, 1)
         self.assertEqual(ds.y, 'Hello')
-        self.assertEqual(ds['new'].z, [None, None])
+        self.assertEqual(dp_new.z, [None, None])
 
 
     def test_load_and_reset(self):
@@ -155,8 +161,11 @@ class State_base_class:
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
         # Add a single object to the 'orig' data pipe.
-        ds['orig'].x = 1
+        dp.x = 1
 
         # Add a single object to the storage object.
         ds.y = 'Hello'

@@ -59,6 +59,10 @@ def copy(pipe_from=None, pipe_to=None):
     pipes.test(pipe_from)
     pipes.test(pipe_to)
 
+    # Get the data pipes.
+    dp_from = pipes.get_pipe(pipe_from)
+    dp_to = pipes.get_pipe(pipe_to)
+
     # Test if pipe_from contains diffusion tensor data.
     if not diff_data_exists(pipe_from):
         raise RelaxNoTensorError, 'diffusion'
@@ -68,7 +72,7 @@ def copy(pipe_from=None, pipe_to=None):
         raise RelaxTensorError, 'diffusion'
 
     # Copy the data.
-    ds[pipe_to].diff_tensor = deepcopy(ds[pipe_from].diff_tensor)
+    dp_to.diff_tensor = deepcopy(dp_from.diff_tensor)
 
 
 def data_names():
@@ -174,8 +178,11 @@ def diff_data_exists(pipe=None):
     if pipe == None:
         pipe = pipes.cdp_name()
 
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
+
     # Test if the data structure exists.
-    if hasattr(ds[pipe], 'diff_tensor'):
+    if hasattr(dp, 'diff_tensor'):
         return True
     else:
         return False

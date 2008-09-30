@@ -26,7 +26,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import results, structure
+from generic_fns import pipes, results, structure
 from relax_errors import RelaxError
 from specific_fns.model_free import main
 
@@ -81,10 +81,10 @@ class Test_main(TestCase):
         self.inst.duplicate_data('orig', 'new', model_index=0)
 
         # Check the original data.
-        self.assert_(hasattr(ds['orig'], 'structure'))
+        self.assert_(hasattr(pipes.get_pipe('orig'), 'structure'))
 
         # Check the duplication.
-        self.assert_(hasattr(ds['new'], 'structure'))
+        self.assert_(hasattr(pipes.get_pipe('new'), 'structure'))
 
 
     def test_duplicate_data_single_mf_model(self):
@@ -119,7 +119,8 @@ class Test_main(TestCase):
         structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1, parser='internal')
 
         # Modify the structure.
-        ds['new'].structure.file[0] = 'test'
+        dp = pipes.get_pipe('new')
+        dp.structure.file[0] = 'test'
 
         # Duplicate the data and catch the error.
         self.assertRaises(RelaxError, self.inst.duplicate_data, 'orig', 'new', model_index=0)

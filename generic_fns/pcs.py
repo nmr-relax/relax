@@ -284,6 +284,10 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
     pipes.test(pipe_from)
     pipes.test(pipe_to)
 
+    # Get the data pipes.
+    dp_from = pipes.get_pipe(pipe_from)
+    dp_to = pipes.get_pipe(pipe_to)
+
     # Test if pipe_from contains sequence data.
     if not exists_mol_res_spin_data(pipe_from):
         raise RelaxNoSequenceError
@@ -300,8 +304,8 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
         # Spin loop.
         for mol_index, res_index, spin_index in spin_index_loop():
             # Alias the spin containers.
-            spin_from = ds[pipe_from].mol[mol_index].res[res_index].spin[spin_index]
-            spin_to = ds[pipe_to].mol[mol_index].res[res_index].spin[spin_index]
+            spin_from = dp_from.mol[mol_index].res[res_index].spin[spin_index]
+            spin_to = dp_to.mol[mol_index].res[res_index].spin[spin_index]
 
             # Loop through the data structure names.
             for name in names:
@@ -325,8 +329,8 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
         # Spin loop.
         for mol_index, res_index, spin_index in spin_index_loop():
             # Alias the spin containers.
-            spin_from = ds[pipe_from].mol[mol_index].res[res_index].spin[spin_index]
-            spin_to = ds[pipe_to].mol[mol_index].res[res_index].spin[spin_index]
+            spin_from = dp_from.mol[mol_index].res[res_index].spin[spin_index]
+            spin_to = dp_to.mol[mol_index].res[res_index].spin[spin_index]
 
             # Find the index corresponding to 'ri_label' and 'frq_label'.
             index = find_index(spin_from, ri_label, frq_label)
