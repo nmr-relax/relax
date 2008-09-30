@@ -21,22 +21,11 @@
 ###############################################################################
 
 # relax module imports.
-import generic_fns
+from data import Relax_data_store; ds = Relax_data_store()
 
 
-class Reset:
-    def __init__(self, relax):
-        """Class containing the function for reinitialising the relax data storage object."""
+def reset():
+    """Reset relax."""
 
-        self.relax = relax
-
-
-    def reset(self):
-        """Reset relax.
-
-        All of the data of the relax data storage object will be erased and hence relax will return
-        to its initial state.
-        """
-
-        # Execute the functional code.
-        generic_fns.reset.reset()
+    # Run the relax data storage object reset method.
+    ds.__reset__()
