@@ -73,138 +73,13 @@ class Results:
         return version
 
 
-    def __read_col_numbers(self, header):
-        """Determine the column indices from the header line.
-
-        @param header:      The header line.
-        @type header:       list of str
-        @return:            The column indices.
-        @rtype:             dictionary of int
-        """
-
-        # Initialise the dictionary of column indices.
-        col = {}
-
-        # Loop over the columns.
-        for i in xrange(len(header)):
-            # Residue info (for relax 1.2).
-            if header[i] == 'Num':
-                col['num'] = i
-            elif header[i] == 'Name':
-                col['name'] = i
-
-            # Spin information.
-            elif header[i] == 'Spin_id':
-                col['spin_id'] = i
-            elif header[i] == 'Selected':
-                col['select'] = i
-            elif header[i] == 'Data_set':
-                col['data_set'] = i
-            elif header[i] == 'Nucleus':
-                col['nucleus'] = i
-            elif header[i] == 'Model':
-                col['model'] = i
-            elif header[i] == 'Equation':
-                col['eqi'] = i
-            elif header[i] == 'Params':
-                col['params'] = i
-            elif header[i] == 'Param_set':
-                col['param_set'] = i
-
-            # Parameters.
-            elif header[i] == 'S2':
-                col['s2'] = i
-            elif header[i] == 'S2f':
-                col['s2f'] = i
-            elif header[i] == 'S2s':
-                col['s2s'] = i
-            elif search('^Local_tm', header[i]):
-                col['local_tm'] = i
-            elif search('^te', header[i]):
-                col['te'] = i
-            elif search('^tf', header[i]):
-                col['tf'] = i
-            elif search('^ts', header[i]):
-                col['ts'] = i
-            elif search('^Rex', header[i]):
-                col['rex'] = i
-            elif search('^Bond_length', header[i]):
-                col['r'] = i
-            elif search('^CSA', header[i]):
-                col['csa'] = i
-
-            # Minimisation info.
-            elif header[i] == 'Chi-squared':
-                col['chi2'] = i
-            elif header[i] == 'Iter':
-                col['iter'] = i
-            elif header[i] == 'f_count':
-                col['f_count'] = i
-            elif header[i] == 'g_count':
-                col['g_count'] = i
-            elif header[i] == 'h_count':
-                col['h_count'] = i
-            elif header[i] == 'Warning':
-                col['warn'] = i
-
-            # Diffusion tensor (for relax 1.2).
-            elif header[i] == 'Diff_type':
-                col['diff_type'] = i
-            elif header[i] == 'tm_(s)':
-                col['tm'] = i
-            elif header[i] == 'Da_(1/s)':
-                col['da'] = i
-            elif header[i] == 'theta_(deg)':
-                col['theta'] = i
-            elif header[i] == 'phi_(deg)':
-                col['phi'] = i
-            elif header[i] == 'Da_(1/s)':
-                col['da'] = i
-            elif header[i] == 'Dr_(1/s)':
-                col['dr'] = i
-            elif header[i] == 'alpha_(deg)':
-                col['alpha'] = i
-            elif header[i] == 'beta_(deg)':
-                col['beta'] = i
-            elif header[i] == 'gamma_(deg)':
-                col['gamma'] = i
-
-            # PDB and XH vector (for relax 1.2).
-            elif header[i] == 'PDB':
-                col['pdb'] = i
-            elif header[i] == 'PDB_model':
-                col['pdb_model'] = i
-            elif header[i] == 'PDB_heteronuc':
-                col['pdb_heteronuc'] = i
-            elif header[i] == 'PDB_proton':
-                col['pdb_proton'] = i
-            elif header[i] == 'XH_vector':
-                col['xh_vect'] = i
-
-            # Relaxation data (for relax 1.2).
-            elif header[i] == 'Ri_labels':
-                col['ri_labels'] = i
-            elif header[i] == 'Remap_table':
-                col['remap_table'] = i
-            elif header[i] == 'Frq_labels':
-                col['frq_labels'] = i
-            elif header[i] == 'Frequencies':
-                col['frq'] = i
-
-        # Return the column indices.
-        return col
-
-
-    def __set_diff_tensor(self, spin_line, col, data_set, verbosity=1):
-        """Set up the diffusion tensor.
+    def __fix_params(self, spin_line, col, verbosity=1):
+        """Fix certain parameters depending on the model type.
 
         @param spin_line:   The line of data for a single spin.
         @type spin_line:    list of str
         @param col:         The column indices.
         @type col:          dict of int
-        @param data_set:    The data set type, one of 'value', 'error', or 'sim_xxx' (where xxx is
-                            a number).
-        @type data_set:     str
         @keyword verbosity: A variable specifying the amount of information to print.  The higher
                             the value, the greater the verbosity.
         @type verbosity:    int
@@ -213,158 +88,90 @@ class Results:
         # Get the current data pipe.
         cdp = pipes.get_pipe()
 
-        # The diffusion tensor type.
-        diff_type = spin_line[col['diff_type']]
-        if diff_type == 'None':
-            diff_type = None
+        # Extract the model type if it exists, otherwise return.
+        if spin_line[col['param_set']] != 'None':
+            model_type = spin_line[col['param_set']]
+        else:
+            return
+
+        # Local tm and model-free only model types.
+        if model_type == 'local_tm' or model_type == 'mf':
+            diff_fixed = True
+            mf_fixed = False
+
+        # Diffusion tensor model type.
+        elif model_type == 'diff':
+            diff_fixed = False
+            mf_fixed = True
+
+        # 'all' model type.
+        elif model_type == 'all':
+            diff_fixed = False
+            mf_fixed = False
+
+        # No model type.
+        elif model_type == 'None':
+            model_type = None
+            diff_fixed = None
+            mf_fixed = None
 
         # Print out.
-        if diff_type and data_set == 'value' and verbosity:
-            print "\nSetting the diffusion tensor."
-            print "Diffusion type: " + diff_type
+        if verbosity >= 2:
+            print "\nFixing parameters based on the model type."
+            print "Model type: " + model_type
+            print "Diffusion tensor fixed: " + `diff_fixed`
+            print "Model-free parameters fixed: " + `mf_fixed`
 
-        # Sphere.
-        if diff_type == 'sphere':
-            # Convert the parameters to floating point numbers.
-            try:
-                tm = float(spin_line[col['tm']])
-            except ValueError:
-                # Errors or simulation values set to None.
-                if data_set != 'value' and spin_line[col['tm']] == 'None':
-                    return
+        # Set the diffusion tensor fixed flag.
+        if model_type != 'local_tm' and diff_fixed != None:
+            cdp.diff_tensor.fixed = diff_fixed
 
-                # Genuine error.
-                raise RelaxError, "The diffusion tensor parameters are not numbers."
-
-            # Values.
-            if data_set == 'value':
-                diff_params = tm
-
-            # Errors.
-            elif data_set == 'error':
-                cdp.diff.tm_err = tm
-
-            # Simulation values.
-            else:
-                # Create the data structure if it doesn't exist.
-                if not hasattr(cdp.diff_tensor, 'tm_sim'):
-                    cdp.diff.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor)
-
-                # Append the value.
-                cdp.diff_tensor.tm_sim.append(tm)
+        # Set the spin specific fixed flags.
+        for spin in spin_loop():
+            if mf_fixed != None:
+                spin.fixed = mf_fixed
 
 
-        # Spheroid.
-        elif diff_type == 'spheroid' or diff_type == 'oblate' or diff_type == 'prolate':
-            # Convert the parameters to floating point numbers.
-            try:
-                tm = float(spin_line[col['tm']])
-                Da = float(spin_line[col['da']])
-                theta = float(spin_line[col['theta']]) / 360.0 * 2.0 * pi
-                phi = float(spin_line[col['phi']]) / 360.0 * 2.0 * pi
-            except ValueError:
-                # Errors or simulation values set to None.
-                if data_set != 'value' and spin_line[col['tm']] == 'None':
-                    return
+    def __generate_sequence(self, spin_line, col, verbosity=1):
+        """Generate the sequence.
 
-                # Genuine error.
-                raise RelaxError, "The diffusion tensor parameters are not numbers."
+        @param spin_line:   The line of data for a single spin.
+        @type spin_line:    list of str
+        @param col:         The column indices.
+        @type col:          dict of int
+        @keyword verbosity: A variable specifying the amount of information to print.  The higher
+                            the value, the greater the verbosity.
+        @type verbosity:    int
+        """
 
-            # Values.
-            if data_set == 'value':
-                diff_params = [tm, Da, theta, phi]
+        # The spin info (for relax 1.2).
+        if col.has_key('num'):
+            mol_name = None
+            res_num = int(spin_line[col['num']])
+            res_name = spin_line[col['name']]
+            spin_num = None
+            spin_name = None
 
-            # Errors.
-            elif data_set == 'error':
-                cdp.diff_tensor.tm_err = tm
-                cdp.diff_tensor.Da_err = Da
-                cdp.diff_tensor.theta_err = theta
-                cdp.diff_tensor.phi_err = phi
+        # The spin info.
+        else:
+            mol_name = spin_line[col['mol_name']]
+            res_num = int(spin_line[col['res_num']])
+            res_name = spin_line[col['res_name']]
+            spin_num = int(spin_line[col['spin_num']])
+            spin_name = spin_line[col['spin_name']]
 
-            # Simulation values.
-            else:
-                # Create the data structure if it doesn't exist.
-                if not hasattr(cdp.diff, 'tm_sim'):
-                    cdp.diff_tensor.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor)
-                if not hasattr(cdp.diff, 'Da_sim'):
-                    cdp.diff_tensor.Da_sim = DiffTensorSimList('Da', cdp.diff_tensor)
-                if not hasattr(cdp.diff, 'theta_sim'):
-                    cdp.diff_tensor.theta_sim = DiffTensorSimList('theta', cdp.diff_tensor)
-                if not hasattr(cdp.diff, 'phi_sim'):
-                    cdp.diff_tensor.phi_sim = DiffTensorSimList('phi', cdp.diff_tensor)
+        # Generate the sequence.
+        generic_fns.sequence.generate(mol_name, res_num, res_name, spin_num, spin_name, verbose=False)
 
-                # Append the value.
-                cdp.diff_tensor.tm_sim.append(tm)
-                cdp.diff_tensor.Da_sim.append(Da)
-                cdp.diff_tensor.theta_sim.append(theta)
-                cdp.diff_tensor.phi_sim.append(phi)
+        # Get the spin identification string.
+        spin_id = generate_spin_id(mol_name, res_num, res_name, spin_num, spin_name)
 
-
-        # Ellipsoid.
-        elif diff_type == 'ellipsoid':
-            # Convert the parameters to floating point numbers.
-            try:
-                tm = float(spin_line[col['tm']])
-                Da = float(spin_line[col['da']])
-                Dr = float(spin_line[col['dr']])
-                alpha = float(spin_line[col['alpha']]) / 360.0 * 2.0 * pi
-                beta = float(spin_line[col['beta']]) / 360.0 * 2.0 * pi
-                gamma = float(spin_line[col['gamma']]) / 360.0 * 2.0 * pi
-            except ValueError:
-                # Errors or simulation values set to None.
-                if data_set != 'value' and spin_line[col['tm']] == 'None':
-                    return
-
-                # Genuine error.
-                raise RelaxError, "The diffusion tensor parameters are not numbers."
-
-            # Values.
-            if data_set == 'value':
-                diff_params = [tm, Da, Dr, alpha, beta, gamma]
-
-            # Errors.
-            elif data_set == 'error':
-                cdp.diff_tensor.tm_err = tm
-                cdp.diff_tensor.Da_err = Da
-                cdp.diff_tensor.Dr_err = Dr
-                cdp.diff_tensor.alpha_err = alpha
-                cdp.diff_tensor.beta_err = beta
-                cdp.diff_tensor.gamma_err = gamma
-
-            # Simulation values.
-            else:
-                # Create the data structure if it doesn't exist.
-                if not hasattr(cdp.diff_tensor, 'tm_sim'):
-                    cdp.diff_tensor.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor)
-                if not hasattr(cdp.diff_tensor, 'Da_sim'):
-                    cdp.diff_tensor.Da_sim = DiffTensorSimList('Da', cdp.diff_tensor)
-                if not hasattr(cdp.diff_tensor, 'Dr_sim'):
-                    cdp.diff_tensor.Dr_sim = DiffTensorSimList('Dr', cdp.diff_tensor)
-                if not hasattr(cdp.diff_tensor, 'alpha_sim'):
-                    cdp.diff_tensor.alpha_sim = DiffTensorSimList('alpha', cdp.diff_tensor)
-                if not hasattr(cdp.diff_tensor, 'beta_sim'):
-                    cdp.diff_tensor.beta_sim = DiffTensorSimList('beta', cdp.diff_tensor)
-                if not hasattr(cdp.diff_tensor, 'gamma_sim'):
-                    cdp.diff_tensor.gamma_sim = DiffTensorSimList('gamma', cdp.diff_tensor)
-
-                # Append the value.
-                cdp.diff_tensor.tm_sim.append(tm)
-                cdp.diff_tensor.Da_sim.append(Da)
-                cdp.diff_tensor.Dr_sim.append(Dr)
-                cdp.diff_tensor.alpha_sim.append(alpha)
-                cdp.diff_tensor.beta_sim.append(beta)
-                cdp.diff_tensor.gamma_sim.append(gamma)
-
-
-        # Set the diffusion tensor.
-        if data_set == 'value' and diff_type:
-            # Sort out the spheroid type.
-            spheroid_type = None
-            if diff_type == 'oblate' or diff_type == 'prolate':
-                spheroid_type = diff_type
-
-            # Set the diffusion tensor.
-            generic_fns.diffusion_tensor.init(params=diff_params, angle_units='rad', spheroid_type=spheroid_type)
+        # Set the selection status.
+        select = bool(int(spin_line[col['select']]))
+        if select:
+            generic_fns.selection.sel_spin(spin_id)
+        else:
+            generic_fns.selection.desel_spin(spin_id)
 
 
     def __get_spin_id(self, spin_line, col, verbosity=1):
@@ -710,93 +517,6 @@ class Results:
                     spin.warning_sim.append(replace(spin_line[col['warn']], '_', ' '))
 
 
-    def __fix_params(self, spin_line, col, verbosity=1):
-        """Fix certain parameters depending on the model type.
-
-        @param spin_line:   The line of data for a single spin.
-        @type spin_line:    list of str
-        @param col:         The column indices.
-        @type col:          dict of int
-        @keyword verbosity: A variable specifying the amount of information to print.  The higher
-                            the value, the greater the verbosity.
-        @type verbosity:    int
-        """
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
-        # Extract the model type if it exists, otherwise return.
-        if spin_line[col['param_set']] != 'None':
-            model_type = spin_line[col['param_set']]
-        else:
-            return
-
-        # Local tm and model-free only model types.
-        if model_type == 'local_tm' or model_type == 'mf':
-            diff_fixed = True
-            mf_fixed = False
-
-        # Diffusion tensor model type.
-        elif model_type == 'diff':
-            diff_fixed = False
-            mf_fixed = True
-
-        # 'all' model type.
-        elif model_type == 'all':
-            diff_fixed = False
-            mf_fixed = False
-
-        # No model type.
-        elif model_type == 'None':
-            model_type = None
-            diff_fixed = None
-            mf_fixed = None
-
-        # Print out.
-        if verbosity >= 2:
-            print "\nFixing parameters based on the model type."
-            print "Model type: " + model_type
-            print "Diffusion tensor fixed: " + `diff_fixed`
-            print "Model-free parameters fixed: " + `mf_fixed`
-
-        # Set the diffusion tensor fixed flag.
-        if model_type != 'local_tm' and diff_fixed != None:
-            cdp.diff_tensor.fixed = diff_fixed
-
-        # Set the spin specific fixed flags.
-        for spin in spin_loop():
-            if mf_fixed != None:
-                spin.fixed = mf_fixed
-
-
-    def __load_structure(self, spin_line, col, verbosity=1):
-        """Load the structure back into the current data pipe.
-
-        @param spin_line:   The line of data for a single spin.
-        @type spin_line:    list of str
-        @param col:         The column indices.
-        @type col:          dict of int
-        @keyword verbosity: A variable specifying the amount of information to print.  The higher
-                            the value, the greater the verbosity.
-        @type verbosity:    int
-        @return:            True if the structure was loaded, False otherwise.
-        @rtype:             bool
-        """
-
-        # File name.
-        pdb = spin_line[col['pdb']]
-
-        # PDB model.
-        pdb_model = eval(spin_line[col['pdb_model']])
-
-        # Read the PDB file (if it exists).
-        if not pdb == 'None':
-            generic_fns.structure.main.read_pdb(file=pdb, model=pdb_model, fail=False, verbosity=verbosity)
-            return True
-        else:
-            return False
-
-
     def __load_relax_data(self, spin_line, col, data_set, spin, verbosity=1):
         """Load the relaxation data.
 
@@ -851,22 +571,32 @@ class Results:
         add_data_to_spin(spin=spin, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, values=values, errors=errors, sim=sim)
 
 
-    def read_columnar_results(self, file_data, verbosity=1):
-        """Read the model-free results file.
+    def __load_structure(self, spin_line, col, verbosity=1):
+        """Load the structure back into the current data pipe.
 
-        @param file_data:   The processed results file data.
-        @type file_data:    list of lists of str
+        @param spin_line:   The line of data for a single spin.
+        @type spin_line:    list of str
+        @param col:         The column indices.
+        @type col:          dict of int
         @keyword verbosity: A variable specifying the amount of information to print.  The higher
                             the value, the greater the verbosity.
         @type verbosity:    int
+        @return:            True if the structure was loaded, False otherwise.
+        @rtype:             bool
         """
 
-        # Determine the results file version.
-        version = self.__determine_version(file_data, verbosity)
+        # File name.
+        pdb = spin_line[col['pdb']]
 
-        # Execute the version specific methods.
-        if version == '1.2':
-            self.__read_1_2_results(file_data, verbosity)
+        # PDB model.
+        pdb_model = eval(spin_line[col['pdb_model']])
+
+        # Read the PDB file (if it exists).
+        if not pdb == 'None':
+            generic_fns.structure.main.read_pdb(file=pdb, model=pdb_model, fail=False, verbosity=verbosity)
+            return True
+        else:
+            return False
 
 
     def __read_1_2_results(self, file_data, verbosity=1):
@@ -1015,46 +745,298 @@ class Results:
             cdp.sim_state = False
 
 
-    def __generate_sequence(self, spin_line, col, verbosity=1):
-        """Generate the sequence.
+    def __read_col_numbers(self, header):
+        """Determine the column indices from the header line.
+
+        @param header:      The header line.
+        @type header:       list of str
+        @return:            The column indices.
+        @rtype:             dictionary of int
+        """
+
+        # Initialise the dictionary of column indices.
+        col = {}
+
+        # Loop over the columns.
+        for i in xrange(len(header)):
+            # Residue info (for relax 1.2).
+            if header[i] == 'Num':
+                col['num'] = i
+            elif header[i] == 'Name':
+                col['name'] = i
+
+            # Spin information.
+            elif header[i] == 'Spin_id':
+                col['spin_id'] = i
+            elif header[i] == 'Selected':
+                col['select'] = i
+            elif header[i] == 'Data_set':
+                col['data_set'] = i
+            elif header[i] == 'Nucleus':
+                col['nucleus'] = i
+            elif header[i] == 'Model':
+                col['model'] = i
+            elif header[i] == 'Equation':
+                col['eqi'] = i
+            elif header[i] == 'Params':
+                col['params'] = i
+            elif header[i] == 'Param_set':
+                col['param_set'] = i
+
+            # Parameters.
+            elif header[i] == 'S2':
+                col['s2'] = i
+            elif header[i] == 'S2f':
+                col['s2f'] = i
+            elif header[i] == 'S2s':
+                col['s2s'] = i
+            elif search('^Local_tm', header[i]):
+                col['local_tm'] = i
+            elif search('^te', header[i]):
+                col['te'] = i
+            elif search('^tf', header[i]):
+                col['tf'] = i
+            elif search('^ts', header[i]):
+                col['ts'] = i
+            elif search('^Rex', header[i]):
+                col['rex'] = i
+            elif search('^Bond_length', header[i]):
+                col['r'] = i
+            elif search('^CSA', header[i]):
+                col['csa'] = i
+
+            # Minimisation info.
+            elif header[i] == 'Chi-squared':
+                col['chi2'] = i
+            elif header[i] == 'Iter':
+                col['iter'] = i
+            elif header[i] == 'f_count':
+                col['f_count'] = i
+            elif header[i] == 'g_count':
+                col['g_count'] = i
+            elif header[i] == 'h_count':
+                col['h_count'] = i
+            elif header[i] == 'Warning':
+                col['warn'] = i
+
+            # Diffusion tensor (for relax 1.2).
+            elif header[i] == 'Diff_type':
+                col['diff_type'] = i
+            elif header[i] == 'tm_(s)':
+                col['tm'] = i
+            elif header[i] == 'Da_(1/s)':
+                col['da'] = i
+            elif header[i] == 'theta_(deg)':
+                col['theta'] = i
+            elif header[i] == 'phi_(deg)':
+                col['phi'] = i
+            elif header[i] == 'Da_(1/s)':
+                col['da'] = i
+            elif header[i] == 'Dr_(1/s)':
+                col['dr'] = i
+            elif header[i] == 'alpha_(deg)':
+                col['alpha'] = i
+            elif header[i] == 'beta_(deg)':
+                col['beta'] = i
+            elif header[i] == 'gamma_(deg)':
+                col['gamma'] = i
+
+            # PDB and XH vector (for relax 1.2).
+            elif header[i] == 'PDB':
+                col['pdb'] = i
+            elif header[i] == 'PDB_model':
+                col['pdb_model'] = i
+            elif header[i] == 'PDB_heteronuc':
+                col['pdb_heteronuc'] = i
+            elif header[i] == 'PDB_proton':
+                col['pdb_proton'] = i
+            elif header[i] == 'XH_vector':
+                col['xh_vect'] = i
+
+            # Relaxation data (for relax 1.2).
+            elif header[i] == 'Ri_labels':
+                col['ri_labels'] = i
+            elif header[i] == 'Remap_table':
+                col['remap_table'] = i
+            elif header[i] == 'Frq_labels':
+                col['frq_labels'] = i
+            elif header[i] == 'Frequencies':
+                col['frq'] = i
+
+        # Return the column indices.
+        return col
+
+
+    def __set_diff_tensor(self, spin_line, col, data_set, verbosity=1):
+        """Set up the diffusion tensor.
 
         @param spin_line:   The line of data for a single spin.
         @type spin_line:    list of str
         @param col:         The column indices.
         @type col:          dict of int
+        @param data_set:    The data set type, one of 'value', 'error', or 'sim_xxx' (where xxx is
+                            a number).
+        @type data_set:     str
         @keyword verbosity: A variable specifying the amount of information to print.  The higher
                             the value, the greater the verbosity.
         @type verbosity:    int
         """
 
-        # The spin info (for relax 1.2).
-        if col.has_key('num'):
-            mol_name = None
-            res_num = int(spin_line[col['num']])
-            res_name = spin_line[col['name']]
-            spin_num = None
-            spin_name = None
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
 
-        # The spin info.
-        else:
-            mol_name = spin_line[col['mol_name']]
-            res_num = int(spin_line[col['res_num']])
-            res_name = spin_line[col['res_name']]
-            spin_num = int(spin_line[col['spin_num']])
-            spin_name = spin_line[col['spin_name']]
+        # The diffusion tensor type.
+        diff_type = spin_line[col['diff_type']]
+        if diff_type == 'None':
+            diff_type = None
 
-        # Generate the sequence.
-        generic_fns.sequence.generate(mol_name, res_num, res_name, spin_num, spin_name, verbose=False)
+        # Print out.
+        if diff_type and data_set == 'value' and verbosity:
+            print "\nSetting the diffusion tensor."
+            print "Diffusion type: " + diff_type
 
-        # Get the spin identification string.
-        spin_id = generate_spin_id(mol_name, res_num, res_name, spin_num, spin_name)
+        # Sphere.
+        if diff_type == 'sphere':
+            # Convert the parameters to floating point numbers.
+            try:
+                tm = float(spin_line[col['tm']])
+            except ValueError:
+                # Errors or simulation values set to None.
+                if data_set != 'value' and spin_line[col['tm']] == 'None':
+                    return
 
-        # Set the selection status.
-        select = bool(int(spin_line[col['select']]))
-        if select:
-            generic_fns.selection.sel_spin(spin_id)
-        else:
-            generic_fns.selection.desel_spin(spin_id)
+                # Genuine error.
+                raise RelaxError, "The diffusion tensor parameters are not numbers."
+
+            # Values.
+            if data_set == 'value':
+                diff_params = tm
+
+            # Errors.
+            elif data_set == 'error':
+                cdp.diff.tm_err = tm
+
+            # Simulation values.
+            else:
+                # Create the data structure if it doesn't exist.
+                if not hasattr(cdp.diff_tensor, 'tm_sim'):
+                    cdp.diff.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor)
+
+                # Append the value.
+                cdp.diff_tensor.tm_sim.append(tm)
+
+
+        # Spheroid.
+        elif diff_type == 'spheroid' or diff_type == 'oblate' or diff_type == 'prolate':
+            # Convert the parameters to floating point numbers.
+            try:
+                tm = float(spin_line[col['tm']])
+                Da = float(spin_line[col['da']])
+                theta = float(spin_line[col['theta']]) / 360.0 * 2.0 * pi
+                phi = float(spin_line[col['phi']]) / 360.0 * 2.0 * pi
+            except ValueError:
+                # Errors or simulation values set to None.
+                if data_set != 'value' and spin_line[col['tm']] == 'None':
+                    return
+
+                # Genuine error.
+                raise RelaxError, "The diffusion tensor parameters are not numbers."
+
+            # Values.
+            if data_set == 'value':
+                diff_params = [tm, Da, theta, phi]
+
+            # Errors.
+            elif data_set == 'error':
+                cdp.diff_tensor.tm_err = tm
+                cdp.diff_tensor.Da_err = Da
+                cdp.diff_tensor.theta_err = theta
+                cdp.diff_tensor.phi_err = phi
+
+            # Simulation values.
+            else:
+                # Create the data structure if it doesn't exist.
+                if not hasattr(cdp.diff, 'tm_sim'):
+                    cdp.diff_tensor.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor)
+                if not hasattr(cdp.diff, 'Da_sim'):
+                    cdp.diff_tensor.Da_sim = DiffTensorSimList('Da', cdp.diff_tensor)
+                if not hasattr(cdp.diff, 'theta_sim'):
+                    cdp.diff_tensor.theta_sim = DiffTensorSimList('theta', cdp.diff_tensor)
+                if not hasattr(cdp.diff, 'phi_sim'):
+                    cdp.diff_tensor.phi_sim = DiffTensorSimList('phi', cdp.diff_tensor)
+
+                # Append the value.
+                cdp.diff_tensor.tm_sim.append(tm)
+                cdp.diff_tensor.Da_sim.append(Da)
+                cdp.diff_tensor.theta_sim.append(theta)
+                cdp.diff_tensor.phi_sim.append(phi)
+
+
+        # Ellipsoid.
+        elif diff_type == 'ellipsoid':
+            # Convert the parameters to floating point numbers.
+            try:
+                tm = float(spin_line[col['tm']])
+                Da = float(spin_line[col['da']])
+                Dr = float(spin_line[col['dr']])
+                alpha = float(spin_line[col['alpha']]) / 360.0 * 2.0 * pi
+                beta = float(spin_line[col['beta']]) / 360.0 * 2.0 * pi
+                gamma = float(spin_line[col['gamma']]) / 360.0 * 2.0 * pi
+            except ValueError:
+                # Errors or simulation values set to None.
+                if data_set != 'value' and spin_line[col['tm']] == 'None':
+                    return
+
+                # Genuine error.
+                raise RelaxError, "The diffusion tensor parameters are not numbers."
+
+            # Values.
+            if data_set == 'value':
+                diff_params = [tm, Da, Dr, alpha, beta, gamma]
+
+            # Errors.
+            elif data_set == 'error':
+                cdp.diff_tensor.tm_err = tm
+                cdp.diff_tensor.Da_err = Da
+                cdp.diff_tensor.Dr_err = Dr
+                cdp.diff_tensor.alpha_err = alpha
+                cdp.diff_tensor.beta_err = beta
+                cdp.diff_tensor.gamma_err = gamma
+
+            # Simulation values.
+            else:
+                # Create the data structure if it doesn't exist.
+                if not hasattr(cdp.diff_tensor, 'tm_sim'):
+                    cdp.diff_tensor.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor)
+                if not hasattr(cdp.diff_tensor, 'Da_sim'):
+                    cdp.diff_tensor.Da_sim = DiffTensorSimList('Da', cdp.diff_tensor)
+                if not hasattr(cdp.diff_tensor, 'Dr_sim'):
+                    cdp.diff_tensor.Dr_sim = DiffTensorSimList('Dr', cdp.diff_tensor)
+                if not hasattr(cdp.diff_tensor, 'alpha_sim'):
+                    cdp.diff_tensor.alpha_sim = DiffTensorSimList('alpha', cdp.diff_tensor)
+                if not hasattr(cdp.diff_tensor, 'beta_sim'):
+                    cdp.diff_tensor.beta_sim = DiffTensorSimList('beta', cdp.diff_tensor)
+                if not hasattr(cdp.diff_tensor, 'gamma_sim'):
+                    cdp.diff_tensor.gamma_sim = DiffTensorSimList('gamma', cdp.diff_tensor)
+
+                # Append the value.
+                cdp.diff_tensor.tm_sim.append(tm)
+                cdp.diff_tensor.Da_sim.append(Da)
+                cdp.diff_tensor.Dr_sim.append(Dr)
+                cdp.diff_tensor.alpha_sim.append(alpha)
+                cdp.diff_tensor.beta_sim.append(beta)
+                cdp.diff_tensor.gamma_sim.append(gamma)
+
+
+        # Set the diffusion tensor.
+        if data_set == 'value' and diff_type:
+            # Sort out the spheroid type.
+            spheroid_type = None
+            if diff_type == 'oblate' or diff_type == 'prolate':
+                spheroid_type = diff_type
+
+            # Set the diffusion tensor.
+            generic_fns.diffusion_tensor.init(params=diff_params, angle_units='rad', spheroid_type=spheroid_type)
 
 
     def __set_xh_vect(self, spin_line, col, spin, verbosity=1):
@@ -1087,3 +1069,21 @@ class Results:
         spin.attached_proton = spin_line[col['pdb_proton']]
         if spin.attached_proton == 'None':
             spin.attached_proton = None
+
+
+    def read_columnar_results(self, file_data, verbosity=1):
+        """Read the model-free results file.
+
+        @param file_data:   The processed results file data.
+        @type file_data:    list of lists of str
+        @keyword verbosity: A variable specifying the amount of information to print.  The higher
+                            the value, the greater the verbosity.
+        @type verbosity:    int
+        """
+
+        # Determine the results file version.
+        version = self.__determine_version(file_data, verbosity)
+
+        # Execute the version specific methods.
+        if version == '1.2':
+            self.__read_1_2_results(file_data, verbosity)
