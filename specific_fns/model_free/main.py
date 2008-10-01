@@ -874,6 +874,49 @@ class Model_free_main:
                 delattr(spin, name)
 
 
+    def deselect(self, model_index, sim_index=None):
+        """Deselect models or simulations.
+
+        @keyword model_index:   The model index.  This is zero for the global models or equal to the
+                                global spin index (which covers the molecule, residue, and spin
+                                indices).
+        @type model_index:      int
+        @keyword sim_index:     The Monte Carlo simulation index.  If None, then models will be
+                                deselected, otherwise the given simulation will.
+        @type sim_index:        int
+        """
+
+        # Determine the model type.
+        model_type = self.determine_model_type()
+
+        # Local models.
+        if model_type == 'mf' or model_type == 'local_tm':
+            # Get the spin.
+            spin = return_spin_from_index(model_index)
+
+            # Spin deselection.
+            if sim_index == None:
+                spin.select = False
+
+            # Simulation deselection.
+            else:
+                spin.select_sim[sim_index] = False
+
+        # Global models.
+        else:
+            # Global model deselection.
+            if sim_index == None:
+                raise RelaxError, "Cannot deselect the global model."
+
+            # Simulation deselection.
+            else:
+                # Get the current data pipe.
+                cdp = pipes.get_pipe()
+
+                # Deselect.
+                cdp.select_sim[sim_index] = False
+
+
     def determine_model_type(self):
         """Determine the global model type.
 
@@ -3105,29 +3148,3 @@ class Model_free_main:
 
         # Don't skip.
         return False
-
-
-    def deselect(self, run, i, sim_index=None):
-        """Function for deselecting models or simulations."""
-
-        # Arguments.
-        self.run = run
-
-        # Determine the model type.
-        model_type = self.determine_model_type()
-
-        # Simulation deselect.
-        if sim_index != None:
-            # Single instance.
-            if model_type == 'mf' or model_type == 'local_tm':
-                ds.res[self.run][i].select_sim[sim_index] = 0
-
-            # Multiple instances.
-            else:
-                ds.select_sim[self.run][sim_index] = 0
-
-        # Residue deselect.
-        else:
-            # Single residue.
-            if model_type == 'mf' or model_type == 'local_tm':
-                ds.res[self.run][i].select = 0
