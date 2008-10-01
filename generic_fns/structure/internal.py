@@ -98,7 +98,8 @@ class Internal(Base_struct_API):
             self.path.append(path)
 
         # Initialise the structural object if not provided.
-        str = Structure_container()
+        if str == None:
+            str = Structure_container()
 
         # Add the structural data.
         if struct_index != None:
