@@ -971,11 +971,9 @@ class Model_free_main:
         if model_index == None:
             raise RelaxError, "The model_index argument cannot be None."
 
-        # First create the pipe_to data pipe, if it doesn't exist (restoring the current pipe at the end).
-        current_pipe = pipes.cdp_name()
-        if not ds.has_key(pipe_to):
-            pipes.create(pipe_to, pipe_type='mf')
-        pipes.switch(current_pipe)
+        # First create the pipe_to data pipe, if it doesn't exist, but don't switch to it.
+        if not pipes.has_pipe(pipe_to):
+            pipes.create(pipe_to, pipe_type='mf', switch=False)
 
         # Get the data pipes.
         dp_from = pipes.get_pipe(pipe_from)
