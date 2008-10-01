@@ -862,7 +862,7 @@ class Model_free_main:
         names = self.data_names()
 
         # Loop over the spins.
-        for spin in spin_loop()
+        for spin in spin_loop():
             # Loop through the data structure names.
             for name in names:
                 # Skip the data structure if it does not exist.
