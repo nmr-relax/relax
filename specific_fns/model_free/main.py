@@ -1094,7 +1094,7 @@ class Model_free_main:
             dp_to.mol = deepcopy(dp_from.mol)
 
 
-    def eliminate(self, name, value, run, i, args):
+    def eliminate(self, name, value, model_index, args):
         """
         Local tm model elimination rule
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1141,20 +1141,30 @@ class Model_free_main:
         if args != None:
             c1, c2 = args
 
-        # Get the tm value.
+        # Determine the model type.
+        model_type = self.determine_model_type()
+
+        # Can't handle this one yet!
+        if model_type != 'mf' or model_type != 'local_tm':
+            raise RelaxError, "Elimination of the global model is not yet supported."
+
+        # Get the spin and it's id string.
+        spin, spin_id = return_spin_from_index(model_index, return_spin_id=True)
+
+         # Get the tm value.
         if model_type == 'local_tm':
-            tm = ds.res[run][i].local_tm
+            tm = spin.local_tm
         else:
-            tm = ds.diff[run].tm
+            tm = cdp.diff_tensor.tm
 
         # Local tm.
         if name == 'local_tm' and value >= c1:
-            print "The local tm parameter of " + `value` + " is greater than " + `c1` + ", eliminating spin system " + `ds.res[run][i].num` + " " + ds.res[run][i].name + " of the run " + `run`
+            print "The local tm parameter of " + `value` + " is greater than " + `c1` + ", eliminating spin system " + `spin_id` + "."
             return 1
 
         # Internal correlation times.
         if match('t[efs]', name) and value >= c2 * tm:
-            print "The " + name + " value of " + `value` + " is greater than " + `c2 * tm` + ", eliminating spin system " + `ds.res[run][i].num` + " " + ds.res[run][i].name + " of the run " + `run`
+            print "The " + name + " value of " + `value` + " is greater than " + `c2 * tm` + ", eliminating spin system " + `spin_id` + "."
             return 1
 
         # Accept model.
