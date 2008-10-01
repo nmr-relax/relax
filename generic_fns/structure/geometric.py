@@ -27,7 +27,6 @@ from string import ascii_uppercase
 from warnings import warn
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns import pipes
 from generic_fns.structure.mass import centre_of_mass
