@@ -1684,7 +1684,7 @@ class Model_free_main:
 
         # Test that no diffusion tensor exists if local tm is a parameter in the model.
         for param in params:
-            if param == 'local_tm' and hasattr(ds, 'diff_tensor'):
+            if param == 'local_tm' and hasattr(pipes.get_pipe(), 'diff_tensor'):
                 raise RelaxTensorError, 'diffusion'
 
         # Loop over the sequence.
