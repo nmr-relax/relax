@@ -33,7 +33,7 @@ from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoRiError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
 from relax_io import extract_data, strip
-from specific_fns.setup import get_specific_fn
+import specific_fns
 
 
 def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, values=None, errors=None, sim=False):
@@ -186,7 +186,7 @@ def back_calc(ri_label=None, frq_label=None, frq=None):
     global_flag = 0
 
     # Specific back-calculate function setup.
-    back_calculate = get_specific_fn('back_calc', pipes.get_type())
+    back_calculate = specific_fns.setup.get_specific_fn('back_calc', pipes.get_type())
 
     # Loop over the spins.
     for spin in spin_loop():
