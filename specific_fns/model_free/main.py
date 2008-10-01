@@ -844,11 +844,8 @@ class Model_free_main:
             return '1H'
 
 
-    def delete(self, run):
-        """Function for deleting all model-free data."""
-
-        # Arguments.
-        self.run = run
+    def delete(self):
+        """Delete all the model-free data."""
 
         # Test if the current pipe exists.
         pipes.test()
@@ -865,22 +862,16 @@ class Model_free_main:
         # Get all data structure names.
         names = self.data_names()
 
-        # Loop over the sequence.
-        for i in xrange(len(ds.res[self.run])):
-            # Remap the data structure 'ds.res[self.run][i]'.
-            data = ds.res[self.run][i]
-
+        # Loop over the spins.
+        for spin in spin_loop()
             # Loop through the data structure names.
             for name in names:
                 # Skip the data structure if it does not exist.
-                if not hasattr(data, name):
+                if not hasattr(spin, name):
                     continue
 
                 # Delete the data.
-                delattr(data, name)
-
-        # Clean up the runs.
-        self.relax.generic.runs.eliminate_unused_runs()
+                delattr(spin, name)
 
 
     def determine_model_type(self):
