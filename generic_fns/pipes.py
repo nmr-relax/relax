@@ -60,15 +60,15 @@ def copy(pipe_from=None, pipe_to=None):
     ds[pipe_to] = ds[pipe_from].__clone__()
 
 
-def create(pipe_name=None, pipe_type=None):
+def create(pipe_name=None, pipe_type=None, switch=True):
     """Create a new data pipe.
 
     The current data pipe will be changed to this new data pipe.
 
 
-    @param pipe_name:   The name of the new data pipe.
+    @keyword pipe_name: The name of the new data pipe.
     @type pipe_name:    str
-    @param pipe_type:   The new data pipe type which can be one of the following:
+    @keyword pipe_type: The new data pipe type which can be one of the following:
         'ct':  Consistency testing,
         'jw':  Reduced spectral density mapping,
         'mf':  Model-free analysis,
@@ -77,6 +77,9 @@ def create(pipe_name=None, pipe_type=None):
         'relax_fit':  Relaxation curve fitting,
         'srls':  SRLS analysis.
     @type pipe_type:    str
+    @keyword switch:    If True, this new pipe will be switched to, otherwise the current data pipe
+                        will remain as is.
+    @type switch:       bool
     """
 
     # List of valid data pipe types.
