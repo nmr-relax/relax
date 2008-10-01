@@ -27,7 +27,7 @@
 from math import log
 
 # relax module imports.
-from pipes import get_type, switch
+from pipes import get_type, has_pipe, pipe_names, switch
 from relax_errors import RelaxError, RelaxPipeError
 from specific_fns.setup import get_specific_fn
 
@@ -115,13 +115,13 @@ def select(method=None, modsel_pipe=None, pipes=None):
     """
 
     # Test if the pipe already exists.
-    if pipes.has_pipe(modsel_pipe):
+    if has_pipe(modsel_pipe):
         raise RelaxPipeError, modsel_pipe
 
     # Use all pipes.
     if pipes == None:
         # Get all data pipe names from the relax data store.
-        pipes = pipes.pipe_names()
+        pipes = pipe_names()
 
     # Select the model selection technique.
     if method == 'AIC':
