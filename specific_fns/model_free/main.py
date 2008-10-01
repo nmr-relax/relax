@@ -30,7 +30,6 @@ from string import replace, split
 import sys
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from float import isNaN,isInf
 from generic_fns import diffusion_tensor, pipes, relax_data, sequence
 from generic_fns.mol_res_spin import convert_from_global_index, count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, spin_index_loop, spin_loop
