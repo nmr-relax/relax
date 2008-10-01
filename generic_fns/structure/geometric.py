@@ -215,7 +215,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         # The chain identifier.
         chain_id = ascii_uppercase[pipe_index]
 
-        # Atom ID extension (allow for multiple chains for hybrid runs).
+        # Atom ID extension (allow for multiple chains for hybrid data pipes).
         atom_id_ext = '_' + chain_id
 
         # Print out.
