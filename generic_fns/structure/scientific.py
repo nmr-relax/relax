@@ -37,7 +37,6 @@ from warnings import warn
 
 # relax module imports.
 from api_base import Base_struct_API
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import Selection, parse_token, tokenise
 from relax_errors import RelaxError, RelaxPdbLoadError
@@ -548,14 +547,7 @@ class Scientific_data(Base_struct_API):
             name = name + "_" + `model`
 
         # Use pointers (references) if the PDB data exists in another data pipe.
-        for key in ds:
-            # Skip the current pipe.
-            if key == pipes.cdp_name():
-                continue
-
-            # Get the data pipe.
-            data_pipe = pipes.get_pipe(key)
-
+        for data_pipe in pipes.pipe_loop():
             # Structure exists.
             if hasattr(data_pipe, 'structure'):
                 # Loop over the structures.
