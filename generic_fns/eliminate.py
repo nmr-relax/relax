@@ -55,20 +55,20 @@ def eliminate(function=None, args=None):
 
     # Specific eliminate, parameter names, parameter values, number of instances, and deselect function setup.
     eliminate = get_specific_fn('eliminate', cdp.pipe_type)
+    model_loop = get_specific_fn('model_loop', cdp.pipe_type)
     param_names = get_specific_fn('param_names', cdp.pipe_type)
     param_values = get_specific_fn('param_values', cdp.pipe_type)
-    num_instances = get_specific_fn('num_instances', cdp.pipe_type)
     deselect = get_specific_fn('deselect', cdp.pipe_type)
 
+    # Determine if simulations are active.
+    if hasattr(cdp, 'sim_state') and cdp.sim_state == True:
+        sim_state = True
+    else:
+        sim_state = False
+
+
     # Get the number of instances and loop over them.
-    for i in xrange(num_instances()):
-        # Determine if simulations are active.
-        if hasattr(cdp, 'sim_state') and cdp.sim_state == True:
-            sim_state = True
-        else:
-            sim_state = False
-
-
+    for model_info in model_loop():
         # Model elimination.
         ####################
 
