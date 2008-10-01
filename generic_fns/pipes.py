@@ -189,16 +189,24 @@ def list():
         print "%-20s%-20s" % (pipe_name, get_type(pipe_name))
 
 
-def pipe_loop():
+def pipe_loop(name=False):
     """Generator function for looping over and yielding the data pipes.
 
-    @return:        The data pipes.
-    @rtype:         PipeContainer instance
+    @keyword name:  A flag which if True will cause the name of the pipe to be returned.
+    @type name:     bool
+    @return:        The data pipes, and optionally the pipe names.
+    @rtype:         PipeContainer instance or tuple of PipeContainer instance and str if name=True
     """
 
     # Loop over the keys.
-    for name in ds.keys():
-        yield ds[name]
+    for key in ds.keys():
+        # Return the pipe and name.
+        if name:
+            yield ds[key], key
+
+        # Return just the pipe.
+        else:
+            yield ds[key]
 
 
 def pipe_names():
