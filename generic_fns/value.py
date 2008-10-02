@@ -29,11 +29,10 @@ from re import compile, match
 import sys
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import diffusion_tensor, minimise
+from generic_fns import diffusion_tensor, minimise, pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
 from generic_fns.sequence import write_header, write_line
-from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxParamSetError, RelaxValueError
+from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoSequenceError, RelaxParamSetError, RelaxValueError
 from relax_io import extract_data, open_write_file, strip
 from specific_fns.setup import get_specific_fn
 
@@ -52,13 +51,12 @@ def copy(pipe_from=None, pipe_to=None, param=None):
 
     # The current data pipe.
     if pipe_from == None:
-        pipe_from = ds.current_pipe
+        pipe_from = pipes.cdp_name()
     if pipe_to == None:
-        pipe_to = ds.current_pipe
+        pipe_to = pipes.cdp_name()
 
     # The second pipe does not exist.
-    if pipe_to not in ds.keys():
-        raise RelaxNoPipeError, pipe_to
+    pipes.test(pipe_to)
 
     # Test if the sequence data for pipe_from is loaded.
     if not exists_mol_res_spin_data(pipe_from):
@@ -69,10 +67,10 @@ def copy(pipe_from=None, pipe_to=None, param=None):
         raise RelaxNoSequenceError, pipe_to
 
     # Specific value and error returning function.
-    return_value = get_specific_fn('return_value', ds[pipe_from].pipe_type)
+    return_value = get_specific_fn('return_value', pipes.get_type(pipe_from))
 
     # Specific set function.
-    set = get_specific_fn('set', ds[pipe_from].pipe_type)
+    set = get_specific_fn('set', pipes.get_type(pipe_from))
 
     # Test if the data exists for pipe_to.
     for spin in spin_loop(pipe_to):
@@ -106,8 +104,7 @@ def display(param=None):
     """
 
     # Test if the current pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Test if the sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -133,7 +130,7 @@ def partition_params(val, param):
     """
 
     # Specific functions.
-    is_spin_param = get_specific_fn('is_spin_param', ds[ds.current_pipe].pipe_type)
+    is_spin_param = get_specific_fn('is_spin_param', pipes.get_type())
 
     # Initialise.
     spin_params = []
@@ -229,8 +226,7 @@ def read(param=None, scaling=1.0, file=None, dir=None, mol_name_col=None, res_nu
     """
 
     # Test if the current pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -253,10 +249,10 @@ def read(param=None, scaling=1.0, file=None, dir=None, mol_name_col=None, res_nu
         min_stat = False
 
         # Specific v
-        return_value = get_specific_fn('return_value', ds[ds.current_pipe].pipe_type)
+        return_value = get_specific_fn('return_value', pipes.get_type())
 
         # Specific set function.
-        set = get_specific_fn('set', ds[ds.current_pipe].pipe_type)
+        set = get_specific_fn('set', pipes.get_type())
 
     # Test data corresponding to param already exists.
     for spin in spin_loop():
@@ -369,12 +365,11 @@ def set(val=None, param=None, spin_id=None, force=False, reset=True):
     """
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Specific functions.
-    return_value = get_specific_fn('return_value', ds[ds.current_pipe].pipe_type)
-    set_non_spin_params = get_specific_fn('set_non_spin_params', ds[ds.current_pipe].pipe_type)
+    return_value = get_specific_fn('return_value', pipes.get_type())
+    set_non_spin_params = get_specific_fn('set_non_spin_params', pipes.get_type())
 
     # The parameters have been specified.
     if param:
@@ -462,10 +457,10 @@ def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
     """
 
     # Specific functions.
-    data_init = get_specific_fn('data_init', ds[ds.current_pipe].pipe_type)
-    default_value = get_specific_fn('default_value', ds[ds.current_pipe].pipe_type)
-    return_data_name = get_specific_fn('return_data_name', ds[ds.current_pipe].pipe_type)
-    set_update = get_specific_fn('set_update', ds[ds.current_pipe].pipe_type)
+    data_init = get_specific_fn('data_init', pipes.get_type())
+    default_value = get_specific_fn('default_value', pipes.get_type())
+    return_data_name = get_specific_fn('return_data_name', pipes.get_type())
+    set_update = get_specific_fn('set_update', pipes.get_type())
 
 
     # Setting the model parameters prior to minimisation.
@@ -579,8 +574,7 @@ def write(param=None, file=None, dir=None, force=False, return_value=None):
     """
 
     # Test if the current pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Test if the sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -601,7 +595,7 @@ def write_data(param=None, file=None, return_value=None):
 
     # Get the value and error returning function if required.
     if not return_value:
-        return_value = get_specific_fn('return_value', ds[ds.current_pipe].pipe_type)
+        return_value = get_specific_fn('return_value', pipes.get_type())
 
     # Format string.
     format = "%-30s%-30s"

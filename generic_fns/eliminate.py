@@ -27,8 +27,8 @@
 from copy import deepcopy
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
-from relax_errors import RelaxError, RelaxNoPipeError
+from generic_fns import pipes
+from relax_errors import RelaxError
 from specific_fns.setup import get_specific_fn
 
 
@@ -48,35 +48,34 @@ def eliminate(function=None, args=None):
     """
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Specific eliminate, parameter names, parameter values, number of instances, and deselect function setup.
     eliminate = get_specific_fn('eliminate', cdp.pipe_type)
+    model_loop = get_specific_fn('model_loop', cdp.pipe_type)
     param_names = get_specific_fn('param_names', cdp.pipe_type)
     param_values = get_specific_fn('param_values', cdp.pipe_type)
-    num_instances = get_specific_fn('num_instances', cdp.pipe_type)
     deselect = get_specific_fn('deselect', cdp.pipe_type)
 
+    # Determine if simulations are active.
+    if hasattr(cdp, 'sim_state') and cdp.sim_state == True:
+        sim_state = True
+    else:
+        sim_state = False
+
+
     # Get the number of instances and loop over them.
-    for i in xrange(num_instances()):
-        # Determine if simulations are active.
-        if hasattr(cdp, 'sim_state') and cdp.sim_state == True:
-            sim_state = True
-        else:
-            sim_state = False
-
-
+    for model_info in model_loop():
         # Model elimination.
         ####################
 
         if not sim_state:
             # Get the parameter names and values.
-            names = param_names(i)
-            values = param_values(i)
+            names = param_names(model_info)
+            values = param_values(model_info)
 
             # No data.
             if names == None or values == None:
@@ -90,12 +89,12 @@ def eliminate(function=None, args=None):
             flag = False
             for j in xrange(len(names)):
                 # Eliminate function.
-                if eliminate(names[j], values[j], i, args):
+                if eliminate(names[j], values[j], model_info, args):
                     flag = True
 
             # Deselect.
             if flag:
-                deselect(i)
+                deselect(model_info)
 
 
         # Simulation elimination.
@@ -105,8 +104,8 @@ def eliminate(function=None, args=None):
             # Loop over the simulations.
             for j in xrange(cdp.sim_number):
                 # Get the parameter names and values.
-                names = param_names(i)
-                values = param_values(i, sim_index=j)
+                names = param_names(model_info)
+                values = param_values(model_info, sim_index=j)
 
                 # No data.
                 if names == None or values == None:
@@ -120,9 +119,9 @@ def eliminate(function=None, args=None):
                 flag = False
                 for k in xrange(len(names)):
                     # Eliminate function.
-                    if eliminate(names[k], values[k], i, args):
+                    if eliminate(names[k], values[k], model_info, args):
                         flag = True
 
                 # Deselect.
                 if flag:
-                    deselect(i, sim_index=j)
+                    deselect(model_info, sim_index=j)

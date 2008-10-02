@@ -26,7 +26,7 @@ import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-
+from generic_fns import pipes
 
 
 class Generic(TestCase):
@@ -42,13 +42,13 @@ class Generic(TestCase):
         """S2 difference stored in a new data pipe."""
 
         # Init.
-        pipes = ['orig1', 'orig2', 'new']
+        pipe_list = ['orig1', 'orig2', 'new']
         s2 = [0.9, 0.7, None]
 
         # Loop over the data pipes to create and fill.
         for i in xrange(3):
             # Create the data pipe.
-            self.relax.interpreter._Pipe.create(pipes[i], 'mf')
+            self.relax.interpreter._Pipe.create(pipe_list[i], 'mf')
 
             # Load the Lupin Ap4Aase sequence.
             self.relax.interpreter._Sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/system_tests/data")
@@ -60,9 +60,14 @@ class Generic(TestCase):
             if s2[i]:
                 self.relax.interpreter._Value.set(s2[i], 'S2', spin_id=':8')
 
+        # Get the data pipes.
+        dp_orig1 = pipes.get_pipe('orig1')
+        dp_orig2 = pipes.get_pipe('orig2')
+        dp_new = pipes.get_pipe('new')
+
         # Calculate the difference and assign it to residue 8 (located in position 7).
-        diff = ds['orig1'].mol[0].res[7].spin[0].s2 - ds['orig2'].mol[0].res[7].spin[0].s2
+        diff = dp_orig1.mol[0].res[7].spin[0].s2 - dp_orig2.mol[0].res[7].spin[0].s2
         self.relax.interpreter._Value.set(diff, 'S2', spin_id=':8')
 
         # Test if the difference is 0.2!
-        self.assertAlmostEqual(ds['new'].mol[0].res[7].spin[0].s2, 0.2)
+        self.assertAlmostEqual(dp_new.mol[0].res[7].spin[0].s2, 0.2)

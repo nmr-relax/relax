@@ -27,10 +27,9 @@
 from copy import deepcopy
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_loop
 import pipes
-from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError
+from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoSequenceError, RelaxSequenceError
 from relax_io import extract_data, open_write_file, strip
 import sys
 
@@ -54,9 +53,9 @@ def copy(pipe_from=None, pipe_to=None, verbose=True):
     if pipe_from == None and pipe_to == None:
         raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
     elif pipe_from == None:
-        pipe_from = ds.current_pipe
+        pipe_from = pipes.cdp_name()
     elif pipe_to == None:
-        pipe_to = ds.current_pipe
+        pipe_to = pipes.cdp_name()
 
     # Test if the pipe_from and pipe_to data pipes exist.
     pipes.test(pipe_from)
@@ -132,7 +131,10 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
 
     # The current data pipe.
     if pipe == None:
-        pipe = ds.current_pipe
+        pipe = pipes.cdp_name()
+
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
 
     # Get the molecule.
     curr_mol = return_molecule(generate_spin_id(mol_name=mol_name), pipe=pipe)
@@ -140,8 +142,8 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
     # A new molecule.
     if not curr_mol:
         # Add the molecule (and store it in the 'curr_mol' object).
-        ds[pipe].mol.add_item(mol_name=mol_name)
-        curr_mol = ds[pipe].mol[-1]
+        dp.mol.add_item(mol_name=mol_name)
+        curr_mol = dp.mol[-1]
 
     # Get the residue.
     curr_res = return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name), pipe=pipe)

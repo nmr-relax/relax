@@ -30,14 +30,13 @@ from string import replace, split
 import sys
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from float import isNaN,isInf
 from generic_fns import diffusion_tensor, pipes, relax_data, sequence
 from generic_fns.mol_res_spin import convert_from_global_index, count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, spin_index_loop, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
 from physical_constants import N15_CSA, NH_BOND_LENGTH
-from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSpinSpecError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxTensorError
+from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoSpinSpecError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxTensorError
 import specific_fns
 
 
@@ -119,7 +118,7 @@ class Model_free_main:
         param_names = []
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Diffusion tensor parameters.
         if model_type == 'diff' or model_type == 'all':
@@ -180,7 +179,7 @@ class Model_free_main:
             model_type = self.determine_model_type()
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Diffusion tensor parameters.
         if model_type == 'diff' or model_type == 'all':
@@ -345,7 +344,7 @@ class Model_free_main:
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Initialise.
         if num_params == 0:
@@ -491,11 +490,10 @@ class Model_free_main:
         """
 
         # Test if the current data pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Test if the pipe type is 'mf'.
-        function_type = ds[ds.current_pipe].pipe_type
+        function_type = pipes.get_type()
         if function_type != 'mf':
             raise RelaxFuncSetupError, specific_fns.get_string(function_type)
 
@@ -845,18 +843,14 @@ class Model_free_main:
             return '1H'
 
 
-    def delete(self, run):
-        """Function for deleting all model-free data."""
-
-        # Arguments.
-        self.run = run
+    def delete(self):
+        """Delete all the model-free data."""
 
         # Test if the current pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Test if the pipe type is set to 'mf'.
-        function_type = ds[ds.current_pipe].pipe_type
+        function_type = pipes.get_type()
         if function_type != 'mf':
             raise RelaxFuncSetupError, specific_fns.setup.get_string(function_type)
 
@@ -867,22 +861,59 @@ class Model_free_main:
         # Get all data structure names.
         names = self.data_names()
 
-        # Loop over the sequence.
-        for i in xrange(len(ds.res[self.run])):
-            # Remap the data structure 'ds.res[self.run][i]'.
-            data = ds.res[self.run][i]
-
+        # Loop over the spins.
+        for spin in spin_loop():
             # Loop through the data structure names.
             for name in names:
                 # Skip the data structure if it does not exist.
-                if not hasattr(data, name):
+                if not hasattr(spin, name):
                     continue
 
                 # Delete the data.
-                delattr(data, name)
+                delattr(spin, name)
 
-        # Clean up the runs.
-        self.relax.generic.runs.eliminate_unused_runs()
+
+    def deselect(self, model_index, sim_index=None):
+        """Deselect models or simulations.
+
+        @keyword model_index:   The model index.  This is zero for the global models or equal to the
+                                global spin index (which covers the molecule, residue, and spin
+                                indices).
+        @type model_index:      int
+        @keyword sim_index:     The Monte Carlo simulation index.  If None, then models will be
+                                deselected, otherwise the given simulation will.
+        @type sim_index:        int
+        """
+
+        # Determine the model type.
+        model_type = self.determine_model_type()
+
+        # Local models.
+        if model_type == 'mf' or model_type == 'local_tm':
+            # Get the spin.
+            spin = return_spin_from_index(model_index)
+
+            # Spin deselection.
+            if sim_index == None:
+                spin.select = False
+
+            # Simulation deselection.
+            else:
+                spin.select_sim[sim_index] = False
+
+        # Global models.
+        else:
+            # Global model deselection.
+            if sim_index == None:
+                raise RelaxError, "Cannot deselect the global model."
+
+            # Simulation deselection.
+            else:
+                # Get the current data pipe.
+                cdp = pipes.get_pipe()
+
+                # Deselect.
+                cdp.select_sim[sim_index] = False
 
 
     def determine_model_type(self):
@@ -894,7 +925,7 @@ class Model_free_main:
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -982,29 +1013,31 @@ class Model_free_main:
         if model_index == None:
             raise RelaxError, "The model_index argument cannot be None."
 
-        # First create the pipe_to data pipe, if it doesn't exist (restoring the current pipe at the end).
-        current_pipe = ds.current_pipe
-        if not ds.has_key(pipe_to):
-            pipes.create(pipe_to, pipe_type='mf')
-        ds.current_pipe = current_pipe
+        # First create the pipe_to data pipe, if it doesn't exist, but don't switch to it.
+        if not pipes.has_pipe(pipe_to):
+            pipes.create(pipe_to, pipe_type='mf', switch=False)
+
+        # Get the data pipes.
+        dp_from = pipes.get_pipe(pipe_from)
+        dp_to = pipes.get_pipe(pipe_to)
 
         # Duplicate all non-sequence specific data.
-        for data_name in dir(ds[pipe_from]):
+        for data_name in dir(dp_from):
             # Skip the container objects.
             if data_name in ['diff_tensor', 'mol', 'structure']:
                 continue
 
             # Skip special objects.
-            if search('^_', data_name) or data_name in ds[pipe_from].__class__.__dict__.keys():
+            if search('^_', data_name) or data_name in dp_from.__class__.__dict__.keys():
                 continue
 
             # Get the original object.
-            data_from = getattr(ds[pipe_from], data_name)
+            data_from = getattr(dp_from, data_name)
 
             # The data already exists.
-            if hasattr(ds[pipe_to], data_name):
+            if hasattr(dp_to, data_name):
                 # Get the object in the target pipe.
-                data_to = getattr(ds[pipe_to], data_name)
+                data_to = getattr(dp_to, data_name)
 
                 # The data must match!
                 if data_from != data_to:
@@ -1014,28 +1047,28 @@ class Model_free_main:
                 continue
 
             # Duplicate the data.
-            setattr(ds[pipe_to], data_name, deepcopy(data_from))
+            setattr(dp_to, data_name, deepcopy(data_from))
 
         # Diffusion tensor comparison.
-        if hasattr(ds[pipe_from], 'diff_tensor'):
+        if hasattr(dp_from, 'diff_tensor'):
             # Duplicate the tensor if it doesn't exist.
-            if not hasattr(ds[pipe_to], 'diff_tensor'):
-                setattr(ds[pipe_to], 'diff_tensor', deepcopy(ds[pipe_from].diff_tensor))
+            if not hasattr(dp_to, 'diff_tensor'):
+                setattr(dp_to, 'diff_tensor', deepcopy(dp_from.diff_tensor))
 
             # Otherwise compare the objects inside the container.
             else:
                 # Loop over the modifiable objects.
-                for data_name in ds[pipe_from].diff_tensor.__mod_attr__:
+                for data_name in dp_from.diff_tensor.__mod_attr__:
                     # Get the original object.
                     data_from = None
-                    if hasattr(ds[pipe_from].diff_tensor, data_name):
-                        data_from = getattr(ds[pipe_from].diff_tensor, data_name)
+                    if hasattr(dp_from.diff_tensor, data_name):
+                        data_from = getattr(dp_from.diff_tensor, data_name)
 
                     # Get the target object.
-                    if data_from and not hasattr(ds[pipe_to].diff_tensor, data_name):
+                    if data_from and not hasattr(dp_to.diff_tensor, data_name):
                         raise RelaxError, "The diffusion tensor object " + `data_name` + " of the " + `pipe_from` + " data pipe is not located in the " + `pipe_to` + " data pipe."
                     elif data_from:
-                        data_to = getattr(ds[pipe_to].diff_tensor, data_name)
+                        data_to = getattr(dp_to.diff_tensor, data_name)
                     else:
                         continue
 
@@ -1044,17 +1077,17 @@ class Model_free_main:
                         raise RelaxError, "The object " + `data_name` + " is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
 
         # Structure comparison.
-        if hasattr(ds[pipe_from], 'structure'):
+        if hasattr(dp_from, 'structure'):
             # Duplicate the tensor if it doesn't exist.
-            if not hasattr(ds[pipe_to], 'structure'):
-                setattr(ds[pipe_to], 'structure', deepcopy(ds[pipe_from].structure))
+            if not hasattr(dp_to, 'structure'):
+                setattr(dp_to, 'structure', deepcopy(dp_from.structure))
 
             # Otherwise compare the objects inside the container.
             else:
                 # Loop over the modifiable objects.
-                for data_name in dir(ds[pipe_from].structure):
+                for data_name in dir(dp_from.structure):
                     # Skip special objects (starting with _, or in the original class and base class namespaces).
-                    if search('^_', data_name) or data_name in ds[pipe_from].structure.__class__.__dict__.keys() or data_name in ds[pipe_from].structure.__class__.__bases__[0].__dict__.keys():
+                    if search('^_', data_name) or data_name in dp_from.structure.__class__.__dict__.keys() or data_name in dp_from.structure.__class__.__bases__[0].__dict__.keys():
                         continue
 
                     # Skip some more special objects.
@@ -1063,14 +1096,14 @@ class Model_free_main:
 
                     # Get the original object.
                     data_from = None
-                    if hasattr(ds[pipe_from].structure, data_name):
-                        data_from = getattr(ds[pipe_from].structure, data_name)
+                    if hasattr(dp_from.structure, data_name):
+                        data_from = getattr(dp_from.structure, data_name)
 
                     # Get the target object.
-                    if data_from and not hasattr(ds[pipe_to].structure, data_name):
+                    if data_from and not hasattr(dp_to.structure, data_name):
                         raise RelaxError, "The structural object " + `data_name` + " of the " + `pipe_from` + " data pipe is not located in the " + `pipe_to` + " data pipe."
                     elif data_from:
-                        data_to = getattr(ds[pipe_to].structure, data_name)
+                        data_to = getattr(dp_to.structure, data_name)
                     else:
                         continue
 
@@ -1088,22 +1121,22 @@ class Model_free_main:
         # Sequence specific data.
         if model_type == 'mf' or (model_type == 'local_tm' and not global_stats):
             # Duplicate the sequence data if it doesn't exist.
-            if ds[pipe_to].mol.is_empty():
+            if dp_to.mol.is_empty():
                 sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to, verbose=verbose)
 
             # Get the spin container indices.
             mol_index, res_index, spin_index = convert_from_global_index(global_index=model_index, pipe=pipe_from)
 
             # Duplicate the spin specific data.
-            ds[pipe_to].mol[mol_index].res[res_index].spin[spin_index] = deepcopy(ds[pipe_from].mol[mol_index].res[res_index].spin[spin_index])
+            dp_to.mol[mol_index].res[res_index].spin[spin_index] = deepcopy(dp_from.mol[mol_index].res[res_index].spin[spin_index])
 
         # Other data types.
         else:
             # Duplicate all the spin specific data.
-            ds[pipe_to].mol = deepcopy(ds[pipe_from].mol)
+            dp_to.mol = deepcopy(dp_from.mol)
 
 
-    def eliminate(self, name, value, run, i, args):
+    def eliminate(self, name, value, model_index, args):
         """
         Local tm model elimination rule
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1150,20 +1183,30 @@ class Model_free_main:
         if args != None:
             c1, c2 = args
 
-        # Get the tm value.
+        # Determine the model type.
+        model_type = self.determine_model_type()
+
+        # Can't handle this one yet!
+        if model_type != 'mf' or model_type != 'local_tm':
+            raise RelaxError, "Elimination of the global model is not yet supported."
+
+        # Get the spin and it's id string.
+        spin, spin_id = return_spin_from_index(model_index, return_spin_id=True)
+
+         # Get the tm value.
         if model_type == 'local_tm':
-            tm = ds.res[run][i].local_tm
+            tm = spin.local_tm
         else:
-            tm = ds.diff[run].tm
+            tm = cdp.diff_tensor.tm
 
         # Local tm.
         if name == 'local_tm' and value >= c1:
-            print "The local tm parameter of " + `value` + " is greater than " + `c1` + ", eliminating spin system " + `ds.res[run][i].num` + " " + ds.res[run][i].name + " of the run " + `run`
+            print "The local tm parameter of " + `value` + " is greater than " + `c1` + ", eliminating spin system " + `spin_id` + "."
             return 1
 
         # Internal correlation times.
         if match('t[efs]', name) and value >= c2 * tm:
-            print "The " + name + " value of " + `value` + " is greater than " + `c2 * tm` + ", eliminating spin system " + `ds.res[run][i].num` + " " + ds.res[run][i].name + " of the run " + `run`
+            print "The " + name + " value of " + `value` + " is greater than " + `c2 * tm` + ", eliminating spin system " + `spin_id` + "."
             return 1
 
         # Accept model.
@@ -1366,7 +1409,7 @@ class Model_free_main:
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Upper limit flag for correlation times.
         upper_time_limit = 1
@@ -1683,7 +1726,7 @@ class Model_free_main:
 
         # Test that no diffusion tensor exists if local tm is a parameter in the model.
         for param in params:
-            if param == 'local_tm' and hasattr(ds, 'diff_tensor'):
+            if param == 'local_tm' and hasattr(pipes.get_pipe(), 'diff_tensor'):
                 raise RelaxTensorError, 'diffusion'
 
         # Loop over the sequence.
@@ -1726,6 +1769,9 @@ class Model_free_main:
             raise RelaxError, "Either the instance or spin_id argument must be supplied."
         elif instance != None and spin_id != None:
             raise RelaxError, "The instance arg " + `instance` + " and spin_id arg " + `spin_id` + " clash.  Only one should be supplied."
+
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
 
         # Determine if local or global statistics will be returned.
         if global_stats == None:
@@ -1790,7 +1836,7 @@ class Model_free_main:
 
             # The chi2 value.
             if model_type != 'local_tm':
-                chi2 = ds[ds.current_pipe].chi2
+                chi2 = cdp.chi2
 
         # Return the data.
         return k, n, chi2
@@ -1833,7 +1879,7 @@ class Model_free_main:
             raise RelaxNoSequenceError
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Is structural data required?
         need_vect = False
@@ -1867,11 +1913,13 @@ class Model_free_main:
         """
 
         # Test if the current data pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
+
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
 
         # Test if the pipe type is 'mf'.
-        function_type = ds[ds.current_pipe].pipe_type
+        function_type = pipes.get_type()
         if function_type != 'mf':
             raise RelaxFuncSetupError, specific_fns.get_string(function_type)
 
@@ -1908,12 +1956,12 @@ class Model_free_main:
             spin.warning = None
 
         # Set the global minimisation stats to None.
-        ds[ds.current_pipe].chi2 = None
-        ds[ds.current_pipe].iter = None
-        ds[ds.current_pipe].f_count = None
-        ds[ds.current_pipe].g_count = None
-        ds[ds.current_pipe].h_count = None
-        ds[ds.current_pipe].warning = None
+        cdp.chi2 = None
+        cdp.iter = None
+        cdp.f_count = None
+        cdp.g_count = None
+        cdp.h_count = None
+        cdp.warning = None
 
 
     def return_conversion_factor(self, param, spin=None, spin_id=None):
@@ -2240,11 +2288,10 @@ class Model_free_main:
         """
 
         # Test if the current data pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Test if the pipe type is 'mf'.
-        function_type = ds[ds.current_pipe].pipe_type
+        function_type = pipes.get_type()
         if function_type != 'mf':
             raise RelaxFuncSetupError, specific_fns.get_string(function_type)
 
@@ -2564,7 +2611,7 @@ class Model_free_main:
         inc = 0
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Determine the model type.
         model_type = self.determine_model_type()
@@ -2689,9 +2736,12 @@ class Model_free_main:
         # Determine the model type.
         model_type = self.determine_model_type()
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Global model.
         if model_type == 'all' or model_type == 'diff':
-            ds[ds.current_pipe].select_sim = select_sim
+            cdp.select_sim = select_sim
 
         # Spin specific model.
         else:
@@ -2729,7 +2779,7 @@ class Model_free_main:
         """Initialise the Monte Carlo parameter values."""
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Determine the model type.
         model_type = self.determine_model_type()
@@ -2913,9 +2963,12 @@ class Model_free_main:
         # Determine the model type.
         model_type = self.determine_model_type()
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Single instance.
         if model_type == 'all' or model_type == 'diff':
-            return ds[ds.current_pipe].chi2_sim
+            return cdp.chi2_sim
 
         # Multiple instances.
         else:
@@ -2941,7 +2994,7 @@ class Model_free_main:
         inc = 0
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Determine the model type.
         model_type = self.determine_model_type()
@@ -3053,9 +3106,12 @@ class Model_free_main:
         # Determine the model type.
         model_type = self.determine_model_type()
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Single instance.
         if model_type == 'all' or model_type == 'diff':
-            return ds[ds.current_pipe].select_sim
+            return cdp.select_sim
 
         # Multiple instances.
         else:
@@ -3091,29 +3147,3 @@ class Model_free_main:
 
         # Don't skip.
         return False
-
-
-    def deselect(self, run, i, sim_index=None):
-        """Function for deselecting models or simulations."""
-
-        # Arguments.
-        self.run = run
-
-        # Determine the model type.
-        model_type = self.determine_model_type()
-
-        # Simulation deselect.
-        if sim_index != None:
-            # Single instance.
-            if model_type == 'mf' or model_type == 'local_tm':
-                ds.res[self.run][i].select_sim[sim_index] = 0
-
-            # Multiple instances.
-            else:
-                ds.select_sim[self.run][sim_index] = 0
-
-        # Residue deselect.
-        else:
-            # Single residue.
-            if model_type == 'mf' or model_type == 'local_tm':
-                ds.res[self.run][i].select = 0

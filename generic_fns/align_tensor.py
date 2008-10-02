@@ -32,10 +32,9 @@ import sys
 
 # relax module imports.
 from angles import wrap_angles
-from data import Relax_data_store; ds = Relax_data_store()
 from data.align_tensor import AlignTensorList
+from generic_fns import pipes
 from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
-import pipes
 from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
 
@@ -52,11 +51,14 @@ def align_data_exists(tensor, pipe=None):
 
     # The data pipe to check.
     if pipe == None:
-        pipe = ds.current_pipe
+        pipe = pipes.cdp_name()
+
+    # Get the data pipe.
+    pipe = pipes.get_pipe(pipe)
 
     # Test if an alignment tensor corresponding to the arg 'tensor' exists.
-    if hasattr(ds[pipe], 'align_tensors'):
-        for data in ds[pipe].align_tensors:
+    if hasattr(pipe, 'align_tensors'):
+        for data in pipe.align_tensors:
             if data.name == tensor:
                 return True
     else:
@@ -82,13 +84,17 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
     if tensor_from == tensor_to and pipe_from == None and pipe_to == None:
         raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None when the tensor names are the same."
     elif pipe_from == None:
-        pipe_from = ds.current_pipe
+        pipe_from = pipes.cdp_name()
     elif pipe_to == None:
-        pipe_to = ds.current_pipe
+        pipe_to = pipes.cdp_name()
 
     # Test if the pipe_from and pipe_to data pipes exist.
     pipes.test(pipe_from)
     pipes.test(pipe_to)
+
+    # Get the data pipes.
+    dp_from = pipes.get_pipe(pipe_from)
+    dp_to = pipes.get_pipe(pipe_to)
 
     # Test if pipe_from contains alignment tensor data.
     if not align_data_exists(tensor_from, pipe_from):
@@ -99,8 +105,8 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
         raise RelaxTensorError, 'alignment'
 
     # Create the align_tensors dictionary if it doesn't yet exist.
-    if not hasattr(ds[pipe_to], 'align_tensors'):
-        ds[pipe_to].align_tensors = AlignTensorList()
+    if not hasattr(dp_to, 'align_tensors'):
+        dp_to.align_tensors = AlignTensorList()
 
     # Find the tensor index.
     index_from = get_tensor_index(tensor_from, pipe_from)
@@ -108,9 +114,9 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
 
     # Copy the data.
     if index_to == None:
-        ds[pipe_to].align_tensors.append(deepcopy(ds[pipe_from].align_tensors[index_from]))
+        dp_to.align_tensors.append(deepcopy(dp_from.align_tensors[index_from]))
     else:
-        ds[pipe_to].align_tensors[index_to] = deepcopy(ds[pipe_from].align_tensors[index_from])
+        dp_to.align_tensors[index_to] = deepcopy(dp_from.align_tensors[index_from])
 
 
 def data_names():
@@ -166,7 +172,7 @@ def delete(tensor):
     """
 
     # Test if the current data pipe exists.
-    pipes.test(ds.current_pipe)
+    pipes.test()
 
     # Test if alignment tensor data exists.
     if not align_data_exists(tensor):
@@ -176,7 +182,7 @@ def delete(tensor):
     index = get_tensor_index(tensor)
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Delete the alignment data.
     cdp.align_tensors.pop(index)
@@ -194,12 +200,15 @@ def display(tensor):
     """
 
     # Test if the current data pipe exists.
-    pipes.test(ds.current_pipe)
+    pipes.test()
+
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
 
     # All tensors.
     if tensor == None:
         # Loop over the tensors.
-        for tensor in ds[ds.current_pipe].align_tensors:
+        for tensor in cdp.align_tensors:
             # Header.
             print "Tensor: " + tensor.name + "\n"
 
@@ -296,7 +305,7 @@ def fold_angles(sim_index=None):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
 
     # Wrap the angles.
@@ -360,17 +369,17 @@ def get_tensor_index(tensor, pipe=None):
 
     # The data pipe to check.
     if pipe == None:
-        pipe = ds.current_pipe
+        pipe = pipes.cdp_name()
 
-    # Alias the current data pipe.
-    cdp = ds[pipe]
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
 
     # Init.
     index = None
 
     # Loop over the tensors.
-    for i in xrange(len(cdp.align_tensors)):
-        if cdp.align_tensors[i].name == tensor:
+    for i in xrange(len(dp.align_tensors)):
+        if dp.align_tensors[i].name == tensor:
             index = i
 
     # Return the index.
@@ -390,10 +399,10 @@ def get_tensor_object(tensor, pipe=None):
 
     # The data pipe to check.
     if pipe == None:
-        pipe = ds.current_pipe
+        pipe = pipes.cdp_name()
 
-    # Alias the current data pipe.
-    cdp = ds[pipe]
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
 
     # Init.
     data = None
@@ -427,10 +436,10 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
     """
 
     # Test if the current data pipe exists.
-    pipes.test(ds.current_pipe)
+    pipes.test()
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test if alignment tensor data already exists.
     if align_data_exists(tensor):
@@ -721,7 +730,7 @@ def matrix_angles(basis_set=0, tensors=None):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test that alignment tensor data exists.
     if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0:
@@ -773,7 +782,7 @@ def matrix_angles(basis_set=0, tensors=None):
     cdp.align_tensors.angles = zeros((tensor_num, tensor_num), float64)
 
     # Header print out.
-    sys.stdout.write("\nData pipe: " + `ds.current_pipe` + "\n")
+    sys.stdout.write("\nData pipe: " + `pipes.cdp_name()` + "\n")
     sys.stdout.write("\n5D angles in deg between the vectors ")
     if basis_set == 0:
         sys.stdout.write("{Sxx, Syy, Sxy, Sxz, Syz}")
@@ -1044,7 +1053,7 @@ def set(tensor=None, value=None, param=None):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Initialise.
     geo_params = []
@@ -1366,7 +1375,7 @@ def svd(basis_set=0, tensors=None):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test that alignment tensor data exists.
     if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0:
@@ -1418,7 +1427,7 @@ def svd(basis_set=0, tensors=None):
     cdp.align_tensors.cond_num = s[0] / s[-1]
 
     # Print out.
-    print "\nData pipe: " + `ds.current_pipe`
+    print "\nData pipe: " + `pipes.cdp_name()`
     print "\nSingular values:"
     for val in s:
         print "\t" + `val`

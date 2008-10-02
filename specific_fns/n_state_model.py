@@ -32,13 +32,13 @@ from re import search
 from warnings import warn
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from float import isNaN, isInf
 import generic_fns
-import generic_fns.structure.geometric
-import generic_fns.structure.mass
 from generic_fns.mol_res_spin import spin_loop
+from generic_fns import pipes
+import generic_fns.structure.geometric
 from generic_fns.structure.internal import Internal
+import generic_fns.structure.mass
 from maths_fns.n_state_model import N_state_opt
 from maths_fns.rotation_matrix import R_2vect, R_euler_zyz
 from physical_constants import dipolar_constant, g1H, pcs_constant, return_gyromagnetic_ratio
@@ -62,7 +62,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if the model is selected.
         if not hasattr(cdp, 'model') or type(cdp.model) != str:
@@ -137,7 +137,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Initialise.
         scaling_matrix = identity(self.param_num(), float64)
@@ -167,6 +167,9 @@ class N_state_model(Common_functions):
         @rtype:     list of str
         """
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Array of data types.
         list = []
 
@@ -183,7 +186,7 @@ class N_state_model(Common_functions):
                 break
 
         # Alignment tensor search.
-        if not ('rdc' in list or 'pcs' in list) and hasattr(ds[ds.current_pipe], 'align_tensors'):
+        if not ('rdc' in list or 'pcs' in list) and hasattr(cdp, 'align_tensors'):
             list.append('tensor')
 
         # No data is present.
@@ -212,7 +215,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if the model is selected.
         if not hasattr(cdp, 'model') or type(cdp.model) != str:
@@ -339,7 +342,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Starting point of the populations.
         pop_start = 0
@@ -447,7 +450,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Initialise.
         pcs = []
@@ -565,7 +568,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Initialise.
         rdcs = []
@@ -659,7 +662,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Initialise.
         full_tensors = []
@@ -713,14 +716,14 @@ class N_state_model(Common_functions):
     def __q_factors_rdc(self):
         """Calculate the Q-factors for the RDC data."""
 
-        # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
 
         # Q-factor list.
         cdp.q_factors_rdc = []
 
         # Loop over the alignments.
-        for i in xrange(len(ds[ds.current_pipe].align_tensors)):
+        for i in xrange(len(cdp.align_tensors)):
             # Init.
             D2_sum = 0.0
             sse = 0.0
@@ -756,14 +759,14 @@ class N_state_model(Common_functions):
     def __q_factors_pcs(self):
         """Calculate the Q-factors for the PCS data."""
 
-        # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
 
         # Q-factor list.
         cdp.q_factors_pcs = []
 
         # Loop over the alignments.
-        for i in xrange(len(ds[ds.current_pipe].align_tensors)):
+        for i in xrange(len(cdp.align_tensors)):
             # Init.
             pcs2_sum = 0.0
             sse = 0.0
@@ -800,7 +803,7 @@ class N_state_model(Common_functions):
         """Update the model parameters as necessary."""
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Initialise the list of model parameters.
         if not hasattr(cdp, 'params'):
@@ -885,11 +888,10 @@ class N_state_model(Common_functions):
         """
 
         # Test if the current data pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Set the pivot point.
         cdp.pivot_point = pivot_point
@@ -980,7 +982,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if the cone models have been determined.
         if cone_type == 'diff in cone':
@@ -1066,11 +1068,14 @@ class N_state_model(Common_functions):
         """
         __docformat__ = "plaintext"
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Split the parameter into its base name and index.
         name, index = self.return_data_name(param, index=True)
 
         # The number of states as a float.
-        N = float(ds[ds.current_pipe].N)
+        N = float(cdp.N)
 
         # Probability.
         if name == 'probs':
@@ -1103,7 +1108,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if the N-state model has been set up.
         if not hasattr(cdp, 'model'):
@@ -1203,7 +1208,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if the N-state model has been set up.
         if not hasattr(cdp, 'model'):
@@ -1358,8 +1363,11 @@ class N_state_model(Common_functions):
         @rtype:                 tuple of (int, int, float)
         """
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Return the values.
-        return self.param_num(), self.num_data_points(), ds[ds.current_pipe].chi2
+        return self.param_num(), self.num_data_points(), cdp.chi2
 
 
     def num_data_points(self):
@@ -1368,6 +1376,9 @@ class N_state_model(Common_functions):
         @return:    The number, n, of data points in the model.
         @rtype:     int
         """
+
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
 
         # Determine the data type.
         data_types = self.__base_data_types()
@@ -1397,7 +1408,7 @@ class N_state_model(Common_functions):
 
         # Alignment tensors.
         if 'tensor' in data_types:
-            n = n + 5*len(ds[ds.current_pipe].align_tensors)
+            n = n + 5*len(cdp.align_tensors)
 
         # Return the value.
         return n
@@ -1411,11 +1422,10 @@ class N_state_model(Common_functions):
         """
 
         # Test if the current data pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if the model is setup.
         if not hasattr(cdp, 'model'):
@@ -1436,11 +1446,10 @@ class N_state_model(Common_functions):
         """
 
         # Test if the current data pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if the model is setup.
         if not hasattr(cdp, 'model'):
@@ -1473,7 +1482,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Determine the data type.
         data_types = self.__base_data_types()
@@ -1620,11 +1629,10 @@ class N_state_model(Common_functions):
         """
 
         # Test if the current data pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if the model is setup.
         if hasattr(cdp, 'model'):
@@ -1668,7 +1676,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Loop over the tensors.
         match = False
@@ -1693,7 +1701,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Get the model parameters if param is None.
         if param == None:
@@ -1743,7 +1751,7 @@ class N_state_model(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Loop over the tensors.
         match = False

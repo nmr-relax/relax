@@ -27,8 +27,7 @@
 from math import log
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
-from pipes import switch
+from pipes import get_type, has_pipe, pipe_names, switch
 from relax_errors import RelaxError, RelaxPipeError
 from specific_fns.setup import get_specific_fn
 
@@ -116,13 +115,13 @@ def select(method=None, modsel_pipe=None, pipes=None):
     """
 
     # Test if the pipe already exists.
-    if ds.has_key(modsel_pipe):
+    if has_pipe(modsel_pipe):
         raise RelaxPipeError, modsel_pipe
 
     # Use all pipes.
     if pipes == None:
         # Get all data pipe names from the relax data store.
-        pipes = ds.keys()
+        pipes = pipe_names()
 
     # Select the model selection technique.
     if method == 'AIC':
@@ -160,28 +159,21 @@ def select(method=None, modsel_pipe=None, pipes=None):
         # Loop over the data pipes.
         for i in xrange(len(pipes)):
             for j in xrange(len(pipes[i])):
-                # Alias the data pipe name.
-                pipe = pipes[i][j]
-
                 # Specific duplicate data, number of instances, and model statistics functions.
-                count_num_instances[pipe] = get_specific_fn('num_instances', ds[pipe].pipe_type)
-                duplicate_data[pipe] = get_specific_fn('duplicate_data', ds[pipe].pipe_type)
-                model_statistics[pipe] = get_specific_fn('model_stats', ds[pipe].pipe_type)
-                skip_function[pipe] = get_specific_fn('skip_function', ds[pipe].pipe_type)
+                count_num_instances[pipes[i][j]] = get_specific_fn('num_instances', get_type(pipes[i][j]))
+                duplicate_data[pipes[i][j]] = get_specific_fn('duplicate_data', get_type(pipes[i][j]))
+                model_statistics[pipes[i][j]] = get_specific_fn('model_stats', get_type(pipes[i][j]))
+                skip_function[pipes[i][j]] = get_specific_fn('skip_function', get_type(pipes[i][j]))
 
     # All other model selection setup.
     else:
         # Loop over the data pipes.
         for i in xrange(len(pipes)):
-            # Alias the data pipe name.
-            pipe = pipes[i]
-
             # Specific duplicate data, number of instances, and model statistics functions.
-            count_num_instances[pipe] = get_specific_fn('num_instances', ds[pipe].pipe_type)
-            duplicate_data[pipe] = get_specific_fn('duplicate_data', ds[pipe].pipe_type)
-            model_statistics[pipe] = get_specific_fn('model_stats', ds[pipe].pipe_type)
-            skip_function[pipe] = get_specific_fn('skip_function', ds[pipe].pipe_type)
-
+            count_num_instances[pipes[i]] = get_specific_fn('num_instances', get_type(pipes[i]))
+            duplicate_data[pipes[i]] = get_specific_fn('duplicate_data', get_type(pipes[i]))
+            model_statistics[pipes[i]] = get_specific_fn('model_stats', get_type(pipes[i]))
+            skip_function[pipes[i]] = get_specific_fn('skip_function', get_type(pipes[i]))
 
     # Number of instances.  If the number is not the same for each data pipe, then the minimum
     # number will give the specific function model_statistics the opportunity to consolidate the

@@ -29,7 +29,7 @@ from numpy import float64, zeros
 
 # relax module imports.
 from base_map import Base_Map
-from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import pipes
 from generic_fns import value
 
 
@@ -75,7 +75,7 @@ class Iso3D(Base_Map):
         """Function for creating the text of a 3D map."""
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Initialise.
         values = zeros(3, float64)

@@ -33,8 +33,7 @@ from warnings import warn
 
 # relax module imports.
 from api_base import Base_struct_API
-from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import relax_re
+from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import Selection
 from relax_errors import RelaxError
 from relax_io import open_read_file
@@ -99,7 +98,8 @@ class Internal(Base_struct_API):
             self.path.append(path)
 
         # Initialise the structural object if not provided.
-        str = Structure_container()
+        if str == None:
+            str = Structure_container()
 
         # Add the structural data.
         if struct_index != None:
@@ -861,13 +861,10 @@ class Internal(Base_struct_API):
             name = name + "_" + `model`
 
         # Use pointers (references) if the PDB data exists in another pipe.
-        for key in ds:
+        for data_pipe, pipe_name in pipes.pipe_loop(name=True):
             # Skip the current pipe.
-            if key == ds.current_pipe:
+            if pipe_name == pipes.cdp_name():
                 continue
-
-            # Get the data pipe.
-            data_pipe = ds[key]
 
             # Structure exists.
             if hasattr(data_pipe, 'structure'):
@@ -879,7 +876,7 @@ class Internal(Base_struct_API):
 
                         # Print out.
                         if verbosity:
-                            print "Using the structures from the data pipe " + `key` + "."
+                            print "Using the structures from the data pipe " + `pipe_name` + "."
                             print self.structural_data[i]
 
                         # Exit this function.

@@ -27,9 +27,8 @@ from numpy.linalg import inv
 from re import match
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from float import isNaN, isInf
-from generic_fns import diffusion_tensor
+from generic_fns import diffusion_tensor, pipes
 from generic_fns.diffusion_tensor import diff_data_exists
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
@@ -81,7 +80,7 @@ class Mf_minimise:
             raise RelaxNoSequenceError
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Determine the model type.
         model_type = self.determine_model_type()
@@ -230,7 +229,7 @@ class Mf_minimise:
         param_index = 0
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Diffusion tensor parameters of the Monte Carlo simulations.
         if sim_index != None and (model_type == 'diff' or model_type == 'all'):
@@ -524,7 +523,7 @@ class Mf_minimise:
         model_type = self.determine_model_type()
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Minimisation options for diffusion tensor parameters.
         if model_type == 'diff' or model_type == 'all':
@@ -578,7 +577,7 @@ class Mf_minimise:
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Spherical diffusion {tm}.
         if cdp.diff_tensor.type == 'sphere':
@@ -758,7 +757,7 @@ class Mf_minimise:
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -1123,7 +1122,7 @@ class Mf_minimise:
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Initialise the data structures for the model-free function.
         relax_data = []
@@ -1275,7 +1274,7 @@ class Mf_minimise:
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Global stats.
         if hasattr(cdp, 'chi2'):

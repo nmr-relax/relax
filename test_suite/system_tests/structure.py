@@ -26,6 +26,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import pipes
 
 
 class Structure(TestCase):
@@ -54,7 +55,7 @@ class Structure(TestCase):
         self.relax.interpreter._Results.read(file='str', dir=path)
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test the structure metadata.
         self.assert_(hasattr(cdp, 'structure'))

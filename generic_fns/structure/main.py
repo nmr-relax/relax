@@ -29,13 +29,13 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import molmol, relax_re
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_loop
+from generic_fns import pipes
 from generic_fns.sequence import write_header, write_line
 from generic_fns.structure.internal import Internal
 from generic_fns.structure.scientific import Scientific_data
-from relax_errors import RelaxError, RelaxFileError, RelaxNoPipeError, RelaxNoSequenceError, RelaxPdbError
+from relax_errors import RelaxError, RelaxFileError, RelaxNoSequenceError, RelaxPdbError
 from relax_io import get_file_path, open_write_file
 from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
 
@@ -55,15 +55,14 @@ def load_spins(spin_id=None, str_id=None, ave_pos=False):
     """
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Print out.
     print "Adding the following spins to the relax data store.\n"
     write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Loop over all atoms of the spin_id selection.
     for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, str_id=str_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
@@ -166,11 +165,10 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', fail=True, ve
     """
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # The file path.
     file_path = get_file_path(file, dir)
@@ -241,7 +239,7 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test if the PDB file has been loaded.
     if not hasattr(cdp, 'structure'):
@@ -382,11 +380,10 @@ def write_pdb(file=None, dir=None, struct_index=None, force=False):
     """
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Check if the structural object exists.
     if not hasattr(cdp, 'structure'):

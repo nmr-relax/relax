@@ -1,34 +1,56 @@
-# Script for converting the model-free results into a LaTeX table.
-#
-# The longtable LaTeX package is necessary to allow the table to span multiple pages.  The package
-# can be included using the LaTeX command:
-#
-# \usepackage{longtable}
-#
-# Assuming the file name 'results.tex', the resultant table can be placed into a LaTeX manuscript
-# with the command:
-#
-# \input{results}
-#
+###############################################################################
+#                                                                             #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+#                                                                             #
+# This file is part of the program relax.                                     #
+#                                                                             #
+# relax is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# relax is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with relax; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+#                                                                             #
+###############################################################################
 
+"""Script for converting the model-free results into a LaTeX table.
+
+The longtable LaTeX package is necessary to allow the table to span multiple pages.  The package
+can be included using the LaTeX command:
+
+\usepackage{longtable}
+
+Assuming the file name 'results.tex', the resultant table can be placed into a LaTeX manuscript
+with the command:
+
+\input{results}
+"""
 
 # The relax data storage object.
-from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns.mol_res_spin import spin_loop
+from generic_fns import pipes
 
+
+# Name of the results file.
+RESULTS_FILE = 'final'
 
 
 class Latex:
-    def __init__(self, relax):
+    def __init__(self):
         """Convert the final results into a LaTeX table."""
 
-        self.relax = relax
-
-        # Create the run.
-        self.run = 'final'
-        pipe.create(self.run, 'mf')
+        # Create the data pipe.
+        pipe.create(RESULTS_FILE, 'mf')
 
         # Load the model-free results.
-        results.read(self.run, dir=None)
+        results.read(RESULTS_FILE, dir=None)
 
         # Open the file.
         self.file = open('results.tex', 'w')
@@ -65,6 +87,9 @@ class Latex:
     def headings(self):
         """Create the LaTeX table headings."""
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Spacing.
         self.file.write("\\\\[-5pt]\n")
 
@@ -79,7 +104,7 @@ class Latex:
         self.file.write("\multicolumn{2}{c}{$S^2_f$} &%\n")
         self.file.write("\multicolumn{2}{c}{$\\tau_e < 100$ or $\\tau_f$} &%\n")
         self.file.write("\multicolumn{2}{c}{$\\tau_e > 100$ or $\\tau_s$} &%\n")
-        self.file.write("\multicolumn{2}{c}{$R_{ex}$ (" + `ds.frq[self.run][0] / 1e6` + " MHz)} \\\\\n")
+        self.file.write("\multicolumn{2}{c}{$R_{ex}$ (" + `cdp.frq[0] / 1e6` + " MHz)} \\\\\n")
         self.file.write("\n")
 
         # Units.
@@ -143,56 +168,53 @@ class Latex:
         self.file.write("% The table body.\n")
 
         # Loop over the spin systems.
-        for i in xrange(len(ds.res[self.run])):
-            # Alias the spin system data container.
-            data = ds.res[self.run][i]
+        for spin, spin_id in spin_loop(return_id=True)
+            # The spin ID string.
+            self.file.write("%-20s & " % (spin.name + `spin.num`))
 
-            # The residue tag.
-            self.file.write("%-7s & " % (data.name + `data.num`))
-
-            # The residue is not selected.
-            if not data.select:
+            # The spin is not selected.
+            if not spin.select:
                 self.file.write("\\\n")
 
             # The model-free model.
-            self.file.write("$%s$ & " % data.model)
+            self.file.write("$%s$ & " % spin.model)
 
             # S2.
-            if data.s2 == None:
+            if spin.s2 == None:
                 self.file.write("%21s & " % "\\multicolumn{2}{c}{}")
             else:
-                self.file.write("%9.3f & %9.3f & " % (data.s2, data.s2_err))
+                self.file.write("%9.3f & %9.3f & " % (spin.s2, spin.s2_err))
 
             # S2f.
-            if data.s2f == None:
+            if spin.s2f == None:
                 self.file.write("%21s & " % "\\multicolumn{2}{c}{}")
             else:
-                self.file.write("%9.3f & %9.3f & " % (data.s2f, data.s2f_err))
+                self.file.write("%9.3f & %9.3f & " % (spin.s2f, spin.s2f_err))
 
             # Fast motion (te < 100 ps or tf).
-            if data.te != None and data.te <= 100 * 1e-12:
-                self.file.write("%9.2f & %9.2f & " % (data.te * 1e12, data.te_err * 1e12))
-            elif data.tf != None:
-                self.file.write("%9.2f & %9.2f & " % (data.tf * 1e12, data.tf_err * 1e12))
+            if spin.te != None and spin.te <= 100 * 1e-12:
+                self.file.write("%9.2f & %9.2f & " % (spin.te * 1e12, spin.te_err * 1e12))
+            elif spin.tf != None:
+                self.file.write("%9.2f & %9.2f & " % (spin.tf * 1e12, spin.tf_err * 1e12))
             else:
                 self.file.write("%21s & " % "\\multicolumn{2}{c}{}")
 
             # Slow motion (te > 100 ps or ts).
-            if data.te != None and data.te > 100 * 1e-12:
-                self.file.write("%9.2f & %9.2f & " % (data.te * 1e12, data.te_err * 1e12))
-            elif data.ts != None:
-                self.file.write("%9.2f & %9.2f & " % (data.ts * 1e12, data.ts_err * 1e12))
+            if spin.te != None and spin.te > 100 * 1e-12:
+                self.file.write("%9.2f & %9.2f & " % (spin.te * 1e12, spin.te_err * 1e12))
+            elif spin.ts != None:
+                self.file.write("%9.2f & %9.2f & " % (spin.ts * 1e12, spin.ts_err * 1e12))
             else:
                 self.file.write("%21s & " % "\\multicolumn{2}{c}{}")
 
             # Rex.
-            if data.rex == None:
+            if spin.rex == None:
                 self.file.write("%21s \\\\\n" % "\\multicolumn{2}{c}{}")
             else:
-                self.file.write("%9.3f & %9.3f \\\\\n" % (data.rex * (2.0 * pi * ds.frq[self.run][0])**2, data.rex_err * (2.0 * pi * ds.frq[self.run][0])**2))
+                self.file.write("%9.3f & %9.3f \\\\\n" % (spin.rex * (2.0 * pi * spin.frq[0])**2, spin.rex_err * (2.0 * pi * spin.frq[0])**2))
 
         # Start a new line.
         self.file.write("\n")
 
 
-Latex(self.relax)
+Latex()
