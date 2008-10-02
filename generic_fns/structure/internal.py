@@ -861,7 +861,7 @@ class Internal(Base_struct_API):
             name = name + "_" + `model`
 
         # Use pointers (references) if the PDB data exists in another pipe.
-        for data_pipe, name in pipes.pipe_loop(name=True):
+        for data_pipe, pipe_name in pipes.pipe_loop(name=True):
             # Structure exists.
             if hasattr(data_pipe, 'structure'):
                 # Loop over the structures.
@@ -872,7 +872,7 @@ class Internal(Base_struct_API):
 
                         # Print out.
                         if verbosity:
-                            print "Using the structures from the data pipe " + `name` + "."
+                            print "Using the structures from the data pipe " + `pipe_name` + "."
                             print self.structural_data[i]
 
                         # Exit this function.
