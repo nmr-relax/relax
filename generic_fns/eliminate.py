@@ -74,8 +74,8 @@ def eliminate(function=None, args=None):
 
         if not sim_state:
             # Get the parameter names and values.
-            names = param_names(i)
-            values = param_values(i)
+            names = param_names(model_info)
+            values = param_values(model_info)
 
             # No data.
             if names == None or values == None:
@@ -89,12 +89,12 @@ def eliminate(function=None, args=None):
             flag = False
             for j in xrange(len(names)):
                 # Eliminate function.
-                if eliminate(names[j], values[j], i, args):
+                if eliminate(names[j], values[j], model_info, args):
                     flag = True
 
             # Deselect.
             if flag:
-                deselect(i)
+                deselect(model_info)
 
 
         # Simulation elimination.
@@ -104,8 +104,8 @@ def eliminate(function=None, args=None):
             # Loop over the simulations.
             for j in xrange(cdp.sim_number):
                 # Get the parameter names and values.
-                names = param_names(i)
-                values = param_values(i, sim_index=j)
+                names = param_names(model_info)
+                values = param_values(model_info, sim_index=j)
 
                 # No data.
                 if names == None or values == None:
@@ -119,9 +119,9 @@ def eliminate(function=None, args=None):
                 flag = False
                 for k in xrange(len(names)):
                     # Eliminate function.
-                    if eliminate(names[k], values[k], i, args):
+                    if eliminate(names[k], values[k], model_info, args):
                         flag = True
 
                 # Deselect.
                 if flag:
-                    deselect(i, sim_index=j)
+                    deselect(model_info, sim_index=j)
