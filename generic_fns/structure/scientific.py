@@ -549,7 +549,7 @@ class Scientific_data(Base_struct_API):
         # Use pointers (references) if the PDB data exists in another data pipe.
         for data_pipe, pipe_name in pipes.pipe_loop(name=True):
             # Skip the current pipe.
-            if pipe_name = pipes.cdp_name():
+            if pipe_name == pipes.cdp_name():
                 continue
 
             # Structure exists.
