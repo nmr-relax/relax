@@ -1839,6 +1839,8 @@ class Model_free_main:
 
             # The chi2 value.
             if model_type != 'local_tm':
+                if not hasattr(cdp, 'chi2'):
+                    raise RelaxError, "Global statistics are not available, most likely because the global model has not been optimised."
                 chi2 = cdp.chi2
 
         # Return the data.
