@@ -87,6 +87,12 @@ class Main:
         # Model selection.
         self.model_selection(pipe='sphere')
 
+        # Final optimisation of all diffusion and model-free parameters.
+        fix('all', fixed=False)
+
+        # Minimise all parameters.
+        minimise(MIN_ALGOR, max_iter=10)
+
 
         # Final stage.
         ##############
