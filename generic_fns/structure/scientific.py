@@ -564,7 +564,7 @@ class Scientific_data(Base_struct_API):
             if hasattr(data_pipe, 'structure'):
                 # Loop over the structures.
                 for i in xrange(data_pipe.structure.num):
-                    if data_pipe.structure.name[i] == name and data_pipe.structure.id == 'scientific':
+                    if data_pipe.structure.name[i] == name and data_pipe.structure.id == 'scientific' and len(data_pipe.structure.structural_data):
                         # Add the structure.
                         self.add_struct(name=name, model=model, file=file, path=path, str=data_pipe.structure.structural_data[i], struct_index=struct_index)
 
