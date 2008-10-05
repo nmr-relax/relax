@@ -1110,19 +1110,16 @@ class Model_free_main:
                     if data_from != data_to:
                         raise RelaxError, "The object " + `data_name` + " is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
 
-        # No sequence data, so skip the rest.
-        if not exists_mol_res_spin_data():
-            return
+        # Duplicate the sequence data if it doesn't exist.
+        if dp_to.mol.is_empty():
+            sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to, preserve_select=True, verbose=verbose)
 
-        # Determine the model type.
+        # Determine the model type of the original data pipe.
+        pipes.switch(pipe_from)
         model_type = self.determine_model_type()
 
         # Sequence specific data.
         if model_type == 'mf' or (model_type == 'local_tm' and not global_stats):
-            # Duplicate the sequence data if it doesn't exist.
-            if dp_to.mol.is_empty():
-                sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to, preserve_select=True, verbose=verbose)
-
             # Get the spin container indices.
             mol_index, res_index, spin_index = convert_from_global_index(global_index=model_index, pipe=pipe_from)
 
