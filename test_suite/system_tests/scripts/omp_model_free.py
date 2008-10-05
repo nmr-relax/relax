@@ -49,7 +49,7 @@ class Main:
         self.multi_model(local_tm=True)
 
         # Model selection.
-        self.model_selection(pipe='aic')
+        self.model_selection(pipe='local_tm')
 
 
         #######################
@@ -60,8 +60,8 @@ class Main:
         ################################
 
         # Copy the model selection data pipe to a new pipe for the spherical diffusion tensor.
-        pipe.copy('aic', 'sphere')
-        pipe.switch('sphere')
+        pipe.copy('local_tm', 'sphere_init')
+        pipe.switch('sphere_init')
 
         # Remove the tm parameter.
         model_free.remove_tm()
@@ -82,12 +82,10 @@ class Main:
         ######################
 
         # Sequential optimisation of all model-free models.
-        pipe.copy('sphere', 'previous')
         self.multi_model(local_tm=False)
 
         # Model selection.
-        pipe.delete('aic')
-        self.model_selection(pipe='aic')
+        self.model_selection(pipe='sphere')
 
 
         # Final stage.
@@ -153,9 +151,9 @@ class Main:
             # Copy the relaxation data.
             relax_data.copy('data')
 
-            # Copy the diffusion tensor from the 'opt' data pipe and prevent it from being minimised.
+            # Copy the diffusion tensor from the 'sphere_init' data pipe and prevent it from being minimised.
             if not local_tm:
-                diffusion_tensor.copy('previous')
+                diffusion_tensor.copy('sphere_init')
                 fix('diff')
 
             # Set all the necessary values.
