@@ -31,10 +31,18 @@ from data import Relax_data_store; ds = Relax_data_store()
 class Modelim(TestCase):
     """Class for testing model selection."""
 
+    def setUp(self):
+        """Set up for these system tests."""
+
+        # Create a model-free data pipe.
+        self.relax.interpreter._Pipe.create('elim', 'mf')
+
+
     def tearDown(self):
         """Reset the relax data storage object."""
 
         ds.__reset__()
+
 
     def test_te_200ns(self):
         """Test the elimination of a model-free model with te = 200 ns."""
