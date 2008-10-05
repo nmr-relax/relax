@@ -52,7 +52,7 @@ class Structure(TestCase):
         path = sys.path[-1] + '/test_suite/shared_data/structures'
 
         # Read the results file.
-        self.relax.interpreter._Results.read(file='str', dir=path)
+        self.relax.interpreter._Results.read(file='str_internal', dir=path)
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
