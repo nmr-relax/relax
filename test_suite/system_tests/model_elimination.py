@@ -62,3 +62,16 @@ class Modelim(TestCase):
         self.assert_(return_spin(':10').select)
         self.assert_(not return_spin(':11').select)
         self.assert_(return_spin(':12').select)
+
+
+    def test_tm_51ns(self):
+        """Test the elimination of a model-free model with the local tm = 51 ns."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/local_tm_model_elimination.py')
+
+        # Checks.
+        self.assert_(return_spin(':13').select)
+        self.assert_(return_spin(':14').select)
+        self.assert_(not return_spin(':15').select)
+        self.assert_(return_spin(':16').select)
