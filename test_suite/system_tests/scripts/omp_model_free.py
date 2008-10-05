@@ -26,6 +26,9 @@ GRID_INC = 3
 # The optimisation technique.
 MIN_ALGOR = 'simplex'
 
+# Number of Monte Carlo simulations.
+MC_NUM = 3
+
 
 class Main:
     def __init__(self, relax):
@@ -85,6 +88,30 @@ class Main:
         # Model selection.
         pipe.delete('aic')
         self.model_selection(pipe='aic')
+
+
+        # Final stage.
+        ##############
+
+        # Unfix all parameters (to switch to the global models).
+        fix('all', fixed=False)
+
+        # Model selection between MI to MV.
+        self.model_selection(pipe='final')
+
+        # Fix the diffusion tensor.
+        fix('diff')
+
+        # Monte Carlo simulations.
+        monte_carlo.setup(number=MC_NUM)
+        monte_carlo.create_data()
+        monte_carlo.initial_values()
+        minimise(MIN_ALGOR)
+        eliminate()
+        monte_carlo.error_analysis()
+
+        # Write the final results.
+        results.write(file='devnull', force=True)
 
 
     def model_selection(self, pipe=None):
