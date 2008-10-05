@@ -349,8 +349,8 @@ def read(param=None, scaling=1.0, file=None, dir=None, mol_name_col=None, res_nu
         minimise.reset_min_stats()
 
 
-def set(val=None, param=None, spin_id=None, force=False, reset=True):
-    """Function for setting residue specific data values.
+def set(val=None, param=None, spin_id=None, force=True, reset=True):
+    """Set global or spin specific data values.
 
     @keyword val:       The parameter values.
     @type val:          None, number, or list of numbers
@@ -401,7 +401,7 @@ def set(val=None, param=None, spin_id=None, force=False, reset=True):
 
             # Loop over the spins.
             for spin in spin_loop(spin_id):
-                # Skip deselected residues.
+                # Skip deselected spins.
                 if not spin.select:
                     continue
 
