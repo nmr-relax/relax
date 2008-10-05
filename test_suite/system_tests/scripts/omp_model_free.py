@@ -94,7 +94,8 @@ class Main:
         # Unfix all parameters (to switch to the global models).
         fix('all', fixed=False)
 
-        # Model selection between MI to MV.
+        # Model selection between 'local_tm' and 'sphere'.
+        self.pipes = ['local_tm', 'sphere']
         self.model_selection(pipe='final')
 
         # Fix the diffusion tensor.
