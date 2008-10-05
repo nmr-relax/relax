@@ -38,6 +38,7 @@ from diffusion_tensor import Diffusion_tensor
 from generic import Generic
 from jw_mapping import Jw
 from load_spins import Load_spins
+from model_elimination import Modelim
 from model_free import Mf
 from model_selection import Modsel
 from n_state_model import N_state_model
@@ -58,6 +59,7 @@ __all__ = ['angles',
            'generic',
            'jw_mapping',
            'load_spins',
+           'model_elimination',
            'model_free',
            'model_selection',
            'n_state_model',
@@ -96,6 +98,7 @@ class System_test_runner:
         suite_array.append(TestLoader().loadTestsFromTestCase(Generic))
         suite_array.append(TestLoader().loadTestsFromTestCase(Jw))
         suite_array.append(TestLoader().loadTestsFromTestCase(Load_spins))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Modelim))
         suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
         suite_array.append(TestLoader().loadTestsFromTestCase(Modsel))
         suite_array.append(TestLoader().loadTestsFromTestCase(N_state_model))
