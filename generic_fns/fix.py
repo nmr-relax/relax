@@ -58,7 +58,7 @@ def fix(element, fixed):
 
 
     # All spins.
-    elif element == 'all_spins' or element == 'all':
+    if element == 'all_spins' or element == 'all':
         # Test if sequence data exists.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
