@@ -1178,6 +1178,9 @@ class Model_free_main:
         """
         __docformat__ = "plaintext"
 
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Default values.
         c1 = 50.0 * 1e-9
         c2 = 1.5
@@ -1190,7 +1193,7 @@ class Model_free_main:
         model_type = self.determine_model_type()
 
         # Can't handle this one yet!
-        if model_type != 'mf' or model_type != 'local_tm':
+        if model_type != 'mf' and model_type != 'local_tm':
             raise RelaxError, "Elimination of the global model is not yet supported."
 
         # Get the spin and it's id string.
@@ -1205,15 +1208,15 @@ class Model_free_main:
         # Local tm.
         if name == 'local_tm' and value >= c1:
             print "The local tm parameter of " + `value` + " is greater than " + `c1` + ", eliminating spin system " + `spin_id` + "."
-            return 1
+            return True
 
         # Internal correlation times.
         if match('t[efs]', name) and value >= c2 * tm:
             print "The " + name + " value of " + `value` + " is greater than " + `c2 * tm` + ", eliminating spin system " + `spin_id` + "."
-            return 1
+            return True
 
         # Accept model.
-        return 0
+        return False
 
 
     def get_param_names(self, model_index=None):
