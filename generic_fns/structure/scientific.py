@@ -613,9 +613,19 @@ class Scientific_data(Base_struct_API):
 
                 # No model 1.
                 if len(str) == 0 and i == 1:
+                    # Load the PDB without a model number.
                     str = Scientific.IO.PDB.Structure(file_path)
+
+                    # Ok, nothing is loadable from this file.
                     if len(str) == 0:
                         raise RelaxPdbLoadError, file_path
+
+                    # Set the model number.
+                    model = None
+
+                # Set the model number.
+                else:
+                    model = i
 
                 # Test if the last structure has been reached.
                 if len(str) == 0:
@@ -627,7 +637,7 @@ class Scientific_data(Base_struct_API):
                     print str
 
                 # Place the structure in 'self.structural_data'.
-                self.add_struct(name=name, model=i, file=file, path=path, str=str, struct_index=struct_index)
+                self.add_struct(name=name, model=model, file=file, path=path, str=str, struct_index=struct_index)
 
                 # Increment i.
                 i = i + 1
