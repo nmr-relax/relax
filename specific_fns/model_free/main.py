@@ -146,12 +146,15 @@ class Model_free_main:
         if model_type != 'diff':
             # Loop over the spins.
             for spin in spin_loop(spin_id):
-                # Skip deselected residues.
+                # Skip deselected spins.
                 if not spin.select:
                     continue
 
                 # Add the spin specific model-free parameters.
                 param_names = param_names + spin.params
+
+        # Return the parameter names.
+        return param_names
 
 
     def assemble_param_vector(self, spin=None, spin_id=None, sim_index=None, model_type=None):
