@@ -119,7 +119,7 @@ def eliminate(function=None, args=None):
                 flag = False
                 for k in xrange(len(names)):
                     # Eliminate function.
-                    if eliminate(names[k], values[k], model_info, args):
+                    if eliminate(names[k], values[k], model_info, args, sim=j):
                         flag = True
 
                 # Deselect.

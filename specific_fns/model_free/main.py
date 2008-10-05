@@ -1132,7 +1132,7 @@ class Model_free_main:
             dp_to.mol = deepcopy(dp_from.mol)
 
 
-    def eliminate(self, name, value, model_index, args):
+    def eliminate(self, name, value, model_index, args, sim=None):
         """
         Local tm model elimination rule
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1204,12 +1204,18 @@ class Model_free_main:
 
         # Local tm.
         if name == 'local_tm' and value >= c1:
-            print "The local tm parameter of " + `value` + " is greater than " + `c1` + ", eliminating spin system " + `spin_id` + "."
+            if sim == None:
+                print "The local tm parameter of %.5g is greater than %.5g, eliminating spin system '%s'." % (value, c1, spin_id)
+            else:
+                print "The local tm parameter of %.5g is greater than %.5g, eliminating simulation %i of spin system '%s'." % (value, c1, sim, spin_id)
             return True
 
         # Internal correlation times.
         if match('t[efs]', name) and value >= c2 * tm:
-            print "The " + name + " value of " + `value` + " is greater than " + `c2 * tm` + ", eliminating spin system " + `spin_id` + "."
+            if sim == None:
+                print "The %s value of %.5g is greater than %.5g, eliminating spin system '%s'." % (name, value, c2*tm, spin_id)
+            else:
+                print "The %s value of %.5g is greater than %.5g, eliminating simulation %i of spin system '%s'." % (name, value, c2*tm, sim, spin_id)
             return True
 
         # Accept model.
