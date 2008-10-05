@@ -96,10 +96,6 @@ class Scientific_data(Base_struct_API):
             if file != self.file[struct_index]:
                 raise RelaxError, "The file names of " + `file` + " and " + `self.file[struct_index]` + " do not match."
 
-            # Path.
-            if path != self.path[struct_index]:
-                raise RelaxError, "The paths of " + `path` + " and " + `self.path[struct_index]` + " do not match."
-
         # Initialise.
         else:
             self.num = self.num + 1
@@ -107,6 +103,18 @@ class Scientific_data(Base_struct_API):
             self.model.append(model)
             self.file.append(file)
             self.path.append(path)
+
+        # Initialise the structural object if not provided.
+        if str == None:
+            raise RelaxError, "The Scientific python structural object cannot be set to None."
+
+        # Add the structural data.
+        if struct_index != None:
+            if struct_index >= len(self.structural_data):
+                self.structural_data.append(str)
+            else:
+                self.structural_data[struct_index] = str
+        else:
             self.structural_data.append(str)
 
 
