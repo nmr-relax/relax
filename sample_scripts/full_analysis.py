@@ -563,7 +563,8 @@ class Main:
         """Model selection function."""
 
         # Model elimination.
-        eliminate()
+        if modsel_pipe != 'final':
+            eliminate()
 
         # Model selection (delete the model selection pipe if it already exists).
         if pipes.has_pipe(modsel_pipe):
