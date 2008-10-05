@@ -1195,11 +1195,15 @@ class Model_free_main:
         # Get the spin and it's id string.
         spin, spin_id = return_spin_from_index(model_index, return_spin_id=True)
 
-         # Get the tm value.
+        # Get the tm value.
         if model_type == 'local_tm':
             tm = spin.local_tm
         else:
             tm = cdp.diff_tensor.tm
+
+        # No tm value set, so skip the tests (no elimination).
+        if tm == None:
+            return False
 
         # Local tm.
         if name == 'local_tm' and value >= c1:
