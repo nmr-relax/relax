@@ -118,7 +118,8 @@ class Main:
         """Model selection function."""
 
         # Model elimination.
-        eliminate()
+        if pipe != 'final':
+            eliminate()
 
         # Model selection.
         model_selection(method='AIC', modsel_pipe=pipe, pipes=self.pipes)
