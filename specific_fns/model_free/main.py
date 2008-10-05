@@ -935,39 +935,29 @@ class Model_free_main:
             raise RelaxNoSequenceError
 
         # If there is a local tm, fail if not all residues have a local tm parameter.
-        local_tm = 0
+        local_tm = False
         for spin in spin_loop():
-            # Skip deselected residues.
-            # This code causes a bug after model elimination if the model has been eliminated (select = 0).
-            #if not spin.select:
-            #    continue
-
             # No params.
             if not hasattr(spin, 'params') or not spin.params:
                 continue
 
             # Local tm.
-            if local_tm == 0 and 'local_tm' in spin.params:
-                local_tm = 1
+            if not local_tm and 'local_tm' in spin.params:
+                local_tm = True
 
             # Inconsistencies.
-            elif local_tm == 1 and not 'local_tm' in spin.params:
+            elif local_tm and not 'local_tm' in spin.params:
                 raise RelaxError, "All residues must either have a local tm parameter or not."
 
         # Check if any model-free parameters are allowed to vary.
-        mf_all_fixed = 1
+        mf_all_fixed = True
         for spin in spin_loop():
-            # Skip deselected residues.
-            # This code causes a bug after model elimination if the model has been eliminated (select = 0).
-            #if not spin.select:
-            #    continue
-
             # Test the fixed flag.
             if not hasattr(spin, 'fixed'):
-                mf_all_fixed = 0
+                mf_all_fixed = False
                 break
             if not spin.fixed:
-                mf_all_fixed = 0
+                mf_all_fixed = False
                 break
 
         # Local tm.
@@ -976,6 +966,12 @@ class Model_free_main:
 
         # Test if the diffusion tensor data is loaded.
         if not diffusion_tensor.diff_data_exists():
+            # Catch when the local tm value is set but not in the parameter list.
+            for spin in spin_loop():
+                if spin.local_tm != None and not 'local_tm' in spin.params:
+                    raise RelaxError, "The local tm value is set but not located in the model parameter list."
+
+            # Normal error.
             raise RelaxNoTensorError, 'diffusion'
 
         # 'diff' model type.
