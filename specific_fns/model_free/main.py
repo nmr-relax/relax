@@ -1110,6 +1110,10 @@ class Model_free_main:
                     if data_from != data_to:
                         raise RelaxError, "The object " + `data_name` + " is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
 
+        # No sequence data, so skip the rest.
+        if dp_from.mol.is_empty():
+            return
+
         # Duplicate the sequence data if it doesn't exist.
         if dp_to.mol.is_empty():
             sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to, preserve_select=True, verbose=verbose)
