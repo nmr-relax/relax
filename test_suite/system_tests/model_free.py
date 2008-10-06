@@ -168,7 +168,7 @@ class Mf(TestCase):
 
         # Some checks.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select_sim, [True, False, True])
-        self.assertEqual(cdp.mol[0].res[1].spin[0].select_sim, [True, True, True])
+        self.assertEqual(cdp.mol[0].res[1].spin[0].select_sim, [True, True, False])
         self.assertEqual(cdp.mol[0].res[2].spin[0].select_sim, [True, True, True])
         self.assert_(not hasattr(cdp.mol[0].res[3].spin[0], 'select_sim'))
 
