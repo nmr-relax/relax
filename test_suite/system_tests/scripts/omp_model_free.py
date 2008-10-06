@@ -112,6 +112,11 @@ class Main:
         monte_carlo.create_data()
         monte_carlo.initial_values()
         minimise(MIN_ALGOR)
+
+        # Set a simulation te value to 200 ns to cause it to be eliminated.
+        ds['final'].mol[0].res[0].spin[0].te_sim[1] = 200*1e-9
+
+        # Finish the MC sims.
         eliminate()
         monte_carlo.error_analysis()
 
