@@ -108,7 +108,6 @@ def compile_api_manual_html(target, source, env):
                'test_suite/*.py',
                'test_suite/system_tests/__init__.py',
                'test_suite/unit_tests/unit_test_runner.py',
-               'sconstruct',
                'scons/*.py']
 
     # exclude
