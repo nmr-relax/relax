@@ -167,9 +167,9 @@ class Mf(TestCase):
         cdp = pipes.get_pipe()
 
         # Some checks.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].select_sim, numpy.array([1, 0, 1], numpy.int))
-        self.assertEqual(cdp.mol[0].res[1].spin[0].select_sim, numpy.array([1, 1, 1], numpy.int))
-        self.assertEqual(cdp.mol[0].res[2].spin[0].select_sim, numpy.array([1, 1, 1], numpy.int))
+        self.assertEqual(cdp.mol[0].res[0].spin[0].select_sim.tolist(), [1, 0, 1])
+        self.assertEqual(cdp.mol[0].res[1].spin[0].select_sim.tolist(), [1, 1, 1])
+        self.assertEqual(cdp.mol[0].res[2].spin[0].select_sim.tolist(), [1, 1, 1])
         self.assert_(not hasattr(cdp.mol[0].res[3].spin[0], 'select_sim'))
 
 
