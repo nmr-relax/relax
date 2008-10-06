@@ -84,47 +84,13 @@ def data_names():
 
 
 def default_value(param):
+    """Return the default values for the diffusion tensor parameters.
+
+    @param param:   The name of the parameter.
+    @type param:    str
+    @return:        The default value.
+    @rtype:         float
     """
-        Diffusion tensor parameter default values
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        ________________________________________________________________________
-        |                        |                    |                        |
-        | Data type              | Object name        | Value                  |
-        |________________________|____________________|________________________|
-        |                        |                    |                        |
-        | tm                     | 'tm'               | 10 * 1e-9              |
-        |                        |                    |                        |
-        | Diso                   | 'Diso'             | 1.666 * 1e7            |
-        |                        |                    |                        |
-        | Da                     | 'Da'               | 0.0                    |
-        |                        |                    |                        |
-        | Dr                     | 'Dr'               | 0.0                    |
-        |                        |                    |                        |
-        | Dx                     | 'Dx'               | 1.666 * 1e7            |
-        |                        |                    |                        |
-        | Dy                     | 'Dy'               | 1.666 * 1e7            |
-        |                        |                    |                        |
-        | Dz                     | 'Dz'               | 1.666 * 1e7            |
-        |                        |                    |                        |
-        | Dpar                   | 'Dpar'             | 1.666 * 1e7            |
-        |                        |                    |                        |
-        | Dper                   | 'Dper'             | 1.666 * 1e7            |
-        |                        |                    |                        |
-        | Dratio                 | 'Dratio'           | 1.0                    |
-        |                        |                    |                        |
-        | alpha                  | 'alpha'            | 0.0                    |
-        |                        |                    |                        |
-        | beta                   | 'beta'             | 0.0                    |
-        |                        |                    |                        |
-        | gamma                  | 'gamma'            | 0.0                    |
-        |                        |                    |                        |
-        | theta                  | 'theta'            | 0.0                    |
-        |                        |                    |                        |
-        | phi                    | 'phi'              | 0.0                    |
-        |________________________|____________________|________________________|
-
-    """    # This docstring is to be joined onto those of the user functions, hence the 8 whitespace characters.
 
     # tm.
     if param == 'tm':
@@ -145,6 +111,49 @@ def default_value(param):
     # All angles.
     elif param == 'alpha' or param == 'beta' or param == 'gamma' or param == 'theta' or param == 'phi':
         return 0.0
+
+# User function documentation.
+__default_value_prompt_doc__ = """
+    Diffusion tensor parameter default values
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    ________________________________________________________________________
+    |                        |                    |                        |
+    | Data type              | Object name        | Value                  |
+    |________________________|____________________|________________________|
+    |                        |                    |                        |
+    | tm                     | 'tm'               | 10 * 1e-9              |
+    |                        |                    |                        |
+    | Diso                   | 'Diso'             | 1.666 * 1e7            |
+    |                        |                    |                        |
+    | Da                     | 'Da'               | 0.0                    |
+    |                        |                    |                        |
+    | Dr                     | 'Dr'               | 0.0                    |
+    |                        |                    |                        |
+    | Dx                     | 'Dx'               | 1.666 * 1e7            |
+    |                        |                    |                        |
+    | Dy                     | 'Dy'               | 1.666 * 1e7            |
+    |                        |                    |                        |
+    | Dz                     | 'Dz'               | 1.666 * 1e7            |
+    |                        |                    |                        |
+    | Dpar                   | 'Dpar'             | 1.666 * 1e7            |
+    |                        |                    |                        |
+    | Dper                   | 'Dper'             | 1.666 * 1e7            |
+    |                        |                    |                        |
+    | Dratio                 | 'Dratio'           | 1.0                    |
+    |                        |                    |                        |
+    | alpha                  | 'alpha'            | 0.0                    |
+    |                        |                    |                        |
+    | beta                   | 'beta'             | 0.0                    |
+    |                        |                    |                        |
+    | gamma                  | 'gamma'            | 0.0                    |
+    |                        |                    |                        |
+    | theta                  | 'theta'            | 0.0                    |
+    |                        |                    |                        |
+    | phi                    | 'phi'              | 0.0                    |
+    |________________________|____________________|________________________|
+
+"""
 
 
 def delete():
@@ -727,57 +736,13 @@ def return_conversion_factor(param, spin_id=None):
 
 
 def return_data_name(name):
-    """
-        Diffusion tensor parameter string matching patterns
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    """Return the parameter name.
 
-        ____________________________________________________________________________________________
-        |                                                        |              |                  |
-        | Data type                                              | Object name  | Patterns         |
-        |________________________________________________________|______________|__________________|
-        |                                                        |              |                  |
-        | Global correlation time - tm                           | 'tm'         | '^tm$'           |
-        |                                                        |              |                  |
-        | Isotropic component of the diffusion tensor - Diso     | 'Diso'       | '[Dd]iso'        |
-        |                                                        |              |                  |
-        | Anisotropic component of the diffusion tensor - Da     | 'Da'         | '[Dd]a'          |
-        |                                                        |              |                  |
-        | Rhombic component of the diffusion tensor - Dr         | 'Dr'         | '[Dd]r$'         |
-        |                                                        |              |                  |
-        | Eigenvalue associated with the x-axis of the diffusion | 'Dx'         | '[Dd]x'          |
-        | diffusion tensor - Dx                                  |              |                  |
-        |                                                        |              |                  |
-        | Eigenvalue associated with the y-axis of the diffusion | 'Dy'         | '[Dd]y'          |
-        | diffusion tensor - Dy                                  |              |                  |
-        |                                                        |              |                  |
-        | Eigenvalue associated with the z-axis of the diffusion | 'Dz'         | '[Dd]z'          |
-        | diffusion tensor - Dz                                  |              |                  |
-        |                                                        |              |                  |
-        | Diffusion coefficient parallel to the major axis of    | 'Dpar'       | '[Dd]par'        |
-        | the spheroid diffusion tensor - Dpar                   |              |                  |
-        |                                                        |              |                  |
-        | Diffusion coefficient perpendicular to the major axis  | 'Dper'       | '[Dd]per'        |
-        | of the spheroid diffusion tensor - Dper                |              |                  |
-        |                                                        |              |                  |
-        | Ratio of the parallel and perpendicular components of  | 'Dratio'     | '[Dd]ratio'      |
-        | the spheroid diffusion tensor - Dratio                 |              |                  |
-        |                                                        |              |                  |
-        | The first Euler angle of the ellipsoid diffusion       | 'alpha'      | '^a$' or 'alpha' |
-        | tensor - alpha                                         |              |                  |
-        |                                                        |              |                  |
-        | The second Euler angle of the ellipsoid diffusion      | 'beta'       | '^b$' or 'beta'  |
-        | tensor - beta                                          |              |                  |
-        |                                                        |              |                  |
-        | The third Euler angle of the ellipsoid diffusion       | 'gamma'      | '^g$' or 'gamma' |
-        | tensor - gamma                                         |              |                  |
-        |                                                        |              |                  |
-        | The polar angle defining the major axis of the         | 'theta'      | 'theta'          |
-        | spheroid diffusion tensor - theta                      |              |                  |
-        |                                                        |              |                  |
-        | The azimuthal angle defining the major axis of the     | 'phi'        | 'phi'            |
-        | spheroid diffusion tensor - phi                        |              |                  |
-        |________________________________________________________|______________|__________________|
-    """    # This docstring is to be joined onto those of the user functions, hence the 8 whitespace characters.
+    @param name:    The name of the parameter to return the name of.
+    @type name:     str
+    @return:        The parameter name.
+    @rtype:         str
+    """
 
     # Enforce that the name must be a string.
     if type(name) != str:
@@ -843,6 +808,59 @@ def return_data_name(name):
     if search('phi', name):
         return 'phi'
 
+# User function documentation.
+__return_data_name_prompt_doc__ = """
+    Diffusion tensor parameter string matching patterns
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    ____________________________________________________________________________________________
+    |                                                        |              |                  |
+    | Data type                                              | Object name  | Patterns         |
+    |________________________________________________________|______________|__________________|
+    |                                                        |              |                  |
+    | Global correlation time - tm                           | 'tm'         | '^tm$'           |
+    |                                                        |              |                  |
+    | Isotropic component of the diffusion tensor - Diso     | 'Diso'       | '[Dd]iso'        |
+    |                                                        |              |                  |
+    | Anisotropic component of the diffusion tensor - Da     | 'Da'         | '[Dd]a'          |
+    |                                                        |              |                  |
+    | Rhombic component of the diffusion tensor - Dr         | 'Dr'         | '[Dd]r$'         |
+    |                                                        |              |                  |
+    | Eigenvalue associated with the x-axis of the diffusion | 'Dx'         | '[Dd]x'          |
+    | diffusion tensor - Dx                                  |              |                  |
+    |                                                        |              |                  |
+    | Eigenvalue associated with the y-axis of the diffusion | 'Dy'         | '[Dd]y'          |
+    | diffusion tensor - Dy                                  |              |                  |
+    |                                                        |              |                  |
+    | Eigenvalue associated with the z-axis of the diffusion | 'Dz'         | '[Dd]z'          |
+    | diffusion tensor - Dz                                  |              |                  |
+    |                                                        |              |                  |
+    | Diffusion coefficient parallel to the major axis of    | 'Dpar'       | '[Dd]par'        |
+    | the spheroid diffusion tensor - Dpar                   |              |                  |
+    |                                                        |              |                  |
+    | Diffusion coefficient perpendicular to the major axis  | 'Dper'       | '[Dd]per'        |
+    | of the spheroid diffusion tensor - Dper                |              |                  |
+    |                                                        |              |                  |
+    | Ratio of the parallel and perpendicular components of  | 'Dratio'     | '[Dd]ratio'      |
+    | the spheroid diffusion tensor - Dratio                 |              |                  |
+    |                                                        |              |                  |
+    | The first Euler angle of the ellipsoid diffusion       | 'alpha'      | '^a$' or 'alpha' |
+    | tensor - alpha                                         |              |                  |
+    |                                                        |              |                  |
+    | The second Euler angle of the ellipsoid diffusion      | 'beta'       | '^b$' or 'beta'  |
+    | tensor - beta                                          |              |                  |
+    |                                                        |              |                  |
+    | The third Euler angle of the ellipsoid diffusion       | 'gamma'      | '^g$' or 'gamma' |
+    | tensor - gamma                                         |              |                  |
+    |                                                        |              |                  |
+    | The polar angle defining the major axis of the         | 'theta'      | 'theta'          |
+    | spheroid diffusion tensor - theta                      |              |                  |
+    |                                                        |              |                  |
+    | The azimuthal angle defining the major axis of the     | 'phi'        | 'phi'            |
+    | spheroid diffusion tensor - phi                        |              |                  |
+    |________________________________________________________|______________|__________________|
+"""
+
 
 def return_eigenvalues():
     """Function for returning Dx, Dy, and Dz."""
@@ -899,47 +917,15 @@ def return_units(param, spin_id=None):
 
 
 def set(value=None, param=None):
+    """Set the diffusion tensor parameters.
+
+    @keyword tensor:    The diffusion tensor object.
+    @type tensor:       DiffTensorData instance
+    @keyword value:     The list of values to set the parameters to.
+    @type value:        list of float
+    @keyword param:     The list of parameter names.
+    @type param:        list of str
     """
-        Diffusion tensor set details
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        If the diffusion tensor has not been setup, use the more powerful function
-        'diffusion_tensor.init' to initialise the tensor parameters.  This function cannot be used
-        to initialise a diffusion tensor.
-
-        The units of the parameters are:
-
-            Inverse seconds for tm.
-            Seconds for Diso, Da, Dx, Dy, Dz, Dpar, Dper.
-            Unitless for Dratio and Dr.
-            Radians for all angles (alpha, beta, gamma, theta, phi).
-
-        When setting a diffusion tensor parameter, the residue number has no effect.  As the
-        internal parameters of spherical diffusion are {tm}, spheroidal diffusion are {tm, Da,
-        theta, phi}, and ellipsoidal diffusion are {tm, Da, Dr, alpha, beta, gamma}, supplying
-        geometric parameters must be done in the following way.  If a single geometric parameter is
-        supplied, it must be one of tm, Diso, Da, Dr, or Dratio.  For the parameters Dpar, Dper, Dx,
-        Dy, and Dx, it is not possible to determine how to use the currently set values together
-        with the supplied value to calculate the new internal parameters.  For spheroidal diffusion,
-        when supplying multiple geometric parameters, the set must belong to one of
-
-            {tm, Da},
-            {Diso, Da},
-            {tm, Dratio},
-            {Dpar, Dper},
-            {Diso, Dratio},
-
-        where either theta, phi, or both orientational parameters can be additionally supplied.  For
-        ellipsoidal diffusion, again when supplying multiple geometric parameters, the set must
-        belong to one of
-
-            {tm, Da, Dr},
-            {Diso, Da, Dr},
-            {Dx, Dy, Dz},
-
-        where any number of the orientational parameters, alpha, beta, or gamma can be additionally
-        supplied.
-    """    # This docstring is to be joined onto those of the user functions, hence the 8 whitespace characters.
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
@@ -1343,6 +1329,49 @@ def set(value=None, param=None):
 
     if orient_params:
         fold_angles()
+
+# User function documentation.
+__set_prompt_doc__ = """
+    Diffusion tensor set details
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    If the diffusion tensor has not been setup, use the more powerful function
+    'diffusion_tensor.init' to initialise the tensor parameters.  This function cannot be used
+    to initialise a diffusion tensor.
+
+    The units of the parameters are:
+
+        Inverse seconds for tm.
+        Seconds for Diso, Da, Dx, Dy, Dz, Dpar, Dper.
+        Unitless for Dratio and Dr.
+        Radians for all angles (alpha, beta, gamma, theta, phi).
+
+    When setting a diffusion tensor parameter, the residue number has no effect.  As the
+    internal parameters of spherical diffusion are {tm}, spheroidal diffusion are {tm, Da,
+    theta, phi}, and ellipsoidal diffusion are {tm, Da, Dr, alpha, beta, gamma}, supplying
+    geometric parameters must be done in the following way.  If a single geometric parameter is
+    supplied, it must be one of tm, Diso, Da, Dr, or Dratio.  For the parameters Dpar, Dper, Dx,
+    Dy, and Dx, it is not possible to determine how to use the currently set values together
+    with the supplied value to calculate the new internal parameters.  For spheroidal diffusion,
+    when supplying multiple geometric parameters, the set must belong to one of
+
+        {tm, Da},
+        {Diso, Da},
+        {tm, Dratio},
+        {Dpar, Dper},
+        {Diso, Dratio},
+
+    where either theta, phi, or both orientational parameters can be additionally supplied.  For
+    ellipsoidal diffusion, again when supplying multiple geometric parameters, the set must
+    belong to one of
+
+        {tm, Da, Dr},
+        {Diso, Da, Dr},
+        {Dx, Dy, Dz},
+
+    where any number of the orientational parameters, alpha, beta, or gamma can be additionally
+    supplied.
+"""
 
 
 def sphere(params=None, time_scale=None, param_types=None):
