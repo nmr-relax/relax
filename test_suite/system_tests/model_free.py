@@ -163,6 +163,15 @@ class Mf(TestCase):
         # Execute the script.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/omp_model_free.py')
 
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Some checks.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].select_sim, numpy.array([1, 0, 1], numpy.int))
+        self.assertEqual(cdp.mol[0].res[1].spin[0].select_sim, numpy.array([1, 1, 1], numpy.int))
+        self.assertEqual(cdp.mol[0].res[2].spin[0].select_sim, numpy.array([1, 1, 1], numpy.int))
+        self.assert_(not hasattr(cdp.mol[0].res[3].spin[0], 'select_sim'))
+
 
     def test_opendx_s2_te_rex(self):
         """Mapping the {S2, te, Rex} chi2 space through the OpenDX user function dx.map()."""
