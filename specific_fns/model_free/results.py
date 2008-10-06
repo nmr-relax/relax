@@ -735,8 +735,9 @@ class Results:
 
         # Set up the simulations.
         if len(sims):
-            # Convert the selected simulation array of arrays into a Numeric matrix and transpose it.
+            # Convert the selected simulation array of arrays into a Numeric matrix, transpose it, then convert back to a Python list.
             all_select_sim = transpose(array(all_select_sim))
+            all_select_sim = all_select_sim.tolist()
 
             # Set up the Monte Carlo simulations.
             generic_fns.monte_carlo.setup(number=len(sims), all_select_sim=all_select_sim)
