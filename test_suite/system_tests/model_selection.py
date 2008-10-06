@@ -26,6 +26,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import pipes
 
 
 class Modsel(TestCase):
@@ -41,7 +42,7 @@ class Modsel(TestCase):
         """AIC model selection between two diffusion tensors."""
 
         # Init.
-        pipes = ['sphere', 'spheroid']
+        pipe_list = ['sphere', 'spheroid']
         tensors = [1e-9, (1e-9, 0, 0, 0)]
 
         # Path of the files.
@@ -50,7 +51,7 @@ class Modsel(TestCase):
         # Loop over the data pipes.
         for i in xrange(2):
             # Create the data pipe.
-            self.relax.interpreter._Pipe.create(pipes[i], 'mf')
+            self.relax.interpreter._Pipe.create(pipe_list[i], 'mf')
 
             # Read the sequence.
             self.relax.interpreter._Sequence.read(file='r1.600.out', dir=path)
@@ -69,13 +70,20 @@ class Modsel(TestCase):
             # Set the diffusion tensors.
             self.relax.interpreter._Diffusion_tensor.init(tensors[i], fixed=False)
 
+        # Get the data pipes.
+        dp_sphere = pipes.get_pipe('sphere')
+        dp_spheroid = pipes.get_pipe('spheroid')
+
         # Set some global stats.
-        ds['sphere'].chi2 = 200
-        ds['spheroid'].chi2 = 0
+        dp_sphere.chi2 = 200
+        dp_spheroid.chi2 = 0
 
         # Model selection.
         self.relax.interpreter._Modsel.model_selection(method='AIC', modsel_pipe='aic')
 
+        # Get the AIC data pipe.
+        dp_aic = pipes.get_pipe('aic')
+
         # Test if the spheroid has been selected.
-        self.assert_(hasattr(ds['aic'], 'diff_tensor'))
-        self.assertEqual(ds['aic'].diff_tensor.type, 'spheroid')
+        self.assert_(hasattr(dp_aic, 'diff_tensor'))
+        self.assertEqual(dp_aic.diff_tensor.type, 'spheroid')

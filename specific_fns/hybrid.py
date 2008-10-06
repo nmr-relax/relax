@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,7 +22,8 @@
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxPipeError, RelaxSequenceError
+from generic_fns import pipes
+from relax_errors import RelaxError, RelaxNoSequenceError, RelaxPipeError, RelaxSequenceError
 
 
 class Hybrid:
@@ -33,13 +34,9 @@ class Hybrid:
     def duplicate_data(self, new_run=None, old_run=None, instance=None):
         """Function for duplicating data."""
 
-        # Test that the new run exists.
-        if not new_run in ds.run_names:
-            raise RelaxNoPipeError, new_run
-
-        # Test that the old run exists.
-        if not old_run in ds.run_names:
-            raise RelaxNoPipeError, old_run
+        # Test that the data pipes exist.
+        pipes.test(new_run)
+        pipes.test(old_run)
 
         # Test that the new run has no sequence loaded.
         if ds.res.has_key(new_run):
@@ -62,8 +59,7 @@ class Hybrid:
         # Loop over the runs to be hybridised.
         for run in runs:
             # Test if the current pipe exists.
-            if not ds.current_pipe:
-                raise RelaxNoPipeError
+            pipes.test()
 
             # Test if sequence data is loaded.
             if not ds.res.has_key(run):

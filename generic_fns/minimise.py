@@ -27,8 +27,8 @@
 from re import search
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import spin_loop
+from generic_fns import pipes
 from relax_errors import RelaxError
 from specific_fns.setup import get_specific_fn
 
@@ -45,38 +45,38 @@ def reset_min_stats(data_pipe=None, spin=None):
 
     # The data pipe.
     if data_pipe == None:
-        data_pipe = ds.current_pipe
+        data_pipe = pipes.cdp_name()
 
-    # Alias the current data pipe.
-    cdp = ds[data_pipe]
+    # Get the data pipe.
+    dp = pipes.get_pipe(data_pipe)
 
 
     # Global minimisation statistics.
     #################################
 
     # Chi-squared.
-    if hasattr(cdp, 'chi2'):
-        cdp.chi2 = None
+    if hasattr(dp, 'chi2'):
+        dp.chi2 = None
 
     # Iteration count.
-    if hasattr(cdp, 'iter'):
-        cdp.iter = None
+    if hasattr(dp, 'iter'):
+        dp.iter = None
 
     # Function count.
-    if hasattr(cdp, 'f_count'):
-        cdp.f_count = None
+    if hasattr(dp, 'f_count'):
+        dp.f_count = None
 
     # Gradient count.
-    if hasattr(cdp, 'g_count'):
-        cdp.g_count = None
+    if hasattr(dp, 'g_count'):
+        dp.g_count = None
 
     # Hessian count.
-    if hasattr(cdp, 'h_count'):
-        cdp.h_count = None
+    if hasattr(dp, 'h_count'):
+        dp.h_count = None
 
     # Warning.
-    if hasattr(cdp, 'warning'):
-        cdp.warning = None
+    if hasattr(dp, 'warning'):
+        dp.warning = None
 
 
     # Sequence specific minimisation statistics.
@@ -119,7 +119,7 @@ def calc(verbosity=1):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Specific calculate function setup.
     calculate = get_specific_fn('calculate', cdp.pipe_type)
@@ -163,7 +163,7 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Specific grid search function.
     grid_search = get_specific_fn('grid_search', cdp.pipe_type)
@@ -214,7 +214,7 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Specific minimisation function.
     minimise = get_specific_fn('minimise', cdp.pipe_type)
@@ -228,8 +228,8 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
         minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity, sim_index=sim_index)
 
     # Monte Carlo simulation minimisation.
-    elif hasattr(ds, 'sim_state') and ds.sim_state == 1:
-        for i in xrange(ds.sim_number):
+    elif hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
+        for i in xrange(cdp.sim_number):
             if verbosity:
                 print "Simulation " + `i+1`
             minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity-1, sim_index=i)
@@ -357,7 +357,7 @@ def return_value(spin=None, stat_type=None, sim=None):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Get the object name.
     object_name = return_data_name(stat_type)
@@ -414,7 +414,7 @@ def set(value=None, error=None, param=None, scaling=None, spin=None):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Get the parameter name.
     param_name = return_data_name(param)

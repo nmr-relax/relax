@@ -27,33 +27,37 @@
 from copy import deepcopy
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_loop
 import pipes
-from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoPipeError, RelaxNoSequenceError, RelaxSequenceError
+from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoSequenceError, RelaxSequenceError
 from relax_io import extract_data, open_write_file, strip
 import sys
 
 
 
-def copy(pipe_from=None, pipe_to=None):
+def copy(pipe_from=None, pipe_to=None, preserve_select=False, verbose=True):
     """Copy the molecule, residue, and spin sequence data from one data pipe to another.
 
-    @param pipe_from:   The data pipe to copy the sequence data from.  This defaults to the current
-                        data pipe.
-    @type pipe_from:    str
-    @param pipe_to:     The data pipe to copy the sequence data to.  This defaults to the current
-                        data pipe.
-    @type pipe_to:      str
+    @keyword pipe_from:         The data pipe to copy the sequence data from.  This defaults to the
+                                current data pipe.
+    @type pipe_from:            str
+    @keyword pipe_to:           The data pipe to copy the sequence data to.  This defaults to the
+                                current data pipe.
+    @type pipe_to:              str
+    @keyword preserve_select:   A flag which if True will cause spin selections to be preserved.
+    @type preserve_select:      bool
+    @keyword verbose:           A flag which if True will cause info about each spin to be printed
+                                out as the sequence is generated.
+    @type verbose:              bool
     """
 
     # Defaults.
     if pipe_from == None and pipe_to == None:
         raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
     elif pipe_from == None:
-        pipe_from = ds.current_pipe
+        pipe_from = pipes.cdp_name()
     elif pipe_to == None:
-        pipe_to = ds.current_pipe
+        pipe_to = pipes.cdp_name()
 
     # Test if the pipe_from and pipe_to data pipes exist.
     pipes.test(pipe_from)
@@ -69,8 +73,14 @@ def copy(pipe_from=None, pipe_to=None):
 
     # Loop over the spins of the pipe_from data pipe.
     for spin, mol_name, res_num, res_name in spin_loop(pipe=pipe_from, full_info=True):
+        # Preserve selection.
+        if preserve_select:
+            select = spin.select
+        else:
+            select = True
+
         # Generate the new sequence.
-        generate(mol_name, res_num, res_name, spin.num, spin.name, pipe_to)
+        generate(mol_name, res_num, res_name, spin.num, spin.name, pipe_to, select=select, verbose=verbose)
 
 
 def display(sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
@@ -106,7 +116,7 @@ def display(sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=Fal
     write_body(file=sys.stdout, sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag)
 
 
-def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None, pipe=None):
+def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None, pipe=None, select=True, verbose=True):
     """Generate the sequence item-by-item by adding a single molecule/residue/spin container as necessary.
 
     @keyword mol_name:  The molecule name.
@@ -119,14 +129,22 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
     @type spin_num:     bool
     @keyword spin_name: The spin name.
     @type spin_name:    bool
-    @param pipe:        The data pipe in which to generate the sequence.  This defaults to the
+    @keyword pipe:      The data pipe in which to generate the sequence.  This defaults to the
                         current data pipe.
     @type pipe:         str
+    @keyword select:    The spin selection flag.
+    @type select:       bool
+    @keyword verbose:   A flag which if True will cause info about each spin to be printed out as
+                        the sequence is generated.
+    @type verbose:      bool
     """
 
     # The current data pipe.
     if pipe == None:
-        pipe = ds.current_pipe
+        pipe = pipes.cdp_name()
+
+    # Get the data pipe.
+    dp = pipes.get_pipe(pipe)
 
     # Get the molecule.
     curr_mol = return_molecule(generate_spin_id(mol_name=mol_name), pipe=pipe)
@@ -134,8 +152,8 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
     # A new molecule.
     if not curr_mol:
         # Add the molecule (and store it in the 'curr_mol' object).
-        ds[pipe].mol.add_item(mol_name=mol_name)
-        curr_mol = ds[pipe].mol[-1]
+        dp.mol.add_item(mol_name=mol_name)
+        curr_mol = dp.mol[-1]
 
     # Get the residue.
     curr_res = return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name), pipe=pipe)
@@ -154,8 +172,15 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
         # Add the spin.
         curr_res.spin.add_item(spin_name=spin_name, spin_num=spin_num)
 
+        # Get the spin.
+        curr_spin = return_spin(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name), pipe=pipe)
+
+    # Set the selection flag.
+    curr_spin.select = select
+
     # Print out of all the spins.
-    write_line(sys.stdout, mol_name, res_num, res_name, spin_num, spin_name, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+    if verbose:
+        write_line(sys.stdout, mol_name, res_num, res_name, spin_num, spin_name, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
 
 
 def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, sep=None):

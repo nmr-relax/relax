@@ -27,9 +27,9 @@
 from re import match
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
-from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError
+from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoTensorError
 
 
 def fix(element, fixed):
@@ -42,11 +42,10 @@ def fix(element, fixed):
     """
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Diffusion tensor.
     if element == 'diff' or element == 'all':
@@ -59,7 +58,7 @@ def fix(element, fixed):
 
 
     # All spins.
-    elif element == 'all_spins' or element == 'all':
+    if element == 'all_spins' or element == 'all':
         # Test if sequence data exists.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError

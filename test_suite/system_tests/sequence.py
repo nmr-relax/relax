@@ -26,6 +26,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import pipes
 
 
 class Sequence(TestCase):
@@ -54,7 +55,7 @@ class Sequence(TestCase):
         self.relax.interpreter._Structure.load_spins(spin_id=':ASP')
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)
@@ -104,7 +105,7 @@ class Sequence(TestCase):
         self.relax.interpreter._Structure.load_spins(spin_id=':GLY@CA')
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)
@@ -149,7 +150,7 @@ class Sequence(TestCase):
         self.relax.interpreter._Structure.load_spins(spin_id=':GLY@N')
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)
@@ -188,7 +189,7 @@ class Sequence(TestCase):
         self.relax.interpreter._Structure.load_spins(spin_id='@N')
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)

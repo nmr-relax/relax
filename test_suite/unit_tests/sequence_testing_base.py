@@ -31,6 +31,7 @@ except ImportError:
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import pipes
 
 
 
@@ -76,40 +77,41 @@ class Sequence_base_class:
         The functions tested are generic_fns.sequence.copy() and prompt.sequence.copy().
         """
 
-        # Alias the 'orig' relax data store.
-        cdp = ds['orig']
+        # Get the data pipe.
+        dp_orig = pipes.get_pipe('orig')
 
         # Create a simple animo acid sequence.
-        cdp.mol[0].res[0].num = 1
-        cdp.mol[0].res[0].name = 'GLY'
-        cdp.mol[0].res.add_item('PRO', 2)
-        cdp.mol[0].res.add_item('LEU', 3)
-        cdp.mol[0].res.add_item('GLY', 4)
-        cdp.mol[0].res.add_item('SER', 5)
+        dp_orig.mol[0].res[0].num = 1
+        dp_orig.mol[0].res[0].name = 'GLY'
+        dp_orig.mol[0].res.add_item('PRO', 2)
+        dp_orig.mol[0].res.add_item('LEU', 3)
+        dp_orig.mol[0].res.add_item('GLY', 4)
+        dp_orig.mol[0].res.add_item('SER', 5)
 
         # Add an object which should not be copied.
-        cdp.mol[0].res[2].spin[0].test = True
+        dp_orig.mol[0].res[2].spin[0].test = True
 
         # Add a new data pipe to the data store.
         ds.add(pipe_name='new', pipe_type='mf')
+        dp_new = pipes.get_pipe('new')
 
         # Copy the residue sequence.
         self.sequence_fns.copy('orig')
 
         # Test the sequence.
-        self.assertEqual(ds['new'].mol[0].res[0].num, 1)
-        self.assertEqual(ds['new'].mol[0].res[0].name, 'GLY')
-        self.assertEqual(ds['new'].mol[0].res[1].num, 2)
-        self.assertEqual(ds['new'].mol[0].res[1].name, 'PRO')
-        self.assertEqual(ds['new'].mol[0].res[2].num, 3)
-        self.assertEqual(ds['new'].mol[0].res[2].name, 'LEU')
-        self.assertEqual(ds['new'].mol[0].res[3].num, 4)
-        self.assertEqual(ds['new'].mol[0].res[3].name, 'GLY')
-        self.assertEqual(ds['new'].mol[0].res[4].num, 5)
-        self.assertEqual(ds['new'].mol[0].res[4].name, 'SER')
+        self.assertEqual(dp_new.mol[0].res[0].num, 1)
+        self.assertEqual(dp_new.mol[0].res[0].name, 'GLY')
+        self.assertEqual(dp_new.mol[0].res[1].num, 2)
+        self.assertEqual(dp_new.mol[0].res[1].name, 'PRO')
+        self.assertEqual(dp_new.mol[0].res[2].num, 3)
+        self.assertEqual(dp_new.mol[0].res[2].name, 'LEU')
+        self.assertEqual(dp_new.mol[0].res[3].num, 4)
+        self.assertEqual(dp_new.mol[0].res[3].name, 'GLY')
+        self.assertEqual(dp_new.mol[0].res[4].num, 5)
+        self.assertEqual(dp_new.mol[0].res[4].name, 'SER')
 
         # Test that the extra object was not copied.
-        self.assert_(not hasattr(ds['new'].mol[0].res[2].spin[0], 'test'))
+        self.assert_(not hasattr(dp_new.mol[0].res[2].spin[0], 'test'))
 
 
     def test_display_protein_sequence(self):
@@ -118,16 +120,16 @@ class Sequence_base_class:
         The functions tested are generic_fns.sequence.display() and prompt.sequence.display().
         """
 
-        # Alias the 'orig' relax data store.
-        cdp = ds['orig']
+        # Get the data pipe.
+        dp_orig = pipes.get_pipe('orig')
 
         # Create a simple animo acid sequence.
-        cdp.mol[0].res[0].num = 1
-        cdp.mol[0].res[0].name = 'GLY'
-        cdp.mol[0].res.add_item('PRO', 2)
-        cdp.mol[0].res.add_item('LEU', 3)
-        cdp.mol[0].res.add_item('GLY', 4)
-        cdp.mol[0].res.add_item('SER', 5)
+        dp_orig.mol[0].res[0].num = 1
+        dp_orig.mol[0].res[0].name = 'GLY'
+        dp_orig.mol[0].res.add_item('PRO', 2)
+        dp_orig.mol[0].res.add_item('LEU', 3)
+        dp_orig.mol[0].res.add_item('GLY', 4)
+        dp_orig.mol[0].res.add_item('SER', 5)
 
         # Try displaying the residue sequence.
         self.sequence_fns.display(res_num_flag=True, res_name_flag=True)
@@ -147,10 +149,13 @@ class Sequence_base_class:
         # Read the residue sequence out of the Ap4Aase 600 MHz NOE data file.
         self.sequence_fns.read(file='Ap4Aase.Noe.600.bz2', dir=path+'/test_suite/shared_data/relaxation_data')
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
         # Test the entire sequence.
         for i in xrange(len(self.Ap4Aase_res_num)):
-            self.assertEqual(ds['orig'].mol[0].res[i].num, self.Ap4Aase_res_num[i])
-            self.assertEqual(ds['orig'].mol[0].res[i].name, self.Ap4Aase_res_name[i])
+            self.assertEqual(dp.mol[0].res[i].num, self.Ap4Aase_res_num[i])
+            self.assertEqual(dp.mol[0].res[i].name, self.Ap4Aase_res_name[i])
 
 
     def test_write_protein_sequence(self):
@@ -159,16 +164,16 @@ class Sequence_base_class:
         The functions tested are generic_fns.sequence.write() and prompt.sequence.write().
         """
 
-        # Alias the 'orig' relax data store.
-        cdp = ds['orig']
+        # Get the data pipe.
+        dp_orig = pipes.get_pipe('orig')
 
         # Create a simple animo acid sequence.
-        cdp.mol[0].res[0].num = 1
-        cdp.mol[0].res[0].name = 'GLY'
-        cdp.mol[0].res.add_item('PRO', 2)
-        cdp.mol[0].res.add_item('LEU', 3)
-        cdp.mol[0].res.add_item('GLY', 4)
-        cdp.mol[0].res.add_item('SER', 5)
+        dp_orig.mol[0].res[0].num = 1
+        dp_orig.mol[0].res[0].name = 'GLY'
+        dp_orig.mol[0].res.add_item('PRO', 2)
+        dp_orig.mol[0].res.add_item('LEU', 3)
+        dp_orig.mol[0].res.add_item('GLY', 4)
+        dp_orig.mol[0].res.add_item('SER', 5)
 
         # Write the residue sequence.
         self.sequence_fns.write(file=self.tmpfile, res_num_flag=True, res_name_flag=True)

@@ -29,7 +29,6 @@ from numpy import dot
 from warnings import warn
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, spin_loop
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
@@ -40,10 +39,10 @@ def angle_diff_frame():
     """Function for calculating the angle defining the XH vector in the diffusion frame."""
 
     # Test if the current data pipe exists.
-    pipes.test(ds.current_pipe)
+    pipes.test()
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test if the PDB file has been loaded.
     if not hasattr(cdp, 'structure'):
@@ -74,7 +73,7 @@ def ellipsoid_frame():
     """Calculate the spherical angles of the bond vector in the ellipsoid frame."""
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Get the unit vectors Dx, Dy, and Dz of the diffusion tensor axes.
     Dx, Dy, Dz = diffusion_tensor.unit_axes()
@@ -107,7 +106,7 @@ def spheroid_frame():
     """Function for calculating the angle alpha of the XH vector within the spheroid frame."""
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Loop over the sequence.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):

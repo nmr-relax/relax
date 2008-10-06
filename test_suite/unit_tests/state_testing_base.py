@@ -26,7 +26,7 @@ import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-
+from generic_fns import pipes
 
 
 class State_base_class:
@@ -64,7 +64,7 @@ class State_base_class:
 
         # Test the contents of the empty singleton.
         self.assertEqual(ds.keys(), [])
-        self.assertEqual(ds.current_pipe, None)
+        self.assertEqual(pipes.cdp_name(), None)
         self.assert_(not hasattr(ds, 'y'))
 
         # Get the relative path of relax.
@@ -75,10 +75,13 @@ class State_base_class:
         # Load the state.
         self.state.load_state(state='basic_single_pipe', dir_name=path+'/test_suite/shared_data/saved_states')
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
         # Test the contents of the restored singleton.
         self.assertEqual(ds.keys(), ['orig'])
-        self.assertEqual(ds.current_pipe, 'orig')
-        self.assertEqual(ds['orig'].x, 1)
+        self.assertEqual(pipes.cdp_name(), 'orig')
+        self.assertEqual(dp.x, 1)
         self.assertEqual(ds.y, 'Hello')
 
 
@@ -90,7 +93,7 @@ class State_base_class:
 
         # Test the contents of the empty singleton.
         self.assertEqual(ds.keys(), [])
-        self.assertEqual(ds.current_pipe, None)
+        self.assertEqual(pipes.cdp_name(), None)
         self.assert_(not hasattr(ds, 'y'))
 
         # Get the relative path of relax.
@@ -103,15 +106,19 @@ class State_base_class:
 
         # Add a new data pipe and some data to it.
         ds.add('new', 'jw_mapping')
-        ds[ds.current_pipe].z = [None, None]
+        cdp = pipes.get_pipe()
+        cdp.z = [None, None]
 
+        # Get the data pipes.
+        dp_orig = pipes.get_pipe('orig')
+        dp_new = pipes.get_pipe('new')
 
         # Test the contents of the restored singleton (with subsequent data added).
         self.assertEqual(ds.keys().sort(), ['orig', 'new'].sort())
-        self.assertEqual(ds.current_pipe, 'new')
-        self.assertEqual(ds['orig'].x, 1)
+        self.assertEqual(pipes.cdp_name(), 'new')
+        self.assertEqual(dp_orig.x, 1)
         self.assertEqual(ds.y, 'Hello')
-        self.assertEqual(ds['new'].z, [None, None])
+        self.assertEqual(dp_new.z, [None, None])
 
 
     def test_load_and_reset(self):
@@ -122,7 +129,7 @@ class State_base_class:
 
         # Test the contents of the empty singleton.
         self.assertEqual(ds.keys(), [])
-        self.assertEqual(ds.current_pipe, None)
+        self.assertEqual(pipes.cdp_name(), None)
         self.assert_(not hasattr(ds, 'y'))
 
         # Get the relative path of relax.
@@ -138,7 +145,7 @@ class State_base_class:
 
         # Test that there are no contents in the reset singleton.
         self.assertEqual(ds.keys(), [])
-        self.assertEqual(ds.current_pipe, None)
+        self.assertEqual(pipes.cdp_name(), None)
         self.assert_(not hasattr(ds, 'y'))
 
 
@@ -154,8 +161,11 @@ class State_base_class:
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
         # Add a single object to the 'orig' data pipe.
-        ds['orig'].x = 1
+        dp.x = 1
 
         # Add a single object to the storage object.
         ds.y = 'Hello'

@@ -28,8 +28,15 @@ prototype method stub (or functional method) with all arguments, raised errors, 
 documented.
 """
 
+# Python module imports.
+from os import sep
+from types import MethodType
+from warnings import warn
+
 # relax module import.
-from relax_errors import RelaxImplementError
+from data.relax_xml import fill_object_contents, xml_to_object
+from relax_errors import RelaxError, RelaxFileError, RelaxImplementError
+from relax_warnings import RelaxWarning
 
 
 class Base_struct_API:
@@ -45,11 +52,35 @@ class Base_struct_API:
     def __init__(self):
         """Initialise the structural object."""
 
-        # The parser specific data object.
+        # Initialise the variables used to keep track of multiple structures.
+        self.num = 0
+        self.name = []
+        self.model = []
+        self.file = []
+        self.path = []
         self.structural_data = []
 
-        # Initialise the file name list.
-        self.file_name = []
+
+    def add_struct(self, name=None, model=None, file=None, path=None, str=None, struct_index=None):
+        """Prototype method stub for adding the given structure to the store.
+
+        @keyword name:          The structural identifier.
+        @type name:             str
+        @keyword model:         The structural model.
+        @type model:            int or None
+        @keyword file:          The name of the file containing the structure.
+        @type file:             str
+        @keyword path:          The optional path where the file is located.
+        @type path:             str
+        @keyword str:           The object containing the structural data.
+        @type str:              Structure_container instance
+        @keyword struct_index:  The index of the structural container, used for replacing the
+                                structure.
+        @type struct_index:     int or None.
+        """
+
+        # Raise the error.
+        raise RelaxImplementError
 
 
     def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, struct_index=None):
@@ -209,19 +240,69 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def load_pdb(self, file_path, model=None, verbosity=False):
+    def from_xml(self, str_node, dir=None):
+        """Recreate the structural object from the XML structural object node.
+
+        @param str_node:    The structural object XML node.
+        @type str_node:     xml.dom.minicompat.Element instance
+        @keyword dir:       The name of the directory containing the results file.
+        @type dir:          str
+        """
+
+        # Recreate all the data structures.
+        xml_to_object(str_node, self)
+
+        # Loop over the structures and load them.
+        for i in xrange(self.num):
+            # Load the structure from file and path.
+            if self.path[i]:
+                try:
+                    loaded = self.load_pdb(file_path=self.path[i] + sep + self.file[i], model=None, struct_index=i)
+                except RelaxError:
+                    loaded = False
+            else:
+                loaded = False
+
+            # Try without the path to search for the file in the current directory.
+            if not loaded:
+                try:
+                    loaded = self.load_pdb(file_path=self.file[i], model=None, struct_index=i)
+                except RelaxError:
+                    loaded = False
+
+            # Try in the path of the results file.
+            if not loaded:
+                try:
+                    loaded = self.load_pdb(file_path=dir + sep + self.file[i], model=None, struct_index=i)
+                except RelaxError:
+                    loaded = False
+
+            # Can't load the file.
+            if not loaded:
+                if self.path[i]:
+                    warn(RelaxWarning("The structure file " + `self.file[i]` + " cannot be found in the current directory, the directory of the results file or in the directory" + `self.path[i]` + "."))
+                else:
+                    warn(RelaxWarning("The structure file " + `self.file[i]` + " cannot be found in the current directory or the directory of the results file."))
+
+
+    def load_pdb(self, file_path, model=None, struct_index=None, verbosity=False):
         """Prototype method stub for loading structures from a PDB file.
 
         This inherited prototype method is a stub which, if the functionality is desired, should be
         overwritten by the derived class.
 
 
-        @param file_path:   The full path of the PDB file.
-        @type file_path:    str
-        @param model:       The structural model to use.
-        @type model:        int
-        @keyword verbosity: A flag which if True will cause messages to be printed.
-        @type verbosity:    bool
+        @param file_path:       The full path of the PDB file.
+        @type file_path:        str
+        @param model:           The structural model to use.
+        @type model:            int
+        @param struct_index:    The index of the structure.  This optional argument can be useful
+                                for reloading a structure.
+        @type struct_index:     int
+        @keyword verbosity:     A flag which if True will cause messages to be printed.
+        @type verbosity:        bool
+        @return:                The status of the loading of the PDB file.
+        @rtype:                 bool
         """
 
         # Raise the error.
@@ -236,6 +317,37 @@ class Base_struct_API:
         """
 
         return len(self.structural_data)
+
+
+    def to_xml(self, doc, element):
+        """Prototype method for converting the structural object to an XML representation.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the alignment tensors XML element to.
+        @type element:  XML element object
+        """
+
+        # Create the structural element and add it to the higher level element.
+        str_element = doc.createElement('structure')
+        element.appendChild(str_element)
+
+        # Set the structural attributes.
+        str_element.setAttribute('desc', 'Structural information')
+        str_element.setAttribute('id', self.id)
+
+        # Blacklist methods.
+        blacklist = []
+        for name in dir(self):
+            # Get the object.
+            obj = getattr(self, name)
+
+            # Add methods to the list.
+            if isinstance(obj, MethodType):
+                blacklist.append(name)
+
+        # Add all simple python objects within the PipeContainer to the pipe element.
+        fill_object_contents(doc, str_element, object=self, blacklist=blacklist + ['structural_data'] + self.__class__.__dict__.keys())
 
 
     def write_pdb(self, file, struct_index=None):

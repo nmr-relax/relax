@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2007 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2006-2008 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,10 +21,7 @@
 ###############################################################################
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
-
-
-# The relax data storage object.
+import generic_fns
 
 
 class Reset:
@@ -41,5 +38,5 @@ class Reset:
         to its initial state.
         """
 
-        # Run the relax data storage object reset method.
-        ds.__reset__()
+        # Execute the functional code.
+        generic_fns.reset.reset()

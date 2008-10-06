@@ -22,6 +22,7 @@
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxSpinSelectDisallowError
 
 
@@ -45,7 +46,7 @@ class Residue_base_class:
         ds.add(pipe_name='test', pipe_type='mf')
 
         # Set the current data pipe to 'orig'.
-        ds.current_pipe = 'orig'
+        pipes.switch('orig')
 
 
     def tearDown(self):
@@ -57,22 +58,25 @@ class Residue_base_class:
     def setup_data(self):
         """Function for setting up some data for the unit tests."""
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
         # Create the first residue and add some data to its spin container.
         self.residue_fns.create(1, 'Ala')
-        ds['orig'].mol[0].res[0].spin[0].num = 111
-        ds['orig'].mol[0].res[0].spin[0].x = 1
-        ds['orig'].mol[0].name = 'Old mol'
+        dp.mol[0].res[0].spin[0].num = 111
+        dp.mol[0].res[0].spin[0].x = 1
+        dp.mol[0].name = 'Old mol'
 
         # Create a second molecule.
-        ds['orig'].mol.add_item('New mol')
+        dp.mol.add_item('New mol')
 
         # Copy the residue to the new molecule.
         self.residue_fns.copy(res_from=':1', res_to='#New mol')
         self.residue_fns.copy(res_from='#Old mol:1', res_to='#New mol:5')
 
         # Change the first residue's data.
-        ds['orig'].mol[0].res[0].spin[0].num = 222
-        ds['orig'].mol[0].res[0].spin[0].x = 2
+        dp.mol[0].res[0].spin[0].num = 222
+        dp.mol[0].res[0].spin[0].x = 2
 
 
     def test_copy_residue_between_molecules(self):
@@ -85,24 +89,27 @@ class Residue_base_class:
         # Set up some data.
         self.setup_data()
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
         # Test the original residue.
-        self.assertEqual(ds['orig'].mol[0].res[0].num, 1)
-        self.assertEqual(ds['orig'].mol[0].res[0].name, 'Ala')
-        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].num, 222)
-        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].x, 2)
+        self.assertEqual(dp.mol[0].res[0].num, 1)
+        self.assertEqual(dp.mol[0].res[0].name, 'Ala')
+        self.assertEqual(dp.mol[0].res[0].spin[0].num, 222)
+        self.assertEqual(dp.mol[0].res[0].spin[0].x, 2)
 
         # Test the new residue 1.
-        self.assertEqual(ds['orig'].mol[1].name, 'New mol')
-        self.assertEqual(ds['orig'].mol[1].res[0].num, 1)
-        self.assertEqual(ds['orig'].mol[1].res[0].name, 'Ala')
-        self.assertEqual(ds['orig'].mol[1].res[0].spin[0].num, 111)
-        self.assertEqual(ds['orig'].mol[1].res[0].spin[0].x, 1)
+        self.assertEqual(dp.mol[1].name, 'New mol')
+        self.assertEqual(dp.mol[1].res[0].num, 1)
+        self.assertEqual(dp.mol[1].res[0].name, 'Ala')
+        self.assertEqual(dp.mol[1].res[0].spin[0].num, 111)
+        self.assertEqual(dp.mol[1].res[0].spin[0].x, 1)
 
         # Test the new residue 5.
-        self.assertEqual(ds['orig'].mol[1].res[1].num, 5)
-        self.assertEqual(ds['orig'].mol[1].res[1].name, 'Ala')
-        self.assertEqual(ds['orig'].mol[1].res[1].spin[0].num, 111)
-        self.assertEqual(ds['orig'].mol[1].res[1].spin[0].x, 1)
+        self.assertEqual(dp.mol[1].res[1].num, 5)
+        self.assertEqual(dp.mol[1].res[1].name, 'Ala')
+        self.assertEqual(dp.mol[1].res[1].spin[0].num, 111)
+        self.assertEqual(dp.mol[1].res[1].spin[0].x, 1)
 
 
 
@@ -113,36 +120,40 @@ class Residue_base_class:
         prompt.residue.copy().
         """
 
+        # Get the data pipes.
+        dp = pipes.get_pipe('orig')
+        dp_test = pipes.get_pipe('test')
+
         # Create the first residue and add some data to its spin container.
         self.residue_fns.create(1, 'Ala')
-        ds['orig'].mol[0].res[0].spin[0].num = 111
-        ds['orig'].mol[0].res[0].spin[0].x = 1
+        dp.mol[0].res[0].spin[0].num = 111
+        dp.mol[0].res[0].spin[0].x = 1
 
         # Copy the residue to the second data pipe.
         self.residue_fns.copy(res_from=':1', pipe_to='test')
         self.residue_fns.copy(pipe_from='orig', res_from=':1', pipe_to='test', res_to=':5')
 
         # Change the first residue's data.
-        ds['orig'].mol[0].res[0].spin[0].num = 222
-        ds['orig'].mol[0].res[0].spin[0].x = 2
+        dp.mol[0].res[0].spin[0].num = 222
+        dp.mol[0].res[0].spin[0].x = 2
 
         # Test the original residue.
-        self.assertEqual(ds['orig'].mol[0].res[0].num, 1)
-        self.assertEqual(ds['orig'].mol[0].res[0].name, 'Ala')
-        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].num, 222)
-        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].x, 2)
+        self.assertEqual(dp.mol[0].res[0].num, 1)
+        self.assertEqual(dp.mol[0].res[0].name, 'Ala')
+        self.assertEqual(dp.mol[0].res[0].spin[0].num, 222)
+        self.assertEqual(dp.mol[0].res[0].spin[0].x, 2)
 
         # Test the new residue 1.
-        self.assertEqual(ds['test'].mol[0].res[0].num, 1)
-        self.assertEqual(ds['test'].mol[0].res[0].name, 'Ala')
-        self.assertEqual(ds['test'].mol[0].res[0].spin[0].num, 111)
-        self.assertEqual(ds['test'].mol[0].res[0].spin[0].x, 1)
+        self.assertEqual(dp_test.mol[0].res[0].num, 1)
+        self.assertEqual(dp_test.mol[0].res[0].name, 'Ala')
+        self.assertEqual(dp_test.mol[0].res[0].spin[0].num, 111)
+        self.assertEqual(dp_test.mol[0].res[0].spin[0].x, 1)
 
         # Test the new residue 5.
-        self.assertEqual(ds['test'].mol[0].res[1].num, 5)
-        self.assertEqual(ds['test'].mol[0].res[1].name, 'Ala')
-        self.assertEqual(ds['test'].mol[0].res[1].spin[0].num, 111)
-        self.assertEqual(ds['test'].mol[0].res[1].spin[0].x, 1)
+        self.assertEqual(dp_test.mol[0].res[1].num, 5)
+        self.assertEqual(dp_test.mol[0].res[1].name, 'Ala')
+        self.assertEqual(dp_test.mol[0].res[1].spin[0].num, 111)
+        self.assertEqual(dp_test.mol[0].res[1].spin[0].x, 1)
 
 
     def test_copy_residue_between_pipes_fail_no_pipe(self):
@@ -152,10 +163,13 @@ class Residue_base_class:
         prompt.residue.copy().
         """
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
         # Create the first residue and add some data to its spin container.
         self.residue_fns.create(1, 'Ala')
-        ds['orig'].mol[0].res[0].spin[0].num = 111
-        ds['orig'].mol[0].res[0].spin[0].x = 1
+        dp.mol[0].res[0].spin[0].num = 111
+        dp.mol[0].res[0].spin[0].x = 1
 
         # Copy the residue to the second data pipe.
         self.assertRaises(RelaxNoPipeError, self.residue_fns.copy, res_from=':1', pipe_to='test2')
@@ -168,45 +182,48 @@ class Residue_base_class:
         prompt.residue.copy().
         """
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
         # Create the first residue and add some data to its spin container.
         self.residue_fns.create(1, 'Ala')
-        ds['orig'].mol[0].res[0].spin[0].num = 111
-        ds['orig'].mol[0].res[0].spin[0].x = 1
+        dp.mol[0].res[0].spin[0].num = 111
+        dp.mol[0].res[0].spin[0].x = 1
 
         # Copy the residue a few times.
         self.residue_fns.copy(res_from=':1', res_to=':2')
         self.residue_fns.copy(res_from=':1', pipe_to='orig', res_to=':3')
 
         # Change the first residue's data.
-        ds['orig'].mol[0].res[0].spin[0].num = 222
-        ds['orig'].mol[0].res[0].spin[0].x = 2
+        dp.mol[0].res[0].spin[0].num = 222
+        dp.mol[0].res[0].spin[0].x = 2
 
         # Copy the residue once more.
         self.residue_fns.copy(res_from=':1', res_to=':4,Met')
 
         # Test the original residue.
-        self.assertEqual(ds['orig'].mol[0].res[0].num, 1)
-        self.assertEqual(ds['orig'].mol[0].res[0].name, 'Ala')
-        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].num, 222)
-        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].x, 2)
+        self.assertEqual(dp.mol[0].res[0].num, 1)
+        self.assertEqual(dp.mol[0].res[0].name, 'Ala')
+        self.assertEqual(dp.mol[0].res[0].spin[0].num, 222)
+        self.assertEqual(dp.mol[0].res[0].spin[0].x, 2)
 
         # Test the new residue 2.
-        self.assertEqual(ds['orig'].mol[0].res[1].num, 2)
-        self.assertEqual(ds['orig'].mol[0].res[1].name, 'Ala')
-        self.assertEqual(ds['orig'].mol[0].res[1].spin[0].num, 111)
-        self.assertEqual(ds['orig'].mol[0].res[1].spin[0].x, 1)
+        self.assertEqual(dp.mol[0].res[1].num, 2)
+        self.assertEqual(dp.mol[0].res[1].name, 'Ala')
+        self.assertEqual(dp.mol[0].res[1].spin[0].num, 111)
+        self.assertEqual(dp.mol[0].res[1].spin[0].x, 1)
 
         # Test the new residue 3.
-        self.assertEqual(ds['orig'].mol[0].res[2].num, 3)
-        self.assertEqual(ds['orig'].mol[0].res[2].name, 'Ala')
-        self.assertEqual(ds['orig'].mol[0].res[2].spin[0].num, 111)
-        self.assertEqual(ds['orig'].mol[0].res[2].spin[0].x, 1)
+        self.assertEqual(dp.mol[0].res[2].num, 3)
+        self.assertEqual(dp.mol[0].res[2].name, 'Ala')
+        self.assertEqual(dp.mol[0].res[2].spin[0].num, 111)
+        self.assertEqual(dp.mol[0].res[2].spin[0].x, 1)
 
         # Test the new residue 4.
-        self.assertEqual(ds['orig'].mol[0].res[3].num, 4)
-        self.assertEqual(ds['orig'].mol[0].res[3].name, 'Met')
-        self.assertEqual(ds['orig'].mol[0].res[3].spin[0].num, 222)
-        self.assertEqual(ds['orig'].mol[0].res[3].spin[0].x, 2)
+        self.assertEqual(dp.mol[0].res[3].num, 4)
+        self.assertEqual(dp.mol[0].res[3].name, 'Met')
+        self.assertEqual(dp.mol[0].res[3].spin[0].num, 222)
+        self.assertEqual(dp.mol[0].res[3].spin[0].x, 2)
 
 
     def test_copy_residue_within_molecule_fail1(self):
@@ -246,20 +263,23 @@ class Residue_base_class:
         prompt.residue.create().
         """
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
         # Create a few new residues.
         self.residue_fns.create(1, 'Ala')
         self.residue_fns.create(2, 'Leu')
         self.residue_fns.create(-3, 'Ser')
 
         # Test that the residue numbers are correct.
-        self.assertEqual(ds['orig'].mol[0].res[0].num, 1)
-        self.assertEqual(ds['orig'].mol[0].res[1].num, 2)
-        self.assertEqual(ds['orig'].mol[0].res[2].num, -3)
+        self.assertEqual(dp.mol[0].res[0].num, 1)
+        self.assertEqual(dp.mol[0].res[1].num, 2)
+        self.assertEqual(dp.mol[0].res[2].num, -3)
 
         # Test that the residue names are correct.
-        self.assertEqual(ds['orig'].mol[0].res[0].name, 'Ala')
-        self.assertEqual(ds['orig'].mol[0].res[1].name, 'Leu')
-        self.assertEqual(ds['orig'].mol[0].res[2].name, 'Ser')
+        self.assertEqual(dp.mol[0].res[0].name, 'Ala')
+        self.assertEqual(dp.mol[0].res[1].name, 'Leu')
+        self.assertEqual(dp.mol[0].res[2].name, 'Ser')
 
 
     def test_create_residue_fail(self):
@@ -283,22 +303,25 @@ class Residue_base_class:
         prompt.residue.delete().
         """
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
         # Create some residues and add some data to the spin containers.
         self.residue_fns.create(1, 'Ala')
         self.residue_fns.create(2, 'Ala')
         self.residue_fns.create(3, 'Ala')
         self.residue_fns.create(4, 'Gly')
-        ds['orig'].mol[0].res[3].spin[0].num = 111
-        ds['orig'].mol[0].res[3].spin[0].x = 1
+        dp.mol[0].res[3].spin[0].num = 111
+        dp.mol[0].res[3].spin[0].x = 1
 
         # Delete the first residue.
         self.residue_fns.delete(res_id=':Ala')
 
         # Test that the first residue is 4 Gly.
-        self.assertEqual(ds['orig'].mol[0].res[0].num, 4)
-        self.assertEqual(ds['orig'].mol[0].res[0].name, 'Gly')
-        self.assertEqual(ds['orig'].mol[0].res[0].spin[0].num, 111)
-        self.assert_(hasattr(ds['orig'].mol[0].res[0].spin[0], 'x'))
+        self.assertEqual(dp.mol[0].res[0].num, 4)
+        self.assertEqual(dp.mol[0].res[0].name, 'Gly')
+        self.assertEqual(dp.mol[0].res[0].spin[0].num, 111)
+        self.assert_(hasattr(dp.mol[0].res[0].spin[0], 'x'))
 
 
     def test_delete_residue_num(self):
@@ -308,26 +331,29 @@ class Residue_base_class:
         prompt.residue.delete().
         """
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
         # Create some residues and add some data to the spin containers.
         self.residue_fns.create(1, 'Ala')
         self.residue_fns.create(2, 'Ala')
         self.residue_fns.create(3, 'Ala')
         self.residue_fns.create(4, 'Gly')
-        ds['orig'].mol[0].res[3].spin[0].num = 111
-        ds['orig'].mol[0].res[3].spin[0].x = 1
+        dp.mol[0].res[3].spin[0].num = 111
+        dp.mol[0].res[3].spin[0].x = 1
 
         # Delete the first residue.
         self.residue_fns.delete(res_id=':1')
 
         # Test that the sequence.
-        self.assertEqual(ds['orig'].mol[0].res[0].num, 2)
-        self.assertEqual(ds['orig'].mol[0].res[0].name, 'Ala')
-        self.assertEqual(ds['orig'].mol[0].res[1].num, 3)
-        self.assertEqual(ds['orig'].mol[0].res[1].name, 'Ala')
-        self.assertEqual(ds['orig'].mol[0].res[2].num, 4)
-        self.assertEqual(ds['orig'].mol[0].res[2].name, 'Gly')
-        self.assertEqual(ds['orig'].mol[0].res[2].spin[0].num, 111)
-        self.assert_(hasattr(ds['orig'].mol[0].res[2].spin[0], 'x'))
+        self.assertEqual(dp.mol[0].res[0].num, 2)
+        self.assertEqual(dp.mol[0].res[0].name, 'Ala')
+        self.assertEqual(dp.mol[0].res[1].num, 3)
+        self.assertEqual(dp.mol[0].res[1].name, 'Ala')
+        self.assertEqual(dp.mol[0].res[2].num, 4)
+        self.assertEqual(dp.mol[0].res[2].name, 'Gly')
+        self.assertEqual(dp.mol[0].res[2].spin[0].num, 111)
+        self.assert_(hasattr(dp.mol[0].res[2].spin[0], 'x'))
 
 
     def test_delete_residue_all(self):
@@ -337,20 +363,23 @@ class Residue_base_class:
         prompt.residue.delete().
         """
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
         # Create some residues and add some data to the spin containers.
         self.residue_fns.create(1, 'Ala')
         self.residue_fns.create(2, 'Ala')
         self.residue_fns.create(3, 'Ala')
         self.residue_fns.create(4, 'Ala')
-        ds['orig'].mol[0].res[3].spin[0].num = 111
-        ds['orig'].mol[0].res[3].spin[0].x = 1
+        dp.mol[0].res[3].spin[0].num = 111
+        dp.mol[0].res[3].spin[0].x = 1
 
         # Delete all residues.
         self.residue_fns.delete(res_id=':1-4')
 
         # Test that the first residue defaults back to the empty residue.
-        self.assertEqual(ds['orig'].mol[0].res[0].num, None)
-        self.assertEqual(ds['orig'].mol[0].res[0].name, None)
+        self.assertEqual(dp.mol[0].res[0].num, None)
+        self.assertEqual(dp.mol[0].res[0].name, None)
 
 
     def test_delete_residue_shift(self):
@@ -360,22 +389,25 @@ class Residue_base_class:
         prompt.residue.delete().
         """
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
         # Create some residues and add some data to the spin containers.
         self.residue_fns.create(1, 'Ala')
         self.residue_fns.create(2, 'Ala')
         self.residue_fns.create(3, 'Ala')
         self.residue_fns.create(4, 'Ala')
-        ds['orig'].mol[0].res[3].spin[0].num = 111
-        ds['orig'].mol[0].res[3].spin[0].x = 1
+        dp.mol[0].res[3].spin[0].num = 111
+        dp.mol[0].res[3].spin[0].x = 1
 
         # Delete the first and third residues.
         self.residue_fns.delete(res_id=':1,3')
 
         # Test that the remaining residues.
-        self.assertEqual(ds['orig'].mol[0].res[0].num, 2)
-        self.assertEqual(ds['orig'].mol[0].res[1].num, 4)
-        self.assertEqual(ds['orig'].mol[0].res[1].spin[0].num, 111)
-        self.assert_(hasattr(ds['orig'].mol[0].res[1].spin[0], 'x'))
+        self.assertEqual(dp.mol[0].res[0].num, 2)
+        self.assertEqual(dp.mol[0].res[1].num, 4)
+        self.assertEqual(dp.mol[0].res[1].spin[0].num, 111)
+        self.assert_(hasattr(dp.mol[0].res[1].spin[0], 'x'))
 
 
     def test_delete_residue_fail(self):
@@ -427,6 +459,9 @@ class Residue_base_class:
         prompt.residue.name().
         """
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
         # Create the first residue and add some data to its spin container.
         self.residue_fns.create(-10, 'His')
 
@@ -434,7 +469,7 @@ class Residue_base_class:
         self.residue_fns.name(res_id=':-10', name='K')
 
         # Test that the residue has been renamed.
-        self.assertEqual(ds['orig'].mol[0].res[0].name, 'K')
+        self.assertEqual(dp.mol[0].res[0].name, 'K')
 
 
     def test_name_residue_many(self):
@@ -444,16 +479,19 @@ class Residue_base_class:
         prompt.residue.name().
         """
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
         # Create the first residue and add some data to its spin container.
         self.residue_fns.create(1, 'Ala')
-        ds['orig'].mol[0].res[0].spin[0].num = 111
+        dp.mol[0].res[0].spin[0].num = 111
 
         # Copy the residue a few times.
         self.residue_fns.copy(res_from=':1', res_to=':2')
         self.residue_fns.copy(res_from=':1', res_to=':3')
 
         # Change the first residue's data.
-        ds['orig'].mol[0].res[0].name = 'His'
+        dp.mol[0].res[0].name = 'His'
 
         # Copy the residue once more.
         self.residue_fns.copy(res_from=':1', res_to=':4,Met')
@@ -462,12 +500,12 @@ class Residue_base_class:
         self.residue_fns.name(res_id=':Ala', name='Gln')
 
         # Test the renaming of alanines.
-        self.assertEqual(ds['orig'].mol[0].res[1].name, 'Gln')
-        self.assertEqual(ds['orig'].mol[0].res[2].name, 'Gln')
+        self.assertEqual(dp.mol[0].res[1].name, 'Gln')
+        self.assertEqual(dp.mol[0].res[2].name, 'Gln')
 
         # Test that the other residues have not changed.
-        self.assertEqual(ds['orig'].mol[0].res[0].name, 'His')
-        self.assertEqual(ds['orig'].mol[0].res[3].name, 'Met')
+        self.assertEqual(dp.mol[0].res[0].name, 'His')
+        self.assertEqual(dp.mol[0].res[3].name, 'Met')
 
 
     def test_name_residue_no_spin(self):
@@ -488,6 +526,9 @@ class Residue_base_class:
         prompt.residue.number().
         """
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
         # Create the first residue and add some data to its spin container.
         self.residue_fns.create(-10, 'His')
 
@@ -495,7 +536,7 @@ class Residue_base_class:
         self.residue_fns.number(res_id=':-10', number=10)
 
         # Test that the residue has been renumbered.
-        self.assertEqual(ds['orig'].mol[0].res[0].num, 10)
+        self.assertEqual(dp.mol[0].res[0].num, 10)
 
 
     def test_number_residue_many_fail(self):
@@ -505,6 +546,9 @@ class Residue_base_class:
         prompt.residue.number().
         """
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
         # Create the first residue and add some data to its spin container.
         self.residue_fns.create(1, 'Ala')
 
@@ -513,7 +557,7 @@ class Residue_base_class:
         self.residue_fns.copy(res_from=':1', res_to=':3')
 
         # Change the first residue's data.
-        ds['orig'].mol[0].res[0].spin[0].name = 'His'
+        dp.mol[0].res[0].spin[0].name = 'His'
 
         # Copy the residue once more.
         self.residue_fns.copy(res_from=':1', res_to=':4,Met')

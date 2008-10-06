@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,6 +22,7 @@
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxNoTensorError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError, RelaxTensorError
 
 
@@ -47,7 +48,7 @@ class Diffusion_tensor_base_class:
         ds.add(pipe_name='test', pipe_type='mf')
 
         # Set the current data pipe to 'orig'.
-        ds.current_pipe = 'orig'
+        pipes.switch('orig')
 
 
     def tearDown(self):
@@ -67,20 +68,23 @@ class Diffusion_tensor_base_class:
         self.diffusion_tensor_fns.init(params=(13.9, 1.8, 0.7, 10.6, -23.3, 0.34), time_scale=1e-9, d_scale=1e7, angle_units='rad', param_types=0, fixed=True)
 
         # Change the current data pipe.
-        ds.current_pipe = 'test'
+        pipes.switch('test')
+
+        # Get the data pipe.
+        dp = pipes.get_pipe('test')
 
         # Copy the tensor to the test pipe.
         self.diffusion_tensor_fns.copy(pipe_from='orig')
 
         # Test the diffusion tensor.
-        self.assertEqual(ds['test'].diff_tensor.type, 'ellipsoid')
-        self.assertAlmostEqual(ds['test'].diff_tensor.tm * 1e9, 13.9, 14)
-        self.assertEqual(ds['test'].diff_tensor.Da, 1.8e7)
-        self.assertEqual(ds['test'].diff_tensor.Dr, 0.7)
-        self.assertEqual(ds['test'].diff_tensor.alpha, 1.1752220392306203)
-        self.assertEqual(ds['test'].diff_tensor.beta, 1.8327412287183442)
-        self.assertEqual(ds['test'].diff_tensor.gamma, 0.34)
-        self.assertEqual(ds['test'].diff_tensor.fixed, 1)
+        self.assertEqual(dp.diff_tensor.type, 'ellipsoid')
+        self.assertAlmostEqual(dp.diff_tensor.tm * 1e9, 13.9, 14)
+        self.assertEqual(dp.diff_tensor.Da, 1.8e7)
+        self.assertEqual(dp.diff_tensor.Dr, 0.7)
+        self.assertEqual(dp.diff_tensor.alpha, 1.1752220392306203)
+        self.assertEqual(dp.diff_tensor.beta, 1.8327412287183442)
+        self.assertEqual(dp.diff_tensor.gamma, 0.34)
+        self.assertEqual(dp.diff_tensor.fixed, 1)
 
 
     def test_copy_pull_sphere(self):
@@ -94,15 +98,18 @@ class Diffusion_tensor_base_class:
         self.diffusion_tensor_fns.init(params=1e-9)
 
         # Change the current data pipe.
-        ds.current_pipe = 'test'
+        pipes.switch('test')
+
+        # Get the data pipe.
+        dp = pipes.get_pipe('test')
 
         # Copy the tensor to the test pipe.
         self.diffusion_tensor_fns.copy(pipe_from='orig')
 
         # Test the diffusion tensor 
-        self.assertEqual(ds['test'].diff_tensor.type, 'sphere')
-        self.assertEqual(ds['test'].diff_tensor.tm, 1e-9)
-        self.assertEqual(ds['test'].diff_tensor.fixed, 1)
+        self.assertEqual(dp.diff_tensor.type, 'sphere')
+        self.assertEqual(dp.diff_tensor.tm, 1e-9)
+        self.assertEqual(dp.diff_tensor.fixed, 1)
 
 
     def test_copy_pull_spheroid(self):
@@ -116,19 +123,22 @@ class Diffusion_tensor_base_class:
         self.diffusion_tensor_fns.init(params=(8.6, 1.3, 600, -20), time_scale=1e-9, d_scale=1e7, angle_units='deg', param_types=2, spheroid_type='prolate', fixed=False)
 
         # Change the current data pipe.
-        ds.current_pipe = 'test'
+        pipes.switch('test')
+
+        # Get the data pipe.
+        dp = pipes.get_pipe('test')
 
         # Copy the tensor to the test pipe.
         self.diffusion_tensor_fns.copy(pipe_from='orig', pipe_to='test')
 
         # Test the diffusion tensor.
-        self.assertEqual(ds['test'].diff_tensor.type, 'spheroid')
-        self.assertEqual(ds['test'].diff_tensor.spheroid_type, 'prolate')
-        self.assertAlmostEqual(ds['test'].diff_tensor.tm * 1e9, 8.6, 14)
-        self.assertEqual(ds['test'].diff_tensor.Da, 5.2854122621564493e6)
-        self.assertEqual(ds['test'].diff_tensor.theta, 2.0943951023931948)
-        self.assertEqual(ds['test'].diff_tensor.phi, 2.7925268031909276)
-        self.assertEqual(ds['test'].diff_tensor.fixed, 0)
+        self.assertEqual(dp.diff_tensor.type, 'spheroid')
+        self.assertEqual(dp.diff_tensor.spheroid_type, 'prolate')
+        self.assertAlmostEqual(dp.diff_tensor.tm * 1e9, 8.6, 14)
+        self.assertEqual(dp.diff_tensor.Da, 5.2854122621564493e6)
+        self.assertEqual(dp.diff_tensor.theta, 2.0943951023931948)
+        self.assertEqual(dp.diff_tensor.phi, 2.7925268031909276)
+        self.assertEqual(dp.diff_tensor.fixed, 0)
 
 
     def test_copy_push_ellipsoid(self):
@@ -144,15 +154,18 @@ class Diffusion_tensor_base_class:
         # Copy the tensor to the test pipe.
         self.diffusion_tensor_fns.copy(pipe_to='test')
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('test')
+
         # Test the diffusion tensor.
-        self.assertEqual(ds['test'].diff_tensor.type, 'ellipsoid')
-        self.assertAlmostEqual(ds['test'].diff_tensor.tm * 1e9, 13.9, 14)
-        self.assertEqual(ds['test'].diff_tensor.Da, 1.8e7)
-        self.assertEqual(ds['test'].diff_tensor.Dr, 0.7)
-        self.assertEqual(ds['test'].diff_tensor.alpha, 1.1752220392306203)
-        self.assertEqual(ds['test'].diff_tensor.beta, 1.8327412287183442)
-        self.assertEqual(ds['test'].diff_tensor.gamma, 0.34)
-        self.assertEqual(ds['test'].diff_tensor.fixed, 1)
+        self.assertEqual(dp.diff_tensor.type, 'ellipsoid')
+        self.assertAlmostEqual(dp.diff_tensor.tm * 1e9, 13.9, 14)
+        self.assertEqual(dp.diff_tensor.Da, 1.8e7)
+        self.assertEqual(dp.diff_tensor.Dr, 0.7)
+        self.assertEqual(dp.diff_tensor.alpha, 1.1752220392306203)
+        self.assertEqual(dp.diff_tensor.beta, 1.8327412287183442)
+        self.assertEqual(dp.diff_tensor.gamma, 0.34)
+        self.assertEqual(dp.diff_tensor.fixed, 1)
 
 
     def test_copy_push_sphere(self):
@@ -168,10 +181,13 @@ class Diffusion_tensor_base_class:
         # Copy the tensor to the test pipe.
         self.diffusion_tensor_fns.copy(pipe_to='test')
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('test')
+
         # Test the diffusion tensor 
-        self.assertEqual(ds['test'].diff_tensor.type, 'sphere')
-        self.assertEqual(ds['test'].diff_tensor.tm, 1e-9)
-        self.assertEqual(ds['test'].diff_tensor.fixed, 1)
+        self.assertEqual(dp.diff_tensor.type, 'sphere')
+        self.assertEqual(dp.diff_tensor.tm, 1e-9)
+        self.assertEqual(dp.diff_tensor.fixed, 1)
 
 
     def test_copy_push_spheroid(self):
@@ -187,14 +203,17 @@ class Diffusion_tensor_base_class:
         # Copy the tensor to the test pipe.
         self.diffusion_tensor_fns.copy(pipe_from='orig', pipe_to='test')
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('test')
+
         # Test the diffusion tensor.
-        self.assertEqual(ds['test'].diff_tensor.type, 'spheroid')
-        self.assertEqual(ds['test'].diff_tensor.spheroid_type, 'prolate')
-        self.assertAlmostEqual(ds['test'].diff_tensor.tm * 1e9, 8.6, 14)
-        self.assertEqual(ds['test'].diff_tensor.Da, 5.2854122621564493e6)
-        self.assertEqual(ds['test'].diff_tensor.theta, 2.0943951023931948)
-        self.assertEqual(ds['test'].diff_tensor.phi, 2.7925268031909276)
-        self.assertEqual(ds['test'].diff_tensor.fixed, 0)
+        self.assertEqual(dp.diff_tensor.type, 'spheroid')
+        self.assertEqual(dp.diff_tensor.spheroid_type, 'prolate')
+        self.assertAlmostEqual(dp.diff_tensor.tm * 1e9, 8.6, 14)
+        self.assertEqual(dp.diff_tensor.Da, 5.2854122621564493e6)
+        self.assertEqual(dp.diff_tensor.theta, 2.0943951023931948)
+        self.assertEqual(dp.diff_tensor.phi, 2.7925268031909276)
+        self.assertEqual(dp.diff_tensor.fixed, 0)
 
 
     def test_delete(self):
@@ -210,8 +229,11 @@ class Diffusion_tensor_base_class:
         # Delete the tensor data.
         self.diffusion_tensor_fns.delete()
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('test')
+
         # Test that the diff_tensor object does not exist.
-        self.failIf(hasattr(ds['orig'], 'diff_tensor'))
+        self.failIf(hasattr(dp, 'diff_tensor'))
 
 
     def test_delete_fail_no_data(self):
@@ -325,18 +347,21 @@ class Diffusion_tensor_base_class:
         prompt.diffusion_tensor.init().
         """
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
         # Initialise the tensor.
         self.diffusion_tensor_fns.init(params=(13.9, 1.8, 0.7, 10.6, -23.3, 0.34), time_scale=1e-9, d_scale=1e7, angle_units='rad', param_types=0, fixed=True)
 
         # Test the diffusion tensor.
-        self.assertEqual(ds['orig'].diff_tensor.type, 'ellipsoid')
-        self.assertAlmostEqual(ds['orig'].diff_tensor.tm * 1e9, 13.9, 14)
-        self.assertEqual(ds['orig'].diff_tensor.Da, 1.8e7)
-        self.assertEqual(ds['orig'].diff_tensor.Dr, 0.7)
-        self.assertEqual(ds['orig'].diff_tensor.alpha, 1.1752220392306203)
-        self.assertEqual(ds['orig'].diff_tensor.beta, 1.8327412287183442)
-        self.assertEqual(ds['orig'].diff_tensor.gamma, 0.34)
-        self.assertEqual(ds['orig'].diff_tensor.fixed, 1)
+        self.assertEqual(dp.diff_tensor.type, 'ellipsoid')
+        self.assertAlmostEqual(dp.diff_tensor.tm * 1e9, 13.9, 14)
+        self.assertEqual(dp.diff_tensor.Da, 1.8e7)
+        self.assertEqual(dp.diff_tensor.Dr, 0.7)
+        self.assertEqual(dp.diff_tensor.alpha, 1.1752220392306203)
+        self.assertEqual(dp.diff_tensor.beta, 1.8327412287183442)
+        self.assertEqual(dp.diff_tensor.gamma, 0.34)
+        self.assertEqual(dp.diff_tensor.fixed, 1)
 
 
     def test_init_sphere(self):
@@ -346,13 +371,16 @@ class Diffusion_tensor_base_class:
         prompt.diffusion_tensor.init().
         """
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
         # Initialise the tensor.
         self.diffusion_tensor_fns.init(params=1e-9)
 
         # Test the diffusion tensor 
-        self.assertEqual(ds['orig'].diff_tensor.type, 'sphere')
-        self.assertEqual(ds['orig'].diff_tensor.tm, 1e-9)
-        self.assertEqual(ds['orig'].diff_tensor.fixed, 1)
+        self.assertEqual(dp.diff_tensor.type, 'sphere')
+        self.assertEqual(dp.diff_tensor.tm, 1e-9)
+        self.assertEqual(dp.diff_tensor.fixed, 1)
 
 
     def test_init_spheroid(self):
@@ -362,14 +390,17 @@ class Diffusion_tensor_base_class:
         prompt.diffusion_tensor.init().
         """
 
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
         # Initialise the tensor.
         self.diffusion_tensor_fns.init(params=(8.6, 1.3, 600, -20), time_scale=1e-9, d_scale=1e7, angle_units='deg', param_types=2, spheroid_type='prolate', fixed=False)
 
         # Test the diffusion tensor.
-        self.assertEqual(ds['orig'].diff_tensor.type, 'spheroid')
-        self.assertEqual(ds['orig'].diff_tensor.spheroid_type, 'prolate')
-        self.assertAlmostEqual(ds['orig'].diff_tensor.tm * 1e9, 8.6, 14)
-        self.assertEqual(ds['orig'].diff_tensor.Da, 5.2854122621564493e6)
-        self.assertEqual(ds['orig'].diff_tensor.theta, 2.0943951023931948)
-        self.assertEqual(ds['orig'].diff_tensor.phi, 2.7925268031909276)
-        self.assertEqual(ds['orig'].diff_tensor.fixed, 0)
+        self.assertEqual(dp.diff_tensor.type, 'spheroid')
+        self.assertEqual(dp.diff_tensor.spheroid_type, 'prolate')
+        self.assertAlmostEqual(dp.diff_tensor.tm * 1e9, 8.6, 14)
+        self.assertEqual(dp.diff_tensor.Da, 5.2854122621564493e6)
+        self.assertEqual(dp.diff_tensor.theta, 2.0943951023931948)
+        self.assertEqual(dp.diff_tensor.phi, 2.7925268031909276)
+        self.assertEqual(dp.diff_tensor.fixed, 0)

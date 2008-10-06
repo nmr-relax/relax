@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,17 +26,17 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
+from generic_fns.mol_res_spin import return_spin
 
 
-class NMRView(TestCase):
-    """TestCase class for the functional tests for the support of NMRView in relax."""
+class Modelim(TestCase):
+    """Class for testing model selection."""
 
     def setUp(self):
-        """Set up for all the functional tests."""
+        """Set up for these system tests."""
 
-        # Create a data pipe.
-        self.relax.interpreter._Pipe.create('mf', 'mf')
+        # Create a model-free data pipe.
+        self.relax.interpreter._Pipe.create('elim', 'mf')
 
 
     def tearDown(self):
@@ -45,20 +45,33 @@ class NMRView(TestCase):
         ds.__reset__()
 
 
-    def test_read_peak_list(self):
-        """Test the reading of an NMRView peak list."""
+    def test_te_200ns(self):
+        """Test the elimination of a model-free model with te = 200 ns."""
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
+        # Read a results file.
+        self.relax.interpreter._Results.read(file='final_results_trunc_1.3', dir=sys.path[-1] + '/test_suite/shared_data/model_free/OMP')
 
-        # Create the sequence data, and name the spins.
-        self.relax.interpreter._Residue.create(70)
-        self.relax.interpreter._Residue.create(72)
-        self.relax.interpreter._Spin.name(name='N')
+        # Set the te value for residue 11 Leu to 200 ns.
+        self.relax.interpreter._Value.set(200*1e-9, 'te', spin_id=":11")
 
-        # Read the peak list.
-        self.relax.interpreter._Relax_fit.read(file="cNTnC.xpk", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", relax_time=0.0176)
+        # Model elimination.
+        self.relax.interpreter._Eliminate.eliminate()
 
-        # Test the data.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], -6.88333129883)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].intensities[0], -5.49038267136)
+        # Checks.
+        self.assert_(return_spin(':9').select)
+        self.assert_(return_spin(':10').select)
+        self.assert_(not return_spin(':11').select)
+        self.assert_(return_spin(':12').select)
+
+
+    def test_tm_51ns(self):
+        """Test the elimination of a model-free model with the local tm = 51 ns."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/local_tm_model_elimination.py')
+
+        # Checks.
+        self.assert_(return_spin(':13').select)
+        self.assert_(return_spin(':14').select)
+        self.assert_(not return_spin(':15').select)
+        self.assert_(return_spin(':16').select)

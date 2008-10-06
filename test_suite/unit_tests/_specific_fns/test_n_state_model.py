@@ -26,6 +26,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import pipes
 from specific_fns import n_state_model
 from test_suite.unit_tests.n_state_model_testing_base import N_state_model_base_class
 
@@ -41,7 +42,7 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
         """Test the operation of the specific_fns.n_state_model.__assemble_param_vector() method."""
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Set up the N, probabilities and Euler angles.
         cdp.N = 3
@@ -70,7 +71,7 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
         """Test the operation of the specific_fns.n_state_model.__disassemble_param_vector() method."""
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Set up the initial N, probabilities and Euler angles.
         cdp.N = 3

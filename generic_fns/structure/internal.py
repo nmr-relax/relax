@@ -25,14 +25,15 @@
 
 # Python module imports.
 from numpy import array, float64, linalg, zeros
+import os
+from os import F_OK, access
 from re import search
-from string import split, strip
+from string import split, strip, upper
 from warnings import warn
 
 # relax module imports.
 from api_base import Base_struct_API
-from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import relax_re
+from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import Selection
 from relax_errors import RelaxError
 from relax_io import open_read_file
@@ -50,6 +51,64 @@ class Internal(Base_struct_API):
 
     # Identification string.
     id = 'internal'
+
+
+    def add_struct(self, name=None, model=None, file=None, path=None, str=None, struct_index=None):
+        """Add the given structure to the store.
+
+        @keyword name:          The structural identifier.
+        @type name:             str
+        @keyword model:         The structural model.
+        @type model:            int or None
+        @keyword file:          The name of the file containing the structure.
+        @type file:             str
+        @keyword path:          The optional path where the file is located.
+        @type path:             str
+        @keyword str:           The object containing the structural data.
+        @type str:              Structure_container instance
+        @keyword struct_index:  The index of the structural container, used for replacing the
+                                structure.
+        @type struct_index:     int or None.
+        """
+
+        # Some checks.
+        if struct_index != None:
+            # Index check.
+            if struct_index >= self.num:
+                raise RelaxError, "The structure index of " + `struct_index` + " cannot be more than the total number of structures of " + `self.num` + "."
+
+            # ID check.
+            if name != self.name[struct_index]:
+                raise RelaxError, "The ID names " + `name` + " and " + `self.name[struct_index]` + " do not match."
+
+            # Model.
+            if model != self.model[struct_index]:
+                raise RelaxError, "The models " + `model` + " and " + `self.model[struct_index]` + " do not match."
+
+            # File name.
+            if file != self.file[struct_index]:
+                raise RelaxError, "The file names of " + `file` + " and " + `self.file[struct_index]` + " do not match."
+
+        # Initialise.
+        else:
+            self.num = self.num + 1
+            self.name.append(name)
+            self.model.append(model)
+            self.file.append(file)
+            self.path.append(path)
+
+        # Initialise the structural object if not provided.
+        if str == None:
+            str = Structure_container()
+
+        # Add the structural data.
+        if struct_index != None:
+            if struct_index >= len(self.structural_data):
+                self.structural_data.append(str)
+            else:
+                self.structural_data[struct_index] = str
+        else:
+            self.structural_data.append(str)
 
 
     def __atom_index(self, atom_num, struct_index):
@@ -499,9 +558,8 @@ class Internal(Base_struct_API):
         @type struct_index:     None or int
         """
 
-
         # Loop over the structures.
-        for i in xrange(len(self.structural_data)):
+        for i in xrange(self.num):
             # Skip non-matching structures.
             if struct_index != None and struct_index != i:
                 continue
@@ -538,7 +596,7 @@ class Internal(Base_struct_API):
         """
 
         # Loop over the structures.
-        for i in xrange(len(self.structural_data)):
+        for i in xrange(self.num):
             # Skip non-matching structures.
             if struct_index != None and struct_index != i:
                 continue
@@ -645,7 +703,7 @@ class Internal(Base_struct_API):
         # Individual structure mode.
         else:
             # Loop over the models.
-            for c in xrange(len(self.structural_data)):
+            for c in xrange(self.num):
                 # Explicit structure identifier.
                 if type(str_id) == int:
                     if str_id != c:
@@ -663,9 +721,9 @@ class Internal(Base_struct_API):
                     # Build the tuple to be yielded.
                     atomic_tuple = ()
                     if model_num_flag:
-                        atomic_tuple = atomic_tuple + (struct.model,)
+                        atomic_tuple = atomic_tuple + (self.model[c],)
                     if mol_name_flag:
-                        atomic_tuple = atomic_tuple + (None,)
+                        atomic_tuple = atomic_tuple + (self.name[c],)
                     if res_num_flag:
                         atomic_tuple = atomic_tuple + (struct.res_num[i],)
                     if res_name_flag:
@@ -705,8 +763,8 @@ class Internal(Base_struct_API):
                                     return_warnings are set)
         """
 
-        # Generate the selection object.
-        sel_obj = Selection(atom_id)
+        # Generate the selection object, using upper case to avoid PDB file issues.
+        sel_obj = Selection(upper(atom_id))
 
         # Initialise some objects.
         vectors = []
@@ -714,7 +772,7 @@ class Internal(Base_struct_API):
         warnings = None
 
         # Loop over the structures.
-        for i in xrange(len(self.structural_data)):
+        for i in xrange(self.num):
             # Single structure.
             if struct_index and struct_index != i:
                 continue
@@ -754,6 +812,10 @@ class Internal(Base_struct_API):
                 # Append the vector to the vectors array.
                 vectors.append(vector)
 
+            # Not found.
+            else:
+                warnings = "Cannot find the atom in the structure"
+
         # Build the tuple to be yielded.
         data = (vectors,)
         if return_name:
@@ -765,41 +827,60 @@ class Internal(Base_struct_API):
         return data
 
 
-    def load_pdb(self, file_path, model=None, verbosity=False):
+    def load_pdb(self, file_path, model=None, struct_index=None, verbosity=False):
         """Method for loading structures from a PDB file.
 
-        @param file_path:   The full path of the PDB file.
-        @type file_path:    str
-        @param model:       The structural model to use.
-        @type model:        int
-        @keyword verbosity: A flag which if True will cause messages to be printed.
-        @type verbosity:    bool
+        @param file_path:       The full path of the PDB file.
+        @type file_path:        str
+        @param model:           The PDB model to use.  If None, all models will be loaded.
+        @type model:            int or None
+        @param struct_index:    The index of the structure.  This optional argument can be useful
+                                for reloading a structure.
+        @type struct_index:     int
+        @keyword verbosity:     A flag which if True will cause messages to be printed.
+        @type verbosity:        bool
+        @return:                The status of the loading of the PDB file.
+        @rtype:                 bool
         """
 
         # Initial print out.
         if verbosity:
-            print "Internal relax PDB parser.\n"
+            print "\nInternal relax PDB parser."
 
-        # Store the file name (with full path).
-        self.file_name.append(file_path)
+        # Test if the file exists.
+        if not access(file_path, F_OK):
+            # Exit indicating failure.
+            return False
+
+        # Separate the file name and path.
+        path, file = os.path.split(file_path)
+
+        # The ID name.
+        name = file
+        if model != None:
+            name = name + "_" + `model`
 
         # Use pointers (references) if the PDB data exists in another pipe.
-        for data_pipe in ds:
+        for data_pipe, pipe_name in pipes.pipe_loop(name=True):
+            # Skip the current pipe.
+            if pipe_name == pipes.cdp_name():
+                continue
+
+            # Structure exists.
             if hasattr(data_pipe, 'structure'):
                 # Loop over the structures.
-                for i in xrange(len(data_pipe.structure)):
-                    if data_pipe.structure.file_name[i] == file_path and data_pipe.structure[i].model == model and data_pipe.structure.id == 'internal':
-                        # Make a pointer to the data.
-                        self.structural_data = data_pipe.structure.structural_data[i]
+                for i in xrange(data_pipe.structure.num):
+                    if data_pipe.structure.name[i] == name and data_pipe.structure.id == 'internal':
+                        # Add the structure.
+                        self.add_struct(name=name, model=model, file=file, path=path, str=data_pipe.structure.structural_data[i], struct_index=struct_index)
 
                         # Print out.
                         if verbosity:
-                            print "Using the structures from the data pipe " + `data_pipe.pipe_name` + "."
-                            for i in xrange(len(self.structural_data)):
-                                print self.structural_data[i]
+                            print "Using the structures from the data pipe " + `pipe_name` + "."
+                            print self.structural_data[i]
 
                         # Exit this function.
-                        return
+                        return True
 
         # Print out.
         if verbosity:
@@ -814,10 +895,14 @@ class Internal(Base_struct_API):
             if model != None and model != model_num:
                 continue
 
-            # Initialise and fill the structural data object.
-            self.structural_data.append(Structure_container())
-            self.structural_data[-1].model = model_num
-            self.__fill_object_from_pdb(records, len(self.structural_data)-1)
+            # Add an empty structure.
+            self.add_struct(name=name, model=model_num, file=file, path=path, str=Structure_container(), struct_index=struct_index)
+
+            # Fill the structural data object.
+            self.__fill_object_from_pdb(records, struct_index=struct_index)
+
+        # Loading worked.
+        return True
 
 
     def write_pdb(self, file, struct_index=None):
@@ -868,7 +953,7 @@ class Internal(Base_struct_API):
         het_data_coll = []
 
         # Loop over the structures.
-        for index in xrange(len(self.structural_data)):
+        for index in xrange(self.num):
             # Skip non-matching structures.
             if struct_index != None and struct_index != index:
                 continue
@@ -1009,7 +1094,7 @@ class Internal(Base_struct_API):
         ######################
 
         # Loop over the structures.
-        for index in xrange(len(self.structural_data)):
+        for index in xrange(self.num):
             # Skip non-matching structures.
             if struct_index != None and struct_index != index:
                 continue

@@ -21,201 +21,48 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import fromstring
-from os import path
 import sys
 from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import Selection
-from generic_fns.structure.internal import Internal
+from generic_fns import pipes
 
 
-class Test_internal(TestCase):
-    """Unit tests for the functions of the 'generic_fns.structure.internal' module."""
+class Structure(TestCase):
+    """Class for testing the structural objects."""
 
     def setUp(self):
-        """Set up for all the internal relax structural object unit tests."""
+        """Set up for all the functional tests."""
 
-        # Get the relative path of relax.
-        self.path = sys.path[0]
-        if self.path == '.':
-            self.path = sys.path[-1]
-
-        # The path to a PDB file.
-        self.test_pdb_path = self.path+'/test_suite/shared_data/structures/Ap4Aase_res1-12.pdb'
-        expanded = path.split(self.test_pdb_path)
-        self.test_pdb_dir = expanded[0]
-        self.test_pdb_file_name = expanded[1]
-
-
-        # Instantiate the structural data object.
-        self.data = Internal()
+        # Create the data pipe.
+        self.relax.interpreter._Pipe.create('mf', 'mf')
 
 
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        # Delete the structural data object.
-        del self.data
-
-        # Reset.
         ds.__reset__()
 
 
-    def test___parse_pdb_record(self):
-        """Test the private Internal.__parse_pdb_record() method."""
+    def test_load_internal_results(self):
+        """Load the PDB file using the information in a results file (using the internal structural object)."""
 
-        # Parse a PDB record.
-        record = self.data._Internal__parse_pdb_record('ATOM    158  CG  GLU    11       9.590  -1.041 -11.596  1.00  0.00           C')
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures'
 
-        # Test the elements.
-        self.assertEqual(record[0], 'ATOM')
-        self.assertEqual(record[1], 158)
-        self.assertEqual(record[2], 'CG')
-        self.assertEqual(record[3], None)
-        self.assertEqual(record[4], 'GLU')
-        self.assertEqual(record[5], None)
-        self.assertEqual(record[6], 11)
-        self.assertEqual(record[7], None)
-        self.assertEqual(record[8], 9.59)
-        self.assertEqual(record[9], -1.041)
-        self.assertEqual(record[10], -11.596)
-        self.assertEqual(record[11], 1.0)
-        self.assertEqual(record[12], 0.0)
-        self.assertEqual(record[13], None)
-        self.assertEqual(record[14], 'C')
-        self.assertEqual(record[15], None)
+        # Read the results file.
+        self.relax.interpreter._Results.read(file='str_internal', dir=path)
 
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
 
-    def test_atom_loop(self):
-        """Test the Internal.atom_loop() method."""
-
-        # Load the PDB file.
-        self.data.load_pdb(self.test_pdb_path)
-
-        # Loop over the atoms.
-        atom_count = 0
-        for atom in self.data.atom_loop():
-            atom_count = atom_count + 1
-
-        # Test the number of atoms looped over.
-        self.assertEqual(atom_count, 150)
-
-
-    def test_atom_loop_mol_selection(self):
-        """Test the Internal.atom_loop() method with the '#XXX' mol selection."""
-
-        # Load the PDB file.
-        self.data.load_pdb(self.test_pdb_path)
-
-        # Loop over the atoms.
-        atom_count = 0
-        for atom in self.data.atom_loop(atom_id='#XXX'):
-            atom_count = atom_count + 1
-
-        # Test the number of atoms looped over.
-        self.assertEqual(atom_count, 0)
-
-
-    def test_atom_loop_res_selection1(self):
-        """Test the Internal.atom_loop() method with the ':8' res selection."""
-
-        # Load the PDB file.
-        self.data.load_pdb(self.test_pdb_path)
-
-        # Loop over the atoms.
-        atom_count = 0
-        for res_num, res_name in self.data.atom_loop(atom_id=':8', res_num_flag=True, res_name_flag=True):
-            # Test the residue name and number.
-            self.assertEqual(res_num, 8)
-            self.assertEqual(res_name, 'SER')
-
-            # Increment the atom count.
-            atom_count = atom_count + 1
-
-        # Test the number of atoms looped over.
-        self.assertEqual(atom_count, 11)
-
-
-    def test_atom_loop_res_selection2(self):
-        """Test the Internal.atom_loop() method with the ':PRO' res selection."""
-
-        # Load the PDB file.
-        self.data.load_pdb(self.test_pdb_path)
-
-        # Loop over the atoms.
-        atom_count = 0
-        for atom in self.data.atom_loop(atom_id=':PRO', res_name_flag=True):
-            # Test the residue name.
-            self.assertEqual(atom[0], 'PRO')
-
-            # Increment the atom count.
-            atom_count = atom_count + 1
-
-        # Test the number of atoms looped over.
-        self.assertEqual(atom_count, 42)
-
-
-    def test_atom_loop_spin_selection1(self):
-        """Test the Internal.atom_loop() method with the '@CA' spin selection."""
-
-        # Load the PDB file.
-        self.data.load_pdb(self.test_pdb_path)
-
-        # Loop over the atoms.
-        atom_count = 0
-        for spin_name in self.data.atom_loop(atom_id='@CA', atom_name_flag=True):
-            # Test the spin name.
-            self.assertEqual(spin_name[0], 'CA')
-
-            # Increment the atom count.
-            atom_count = atom_count + 1
-
-        # Test the number of atoms looped over.
-        self.assertEqual(atom_count, 12)
-
-
-    def test_atom_loop_spin_selection2(self):
-        """Test the Internal.atom_loop() method with the '@163' spin selection."""
-
-        # Load the PDB file.
-        self.data.load_pdb(self.test_pdb_path)
-
-        # Loop over the atoms.
-        atom_count = 0
-        for model_num, mol_name, res_num, res_name, spin_num, spin_name, element, pos in self.data.atom_loop(atom_id='@163', model_num_flag=True, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
-            # Test the spin info.
-            self.assertEqual(model_num, 1)
-            self.assertEqual(mol_name, 'Ap4Aase_res1-12.pdb')
-            self.assertEqual(res_num, 11)
-            self.assertEqual(res_name, 'GLU')
-            self.assertEqual(spin_num, 163)
-            self.assertEqual(spin_name, 'OE1')
-            self.assertEqual(element, 'O')
-            self.assertEqual(pos.tostring(), '\\\x8f\xc2\xf5(\x1c$@\xecQ\xb8\x1e\x85\xeb\x05\xc0\x89A`\xe5\xd0b*\xc0')
-
-            # Increment the atom count.
-            atom_count = atom_count + 1
-
-        # Test the number of atoms looped over.
-        self.assertEqual(atom_count, 1)
-
-
-    def test_load_pdb(self):
-        """Load a PDB file using Internal.load_pdb()."""
-
-        # Load the PDB file.
-        self.data.load_pdb(self.test_pdb_path)
-
-        # Test the structural data.
-        self.assertEqual(len(self.data.file), 1)
-        self.assertEqual(self.data.file[0], self.test_pdb_file_name)
-        self.assertEqual(self.data.path[0], self.test_pdb_dir)
-        self.assertEqual(self.data.model[0], 1)
-        self.assertEqual(len(self.data.structural_data), 1)
-        self.assertEqual(type(self.data.structural_data), list)
+        # Test the structure metadata.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assertEqual(cdp.structure.file, ['Ap4Aase_res1-12.pdb'])
+        self.assertEqual(cdp.structure.path, [''])
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assert_(len(cdp.structure.structural_data))
 
         # The real atomic data.
         atom_name = ['N', 'CA', '1HA', '2HA', 'C', 'O', '1HT', '2HT', '3HT', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', 'HG', 'CD1', '1HD1', '2HD1', '3HD1', 'CD2', '1HD2', '2HD2', '3HD2', 'C', 'O', 'N', 'H', 'CA', '1HA', '2HA', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'OG', 'HG', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', 'SD', 'CE', '1HE', '2HE', '3HE', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', 'OD1', 'OD2', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'OG', 'HG', 'C', 'O', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', 'CD', 'OE1', 'OE2', 'C', 'O', 'N', 'H', 'CA', '1HA', '2HA', 'C', 'O']
@@ -231,8 +78,8 @@ class Test_internal(TestCase):
         z = [6.302, 7.391, 8.306, 7.526, 7.089, 6.087, 6.697, 5.822, 5.604, 7.943, 9.155, 7.752, 7.908, 8.829, 9.212, 8.407, 9.880, 10.560, 10.415, 9.754, 8.900, 6.374, 5.909, 5.719, 6.139, 4.391, 4.081, 4.415, 4.326, 5.367, 3.307, 2.640, 3.889, 4.956, 3.700, 3.430, 2.493, 2.814, 2.633, 1.449, 3.403, 3.572, 2.369, 2.281, 1.371, 0.855, 1.868, 0.359, 0.149, -0.269, -0.055, -1.268, -1.726, -0.608, 0.037, -1.377, 0.162, 0.731, -2.354, -2.175, -3.496, -3.603, -4.606, -4.199, -5.387, -5.803, -6.196, -4.563, -5.146, -4.350, -3.001, -1.895, -1.241, -1.307, -2.472, -5.551, -5.582, -6.328, -6.269, -7.274, -6.735, -7.913, -8.518, -7.133, -8.791, -9.871, -8.395, -8.346, -8.584, -8.977, -8.732, -10.002, -10.355, -11.174, -11.584, -11.936, -10.759, -11.425, -9.403, -8.469, -9.921, -11.030, -9.410, -8.336, -10.080, -9.428, -10.291, -11.333, -11.606, -12.128, -10.723, -11.893, -9.781, -10.959, -8.768, -7.344, -8.971, -9.765, -7.642, -7.816, -7.251, -6.715, -6.584, -5.765, -7.175, -6.955, -9.288, -9.222, -9.654, -9.696, -10.009, -10.928, -10.249, -10.194, -9.475, -11.596, -11.540, -11.813, -12.724, -13.193, -13.137, -8.947, -7.774, -9.383, -10.338, -8.477, -8.138, -9.017, -7.265, -6.226]
 
         # Test the atomic data.
-        str = self.data.structural_data[0]
-        for i in xrange(len(self.data.structural_data[0].atom_name)):
+        str = cdp.structure.structural_data[0]
+        for i in xrange(len(str.atom_name)):
             self.assertEqual(str.atom_name[i], atom_name[i])
             self.assertEqual(str.bonded[i], bonded[i])
             self.assertEqual(str.chain_id[i], chain_id[i])
@@ -244,3 +91,30 @@ class Test_internal(TestCase):
             self.assertEqual(str.x[i], x[i])
             self.assertEqual(str.y[i], y[i])
             self.assertEqual(str.z[i], z[i])
+
+
+    def test_load_scientific_results(self):
+        """Load the PDB file using the information in a results file (using the Scientific python structural object)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures'
+
+        # Read the results file.
+        self.relax.interpreter._Results.read(file='str_scientific', dir=path)
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test the structure metadata.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assertEqual(cdp.structure.file, ['Ap4Aase_res1-12.pdb'])
+        self.assertEqual(cdp.structure.path, [''])
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assert_(len(cdp.structure.structural_data))
+        print cdp.structure.structural_data
+
+        # The real atomic data.
+        res_name = ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY']
+
+        # Check the atomic data.
+        self.assertEqual(cdp.structure.structural_data[0].peptide_chains[0].sequence(), res_name)

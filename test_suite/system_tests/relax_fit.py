@@ -27,6 +27,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import return_spin_from_index, spin_index_loop
+from generic_fns import pipes
 
 
 class Relax_fit(TestCase):
@@ -74,16 +75,20 @@ class Relax_fit(TestCase):
         # Test the integrity of the data.
         #################################
 
+        # Get the data pipes.
+        dp_new = pipes.get_pipe('new')
+        dp_rx = pipes.get_pipe('rx')
+
         # Loop over the spins of the original data.
         for mol_index, res_index, spin_index in spin_index_loop():
             # Alias the spin containers.
-            new_spin = ds['new'].mol[mol_index].res[res_index].spin[spin_index]
-            orig_spin = ds['rx'].mol[mol_index].res[res_index].spin[spin_index]
+            new_spin = dp_new.mol[mol_index].res[res_index].spin[spin_index]
+            orig_spin = dp_rx.mol[mol_index].res[res_index].spin[spin_index]
 
             # Check the sequence info.
-            self.assertEqual(ds['new'].mol[mol_index].name, ds['rx'].mol[mol_index].name)
-            self.assertEqual(ds['new'].mol[mol_index].res[res_index].num, ds['rx'].mol[mol_index].res[res_index].num)
-            self.assertEqual(ds['new'].mol[mol_index].res[res_index].name, ds['rx'].mol[mol_index].res[res_index].name)
+            self.assertEqual(dp_new.mol[mol_index].name, dp_rx.mol[mol_index].name)
+            self.assertEqual(dp_new.mol[mol_index].res[res_index].num, dp_rx.mol[mol_index].res[res_index].num)
+            self.assertEqual(dp_new.mol[mol_index].res[res_index].name, dp_rx.mol[mol_index].res[res_index].name)
             self.assertEqual(new_spin.num, orig_spin.num)
             self.assertEqual(new_spin.name, orig_spin.name)
 

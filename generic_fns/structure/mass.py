@@ -24,8 +24,8 @@
 from numpy import float64, zeros
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import return_molecule, return_residue, return_spin
+from generic_fns import pipes
 from physical_constants import return_atomic_mass
 from relax_errors import RelaxNoPdbError
 
@@ -43,7 +43,7 @@ def centre_of_mass(return_mass=False):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test if a structure has been loaded.
     if not hasattr(cdp, 'structure'):

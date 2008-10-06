@@ -22,6 +22,7 @@
 
 # Python module imports.
 from re import match
+from warnings import warn
 
 # relax module imports.
 from align_tensor import AlignTensorList
@@ -32,6 +33,7 @@ from mol_res_spin import MoleculeList
 from prototype import Prototype
 from relax_errors import RelaxFromXMLNotEmptyError
 from relax_xml import fill_object_contents, node_value_to_python, xml_to_object
+from relax_warnings import RelaxWarning
 
 
 class PipeContainer(Prototype):
@@ -94,11 +96,13 @@ class PipeContainer(Prototype):
         return text
 
 
-    def from_xml(self, relax_node):
+    def from_xml(self, relax_node, dir=None):
         """Read a pipe container XML element and place the contents into this pipe.
 
         @param relax_node:  The relax XML node.
         @type relax_node:   xml.dom.minidom.Element instance
+        @keyword dir:       The name of the directory containing the results file.
+        @type dir:          str
         """
 
         # Test if empty.
@@ -138,6 +142,26 @@ class PipeContainer(Prototype):
         # Recreate the molecule, residue, and spin data structure.
         mol_nodes = relax_node.getElementsByTagName('mol')
         self.mol.from_xml(mol_nodes)
+
+        # Get the structural object nodes and, if they exist, fill the contents.
+        str_nodes = relax_node.getElementsByTagName('structure')
+        if str_nodes:
+            # Get the object type.
+            parser = str(str_nodes[0].getAttribute('id'))
+
+            # Create the structural object.
+            fail = False
+            if parser == 'scientific':
+                self.structure = generic_fns.structure.scientific.Scientific_data()
+            elif parser == 'internal':
+                self.structure = generic_fns.structure.internal.Internal()
+            else:
+                warn(RelaxWarning("The structural file parser " + `parser` + " is unknown.  The structure will not be loaded."))
+                fail = True
+
+            # Fill its contents.
+            if not fail:
+                self.structure.from_xml(str_nodes[0], dir=dir)
 
 
     def is_empty(self):
@@ -206,12 +230,12 @@ class PipeContainer(Prototype):
         if hasattr(self, 'align_tensors'):
             self.align_tensors.to_xml(doc, element)
 
-        # Add the structural data, if it exists.
-        if hasattr(self, 'structure'):
-            self.xml_create_str_element(doc, element)
-
         # Add the molecule-residue-spin data.
         self.mol.to_xml(doc, element)
+
+        # Add the structural data, if it exists.
+        if hasattr(self, 'structure'):
+            self.structure.to_xml(doc, element)
 
 
     def xml_create_hybrid_element(self, doc, element):
@@ -237,21 +261,3 @@ class PipeContainer(Prototype):
         # Add the pipes list.
         text_val = doc.createTextNode(str(self.hybrid_pipes))
         list_element.appendChild(text_val)
-
-
-    def xml_create_str_element(self, doc, element):
-        """Create an XML element for the structural information.
-
-        @param doc:     The XML document object.
-        @type doc:      xml.dom.minidom.Document instance
-        @param element: The element to add the structural info to.
-        @type element:  XML element object
-        """
-
-        # Create the structural element and add it to the higher level element.
-        str_element = doc.createElement('structure')
-        element.appendChild(str_element)
-
-        # Set the structural attributes.
-        str_element.setAttribute('desc', 'Structural information')
-        str_element.setAttribute('id', self.structure.id)
