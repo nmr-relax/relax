@@ -29,9 +29,9 @@ from re import split
 from warnings import warn
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin
-from relax_errors import RelaxError, RelaxArgNotInListError, RelaxNoPipeError, RelaxNoSequenceError
+from generic_fns import pipes
+from relax_errors import RelaxError, RelaxArgNotInListError, RelaxNoSequenceError
 from relax_io import extract_data, strip
 from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
@@ -253,8 +253,7 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
         H_dim = 'w1'
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():

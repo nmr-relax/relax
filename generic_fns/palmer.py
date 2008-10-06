@@ -37,9 +37,9 @@ except ImportError:
     pass
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
-from relax_errors import RelaxDirError, RelaxFileError, RelaxFileOverwriteError, RelaxNoModelError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNucleusError, RelaxProgFailError
+from generic_fns import pipes
+from relax_errors import RelaxDirError, RelaxFileError, RelaxFileOverwriteError, RelaxNoModelError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNucleusError, RelaxProgFailError
 from relax_io import mkdir_nofail, open_write_file, test_binary
 
 
@@ -55,11 +55,10 @@ def create(dir, force, binary, diff_search, sims, sim_type, trim, steps, constra
     """
 
     # Test if the current pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -274,7 +273,7 @@ def create_mfmodel(i, file):
     """Create the Modelfree4 input file 'mfmodel'."""
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Spin title.
     file.write("\nspin     " + spin.name + "_" + `spin.num` + "\n")
@@ -365,7 +364,7 @@ def create_mfpar(i, file):
     """Create the Modelfree4 input file 'mfpar'."""
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Spin title.
     file.write("\nspin     " + spin.name + "_" + `spin.num` + "\n")
@@ -386,7 +385,7 @@ def create_run(file):
     """Create the script 'run.sh' for the execution of Modelfree4."""
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     file.write("#! /bin/sh\n")
     file.write(self.binary + " -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
@@ -404,7 +403,7 @@ def execute(dir, force, binary):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Arguments.
     self.pipe = pipe
@@ -494,7 +493,7 @@ def extract(dir, spin_id=None):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():

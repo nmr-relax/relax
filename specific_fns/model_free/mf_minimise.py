@@ -27,9 +27,8 @@ from numpy.linalg import inv
 from re import match
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from float import isNaN, isInf
-from generic_fns import diffusion_tensor
+from generic_fns import diffusion_tensor, pipes
 from generic_fns.diffusion_tensor import diff_data_exists
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
@@ -81,7 +80,7 @@ class Mf_minimise:
             raise RelaxNoSequenceError
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Determine the model type.
         model_type = self.determine_model_type()
@@ -230,7 +229,7 @@ class Mf_minimise:
         param_index = 0
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Diffusion tensor parameters of the Monte Carlo simulations.
         if sim_index != None and (model_type == 'diff' or model_type == 'all'):
@@ -524,7 +523,7 @@ class Mf_minimise:
         model_type = self.determine_model_type()
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Minimisation options for diffusion tensor parameters.
         if model_type == 'diff' or model_type == 'all':
@@ -578,7 +577,7 @@ class Mf_minimise:
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Spherical diffusion {tm}.
         if cdp.diff_tensor.type == 'sphere':
@@ -758,7 +757,7 @@ class Mf_minimise:
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -936,7 +935,7 @@ class Mf_minimise:
             h_count = 0
 
             # Get the data for minimisation.
-            relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params = self.minimise_data_setup(model_type, min_algor, num_data_sets, spin=spin, sim_index=sim_index)
+            relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params = self.minimise_data_setup(model_type, min_algor, num_data_sets, min_options, spin=spin, sim_index=sim_index)
 
 
             # Initialise the function to minimise.
@@ -1100,7 +1099,7 @@ class Mf_minimise:
                     cdp.warning = warning
 
 
-    def minimise_data_setup(self, model_type, min_algor, num_data_sets, spin=None, sim_index=None):
+    def minimise_data_setup(self, model_type, min_algor, num_data_sets, min_options, spin=None, sim_index=None):
         """Set up all the data required for minimisation.
 
         @param model_type:      The model type, one of 'all', 'diff', 'mf', or 'local_tm'.
@@ -1109,6 +1108,8 @@ class Mf_minimise:
         @type min_algor:        str
         @param num_data_sets:   The number of data sets.
         @type num_data_sets:    int
+        @param min_options:     The minimisation options array.
+        @type min_options:      list
         @keyword spin:          The spin data container.
         @type spin:             SpinContainer instance
         @keyword sim_index:     The optional MC simulation index.
@@ -1121,7 +1122,7 @@ class Mf_minimise:
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Initialise the data structures for the model-free function.
         relax_data = []
@@ -1273,7 +1274,7 @@ class Mf_minimise:
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Global stats.
         if hasattr(cdp, 'chi2'):

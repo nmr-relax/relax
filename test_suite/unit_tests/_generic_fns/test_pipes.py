@@ -51,7 +51,7 @@ class Test_pipes(TestCase):
         ds.add(pipe_name='empty', pipe_type='mf')
 
         # Set the current pipe to the 'orig' data pipe.
-        ds.current_pipe = 'orig'
+        pipes.switch('orig')
 
 
     def tearDown(self):
@@ -146,7 +146,7 @@ class Test_pipes(TestCase):
         self.assert_(ds.has_key(name))
 
         # Test that the current pipe is the new pipe.
-        self.assertEqual(ds.current_pipe, name)
+        self.assertEqual(pipes.cdp_name(), name)
 
 
     def test_creation_fail(self):
@@ -162,11 +162,11 @@ class Test_pipes(TestCase):
     def test_current(self):
         """Get the current data pipe.
 
-        The function used is generic_fns.pipes.current().
+        The function used is generic_fns.pipes.cdp_name().
         """
 
         # Test the current pipe.
-        self.assertEqual(pipes.current(), 'orig')
+        self.assertEqual(pipes.cdp_name(), 'orig')
 
 
     def test_deletion(self):
@@ -177,7 +177,7 @@ class Test_pipes(TestCase):
 
         # Set the current pipe to the 'orig' data pipe.
         name = 'orig'
-        ds.current_pipe = name
+        pipes.switch(name)
 
         # Delete the 'orig' data pipe.
         pipes.delete(name)
@@ -186,7 +186,7 @@ class Test_pipes(TestCase):
         self.assert_(not ds.has_key(name))
 
         # Test that the current pipe is None (as the current pipe was deleted).
-        self.assertEqual(ds.current_pipe, None)
+        self.assertEqual(pipes.cdp_name(), None)
 
 
     def test_deletion_fail(self):
@@ -209,13 +209,13 @@ class Test_pipes(TestCase):
         pipes.switch('orig')
 
         # Test the current data pipe.
-        self.assertEqual(ds.current_pipe, 'orig')
+        self.assertEqual(pipes.cdp_name(), 'orig')
 
         # Switch to the 'empty' data pipe.
         pipes.switch('empty')
 
         # Test the current data pipe.
-        self.assertEqual(ds.current_pipe, 'empty')
+        self.assertEqual(pipes.cdp_name(), 'empty')
 
 
     def test_switch_fail(self):

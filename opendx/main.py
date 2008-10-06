@@ -30,7 +30,6 @@ from re import search
 import string
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 import isosurface_3D
 from relax_errors import RelaxError, RelaxNoResError
 from relax_io import test_binary

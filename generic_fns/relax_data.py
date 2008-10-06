@@ -29,10 +29,11 @@ import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
-from relax_errors import RelaxError, RelaxNoRiError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
+from generic_fns import pipes
+from relax_errors import RelaxError, RelaxNoRiError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
 from relax_io import extract_data, strip
+import specific_fns
 
 
 def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, values=None, errors=None, sim=False):
@@ -60,29 +61,32 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
     """
 
     # Test if the current data pipe exists.
-    pipes.test(ds.current_pipe)
+    pipes.test()
 
     # Test if sequence data exists.
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
+
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
 
 
     # Global (non-spin specific) data.
     #####################################
 
     # Initialise the global data if necessary.
-    data_init(ds[ds.current_pipe], global_flag=True)
+    data_init(cdp, global_flag=True)
 
     # Add the data structures.
-    ds[ds.current_pipe].ri_labels = deepcopy(ri_labels)
-    ds[ds.current_pipe].remap_table = deepcopy(remap_table)
-    ds[ds.current_pipe].frq_labels = deepcopy(frq_labels)
-    ds[ds.current_pipe].frq = deepcopy(frq)
-    ds[ds.current_pipe].num_ri = len(ri_labels)
-    ds[ds.current_pipe].num_frq = len(frq)
+    cdp.ri_labels = deepcopy(ri_labels)
+    cdp.remap_table = deepcopy(remap_table)
+    cdp.frq_labels = deepcopy(frq_labels)
+    cdp.frq = deepcopy(frq)
+    cdp.num_ri = len(ri_labels)
+    cdp.num_frq = len(frq)
 
     # Update the NOE R1 translation table.
-    update_noe_r1_table(ds[ds.current_pipe])
+    update_noe_r1_table(cdp)
 
 
     # Spin specific data.
@@ -137,72 +141,67 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
 
 
 def back_calc(ri_label=None, frq_label=None, frq=None):
-    """Function for back calculating relaxation data."""
+    """Back calculate the relaxation data.
+
+    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+    @type ri_label:     str
+    @param frq_label:   The field strength label.
+    @type frq_label:    str
+    @param frq:         The spectrometer proton frequency in Hz.
+    @type frq:          float
+    """
 
     # Test if the current pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
+
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Test if relaxation data corresponding to 'self.ri_label' and 'self.frq_label' already exists.
-    if self.test_labels():
-        raise RelaxRiError, (self.ri_label, self.frq_label)
+    # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
+    if test_labels():
+        raise RelaxRiError, (ri_label, frq_label)
 
 
     # Global (non-residue specific) data.
     #####################################
 
     # Global data flag.
-    self.global_flag = 1
+    global_flag = 1
 
     # Initialise the global data if necessary.
-    self.data_init(ds)
+    data_init(cdp)
 
     # Update the global data.
-    self.update_data_structures_pipe(ri_label, frq_label, frq)
+    update_data_structures_pipe(ri_label, frq_label, frq)
 
 
     # Residue specific data.
     ########################
 
     # Global data flag.
-    self.global_flag = 0
-
-    # Function type.
-    function_type = ds.run_types[ds.run_names.index(self.run)]
+    global_flag = 0
 
     # Specific back-calculate function setup.
-    back_calculate = self.relax.specific_setup.setup('back_calc', function_type)
+    back_calculate = specific_fns.setup.get_specific_fn('back_calc', pipes.get_type())
 
-    # Loop over the sequence.
-    for i in xrange(len(ds.res[self.run])):
-        # Remap the data structure 'ds.res[self.run][i]'.
-        data = ds.res[self.run][i]
-
-        # Skip deselected residues.
-        if not data.select:
+    # Loop over the spins.
+    for spin in spin_loop():
+        # Skip deselected spins.
+        if not spin.select:
             continue
 
-        # Store a copy of all the data in 'ds.res[self.run][i]' for backing up if the back_calculation function fails.
-        back_up = deepcopy(data)
-
         # Initialise all data structures.
-        self.update_data_structures_spin(data, ri_label, frq_label, frq)
+        update_data_structures_spin(spin, ri_label, frq_label, frq)
 
         # Back-calculate the relaxation value.
-        try:
-            value = back_calculate(run=self.run, index=i, ri_label=self.ri_label, frq_label=frq_label, frq=self.frq)
-        except:
-            # Restore the data.
-            ds.res[self.run][i] = deepcopy(back_up)
-            del back_up
-            raise
+        value = back_calculate(spin=spin, ri_label=ri_label, frq_label=frq_label, frq=frq)
 
         # Update all data structures.
-        self.update_data_structures_spin(data, ri_label, frq_label, frq, value)
+        update_data_structures_spin(spin, ri_label, frq_label, frq, value)
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
@@ -224,13 +223,17 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
     if pipe_from == None and pipe_to == None:
         raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
     elif pipe_from == None:
-        pipe_from = ds.current_pipe
+        pipe_from = pipes.cdp_name()
     elif pipe_to == None:
-        pipe_to = ds.current_pipe
+        pipe_to = pipes.cdp_name()
 
     # Test if the pipe_from and pipe_to data pipes exist.
     pipes.test(pipe_from)
     pipes.test(pipe_to)
+
+    # Get the data pipes.
+    dp_from = pipes.get_pipe(pipe_from)
+    dp_to = pipes.get_pipe(pipe_to)
 
     # Test if pipe_from contains sequence data.
     if not exists_mol_res_spin_data(pipe_from):
@@ -248,8 +251,8 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
         # Spin loop.
         for mol_index, res_index, spin_index in spin_index_loop():
             # Alias the spin containers.
-            spin_from = ds[pipe_from].mol[mol_index].res[res_index].spin[spin_index]
-            spin_to = ds[pipe_to].mol[mol_index].res[res_index].spin[spin_index]
+            spin_from = dp_from.mol[mol_index].res[res_index].spin[spin_index]
+            spin_to = dp_to.mol[mol_index].res[res_index].spin[spin_index]
 
             # Loop through the data structure names.
             for name in names:
@@ -273,8 +276,8 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
         # Spin loop.
         for mol_index, res_index, spin_index in spin_index_loop():
             # Alias the spin containers.
-            spin_from = ds[pipe_from].mol[mol_index].res[res_index].spin[spin_index]
-            spin_to = ds[pipe_to].mol[mol_index].res[res_index].spin[spin_index]
+            spin_from = dp_from.mol[mol_index].res[res_index].spin[spin_index]
+            spin_to = dp_to.mol[mol_index].res[res_index].spin[spin_index]
 
             # Find the index corresponding to 'ri_label' and 'frq_label'.
             index = find_index(spin_from, ri_label, frq_label)
@@ -408,8 +411,7 @@ def delete(ri_label=None, frq_label=None):
     self.frq_label = frq_label
 
     # Test if the current pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Test if the sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -478,8 +480,7 @@ def display(ri_label=None, frq_label=None):
     self.frq_label = frq_label
 
     # Test if the current pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Test if the sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -556,7 +557,10 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
     """
 
     # Test if the current data pipe exists.
-    pipes.test(ds.current_pipe)
+    pipes.test()
+
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
 
     # Test if sequence data exists.
     if not exists_mol_res_spin_data():
@@ -615,7 +619,7 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
     #####################################
 
     # Initialise the global data for the current pipe if necessary.
-    data_init(ds[ds.current_pipe], global_flag=True)
+    data_init(cdp, global_flag=True)
 
     # Update the global data.
     update_data_structures_pipe(ri_label, frq_label, frq)
@@ -738,7 +742,7 @@ def update_data_structures_pipe(ri_label=None, frq_label=None, frq=None):
     """
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Initialise the relaxation data structures (if needed).
     data_init(cdp, global_flag=True)
@@ -913,8 +917,7 @@ def write(ri_label=None, frq_label=None, file=None, dir=None, force=False):
     self.frq_label = frq_label
 
     # Test if the current pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Test if the sequence data is loaded.
     if not exists_mol_res_spin_data():

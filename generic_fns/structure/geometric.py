@@ -27,12 +27,12 @@ from string import ascii_uppercase
 from warnings import warn
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
+from generic_fns import pipes
 from generic_fns.structure.mass import centre_of_mass
-from internal import Internal, Structure_container
+from internal import Internal
 from maths_fns.rotation_matrix import R_2vect
-from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
+from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning
 
@@ -166,28 +166,27 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         scale = autoscale_tensor(scale)
 
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Create an array of data pipes to loop over (hybrid support).
     if cdp.pipe_type == 'hybrid':
-        pipes = cdp.hybrid_pipes
+        pipe_list = cdp.hybrid_pipes
     else:
-        pipes = [ds.current_pipe]
+        pipe_list = [pipes.cdp_name()]
 
     # Create the structural object.
     structure = Internal()
 
     # Add a structure.
-    structure.structural_data.append(Structure_container())
+    structure.add_struct(name='diff_tensor')
 
     # Loop over the pipes.
-    for pipe_index in xrange(len(pipes)):
-        # Alias the pipe container.
-        pipe = ds[pipes[pipe_index]]
+    for pipe_index in xrange(len(pipe_list)):
+        # Get the pipe container.
+        pipe = pipes.get_pipe(pipe_list[pipe_index])
 
 
         # Tests.
@@ -215,7 +214,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         # The chain identifier.
         chain_id = ascii_uppercase[pipe_index]
 
-        # Atom ID extension (allow for multiple chains for hybrid runs).
+        # Atom ID extension (allow for multiple chains for hybrid data pipes).
         atom_id_ext = '_' + chain_id
 
         # Print out.
@@ -305,11 +304,9 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     tensor_pdb_file.close()
 
 
-def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, force=False):
+def create_vector_dist(length=None, symmetry=1, file=None, dir=None, force=False):
     """Create a PDB representation of the XH vector distribution.
 
-    @param run:         The run.
-    @type run:          str
     @param length:      The length to set the vectors to in the PDB file.
     @type length:       float
     @param symmetry:    The symmetry flag which if set will create a second PDB chain 'B' which
@@ -320,32 +317,31 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     @param dir:         The name of the directory to place the PDB file into.
     @type dir:          str
     @param force:       Flag which if set will overwrite any pre-existing file.
-    @type force:        int
+    @type force:        bool
     """
 
-    # Arguments.
-    run = run
-
     # Test if the current pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
-    # Test if the PDB file of the macromolecule has been loaded.
-    if not ds.pdb.has_key(run):
-        raise RelaxNoPdbError, run
+    # Get the data pipe.
+    cdp = pipes.get_pipe()
+
+    # Test if a structure has been loaded.
+    if not hasattr(cdp, 'structure') or not cdp.structure.num > 0:
+        raise RelaxNoPdbError
 
     # Test if sequence data is loaded.
-    if not len(ds.res[run]):
-        raise RelaxNoSequenceError, run
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
     # Test if unit vectors exist.
     vectors = 0
-    for i in xrange(len(ds.res[run])):
-        if hasattr(ds.res[run][i], 'xh_vect'):
+    for spin in spin_loop():
+        if hasattr(spin, 'xh_vect'):
             vectors = 1
             break
     if not vectors:
-        raise RelaxNoVectorsError, run
+        raise RelaxNoVectorsError
 
 
     # Initialise.
@@ -354,8 +350,9 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     # Create the structural object.
     structure = Internal()
 
-    # Initialise the residue number.
+    # Initialise the residue and atom numbers.
     res_num = 1
+    atom_num = 1
 
 
     # Centre of mass.
@@ -372,81 +369,53 @@ def create_vector_dist(run=None, length=None, symmetry=1, file=None, dir=None, f
     #################
 
     # Loop over the spin systems.
-    for i in xrange(len(ds.res[run])):
-        # Alias the spin system data.
-        data = ds.res[run][i]
-
+    for spin in spin_loop():
         # Skip deselected spin systems.
-        if not data.select:
+        if not spin.select:
             continue
 
         # Skip spin systems missing the xh_vect structure.
-        if not hasattr(data, 'xh_vect'):
+        if not hasattr(spin, 'xh_vect'):
             continue
 
         # Scale the vector.
-        vector = data.xh_vect * length * 1e10
-
-        # The atom ids.
-        end = '_' + `data.num` + '_' + data.name
-        X_id = data.heteronuc + end
-        H_id = data.proton + end
+        vector = spin.xh_vect * length * 1e10
 
         # Add the central X atom.
-        structure.atom_add(pdb_record='ATOM', atom_num=X_id, atom_name=data.heteronuc, res_name=data.name, chain_id='A', res_num=data.num, pos=R, segment_id=None, element=data.heteronuc, struct_index=None)
+        structure.atom_add(pdb_record='ATOM', atom_num=atom_num, atom_name=spin.heteronuc, res_name=spin.name, chain_id='A', res_num=spin.num, pos=R, segment_id=None, element=spin.heteronuc, struct_index=None)
 
         # Add the H atom.
-        structure.atom_add(pdb_record='ATOM', atom_num=H_id, atom_name=data.proton, res_name=data.name, chain_id='A', res_num=data.num, pos=R+vector, segment_id=None, element=data.proton, struct_index=None)
+        structure.atom_add(pdb_record='ATOM', atom_num=atom_num+1, atom_name=spin.proton, res_name=spin.name, chain_id='A', res_num=spin.num, pos=R+vector, segment_id=None, element=spin.proton, struct_index=None)
 
         # Connect the two atoms.
-        structure.atom_connect(index1=X_id, index2=H_id)
+        structure.atom_connect(index1=atom_num-1, index2=atom_num)
 
-        # Store the terminate residue number for the TER record.
-        last_res = data.num
-        last_name = data.name
-
-    # The TER record.
-    structure.atom_add(pdb_record='TER', atom_num=None, atom_name='TER' + '_A', res_name=last_name, chain_id='A', res_num=last.res, pos=R, segment_id=None, element=None, struct_index=None)
+        # Increment the atom number.
+        atom_num = atom_num + 2
 
     # Symmetry chain.
     if symmetry:
         # Loop over the spin systems.
-        for i in xrange(len(ds.res[run])):
-            # Alias the spin system data.
-            data = ds.res[run][i]
-
+        for spin in spin_loop():
             # Skip deselected spin systems.
-            if not data.select:
+            if not spin.select:
                 continue
 
             # Skip spin systems missing the xh_vect structure.
-            if not hasattr(data, 'xh_vect'):
+            if not hasattr(spin, 'xh_vect'):
                 continue
 
             # Scale the vector.
-            vector = data.xh_vect * length * 1e10
-
-            # The atom ids.
-            end = '_' + `data.num` + '_' + data.name
-            X_id = data.heteronuc + end
-            H_id = data.proton + end
+            vector = spin.xh_vect * length * 1e10
 
             # Add the central X atom.
-            structure.atom_add(pdb_record='ATOM', atom_num=X_id + 'B', atom_name=data.heteronuc, res_name=data.name, chain_id='B', res_num=data.num, pos=R, segment_id=None, element=data.heteronuc, struct_index=None)
+            structure.atom_add(pdb_record='ATOM', atom_num=atom_num, atom_name=spin.heteronuc, res_name=spin.name, chain_id='B', res_num=spin.num, pos=R, segment_id=None, element=spin.heteronuc, struct_index=None)
 
             # Add the H atom.
-            structure.atom_add(pdb_record='ATOM', atom_num=H_id + 'B', atom_name=data.proton, res_name=data.name, chain_id='B', res_num=data.num, pos=R+vector, segment_id=None, element=data.proton, struct_index=None)
+            structure.atom_add(pdb_record='ATOM', atom_num=atom_num+1, atom_name=spin.proton, res_name=spin.name, chain_id='B', res_num=spin.num, pos=R+vector, segment_id=None, element=spin.proton, struct_index=None)
 
             # Connect the two atoms.
-            structure.atom_connect(index1=X_id + '_B', index2=H_id + '_B')
-
-            # Store the terminate residue number for the TER record.
-            last_res = data.num
-            last_name = data.name
-
-        # The TER record.
-        structure.atom_add(pdb_record='TER', atom_num=None, atom_name='TER' + '_B', res_name=last_name, chain_id='B', res_num=last.res, pos=R, segment_id=None, element=None, struct_index=None)
-
+            structure.atom_connect(index1=atom_num-1, index2=atom_num)
 
 
     # Create the PDB file.

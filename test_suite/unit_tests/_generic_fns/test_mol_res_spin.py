@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import mol_res_spin
+from generic_fns import mol_res_spin, pipes
 from relax_errors import RelaxError, RelaxNoPipeError
 
 
@@ -39,7 +39,7 @@ class Test_mol_res_spin(TestCase):
         ds.add(pipe_name='orig', pipe_type='mf')
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Name the first molecule.
         cdp.mol[0].name = 'Ap4Aase'
@@ -437,7 +437,7 @@ class Test_mol_res_spin(TestCase):
         obj = mol_res_spin.Selection("#Ap4Aase:2&:Glu@63&@NH")
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if various spins are in the selection.
         self.assert_((cdp.mol[0], cdp.mol[0].res[0], cdp.mol[0].res[0].spin[0]) not in obj)
@@ -543,9 +543,10 @@ class Test_mol_res_spin(TestCase):
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
+        dp = pipes.get_pipe('orig')
 
         # Name the first molecule.
-        ds['orig'].mol[0].name = 'TOM40'
+        dp.mol[0].name = 'TOM40'
 
         # This should be True.
         self.failUnless(mol_res_spin.exists_mol_res_spin_data())
@@ -562,9 +563,10 @@ class Test_mol_res_spin(TestCase):
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
+        dp = pipes.get_pipe('orig')
 
         # Name the first residue.
-        ds['orig'].mol[0].res[0].name = 'Lys'
+        dp.mol[0].res[0].name = 'Lys'
 
         # This should be True.
         self.failUnless(mol_res_spin.exists_mol_res_spin_data())
@@ -581,9 +583,10 @@ class Test_mol_res_spin(TestCase):
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
+        dp = pipes.get_pipe('orig')
 
         # Number the first residue.
-        ds['orig'].mol[0].res[0].num = 1
+        dp.mol[0].res[0].num = 1
 
         # This should be True.
         self.failUnless(mol_res_spin.exists_mol_res_spin_data())
@@ -600,9 +603,10 @@ class Test_mol_res_spin(TestCase):
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
+        dp = pipes.get_pipe('orig')
 
         # Name the first spin.
-        ds['orig'].mol[0].res[0].spin[0].name = 'NH'
+        dp.mol[0].res[0].spin[0].name = 'NH'
 
         # This should be True.
         self.failUnless(mol_res_spin.exists_mol_res_spin_data())
@@ -619,9 +623,10 @@ class Test_mol_res_spin(TestCase):
 
         # Add a data pipe to the data store.
         ds.add(pipe_name='orig', pipe_type='mf')
+        dp = pipes.get_pipe('orig')
 
         # Number the first spin.
-        ds['orig'].mol[0].res[0].spin[0].num = 234
+        dp.mol[0].res[0].spin[0].num = 234
 
         # This should be True.
         self.failUnless(mol_res_spin.exists_mol_res_spin_data())

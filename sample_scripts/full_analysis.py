@@ -22,12 +22,43 @@
 
 """Script for black-box model-free analysis.
 
+This script is designed for those who appreciate black-boxes or those who appreciate complex code.  Importantly data at multiple magnetic field strengths is essential for this analysis.  The script will need to be heavily tailored to the molecule in question by changing the variables just below this documentation.  If you would like to change how model-free analysis is performed, the code in the class Main can be changed as needed.  For a description of object-oriented coding in python using classes, functions/methods, self, etc., see the python tutorial.
+
+
+References
+==========
+
 The model-free optimisation methodology herein is that of:
 
-d'Auvergne, E. J. and Gooley, P. R. (2008). Optimisation of NMR dynamic models II. A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor. J. Biomol. NMR, 40(2), 121-133
+    d'Auvergne, E. J. and Gooley, P. R. (2008b). Optimisation of NMR dynamic models II. A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor. J. Biomol. NMR, 40(2), 121-133
+
+Other references for features of this script include model-free model selection using Akaike's Information Criterion:
+
+    d’Auvergne, E. J. and Gooley, P. R. (2003). The use of model selection in the model-free analysis of protein dynamics. J. Biomol. NMR, 25(1), 25-39.
+
+The elimination of failed model-free models and Monte Carlo simulations:
+
+    d’Auvergne, E. J. and Gooley, P. R. (2006). Model-free model elimination: A new step in the model-free dynamic analysis of NMR relaxation data. J. Biomol. NMR, 35(2), 117-135.
+
+Significant model-free optimisation improvements:
+
+    d’Auvergne, E. J. and Gooley, P. R. (2008a). Optimisation of NMR dynamic models I. Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces. J. Biomol. NMR, 40(2), 107-109.
+
+Rather than searching for the lowest chi-squared value, this script searches for the model with the lowest AIC criterion.  This complex multi-universe, multi-dimensional search is formulated using set theory as the universal solution:
+
+    d’Auvergne, E. J. and Gooley, P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. 3(7), 483-494.
+
+The basic three references for the original and extended model-free theories are:
+
+    Lipari, G. and Szabo, A. (1982a). Model-free approach to the interpretation of nuclear magnetic-resonance relaxation in macromolecules I. Theory and range of validity. J. Am. Chem. Soc., 104(17), 4546-4559.
+
+    Lipari, G. and Szabo, A. (1982b). Model-free approach to the interpretation of nuclear magnetic-resonance relaxation in macromolecules II. Analysis of experimental results. J. Am. Chem. Soc., 104(17), 4559-4570.
+
+    Clore, G. M., Szabo, A., Bax, A., Kay, L. E., Driscoll, P. C., and Gronenborn, A.M. (1990). Deviations from the simple 2-parameter model-free approach to the interpretation of N-15 nuclear magnetic-relaxation of proteins. J. Am. Chem. Soc., 112(12), 4989-4991.
 
 
-This script is designed for those who appreciate black-boxes or those who appreciate complex code.  Importantly data at multiple magnetic field strengths is essential for this analysis.  The script will need to be heavily tailored to the molecule in question by changing the variables just below this documentation.  If you would like to change how model-free analysis is performed, the code in the class Main can be changed as needed.  For a description of object-oriented coding in python using classes, functions/methods, self, etc., see the python tutorial.
+How to use this script
+======================
 
 The value of the variable DIFF_MODEL will determine the behaviour of this script.  The five diffusion models used in this script are:
 
@@ -51,7 +82,7 @@ It is important that the number of parameters in a model does not exceed the num
 
 
 Model I - Local tm
-==================
+~~~~~~~~~~~~~~~~~~
 
 This will optimise the diffusion model whereby all spin of the molecule have a local tm value, i.e. there is no global diffusion tensor.  This model needs to be optimised prior to optimising any of the other diffusion models.  Each spin is fitted to the multiple model-free models separately, where the parameter tm is included in each model.
 
@@ -59,7 +90,7 @@ AIC model selection is used to select the models for each spin.
 
 
 Model II - Sphere
-=================
+~~~~~~~~~~~~~~~~~
 
 This will optimise the isotropic diffusion model.  Multiple steps are required, an initial optimisation of the diffusion tensor, followed by a repetitive optimisation until convergence of the diffusion tensor.  Each of these steps requires this script to be rerun. For the initial optimisation, which will be placed in the directory './sphere/init/', the following steps are used:
 
@@ -80,26 +111,26 @@ All model-free and diffusion parameters are allowed to vary and a global optimis
 
 
 Model III - Prolate spheroid
-============================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The methods used are identical to those of diffusion model MII, except that an axially symmetric diffusion tensor with Da >= 0 is used.  The base directory containing all the results is './prolate/'.
 
 
 Model IV - Oblate spheroid
-==========================
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The methods used are identical to those of diffusion model MII, except that an axially symmetric diffusion tensor with Da <= 0 is used.  The base directory containing all the results is './oblate/'.
 
 
 Model V - Ellipsoid
-===================
+~~~~~~~~~~~~~~~~~~~
 
 The methods used are identical to those of diffusion model MII, except that a fully anisotropic diffusion tensor is used (also known as rhombic or asymmetric diffusion).  The base directory is './ellipsoid/'.
 
 
 
 Final run
-=========
+~~~~~~~~~
 
 Once all the diffusion models have converged, the final run can be executed.  This is done by setting the variable DIFF_MODEL to 'final'.  This consists of two steps, diffusion tensor model selection, and Monte Carlo simulations.  Firstly AIC model selection is used to select between the diffusion tensor models.  Monte Carlo simulations are then run solely on this selected diffusion model.  Minimisation of the model is bypassed as it is assumed that the model is already fully optimised (if this is not the case the final run is not yet appropriate).
 
@@ -112,9 +143,9 @@ from re import search
 from string import lower
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from float import floatAsByteArray
 from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
+from generic_fns import pipes
 from relax_errors import RelaxError
 
 
@@ -329,7 +360,7 @@ class Main:
             ##########################
 
             # Fix the diffusion tensor, if it exists.
-            if hasattr(ds['final'], 'diff_tensor'):
+            if hasattr(pipes.get_pipe('final'), 'diff_tensor'):
                 fix('diff')
 
             # Simulations.
@@ -358,8 +389,8 @@ class Main:
         """Test for the convergence of the global model."""
 
         # Alias the data pipes.
-        cdp = ds[ds.current_pipe]
-        prev_pipe = ds['previous']
+        cdp = pipes.get_pipe()
+        prev_pipe = pipes.get_pipe('previous')
 
         # Print out.
         print "\n\n\n"
@@ -546,7 +577,7 @@ class Main:
         """Function for loading the optimised diffusion tensor."""
 
         # Create the data pipe for the previous data (deleting the old data pipe first if necessary).
-        if ds.has_key('previous'):
+        if pipes.has_pipe('previous'):
             pipe.delete('previous')
         pipe.create('previous', 'mf')
 
@@ -563,10 +594,11 @@ class Main:
         """Model selection function."""
 
         # Model elimination.
-        eliminate()
+        if modsel_pipe != 'final':
+            eliminate()
 
         # Model selection (delete the model selection pipe if it already exists).
-        if ds.has_key(modsel_pipe):
+        if pipes.has_pipe(modsel_pipe):
             pipe.delete(modsel_pipe)
         model_selection(method='AIC', modsel_pipe=modsel_pipe, pipes=self.pipes)
 
@@ -587,7 +619,7 @@ class Main:
         # Loop over the data pipes.
         for name in self.pipes:
             # Create the data pipe.
-            if ds.has_key(name):
+            if pipes.has_pipe(name):
                 pipe.delete(name)
             pipe.create(name, 'mf')
 

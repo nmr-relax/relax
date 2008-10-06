@@ -26,6 +26,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import pipes
 
 
 class Unit_vectors(TestCase):
@@ -57,7 +58,7 @@ class Unit_vectors(TestCase):
         self.relax.interpreter._Structure.vectors(attached='H')
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Leu 3.
         self.assert_(hasattr(cdp.mol[0].res[2].spin[0], 'xh_vect'))
@@ -85,7 +86,7 @@ class Unit_vectors(TestCase):
         self.relax.interpreter._Structure.vectors(attached='H')
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Leu 3.
         self.assert_(hasattr(cdp.mol[0].res[2].spin[0], 'xh_vect'))
@@ -110,7 +111,7 @@ class Unit_vectors(TestCase):
         self.relax.interpreter._Structure.vectors(attached='H')
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Leu 3.
         self.assert_(hasattr(cdp.mol[0].res[2].spin[0], 'xh_vect'))
@@ -138,7 +139,7 @@ class Unit_vectors(TestCase):
         self.relax.interpreter._Structure.vectors(attached='H')
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Leu 3.
         self.assert_(hasattr(cdp.mol[0].res[2].spin[0], 'xh_vect'))

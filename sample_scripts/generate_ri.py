@@ -3,9 +3,6 @@
 # relax module imports.
 from generic.selection import spin_loop
 
-# The relax data storage object.
-from data import Relax_data_store; ds = Relax_data_store()
-
 
 def back_calc():
     """Function for back calculating the relaxation data."""

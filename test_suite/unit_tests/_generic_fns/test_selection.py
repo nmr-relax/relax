@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import selection
+from generic_fns import pipes, selection
 from relax_errors import RelaxError, RelaxNoPipeError
 
 
@@ -39,7 +39,7 @@ class Test_selection(TestCase):
         ds.add(pipe_name='orig', pipe_type='mf')
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Name the first molecule.
         cdp.mol[0].name = 'Ap4Aase'
@@ -92,7 +92,7 @@ class Test_selection(TestCase):
         selection.reverse()
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test the selection status.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, 1)

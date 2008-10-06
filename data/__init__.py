@@ -160,11 +160,13 @@ class Relax_data_store(dict):
         self.current_pipe = pipe_name
 
 
-    def from_xml(self, file, verbosity=1):
+    def from_xml(self, file, dir=None, verbosity=1):
         """Parse a XML document representation of a data pipe, and load it into the relax data store.
 
         @param file:        The open file object.
         @type file:         file
+        @keyword dir:       The name of the directory containing the results file.
+        @type dir:          str
         @keyword verbosity: A flag specifying the amount of information to print.  The higher the value,
                             the greater the verbosity.
         @type verbosity:    int
@@ -180,7 +182,7 @@ class Relax_data_store(dict):
         relax_version = str(relax_node.getAttribute('version'))
 
         # Fill the pipe.
-        self[self.current_pipe].from_xml(relax_node)
+        self[self.current_pipe].from_xml(relax_node, dir=dir)
 
 
     def to_xml(self, file):

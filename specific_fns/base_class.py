@@ -24,8 +24,8 @@
 from copy import deepcopy
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, spin_loop
+from generic_fns import pipes
 from relax_errors import RelaxError
 
 
@@ -76,7 +76,7 @@ class Common_functions:
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Diffusion tensor errors.
         if hasattr(cdp, 'diff'):
@@ -225,7 +225,7 @@ class Common_functions:
         object_sim = object_name + '_sim'
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Initial values.
         value = None
@@ -332,7 +332,7 @@ class Common_functions:
         min_names = self.data_names(set='min')
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
 
         # Test if Monte Carlo parameter values have already been set.
