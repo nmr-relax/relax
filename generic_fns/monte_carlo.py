@@ -347,7 +347,7 @@ def setup(number=None, all_select_sim=None):
     @keyword all_select_sim:    The selection status of the Monte Carlo simulations.  The first
                                 dimension of this matrix corresponds to the simulation and the
                                 second corresponds to the instance.
-    @type all_select_sim:       numpy matrix (int)
+    @type all_select_sim:       list of lists of bool
     """
 
     # Test if the current data pipe exists.
