@@ -26,7 +26,6 @@
 # Python module imports.
 from copy import deepcopy
 from math import sqrt
-from numpy import ones
 from random import gauss
 
 # relax module imports.
@@ -312,7 +311,7 @@ def select_all_sims(number=None, all_select_sim=None):
     @keyword all_select_sim:    The selection status of the Monte Carlo simulations.  The first
                                 dimension of this matrix corresponds to the simulation and the
                                 second corresponds to the models.
-    @type all_select_sim:       numpy matrix (int)
+    @type all_select_sim:       list of lists of bool
     """
 
     # Alias the current data pipe.
@@ -324,14 +323,14 @@ def select_all_sims(number=None, all_select_sim=None):
 
     # Create the selected simulation array with all simulations selected.
     if all_select_sim == None:
-        select_sim = ones(number, int)
+        select_sim = [True]*number
 
     # Loop over the models.
     i = 0
     for model_info in model_loop():
         # Set up the selected simulation array.
         if all_select_sim != None:
-            select_sim = all_select_sim[i].tolist()
+            select_sim = all_select_sim[i]
 
         # Set the selected simulation array.
         set_selected_sim(model_info, select_sim)
