@@ -2764,7 +2764,7 @@ class Model_free_main:
             spin = return_spin_from_index(model_index)
 
             # Set the simulation flags.
-            spin.select_sim = select_sim
+            spin.select_sim = deepcopy(select_sim)
 
 
     def set_update(self, param, spin):
