@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for colour manipulation."""
+
 # Python module imports.
 from numpy import float64, array
 
@@ -30,8 +33,21 @@ from relax_errors import RelaxInvalidColourError
 def linear_gradient(value, start, end, colour_list=None):
     """Return an RGB colour array of the value placed on a linear colour gradient.
 
-    The argment value should be a number between zero and one.  The start and end colours can
+    The argument value should be a number between zero and one.  The start and end colours can
     either be strings or RGB colour arrays.
+
+    @param value:           The position on the gradient, ranging from zero to one.
+    @type value:            float
+    @param start:           The starting colour, either the name of the colour as a string or an RGB
+                            colour array.
+    @type start:            str or list of float
+    @param end:             The ending colour, either the name of the colour as a string or an RGB
+                            colour array.
+    @type end:              str or list of float
+    @keyword colour_list:   The colour names to use, one of 'x11' or 'molmol'.
+    @type colour_list:      str
+    @return:                The position in the gradient.
+    @rtype:                 float
     """
 
     # Translate the end colour to RGB arrays if necessary.
