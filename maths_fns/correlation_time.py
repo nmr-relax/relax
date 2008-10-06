@@ -36,7 +36,7 @@ from math import sqrt
 def calc_sphere_ti(data, diff_data):
     """Diffusional correlation times.
 
-    The correlation time is
+    The correlation time is::
     
         t0 = tm.
     """
@@ -51,7 +51,7 @@ def calc_sphere_ti(data, diff_data):
 def calc_sphere_dti(data, diff_data):
     """Partial derivatives of the diffusional correlation times.
 
-    The tm partial derivatives are
+    The tm partial derivatives are::
 
         dt0
         ---  =  1.
@@ -75,7 +75,7 @@ def calc_sphere_dti(data, diff_data):
 def calc_spheroid_ti(data, diff_data):
     """Diffusional correlation times.
 
-    The equations for the parameters {Diso, Da} are
+    The equations for the parameters {Diso, Da} are::
 
         t-1  =  (6Diso - 2Da)**-1,
 
@@ -130,7 +130,9 @@ def calc_spheroid_dti(data, diff_data):
     """Diffusional correlation time gradients.
 
     tm partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~
+    ======================
+
+    The equations are::
 
         dt-1        dDiso
         ----  =  -6 ----- (6Diso - 2Da)**-2,
@@ -145,13 +147,13 @@ def calc_spheroid_dti(data, diff_data):
         dtm          dtm
 
 
-    As
+    As::
 
         dDiso
         -----  =  -1/6 * tm**-2,
          dtm
 
-    the equations simplify to
+    the equations simplify to::
 
         dt-1
         ----  =  tm**-2 (6Diso - 2Da)**-2,
@@ -167,7 +169,9 @@ def calc_spheroid_dti(data, diff_data):
 
 
     Da partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~
+    ======================
+
+    The equations are::
 
         dt-1
         ----  =  2(6Diso - 2Da)**-2,
@@ -215,7 +219,9 @@ def calc_spheroid_d2ti(data, diff_data):
     """Diffusional correlation time Hessians.
 
     tm-tm partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    =========================
+
+    The equations are::
 
         d2t-1        / dDiso \ 2                         d2Diso
         -----  =  72 | ----- |   (6Diso - 2Da)**-3  -  6 ------ (6Diso - 2Da)**-2,
@@ -230,19 +236,19 @@ def calc_spheroid_d2ti(data, diff_data):
         dtm2         \  dtm  /                            dtm2
 
 
-    As
+    As::
 
         d2Diso
         ------  =  1/3 * tm**-3,
          dtm2
 
-    and
+    and::
 
         dDiso
         -----  =  -1/6 * tm**-2,
          dtm
 
-    the equations simplify to
+    the equations simplify to::
 
         d2t-1
         -----  =  2tm**-4 (6Diso - 2Da)**-3  -  2tm**-3 (6Diso - 2Da)**-2,
@@ -258,7 +264,9 @@ def calc_spheroid_d2ti(data, diff_data):
 
 
     tm-Da partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    =========================
+
+    The equations are::
 
          d2t-1          dDiso
         -------  =  -24 ----- (6Diso - 2Da)**-3,
@@ -272,13 +280,13 @@ def calc_spheroid_d2ti(data, diff_data):
         -------  =  24 ----- (6Diso + 2Da)**-3.
         dtm.dDa         dtm
 
-    As
+    As::
 
         dDiso
         -----  =  -1/6 * tm**-2,
          dtm
 
-    the equations simplify to
+    the equations simplify to::
 
          d2t-1
         -------  =  4tm**-2 (6Diso - 2Da)**-3,
@@ -295,7 +303,9 @@ def calc_spheroid_d2ti(data, diff_data):
 
 
     Da-Da partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    =========================
+
+    The equations are::
 
         d2t-1
         -----  =  8 (6Diso - 2Da)**-3,
@@ -359,7 +369,7 @@ def calc_spheroid_d2ti(data, diff_data):
 def calc_ellipsoid_ti(data, diff_data):
     """Diffusional correlation times.
 
-    The equations for the parameters {Diso, Da, Dr} are:
+    The equations for the parameters {Diso, Da, Dr} are::
 
         t-2  =  (6Diso - 2DaR)**-1,
 
@@ -371,7 +381,7 @@ def calc_ellipsoid_ti(data, diff_data):
 
         t2   =  (6Diso + 2DaR)**-1,
 
-    where:
+    where::
               __________
         R = \/1 + 3Dr**2.
 
@@ -443,7 +453,9 @@ def calc_ellipsoid_dti(data, diff_data):
     """Diffusional correlation time gradients.
 
     tm partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~
+    ======================
+
+    The equations are::
 
         dt-2         dDiso
         ----  =  - 6 ----- (6Diso - 2DaR)**-2,
@@ -466,13 +478,13 @@ def calc_ellipsoid_dti(data, diff_data):
         dtm           dtm
 
 
-    As
+    As::
 
         dDiso
         -----  =  -1/6 * tm**-2,
          dtm
 
-    the equations simplify to
+    the equations simplify to::
 
         dt-2
         ----  =  tm**-2 (6Diso - 2DaR)**-2,
@@ -496,7 +508,9 @@ def calc_ellipsoid_dti(data, diff_data):
 
 
     Da partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~
+    ======================
+
+    The equations are::
 
         dt-2
         ----  =  2R (6Diso - 2DaR)**-2,
@@ -520,7 +534,9 @@ def calc_ellipsoid_dti(data, diff_data):
 
 
     Dr partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~
+    ======================
+
+    The equations are::
 
         dt-2
         ----  =  6 Da.Dr/R (6Diso - 2DaR)**-2,
@@ -593,6 +609,8 @@ def calc_ellipsoid_d2ti(data, diff_data):
     tm-tm partial derivatives
     ~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    The equations are::
+
         d2t-2        / dDiso \ 2                          d2Diso
         -----  =  72 | ----- |   (6Diso - 2DaR)**-3  -  6 ------ (6Diso - 2DaR)**-2,
         dtm2         \  dtm  /                             dtm2
@@ -613,19 +631,19 @@ def calc_ellipsoid_d2ti(data, diff_data):
         ----   =  72 | ----- |   (6Diso + 2DaR)**-3  -  6 ------ (6Diso + 2DaR)**-2.
         dtm2         \  dtm  /                             dtm2
 
-    As
+    As::
 
         d2Diso
         ------  =  1/3 * tm**-3,
          dtm2
 
-    and
+    and::
 
         dDiso
         -----  =  -1/6 * tm**-2,
          dtm
 
-    the equations simplify to
+    the equations simplify to::
 
         d2t-2
         -----  =  2tm**-4 (6Diso - 2DaR)**-3  -  2tm**-3 (6Diso - 2DaR)**-2,
@@ -650,7 +668,9 @@ def calc_ellipsoid_d2ti(data, diff_data):
 
 
     tm-Da partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    =========================
+
+    The equations are::
 
          d2t-2           dDiso
         -------  =  -24R ----- (6Diso - 2DaR)**-3,
@@ -672,13 +692,13 @@ def calc_ellipsoid_d2ti(data, diff_data):
         -------  =  24R ----- (6Diso + 2DaR)**-3.
         dtm.dDa          dtm
 
-    As
+    As::
 
         dDiso
         -----  =  -1/6 * tm**-2,
          dtm
 
-    the equations simplify to
+    the equations simplify to::
 
          d2t-2
         -------  =  4R tm**-2 (6Diso - 2DaR)**-3,
@@ -702,7 +722,9 @@ def calc_ellipsoid_d2ti(data, diff_data):
 
 
     tm-Dr partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    =========================
+
+    The equations are::
 
          d2t-2                  dDiso
         -------  =  -72 Da.Dr/R ----- (6Diso - 2DaR)**-3,
@@ -724,13 +746,13 @@ def calc_ellipsoid_d2ti(data, diff_data):
         -------  =  72 Da.Dr/R ----- (6Diso + 2DaR)**-3.
         dtm.dDr                 dtm
 
-    As
+    As::
 
         dDiso
         -----  =  -1/6 * tm**-2,
          dtm
 
-    the equations simplify to
+    the equations simplify to::
 
          d2t-2
         -------  =  12 Da.Dr/R tm**-2 (6Diso - 2DaR)**-3,
@@ -754,7 +776,9 @@ def calc_ellipsoid_d2ti(data, diff_data):
 
 
     Da-Da partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    =========================
+
+    The equations are::
 
         d2t-2
         -----  =  8R**2 (6Diso - 2DaR)**-3,
@@ -778,7 +802,9 @@ def calc_ellipsoid_d2ti(data, diff_data):
 
 
     Da-Dr partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    =========================
+
+    The equations are::
 
          d2t-2
         -------  =  24Da.Dr (6Diso - 2DaR)**-3  +  6Dr/R (6Diso - 2DaR)**-2,
@@ -802,7 +828,9 @@ def calc_ellipsoid_d2ti(data, diff_data):
 
 
     Dr-Dr partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    =========================
+
+    The equations are::
 
         d2t-2
         -----  =  72(Da.Dr/R)**2 (6Diso - 2DaR)**-3  +  6Da/R**3 (6Diso - 2DaR)**-2,

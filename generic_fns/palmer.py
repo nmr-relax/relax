@@ -47,11 +47,11 @@ def create(dir, force, binary, diff_search, sims, sim_type, trim, steps, constra
     """Function for creating the Modelfree4 input files.
 
     The following files are created:
-        dir/mfin
-        dir/mfdata
-        dir/mfpar
-        dir/mfmodel
-        dir/run.sh
+        - dir/mfin
+        - dir/mfdata
+        - dir/mfpar
+        - dir/mfmodel
+        - dir/run.sh
     """
 
     # Test if the current pipe exists.

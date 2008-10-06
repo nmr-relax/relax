@@ -297,8 +297,8 @@ class Relax:
     def get_intro_string(self):
         """Create the program introduction.
 
-        @return:        The program introduction string.
-        @type return:   str
+        @return:    The program introduction string.
+        @rtype:     str
         """
 
         # The width of the printout.
