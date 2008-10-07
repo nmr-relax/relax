@@ -27,7 +27,7 @@ from re import match
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import intensity, pipes
-from generic_fns.mol_res_spin import exists_mol_res_spin_data
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxArgNotInListError, RelaxError, RelaxInvalidDataError, RelaxNoSequenceError, RelaxRegExpError
 from relax_io import open_write_file
 
@@ -349,14 +349,17 @@ class Noe:
         return value, error
 
 
-    def set_error(self, run=None, error=0.0, spectrum_type=None, res_num=None, res_name=None):
-        """Function for setting the errors."""
+    def set_error(self, error=0.0, spectrum_type=None, spin_id=None):
+        """Set the peak intensity errors.
 
-        # Arguments.
-        self.run = run
-        self.spectrum_type = spectrum_type
-        self.res_num = res_num
-        self.res_name = res_name
+        @param error:           The peak intensity error value defined as the RMSD of the base plane
+                                noise.
+        @type error:            float
+        @keyword spectrum_type: The type of spectrum, one of 'ref' or 'sat'.
+        @type spectrum_type:    str
+        @param spin_id:         The spin identification string.
+        @type spin_id:          str
+        """
 
         # Test if the current pipe exists
         pipes.test()
@@ -365,44 +368,17 @@ class Noe:
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # Test if the residue number is a valid regular expression.
-        if type(res_num) == str:
-            try:
-                compile(res_num)
-            except:
-                raise RelaxRegExpError, ('residue number', res_num)
-
-        # Test if the residue name is a valid regular expression.
-        if res_name:
-            try:
-                compile(res_name)
-            except:
-                raise RelaxRegExpError, ('residue name', res_name)
-
-        # Loop over the sequence.
-        for i in xrange(len(ds.res[run])):
-            # Remap the data structure 'ds.res[self.run][i]'.
-            data = ds.res[self.run][i]
-
-            # Skip deselected residues.
-            if not data.select:
-                continue
-
-            # If 'res_num' is not None, skip the residue if there is no match.
-            if type(res_num) == int and not data.num == res_num:
-                continue
-            elif type(res_num) == str and not match(res_num, `data.num`):
-                continue
-
-            # If 'res_name' is not None, skip the residue if there is no match.
-            if res_name != None and not match(res_name, data.name):
+        # Loop over the spins.
+        for spin in spin_loop(spin_id):
+            # Skip deselected spins.
+            if not spin.select:
                 continue
 
             # Set the error.
-            if self.spectrum_type == 'ref':
-                data.ref_err = float(error)
-            elif self.spectrum_type == 'sat':
-                data.sat_err = float(error)
+            if spectrum_type == 'ref':
+                spin.ref_err = float(error)
+            elif spectrum_type == 'sat':
+                spin.sat_err = float(error)
 
 
     def write(self, run=None, file=None, dir=None, force=False):
