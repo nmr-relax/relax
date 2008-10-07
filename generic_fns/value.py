@@ -104,7 +104,7 @@ class Value:
             raise RelaxNoSequenceError, self.run
 
         # Print the data.
-        self.write_data(sys.stdout)
+        self.write_data(run=run, param=param, file=sys.stdout)
 
 
     def read(self, run=None, param=None, scaling=1.0, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
@@ -534,7 +534,7 @@ class Value:
         file = self.relax.IO.open_write_file(file, dir, force)
 
         # Write the data.
-        self.write_data(file, return_value)
+        self.write_data(run=run, param=param, file=file, return_value=return_value)
 
         # Close the file.
         file.close()
