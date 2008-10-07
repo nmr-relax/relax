@@ -26,7 +26,8 @@ from re import match
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import intensity
+from generic_fns import intensity, pipes
+from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from relax_errors import RelaxArgNotInListError, RelaxError, RelaxInvalidDataError, RelaxNoSequenceError, RelaxRegExpError
 from relax_io import open_write_file
 
