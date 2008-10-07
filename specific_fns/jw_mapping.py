@@ -283,12 +283,12 @@ class Jw_mapping(Common_functions):
         for spin in spin_loop():
             # Check if data exists.
             if not hasattr(spin, 'relax_data'):
-                spin.select = 0
+                spin.select = False
                 continue
 
             # Require 3 or more data points.
             if len(spin.relax_data) < 3:
-                spin.select = 0
+                spin.select = False
                 continue
 
 

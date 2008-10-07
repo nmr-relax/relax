@@ -665,7 +665,7 @@ class Relax_fit(Common_functions):
 
                 # Skip and deselect spins which have no data.
                 if not hasattr(spin, 'intensities'):
-                    spin.select = 0
+                    spin.select = False
                     continue
 
                 # Initialise the average intensity and standard deviation data structures.
