@@ -198,35 +198,6 @@ class Noe(Common_functions):
         return None
 
 
-    def return_value(self, run, i, data_type='noe'):
-        """Function for returning the NOE value and error."""
-
-        # Arguments.
-        self.run = run
-
-        # Remap the data structure 'ds.res[run][i]'.
-        data = ds.res[run][i]
-
-        # Get the object.
-        object_name = self.return_data_name(data_type)
-        if not object_name:
-            raise RelaxError, "The NOE calculation data type " + `data_type` + " does not exist."
-        object_error = object_name + "_err"
-
-        # Get the value.
-        value = None
-        if hasattr(data, object_name):
-            value = getattr(data, object_name)
-
-        # Get the error.
-        error = None
-        if hasattr(data, object_error):
-            error = getattr(data, object_error)
-
-        # Return the data.
-        return value, error
-
-
     def set_error(self, error=0.0, spectrum_type=None, spin_id=None):
         """Set the peak intensity errors.
 
