@@ -10,7 +10,7 @@ pipe.create('rx', 'relax_fit')
 data_path = sys.path[-1] + '/test_suite/shared_data/curve_fitting'
 
 # Load the sequence.
-sequence.read('Ap4Aase.seq', dir=sys.path[-1] + '/test_suite/system_tests/data')
+sequence.read('Ap4Aase.seq', dir=sys.path[-1] + '/test_suite/shared_data')
 
 # Name the spins so they can be matched to the assignments.
 spin.name(name='N')

@@ -51,7 +51,7 @@ class Generic(TestCase):
             self.relax.interpreter._Pipe.create(pipe_list[i], 'mf')
 
             # Load the Lupin Ap4Aase sequence.
-            self.relax.interpreter._Sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/system_tests/data")
+            self.relax.interpreter._Sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/shared_data")
 
             # Only select residue 8.
             self.relax.interpreter._Select.spin(spin_id=':8', change_all=True)
