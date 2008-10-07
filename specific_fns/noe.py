@@ -26,6 +26,7 @@ from re import match
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import intensity
 from relax_errors import RelaxArgNotInListError, RelaxError, RelaxInvalidDataError, RelaxNoSequenceError, RelaxRegExpError
 from relax_io import open_write_file
 
@@ -93,24 +94,39 @@ class Noe:
                 continue
 
 
-    def read(self, run=None, file=None, dir=None, spectrum_type=None, format=None, heteronuc=None, proton=None, int_col=None):
-        """Function for reading peak intensity data."""
+    def read(self, file=None, dir=None, spectrum_type=None, format=None, heteronuc=None, proton=None, int_col=None):
+        """Read in the peak intensity data.
 
-        # Arguments.
-        self.run = run
-        self.spectrum_type = spectrum_type
+        @keyword file:          The name of the file containing the peak intensities.
+        @type file:             str
+        @keyword dir:           The directory where the file is located.
+        @type dir:              str
+        @keyword spectrum_type: The type of spectrum, one of 'ref' or 'sat'.
+        @type spectrum_type:    str
+        @keyword format:        The type of file containing peak intensities.  This can currently be
+                                one of 'sparky' or 'xeasy'.
+        @type format:           str
+        @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity
+                                file.
+        @type heteronuc:        str
+        @keyword proton:        The name of the proton as specified in the peak intensity file.
+        @type proton:           str
+        @keyword int_col:       The column containing the peak intensity data (for a non-standard
+                                formatted file).
+        @type int_col:          int
+        """
 
         # Spectrum type argument.
         spect_type_list = ['ref', 'sat']
-        if self.spectrum_type not in spect_type_list:
-            raise RelaxArgNotInListError, ('spectrum type', self.spectrum_type, spect_type_list)
-        if self.spectrum_type == 'ref':
+        if spectrum_type not in spect_type_list:
+            raise RelaxArgNotInListError, ('spectrum type', spectrum_type, spect_type_list)
+        if spectrum_type == 'ref':
             print "Reference spectrum."
-        if self.spectrum_type == 'sat':
+        if spectrum_type == 'sat':
             print "Saturated spectrum."
 
         # Generic intensity function.
-        self.relax.generic.intensity.read(run=run, file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self.assign_function)
+        intensity.read(file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self.assign_function)
 
 
     def read_columnar_results(self, run, file_data):
