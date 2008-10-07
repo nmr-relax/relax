@@ -206,7 +206,7 @@ def number_of_header_lines(file_data, format, int_col, intensity):
     return header_lines
 
 
-def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=None, assign_func=None):
+def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=None, assign_func=None, spectrum_type=None):
     """Read the peak intensity data.
 
     @keyword file:          The name of the file containing the peak intensities.
@@ -226,6 +226,8 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
     @type int_col:          int
     @keyword assign_func:   A function used to place the intensity data within the spin container.
     @type assign_func:      func
+    @keyword spectrum_type: The optional spectrum type to be sent back into assign_func().
+    @type spectrum_type:    str
     """
 
     # Format argument.
@@ -298,4 +300,4 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
             continue
 
         # Assign the data.
-        assign_func(spin=spin, intensity=intensity)
+        assign_func(spin=spin, intensity=intensity, spectrum_type=spectrum_type)

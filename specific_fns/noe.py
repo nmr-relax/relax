@@ -138,7 +138,7 @@ class Noe:
             print "Saturated spectrum."
 
         # Generic intensity function.
-        intensity.read(file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self.assign_function)
+        intensity.read(file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self.assign_function, spectrum_type=spectrum_type)
 
 
     def read_columnar_results(self, run, file_data):
