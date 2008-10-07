@@ -423,7 +423,7 @@ class Value:
         value.set(val=val, param=param, spin_id=spin_id)
 
 
-    def write(self, run=None, param=None, file=None, dir=None, force=False):
+    def write(self, param=None, file=None, dir=None, force=False):
         """Function for writing residue specific data values to a file.
 
         Keyword Arguments
@@ -451,33 +451,28 @@ class Value:
         Examples
         ~~~~~~~~
 
-        To write the CSA values for the run 'm1' to the file 'csa.txt', type:
+        To write the CSA values to the file 'csa.txt', type one of:
 
-        relax> value.write('m1', 'CSA', 'csa.txt')
-        relax> value.write(run='m1', param='CSA', file='csa.txt')
+        relax> value.write('CSA', 'csa.txt')
+        relax> value.write(param='CSA', file='csa.txt')
 
 
-        To write the NOE values from the run 'noe' to the file 'noe', type:
+        To write the NOE values to the file 'noe', type:
 
-        relax> value.write('noe', 'noe', 'noe.out')
-        relax> value.write('noe', param='noe', file='noe.out')
-        relax> value.write(run='noe', param='noe', file='noe.out')
-        relax> value.write(run='noe', param='noe', file='noe.out', force=True)
+        relax> value.write('noe', 'noe.out')
+        relax> value.write(param='noe', file='noe.out')
+        relax> value.write(param='noe', file='noe.out')
+        relax> value.write(param='noe', file='noe.out', force=True)
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "value.write("
-            text = text + "run=" + `run`
-            text = text + ", param=" + `param`
+            text = text + "param=" + `param`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force` + ")"
             print text
-
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The parameter.
         if type(param) != str:
@@ -496,7 +491,7 @@ class Value:
             raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
-        self.__relax__.generic.value.write(run=run, param=param, file=file, dir=dir, force=force)
+        value.write(param=param, file=file, dir=dir, force=force)
 
 
     # Docstring modification.
