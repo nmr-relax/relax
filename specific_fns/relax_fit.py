@@ -961,12 +961,12 @@ class Relax_fit(Common_functions):
         for spin in spin_loop():
             # Check if data exists.
             if not hasattr(spin, 'intensities'):
-                spin.select = 0
+                spin.select = False
                 continue
 
             # Require 3 or more data points.
             if len(spin.intensities) < 3:
-                spin.select = 0
+                spin.select = False
                 continue
 
 
