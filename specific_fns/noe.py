@@ -36,14 +36,24 @@ class Noe:
         """Class containing functions for relaxation data."""
 
 
-    def assign_function(self, run=None, i=None, intensity=None):
-        """Function for assigning peak intensity data to either the reference or saturated spectra."""
+    def assign_function(self, spin=None, intensity=None, spectrum_type=None):
+        """Place the peak intensity data into the spin container.
+
+        The intensity data can be either that of the reference or saturated spectrum.
+
+        @keyword spin:          The spin container.
+        @type spin:             SpinContainer instance
+        @keyword intensity:     The intensity value.
+        @type intensity:        float
+        @keyword spectrum_type: The type of spectrum, one of 'ref' or 'sat'.
+        @type spectrum_type:    str
+        """
 
         # Add the data.
-        if self.spectrum_type == 'ref':
-            ds.res[run][i].ref = intensity
-        elif self.spectrum_type == 'sat':
-            ds.res[run][i].sat = intensity
+        if spectrum_type == 'ref':
+            spin.ref = intensity
+        elif spectrum_type == 'sat':
+            spin.sat = intensity
 
 
     def calculate(self, run=None, verbosity=1):
