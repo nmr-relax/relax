@@ -54,6 +54,8 @@ class Noe:
             spin.ref = intensity
         elif spectrum_type == 'sat':
             spin.sat = intensity
+        else:
+            raise RelaxError, "The spectrum type '%s' is unknown." % spectrum_type
 
 
     def calculate(self, run=None, verbosity=1):
