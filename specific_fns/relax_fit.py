@@ -136,15 +136,17 @@ class Relax_fit(Common_functions):
         return scaling_matrix
 
 
-    def assign_function(self, spin=None, intensity=None):
+    def assign_function(self, spin=None, intensity=None, spectrum_type=spectrum_type):
         """Place the peak intensity data into the spin container.
 
         The intensity data can be either that of the reference or saturated spectrum.
 
-        @keyword spin:      The spin container.
-        @type spin:         SpinContainer instance
-        @keyword intensity: The intensity value.
-        @type intensity:    float
+        @keyword spin:          The spin container.
+        @type spin:             SpinContainer instance
+        @keyword intensity:     The intensity value.
+        @type intensity:        float
+        @keyword spectrum_type: Unused argument sent in by the caller function.
+        @type spectrum_type:    None
         """
 
         # Alias the current data pipe.
