@@ -25,6 +25,7 @@ from math import sqrt
 from re import match
 
 # relax module imports.
+from base_class import Common_functions
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import intensity, pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
@@ -32,7 +33,7 @@ from relax_errors import RelaxArgNotInListError, RelaxError, RelaxInvalidDataErr
 from relax_io import open_write_file
 
 
-class Noe:
+class Noe(Common_functions):
     def __init__(self):
         """Class containing functions for relaxation data."""
 
