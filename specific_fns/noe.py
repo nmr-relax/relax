@@ -91,20 +91,18 @@ class Noe:
             data.noe_err = sqrt((data.sat_err * data.ref)**2 + (data.ref_err * data.sat)**2) / data.ref**2
 
 
-    def overfit_deselect(self, run):
-        """Function for deselecting residues without sufficient data to support calculation"""
+    def overfit_deselect(self):
+        """Deselect spins which have insufficient data to support calculation"""
 
-        # Test the sequence data exists:
-        if not ds.res.has_key(run):
-            raise RelaxNoSequenceError, run
+        # Test the sequence data exists.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
-        # Loop over residue data:
-        for residue in ds.res[run]:
-
+        # Loop over spin data.
+        for spin in spin_loop():
             # Check for sufficient data.
-            if not (hasattr(residue, 'ref') and hasattr(residue, 'sat') and hasattr(residue, 'ref_err') and hasattr(residue, 'sat_err')):
-                residue.select = 0
-                continue
+            if not (hasattr(spin, 'ref') and hasattr(spin, 'sat') and hasattr(spin, 'ref_err') and hasattr(spin, 'sat_err')):
+                spin.select = False
 
 
     def read(self, file=None, dir=None, spectrum_type=None, format=None, heteronuc=None, proton=None, int_col=None):
