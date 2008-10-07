@@ -591,7 +591,17 @@ def write(param=None, file=None, dir=None, force=False, return_value=None):
 
 
 def write_data(param=None, file=None, return_value=None):
-    """Function for writing data."""
+    """The function which actually writes the data.
+
+    @keyword file:          The file to write the data to.
+    @type file:             str
+    @keyword dir:           The name of the directory to place the file into (defaults to the
+                            current directory).
+    @type dir:              str
+    @keyword return_value:  An optional function which if supplied will override the default value
+                            returning function.
+    @type return_value:     None or func
+    """
 
     # Get the value and error returning function if required.
     if not return_value:
@@ -601,7 +611,7 @@ def write_data(param=None, file=None, return_value=None):
     format = "%-30s%-30s"
 
     # Write a header line.
-    write_header(extra_format=format, extra_values=('Value', 'Error'), mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+    write_header(file, extra_format=format, extra_values=('Value', 'Error'), mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
 
     # Loop over the sequence.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
