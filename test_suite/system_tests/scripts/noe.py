@@ -7,6 +7,9 @@ pipe.create('NOE', 'noe')
 # Load the sequence.
 sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + '/test_suite/shared_data')
 
+# Name the spins so they can be matched to the assignments.
+spin.name(name='N')
+
 # Load the reference spectrum and saturated spectrum peak intensities.
 noe.read(file='ref_ave.list', dir=sys.path[-1] + '/test_suite/shared_data/peak_lists', spectrum_type='ref')
 noe.read(file='sat_ave.list', dir=sys.path[-1] + '/test_suite/shared_data/peak_lists', spectrum_type='sat')
