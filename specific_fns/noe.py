@@ -59,36 +59,33 @@ class Noe:
             raise RelaxError, "The spectrum type '%s' is unknown." % spectrum_type
 
 
-    def calculate(self, run=None, verbosity=1):
-        """Function for calculating the NOE and its error.
+    def calculate(self, verbosity=1):
+        """Calculate the NOE and its error.
 
         The error for each peak is calculated using the formula::
                           ___________________________________________
                        \/ {sd(sat)*I(unsat)}^2 + {sd(unsat)*I(sat)}^2
             sd(NOE) = -----------------------------------------------
                                           I(unsat)^2
-        """
 
-        # Arguments.
-        self.run = run
+        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:    int
+        """
 
         # Test if the current pipe exists.
         pipes.test()
 
-        # Loop over the sequence.
-        for i in xrange(len(ds.res[self.run])):
-            # Remap the data structure 'ds.res[self.run][i]'.
-            data = ds.res[self.run][i]
-
-            # Skip deselected residues.
-            if not data.select:
+        # Loop over the spins.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
                 continue
 
             # Calculate the NOE.
-            data.noe = data.sat / data.ref
+            spin.noe = spin.sat / spin.ref
 
             # Calculate the error.
-            data.noe_err = sqrt((data.sat_err * data.ref)**2 + (data.ref_err * data.sat)**2) / data.ref**2
+            spin.noe_err = sqrt((spin.sat_err * spin.ref)**2 + (spin.ref_err * spin.sat)**2) / spin.ref**2
 
 
     def overfit_deselect(self):
