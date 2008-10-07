@@ -256,26 +256,3 @@ class Noe:
                 spin.ref_err = float(error)
             elif spectrum_type == 'sat':
                 spin.sat_err = float(error)
-
-
-    def write(self, run=None, file=None, dir=None, force=False):
-        """Function for writing NOE values and errors to a file."""
-
-        # Arguments
-        self.run = run
-
-        # Test if the current pipe exists.
-        pipes.test()
-
-        # Test if the sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # Open the file for writing.
-        noe_file = open_write_file(file, dir, force)
-
-        # Write the data.
-        self.relax.generic.value.write_data(self.run, None, noe_file, return_value=self.return_value)
-
-        # Close the file.
-        noe_file.close()
