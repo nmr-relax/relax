@@ -1,3 +1,35 @@
+Version 1.3.2
+(8 October 2008, from /1.3)
+http://svn.gna.org/svn/relax/tags/1.3.2
+
+    Features:
+        * The NOE analysis has been converted to the new design and is fully functional again.
+
+    Changes:
+        * Internal abstractions to the relax data store by using the generic_fns.pipes API.
+        * Added more literature references to the 'full_analysis.py' script.
+        * Eliminated Monte Carlo simulations are better identified during user function execution.
+
+    Bugfixes:
+        * The generation of the cone geometric object for the N-state model is fixed.
+        * Fixes for the relax_curve_diff.py and latex_mf_table.py sample scripts (identified by the relax data store abstraction).
+        * Fixed the reading of relax 1.2 model-free results files (identified by the relax data store abstraction).
+        * Various PDB file loading issues fixed.
+        * value.set() no longer fails when the parameter being set already exists (bug #12406).
+        * Fix for the bug whereby model elimination does nothing for model-free models.  This fix may solve other model-free related issues (bug #12407).
+        * Model elimination no longer fails when no diffusion tensor is loaded (bug #12408).
+        * The error when loading the PDB file through the reading of the results file in the 'final' stage of the 'full_analysis.py' sample script is fixed (bug # 12409).
+        * Model elimination is fixed in the 'full_analysis.py' script.
+        * The fix() user function works again when the element argument is set to 'all'.
+        * Fix for the duplication of sequence data during model selection.
+        * Monte Carlo simulations were failing due to a missing sequence error (bug #12410).
+        * The model elimination error "AttributeError: 'SpinContainer' object has no attribute 'params'." has been fixed (bug #12411).
+        * A missing global chi-squared value was causing failure of global model selection (bug #12412).
+        * Monte Carlo simulation elimination was removing the simulation not from the affected spin but from all spins (bug #12416).
+        * Fix for the failure of the value.write() user function in all analysis types (bug #12418).
+
+
+
 Version 1.3.1
 (28 September 2008, from /1.3)
 http://svn.gna.org/svn/relax/tags/1.3.1
