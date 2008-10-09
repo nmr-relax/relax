@@ -986,7 +986,7 @@ class Relax_fit(Common_functions):
         @keyword relax_time:    The time, in seconds, of the relaxation period.
         @type relax_time:       float
         @keyword format:        The type of file containing peak intensities.  This can currently be
-                                one of 'sparky' or 'xeasy'.
+                                one of 'sparky', 'xeasy' or 'nmrview'.
         @type format:           str
         @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity
                                 file.

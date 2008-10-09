@@ -113,7 +113,7 @@ class Noe(Common_functions):
         @keyword spectrum_type: The type of spectrum, one of 'ref' or 'sat'.
         @type spectrum_type:    str
         @keyword format:        The type of file containing peak intensities.  This can currently be
-                                one of 'sparky' or 'xeasy'.
+                                one of 'sparky', 'xeasy' or 'nmrview'.
         @type format:           str
         @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity
                                 file.

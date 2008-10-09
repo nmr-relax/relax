@@ -126,6 +126,7 @@ class Relax_fit:
         The format argument can currently be set to:
             'sparky'
             'xeasy'
+            'nmrview'
 
         If the format argument is set to 'sparky', the file should be a Sparky peak list saved after
         typing the command 'lt'.  The default is to assume that columns 0, 1, 2, and 3 (1st, 2nd,
@@ -140,6 +141,8 @@ class Relax_fit:
         the peak intensity column is hardwired to number 10 (the 11th column) which contains either
         the peak height or peak volume data.  Because the columns are fixed, the int_col argument
         will be ignored.
+
+        If the format argument is set to 'nmrview', the file should be a Nmrview peak list.
 
 
         The heteronuc and proton arguments should be set respectively to the name of the
