@@ -173,9 +173,28 @@ def intensity_nmrview(line, int_col=None):
     @raises RelaxError: When the expected peak intensity is not a float.
     """
 
-    # Print some texte indicating the unavailability of this function...
-    print "This function is still unavailable.\n"
-    sys.exit()
+    # The residue number
+    try:
+        res_num = int(line[2])
+    except ValueError:
+        raise RelaxError, "The peak list is invalid."
+
+    # Nuclei names.
+    x_name = line[9]
+    h_name = line[2]
+
+    # The peak intensity column.
+    if int_col == None:
+        int_col = 16
+
+    # Intensity.
+    try:
+        intensity = float(line[int_col])
+    except ValueError:
+        raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
+
+    # Return the data.
+    return res_num, h_name, x_name, intensity
 
 
 def number_of_header_lines(file_data, format, int_col, intensity):
