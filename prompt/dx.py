@@ -279,5 +279,5 @@ class OpenDX:
 
     # Write function.
     map.__doc__ = map.__doc__ + "\n\n" + regexp_doc() + "\n"
-    map.__doc__ = map.__doc__ + diffusion_tensor.return_data_name.__doc__ + "\n\n"
+    map.__doc__ = map.__doc__ + diffusion_tensor.__return_data_name_prompt_doc__ + "\n\n"
     map.__doc__ = map.__doc__ + Model_free.return_data_name.__doc__ + "\n\n"

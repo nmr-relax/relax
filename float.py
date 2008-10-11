@@ -22,6 +22,7 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
 '''ieeefloat a set of functions for dealing with IEEE-754 float objects.
 
 On most platforms Python uses IEEE-754 double objects of length 64 bits to represent floats (some
@@ -30,9 +31,9 @@ of a python float object on most platforms.
 
 IEEE-74 uses special bit patterns to represent the following states or classes of IEEE floating
 point numbers (IEEE-class):
-    +/- NaN:    Not a number (e.g. 0.0/0.0).
-    inf:        Positive or negative infinity (1.0/0.0).
-    +/- zero:   Zero maybe positive or negative under IEEE-754.
+    - +/- NaN:    Not a number (e.g. 0.0/0.0).
+    - inf:        Positive or negative infinity (1.0/0.0).
+    - +/- zero:   Zero maybe positive or negative under IEEE-754.
 
 This module provides functions for working with python floats and their special values, if they
 contain IEEE-754 formatted values.  Specifically:
@@ -81,11 +82,11 @@ IEEE-754 double format:
 
 
 Todo:
-    Unit test suite.
-    Test under Windows.
-    Test under a Solaris Sparc box (big endian).
-    Add example IEEE double.
-    Check byte/nibble attributions.
+    - Unit test suite.
+    - Test under Windows.
+    - Test under a Solaris Sparc box (big endian).
+    - Add example IEEE double.
+    - Check byte/nibble attributions.
 '''
 from struct import pack,unpack
 import sys

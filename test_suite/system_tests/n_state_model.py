@@ -27,6 +27,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import pipes
 
 
 class N_state_model(TestCase):
@@ -54,7 +55,7 @@ class N_state_model(TestCase):
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/5_state_xz.py')
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test the optimised probabilities.
         self.assertAlmostEqual(cdp.probs[0], 0.2)

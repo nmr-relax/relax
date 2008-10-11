@@ -21,8 +21,9 @@
 ###############################################################################
 
 # Python module imports.
-import sys
 from numpy import fromstring
+from os import path
+import sys
 from unittest import TestCase
 
 # relax module imports.
@@ -44,6 +45,10 @@ class Test_internal(TestCase):
 
         # The path to a PDB file.
         self.test_pdb_path = self.path+'/test_suite/shared_data/structures/Ap4Aase_res1-12.pdb'
+        expanded = path.split(self.test_pdb_path)
+        self.test_pdb_dir = expanded[0]
+        self.test_pdb_file_name = expanded[1]
+
 
         # Instantiate the structural data object.
         self.data = Internal()
@@ -183,7 +188,7 @@ class Test_internal(TestCase):
         for model_num, mol_name, res_num, res_name, spin_num, spin_name, element, pos in self.data.atom_loop(atom_id='@163', model_num_flag=True, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
             # Test the spin info.
             self.assertEqual(model_num, 1)
-            self.assertEqual(mol_name, None)
+            self.assertEqual(mol_name, 'Ap4Aase_res1-12.pdb')
             self.assertEqual(res_num, 11)
             self.assertEqual(res_name, 'GLU')
             self.assertEqual(spin_num, 163)
@@ -205,11 +210,12 @@ class Test_internal(TestCase):
         self.data.load_pdb(self.test_pdb_path)
 
         # Test the structural data.
-        self.assertEqual(len(self.data.file_name), 1)
-        self.assertEqual(self.data.file_name[0], self.test_pdb_path)
+        self.assertEqual(len(self.data.file), 1)
+        self.assertEqual(self.data.file[0], self.test_pdb_file_name)
+        self.assertEqual(self.data.path[0], self.test_pdb_dir)
+        self.assertEqual(self.data.model[0], 1)
         self.assertEqual(len(self.data.structural_data), 1)
         self.assertEqual(type(self.data.structural_data), list)
-        self.assertEqual(self.data.structural_data[0].model, 1)
 
         # The real atomic data.
         atom_name = ['N', 'CA', '1HA', '2HA', 'C', 'O', '1HT', '2HT', '3HT', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', 'HG', 'CD1', '1HD1', '2HD1', '3HD1', 'CD2', '1HD2', '2HD2', '3HD2', 'C', 'O', 'N', 'H', 'CA', '1HA', '2HA', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'OG', 'HG', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', 'SD', 'CE', '1HE', '2HE', '3HE', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', 'OD1', 'OD2', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'OG', 'HG', 'C', 'O', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', 'CD', 'OE1', 'OE2', 'C', 'O', 'N', 'H', 'CA', '1HA', '2HA', 'C', 'O']

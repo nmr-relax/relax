@@ -31,13 +31,12 @@ from re import match, search
 import sys
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from dep_check import C_module_exp_fn
 from base_class import Common_functions
-from generic_fns import intensity
+from generic_fns import intensity, pipes
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
 from minfx.generic import generic_minimise
-from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoPipeError, RelaxNoSequenceError
+from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError
 
 # C modules.
 if C_module_exp_fn:
@@ -114,7 +113,7 @@ class Relax_fit(Common_functions):
             return scaling_matrix
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Loop over the parameters.
         for i in xrange(len(spin.params)):
@@ -137,19 +136,21 @@ class Relax_fit(Common_functions):
         return scaling_matrix
 
 
-    def assign_function(self, spin=None, intensity=None):
+    def assign_function(self, spin=None, intensity=None, spectrum_type=None):
         """Place the peak intensity data into the spin container.
 
         The intensity data can be either that of the reference or saturated spectrum.
 
-        @keyword spin:      The spin container.
-        @type spin:         SpinContainer instance
-        @keyword intensity: The intensity value.
-        @type intensity:    float
+        @keyword spin:          The spin container.
+        @type spin:             SpinContainer instance
+        @keyword intensity:     The intensity value.
+        @type intensity:        float
+        @keyword spectrum_type: Unused argument sent in by the caller function.
+        @type spectrum_type:    None
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Initialise.
         index = None
@@ -182,7 +183,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Create the initial parameter vector.
         param_vector = self.assemble_param_vector(spin=spin)
@@ -232,7 +233,7 @@ class Relax_fit(Common_functions):
             raise RelaxNoModelError
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Loop over the spectral time points.
         for j in xrange(len(cdp.relax_times)):
@@ -388,7 +389,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Monte Carlo simulations.
         if sim_index != None:
@@ -501,7 +502,7 @@ class Relax_fit(Common_functions):
             inc = temp
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Minimisation options initialisation.
         min_options = []
@@ -629,7 +630,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if the standard deviation has already been calculated.
         if hasattr(cdp, 'sd'):
@@ -666,7 +667,7 @@ class Relax_fit(Common_functions):
 
                 # Skip and deselect spins which have no data.
                 if not hasattr(spin, 'intensities'):
-                    spin.select = 0
+                    spin.select = False
                     continue
 
                 # Initialise the average intensity and standard deviation data structures.
@@ -778,7 +779,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -931,8 +932,11 @@ class Relax_fit(Common_functions):
         @type params:   list of str
         """
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Set the model.
-        ds[ds.current_pipe].curve_type = model
+        cdp.curve_type = model
 
         # Loop over the sequence.
         for spin in spin_loop():
@@ -959,12 +963,12 @@ class Relax_fit(Common_functions):
         for spin in spin_loop():
             # Check if data exists.
             if not hasattr(spin, 'intensities'):
-                spin.select = 0
+                spin.select = False
                 continue
 
             # Require 3 or more data points.
             if len(spin.intensities) < 3:
-                spin.select = 0
+                spin.select = False
                 continue
 
 
@@ -982,7 +986,7 @@ class Relax_fit(Common_functions):
         @keyword relax_time:    The time, in seconds, of the relaxation period.
         @type relax_time:       float
         @keyword format:        The type of file containing peak intensities.  This can currently be
-                                one of 'sparky' or 'xeasy'.
+                                one of 'sparky', 'xeasy' or 'nmrview'.
         @type format:           str
         @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity
                                 file.
@@ -995,7 +999,7 @@ class Relax_fit(Common_functions):
         """
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Store the relaxation time in the class instance.
         self.__relax_time = relax_time
@@ -1052,7 +1056,10 @@ class Relax_fit(Common_functions):
         @rtype:         list of float
         """
 
-        return ds[ds.current_pipe].sd
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
+        return cdp.sd
 
 
     def return_data_name(self, name):
@@ -1143,11 +1150,13 @@ class Relax_fit(Common_functions):
         """
 
         # Test if the current pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
+
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
 
         # Test if the pipe type is set to 'relax_fit'.
-        function_type = ds[ds.current_pipe].pipe_type
+        function_type = cdp.pipe_type
         if function_type != 'relax_fit':
             raise RelaxFuncSetupError, specific_setup.get_string(function_type)
 

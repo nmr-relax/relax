@@ -27,11 +27,12 @@
 # Python module imports.
 from re import split
 from warnings import warn
+import sys
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin
-from relax_errors import RelaxError, RelaxArgNotInListError, RelaxNoPipeError, RelaxNoSequenceError
+from generic_fns import pipes
+from relax_errors import RelaxError, RelaxArgNotInListError, RelaxNoSequenceError
 from relax_io import extract_data, strip
 from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
@@ -158,13 +159,51 @@ def intensity_xeasy(line, int_col=None):
     return res_num, h_name, x_name, intensity
 
 
+def intensity_nmrview(line, int_col=None):
+    """Function for returning relevant data from the Nmrview peak intensity line.
+
+    The residue number, heteronucleus and proton names, and peak intensity will be returned.
+
+
+    @param line:        The single line of information from the intensity file.
+    @type line:         list of str
+    @keyword int_col:   The column containing the peak intensity data (for a non-standard formatted
+                        file).
+    @type int_col:      int
+    @raises RelaxError: When the expected peak intensity is not a float.
+    """
+
+    # The residue number
+    try:
+        res_num = int(line[2])
+    except ValueError:
+        raise RelaxError, "The peak list is invalid."
+
+    # Nuclei names.
+    x_name = line[9]
+    h_name = line[2]
+
+    # The peak intensity column.
+    if int_col == None:
+        int_col = 16
+
+    # Intensity.
+    try:
+        intensity = float(line[int_col])
+    except ValueError:
+        raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
+
+    # Return the data.
+    return res_num, h_name, x_name, intensity
+
+
 def number_of_header_lines(file_data, format, int_col, intensity):
     """Function for determining how many header lines are in the intensity file.
 
     @param file_data:   The processed results file data.
     @type file_data:    list of lists of str
     @param format:      The type of file containing peak intensities.  This can currently be one of
-                        'sparky' or 'xeasy'.
+                        'sparky', 'xeasy' or 'nmrview'.
     @type format:       str
     @param int_col:     The column containing the peak intensity data (for a non-standard
                         formatted file).
@@ -206,7 +245,7 @@ def number_of_header_lines(file_data, format, int_col, intensity):
     return header_lines
 
 
-def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=None, assign_func=None):
+def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=None, assign_func=None, spectrum_type=None):
     """Read the peak intensity data.
 
     @keyword file:          The name of the file containing the peak intensities.
@@ -214,7 +253,7 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
     @keyword dir:           The directory where the file is located.
     @type dir:              str
     @keyword format:        The type of file containing peak intensities.  This can currently be
-                            one of 'sparky' or 'xeasy'.
+                            one of 'sparky', 'xeasy' or 'nmrview'.
     @type format:           str
     @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity
                             file.
@@ -226,10 +265,12 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
     @type int_col:          int
     @keyword assign_func:   A function used to place the intensity data within the spin container.
     @type assign_func:      func
+    @keyword spectrum_type: The optional spectrum type to be sent back into assign_func().
+    @type spectrum_type:    str
     """
 
     # Format argument.
-    format_list = ['sparky', 'xeasy']
+    format_list = ['sparky', 'xeasy', 'nmrview']
     if format not in format_list:
         raise RelaxArgNotInListError, ('format', format, format_list)
 
@@ -252,9 +293,16 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
         # Set the default proton dimension.
         H_dim = 'w1'
 
+    # Nmrview.
+    elif format == 'nmrview':
+        # Print out.
+        print "Nmrview formatted data file.\n"
+
+        # Set the intensity reading function.
+        intensity_fn = intensity_nmrview
+
     # Test if the current data pipe exists.
-    if not ds.current_pipe:
-        raise RelaxNoPipeError
+    pipes.test()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -299,4 +347,4 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
             continue
 
         # Assign the data.
-        assign_func(spin=spin, intensity=intensity)
+        assign_func(spin=spin, intensity=intensity, spectrum_type=spectrum_type)

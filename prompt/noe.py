@@ -42,7 +42,7 @@ class Noe:
         self.__relax__ = relax
 
 
-    def error(self, error=0.0, spectrum_type=None, res_num=None, res_name=None):
+    def error(self, error=0.0, spectrum_type=None, spin_id=None):
         """Function for setting the errors in the reference or saturated NOE spectra.
 
         Keyword Arguments
@@ -52,9 +52,7 @@ class Noe:
 
         spectrum_type:  The type of spectrum.
 
-        res_num:  The residue number.
-
-        res_name:  The residue name.
+        spin_id:  The spin identification string.
 
 
         Description
@@ -76,8 +74,7 @@ class Noe:
             text = sys.ps3 + "noe.error("
             text = text + "error=" + `error`
             text = text + ", spectrum_type=" + `spectrum_type`
-            text = text + ", res_num=" + `res_num`
-            text = text + ", res_name=" + `res_name` + ")"
+            text = text + ", spin_id=" + `spin_id` + ")"
             print text
 
         # The error.
@@ -88,16 +85,12 @@ class Noe:
         if type(spectrum_type) != str:
             raise RelaxStrError, ('spectrum type', spectrum_type)
 
-        # Residue number.
-        if res_num != None and type(res_num) != int and type(res_num) != str:
-            raise RelaxNoneIntStrError, ('residue number', res_num)
-
-        # Residue name.
-        if res_name != None and type(res_name) != str:
-            raise RelaxNoneStrError, ('residue name', res_name)
+        # Spin identification string.
+        if spin_id != None and type(spin_id) != str:
+            raise RelaxNoneStrError, ('spin identification string', spin_id)
 
         # Execute the functional code.
-        noe_obj.set_error(error=error, spectrum_type=spectrum_type, res_num=res_num, res_name=res_name)
+        noe_obj.set_error(error=error, spectrum_type=spectrum_type, spin_id=spin_id)
 
 
     def read(self, file=None, dir=None, spectrum_type=None, format='sparky', heteronuc='N', proton='HN', int_col=None):
@@ -135,6 +128,7 @@ class Noe:
         The 'format' argument can currently be set to:
             'sparky'
             'xeasy'
+            'nmrview'
 
         If the 'format' argument is set to 'sparky', the file should be a Sparky peak list saved
         after typing the command 'lt'.  The default is to assume that columns 0, 1, 2, and 3 (1st,
@@ -149,6 +143,8 @@ class Noe:
         the peak intensity column is hardwired to number 10 (the 11th column) which contains either
         the peak height or peak volume data.  Because the columns are fixed, the 'int_col' argument
         will be ignored.
+
+        If the format argument is set to 'nmrview', the file should be a Nmrview peak list.
 
 
         The 'heteronuc' and 'proton' arguments should be set respectively to the name of the

@@ -24,8 +24,8 @@
 """Module for interfacing with VMD."""
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 import dep_check
+from generic_fns import pipes
 from relax_errors import RelaxNoPdbError
 
 
@@ -37,7 +37,7 @@ def view():
         raise RelaxError, "VMD is not available (cannot import Scientific.Visualization.VMD due to missing Numeric dependency)."
 
     # Alias the current data pipe.
-    cdp = ds[ds.current_pipe]
+    cdp = pipes.get_pipe()
 
     # Test if the PDB file has been loaded.
     if not hasattr(cdp, 'structure'):

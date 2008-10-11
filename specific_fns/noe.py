@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005,2007 Edward d'Auvergne                              #
+# Copyright (C) 2004-2005,2007-2008 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,211 +25,117 @@ from math import sqrt
 from re import match
 
 # relax module imports.
+from base_class import Common_functions
 from data import Relax_data_store; ds = Relax_data_store()
-from relax_errors import RelaxArgNotInListError, RelaxError, RelaxInvalidDataError, RelaxNoPipeError, RelaxNoSequenceError, RelaxRegExpError
+from generic_fns import intensity, pipes
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
+from relax_errors import RelaxArgNotInListError, RelaxError, RelaxInvalidDataError, RelaxNoSequenceError, RelaxRegExpError
 from relax_io import open_write_file
 
 
-class Noe:
+class Noe(Common_functions):
     def __init__(self):
         """Class containing functions for relaxation data."""
 
 
-    def assign_function(self, run=None, i=None, intensity=None):
-        """Function for assigning peak intensity data to either the reference or saturated spectra."""
+    def assign_function(self, spin=None, intensity=None, spectrum_type=None):
+        """Place the peak intensity data into the spin container.
+
+        The intensity data can be either that of the reference or saturated spectrum.
+
+        @keyword spin:          The spin container.
+        @type spin:             SpinContainer instance
+        @keyword intensity:     The intensity value.
+        @type intensity:        float
+        @keyword spectrum_type: The type of spectrum, one of 'ref' or 'sat'.
+        @type spectrum_type:    str
+        """
 
         # Add the data.
-        if self.spectrum_type == 'ref':
-            ds.res[run][i].ref = intensity
-        elif self.spectrum_type == 'sat':
-            ds.res[run][i].sat = intensity
+        if spectrum_type == 'ref':
+            spin.ref = intensity
+        elif spectrum_type == 'sat':
+            spin.sat = intensity
+        else:
+            raise RelaxError, "The spectrum type '%s' is unknown." % spectrum_type
 
 
-    def calculate(self, run=None, verbosity=1):
-        """Function for calculating the NOE and its error.
+    def calculate(self, verbosity=1):
+        """Calculate the NOE and its error.
 
         The error for each peak is calculated using the formula::
                           ___________________________________________
                        \/ {sd(sat)*I(unsat)}^2 + {sd(unsat)*I(sat)}^2
             sd(NOE) = -----------------------------------------------
                                           I(unsat)^2
+
+        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:    int
         """
 
-        # Arguments.
-        self.run = run
-
         # Test if the current pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
-        # Loop over the sequence.
-        for i in xrange(len(ds.res[self.run])):
-            # Remap the data structure 'ds.res[self.run][i]'.
-            data = ds.res[self.run][i]
-
-            # Skip deselected residues.
-            if not data.select:
+        # Loop over the spins.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
                 continue
 
             # Calculate the NOE.
-            data.noe = data.sat / data.ref
+            spin.noe = spin.sat / spin.ref
 
             # Calculate the error.
-            data.noe_err = sqrt((data.sat_err * data.ref)**2 + (data.ref_err * data.sat)**2) / data.ref**2
+            spin.noe_err = sqrt((spin.sat_err * spin.ref)**2 + (spin.ref_err * spin.sat)**2) / spin.ref**2
 
 
-    def overfit_deselect(self, run):
-        """Function for deselecting residues without sufficient data to support calculation"""
+    def overfit_deselect(self):
+        """Deselect spins which have insufficient data to support calculation"""
 
-        # Test the sequence data exists:
-        if not ds.res.has_key(run):
-            raise RelaxNoSequenceError, run
+        # Test the sequence data exists.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
 
-        # Loop over residue data:
-        for residue in ds.res[run]:
-
+        # Loop over spin data.
+        for spin in spin_loop():
             # Check for sufficient data.
-            if not (hasattr(residue, 'ref') and hasattr(residue, 'sat') and hasattr(residue, 'ref_err') and hasattr(residue, 'sat_err')):
-                residue.select = 0
-                continue
+            if not (hasattr(spin, 'ref') and hasattr(spin, 'sat') and hasattr(spin, 'ref_err') and hasattr(spin, 'sat_err')):
+                spin.select = False
 
 
-    def read(self, run=None, file=None, dir=None, spectrum_type=None, format=None, heteronuc=None, proton=None, int_col=None):
-        """Function for reading peak intensity data."""
+    def read(self, file=None, dir=None, spectrum_type=None, format=None, heteronuc=None, proton=None, int_col=None):
+        """Read in the peak intensity data.
 
-        # Arguments.
-        self.run = run
-        self.spectrum_type = spectrum_type
+        @keyword file:          The name of the file containing the peak intensities.
+        @type file:             str
+        @keyword dir:           The directory where the file is located.
+        @type dir:              str
+        @keyword spectrum_type: The type of spectrum, one of 'ref' or 'sat'.
+        @type spectrum_type:    str
+        @keyword format:        The type of file containing peak intensities.  This can currently be
+                                one of 'sparky', 'xeasy' or 'nmrview'.
+        @type format:           str
+        @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity
+                                file.
+        @type heteronuc:        str
+        @keyword proton:        The name of the proton as specified in the peak intensity file.
+        @type proton:           str
+        @keyword int_col:       The column containing the peak intensity data (for a non-standard
+                                formatted file).
+        @type int_col:          int
+        """
 
         # Spectrum type argument.
         spect_type_list = ['ref', 'sat']
-        if self.spectrum_type not in spect_type_list:
-            raise RelaxArgNotInListError, ('spectrum type', self.spectrum_type, spect_type_list)
-        if self.spectrum_type == 'ref':
+        if spectrum_type not in spect_type_list:
+            raise RelaxArgNotInListError, ('spectrum type', spectrum_type, spect_type_list)
+        if spectrum_type == 'ref':
             print "Reference spectrum."
-        if self.spectrum_type == 'sat':
+        if spectrum_type == 'sat':
             print "Saturated spectrum."
 
         # Generic intensity function.
-        self.relax.generic.intensity.read(run=run, file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self.assign_function)
-
-
-    def read_columnar_results(self, run, file_data):
-        """Function for reading the results file."""
-
-        # Arguments.
-        self.run = run
-
-        # Extract and remove the header.
-        header = file_data[0]
-        file_data = file_data[1:]
-
-        # Sort the column numbers.
-        col = {}
-        for i in xrange(len(header)):
-            if header[i] == 'Num':
-                col['num'] = i
-            elif header[i] == 'Name':
-                col['name'] = i
-            elif header[i] == 'Selected':
-                col['select'] = i
-            elif header[i] == 'Ref_intensity':
-                col['ref_int'] = i
-            elif header[i] == 'Ref_error':
-                col['ref_err'] = i
-            elif header[i] == 'Sat_intensity':
-                col['sat_int'] = i
-            elif header[i] == 'Sat_error':
-                col['sat_err'] = i
-            elif header[i] == 'NOE':
-                col['noe'] = i
-            elif header[i] == 'NOE_error':
-                col['noe_err'] = i
-
-        # Test the file.
-        if len(col) < 2:
-            raise RelaxInvalidDataError
-
-
-        # Sequence.
-        ###########
-
-        # Generate the sequence.
-        for i in xrange(len(file_data)):
-            # Residue number and name.
-            try:
-                res_num = int(file_data[i][col['num']])
-            except ValueError:
-                raise RelaxError, "The residue number " + file_data[i][col['num']] + " is not an integer."
-            res_name = file_data[i][col['name']]
-
-            # Add the residue.
-            self.relax.generic.sequence.add(self.run, res_num, res_name, select=int(file_data[i][col['select']]))
-
-
-        # Data.
-        #######
-
-        # Loop over the file data.
-        for i in xrange(len(file_data)):
-            # Residue number and name.
-            try:
-                res_num = int(file_data[i][col['num']])
-            except ValueError:
-                raise RelaxError, "The residue number " + file_data[i][col['num']] + " is not an integer."
-            res_name = file_data[i][col['name']]
-
-            # Find the residue index.
-            index = None
-            for j in xrange(len(ds.res[self.run])):
-                if ds.res[self.run][j].num == res_num and ds.res[self.run][j].name == res_name:
-                    index = j
-                    break
-            if index == None:
-                raise RelaxError, "Residue " + `res_num` + " " + res_name + " cannot be found in the sequence."
-
-            # Reassign data structure.
-            data = ds.res[self.run][index]
-
-            # Skip deselected residues.
-            if not data.select:
-                continue
-
-            # Reference intensity.
-            try:
-                data.ref = float(file_data[i][col['ref_int']])
-            except ValueError:
-                data.ref = None
-
-            # Reference error.
-            try:
-                data.ref_err = float(file_data[i][col['ref_err']])
-            except ValueError:
-                data.ref_err = None
-
-            # Saturated intensity.
-            try:
-                data.sat = float(file_data[i][col['sat_int']])
-            except ValueError:
-                data.sat = None
-
-            # Saturated error.
-            try:
-                data.sat_err = float(file_data[i][col['sat_err']])
-            except ValueError:
-                data.sat_err = None
-
-            # NOE.
-            try:
-                data.noe = float(file_data[i][col['noe']])
-            except ValueError:
-                data.noe = None
-
-            # NOE error.
-            try:
-                data.noe_err = float(file_data[i][col['noe_err']])
-            except ValueError:
-                data.noe_err = None
+        intensity.read(file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self.assign_function, spectrum_type=spectrum_type)
 
 
     def return_data_name(self, name):
@@ -292,204 +198,33 @@ class Noe:
         return None
 
 
-    def return_value(self, run, i, data_type='noe'):
-        """Function for returning the NOE value and error."""
+    def set_error(self, error=0.0, spectrum_type=None, spin_id=None):
+        """Set the peak intensity errors.
 
-        # Arguments.
-        self.run = run
-
-        # Remap the data structure 'ds.res[run][i]'.
-        data = ds.res[run][i]
-
-        # Get the object.
-        object_name = self.return_data_name(data_type)
-        if not object_name:
-            raise RelaxError, "The NOE calculation data type " + `data_type` + " does not exist."
-        object_error = object_name + "_err"
-
-        # Get the value.
-        value = None
-        if hasattr(data, object_name):
-            value = getattr(data, object_name)
-
-        # Get the error.
-        error = None
-        if hasattr(data, object_error):
-            error = getattr(data, object_error)
-
-        # Return the data.
-        return value, error
-
-
-    def set_error(self, run=None, error=0.0, spectrum_type=None, res_num=None, res_name=None):
-        """Function for setting the errors."""
-
-        # Arguments.
-        self.run = run
-        self.spectrum_type = spectrum_type
-        self.res_num = res_num
-        self.res_name = res_name
+        @param error:           The peak intensity error value defined as the RMSD of the base plane
+                                noise.
+        @type error:            float
+        @keyword spectrum_type: The type of spectrum, one of 'ref' or 'sat'.
+        @type spectrum_type:    str
+        @param spin_id:         The spin identification string.
+        @type spin_id:          str
+        """
 
         # Test if the current pipe exists
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Test if the sequence data is loaded.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # Test if the residue number is a valid regular expression.
-        if type(res_num) == str:
-            try:
-                compile(res_num)
-            except:
-                raise RelaxRegExpError, ('residue number', res_num)
-
-        # Test if the residue name is a valid regular expression.
-        if res_name:
-            try:
-                compile(res_name)
-            except:
-                raise RelaxRegExpError, ('residue name', res_name)
-
-        # Loop over the sequence.
-        for i in xrange(len(ds.res[run])):
-            # Remap the data structure 'ds.res[self.run][i]'.
-            data = ds.res[self.run][i]
-
-            # Skip deselected residues.
-            if not data.select:
-                continue
-
-            # If 'res_num' is not None, skip the residue if there is no match.
-            if type(res_num) == int and not data.num == res_num:
-                continue
-            elif type(res_num) == str and not match(res_num, `data.num`):
-                continue
-
-            # If 'res_name' is not None, skip the residue if there is no match.
-            if res_name != None and not match(res_name, data.name):
+        # Loop over the spins.
+        for spin in spin_loop(spin_id):
+            # Skip deselected spins.
+            if not spin.select:
                 continue
 
             # Set the error.
-            if self.spectrum_type == 'ref':
-                data.ref_err = float(error)
-            elif self.spectrum_type == 'sat':
-                data.sat_err = float(error)
-
-
-    def write(self, run=None, file=None, dir=None, force=False):
-        """Function for writing NOE values and errors to a file."""
-
-        # Arguments
-        self.run = run
-
-        # Test if the current pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
-
-        # Test if the sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # Open the file for writing.
-        noe_file = open_write_file(file, dir, force)
-
-        # Write the data.
-        self.relax.generic.value.write_data(self.run, None, noe_file, return_value=self.return_value)
-
-        # Close the file.
-        noe_file.close()
-
-
-    def write_columnar_line(self, file=None, num=None, name=None, select=None, ref_int=None, ref_err=None, sat_int=None, sat_err=None, noe=None, noe_err=None):
-        """Function for printing a single line of the columnar formatted results."""
-
-        # Residue number and name.
-        file.write("%-4s %-5s " % (num, name))
-
-        # Selected flag and data set.
-        file.write("%-9s " % select)
-        if not select:
-            file.write("\n")
-            return
-
-        # Reference and saturated data.
-        file.write("%-25s %-25s " % (ref_int, ref_err))
-        file.write("%-25s %-25s " % (sat_int, sat_err))
-
-        # NOE and error.
-        file.write("%-25s %-25s " % (noe, noe_err))
-
-        # End of the line.
-        file.write("\n")
-
-
-    def write_columnar_results(self, file, run):
-        """Function for printing the results into a file."""
-
-        # Arguments.
-        self.run = run
-
-        # Test if the current pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
-
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-
-        # Header.
-        #########
-
-
-        # Write the header line.
-        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', ref_int='Ref_intensity', ref_err='Ref_error', sat_int='Sat_intensity', sat_err='Sat_error', noe='NOE', noe_err='NOE_error')
-
-
-        # Values.
-        #########
-
-        # Loop over the sequence.
-        for i in xrange(len(ds.res[self.run])):
-            # Reassign data structure.
-            data = ds.res[self.run][i]
-
-            # Deselected residues.
-            if not data.select:
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=0)
-                continue
-
-            # Reference intensity.
-            ref_int = None
-            if hasattr(data, 'ref'):
-                ref_int = data.ref
-
-            # Reference error.
-            ref_err = None
-            if hasattr(data, 'ref_err'):
-                ref_err = data.ref_err
-
-            # Saturated intensity.
-            sat_int = None
-            if hasattr(data, 'sat'):
-                sat_int = data.sat
-
-            # Saturated error.
-            sat_err = None
-            if hasattr(data, 'sat_err'):
-                sat_err = data.sat_err
-
-            # NOE
-            noe = None
-            if hasattr(data, 'noe'):
-                noe = data.noe
-
-            # NOE error.
-            noe_err = None
-            if hasattr(data, 'noe_err'):
-                noe_err = data.noe_err
-
-            # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, ref_int=ref_int, ref_err=ref_err, sat_int=sat_int, sat_err=sat_err, noe=noe, noe_err=noe_err)
+            if spectrum_type == 'ref':
+                spin.ref_err = float(error)
+            elif spectrum_type == 'sat':
+                spin.sat_err = float(error)

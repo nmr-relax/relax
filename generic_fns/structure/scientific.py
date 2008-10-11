@@ -29,14 +29,15 @@ import dep_check
 # Python module imports.
 from math import sqrt
 from numpy import array, dot, float64, zeros
+import os
+from os import F_OK, access
 if dep_check.scientific_pdb_module:
     import Scientific.IO.PDB
 from warnings import warn
 
 # relax module imports.
 from api_base import Base_struct_API
-from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import relax_re
+from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import Selection, parse_token, tokenise
 from relax_errors import RelaxError, RelaxPdbLoadError
 from relax_warnings import RelaxWarning, RelaxNoAtomWarning, RelaxZeroVectorWarning
@@ -55,8 +56,66 @@ class Scientific_data(Base_struct_API):
         if not dep_check.scientific_pdb_module:
             raise RelaxError, "The Scientific python PDB module Scientific.IO.PDB could not be imported."
 
-        # The parser specific data object.
-        self.structural_data = []
+        # Execute the base class __init__() method.
+        Base_struct_API.__init__(self)
+
+
+    def add_struct(self, name=None, model=None, file=None, path=None, str=None, struct_index=None):
+        """Add the given structure to the store.
+
+        @keyword name:          The structural identifier.
+        @type name:             str
+        @keyword model:         The structural model.
+        @type model:            int or None
+        @keyword file:          The name of the file containing the structure.
+        @type file:             str
+        @keyword path:          The optional path where the file is located.
+        @type path:             str
+        @keyword str:           The object containing the structural data.
+        @type str:              Structure_container instance
+        @keyword struct_index:  The index of the structural container, used for replacing the
+                                structure.
+        @type struct_index:     int or None.
+        """
+
+        # Some checks.
+        if struct_index != None:
+            # Index check.
+            if struct_index >= self.num:
+                raise RelaxError, "The structure index of " + `struct_index` + " cannot be more than the total number of structures of " + `self.num` + "."
+
+            # ID check.
+            if name != self.name[struct_index]:
+                raise RelaxError, "The ID names " + `name` + " and " + `self.name[struct_index]` + " do not match."
+
+            # Model.
+            if model != self.model[struct_index]:
+                raise RelaxError, "The models " + `model` + " and " + `self.model[struct_index]` + " do not match."
+
+            # File name.
+            if file != self.file[struct_index]:
+                raise RelaxError, "The file names of " + `file` + " and " + `self.file[struct_index]` + " do not match."
+
+        # Initialise.
+        else:
+            self.num = self.num + 1
+            self.name.append(name)
+            self.model.append(model)
+            self.file.append(file)
+            self.path.append(path)
+
+        # Initialise the structural object if not provided.
+        if str == None:
+            raise RelaxError, "The Scientific python structural object cannot be set to None."
+
+        # Add the structural data.
+        if struct_index != None:
+            if struct_index >= len(self.structural_data):
+                self.structural_data.append(str)
+            else:
+                self.structural_data[struct_index] = str
+        else:
+            self.structural_data.append(str)
 
 
     def __find_bonded_atom(self, attached_atom, mol_type, res):
@@ -238,7 +297,6 @@ class Scientific_data(Base_struct_API):
         @type pos_flag:             bool
                                     average atom properties across all loaded structures.
         @type ave:                  bool
-        @return:                    A tuple of atomic information, as described in the docstring.
         @return:                    A tuple of atomic information, as described in the docstring.
         @rtype:                     tuple consisting of optional molecule name (str), residue number
                                     (int), residue name (str), atom number (int), atom name(str),
@@ -462,41 +520,60 @@ class Scientific_data(Base_struct_API):
         return data
 
 
-    def load_pdb(self, file_path, model=None, verbosity=False):
+    def load_pdb(self, file_path, model=None, struct_index=None, verbosity=False):
         """Function for loading the structures from the PDB file.
 
-        @param file_path:   The full path of the file.
-        @type file_path:    str
-        @param model:       The PDB model to use.
-        @type model:        None or int
-        @keyword verbosity: A flag which if True will cause messages to be printed.
-        @type verbosity:    bool
+        @param file_path:       The full path of the file.
+        @type file_path:        str
+        @param model:           The PDB model to use.  If None, all models will be loaded.
+        @type model:            int or None
+        @param struct_index:    The index of the structure.  This optional argument can be useful
+                                for reloading a structure.
+        @type struct_index:     int
+        @keyword verbosity:     A flag which if True will cause messages to be printed.
+        @type verbosity:        bool
+        @return:                The status of the loading of the PDB file.
+        @rtype:                 bool
         """
 
         # Initial print out.
         if verbosity:
-            print "Scientific Python PDB parser.\n"
+            print "\nScientific Python PDB parser."
 
-        # Store the file name (with full path).
-        self.file_name = file_path
+        # Test if the file exists.
+        if not access(file_path, F_OK):
+            # Exit indicating failure.
+            return False
 
-        # Store the model number.
-        self.model = model
+        # Separate the file name and path.
+        path, file = os.path.split(file_path)
 
-        # Use pointers (references) if the PDB data exists in another run.
-        for data_pipe in ds:
-            if hasattr(data_pipe, 'structure') and data_pipe.structure.file_name == file_path and data_pipe.structure.model == model:
-                # Make a pointer to the data.
-                self.structural_data = data_pipe.structure.structural_data
+        # The ID name.
+        name = file
+        if model != None:
+            name = name + "_" + `model`
 
-                # Print out.
-                if verbosity:
-                    print "Using the structures from the data pipe " + `data_pipe.pipe_name` + "."
-                    for i in xrange(len(self.structural_data)):
-                        print self.structural_data[i]
+        # Use pointers (references) if the PDB data exists in another data pipe.
+        for data_pipe, pipe_name in pipes.pipe_loop(name=True):
+            # Skip the current pipe.
+            if pipe_name == pipes.cdp_name():
+                continue
 
-                # Exit this function.
-                return
+            # Structure exists.
+            if hasattr(data_pipe, 'structure'):
+                # Loop over the structures.
+                for i in xrange(data_pipe.structure.num):
+                    if data_pipe.structure.name[i] == name and data_pipe.structure.id == 'scientific' and len(data_pipe.structure.structural_data):
+                        # Add the structure.
+                        self.add_struct(name=name, model=model, file=file, path=path, str=data_pipe.structure.structural_data[i], struct_index=struct_index)
+
+                        # Print out.
+                        if verbosity:
+                            print "Using the structures from the data pipe " + `pipe_name` + "."
+                            print self.structural_data[i]
+
+                        # Exit this function.
+                        return True
 
         # Load the structure i from the PDB file.
         if type(model) == int:
@@ -515,8 +592,8 @@ class Scientific_data(Base_struct_API):
             if verbosity:
                 print str
 
-            # Place the structure in 'self.structural_data'.
-            self.structural_data.append(str)
+            # Add the structure.
+            self.add_struct(name=name, model=model, file=file, path=path, str=str, struct_index=struct_index)
 
 
         # Load all structures.
@@ -535,9 +612,19 @@ class Scientific_data(Base_struct_API):
 
                 # No model 1.
                 if len(str) == 0 and i == 1:
+                    # Load the PDB without a model number.
                     str = Scientific.IO.PDB.Structure(file_path)
+
+                    # Ok, nothing is loadable from this file.
                     if len(str) == 0:
                         raise RelaxPdbLoadError, file_path
+
+                    # Set the model number.
+                    model = None
+
+                # Set the model number.
+                else:
+                    model = i
 
                 # Test if the last structure has been reached.
                 if len(str) == 0:
@@ -549,7 +636,10 @@ class Scientific_data(Base_struct_API):
                     print str
 
                 # Place the structure in 'self.structural_data'.
-                self.structural_data.append(str)
+                self.add_struct(name=name, model=model, file=file, path=path, str=str, struct_index=struct_index)
 
                 # Increment i.
                 i = i + 1
+
+        # Loading worked.
+        return True

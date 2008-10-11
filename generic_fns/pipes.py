@@ -54,21 +54,21 @@ def copy(pipe_from=None, pipe_to=None):
 
     # The current data pipe.
     if pipe_from == None:
-        pipe_from = ds.current_pipe
+        pipe_from = cdp_name()
 
     # Copy the data.
     ds[pipe_to] = ds[pipe_from].__clone__()
 
 
-def create(pipe_name=None, pipe_type=None):
+def create(pipe_name=None, pipe_type=None, switch=True):
     """Create a new data pipe.
 
     The current data pipe will be changed to this new data pipe.
 
 
-    @param pipe_name:   The name of the new data pipe.
+    @keyword pipe_name: The name of the new data pipe.
     @type pipe_name:    str
-    @param pipe_type:   The new data pipe type which can be one of the following:
+    @keyword pipe_type: The new data pipe type which can be one of the following:
         'ct':  Consistency testing,
         'jw':  Reduced spectral density mapping,
         'mf':  Model-free analysis,
@@ -77,6 +77,9 @@ def create(pipe_name=None, pipe_type=None):
         'relax_fit':  Relaxation curve fitting,
         'srls':  SRLS analysis.
     @type pipe_type:    str
+    @keyword switch:    If True, this new pipe will be switched to, otherwise the current data pipe
+                        will remain as is.
+    @type switch:       bool
     """
 
     # List of valid data pipe types.
@@ -94,7 +97,7 @@ def create(pipe_name=None, pipe_type=None):
     ds.add(pipe_name=pipe_name, pipe_type=pipe_type)
 
 
-def current():
+def cdp_name():
     """Return the name of the current data pipe.
     
     @return:        The name of the current data pipe.
@@ -112,8 +115,8 @@ def delete(pipe_name=None):
     """
 
     # Test if the data pipe exists.
-    if pipe_name != None and not ds.has_key(pipe_name):
-        raise RelaxNoPipeError, pipe_name
+    if pipe_name != None:
+        test(pipe_name)
 
     # Delete the data pipe.
     del ds[pipe_name]
@@ -121,6 +124,58 @@ def delete(pipe_name=None):
     # Set the current data pipe to None if it is the deleted data pipe.
     if ds.current_pipe == pipe_name:
         ds.current_pipe = None
+
+
+def get_pipe(name=None):
+    """Return a data pipe.
+
+    @keyword name:  The name of the data pipe to return.  If None, the current data pipe is
+                    returned.
+    @type name:     str or None
+    @return:        The current data pipe.
+    @rtype:         PipeContainer instance
+    """
+
+    # The name of the data pipe.
+    if name == None:
+        name = cdp_name()
+
+    return ds[name]
+
+
+def get_type(name=None):
+    """Return the type of the data pipe.
+
+    @keyword name:  The name of the data pipe.  If None, the current data pipe is used.
+    @type name:     str or None
+    @return:        The current data pipe type.
+    @rtype:         str
+    """
+
+    # The name of the data pipe.
+    if name == None:
+        name = cdp_name()
+
+    # Get the data pipe.
+    pipe = get_pipe(name)
+
+    return pipe.pipe_type
+
+
+def has_pipe(name):
+    """Determine if the relax data store contains the data pipe.
+
+    @param name:    The name of the data pipe.
+    @type name:     str
+    @return:        True if the data pipe exists, False otherwise.
+    @rtype:         bool
+    """
+
+    # Check.
+    if ds.has_key(name):
+        return True
+    else:
+        return False
 
 
 def list():
@@ -131,7 +186,37 @@ def list():
 
     # Loop over the data pipes.
     for pipe_name in ds:
-        print "%-20s%-20s" % (pipe_name, ds[pipe_name].pipe_type)
+        print "%-20s%-20s" % (pipe_name, get_type(pipe_name))
+
+
+def pipe_loop(name=False):
+    """Generator function for looping over and yielding the data pipes.
+
+    @keyword name:  A flag which if True will cause the name of the pipe to be returned.
+    @type name:     bool
+    @return:        The data pipes, and optionally the pipe names.
+    @rtype:         PipeContainer instance or tuple of PipeContainer instance and str if name=True
+    """
+
+    # Loop over the keys.
+    for key in ds.keys():
+        # Return the pipe and name.
+        if name:
+            yield ds[key], key
+
+        # Return just the pipe.
+        else:
+            yield ds[key]
+
+
+def pipe_names():
+    """Return the list of all data pipes.
+
+    @return:        The list of data pipes.
+    @rtype:         list of str
+    """
+
+    return ds.keys()
 
 
 def switch(pipe_name=None):
@@ -142,8 +227,7 @@ def switch(pipe_name=None):
     """
 
     # Test if the data pipe exists.
-    if not ds.has_key(pipe_name):
-        raise RelaxNoPipeError, pipe_name
+    test(pipe_name)
 
     # Switch the current data pipe.
     ds.current_pipe = pipe_name
@@ -161,7 +245,7 @@ def test(pipe_name=None):
     # No supplied data pipe and no current data pipe.
     if pipe_name == None:
         # Get the current pipe.
-        pipe_name = current()
+        pipe_name = cdp_name()
 
         # Still no luck.
         if pipe_name == None:

@@ -26,6 +26,9 @@ GRID_INC = 3
 # The optimisation technique.
 MIN_ALGOR = 'simplex'
 
+# Number of Monte Carlo simulations.
+MC_NUM = 3
+
 
 class Main:
     def __init__(self, relax):
@@ -46,7 +49,7 @@ class Main:
         self.multi_model(local_tm=True)
 
         # Model selection.
-        self.model_selection(pipe='aic')
+        self.model_selection(pipe='local_tm')
 
 
         #######################
@@ -57,8 +60,8 @@ class Main:
         ################################
 
         # Copy the model selection data pipe to a new pipe for the spherical diffusion tensor.
-        pipe.copy('aic', 'sphere')
-        pipe.switch('sphere')
+        pipe.copy('local_tm', 'sphere_init')
+        pipe.switch('sphere_init')
 
         # Remove the tm parameter.
         model_free.remove_tm()
@@ -79,19 +82,55 @@ class Main:
         ######################
 
         # Sequential optimisation of all model-free models.
-        pipe.copy('sphere', 'previous')
         self.multi_model(local_tm=False)
 
         # Model selection.
-        pipe.delete('aic')
-        self.model_selection(pipe='aic')
+        self.model_selection(pipe='sphere')
+
+        # Final optimisation of all diffusion and model-free parameters.
+        fix('all', fixed=False)
+
+        # Minimise all parameters.
+        minimise(MIN_ALGOR, max_iter=10)
+
+
+        # Final stage.
+        ##############
+
+        # Unfix all parameters (to switch to the global models).
+        fix('all', fixed=False)
+
+        # Model selection between 'local_tm' and 'sphere'.
+        self.pipes = ['local_tm', 'sphere']
+        self.model_selection(pipe='final')
+
+        # Fix the diffusion tensor.
+        fix('diff')
+
+        # Monte Carlo simulations.
+        monte_carlo.setup(number=MC_NUM)
+        monte_carlo.create_data()
+        monte_carlo.initial_values()
+        minimise(MIN_ALGOR)
+
+        # Set some MC simulation te values to 200 ns to cause them to be eliminated.
+        ds['final'].mol[0].res[0].spin[0].te_sim[1] = 200*1e-9
+        ds['final'].mol[0].res[1].spin[0].te_sim[2] = 200*1e-9
+
+        # Finish the MC sims.
+        eliminate()
+        monte_carlo.error_analysis()
+
+        # Write the final results.
+        results.write(file='devnull', force=True)
 
 
     def model_selection(self, pipe=None):
         """Model selection function."""
 
         # Model elimination.
-        eliminate()
+        if pipe != 'final':
+            eliminate()
 
         # Model selection.
         model_selection(method='AIC', modsel_pipe=pipe, pipes=self.pipes)
@@ -125,9 +164,9 @@ class Main:
             # Copy the relaxation data.
             relax_data.copy('data')
 
-            # Copy the diffusion tensor from the 'opt' data pipe and prevent it from being minimised.
+            # Copy the diffusion tensor from the 'sphere_init' data pipe and prevent it from being minimised.
             if not local_tm:
-                diffusion_tensor.copy('previous')
+                diffusion_tensor.copy('sphere_init')
                 fix('diff')
 
             # Set all the necessary values.

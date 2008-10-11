@@ -11,12 +11,12 @@ name = 'jw_mapping'
 pipe.create(name, 'jw')
 
 # Load the sequence.
-sequence.read(sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/noe.dat')
+sequence.read(sys.path[-1] + '/test_suite/shared_data/jw_mapping/noe.dat')
 
 # Load the relaxation data.
-relax_data.read('R1', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/R1.dat')
-relax_data.read('R2', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/R2.dat')
-relax_data.read('NOE', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/noe.dat')
+relax_data.read('R1', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/shared_data/jw_mapping/R1.dat')
+relax_data.read('R2', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/shared_data/jw_mapping/R2.dat')
+relax_data.read('NOE', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/shared_data/jw_mapping/noe.dat')
 
 # Set the nuclei types
 value.set('15N', 'heteronucleus')

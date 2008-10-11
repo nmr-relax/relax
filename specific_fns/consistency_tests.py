@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2007 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
 # Copyright (C) 2007-2008 Sebastien Morin                                     #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -27,11 +27,11 @@ from string import replace
 
 # relax module imports.
 from base_class import Common_functions
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
+from generic_fns import pipes
 from maths_fns.consistency_tests import Consistency
 from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
-from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoPipeError, RelaxNoSequenceError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
+from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
 
 
 class Consistency_tests(Common_functions):
@@ -43,7 +43,7 @@ class Consistency_tests(Common_functions):
         """Calculation of the consistency functions."""
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if the frequency has been set.
         if not hasattr(cdp, 'ct_frq') or type(cdp.ct_frq) != float:
@@ -309,12 +309,12 @@ class Consistency_tests(Common_functions):
 
             # Check for sufficient data
             if not hasattr(spin, 'relax_data'):
-                spin.select = 0
+                spin.select = False
                 continue
 
             # Require 3 or more data points
             if len(spin.relax_data) < 3:
-                spin.select = 0
+                spin.select = False
                 continue
 
 
@@ -466,14 +466,13 @@ class Consistency_tests(Common_functions):
         """Function for selecting which relaxation data to use in the consistency tests."""
 
         # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
+        cdp = pipes.get_pipe()
 
         # Test if the current pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
+        pipes.test()
 
         # Test if the pipe type is set to 'ct'.
-        function_type = ds[ds.current_pipe].pipe_type
+        function_type = cdp.pipe_type
         if function_type != 'ct':
             raise RelaxFuncSetupError, specific_fns.setup.get_string(function_type)
 
@@ -551,290 +550,3 @@ class Consistency_tests(Common_functions):
 
         # Create the data structure.
         spin.relax_sim_data = sim_data
-
-
-    def write_columnar_line(self, file=None, num=None, name=None, select=None, data_set=None, heteronuc_type=None, wH=None, j0=None, f_eta=None, f_r2=None, r=None, csa=None, orientation=None, tc=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, ri=None, ri_error=None):
-        """Function for printing a single line of the columnar formatted results."""
-
-        # Residue number and name.
-        file.write("%-4s %-5s " % (num, name))
-
-        # Selected flag and data set.
-        file.write("%-9s %-9s " % (select, data_set))
-
-        # Nucleus.
-        file.write("%-7s " % heteronuc_type)
-
-        # Proton frequency.
-        file.write("%-25s " % wH)
-
-        # Parameters.
-        file.write("%-25s " % j0)
-        file.write("%-25s " % f_eta)
-        file.write("%-25s " % f_r2)
-        file.write("%-25s " % r)
-        file.write("%-25s " % csa)
-        file.write("%-25s " % orientation)
-        file.write("%-25s " % tc)
-
-        # Relaxation data setup.
-        if ri_labels:
-            file.write("%-40s " % ri_labels)
-            file.write("%-25s " % remap_table)
-            file.write("%-25s " % frq_labels)
-            file.write("%-30s " % frq)
-
-        # Relaxation data.
-        if ri:
-            for i in xrange(len(ri)):
-                if ri[i] == None:
-                    file.write("%-25s " % 'None')
-                else:
-                    file.write("%-25s " % ri[i])
-
-        # Relaxation errors.
-        if ri_error:
-            for i in xrange(len(ri_error)):
-                if ri_error[i] == None:
-                    file.write("%-25s " % 'None')
-                else:
-                    file.write("%-25s " % ri_error[i])
-
-        # End of the line.
-        file.write("\n")
-
-
-    def write_columnar_results(self, file):
-        """Function for printing the results into a file."""
-
-        # Alias the current data pipe.
-        cdp = ds[ds.current_pipe]
-
-        # Test if the current pipe exists.
-        if not ds.current_pipe:
-            raise RelaxNoPipeError
-
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-
-        # Header.
-        #########
-
-        # Relaxation data and errors.
-        ri = []
-        ri_error = []
-        if hasattr(ds, 'num_ri'):
-            for i in xrange(cdp.num_ri):
-                ri.append('Ri_(' + cdp.ri_labels[i] + "_" + cdp.frq_labels[cdp.remap_table[i]] + ")")
-                ri_error.append('Ri_error_(' + cdp.ri_labels[i] + "_" + cdp.frq_labels[cdp.remap_table[i]] + ")")
-
-        # Write the header line.
-        self.write_columnar_line(file=file, num='Num', name='Name', select='Selected', data_set='Data_set', heteronuc_type='Nucleus', wH='Proton_frq_(MHz)', j0='J(0)', f_eta='F_eta', f_r2='F_R2', r='Bond_length_(A)', csa='CSA_(ppm)', orientation='Angle_Theta_(degrees)', tc='Correlation_time_(ns)', ri_labels='Ri_labels', remap_table='Remap_table', frq_labels='Frq_labels', frq='Frequencies', ri=ri, ri_error=ri_error)
-
-
-        # Values.
-        #########
-
-        # Nucleus.
-        heteronuc_type = self.relax.generic.nuclei.find_heteronuc_type()
-
-        # The proton frequency in MHz.
-        wH = cdp.ct_frq / 1e6
-
-        # Relaxation data setup.
-        try:
-            ri_labels = replace(`cdp.ri_labels`, ' ', '')
-            remap_table = replace(`cdp.remap_table`, ' ', '')
-            frq_labels = replace(`cdp.frq_labels`, ' ', '')
-            frq = replace(`cdp.frq`, ' ', '')
-        except AttributeError:
-            ri_labels = `None`
-            remap_table = `None`
-            frq_labels = `None`
-            frq = `None`
-
-        # Loop over the sequence.
-        for i in xrange(len(cdp.res)):
-            # Reassign data structure.
-            data = cdp.res[i]
-
-            # J(0).
-            j0 = None
-            if hasattr(data, 'j0'):
-                j0 = data.j0
-
-            # F_eta.
-            f_eta = None
-            if hasattr(data, 'f_eta'):
-                f_eta = data.f_eta
-
-            # F_R2.
-            f_r2 = None
-            if hasattr(data, 'f_r2'):
-                f_r2 = data.f_r2
-
-            # Bond length.
-            r = None
-            if hasattr(data, 'r') and data.r != None:
-                r = data.r / 1e-10
-
-            # CSA.
-            csa = None
-            if hasattr(data, 'csa') and data.csa != None:
-                csa = data.csa / 1e-6
-
-            # Relaxation data and errors.
-            ri = []
-            ri_error = []
-            if hasattr(cdp, 'num_ri'):
-                for i in xrange(cdp.num_ri):
-                    try:
-                        # Find the residue specific data corresponding to i.
-                        index = None
-                        for j in xrange(data.num_ri):
-                            if data.ri_labels[j] == cdp.ri_labels[i] and data.frq_labels[data.remap_table[j]] == cdp.frq_labels[cdp.remap_table[i]]:
-                                index = j
-
-                        # Data exists for this data type.
-                        ri.append(spin)
-                        ri_error.append(spin)
-
-                    # No data exists for this data type.
-                    except:
-                        ri.append(None)
-                        ri_error.append(None)
-
-            # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='value', heteronuc_type=heteronuc_type, wH=`wH`, j0=`j0`, f_eta=`f_eta`, f_r2=`f_r2`, r=`r`, csa=`csa`, orientation=`orientation`, tc=`tc`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
-
-
-        # Errors.
-        #########
-
-        # Skip this section and the next if no simulations have been setup.
-        if not hasattr(cdp, 'sim_state'):
-            return
-        elif cdp.sim_state == 0:
-            return
-
-        # Loop over the sequence.
-        for i in xrange(len(cdp.res)):
-            # Reassign data structure.
-            data = cdp.res[i]
-
-            # J(0).
-            j0 = None
-            if hasattr(data, 'j0_err'):
-                j0 = data.j0_err
-
-            # F_eta.
-            f_eta = None
-            if hasattr(data, 'f_eta_err'):
-                f_eta = data.f_eta_err
-
-            # F_R2.
-            f_r2 = None
-            if hasattr(data, 'f_r2_err'):
-                f_r2 = data.f_r2_err
-
-            # Bond length.
-            r = None
-            if hasattr(data, 'r_err') and data.r_err != None:
-                r = data.r_err / 1e-10
-
-            # CSA.
-            csa = None
-            if hasattr(data, 'csa_err') and data.csa_err != None:
-                csa = data.csa_err / 1e-6
-
-            # Angle Theta.
-            orientation = None
-            if hasattr(data, 'orientation_err') and data.orientation_err != None:
-                orientation = data.orientation_err
-
-            # Correlation time.
-            tc = None
-            if hasattr(data, 'tc_err') and data.tc_err != None:
-                tc = data.tc_err / 1e-6
-
-            # Relaxation data and errors.
-            ri = []
-            ri_error = []
-            for i in xrange(cdp.num_ri):
-                ri.append(None)
-                ri_error.append(None)
-
-            # Write the line.
-            self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', heteronuc_type=heteronuc_type, wH=`wH`, j0=`j0`, f_eta=`f_eta`, f_r2=`f_r2`, r=`r`, csa=`csa`, orientation=`orientation`, tc=`tc`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
-
-
-        # Simulation values.
-        ####################
-
-        # Loop over the simulations.
-        for i in xrange(cdp.sim_number):
-            # Loop over the sequence.
-            for j in xrange(len(cdp.res)):
-                # Reassign data structure.
-                data = cdp.res[j]
-
-                # J(0).
-                j0 = None
-                if hasattr(data, 'j0_sim'):
-                    j0 = data.j0_sim[i]
-
-                # F_eta.
-                f_eta = None
-                if hasattr(data, 'f_eta_sim'):
-                    f_eta = data.f_eta_sim[i]
-
-                # F_R2.
-                f_r2 = None
-                if hasattr(data, 'f_r2_sim'):
-                    f_r2 = data.f_r2_sim[i]
-
-                # Bond length.
-                r = None
-                if hasattr(data, 'r_sim') and data.r_sim != None and data.r_sim[i] != None:
-                    r = data.r_sim[i] / 1e-10
-
-                # CSA.
-                csa = None
-                if hasattr(data, 'csa_sim') and data.csa_sim != None and data.csa_sim[i] != None:
-                    csa = data.csa_sim[i] / 1e-6
-
-                # Angle Theta.
-                orientation = None
-                if hasattr(data, 'orientation_sim') and data.orientation_sim != None and data.orientation_sim[i] != None:
-                    orientation = data.orientation_sim[i]
-
-                # Correlation time.
-                tc = None
-                if hasattr(data, 'tc_sim') and data.tc_sim != None and data.tc_sim[i] != None:
-                    tc = data.tc_sim[i] / 1e-6
-
-                # Relaxation data and errors.
-                ri = []
-                ri_error = []
-                if hasattr(cdp, 'num_ri'):
-                    for k in xrange(cdp.num_ri):
-                        try:
-                            # Find the residue specific data corresponding to k.
-                            index = None
-                            for l in xrange(data.num_ri):
-                                if data.ri_labels[l] == cdp.ri_labels[k] and data.frq_labels[data.remap_table[l]] == cdp.frq_labels[cdp.remap_table[k]]:
-                                    index = l
-
-                            # Data exists for this data type.
-                            ri.append(spin)
-                            ri_error.append(spin)
-
-                        # No data exists for this data type.
-                        except:
-                            ri.append(None)
-                            ri_error.append(None)
-
-                # Write the line.
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='sim_'+`i`, heteronuc_type=heteronuc_type, wH=`wH`, j0=`j0`, f_eta=`f_eta`, f_r2=`f_r2`, r=`r`, csa=`csa`, orientation=`orientation`, tc=`tc`, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)

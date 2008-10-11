@@ -2,7 +2,7 @@ import sys
 
 
 # Read the sequence.
-sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + '/test_suite/system_tests/data')
+sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + '/test_suite/shared_data')
 
 # Read a PDB file.
 structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1)

@@ -30,12 +30,12 @@ def exec_stage_1(runs):
         pipe.create(name, 'mf')
 
         # Load the sequence.
-        sequence.read(sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/noe.dat')
+        sequence.read(sys.path[-1] + '/test_suite/shared_data/jw_mapping/noe.dat')
 
         # Load the relaxation data.
-        relax_data.read('R1', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/R1.dat')
-        relax_data.read('R2', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/R2.dat')
-        relax_data.read('NOE', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/noe.dat')
+        relax_data.read('R1', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/shared_data/jw_mapping/R1.dat')
+        relax_data.read('R2', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/shared_data/jw_mapping/R2.dat')
+        relax_data.read('NOE', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/shared_data/jw_mapping/noe.dat')
 
         # Setup other values.
         diffusion_tensor.init(1e-8)
