@@ -15,6 +15,10 @@ from data import Relax_data_store; ds = Relax_data_store()
 #   Stage 3:  Final optimisation of diffusion tensor parameters together with model-free parameters.
 
 
+# Missing temp directory (allow this script to run outside of the system test framework).
+if not hasattr(ds, 'tmpdir'):
+    ds.tmpdir = 'temp_script'
+
 # Functions.
 
 def exec_stage_1(runs):
