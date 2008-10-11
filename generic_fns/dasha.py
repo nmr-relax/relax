@@ -32,17 +32,24 @@ import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import angles, pipes
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxDirError, RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNucleusError
 from relax_io import mkdir_nofail, open_write_file, test_binary
+from specific_fns.setup import model_free_obj
 
 
 def create(algor='LM', dir=None, force=False):
-    """Function for creating the Dasha script file 'dir/dasha_script'."""
-
-    # Arguments.
-    self.algor = algor
-    self.dir = dir
-    self.force = force
+    """Create the Dasha script file 'dasha_script' for controlling the program.
+    
+    @keyword algor: The optimisation algorithm to use.  This can be the Levenberg-Marquardt
+                    algorithm 'LM' or the Newton-Raphson algorithm 'NR'.
+    @type algor:    str
+    @keyword dir:   The optional directory to place the script into.
+    @type dir:      str or None
+    @keyword force: A flag which if True will cause any pre-existing file to be overwritten.
+    @type force:    bool
+    """
 
     # Test if the current pipe exists.
     pipes.test()
@@ -51,20 +58,19 @@ def create(algor='LM', dir=None, force=False):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Determine the parameter set.
-    model_type = self.relax.specific.model_free.determine_model_type(self.run)
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
 
-    # Test if diffusion tensor data for the run exists.
-    if model_type != 'local_tm' and not ds.diff.has_key(self.run):
+    # Determine the parameter set.
+    model_type = model_free_obj.determine_model_type()
+
+    # Test if diffusion tensor data for the data_pipe exists.
+    if model_type != 'local_tm' and not hasattr(cdp, 'diff_tensor'):
         raise RelaxNoTensorError, 'diffusion'
 
     # Test if the PDB file has been loaded (for the spheroid and ellipsoid).
-    if model_type != 'local_tm' and ds.diff[self.run].type != 'sphere' and not ds.pdb.has_key(self.run):
-        raise RelaxNoPdbError, self.run
-
-    # Test if the nucleus type has been set.
-    if not hasattr(ds, 'gx'):
-        raise RelaxNucleusError
+    if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere' and not hasattr(cdp, 'structure'):
+        raise RelaxNoPdbError
 
     # Test the optimisation algorithm.
     if algor not in ['LM', 'NR']:
@@ -72,34 +78,34 @@ def create(algor='LM', dir=None, force=False):
 
     # Directory creation.
     if dir == None:
-        dir = pipe
+        dir = pipes.cdp_name()
     mkdir_nofail(dir, verbosity=0)
 
     # Number of field strengths and values.
-    self.num_frq = 0
-    self.frq = []
-    for i in xrange(len(ds.res[self.run])):
-        if hasattr(ds.res[self.run][i], 'num_frq'):
-            if ds.res[self.run][i].num_frq > self.num_frq:
+    num_frq = 0
+    frq = []
+    for spin in spin_loop():
+        if hasattr(spin, 'num_frq'):
+            if spin.num_frq > num_frq:
                 # Number of field strengths.
-                self.num_frq = ds.res[self.run][i].num_frq
+                num_frq = spin.num_frq
 
                 # Field strength values.
-                for frq in ds.res[self.run][i].frq:
-                    if frq not in self.frq:
-                        self.frq.append(frq)
+                for val in spin.frq:
+                    if val not in frq:
+                        frq.append(val)
 
     # Calculate the angle alpha of the XH vector in the spheroid diffusion frame.
-    if ds.diff[self.run].type == 'spheroid':
-        self.relax.generic.angles.spheroid_frame(self.run)
+    if cdp.diff_tensor.type == 'spheroid':
+        angles.spheroid_frame()
 
     # Calculate the angles theta and phi of the XH vector in the ellipsoid diffusion frame.
-    elif ds.diff[self.run].type == 'ellipsoid':
-        self.relax.generic.angles.ellipsoid_frame(self.run)
+    elif cdp.diff_tensor.type == 'ellipsoid':
+        angles.ellipsoid_frame()
 
     # The 'dasha_script' file.
-    script = open_write_file(file_name='dasha_script', dir=self.dir, force=self.force)
-    self.create_script(script)
+    script = open_write_file(file_name='dasha_script', dir=dir, force=force)
+    create_script(script)
     script.close()
 
 
