@@ -36,13 +36,13 @@ for name in pipes:
     model_free.select_model(model=name)
 
     # Create the Dasha script.
-    dasha.create(algor='NR', force=True)
+    dasha.create(algor='NR', dir=ds.tmpdir, force=True)
 
     # Execute Dasha.
-    dasha.execute()
+    dasha.execute(dir=ds.tmpdir)
 
     # Read the data.
-    dasha.extract()
+    dasha.extract(dir=ds.tmpdir)
 
     # Write the results.
     results.write(file=ds.tmpdir + '/' + 'results_dasha', force=True)
