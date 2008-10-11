@@ -67,27 +67,23 @@ def exec_stage_2(runs):
     """
 
     # Load the saved state from stage 1.
-    state.load('stage1.save')
+    state.load('stage1.save', dir_name=ds.tmpdir)
 
     # Print out.
     print "\n\nLoading all the Modelfree 4 data."
 
     # Extract the Modelfree4 data from the 'mfout' files.
     for name in runs:
-        palmer.extract(dir=name)
+        palmer.extract(dir=ds.tmpdir + '/' + name)
 
     # Print out.
     print "\n\nModel selection."
 
-    # Create the model selection run.
-    name = 'aic'
-    pipe.create(name, 'mf')
-
     # Model selection.
-    model_selection(method='AIC', modsel_run=name)
+    model_selection(method='AIC', modsel_pipe='aic')
 
     # Write the results.
-    results.write(file='results', force=True)
+    results.write(file='results', dir=ds.tmpdir, force=True)
 
     # Save the program state.
     state.save(state='stage2.save', dir_name=ds.tmpdir, force=True)
@@ -100,7 +96,7 @@ def exec_stage_3():
     """
 
     # Load the saved state from stage 2.
-    state.load('stage2.save')
+    state.load('stage2.save', dir_name=ds.tmpdir)
 
     # Set the run name.
     name = 'aic'
@@ -109,13 +105,13 @@ def exec_stage_3():
     fix(name, 'diff', False)
 
     # Create the Modelfree4 files (change sims as needed, see below).
-    palmer.create(dir='final', force=True, sims=0)
+    palmer.create(dir=ds.tmpdir + '/final', force=True, sims=0)
 
     # Run Modelfree4.
-    palmer.execute(dir='final', force=True)
+    palmer.execute(dir=ds.tmpdir + '/final', force=True)
 
     # Extract the Modelfree4 data from the 'mfout' file.
-    palmer.extract(dir='final')
+    palmer.extract(dir=ds.tmpdir + '/final')
 
     # Save the program state.
     state.save(state='stage3.save', dir_name=ds.tmpdir, force=True)
