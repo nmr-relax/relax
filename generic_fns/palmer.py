@@ -43,8 +43,8 @@ from relax_errors import RelaxDirError, RelaxFileError, RelaxFileOverwriteError,
 from relax_io import mkdir_nofail, open_write_file, test_binary
 
 
-def create(dir, force, binary, diff_search, sims, sim_type, trim, steps, constraints, heteronuc_type, atom1, atom2, spin_id):
-    """Function for creating the Modelfree4 input files.
+def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, trim=None, steps=None, heteronuc_type=None, atom1=None, atom2=None, spin_id=None, force=False, constraints=True):
+    """Create the Modelfree4 input files.
 
     The following files are created:
         - dir/mfin
@@ -52,6 +52,41 @@ def create(dir, force, binary, diff_search, sims, sim_type, trim, steps, constra
         - dir/mfpar
         - dir/mfmodel
         - dir/run.sh
+
+    @keyword dir:               The optional directory to place the files into.  If None, then the
+                                files will be placed into a directory named after the current data
+                                pipe.
+    @type dir:                  str or None
+    @keyword binary:            The name of the Modelfree4 binary file.  This can include the path
+                                to the binary.
+    @type binary:               str
+    @keyword diff_search:       The diffusion tensor search algorithm (see the Modelfree4 manual for
+                                details).
+    @type diff_search:          str
+    @keyword sims:              The number of Monte Carlo simulations to perform.
+    @type sims:                 int
+    @keyword sim_type:          The type of simulation to perform (see the Modelfree4 manual for
+                                details).
+    @type sim_type:             str
+    @keyword trim:              Trimming of the Monte Carlo simulations (see the Modelfree4 manual
+                                for details).
+    @type trim:                 int
+    @keyword steps:             The grid search size (see the Modelfree4 manual for details).
+    @type steps:                int
+    @keyword heteronuc_type:    The Modelfree4 three letter code for the heteronucleus type, e.g.
+                                '15N', '13C', etc.
+    @type heteronuc_type:       str
+    @keyword atom1:             The name of the heteronucleus in the PDB file.
+    @type atom1:                str
+    @keyword atom2:             The name of the proton in the PDB file.
+    @type atom2:                str
+    @keyword spin_id:           The spin identification string.
+    @type spin_id:              str
+    @keyword force:             A flag which if True will cause all pre-existing files to be
+                                overwritten.
+    @type force:                bool
+    @keyword constraints:       A flag which if True will result in constrained optimisation.
+    @type constraints:          bool
     """
 
     # Test if the current pipe exists.
