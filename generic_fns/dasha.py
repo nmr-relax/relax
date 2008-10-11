@@ -364,27 +364,31 @@ def create_script(file, model_type, algor):
 
 
 def execute(dir, force, binary):
-    """Function for executing Dasha."""
+    """Execute Dasha.
 
-    # Arguments.
-    self.dir = dir
-    self.force = force
-    self.binary = binary
+    @param dir:     The optional directory where the script is located.
+    @type dir:      str or None
+    @param force:   A flag which if True will cause any pre-existing files to be overwritten by
+                    Dasha.
+    @type force:    bool
+    @param binary:  The name of the Dasha binary file.  This can include the path to the binary.
+    @type binary:   str
+    """
 
     # Test the binary file string corresponds to a valid executable.
-    test_binary(self.binary)
+    test_binary(binary)
 
     # The current directory.
     orig_dir = getcwd()
 
     # The directory.
     if dir == None:
-        dir = pipe
+        dir = pipes.cdp_name()
     if not access(dir, F_OK):
         raise RelaxDirError, ('Dasha', dir)
 
     # Change to this directory.
-    chdir(self.dir)
+    chdir(dir)
 
     # Catch failures and return to the correct directory.
     try:
