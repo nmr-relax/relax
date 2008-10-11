@@ -82,7 +82,7 @@ def exec_stage_2(runs):
     pipe.create(name, 'mf')
 
     # Model selection.
-    model_selection(method='AIC', modsel_run=name)
+    model_selection(method='AIC', modsel_pipe=name)
 
     # Write the results.
     results.write(file='results', force=True)
