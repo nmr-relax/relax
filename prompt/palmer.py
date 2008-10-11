@@ -114,7 +114,7 @@ class Palmer:
             text = text + ", heteronucleus=" + `heteronuc_type`
             text = text + ", atom1=" + `atom1`
             text = text + ", atom2=" + `atom2`
-            text = text + ", spin_id" + `spin_id` + ")"
+            text = text + ", spin_id=" + `spin_id` + ")"
             print text
 
         # Directory.
