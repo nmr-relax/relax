@@ -7,6 +7,10 @@ import sys
 from data import Relax_data_store; ds = Relax_data_store()
 
 
+# Missing temp directory (allow this script to run outside of the system test framework).
+if not hasattr(ds, 'tmpdir'):
+    ds.tmpdir = 'temp_script'
+
 # Set the data pipe names (also the names of preset model-free models).
 pipes = ['m1', 'm2', 'm3']
 
