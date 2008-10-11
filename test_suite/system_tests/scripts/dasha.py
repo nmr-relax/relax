@@ -49,4 +49,4 @@ for name in pipes:
     dasha.extract(dir=ds.tmpdir)
 
     # Write the results.
-    results.write(file=ds.tmpdir + '/' + 'results_dasha', force=True)
+    results.write(file=ds.tmpdir + '/' + 'results_dasha', dir=None, force=True)
