@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2005-2006 Edward d'Auvergne                                   #
+# Copyright (C) 2005-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,6 +25,7 @@ import sys
 
 # relax module imports.
 import help
+from generic_fns import dasha
 from relax_errors import RelaxBinError, RelaxNoneStrError, RelaxStrError
 
 
@@ -96,7 +97,7 @@ class Dasha:
             raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
-        self.__relax__.generic.dasha.create(algor=algor, dir=dir, force=force)
+        dasha.create(algor=algor, dir=dir, force=force)
 
 
     def execute(self, dir=None, force=False, binary='dasha'):
@@ -148,7 +149,7 @@ class Dasha:
             raise RelaxStrError, ('Dasha binary', binary)
 
         # Execute the functional code.
-        self.__relax__.generic.dasha.execute(dir=dir, force=force, binary=binary)
+        dasha.execute(dir=dir, force=force, binary=binary)
 
 
     def extract(self, dir=None):
@@ -172,4 +173,4 @@ class Dasha:
                 raise RelaxNoneStrError, ('directory name', dir)
 
         # Execute the functional code.
-        self.__relax__.generic.dasha.extract(dir=dir)
+        dasha.extract(dir=dir)
