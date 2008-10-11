@@ -76,6 +76,12 @@ def create(algor='LM', dir=None, force=False):
     if algor not in ['LM', 'NR']:
         raise RelaxError, "The Dasha optimisation algorithm " + `algor` + " is unknown, it should either be 'LM' or 'NR'."
 
+    # Multiple spins per residue not allowed.
+    for residue in residue_loop():
+        # Test the number of spins.
+        if len(residue.spin) > 1:
+            raise RelaxError, "More than one spin per residue is not supported."
+
     # Directory creation.
     if dir == None:
         dir = pipes.cdp_name()
@@ -231,7 +237,10 @@ def create_script(file, model_type, algor):
             file.write('\nread < ' + data_type + ' ' + `number` + '\n')
 
         # The relaxation data.
-        for spin in spin_loop():
+        for residue in residue_loop():
+            # Alias the spin.
+            spin = residue.spin[0]
+
             # Skip deselected spins.
             if not spin.select:
                 continue
@@ -242,7 +251,7 @@ def create_script(file, model_type, algor):
                 continue
 
             # Data and errors.
-            file.write(`spin.num` + ' ' + `spin.relax_data[i]` + ' ' + `spin.relax_error[i]` + '\n')
+            file.write(`residue.num` + ' ' + `spin.relax_data[i]` + ' ' + `spin.relax_error[i]` + '\n')
 
         # Terminate the reading.
         file.write('exit\n')
@@ -251,10 +260,6 @@ def create_script(file, model_type, algor):
     if model_type == 'mf':
         # Loop over the residues.
         for residue in residue_loop():
-            # Test the number of spins.
-            if len(residue.spin) > 1:
-                raise RelaxError, "More than one spin per residue is not supported."
-
             # Alias the spin.
             spin = residue.spin[0]
 
