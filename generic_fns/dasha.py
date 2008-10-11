@@ -481,7 +481,7 @@ def extract(dir):
             if not spin.select:
                 continue
 
-            # Skip the residue (don't set the parameter to None) if the parameter exists in the model.
+            # Skip the spin (don't set the parameter to None) if the parameter exists in the model.
             if param in spin.params:
                 continue
 
