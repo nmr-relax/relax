@@ -420,7 +420,7 @@ def execute(dir, force, binary):
 
 
 def extract(dir):
-    """Extract the Dasha results out of the 'dasha_results' file.
+    """Extract the data from the Dasha results files.
 
     @param dir:     The optional directory where the results file is located.
     @type dir:      str or None
