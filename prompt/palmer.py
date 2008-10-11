@@ -151,8 +151,8 @@ class Palmer:
             raise RelaxIntError, ('steps', steps)
 
         # Constraint flag.
-        if type(constraints) != int or (constraints != 0 and constraints != 1):
-            raise RelaxBinError, ('constraint flag', constraints)
+        if type(constraints) != bool:
+            raise RelaxBoolError, ('constraints flag', constraints)
 
         # The heteronucleus argument.
         if type(heteronuc_type) != str:
