@@ -32,7 +32,7 @@ import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import angles, diffusion_tensor, pipes
+from generic_fns import angles, diffusion_tensor, pipes, value
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, first_residue_num, last_residue_num, residue_loop, spin_loop
 from relax_errors import RelaxDirError, RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNucleusError
 from relax_io import mkdir_nofail, open_write_file, test_binary
@@ -415,7 +415,11 @@ def execute(dir, force, binary):
 
 
 def extract(dir):
-    """Function for extracting the Dasha results out of the 'dasha_results' file."""
+    """Extract the Dasha results out of the 'dasha_results' file.
+
+    @param dir:     The optional directory where the results file is located.
+    @type dir:      str or None
+    """
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -423,7 +427,7 @@ def extract(dir):
 
     # The directory.
     if dir == None:
-        dir = run
+        dir = pipes.cdp_name()
     if not access(dir, F_OK):
         raise RelaxDirError, ('Dasha', dir)
 
@@ -440,25 +444,25 @@ def extract(dir):
         if param in ['te', 'tf', 'ts']:
             scaling = 1e-9
         elif param == 'Rex':
-            scaling = 1.0 / (2.0 * pi * ds.frq[self.run][0]) ** 2
+            scaling = 1.0 / (2.0 * pi * cdp.frq[0]) ** 2
         else:
             scaling = 1.0
 
         # Set the values.
-        self.relax.generic.value.read(self.run, param=param, scaling=scaling, file=file_name, num_col=0, name_col=None, data_col=1, error_col=2)
+        value.read(param=param, scaling=scaling, file=file_name, res_num_col=0, res_name_col=None, data_col=1, error_col=2)
 
         # Clean up of non-existant parameters (set the parameter to None!).
-        for i in xrange(len(ds.res[self.run])):
-            # Skip deselected residues.
-            if not ds.res[self.run][i].select:
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
                 continue
 
             # Skip the residue (don't set the parameter to None) if the parameter exists in the model.
-            if param in ds.res[self.run][i].params:
+            if param in spin.params:
                 continue
 
             # Set the parameter to None.
-            setattr(ds.res[self.run][i], lower(param), None)
+            setattr(spin, lower(param), None)
 
     # Extract the chi-squared values.
     file_name = dir + '/chi2.out'
@@ -468,4 +472,4 @@ def extract(dir):
         raise RelaxFileError, ('Dasha', file_name)
 
     # Set the values.
-    self.relax.generic.value.read(self.run, param='chi2', file=file_name, num_col=0, name_col=None, data_col=1, error_col=2)
+    value.read(param='chi2', file=file_name, res_num_col=0, res_name_col=None, data_col=1, error_col=2)
