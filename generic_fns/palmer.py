@@ -105,7 +105,7 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
 
     # Directory creation.
     if dir == None:
-        dir = pipe
+        dir = pipes.cdp_name()
     mkdir_nofail(dir, verbosity=0)
 
     # Number of field strengths and values.
@@ -118,9 +118,9 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
                 num_frq = spin.num_frq
 
                 # Field strength values.
-                for frq in spin.frq:
-                    if frq not in frq:
-                        frq.append(frq)
+                for val in spin.frq:
+                    if val not in frq:
+                        frq.append(val)
 
     # The 'mfin' file.
     mfin = open_write_file('mfin', dir, force)
@@ -136,14 +136,14 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
     for spin in spin_loop(spin_id):
         if hasattr(spin, 'num_frq'):
             # The 'mfdata' file.
-            if not create_mfdata(i, mfdata):
+            if not create_mfdata(spin, mfdata):
                 continue
 
             # The 'mfmodel' file.
-            create_mfmodel(i, mfmodel)
+            create_mfmodel(spin, mfmodel)
 
             # The 'mfpar' file.
-            create_mfpar(i, mfpar)
+            create_mfpar(spin, mfpar)
 
     # Close the 'mfdata', 'mfmodel', and 'mfpar' files.
     mfdata.close()
