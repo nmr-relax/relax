@@ -502,26 +502,30 @@ def create_run(file, binary=None, dir=None):
 
 
 def execute(dir, force, binary):
-    """Function for executing Modelfree4.
+    """Execute Modelfree4.
 
     BUG:  Control-C during execution causes the cwd to stay as dir.
+
+
+    @param dir:     The optional directory where the script is located.
+    @type dir:      str or None
+    @param force:   A flag which if True will cause any pre-existing files to be overwritten by
+                    Modelfree4.
+    @type force:    bool
+    @param binary:  The name of the Modelfree4 binary file.  This can include the path to the
+                    binary.
+    @type binary:   str
     """
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
-
-    # Arguments.
-    self.pipe = pipe
-    self.dir = dir
-    self.force = force
-    self.binary = binary
 
     # The current directory.
     orig_dir = getcwd()
 
     # The directory.
     if dir == None:
-        dir = pipe
+        dir = pipes.cdp_name()
     if not access(dir, F_OK):
         raise RelaxDirError, ('Modelfree4', dir)
 
@@ -548,7 +552,7 @@ def execute(dir, force, binary):
 
         # Test if the 'PDB' input file exists.
         if cdp.diff_tensor.type != 'sphere':
-            pdb = cdp.structure.file_name.split('/')[-1]
+            pdb = cdp.structure.file_name[0]
             if not access(pdb, F_OK):
                 raise RelaxFileError, ('PDB', pdb)
         else:
@@ -561,18 +565,18 @@ def execute(dir, force, binary):
                     remove(file)
 
         # Test the binary file string corresponds to a valid executable.
-        test_binary(self.binary)
+        test_binary(binary)
 
         # Execute Modelfree4 (inputting a PDB file).
         if pdb:
-            status = spawnlp(P_WAIT, self.binary, self.binary, '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out', '-s', pdb)
+            status = spawnlp(P_WAIT, binary, binary, '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out', '-s', pdb)
             if status:
                 raise RelaxProgFailError, 'Modelfree4'
 
 
         # Execute Modelfree4 (without a PDB file).
         else:
-            status = spawnlp(P_WAIT, self.binary, self.binary, '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out')
+            status = spawnlp(P_WAIT, binary, binary, '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out')
             if status:
                 raise RelaxProgFailError, 'Modelfree4'
 
