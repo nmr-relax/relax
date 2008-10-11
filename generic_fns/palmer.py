@@ -39,6 +39,7 @@ except ImportError:
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from generic_fns import pipes
+from physical_constants import return_gyromagnetic_ratio
 from relax_errors import RelaxDirError, RelaxFileError, RelaxFileOverwriteError, RelaxNoModelError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNucleusError, RelaxProgFailError
 from relax_io import mkdir_nofail, open_write_file, test_binary
 
@@ -133,17 +134,17 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
     mfpar = open_write_file('mfpar', dir, force)
 
     # Loop over the sequence.
-    for spin, id in spin_loop(spin_id, return_id=True):
+    for spin, mol_name, res_num, res_name, id in spin_loop(spin_id, full_info=True, return_id=True):
         if hasattr(spin, 'num_frq'):
             # The 'mfdata' file.
             if not create_mfdata(mfdata, spin=spin, spin_id=id, num_frq=num_frq, frq=frq):
                 continue
 
             # The 'mfmodel' file.
-            create_mfmodel(spin, mfmodel)
+            create_mfmodel(mfmodel, spin=spin, spin_id=id, steps=steps, constraints=constraints)
 
             # The 'mfpar' file.
-            create_mfpar(spin, mfpar)
+            create_mfpar(mfpar, spin=spin, spin_id=id, res_num=res_num, atom1=atom1, atom2=atom2)
 
     # Close the 'mfdata', 'mfmodel', and 'mfpar' files.
     mfdata.close()
@@ -338,14 +339,26 @@ def create_mfin(file, diff_search=None, sims=None, sim_type=None, trim=None, num
     file.write('%4i\n' % 10)
 
 
-def create_mfmodel(i, file):
-    """Create the Modelfree4 input file 'mfmodel'."""
+def create_mfmodel(file, spin=None, spin_id=None, steps=None, constraints=None):
+    """Create the Modelfree4 input file 'mfmodel'.
+
+    @param file:            The writable file object.
+    @type file:             file object
+    @keyword spin:          The spin container.
+    @type spin:             SpinContainer instance
+    @keyword spin_id:       The spin identification string.
+    @type spin_id           str
+    @keyword steps:         The grid search size (see the Modelfree4 manual for details).
+    @type steps:            int
+    @keyword constraints:   A flag which if True will result in constrained optimisation.
+    @type constraints:      bool
+    """
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
 
     # Spin title.
-    file.write("\nspin     " + spin.name + "_" + `spin.num` + "\n")
+    file.write("\nspin     " + spin_id + "\n")
 
     # tloc.
     file.write('%-3s%-6s%-6.1f' % ('M1', 'tloc', 0))
@@ -354,23 +367,23 @@ def create_mfmodel(i, file):
     else:
         file.write('%-4i' % 0)
 
-    if self.constraints:
+    if constraints:
         file.write('%-2i' % 2)
     else:
         file.write('%-2i' % 0)
 
-    file.write('%11.3f%12.3f %-4s\n' % (0, 20, self.steps))
+    file.write('%11.3f%12.3f %-4s\n' % (0, 20, steps))
 
     # Theta.
     file.write('%-3s%-6s%-6.1f' % ('M1', 'Theta', 0))
     file.write('%-4i' % 0)
 
-    if self.constraints:
+    if constraints:
         file.write('%-2i' % 2)
     else:
         file.write('%-2i' % 0)
 
-    file.write('%11.3f%12.3f %-4s\n' % (0, 90, self.steps))
+    file.write('%11.3f%12.3f %-4s\n' % (0, 90, steps))
 
     # S2f.
     file.write('%-3s%-6s%-6.1f' % ('M1', 'Sf2', 1))
@@ -379,12 +392,12 @@ def create_mfmodel(i, file):
     else:
         file.write('%-4i' % 0)
 
-    if self.constraints:
+    if constraints:
         file.write('%-2i' % 2)
     else:
         file.write('%-2i' % 0)
 
-    file.write('%11.3f%12.3f %-4s\n' % (0, 1, self.steps))
+    file.write('%11.3f%12.3f %-4s\n' % (0, 1, steps))
 
     # S2s.
     file.write('%-3s%-6s%-6.1f' % ('M1', 'Ss2', 1))
@@ -393,12 +406,12 @@ def create_mfmodel(i, file):
     else:
         file.write('%-4i' % 0)
 
-    if self.constraints:
+    if constraints:
         file.write('%-2i' % 2)
     else:
         file.write('%-2i' % 0)
 
-    file.write('%11.3f%12.3f %-4s\n' % (0, 1, self.steps))
+    file.write('%11.3f%12.3f %-4s\n' % (0, 1, steps))
 
     # te.
     file.write('%-3s%-6s%-6.1f' % ('M1', 'te', 0))
@@ -407,12 +420,12 @@ def create_mfmodel(i, file):
     else:
         file.write('%-4i' % 0)
 
-    if self.constraints:
+    if constraints:
         file.write('%-2i' % 2)
     else:
         file.write('%-2i' % 0)
 
-    file.write('%11.3f%12.3f %-4s\n' % (0, 10000, self.steps))
+    file.write('%11.3f%12.3f %-4s\n' % (0, 10000, steps))
 
     # Rex.
     file.write('%-3s%-6s%-6.1f' % ('M1', 'Rex', 0))
@@ -421,33 +434,47 @@ def create_mfmodel(i, file):
     else:
         file.write('%-4i' % 0)
 
-    if self.constraints:
+    if constraints:
         file.write('%-2i' % -1)
     else:
         file.write('%-2i' % 0)
 
-    file.write('%11.3f%12.3f %-4s\n' % (0, 20, self.steps))
+    file.write('%11.3f%12.3f %-4s\n' % (0, 20, steps))
 
 
-def create_mfpar(i, file):
-    """Create the Modelfree4 input file 'mfpar'."""
+def create_mfpar(file, spin=None, spin_id=None, res_num=None, atom1=None, atom2=None):
+    """Create the Modelfree4 input file 'mfpar'.
+
+    @param file:        The writable file object.
+    @type file:         file object
+    @keyword spin:      The spin container.
+    @type spin:         SpinContainer instance
+    @keyword spin_id:   The spin identification string.
+    @type spin_id       str
+    @keyword res_num:   The residue number from the PDB file corresponding to the spin.
+    @type res_num:      int
+    @keyword atom1:     The name of the heteronucleus in the PDB file.
+    @type atom1:        str
+    @keyword atom2:     The name of the proton in the PDB file.
+    @type atom2:        str
+    """
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
 
     # Spin title.
-    file.write("\nspin     " + spin.name + "_" + `spin.num` + "\n")
+    file.write("\nspin     " + spin_id + "\n")
 
     file.write('%-14s' % "constants")
-    file.write('%-6i' % spin.num)
+    file.write('%-6i' % res_num)
     file.write('%-7s' % spin.heteronuc_type)
-    file.write('%-8.4f' % ([return_gyromagnetic_ratio(spin.heteronuc_type)] / 1e7))
+    file.write('%-8.4f' % (return_gyromagnetic_ratio(spin.heteronuc_type) / 1e7))
     file.write('%-8.3f' % (spin.r * 1e10))
     file.write('%-8.3f\n' % (spin.csa * 1e6))
 
     file.write('%-10s' % "vector")
-    file.write('%-4s' % self.atom1)
-    file.write('%-4s\n' % self.atom2)
+    file.write('%-4s' % atom1)
+    file.write('%-4s\n' % atom2)
 
 
 def create_run(file):
