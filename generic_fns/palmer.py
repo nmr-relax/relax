@@ -124,7 +124,7 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
 
     # The 'mfin' file.
     mfin = open_write_file('mfin', dir, force)
-    create_mfin(mfin)
+    create_mfin(mfin, diff_search=diff_search, sims=sims, sim_type=sim_type, trim=trim, num_frq=num_frq, frq=frq)
     mfin.close()
 
     # Open the 'mfdata', 'mfmodel', and 'mfpar' files.
@@ -214,28 +214,50 @@ def create_mfdata(i, file):
     return written
 
 
-def create_mfin(file):
-    """Create the Modelfree4 input file 'mfin'."""
+def create_mfin(file, diff_search=None, sims=None, sim_type=None, trim=None, num_frq=None, frq=None):
+    """Create the Modelfree4 input file 'mfin'.
+
+    @param file:            The writable file object.
+    @type file:             file object
+    @keyword diff_search:   The diffusion tensor search algorithm (see the Modelfree4 manual for
+                            details).
+    @type diff_search:      str
+    @keyword sims:          The number of Monte Carlo simulations to perform.
+    @type sims:             int
+    @keyword sim_type:      The type of simulation to perform (see the Modelfree4 manual for
+                            details).
+    @type sim_type:         str
+    @keyword trim:          Trimming of the Monte Carlo simulations (see the Modelfree4 manual for
+                            details).
+    @type trim:             int
+    @keyword num_frq:       The number of spectrometer frequencies relaxation data was collected at.
+    @type num_frq:          int
+    @keyword frq:           The spectrometer frequencies.
+    @type frq:              list of float
+    """
+
+    # Alias the current data pipe.
+    cdp = pipes.get_pipe()
 
     # Set the diffusion tensor specific values.
     if cdp.diff_tensor.type == 'sphere':
         diff = 'isotropic'
         algorithm = 'brent'
-        tm = cdp.diff.tm / 1e-9
+        tm = cdp.diff_tensor.tm / 1e-9
         dratio = 1
         theta = 0
         phi = 0
     elif cdp.diff_tensor.type == 'spheroid':
         diff = 'axial'
         algorithm = 'powell'
-        tm = cdp.diff.tm / 1e-9
-        dratio = cdp.diff.Dratio
-        theta = cdp.diff.theta * 360.0 / (2.0 * pi)
-        phi = cdp.diff.phi * 360.0 / (2.0 * pi)
+        tm = cdp.diff_tensor.tm / 1e-9
+        dratio = cdp.diff_tensor.Dratio
+        theta = cdp.diff_tensor.theta * 360.0 / (2.0 * pi)
+        phi = cdp.diff_tensor.phi * 360.0 / (2.0 * pi)
     elif cdp.diff_tensor.type == 'ellipsoid':
         diff = 'anisotropic'
         algorithm = 'powell'
-        tm = cdp.diff.tm / 1e-9
+        tm = cdp.diff_tensor.tm / 1e-9
         dratio = 0
         theta = 0
         phi = 0
@@ -246,15 +268,15 @@ def create_mfin(file):
     file.write("search          grid\n\n")
 
     # Diffusion type.
-    if cdp.diff.fixed:
+    if cdp.diff_tensor.fixed:
         algorithm = 'fix'
 
-    file.write("diffusion       " + diff + " " + self.diff_search + "\n\n")
+    file.write("diffusion       " + diff + " " + diff_search + "\n\n")
     file.write("algorithm       " + algorithm + "\n\n")
 
     # Monte Carlo simulations.
-    if self.sims:
-        file.write("simulations     " + self.sim_type + "    " + `self.sims` + "       " + `self.trim` + "\n\n")
+    if sims:
+        file.write("simulations     " + sim_type + "    " + `sims` + "       " + `trim` + "\n\n")
     else:
         file.write("simulations     none\n\n")
 
@@ -262,9 +284,9 @@ def create_mfin(file):
     file.write("selection       " + selection + "\n\n")
     file.write("sim_algorithm   " + algorithm + "\n\n")
 
-    file.write("fields          " + `self.num_frq`)
-    for frq in self.frq:
-        file.write("  " + `frq*1e-6`)
+    file.write("fields          " + `num_frq`)
+    for val in frq:
+        file.write("  " + `val*1e-6`)
     file.write("\n")
 
     # tm.
