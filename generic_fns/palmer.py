@@ -26,15 +26,10 @@
 
 # Python module imports.
 from math import pi
-from os import F_OK, P_WAIT, access, chdir, chmod, getcwd, listdir, remove, system
+from os import F_OK, access, chdir, chmod, getcwd, listdir, popen3, remove, system
 from re import match, search
 from string import count, find, split
-
-# UNIX only functions from the os module (Modelfree4 only runs under UNIX anyway).
-try:
-    from os import spawnlp
-except ImportError:
-    pass
+import sys
 
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
@@ -567,18 +562,21 @@ def execute(dir, force, binary):
         # Test the binary file string corresponds to a valid executable.
         test_binary(binary)
 
-        # Execute Modelfree4 (inputting a PDB file).
+        # Execute Modelfree4.
         if pdb:
-            status = spawnlp(P_WAIT, binary, binary, '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out', '-s', pdb)
-            if status:
-                raise RelaxProgFailError, 'Modelfree4'
-
-
-        # Execute Modelfree4 (without a PDB file).
+            cmd = binary + ' -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out -s ' + pdb
         else:
-            status = spawnlp(P_WAIT, binary, binary, '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out')
-            if status:
-                raise RelaxProgFailError, 'Modelfree4'
+            cmd = binary + ' -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out'
+        stdin, stdout, stderr = popen3(cmd)
+
+        # Close the pipe.
+        stdin.close()
+
+        # Write to stdout and stderr.
+        for line in stdout.readlines():
+            sys.stdout.write(line)
+        for line in stderr.readlines():
+            sys.stderr.write(line)
 
     # Failure.
     except:
