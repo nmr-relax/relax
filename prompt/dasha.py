@@ -26,7 +26,7 @@ import sys
 # relax module imports.
 import help
 from generic_fns import dasha
-from relax_errors import RelaxBinError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxBoolError, RelaxNoneStrError, RelaxStrError
 
 
 class Dasha:
