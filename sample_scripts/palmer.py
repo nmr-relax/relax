@@ -77,12 +77,8 @@ def exec_stage_2(runs):
     # Print out.
     print "\n\nModel selection."
 
-    # Create the model selection run.
-    name = 'aic'
-    pipe.create(name, 'mf')
-
     # Model selection.
-    model_selection(method='AIC', modsel_pipe=name)
+    model_selection(method='AIC', modsel_pipe='aic')
 
     # Write the results.
     results.write(file='results', force=True)
