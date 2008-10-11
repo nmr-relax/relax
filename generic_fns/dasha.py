@@ -25,7 +25,7 @@
 
 # Python module imports.
 from math import pi
-from os import F_OK, access, chdir, getcwd, system
+from os import F_OK, access, chdir, getcwd, system, popen3
 from re import match, search
 from string import lower, split
 import sys
@@ -402,7 +402,23 @@ def execute(dir, force, binary):
             raise RelaxFileError, ('dasha script', 'dasha_script')
 
         # Execute Dasha.
-        system(binary + ' < dasha_script | tee dasha_results')
+        stdin, stdout, stderr = popen3(binary)
+
+        # Get the contents of the script and pump it into Dasha.
+        script = open('dasha_script')
+        lines = script.readlines()
+        script.close()
+        for line in lines:
+            stdin.write(line)
+
+        # Close the pipe.
+        stdin.close()
+
+        # Write to stdout and stderr.
+        for line in stdout.readlines():
+            sys.stdout.write(line)
+        for line in stderr.readlines():
+            sys.stderr.write(line)
 
     # Failure.
     except:
