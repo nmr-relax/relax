@@ -430,6 +430,9 @@ def extract(dir):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
     # The directory.
     if dir == None:
         dir = pipes.cdp_name()
