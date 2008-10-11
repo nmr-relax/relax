@@ -69,9 +69,6 @@ def copy(pipe_from=None, pipe_to=None, param=None):
     # Specific value and error returning function.
     return_value = get_specific_fn('return_value', pipes.get_type(pipe_from))
 
-    # Specific set function.
-    set = get_specific_fn('set', pipes.get_type(pipe_from))
-
     # Test if the data exists for pipe_to.
     for spin in spin_loop(pipe_to):
         # Get the value and error for pipe_to.
@@ -90,7 +87,7 @@ def copy(pipe_from=None, pipe_to=None, param=None):
         spin_to = return_spin(spin_id, pipe_to)
 
         # Set the values of pipe_to.
-        set(spin_to, value=value, error=error, param=param)
+        set_spin_params(spin_to, value=value, error=error, param=param)
 
     # Reset all minimisation statistics.
     minimise.reset_min_stats(pipe_to)
@@ -252,7 +249,7 @@ def read(param=None, scaling=1.0, file=None, dir=None, mol_name_col=None, res_nu
         return_value = get_specific_fn('return_value', pipes.get_type())
 
         # Specific set function.
-        set = get_specific_fn('set', pipes.get_type())
+        set = set_spin_params
 
     # Test data corresponding to param already exists.
     for spin in spin_loop():
