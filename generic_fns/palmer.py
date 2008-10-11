@@ -153,7 +153,7 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
 
     # The 'run.sh' script.
     run = open_write_file('run.sh', dir, force)
-    create_run(run)
+    create_run(run, binary=binary, dir=dir)
     run.close()
     chmod(dir + '/run.sh', 0755)
 
@@ -477,18 +477,27 @@ def create_mfpar(file, spin=None, spin_id=None, res_num=None, atom1=None, atom2=
     file.write('%-4s\n' % atom2)
 
 
-def create_run(file):
-    """Create the script 'run.sh' for the execution of Modelfree4."""
+def create_run(file, binary=None, dir=None):
+    """Create the script 'run.sh' for the execution of Modelfree4.
+
+    @param file:        The writable file object.
+    @type file:         file object
+    @keyword binary:    The name of the Modelfree4 binary file.  This can include the path to the
+                        binary.
+    @type binary:       str
+    @keyword dir:       The directory to copy the PDB file to.
+    @type dir:          str
+    """
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
 
     file.write("#! /bin/sh\n")
-    file.write(self.binary + " -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
+    file.write(binary + " -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
     if cdp.diff_tensor.type != 'sphere':
         # Copy the pdb file to the model directory so there are no problems with the existance of *.rotate files.
-        system('cp ' + cdp.structure.file_name + ' ' + self.dir)
-        file.write(" -s " + cdp.structure.file_name.split('/')[-1])
+        system('cp ' + cdp.structure.dir[0] + cdp.structure.file_name[0] + ' ' + dir)
+        file.write(" -s " + cdp.structure.file_name[0])
     file.write("\n")
 
 
