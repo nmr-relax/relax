@@ -133,10 +133,10 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
     mfpar = open_write_file('mfpar', dir, force)
 
     # Loop over the sequence.
-    for spin in spin_loop(spin_id):
+    for spin, id in spin_loop(spin_id, return_id=True):
         if hasattr(spin, 'num_frq'):
             # The 'mfdata' file.
-            if not create_mfdata(spin, mfdata):
+            if not create_mfdata(mfdata, spin=spin, spin_id=id, num_frq=num_frq, frq=frq):
                 continue
 
             # The 'mfmodel' file.
@@ -157,23 +157,35 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
     chmod(dir + '/run.sh', 0755)
 
 
-def create_mfdata(i, file):
-    """Create the Modelfree4 input file 'mfmodel'."""
+def create_mfdata(file, spin=None, spin_id=None, num_frq=None, frq=None):
+    """Create the Modelfree4 input file 'mfmodel'.
+
+    @param file:        The writable file object.
+    @type file:         file object
+    @param spin:        The spin container.
+    @type spin:         SpinContainer instance
+    @param spin_id:     The spin identification string.
+    @type spin_id       str
+    @keyword num_frq:   The number of spectrometer frequencies relaxation data was collected at.
+    @type num_frq:      int
+    @keyword frq:       The spectrometer frequencies.
+    @type frq:          list of float
+    """
 
     # Spin title.
-    file.write("\nspin     " + spin.name + "_" + `spin.num` + "\n")
+    file.write("\nspin     " + spin_id + "\n")
 
     # Data written flag.
-    written = 0
+    written = False
 
     # Loop over the frequencies.
-    for j in xrange(self.num_frq):
+    for j in xrange(num_frq):
         # Set the data to None.
         r1, r2, noe = None, None, None
 
         # Loop over the relevant relaxation data.
         for k in xrange(spin.num_ri):
-            if self.frq[j] != spin.frq[spin.remap_table[k]]:
+            if frq[j] != spin.frq[spin.remap_table[k]]:
                 continue
 
             # Find the corresponding R1.
@@ -193,23 +205,23 @@ def create_mfdata(i, file):
 
         # Test if the R1 exists for this frequency, otherwise skip the data.
         if r1:
-            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('R1', self.frq[j]*1e-6, r1, r1_err, 1))
+            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('R1', frq[j]*1e-6, r1, r1_err, 1))
         else:
-            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('R1', self.frq[j]*1e-6, 0, 0, 0))
+            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('R1', frq[j]*1e-6, 0, 0, 0))
 
         # Test if the R2 exists for this frequency, otherwise skip the data.
         if r2:
-            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('R2', self.frq[j]*1e-6, r2, r2_err, 1))
+            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('R2', frq[j]*1e-6, r2, r2_err, 1))
         else:
-            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('R2', self.frq[j]*1e-6, 0, 0, 0))
+            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('R2', frq[j]*1e-6, 0, 0, 0))
 
         # Test if the NOE exists for this frequency, otherwise skip the data.
         if noe:
-            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('NOE', self.frq[j]*1e-6, noe, noe_err, 1))
+            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('NOE', frq[j]*1e-6, noe, noe_err, 1))
         else:
-            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('NOE', self.frq[j]*1e-6, 0, 0, 0))
+            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('NOE', frq[j]*1e-6, 0, 0, 0))
 
-        written = 1
+        written = True
 
     return written
 
