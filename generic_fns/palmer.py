@@ -548,7 +548,7 @@ def execute(dir, force, binary):
 
         # Test if the 'PDB' input file exists.
         if cdp.diff_tensor.type != 'sphere':
-            pdb = cdp.structure.file_name[0]
+            pdb = cdp.structure.file[0]
             if not access(pdb, F_OK):
                 raise RelaxFileError, ('PDB', pdb)
         else:
