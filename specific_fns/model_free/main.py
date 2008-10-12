@@ -1712,8 +1712,8 @@ class Model_free_main:
             # Get the spin container.
             spin, spin_id = return_spin_from_index(model_index, return_spin_id=True)
 
-            # Return the spin id.
-            return spin_id
+            # Return the description.
+            return "Model-free model of spin '%s'." % spin_id
 
 
     def model_loop(self):

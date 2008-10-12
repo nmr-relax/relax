@@ -214,7 +214,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
     # Loop over the base models.
     for model_info in model_loop():
         # Print out.
-        print "\nModel: " + `model_desc(model_info)` + ".\n"
+        print "\n" + model_desc(model_info)
         print "%-20s %-20s %-20s %-20s %-20s" % ("Data pipe", "Num_params_(k)", "Num_data_sets_(n)", "Chi2", "Criterion")
 
         # Initial model.
@@ -284,7 +284,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
                 best_crit = crit
 
         # Print out of selected model.
-        print "\nThe model from the data pipe " + `best_model` + " has been selected."
+        print "The model from the data pipe " + `best_model` + " has been selected."
 
         # Duplicate the data from the 'best_model' to the model selection data pipe.
         if best_model != None:
