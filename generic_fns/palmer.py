@@ -608,7 +608,7 @@ def extract(dir, spin_id=None):
 
     # The directory.
     if dir == None:
-        dir = pipe
+        dir = pipes.cdp_name()
     if not access(dir, F_OK):
         raise RelaxDirError, ('Modelfree4', dir)
 
