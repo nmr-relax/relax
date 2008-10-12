@@ -153,7 +153,7 @@ class Palmer(TestCase):
         # Checks for model m1, m2, and m3 mfout file reading.
         models = ['m1', 'm2', 'm3']
         params = [['S2'], ['S2', 'te'], ['S2', 'Rex']]
-        spin_names = [':-2&:Gly', ':-1&:Gly', ':0&:Gly']
+        spin_names = [':9', ':10', ':11']
         s2 = [[0.822, 0.799, 0.823], [0.855, 0.777, 0.812], [0.822, 0.799, 0.823]]
         te = [[None, None, None], [420.873, 36.084, 20.043], [None, None, None]]
         rex = [[None, None, None], [None, None, None], [0.0, 0.0, 0.0]]
