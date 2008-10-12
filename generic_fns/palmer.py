@@ -33,7 +33,7 @@ import sys
 
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
-from generic_fns import pipes
+from generic_fns import diffusion_tensor, pipes
 from physical_constants import return_gyromagnetic_ratio
 from relax_errors import RelaxDirError, RelaxFileError, RelaxFileOverwriteError, RelaxNoModelError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNucleusError, RelaxProgFailError
 from relax_io import mkdir_nofail, open_write_file, test_binary
@@ -645,10 +645,24 @@ def extract(dir, spin_id=None):
         row = split(mfout_lines[global_chi2_pos])
         cdp.chi2 = float(row[1])
 
-        # Diffusion tensor.
+        # Spherical diffusion tensor.
         if cdp.diff_tensor.type == 'sphere':
+            # Split the lines.
             tm_row = split(mfout_lines[diff_pos])
+
+            # Set the params.
             cdp.diff_tensor.tm = float(tm_row[2])
+
+        # Spheroid diffusion tensor.
+        else:
+            # Split the lines.
+            tm_row = split(mfout_lines[diff_pos])
+            dratio_row = split(mfout_lines[diff_pos+1])
+            theta_row = split(mfout_lines[diff_pos+2])
+            phi_row = split(mfout_lines[diff_pos+3])
+
+            # Set the params.
+            diffusion_tensor.set([float(tm_row[2]), float(dratio_row[2]), float(theta_row[2]), float(phi_row[2])], ['tm', 'Dratio', 'theta', 'phi'])
 
     # Loop over the sequence.
     pos = 0
