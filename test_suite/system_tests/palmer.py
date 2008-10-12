@@ -134,5 +134,5 @@ class Palmer(TestCase):
 
         # Final global values.
         final_pipe = pipes.get_pipe('aic')
-        self.assertEqual(final_pipe.chi2, 22.5355)
+        self.assertEqual(final_pipe.chi2, 2.5355)
         self.assertEqual(final_pipe.diff_tensor.tm, 12.050 * 1e-9)
