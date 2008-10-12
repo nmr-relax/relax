@@ -125,6 +125,10 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         if eqi == 'model_stats':
             function = inst.model_statistics
 
+        # Model type.
+        if eqi == 'model_type':
+            function = inst.model_type
+
         # Molmol macro creation.
         if eqi == 'molmol_macro':
             function = inst.molmol.macro
