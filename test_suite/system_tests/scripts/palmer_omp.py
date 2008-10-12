@@ -31,7 +31,7 @@ def exec_stage_1(pipes):
         sequence.copy('data')
 
         # Read a PDB file.
-        structure.read_pdb(file='1F35_N_H_molmol.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', parser='internal')
+        structure.read_pdb(file='1F35_N_H_trunc.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', parser='internal')
 
         # Select only 3 spins (residues 9, 10, and 11).
         deselect.all()
