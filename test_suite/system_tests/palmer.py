@@ -29,6 +29,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns import pipes
 from generic_fns.mol_res_spin import return_spin
 from relax_io import test_binary
 
@@ -130,3 +131,8 @@ class Palmer(TestCase):
             self.assertEqual(spin.ts, None)
             self.assertEqual(spin.rex, rex[spin_index])
             self.assertEqual(spin.chi2, chi2[spin_index])
+
+        # Final global values.
+        final_pipe = pipes.get_pipe('aic')
+        self.assertEqual(final_pipe.chi2, 22.5355)
+        self.assertEqual(final_pipe.diff_tensor.tm, 12.050 * 1e-9)
