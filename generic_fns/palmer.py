@@ -622,7 +622,7 @@ def extract(dir, spin_id=None):
     mfout_file.close()
 
     # Get the section line positions of the mfout file.
-    s2_pos, s2f_pos, s2s_pos, te_pos, rex_pos, chi2_pos = line_positions(mfout_lines)
+    global_chi2_pos, diff_pos, s2_pos, s2f_pos, s2s_pos, te_pos, rex_pos, chi2_pos = line_positions(mfout_lines)
 
     # Find out if simulations were carried out.
     sims = 0
@@ -630,6 +630,16 @@ def extract(dir, spin_id=None):
         if search('_iterations', mfout_lines[i]):
             row = split(mfout_lines[i])
             sims = int(row[1])
+
+    # Global chi2.
+    row = split(mfout_lines[global_chi2_pos])
+    cdp.chi2 = float(row[1])
+
+    # Diffusion tensor.
+    if cdp.diff_tensor.type == 'sphere':
+        tm_row = split(mfout_lines[diff_pos])
+        print tm_row
+        cdp.diff_tensor.tm = float(tm_row[2])
 
     # Loop over the sequence.
     pos = 0
@@ -782,9 +792,17 @@ def line_positions(mfout_lines):
     # Loop over the file.
     i = 0
     while i < len(mfout_lines):
+        # Global chi2.
+        if match('data_chi_square', mfout_lines[i]):
+            global_chi2_pos = i + 1
+
+        # Diffusion tensor.
+        if match('data_diffusion_tensor', mfout_lines[i]):
+            diff_pos = i + 3
+
         # Model-free data.
         if match('data_model_1', mfout_lines[i]):
-            # Shift down two lines (to avoid the lines not starting with a space)..
+            # Shift down two lines (to avoid the lines not starting with a space).
             i = i + 2
 
             # Walk through all the data.
@@ -827,4 +845,4 @@ def line_positions(mfout_lines):
         i = i + 1
 
     # Return the positions.
-    return s2_pos, s2f_pos, s2s_pos, te_pos, rex_pos, chi2_pos
+    return global_chi2_pos, diff_pos, s2_pos, s2f_pos, s2s_pos, te_pos, rex_pos, chi2_pos
