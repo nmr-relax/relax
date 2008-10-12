@@ -33,13 +33,6 @@ from generic_fns import pipes
 class Angles(TestCase):
     """Class for testing the angle calculation function."""
 
-    def setUp(self):
-        """Set up for all the functional tests."""
-
-        # Create the data pipe.
-        self.relax.interpreter._Pipe.create('mf', 'mf')
-
-
     def tearDown(self):
         """Reset the relax data storage object."""
 
