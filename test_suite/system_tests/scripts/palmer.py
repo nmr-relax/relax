@@ -92,11 +92,8 @@ def exec_stage_3():
     Final optimisation of diffusion tensor parameters together with model-free parameters.
     """
 
-    # Set the run name.
-    name = 'aic'
-
     # Let the diffusion tensor parameters be optimised.
-    fix(name, 'diff', False)
+    fix('diff', False)
 
     # Create the Modelfree4 files (change sims as needed, see below).
     palmer.create(dir=ds.tmpdir + '/final', force=True, sims=0)
