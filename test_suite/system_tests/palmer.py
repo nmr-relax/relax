@@ -28,6 +28,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns.mol_res_spin import return_spin
 from relax_io import test_binary
 
 
@@ -65,3 +66,27 @@ class Palmer(TestCase):
 
         # Execute the script.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/palmer.py')
+
+        # Checks for model m1 mfout file reading.
+        models = ['m1', 'm2', 'm3']
+        params = [['S2'], ['S2', 'te'], ['S2', 'Rex']]
+        spin_names = [':-2&:Gly', ':-1&:Gly', ':0&:Gly']
+        s2 = [[0.869, 0.732, 0.802], [0.869, 0.730, 0.755], [0.715, 0.643, 0.734]]
+        te = [[None, None, None], [0.0, 1.951, 1319.171], [None, None, None]]
+        rex = [[None, None, None], [None, None, None], [4.308, 4.278, 1.017]]
+        chi2 = [[36.6223, 20.3954, 5.2766], [36.6223, 20.3299, 0.0], [1.9763, 0.6307, 5.2766]]
+        for model_index in xrange(3):
+            print "Model " + `models[model_index]`
+            for spin_index in xrange(3):
+                print "Spin " + `spin_names[spin_index]`
+                spin = return_spin(spin_names[spin_index], pipe=models[model_index])
+                self.assertEqual(spin.model, models[model_index])
+                self.assertEqual(spin.params, params[model_index])
+                self.assertEqual(spin.s2, s2[model_index][spin_index])
+                self.assertEqual(spin.s2f, None)
+                self.assertEqual(spin.s2s, None)
+                self.assertEqual(spin.te, te[model_index][spin_index])
+                self.assertEqual(spin.tf, None)
+                self.assertEqual(spin.ts, None)
+                self.assertEqual(spin.rex, rex[model_index][spin_index])
+                self.assertEqual(spin.chi2, chi2[model_index][spin_index])
