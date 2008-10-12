@@ -37,6 +37,7 @@ from generic_fns import pipes
 from physical_constants import return_gyromagnetic_ratio
 from relax_errors import RelaxDirError, RelaxFileError, RelaxFileOverwriteError, RelaxNoModelError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNucleusError, RelaxProgFailError
 from relax_io import mkdir_nofail, open_write_file, test_binary
+from specific_fns.setup import model_free_obj
 
 
 def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, trim=None, steps=None, heteronuc_type=None, atom1=None, atom2=None, spin_id=None, force=False, constraints=True):
@@ -616,6 +617,9 @@ def extract(dir, spin_id=None):
     if not access(dir + "/mfout", F_OK):
         raise RelaxFileError, ('Modelfree4', dir + "/mfout")
 
+    # Determine the parameter set.
+    model_type = model_free_obj.determine_model_type()
+
     # Open the file.
     mfout_file = open(dir + "/mfout", 'r')
     mfout_lines = mfout_file.readlines()
@@ -631,14 +635,16 @@ def extract(dir, spin_id=None):
             row = split(mfout_lines[i])
             sims = int(row[1])
 
-    # Global chi2.
-    row = split(mfout_lines[global_chi2_pos])
-    cdp.chi2 = float(row[1])
+    # Global data.
+    if model_type in ['all', 'diff']:
+        # Global chi-squared.
+        row = split(mfout_lines[global_chi2_pos])
+        cdp.chi2 = float(row[1])
 
-    # Diffusion tensor.
-    if cdp.diff_tensor.type == 'sphere':
-        tm_row = split(mfout_lines[diff_pos])
-        cdp.diff_tensor.tm = float(tm_row[2])
+        # Diffusion tensor.
+        if cdp.diff_tensor.type == 'sphere':
+            tm_row = split(mfout_lines[diff_pos])
+            cdp.diff_tensor.tm = float(tm_row[2])
 
     # Loop over the sequence.
     pos = 0
