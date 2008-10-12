@@ -68,7 +68,7 @@ class Palmer(TestCase):
         # Execute the script.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/palmer.py')
 
-        # Checks for model m1 mfout file reading.
+        # Checks for model m1, m2, and m3 mfout file reading.
         models = ['m1', 'm2', 'm3']
         params = [['S2'], ['S2', 'te'], ['S2', 'Rex']]
         spin_names = [':-2&:Gly', ':-1&:Gly', ':0&:Gly']
@@ -101,3 +101,32 @@ class Palmer(TestCase):
                 self.assertEqual(spin.ts, None)
                 self.assertEqual(spin.rex, rex[model_index][spin_index])
                 self.assertEqual(spin.chi2, chi2[model_index][spin_index])
+
+        # Checks for the final mfout file reading.
+        models = ['m3', 'm3', 'm2']
+        params = [['S2', 'Rex'], ['S2', 'Rex'], ['S2', 'te']]
+        s2 = [0.844, 0.760, 0.592]
+        te = [None, None, 1809.287]
+        rex = [0.0, 0.394, None]
+        chi2 = [1.7964, 0.7391, 0.0000]
+        for spin_index in xrange(3):
+            # Get the spin.
+            spin = return_spin(spin_names[spin_index], pipe='final')
+
+            # Conversions.
+            if te[spin_index]:
+                te[spin_index] = te[spin_index] * 1e-12
+            if rex[spin_index]:
+                rex[spin_index] = rex[spin_index] / (2.0 * pi * spin.frq[0])**2
+
+            # Checks.
+            self.assertEqual(spin.model, models)
+            self.assertEqual(spin.params, params)
+            self.assertEqual(spin.s2, s2[spin_index])
+            self.assertEqual(spin.s2f, None)
+            self.assertEqual(spin.s2s, None)
+            self.assertEqual(spin.te, te[spin_index])
+            self.assertEqual(spin.tf, None)
+            self.assertEqual(spin.ts, None)
+            self.assertEqual(spin.rex, rex[spin_index])
+            self.assertEqual(spin.chi2, chi2[spin_index])
