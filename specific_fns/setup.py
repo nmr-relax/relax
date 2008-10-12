@@ -114,6 +114,10 @@ def get_specific_fn(eqi, function_type, raise_error=True):
             function = inst.minimise
 
         # Model loop.
+        if eqi == 'model_desc':
+            function = inst.model_desc
+
+        # Model loop.
         if eqi == 'model_loop':
             function = inst.model_loop
 

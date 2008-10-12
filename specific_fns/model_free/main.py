@@ -1683,6 +1683,38 @@ class Model_free_main:
             return [-100 * 1e-6, -300 * 1e-6]
 
 
+    def model_desc(self, model_index):
+        """Return a description of the model.
+
+        @param model_index: The model index.  This is zero for the global models or equal to the
+                            global spin index (which covers the molecule, residue, and spin
+                            indices).
+        @type model_index:  int
+        @return:            The model description.
+        @rtype:             str
+        """
+
+        # Determine the model type.
+        model_type = self.determine_model_type()
+
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Global models.
+        if model_type == 'all':
+            return "Global model - all diffusion tensor parameters and spin specific model-free parameters."
+        elif model_type == 'diff':
+            return "Diffusion tensor model."
+
+        # Spin specific model.
+        else:
+            # Get the spin container.
+            spin, spin_id = return_spin_from_index(model_index, return_spin_id=True)
+
+            # Return the spin id.
+            return spin_id
+
+
     def model_loop(self):
         """Generator method for looping over the models (global or local).
 
