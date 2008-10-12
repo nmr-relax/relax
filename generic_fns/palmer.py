@@ -131,6 +131,10 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
 
     # Loop over the sequence.
     for spin, mol_name, res_num, res_name, id in spin_loop(spin_id, full_info=True, return_id=True):
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
         if hasattr(spin, 'num_frq'):
             # The 'mfdata' file.
             if not create_mfdata(mfdata, spin=spin, spin_id=id, num_frq=num_frq, frq=frq):
