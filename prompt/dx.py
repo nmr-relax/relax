@@ -92,7 +92,7 @@ class OpenDX:
             raise RelaxBoolError, ('visual program execution flag', vp_exec)
 
         # Execute the functional code.
-        opendx.main.run(file=file, dir=dir, dx_exe=dx_exe, vp_exec=vp_exec)
+        opendx.main.run(file_prefix=file, dir=dir, dx_exe=dx_exe, vp_exec=vp_exec)
 
 
     def map(self, params=None, map_type="Iso3D", spin_id=None, inc=20, lower=None, upper=None, axis_incs=5, file_prefix="map", dir="dx", point=None, point_file="point", remap=None):
