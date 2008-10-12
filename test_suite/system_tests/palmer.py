@@ -136,3 +136,84 @@ class Palmer(TestCase):
         final_pipe = pipes.get_pipe('aic')
         self.assertEqual(final_pipe.chi2, 2.5355)
         self.assertEqual(final_pipe.diff_tensor.tm, 12.050)
+
+
+    def test_palmer_omp(self):
+        """Test a complete model-free analysis using 'Modelfree4' with the OMP relaxation data, a PDB file, and a spheroid tensor."""
+
+        # Test for the presence of the Modelfree4 binary (skip the test if not present).
+        try:
+            test_binary('modelfree4')
+        except:
+            return
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/palmer_omp.py')
+
+        # Checks for model m1, m2, and m3 mfout file reading.
+        models = ['m1', 'm2', 'm3']
+        params = [['S2'], ['S2', 'te'], ['S2', 'Rex']]
+        spin_names = [':-2&:Gly', ':-1&:Gly', ':0&:Gly']
+        s2 = [[0.869, 0.732, 0.802], [0.869, 0.730, 0.755], [0.715, 0.643, 0.734]]
+        te = [[None, None, None], [0.0, 1.951, 1319.171], [None, None, None]]
+        rex = [[None, None, None], [None, None, None], [4.308, 4.278, 1.017]]
+        chi2 = [[36.6223, 20.3954, 5.2766], [36.6223, 20.3299, 0.0], [1.9763, 0.6307, 5.2766]]
+        for model_index in xrange(3):
+            print "Model " + `models[model_index]`
+            for spin_index in xrange(3):
+                print "Spin " + `spin_names[spin_index]`
+
+                # Get the spin.
+                spin = return_spin(spin_names[spin_index], pipe=models[model_index])
+
+                # Conversions.
+                if te[model_index][spin_index]:
+                    te[model_index][spin_index] = te[model_index][spin_index] * 1e-12
+                if rex[model_index][spin_index]:
+                    rex[model_index][spin_index] = rex[model_index][spin_index] / (2.0 * pi * spin.frq[0])**2
+
+                # Checks.
+                self.assertEqual(spin.model, models[model_index])
+                self.assertEqual(spin.params, params[model_index])
+                self.assertEqual(spin.s2, s2[model_index][spin_index])
+                self.assertEqual(spin.s2f, None)
+                self.assertEqual(spin.s2s, None)
+                self.assertEqual(spin.te, te[model_index][spin_index])
+                self.assertEqual(spin.tf, None)
+                self.assertEqual(spin.ts, None)
+                self.assertEqual(spin.rex, rex[model_index][spin_index])
+                self.assertEqual(spin.chi2, chi2[model_index][spin_index])
+
+        # Checks for the final mfout file reading.
+        models = ['m3', 'm3', 'm2']
+        params = [['S2', 'Rex'], ['S2', 'Rex'], ['S2', 'te']]
+        s2 = [0.844, 0.760, 0.592]
+        te = [None, None, 1809.287]
+        rex = [0.0, 0.394, None]
+        chi2 = [1.7964, 0.7391, 0.0000]
+        for spin_index in xrange(3):
+            # Get the spin.
+            spin = return_spin(spin_names[spin_index], pipe='aic')
+
+            # Conversions.
+            if te[spin_index]:
+                te[spin_index] = te[spin_index] * 1e-12
+            if rex[spin_index]:
+                rex[spin_index] = rex[spin_index] / (2.0 * pi * spin.frq[0])**2
+
+            # Checks.
+            self.assertEqual(spin.model, models[spin_index])
+            self.assertEqual(spin.params, params[spin_index])
+            self.assertEqual(spin.s2, s2[spin_index])
+            self.assertEqual(spin.s2f, None)
+            self.assertEqual(spin.s2s, None)
+            self.assertEqual(spin.te, te[spin_index])
+            self.assertEqual(spin.tf, None)
+            self.assertEqual(spin.ts, None)
+            self.assertEqual(spin.rex, rex[spin_index])
+            self.assertEqual(spin.chi2, chi2[spin_index])
+
+        # Final global values.
+        final_pipe = pipes.get_pipe('aic')
+        self.assertEqual(final_pipe.chi2, 2.5355)
+        self.assertEqual(final_pipe.diff_tensor.tm, 12.050)
