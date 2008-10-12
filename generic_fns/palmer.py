@@ -638,7 +638,6 @@ def extract(dir, spin_id=None):
     # Diffusion tensor.
     if cdp.diff_tensor.type == 'sphere':
         tm_row = split(mfout_lines[diff_pos])
-        print tm_row
         cdp.diff_tensor.tm = float(tm_row[2])
 
     # Loop over the sequence.
