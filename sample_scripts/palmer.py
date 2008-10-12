@@ -93,8 +93,12 @@ def exec_stage_2(pipes):
     # Print out.
     print "\n\nLoading all the Modelfree 4 data."
 
-    # Extract the Modelfree4 data from the 'mfout' files.
+    # Loop over the data pipes.
     for name in pipes:
+        # Switch to the data pipe.
+        pipe.switch(name)
+
+        # Extract the Modelfree4 data from the 'mfout' files.
         palmer.extract(dir=name)
 
     # Print out.
