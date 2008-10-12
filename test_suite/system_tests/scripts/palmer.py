@@ -66,9 +66,6 @@ def exec_stage_2(runs):
     Model-free model selection.
     """
 
-    # Load the saved state from stage 1.
-    state.load('stage1.save', dir_name=ds.tmpdir)
-
     # Print out.
     print "\n\nLoading all the Modelfree 4 data."
 
@@ -94,9 +91,6 @@ def exec_stage_3():
 
     Final optimisation of diffusion tensor parameters together with model-free parameters.
     """
-
-    # Load the saved state from stage 2.
-    state.load('stage2.save', dir_name=ds.tmpdir)
 
     # Set the run name.
     name = 'aic'
