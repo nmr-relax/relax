@@ -27,13 +27,16 @@ def exec_stage_1(pipes):
         # Load the sequence.
         sequence.read(sys.path[-1] + '/test_suite/shared_data/jw_mapping/noe.dat')
 
+        # Read a PDB file.
+        structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1)
+
         # Load the relaxation data.
         relax_data.read('R1', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/shared_data/jw_mapping/R1.dat')
         relax_data.read('R2', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/shared_data/jw_mapping/R2.dat')
         relax_data.read('NOE', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/shared_data/jw_mapping/noe.dat')
 
         # Setup other values.
-        diffusion_tensor.init(1e-8)
+        diffusion_tensor.init((1e-8, 0, 0, 0))
         value.set('15N', 'heteronucleus')
         value.set(1.02 * 1e-10, 'bond_length')
         value.set(-172 * 1e-6, 'csa')
