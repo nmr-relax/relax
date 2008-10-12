@@ -7,29 +7,20 @@ import sys
 from data import Relax_data_store; ds = Relax_data_store()
 
 
-# Set the stage of analysis.
-#
-# The three stages in this script are:
-#   Stage 1:  Initial model-free minimisation.
-#   Stage 2:  Model-free model selection.
-#   Stage 3:  Final optimisation of diffusion tensor parameters together with model-free parameters.
-
-
 # Missing temp directory (allow this script to run outside of the system test framework).
 if not hasattr(ds, 'tmpdir'):
     ds.tmpdir = 'temp_script'
 
-# Functions.
 
-def exec_stage_1(runs):
+def exec_stage_1(pipes):
     """Stage 1 function.
 
     Initial model-free minimisation.
     """
 
-    # Loop over the runs.
-    for name in runs:
-        # Create the run.
+    # Loop over the data pipes.
+    for name in pipes:
+        # Create the pipe.
         print "\n\n# " + name + " #"
         pipe.create(name, 'mf')
 
@@ -60,7 +51,7 @@ def exec_stage_1(runs):
     state.save(state='stage1.save', dir_name=ds.tmpdir, force=True)
 
 
-def exec_stage_2(runs):
+def exec_stage_2(pipes):
     """Stage 2 function.
 
     Model-free model selection.
@@ -70,7 +61,7 @@ def exec_stage_2(runs):
     print "\n\nLoading all the Modelfree 4 data."
 
     # Extract the Modelfree4 data from the 'mfout' files.
-    for name in runs:
+    for name in pipes:
         palmer.extract(dir=ds.tmpdir + '/' + name)
 
     # Print out.
@@ -104,6 +95,9 @@ def exec_stage_3():
     # Extract the Modelfree4 data from the 'mfout' file.
     palmer.extract(dir=ds.tmpdir + '/final')
 
+    # Write the results.
+    results.write(file='final', dir=ds.tmpdir, force=True)
+
     # Save the program state.
     state.save(state='stage3.save', dir_name=ds.tmpdir, force=True)
 
@@ -111,10 +105,10 @@ def exec_stage_3():
 # Main section of the script.
 #############################
 
-# Set the run name (also the name of a preset model-free model).
-runs = ['m1', 'm2', 'm3']
+# Set the pipe names (also the name of a preset model-free model).
+pipes = ['m1', 'm2', 'm3']
 
 # Run the stages.
-exec_stage_1(runs)
-exec_stage_2(runs)
+exec_stage_1(pipes)
+exec_stage_2(pipes)
 exec_stage_3()
