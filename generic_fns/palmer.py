@@ -492,7 +492,7 @@ def create_run(file, binary=None, dir=None):
     file.write(binary + " -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
     if cdp.diff_tensor.type != 'sphere':
         # Copy the pdb file to the model directory so there are no problems with the existance of *.rotate files.
-        system('cp ' + cdp.structure.dir[0] + cdp.structure.file_name[0] + ' ' + dir)
+        system('cp ' + cdp.structure.path[0] + cdp.structure.file_name[0] + ' ' + dir)
         file.write(" -s " + cdp.structure.file_name[0])
     file.write("\n")
 
