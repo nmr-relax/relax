@@ -662,7 +662,7 @@ def extract(dir, spin_id=None):
             phi_row = split(mfout_lines[diff_pos+3])
 
             # Set the params.
-            diffusion_tensor.set([float(tm_row[2]), float(dratio_row[2]), float(theta_row[2]), float(phi_row[2])], ['tm', 'Dratio', 'theta', 'phi'])
+            diffusion_tensor.set([float(tm_row[2]), float(dratio_row[2]), float(theta_row[2])*2.0*pi/360.0, float(phi_row[2])*2.0*pi/360.0], ['tm', 'Dratio', 'theta', 'phi'])
 
     # Loop over the sequence.
     pos = 0
