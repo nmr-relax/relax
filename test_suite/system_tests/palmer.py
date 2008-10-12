@@ -40,9 +40,6 @@ class Palmer(TestCase):
     def setUp(self):
         """Set up for all the functional tests."""
 
-        # Create the data pipe.
-        self.relax.interpreter._Pipe.create('palmer', 'mf')
-
         # Create a temporary directory for ModelFree4 outputs.
         ds.tmpdir = mkdtemp()
 
