@@ -991,17 +991,17 @@ class Model_free_main:
             return 'all'
 
 
-    def duplicate_data(self, pipe_from=None, pipe_to=None, model_info=None, global_stats=False, verbose=True):
+    def duplicate_data(self, pipe_from=None, pipe_to=None, model_index=None, global_stats=False, verbose=True):
         """Duplicate the data specific to a single model-free model.
 
         @keyword pipe_from:     The data pipe to copy the data from.
         @type pipe_from:        str
         @keyword pipe_to:       The data pipe to copy the data to.
         @type pipe_to:          str
-        @param model_info:      The model index.  This is zero for the global models or equal to the
+        @param model_index:     The model index.  This is zero for the global models or equal to the
                                 global spin index (which covers the molecule, residue, and spin
                                 indices).  This originates from the model_loop().
-        @type model_info:       int
+        @type model_index:      int
         @keyword global_stats:  The global statistics flag
         @type global_stats:     bool
         @keyword verbose:       A flag which if True will cause info about each spin to be printed
@@ -1010,8 +1010,8 @@ class Model_free_main:
         """
 
         # Arg tests.
-        if model_info == None:
-            raise RelaxError, "The model_info argument cannot be None."
+        if model_index == None:
+            raise RelaxError, "The model_index argument cannot be None."
 
         # First create the pipe_to data pipe, if it doesn't exist, but don't switch to it.
         if not pipes.has_pipe(pipe_to):
@@ -1126,7 +1126,7 @@ class Model_free_main:
         # Sequence specific data.
         if model_type == 'mf' or (model_type == 'local_tm' and not global_stats):
             # Get the spin container indices.
-            mol_index, res_index, spin_index = convert_from_global_index(global_index=model_info, pipe=pipe_from)
+            mol_index, res_index, spin_index = convert_from_global_index(global_index=model_index, pipe=pipe_from)
 
             # Duplicate the spin specific data.
             dp_to.mol[mol_index].res[res_index].spin[spin_index] = deepcopy(dp_from.mol[mol_index].res[res_index].spin[spin_index])
