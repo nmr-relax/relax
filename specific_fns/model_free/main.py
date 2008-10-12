@@ -1689,7 +1689,7 @@ class Model_free_main:
 
         @param model_index: The model index.  This is zero for the global models or equal to the
                             global spin index (which covers the molecule, residue, and spin
-                            indices).
+                            indices).  This originates from the model_loop().
         @type model_index:  int
         @return:            The model description.
         @rtype:             str
@@ -1888,6 +1888,29 @@ class Model_free_main:
 
         # Return the data.
         return k, n, chi2
+
+
+    def model_type(self, model_index):
+        """Return the type of the model, either being 'local' or 'global'.
+
+        @param model_index: The model index.  This is zero for the global models or equal to the
+                            global spin index (which covers the molecule, residue, and spin
+                            indices).  This originates from the model_loop().
+        @type model_index:  int
+        @return:            The model type, one of 'local' or 'global'.
+        @rtype:             str
+        """
+
+        # Determine the model type.
+        model_type = self.determine_model_type()
+
+        # Global models.
+        if model_type in ['all', 'diff']:
+            return 'global'
+
+        # Local models.
+        else:
+            return 'local'
 
 
     def num_instances(self):
