@@ -1820,16 +1820,15 @@ class Model_free_main:
         # Get the current data pipe.
         cdp = pipes.get_pipe()
 
-        # Determine if local or global statistics will be returned.
-        if global_stats == None:
-            global_stats = 1
-            for spin in spin_loop():
-                if hasattr(spin, 'chi2') and spin.chi2 != None:
-                    global_stats = 0
-                    break
-
         # Determine the model type.
         model_type = self.determine_model_type()
+
+        # Determine if local or global statistics will be returned.
+        if global_stats == None:
+            if model_type in ['mf', 'local_tm']:
+                global_stats = False
+            else:
+                global_stats = True
 
         # Statistics for a single residue.
         if not global_stats:
