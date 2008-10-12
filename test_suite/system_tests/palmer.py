@@ -111,7 +111,7 @@ class Palmer(TestCase):
         chi2 = [1.7964, 0.7391, 0.0000]
         for spin_index in xrange(3):
             # Get the spin.
-            spin = return_spin(spin_names[spin_index], pipe='final')
+            spin = return_spin(spin_names[spin_index], pipe='aic')
 
             # Conversions.
             if te[spin_index]:
@@ -120,8 +120,8 @@ class Palmer(TestCase):
                 rex[spin_index] = rex[spin_index] / (2.0 * pi * spin.frq[0])**2
 
             # Checks.
-            self.assertEqual(spin.model, models)
-            self.assertEqual(spin.params, params)
+            self.assertEqual(spin.model, models[spin_index])
+            self.assertEqual(spin.params, params[spin_index])
             self.assertEqual(spin.s2, s2[spin_index])
             self.assertEqual(spin.s2f, None)
             self.assertEqual(spin.s2s, None)
