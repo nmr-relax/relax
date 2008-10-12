@@ -210,11 +210,11 @@ def select(method=None, modsel_pipe=None, pipes=None):
                     switch(pipe)
 
                     # Skip function.
-                    if skip_function[pipe](instance=i):
+                    if skip_function[pipe](model_info):
                         continue
 
                     # Get the model statistics.
-                    k, n, chi2 = model_statistics[pipe](instance=i, min_instances=min_instances)
+                    k, n, chi2 = model_statistics[pipe](model_info)
 
                     # Missing data sets.
                     if k == None or n == None or chi2 == None:
@@ -235,17 +235,11 @@ def select(method=None, modsel_pipe=None, pipes=None):
                 switch(pipe)
 
                 # Skip function.
-                if skip_function[pipe](instance=i, min_instances=min_instances, num_instances=num_instances[j]):
+                if skip_function[pipe](model_info):
                     continue
 
-                # Global stats.
-                if num_instances[j] > min_instances or num_instances[j] == 1:
-                    global_stats = 1
-                else:
-                    global_stats = 0
-
                 # Get the model statistics.
-                k, n, chi2 = model_statistics[pipe](instance=i, global_stats=global_stats)
+                k, n, chi2 = model_statistics[pipe](model_info)
 
                 # Missing data sets.
                 if k == None or n == None or chi2 == None:
@@ -271,8 +265,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
             switch(best_model)
 
             # Duplicate.
-            duplicate_data[best_model](pipe_from=best_model, pipe_to=modsel_pipe, model_index=i, global_stats=global_stats, verbose=False)
+            duplicate_data[best_model](pipe_from=best_model, pipe_to=modsel_pipe, model_info=model_info, verbose=False)
 
     # Switch to the model selection pipe.
     switch(modsel_pipe)
-

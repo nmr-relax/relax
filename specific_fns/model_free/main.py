@@ -879,7 +879,7 @@ class Model_free_main:
     def deselect(self, model_index, sim_index=None):
         """Deselect models or simulations.
 
-        @keyword model_index:   The model index.  This is zero for the global models or equal to the
+        @param model_index:     The model index.  This is zero for the global models or equal to the
                                 global spin index (which covers the molecule, residue, and spin
                                 indices).
         @type model_index:      int
@@ -991,16 +991,17 @@ class Model_free_main:
             return 'all'
 
 
-    def duplicate_data(self, pipe_from=None, pipe_to=None, model_index=None, global_stats=False, verbose=True):
+    def duplicate_data(self, pipe_from=None, pipe_to=None, model_info=None, global_stats=False, verbose=True):
         """Duplicate the data specific to a single model-free model.
 
         @keyword pipe_from:     The data pipe to copy the data from.
         @type pipe_from:        str
         @keyword pipe_to:       The data pipe to copy the data to.
         @type pipe_to:          str
-        @keyword model_index:   The index of the model to determine which spin system to duplicate
-                                data from.
-        @type model_index:      int
+        @param model_info:      The model index.  This is zero for the global models or equal to the
+                                global spin index (which covers the molecule, residue, and spin
+                                indices).  This originates from the model_loop().
+        @type model_info:       int
         @keyword global_stats:  The global statistics flag
         @type global_stats:     bool
         @keyword verbose:       A flag which if True will cause info about each spin to be printed
@@ -1009,8 +1010,8 @@ class Model_free_main:
         """
 
         # Arg tests.
-        if model_index == None:
-            raise RelaxError, "The model_index argument cannot be None."
+        if model_info == None:
+            raise RelaxError, "The model_info argument cannot be None."
 
         # First create the pipe_to data pipe, if it doesn't exist, but don't switch to it.
         if not pipes.has_pipe(pipe_to):
@@ -1125,7 +1126,7 @@ class Model_free_main:
         # Sequence specific data.
         if model_type == 'mf' or (model_type == 'local_tm' and not global_stats):
             # Get the spin container indices.
-            mol_index, res_index, spin_index = convert_from_global_index(global_index=model_index, pipe=pipe_from)
+            mol_index, res_index, spin_index = convert_from_global_index(global_index=model_info, pipe=pipe_from)
 
             # Duplicate the spin specific data.
             dp_to.mol[mol_index].res[res_index].spin[spin_index] = deepcopy(dp_from.mol[mol_index].res[res_index].spin[spin_index])
@@ -1785,7 +1786,7 @@ class Model_free_main:
             spin.params = params
 
 
-    def model_statistics(self, instance=None, spin_id=None, global_stats=None):
+    def model_statistics(self, model_info=None, spin_id=None, global_stats=None):
         """Return the k, n, and chi2 model statistics.
 
         k - number of parameters.
@@ -1793,9 +1794,10 @@ class Model_free_main:
         chi2 - the chi-squared value.
 
 
-        @keyword instance:      This is the optimisation instance index.  Either this or the spin_id
-                                keyword argument must be supplied.
-        @type instance:         None or int
+        @keyword model_index:   The model index.  This is zero for the global models or equal to the
+                                global spin index (which covers the molecule, residue, and spin
+                                indices).  This originates from the model_loop().
+        @type model_index:      int
         @keyword spin_id:       The spin identification string.  Either this or the instance keyword
                                 argument must be supplied.
         @type spin_id:          None or str
@@ -1810,10 +1812,10 @@ class Model_free_main:
         """
 
         # Bad argument combination.
-        if instance == None and spin_id == None:
-            raise RelaxError, "Either the instance or spin_id argument must be supplied."
-        elif instance != None and spin_id != None:
-            raise RelaxError, "The instance arg " + `instance` + " and spin_id arg " + `spin_id` + " clash.  Only one should be supplied."
+        if model_info == None and spin_id == None:
+            raise RelaxError, "Either the model_info or spin_id argument must be supplied."
+        elif model_info != None and spin_id != None:
+            raise RelaxError, "The model_info arg " + `model_info` + " and spin_id arg " + `spin_id` + " clash.  Only one should be supplied."
 
         # Get the current data pipe.
         cdp = pipes.get_pipe()
@@ -1835,7 +1837,7 @@ class Model_free_main:
             if spin_id:
                 spin = return_spin(spin_id)
             else:
-                spin = return_spin_from_index(instance)
+                spin = return_spin_from_index(model_info)
 
             # Skip deselected residues.
             if not spin.select:
@@ -3169,27 +3171,20 @@ class Model_free_main:
             return spin.select_sim
 
 
-    def skip_function(self, instance=None, min_instances=None, num_instances=None):
+    def skip_function(self, model_index):
         """Skip certain data.
 
-        @keyword instance:      The index of the minimisation instance.
-        @type instance:         int
-        @keyword min_instances: The total number of minimisation instances.
-        @type min_instances:    int
-        @keyword num_instances: The total number of instances.
-        @type num_instances:    int
+        @param model_index:     The model index.  This is zero for the global models or equal to the
+                                global spin index (which covers the molecule, residue, and spin
+                                indices).  This originates from the model_loop().
+        @type model_index:      int
         """
 
         # Determine the model type.
         model_type = self.determine_model_type()
 
-        # All spins.
-        combine = False
-        if min_instances == 1 and min_instances != num_instances:
-            combine = True
-
         # Sequence specific data.
-        if (model_type == 'mf' or model_type == 'local_tm') and not combine and not return_spin_from_index(instance).select:
+        if (model_type == 'mf' or model_type == 'local_tm') and not return_spin_from_index(model_index).select:
             return True
 
         # Don't skip.
