@@ -215,5 +215,5 @@ class Palmer(TestCase):
         self.assertEqual(final_pipe.chi2, 32.6995)
         self.assertEqual(final_pipe.diff_tensor.tm, 8.964)
         self.assertEqual(final_pipe.diff_tensor.Dratio, 1.324)
-        self.assertEqual(final_pipe.diff_tensor.theta, -52.070)
-        self.assertEqual(final_pipe.diff_tensor.phi, 2.377)
+        self.assertEqual(final_pipe.diff_tensor.theta, (-52.070 / 360.0) * 2.0 * pi + pi)
+        self.assertEqual(final_pipe.diff_tensor.phi, (2.377 / 360.0) * 2.0 * pi)
