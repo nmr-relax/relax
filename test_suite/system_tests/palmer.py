@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+from math import pi
 import sys
 from shutil import rmtree
 from tempfile import mkdtemp
@@ -79,7 +80,17 @@ class Palmer(TestCase):
             print "Model " + `models[model_index]`
             for spin_index in xrange(3):
                 print "Spin " + `spin_names[spin_index]`
+
+                # Get the spin.
                 spin = return_spin(spin_names[spin_index], pipe=models[model_index])
+
+                # Conversions.
+                if te[model_index][spin_index]:
+                    te[model_index][spin_index] = te[model_index][spin_index] * 1e-12
+                if rex[model_index][spin_index]:
+                    rex[model_index][spin_index] = rex[model_index][spin_index] / (2.0 * pi * spin.frq[0])**2
+
+                # Checks.
                 self.assertEqual(spin.model, models[model_index])
                 self.assertEqual(spin.params, params[model_index])
                 self.assertEqual(spin.s2, s2[model_index][spin_index])
