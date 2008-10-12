@@ -146,6 +146,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
     # Initialise.
     function_type = {}
     model_loop = {}
+    model_type = {}
     duplicate_data = {}
     model_statistics = {}
     skip_function = {}
@@ -161,9 +162,27 @@ def select(method=None, modsel_pipe=None, pipes=None):
             for j in xrange(len(pipes[i])):
                 # Specific functions.
                 model_loop[pipes[i][j]] = get_specific_fn('model_loop', get_type(pipes[i][j]))
+                model_type[pipes[i][j]] = get_specific_fn('model_type', get_type(pipes[i][j]))
                 duplicate_data[pipes[i][j]] = get_specific_fn('duplicate_data', get_type(pipes[i][j]))
                 model_statistics[pipes[i][j]] = get_specific_fn('model_stats', get_type(pipes[i][j]))
                 skip_function[pipes[i][j]] = get_specific_fn('skip_function', get_type(pipes[i][j]))
+
+        # The model loop should be the same for all data pipes!
+        for i in xrange(len(pipes)):
+            for j in xrange(len(pipes[i])):
+                if model_loop[pipes[0][j]] != model_loop[pipes[i][j]]:
+                    raise RelaxError, "The models for each data pipes should be the same."
+        model_loop = model_loop[pipes[0][0]]
+
+        # The model description.
+        model_desc = get_specific_fn('model_desc', get_type(pipes[0]))
+
+        # Global vs. local models.
+        global_flag = False
+        for i in xrange(len(pipes)):
+            for j in xrange(len(pipes[i])):
+                if model_type[pipes[i][j]]() == 'global':
+                    global_flag = True
 
     # All other model selection setup.
     else:
@@ -171,18 +190,26 @@ def select(method=None, modsel_pipe=None, pipes=None):
         for i in xrange(len(pipes)):
             # Specific functions.
             model_loop[pipes[i]] = get_specific_fn('model_loop', get_type(pipes[i]))
+            model_type[pipes[i]] = get_specific_fn('model_type', get_type(pipes[i]))
             duplicate_data[pipes[i]] = get_specific_fn('duplicate_data', get_type(pipes[i]))
             model_statistics[pipes[i]] = get_specific_fn('model_stats', get_type(pipes[i]))
             skip_function[pipes[i]] = get_specific_fn('skip_function', get_type(pipes[i]))
 
-    # The model loop should be the same for all data pipes!
-    for j in xrange(len(pipes)):
-        if model_loop[pipes[0]] != model_loop[pipes[j]]:
-            raise RelaxError, "The models for each data pipes should be the same."
-    model_loop = model_loop[pipes[0]]
+        # The model loop should be the same for all data pipes!
+        for j in xrange(len(pipes)):
+            if model_loop[pipes[0]] != model_loop[pipes[j]]:
+                raise RelaxError, "The models for each data pipes should be the same."
+        model_loop = model_loop[pipes[0]]
 
-    # The model description.
-    model_desc = get_specific_fn('model_desc', get_type(pipes[0]))
+        # The model description.
+        model_desc = get_specific_fn('model_desc', get_type(pipes[0]))
+
+        # Global vs. local models.
+        global_flag = False
+        for j in xrange(len(pipes)):
+            if model_type[pipes[j]]() == 'global':
+                global_flag = True
+
 
     # Loop over the base models.
     for model_info in model_loop():
@@ -239,7 +266,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
                     continue
 
                 # Get the model statistics.
-                k, n, chi2 = model_statistics[pipe](model_info)
+                k, n, chi2 = model_statistics[pipe](model_info, global_stats=global_flag)
 
                 # Missing data sets.
                 if k == None or n == None or chi2 == None:
