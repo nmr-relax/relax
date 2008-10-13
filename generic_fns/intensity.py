@@ -226,23 +226,32 @@ def number_of_header_lines(file_data, format, int_col, intensity):
     ########
 
     # Loop over the lines of the file until a peak intensity value is reached.
-    header_lines = 0
-    for i in xrange(len(file_data)):
-        # Try to see if the intensity can be extracted.
-        try:
-            if int_col:
-                intensity(file_data[i], int_col)
+    if format == 'easy':
+        header_lines = 0
+        for i in xrange(len(file_data)):
+            # Try to see if the intensity can be extracted.
+            try:
+                if int_col:
+                    intensity(file_data[i], int_col)
+                else:
+                    intensity(file_data[i])
+            except RelaxError:
+                header_lines = header_lines + 1
+            except IndexError:
+                header_lines = header_lines + 1
             else:
-                intensity(file_data[i])
-        except RelaxError:
-            header_lines = header_lines + 1
-        except IndexError:
-            header_lines = header_lines + 1
-        else:
-            break
+                break
 
-    # Return the number of lines.
-    return header_lines
+        # Return the number of lines.
+        return header_lines
+
+
+    # NMRView.
+    ##########
+
+    # Assume the Sparky file has six header lines!
+    elif format == 'nmrview':
+        return 6
 
 
 def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=None, assign_func=None, spectrum_type=None):
