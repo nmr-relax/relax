@@ -144,7 +144,7 @@ class Noe:
         the peak height or peak volume data.  Because the columns are fixed, the 'int_col' argument
         will be ignored.
 
-        If the format argument is set to 'nmrview', the file should be a Nmrview peak list.
+        If the format argument is set to 'nmrview', the file should be a NMRView peak list.
 
 
         The 'heteronuc' and 'proton' arguments should be set respectively to the name of the

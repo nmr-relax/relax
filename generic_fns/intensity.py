@@ -160,7 +160,7 @@ def intensity_xeasy(line, int_col=None):
 
 
 def intensity_nmrview(line, int_col=None):
-    """Function for returning relevant data from the Nmrview peak intensity line.
+    """Function for returning relevant data from the NMRView peak intensity line.
 
     The residue number, heteronucleus and proton names, and peak intensity will be returned.
 
@@ -293,10 +293,10 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
         # Set the default proton dimension.
         H_dim = 'w1'
 
-    # Nmrview.
+    # NMRView.
     elif format == 'nmrview':
         # Print out.
-        print "Nmrview formatted data file.\n"
+        print "NMRView formatted data file.\n"
 
         # Set the intensity reading function.
         intensity_fn = intensity_nmrview
