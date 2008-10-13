@@ -49,6 +49,7 @@ from pipe_create import Pipe_create
 from relax_fit import Relax_fit
 from results import Results
 from sequence import Sequence
+from sparky import Sparky
 from state import State
 from structure import Structure
 from unit_vectors import Unit_vectors
@@ -73,6 +74,7 @@ __all__ = ['angles',
            'results',
            'sequence',
            'state',
+           'sparky',
            'structure',
            'unit_vectors']
 
@@ -113,6 +115,7 @@ class System_test_runner:
         suite_array.append(TestLoader().loadTestsFromTestCase(Relax_fit))
         suite_array.append(TestLoader().loadTestsFromTestCase(Results))
         suite_array.append(TestLoader().loadTestsFromTestCase(Sequence))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Sparky))
         suite_array.append(TestLoader().loadTestsFromTestCase(State))
         suite_array.append(TestLoader().loadTestsFromTestCase(Structure))
         suite_array.append(TestLoader().loadTestsFromTestCase(Unit_vectors))
