@@ -59,7 +59,7 @@ class Sparky(TestCase):
         self.relax.interpreter._Spin.name(name='N')
 
         # Read the peak list.
-        self.relax.interpreter._Relax_fit.read(file="ref_ave.list", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", relax_time=0, format='sparky')
+        self.relax.interpreter._Relax_fit.read(file="ref_ave.list", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", relax_time=0.0, format='sparky')
 
         # Test the data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 6262)
