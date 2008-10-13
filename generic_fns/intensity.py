@@ -195,7 +195,7 @@ def intensity_nmrview(line, int_col=None):
 
     # The peak intensity column.
     if int_col == None:
-        int_col = 16
+        int_col = 15
 
     # Intensity.
     try:
