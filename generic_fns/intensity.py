@@ -27,6 +27,7 @@
 # Python module imports.
 from re import split
 from warnings import warn
+import string
 import sys
 
 # relax module imports.
@@ -175,13 +176,22 @@ def intensity_nmrview(line, int_col=None):
 
     # The residue number
     try:
-        res_num = int(line[2])
+        res_num = string.strip(line[1],'{')
+        res_num = string.strip(res_num,'}')
+        res_num = string.split(res_num,'.')
+        res_num = res_num[0]
     except ValueError:
         raise RelaxError, "The peak list is invalid."
 
     # Nuclei names.
-    x_name = line[9]
-    h_name = line[2]
+    x_name = string.strip(line[8],'{')
+    x_name = string.strip(x_name,'}')
+    x_name = string.split(x_name,'.')
+    x_name = x_name[1]
+    h_name = string.strip(line[1],'{')
+    h_name = string.strip(h_name,'}')
+    h_name = string.split(h_name,'.')
+    h_name = h_name[1]
 
     # The peak intensity column.
     if int_col == None:
