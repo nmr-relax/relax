@@ -53,6 +53,7 @@ from sparky import Sparky
 from state import State
 from structure import Structure
 from unit_vectors import Unit_vectors
+from xeasy import XEasy
 
 
 __all__ = ['angles',
@@ -76,7 +77,8 @@ __all__ = ['angles',
            'state',
            'sparky',
            'structure',
-           'unit_vectors']
+           'unit_vectors',
+           'xeasy']
 
 
 class System_test_runner:
@@ -119,6 +121,7 @@ class System_test_runner:
         suite_array.append(TestLoader().loadTestsFromTestCase(State))
         suite_array.append(TestLoader().loadTestsFromTestCase(Structure))
         suite_array.append(TestLoader().loadTestsFromTestCase(Unit_vectors))
+        suite_array.append(TestLoader().loadTestsFromTestCase(XEasy))
 
         # Add the relax namespace to each TestCase object.
         for i in xrange(len(suite_array)):
