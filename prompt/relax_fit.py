@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006 Edward d'Auvergne                                  #
+# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,7 @@ import sys
 
 # relax module imports.
 import help
-from relax_errors import RelaxFloatError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxFloatError, RelaxNoneIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 from specific_fns.setup import relax_fit_obj
 
 
@@ -173,8 +173,8 @@ class Relax_fit:
             raise RelaxNoneStrError, ('directory name', dir)
 
         # The relaxation time.
-        if type(relax_time) != float:
-            raise RelaxFloatError, ('relaxation time', relax_time)
+        if type(relax_time) != int and type(relax_time) != float:
+            raise RelaxNumError, ('relaxation time', relax_time)
 
         # The format.
         if type(format) != str:
