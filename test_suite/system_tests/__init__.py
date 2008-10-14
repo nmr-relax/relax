@@ -43,17 +43,15 @@ from model_free import Mf
 from model_selection import Modsel
 from n_state_model import N_state_model
 from noe import Noe
-from nmrview import NMRView
 from palmer import Palmer
+from peak_lists import NMRView, Sparky, XEasy
 from pipe_create import Pipe_create
 from relax_fit import Relax_fit
 from results import Results
 from sequence import Sequence
-from sparky import Sparky
 from state import State
 from structure import Structure
 from unit_vectors import Unit_vectors
-from xeasy import XEasy
 
 
 __all__ = ['angles',
@@ -68,17 +66,15 @@ __all__ = ['angles',
            'model_selection',
            'n_state_model',
            'noe',
-           'nmrview',
            'palmer',
+           'peak_lists'
            'pipe_create',
            'relax_fit',
            'results',
            'sequence',
            'state',
-           'sparky',
            'structure',
-           'unit_vectors',
-           'xeasy']
+           'unit_vectors']
 
 
 class System_test_runner:
