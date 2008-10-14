@@ -1002,7 +1002,7 @@ class Relax_fit(Common_functions):
         cdp = pipes.get_pipe()
 
         # Store the relaxation time in the class instance.
-        self.__relax_time = relax_time
+        self.__relax_time = float(relax_time)
 
         # Global relaxation time data structure.
         if not hasattr(cdp, 'relax_times'):
