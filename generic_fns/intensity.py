@@ -175,6 +175,7 @@ def intensity_nmrview(line, int_col=None):
     """
 
     # The residue number
+    res_num=''
     try:
         res_num = string.strip(line[1],'{')
         res_num = string.strip(res_num,'}')
@@ -184,14 +185,18 @@ def intensity_nmrview(line, int_col=None):
         raise RelaxError, "The peak list is invalid."
 
     # Nuclei names.
-    x_name = string.strip(line[8],'{')
-    x_name = string.strip(x_name,'}')
-    x_name = string.split(x_name,'.')
-    x_name = x_name[1]
-    h_name = string.strip(line[1],'{')
-    h_name = string.strip(h_name,'}')
-    h_name = string.split(h_name,'.')
-    h_name = h_name[1]
+    x_name=''
+    if line[8]!='{}':
+        x_name = string.strip(line[8],'{')
+        x_name = string.strip(x_name,'}')
+        x_name = string.split(x_name,'.')
+        x_name = x_name[1]
+    h_name=''
+    if line[1]!='{}':
+        h_name = string.strip(line[1],'{')
+        h_name = string.strip(h_name,'}')
+        h_name = string.split(h_name,'.')
+        h_name = h_name[1]
 
     # The peak intensity column.
     if int_col == None:
