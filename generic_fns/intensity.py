@@ -86,29 +86,36 @@ def intensity_sparky(line, int_col=None):
     @raises RelaxError: When the expected peak intensity is not a float.
     """
 
+
     # The Sparky assignment.
-    assignment = split('([A-Z]+)', line[0])
-    assignment = assignment[1:-1]
+    assignment = ''
+    res_num=''
+    h_name=''
+    x_name=''
+    intensity=''
+    if line[0]!='?-?':
+        assignment = split('([A-Z]+)', line[0])
+        assignment = assignment[1:-1]
 
     # The residue number.
-    try:
-        res_num = int(assignment[1])
-    except:
-        raise RelaxError, "Improperly formatted Sparky file."
+        try:
+            res_num = int(assignment[1])
+        except:
+            raise RelaxError, "Improperly formatted Sparky file."
 
     # Nuclei names.
-    x_name = assignment[2]
-    h_name = assignment[4]
+        x_name = assignment[2]
+        h_name = assignment[4]
 
     # The peak intensity column.
-    if int_col == None:
-        int_col = 3
+        if int_col == None:
+            int_col = 3
 
     # Intensity.
-    try:
-        intensity = float(line[int_col])
-    except ValueError:
-        raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
+        try:
+            intensity = float(line[int_col])
+        except ValueError:
+            raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
 
     # Return the data.
     return res_num, h_name, x_name, intensity
