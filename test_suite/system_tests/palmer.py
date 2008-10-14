@@ -31,6 +31,7 @@ from unittest import TestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 from generic_fns.mol_res_spin import return_spin
+from relax_errors import RelaxError
 from relax_io import test_binary
 
 
@@ -149,6 +150,11 @@ class Palmer(TestCase):
 
         # Execute the script.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/palmer_omp.py')
+
+        # Catch a the old, buggy modelfree4 versions and complain loudly!
+        spin = return_spin(':9', pipe='m2')
+        if spin.s2 == 0.855:
+            raise RelaxError, "You are using an old, buggy Modelfree4 version!  You must upgrade to version 4.20 or later."
 
         # Checks for model m1, m2, and m3 mfout file reading.
         models = ['m1', 'm2', 'm3']
