@@ -27,6 +27,7 @@ except ImportError:
 
                  3. choose another multi processor method to give to the
                     --multi command line flag\n'''
+    #FIXME dedent not working
     msg=textwrap.dedent(msg)
     sys.stderr.write(msg)
     sys.stderr.write('exiting...\n\n')
