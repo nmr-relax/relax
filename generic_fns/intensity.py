@@ -121,7 +121,7 @@ def intensity_sparky(line, int_col=None):
     return res_num, h_name, x_name, intensity
 
 
-def intensity_xeasy(line, int_col=None):
+def intensity_xeasy(line, int_col=None, H_dim='w1'):
     """Function for returning relevant data from the XEasy peak intensity line.
 
     The residue number, heteronucleus and proton names, and peak intensity will be returned.
@@ -322,7 +322,7 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
         H_dim = 'w1'
 
         # Set the intensity reading function.
-        intensity_fn = intensity_xeasy(H_dim)
+        intensity_fn = intensity_xeasy
 
     # NMRView.
     elif format == 'nmrview':
