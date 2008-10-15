@@ -973,23 +973,23 @@ class Mf_minimise:
             # Back-calculation.
             ###################
 
-            #FIXME could be neater?
-            if min_algor == 'back_calc':
-                return command.build_mf().calc_ri()
 
 
             # Minimisation.
             ###############
             #FIXME??? strange contraints
-            if match('^[Gg]rid', min_algor):
+            if match('^[Gg]rid', min_algor) and self.param_set == 'all':
                 processors = self.relax.processor.processor_size()
                 full_grid_info = Grid_info(min_options)
                 sub_grid_list = full_grid_info.sub_divide(self.relax.processor.processor_size())
-                super_grid_memo = MF_super_grid_memo(model_free=self,index=index,sim_index=sim_index,run=self.run,param_set=self.param_set,
-                                          scaling=scaling,scaling_matrix=self.scaling_matrix)
+                if constraints:
+                    super_grid_memo = MF_super_grid_memo(model_free=self,index=index,sim_index=sim_index,run=self.run,param_set=self.param_set,
+                                          scaling=scaling,scaling_matrix=self.scaling_matrix,full_output=1, print_flag=print_flag, print_prefix="", grid_size=self.grid_size, A=A,b=b)
+                else:
+                    super_grid_memo = MF_super_grid_memo(model_free=self,index=index,sim_index=sim_index,run=self.run,param_set=self.param_set,
+                                          scaling=scaling,scaling_matrix=self.scaling_matrix,full_output=1, print_flag=print_flag, print_prefix="", grid_size=self.grid_size, )
 
                 for sub_grid_index,sub_grid_info in enumerate(sub_grid_list):
-
                     command=MF_grid_command()
                     command.set_mf(init_params=param_vector, model_type=model_type, diff_type=diff_type, diff_params=diff_params, scaling_matrix=scaling_matrix, num_spins=num_spins, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
                     if constraints:
@@ -998,12 +998,17 @@ class Mf_minimise:
                         command.set_minimise(args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
 
 
-                memo = MF_grid_memo(super_grid_memo)
-                self.relax.processor.add_to_queue(command,memo)
+                    memo = MF_grid_memo(super_grid_memo)
+                    self.relax.processor.add_to_queue(command,memo)
 
             else:
                 command=MF_minimise_command()
                 command.set_mf(init_params=param_vector, model_type=model_type, diff_type=diff_type, diff_params=diff_params, scaling_matrix=scaling_matrix, num_spins=num_spins, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
+
+                #FIXME could be neater?
+                if min_algor == 'back_calc':
+                    return command.build_mf().calc_ri()
+
                 if constraints:
                     command.set_minimise(args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=verbosity)
                 else:
@@ -1012,7 +1017,7 @@ class Mf_minimise:
                 memo = MF_memo(model_free=self,index=index,sim_index=sim_index,run=self.run,param_set=self.param_set,scaling=scaling, scaling_matrix=scaling_matrix)
 
                 self.relax.processor.add_to_queue(command,memo)
-
+        #print self.relax.processor.command_queue
         #raise Exception('test')
         #self.relax.processor.run_queue()
 
@@ -1022,6 +1027,20 @@ class Mf_minimise:
             #self.write_columnar_line(file=sys.stdout)
             #self.param_vector=param_vector
 
+#            print 'disassembel result'
+#            print 'param_vector',param_vector
+#            print 'func',func
+#            print 'iter',iter
+#            print 'fc',fc
+#            print 'gc',gc
+#            print 'hc',hc
+#            print 'warning',warning
+#            print 'run',run
+#            print 'index',index
+#            print 'sim_index',sim_index
+#            print ' param_set ',param_set
+#            print 'scaling',scaling
+#            print 'scaling_matrix',scaling_matrix
             #FIXME this is a fix for old code
 #            self.iter_count = iter
 #            self.f_count = fc

@@ -30,7 +30,12 @@ from re import match
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
 
+import minimise
 import sys
+from mpi4py import  MPI
+
+from minimise.generic import set_pre_and_post_amble as set_generic_pre_and_post_amble
+from minimise.grid import set_pre_and_post_amble as set_grid_pre_and_post_amble
 
 class Exit_command(Slave_command):
     def __init__(self):
@@ -65,13 +70,13 @@ class MF_memo(Memo):
         self.scaling=scaling
         self.scaling_matrix=scaling_matrix
 
-OFFSET_XK=0
-OFFSET_FK=1
-OFFSET_K=2
-OFFSET_F_COUNT=3
-OFFSET_G_COUNT=4
-OFFSET_H_COUNT=5
-OFFSET_WARNING=6
+OFFSET_XK=0      #  The array of minimised parameter values
+OFFSET_FK=1      #  The minimised function value,
+OFFSET_K=2       #  The number of iterations,
+OFFSET_F_COUNT=3 #  The number of function calls,
+OFFSET_G_COUNT=4 #  The number of gradient calls,
+OFFSET_H_COUNT=5 #  The number of Hessian calls,
+OFFSET_WARNING=6 #  The warning string.
 
 OFFSET_SHORT_MIN_PARAMS=0
 OFFSET_SHORT_FK=1
@@ -215,106 +220,209 @@ class MF_minimise_command(Slave_command):
                 string = "Fitting to residue: " + i_m['res_id']
                 print "\n\n" + string
                 print len(string) * '~'
-            if match('^[Gg]rid', m_m['min_algor']):
-                print "Unconstrained grid search size: " + `i_m['grid_size']` + " (constraints may decrease this size).\n"
 
     def process_results(self,results,processor,completed):
         param_vector, func, iter, fc, gc, hc, warning = results
 
         result_string = sys.stdout.getvalue() + sys.stderr.getvalue()
-        processor.return_object(Result_string(result_string,completed=False))
-        processor.return_object(MF_result_command(self.memo_id,param_vector, func, iter, fc, gc, hc, warning,completed=completed))
+        processor.return_object(MF_result_command(self.memo_id,param_vector, func, iter, fc, gc, hc, warning,completed=False))
+        processor.return_object(Result_string(result_string,completed=completed))
 
-    def run(self,processor, completed):
-
+    def pre_run(self,processor):
         #FIXME: move to processor startup
-        save_stdout = sys.stdout
-        save_stderr = sys.stderr
-        pre_string = processor.rank_format_string() % processor.rank()
+        self.save_stdout = sys.stdout
+        self.save_stderr = sys.stderr
+
         # add debug flag or extra channels that output immediately
+        pre_string = processor.rank_format_string() % processor.rank()
         sys.stdout = PrependStringIO(pre_string + ' S> ')
         sys.stderr = PrependStringIO(pre_string + ' E> ')
 
-        self.mf = self.build_mf()
-
-
+    def pre_command_feed_back(self,processor):
         self.do_feedback()
-        results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
-        self.process_results(results,processor,completed)
 
+    def post_command_feedback(self,results,processor):
+        pass
+
+    def run_command(self,processor):
+        self.mf = self.build_mf()
+        return generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
+
+
+    def process_result(self,processor):
+        self.process_results(self.results,processor,completed)
+
+    def post_run(self,processor):
         #FIXME: move to processor startup
         sys.stdout.close()
         sys.stderr.close()
-        sys.stdout = save_stdout
-        sys.stderr = save_stderr
+        sys.stdout = self.save_stdout
+        sys.stderr = self.save_stderr
+
+    def run(self,processor, completed):
+
+#        #FIXME: move to processor startup
+#        save_stdout = sys.stdout
+#        save_stderr = sys.stderr
+#        pre_string = processor.rank_format_string() % processor.rank()
+#        # add debug flag or extra channels that output immediately
+#        sys.stdout = PrependStringIO(pre_string + ' S> ')
+#        sys.stderr = PrependStringIO(pre_string + ' E> ')
+
+        self.pre_run(processor)
+        self.pre_command_feed_back(processor)
+        results = self.run_command(processor)
+        self.post_command_feedback(results, processor)
+        self.process_results(results, processor, completed)
+        self.post_run(processor)
+
+
+
+
+
+
+#        #FIXME: move to processor startup
+#        sys.stdout.close()
+#        sys.stderr.close()
+#        sys.stdout = save_stdout
+#        sys.stderr = save_stderr
 
 class MF_grid_command(MF_minimise_command):
     def __init__(self):
         super(MF_grid_command,self).__init__()
 
+#    def run(self,processor,completed):
+#        pass
+
+    def pre_command_feed_back(self,processor):
+#        print_prefix  = self.minimise_map['print_prefix']
+#        print_flag  = self.minimise_map['print_flag']
+#        grid_step = self.minimise_map['min_options'].start
+#        grid_size = self.minimise_map['min_options'].steps
+#        full_output = self.minimise_map['full_output']
+#        A = self.minimise_map['A']
+#        b = self.minimise_map['b']
+#
+
+
+        set_generic_pre_and_post_amble(False)
+        set_grid_pre_and_post_amble(False)
+#        if grid_step == 0:
+#            print "Unconstrained grid search size: " + `grid_size` + " (constraints may decrease this size).\n"
+#
+#            if print_flag:
+#                if print_flag >= 2:
+#                    print print_prefix
+#                print print_prefix
+#                print print_prefix + "Grid search"
+#                print print_prefix + "~~~~~~~~~~~"
+#
+#            # Linear constraints.
+#            if A != None and b != None:
+#                if print_flag >= 3:
+#                    print print_prefix + "Linear constraint matrices."
+#                    print print_prefix + "A: " + `A`
+#                    print print_prefix + "b: " + `b`
+
+        #def run_command()
+        #    return super(MF_grid_command,self).run(processor,completed)
+    def post_command_feedback(self,results,processor):
+
+        set_generic_pre_and_post_amble(True)
+        set_grid_pre_and_post_amble(True)
+
     def process_results(self,results,processor,completed):
         param_vector, func, iter, fc, gc, hc, warning = results
 
         result_string = sys.stdout.getvalue() + sys.stderr.getvalue()
-        processor.return_object(Result_string(result_string,completed=False))
-        processor.return_object(MF_grid_result_command(self.memo_id,param_vector, func, iter, fc, gc, hc, warning,completed=completed))
+        processor.return_object(MF_grid_result_command(result_string,self.memo_id,param_vector, func, iter, fc, gc, hc, warning,completed=completed))
 
-def MF_grid_memo(memo):
+class MF_grid_memo(Memo):
     def __init__(self,super_grid_memo):
         super(MF_grid_memo,self).__init__()
         self.super_grid_memo = super_grid_memo
+        self.super_grid_memo.add_sub_memo(self)
 
 
-    def add_results(self,results):
-        self.super_grid_memo.add_result(results)
+    def add_result(self,results):
+        self.super_grid_memo.add_result(self,results)
 
 class MF_super_grid_memo(MF_memo):
-    def __init__(self,model_free,index,sim_index,run,param_set,scaling,scaling_matrix):
+    def __init__(self,model_free,index,sim_index,run,param_set,scaling,scaling_matrix,print_prefix,print_flag,full_output,A,b,grid_size):
         super(MF_super_grid_memo,self).__init__(model_free,index,sim_index,run,param_set,scaling,scaling_matrix)
+        self.full_output=full_output
+        self.print_prefix = print_prefix
+        self.print_flag = print_flag
         self.sub_memos = []
         self.completed = False
 
+        self.A=A
+        self.b=b
+        self.grid_size=grid_size
         # aggregated results
         #             min_params, f_min, k
         short_result=[None, None, 0]
         self.xk = None
-        self.fk = None
+        self.fk = 1e300
         self.k = 0
         self.f_count = 0
         self.g_count = 0
         self.h_count = 0
         self.warning = []
+        self.first_time=None
 
 
 
 
-    def add_sub_memo(self):
+
+    def add_sub_memo(self,memo):
         self.sub_memos.append(memo)
 
-    def add_result(self,sub_memo,results,full_output):
-        if full_output:
+    def add_result(self,sub_memo,results):
+#        print '**** add result ****', sub_memo.memo_id(), results[OFFSET_FK], len(self.sub_memos)
+#        print results
+#        print self.full_output
+#        print results[OFFSET_FK],self.fk
+        sys.stdout.flush()
+        if self.full_output:
             if results[OFFSET_FK] < self.fk:
+                #print 'adding ******'
                 self.xk = results[OFFSET_XK]
                 self.fk = results[OFFSET_FK]
-                self.k += results[OFFSET_K]
-                self.f_count += results[OFFSET_F_COUNT]
-                self.g_count += results[OFFSET_G_COUNT]
-                self.h_count += results[OFFSET_H_COUNT]
-                self.warning.append(results[WARNING_OFFSET])
+            self.k += results[OFFSET_K]
+            self.f_count += results[OFFSET_F_COUNT]
+
+            self.g_count += results[OFFSET_G_COUNT]
+            self.h_count += results[OFFSET_H_COUNT]
+            if results[OFFSET_WARNING] != None:
+                self.warning.append(results[OFFSET_WARNING])
 
         else:
             if results[OFFSET_SHORT_FK] < short_result[OFFSET_SHORT_FK]:
                 self.short_result[OFFSET_SHORT_MIN_PARAMS] = results[OFFSET_SHORT_MIN_PARAMS]
                 self.short_result[OFFSET_SHORT_FK] = results[OFFSET_SHORT_FK]
-                self.short_result[OFFSET_SHORT_K] += results[OFFSET_SHORT_K]
+            self.short_result[OFFSET_SHORT_K] += results[OFFSET_SHORT_K]
         self.sub_memos.remove(sub_memo)
 
         if len(self.sub_memos) < 1:
             self.completed = True
+            if len(self.warning) == 0:
+                self.warning = None
+            else:
+                self.warning= ', '.join(self.warning)
+
+        # the order here is important !
+        if self.first_time == True:
+            self.first_time=False
+
+        if self.first_time == None:
+            self.first_time = True
+        #print   '****', self.xk,self.fk,self.k,self.f_count,self.g_count,self.h_count,self.warning
 
 class MF_grid_result_command(Result_command):
-    def __init__(self,memo_id,param_vector, func, iter, fc, gc, hc, warning,completed):
+    def __init__(self,result_string,memo_id,param_vector, func, iter, fc, gc, hc, warning,completed):
         super(MF_grid_result_command,self).__init__(completed=completed)
+        self.result_string=result_string
         self.memo_id=memo_id
         self.param_vector=param_vector
         self.func=func
@@ -330,20 +438,72 @@ class MF_grid_result_command(Result_command):
         # FIXME: names not consistent in memo
         # FIXME too much repacking
         results = (self.param_vector,self.func,self.iter,self.fc,self.gc,self.hc, self.warning)
-        memo.add_result(results,full_result=True)
+        memo.add_result(results)
 
         sgm =  memo.super_grid_memo
+
+        print_prefix  = sgm.print_prefix
+        print_flag  = sgm.print_flag
+        full_output = sgm.full_output
+        A = sgm.A
+        b = sgm.b
+        grid_size = sgm.grid_size
+
+
+        if sgm.first_time:
+
+
+            print
+            print "Unconstrained grid search size: " + `grid_size` + " (constraints may decrease this size).\n"
+
+            if print_flag:
+                if print_flag >= 2:
+                    print print_prefix
+                print print_prefix
+                print print_prefix + "Grid search"
+                print print_prefix + "~~~~~~~~~~~"
+
+            # Linear constraints.
+            if A != None and b != None:
+                if print_flag >= 3:
+                    print print_prefix + "Linear constraint matrices."
+                    print print_prefix + "A: " + `A`
+                    print print_prefix + "b: " + `b`
+
+        processor.save_stdout.write('\n'+self.result_string),
+
+
         if sgm.completed:
 
 
+            if print_flag and results != None:
+                if full_output:
+                    print
+                    print
+                    print print_prefix + "Parameter values: " + `sgm.xk`
+                    print print_prefix + "Function value:   " + `sgm.fk`
+                    print print_prefix + "Iterations:       " + `sgm.k`
+                    print print_prefix + "Function calls:   " + `sgm.f_count`
+                    print print_prefix + "Gradient calls:   " + `sgm.g_count`
+                    print print_prefix + "Hessian calls:    " + `sgm.h_count`
+                    if sgm.warning:
+                        print print_prefix + "Warning:          " + sgm.warning
+                    else:
+                        print print_prefix + "Warning:          None"
+                else:
+                    print print_prefix + "Parameter values: " + `sgm.short_results`
+                print ""
 
-            m_f=memo.model_free
+
+
+
+            m_f=sgm.model_free
             m_f.iter_count = 0
             m_f.f_count = 0
             m_f.g_count = 0
             m_f.h_count = 0
             #raise Exception()
-            m_f.disassemble_result(param_vector=sgm.xk,func=sgm.fk,iter=sgm.k,fc=sgm.fc,
-                                   gc=sgm.gc,hc=sgm.hc, warning=sgm.warning,
-                                   run=memo.run, index=memo.index, sim_index=memo.sim_index,
-                                   param_set=memo.param_set, scaling=memo.scaling, scaling_matrix=memo.scaling_matrix)
+            m_f.disassemble_result(param_vector=sgm.xk,func=sgm.fk,iter=sgm.k,fc=sgm.f_count,
+                                   gc=sgm.g_count,hc=sgm.h_count, warning=sgm.warning,
+                                   run=sgm.run, index=sgm.index, sim_index=sgm.sim_index,
+                                   param_set=sgm.param_set, scaling=sgm.scaling, scaling_matrix=sgm.scaling_matrix)
