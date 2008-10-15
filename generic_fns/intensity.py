@@ -318,11 +318,11 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
         # Print out.
         print "XEasy formatted data file.\n"
 
-        # Set the intensity reading function.
-        intensity_fn = intensity_xeasy
-
         # Set the default proton dimension.
         H_dim = 'w1'
+
+        # Set the intensity reading function.
+        intensity_fn = intensity_xeasy(H_dim)
 
     # NMRView.
     elif format == 'nmrview':
