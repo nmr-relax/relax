@@ -493,7 +493,9 @@ def load_multiprocessor(relax_instance):
         clazz =  getattr(modules[-1], class_name)
     else:
         raise RelaxError("can't load class %s from module %s" % (class_name,module_path))
+
     object = clazz(relax_instance)
+    relax_instance.processor =  object
     return object
 
 if __name__ == "__main__":
