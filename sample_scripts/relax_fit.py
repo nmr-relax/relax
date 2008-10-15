@@ -73,7 +73,7 @@ grace.write(y_data_type='chi2', file='chi2.agr', force=True)    # Minimised chi-
 grace.write(y_data_type='i0', file='i0.agr', force=True)    # Initial peak intensity.
 grace.write(y_data_type='rx', file='rx.agr', force=True)    # Relaxation rate.
 grace.write(x_data_type='relax_times', y_data_type='ave_int', file='intensities.agr', force=True)    # Average peak intensities.
-grace.write(x_data_type='relax_times', y_data_type='ave_int', norm=1, file='intensities_norm.agr', force=True)    # Average peak intensities (normalised).
+grace.write(x_data_type='relax_times', y_data_type='ave_int', norm=True, file='intensities_norm.agr', force=True)    # Average peak intensities (normalised).
 
 # Display the Grace plots.
 grace.view(file='chi2.agr')
