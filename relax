@@ -102,8 +102,11 @@ class Relax:
         relax_errors.relax = self
         relax_warnings.relax = self
 
+    def run(self):
 
-    def run(self, mode):
+        #FIXME use self.mode all over
+        mode = self.mode
+
         # Show the version number and exit.
         if mode == 'version':
             print 'relax ' + self.version
@@ -289,19 +292,7 @@ class Relax:
             # Set the mode.
             mode = 'licence'
 
-        # multi processor
-        elif options.multiprocessor != 'uni':
 
-            # Exclusive modes.
-            if options.test_suite or options.unit_test:
-                parser.error("the relax multi processor mode and executing the test suite are mutually exclusive")
-            elif options.licence:
-                parser.error("the relax multi processor multi processor and licence are mutually exclusive")
-
-            self.multiprocessor_type = options.multiprocessor
-            self.n_processors = options.n_processors
-
-            mode='multi'
 
         # Script mode.
         elif self.script_file:
@@ -319,7 +310,26 @@ class Relax:
             mode = 'prompt'
 
         # Return.
-        return mode
+
+        # multi processor
+
+        if options.multiprocessor == 'uni':
+            self.multi_mode = 'uni'
+        else:
+            # Exclusive modes.
+            if options.test_suite or options.unit_test:
+                parser.error("the relax multi processor mode and executing the test suite are mutually exclusive")
+            elif options.licence:
+                parser.error("the relax multi processor multi processor and licence are mutually exclusive")
+
+            self.multiprocessor_type = options.multiprocessor
+            self.n_processors = options.n_processors
+
+            #note will be changed to multi_master or multi_slave when multi_processor initialises
+            self.multi_mode='multi'
+
+        #FIXME: use self.mode throughout
+        self.mode=mode
 
 
     def get_intro_string(self):
@@ -451,13 +461,14 @@ def import_module(module_path, verbose=False):
 
     try:
         module = __import__(module_path,globals(),  locals(), [])
-        print 'loaded module %s' % module_path
+        if verbose:
+            print 'loaded module %s' % module_path
     except Exception, e:
         if verbose:
             print 'failed to load module_path %s' % module_path
             print 'exception:',e
 
-
+    #FIXME: needs more failure checking
     if module != None:
         result = [module]
         components = module_path.split('.')
@@ -467,16 +478,20 @@ def import_module(module_path, verbose=False):
     return result
 
 #FIXME: mode not required should be an instance variable of relax?
-def load_multiprocessor(mode,relax_instance):
+def load_multiprocessor(relax_instance):
 
     processor_name = relax_instance.multiprocessor_type + '_processor'
     class_name= processor_name[0].upper() + processor_name[1:]
     module_path = '.'.join(('multi',processor_name))
 
 
-    modules = import_module(module_path)
-    clazz =  getattr(modules[-1], class_name)
-    object = clazz(mode,relax_instance)
+    modules = import_module(module_path,verbose=True)
+    print modules
+    if hasattr(modules[-1],class_name):
+        clazz =  getattr(modules[-1], class_name)
+    else:
+        raise RelaxError("can't load class %s from module %s" % (class_name,module_path))
+    object = clazz(relax_instance)
     return object
 
 if __name__ == "__main__":
@@ -490,7 +505,7 @@ if __name__ == "__main__":
     if not profile_flag:
         relax_instance = Relax()
         mode=relax_instance.arguments(sys.argv[1:])
-        multi_processor = load_multiprocessor(mode,relax_instance)
+        multi_processor = load_multiprocessor(relax_instance)
         multi_processor.run()
 
     else:
