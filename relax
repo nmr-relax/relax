@@ -129,6 +129,7 @@ class Relax:
             # Run the interpreter.
             self.interpreter = interpreter.Interpreter(self, intro_string)
             self.interpreter.run(self.script_file)
+            print 'exit'
 
         # Execute the relax test suite
         elif mode == 'test suite':
@@ -486,8 +487,8 @@ def load_multiprocessor(relax_instance):
     module_path = '.'.join(('multi',processor_name))
 
 
-    modules = import_module(module_path,verbose=True)
-    print modules
+    modules = import_module(module_path)
+    #print modules
     if hasattr(modules[-1],class_name):
         clazz =  getattr(modules[-1], class_name)
     else:
