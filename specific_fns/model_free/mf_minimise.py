@@ -25,6 +25,8 @@ from math import pi
 from numpy import float64, array, dot, zeros
 from numpy.linalg import inv
 from re import match
+import cStringIO #FIXME: temporary for pickle tests
+import marshal   #FIXME: temporary for pickle tests
 
 # relax module imports.
 from float import isNaN, isInf
@@ -33,6 +35,7 @@ from generic_fns.diffusion_tensor import diff_data_exists
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
+from multi.mpi4py_processor import  MF_minimise_command
 from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxProtonTypeError, RelaxSpinTypeError
 
@@ -938,12 +941,70 @@ class Mf_minimise:
             relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params = self.minimise_data_setup(model_type, min_algor, num_data_sets, min_options, spin=spin, sim_index=sim_index)
 
 
-            # Initialise the function to minimise.
-            ######################################
-
-            self.mf = Mf(init_params=param_vector, model_type=model_type, diff_type=diff_type, diff_params=diff_params, scaling_matrix=scaling_matrix, num_spins=num_spins, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
-
-
+#            # Initialise the function to minimise.
+#            ######################################
+#            print 'initialise Mf'
+#            print 'init_params',self.param_vector
+#            print 'param_se',self.param_set
+#            print 'diff_type',diff_type
+#            print 'diff_params',diff_params
+#            print 'scaling_matrix',self.scaling_matrix
+#            print 'num_res',num_res
+#            print 'equations',equations
+#            print 'param_types',param_types
+#            print 'param_values',param_values
+#            print 'relax_data',relax_data
+#            print 'errors',relax_error
+#            print 'bond_length',r
+#            print 'csa=',csa
+#            print 'num_frq',num_frq
+#            print 'frq',frq
+#            print 'num_ri',num_ri
+#            print 'remap_table',remap_table
+#            print 'noe_r1_table',noe_r1_table
+#            print 'ri_labels',ri_labels
+#            print 'gx',self.relax.data.gx
+#            print 'gh',self.relax.data.gh
+#            print 'g_ratio',self.relax.data.g_ratio
+#            print 'h_bar',self.relax.data.h_bar
+#            print 'mu0',self.relax.data.mu0
+#            print 'num_params',num_params
+#            print 'vectors',xh_unit_vectors
+#
+#            data_list =  [ 'initialise Mf',
+#             'init_params',self.param_vector,
+#             'param_set',self.param_set,
+#             'diff_type',diff_type,
+#             'diff_params',diff_params,
+#             'scaling_matrix',self.scaling_matrix,
+#             'num_res',num_res,
+#             'equations',equations,
+#             'param_types',param_types,
+#             'param_values',param_values,
+#             'relax_data',relax_data,
+#             'errors',relax_error,
+#             'bond_length',r,
+#             'csa=',csa,
+#             'num_frq',num_frq,
+#             'frq',frq,
+#             'num_ri',num_ri,
+#             'remap_table',remap_table,
+#             'noe_r1_table',noe_r1_table,
+#             'ri_labels',ri_labels,
+#             'gx',self.relax.data.gx,
+#             'gh',self.relax.data.gh,\
+#             'g_ratio',self.relax.data.g_ratio,
+#             'h_bar',self.relax.data.h_bar,
+#             'mu0',self.relax.data.mu0,
+#             'num_params',num_params,
+#             'vectors',xh_unit_vectors]
+#            for elem in data_list:
+#                marshal.loads(marshal.dumps(elem))
+#            self.mf = Mf(init_params=param_vector, model_type=model_type, diff_type=diff_type, diff_params=diff_params, scaling_matrix=scaling_matrix, num_spins=num_spins, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
+            command=MF_minimise_command()
+            command.set_mf(init_params=param_vector, model_type=model_type, diff_type=diff_type, diff_params=diff_params, scaling_matrix=scaling_matrix, num_spins=num_spins, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
+            #test.assert_mf_equivalent(self.mf)
+            ##self.mf=test.mf
             # Setup the minimisation algorithm when constraints are present.
             ################################################################
 
@@ -975,25 +1036,32 @@ class Mf_minimise:
             # Back-calculation.
             ###################
 
+            #FIXME could be neater?
             if min_algor == 'back_calc':
-                return self.mf.calc_ri()
+                return command.build_mf().calc_ri()
 
 
             # Minimisation.
             ###############
-
+            #FIXME remove old version
+#            if constraints:
+#                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
+#            else:
+#                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
+#            if results == None:
+#                return
+            #FIXME??? strange contraints
             # Constrained optimisation.
             if constraints:
-                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=verbosity)
-
-            # Unconstrained optimisation.
+                command.set_minimise(args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=verbosity)
             else:
-                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
+                command.set_minimise(args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
+            command.run(None)
 
             # Disassemble the results.
             if results == None:
                 continue
-            param_vector, func, iter, fc, gc, hc, warning = results
+            param_vector, func, iter, fc, gc, hc, warning = command.results
             iter_count = iter_count + iter
             f_count = f_count + fc
             g_count = g_count + gc
