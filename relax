@@ -102,18 +102,20 @@ class Relax:
         relax_errors.relax = self
         relax_warnings.relax = self
 
+
+    def run(self, mode):
         # Show the version number and exit.
         if mode == 'version':
             print 'relax ' + self.version
             sys.exit()
 
         # Logging.
-        if log_file:
-            log(log_file)
+        if self.log_file:
+            log(self.log_file)
 
         # Tee.
-        elif tee_file:
-            tee(tee_file)
+        elif self.tee_file:
+            tee(self.tee_file)
 
         # Create a string to pass to the interpreter to print.
         intro_string = self.get_intro_string()
@@ -159,7 +161,7 @@ class Relax:
             self.licence()
 
 
-    def arguments(self):
+    def arguments(self,args):
         """Function for processing the command line arguments."""
 
         # Parser object.
@@ -176,9 +178,11 @@ class Relax:
         parser.add_option('-s', '--system-tests', action='store_true', dest='system_tests', default=0, help='execute the relax system/functional tests (part of the test suite)')
         parser.add_option('-u', '--unit-tests', action='store_true', dest='unit_tests', default=0, help='execute the relax unit tests (part of the test suite)')
         parser.add_option('-v', '--version', action='store_true', dest='version', default=0, help='show the version number and exit')
+        parser.add_option('-m', '--multi', action='store', type='string', dest='multiprocessor', default='uni', help='set multi processor method')
+        parser.add_option('-n', '--processors', action='store', type='int', dest='n_processors', default=1, help='set number of processors (may be ignored)')
 
         # Parse the options.
-        (options, args) = parser.parse_args()
+        (options, args) = parser.parse_args(args)
 
         # Debugging flag.
         if options.debug:
@@ -195,9 +199,9 @@ class Relax:
                 parser.error("the logging and tee options cannot be set simultaneously")
 
             # The log file.
-            log_file = options.log
+            self.log_file = options.log
         else:
-            log_file = None
+            self.log_file = None
 
         # Tee.
         if options.tee:
@@ -206,9 +210,9 @@ class Relax:
                 parser.error("the tee and logging options cannot be set simultaneously")
 
             # The tee file.
-            tee_file = options.tee
+            self.tee_file = options.tee
         else:
-            tee_file = None
+            self.tee_file = None
 
         # Number of positional arguements should only be 0 or 1.  1 should be the script file.
         if len(args) > 1:
@@ -222,6 +226,9 @@ class Relax:
             # Test if the script file exists.
             if not access(self.script_file, F_OK):
                 parser.error("the script file " + `self.script_file` + " does not exist")
+
+
+
 
 
         # Determine the relax mode and test for mutually exclusive modes.
@@ -282,16 +289,37 @@ class Relax:
             # Set the mode.
             mode = 'licence'
 
+        # multi processor
+        elif options.multiprocessor != 'uni':
+
+            # Exclusive modes.
+            if options.test_suite or options.unit_test:
+                parser.error("the relax multi processor mode and executing the test suite are mutually exclusive")
+            elif options.licence:
+                parser.error("the relax multi processor multi processor and licence are mutually exclusive")
+
+            self.multiprocessor_type = options.multiprocessor
+            self.n_processors = options.n_processors
+
+            mode='multi'
+
         # Script mode.
         elif self.script_file:
+            #FIXME check for uniprocessor and n_processors
+            self.multiprocessor_type = options.multiprocessor
+            self.n_processors = options.n_processors
             mode = 'script'
+
 
         # Prompt mode (default).
         else:
+            #FIXME check for uniprocessor and n_processors
+            self.multiprocessor_type = options.multiprocessor
+            self.n_processors = options.n_processors
             mode = 'prompt'
 
         # Return.
-        return mode, log_file, tee_file
+        return mode
 
 
     def get_intro_string(self):
@@ -399,16 +427,77 @@ class RelaxParser(OptionParser):
         # Exit.
         sys.exit()
 
+# FIXME: code shared with unit testing framework not changed from unit tests version
+# replace unit test version with this
+def import_module(module_path, verbose=False):
+    ''' import the python module named by module_path
+
+        @type module_path: a string containing a dot separated module path
+        @param module_path: a module path in python dot separated format
+                            note: this currently doesn't support relative module
+                            paths as defined by pep328 and python 2.5
+
+        @type verbose: Boolean
+        @param verbose: whether to report sucesses and failures for debugging
+
+        @rtype:     list of class module instances or None
+        @return:    the module path as a list of module instances or None
+                    if the module path cannot be found in the python path
+
+        '''
+
+    module = None
+    result = None
+
+    try:
+        module = __import__(module_path,globals(),  locals(), [])
+        print 'loaded module %s' % module_path
+    except Exception, e:
+        if verbose:
+            print 'failed to load module_path %s' % module_path
+            print 'exception:',e
+
+
+    if module != None:
+        result = [module]
+        components = module_path.split('.')
+        for component in components[1:]:
+            module = getattr(module, component)
+            result.append(module)
+    return result
+
+#FIXME: mode not required should be an instance variable of relax?
+def load_multiprocessor(mode,relax_instance):
+
+    processor_name = relax_instance.multiprocessor_type + '_processor'
+    class_name= processor_name[0].upper() + processor_name[1:]
+    module_path = '.'.join(('multi',processor_name))
+
+
+    modules = import_module(module_path)
+    clazz =  getattr(modules[-1], class_name)
+    object = clazz(mode,relax_instance)
+    return object
 
 if __name__ == "__main__":
+    #import multi.uni_processor
+    for elem in  sys.modules:
+        if elem == 'multi.uni_processor':
+            print 'found',elem
     # Change this flag to 1 for code profiling.
     profile_flag = 0
 
     if not profile_flag:
-        Relax()
+        relax_instance = Relax()
+        mode=relax_instance.arguments(sys.argv[1:])
+        multi_processor = load_multiprocessor(mode,relax_instance)
+        multi_processor.run()
+
     else:
         def print_stats(stats, status=0):
             pstats.Stats(stats).sort_stats('time', 'name').print_stats()
-
+        #FIXME: profiling won't work with multi processors.
         profile.Profile.print_stats = print_stats
         profile.run('Relax()')
+
+
