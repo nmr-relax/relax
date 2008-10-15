@@ -131,6 +131,11 @@ class Relax:
             self.interpreter.run(self.script_file)
             print 'exit'
 
+        elif mode == 'slave':
+            self.interpreter = Interpreter(self)
+            self.dummy_mode=1
+            self.interpreter.run()
+
         # Execute the relax test suite
         elif mode == 'test suite':
             # Load the interpreter and turn intros on.
