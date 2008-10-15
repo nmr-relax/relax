@@ -2,6 +2,8 @@ from  StringIO import StringIO
 import sys
 
 
+
+
 class PrependOut(StringIO):
 
     def __init__(self,token,stream):
@@ -9,14 +11,19 @@ class PrependOut(StringIO):
         self.token = token
         self.token_length = len(token)
         self.first_time = True
+
         self.stream=stream
 
     def write(self,string):
-        if self.first_time == True:
-            string =self.token + string
-            self.first_time = False
+        #sys.__stdout__.write('<<' + string + '>>\n')
+
         string = string.replace('\n', '\n' + self.token)
+        if self.first_time == True:
+            string = '\n'+self.token + string
+            self.first_time = False
+
         #StringIO.write(self,string)
+        #sys.__stdout__.write('<<' + string + '>>\n')
         self.stream.write(string)
         #self.truncate(0)
 
@@ -36,11 +43,20 @@ class PrependStringIO(StringIO):
         self.token_length = len(token)
         self.first_time = True
 
+
     def write(self,string):
-        if self.first_time == True:
-            string =self.token + string
-            self.first_time = False
+        # FIXME: raising an exception here wedges mpi4py
+        file_name = sys._getframe(1).f_code.co_filename.split('/')[-1]
+        function_name = sys._getframe(1).f_code.co_name
+        line_number = sys._getframe(1).f_lineno
+        #msg = '<<%d - %s - %s - %d: %s>>'  %(id(self),file_name,function_name,line_number,string)
+        #sys.__stdout__.write(msg)
         string = string.replace('\n', '\n' + self.token)
+        if self.first_time == True:
+            string ='\n' +self.token + string
+            self.first_time = False
+
+
         StringIO.write(self,string)
 
 
@@ -49,10 +65,9 @@ class PrependStringIO(StringIO):
 
     def getvalue(self):
         result = StringIO.getvalue(self)
-        #if len(result) <= len(self.token):
-        #   result = ''
-        #if result.endswith('\n' + self.token):
-        #    result = result[0:-self.token_length-1]
+        if len(result) > 0  and result[-1] == '\n':
+           result = result[0:-self.token_length-1]
+           result=result+'\n'
         return result
 
 if __name__ =='__main__':

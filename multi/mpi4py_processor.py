@@ -174,7 +174,7 @@ class Threaded_result_queue(object):
 
 
 
-#FIXME do some inheritance
+#FIXME: do some inheritance
 class Mpi4py_processor(Processor):
 
 

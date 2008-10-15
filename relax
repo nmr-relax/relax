@@ -132,10 +132,11 @@ class Relax:
             self.interpreter = interpreter.Interpreter(self, intro_string)
             self.interpreter.run(self.script_file)
 
-        elif mode == 'slave':
-            self.interpreter = Interpreter(self)
-            self.dummy_mode=1
-            self.interpreter.run()
+        # FIXME no more threading
+#        elif mode == 'slave':
+#            self.interpreter = Interpreter(self)
+#            self.dummy_mode=1
+#            self.interpreter.run()
 
         # Execute the relax test suite
         elif mode == 'test suite':
@@ -244,14 +245,16 @@ class Relax:
 
         # Determine the relax mode and test for mutually exclusive modes.
         #################################################################
-
+# TODO: this should be a task
         # Show the version number.
         if options.version:
             mode = 'version'
 
         # Run the relax tests.
         elif options.test_suite or options.system_tests or options.unit_tests:
-            # Make sure no script is supplied.
+#FIXME: multiprocessor options should be  mostly resolved independant of the run mode
+            self.multiprocessor_type = options.multiprocessor
+            self.n_processors = options.n_processors           # Make sure no script is supplied.
             if self.script_file:
                 parser.error("a script should not be supplied when executing the test suite")
 
