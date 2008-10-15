@@ -3,7 +3,6 @@
 # Copyright (C) 2007  Gary S Thompson (see https://gna.org/users/varioustoxins #
 #                                      for contact details)                    #
 #                                                                              #
-#                                                                              #
 # This file is part of the program relax.                                      #
 #                                                                              #
 # relax is free software; you can redistribute it and/or modify                #
@@ -22,22 +21,21 @@
 #                                                                              #
 ################################################################################
 
+# Module docstring.
+"""Module for the multi-processor command system."""
 
-from multi.processor import Memo,Slave_command
-from multi.processor import Result_command,Result_string
-from re import match
-
-from maths_fns.mf import Mf
-from minimise.generic import generic_minimise
-
-import minimise
+# Python module imports.
 import sys
 import traceback
-from processor import Capturing_exception
+from re import match
 
+# relax module imports.
+from maths_fns.mf import Mf
+#from minimise.generic import generic_minimise
+#from minimise.generic import set_pre_and_post_amble as set_generic_pre_and_post_amble
+#from minimise.grid import set_pre_and_post_amble as set_grid_pre_and_post_amble
+from multi.processor import Capturing_exception, Memo, Result_command, Result_string, Slave_command
 
-from minimise.generic import set_pre_and_post_amble as set_generic_pre_and_post_amble
-from minimise.grid import set_pre_and_post_amble as set_grid_pre_and_post_amble
 
 class Exit_command(Slave_command):
     def __init__(self):

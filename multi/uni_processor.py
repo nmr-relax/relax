@@ -3,7 +3,6 @@
 # Copyright (C) 2007  Gary S Thompson (see https://gna.org/users/varioustoxins #
 #                                      for contact details)                    #
 #                                                                              #
-#                                                                              #
 # This file is part of the program relax.                                      #
 #                                                                              #
 # relax is free software; you can redistribute it and/or modify                #
@@ -21,12 +20,19 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA    #
 #                                                                              #
 ################################################################################
-from errors import RelaxWarnings
+
+# Module docstring.
+"""Module containing the uni-processor class."""
+
+# Python module imports.
 import threading, Queue
 import sys,os
-import multi
 
-from multi.processor import Processor,Result_command,Result_string
+# relax module imports.
+import multi
+from multi.processor import Processor, Result_command, Result_string
+
+
 #class Processor(object):
 #    def add_to_queue(self,command,memo=None):
 #        pass
