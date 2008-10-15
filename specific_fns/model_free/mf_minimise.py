@@ -978,7 +978,7 @@ class Mf_minimise:
             # Minimisation.
             ###############
             #FIXME??? strange contraints
-            if match('^[Gg]rid', min_algor) and self.param_set == 'all':
+            if match('^[Gg]rid', min_algor) and self.param_set == 'diff' :
                 processors = self.relax.processor.processor_size()
                 full_grid_info = Grid_info(min_options)
                 sub_grid_list = full_grid_info.sub_divide(self.relax.processor.processor_size())

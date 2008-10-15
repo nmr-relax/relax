@@ -32,7 +32,6 @@ from minimise.generic import generic_minimise
 
 import minimise
 import sys
-from mpi4py import  MPI
 
 from minimise.generic import set_pre_and_post_amble as set_generic_pre_and_post_amble
 from minimise.grid import set_pre_and_post_amble as set_grid_pre_and_post_amble
@@ -228,18 +227,34 @@ class MF_minimise_command(Slave_command):
         processor.return_object(MF_result_command(self.memo_id,param_vector, func, iter, fc, gc, hc, warning,completed=False))
         processor.return_object(Result_string(result_string,completed=completed))
 
+    def pre_command_feed_back(self,processor):
+        self.do_feedback()
+
+
     def pre_run(self,processor):
         #FIXME: move to processor startup
+
         self.save_stdout = sys.stdout
         self.save_stderr = sys.stderr
 
         # add debug flag or extra channels that output immediately
-        pre_string = processor.rank_format_string() % processor.rank()
-        sys.stdout = PrependStringIO(pre_string + ' S> ')
-        sys.stderr = PrependStringIO(pre_string + ' E> ')
+        if processor.processor_size() > 1:
+            pre_string = processor.rank_format_string() % processor.rank()
+            stderr_string = ' E>'
+            stdout_string  = ' S>'
+        else:
+            pre_string = ''
+            stderr_string = ''
+            stdout_string  = ''
+        sys.stdout = PrependStringIO(pre_string + stdout_string)
+        sys.stderr = PrependStringIO(pre_string + stderr_string)
 
-    def pre_command_feed_back(self,processor):
-        self.do_feedback()
+    def post_run(self,processor):
+        #FIXME: move to processor startup
+        sys.stdout.close()
+        sys.stderr.close()
+        sys.stdout = self.save_stdout
+        sys.stderr = self.save_stderr
 
     def post_command_feedback(self,results,processor):
         pass
@@ -252,12 +267,7 @@ class MF_minimise_command(Slave_command):
     def process_result(self,processor):
         self.process_results(self.results,processor,completed)
 
-    def post_run(self,processor):
-        #FIXME: move to processor startup
-        sys.stdout.close()
-        sys.stderr.close()
-        sys.stdout = self.save_stdout
-        sys.stderr = self.save_stderr
+
 
     def run(self,processor, completed):
 
@@ -303,7 +313,6 @@ class MF_grid_command(MF_minimise_command):
 #        A = self.minimise_map['A']
 #        b = self.minimise_map['b']
 #
-
 
         set_generic_pre_and_post_amble(False)
         set_grid_pre_and_post_amble(False)
@@ -450,6 +459,7 @@ class MF_grid_result_command(Result_command):
         grid_size = sgm.grid_size
 
 
+
         if sgm.first_time:
 
 
@@ -478,8 +488,8 @@ class MF_grid_result_command(Result_command):
 
             if print_flag and results != None:
                 if full_output:
-                    print
-                    print
+                    print ''
+                    print ''
                     print print_prefix + "Parameter values: " + `sgm.xk`
                     print print_prefix + "Function value:   " + `sgm.fk`
                     print print_prefix + "Iterations:       " + `sgm.k`

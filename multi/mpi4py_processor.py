@@ -22,7 +22,8 @@
 #                                                                              #
 ################################################################################
 
-#TODO clone communicators & resize
+# TODO: clone communicators & resize
+# TODO: check exceptiosn on master
 import sys
 import os
 import math
@@ -169,8 +170,9 @@ class Mpi4py_processor(Processor):
         result.rank=MPI.rank
         MPI.COMM_WORLD.Send(buf=result, dest=0)
 
-
-
+    #FIXME: fill out
+    def process_result(self):
+        pass
 
     def run_command_queue(self,queue):
         self.assert_on_master()
@@ -248,16 +250,10 @@ class Mpi4py_processor(Processor):
                 last_command = len(commands)-1
                 for i,command  in enumerate(commands):
                     try:
-                        completed = i == last_command
+                        completed = (i == last_command)
                         command.run(self,completed)
                         #raise Exception('dummy')
                     except Exception,e:
                         #self.return_object(e)
                         self.return_object(Capturing_exception(rank=self.rank(),name=self.get_name()))
-
-
-
-
-
-
 
