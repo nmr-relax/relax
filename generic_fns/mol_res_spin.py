@@ -1179,6 +1179,20 @@ def find_index(selection=None, pipe=None, global_index=True):
                         return mol_index, res_index, spin_index
 
 
+def first_residue_num(selection=None):
+    """Determine the first residue number.
+
+    @return:    The number of the first residue.
+    @rtype:     int
+    """
+
+    # Get the molecule.
+    mol = return_molecule(selection)
+
+    # The first residue number.
+    return mol.res[0].num
+
+
 def generate_spin_id(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
     """Generate the spin selection string.
 
@@ -1267,6 +1281,20 @@ def generate_spin_id_data_array(data=None, mol_name_col=None, res_num_col=0, res
 
     # Return the spin id string.
     return id
+
+
+def last_residue_num(selection=None):
+    """Determine the last residue number.
+
+    @return:    The number of the last residue.
+    @rtype:     int
+    """
+
+    # Get the molecule.
+    mol = return_molecule(selection)
+
+    # The last residue number.
+    return mol.res[-1].num
 
 
 def molecule_loop(selection=None, pipe=None):

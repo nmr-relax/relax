@@ -26,32 +26,64 @@
 
 # Python module imports.
 from math import pi
-from os import F_OK, P_WAIT, access, chdir, chmod, getcwd, listdir, remove, system
+from os import F_OK, access, chdir, chmod, getcwd, listdir, popen3, remove, sep, system
 from re import match, search
 from string import count, find, split
-
-# UNIX only functions from the os module (Modelfree4 only runs under UNIX anyway).
-try:
-    from os import spawnlp
-except ImportError:
-    pass
+import sys
 
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
-from generic_fns import pipes
+from generic_fns import diffusion_tensor, pipes
+from physical_constants import return_gyromagnetic_ratio
 from relax_errors import RelaxDirError, RelaxFileError, RelaxFileOverwriteError, RelaxNoModelError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNucleusError, RelaxProgFailError
 from relax_io import mkdir_nofail, open_write_file, test_binary
+from specific_fns.setup import model_free_obj
 
 
-def create(dir, force, binary, diff_search, sims, sim_type, trim, steps, constraints, heteronuc_type, atom1, atom2, spin_id):
-    """Function for creating the Modelfree4 input files.
+def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, trim=None, steps=None, heteronuc_type=None, atom1=None, atom2=None, spin_id=None, force=False, constraints=True):
+    """Create the Modelfree4 input files.
 
     The following files are created:
-        dir/mfin
-        dir/mfdata
-        dir/mfpar
-        dir/mfmodel
-        dir/run.sh
+        - dir/mfin
+        - dir/mfdata
+        - dir/mfpar
+        - dir/mfmodel
+        - dir/run.sh
+
+    @keyword dir:               The optional directory to place the files into.  If None, then the
+                                files will be placed into a directory named after the current data
+                                pipe.
+    @type dir:                  str or None
+    @keyword binary:            The name of the Modelfree4 binary file.  This can include the path
+                                to the binary.
+    @type binary:               str
+    @keyword diff_search:       The diffusion tensor search algorithm (see the Modelfree4 manual for
+                                details).
+    @type diff_search:          str
+    @keyword sims:              The number of Monte Carlo simulations to perform.
+    @type sims:                 int
+    @keyword sim_type:          The type of simulation to perform (see the Modelfree4 manual for
+                                details).
+    @type sim_type:             str
+    @keyword trim:              Trimming of the Monte Carlo simulations (see the Modelfree4 manual
+                                for details).
+    @type trim:                 int
+    @keyword steps:             The grid search size (see the Modelfree4 manual for details).
+    @type steps:                int
+    @keyword heteronuc_type:    The Modelfree4 three letter code for the heteronucleus type, e.g.
+                                '15N', '13C', etc.
+    @type heteronuc_type:       str
+    @keyword atom1:             The name of the heteronucleus in the PDB file.
+    @type atom1:                str
+    @keyword atom2:             The name of the proton in the PDB file.
+    @type atom2:                str
+    @keyword spin_id:           The spin identification string.
+    @type spin_id:              str
+    @keyword force:             A flag which if True will cause all pre-existing files to be
+                                overwritten.
+    @type force:                bool
+    @keyword constraints:       A flag which if True will result in constrained optimisation.
+    @type constraints:          bool
     """
 
     # Test if the current pipe exists.
@@ -70,7 +102,7 @@ def create(dir, force, binary, diff_search, sims, sim_type, trim, steps, constra
 
     # Directory creation.
     if dir == None:
-        dir = pipe
+        dir = pipes.cdp_name()
     mkdir_nofail(dir, verbosity=0)
 
     # Number of field strengths and values.
@@ -83,13 +115,13 @@ def create(dir, force, binary, diff_search, sims, sim_type, trim, steps, constra
                 num_frq = spin.num_frq
 
                 # Field strength values.
-                for frq in spin.frq:
-                    if frq not in frq:
-                        frq.append(frq)
+                for val in spin.frq:
+                    if val not in frq:
+                        frq.append(val)
 
     # The 'mfin' file.
     mfin = open_write_file('mfin', dir, force)
-    create_mfin(mfin)
+    create_mfin(mfin, diff_search=diff_search, sims=sims, sim_type=sim_type, trim=trim, num_frq=num_frq, frq=frq)
     mfin.close()
 
     # Open the 'mfdata', 'mfmodel', and 'mfpar' files.
@@ -98,17 +130,21 @@ def create(dir, force, binary, diff_search, sims, sim_type, trim, steps, constra
     mfpar = open_write_file('mfpar', dir, force)
 
     # Loop over the sequence.
-    for spin in spin_loop(spin_id):
+    for spin, mol_name, res_num, res_name, id in spin_loop(spin_id, full_info=True, return_id=True):
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
         if hasattr(spin, 'num_frq'):
             # The 'mfdata' file.
-            if not create_mfdata(i, mfdata):
+            if not create_mfdata(mfdata, spin=spin, spin_id=id, num_frq=num_frq, frq=frq):
                 continue
 
             # The 'mfmodel' file.
-            create_mfmodel(i, mfmodel)
+            create_mfmodel(mfmodel, spin=spin, spin_id=id, steps=steps, constraints=constraints)
 
             # The 'mfpar' file.
-            create_mfpar(i, mfpar)
+            create_mfpar(mfpar, spin=spin, spin_id=id, res_num=res_num, atom1=atom1, atom2=atom2)
 
     # Close the 'mfdata', 'mfmodel', and 'mfpar' files.
     mfdata.close()
@@ -117,28 +153,40 @@ def create(dir, force, binary, diff_search, sims, sim_type, trim, steps, constra
 
     # The 'run.sh' script.
     run = open_write_file('run.sh', dir, force)
-    create_run(run)
+    create_run(run, binary=binary, dir=dir)
     run.close()
     chmod(dir + '/run.sh', 0755)
 
 
-def create_mfdata(i, file):
-    """Create the Modelfree4 input file 'mfmodel'."""
+def create_mfdata(file, spin=None, spin_id=None, num_frq=None, frq=None):
+    """Create the Modelfree4 input file 'mfmodel'.
+
+    @param file:        The writable file object.
+    @type file:         file object
+    @param spin:        The spin container.
+    @type spin:         SpinContainer instance
+    @param spin_id:     The spin identification string.
+    @type spin_id       str
+    @keyword num_frq:   The number of spectrometer frequencies relaxation data was collected at.
+    @type num_frq:      int
+    @keyword frq:       The spectrometer frequencies.
+    @type frq:          list of float
+    """
 
     # Spin title.
-    file.write("\nspin     " + spin.name + "_" + `spin.num` + "\n")
+    file.write("\nspin     " + spin_id + "\n")
 
     # Data written flag.
-    written = 0
+    written = False
 
     # Loop over the frequencies.
-    for j in xrange(self.num_frq):
+    for j in xrange(num_frq):
         # Set the data to None.
         r1, r2, noe = None, None, None
 
         # Loop over the relevant relaxation data.
         for k in xrange(spin.num_ri):
-            if self.frq[j] != spin.frq[spin.remap_table[k]]:
+            if frq[j] != spin.frq[spin.remap_table[k]]:
                 continue
 
             # Find the corresponding R1.
@@ -158,49 +206,71 @@ def create_mfdata(i, file):
 
         # Test if the R1 exists for this frequency, otherwise skip the data.
         if r1:
-            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('R1', self.frq[j]*1e-6, r1, r1_err, 1))
+            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('R1', frq[j]*1e-6, r1, r1_err, 1))
         else:
-            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('R1', self.frq[j]*1e-6, 0, 0, 0))
+            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('R1', frq[j]*1e-6, 0, 0, 0))
 
         # Test if the R2 exists for this frequency, otherwise skip the data.
         if r2:
-            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('R2', self.frq[j]*1e-6, r2, r2_err, 1))
+            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('R2', frq[j]*1e-6, r2, r2_err, 1))
         else:
-            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('R2', self.frq[j]*1e-6, 0, 0, 0))
+            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('R2', frq[j]*1e-6, 0, 0, 0))
 
         # Test if the NOE exists for this frequency, otherwise skip the data.
         if noe:
-            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('NOE', self.frq[j]*1e-6, noe, noe_err, 1))
+            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('NOE', frq[j]*1e-6, noe, noe_err, 1))
         else:
-            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('NOE', self.frq[j]*1e-6, 0, 0, 0))
+            file.write('%-7s%-10.3f%20.15f%20.15f %-3i\n' % ('NOE', frq[j]*1e-6, 0, 0, 0))
 
-        written = 1
+        written = True
 
     return written
 
 
-def create_mfin(file):
-    """Create the Modelfree4 input file 'mfin'."""
+def create_mfin(file, diff_search=None, sims=None, sim_type=None, trim=None, num_frq=None, frq=None):
+    """Create the Modelfree4 input file 'mfin'.
+
+    @param file:            The writable file object.
+    @type file:             file object
+    @keyword diff_search:   The diffusion tensor search algorithm (see the Modelfree4 manual for
+                            details).
+    @type diff_search:      str
+    @keyword sims:          The number of Monte Carlo simulations to perform.
+    @type sims:             int
+    @keyword sim_type:      The type of simulation to perform (see the Modelfree4 manual for
+                            details).
+    @type sim_type:         str
+    @keyword trim:          Trimming of the Monte Carlo simulations (see the Modelfree4 manual for
+                            details).
+    @type trim:             int
+    @keyword num_frq:       The number of spectrometer frequencies relaxation data was collected at.
+    @type num_frq:          int
+    @keyword frq:           The spectrometer frequencies.
+    @type frq:              list of float
+    """
+
+    # Alias the current data pipe.
+    cdp = pipes.get_pipe()
 
     # Set the diffusion tensor specific values.
     if cdp.diff_tensor.type == 'sphere':
         diff = 'isotropic'
         algorithm = 'brent'
-        tm = cdp.diff.tm / 1e-9
+        tm = cdp.diff_tensor.tm / 1e-9
         dratio = 1
         theta = 0
         phi = 0
     elif cdp.diff_tensor.type == 'spheroid':
         diff = 'axial'
         algorithm = 'powell'
-        tm = cdp.diff.tm / 1e-9
-        dratio = cdp.diff.Dratio
-        theta = cdp.diff.theta * 360.0 / (2.0 * pi)
-        phi = cdp.diff.phi * 360.0 / (2.0 * pi)
+        tm = cdp.diff_tensor.tm / 1e-9
+        dratio = cdp.diff_tensor.Dratio
+        theta = cdp.diff_tensor.theta * 360.0 / (2.0 * pi)
+        phi = cdp.diff_tensor.phi * 360.0 / (2.0 * pi)
     elif cdp.diff_tensor.type == 'ellipsoid':
         diff = 'anisotropic'
         algorithm = 'powell'
-        tm = cdp.diff.tm / 1e-9
+        tm = cdp.diff_tensor.tm / 1e-9
         dratio = 0
         theta = 0
         phi = 0
@@ -211,15 +281,15 @@ def create_mfin(file):
     file.write("search          grid\n\n")
 
     # Diffusion type.
-    if cdp.diff.fixed:
+    if cdp.diff_tensor.fixed:
         algorithm = 'fix'
 
-    file.write("diffusion       " + diff + " " + self.diff_search + "\n\n")
+    file.write("diffusion       " + diff + " " + diff_search + "\n\n")
     file.write("algorithm       " + algorithm + "\n\n")
 
     # Monte Carlo simulations.
-    if self.sims:
-        file.write("simulations     " + self.sim_type + "    " + `self.sims` + "       " + `self.trim` + "\n\n")
+    if sims:
+        file.write("simulations     " + sim_type + "    " + `sims` + "       " + `trim` + "\n\n")
     else:
         file.write("simulations     none\n\n")
 
@@ -227,9 +297,9 @@ def create_mfin(file):
     file.write("selection       " + selection + "\n\n")
     file.write("sim_algorithm   " + algorithm + "\n\n")
 
-    file.write("fields          " + `self.num_frq`)
-    for frq in self.frq:
-        file.write("  " + `frq*1e-6`)
+    file.write("fields          " + `num_frq`)
+    for val in frq:
+        file.write("  " + `val*1e-6`)
     file.write("\n")
 
     # tm.
@@ -269,14 +339,26 @@ def create_mfin(file):
     file.write('%4i\n' % 10)
 
 
-def create_mfmodel(i, file):
-    """Create the Modelfree4 input file 'mfmodel'."""
+def create_mfmodel(file, spin=None, spin_id=None, steps=None, constraints=None):
+    """Create the Modelfree4 input file 'mfmodel'.
+
+    @param file:            The writable file object.
+    @type file:             file object
+    @keyword spin:          The spin container.
+    @type spin:             SpinContainer instance
+    @keyword spin_id:       The spin identification string.
+    @type spin_id           str
+    @keyword steps:         The grid search size (see the Modelfree4 manual for details).
+    @type steps:            int
+    @keyword constraints:   A flag which if True will result in constrained optimisation.
+    @type constraints:      bool
+    """
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
 
     # Spin title.
-    file.write("\nspin     " + spin.name + "_" + `spin.num` + "\n")
+    file.write("\nspin     " + spin_id + "\n")
 
     # tloc.
     file.write('%-3s%-6s%-6.1f' % ('M1', 'tloc', 0))
@@ -285,23 +367,23 @@ def create_mfmodel(i, file):
     else:
         file.write('%-4i' % 0)
 
-    if self.constraints:
+    if constraints:
         file.write('%-2i' % 2)
     else:
         file.write('%-2i' % 0)
 
-    file.write('%11.3f%12.3f %-4s\n' % (0, 20, self.steps))
+    file.write('%11.3f%12.3f %-4s\n' % (0, 20, steps))
 
     # Theta.
     file.write('%-3s%-6s%-6.1f' % ('M1', 'Theta', 0))
     file.write('%-4i' % 0)
 
-    if self.constraints:
+    if constraints:
         file.write('%-2i' % 2)
     else:
         file.write('%-2i' % 0)
 
-    file.write('%11.3f%12.3f %-4s\n' % (0, 90, self.steps))
+    file.write('%11.3f%12.3f %-4s\n' % (0, 90, steps))
 
     # S2f.
     file.write('%-3s%-6s%-6.1f' % ('M1', 'Sf2', 1))
@@ -310,12 +392,12 @@ def create_mfmodel(i, file):
     else:
         file.write('%-4i' % 0)
 
-    if self.constraints:
+    if constraints:
         file.write('%-2i' % 2)
     else:
         file.write('%-2i' % 0)
 
-    file.write('%11.3f%12.3f %-4s\n' % (0, 1, self.steps))
+    file.write('%11.3f%12.3f %-4s\n' % (0, 1, steps))
 
     # S2s.
     file.write('%-3s%-6s%-6.1f' % ('M1', 'Ss2', 1))
@@ -324,12 +406,12 @@ def create_mfmodel(i, file):
     else:
         file.write('%-4i' % 0)
 
-    if self.constraints:
+    if constraints:
         file.write('%-2i' % 2)
     else:
         file.write('%-2i' % 0)
 
-    file.write('%11.3f%12.3f %-4s\n' % (0, 1, self.steps))
+    file.write('%11.3f%12.3f %-4s\n' % (0, 1, steps))
 
     # te.
     file.write('%-3s%-6s%-6.1f' % ('M1', 'te', 0))
@@ -338,12 +420,12 @@ def create_mfmodel(i, file):
     else:
         file.write('%-4i' % 0)
 
-    if self.constraints:
+    if constraints:
         file.write('%-2i' % 2)
     else:
         file.write('%-2i' % 0)
 
-    file.write('%11.3f%12.3f %-4s\n' % (0, 10000, self.steps))
+    file.write('%11.3f%12.3f %-4s\n' % (0, 10000, steps))
 
     # Rex.
     file.write('%-3s%-6s%-6.1f' % ('M1', 'Rex', 0))
@@ -352,71 +434,98 @@ def create_mfmodel(i, file):
     else:
         file.write('%-4i' % 0)
 
-    if self.constraints:
+    if constraints:
         file.write('%-2i' % -1)
     else:
         file.write('%-2i' % 0)
 
-    file.write('%11.3f%12.3f %-4s\n' % (0, 20, self.steps))
+    file.write('%11.3f%12.3f %-4s\n' % (0, 20, steps))
 
 
-def create_mfpar(i, file):
-    """Create the Modelfree4 input file 'mfpar'."""
+def create_mfpar(file, spin=None, spin_id=None, res_num=None, atom1=None, atom2=None):
+    """Create the Modelfree4 input file 'mfpar'.
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
-    # Spin title.
-    file.write("\nspin     " + spin.name + "_" + `spin.num` + "\n")
-
-    file.write('%-14s' % "constants")
-    file.write('%-6i' % spin.num)
-    file.write('%-7s' % spin.heteronuc_type)
-    file.write('%-8.4f' % ([return_gyromagnetic_ratio(spin.heteronuc_type)] / 1e7))
-    file.write('%-8.3f' % (spin.r * 1e10))
-    file.write('%-8.3f\n' % (spin.csa * 1e6))
-
-    file.write('%-10s' % "vector")
-    file.write('%-4s' % self.atom1)
-    file.write('%-4s\n' % self.atom2)
-
-
-def create_run(file):
-    """Create the script 'run.sh' for the execution of Modelfree4."""
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
-    file.write("#! /bin/sh\n")
-    file.write(self.binary + " -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
-    if cdp.diff_tensor.type != 'sphere':
-        # Copy the pdb file to the model directory so there are no problems with the existance of *.rotate files.
-        system('cp ' + cdp.structure.file_name + ' ' + self.dir)
-        file.write(" -s " + cdp.structure.file_name.split('/')[-1])
-    file.write("\n")
-
-
-def execute(dir, force, binary):
-    """Function for executing Modelfree4.
-
-    BUG:  Control-C during execution causes the cwd to stay as dir.
+    @param file:        The writable file object.
+    @type file:         file object
+    @keyword spin:      The spin container.
+    @type spin:         SpinContainer instance
+    @keyword spin_id:   The spin identification string.
+    @type spin_id       str
+    @keyword res_num:   The residue number from the PDB file corresponding to the spin.
+    @type res_num:      int
+    @keyword atom1:     The name of the heteronucleus in the PDB file.
+    @type atom1:        str
+    @keyword atom2:     The name of the proton in the PDB file.
+    @type atom2:        str
     """
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
 
-    # Arguments.
-    self.pipe = pipe
-    self.dir = dir
-    self.force = force
-    self.binary = binary
+    # Spin title.
+    file.write("\nspin     " + spin_id + "\n")
+
+    file.write('%-14s' % "constants")
+    file.write('%-6i' % res_num)
+    file.write('%-7s' % spin.heteronuc_type)
+    file.write('%-8.4f' % (return_gyromagnetic_ratio(spin.heteronuc_type) / 1e7))
+    file.write('%-8.3f' % (spin.r * 1e10))
+    file.write('%-8.3f\n' % (spin.csa * 1e6))
+
+    file.write('%-10s' % "vector")
+    file.write('%-4s' % atom1)
+    file.write('%-4s\n' % atom2)
+
+
+def create_run(file, binary=None, dir=None):
+    """Create the script 'run.sh' for the execution of Modelfree4.
+
+    @param file:        The writable file object.
+    @type file:         file object
+    @keyword binary:    The name of the Modelfree4 binary file.  This can include the path to the
+                        binary.
+    @type binary:       str
+    @keyword dir:       The directory to copy the PDB file to.
+    @type dir:          str
+    """
+
+    # Alias the current data pipe.
+    cdp = pipes.get_pipe()
+
+    file.write("#! /bin/sh\n")
+    file.write(binary + " -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
+    if cdp.diff_tensor.type != 'sphere':
+        # Copy the pdb file to the model directory so there are no problems with the existance of *.rotate files.
+        system('cp ' + cdp.structure.path[0] + sep + cdp.structure.file[0] + ' ' + dir)
+        file.write(" -s " + cdp.structure.file[0])
+    file.write("\n")
+
+
+def execute(dir, force, binary):
+    """Execute Modelfree4.
+
+    BUG:  Control-C during execution causes the cwd to stay as dir.
+
+
+    @param dir:     The optional directory where the script is located.
+    @type dir:      str or None
+    @param force:   A flag which if True will cause any pre-existing files to be overwritten by
+                    Modelfree4.
+    @type force:    bool
+    @param binary:  The name of the Modelfree4 binary file.  This can include the path to the
+                    binary.
+    @type binary:   str
+    """
+
+    # Alias the current data pipe.
+    cdp = pipes.get_pipe()
 
     # The current directory.
     orig_dir = getcwd()
 
     # The directory.
     if dir == None:
-        dir = pipe
+        dir = pipes.cdp_name()
     if not access(dir, F_OK):
         raise RelaxDirError, ('Modelfree4', dir)
 
@@ -443,7 +552,7 @@ def execute(dir, force, binary):
 
         # Test if the 'PDB' input file exists.
         if cdp.diff_tensor.type != 'sphere':
-            pdb = cdp.structure.file_name.split('/')[-1]
+            pdb = cdp.structure.file[0]
             if not access(pdb, F_OK):
                 raise RelaxFileError, ('PDB', pdb)
         else:
@@ -456,20 +565,23 @@ def execute(dir, force, binary):
                     remove(file)
 
         # Test the binary file string corresponds to a valid executable.
-        test_binary(self.binary)
+        test_binary(binary)
 
-        # Execute Modelfree4 (inputting a PDB file).
+        # Execute Modelfree4.
         if pdb:
-            status = spawnlp(P_WAIT, self.binary, self.binary, '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out', '-s', pdb)
-            if status:
-                raise RelaxProgFailError, 'Modelfree4'
-
-
-        # Execute Modelfree4 (without a PDB file).
+            cmd = binary + ' -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out -s ' + pdb
         else:
-            status = spawnlp(P_WAIT, self.binary, self.binary, '-i', 'mfin', '-d', 'mfdata', '-p', 'mfpar', '-m', 'mfmodel', '-o', 'mfout', '-e', 'out')
-            if status:
-                raise RelaxProgFailError, 'Modelfree4'
+            cmd = binary + ' -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out'
+        stdin, stdout, stderr = popen3(cmd)
+
+        # Close the pipe.
+        stdin.close()
+
+        # Write to stdout and stderr.
+        for line in stdout.readlines():
+            sys.stdout.write(line)
+        for line in stderr.readlines():
+            sys.stderr.write(line)
 
     # Failure.
     except:
@@ -501,7 +613,7 @@ def extract(dir, spin_id=None):
 
     # The directory.
     if dir == None:
-        dir = pipe
+        dir = pipes.cdp_name()
     if not access(dir, F_OK):
         raise RelaxDirError, ('Modelfree4', dir)
 
@@ -509,13 +621,16 @@ def extract(dir, spin_id=None):
     if not access(dir + "/mfout", F_OK):
         raise RelaxFileError, ('Modelfree4', dir + "/mfout")
 
+    # Determine the parameter set.
+    model_type = model_free_obj.determine_model_type()
+
     # Open the file.
     mfout_file = open(dir + "/mfout", 'r')
     mfout_lines = mfout_file.readlines()
     mfout_file.close()
 
     # Get the section line positions of the mfout file.
-    s2_pos, s2f_pos, s2s_pos, te_pos, rex_pos, chi2_pos = line_positions(mfout_lines)
+    global_chi2_pos, diff_pos, s2_pos, s2f_pos, s2s_pos, te_pos, rex_pos, chi2_pos = line_positions(mfout_lines)
 
     # Find out if simulations were carried out.
     sims = 0
@@ -523,6 +638,31 @@ def extract(dir, spin_id=None):
         if search('_iterations', mfout_lines[i]):
             row = split(mfout_lines[i])
             sims = int(row[1])
+
+    # Global data.
+    if model_type in ['all', 'diff']:
+        # Global chi-squared.
+        row = split(mfout_lines[global_chi2_pos])
+        cdp.chi2 = float(row[1])
+
+        # Spherical diffusion tensor.
+        if cdp.diff_tensor.type == 'sphere':
+            # Split the lines.
+            tm_row = split(mfout_lines[diff_pos])
+
+            # Set the params.
+            cdp.diff_tensor.tm = float(tm_row[2])
+
+        # Spheroid diffusion tensor.
+        else:
+            # Split the lines.
+            tm_row = split(mfout_lines[diff_pos])
+            dratio_row = split(mfout_lines[diff_pos+1])
+            theta_row = split(mfout_lines[diff_pos+2])
+            phi_row = split(mfout_lines[diff_pos+3])
+
+            # Set the params.
+            diffusion_tensor.set([float(tm_row[2]), float(dratio_row[2]), float(theta_row[2])*2.0*pi/360.0, float(phi_row[2])*2.0*pi/360.0], ['tm', 'Dratio', 'theta', 'phi'])
 
     # Loop over the sequence.
     pos = 0
@@ -675,9 +815,17 @@ def line_positions(mfout_lines):
     # Loop over the file.
     i = 0
     while i < len(mfout_lines):
+        # Global chi2.
+        if match('data_chi_square', mfout_lines[i]):
+            global_chi2_pos = i + 1
+
+        # Diffusion tensor.
+        if match('data_diffusion_tensor', mfout_lines[i]):
+            diff_pos = i + 3
+
         # Model-free data.
         if match('data_model_1', mfout_lines[i]):
-            # Shift down two lines (to avoid the lines not starting with a space)..
+            # Shift down two lines (to avoid the lines not starting with a space).
             i = i + 2
 
             # Walk through all the data.
@@ -720,4 +868,4 @@ def line_positions(mfout_lines):
         i = i + 1
 
     # Return the positions.
-    return s2_pos, s2f_pos, s2s_pos, te_pos, rex_pos, chi2_pos
+    return global_chi2_pos, diff_pos, s2_pos, s2f_pos, s2s_pos, te_pos, rex_pos, chi2_pos

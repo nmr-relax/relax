@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006 Edward d'Auvergne                                  #
+# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,7 @@ import sys
 
 # relax module imports.
 import help
-from relax_errors import RelaxFloatError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxFloatError, RelaxNoneIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 from specific_fns.setup import relax_fit_obj
 
 
@@ -46,11 +46,10 @@ class Relax_fit:
         """Function for calculating the average intensity and standard deviation of all spectra.
 
 
-        Errors of individual residues at a single time point
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Errors of individual spin at a single time point
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        The standard deviation for a single residue at a single time point is calculated by the
-        formula
+        The standard deviation for a single spin at a single time point is calculated by the formula
 
         -----
                      ____________________________
@@ -67,8 +66,8 @@ class Relax_fit:
         ~~~~~~~~~~~~~~~~~~~~~~~
 
         As the value of n in the above equation is always very low, normally only a couple of
-        spectra are collected per time point, the standard deviation of all residues is averaged for
-        a single time point.  Although this results in all residues having the same error, the
+        spectra are collected per time point, the standard deviation of all spins is averaged for
+        a single time point.  Although this results in all spins having the same error, the
         accuracy of the error estimate is significantly improved.
 
 
@@ -79,7 +78,7 @@ class Relax_fit:
         supported), the each time point will have its own error estimate.  However, if there are
         time points in the series which only consist of a single spectrum, then the standard
         deviations of replicated time points will be averaged.  Hence, for the entire experiment
-        there will be a single error value for all residues and for all time points.
+        there will be a single error value for all spins and for all time points.
 
         A better approach rather than averaging across all time points would be to use a form of
         interpolation as the errors across time points generally decreases for longer time periods.
@@ -126,6 +125,7 @@ class Relax_fit:
         The format argument can currently be set to:
             'sparky'
             'xeasy'
+            'nmrview'
 
         If the format argument is set to 'sparky', the file should be a Sparky peak list saved after
         typing the command 'lt'.  The default is to assume that columns 0, 1, 2, and 3 (1st, 2nd,
@@ -140,6 +140,8 @@ class Relax_fit:
         the peak intensity column is hardwired to number 10 (the 11th column) which contains either
         the peak height or peak volume data.  Because the columns are fixed, the int_col argument
         will be ignored.
+
+        If the format argument is set to 'nmrview', the file should be a NMRView peak list.
 
 
         The heteronuc and proton arguments should be set respectively to the name of the
@@ -170,8 +172,8 @@ class Relax_fit:
             raise RelaxNoneStrError, ('directory name', dir)
 
         # The relaxation time.
-        if type(relax_time) != float:
-            raise RelaxFloatError, ('relaxation time', relax_time)
+        if type(relax_time) != int and type(relax_time) != float:
+            raise RelaxNumError, ('relaxation time', relax_time)
 
         # The format.
         if type(format) != str:

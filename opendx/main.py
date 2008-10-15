@@ -112,4 +112,4 @@ def run(file_prefix="map", dir="dx", dx_exe="dx", vp_exec=True):
     test_binary(dx_exe)
 
     # Run OpenDX.
-    system(dx_exe + dir_text + " -program " + file + ".net" + execute_text + " &")
+    system(dx_exe + dir_text + " -program " + file_prefix + ".net" + execute_text + " &")

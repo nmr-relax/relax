@@ -136,15 +136,17 @@ class Relax_fit(Common_functions):
         return scaling_matrix
 
 
-    def assign_function(self, spin=None, intensity=None):
+    def assign_function(self, spin=None, intensity=None, spectrum_type=None):
         """Place the peak intensity data into the spin container.
 
         The intensity data can be either that of the reference or saturated spectrum.
 
-        @keyword spin:      The spin container.
-        @type spin:         SpinContainer instance
-        @keyword intensity: The intensity value.
-        @type intensity:    float
+        @keyword spin:          The spin container.
+        @type spin:             SpinContainer instance
+        @keyword intensity:     The intensity value.
+        @type intensity:        float
+        @keyword spectrum_type: Unused argument sent in by the caller function.
+        @type spectrum_type:    None
         """
 
         # Alias the current data pipe.
@@ -665,7 +667,7 @@ class Relax_fit(Common_functions):
 
                 # Skip and deselect spins which have no data.
                 if not hasattr(spin, 'intensities'):
-                    spin.select = 0
+                    spin.select = False
                     continue
 
                 # Initialise the average intensity and standard deviation data structures.
@@ -961,12 +963,12 @@ class Relax_fit(Common_functions):
         for spin in spin_loop():
             # Check if data exists.
             if not hasattr(spin, 'intensities'):
-                spin.select = 0
+                spin.select = False
                 continue
 
             # Require 3 or more data points.
             if len(spin.intensities) < 3:
-                spin.select = 0
+                spin.select = False
                 continue
 
 
@@ -984,7 +986,7 @@ class Relax_fit(Common_functions):
         @keyword relax_time:    The time, in seconds, of the relaxation period.
         @type relax_time:       float
         @keyword format:        The type of file containing peak intensities.  This can currently be
-                                one of 'sparky' or 'xeasy'.
+                                one of 'sparky', 'xeasy' or 'nmrview'.
         @type format:           str
         @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity
                                 file.
@@ -1000,7 +1002,7 @@ class Relax_fit(Common_functions):
         cdp = pipes.get_pipe()
 
         # Store the relaxation time in the class instance.
-        self.__relax_time = relax_time
+        self.__relax_time = float(relax_time)
 
         # Global relaxation time data structure.
         if not hasattr(cdp, 'relax_times'):

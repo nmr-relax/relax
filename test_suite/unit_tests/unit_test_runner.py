@@ -24,38 +24,32 @@
 #                                                                              #
 ################################################################################
 
+# Module docstring.
+'''Utilities for unit test running from the command line or within the relax testing frame work.
+
+Unit tests in the relax frame work are stored in a directory structure
+rooted at <relax-root-directory>/test_suite/unit_tests. The directory
+unit tests contains a directory structure that mirrors the relax directory
+structure and which ideally contains one unit test file/module for each
+file/module in the relax framework. The default convention is that the unit
+test module for a relax module called <relax-module> is called
+test_<relax-module> (stored in test_<relax-module>.py). The unit test module
+test_<relax-module> should then contain a class called Test_<relax-module>
+which is a child of TestCase and contains methods whose names start with
+'test' and take no arguments other than self.
+
+A concrete example: for class <relax-root-directory>/maths-fns/chi2.py FIXME:***complete***
 
 
-''' unit_test_runner provides utilities for the running of unit tests from the
-    command line or within the relax testing frame work.
+The framework can discover sets of unit tests from the file system and add
+them to TestSuites either from the command line or programmatically from
+inside another program. It also has the ability to search for a  root unit
+test and system directory from a position anywhere inside the unit test
+hierarchy.
 
-    Unit tests in the relax frame work are stored in a directory structure
-    rooted at <relax-root-directory>/test_suite/unit_tests. The directory
-    unit tests contains a directory structure that mirrors the relax directory
-    structure and which ideally contains one unit test file/module for each
-    file/module in the relax framework. The default convention is that the unit
-    test module for a relax module called <relax-module> is called
-    test_<relax-module> (stored in test_<relax-module>.py). The unit test module
-    test_<relax-module> should then contain a class called Test_<relax-module>
-    which is a child of TestCase and contains methods whose names start with
-    'test' and take no arguments other than self.
-
-    A concrete example:
-
-    for class <relax-root-directory>/maths-fns/chi2.py FIXME:***complete***
-
-
-
-
-    The framework can discover sets of unit tests from the file system and add
-    them to TestSuites either from the command line or programmatically from
-    inside another program. It also has the ability to search for a  root unit
-    test and system directory from a position anywhere inside the unit test
-    hierarchy.
-
-    TODO: examine PEP 338 and runpy.run_module(modulename): Executing Modules as Scripts
-          for a later version of relax that is dependant on python 2.5
-    TODO: split out runner part from search part
+TODO: Examine PEP 338 and runpy.run_module(modulename): Executing Modules as Scripts for a later
+version of relax that is dependant on python 2.5.
+TODO: Split out runner part from search part.
 '''
 
 import os,re,unittest,string,sys
@@ -76,12 +70,11 @@ PY_UNIT_TEST_PATTERN='test_.*\.py$'
 def get_startup_path():
     '''Get the path of the directory the program started from.
 
-       The startup path is the first path in sys.path (the internal PYTHONPATH)
-       by convention. If the first element of sys.path is an empty trying the
-       current working directory is used instead.
+    The startup path is the first path in sys.path (the internal PYTHONPATH) by convention. If the
+    first element of sys.path is an empty trying the current working directory is used instead.
 
-       @rtype:  string
-       @return: a file system path for the current operating system
+    @return:    A file system path for the current operating system.
+    @rtype:     str
     '''
 
     startup_path = sys.path[0]
@@ -91,17 +84,15 @@ def get_startup_path():
 
 
 def import_module(module_path):
-    ''' import the python module named by module_path
+    '''Import the python module named by module_path.
 
-        @type module_path: a string containing a dot separated module path
-        @param module_path: a module path in python dot separated format
-                            note: this currently doesn't support relative module
-                            paths as defined by pep328 and python 2.5
-        @rtype:     list of class module instances or None
-        @return:    the module path as a list of module instances or None
-                    if the module path cannot be found in the python path
-
-        '''
+    @param module_path: A module path in python dot separated format.  Note: this currently doesn't
+                        support relative module paths as defined by pep328 and python 2.5.
+    @type module_path:  str
+    @return:            The module path as a list of module instances or None if the module path
+                        cannot be found in the python path.
+    @rtype:             list of class module instances or None
+    '''
 
     module = None
     result = None
@@ -122,30 +113,23 @@ def import_module(module_path):
 
 
 def get_module_relative_path(package_path, module_name, root_paths=None):
-    '''Find the relative path of a module to one of a set of root paths using
-       a  list of package paths and a module name.
+    '''Find the relative path of a module to one of a set of root paths using a list of package paths and a module name.
 
-       As the module may match more than one path the first path that
-       can contain it is chosen.
+    As the module may match more than one path the first path that can contain it is chosen.
 
-       @type  package_path: string
-       @param package_path: path of a python packages leading to module_name
-
-
-       @type module_name: string
-       @param module_name: the name of the module to load
-
-       @type  root_paths: sequence of strings
-       @param root_paths: a set of paths to search for the module in.if None is
-              passed the list is initialized from the internal PYTHONPATH
-              sys.path. Elements which are empty strings are replace with
-              the current working directory sys.getcwd()
-
-
-       @returns: a relative module path to one of the rootPaths which is
-                 separated by '.'s if the modulePath is a subpath of one of
-                 the root paths, otherwise None
-
+    @param package_path:    Path of a python packages leading to module_name.
+    @type  package_path:    str
+    @param module_name:     The name of the module to load.
+    @type module_name:      str
+    @keyword root_paths:    A set of paths to search for the module in.  If None is passed the list
+                            is initialized from the internal PYTHONPATH sys.path.  Elements which
+                            are empty strings are replace with the current working directory
+                            sys.getcwd().
+    @type root_paths:       list of str
+    @return:                A relative module path to one of the rootPaths which is separated by
+                            '.'s if the modulePath is a subpath of one of the root paths, otherwise
+                            None.
+    @rtype:                 str or None
     '''
 
     relative_path = None
@@ -179,15 +163,13 @@ def get_module_relative_path(package_path, module_name, root_paths=None):
 def get_common_prefix(path1, path2):
     '''Get the common prefix between two paths.
 
-       @type path1: a list of path segments
-       @param path1: the first path to be compared
-
-       @type path2: a list of path segments
-       @param path2: the second path to be compared
-
-       @return: the common path shared between the two paths starting from the
-                root directory as a list of segments. If there is no common
-                path an empty list is returned.
+    @param path1:   The first path to be compared.
+    @type path1:    list of str
+    @param path2:   The second path to be compared.
+    @type path2:    list of str
+    @return:        The common path shared between the two paths starting from the root directory as
+                    a list of segments.  If there is no common path an empty list is returned.
+    @rtype:         list of str
     '''
 
     result_path = []
@@ -203,13 +185,12 @@ def get_common_prefix(path1, path2):
 def segment_path(path, normalise=True):
     '''Segment a path into a list of components (drives, files, directories etc).
 
-       @type path: a path
-       @param path: the path to segment
-
-       @type normalise: Boolean
-       @param normalise: whether to normalise the path before starting.
-
-       @result: a list of path segments
+    @param path:        The path to segment.
+    @type path:         str
+    @param normalise:   Whether to normalise the path before starting.
+    @type normalise:    bool
+    @return:            A list of path segments.
+    @rtype:             list of str
     '''
 
     if normalise:
@@ -231,11 +212,10 @@ def segment_path(path, normalise=True):
 def join_path_segments(segments):
     '''Join a list of path segments (drives, files, directories etc) into a path.
 
-       @type path: a list of path segments
-       @param path: the path segments to join into a path
-
-        @rtype: string
-       @result: the path containing the joined path segments
+    @param segments:    The path segments to join into a path.
+    @type segments:     a list of path segments
+    @return:            The path containing the joined path segments.
+    @rtype:             str
     '''
 
     if len(segments) == 0:
@@ -250,6 +230,7 @@ def join_path_segments(segments):
             result = os.path.join(result, segments_copy.pop())
 
     return result
+
 
 class ExtendedException(Exception):
     def __init__(self,e,module):
@@ -351,26 +332,24 @@ def load_test_case(package_path,  module_name, class_name):
 class Test_finder:
     '''Find and load unit test classes as a hierarchy of TestSuites and TestCases.
 
-       The class provides functions for running or returning the resulting
-       TestSuite and requires a root directory to start searching from.
+    The class provides functions for running or returning the resulting TestSuite and requires a
+    root directory to start searching from.
 
-       TestCases are identified by the class name matching a pattern
-       (pattern_string)
+    TestCases are identified by the class name matching a pattern (pattern_string).
     '''
 
     suite = unittest.TestSuite()
-    '''the root test suite to which testSuites and cases are added'''
+    '''The root test suite to which testSuites and cases are added.'''
 
     def __init__(self, root_path=None, pattern_list=[PY_UNIT_TEST_PATTERN]):
-        ''' Initialise the unit test finder.
+        '''Initialise the unit test finder.
 
-            @type root_path: string
-            @param root_path: the path to starts searching for unit tests from,
-                              all sub directories and files  are searched
-
-            @type pattern_list: list of string
-            @param pattern_list: a lsit of regular expression patterns which identifie
-                                   a file as one containing a unit test TestCase
+        @keyword root_path:     The path to starts searching for unit tests from, all sub
+                                directories and files are searched.
+        @type root_path:        str
+        @keyword pattern_list:  A list of regular expression patterns which identify a file as one
+                                containing a unit test TestCase.
+        @type pattern_list:     list of str
         '''
 
         self.root_path = root_path
@@ -383,9 +362,10 @@ class Test_finder:
 
 
     def scan_paths(self):
-        '''Scan directories and paths for unit test classes and load them into TestSuites
+        '''Scan directories and paths for unit test classes and load them into TestSuites.
 
-            @rtype: a hierachy of pyunit testSuites and testCases
+        @return:    A hierachy of pyunit testSuites and testCases.
+        @rtype:     TestSuite instance
         '''
 
         print self.root_path
@@ -435,6 +415,7 @@ class Test_finder:
 
         return self.suite
 
+
 class Unit_test_runner(object):
     '''Class to run a particular unit test or a directory of unit tests.'''
 
@@ -442,12 +423,12 @@ class Unit_test_runner(object):
     ##########
 
     TEST_SUITE_ROOT='test-suite-root_constant'
-    ''' @type TEST_SUITE_ROOT: string
-        @ivar TEST_SUITE_ROOT: constant indicating the use of the current unit test suite found from the root_path'''
+    """@ivar:   Constant indicating the use of the current unit test suite found from the root_path.
+       @type:   str
+    """
 
     system_path_pattern = ['test_suite' + os.sep + 'unit_tests', os.pardir + os.sep + os.pardir]
-    ''' @type system_path_pattern: list of strings
-        @ivar system_path_pattern: a search template for the directory in which relax is installed.
+    """@ivar:   A search template for the directory in which relax is installed.
                                  The directory which relax is installed in is viewed as the the 'PYTHONPATH'
                                  of the classes to be tested. It must be unique and defined
                                  relative to the test suite. For the current setup
@@ -455,65 +436,61 @@ class Unit_test_runner(object):
                                  directory structure to match the second string is a relative path from that
                                  directory to the system directory. The search is started from the
                                  value of root_path in the file system.
-    '''
+       @type:  list of str
+    """
 
     unit_test_path_pattern = ['test_suite' + os.sep + 'unit_tests', os.curdir]
-    '''  @type unit_test_path_pattern: a list of strings
-         @ivar unit_test_path_pattern: a search template for the directory from which all unit
+    """@ivar:   A search template for the directory from which all unit
                                        module directories descend. For the current setup in relax
                                        this is (\'unit_tests\', \'.\'). The search is started from the
                                        value of root_path in the file system.
-    '''
+       @type:   list of str
+    """
 
     test_case_patterns = ['test_.*\.py$']
-    '''  @type  test_case_patterns: a list of strings containing regex patterns
-         @ivar  test_case_patterns: a list of regex patterns against which files will be
+    """@ivar:   A list of regex patterns against which files will be
                 tested to see if they are expected to contain unit tests. If
                 the file has the correct pattern the module contained inside the
                 file will be searched for testCases e.g in the case of test_float.py
                 the module to be searched for would be test_float.Test_float.
-    '''
+       @type:   list of str
+    """
 
-    def __init__(self, root_path=os.curdir, test_module=None, search_for_root_path=True,
-                  search_for_unit_test_path=True, verbose = False):
+    def __init__(self, root_path=os.curdir, test_module=None, search_for_root_path=True, search_for_unit_test_path=True, verbose=False):
         '''Initialise the unit test runner.
 
-        @type  root_path: a string containing a directory name
-        @param root_path: root path to start searching for modules to unit test
+        @keyword root_path:                 Root path to start searching for modules to unit test
                from. Two special cases arise: if the string contains '.'
                the search starts from the current working directory, if the value is
                the special value TEST_SUITE_ROOT defined in this class the root of the
                test suite is sought from the current working directory using
                find_unit_test_directory_path() and used instead. Default current
                working directory.
-
-        @type  test_module: string
-        @param test_module: the name of a module to unit test. If the variable
+        @type root_path:                    str
+        @keyword test_module:               The name of a module to unit test. If the variable
                is None a search for all unit tests using <test-pattern> will start
                from <root_path>, if the variable is '.' a search for all unit tests will
                commence from the current working directory, otherwise it will be used as
                a module path from the
                current root_path or CHECKME: ****module_directory_path****. The module name can be in the directory path format
                used by the current operating system or a unix style path with /'s including
-               a final .py extension or a dotted moudle name
-
-        @type  search_for_root_path: boolean
-        @param search_for_root_path: whether to carry out a search from the root_directory
-                                     using self.system_path_pattern to find the directory self.system_directory
-                                     if no search is carried out self.system_directory is set to None and it is
-                                     the responsibility of code creating the class to set it before self.run
-                                     is called
-
-        @type  search_for_unit_test_path: boolean
-        @param search_for_unit_test_path: whether to carry out a search from the root_directory
-                                          using self.unit_test_path_patter to find the directory self.unit_test_directory
-                                          if no search is carried out self.unit_test_directory is set to None and it is
-                                          the responsibility of code creating the class to set it before self.run
-                                          is called
-
-        @type  verbose: Boolean
-        @param verbose: produce verbose output during testing e.g. directories
-               searched root directories etc
+               a final .py extension or a dotted moudle name.
+        @type test_module:                  str
+        @keyword search_for_root_path:      Whether to carry out a search from the root_directory
+               using self.system_path_pattern to find the directory self.system_directory
+               if no search is carried out self.system_directory is set to None and it is
+               the responsibility of code creating the class to set it before self.run
+               is called.
+        @type search_for_root_path:         bool
+        @keyword search_for_unit_test_path: Whether to carry out a search from the root_directory
+               using self.unit_test_path_patter to find the directory self.unit_test_directory
+               if no search is carried out self.unit_test_directory is set to None and it is
+               the responsibility of code creating the class to set it before self.run
+               is called.
+        @type search_for_unit_test_path:    bool
+        @keyword verbose:                   Produce verbose output during testing e.g. directories
+               searched root directories etc.
+        @type verbose:                      bool
         '''
 
         # setup root path
@@ -584,30 +561,26 @@ class Unit_test_runner(object):
     def get_first_instance_path(self, path, target_path, offset_path=os.curdir):
         '''Get the minimal path searching up the file system to target_directory.
 
-            the algorithm is that we repeatedly chop the end off path and see if
-            the tail of the path matches target_path If it doesn't match we search
-            in the resulting directory by asspending target_path and seeing if it exists
-            in the file system. Finally once the required directory structure has been
-            found  the offset_path is appended to the found path and the resulting path
-            normalised
+        The algorithm is that we repeatedly chop the end off path and see if the tail of the path
+        matches target_path If it doesn't match we search in the resulting directory by appending
+        target_path and seeing if it exists in the file system. Finally once the required directory
+        structure has been found the offset_path is appended to the found path and the resulting
+        path normalised.
+
+        Note the algorithm understands .. and .
 
 
-            Note the algorithm understands .. and .
-
-            @type path:  a directory path in a string
-            @param path: a directory path to search up
-
-            @type  target_path: a directory  name in a string
-            @param target_path: a directory to find in the path or
-                                     below one of the elements in the path
-
-             @type offset_path: string containing a relative path
-             @param offset_path: an relative path offset to add to the path that has been
-                                 found to give the result directory
-
-            @rtype: string containing a path
-            @return: the path that has been found or None if the path cannot be found
-                     by walking up and analysing the current directory structure
+        @param path:        A directory path to search up.
+        @type path:         str
+        @param target_path: A directory to find in the path or below one of the elements in the
+                            path.
+        @type target_path:  str
+        @param offset_path: A relative path offset to add to the path that has been found to give
+                            the result directory.
+        @type offset_path:  str
+        @return:            The path that has been found or None if the path cannot be found by
+                            walking up and analysing the current directory structure.
+        @rtype:             str
         '''
 
         seg_path = segment_path(os.path.normpath(path))
@@ -643,24 +616,24 @@ class Unit_test_runner(object):
     def paths_from_test_module(self, test_module):
         '''Determine the possible paths of the test_module.
 
-           it is assumed that the test_module can be either a path or
-           a python module or package name including dots
+        It is assumed that the test_module can be either a path or a python module or package name
+        including dots.
 
-           The following heuristics are used
+        The following heuristics are used:
 
-                1. if the test_module=None add the value '.'
-                2. if the test_module ends with a PY_FILE_EXTENSION append
-                   test_module with the PY_FILE_EXTENSION removed
-                3. add the module_name with .'s converted to /'s and
-                   any elements of the form PY_FILE_EXTENSION removed
-                3. repeat 2 and 3 with the last element of the path
-                   repeated with the first letter capitalised
+            1. If the test_module=None add the value '.'.
+            2. If the test_module ends with a PY_FILE_EXTENSION append test_module with the
+               PY_FILE_EXTENSION removed.
+            3. Add the module_name with .'s converted to /'s and any elements of the form
+               PY_FILE_EXTENSION removed.
+            4. Repeat 2 and 3 with the last element of the path repeated with the first letter
+               capitalised.
+
+        Note: we can't deal with module methods...
 
 
-           note: we can't deal with module methods...
-
-           @rtype: a set of strings
-           @return: a set of possible module names in python . separated format
+        @return:    A set of possible module names in python '.' separated format.
+        @rtype:     str
         '''
 
         result  = set()
@@ -716,18 +689,12 @@ class Unit_test_runner(object):
     def run(self, runner=None):
         '''Run a unit test or set of unit tests.
 
-            @type runner: a unit test runner such as TextTestRunner or
-                          a sub class of BaseGUITestRunner
-            @param runner: a unit test runner such as TextTestRunner
-                           None indicates use of the default unit test runner
-                           for an example of how to write a test runner
-                           @see the python documentation for TextTestRunner
-                           in the python source
-
-
-            @rtype: String
-            @return: a string indicating success or failure of the unit tests
-                     run
+        @keyword runner:    A unit test runner such as TextTestRunner.  None indicates use of the
+                            default unit test runner for an example of how to write a test runner
+                            see the python documentation for TextTestRunner in the python source.
+        @type runner:       Unit test runner instance (TextTestRunner, BaseGUITestRunner subclass, etc.)
+        @return:            A string indicating success or failure of the unit tests run.
+        @rtype:             str
         '''
 
         msg = ''' Either set self.%s to a %s directory or set search_for_%s_path in

@@ -420,7 +420,7 @@ def set(value=None, error=None, param=None, scaling=None, spin=None):
     param_name = return_data_name(param)
 
     # Global minimisation stats.
-    if index == None:
+    if spin == None:
         # Chi-squared.
         if param_name == 'chi2':
             cdp.chi2 = value

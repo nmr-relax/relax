@@ -277,6 +277,7 @@ class Main:
 
         # Target for removing temporary files.
         clean_env = Environment(BUILDERS={'clean' : Builder(action=self.clean_files)})
+        clean_env.Depends('clean', 'manual_clean')
         clean_env.clean(target='clean', source=None)
 
 

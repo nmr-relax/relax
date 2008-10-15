@@ -21,7 +21,7 @@
 ###############################################################################
 
 # relax module imports.
-import generic_fns
+import generic_fns.reset
 
 
 class Reset:

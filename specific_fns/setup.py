@@ -114,12 +114,20 @@ def get_specific_fn(eqi, function_type, raise_error=True):
             function = inst.minimise
 
         # Model loop.
+        if eqi == 'model_desc':
+            function = inst.model_desc
+
+        # Model loop.
         if eqi == 'model_loop':
             function = inst.model_loop
 
         # Model statistics.
         if eqi == 'model_stats':
             function = inst.model_statistics
+
+        # Model type.
+        if eqi == 'model_type':
+            function = inst.model_type
 
         # Molmol macro creation.
         if eqi == 'molmol_macro':

@@ -42,7 +42,7 @@ class Palmer:
         self.__relax__ = relax
 
 
-    def create(self, dir=None, force=False, binary='modelfree4', diff_search='none', sims=0, sim_type='pred', trim=0, steps=20, constraints=1, heteronuc_type='15N', atom1='N', atom2='H', spin_id=None):
+    def create(self, dir=None, force=False, binary='modelfree4', diff_search='none', sims=0, sim_type='pred', trim=0, steps=20, constraints=True, heteronuc_type='15N', atom1='N', atom2='H', spin_id=None):
         """Function for creating the Modelfree4 input files.
 
         Keyword Arguments
@@ -66,7 +66,7 @@ class Palmer:
         steps:  See the Modelfree4 manual.
 
         constraints:  A flag specifying whether the parameters should be constrained.  The default
-        is to turn constraints on (constraints=1).
+        is to turn constraints on (constraints=True).
 
         heteronuc_type:  A three letter string describing the heteronucleus type, ie 15N, 13C, etc.
 
@@ -114,7 +114,7 @@ class Palmer:
             text = text + ", heteronucleus=" + `heteronuc_type`
             text = text + ", atom1=" + `atom1`
             text = text + ", atom2=" + `atom2`
-            text = text + ", spin_id" + `spin_id` + ")"
+            text = text + ", spin_id=" + `spin_id` + ")"
             print text
 
         # Directory.
@@ -151,8 +151,8 @@ class Palmer:
             raise RelaxIntError, ('steps', steps)
 
         # Constraint flag.
-        if type(constraints) != int or (constraints != 0 and constraints != 1):
-            raise RelaxBinError, ('constraint flag', constraints)
+        if type(constraints) != bool:
+            raise RelaxBoolError, ('constraints flag', constraints)
 
         # The heteronucleus argument.
         if type(heteronuc_type) != str:

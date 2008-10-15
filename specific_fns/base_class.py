@@ -307,7 +307,7 @@ class Common_functions:
         """
 
         # Set the array.
-        spin.select_sim = select_sim
+        spin.select_sim = deepcopy(select_sim)
 
 
     def set_update(self, param, spin):

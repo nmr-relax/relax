@@ -298,7 +298,6 @@ class Scientific_data(Base_struct_API):
                                     average atom properties across all loaded structures.
         @type ave:                  bool
         @return:                    A tuple of atomic information, as described in the docstring.
-        @return:                    A tuple of atomic information, as described in the docstring.
         @rtype:                     tuple consisting of optional molecule name (str), residue number
                                     (int), residue name (str), atom number (int), atom name(str),
                                     element name (str), and atomic position (array of len 3).

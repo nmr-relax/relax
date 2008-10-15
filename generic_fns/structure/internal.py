@@ -273,10 +273,10 @@ class Internal(Base_struct_API):
 
         For any other residues, no description is returned.
 
-        @param res: The residue ID.
-        @type res:  str
-        @return:    The chemical name.
-        @rtype:     str or None
+        @param hetID:   The residue ID.
+        @type hetID:    str
+        @return:        The chemical name.
+        @rtype:         str or None
         """
 
         # Tensor.

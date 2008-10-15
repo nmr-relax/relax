@@ -42,23 +42,16 @@ class Results:
         self.__relax__ = relax
 
 
-    def display(self, format='xml'):
-        """Function for displaying the results.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        format:  The format of the output.
-        """
+    def display(self):
+        """Function for displaying the results."""
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "results.display("
-            text = text + "format=" + `format` + ")"
+            text = sys.ps3 + "results.display()"
             print text
 
         # Execute the functional code.
-        results.display(format=format)
+        results.display()
 
 
     def read(self, file='results', dir=None):
@@ -102,7 +95,7 @@ class Results:
         results.read(file=file, directory=dir)
 
 
-    def write(self, file='results', dir='pipe_name', force=False, format='xml', compress_type=1):
+    def write(self, file='results', dir='pipe_name', force=False, compress_type=1):
         """Function for writing results to a file.
 
         Keyword Arguments
@@ -114,8 +107,6 @@ class Results:
         dir:  The directory name.
 
         force:  A flag which if True will cause the results file to be overwritten.
-
-        format:  The format of the output.
 
         compress_type:  The type of compression to use when creating the file.
 
@@ -145,7 +136,6 @@ class Results:
             text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force`
-            text = text + ", format=" + `format`
             text = text + ", compress_type=" + `compress_type` + ")"
             print text
 
@@ -161,13 +151,9 @@ class Results:
         if type(force) != bool:
             raise RelaxBoolError, ('force flag', force)
 
-        # Format.
-        if type(format) != str:
-            raise RelaxStrError, ('format', format)
-
         # Compression type.
         if type(compress_type) != int:
             raise RelaxIntError, ('compression type', compress_type)
 
         # Execute the functional code.
-        results.write(file=file, directory=dir, force=force, format=format, compress_type=compress_type)
+        results.write(file=file, directory=dir, force=force, compress_type=compress_type)

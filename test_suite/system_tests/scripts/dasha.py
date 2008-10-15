@@ -7,6 +7,10 @@ import sys
 from data import Relax_data_store; ds = Relax_data_store()
 
 
+# Missing temp directory (allow this script to run outside of the system test framework).
+if not hasattr(ds, 'tmpdir'):
+    ds.tmpdir = 'temp_script'
+
 # Set the data pipe names (also the names of preset model-free models).
 pipes = ['m1', 'm2', 'm3']
 
@@ -16,15 +20,15 @@ for name in pipes:
     pipe.create(name, 'mf')
 
     # Load the sequence.
-    sequence.read(sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/noe.dat')
+    sequence.read(sys.path[-1] + '/test_suite/shared_data/jw_mapping/noe.dat')
 
     # Load a PDB file.
     #structure.read_pdb('example.pdb')
 
     # Load the relaxation data.
-    relax_data.read('R1', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/R1.dat')
-    relax_data.read('R2', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/R2.dat')
-    relax_data.read('NOE', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/noe.dat')
+    relax_data.read('R1', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/shared_data/jw_mapping/R1.dat')
+    relax_data.read('R2', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/shared_data/jw_mapping/R2.dat')
+    relax_data.read('NOE', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/shared_data/jw_mapping/noe.dat')
 
     # Setup other values.
     diffusion_tensor.init(1e-8, fixed=True)
@@ -36,13 +40,13 @@ for name in pipes:
     model_free.select_model(model=name)
 
     # Create the Dasha script.
-    dasha.create(algor='NR', force=True)
+    dasha.create(algor='NR', dir=ds.tmpdir, force=True)
 
     # Execute Dasha.
-    dasha.execute()
+    dasha.execute(dir=ds.tmpdir)
 
     # Read the data.
-    dasha.extract()
+    dasha.extract(dir=ds.tmpdir)
 
     # Write the results.
-    results.write(file=ds.tmpdir + '/' + 'results_dasha', force=True)
+    results.write(file=ds.tmpdir + '/' + 'results_dasha', dir=None, force=True)

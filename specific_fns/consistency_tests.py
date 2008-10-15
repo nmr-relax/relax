@@ -309,12 +309,12 @@ class Consistency_tests(Common_functions):
 
             # Check for sufficient data
             if not hasattr(spin, 'relax_data'):
-                spin.select = 0
+                spin.select = False
                 continue
 
             # Require 3 or more data points
             if len(spin.relax_data) < 3:
-                spin.select = 0
+                spin.select = False
                 continue
 
 
