@@ -5,6 +5,8 @@ import sys
 import multi
 import time,datetime
 
+from multi.processor import Result_command,Result_string
+
 #FIXME need to subclass
 class Uni_processor(object):
     def __init__(self,relax_instance):
@@ -56,7 +58,7 @@ class Uni_processor(object):
 
 
 
-        if isinstance(result, multi.mpi4py_processor.Result_command):
+        if isinstance(result, Result_command):
             memo=None
             if result.memo_id != None:
                 memo=self.memo_map[result.memo_id]
@@ -64,7 +66,7 @@ class Uni_processor(object):
             if result.memo_id != None and result.completed:
             		del self.memo_map[result.memo_id]
 
-	    elif isinstance(result, multi.mpi4py_processor.Result_string):
+	    elif isinstance(result, Result_string):
 	        #FIXME can't cope with multiple lines
 	        print result.rank,result.string
 	    else:
