@@ -55,6 +55,19 @@ class Get_name_command(Slave_command):
         result = Result_string(msg,completed)
         processor.return_object(result)
 
+class Set_processor_property_command(Slave_command):
+    def __init__(self,property_map):
+        super(Set_processor_property_command,self).__init__()
+        self.property_map = property_map
+
+    def run(self,processor,completed):
+        for property,value in self.property_map.items():
+            try:
+                setattr(processor, property, value)
+                processor.return_object(NULL_RESULT)
+            except Exception, e:
+                processor.return_object(e)
+
 
 
 #not quite a momento so a memo
@@ -80,6 +93,8 @@ OFFSET_WARNING=6 #  The warning string.
 OFFSET_SHORT_MIN_PARAMS=0
 OFFSET_SHORT_FK=1
 OFFSET_SHORT_K=2
+
+
 
 
 
@@ -240,8 +255,8 @@ class MF_minimise_command(Slave_command):
         # add debug flag or extra channels that output immediately
         if processor.processor_size() > 1:
             pre_string = processor.rank_format_string() % processor.rank()
-            stderr_string = ' E>'
-            stdout_string  = ' S>'
+            stderr_string = ' E> '
+            stdout_string  = ' S> '
         else:
             pre_string = ''
             stderr_string = ''

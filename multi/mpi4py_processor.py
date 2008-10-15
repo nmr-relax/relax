@@ -29,15 +29,24 @@ import os
 import math
 import textwrap
 import traceback
+import time
+import Queue
+import threading
 
 from multi.processor import Processor,Memo,Slave_command
-from multi.processor import Result,Result_command,Result_string
+from multi.processor import Result,Result_command,Result_string,Result_exception
 from multi.commands import Exit_command
 
 from copy import copy
 from multi.processor import Capturing_exception
 
 
+
+
+in_main_loop = False
+
+# save original sys.exit to call after wrapper
+_sys_exit =  sys.exit
 
 
 # load mpi
@@ -59,9 +68,7 @@ except ImportError:
     sys.stderr.write('exiting...\n\n')
     sys.exit()
 
-# save original sys.exit to call after wrapper
-if MPI.rank == 0:
-    _sys_exit =  sys.exit
+
 
 #FIXME: delete me
 #def rank_format_string():
@@ -72,10 +79,26 @@ if MPI.rank == 0:
 #RANK_FORMAT_STRING = rank_format_string
 
 # wrapper sys.exit function
+# CHECKME is status ok
 def exit(status=None):
 
-    exit_mpi()
-    _sys_exit(status)
+    if MPI.rank != 0:
+        if in_main_loop:
+            raise Exception('sys.exit unexpectedley called on slave!')
+        else:
+            sys.__stderr__.write('\n')
+            sys.__stderr__.write('***********************************************\n')
+            sys.__stderr__.write('\n')
+            sys.__stderr__.write('warning sys.exit called before mpi4py main loop\n')
+            sys.__stderr__.write('\n')
+            sys.__stderr__.write('***********************************************\n')
+            sys.__stderr__.write('\n')
+            MPI.COMM_WORLD.Abort()
+    else:
+        #print 'here'
+        exit_mpi()
+        #MPI.COMM_WORLD.Abort(1)
+        _sys_exit(status)
 
 def broadcast_command(command):
     for i in range(1,MPI.size):
@@ -95,6 +118,59 @@ def exit_mpi():
         ditch_all_results()
 
 
+class Batched_result_command(Result_command):
+
+    def __init__(self,result_commands,completed=True):
+        super(Batched_result_command,self).__init__(completed=completed)
+        self.result_commands=result_commands
+
+
+    def run(self,relax,processor,batched_memo):
+
+        processor.assert_on_master()
+        if batched_memo != None:
+            msg = "batched result commands shouldn't have memo values, memo: " + `batched_memo`
+            raise ValueError(msg)
+
+        for result_command in self.result_commands:
+            processor.process_result(result_command)
+
+
+class Exit_queue_result_command(Result_command):
+    def __init__(self,completed=True):
+        pass
+
+RESULT_QUEUE_EXIT_COMMAND = Exit_queue_result_command()
+
+class Threaded_result_queue(object):
+    def __init__(self,mpi4py_processor):
+
+        self.queue = Queue.Queue()
+        self.mpi4py_processor = mpi4py_processor
+        self.sleep_time =0.05
+
+        self.running=1
+        # FIXME: syntax error here produces exception but no quit
+        self.thread1 = threading.Thread(target=self.workerThread)
+        self.thread1.setDaemon(1)
+        self.thread1.start()
+
+    def workerThread(self):
+
+            while True:
+                item=self.queue.get()
+                if item == RESULT_QUEUE_EXIT_COMMAND:
+                    break
+                self.mpi4py_processor.process_result(item)
+
+
+    def put(self,job):
+        self.queue.put_nowait(job)
+
+    def run_all(self):
+        self.queue.put_nowait(RESULT_QUEUE_EXIT_COMMAND)
+        self.thread1.join()
+
 
 
 
@@ -103,7 +179,7 @@ class Mpi4py_processor(Processor):
 
 
 
-    def __init__(self,relax_instance, chunkyness=3):
+    def __init__(self,relax_instance, chunkyness=1):
         super(Mpi4py_processor,self).__init__(relax_instance = relax_instance, chunkyness=chunkyness)
 
 
@@ -116,6 +192,13 @@ class Mpi4py_processor(Processor):
         self.command_queue=[]
         self.memo_map={}
 
+        self.batched_returns=True
+        self.result_list=None
+
+        self.threaded_result_processing=True
+
+    def abort(self):
+        MPI.COMM_WORLD.Abort()
 
     def add_to_queue(self,command,memo=None):
         self.command_queue.append(command)
@@ -163,62 +246,87 @@ class Mpi4py_processor(Processor):
     def get_name(self):
         return '%s-%s' % (MPI.Get_processor_name(),os.getpid())
 
+    # CHECKME am i used
     def exit(self):
         exit_mpi()
 
     def return_object(self,result):
-        result.rank=MPI.rank
-        MPI.COMM_WORLD.Send(buf=result, dest=0)
+        result_object = None
+        #raise Exception('dummy')
+        if self.batched_returns:
+            is_batch_result = isinstance(result, Batched_result_command)
 
-    #FIXME: fill out
-    def process_result(self):
-        pass
+
+            if is_batch_result:
+                result_object = result
+            else:
+                if self.result_list != None:
+                    self.result_list.append(result)
+        else:
+            result_object=result
+
+
+        if result_object != None:
+            #FIXME check is used?
+            result_object.rank=MPI.rank
+            MPI.COMM_WORLD.Send(buf=result_object, dest=0)
+
+    #FIXME: fill out generic result processing move to processor
+    def process_result(self,result):
+
+        if isinstance(result, Result):
+
+            if isinstance(result, Result_command):
+                memo=None
+                if result.memo_id != None:
+                    memo=self.memo_map[result.memo_id]
+                result.run(self.relax_instance,self,memo)
+                if result.memo_id != None and result.completed:
+                    del self.memo_map[result.memo_id]
+
+            elif isinstance(result, Result_string):
+                #FIXME can't cope with multiple lines
+                self.save_stdout.write(result.string),
+        else:
+            message = 'Unexpected result type \n%s \nvalue%s' %(result.__class__.__name__,result)
+            raise Exception(message)
 
     def run_command_queue(self,queue):
-        self.assert_on_master()
+            self.assert_on_master()
 
-        running_set=set()
-        idle_set=set([i for i in range(1,MPI.size)])
+            running_set=set()
+            idle_set=set([i for i in range(1,MPI.size)])
 
-        while len(queue) != 0:
-
-            while len(idle_set) != 0:
-                if len(queue) != 0:
-                    command = queue.pop()
-                    dest=idle_set.pop()
-                    MPI.COMM_WORLD.Send(buf=command,dest=dest)
-                    running_set.add(dest)
-                else:
-                    break
+            if self.threaded_result_processing:
+                result_queue=Threaded_result_queue(self)
 
 
-            while len(running_set) !=0:
-                result = MPI.COMM_WORLD.Recv(source=MPI.ANY_SOURCE)
-                if isinstance(result, Exception):
-                    #FIXME: clear command queue
-                    #       and finalise mpi (or restart it if we can!
-                    # also tracebacks are no good
-                    raise result
+            while len(queue) != 0:
 
-                if isinstance(result, Result):
+                while len(idle_set) != 0:
+                    if len(queue) != 0:
+                        command = queue.pop()
+                        dest=idle_set.pop()
+                        MPI.COMM_WORLD.Send(buf=command,dest=dest)
+                        running_set.add(dest)
+                    else:
+                        break
+
+
+                while len(running_set) !=0:
+                    result = MPI.COMM_WORLD.Recv(source=MPI.ANY_SOURCE)
+                    #print result
+
                     if result.completed:
                         idle_set.add(result.rank)
                         running_set.remove(result.rank)
-
-                    if isinstance(result, Result_command):
-                        memo=None
-                        if result.memo_id != None:
-                            memo=self.memo_map[result.memo_id]
-                        result.run(self.relax_instance,self,memo)
-                        if result.memo_id != None and result.completed:
-                            del self.memo_map[result.memo_id]
-
-                    elif isinstance(result, Result_string):
-                        #FIXME can't cope with multiple lines
-                        self.save_stdout.write(result.string),
+                    if self.threaded_result_processing:
+                        result_queue.put(result)
                     else:
-                        message = 'Unexpected result type \n%s \nvalue%s' %(result.__class__.__name__,result)
-                        raise Exception(message)
+                        self.process_result(result)
+
+            if self.threaded_result_processing:
+                result_queue.run_all()
 
 
 
@@ -231,29 +339,55 @@ class Mpi4py_processor(Processor):
 
     def run(self):
 
-
+        global in_main_loop
+        in_main_loop= True
 
         if self.on_master():
-            self.pre_run()
-            self.relax_instance.run()
-            self.post_run()
+            try:
+                self.pre_run()
+                self.relax_instance.run()
+                self.post_run()
+            except Exception,e:
+                # check me could be moved outside
+                #print e
+                traceback.print_exc(file=sys.stdout)
+                self.abort()
 
             # note this a modified exit that kills all MPI processors
             sys.exit()
         else:
+            try:
+                while not self.do_quit:
 
-            while not self.do_quit:
-                commands = MPI.COMM_WORLD.Recv(source=0)
+                    commands = MPI.COMM_WORLD.Recv(source=0)
 
-                if not isinstance(commands,list):
-                    commands =  [commands]
-                last_command = len(commands)-1
-                for i,command  in enumerate(commands):
-                    try:
+
+                    if not isinstance(commands,list):
+                        commands =  [commands]
+                    last_command = len(commands)-1
+
+                    if self.batched_returns:
+                        self.result_list = []
+                    else:
+                        self.result_list = None
+
+                    for i,command  in enumerate(commands):
+
+                        #raise Exception('dummy')
                         completed = (i == last_command)
                         command.run(self,completed)
-                        #raise Exception('dummy')
-                    except Exception,e:
-                        #self.return_object(e)
-                        self.return_object(Capturing_exception(rank=self.rank(),name=self.get_name()))
 
+
+
+                    if self.batched_returns:
+                        self.return_object(Batched_result_command(result_commands=self.result_list))
+                        self.result_list=None
+
+            except Exception,e:
+                self.result_list=None
+                capturing_exception = Capturing_exception(rank=self.rank(),name=self.get_name())
+                exception_result = Result_exception(capturing_exception)
+                exception_result.rank=MPI.rank
+                MPI.COMM_WORLD.Send(buf=exception_result, dest=0)
+
+    in_main_loop = False

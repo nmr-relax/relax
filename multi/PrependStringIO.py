@@ -1,7 +1,6 @@
 from  StringIO import StringIO
 import sys
 
-# these may need to be in c they cause an pprox 10% slowdown
 
 class PrependOut(StringIO):
 
@@ -21,6 +20,9 @@ class PrependOut(StringIO):
         self.stream.write(string)
         #self.truncate(0)
 
+    # lost more functions needed use dict???
+    def isatty(self,*args,**kwargs):
+        return stream.isatty(*args,**kwargs)
 #    def flush(self):
 #        self.stream.write(self.getvalue().rstrip(self.token))
 #        self.truncate(0)
