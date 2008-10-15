@@ -5,6 +5,9 @@ import sys
 import os
 import math
 
+#FIXME: me move top generic command module
+from maths_fns.mf import Mf
+from minimise.generic import generic_minimise
 
 # load mpi
 try:
@@ -74,6 +77,7 @@ class Null_result_command(Result_command):
 
 NULL_RESULT=Null_result_command()
 
+
 class Slave_command(object):
     def run(self,processor):
         pass
@@ -92,6 +96,41 @@ class Get_name_command(Slave_command):
         msg = processor.get_name()
         result = Result_string(msg,True)
         processor.return_object(result)
+
+class MF_minimise_command(Slave_command):
+    def __init__(self):
+        #!! 'a0':1.0,'mu':0.0001,'eta':0.1,
+        self.minimise_map={'args':(), 'x0':None, 'min_algor':None, 'min_options':None, 'func_tol':1e-25, 'grad_tol':None,
+                     'maxiter':1e6, 'A':None, 'b':'None', 'l':None, 'u':None, 'c':None, 'dc':None, 'd2c':None,
+                     'dc':None, 'd2c':None, 'full_output':0, 'print_flag':0,
+                     'print_prefix':""}
+
+
+
+        self.mf_map={'init_params':None, 'param_set':None, 'diff_type':None, 'diff_params':None,
+                      'scaling_matrix':None, 'num_res':None, 'equations':None, 'param_types':None,
+                      'param_values':None, 'relax_data':None, 'errors':None, 'bond_length':None,
+                      'csa':None, 'num_frq':0, 'frq':None, 'num_ri':None, 'remap_table':None, 'noe_r1_table':None,
+                      'ri_labels':None, 'gx':0, 'gh':0, 'g_ratio':0, 'h_bar':0, 'mu0':0, 'num_params':None, 'vectors':None}
+
+
+    #FIXME: bad names
+    def set_mf(self, **kwargs):
+        self.mf_map.update(**kwargs)
+
+
+    def set_minimise(self,**kwargs):
+        self.minimise_map.update(**kwargs)
+
+    def build_mf(self):
+        return  Mf(**self.mf_map)
+
+    def do_minimise(self):
+        return generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
+
+    def run(self,processor):
+        self.mf = self.build_mf()
+        self.results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
 
 #FIXME do some inheritance
 class Mpi4py_processor:
