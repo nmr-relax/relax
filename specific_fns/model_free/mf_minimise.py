@@ -35,7 +35,7 @@ from generic_fns.diffusion_tensor import diff_data_exists
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
-from multi.mpi4py_processor import  MF_minimise_command
+from multi.mpi4py_processor import  MF_minimise_command,MF_completion_memo
 from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxProtonTypeError, RelaxSpinTypeError
 
@@ -932,10 +932,11 @@ class Mf_minimise:
                 A, b = self.linear_constraints(num_params, model_type=model_type, spin=spin, scaling_matrix=scaling_matrix)
 
             # Initialise the iteration counter and function, gradient, and Hessian call counters.
-            iter_count = 0
-            f_count = 0
-            g_count = 0
-            h_count = 0
+            #FIXME: move to processor command
+            self.iter_count = 0
+            self.f_count = 0
+            self.g_count = 0
+            self.h_count = 0
 
             # Get the data for minimisation.
             relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params = self.minimise_data_setup(model_type, min_algor, num_data_sets, min_options, spin=spin, sim_index=sim_index)
@@ -1001,6 +1002,7 @@ class Mf_minimise:
 #            for elem in data_list:
 #                marshal.loads(marshal.dumps(elem))
 #            self.mf = Mf(init_params=param_vector, model_type=model_type, diff_type=diff_type, diff_params=diff_params, scaling_matrix=scaling_matrix, num_spins=num_spins, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
+
             command=MF_minimise_command()
             command.set_mf(init_params=param_vector, model_type=model_type, diff_type=diff_type, diff_params=diff_params, scaling_matrix=scaling_matrix, num_spins=num_spins, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
             #test.assert_mf_equivalent(self.mf)
@@ -1056,16 +1058,43 @@ class Mf_minimise:
                 command.set_minimise(args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=verbosity)
             else:
                 command.set_minimise(args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
-            command.run(None)
 
             # Disassemble the results.
             if results == None:
                 continue
-            param_vector, func, iter, fc, gc, hc, warning = command.results
-            iter_count = iter_count + iter
-            f_count = f_count + fc
-            g_count = g_count + gc
-            h_count = h_count + hc
+            memo = MF_completion_memo(model_free=self,index=index,sim_index=sim_index,run=self.run,param_set=self.param_set,scaling=scaling)
+
+            self.relax.processor.add_to_queue(command,memo)
+            #self.relax.processor.add_to_queue()
+
+            #command.do_minimise(memo)
+            #command.memo_id
+
+            #param_vector, func, iter, fc, gc, hc, warning = command.results
+            #self.disassemble_result(param_vector=param_vector,func=func,iter=iter,fc=fc,gc=gc,hc=hc,warning=warning,
+            #                        run=memo.run,index=memo.index,sim_index=memo.sim_index, param_set=memo.param_set,scaling=memo.scaling)
+
+        self.relax.processor.run_queue()
+
+
+    def disassemble_result(self,param_vector,func,iter,fc,gc,hc,warning,run,index,sim_index, param_set,scaling):
+            self.func=func
+            self.warning=warning
+            self.param_vector=param_vector
+
+            #FIXME something is resetting the count between each calculation!
+#            self.iter_count = iter
+#            self.f_count = fc
+#            self.g_count = gc
+#            self.h_count = hc
+
+            self.iter_count = self.iter_count + iter
+            self.f_count = self.f_count + fc
+            self.g_count = self.g_count + gc
+            self.h_count = self.h_count + hc
+
+
+
 
             # Catch infinite chi-squared values.
             if isInf(func):
@@ -1087,22 +1116,22 @@ class Mf_minimise:
                 # Sequence specific minimisation statistics.
                 if model_type == 'mf' or model_type == 'local_tm':
                     # Chi-squared statistic.
-                    spin.chi2_sim[sim_index] = func
+                    spin.chi2_sim[sim_index] = self.func
 
                     # Iterations.
-                    spin.iter_sim[sim_index] = iter_count
+                    spin.iter_sim[sim_index] = self.iter_count
 
                     # Function evaluations.
-                    spin.f_count_sim[sim_index] = f_count
+                    spin.f_count_sim[sim_index] = self.f_count
 
                     # Gradient evaluations.
-                    spin.g_count_sim[sim_index] = g_count
+                    spin.g_count_sim[sim_index] = self.g_count
 
                     # Hessian evaluations.
-                    spin.h_count_sim[sim_index] = h_count
+                    spin.h_count_sim[sim_index] = self.h_count
 
                     # Warning.
-                    spin.warning_sim[sim_index] = warning
+                    spin.warning_sim[sim_index] = self.warning
 
                 # Global minimisation statistics.
                 elif model_type == 'diff' or model_type == 'all':
@@ -1129,22 +1158,22 @@ class Mf_minimise:
                 # Sequence specific minimisation statistics.
                 if model_type == 'mf' or model_type == 'local_tm':
                     # Chi-squared statistic.
-                    spin.chi2 = func
+                    spin.chi2 = self.func
 
                     # Iterations.
-                    spin.iter = iter_count
+                    spin.iter = self.iter_count
 
                     # Function evaluations.
-                    spin.f_count = f_count
+                    spin.f_count = self.f_count
 
                     # Gradient evaluations.
-                    spin.g_count = g_count
+                    spin.g_count = self.g_count
 
                     # Hessian evaluations.
-                    spin.h_count = h_count
+                    spin.h_count = self.h_count
 
                     # Warning.
-                    spin.warning = warning
+                    spin.warning = self.warning
 
                 # Global minimisation statistics.
                 elif model_type == 'diff' or model_type == 'all':

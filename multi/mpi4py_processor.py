@@ -4,6 +4,7 @@
 import sys
 import os
 import math
+import time,datetime
 
 #FIXME: me move top generic command module
 from maths_fns.mf import Mf
@@ -54,7 +55,8 @@ def exit_mpi():
 
 class Result(object):
     def __init__(self):
-        self.rank=MPI.rank
+        pass
+
 
 class Result_string(Result):
     #FIXME move result up a level
@@ -64,11 +66,12 @@ class Result_string(Result):
         self.completed=completed
 
 class Result_command(Result):
-    def __init__(self,completed):
+    def __init__(self,completed,memo_id=None):
         super(Result_command,self).__init__()
         self.completed=completed
+        self.memo_id=memo_id
 
-    def run(self,relax,processor):
+    def run(self,relax,processor,memo):
         pass
 
 class Null_result_command(Result_command):
@@ -79,12 +82,24 @@ NULL_RESULT=Null_result_command()
 
 
 class Slave_command(object):
+    def __init__(self):
+        self.memo_id=None
+
+    def set_memo_id(self,memo):
+        if memo != None:
+            self.memo_id = memo.memo_id()
+        else:
+            self.memo_id=None
+
     def run(self,processor):
         pass
 
 #FIXME do some inheritance
 
 class Exit_command(Slave_command):
+    def __init__(self):
+        super(Exit_command,self).__init__()
+
     def run(self,processor):
         processor.return_object(NULL_RESULT)
         processor.do_quit=True
@@ -92,13 +107,59 @@ class Exit_command(Slave_command):
 
 
 class Get_name_command(Slave_command):
+    def __init__(self):
+        super(Exit_command,self).__init__()
+
     def run(self,processor):
         msg = processor.get_name()
         result = Result_string(msg,True)
         processor.return_object(result)
 
+class Memo(object):
+    def memo_id(self):
+        return id(self)
+
+
+#not quit a momento so a memo
+class MF_completion_memo(Memo):
+    def __init__(self,model_free,index,sim_index,run,param_set,scaling):
+        self.index = index
+        self.sim_index=sim_index
+        self.run=run
+        self.param_set=param_set
+        self.model_free=model_free
+        self.scaling=scaling
+
+
+class MF_completion_command(Result_command):
+    def __init__(self,memo_id,param_vector, func, iter, fc, gc, hc, warning):
+        super(MF_completion_command,self).__init__(True,memo_id=memo_id)
+        self.memo_id=memo_id
+        self.param_vector=param_vector
+        self.func=func
+        self.iter=iter
+        self.fc=fc
+        self.gc=gc
+        self.hc=hc
+        self.warning=warning
+
+    def run(self,relax,processor,memo):
+        m_f=memo.model_free
+        m_f.iter_count = 0
+        m_f.f_count = 0
+        m_f.g_count = 0
+        m_f.h_count = 0
+        m_f.disassemble_result(param_vector=self.param_vector,func=self.func,iter=self.iter,fc=self.fc,
+                               gc=self.gc,hc=self.hc, warning=self.warning,
+                               run=memo.run, index=memo.index,sim_index=memo.sim_index,
+                               param_set=memo.param_set,scaling=memo.scaling)
+
+
 class MF_minimise_command(Slave_command):
     def __init__(self):
+        super(MF_minimise_command,self).__init__()
+
+
         #!! 'a0':1.0,'mu':0.0001,'eta':0.1,
         self.minimise_map={'args':(), 'x0':None, 'min_algor':None, 'min_options':None, 'func_tol':1e-25, 'grad_tol':None,
                      'maxiter':1e6, 'A':None, 'b':'None', 'l':None, 'u':None, 'c':None, 'dc':None, 'd2c':None,
@@ -125,12 +186,22 @@ class MF_minimise_command(Slave_command):
     def build_mf(self):
         return  Mf(**self.mf_map)
 
-    def do_minimise(self):
-        return generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
+    def do_minimise(self,memo):
+        self.mf = self.build_mf()
+        results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
 
+        m_f=memo.model_free
+        param_vector, func, iter, fc, gc, hc, warning = results
+        m_f.disassemble_result(param_vector=param_vector,func=func,iter=iter,fc=fc,
+                               gc=gc,hc=hc, warning=warning,
+                               run=memo.run, index=memo.index,sim_index=memo.sim_index,
+                               param_set=memo.param_set,scaling=memo.scaling)
     def run(self,processor):
         self.mf = self.build_mf()
-        self.results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
+        results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
+        param_vector, func, iter, fc, gc, hc, warning = results
+
+        processor.return_object(MF_completion_command(self.memo_id,param_vector, func, iter, fc, gc, hc, warning))
 
 #FIXME do some inheritance
 class Mpi4py_processor:
@@ -143,6 +214,23 @@ class Mpi4py_processor:
         # wrap sys.exit to close down mpi before exiting
         sys.exit= exit
         self.do_quit=False
+
+        #FIXME un clone from uniprocessor
+        #command queue and memo queue
+        self.command_queue=[]
+        self.memo_map={}
+
+    def add_to_queue(self,command,memo=None):
+        self.command_queue.append(command)
+        if memo != None:
+            command.set_memo_id(memo)
+            self.memo_map[memo.memo_id()]=memo
+
+    def run_queue(self):
+        #FIXME: need a finally here to cleanup exceptions states
+         self.run_command_queue(self.command_queue)
+         del self.command_queue[:]
+         self.memo_map.clear()
 
     def assert_on_master(self):
         if MPI.rank != 0:
@@ -157,13 +245,15 @@ class Mpi4py_processor:
         exit_mpi()
 
     def return_object(self,result):
+        result.rank=MPI.rank
         MPI.COMM_WORLD.Send(buf=result, dest=0)
 
-    def run_command_queue(self,commands):
-        self.assert_on_master()
 
-        for i in range(1,MPI.size):
-            MPI.COMM_WORLD.Send(buf=command,dest=i)
+#    def process_commands(self,commands):
+#        self.assert_on_master()
+#
+#        for i in range(1,MPI.size):
+#            MPI.COMM_WORLD.Send(buf=command,dest=i)
 
     def run_command_globally(self,command):
         queue = [command for i in range(1,MPI.size)]
@@ -201,6 +291,8 @@ class Mpi4py_processor:
             while len(running_set) !=0:
                 result = MPI.COMM_WORLD.Recv(source=MPI.ANY_SOURCE)
                 if isinstance(result, Exception):
+                    #FIXME: clear command queue
+                    #       and finalise mpi (or restart it if we can!
                     raise result
 
                 if isinstance(result, Result):
@@ -209,7 +301,13 @@ class Mpi4py_processor:
                         running_set.remove(result.rank)
 
                     if isinstance(result, Result_command):
-                        result.run(self.relax,self)
+                        memo=None
+                        if result.memo_id != None:
+                            memo=self.memo_map[result.memo_id]
+                        result.run(self.relax_instance,self,memo)
+                        if result.memo_id != None and result.completed:
+                            del self.memo_map[result.memo_id]
+
                     elif isinstance(result, Result_string):
                         #FIXME can't cope with multiple lines
                         print result.rank,result.string
@@ -242,7 +340,14 @@ class Mpi4py_processor:
 
 
         if MPI.rank ==0:
+            start_time =  time.time()
             self.relax_instance.run()
+            end_time = time.time()
+            time_diff= end_time - start_time
+            time_delta = datetime.timedelta(seconds=time_diff)
+            sys.stderr.write('overall runtime: ' + time_delta.__str__() + '\n')
+            sys.stderr.flush()
+            # note this a mdofied exit that kills all MPI processors
             sys.exit()
         else:
             #self.relax_instance.run(deamon=True)

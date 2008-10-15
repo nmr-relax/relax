@@ -132,7 +132,6 @@ class Relax:
             self.interpreter = interpreter.Interpreter(self, intro_string)
             self.interpreter.run(self.script_file)
 
-
         elif mode == 'slave':
             self.interpreter = Interpreter(self)
             self.dummy_mode=1
