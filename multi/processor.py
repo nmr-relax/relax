@@ -22,6 +22,67 @@
 #                                                                              #
 ################################################################################
 
+#FIXME better  requirement of inherited commands
+import time,datetime
+
+
+
+def raise_unimplimented(method):
+    raise NotImplementedError("Attempt to invoke unimplemented abstract method %s") % method.__name__
+
+#requires 2.4 decorators@abstract
+#def abstract(f):
+#    raise_unimplimented(f)
+#    return f
+
+class Processor(object):
+
+    def add_to_queue(self,command,memo=None):
+         raise_unimplimented(self.add_to_queue)
+
+    def run_queue(self):
+        raise_unimplimented(self.run_queue)
+
+    def run(self):
+        raise_unimplimented(self.run)
+
+    def return_object(self,result):
+        raise_unimplimented(self.return_object)
+
+    def get_name(self):
+        raise_unimplimented(self.get_name)
+
+    def exit(self):
+        raise_unimplimented(self.exit)
+
+    def on_master(self):
+        raise_unimplimented(self.on_master)
+
+    def on_slave(self):
+        return not self.on_master()
+
+    def run_command_globally(self,command):
+        queue = [command for i in range(1,MPI.size)]
+        self.run_command_queue(queue)
+
+    def pre_run(self):
+        if self.on_master():
+            self.start_time =  time.time()
+
+    def get_time_delta(self,start_time,end_time):
+
+        time_diff= end_time - start_time
+        time_delta = datetime.timedelta(seconds=time_diff)
+        time_delta_str = time_delta.__str__()
+        (time_delta_str,millis) = time_delta_str.split('.',1)
+        return time_delta_str
+
+    def post_run(self):
+        if self.on_master():
+            end_time = time.time()
+            time_delta_str = self.get_time_delta(self.start_time,end_time)
+            print 'overall runtime: ' + time_delta_str + '\n'
+
 class Result(object):
     def __init__(self,completed):
         self.completed=completed

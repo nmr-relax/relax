@@ -486,6 +486,9 @@ def import_module(module_path, verbose=False):
     return result
 
 #FIXME: mode not required should be an instance variable of relax?
+#FIXME error checking for if module require not found
+#FIXME move module loading to processor
+#FIXME module loading code needs to be in a util module
 def load_multiprocessor(relax_instance):
 
     processor_name = relax_instance.multiprocessor_type + '_processor'
