@@ -25,8 +25,6 @@ from math import pi
 from numpy import float64, array, dot, zeros
 from numpy.linalg import inv
 from re import match
-import cStringIO #FIXME: temporary for pickle tests
-import marshal   #FIXME: temporary for pickle tests
 
 # relax module imports.
 from float import isNaN, isInf
@@ -933,10 +931,10 @@ class Mf_minimise:
 
             # Initialise the iteration counter and function, gradient, and Hessian call counters.
             #FIXME: move to processor command
-            self.iter_count = 0
-            self.f_count = 0
-            self.g_count = 0
-            self.h_count = 0
+            #self.iter_count = 0
+            #self.f_count = 0
+            #self.g_count = 0
+            #self.h_count = 0
 
             # Get the data for minimisation.
             relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params = self.minimise_data_setup(model_type, min_algor, num_data_sets, min_options, spin=spin, sim_index=sim_index)
@@ -990,23 +988,30 @@ class Mf_minimise:
             else:
                 command.set_minimise(args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
 
-            # Disassemble the results.
-            if results == None:
-                continue
-            memo = MF_memo(model_free=self,index=index,sim_index=sim_index,run=self.run,param_set=self.param_set,scaling=scaling)
+            memo = MF_memo(model_free=self,index=index,sim_index=sim_index,run=self.run,param_set=self.param_set,scaling=scaling, scaling_matrix=scaling_matrix)
 
             self.relax.processor.add_to_queue(command,memo)
 
+        #raise Exception('test')
+        #self.relax.processor.run_queue()
 
-        self.relax.processor.run_queue()
 
-
-    def disassemble_result(self,param_vector,func,iter,fc,gc,hc,warning,run,index,sim_index, param_set,scaling):
-            self.func=func
-            self.warning=warning
-            self.param_vector=param_vector
+    def disassemble_result(self,param_vector,func,iter,fc,gc,hc,warning,run,index,sim_index, param_set,scaling,scaling_matrix):
+            #print '***',param_vector,func,iter,fc,gc,hc,warning,run,index,sim_index, param_set,scaling
+            #self.write_columnar_line(file=sys.stdout)
+            #self.param_vector=param_vector
 
             #FIXME this is a fix for old code
+#            self.iter_count = iter
+#            self.f_count = fc
+#            self.g_count = gc
+#            self.h_count = hc
+#            self.run=run
+
+
+
+            self.func=func
+            self.warning=warning
             self.iter_count = self.iter_count + iter
             self.f_count = self.f_count + fc
             self.g_count = self.g_count + gc
@@ -1028,12 +1033,14 @@ class Mf_minimise:
                 param_vector = dot(scaling_matrix, param_vector)
 
             # Disassemble the parameter vector.
+            # FIXME pass param_vector
             self.disassemble_param_vector(model_type, param_vector=param_vector, spin=spin, sim_index=sim_index)
 
             # Monte Carlo minimisation statistics.
             if sim_index != None:
                 # Sequence specific minimisation statistics.
                 if model_type == 'mf' or model_type == 'local_tm':
+
                     # Chi-squared statistic.
                     spin.chi2_sim[sim_index] = self.func
 
@@ -1076,6 +1083,16 @@ class Mf_minimise:
             else:
                 # Sequence specific minimisation statistics.
                 if model_type == 'mf' or model_type == 'local_tm':
+# FIXME: remove me
+#                    import traceback
+#                    if self.relax.data.res[run][index].num ==  4:
+#                        print '***1',run,param_set
+#                        print '***2',index,self.relax.data.res[run][index].num,self.relax.data.res['m1'][index].name
+#                        print '***3',self.relax.data.res[run][index].num,self.relax.data.res['m1'][index].name,param_set,run,index,sim_index,self.param_vector
+#                        print '***4',self.relax.data.res['m1'][index].s2,id(self.relax.data.res['m1'][index])
+#                        print '***5'
+#                        traceback.print_stack(file=sys.stdout)
+
                     # Chi-squared statistic.
                     spin.chi2 = self.func
 

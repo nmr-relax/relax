@@ -23,7 +23,9 @@
 ################################################################################
 
 #FIXME better  requirement of inherited commands
-import time,datetime
+import time,datetime,math,sys
+from multi.PrependStringIO import  PrependStringIO,PrependOut
+import traceback,textwrap
 
 
 
@@ -61,13 +63,30 @@ class Processor(object):
     def on_slave(self):
         return not self.on_master()
 
+    def rank(self):
+        raise_unimplimented(self.rank)
+
+    def processor_size(self):
+        raise_unimplimented(self.processor_size())
+
     def run_command_globally(self,command):
         queue = [command for i in range(1,MPI.size)]
         self.run_command_queue(queue)
 
+    #FIXME: remname chunk* grain*
+    def __init__(self,relax_instance,chunkyness=1):
+        self.chunkyness = chunkyness
+        self.relax_instance = relax_instance
+
     def pre_run(self):
         if self.on_master():
             self.start_time =  time.time()
+
+        self.save_stdout = sys.stdout
+        self.save_stderr = sys.stderr
+        pre_string = 'M'*self.rank_format_string_width()
+        sys.stdout = PrependOut(pre_string + ' S> ', sys.stdout)
+        sys.stderr = PrependOut(pre_string + ' E> ', sys.stderr)
 
     def get_time_delta(self,start_time,end_time):
 
@@ -82,6 +101,16 @@ class Processor(object):
             end_time = time.time()
             time_delta_str = self.get_time_delta(self.start_time,end_time)
             print 'overall runtime: ' + time_delta_str + '\n'
+        sys.stdout = self.save_stdout
+        sys.stderr = self.save_stderr
+
+    def rank_format_string_width(self):
+        return int(math.ceil(math.log10(self.processor_size())))
+
+    def rank_format_string(self):
+        digits  = self.rank_format_string_width()
+        format = '%%%di' % digits
+        return format
 
 class Result(object):
     def __init__(self,completed):
@@ -104,8 +133,8 @@ class Result_command(Result):
         pass
 
 class Null_result_command(Result_command):
-    def __init__(self):
-        super(Null_result_command,self).__init__(completed=True)
+    def __init__(self,completed=True):
+        super(Null_result_command,self).__init__(completed=completed)
 
 NULL_RESULT=Null_result_command()
 
@@ -120,7 +149,7 @@ class Slave_command(object):
         else:
             self.memo_id=None
 
-    def run(self,processor):
+    def run(self,processor,completed):
         pass
 
 
@@ -128,3 +157,40 @@ class Slave_command(object):
 class Memo(object):
     def memo_id(self):
         return id(self)
+
+
+
+class Capturing_exception(Exception):
+    def __init__(self,exc_info=None, rank='unknown', name='unknown'):
+        Exception.__init__(self)
+        self.rank=rank
+        self.name=name
+        if exc_info == None:
+            (exception_type,exception_instance,exception_traceback)=sys.exc_info()
+        self.exception_name =  exception_type.__name__
+        self.exception_string = exception_instance.__str__()
+        self.traceback = traceback.format_tb(exception_traceback)
+
+    def __str__(self):
+        message ='''
+
+                     %s
+
+                     Nested Exception from sub processor
+                     Rank: %s  Name: %s
+                     Exception type: %s
+                     Message: %s
+
+                     %s
+
+                     %s
+
+
+                 '''
+        message = textwrap.dedent(message)
+        result =  message % ('-'*120,self.rank, self.name, self.exception_name,
+                             self.exception_string, '\n'.join(self.traceback),
+                             '-'*120)
+        return result
+
+

@@ -27,11 +27,14 @@ import sys
 import os
 import math
 import textwrap
+import traceback
 
 from multi.processor import Processor,Memo,Slave_command
 from multi.processor import Result,Result_command,Result_string
 from multi.commands import Exit_command
 
+from copy import copy
+from multi.processor import Capturing_exception
 
 
 
@@ -59,13 +62,13 @@ except ImportError:
 if MPI.rank == 0:
     _sys_exit =  sys.exit
 
-
-def rank_format_string():
-    digits  = math.ceil(math.log10(MPI.size))
-    format = '%%%di' % digits
-    return format
-
-RANK_FORMAT_STRING = rank_format_string
+#FIXME: delete me
+#def rank_format_string():
+#    digits  = math.ceil(math.log10(MPI.size))
+#    format = '%%%di' % digits
+#    return format
+#
+#RANK_FORMAT_STRING = rank_format_string
 
 # wrapper sys.exit function
 def exit(status=None):
@@ -99,8 +102,9 @@ class Mpi4py_processor(Processor):
 
 
 
-    def __init__(self,relax_instance):
-        self.relax_instance= relax_instance
+    def __init__(self,relax_instance, chunkyness=3):
+        super(Mpi4py_processor,self).__init__(relax_instance = relax_instance, chunkyness=chunkyness)
+
 
         # wrap sys.exit to close down mpi before exiting
         sys.exit= exit
@@ -111,15 +115,41 @@ class Mpi4py_processor(Processor):
         self.command_queue=[]
         self.memo_map={}
 
+
     def add_to_queue(self,command,memo=None):
         self.command_queue.append(command)
         if memo != None:
             command.set_memo_id(memo)
             self.memo_map[memo.memo_id()]=memo
 
+    def rank(self):
+        return MPI.rank
+
+    def processor_size(self):
+        return MPI.size -1
+
+    def chunk_queue(self,queue):
+        lqueue=copy(queue)
+        result = []
+        processors = self.processor_size()
+        chunks = processors * self.chunkyness
+        chunk_size = int(math.floor(float(len(queue)) / float(chunks)))
+
+        if chunk_size < 1:
+            result = queue
+        else:
+            for i in range(chunks):
+                result.append(lqueue[:chunk_size])
+                del lqueue[:chunk_size]
+            for i,elem in enumerate(lqueue):
+                result[i].append(elem)
+        return result
+
     def run_queue(self):
         #FIXME: need a finally here to cleanup exceptions states
-         self.run_command_queue(self.command_queue)
+         lqueue =  self.chunk_queue(self.command_queue)
+         self.run_command_queue(lqueue)
+
          del self.command_queue[:]
          self.memo_map.clear()
 
@@ -138,7 +168,6 @@ class Mpi4py_processor(Processor):
     def return_object(self,result):
         result.rank=MPI.rank
         MPI.COMM_WORLD.Send(buf=result, dest=0)
-
 
 
 
@@ -166,6 +195,7 @@ class Mpi4py_processor(Processor):
                 if isinstance(result, Exception):
                     #FIXME: clear command queue
                     #       and finalise mpi (or restart it if we can!
+                    # also tracebacks are no good
                     raise result
 
                 if isinstance(result, Result):
@@ -183,7 +213,7 @@ class Mpi4py_processor(Processor):
 
                     elif isinstance(result, Result_string):
                         #FIXME can't cope with multiple lines
-                        print result.rank,result.string
+                        self.save_stdout.write(result.string),
                     else:
                         message = 'Unexpected result type \n%s \nvalue%s' %(result.__class__.__name__,result)
                         raise Exception(message)
@@ -211,11 +241,19 @@ class Mpi4py_processor(Processor):
         else:
 
             while not self.do_quit:
-                command = MPI.COMM_WORLD.Recv(source=0)
-                try:
-                    command.run(self)
-                except Exception,e:
-                    self.return_object(e)
+                commands = MPI.COMM_WORLD.Recv(source=0)
+
+                if not isinstance(commands,list):
+                    commands =  [commands]
+                last_command = len(commands)-1
+                for i,command  in enumerate(commands):
+                    try:
+                        completed = i == last_command
+                        command.run(self,completed)
+                        #raise Exception('dummy')
+                    except Exception,e:
+                        #self.return_object(e)
+                        self.return_object(Capturing_exception(rank=self.rank(),name=self.get_name()))
 
 
 

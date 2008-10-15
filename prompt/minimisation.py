@@ -148,9 +148,11 @@ class Minimisation:
         if type(verbosity) != int:
             raise RelaxIntError, ('verbosity level', verbosity)
 
-        # Execute the functional code.
+        # Enqueue the functional code.
         minimise.grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity)
 
+        # Execute the functional code.
+        self.relax.processor.run_queue()
 
     def minimise(self, *args, **keywords):
         """Minimisation function.
@@ -354,10 +356,11 @@ class Minimisation:
         if type(verbosity) != int:
             raise RelaxIntError, ('verbosity level', verbosity)
 
-        # Execute the functional code.
+        # Enqyueue the functional code.
         minimise.minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity)
 
-
+        # Execute the functional code.
+        self.relax.processor.run_queue()
 
     # Modify the docstring of the minimise method to include the docstring of the generic_minimise function in 'minimise.generic'.
     ##############################################################################################################################

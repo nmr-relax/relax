@@ -132,8 +132,9 @@ def calc(verbosity=1):
     if hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
         # Loop over the simulations.
         for i in xrange(cdp.sim_number):
-            if verbosity:
-                print "Simulation " + `i+1`
+# FIXME: simulation number prints in wrong place
+#                if verbosity:
+#                    print "Simulation " + `i+1`
             calculate(verbosity=verbosity-1, sim_index=i)
 
     # Minimisation.
