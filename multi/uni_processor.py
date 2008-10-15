@@ -21,6 +21,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA    #
 #                                                                              #
 ################################################################################
+from errors import RelaxWarnings
 import threading, Queue
 import sys,os
 import multi
@@ -71,11 +72,18 @@ from multi.processor import Processor,Result_command,Result_string
 class Uni_processor(Processor):
 
 
-    def __init__(self,relax_instance):
-        self.relax_instance= relax_instance
+    def __init__(self,processor_size,callback):
+        super(Uni_processor,self).__init__(processor_size=1,callback=callback)
+
+        if processor_size > 1:
+            print 'warning: uniprocessor can only support 1 processor you requested %d' % processor_size
+            print 'continuing...\n'
+
 
         self.command_queue=[]
         self.memo_map={}
+
+        self.slave_stdio_capture=self.std_stdio_capture(rank=1,pre_strings=('',''))
 
     def add_to_queue(self,command,memo=None):
         self.command_queue.append(command)
@@ -89,7 +97,11 @@ class Uni_processor(Processor):
         last_command = len(self.command_queue)-1
         for i,command  in enumerate(self.command_queue):
             completed = (i == last_command)
+
+            self.capture_stdio(self.slave_stdio_capture)
             command.run(self,completed)
+            self.restore_stdio()
+
         #self.run_command_queue()
         #TODO: add cheques for empty queuese and maps if now warn
         del self.command_queue[:]
@@ -103,9 +115,11 @@ class Uni_processor(Processor):
 #        start_time =  time.clock()
         try:
             self.pre_run()
-            self.relax_instance.run()
-        finally:
+            self.callback.init_master(self)
             self.post_run()
+        except Exception,e:
+            self.callback.handle_exception(self,e)
+
 #        end_time = time.clock()
 #        time_diff= end_time - start_time
 #        time_delta = datetime.timedelta(seconds=time_diff)
@@ -119,18 +133,18 @@ class Uni_processor(Processor):
     def exit(self):
         sys.exit()
 
-    def on_master(self):
-        return True
+#    def on_master(self):
+#        return True
 
 
     def rank(self):
-        return 1
+        return 0
 
     def processor_size(self):
         return 1
 
-
-
+    def get_intro_string(self):
+        return '''uniprocessor'''
 
 
 
@@ -148,12 +162,12 @@ class Uni_processor(Processor):
             memo=None
             if result.memo_id != None:
                 memo=self.memo_map[result.memo_id]
-            result.run(self.relax_instance,self,memo)
+            result.run(self,memo)
             if result.memo_id != None and result.completed:
                 del self.memo_map[result.memo_id]
 
         elif isinstance(result, Result_string):
-            self.save_stdout.write(result.string)
+            sys.stdout.write(result.string)
         else:
             message = 'Unexpected result type \n%s \nvalue%s' %(result.__class__.__name__,result)
             raise Exception(message)

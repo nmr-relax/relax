@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+from numpy.f2py.cfuncs import callbacks
 
 ###############################################################################
 #                                                                             #
@@ -46,6 +47,7 @@ import pstats
 from re import match
 from string import split, strip
 import sys
+from multi.processor import Application_callback,Processor
 
 # relax modules.
 import generic_fns
@@ -191,10 +193,14 @@ class Relax:
         parser.add_option('-u', '--unit-tests', action='store_true', dest='unit_tests', default=0, help='execute the relax unit tests (part of the test suite)')
         parser.add_option('-v', '--version', action='store_true', dest='version', default=0, help='show the version number and exit')
         parser.add_option('-m', '--multi', action='store', type='string', dest='multiprocessor', default='uni', help='set multi processor method')
-        parser.add_option('-n', '--processors', action='store', type='int', dest='n_processors', default=1, help='set number of processors (may be ignored)')
+        parser.add_option('-n', '--processors', action='store', type='int', dest='n_processors', default=-1, help='set number of processors (may be ignored)')
+
+
+
 
         # Parse the options.
         (options, args) = parser.parse_args(args)
+
 
         # Debugging flag.
         if options.debug:
@@ -392,6 +398,8 @@ class Relax:
         if not dep_check.C_module_exp_fn:
             intro_string = intro_string + "\n" + dep_check.C_module_exp_fn_mesg + "\n"
 
+        self.intro_string  = self.intro_string  + '\nprocessor = ' + self.processor.get_intro_string() + '\n'
+
         # Return the string.
         return intro_string
 
@@ -450,66 +458,7 @@ class RelaxParser(OptionParser):
 
 # FIXME: code shared with unit testing framework not changed from unit tests version
 # replace unit test version with this
-def import_module(module_path, verbose=False):
-    ''' import the python module named by module_path
 
-        @type module_path: a string containing a dot separated module path
-        @param module_path: a module path in python dot separated format
-                            note: this currently doesn't support relative module
-                            paths as defined by pep328 and python 2.5
-
-        @type verbose: Boolean
-        @param verbose: whether to report sucesses and failures for debugging
-
-        @rtype:     list of class module instances or None
-        @return:    the module path as a list of module instances or None
-                    if the module path cannot be found in the python path
-
-        '''
-
-    module = None
-    result = None
-
-    #try:
-    module = __import__(module_path,globals(),  locals(), [])
-    if verbose:
-        print 'loaded module %s' % module_path
-    #except Exception, e:
-    #    if verbose:
-    #        print 'failed to load module_path %s' % module_path
-    #        print 'exception:',e
-
-    #FIXME: needs more failure checking
-    if module != None:
-        result = [module]
-        components = module_path.split('.')
-        for component in components[1:]:
-            module = getattr(module, component)
-            result.append(module)
-    return result
-
-#FIXME: mode not required should be an instance variable of relax?
-#FIXME error checking for if module require not found
-#FIXME move module loading to processor
-#FIXME module loading code needs to be in a util module
-def load_multiprocessor(relax_instance):
-
-    processor_name = relax_instance.multiprocessor_type + '_processor'
-    class_name= processor_name[0].upper() + processor_name[1:]
-    module_path = '.'.join(('multi',processor_name))
-
-
-    modules = import_module(module_path)
-    #print modules
-
-    if hasattr(modules[-1],class_name):
-        clazz =  getattr(modules[-1], class_name)
-    else:
-        raise RelaxError("can't load class %s from module %s" % (class_name,module_path))
-
-    object = clazz(relax_instance)
-    relax_instance.processor =  object
-    return object
 
 if __name__ == "__main__":
     #import multi.uni_processor
@@ -521,8 +470,11 @@ if __name__ == "__main__":
 
     if not profile_flag:
         relax_instance = Relax()
-        mode=relax_instance.arguments(sys.argv[1:])
-        multi_processor = load_multiprocessor(relax_instance)
+        relax_instance.arguments(sys.argv[1:])
+        callbacks =  Application_callback(master=relax_instance)
+        multi_processor = Processor.load_multiprocessor(relax_instance.multiprocessor_type,
+                                              callbacks, processor_size=relax_instance.n_processors)
+        relax_instance.processor =  multi_processor
         multi_processor.run()
 
     else:
