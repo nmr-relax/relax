@@ -28,6 +28,7 @@ class Get_name_command(Slave_command):
 #not quite a momento so a memo
 class MF_memo(Memo):
     def __init__(self,model_free,index,sim_index,run,param_set,scaling):
+        super(MF_memo,self).__init__()
         self.index = index
         self.sim_index=sim_index
         self.run=run
@@ -38,7 +39,7 @@ class MF_memo(Memo):
 
 class MF_result_command(Result_command):
     def __init__(self,memo_id,param_vector, func, iter, fc, gc, hc, warning):
-        super(MF_completion_command,self).__init__(completed=True,memo_id=memo_id)
+        super(MF_result_command,self).__init__(completed=True,memo_id=memo_id)
         self.memo_id=memo_id
         self.param_vector=param_vector
         self.func=func
@@ -82,7 +83,9 @@ class MF_minimise_command(Slave_command):
         self.info_map={'res_id':None,'grid_size':1}
     #FIXME: bad names
     def set_mf(self, **kwargs):
-        self.mf_map.update(**kwargs)
+        # note the creation of a dict prevents a bug in python 2.3.3  where
+        # it complains update doesn't take keywords
+        self.mf_map.update(dict(**kwargs))
 
 
     def set_minimise(self,**kwargs):
@@ -93,7 +96,9 @@ class MF_minimise_command(Slave_command):
         if 'grid_size' in kwargs:
            self.info_map['grid_size']= kwargs['grid_size']
            del kwargs['grid_size']
-        self.minimise_map.update(**kwargs)
+        # note the creation of a dict prevents a bug in python 2.3.3  where
+        # it complains update doesn't take keywords
+        self.minimise_map.update(dict(**kwargs))
 
     def build_mf(self):
         return  Mf(**self.mf_map)
@@ -135,5 +140,5 @@ class MF_minimise_command(Slave_command):
         results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
         param_vector, func, iter, fc, gc, hc, warning = results
 
-        processor.return_object(MF_completion_command(self.memo_id,param_vector, func, iter, fc, gc, hc, warning))
+        processor.return_object(MF_result_command(self.memo_id,param_vector, func, iter, fc, gc, hc, warning))
 
