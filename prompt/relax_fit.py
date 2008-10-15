@@ -46,11 +46,10 @@ class Relax_fit:
         """Function for calculating the average intensity and standard deviation of all spectra.
 
 
-        Errors of individual residues at a single time point
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Errors of individual spin at a single time point
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        The standard deviation for a single residue at a single time point is calculated by the
-        formula
+        The standard deviation for a single spin at a single time point is calculated by the formula
 
         -----
                      ____________________________
@@ -67,8 +66,8 @@ class Relax_fit:
         ~~~~~~~~~~~~~~~~~~~~~~~
 
         As the value of n in the above equation is always very low, normally only a couple of
-        spectra are collected per time point, the standard deviation of all residues is averaged for
-        a single time point.  Although this results in all residues having the same error, the
+        spectra are collected per time point, the standard deviation of all spins is averaged for
+        a single time point.  Although this results in all spins having the same error, the
         accuracy of the error estimate is significantly improved.
 
 
@@ -79,7 +78,7 @@ class Relax_fit:
         supported), the each time point will have its own error estimate.  However, if there are
         time points in the series which only consist of a single spectrum, then the standard
         deviations of replicated time points will be averaged.  Hence, for the entire experiment
-        there will be a single error value for all residues and for all time points.
+        there will be a single error value for all spins and for all time points.
 
         A better approach rather than averaging across all time points would be to use a form of
         interpolation as the errors across time points generally decreases for longer time periods.
