@@ -1,6 +1,7 @@
 
 from multi.processor import Memo,Slave_command
 from multi.processor import Result_command,Result_string,NULL_RESULT
+from re import match
 
 from maths_fns.mf import Mf
 from minimise.generic import generic_minimise
@@ -24,7 +25,7 @@ class Get_name_command(Slave_command):
         result = Result_string(msg,True)
         processor.return_object(result)
 
-#not quit a momento so a memo
+#not quite a momento so a memo
 class MF_completion_memo(Memo):
     def __init__(self,model_free,index,sim_index,run,param_set,scaling):
         self.index = index
@@ -78,19 +79,27 @@ class MF_minimise_command(Slave_command):
                       'csa':None, 'num_frq':0, 'frq':None, 'num_ri':None, 'remap_table':None, 'noe_r1_table':None,
                       'ri_labels':None, 'gx':0, 'gh':0, 'g_ratio':0, 'h_bar':0, 'mu0':0, 'num_params':None, 'vectors':None}
 
-
+        self.info_map={'res_id':None,'grid_size':1}
     #FIXME: bad names
     def set_mf(self, **kwargs):
         self.mf_map.update(**kwargs)
 
 
     def set_minimise(self,**kwargs):
+        print kwargs
+        if 'res_id' in kwargs:
+           self.info_map['res_id']= kwargs['res_id']
+           del kwargs['res_id']
+        if 'grid_size' in kwargs:
+           self.info_map['grid_size']= kwargs['grid_size']
+           del kwargs['grid_size']
         self.minimise_map.update(**kwargs)
 
     def build_mf(self):
         return  Mf(**self.mf_map)
 
     def do_minimise(self,memo):
+
         self.mf = self.build_mf()
         results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
 
@@ -100,8 +109,29 @@ class MF_minimise_command(Slave_command):
                                gc=gc,hc=hc, warning=warning,
                                run=memo.run, index=memo.index,sim_index=memo.sim_index,
                                param_set=memo.param_set,scaling=memo.scaling)
+
+    def do_feedback(self):
+        # Print out.
+        #print_flag,param_set,residue_num,residue_name,min_algor,grid_size=None
+        m_m=self.minimise_map
+        m_f=self.mf_map
+        i_m=self.info_map
+        if m_m['print_flag'] >= 1:
+            # Individual residue stuff.
+            if m_f['param_set'] == 'mf' or m_f['param_set'] == 'local_tm':
+                if m_m['print_flag'] >= 2:
+                    print "\n\n"
+                string = "Fitting to residue: " + i_m['res_id']
+                print "\n\n" + string
+                print len(string) * '~'
+            if match('^[Gg]rid', m_m['min_algor']):
+                print "Unconstrained grid search size: " + `i_m['grid_size']` + " (constraints may decrease this size).\n"
+
     def run(self,processor):
         self.mf = self.build_mf()
+
+
+        self.do_feedback()
         results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
         param_vector, func, iter, fc, gc, hc, warning = results
 
