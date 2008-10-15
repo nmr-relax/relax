@@ -38,16 +38,16 @@ from relax_io import extract_data, strip
 from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
 
-def det_dimensions():
+def det_dimensions(file_data):
     """Determine which are the proton and heteronuclei dimensions of the XEasy text file.
 
     @return:    None
     """
 
     # Loop over the lines of the file until the proton and heteronucleus is reached.
-    for i in xrange(len(self.file_data)):
+    for i in xrange(len(file_data)):
         # Extract the data.
-        res_num, w1_name, w2_name, intensity = self.intensity(self.file_data[i])
+        res_num, w1_name, w2_name, intensity = intensity(file_data[i])
 
         # Proton in w1, heteronucleus in w2.
         if w1_name == self.proton and w2_name == self.heteronuc:
@@ -354,7 +354,7 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
 
     # Determine the proton and heteronucleus dimensions in the XEasy text file.
     if format == 'xeasy':
-        det_dimensions()
+        det_dimensions(file_data)
 
     # Loop over the peak intensity data.
     for i in xrange(len(file_data)):
