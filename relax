@@ -377,7 +377,7 @@ class Relax:
             intro_string = intro_string + "and comes with absolutely no warranty.  For details type 'GPL'.  Assistance in using this program\n"
             intro_string = intro_string + "can be accessed by typing 'help'.\n"
 
-        # ImportErrors, if any.
+        # Import errors, if any.
         if not dep_check.C_module_exp_fn:
             intro_string = intro_string + "\n" + dep_check.C_module_exp_fn_mesg + "\n"
 
