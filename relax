@@ -232,6 +232,10 @@ class Relax:
             if not access(self.script_file, F_OK):
                 parser.error("the script file " + `self.script_file` + " does not exist")
 
+        # Set the multi-processor type and number.
+        self.multiprocessor_type = options.multiprocessor
+        self.n_processors = options.n_processors
+
 
         # Determine the relax mode and test for mutually exclusive modes.
         #################################################################
@@ -244,9 +248,7 @@ class Relax:
 
         # Run the relax tests.
         elif options.test_suite or options.system_tests or options.unit_tests:
-            #FIXME: multiprocessor options should be mostly resolved independent of the run mode.
-            self.multiprocessor_type = options.multiprocessor
-            self.n_processors = options.n_processors           # Make sure no script is supplied.
+            # Make sure no script is supplied.
             if self.script_file:
                 parser.error("a script should not be supplied when executing the test suite")
 
@@ -296,33 +298,19 @@ class Relax:
 
         # Script mode.
         elif self.script_file:
-            #FIXME check for uniprocessor and n_processors.
-            self.multiprocessor_type = options.multiprocessor
-            self.n_processors = options.n_processors
             self.mode = 'script'
 
         # Prompt mode (default).
         else:
-            #FIXME check for uniprocessor and n_processors.
-            self.multiprocessor_type = options.multiprocessor
-            self.n_processors = options.n_processors
             self.mode = 'prompt'
 
-        # multi processor
-        if options.multiprocessor == 'uni':
-            self.multi_mode = 'uni'
-        else:
+        # Multi-processor mode (not including the uni-processor).
+        if options.multiprocessor != 'uni':
             # Exclusive modes.
             if options.test_suite or options.unit_test:
                 parser.error("the relax multi processor mode and executing the test suite are mutually exclusive")
             elif options.licence:
                 parser.error("the relax multi processor multi processor and licence are mutually exclusive")
-
-            self.multiprocessor_type = options.multiprocessor
-            self.n_processors = options.n_processors
-
-            #note will be changed to multi_master or multi_slave when multi_processor initialises
-            self.multi_mode = 'multi'
 
 
     def get_intro_string(self):
