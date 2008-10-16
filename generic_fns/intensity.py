@@ -365,7 +365,7 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
     # Loop over the peak intensity data.
     for i in xrange(len(file_data)):
         # Extract the data.
-        res_num, H_name, X_name, intensity = intensity_fn(file_data[i], int_col=int_col)
+        res_num, H_name, X_name, intensity = intensity_fn(file_data[i], int_col)
 
         # Skip data.
         if X_name != heteronuc or H_name != proton:
