@@ -422,11 +422,6 @@ class RelaxParser(OptionParser):
 # replace unit test version with this
 
 if __name__ == "__main__":
-    #import multi.uni_processor
-    for elem in sys.modules:
-        if elem == 'multi.uni_processor':
-            print 'found', elem
-
     # Change this flag to True for code profiling.
     profile_flag = False
 
