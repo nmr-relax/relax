@@ -89,7 +89,7 @@ class Uni_processor(Processor):
         self.command_queue=[]
         self.memo_map={}
 
-        self.slave_stdio_capture=self.std_stdio_capture(rank=1,pre_strings=('',''))
+        self.slave_stdio_capture = self.std_stdio_capture(pre_strings=('',''))
 
     def add_to_queue(self,command,memo=None):
         self.command_queue.append(command)
