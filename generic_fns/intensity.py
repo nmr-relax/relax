@@ -47,7 +47,7 @@ def det_dimensions(file_data):
     # Loop over the lines of the file until the proton and heteronucleus is reached.
     for i in xrange(len(file_data)):
         # Extract the data.
-        res_num, w1_name, w2_name, intensity = intensity(file_data[i])
+        res_num, w1_name, w2_name, intensity = intensity_xeasy(file_data[i])
 
         # Proton in w1, heteronucleus in w2.
         if w1_name == self.proton and w2_name == self.heteronuc:
