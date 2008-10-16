@@ -28,6 +28,7 @@
 __all__ = [ 'main',
             'mf_minimise',
             'molmol',
+            'multi_processor_commands',
             'results']
 
 # relax module imports.
