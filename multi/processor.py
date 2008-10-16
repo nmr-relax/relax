@@ -413,7 +413,7 @@ class Processor(object):
             current command line.
     '''
 
-    # register load multi_processor as a ststic function of the class
+    # Register load multi_processor as a static function of the class.
     # FIXME: cleanup move function into class
     load_multiprocessor = staticmethod(load_multiprocessor)
 
