@@ -382,7 +382,7 @@ class Relax:
             intro_string = intro_string + "\n" + dep_check.C_module_exp_fn_mesg + "\n"
 
         # Multi processor string component.
-        intro_string  = intro_string  + '\nprocessor = ' + self.processor.get_intro_string() + '\n'
+        intro_string  = intro_string  + '\nProcessor model:  %s\n' % self.processor.get_intro_string()
 
         # Return the string.
         return intro_string
