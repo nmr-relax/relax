@@ -109,12 +109,8 @@ class Relax:
     def run(self):
         """Execute relax."""
 
-        #FIXME use self.mode all over.
-        mode = self.mode
-        print mode
-
         # Show the version number and exit.
-        if mode == 'version':
+        if self.mode == 'version':
             print 'relax ' + self.version
             sys.exit()
 
@@ -130,13 +126,13 @@ class Relax:
         intro_string = self.get_intro_string()
 
         # Run the interpreter for the prompt or script modes.
-        if mode == 'prompt' or mode == 'script':
+        if self.mode == 'prompt' or self.mode == 'script':
             # Run the interpreter.
             self.interpreter = interpreter.Interpreter(self, intro_string)
             self.interpreter.run(self.script_file)
 
         # Execute the relax test suite
-        elif mode == 'test suite':
+        elif self.mode == 'test suite':
             # Load the interpreter and turn intros on.
             self.interpreter = interpreter.Interpreter(self, show_script=False, quit=False, raise_relax_error=True)
             self.interpreter._on()
@@ -146,7 +142,7 @@ class Relax:
             runner.run_all_tests()
 
         # Execute the relax system tests.
-        elif mode == 'system tests':
+        elif self.mode == 'system tests':
             # Load the interpreter and turn intros on.
             self.interpreter = interpreter.Interpreter(self, show_script=False, quit=False, raise_relax_error=True)
             self.interpreter._on()
@@ -156,17 +152,17 @@ class Relax:
             runner.run_system_tests()
 
         # Execute the relax unit tests.
-        elif mode == 'unit tests':
+        elif self.mode == 'unit tests':
             # Run the tests.
             runner = Test_suite_runner(self)
             runner.run_unit_tests()
 
         # Test mode.
-        elif mode == 'test':
+        elif self.mode == 'test':
             self.test_mode()
 
         # Licence mode.
-        elif mode == 'licence':
+        elif self.mode == 'licence':
             self.licence()
 
 
@@ -244,7 +240,7 @@ class Relax:
 
         # Show the version number.
         if options.version:
-            mode = 'version'
+            self.mode = 'version'
 
         # Run the relax tests.
         elif options.test_suite or options.system_tests or options.unit_tests:
@@ -262,11 +258,11 @@ class Relax:
 
             # Set the mode.
             if options.test_suite:
-                mode = 'test suite'
+                self.mode = 'test suite'
             elif options.system_tests:
-                mode = 'system tests'
+                self.mode = 'system tests'
             elif options.unit_tests:
-                mode = 'unit tests'
+                self.mode = 'unit tests'
 
         # Test mode.
         elif options.test:
@@ -281,7 +277,7 @@ class Relax:
                 parser.error("the relax modes test and licence are mutually exclusive")
 
             # Set the mode.
-            mode = 'test'
+            self.mode = 'test'
 
         # Licence mode.
         elif options.licence:
@@ -296,21 +292,21 @@ class Relax:
                 parser.error("the relax modes licence and test are mutually exclusive")
 
             # Set the mode.
-            mode = 'licence'
+            self.mode = 'licence'
 
         # Script mode.
         elif self.script_file:
             #FIXME check for uniprocessor and n_processors.
             self.multiprocessor_type = options.multiprocessor
             self.n_processors = options.n_processors
-            mode = 'script'
+            self.mode = 'script'
 
         # Prompt mode (default).
         else:
             #FIXME check for uniprocessor and n_processors.
             self.multiprocessor_type = options.multiprocessor
             self.n_processors = options.n_processors
-            mode = 'prompt'
+            self.mode = 'prompt'
 
         # multi processor
         if options.multiprocessor == 'uni':
@@ -327,9 +323,6 @@ class Relax:
 
             #note will be changed to multi_master or multi_slave when multi_processor initialises
             self.multi_mode = 'multi'
-
-        #FIXME: use self.mode throughout
-        self.mode = mode
 
 
     def get_intro_string(self):
