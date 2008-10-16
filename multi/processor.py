@@ -180,21 +180,6 @@ def load_multiprocessor(processor_name, callback, processor_size):
     return object
 
 
-
-#FIXME: move elsewhere
-def traceit(frame, event, arg):
-    import linecache
-    if event == "line":
-        file_name = os.path.split(frame.f_code.co_filename)[-1]
-        function_name = frame.f_code.co_name
-        line_number = frame.f_lineno
-        line = linecache.getline(file_name, line_number)
-        msg = '<< %s - %s - %d>> %s'  %(file_name,function_name,line_number, line[:-1])
-        print >> sys.__stdout__, msg
-
-    return traceit
-
-
 #sys.settrace(traceit)
 # FIXME useful debugging code but where to put it
 def print_file_lineno(range=xrange(1,2)):
@@ -211,12 +196,56 @@ def print_file_lineno(range=xrange(1,2)):
         except Exception, e:
             print e
             break
+
+
 #FIXME: useful for debugging but where to put it
 def print_message(processor,message):
     f=open ('error' + `processor.rank()` + '.txt','a')
     f.write(message+'\n')
     f.flush()
     f.close()
+
+
+#requires 2.4 decorators@abstract
+#def abstract(f):
+#    raise_unimplimented(f)
+
+#    return f
+
+def raise_unimplimented(method):
+    '''Standard function for raising NotImplementedError for unimplemented abstract methods.
+
+    @todo:  For python versions >= 2.4 it is possible to use annotations and meta classes to provide
+            a very elegant implementation of abstract methods that check on class instantiation that
+            the derived class is a complete implementation of the abstract class. Note some people
+            think abstract classes shouldn't be used with python, however.  They are proposed for
+            python 3k by Guido van Rossum in pep3119 ;-)
+
+    @see:   http://soiland.no/blog/py/abstract
+    @see:   http://www.python.org/dev/peps/pep-3119
+
+    @param method:              The method which should be abstract.
+    @type method:               class method
+    @raise NotImplementedError: A not implemented exception with the method name as a parameter.
+    '''
+
+    msg = "Attempt to invoke unimplemented abstract method %s"
+    raise NotImplementedError(msg % method.__name__)
+
+
+#FIXME: move elsewhere
+def traceit(frame, event, arg):
+    import linecache
+    if event == "line":
+        file_name = os.path.split(frame.f_code.co_filename)[-1]
+        function_name = frame.f_code.co_name
+        line_number = frame.f_lineno
+        line = linecache.getline(file_name, line_number)
+        msg = '<< %s - %s - %d>> %s'  %(file_name,function_name,line_number, line[:-1])
+        print >> sys.__stdout__, msg
+
+    return traceit
+
 
 class Application_callback(object):
     '''Call backs provided to the host application by the multi processor framework.
@@ -272,32 +301,6 @@ class Application_callback(object):
         # note we print to __stdout__ as sys.stdout may be a wrapper we applied
         traceback.print_exc(file=sys.__stdout__)
         processor.abort()
-
-#requires 2.4 decorators@abstract
-#def abstract(f):
-#    raise_unimplimented(f)
-
-#    return f
-
-def raise_unimplimented(method):
-    '''Standard function for raising NotImplementedError for unimplemented abstract methods.
-
-    @todo:  For python versions >= 2.4 it is possible to use annotations and meta classes to provide
-            a very elegant implementation of abstract methods that check on class instantiation that
-            the derived class is a complete implementation of the abstract class. Note some people
-            think abstract classes shouldn't be used with python, however.  They are proposed for
-            python 3k by Guido van Rossum in pep3119 ;-)
-
-    @see:   http://soiland.no/blog/py/abstract
-    @see:   http://www.python.org/dev/peps/pep-3119
-
-    @param method:              The method which should be abstract.
-    @type method:               class method
-    @raise NotImplementedError: A not implemented exception with the method name as a parameter.
-    '''
-
-    msg = "Attempt to invoke unimplemented abstract method %s"
-    raise NotImplementedError(msg % method.__name__)
 
 
 class Processor(object):
