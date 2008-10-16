@@ -450,8 +450,8 @@ if __name__ == "__main__":
         if elem == 'multi.uni_processor':
             print 'found', elem
 
-    # Change this flag to 1 for code profiling.
-    profile_flag = 0
+    # Change this flag to True for code profiling.
+    profile_flag = False
 
     # No profiling.
     if not profile_flag:
