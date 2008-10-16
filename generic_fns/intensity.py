@@ -177,8 +177,8 @@ def intensity_nmrview(line, int_col):
     @param line:        The single line of information from the intensity file.
     @type line:         list of str
     @keyword int_col:   The column containing the peak intensity data. The default is 16 for
-                        intensities. 'int_col = 15' will use the volumes (or evolumes). For a
-                        non-standard formatted file, use a different value.
+                        intensities. Setting the int_col argument to 15 will use the volumes (or
+                        evolumes). For a non-standard formatted file, use a different value.
     @type int_col:      int
     @raises RelaxError: When the expected peak intensity is not a float.
     """
@@ -211,9 +211,9 @@ def intensity_nmrview(line, int_col):
     if int_col == None:
         int_col = 16
     if int_col == 16:
-        print 'Using intensities.'
+        print 'Using peak heights.'
     if int_col == 15:
-        print 'Using volumes (or evolumes).'
+        print 'Using peak volumes (or evolumes).'
 
     # Intensity.
     try:

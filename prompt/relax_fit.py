@@ -143,8 +143,8 @@ class Relax_fit:
         will be ignored.
 
         If the 'format' argument is set to 'nmrview', the file should be a NMRView peak list. The
-        default is to use column 16 (which contains peak intensities) for peak amplitudes. To use
-        use peak volumes (or evolumes), 'int_col = 15' must be used.
+        default is to use column 16 (which contains peak heights) for peak intensities. To use
+        use peak volumes (or evolumes), int_col must be set to 15.
 
 
         The heteronuc and proton arguments should be set respectively to the name of the
