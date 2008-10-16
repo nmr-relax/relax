@@ -52,23 +52,24 @@ class Relax_fit:
         The standard deviation for a single spin at a single time point is calculated by the formula
 
         -----
-                     ____________________________
-            sd =   \/ sum({Ii - Iav}^2) / (n - 1) ,
+
+            sigma =  sum({Ii - Iav}^2) / (n - 1) ,
 
         -----
 
-        where n is the total number of collected spectra for the time point and i is the
-        corresponding index, Ii is the peak intensity for spectrum i, Iav is the mean over all
-        spectra, ie the sum of all peak intensities divided by n.
+        where sigma is the variance or square of the standard deviation, n is the total number of
+        collected spectra for the time point and i is the corresponding index, Ii is the peak
+        intensity for spectrum i, Iav is the mean over all spectra, ie the sum of all peak
+        intensities divided by n.
 
 
         Averaging of the errors
         ~~~~~~~~~~~~~~~~~~~~~~~
 
         As the value of n in the above equation is always very low, normally only a couple of
-        spectra are collected per time point, the standard deviation of all spins is averaged for
-        a single time point.  Although this results in all spins having the same error, the
-        accuracy of the error estimate is significantly improved.
+        spectra are collected per time point, the variance of all spins is averaged for a single
+        time point.  Although this results in all spins having the same error, the accuracy of the
+        error estimate is significantly improved.
 
 
         Errors across multiple time points
@@ -76,9 +77,9 @@ class Relax_fit:
 
         If all spectra are collected in duplicate (triplicate or higher number of spectra are
         supported), the each time point will have its own error estimate.  However, if there are
-        time points in the series which only consist of a single spectrum, then the standard
-        deviations of replicated time points will be averaged.  Hence, for the entire experiment
-        there will be a single error value for all spins and for all time points.
+        time points in the series which only consist of a single spectrum, then the variances of
+        replicated time points will be averaged.  Hence, for the entire experiment there will be a
+        single error value for all spins and for all time points.
 
         A better approach rather than averaging across all time points would be to use a form of
         interpolation as the errors across time points generally decreases for longer time periods.
@@ -127,7 +128,7 @@ class Relax_fit:
             'xeasy'
             'nmrview'
 
-        If the format argument is set to 'sparky', the file should be a Sparky peak list saved after
+        If the 'format' argument is set to 'sparky', the file should be a Sparky peak list saved after
         typing the command 'lt'.  The default is to assume that columns 0, 1, 2, and 3 (1st, 2nd,
         3rd, and 4th) contain the Sparky assignment, w1, w2, and peak intensity data respectively.
         The frequency data w1 and w2 are ignored while the peak intensity data can either be the
@@ -135,13 +136,15 @@ class Relax_fit:
         is not within column 3, set the argument int_col to the appropriate value (column numbering
         starts from 0 rather than 1).
 
-        If the format argument is set to 'xeasy', the file should be the saved XEasy text window
+        If the 'format' argument is set to 'xeasy', the file should be the saved XEasy text window
         output of the list peak entries command, 'tw' followed by 'le'.  As the columns are fixed,
         the peak intensity column is hardwired to number 10 (the 11th column) which contains either
         the peak height or peak volume data.  Because the columns are fixed, the int_col argument
         will be ignored.
 
-        If the format argument is set to 'nmrview', the file should be a NMRView peak list.
+        If the 'format' argument is set to 'nmrview', the file should be a NMRView peak list. The
+        default is to use column 16 (which contains peak intensities) for peak amplitudes. To use
+        use peak volumes (or evolumes), 'int_col = 15' must be used.
 
 
         The heteronuc and proton arguments should be set respectively to the name of the

@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -60,8 +61,8 @@ class NMRView(TestCase):
         self.relax.interpreter._Relax_fit.read(file="cNTnC.xpk", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", relax_time=0.0176, format='nmrview')
 
         # Test the data.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0][0], -6.88333129883)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].intensities[0][0], -5.49038267136)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0][0], -0.1694)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].intensities[0][0], -0.1142)
 
 
 class Sparky(TestCase):
@@ -155,3 +156,10 @@ class XEasy(TestCase):
         # Test the data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0][0], 9.714e+03)
         self.assertEqual(cdp.mol[0].res[1].spin[0].intensities[0][0], 7.919e+03)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].intensities[0][0], 1.356e+04)
+        self.assertEqual(cdp.mol[0].res[3].spin[0].intensities[0][0], 9.884e+03)
+        self.assertEqual(cdp.mol[0].res[4].spin[0].intensities[0][0], 2.041e+04)
+        self.assertEqual(cdp.mol[0].res[5].spin[0].intensities[0][0], 9.305e+03)
+        self.assertEqual(cdp.mol[0].res[6].spin[0].intensities[0][0], 3.154e+04)
+        self.assertEqual(cdp.mol[0].res[7].spin[0].intensities[0][0], 9.180e+03)
+        self.assertEqual(cdp.mol[0].res[8].spin[0].intensities[0][0], 1.532e+04)
