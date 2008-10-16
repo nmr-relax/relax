@@ -155,3 +155,10 @@ class XEasy(TestCase):
         # Test the data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0][0], 9.714e+03)
         self.assertEqual(cdp.mol[0].res[1].spin[0].intensities[0][0], 7.919e+03)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].intensities[0][0], 1.356e+04)
+        self.assertEqual(cdp.mol[0].res[3].spin[0].intensities[0][0], 9.884e+03)
+        self.assertEqual(cdp.mol[0].res[4].spin[0].intensities[0][0], 2.041e+04)
+        self.assertEqual(cdp.mol[0].res[5].spin[0].intensities[0][0], 9.305e+03)
+        self.assertEqual(cdp.mol[0].res[6].spin[0].intensities[0][0], 3.154e+04)
+        self.assertEqual(cdp.mol[0].res[7].spin[0].intensities[0][0], 9.180e+03)
+        self.assertEqual(cdp.mol[0].res[8].spin[0].intensities[0][0], 1.532e+04)
