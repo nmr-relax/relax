@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2004, 2007-2008 Edward d'Auvergne                             #
+# Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -27,6 +28,8 @@
 # Python module imports.
 from re import split
 from warnings import warn
+import string
+import sys
 
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin
@@ -36,21 +39,21 @@ from relax_io import extract_data, strip
 from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
 
-def det_dimensions():
+def det_dimensions(file_data, proton, heteronuc):
     """Determine which are the proton and heteronuclei dimensions of the XEasy text file.
 
     @return:    None
     """
 
     # Loop over the lines of the file until the proton and heteronucleus is reached.
-    for i in xrange(len(self.file_data)):
+    for i in xrange(len(file_data)):
         # Extract the data.
-        res_num, w1_name, w2_name, intensity = self.intensity(self.file_data[i])
+        res_num, w1_name, w2_name, intensity = intensity_xeasy(file_data[i])
 
         # Proton in w1, heteronucleus in w2.
-        if w1_name == self.proton and w2_name == self.heteronuc:
+        if w1_name == proton and w2_name == heteronuc:
             # Set the proton dimension.
-            self.H_dim = 'w1'
+            H_dim = 'w1'
 
             # Print out.
             print "The proton dimension is w1"
@@ -59,9 +62,9 @@ def det_dimensions():
             break
 
         # Heteronucleus in w1, proton in w2.
-        if w1_name == self.heteronuc and w2_name == self.proton:
+        if w1_name == heteronuc and w2_name == proton:
             # Set the proton dimension.
-            self.H_dim = 'w2'
+            H_dim = 'w2'
 
             # Print out.
             print "The proton dimension is w2"
@@ -70,7 +73,7 @@ def det_dimensions():
             break
 
 
-def intensity_sparky(line, int_col=None):
+def intensity_sparky(line, int_col):
     """Function for returning relevant data from the Sparky peak intensity line.
 
     The residue number, heteronucleus and proton names, and peak intensity will be returned.
@@ -84,35 +87,42 @@ def intensity_sparky(line, int_col=None):
     @raises RelaxError: When the expected peak intensity is not a float.
     """
 
+
     # The Sparky assignment.
-    assignment = split('([A-Z]+)', line[0])
-    assignment = assignment[1:-1]
+    assignment = ''
+    res_num = ''
+    h_name = ''
+    x_name = ''
+    intensity = ''
+    if line[0]!='?-?':
+        assignment = split('([A-Z]+)', line[0])
+        assignment = assignment[1:-1]
 
     # The residue number.
-    try:
-        res_num = int(assignment[1])
-    except:
-        raise RelaxError, "Improperly formatted Sparky file."
+        try:
+            res_num = int(assignment[1])
+        except:
+            raise RelaxError, "Improperly formatted Sparky file."
 
     # Nuclei names.
-    x_name = assignment[2]
-    h_name = assignment[4]
+        x_name = assignment[2]
+        h_name = assignment[4]
 
     # The peak intensity column.
-    if int_col == None:
-        int_col = 3
+        if int_col == None:
+            int_col = 3
 
     # Intensity.
-    try:
-        intensity = float(line[int_col])
-    except ValueError:
-        raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
+        try:
+            intensity = float(line[int_col])
+        except ValueError:
+            raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
 
     # Return the data.
     return res_num, h_name, x_name, intensity
 
 
-def intensity_xeasy(line, int_col=None):
+def intensity_xeasy(line, int_col, H_dim='w1'):
     """Function for returning relevant data from the XEasy peak intensity line.
 
     The residue number, heteronucleus and proton names, and peak intensity will be returned.
@@ -158,13 +168,70 @@ def intensity_xeasy(line, int_col=None):
     return res_num, h_name, x_name, intensity
 
 
+def intensity_nmrview(line, int_col):
+    """Function for returning relevant data from the NMRView peak intensity line.
+
+    The residue number, heteronucleus and proton names, and peak intensity will be returned.
+
+
+    @param line:        The single line of information from the intensity file.
+    @type line:         list of str
+    @keyword int_col:   The column containing the peak intensity data. The default is 16 for
+                        intensities. 'int_col = 15' will use the volumes (or evolumes). For a
+                        non-standard formatted file, use a different value.
+    @type int_col:      int
+    @raises RelaxError: When the expected peak intensity is not a float.
+    """
+
+    # The residue number
+    res_num = ''
+    try:
+        res_num = string.strip(line[1],'{')
+        res_num = string.strip(res_num,'}')
+        res_num = string.split(res_num,'.')
+        res_num = res_num[0]
+    except ValueError:
+        raise RelaxError, "The peak list is invalid."
+
+    # Nuclei names.
+    x_name = ''
+    if line[8]!='{}':
+        x_name = string.strip(line[8],'{')
+        x_name = string.strip(x_name,'}')
+        x_name = string.split(x_name,'.')
+        x_name = x_name[1]
+    h_name = ''
+    if line[1]!='{}':
+        h_name = string.strip(line[1],'{')
+        h_name = string.strip(h_name,'}')
+        h_name = string.split(h_name,'.')
+        h_name = h_name[1]
+
+    # The peak intensity column.
+    if int_col == None:
+        int_col = 16
+    if int_col == 16:
+        print 'Using intensities.'
+    if int_col == 15:
+        print 'Using volumes (or evolumes).'
+
+    # Intensity.
+    try:
+        intensity = float(line[int_col])
+    except ValueError:
+        raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
+
+    # Return the data.
+    return res_num, h_name, x_name, intensity
+
+
 def number_of_header_lines(file_data, format, int_col, intensity):
     """Function for determining how many header lines are in the intensity file.
 
     @param file_data:   The processed results file data.
     @type file_data:    list of lists of str
     @param format:      The type of file containing peak intensities.  This can currently be one of
-                        'sparky' or 'xeasy'.
+                        'sparky', 'xeasy' or 'nmrview'.
     @type format:       str
     @param int_col:     The column containing the peak intensity data (for a non-standard
                         formatted file).
@@ -187,26 +254,35 @@ def number_of_header_lines(file_data, format, int_col, intensity):
     ########
 
     # Loop over the lines of the file until a peak intensity value is reached.
-    header_lines = 0
-    for i in xrange(len(file_data)):
-        # Try to see if the intensity can be extracted.
-        try:
-            if int_col:
-                intensity(file_data[i], int_col)
+    if format == 'xeasy':
+        header_lines = 0
+        for i in xrange(len(file_data)):
+            # Try to see if the intensity can be extracted.
+            try:
+                if int_col:
+                    intensity(file_data[i], int_col)
+                else:
+                    intensity(file_data[i])
+            except RelaxError:
+                header_lines = header_lines + 1
+            except IndexError:
+                header_lines = header_lines + 1
             else:
-                intensity(file_data[i])
-        except RelaxError:
-            header_lines = header_lines + 1
-        except IndexError:
-            header_lines = header_lines + 1
-        else:
-            break
+                break
 
-    # Return the number of lines.
-    return header_lines
+        # Return the number of lines.
+        return header_lines
 
 
-def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=None, assign_func=None):
+    # NMRView.
+    ##########
+
+    # Assume the NMRView file has six header lines!
+    elif format == 'nmrview':
+        return 6
+
+
+def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=None, assign_func=None, spectrum_type=None):
     """Read the peak intensity data.
 
     @keyword file:          The name of the file containing the peak intensities.
@@ -214,7 +290,7 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
     @keyword dir:           The directory where the file is located.
     @type dir:              str
     @keyword format:        The type of file containing peak intensities.  This can currently be
-                            one of 'sparky' or 'xeasy'.
+                            one of 'sparky', 'xeasy' or 'nmrview'.
     @type format:           str
     @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity
                             file.
@@ -226,10 +302,12 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
     @type int_col:          int
     @keyword assign_func:   A function used to place the intensity data within the spin container.
     @type assign_func:      func
+    @keyword spectrum_type: The optional spectrum type to be sent back into assign_func().
+    @type spectrum_type:    str
     """
 
     # Format argument.
-    format_list = ['sparky', 'xeasy']
+    format_list = ['sparky', 'xeasy', 'nmrview']
     if format not in format_list:
         raise RelaxArgNotInListError, ('format', format, format_list)
 
@@ -246,11 +324,19 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
         # Print out.
         print "XEasy formatted data file.\n"
 
+        # Set the default proton dimension.
+        H_dim = 'w1'
+
         # Set the intensity reading function.
         intensity_fn = intensity_xeasy
 
-        # Set the default proton dimension.
-        H_dim = 'w1'
+    # NMRView.
+    elif format == 'nmrview':
+        # Print out.
+        print "NMRView formatted data file.\n"
+
+        # Set the intensity reading function.
+        intensity_fn = intensity_nmrview
 
     # Test if the current data pipe exists.
     pipes.test()
@@ -274,12 +360,12 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
 
     # Determine the proton and heteronucleus dimensions in the XEasy text file.
     if format == 'xeasy':
-        det_dimensions()
+        det_dimensions(file_data=file_data, proton=proton, heteronuc=heteronuc)
 
     # Loop over the peak intensity data.
     for i in xrange(len(file_data)):
         # Extract the data.
-        res_num, H_name, X_name, intensity = intensity_fn(file_data[i])
+        res_num, H_name, X_name, intensity = intensity_fn(file_data[i], int_col)
 
         # Skip data.
         if X_name != heteronuc or H_name != proton:
@@ -298,4 +384,4 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
             continue
 
         # Assign the data.
-        assign_func(spin=spin, intensity=intensity)
+        assign_func(spin=spin, intensity=intensity, spectrum_type=spectrum_type)

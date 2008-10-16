@@ -61,30 +61,14 @@ def determine_format(file):
         return 'columnar'
 
 
-def display(format='xml'):
-    """Displaying the results/contents of the current data pipe.
-
-    @keyword format:    The format of the displayed results.
-    @type format:       str
-    """
+def display():
+    """Displaying the results/contents of the current data pipe."""
 
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Specific results writing function.
-    if format == 'xml':
-        write_function = ds.to_xml
-    elif format == 'columnar':
-        write_function = get_specific_fn('write_columnar_results', pipes.get_type(), raise_error=False)
-    else:
-        raise RelaxError, "Unknown format " + `format` + "."
-
-    # No function.
-    if not write_function:
-        raise RelaxError, "The " + format + " format is not currently supported for " + get_string(pipes.get_type()) + "."
-
     # Write the results.
-    write_function(sys.stdout)
+    ds.to_xml(sys.stdout)
 
 
 def read(file='results', directory=None):
@@ -135,7 +119,7 @@ def read(file='results', directory=None):
         raise RelaxError, "The format of the results file " + `file_path` + " cannot be determined."
 
 
-def write(file="results", directory=None, force=False, format='columnar', compress_type=1, verbosity=1):
+def write(file="results", directory=None, force=False, compress_type=1, verbosity=1):
     """Create the results file."""
 
     # Test if the current data pipe exists.
@@ -145,23 +129,11 @@ def write(file="results", directory=None, force=False, format='columnar', compre
     if directory == 'pipe_name':
         directory = pipes.cdp_name()
 
-    # Specific results writing function.
-    if format == 'xml':
-        write_function = ds.to_xml
-    elif format == 'columnar':
-        write_function = get_specific_fn('write_columnar_results', pipes.get_type(), raise_error=False)
-    else:
-        raise RelaxError, "Unknown format " + `format` + "."
-
-    # No function.
-    if not write_function:
-        raise RelaxError, "The " + format + " format is not currently supported for " + get_string(pipes.get_type()) + "."
-
     # Open the file for writing.
     results_file = open_write_file(file_name=file, dir=directory, force=force, compress_type=compress_type, verbosity=verbosity)
 
     # Write the results.
-    write_function(results_file)
+    ds.to_xml(results_file)
 
     # Close the results file.
     results_file.close()

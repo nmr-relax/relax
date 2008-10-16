@@ -128,7 +128,19 @@ def data_names():
 
 
 def default_value(param):
+    """Return the default values for the alignment tensor parameters.
+
+    @param param:   The name of the parameter.
+    @type param:    str
+    @return:        The default value, which for all parameters is set to zero.
+    @rtype:         float
     """
+
+    # Return 0.0.
+    return 0.0
+
+# User function documentation.
+__default_value_prompt_doc__ = """
     Alignment tensor parameter default values
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -158,10 +170,7 @@ def default_value(param):
     | gamma                  | 'gamma'            | 0.0                    |
     |________________________|____________________|________________________|
 
-    """
-
-    # Return 0.0.
-    return 0.0
+"""
 
 
 def delete(tensor):
@@ -839,63 +848,12 @@ def return_conversion_factor(param):
 
 
 def return_data_name(name):
-    """
-    Alignment tensor parameter string matching patterns
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    """Return the parameter name.
 
-    ____________________________________________________________________________________________
-    |                                                        |              |                  |
-    | Data type                                              | Object name  | Patterns         |
-    |________________________________________________________|______________|__________________|
-    |                                                        |              |                  |
-    | The xx component of the Saupe order matrix - Sxx       | 'Sxx'        | '^[Sa]xx$'       |
-    |                                                        |              |                  |
-    | The yy component of the Saupe order matrix - Syy       | 'Syy'        | '^[Sa]yy$'       |
-    |                                                        |              |                  |
-    | The zz component of the Saupe order matrix - Szz       | 'Szz'        | '^[Sa]zz$'       |
-    |                                                        |              |                  |
-    | The xy component of the Saupe order matrix - Sxy       | 'Sxy'        | '^[Sa]xy$'       |
-    |                                                        |              |                  |
-    | The xz component of the Saupe order matrix - Sxz       | 'Sxz'        | '^[Sa]xz$'       |
-    |                                                        |              |                  |
-    | The yz component of the Saupe order matrix - Syz       | 'Syz'        | '^[Sa]yz$'       |
-    |                                                        |              |                  |
-    | The xx-yy component of the Saupe order matrix - Sxx-yy | 'Sxxyy'      | '^[Sa]xxyy$'     |
-    |                                                        |              |                  |
-    | The xx component of the alignment tensor - Axx         | 'Axx'        | '^[Aa]xx$'       |
-    |                                                        |              |                  |
-    | The yy component of the alignment tensor - Ayy         | 'Ayy'        | '^[Aa]yy$'       |
-    |                                                        |              |                  |
-    | The zz component of the alignment tensor - Azz         | 'Azz'        | '^[Aa]zz$'       |
-    |                                                        |              |                  |
-    | The xy component of the alignment tensor - Axy         | 'Axy'        | '^[Aa]xy$'       |
-    |                                                        |              |                  |
-    | The xz component of the alignment tensor - Axz         | 'Axz'        | '^[Aa]xz$'       |
-    |                                                        |              |                  |
-    | The yz component of the alignment tensor - Ayz         | 'Ayz'        | '^[Aa]yz$'       |
-    |                                                        |              |                  |
-    | The xx-yy component of the alignment tensor - Axx-yy   | 'Axxyy'      | '^[Aa]xxyy$'     |
-    |                                                        |              |                  |
-    | The xx component of the probability matrix - Pxx       | 'Pxx'        | '^[Pa]xx$'       |
-    |                                                        |              |                  |
-    | The yy component of the probability matrix - Pyy       | 'Pyy'        | '^[Pa]yy$'       |
-    |                                                        |              |                  |
-    | The zz component of the probability matrix - Pzz       | 'Pzz'        | '^[Pa]zz$'       |
-    |                                                        |              |                  |
-    | The xy component of the probability matrix - Pxy       | 'Pxy'        | '^[Pa]xy$'       |
-    |                                                        |              |                  |
-    | The xz component of the probability matrix - Pxz       | 'Pxz'        | '^[Pa]xz$'       |
-    |                                                        |              |                  |
-    | The yz component of the probability matrix - Pyz       | 'Pyz'        | '^[Pa]yz$'       |
-    |                                                        |              |                  |
-    | The xx-yy component of the probability matrix - Pxx-yy | 'Pxxyy'      | '^[Pa]xxyy$'     |
-    |                                                        |              |                  |
-    | The first Euler angle of the alignment tensor - alpha  | 'alpha'      | '^a$' or 'alpha' |
-    |                                                        |              |                  |
-    | The second Euler angle of the alignment tensor - beta  | 'beta'       | '^b$' or 'beta'  |
-    |                                                        |              |                  |
-    | The third Euler angle of the alignment tensor - gamma  | 'gamma'      | '^g$' or 'gamma' |
-    |________________________________________________________|______________|__________________|
+    @param name:    The name of the parameter to return the name of.
+    @type name:     str
+    @return:        The parameter name.
+    @rtype:         str
     """
 
     # Enforce that the name must be a string.
@@ -1001,6 +959,66 @@ def return_data_name(name):
     # No parameter?
     raise RelaxUnknownParamError, name
 
+# User function documentation.
+__return_data_name_prompt_doc__ = """
+    Alignment tensor parameter string matching patterns
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    ____________________________________________________________________________________________
+    |                                                        |              |                  |
+    | Data type                                              | Object name  | Patterns         |
+    |________________________________________________________|______________|__________________|
+    |                                                        |              |                  |
+    | The xx component of the Saupe order matrix - Sxx       | 'Sxx'        | '^[Sa]xx$'       |
+    |                                                        |              |                  |
+    | The yy component of the Saupe order matrix - Syy       | 'Syy'        | '^[Sa]yy$'       |
+    |                                                        |              |                  |
+    | The zz component of the Saupe order matrix - Szz       | 'Szz'        | '^[Sa]zz$'       |
+    |                                                        |              |                  |
+    | The xy component of the Saupe order matrix - Sxy       | 'Sxy'        | '^[Sa]xy$'       |
+    |                                                        |              |                  |
+    | The xz component of the Saupe order matrix - Sxz       | 'Sxz'        | '^[Sa]xz$'       |
+    |                                                        |              |                  |
+    | The yz component of the Saupe order matrix - Syz       | 'Syz'        | '^[Sa]yz$'       |
+    |                                                        |              |                  |
+    | The xx-yy component of the Saupe order matrix - Sxx-yy | 'Sxxyy'      | '^[Sa]xxyy$'     |
+    |                                                        |              |                  |
+    | The xx component of the alignment tensor - Axx         | 'Axx'        | '^[Aa]xx$'       |
+    |                                                        |              |                  |
+    | The yy component of the alignment tensor - Ayy         | 'Ayy'        | '^[Aa]yy$'       |
+    |                                                        |              |                  |
+    | The zz component of the alignment tensor - Azz         | 'Azz'        | '^[Aa]zz$'       |
+    |                                                        |              |                  |
+    | The xy component of the alignment tensor - Axy         | 'Axy'        | '^[Aa]xy$'       |
+    |                                                        |              |                  |
+    | The xz component of the alignment tensor - Axz         | 'Axz'        | '^[Aa]xz$'       |
+    |                                                        |              |                  |
+    | The yz component of the alignment tensor - Ayz         | 'Ayz'        | '^[Aa]yz$'       |
+    |                                                        |              |                  |
+    | The xx-yy component of the alignment tensor - Axx-yy   | 'Axxyy'      | '^[Aa]xxyy$'     |
+    |                                                        |              |                  |
+    | The xx component of the probability matrix - Pxx       | 'Pxx'        | '^[Pa]xx$'       |
+    |                                                        |              |                  |
+    | The yy component of the probability matrix - Pyy       | 'Pyy'        | '^[Pa]yy$'       |
+    |                                                        |              |                  |
+    | The zz component of the probability matrix - Pzz       | 'Pzz'        | '^[Pa]zz$'       |
+    |                                                        |              |                  |
+    | The xy component of the probability matrix - Pxy       | 'Pxy'        | '^[Pa]xy$'       |
+    |                                                        |              |                  |
+    | The xz component of the probability matrix - Pxz       | 'Pxz'        | '^[Pa]xz$'       |
+    |                                                        |              |                  |
+    | The yz component of the probability matrix - Pyz       | 'Pyz'        | '^[Pa]yz$'       |
+    |                                                        |              |                  |
+    | The xx-yy component of the probability matrix - Pxx-yy | 'Pxxyy'      | '^[Pa]xxyy$'     |
+    |                                                        |              |                  |
+    | The first Euler angle of the alignment tensor - alpha  | 'alpha'      | '^a$' or 'alpha' |
+    |                                                        |              |                  |
+    | The second Euler angle of the alignment tensor - beta  | 'beta'       | '^b$' or 'beta'  |
+    |                                                        |              |                  |
+    | The third Euler angle of the alignment tensor - gamma  | 'gamma'      | '^g$' or 'gamma' |
+    |________________________________________________________|______________|__________________|
+"""
+
 
 def return_units(param):
     """Function for returning a string representing the parameters units.
@@ -1024,32 +1042,14 @@ def return_units(param):
 
 
 def set(tensor=None, value=None, param=None):
-    """
-    Alignment tensor set details
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    """Set the tensor.
 
-    If the alignment tensor has not been setup, use the more powerful function
-    'alignment_tensor.init' to initialise the tensor parameters.
-
-    The alignment tensor parameters can only be set when the data pipe corresponds to model-free
-    analysis.  The units of the parameters are:
-
-        Unitless for Sxx, Syy, Szz, Sxxyy, Sxy, Sxz, Syz.
-        Unitless for Axx, Ayy, Azz, Axxyy, Axy, Axz, Ayz.
-        Unitless for Pxx, Pyy, Pzz, Pxxyy, Pxy, Pxz, Pyz.
-        Radians for all angles (alpha, beta, gamma).
-
-    If a single geometric parameter is supplied, it must be one of Bxx, Byy, Bxy, Bxz, Byz, where B
-    is one of S, A, or P.  For the parameters Bzz and Bxxyy, it is not possible to determine how to
-    use the currently set values together with the supplied value to calculate the new internal
-    parameters.  When supplying multiple geometric parameters, the set must belong to one of
-
-        {Sxx, Syy, Sxy, Sxz, Syz},
-        {Szz, Sxxyy, Sxy, Sxz, Syz}.
-        {Axx, Ayy, Axy, Axz, Ayz},
-        {Azz, Axxyy, Axy, Axz, Ayz}.
-        {Pxx, Pyy, Pxy, Pxz, Pyz},
-        {Pzz, Pxxyy, Pxy, Pxz, Pyz}.
+    @keyword tensor:    The alignment tensor object.
+    @type tensor:       AlignTensorData instance
+    @keyword value:     The list of values to set the parameters to.
+    @type value:        list of float
+    @keyword param:     The list of parameter names.
+    @type param:        list of str
     """
 
     # Alias the current data pipe.
@@ -1333,6 +1333,35 @@ def set(tensor=None, value=None, param=None):
 
     if orient_params:
         fold_angles()
+
+# User function documentation.
+__set_prompt_doc__ = """
+    Alignment tensor set details
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    If the alignment tensor has not been setup, use the more powerful function
+    'alignment_tensor.init' to initialise the tensor parameters.
+
+    The alignment tensor parameters can only be set when the data pipe corresponds to model-free
+    analysis.  The units of the parameters are:
+
+        Unitless for Sxx, Syy, Szz, Sxxyy, Sxy, Sxz, Syz.
+        Unitless for Axx, Ayy, Azz, Axxyy, Axy, Axz, Ayz.
+        Unitless for Pxx, Pyy, Pzz, Pxxyy, Pxy, Pxz, Pyz.
+        Radians for all angles (alpha, beta, gamma).
+
+    If a single geometric parameter is supplied, it must be one of Bxx, Byy, Bxy, Bxz, Byz, where B
+    is one of S, A, or P.  For the parameters Bzz and Bxxyy, it is not possible to determine how to
+    use the currently set values together with the supplied value to calculate the new internal
+    parameters.  When supplying multiple geometric parameters, the set must belong to one of
+
+        {Sxx, Syy, Sxy, Sxz, Syz},
+        {Szz, Sxxyy, Sxy, Sxz, Syz}.
+        {Axx, Ayy, Axy, Axz, Ayz},
+        {Azz, Axxyy, Axy, Axz, Ayz}.
+        {Pxx, Pyy, Pxy, Pxz, Pyz},
+        {Pzz, Pxxyy, Pxy, Pxz, Pyz}.
+"""
 
 
 def svd(basis_set=0, tensors=None):

@@ -63,7 +63,7 @@ class Relax_fit(TestCase):
         self.relax.interpreter._Pipe.create('new', 'relax_fit')
 
         # Load the Lupin Ap4Aase sequence.
-        self.relax.interpreter._Sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/system_tests/data")
+        self.relax.interpreter._Sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/shared_data")
 
         # Name the spins so they can be matched to the assignments.
         self.relax.interpreter._Spin.name(name='N')

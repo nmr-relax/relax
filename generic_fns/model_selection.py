@@ -27,7 +27,7 @@
 from math import log
 
 # relax module imports.
-from pipes import get_type, has_pipe, pipe_names, switch
+from pipes import cdp_name, get_type, has_pipe, pipe_names, switch
 from relax_errors import RelaxError, RelaxPipeError
 from specific_fns.setup import get_specific_fn
 
@@ -145,7 +145,8 @@ def select(method=None, modsel_pipe=None, pipes=None):
 
     # Initialise.
     function_type = {}
-    count_num_instances = {}
+    model_loop = {}
+    model_type = {}
     duplicate_data = {}
     model_statistics = {}
     skip_function = {}
@@ -159,63 +160,61 @@ def select(method=None, modsel_pipe=None, pipes=None):
         # Loop over the data pipes.
         for i in xrange(len(pipes)):
             for j in xrange(len(pipes[i])):
-                # Specific duplicate data, number of instances, and model statistics functions.
-                count_num_instances[pipes[i][j]] = get_specific_fn('num_instances', get_type(pipes[i][j]))
+                # Specific functions.
+                model_loop[pipes[i][j]] = get_specific_fn('model_loop', get_type(pipes[i][j]))
+                model_type[pipes[i][j]] = get_specific_fn('model_type', get_type(pipes[i][j]))
                 duplicate_data[pipes[i][j]] = get_specific_fn('duplicate_data', get_type(pipes[i][j]))
                 model_statistics[pipes[i][j]] = get_specific_fn('model_stats', get_type(pipes[i][j]))
                 skip_function[pipes[i][j]] = get_specific_fn('skip_function', get_type(pipes[i][j]))
+
+        # The model loop should be the same for all data pipes!
+        for i in xrange(len(pipes)):
+            for j in xrange(len(pipes[i])):
+                if model_loop[pipes[0][j]] != model_loop[pipes[i][j]]:
+                    raise RelaxError, "The models for each data pipes should be the same."
+        model_loop = model_loop[pipes[0][0]]
+
+        # The model description.
+        model_desc = get_specific_fn('model_desc', get_type(pipes[0]))
+
+        # Global vs. local models.
+        global_flag = False
+        for i in xrange(len(pipes)):
+            for j in xrange(len(pipes[i])):
+                if model_type[pipes[i][j]]() == 'global':
+                    global_flag = True
 
     # All other model selection setup.
     else:
         # Loop over the data pipes.
         for i in xrange(len(pipes)):
-            # Specific duplicate data, number of instances, and model statistics functions.
-            count_num_instances[pipes[i]] = get_specific_fn('num_instances', get_type(pipes[i]))
+            # Specific functions.
+            model_loop[pipes[i]] = get_specific_fn('model_loop', get_type(pipes[i]))
+            model_type[pipes[i]] = get_specific_fn('model_type', get_type(pipes[i]))
             duplicate_data[pipes[i]] = get_specific_fn('duplicate_data', get_type(pipes[i]))
             model_statistics[pipes[i]] = get_specific_fn('model_stats', get_type(pipes[i]))
             skip_function[pipes[i]] = get_specific_fn('skip_function', get_type(pipes[i]))
 
-    # Number of instances.  If the number is not the same for each data pipe, then the minimum
-    # number will give the specific function model_statistics the opportunity to consolidate the
-    # instances to the minimum number if possible.
-    min_instances = 1e99
-    num_instances = []
-    for i in xrange(len(pipes)):
-        # An array of arrays - for cross validation model selection.
-        if type(pipes[i]) == list:
-            num_instances.append([])
+        # The model loop should be the same for all data pipes!
+        for j in xrange(len(pipes)):
+            if model_loop[pipes[0]] != model_loop[pipes[j]]:
+                raise RelaxError, "The models for each data pipes should be the same."
+        model_loop = model_loop[pipes[0]]
 
-            # Loop over the nested array.
-            for j in xrange(len(pipes[i])):
-                # Switch pipes.
-                switch(pipes[i][j])
+        # The model description.
+        model_desc = get_specific_fn('model_desc', get_type(pipes[0]))
 
-                # Number of instances.
-                num = count_num_instances[pipes[i][j]]()
-                num_instances[i].append(num)
-
-                # Minimum.
-                if num < min_instances:
-                    min_instances = num
-
-        # All other model selection techniques.
-        else:
-            # Switch pipes.
-            switch(pipes[i])
-
-            # Number of instances.
-            num = count_num_instances[pipes[i]]()
-            num_instances.append(num)
-
-            # Minimum.
-            if num < min_instances:
-                min_instances = num
+        # Global vs. local models.
+        global_flag = False
+        for j in xrange(len(pipes)):
+            if model_type[pipes[j]]() == 'global':
+                global_flag = True
 
 
-    # Loop over the number of instances.
-    for i in xrange(min_instances):
+    # Loop over the base models.
+    for model_info in model_loop():
         # Print out.
-        print "\nModel index " + `i` + ".\n"
+        print "\n" + model_desc(model_info)
         print "%-20s %-20s %-20s %-20s %-20s" % ("Data pipe", "Num_params_(k)", "Num_data_sets_(n)", "Chi2", "Criterion")
 
         # Initial model.
@@ -238,11 +237,11 @@ def select(method=None, modsel_pipe=None, pipes=None):
                     switch(pipe)
 
                     # Skip function.
-                    if skip_function[pipe](instance=i):
+                    if skip_function[pipe](model_info):
                         continue
 
                     # Get the model statistics.
-                    k, n, chi2 = model_statistics[pipe](instance=i, min_instances=min_instances)
+                    k, n, chi2 = model_statistics[pipe](model_info)
 
                     # Missing data sets.
                     if k == None or n == None or chi2 == None:
@@ -263,17 +262,11 @@ def select(method=None, modsel_pipe=None, pipes=None):
                 switch(pipe)
 
                 # Skip function.
-                if skip_function[pipe](instance=i, min_instances=min_instances, num_instances=num_instances[j]):
+                if skip_function[pipe](model_info):
                     continue
 
-                # Global stats.
-                if num_instances[j] > min_instances or num_instances[j] == 1:
-                    global_stats = 1
-                else:
-                    global_stats = 0
-
                 # Get the model statistics.
-                k, n, chi2 = model_statistics[pipe](instance=i, global_stats=global_stats)
+                k, n, chi2 = model_statistics[pipe](model_info, global_stats=global_flag)
 
                 # Missing data sets.
                 if k == None or n == None or chi2 == None:
@@ -291,7 +284,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
                 best_crit = crit
 
         # Print out of selected model.
-        print "\nThe model from the data pipe " + `best_model` + " has been selected."
+        print "The model from the data pipe " + `best_model` + " has been selected."
 
         # Duplicate the data from the 'best_model' to the model selection data pipe.
         if best_model != None:
@@ -299,8 +292,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
             switch(best_model)
 
             # Duplicate.
-            duplicate_data[best_model](pipe_from=best_model, pipe_to=modsel_pipe, model_index=i, global_stats=global_stats, verbose=False)
+            duplicate_data[best_model](best_model, modsel_pipe, model_info, verbose=False)
 
     # Switch to the model selection pipe.
     switch(modsel_pipe)
-

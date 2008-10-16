@@ -92,6 +92,8 @@ class Iso3D(Base_Map):
         # Initial value of the first parameter.
         values[0] = self.bounds[0, 0]
 
+        # The model identifier.
+
         # Loop over the first parameter.
         for i in xrange((self.inc + 1)):
             # Initial value of the second parameter.
@@ -105,13 +107,22 @@ class Iso3D(Base_Map):
                 # Loop over the third parameter.
                 for k in xrange((self.inc + 1)):
                     # Set the parameter values.
-                    value.set(val=values, param=self.params, spin_id=self.spin_id, force=True)
+                    if self.spin_id:
+                        value.set(val=values, param=self.params, spin_id=self.spin_id, force=True)
+                    else:
+                        value.set(val=values, param=self.params, force=True)
 
                     # Calculate the function values.
-                    self.calculate(spin_id=self.spin_id, verbosity=0)
+                    if self.spin_id:
+                        self.calculate(spin_id=self.spin_id, verbosity=0)
+                    else:
+                        self.calculate(verbosity=0)
 
                     # Get the minimisation statistics for the model.
-                    k, n, chi2 = self.model_stats(spin_id=self.spin_id)
+                    if self.spin_id:
+                        k, n, chi2 = self.model_stats(spin_id=self.spin_id)
+                    else:
+                        k, n, chi2 = self.model_stats(model_info=0)
 
                     # Set maximum value to 1e20 to stop the OpenDX server connection from breaking.
                     if chi2 > 1e20:

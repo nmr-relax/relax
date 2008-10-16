@@ -52,7 +52,7 @@ class Ct(TestCase):
         """The consistency testing calculation test."""
 
         # Data directory.
-        dir = sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/'
+        dir = sys.path[-1] + '/test_suite/shared_data/jw_mapping/'
 
         # Data paths.
         dataPaths = [dir + 'noe.dat',
@@ -70,7 +70,7 @@ class Ct(TestCase):
         f_r2 = [2.0482909381655862e-09, 1.8998154021753067e-09]
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + '/test_suite/system_tests/data')
+        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + '/test_suite/shared_data')
 
         # Read the data.
         for dataSet in xrange(len(dataPaths)):
@@ -114,7 +114,7 @@ class Ct(TestCase):
         """The user function value.set()."""
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + '/test_suite/system_tests/data')
+        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + '/test_suite/shared_data')
 
         # Try to set the values.
         bond_length = NH_BOND_LENGTH

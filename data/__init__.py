@@ -75,7 +75,7 @@ class Relax_data_store(dict):
         # The data pipes.
         text = text + "\n"
         text = text + "Data pipes:\n"
-        pipes = self.keys()
+        pipes = self.instance.keys()
         if pipes:
             for pipe in pipes:
                 text = text + "  %s\n" % `pipe`
@@ -132,7 +132,7 @@ class Relax_data_store(dict):
             del self.__dict__[key]
 
         # Remove all items from the dictionary.
-        self.clear()
+        self.instance.clear()
 
 
     def add(self, pipe_name, pipe_type):
@@ -147,7 +147,7 @@ class Relax_data_store(dict):
         """
 
         # Test if the pipe already exists.
-        if pipe_name in self.keys():
+        if pipe_name in self.instance.keys():
             raise RelaxPipeError, pipe_name
 
         # Create a new container.
@@ -157,7 +157,7 @@ class Relax_data_store(dict):
         self[pipe_name].pipe_type = pipe_type
 
         # Change the current data pipe.
-        self.current_pipe = pipe_name
+        self.instance.current_pipe = pipe_name
 
 
     def from_xml(self, file, dir=None, verbosity=1):
@@ -182,7 +182,7 @@ class Relax_data_store(dict):
         relax_version = str(relax_node.getAttribute('version'))
 
         # Fill the pipe.
-        self[self.current_pipe].from_xml(relax_node, dir=dir)
+        self[self.instance.current_pipe].from_xml(relax_node, dir=dir)
 
 
     def to_xml(self, file):
@@ -197,29 +197,29 @@ class Relax_data_store(dict):
         """
 
         # Create the XML document object.
-        self.xmldoc = xml.dom.minidom.Document()
+        xmldoc = xml.dom.minidom.Document()
 
         # Create the top level element, including the relax URL.
-        top_element = self.xmldoc.createElementNS('http://nmr-relax.com', 'relax')
+        top_element = xmldoc.createElementNS('http://nmr-relax.com', 'relax')
 
         # Append the element.
-        self.xmldoc.appendChild(top_element)
+        xmldoc.appendChild(top_element)
 
         # Set the relax version number, and add a creation time.
         top_element.setAttribute('version', version)
         top_element.setAttribute('time', asctime())
 
         # Create the pipe XML element and add it to the top level XML element.
-        pipe_element = self.xmldoc.createElement('pipe')
+        pipe_element = xmldoc.createElement('pipe')
         top_element.appendChild(pipe_element)
 
         # Set the data pipe attributes.
         pipe_element.setAttribute('desc', 'The contents of a relax data pipe')
-        pipe_element.setAttribute('name', self.current_pipe)
-        pipe_element.setAttribute('type', self[self.current_pipe].pipe_type)
+        pipe_element.setAttribute('name', self.instance.current_pipe)
+        pipe_element.setAttribute('type', self[self.instance.current_pipe].pipe_type)
 
         # Fill the data pipe XML element.
-        self[self.current_pipe].to_xml(self.xmldoc, pipe_element)
+        self[self.instance.current_pipe].to_xml(xmldoc, pipe_element)
 
         # Write out the XML file.
-        file.write(self.xmldoc.toprettyxml(indent='    '))
+        file.write(xmldoc.toprettyxml(indent='    '))

@@ -136,15 +136,17 @@ class Relax_fit(Common_functions):
         return scaling_matrix
 
 
-    def assign_function(self, spin=None, intensity=None):
+    def assign_function(self, spin=None, intensity=None, spectrum_type=None):
         """Place the peak intensity data into the spin container.
 
         The intensity data can be either that of the reference or saturated spectrum.
 
-        @keyword spin:      The spin container.
-        @type spin:         SpinContainer instance
-        @keyword intensity: The intensity value.
-        @type intensity:    float
+        @keyword spin:          The spin container.
+        @type spin:             SpinContainer instance
+        @keyword intensity:     The intensity value.
+        @type intensity:        float
+        @keyword spectrum_type: Unused argument sent in by the caller function.
+        @type spectrum_type:    None
         """
 
         # Alias the current data pipe.
@@ -631,14 +633,14 @@ class Relax_fit(Common_functions):
         cdp = pipes.get_pipe()
 
         # Test if the standard deviation has already been calculated.
-        if hasattr(cdp, 'sd'):
+        if hasattr(cdp, 'sigma'):
             raise RelaxError, "The average intensity and standard deviation of all spectra has already been calculated."
 
         # Print out.
         print "\nCalculating the average intensity and standard deviation of all spectra."
 
         # Initialise.
-        cdp.sd = []
+        cdp.sigma = []
 
         # Loop over the time points.
         for time_index in xrange(len(cdp.relax_times)):
@@ -648,8 +650,8 @@ class Relax_fit(Common_functions):
             if verbosity:
                 print "%-5s%-6s%-20s%-20s" % ("Num", "Name", "Average", "SD")
 
-            # Append zero to the global standard deviation structure.
-            cdp.sd.append(0.0)
+            # Append zero to the global variance structure.
+            cdp.sigma.append(0.0)
 
             # Test for multiple spectra.
             if cdp.num_spectra[time_index] == 1:
@@ -665,14 +667,14 @@ class Relax_fit(Common_functions):
 
                 # Skip and deselect spins which have no data.
                 if not hasattr(spin, 'intensities'):
-                    spin.select = 0
+                    spin.select = False
                     continue
 
                 # Initialise the average intensity and standard deviation data structures.
                 if not hasattr(spin, 'ave_intensities'):
                     spin.ave_intensities = []
-                if not hasattr(spin, 'sd'):
-                    spin.sd = []
+                if not hasattr(spin, 'sigma'):
+                    spin.sigma = []
 
                 # Average intensity.
                 spin.ave_intensities.append(average(spin.intensities[time_index]))
@@ -682,57 +684,62 @@ class Relax_fit(Common_functions):
                 for j in xrange(cdp.num_spectra[time_index]):
                     SSE = SSE + (spin.intensities[time_index][j] - spin.ave_intensities[time_index]) ** 2
 
-                # Standard deviation.
-                #                 ____________________________
-                #                /   1
-                #       sd =    /  ----- * sum({Xi - Xav}^2)]
-                #             \/   n - 1
+                # Variance.
+                #
+                #                 1
+                #       sigma = ----- * sum({Xi - Xav}^2)]
+                #               n - 1
                 #
                 if cdp.num_spectra[time_index] == 1:
-                    sd = 0.0
+                    sigma = 0.0
                 else:
-                    sd = sqrt(1.0 / (cdp.num_spectra[time_index] - 1.0) * SSE)
-                spin.sd.append(sd)
+                    sigma = 1.0 / (cdp.num_spectra[time_index] - 1.0) * SSE
+                spin.sigma.append(sigma)
 
                 # Print out.
                 if verbosity:
-                    print "%-5i%-6s%-20s%-20s" % (spin.num, spin.name, `spin.ave_intensities[time_index]`, `spin.sd[time_index]`)
+                    print "%-5i%-6s%-20s%-20s" % (spin.num, spin.name, `spin.ave_intensities[time_index]`, `spin.sigma[time_index]`)
 
-                # Sum of standard deviations (for average).
-                cdp.sd[time_index] = cdp.sd[time_index] + spin.sd[time_index]
+                # Sum of variances (for average).
+                cdp.sigma[time_index] = cdp.sigma[time_index] + spin.sigma[time_index]
 
-            # Average sd.
-            cdp.sd[time_index] = cdp.sd[time_index] / float(count_spins())
+            # Average variance.
+            cdp.sigma[time_index] = cdp.sigma[time_index] / float(count_spins())
 
             # Print out.
-            print "Standard deviation for time point %s:  %s" % (`time_index`, `cdp.sd[time_index]`)
+            print "Standard deviation for time point %s:  %s" % (`time_index`, `cdp.sigma[time_index]`)
 
 
         # Average across all spectra if there are time points with a single spectrum.
-        if 0.0 in cdp.sd:
+        if 0.0 in cdp.sigma:
             # Initialise.
-            sd = 0.0
+            sigma = 0.0
             num_dups = 0
 
             # Loop over all time points.
             for i in xrange(len(cdp.relax_times)):
-                # Single spectrum (or extrodinarily accurate NMR spectra!).
-                if cdp.sd[i] == 0.0:
+                # Single spectrum (or extraordinarily accurate NMR spectra!).
+                if cdp.sigma[i] == 0.0:
                     continue
 
                 # Sum and count.
-                sd = sd + cdp.sd[i]
+                sigma = sigma + cdp.sigma[i]
                 num_dups = num_dups + 1
 
             # Average value.
-            sd = sd / float(num_dups)
+            sigma = sigma / float(num_dups)
 
             # Assign the average value to all time points.
             for i in xrange(len(cdp.relax_times)):
-                cdp.sd[i] = sd
+                cdp.sigma[i] = sigma
 
             # Print out.
-            print "\nStandard deviation (averaged over all spectra):  " + `sd`
+            print "\nStandard deviation (averaged over all spectra):  " + `sigma`
+
+        # Create the standard deviation data structure.
+        cdp.sd = []
+        for sigma in cdp.sigma:
+            cdp.sd.append(sqrt(sigma))
 
 
     def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
@@ -961,12 +968,12 @@ class Relax_fit(Common_functions):
         for spin in spin_loop():
             # Check if data exists.
             if not hasattr(spin, 'intensities'):
-                spin.select = 0
+                spin.select = False
                 continue
 
             # Require 3 or more data points.
             if len(spin.intensities) < 3:
-                spin.select = 0
+                spin.select = False
                 continue
 
 
@@ -984,7 +991,7 @@ class Relax_fit(Common_functions):
         @keyword relax_time:    The time, in seconds, of the relaxation period.
         @type relax_time:       float
         @keyword format:        The type of file containing peak intensities.  This can currently be
-                                one of 'sparky' or 'xeasy'.
+                                one of 'sparky', 'xeasy' or 'nmrview'.
         @type format:           str
         @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity
                                 file.
@@ -1000,7 +1007,7 @@ class Relax_fit(Common_functions):
         cdp = pipes.get_pipe()
 
         # Store the relaxation time in the class instance.
-        self.__relax_time = relax_time
+        self.__relax_time = float(relax_time)
 
         # Global relaxation time data structure.
         if not hasattr(cdp, 'relax_times'):

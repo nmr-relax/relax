@@ -51,7 +51,7 @@ class Jw(TestCase):
         """The spectral density calculation test."""
 
         # Data directory.
-        dir = sys.path[-1] + '/test_suite/system_tests/data/jw_mapping/'
+        dir = sys.path[-1] + '/test_suite/shared_data/jw_mapping/'
 
         # Data paths.
         dataPaths = [dir + 'noe.dat',
@@ -69,7 +69,7 @@ class Jw(TestCase):
         jwh = [1.5598167512718012e-12, 2.9480536599037041e-12]
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + '/test_suite/system_tests/data')
+        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + '/test_suite/shared_data')
 
         # Read the data.
         for dataSet in xrange(len(dataPaths)):
@@ -107,7 +107,7 @@ class Jw(TestCase):
         """The user function value.set()."""
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + '/test_suite/system_tests/data')
+        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + '/test_suite/shared_data')
 
         # Try to set the values.
         bond_length = NH_BOND_LENGTH

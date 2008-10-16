@@ -427,7 +427,7 @@ class Molmol:
     write.__doc__ = write.__doc__ + "\n\n" + Molmol.molmol_classic_style.__doc__ + "\n\n"
 
     # Molmol RGB colour list.
-    write.__doc__ = write.__doc__ + "\n\n" + colour.molmol_colours.__doc__ + "\n\n"
+    write.__doc__ = write.__doc__ + "\n\n" + colour.__molmol_colours_prompt_doc__ + "\n\n"
 
     # X11 RGB colour list.
-    write.__doc__ = write.__doc__ + "\n\n" + colour.x11_colours.__doc__ + "\n\n"
+    write.__doc__ = write.__doc__ + "\n\n" + colour.__x11_colours_prompt_doc__ + "\n\n"

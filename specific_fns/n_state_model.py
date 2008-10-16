@@ -335,7 +335,7 @@ class N_state_model(Common_functions):
                                     contain the elements 'rdc', 'pcs' or 'tensor'.
         @type data_types:           list of str
         @keyword scaling_matrix:    The diagonal scaling matrix.
-        @type scaling_matrx:        numpy rank-2 square matrix
+        @type scaling_matrix:       numpy rank-2 square matrix
         @return:                    The matrices A and b.
         @rtype:                     tuple of len 2 of a numpy rank-2, size NxM matrix and numpy
                                     rank-1, size N array

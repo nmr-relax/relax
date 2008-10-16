@@ -1,49 +1,72 @@
-# Script for model-free analysis using the program 'Modelfree4'.
+###############################################################################
+#                                                                             #
+# Copyright (C) 2001-2008 Edward d'Auvergne                                   #
+#                                                                             #
+# This file is part of the program relax.                                     #
+#                                                                             #
+# relax is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# relax is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with relax; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+#                                                                             #
+###############################################################################
 
-# The RelaxError system.
+"""Script for model-free analysis using Art Palmer's program 'Modelfree4'.
+
+The three stages in this script, which can be set below, are:
+  Stage 1:  Initial model-free minimisation.
+  Stage 2:  Model-free model selection.
+  Stage 3:  Final optimisation of diffusion tensor parameters together with model-free parameters.
+"""
+
+# relax module imports.
 from relax_errors import RelaxError
 
+
 # Set the stage of analysis.
-#
-# The three stages in this script are:
-#   Stage 1:  Initial model-free minimisation.
-#   Stage 2:  Model-free model selection.
-#   Stage 3:  Final optimisation of diffusion tensor parameters together with model-free parameters.
-stage = 2
+STAGE = 1
 
 
-# Functions.
-
-def exec_stage_1(runs):
+def exec_stage_1(pipes):
     """Stage 1 function.
 
     Initial model-free minimisation.
     """
 
-    # Loop over the runs.
-    for name in runs:
-        # Create the run.
+    # Loop over the data pipes.
+    for name in pipes:
+        # Create the data pipe.
         print "\n\n# " + name + " #"
         pipe.create(name, 'mf')
 
         # Load the sequence.
-        sequence.read(name, 'noe.500.out')
+        sequence.read('noe.500.out')
 
         # PDB.
-        #structure.read_pdb(name, 'Ap4Aase_new_3.pdb')
+        #structure.read_pdb('Ap4Aase_new_3.pdb')
 
         # Load the relaxation data.
-        relax_data.read(name, 'R1', '600', 600.0 * 1e6, 'r1.600.out')
-        relax_data.read(name, 'R2', '600', 600.0 * 1e6, 'r2.600.out')
-        relax_data.read(name, 'NOE', '600', 600.0 * 1e6, 'noe.600.out')
-        relax_data.read(name, 'R1', '500', 500.0 * 1e6, 'r1.500.out')
-        relax_data.read(name, 'R2', '500', 500.0 * 1e6, 'r2.500.out')
-        relax_data.read(name, 'NOE', '500', 500.0 * 1e6, 'noe.500.out')
+        relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out')
+        relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out')
+        relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out')
+        relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out')
+        relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out')
+        relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out')
 
         # Setup other values.
-        diffusion_tensor.init(name, 1e-8)
-        value.set(name, 1.02 * 1e-10, 'bond_length')
-        value.set(name, -172 * 1e-6, 'csa')
+        diffusion_tensor.init(1e-8)
+        value.set('15N', 'heteronucleus')
+        value.set(1.02 * 1e-10, 'bond_length')
+        value.set(-172 * 1e-6, 'csa')
 
         # Select the model-free model.
         model_free.select_model(model=name)
@@ -58,7 +81,7 @@ def exec_stage_1(runs):
     state.save('stage1.save', force=True)
 
 
-def exec_stage_2(runs):
+def exec_stage_2(pipes):
     """Stage 2 function.
 
     Model-free model selection.
@@ -70,19 +93,19 @@ def exec_stage_2(runs):
     # Print out.
     print "\n\nLoading all the Modelfree 4 data."
 
-    # Extract the Modelfree4 data from the 'mfout' files.
-    for name in runs:
-        palmer.extract()
+    # Loop over the data pipes.
+    for name in pipes:
+        # Switch to the data pipe.
+        pipe.switch(name)
+
+        # Extract the Modelfree4 data from the 'mfout' files.
+        palmer.extract(dir=name)
 
     # Print out.
     print "\n\nModel selection."
 
-    # Create the model selection run.
-    name = 'aic'
-    pipe.create(name, 'mf')
-
     # Model selection.
-    model_selection(method='AIC', modsel_run=name)
+    model_selection(method='AIC', modsel_pipe='aic')
 
     # Write the results.
     results.write(file='results', force=True)
@@ -100,11 +123,8 @@ def exec_stage_3():
     # Load the saved state from stage 2.
     state.load('stage2.save')
 
-    # Set the run name.
-    name = 'aic'
-
     # Let the diffusion tensor parameters be optimised.
-    fix(name, 'diff', 0)
+    fix('diff', False)
 
     # Create the Modelfree4 files (change sims as needed, see below).
     palmer.create(dir='final', force=True, sims=0)
@@ -122,18 +142,15 @@ def exec_stage_3():
 # Main section of the script.
 #############################
 
-# Nuclei type.
-value.set('15N', 'heteronucleus')
-
-# Set the run name (also the name of a preset model-free model).
-runs = ['m1', 'm2', 'm3', 'm4', 'm5']
+# Set the data pipe names (also the name of a preset model-free model).
+pipes = ['m1', 'm2', 'm3', 'm4', 'm5']
 
 # Run the stages.
-if stage == 1:
-    exec_stage_1(runs)
-elif stage == 2:
-    exec_stage_2(runs)
-elif stage == 3:
+if STAGE == 1:
+    exec_stage_1(pipes)
+elif STAGE == 2:
+    exec_stage_2(pipes)
+elif STAGE == 3:
     exec_stage_3()
 else:
     raise RelaxError, "The stage value, which is set to " + `stage` + ", should be either 1, 2, or 3."

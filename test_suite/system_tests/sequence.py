@@ -285,4 +285,4 @@ class Sequence(TestCase):
         """The sequence.read() test."""
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + '/test_suite/system_tests/data')
+        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + '/test_suite/shared_data')

@@ -666,25 +666,31 @@ def uniform_vect_dist_spherical_angles(inc=20):
 
     This function returns an array of unit vectors uniformly distributed within 3D space.  To
     create the distribution, uniform spherical angles are used.  The two spherical angles are
-    defined as
+    defined as::
 
         theta = 2.pi.u,
         phi = cos^-1(2v - 1),
 
-    where
+    where::
 
         u in [0, 1),
         v in [0, 1].
 
     Because theta is defined between [0, pi] and phi is defined between [0, 2pi], for a uniform
     distribution u is only incremented half of 'inc'.  The unit vectors are generated using the
-    equation
+    equation::
 
                    | cos(theta) * sin(phi) |
         vector  =  | sin(theta) * sin(phi) |.
                    |      cos(phi)         |
 
     The vectors of this distribution generate both longitudinal and latitudinal lines.
+
+
+    @keyword inc:   The number of increments in the distribution.
+    @type inc:      int
+    @return:        The distribution of vectors on a sphere.
+    @rtype:         list of rank-1, 3D numpy arrays
     """
 
     # The inc argument must be an even number.
