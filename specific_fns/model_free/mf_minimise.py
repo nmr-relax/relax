@@ -33,7 +33,7 @@ from generic_fns.diffusion_tensor import diff_data_exists
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
-from multi_processor_commands import MF_grid_command, MF_super_grid_memo, MF_grid_memo
+from multi_processor_commands import MF_grid_command, MF_grid_memo, MF_minimise_command, MF_super_grid_memo
 from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxProtonTypeError, RelaxSpinTypeError
 
@@ -1124,7 +1124,7 @@ class Mf_minimise:
                     super_grid_memo = MF_super_grid_memo(model_free=self, index=index, sim_index=sim_index, model_type=model_type, scaling=scaling, scaling_matrix=self.scaling_matrix, full_output=1, print_flag=print_flag, print_prefix="", grid_size=self.grid_size, )
 
                 for sub_grid_index, sub_grid_info in enumerate(sub_grid_list):
-                    command=MF_grid_command()
+                    command = MF_grid_command()
                     command.set_mf(init_params=param_vector, model_type=model_type, diff_type=diff_type, diff_params=diff_params, scaling_matrix=scaling_matrix, num_spins=num_spins, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
                     if constraints:
                         command.set_minimise(args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=verbosity)
@@ -1136,7 +1136,7 @@ class Mf_minimise:
                     self.relax.processor.add_to_queue(command, memo)
 
             else:
-                command=MF_minimise_command()
+                command = MF_minimise_command()
                 command.set_mf(init_params=param_vector, model_type=model_type, diff_type=diff_type, diff_params=diff_params, scaling_matrix=scaling_matrix, num_spins=num_spins, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
 
                 #FIXME could be neater?
