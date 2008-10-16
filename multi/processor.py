@@ -476,6 +476,7 @@ class Processor(object):
         # global_stdio_capture
         self.setup_stdio_capture(stdio_capture)
 
+
     def abort(self):
         '''Shutdown the multi processor in exceptional conditions - designed for overriding.
 
